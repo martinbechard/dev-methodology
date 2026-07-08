@@ -1,0 +1,4 @@
+interface:
+  display_name: "Local Model Integration"
+  short_description: "Local model runtime guidance"
+  default_prompt: "Use $local-model-integration for local model downloads, MLX serving, runtime state, and model routing."

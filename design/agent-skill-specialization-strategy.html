@@ -1,0 +1,806 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agent And Skill Specialization Strategy</title>
+  <style>
+    :root {
+      --color-ink: #18212f;
+      --color-muted: #5b6678;
+      --color-page: #f6f8fb;
+      --color-panel: #ffffff;
+      --color-line: #dae2ec;
+      --color-agent: #0f766e;
+      --color-skill: #b45309;
+      --color-config: #7c3aed;
+      --color-rule: #2563eb;
+      --color-case: #be123c;
+      --color-soft-agent: #e4f7f4;
+      --color-soft-skill: #fff1d8;
+      --color-soft-config: #f0e8ff;
+      --color-soft-rule: #e8f0ff;
+      --color-soft-case: #ffe5ec;
+      --color-soft-gray: #edf1f6;
+      --shadow-panel: 0 14px 32px rgba(31, 41, 55, 0.08);
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.25rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --space-10: 2.5rem;
+      --radius: 0.5rem;
+      --radius-small: 0.35rem;
+      --content-max: 1240px;
+      --font-sm: 0.92rem;
+      --font-xs: 0.78rem;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--color-ink);
+      background:
+        linear-gradient(180deg, rgba(232, 240, 255, 0.9), rgba(246, 248, 251, 0) 340px),
+        var(--color-page);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.52;
+    }
+
+    main {
+      max-width: var(--content-max);
+      margin: 0 auto;
+      padding: var(--space-10) var(--space-6);
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      max-width: 940px;
+      font-size: clamp(2rem, 4vw, 3.65rem);
+    }
+
+    h2 {
+      margin-bottom: var(--space-4);
+      font-size: clamp(1.35rem, 2vw, 2rem);
+    }
+
+    h3 {
+      font-size: 1rem;
+    }
+
+    p {
+      margin: 0;
+      color: var(--color-muted);
+    }
+
+    code {
+      padding: 0.1rem 0.24rem;
+      border-radius: 0.25rem;
+      background: var(--color-soft-gray);
+      font-size: 0.9em;
+    }
+
+    .hero {
+      display: grid;
+      gap: var(--space-6);
+      margin-bottom: var(--space-8);
+    }
+
+    .lede {
+      max-width: 940px;
+      font-size: 1.08rem;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: 0.35rem 0.6rem;
+      border: 1px solid var(--color-line);
+      border-radius: 999px;
+      background: var(--color-panel);
+      color: var(--color-muted);
+      font-size: var(--font-xs);
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .dot {
+      width: 0.65rem;
+      height: 0.65rem;
+      border-radius: 50%;
+    }
+
+    .dot.agent {
+      background: var(--color-agent);
+    }
+
+    .dot.skill {
+      background: var(--color-skill);
+    }
+
+    .dot.config {
+      background: var(--color-config);
+    }
+
+    .dot.rule {
+      background: var(--color-rule);
+    }
+
+    .dot.case {
+      background: var(--color-case);
+    }
+
+    .section {
+      margin-top: var(--space-8);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: var(--space-4);
+    }
+
+    .wide-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: var(--space-4);
+    }
+
+    .panel,
+    .card {
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      background: var(--color-panel);
+      box-shadow: var(--shadow-panel);
+    }
+
+    .panel {
+      padding: var(--space-5);
+    }
+
+    .card {
+      display: grid;
+      gap: var(--space-4);
+      padding: var(--space-5);
+      border-top: 0.35rem solid var(--color-line);
+    }
+
+    .card.agent {
+      border-top-color: var(--color-agent);
+    }
+
+    .card.skill {
+      border-top-color: var(--color-skill);
+    }
+
+    .card.config {
+      border-top-color: var(--color-config);
+    }
+
+    .card.rule {
+      border-top-color: var(--color-rule);
+    }
+
+    .card.case {
+      border-top-color: var(--color-case);
+    }
+
+    .panel h3,
+    .card h3 {
+      margin-bottom: var(--space-2);
+    }
+
+    .panel ul,
+    .card ul {
+      margin: var(--space-3) 0 0;
+      padding-left: var(--space-5);
+      color: var(--color-muted);
+    }
+
+    .panel li,
+    .card li {
+      margin-top: 0.35rem;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+
+    .tag {
+      display: inline-flex;
+      padding: 0.25rem 0.48rem;
+      border-radius: var(--radius-small);
+      background: var(--color-soft-gray);
+      color: var(--color-ink);
+      font-size: var(--font-xs);
+      font-weight: 650;
+    }
+
+    .tag.agent {
+      background: var(--color-soft-agent);
+      color: var(--color-agent);
+    }
+
+    .tag.skill {
+      background: var(--color-soft-skill);
+      color: var(--color-skill);
+    }
+
+    .tag.config {
+      background: var(--color-soft-config);
+      color: var(--color-config);
+    }
+
+    .tag.rule {
+      background: var(--color-soft-rule);
+      color: var(--color-rule);
+    }
+
+    .tag.case {
+      background: var(--color-soft-case);
+      color: var(--color-case);
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
+      gap: var(--space-3);
+      align-items: stretch;
+    }
+
+    .flow-step {
+      min-height: 8rem;
+      padding: var(--space-4);
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      background: var(--color-panel);
+    }
+
+    .flow-step strong {
+      display: block;
+      margin-bottom: var(--space-2);
+    }
+
+    .matrix {
+      overflow-x: auto;
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      background: var(--color-panel);
+      box-shadow: var(--shadow-panel);
+    }
+
+    table {
+      width: 100%;
+      min-width: 920px;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: var(--space-4);
+      border-bottom: 1px solid var(--color-line);
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th {
+      background: #f9fbfe;
+      color: var(--color-ink);
+      font-size: var(--font-xs);
+      text-transform: uppercase;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    td {
+      color: var(--color-muted);
+      font-size: var(--font-sm);
+    }
+
+    .name {
+      color: var(--color-ink);
+      font-weight: 780;
+    }
+
+    .config-block {
+      margin: var(--space-4) 0 0;
+      padding: var(--space-4);
+      overflow-x: auto;
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius-small);
+      background: #101827;
+      color: #eef4ff;
+      font-size: var(--font-sm);
+      line-height: 1.45;
+    }
+
+    .config-block code {
+      padding: 0;
+      background: transparent;
+      color: inherit;
+      font-size: inherit;
+    }
+
+    .note {
+      padding: var(--space-4);
+      border-left: 0.3rem solid var(--color-rule);
+      border-radius: var(--radius-small);
+      background: var(--color-soft-rule);
+      color: var(--color-ink);
+    }
+
+    @media (max-width: 820px) {
+      main {
+        padding: var(--space-8) var(--space-4);
+      }
+
+      table {
+        min-width: 760px;
+      }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <section class="hero" aria-labelledby="page-title">
+    <div class="legend" aria-label="Legend">
+      <span class="pill"><span class="dot agent"></span> Role agent</span>
+      <span class="pill"><span class="dot skill"></span> Routed skill</span>
+      <span class="pill"><span class="dot config"></span> Project config</span>
+      <span class="pill"><span class="dot rule"></span> Dispatch rule</span>
+      <span class="pill"><span class="dot case"></span> Repo application</span>
+    </div>
+    <h1 id="page-title">Agent And Skill Specialization Strategy</h1>
+    <p class="lede">
+      The methodology has a shared catalog of role agents and skills that every project can use. A project-specific definition selects,
+      overrides, dispatches, and aggregates that shared catalog without forking the common role source. Role agents act as skill routers:
+      they read caller parameters and project configuration, classify the work, load the smallest relevant skill set, and produce the
+      role's contracted output.
+    </p>
+  </section>
+
+  <section class="section" aria-labelledby="principle-title">
+    <h2 id="principle-title">Specialization Principle</h2>
+    <div class="wide-grid">
+      <article class="card agent">
+        <h3>Agents Specialize By Responsibility</h3>
+        <p>Agents remain broad, invokable roles with stable behavior and clear authority boundaries.</p>
+        <ul>
+          <li>Development Orchestrator decomposes and routes work.</li>
+          <li>Coding Agent edits code across stacks through skill dispatch.</li>
+          <li>Code Review Agent reviews with fresh context and read-only authority.</li>
+          <li>QA And Verification Agent proves outcomes with commands and evidence.</li>
+          <li>Project Organiser owns file placement and project taxonomy.</li>
+        </ul>
+      </article>
+
+      <article class="card skill">
+        <h3>Skills Specialize By Expertise</h3>
+        <p>Skills stay small and composable, so a single role can load the right knowledge for a specific job without carrying unrelated guidance.</p>
+        <ul>
+          <li>Stack skills cover React, Next.js, Electron, Spring Boot, Python, Drizzle, Postgres, or MLX.</li>
+          <li>Artifact skills cover API routes, UI components, prompts, CLI commands, tests, docs, and wiki pages.</li>
+          <li>Quality skills cover testing, security, accessibility, privacy, performance, and observability.</li>
+          <li>Project skills cover local rules, folder taxonomy, commands, generated files, and data boundaries.</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="configuration-layers-title">
+    <h2 id="configuration-layers-title">Configuration Layers</h2>
+    <div class="wide-grid">
+      <article class="card rule">
+        <h3>Shared Catalog</h3>
+        <p>The shared catalog is the default source for reusable agents, reusable skills, base dispatch rules, and host adapter templates.</p>
+        <ul>
+          <li><code>agents/roles/*.role.yaml</code> defines portable role agents.</li>
+          <li><code>skills/*/SKILL.md</code> defines portable skills.</li>
+          <li><code>profiles/base/*.yaml</code> defines common project families, tiers, and stack packs.</li>
+          <li><code>adapters/*</code> maps shared roles and skills into runtime-specific files.</li>
+        </ul>
+      </article>
+
+      <article class="card config">
+        <h3>Project Definition</h3>
+        <p>The project definition selects and adapts the shared catalog for a repository.</p>
+        <ul>
+          <li><code>.agents/project-profile.yaml</code> selects project family, tier, stacks, roles, skill packs, commands, and data rules.</li>
+          <li><code>docs/project-taxonomy.md</code> defines project-specific file placement and artifact categories.</li>
+          <li>Project-specific definitions can append skills, narrow dispatch rules, override validation commands, and aggregate workflows.</li>
+          <li>Project-specific definitions cannot silently change a shared role's authority or output contract.</li>
+        </ul>
+      </article>
+
+      <article class="card config">
+        <h3>Folder Definition</h3>
+        <p>Folder definitions add local routing for subtrees that use different stacks, generated artifacts, data rules, or verification commands.</p>
+        <ul>
+          <li><code>&lt;subtree&gt;/.agents/folder-profile.yaml</code> governs the subtree where it lives.</li>
+          <li>The nearest folder profile applies after the root project profile.</li>
+          <li>Folder definitions contain only local differences from the root profile.</li>
+          <li>Folder definitions are for routing and narrowing, not for creating folder-specific agents.</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="router-title">
+    <h2 id="router-title">Role Agent Dispatch Loop</h2>
+    <div class="flow">
+      <div class="flow-step">
+        <strong>1. Read request</strong>
+        <p>Parse caller parameters: role, task intent, target files, constraints, requested verification, and allowed authority.</p>
+      </div>
+      <div class="flow-step">
+        <strong>2. Load config</strong>
+        <p>Read the root project profile, nearest folder profile, local instructions, package metadata, wiki map, and relevant procedures.</p>
+      </div>
+      <div class="flow-step">
+        <strong>3. Classify work</strong>
+        <p>Determine project family, tier, artifact type, language, runtime container, data sensitivity, and validation surface.</p>
+      </div>
+      <div class="flow-step">
+        <strong>4. Select skills</strong>
+        <p>Load common role skills, project skills, stack skills, artifact skills, quality skills, and folder-specific skills.</p>
+      </div>
+      <div class="flow-step">
+        <strong>5. Execute contract</strong>
+        <p>Do the role's job with the selected skills only, then produce the role output and verification evidence.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="agent-rule-title">
+    <h2 id="agent-rule-title">When To Create A Specialized Agent</h2>
+    <div class="matrix">
+      <table>
+        <thead>
+          <tr>
+            <th>Decision</th>
+            <th>Create a specialized agent when</th>
+            <th>Use a routed skill when</th>
+            <th>Example</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="name">Authority</span></td>
+            <td>The role has different write permissions, read-only behavior, approval rights, or escalation authority.</td>
+            <td>The same executor can safely use a different framework or language rule.</td>
+            <td>Code Review Agent is separate. React coding is a Coding Agent skill pack.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Output contract</span></td>
+            <td>The role returns a different artifact shape, such as a review verdict, QA report, design spec, or path decision.</td>
+            <td>The role still returns the same patch, explanation, or verification shape.</td>
+            <td>QA And Verification Agent is separate. Jest versus Vitest is a test skill choice.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Context isolation</span></td>
+            <td>The work benefits from an independent context, adversarial reading, or clean-room validation.</td>
+            <td>The same context can safely continue with a stack-specific procedure.</td>
+            <td>Artifact Review Agent is separate. API route coding is not separate.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Runtime resource</span></td>
+            <td>The role owns exclusive resources such as browser sessions, E2E servers, shared databases, or merge lanes.</td>
+            <td>The task only changes which test command or runtime library applies.</td>
+            <td>E2E Browser Agent can be separate. Playwright knowledge is also a skill.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Lifecycle phase</span></td>
+            <td>The role belongs to a different phase: orchestrate, plan, implement, review, verify, merge, or document.</td>
+            <td>The same phase changes language, stack, folder, or artifact subtype.</td>
+            <td>Development Orchestrator is separate. TypeScript and Java coding are skills.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="coding-title">
+    <h2 id="coding-title">Coding Agent As Skill Router</h2>
+    <div class="grid">
+      <article class="card config">
+        <h3>Dispatch Inputs</h3>
+        <ul>
+          <li>Caller-supplied task intent and file paths.</li>
+          <li><code>.agents/project-profile.yaml</code> project family, tier, stacks, and validation commands.</li>
+          <li>Nearest <code>.agents/folder-profile.yaml</code> for local stack or policy overrides.</li>
+          <li>Repository files such as <code>package.json</code>, <code>tsconfig.json</code>, framework configs, and procedure files.</li>
+          <li>Wiki or design pages that describe the touched subsystem.</li>
+        </ul>
+      </article>
+
+      <article class="card rule">
+        <h3>Common Coding Skills</h3>
+        <div class="tag-row">
+          <span class="tag skill">careful-coding</span>
+          <span class="tag skill">ast-grep</span>
+          <span class="tag skill">project-wiki-query</span>
+          <span class="tag skill">project-organiser-use</span>
+          <span class="tag skill">fix-explanation</span>
+          <span class="tag skill">structured-review</span>
+        </div>
+      </article>
+
+      <article class="card rule">
+        <h3>Stack Skills</h3>
+        <div class="tag-row">
+          <span class="tag skill">typescript-esm</span>
+          <span class="tag skill">typescript-strict</span>
+          <span class="tag skill">electron-main</span>
+          <span class="tag skill">electron-preload</span>
+          <span class="tag skill">react-vite-renderer</span>
+          <span class="tag skill">nextjs-app-router</span>
+          <span class="tag skill">react-server-components</span>
+          <span class="tag skill">node-cli</span>
+          <span class="tag skill">api-routes</span>
+          <span class="tag skill">clerk-auth</span>
+          <span class="tag skill">postgres-drizzle</span>
+          <span class="tag skill">langgraph</span>
+          <span class="tag skill">tailwind-design-system</span>
+          <span class="tag skill">jest</span>
+          <span class="tag skill">vitest</span>
+          <span class="tag skill">playwright</span>
+        </div>
+      </article>
+
+      <article class="card skill">
+        <h3>Application Domain Skills</h3>
+        <div class="tag-row">
+          <span class="tag skill">harness-implementation</span>
+          <span class="tag skill">tool-runtime-implementation</span>
+          <span class="tag skill">plan-engine-implementation</span>
+          <span class="tag skill">local-model-integration</span>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="config-title">
+    <h2 id="config-title">Project Definition Shape</h2>
+    <div class="wide-grid">
+      <article class="panel">
+        <h3>Root profile</h3>
+        <p>The root profile is the repository's contract with the shared catalog. Agent routers load it after host safety rules and before folder profiles.</p>
+        <ul>
+          <li><code>extends</code> imports shared catalog versions.</li>
+          <li><code>agents</code> enables shared roles and adds project-specific startup reads or common skills.</li>
+          <li><code>skills</code> selects shared packs and defines project-local packs.</li>
+          <li><code>application_domains</code> names product internals that development agents may need to understand.</li>
+          <li><code>dispatch</code> maps paths, artifact types, and task intents to skills.</li>
+          <li><code>aggregates</code> names multi-agent workflows without creating new agent types.</li>
+        </ul>
+      </article>
+
+      <article class="panel">
+        <h3>Override forms</h3>
+        <p>Overrides are explicit and scoped. They adapt the shared catalog without mutating it.</p>
+        <ul>
+          <li><span class="name">Append</span>: add project skills, reads, checks, or commands to a shared role.</li>
+          <li><span class="name">Narrow</span>: restrict a rule to a path, artifact type, stack, or task intent.</li>
+          <li><span class="name">Replace</span>: substitute a project-owned skill pack for a shared pack by name.</li>
+          <li><span class="name">Disable</span>: turn off a shared pack or role with an explicit reason.</li>
+          <li><span class="name">Aggregate</span>: define a named workflow that invokes several agents and skill packs in order.</li>
+        </ul>
+      </article>
+    </div>
+
+    <pre class="config-block"><code>version: 1
+
+extends:
+  catalog: dev-methodology
+  roles_version: current
+  skills_version: current
+
+project:
+  family: full-stack-product
+  tier: greenfield-product
+  stacks:
+    - nextjs-app-router
+    - typescript
+    - postgres
+  application_domains:
+    - questionnaire-workflow
+    - analysis-engine
+    - authenticated-user-experience
+
+agents:
+  enabled:
+    - development-orchestrator
+    - project-organiser
+    - coding-agent
+    - code-review-agent
+    - qa-and-verification-agent
+    - documentation-architect
+  overrides:
+    coding-agent:
+      append_startup_reads:
+        - AGENTS.md
+        - package.json
+      append_common_skills:
+        - project-local-coding-rules
+    qa-and-verification-agent:
+      validation_commands:
+        build: pnpm run build
+        unit: pnpm test
+
+skills:
+  packs:
+    project-local-coding-rules:
+      includes:
+        - careful-coding
+        - ast-grep
+        - structured-review
+    nextjs-api-work:
+      includes:
+        - typescript-strict
+        - nextjs-app-router
+        - api-routes
+        - clerk-auth
+        - jest
+
+dispatch:
+  coding-agent:
+    common_skills:
+      - careful-coding
+      - ast-grep
+    rules:
+      - match: src/app/api/**/route.ts
+        artifact: api-route
+        add_skills:
+          - nextjs-api-work
+      - match: src/components/**
+        artifact: frontend-ui
+        add_skills:
+          - react-server-components
+          - tailwind-design-system
+          - playwright
+
+aggregates:
+  verified-code-change:
+    sequence:
+      - agent: project-organiser
+        when: creates_or_moves_files
+      - agent: coding-agent
+      - agent: code-review-agent
+      - agent: qa-and-verification-agent
+    final_output: verified_patch_summary</code></pre>
+  </section>
+
+  <section class="section" aria-labelledby="folder-title">
+    <h2 id="folder-title">Folder Definition Shape</h2>
+    <div class="wide-grid">
+      <article class="panel">
+        <h3>Folder scope</h3>
+        <p>A folder profile applies to its subtree and is read after the root project profile.</p>
+        <ul>
+          <li>It can add path-local stack skills.</li>
+          <li>It can select path-local validation commands.</li>
+          <li>It can mark data sensitivity or generated-file status.</li>
+          <li>It can route documentation, prompt, API, frontend, or test artifacts differently.</li>
+        </ul>
+      </article>
+
+      <article class="panel">
+        <h3>Folder constraints</h3>
+        <p>A folder profile narrows routing. It does not fork the role catalog.</p>
+        <ul>
+          <li>It cannot change an agent's write authority.</li>
+          <li>It cannot change a review verdict schema.</li>
+          <li>It cannot disable host safety or project data rules.</li>
+          <li>If authority or output contract changes, define a specialized role in the shared catalog or project role directory.</li>
+        </ul>
+      </article>
+    </div>
+
+    <pre class="config-block"><code>scope:
+  path: src/app/api
+  artifact_family: api
+
+dispatch:
+  coding-agent:
+    append_common_skills:
+      - api-routes
+      - clerk-auth
+      - typescript-strict
+      - jest
+
+validation:
+  focused:
+    - pnpm test -- src/app/api
+  always_after_code:
+    - pnpm run build
+
+data_rules:
+  pii_to_external_llm: forbidden
+  log_sensitive_payloads: forbidden</code></pre>
+  </section>
+
+  <section class="section" aria-labelledby="examples-title">
+    <h2 id="examples-title">Validation Examples</h2>
+    <div class="panel">
+      <p>
+        Repository-specific applications live in the separate examples document:
+        <a href="agent-skill-specialization-examples.html">Agent Skill Specialization Examples</a>.
+        The examples exercise this strategy against concrete repositories without becoming part of the shared policy.
+      </p>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="migration-title">
+    <h2 id="migration-title">Agent Set Normalization</h2>
+    <div class="wide-grid">
+      <article class="panel">
+        <h3>Project internals are domains</h3>
+        <ul>
+          <li>If the project implements agents, tools, prompts, model runtimes, schedulers, or harnesses, classify those as application domains first.</li>
+          <li>Coding Agent loads skills for those domains when editing product code, but the domains do not become invocable development agents by default.</li>
+          <li>Create a specialized development agent only when the human or orchestrator needs a separate context, authority model, or output contract.</li>
+        </ul>
+      </article>
+
+      <article class="panel">
+        <h3>Generic agents retained</h3>
+        <ul>
+          <li>Development Orchestrator.</li>
+          <li>Project Organiser.</li>
+          <li>Coding Agent.</li>
+          <li>Code Review Agent.</li>
+          <li>QA And Verification Agent.</li>
+          <li>Documentation Architect.</li>
+          <li>Artifact Review Agent.</li>
+          <li>Wiki Query Agent and Wiki Ingest Agent.</li>
+          <li>Backlog Steward and Merge Coordinator.</li>
+        </ul>
+      </article>
+
+      <article class="panel">
+        <h3>Specialized agents allowed</h3>
+        <ul>
+          <li>E2E Browser Agent for Playwright, browser state, dev server claims, and authenticated workflows.</li>
+          <li>UX Designer or UX Reviewer for design artifacts and independent usability review.</li>
+          <li>Security Reviewer for threat, data, supply-chain, and exploitability review.</li>
+          <li>Runtime Diagnostician for long-running local runtime failures with logs and exclusive resources.</li>
+          <li>Prompt Contract Reviewer for prompt protocol, tool-call safety, and evaluation review.</li>
+        </ul>
+      </article>
+
+      <article class="panel">
+        <h3>Specialized agents avoided</h3>
+        <ul>
+          <li>Frontend Coder, API Coder, Java Coder, Python Coder, React Coder, and Next.js Coder.</li>
+          <li>Framework-specific reviewers when the review output contract is unchanged.</li>
+          <li>Test-framework-specific agents when the job is ordinary code verification.</li>
+          <li>Folder-specific agents whose only difference is path or stack selection.</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+</main>
+</body>
+</html>

@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agent Skill Specialization Examples</title>
+  <style>
+    :root {
+      --color-ink: #18212f;
+      --color-muted: #5b6678;
+      --color-page: #f6f8fb;
+      --color-panel: #ffffff;
+      --color-line: #dae2ec;
+      --color-agent: #0f766e;
+      --color-skill: #b45309;
+      --color-config: #7c3aed;
+      --color-case: #be123c;
+      --color-soft-agent: #e4f7f4;
+      --color-soft-skill: #fff1d8;
+      --color-soft-config: #f0e8ff;
+      --color-soft-case: #ffe5ec;
+      --color-soft-gray: #edf1f6;
+      --shadow-panel: 0 14px 32px rgba(31, 41, 55, 0.08);
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.25rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --space-10: 2.5rem;
+      --radius: 0.5rem;
+      --radius-small: 0.35rem;
+      --content-max: 1240px;
+      --font-sm: 0.92rem;
+      --font-xs: 0.78rem;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--color-ink);
+      background:
+        linear-gradient(180deg, rgba(232, 240, 255, 0.9), rgba(246, 248, 251, 0) 340px),
+        var(--color-page);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.52;
+    }
+
+    main {
+      max-width: var(--content-max);
+      margin: 0 auto;
+      padding: var(--space-10) var(--space-6);
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      max-width: 940px;
+      font-size: clamp(2rem, 4vw, 3.65rem);
+    }
+
+    h2 {
+      margin-bottom: var(--space-4);
+      font-size: clamp(1.35rem, 2vw, 2rem);
+    }
+
+    h3 {
+      font-size: 1rem;
+    }
+
+    p {
+      margin: 0;
+      color: var(--color-muted);
+    }
+
+    code {
+      padding: 0.1rem 0.24rem;
+      border-radius: 0.25rem;
+      background: var(--color-soft-gray);
+      font-size: 0.9em;
+    }
+
+    a {
+      color: var(--color-config);
+      font-weight: 700;
+    }
+
+    .hero {
+      display: grid;
+      gap: var(--space-6);
+      margin-bottom: var(--space-8);
+    }
+
+    .lede {
+      max-width: 940px;
+      font-size: 1.08rem;
+    }
+
+    .section {
+      margin-top: var(--space-8);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: var(--space-4);
+    }
+
+    .panel,
+    .card {
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      background: var(--color-panel);
+      box-shadow: var(--shadow-panel);
+    }
+
+    .panel {
+      padding: var(--space-5);
+    }
+
+    .card {
+      display: grid;
+      gap: var(--space-4);
+      padding: var(--space-5);
+      border-top: 0.35rem solid var(--color-line);
+    }
+
+    .card.agent {
+      border-top-color: var(--color-agent);
+    }
+
+    .card.skill {
+      border-top-color: var(--color-skill);
+    }
+
+    .card.config {
+      border-top-color: var(--color-config);
+    }
+
+    .card.case {
+      border-top-color: var(--color-case);
+    }
+
+    .panel h3,
+    .card h3 {
+      margin-bottom: var(--space-2);
+    }
+
+    .panel ul,
+    .card ul {
+      margin: var(--space-3) 0 0;
+      padding-left: var(--space-5);
+      color: var(--color-muted);
+    }
+
+    .panel li,
+    .card li {
+      margin-top: 0.35rem;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+
+    .tag {
+      display: inline-flex;
+      padding: 0.25rem 0.48rem;
+      border-radius: var(--radius-small);
+      background: var(--color-soft-gray);
+      color: var(--color-ink);
+      font-size: var(--font-xs);
+      font-weight: 650;
+    }
+
+    .tag.agent {
+      background: var(--color-soft-agent);
+      color: var(--color-agent);
+    }
+
+    .tag.skill {
+      background: var(--color-soft-skill);
+      color: var(--color-skill);
+    }
+
+    .tag.config {
+      background: var(--color-soft-config);
+      color: var(--color-config);
+    }
+
+    .tag.case {
+      background: var(--color-soft-case);
+      color: var(--color-case);
+    }
+
+    .matrix {
+      overflow-x: auto;
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      background: var(--color-panel);
+      box-shadow: var(--shadow-panel);
+    }
+
+    table {
+      width: 100%;
+      min-width: 920px;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: var(--space-4);
+      border-bottom: 1px solid var(--color-line);
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th {
+      background: #f9fbfe;
+      color: var(--color-ink);
+      font-size: var(--font-xs);
+      text-transform: uppercase;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    td {
+      color: var(--color-muted);
+      font-size: var(--font-sm);
+    }
+
+    .name {
+      color: var(--color-ink);
+      font-weight: 780;
+    }
+
+    .config-block {
+      margin: var(--space-4) 0 0;
+      padding: var(--space-4);
+      overflow-x: auto;
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius-small);
+      background: #101827;
+      color: #eef4ff;
+      font-size: var(--font-sm);
+      line-height: 1.45;
+    }
+
+    .config-block code {
+      padding: 0;
+      background: transparent;
+      color: inherit;
+      font-size: inherit;
+    }
+
+    @media (max-width: 820px) {
+      main {
+        padding: var(--space-8) var(--space-4);
+      }
+
+      table {
+        min-width: 760px;
+      }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <section class="hero" aria-labelledby="page-title">
+    <h1 id="page-title">Agent Skill Specialization Examples</h1>
+    <p class="lede">
+      These examples apply the shared agent and skill specialization strategy to two concrete repositories.
+      The generic strategy lives in <a href="agent-skill-specialization-strategy.html">Agent And Skill Specialization Strategy</a>.
+    </p>
+  </section>
+
+  <section class="section" aria-labelledby="gemma-title">
+    <h2 id="gemma-title">gemma-chat-public</h2>
+    <div class="grid">
+      <article class="card case">
+        <h3>Project classification</h3>
+        <ul>
+          <li>Family: local-model experimentation app, Electron desktop app, custom harness.</li>
+          <li>Tier: greenfield experimental product with local-first verification.</li>
+          <li>Primary stacks: TypeScript, Electron, Vite, React, Node, Vitest.</li>
+          <li>Application domains: custom harness, product tool runtime, plan engine, local MLX serving, configured remote model endpoints.</li>
+        </ul>
+      </article>
+
+      <article class="card agent">
+        <h3>Shared agents selected</h3>
+        <div class="tag-row">
+          <span class="tag agent">Development Orchestrator</span>
+          <span class="tag agent">Coding Agent</span>
+          <span class="tag agent">Code Review Agent</span>
+          <span class="tag agent">QA And Verification Agent</span>
+          <span class="tag agent">Documentation Architect</span>
+          <span class="tag agent">Wiki Query Agent</span>
+          <span class="tag agent">Project Organiser</span>
+        </div>
+      </article>
+
+      <article class="card skill">
+        <h3>Development skill packs</h3>
+        <div class="tag-row">
+          <span class="tag skill">typescript-esm</span>
+          <span class="tag skill">electron-main</span>
+          <span class="tag skill">electron-preload</span>
+          <span class="tag skill">react-vite-renderer</span>
+          <span class="tag skill">node-cli</span>
+          <span class="tag skill">vitest</span>
+          <span class="tag skill">project-wiki</span>
+        </div>
+      </article>
+
+      <article class="card skill">
+        <h3>Application-domain skill packs</h3>
+        <div class="tag-row">
+          <span class="tag skill">harness-implementation</span>
+          <span class="tag skill">tool-runtime-implementation</span>
+          <span class="tag skill">plan-engine-implementation</span>
+          <span class="tag skill">local-model-integration</span>
+        </div>
+      </article>
+    </div>
+
+    <div class="panel section">
+      <h3>Boundary rule</h3>
+      <p>Gemma's own harness, tools, planning loop, prompts, and local model runtime are product internals. Development agents load skills for those domains when they code, review, test, or document the project; they are not counted as methodology agents that a human invokes unless a separate development context or output contract is needed.</p>
+    </div>
+
+    <div class="matrix section">
+      <table>
+        <thead>
+          <tr>
+            <th>Work target</th>
+            <th>Coding Agent dispatch</th>
+            <th>Verification dispatch</th>
+            <th>Specialized agent?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="name">src/renderer/**</span></td>
+            <td>Load react-vite-renderer, electron-preload, typescript-esm, and vitest. Apply project renderer-state and accessibility rules from the profile.</td>
+            <td>Run focused renderer Vitest tests, then full tests and build for completed code work.</td>
+            <td>No. This is a frontend skill route inside Coding Agent.</td>
+          </tr>
+          <tr>
+            <td><span class="name">src/main/**</span></td>
+            <td>Load electron-main, electron-preload, node-cli, typescript-esm, and local-model-integration when model routing is touched.</td>
+            <td>Run focused main tests, typecheck or build, and full test suite when behavior changes.</td>
+            <td>No. Main-process work is a stack and runtime route.</td>
+          </tr>
+          <tr>
+            <td><span class="name">src/main/tools/**</span></td>
+            <td>Load tool-runtime-implementation, tool-contract, prompt-surface, action-parser, protected-file, and tool registry skills.</td>
+            <td>Run tool tests and prompt tests such as action parser, tool layout, and code system prompt coverage.</td>
+            <td>No for normal tools. The tool runtime is product code. A dedicated Tool Contract Reviewer is useful for independent review only.</td>
+          </tr>
+          <tr>
+            <td><span class="name">src/main/plan/**</span></td>
+            <td>Load plan-engine-implementation, YAML parsing, semantic review, evidence, retry policy, and verification prompt skills.</td>
+            <td>Run focused plan tests and CLI plan prompt tests.</td>
+            <td>No for implementation. The plan engine is product code. Code Review Agent stays separate for fresh-context review.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Gemma*.md</span></td>
+            <td>Load harness-implementation, tool-runtime-implementation, and plan-engine-implementation. Apply prompt contract rules from the project profile.</td>
+            <td>Run prompt-related tests and inspect affected mode behavior.</td>
+            <td>Sometimes. A Prompt Contract Reviewer is useful when prompt safety and tool protocol need independent review.</td>
+          </tr>
+          <tr>
+            <td><span class="name">MLX runtime</span></td>
+            <td>Load local-model-integration, Python environment, cache, server lifecycle, and runtime diagnostics skills.</td>
+            <td>Run MLX-focused tests or smoke checks where local resources allow.</td>
+            <td>Sometimes. Runtime Diagnostician is a development support agent for setup failures and logs, not a Gemma runtime agent.</td>
+          </tr>
+          <tr>
+            <td><span class="name">docs/wiki/**</span></td>
+            <td>Route to Documentation Architect or Wiki Ingest Agent instead of Coding Agent.</td>
+            <td>Run wiki status, lint, and relevant link checks.</td>
+            <td>Yes. Documentation and wiki synthesis have different output contracts.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <pre class="config-block"><code>project:
+  family: agentic-development-harness
+  tier: greenfield-product
+  stacks:
+    - typescript-esm
+    - electron
+    - vite
+    - react
+    - node-cli
+    - vitest
+  application_domains:
+    - custom-harness
+    - product-tool-runtime
+    - plan-engine
+    - local-model-runtime
+
+dispatch:
+  coding-agent:
+    rules:
+      - match: src/renderer/**
+        add_skills: [react-vite-renderer, electron-preload, typescript-esm, vitest]
+      - match: src/main/**
+        add_skills: [electron-main, electron-preload, node-cli, typescript-esm]
+      - match: src/main/tools/**
+        add_skills: [tool-runtime-implementation, harness-implementation, vitest]
+      - match: src/main/plan/**
+        add_skills: [plan-engine-implementation, harness-implementation, vitest]
+      - match: Gemma*.md
+        add_skills: [harness-implementation, tool-runtime-implementation, plan-engine-implementation]
+      - match: MLX runtime
+        add_skills: [local-model-integration, electron-main, node-cli]</code></pre>
+  </section>
+
+  <section class="section" aria-labelledby="mpact-title">
+    <h2 id="mpact-title">mpact-insight-questionnaire</h2>
+    <div class="grid">
+      <article class="card case">
+        <h3>Project classification</h3>
+        <ul>
+          <li>Family: full-stack web product, API service, analysis workflow, documentation-rich application.</li>
+          <li>Tier: greenfield product with production-style verification and no legacy compatibility layer.</li>
+          <li>Primary stacks: Next.js 15, React 19, TypeScript, PostgreSQL, Drizzle, Clerk, Tailwind, Jest, Playwright.</li>
+          <li>Special runtime: LangGraph analysis flows, Vercel AI Gateway, QStash, chatbot RAG, Dev versus QA runtime boundary.</li>
+        </ul>
+      </article>
+
+      <article class="card agent">
+        <h3>Shared agents selected</h3>
+        <div class="tag-row">
+          <span class="tag agent">Development Orchestrator</span>
+          <span class="tag agent">Project Organiser</span>
+          <span class="tag agent">Coding Agent</span>
+          <span class="tag agent">Code Review Agent</span>
+          <span class="tag agent">QA And Verification Agent</span>
+          <span class="tag agent">E2E Browser Agent</span>
+          <span class="tag agent">UX Reviewer</span>
+          <span class="tag agent">Documentation Architect</span>
+        </div>
+      </article>
+
+      <article class="card skill">
+        <h3>Project skill packs</h3>
+        <div class="tag-row">
+          <span class="tag skill">nextjs-app-router</span>
+          <span class="tag skill">react-server-components</span>
+          <span class="tag skill">typescript-strict</span>
+          <span class="tag skill">api-routes</span>
+          <span class="tag skill">clerk-auth</span>
+          <span class="tag skill">postgres-drizzle</span>
+          <span class="tag skill">langgraph</span>
+          <span class="tag skill">tailwind-design-system</span>
+          <span class="tag skill">jest</span>
+          <span class="tag skill">playwright</span>
+          <span class="tag skill">project-wiki</span>
+        </div>
+      </article>
+    </div>
+
+    <div class="matrix section">
+      <table>
+        <thead>
+          <tr>
+            <th>Work target</th>
+            <th>Coding Agent dispatch</th>
+            <th>Verification dispatch</th>
+            <th>Specialized agent?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="name">src/app/** page or layout</span></td>
+            <td>Load Next.js App Router, React Server Components, TypeScript, auth boundary, and UI composition skills.</td>
+            <td>Run relevant Jest tests, build, and smoke checks for routing, layout, middleware, or auth changes.</td>
+            <td>No. This is a Coding Agent route.</td>
+          </tr>
+          <tr>
+            <td><span class="name">src/app/api/**/route.ts</span></td>
+            <td>Load api-routes, clerk-auth, nextjs-app-router, typescript-strict, postgres-drizzle, and jest.</td>
+            <td>Run API unit or integration tests, build, and affected E2E tests when user-visible.</td>
+            <td>No. API language and framework knowledge is a skill route.</td>
+          </tr>
+          <tr>
+            <td><span class="name">src/components/**</span></td>
+            <td>Load react-server-components, tailwind-design-system, typescript-strict, and playwright when workflow coverage is affected.</td>
+            <td>Run component tests and E2E tests for changed user workflows.</td>
+            <td>No for coding. UX Reviewer remains separate for independent design review.</td>
+          </tr>
+          <tr>
+            <td><span class="name">src/lib/server/**</span></td>
+            <td>Load typescript-strict, postgres-drizzle, langgraph, clerk-auth, and jest based on the touched server subfolder.</td>
+            <td>Run focused Jest tests, build, and integration tests for persistence or workflow changes.</td>
+            <td>No. Server area changes are routed skills unless they need a separate verifier.</td>
+          </tr>
+          <tr>
+            <td><span class="name">src/prompts/**</span></td>
+            <td>Load langgraph, typescript-strict, and jest. Apply project prompt, fixture, RAG, and data-safety rules from the profile.</td>
+            <td>Run prompt fixture tests, index generation checks, and affected analysis tests.</td>
+            <td>Sometimes. Prompt Review Agent is useful for independent prompt safety or evaluation review.</td>
+          </tr>
+          <tr>
+            <td><span class="name">tests/*.spec.ts</span></td>
+            <td>Route to E2E Browser Agent when creating or fixing Playwright workflows, because browser state and runtime resources are exclusive.</td>
+            <td>Run targeted Playwright command against Dev, not QA, with console error checks.</td>
+            <td>Yes. E2E work owns a distinct runtime and output contract.</td>
+          </tr>
+          <tr>
+            <td><span class="name">docs or docs/wiki</span></td>
+            <td>Route to Documentation Architect or Wiki Ingest Agent for specs, project wiki, chatbot RAG docs, and user-facing docs.</td>
+            <td>Run wiki lint and docs-specific checks, plus build when docs feed generated app artifacts.</td>
+            <td>Yes. Documentation has a distinct artifact contract.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <pre class="config-block"><code>project:
+  family: full-stack-product
+  tier: greenfield-product
+  stacks:
+    - nextjs-app-router
+    - typescript-strict
+    - postgres-drizzle
+    - clerk-auth
+    - jest
+    - playwright
+
+dispatch:
+  coding-agent:
+    rules:
+      - match: src/app/**/*
+        add_skills: [nextjs-app-router, react-server-components, typescript-strict]
+      - match: src/app/api/**/route.ts
+        add_skills: [api-routes, clerk-auth, postgres-drizzle, jest]
+      - match: src/components/**
+        add_skills: [react-server-components, tailwind-design-system, playwright]
+      - match: src/lib/server/**
+        add_skills: [typescript-strict, postgres-drizzle, langgraph, jest]
+      - match: src/prompts/**
+        add_skills: [langgraph, typescript-strict, jest]
+      - match: tests/*.spec.ts
+        route_to_agent: e2e-browser-agent</code></pre>
+  </section>
+</main>
+</body>
+</html>

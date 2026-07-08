@@ -1,0 +1,881 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agentic Development Operating Model</title>
+  <style>
+    :root {
+      --color-ink: #172033;
+      --color-muted: #5b6678;
+      --color-page: #f6f8fb;
+      --color-panel: #ffffff;
+      --color-line: #d9e1ea;
+      --color-orchestrator: #2563eb;
+      --color-agent: #0f766e;
+      --color-skill: #b45309;
+      --color-profile: #7c3aed;
+      --color-folder: #be123c;
+      --color-soft-blue: #e8f0ff;
+      --color-soft-green: #e4f7f4;
+      --color-soft-amber: #fff1d8;
+      --color-soft-purple: #f0e8ff;
+      --color-soft-rose: #ffe5ec;
+      --color-soft-gray: #edf1f6;
+      --shadow-panel: 0 14px 32px rgba(31, 41, 55, 0.08);
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.25rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --space-10: 2.5rem;
+      --radius: 0.5rem;
+      --radius-small: 0.35rem;
+      --content-max: 1220px;
+      --font-sm: 0.92rem;
+      --font-xs: 0.78rem;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--color-ink);
+      background:
+        linear-gradient(180deg, rgba(232, 240, 255, 0.9), rgba(246, 248, 251, 0) 340px),
+        var(--color-page);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.52;
+    }
+
+    main {
+      max-width: var(--content-max);
+      margin: 0 auto;
+      padding: var(--space-10) var(--space-6);
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      max-width: 900px;
+      font-size: clamp(2rem, 4vw, 3.7rem);
+    }
+
+    h2 {
+      margin-bottom: var(--space-4);
+      font-size: clamp(1.35rem, 2vw, 2rem);
+    }
+
+    h3 {
+      font-size: 1rem;
+    }
+
+    p {
+      margin: 0;
+      color: var(--color-muted);
+    }
+
+    code {
+      padding: 0.1rem 0.24rem;
+      border-radius: 0.25rem;
+      background: var(--color-soft-gray);
+      font-size: 0.9em;
+    }
+
+    .hero {
+      display: grid;
+      gap: var(--space-6);
+      margin-bottom: var(--space-8);
+    }
+
+    .lede {
+      max-width: 900px;
+      font-size: 1.08rem;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: 0.35rem 0.6rem;
+      border: 1px solid var(--color-line);
+      border-radius: 999px;
+      background: var(--color-panel);
+      color: var(--color-muted);
+      font-size: var(--font-xs);
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .dot {
+      width: 0.65rem;
+      height: 0.65rem;
+      border-radius: 50%;
+    }
+
+    .dot.orchestrator {
+      background: var(--color-orchestrator);
+    }
+
+    .dot.agent {
+      background: var(--color-agent);
+    }
+
+    .dot.skill {
+      background: var(--color-skill);
+    }
+
+    .dot.profile {
+      background: var(--color-profile);
+    }
+
+    .dot.folder {
+      background: var(--color-folder);
+    }
+
+    .section {
+      margin-top: var(--space-8);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: var(--space-4);
+    }
+
+    .wide-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+      gap: var(--space-4);
+    }
+
+    .panel,
+    .card {
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      background: var(--color-panel);
+      box-shadow: var(--shadow-panel);
+    }
+
+    .panel {
+      padding: var(--space-5);
+    }
+
+    .card {
+      display: grid;
+      gap: var(--space-4);
+      padding: var(--space-5);
+      border-top: 0.35rem solid var(--color-line);
+    }
+
+    .card.orchestrator {
+      border-top-color: var(--color-orchestrator);
+    }
+
+    .card.agent {
+      border-top-color: var(--color-agent);
+    }
+
+    .card.skill {
+      border-top-color: var(--color-skill);
+    }
+
+    .card.profile {
+      border-top-color: var(--color-profile);
+    }
+
+    .card.folder {
+      border-top-color: var(--color-folder);
+    }
+
+    .panel h3,
+    .card h3 {
+      margin-bottom: var(--space-2);
+    }
+
+    .panel ul,
+    .card ul {
+      margin: var(--space-3) 0 0;
+      padding-left: var(--space-5);
+      color: var(--color-muted);
+    }
+
+    .panel li,
+    .card li {
+      margin-top: 0.35rem;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+
+    .tag {
+      display: inline-flex;
+      padding: 0.25rem 0.48rem;
+      border-radius: var(--radius-small);
+      background: var(--color-soft-gray);
+      color: var(--color-ink);
+      font-size: var(--font-xs);
+      font-weight: 650;
+    }
+
+    .tag.orchestrator {
+      background: var(--color-soft-blue);
+      color: var(--color-orchestrator);
+    }
+
+    .tag.agent {
+      background: var(--color-soft-green);
+      color: var(--color-agent);
+    }
+
+    .tag.skill {
+      background: var(--color-soft-amber);
+      color: var(--color-skill);
+    }
+
+    .tag.profile {
+      background: var(--color-soft-purple);
+      color: var(--color-profile);
+    }
+
+    .tag.folder {
+      background: var(--color-soft-rose);
+      color: var(--color-folder);
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: var(--space-3);
+      align-items: stretch;
+    }
+
+    .flow-step {
+      padding: var(--space-4);
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      background: var(--color-panel);
+      min-height: 8rem;
+    }
+
+    .flow-step strong {
+      display: block;
+      margin-bottom: var(--space-2);
+    }
+
+    .matrix {
+      overflow-x: auto;
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      background: var(--color-panel);
+      box-shadow: var(--shadow-panel);
+    }
+
+    table {
+      width: 100%;
+      min-width: 860px;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: var(--space-4);
+      border-bottom: 1px solid var(--color-line);
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th {
+      background: #f9fbfe;
+      color: var(--color-ink);
+      font-size: var(--font-xs);
+      text-transform: uppercase;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    td {
+      color: var(--color-muted);
+      font-size: var(--font-sm);
+    }
+
+    .name {
+      color: var(--color-ink);
+      font-weight: 780;
+    }
+
+    .config-block {
+      margin: var(--space-4) 0 0;
+      padding: var(--space-4);
+      overflow-x: auto;
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius-small);
+      background: #101827;
+      color: #eef4ff;
+      font-size: var(--font-sm);
+      line-height: 1.45;
+    }
+
+    .config-block code {
+      padding: 0;
+      background: transparent;
+      color: inherit;
+      font-size: inherit;
+    }
+
+    .note {
+      padding: var(--space-4);
+      border-left: 0.3rem solid var(--color-profile);
+      border-radius: var(--radius-small);
+      background: var(--color-soft-purple);
+      color: var(--color-ink);
+    }
+
+    @media (max-width: 820px) {
+      main {
+        padding: var(--space-8) var(--space-4);
+      }
+
+      table {
+        min-width: 720px;
+      }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <section class="hero" aria-labelledby="page-title">
+    <div class="legend" aria-label="Legend">
+      <span class="pill"><span class="dot orchestrator"></span> Orchestration</span>
+      <span class="pill"><span class="dot agent"></span> Role agents</span>
+      <span class="pill"><span class="dot skill"></span> Skills</span>
+      <span class="pill"><span class="dot profile"></span> Project profile</span>
+      <span class="pill"><span class="dot folder"></span> Folder policy</span>
+    </div>
+    <h1 id="page-title">Agentic Development Operating Model</h1>
+    <p class="lede">
+      The methodology uses named role agents for human and orchestrated work, short skills for load-on-demand procedures,
+      project profiles for selecting stack and tier guidance, and folder policies for local overrides. Each layer has one job,
+      so long-running development can split into subagents without making every context carry every rule.
+    </p>
+  </section>
+
+  <section class="section" aria-labelledby="layers-title">
+    <h2 id="layers-title">Operating Layers</h2>
+    <div class="flow">
+      <div class="flow-step">
+        <strong>1. Project Profile</strong>
+        <p>Declares project type, tier, stack packs, enabled agents, validation commands, data rules, and folder policy roots.</p>
+      </div>
+      <div class="flow-step">
+        <strong>2. Role Agent</strong>
+        <p>Defines an invokable job role with a purpose, triggers, allowed tools, expected inputs, skill loadout, outputs, and handoff rules.</p>
+      </div>
+      <div class="flow-step">
+        <strong>3. Skill</strong>
+        <p>Provides a short procedural instruction unit that a role loads only when the job requires that expertise.</p>
+      </div>
+      <div class="flow-step">
+        <strong>4. Orchestrator</strong>
+        <p>Breaks work into bounded subagent jobs, prepares context packs, routes outputs, and runs review or retry loops.</p>
+      </div>
+      <div class="flow-step">
+        <strong>5. Runtime Adapter</strong>
+        <p>Materializes shared role definitions into host-specific agent files for Codex, Claude Code, Gemini CLI, Junie, or another runtime.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="roles-title">
+    <h2 id="roles-title">Role Agent Set</h2>
+    <div class="grid">
+      <article class="card orchestrator">
+        <h3>Development Orchestrator</h3>
+        <p>Coordinates multi-step work across subagents while preserving small contexts, explicit handoffs, and verification evidence.</p>
+        <div class="tag-row">
+          <span class="tag orchestrator">task decomposition</span>
+          <span class="tag orchestrator">context packs</span>
+          <span class="tag orchestrator">agent routing</span>
+          <span class="tag orchestrator">retry policy</span>
+          <span class="tag orchestrator">merge policy</span>
+        </div>
+      </article>
+
+      <article class="card folder">
+        <h3>Project Organiser</h3>
+        <p>Classifies artifacts by purpose, chooses paths from the project taxonomy, applies path intent, and audits generated files after runs.</p>
+        <div class="tag-row">
+          <span class="tag folder">project taxonomy</span>
+          <span class="tag folder">path intent</span>
+          <span class="tag folder">folder profile</span>
+          <span class="tag folder">file placement audit</span>
+        </div>
+      </article>
+
+      <article class="card agent">
+        <h3>Coding Agent</h3>
+        <p>Implements scoped source changes using the active project profile, folder policy, repository patterns, tests, and build commands.</p>
+        <div class="tag-row">
+          <span class="tag agent">careful-coding</span>
+          <span class="tag agent">ast-grep</span>
+          <span class="tag agent">stack pack</span>
+          <span class="tag agent">focused tests</span>
+        </div>
+      </article>
+
+      <article class="card agent">
+        <h3>Code Review Agent</h3>
+        <p>Reviews diffs for regressions, rule violations, missing tests, weak verification, unsafe abstractions, and documentation drift.</p>
+        <div class="tag-row">
+          <span class="tag agent">structured-review</span>
+          <span class="tag agent">tier policy</span>
+          <span class="tag agent">source evidence</span>
+          <span class="tag agent">finding report</span>
+        </div>
+      </article>
+
+      <article class="card agent">
+        <h3>QA And Verification Agent</h3>
+        <p>Runs acceptance checks, build commands, unit tests, E2E tests, lint gates, and spec coverage checks for completed work.</p>
+        <div class="tag-row">
+          <span class="tag agent">validation</span>
+          <span class="tag agent">test execution</span>
+          <span class="tag agent">coverage matrix</span>
+          <span class="tag agent">PASS WARN FAIL</span>
+        </div>
+      </article>
+
+      <article class="card agent">
+        <h3>Documentation Architect</h3>
+        <p>Selects the right document shape and writes source-backed functional, architecture, high-level design, module, or wiki pages.</p>
+        <div class="tag-row">
+          <span class="tag agent">development-methodology</span>
+          <span class="tag agent">documentation-bootstrap</span>
+          <span class="tag agent">reverse engineering</span>
+          <span class="tag agent">page verifier</span>
+        </div>
+      </article>
+
+      <article class="card agent">
+        <h3>Artifact Review Agent</h3>
+        <p>Performs fresh-context review of finished methodology artifacts using the artifact-specific verifier for the document type.</p>
+        <div class="tag-row">
+          <span class="tag agent">functional spec review</span>
+          <span class="tag agent">architecture review</span>
+          <span class="tag agent">module review</span>
+          <span class="tag agent">wiki review</span>
+        </div>
+      </article>
+
+      <article class="card agent">
+        <h3>Wiki Query Agent</h3>
+        <p>Answers project questions from docs/wiki first, verifies against authoritative files, and records durable knowledge gaps.</p>
+        <div class="tag-row">
+          <span class="tag agent">project-wiki-query</span>
+          <span class="tag agent">project-wiki-research</span>
+          <span class="tag agent">code-project-wiki</span>
+        </div>
+      </article>
+
+      <article class="card agent">
+        <h3>Wiki Ingest Agent</h3>
+        <p>Processes raw inputs into durable wiki leaves, digest entries, processed-source links, linted pages, and verifier evidence.</p>
+        <div class="tag-row">
+          <span class="tag agent">topic writer</span>
+          <span class="tag agent">topic verifier</span>
+          <span class="tag agent">raw to durable</span>
+          <span class="tag agent">link leaves</span>
+        </div>
+      </article>
+
+      <article class="card agent">
+        <h3>Public Source Collector</h3>
+        <p>Collects public raw source artifacts for approved topics, records exclusions, and leaves durable synthesis to wiki ingest.</p>
+        <div class="tag-row">
+          <span class="tag agent">raw-only boundary</span>
+          <span class="tag agent">public evidence</span>
+          <span class="tag agent">source windows</span>
+        </div>
+      </article>
+
+      <article class="card agent">
+        <h3>Backlog Steward</h3>
+        <p>Creates, claims, resumes, blocks, completes, and archives typed backlog work with recoverable status evidence.</p>
+        <div class="tag-row">
+          <span class="tag agent">create-backlog</span>
+          <span class="tag agent">manage-backlog</span>
+          <span class="tag agent">agent-claim</span>
+        </div>
+      </article>
+
+      <article class="card agent">
+        <h3>Merge Coordinator</h3>
+        <p>Integrates work from multiple agents or worktrees while preserving claims, ownership, verification, and conflict evidence.</p>
+        <div class="tag-row">
+          <span class="tag agent">agent-work-merge</span>
+          <span class="tag agent">conflict routing</span>
+          <span class="tag agent">branch evidence</span>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="skill-title">
+    <h2 id="skill-title">Skill Load Model</h2>
+    <div class="wide-grid">
+      <article class="panel">
+        <h3>Skill contract</h3>
+        <p>Skills normalize reusable information into short definitions. A skill contains the narrow procedure, trigger, constraints, and assets for one expertise area.</p>
+        <ul>
+          <li>A skill is not an agent persona.</li>
+          <li>A role agent loads the skill only when the task needs it.</li>
+          <li>A skill stays portable across projects and runtimes.</li>
+          <li>Project-specific selection lives in the project profile.</li>
+        </ul>
+      </article>
+
+      <article class="panel">
+        <h3>Skill groups</h3>
+        <p>The profile selects skill groups by project type, stack, tier, and folder scope.</p>
+        <ul>
+          <li>Methodology skills for docs, wiki, structured design, review, backlog, and merge work.</li>
+          <li>Stack skills for Next.js, Electron, TypeScript, Postgres, LangGraph, local model integration, and browser tests.</li>
+          <li>Quality skills for tests, security, privacy, performance, observability, and release checks.</li>
+          <li>Repository skills for local procedures, taxonomy, scripts, templates, and generated artifact conventions.</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="taxonomy-title">
+    <h2 id="taxonomy-title">Project Taxonomy</h2>
+    <div class="matrix">
+      <table>
+        <thead>
+          <tr>
+            <th>Project family</th>
+            <th>Default roles</th>
+            <th>Typical stack packs</th>
+            <th>Primary validation</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="name">Frontend web app</span></td>
+            <td>Orchestrator, Coding Agent, Code Review Agent, QA And Verification Agent, UX Reviewer.</td>
+            <td>nextjs-app-router, react-server-components, tailwind-design-system, playwright.</td>
+            <td>Build, lint, component tests, E2E tests, visual and accessibility checks.</td>
+          </tr>
+          <tr>
+            <td><span class="name">API service</span></td>
+            <td>Orchestrator, Coding Agent, Code Review Agent, QA And Verification Agent, Documentation Architect.</td>
+            <td>api-routes, typescript-strict, clerk-auth, postgres-drizzle, jest.</td>
+            <td>Build, unit tests, integration tests, contract tests, OpenAPI or route checks.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Full-stack product</span></td>
+            <td>Orchestrator, Project Organiser, Coding Agent, Code Review Agent, QA And Verification Agent.</td>
+            <td>nextjs-app-router, react-server-components, api-routes, clerk-auth, postgres-drizzle, langgraph, jest, playwright.</td>
+            <td>Build, unit tests, integration tests, E2E tests, smoke tests, release gates.</td>
+          </tr>
+          <tr>
+            <td><span class="name">CLI or local tooling</span></td>
+            <td>Coding Agent, Code Review Agent, Documentation Architect, QA And Verification Agent.</td>
+            <td>node-cli, typescript-esm, vitest.</td>
+            <td>Unit tests, command snapshots, packaging checks, docs examples.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Data or analytics pipeline</span></td>
+            <td>Orchestrator, Coding Agent, Code Review Agent, QA And Verification Agent.</td>
+            <td>Ingestion, schema validation, transformations, warehouse, reporting.</td>
+            <td>Schema tests, fixture runs, data quality checks, lineage checks.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Agentic development harness</span></td>
+            <td>Orchestrator, Project Organiser, Coding Agent, Code Review Agent, Artifact Review Agent.</td>
+            <td>harness-implementation, tool-runtime-implementation, plan-engine-implementation, local-model-integration, vitest.</td>
+            <td>Harness tests, prompt tests, replay traces, output schema checks.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Documentation or wiki repository</span></td>
+            <td>Documentation Architect, Wiki Query Agent, Wiki Ingest Agent, Public Source Collector, Artifact Review Agent.</td>
+            <td>Project wiki, source collection, durable synthesis, link validation.</td>
+            <td>Wiki status, lint, topic verification, source reconciliation.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Library, SDK, or package</span></td>
+            <td>Coding Agent, Code Review Agent, Documentation Architect, QA And Verification Agent.</td>
+            <td>Public API design, compatibility policy, examples, release packaging.</td>
+            <td>Unit tests, public API checks, docs examples, package build.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Enterprise workflow integration</span></td>
+            <td>Orchestrator, Coding Agent, Code Review Agent, Documentation Architect, QA And Verification Agent.</td>
+            <td>APIs, events, queues, auth, audit, data contracts.</td>
+            <td>Contract tests, integration tests, audit checks, security review.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="tiers-title">
+    <h2 id="tiers-title">Project Tiers</h2>
+    <div class="grid">
+      <article class="panel">
+        <h3>Prototype or spike</h3>
+        <p>Fast learning, narrow scope, explicit throwaway boundaries, lightweight tests for important assumptions.</p>
+      </article>
+      <article class="panel">
+        <h3>Greenfield product</h3>
+        <p>Simple steady-state design, active refactoring, full build verification, minimal migration ceremony.</p>
+      </article>
+      <article class="panel">
+        <h3>Internal tool</h3>
+        <p>Practical reliability, clear ownership, repeatable setup, focused docs, and efficient verification.</p>
+      </article>
+      <article class="panel">
+        <h3>Production service</h3>
+        <p>Build and test gates, observability, security checks, rollback clarity, and operational runbooks.</p>
+      </article>
+      <article class="panel">
+        <h3>Regulated or high-risk system</h3>
+        <p>Traceability, privacy controls, audit evidence, threat review, and explicit approval records.</p>
+      </article>
+      <article class="panel">
+        <h3>Legacy maintenance</h3>
+        <p>Compatibility constraints, conservative edits, migration plans, fixture coverage, and regression review.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="profile-title">
+    <h2 id="profile-title">Project Profile</h2>
+    <div class="wide-grid">
+      <article class="panel">
+        <h3>Root profile</h3>
+        <p>The root profile is the normal selector for project family, tier, stack packs, role availability, validation commands, and data handling rules.</p>
+        <ul>
+          <li>Canonical path: <code>.agents/project-profile.yaml</code></li>
+          <li>Host adapters may mirror selected fields into runtime-specific config files.</li>
+          <li>The profile selects skills and policies; it does not duplicate full skill bodies or role prompts.</li>
+        </ul>
+      </article>
+
+      <article class="panel">
+        <h3>Folder profile</h3>
+        <p>Folder profiles narrow or add guidance for subtrees with a different stack, test policy, artifact type, or data sensitivity.</p>
+        <ul>
+          <li>Canonical path: <code>.agents/folder-profile.yaml</code> inside the governed subtree.</li>
+          <li>Nearest folder profile wins for files inside that subtree.</li>
+          <li>Folder profiles contain only the fields that differ from the root profile.</li>
+        </ul>
+      </article>
+    </div>
+
+<pre class="config-block"><code>project:
+  name: example-product
+  family: full-stack-product
+  tier: greenfield-product
+  primary_stack: nextjs-app-router
+  secondary_stacks:
+    - postgres-drizzle
+    - langgraph
+
+agents:
+  default_orchestrator: development-orchestrator
+  enabled_roles:
+    - project-organiser
+    - coding-agent
+    - code-review-agent
+    - qa-and-verification-agent
+    - documentation-architect
+
+skills:
+  methodology:
+    - careful-coding
+    - structured-review
+    - fix-explanation
+  stack_packs:
+    - nextjs-app-router
+    - react-server-components
+    - typescript-strict
+    - api-routes
+    - clerk-auth
+    - postgres-drizzle
+    - langgraph
+    - jest
+    - playwright
+  quality:
+    - structured-review
+    - project-wiki-query
+
+validation:
+  build: ./mvnw test
+  api_contract: ./mvnw verify -Pcontract
+
+data_rules:
+  pii_to_llm: forbidden
+  company_internal_to_external_llm: forbidden
+
+folders:
+  src/app:
+    stack: nextjs-app-router
+    skills:
+      - react-server-components
+      - tailwind-design-system
+  src/lib/server:
+    skills:
+      - postgres-drizzle
+      - langgraph</code></pre>
+  </section>
+
+  <section class="section" aria-labelledby="resolution-title">
+    <h2 id="resolution-title">Guidance Resolution</h2>
+    <div class="flow">
+      <div class="flow-step">
+        <strong>Host rules</strong>
+        <p>Runtime safety rules, tool permissions, and privacy constraints are always active.</p>
+      </div>
+      <div class="flow-step">
+        <strong>Role contract</strong>
+        <p>The selected agent role supplies purpose, input requirements, allowed tools, output shape, and handoff behavior.</p>
+      </div>
+      <div class="flow-step">
+        <strong>Root profile</strong>
+        <p>The project profile selects project family, tier, stacks, skill packs, and validation commands.</p>
+      </div>
+      <div class="flow-step">
+        <strong>Folder profile</strong>
+        <p>The nearest folder profile supplies local stack or policy overrides for the touched files.</p>
+      </div>
+      <div class="flow-step">
+        <strong>Task evidence</strong>
+        <p>The task prompt and repository evidence select the smallest relevant subset of skills for the job.</p>
+      </div>
+    </div>
+    <p class="note">
+      Hard safety, privacy, and data handling rules remain constraints at every layer. Task prompts can narrow work, but they do not disable higher-priority constraints.
+    </p>
+  </section>
+
+  <section class="section" aria-labelledby="orchestration-title">
+    <h2 id="orchestration-title">Orchestrated Development Loop</h2>
+    <div class="matrix">
+      <table>
+        <thead>
+          <tr>
+            <th>Step</th>
+            <th>Owner</th>
+            <th>Context boundary</th>
+            <th>Output</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="name">Intake</span></td>
+            <td>Development Orchestrator</td>
+            <td>Reads the user request, project profile, relevant folder profiles, backlog, and repo status.</td>
+            <td>Task breakdown, agent assignments, context pack list, validation plan.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Placement</span></td>
+            <td>Project Organiser</td>
+            <td>Reads taxonomy, requested artifact descriptions, and path intents.</td>
+            <td>Approved paths, taxonomy updates when needed, placement rationale.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Execution</span></td>
+            <td>Coding Agent or Documentation Architect</td>
+            <td>Receives only the files, skills, profile excerpts, and acceptance criteria needed for the assigned job.</td>
+            <td>Patch, artifact, test evidence, build evidence, implementation notes.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Review</span></td>
+            <td>Code Review Agent or Artifact Review Agent</td>
+            <td>Receives the diff, source evidence, role contract, and profile rules without the executor's full scratch context.</td>
+            <td>PASS WARN FAIL verdict with file and rule references.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Verification</span></td>
+            <td>QA And Verification Agent</td>
+            <td>Receives the acceptance criteria, validation commands, changed files, and relevant runtime notes.</td>
+            <td>Command results, coverage notes, unresolved risks.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Integration</span></td>
+            <td>Merge Coordinator</td>
+            <td>Receives branch state, claims, conflicts, and verification records for parallel work.</td>
+            <td>Merged work, conflict ownership, remaining follow-up items.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="files-title">
+    <h2 id="files-title">File Contracts</h2>
+    <div class="grid">
+      <article class="panel">
+        <h3>Shared role source</h3>
+        <ul>
+          <li><code>agents/roles/development-orchestrator.role.yaml</code></li>
+          <li><code>agents/roles/project-organiser.role.yaml</code></li>
+          <li><code>agents/roles/coding-agent.role.yaml</code></li>
+          <li><code>agents/roles/code-review-agent.role.yaml</code></li>
+        </ul>
+      </article>
+
+      <article class="panel">
+        <h3>Project selectors</h3>
+        <ul>
+          <li><code>.agents/project-profile.yaml</code></li>
+          <li><code>docs/project-taxonomy.md</code></li>
+          <li><code>&lt;subtree&gt;/.agents/folder-profile.yaml</code></li>
+        </ul>
+      </article>
+
+      <article class="panel">
+        <h3>Runtime adapters</h3>
+        <ul>
+          <li><code>.Codex/agents/*.md</code></li>
+          <li><code>.Codex/orchestrator-config.yaml</code></li>
+          <li><code>.claude/agents/*.md</code></li>
+          <li><code>adapters/codex/**/openai.yaml</code></li>
+        </ul>
+      </article>
+
+      <article class="panel">
+        <h3>Execution evidence</h3>
+        <ul>
+          <li><code>.agents/runs/&lt;run-id&gt;/context-pack.json</code></li>
+          <li><code>.agents/runs/&lt;run-id&gt;/agent-results.jsonl</code></li>
+          <li><code>.agents/runs/&lt;run-id&gt;/verification.md</code></li>
+          <li><code>.agents/runs/&lt;run-id&gt;/handoff.md</code></li>
+        </ul>
+      </article>
+    </div>
+  </section>
+</main>
+</body>
+</html>

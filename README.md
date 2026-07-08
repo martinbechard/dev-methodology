@@ -109,6 +109,29 @@ The development practice skills are:
 - agent-claim
 - agent-work-merge
 
+The stack and project-domain skill packs are:
+
+- typescript-esm
+- typescript-strict
+- electron-main
+- electron-preload
+- react-vite-renderer
+- nextjs-app-router
+- react-server-components
+- node-cli
+- api-routes
+- clerk-auth
+- postgres-drizzle
+- langgraph
+- tailwind-design-system
+- jest
+- vitest
+- playwright
+- harness-implementation
+- tool-runtime-implementation
+- plan-engine-implementation
+- local-model-integration
+
 ## Applying This Bundle To A Project
 
 1. Install or refresh the bundle on the target machine.

@@ -1,0 +1,4 @@
+interface:
+  display_name: "React Vite Renderer"
+  short_description: "React renderer guidance for Vite apps"
+  default_prompt: "Use $react-vite-renderer for React renderer, Vite, Electron UI, component, and browser-state work."

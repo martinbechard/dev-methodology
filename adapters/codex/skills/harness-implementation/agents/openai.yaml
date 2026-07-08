@@ -1,0 +1,4 @@
+interface:
+  display_name: "Harness Implementation"
+  short_description: "Product harness implementation guidance"
+  default_prompt: "Use $harness-implementation for product code that implements custom agent harness behavior."

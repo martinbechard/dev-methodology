@@ -1,0 +1,4 @@
+interface:
+  display_name: "Postgres Drizzle"
+  short_description: "PostgreSQL and Drizzle guidance"
+  default_prompt: "Use $postgres-drizzle for Drizzle schema, migrations, queries, transactions, and typed PostgreSQL access."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "React Server Components"
+  short_description: "React server and client boundary guidance"
+  default_prompt: "Use $react-server-components for server components, client boundaries, server actions, and serialized props."

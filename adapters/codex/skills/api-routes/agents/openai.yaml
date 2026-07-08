@@ -1,0 +1,4 @@
+interface:
+  display_name: "API Routes"
+  short_description: "HTTP route handler guidance"
+  default_prompt: "Use $api-routes for HTTP boundaries, route handlers, validation, auth, and response contracts."

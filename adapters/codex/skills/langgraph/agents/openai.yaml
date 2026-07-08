@@ -1,0 +1,4 @@
+interface:
+  display_name: "LangGraph"
+  short_description: "LangGraph workflow guidance"
+  default_prompt: "Use $langgraph for graph state, nodes, edges, checkpoints, retries, and AI analysis workflows."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Plan Engine Implementation"
+  short_description: "Product plan engine guidance"
+  default_prompt: "Use $plan-engine-implementation for product code that creates, executes, reviews, or verifies plans."

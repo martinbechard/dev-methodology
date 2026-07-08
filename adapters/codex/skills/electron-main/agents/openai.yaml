@@ -1,0 +1,4 @@
+interface:
+  display_name: "Electron Main"
+  short_description: "Electron main-process guidance"
+  default_prompt: "Use $electron-main for Electron main-process lifecycle, IPC, windows, or privileged desktop runtime work."

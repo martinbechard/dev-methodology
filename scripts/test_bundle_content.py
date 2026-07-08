@@ -29,6 +29,28 @@ ARTIFACT_REVIEW_SKILLS = (
     ("high-level-design-review", "high-level-design-review-checklist.md"),
     ("module-design-review", "module-design-review-checklist.md"),
 )
+EXAMPLE_PROJECT_SKILL_PACKS = (
+    "api-routes",
+    "clerk-auth",
+    "electron-main",
+    "electron-preload",
+    "harness-implementation",
+    "jest",
+    "langgraph",
+    "local-model-integration",
+    "nextjs-app-router",
+    "node-cli",
+    "plan-engine-implementation",
+    "playwright",
+    "postgres-drizzle",
+    "react-server-components",
+    "react-vite-renderer",
+    "tailwind-design-system",
+    "tool-runtime-implementation",
+    "typescript-esm",
+    "typescript-strict",
+    "vitest",
+)
 README_REQUIRED_PHRASES = (
     "Use the installed skills as the operating surface.",
     "documentation-bootstrap",
@@ -115,6 +137,22 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn("Review Checklist", checklist_text)
                 self.assertIn("Findings", checklist_text)
                 self.assertIn(skill_name, development_methodology_text)
+
+    def test_example_project_skill_packs_are_packaged(self) -> None:
+        for skill_name in EXAMPLE_PROJECT_SKILL_PACKS:
+            with self.subTest(skill_name=skill_name):
+                skill_path = SKILLS_ROOT / skill_name / "SKILL.md"
+                source_metadata_path = SKILLS_ROOT / skill_name / "agents" / "openai.yaml"
+                adapter_metadata_path = (
+                    CODEX_ADAPTER_SKILLS_ROOT
+                    / skill_name
+                    / "agents"
+                    / "openai.yaml"
+                )
+
+                self.assertTrue(skill_path.is_file())
+                self.assertTrue(adapter_metadata_path.is_file())
+                self.assertFalse(source_metadata_path.exists())
 
     def test_readme_points_to_skill_based_setup(self) -> None:
         readme_text = README_PATH.read_text(encoding="utf-8")

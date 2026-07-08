@@ -1,0 +1,4 @@
+interface:
+  display_name: "Jest"
+  short_description: "Jest testing guidance"
+  default_prompt: "Use $jest for Jest test design, focused runs, mocks, fixtures, and failure diagnosis."
