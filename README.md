@@ -2,7 +2,7 @@
 Copyright (c) 2025 Martin Bechard [martin.bechard@DevConsult.ca]
 This software is licensed under the MIT License.
 File path: README.md
-Credit: Human-owned methodology packaged with agent assistance.
+Credit: Human/AI methodology
 1-line summary: Entry point for the reusable development documentation and project wiki skill bundle.
 Witty remark: A map is better when it knows where the roads actually are.
 -->
@@ -13,7 +13,7 @@ Witty remark: A map is better when it knows where the roads actually are.
 
 This repository distributes portable Agent Skills for software project documentation, project wiki maintenance, backlog flow, structured design and review, careful coding, multi-agent coordination, and structure-aware code search.
 
-Use the installed skills as the operating surface. The repository README is only the human entry point for installing and refreshing the bundle.
+Use the installed skills as the operating surface. The repository README is only the entry point for installing and refreshing the bundle.
 
 The core methodology keeps one shared wiki-compatible page contract and five document shapes:
 
