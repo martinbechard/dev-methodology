@@ -49,6 +49,13 @@ README_FORBIDDEN_PHRASES = (
     "Copy the templates folder",
     "procedure-reverse-engineer-project-documentation.md before treating the wiki as complete",
 )
+REVERSE_ENGINEERING_DISCOVERY_PHRASES = (
+    "## Code Discovery Tools",
+    "Use ast-grep when discovery depends on syntax, nesting, imports, exports, callers, route declarations, component shapes, async flow, error handling, or test structure.",
+    "Before using ast-grep, run ast-grep --version.",
+    "If ast-grep is unavailable, continue with rg, grep, repository file walking, and direct source reading.",
+    "Do not treat ast-grep matches as documentation evidence until the matched code has been read.",
+)
 
 
 class BundleContentTests(unittest.TestCase):
@@ -119,6 +126,15 @@ class BundleContentTests(unittest.TestCase):
         for phrase in README_FORBIDDEN_PHRASES:
             with self.subTest(phrase=phrase):
                 self.assertNotIn(phrase, readme_text)
+
+    def test_reverse_engineering_uses_structural_code_discovery(self) -> None:
+        skill_text = (
+            SKILLS_ROOT / "documentation-reverse-engineering" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+
+        for phrase in REVERSE_ENGINEERING_DISCOVERY_PHRASES:
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, skill_text)
 
 
 if __name__ == "__main__":

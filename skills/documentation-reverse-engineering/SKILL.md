@@ -36,15 +36,28 @@ Completion gate:
 - Existing documentation is inventoried.
 - Verification commands are known or recorded as not yet identified.
 
+## Code Discovery Tools
+
+Use source inventory first, then use structure-aware search where it adds evidence.
+
+- Use rg or repository file walking for source roots, filenames, plain text references, configuration keys, route strings, generated artifacts, and broad source inventory.
+- Use grep only as a portability fallback when rg is unavailable.
+- Use ast-grep when discovery depends on syntax, nesting, imports, exports, callers, route declarations, component shapes, async flow, error handling, or test structure.
+- Before using ast-grep, run ast-grep --version.
+- If ast-grep is unavailable, continue with rg, grep, repository file walking, and direct source reading.
+- Do not treat ast-grep matches as documentation evidence until the matched code has been read.
+- Use ast-grep to seed candidate modules, callers, contracts, tests, and relationships; use source reading to decide responsibility, ownership, behavior, and document boundaries.
+
 ## Pass 1: Module Designs
 
 1. Walk source roots and identify modules by runtime responsibility.
-2. For each meaningful module, read implementation, callers, imports, exported contracts, tests, configuration use, persistence use, and user-visible behavior.
-3. Create or update one module design document per meaningful module or tightly coupled module folder.
-4. Use the module design template from development-methodology assets.
-5. Add a Processing Diagram only when conditional flow, retries, error handling, or state transitions are difficult to understand from prose alone.
-6. Link related tests and source files from each module document.
-7. Record missing tests, ambiguous ownership, and undocumented side effects as open questions.
+2. Use the Code Discovery Tools section to seed candidate modules, callers, imports, exports, routes, tests, and structural relationships before reading files deeply.
+3. For each meaningful module, read implementation, callers, imports, exported contracts, tests, configuration use, persistence use, and user-visible behavior.
+4. Create or update one module design document per meaningful module or tightly coupled module folder.
+5. Use the module design template from development-methodology assets.
+6. Add a Processing Diagram only when conditional flow, retries, error handling, or state transitions are difficult to understand from prose alone.
+7. Link related tests and source files from each module document.
+8. Record missing tests, ambiguous ownership, and undocumented side effects as open questions.
 
 Prefer one module document for one coherent responsibility. Split only when separate responsibilities can change independently.
 
