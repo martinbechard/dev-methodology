@@ -1,7 +1,7 @@
 <!--
 Copyright (c) 2025 Martin Bechard [martin.bechard@DevConsult.ca]
 This software is licensed under the MIT License.
-File path: templates/architecture-template.md
+File path: skills/development-methodology/assets/templates/architecture-template.md
 1-line summary: Template for project-level architecture documentation.
 Witty remark: The blueprint is allowed to be boring if the building stays upright.
 -->

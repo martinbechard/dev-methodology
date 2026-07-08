@@ -1,7 +1,7 @@
 <!--
 Copyright (c) 2025 Martin Bechard [martin.bechard@DevConsult.ca]
 This software is licensed under the MIT License.
-File path: templates/project-wiki-template.md
+File path: skills/development-methodology/assets/templates/project-wiki-template.md
 1-line summary: Template for project wiki setup and code-aware maintenance.
 Witty remark: The wiki should keep a flashlight pointed at the source tree.
 -->
@@ -18,7 +18,7 @@ TODO: State whether the wiki is already initialized, planned, partially maintain
 
 ## Authoritative Sources
 
-TODO: Link the project documentation methodology, project procedures, README files, source roots, test roots, backlog roots, existing docs, and wiki tooling that define how this wiki should work.
+TODO: Link the installed development-methodology skill, project procedures, README files, source roots, test roots, backlog roots, existing docs, and wiki tooling that define how this wiki should work.
 
 TODO: State which source wins when sources disagree.
 
@@ -146,4 +146,4 @@ TODO: List the commands, lint checks, page review checks, link checks, and sampl
 
 ## Related Documents
 
-TODO: Link the documentation methodology, project procedures, subclass templates used by this project, and existing wiki pages.
+TODO: Link the installed documentation skills, project procedures, subclass templates used by this project, and existing wiki pages.

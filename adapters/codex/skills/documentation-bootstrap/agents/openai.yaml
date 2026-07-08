@@ -1,0 +1,4 @@
+interface:
+  display_name: "Documentation Bootstrap"
+  short_description: "Set up documentation methodology in a repository"
+  default_prompt: "Use $documentation-bootstrap to apply the development methodology bundle to this repository."

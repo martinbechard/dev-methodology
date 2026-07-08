@@ -1,4 +1,4 @@
 interface:
   display_name: "Development Methodology"
-  short_description: "Use development documentation templates"
-  default_prompt: "Use $development-methodology to create project documentation from the bundled templates."
+  short_description: "Route methodology documentation work"
+  default_prompt: "Use $development-methodology to choose the right documentation workflow, template, and verification path."

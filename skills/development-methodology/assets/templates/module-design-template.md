@@ -1,7 +1,7 @@
 <!--
 Copyright (c) 2025 Martin Bechard [martin.bechard@DevConsult.ca]
 This software is licensed under the MIT License.
-File path: templates/module-design-template.md
+File path: skills/development-methodology/assets/templates/module-design-template.md
 1-line summary: Template for one-module design documentation.
 Witty remark: A module with a job description is less likely to start moonlighting.
 -->

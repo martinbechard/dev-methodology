@@ -2,8 +2,8 @@
 Copyright (c) 2025 Martin Bechard [martin.bechard@DevConsult.ca]
 This software is licensed under the MIT License.
 File path: README.md
-Credit: Generated with agent assistance and human review.
-1-line summary: Entry point for the reusable development documentation and project wiki methodology bundle.
+Credit: Human-owned methodology packaged with agent assistance.
+1-line summary: Entry point for the reusable development documentation and project wiki skill bundle.
 Witty remark: A map is better when it knows where the roads actually are.
 -->
 
@@ -11,11 +11,11 @@ Witty remark: A map is better when it knows where the roads actually are.
 
 ## Purpose
 
-This bundle provides a reusable development documentation methodology for software projects.
+This repository distributes portable Agent Skills for software project documentation, project wiki maintenance, backlog flow, structured design and review, careful coding, multi-agent coordination, and structure-aware code search.
 
-The shared project wiki page contract is the base document shape. Specialized documents extend that base shape.
+Use the installed skills as the operating surface. The repository README is only the human entry point for installing and refreshing the bundle.
 
-The primary document specializations are:
+The core methodology keeps one shared wiki-compatible page contract and five document shapes:
 
 1. Project wiki page
 2. Functional specification
@@ -23,19 +23,17 @@ The primary document specializations are:
 4. High-level design
 5. Module design
 
-Use the methodology to decide which document type a project needs, then copy the matching template into the target project and replace every TODO instruction with project-specific content.
+The shared page contract starts every durable page with Current Understanding, Authoritative Sources, Related Code, Related Tests, Related Backlog Items, Related Wiki Pages, Open Questions, and Maintenance Notes. Specialized documents keep those sections first, then add their own sections.
 
-## Files
+## Repository Shape
 
-- documentation-methodology.md defines the shared wiki-compatible page contract, document specializations, selection rules, and project wiki operating model.
-- templates/functional-spec-template.md provides a TODO-driven wiki page subclass for user-visible workflows and acceptance behavior.
-- templates/architecture-template.md provides a TODO-driven wiki page subclass for project-wide and cross-cutting architecture.
-- templates/high-level-design-template.md provides a TODO-driven wiki page subclass for complete subsystems and feature families.
-- templates/module-design-template.md provides a TODO-driven wiki page subclass for individual modules, tasks, services, utilities, or UI components.
-- templates/project-wiki-template.md provides a TODO-driven template for project wiki setup and maintenance rules.
-- procedure-reverse-engineer-project-documentation.md defines the multi-pass procedure for deriving documentation from an existing codebase.
-- skills contains portable Agent Skills for project wikis, development documentation, backlog flow, structured design, structured review, careful coding, multi-agent coordination, and structure-aware code search.
+- skills contains the portable Agent Skills.
+- skills/development-methodology/assets/templates contains the reusable TODO-driven template assets.
+- adapters contains runtime-specific metadata that is copied only by matching installer adapters.
 - scripts/install-skills.py installs the bundled skills through adapter profiles for generic Agent Skills, Codex, Gemini CLI, and Claude Code.
+- scripts contains regression tests for installer behavior and bundle content.
+
+Reusable templates live inside the development-methodology skill assets so there is one distribution surface for agents. Target projects may copy individual template files when they need local editable documents, but the methodology itself is delivered through skills.
 
 ## One-Time Skill Setup
 
@@ -67,7 +65,7 @@ To inspect the plan without copying files, run:
 python3 scripts/install-skills.py --dry-run
 ```
 
-Refresh or restart the target agent runtime after installing skills if it does not detect the new skill files automatically.
+Refresh or restart the target agent runtime after installing skills if it does not detect new skill files automatically.
 
 ## Bundled Skill Inventory
 
@@ -78,10 +76,14 @@ The wiki and development-wiki skills are:
 - project-wiki-research
 - project-wiki-topic-writer
 - project-wiki-topic-verifier
+- code-project-wiki
 
-The documentation template skill is:
+The documentation methodology skills are:
 
 - development-methodology
+- documentation-bootstrap
+- documentation-reverse-engineering
+- documentation-page-verifier
 
 The development practice skills are:
 
@@ -98,31 +100,34 @@ The development practice skills are:
 
 ## Applying This Bundle To A Project
 
-1. Review the target project documentation and find examples of functional specifications, architecture, high-level design, module design, and wiki pages.
-2. Create or confirm documentation folders in the target project.
-3. Copy documentation-methodology.md into the project documentation area.
-4. Copy the templates folder into the same documentation area.
-5. Edit the methodology only where the target project has different document locations or naming conventions.
-6. Use the templates for new documents. Specialized templates already start with the shared wiki-compatible sections.
-7. Remove sections that are genuinely not applicable after filling in the TODO instructions.
-8. Keep functional and technical documents as steady-state references rather than change logs.
-9. Maintain a project wiki that synthesizes functional and technical documents with direct references to code and tests.
-10. For existing projects without a complete documentation set, apply procedure-reverse-engineer-project-documentation.md before treating the wiki as complete.
+1. Install or refresh the bundle on the target machine.
+2. In the target repository, use documentation-bootstrap for first-time setup.
+3. Use development-methodology when creating or revising functional specs, architecture, high-level designs, module designs, or wiki-compatible documentation.
+4. Use documentation-reverse-engineering when an existing codebase needs a source-backed documentation set.
+5. Use code-project-wiki when docs/wiki needs code-aware maintenance, commit-range review, Related Code upkeep, or Related Tests upkeep.
+6. Use documentation-page-verifier before finishing specialized documentation pages.
+7. Use the project-wiki family for docs/wiki setup, topic writing, topic verification, wiki-backed answers, and raw research.
 
 ## Neutral Target Project Layout
 
-- [documentation-root]/documentation-methodology.md
-- [documentation-root]/templates/functional-spec-template.md
-- [documentation-root]/templates/architecture-template.md
-- [documentation-root]/templates/high-level-design-template.md
-- [documentation-root]/templates/module-design-template.md
-- [documentation-root]/templates/project-wiki-template.md
 - [documentation-root]/functional
 - [documentation-root]/architecture
 - [documentation-root]/high-level
 - [documentation-root]/modules
 - docs/wiki
+- raw/wiki-fragments
+- raw/processed
 
 The placeholder [documentation-root] means the documentation root chosen by the target project. Projects may choose different folders when they already have established documentation locations, but each project should keep a clear home for each documentation type.
 
 The project wiki should live at docs/wiki. It is a synthesized navigation and understanding layer, not the highest source of truth. Code and tests remain authoritative for actual behavior. Functional and technical documents can live under docs/wiki as wiki page subclasses or remain in their project documentation folders with wiki pages linking to them.
+
+## Verification
+
+Before publishing changes to this bundle, run:
+
+```bash
+python3 -m unittest discover scripts
+PYTHONPATH=skills/project-wiki/scripts python3 -m unittest discover skills/project-wiki/scripts
+python3 skills/project-wiki/scripts/wiki_ops.py okf-skill-validate skills/*
+```

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Documentation Page Verifier"
+  short_description: "Verify methodology documentation pages"
+  default_prompt: "Use $documentation-page-verifier to verify this documentation page against the methodology template and sources."

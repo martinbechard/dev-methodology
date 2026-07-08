@@ -1,0 +1,4 @@
+interface:
+  display_name: "Documentation Reverse Engineering"
+  short_description: "Derive documentation from an existing codebase"
+  default_prompt: "Use $documentation-reverse-engineering to derive source-backed project documentation from this repository."
