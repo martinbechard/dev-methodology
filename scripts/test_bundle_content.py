@@ -40,6 +40,8 @@ README_REQUIRED_PHRASES = (
     "architecture-review",
     "high-level-design-review",
     "module-design-review",
+    "Junie CLI",
+    "--adapter junie",
     "skills/development-methodology/assets/templates",
 )
 README_FORBIDDEN_PHRASES = (

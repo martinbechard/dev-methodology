@@ -7,7 +7,7 @@ import shutil
 import sys
 from collections.abc import Sequence
 from pathlib import Path
-from typing import NamedTuple
+from typing import NamedTuple, Optional
 
 
 SUCCESS_EXIT_CODE = 0
@@ -18,10 +18,12 @@ GENERIC_ADAPTER_NAME = "generic"
 CODEX_ADAPTER_NAME = "codex"
 GEMINI_ADAPTER_NAME = "gemini"
 CLAUDE_ADAPTER_NAME = "claude"
+JUNIE_ADAPTER_NAME = "junie"
 AGENTS_HOME_ENVIRONMENT_VARIABLE = "AGENTS_HOME"
 CLAUDE_HOME_ENVIRONMENT_VARIABLE = "CLAUDE_HOME"
 AGENTS_HOME_FOLDER_NAME = ".agents"
 CLAUDE_HOME_FOLDER_NAME = ".claude"
+JUNIE_HOME_FOLDER_NAME = ".junie"
 SKILL_MANIFEST_FILE_NAME = "SKILL.md"
 ADAPTERS_FOLDER_NAME = "adapters"
 GENERATED_CACHE_FOLDER_NAME = "__pycache__"
@@ -33,7 +35,7 @@ OPENAI_METADATA_FILE_NAME = "openai.yaml"
 
 class Adapter(NamedTuple):
     name: str
-    home_environment_variable: str
+    home_environment_variable: Optional[str]
     default_home_folder_name: str
     install_openai_metadata: bool
 
@@ -63,6 +65,12 @@ ADAPTERS = {
         default_home_folder_name=CLAUDE_HOME_FOLDER_NAME,
         install_openai_metadata=False,
     ),
+    JUNIE_ADAPTER_NAME: Adapter(
+        name=JUNIE_ADAPTER_NAME,
+        home_environment_variable=None,
+        default_home_folder_name=JUNIE_HOME_FOLDER_NAME,
+        install_openai_metadata=False,
+    ),
 }
 
 
@@ -76,7 +84,11 @@ def default_adapter_metadata_source(source: Path, adapter_name: str) -> Path:
 
 def default_destination(adapter_name: str = DEFAULT_ADAPTER_NAME) -> Path:
     adapter = ADAPTERS[adapter_name]
-    configured_home = os.environ.get(adapter.home_environment_variable)
+    configured_home = (
+        os.environ.get(adapter.home_environment_variable)
+        if adapter.home_environment_variable is not None
+        else None
+    )
     if configured_home:
         return Path(configured_home).expanduser() / DEFAULT_SKILLS_FOLDER_NAME
 

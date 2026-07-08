@@ -90,16 +90,18 @@ class InstallSkillsTests(unittest.TestCase):
             self.assertEqual(replace_exit_code, installer.SUCCESS_EXIT_CODE)
             self.assertEqual((destination / "alpha" / "SKILL.md").read_text(encoding="utf-8"), UPDATED_SKILL_FILE_CONTENT)
 
-    def test_adapter_default_destinations_use_agent_and_claude_homes(self) -> None:
+    def test_adapter_default_destinations_use_agent_claude_and_junie_homes(self) -> None:
         installer = load_installer()
 
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
             agents_home = root / "agent-home"
             claude_home = root / "claude-home"
+            user_home = root / "user-home"
             environment = {
                 "AGENTS_HOME": str(agents_home),
                 "CLAUDE_HOME": str(claude_home),
+                "HOME": str(user_home),
             }
 
             with patch.dict(os.environ, environment, clear=True):
@@ -107,6 +109,7 @@ class InstallSkillsTests(unittest.TestCase):
                 self.assertEqual(agents_home / "skills", installer.default_destination("codex"))
                 self.assertEqual(agents_home / "skills", installer.default_destination("gemini"))
                 self.assertEqual(claude_home / "skills", installer.default_destination("claude"))
+                self.assertEqual(user_home / ".junie" / "skills", installer.default_destination("junie"))
 
     def test_dest_overrides_adapter_default(self) -> None:
         installer = load_installer()
@@ -206,11 +209,11 @@ class InstallSkillsTests(unittest.TestCase):
             output = io.StringIO()
             with redirect_stdout(output):
                 exit_code = installer.main(
-                    ["--adapter", "gemini", "--source", str(source), "--dest", str(destination), "--dry-run"]
+                    ["--adapter", "junie", "--source", str(source), "--dest", str(destination), "--dry-run"]
                 )
 
             self.assertEqual(exit_code, installer.SUCCESS_EXIT_CODE)
-            self.assertIn(f"adapter gemini", output.getvalue())
+            self.assertIn(f"adapter junie", output.getvalue())
             self.assertIn(f"destination {destination}", output.getvalue())
             self.assertIn("would install alpha", output.getvalue())
             self.assertFalse(destination.exists())
