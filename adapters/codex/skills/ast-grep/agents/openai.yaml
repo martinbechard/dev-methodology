@@ -1,0 +1,4 @@
+interface:
+  display_name: "ast-grep"
+  short_description: "AST-aware code search and rule writing"
+  default_prompt: "Use $ast-grep to find code by structure instead of text."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Manage Backlog"
+  short_description: "Operate backlog lifecycle safely"
+  default_prompt: "Use $manage-backlog to inspect and update this backlog."

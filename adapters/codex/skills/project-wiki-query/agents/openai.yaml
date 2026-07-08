@@ -1,0 +1,4 @@
+interface:
+  display_name: "Project Wiki Query"
+  short_description: "Answer wiki queries and capture raw gaps"
+  default_prompt: "Use $project-wiki-query to answer from docs/wiki and capture any durable query-derived gaps as raw source fragments."

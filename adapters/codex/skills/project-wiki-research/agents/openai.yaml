@@ -1,0 +1,4 @@
+interface:
+  display_name: "Project Wiki Research"
+  short_description: "Ad-hoc research for wiki raw intake"
+  default_prompt: "Use $project-wiki-research to research a missing wiki topic and save a sourced raw report."

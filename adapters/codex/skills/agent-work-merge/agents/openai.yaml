@@ -1,0 +1,7 @@
+interface:
+  display_name: "Agent Work Merge"
+  short_description: "Merge parallel agent worktree branches"
+  default_prompt: "Use $agent-work-merge to integrate completed worktree-based agent work into the main checkout."
+
+policy:
+  allow_implicit_invocation: true
