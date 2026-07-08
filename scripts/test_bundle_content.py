@@ -22,12 +22,24 @@ NEW_WORKFLOW_SKILLS = (
     "code-project-wiki",
     "documentation-page-verifier",
 )
+ARTIFACT_REVIEW_SKILLS = (
+    ("project-wiki-review", "project-wiki-review-checklist.md"),
+    ("functional-spec-review", "functional-spec-review-checklist.md"),
+    ("architecture-review", "architecture-review-checklist.md"),
+    ("high-level-design-review", "high-level-design-review-checklist.md"),
+    ("module-design-review", "module-design-review-checklist.md"),
+)
 README_REQUIRED_PHRASES = (
     "Use the installed skills as the operating surface.",
     "documentation-bootstrap",
     "documentation-reverse-engineering",
     "code-project-wiki",
     "documentation-page-verifier",
+    "project-wiki-review",
+    "functional-spec-review",
+    "architecture-review",
+    "high-level-design-review",
+    "module-design-review",
     "skills/development-methodology/assets/templates",
 )
 README_FORBIDDEN_PHRASES = (
@@ -65,6 +77,35 @@ class BundleContentTests(unittest.TestCase):
                         / "openai.yaml"
                     ).is_file()
                 )
+
+    def test_artifact_review_skills_have_checklists_and_metadata(self) -> None:
+        development_methodology_text = (
+            SKILLS_ROOT / "development-methodology" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+
+        for skill_name, checklist_name in ARTIFACT_REVIEW_SKILLS:
+            with self.subTest(skill_name=skill_name):
+                skill_path = SKILLS_ROOT / skill_name / "SKILL.md"
+                checklist_path = SKILLS_ROOT / skill_name / "references" / checklist_name
+                metadata_path = (
+                    CODEX_ADAPTER_SKILLS_ROOT
+                    / skill_name
+                    / "agents"
+                    / "openai.yaml"
+                )
+
+                self.assertTrue(skill_path.is_file())
+                self.assertTrue(checklist_path.is_file())
+                self.assertTrue(metadata_path.is_file())
+
+                skill_text = skill_path.read_text(encoding="utf-8")
+                checklist_text = checklist_path.read_text(encoding="utf-8")
+
+                self.assertIn(checklist_name, skill_text)
+                self.assertIn("documentation-page-verifier", skill_text)
+                self.assertIn("Review Checklist", checklist_text)
+                self.assertIn("Findings", checklist_text)
+                self.assertIn(skill_name, development_methodology_text)
 
     def test_readme_points_to_skill_based_setup(self) -> None:
         readme_text = README_PATH.read_text(encoding="utf-8")

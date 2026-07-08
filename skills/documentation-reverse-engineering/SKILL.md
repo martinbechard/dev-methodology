@@ -101,13 +101,18 @@ When the project uses docs/wiki:
 
 After the passes:
 
-1. Use documentation-page-verifier on created or changed specialized documents.
-2. Run the project's build command when documentation work changed code, generated artifacts, or project metadata that can affect the build.
-3. Run documentation or wiki lint when available.
-4. Search new documentation for unresolved TODO markers that are not intentional.
-5. Search new steady-state documentation for stale comparative language such as enhanced, revised, old, and new.
-6. Confirm every created document has related source, related test, or Not yet identified entries.
-7. Confirm every diagram represents a real sequence, association, aggregation, containment, ownership, dependency, lifecycle, coverage, or data movement relationship.
-8. Confirm every open question is specific enough for a human or future agent to answer.
+1. Use module-design-review on created or changed module design documents.
+2. Use high-level-design-review on created or changed high-level design documents.
+3. Use architecture-review on created or changed architecture documents.
+4. Use functional-spec-review on created or changed functional specifications.
+5. Use project-wiki-review on created or changed project wiki methodology pages.
+6. Use documentation-page-verifier for mixed, unknown, or custom documentation artifacts.
+7. Run the project's build command when documentation work changed code, generated artifacts, or project metadata that can affect the build.
+8. Run documentation or wiki lint when available.
+9. Search new documentation for unresolved TODO markers that are not intentional.
+10. Search new steady-state documentation for stale comparative language such as enhanced, revised, old, and new.
+11. Confirm every created document has related source, related test, or Not yet identified entries.
+12. Confirm every diagram represents a real sequence, association, aggregation, containment, ownership, dependency, lifecycle, coverage, or data movement relationship.
+13. Confirm every open question is specific enough for a human or future agent to answer.
 
 Stop and ask for human input when source conflicts cannot be resolved, business ownership would be guessed, private systems are needed, verification cannot run for environmental reasons, or the work would send private material to an external service without explicit authorization.

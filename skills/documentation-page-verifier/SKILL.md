@@ -1,12 +1,20 @@
 ---
 type: Skill
 name: documentation-page-verifier
-description: Use when verifying functional specs, architecture, high-level design, module design, project wiki subclasses, or methodology template outputs.
+description: Use when verifying mixed, unknown, custom, or shared methodology documentation concerns that do not have a clearer artifact-specific review skill.
 ---
 
 # Documentation Page Verifier
 
-Use this skill before finishing specialized software documentation pages or methodology template outputs. The verifier checks that a page is source-backed, wiki-compatible, steady-state, and useful to future agents.
+Use this skill for shared methodology documentation checks when the artifact type is mixed, unknown, custom, or not covered by a clearer artifact-specific review skill. The verifier checks that a page is source-backed, wiki-compatible, steady-state, and useful to future agents.
+
+## Prefer Artifact-Specific Review
+
+- Use project-wiki-review for project wiki pages and project-wiki-template artifacts.
+- Use functional-spec-review for functional specification artifacts.
+- Use architecture-review for architecture artifacts.
+- Use high-level-design-review for high-level design artifacts.
+- Use module-design-review for module design artifacts.
 
 ## Verification Inputs
 

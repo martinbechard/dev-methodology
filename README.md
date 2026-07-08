@@ -85,6 +85,14 @@ The documentation methodology skills are:
 - documentation-reverse-engineering
 - documentation-page-verifier
 
+The artifact review skills are:
+
+- project-wiki-review
+- functional-spec-review
+- architecture-review
+- high-level-design-review
+- module-design-review
+
 The development practice skills are:
 
 - careful-coding
@@ -105,8 +113,9 @@ The development practice skills are:
 3. Use development-methodology when creating or revising functional specs, architecture, high-level designs, module designs, or wiki-compatible documentation.
 4. Use documentation-reverse-engineering when an existing codebase needs a source-backed documentation set.
 5. Use code-project-wiki when docs/wiki needs code-aware maintenance, commit-range review, Related Code upkeep, or Related Tests upkeep.
-6. Use documentation-page-verifier before finishing specialized documentation pages.
-7. Use the project-wiki family for docs/wiki setup, topic writing, topic verification, wiki-backed answers, and raw research.
+6. Use the artifact-specific review skill before finishing a project wiki page, functional specification, architecture document, high-level design, or module design.
+7. Use documentation-page-verifier as the shared verifier for mixed, unknown, or custom documentation artifacts.
+8. Use the project-wiki family for docs/wiki setup, topic writing, topic verification, wiki-backed answers, and raw research.
 
 ## Neutral Target Project Layout
 

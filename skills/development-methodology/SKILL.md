@@ -13,7 +13,12 @@ Use this skill as the router for software project documentation work from this b
 - Use documentation-bootstrap for first-time setup in a target repository.
 - Use documentation-reverse-engineering when deriving documentation from an existing codebase.
 - Use code-project-wiki for code-aware docs/wiki maintenance, commit-range sync, Related Code upkeep, or Related Tests upkeep.
-- Use documentation-page-verifier before finishing functional specifications, architecture documents, high-level designs, module designs, or project wiki subclass pages.
+- Use project-wiki-review before finishing project wiki pages or project-wiki-template artifacts.
+- Use functional-spec-review before finishing functional specification artifacts.
+- Use architecture-review before finishing architecture artifacts.
+- Use high-level-design-review before finishing high-level design artifacts.
+- Use module-design-review before finishing module design artifacts.
+- Use documentation-page-verifier for shared checks on mixed, unknown, or custom documentation artifacts.
 - Use project-wiki before creating, maintaining, or validating docs/wiki content.
 - Use project-wiki-query for wiki-backed project questions.
 - Use project-wiki-research for sourced raw reports that should feed a wiki later.
@@ -71,12 +76,13 @@ When a target project needs a local editable document, copy only the matching te
 
 Before finishing documentation or wiki work:
 
-1. Use documentation-page-verifier for specialized page checks.
-2. Run project wiki status and lint when docs/wiki exists.
-3. Run OKF validation when topic pages or skill files changed.
-4. Run the target project build when code, imports, generated artifacts, or project metadata changed.
-5. Search generated documents for unresolved TODO markers that are not intentional.
-6. Confirm every created document names related source, tests, or Not yet identified.
-7. Confirm wiki changes follow the project-wiki verifier checklist when topic pages changed.
+1. Use the artifact-specific review skill when the artifact type is project wiki, functional specification, architecture, high-level design, or module design.
+2. Use documentation-page-verifier for mixed, unknown, or custom documentation artifacts.
+3. Run project wiki status and lint when docs/wiki exists.
+4. Run OKF validation when topic pages or skill files changed.
+5. Run the target project build when code, imports, generated artifacts, or project metadata changed.
+6. Search generated documents for unresolved TODO markers that are not intentional.
+7. Confirm every created document names related source, tests, or Not yet identified.
+8. Confirm wiki changes follow the project-wiki verifier checklist when topic pages changed.
 
 Do not send private, proprietary, sensitive, PII, or company-internal material to an external service unless the user explicitly authorizes it.
