@@ -89,6 +89,8 @@ Each shared destination keeps an ownership manifest named .dev-methodology-insta
 
 Runtime agent metadata packaged inside an owned skill is refreshed and pruned with that skill. Future standalone agent definition folders should be added to the ownership manifest before any prune path is allowed to remove them.
 
+Before renaming or deleting a source skill, sweep this repository for the old skill id. Update or remove references in skill files, companion-skill lists, adapter metadata, role definitions, dispatch profiles, aggregate workflow examples, design documents, README content, scripts, and tests before refreshing shared installs.
+
 When a source skill is renamed or deleted, use the dry run to confirm that the old owned skill is reported as obsolete before running the real refresh.
 
 ## Bundled Skill Inventory

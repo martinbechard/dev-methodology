@@ -80,10 +80,11 @@ Before finishing documentation or wiki work:
 3. Run project wiki status and lint when docs/wiki exists.
 4. Run OKF validation when topic pages changed.
 5. Run the repository agent-skill validator when skill files changed.
-6. Refresh shared skill installs from this source repository when bundled skill files changed. When a skill was renamed or deleted, confirm the refresh reports the obsolete owned skill as pruned or reports that prune was skipped because no ownership manifest existed. Do not remove unowned local skills manually. If standalone agent definition folders are added later, track them in the ownership manifest before enabling prune behavior for them.
-7. Run the target project build when code, imports, generated artifacts, or project metadata changed.
-8. Search generated documents for unresolved TODO markers that are not intentional.
-9. Confirm every created document names related source, tests, or Not yet identified.
-10. Confirm wiki changes follow the project-wiki verifier checklist when topic pages changed.
+6. When a bundled skill is renamed or deleted, sweep the source repository for the old skill id and update or remove references in skills, companion-skill lists, adapter metadata, role definitions, dispatch profiles, aggregate workflow examples, design documents, scripts, and tests.
+7. Refresh shared skill installs from this source repository when bundled skill files changed. When a skill was renamed or deleted, confirm the refresh reports the obsolete owned skill as pruned or reports that prune was skipped because no ownership manifest existed. Do not remove unowned local skills manually. If standalone agent definition folders are added later, track them in the ownership manifest before enabling prune behavior for them.
+8. Run the target project build when code, imports, generated artifacts, or project metadata changed.
+9. Search generated documents for unresolved TODO markers that are not intentional.
+10. Confirm every created document names related source, tests, or Not yet identified.
+11. Confirm wiki changes follow the project-wiki verifier checklist when topic pages changed.
 
 Do not send private, proprietary, sensitive, PII, or company-internal material to an external service unless the user explicitly authorizes it.

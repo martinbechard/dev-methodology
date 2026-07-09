@@ -451,6 +451,7 @@
         <ul>
           <li><code>scripts/refresh-shared-skills.py</code> replaces the shared machine installs from the current source tree.</li>
           <li><code>.dev-methodology-install.json</code> records the skills this catalog installed into each shared destination.</li>
+          <li>Before a rename or deletion, sweep the source catalog for the old skill id and update role definitions, adapter metadata, skills, dispatch profiles, workflow examples, design documents, scripts, and tests.</li>
           <li>Renamed or deleted skills are pruned only when the ownership manifest says this catalog installed the old artifact.</li>
           <li>Runtime agent metadata packaged inside a skill is refreshed and pruned with that owned skill.</li>
           <li>The first refresh without a manifest writes the baseline and skips pruning so unowned local skills stay untouched.</li>
