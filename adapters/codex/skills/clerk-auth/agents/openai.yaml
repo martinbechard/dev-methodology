@@ -1,4 +1,0 @@
-interface:
-  display_name: "Clerk Auth"
-  short_description: "Clerk authentication guidance"
-  default_prompt: "Use $clerk-auth for Clerk sessions, protected routes, organization context, middleware, and permissions."

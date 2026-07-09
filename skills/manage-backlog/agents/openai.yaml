@@ -1,0 +1,17 @@
+# Codex app metadata for this skill.
+# Derived interface fields are refreshed from SKILL.md by scripts/openai_metadata.py.
+interface:
+  # User-facing name shown in Codex skill surfaces.
+  display_name: Manage Backlog
+  # User-facing summary shown in Codex skill surfaces.
+  short_description: Manage a markdown backlog with typed active folders, holding, completed archives, failed...
+  # Prompt Codex can use when launching this skill directly.
+  default_prompt: Use $manage-backlog to inspect and update this backlog.
+
+# Optional invocation policy placeholder.
+# policy:
+#   allow_implicit_invocation: false
+
+# Optional tool dependency placeholder.
+# dependencies:
+#   tools: []

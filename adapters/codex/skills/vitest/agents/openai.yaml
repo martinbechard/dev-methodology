@@ -1,4 +1,0 @@
-interface:
-  display_name: "Vitest"
-  short_description: "Vitest testing guidance"
-  default_prompt: "Use $vitest for Vitest test design, focused runs, fixtures, mocks, and failure diagnosis."

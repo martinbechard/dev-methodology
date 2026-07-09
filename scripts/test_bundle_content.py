@@ -8,7 +8,6 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 README_PATH = REPOSITORY_ROOT / "README.md"
 AGENTS_PATH = REPOSITORY_ROOT / "AGENTS.md"
 SKILLS_ROOT = REPOSITORY_ROOT / "skills"
-CODEX_ADAPTER_SKILLS_ROOT = REPOSITORY_ROOT / "adapters" / "codex" / "skills"
 REMOVED_ROOT_FILES = (
     "documentation-methodology.md",
     "procedure-reverse-engineer-project-documentation.md",
@@ -25,8 +24,8 @@ NEW_WORKFLOW_SKILLS = (
     "create-agents-plan",
 )
 AGENTS_PLAN_SKILL = "create-agents-plan"
-AGENTS_PLAN_TEMPLATE = "agents-plan-template.md"
-AGENTS_PLAN_ARTIFACT = "AGENTS-PLAN.md"
+AGENTS_PLAN_TEMPLATE = "agents-plan-template.yaml"
+AGENTS_PLAN_ARTIFACT = "AGENTS-PLAN.yaml"
 ARTIFACT_CREATION_SKILLS = (
     (
         "create-project-wiki",
@@ -93,7 +92,7 @@ README_REQUIRED_PHRASES = (
     "code-project-wiki",
     "documentation-page-verifier",
     "create-agents-plan",
-    "AGENTS-PLAN.md",
+    "AGENTS-PLAN.yaml",
     "create-project-wiki",
     "create-functional-spec",
     "create-architecture",
@@ -111,7 +110,7 @@ README_REQUIRED_PHRASES = (
     "python3 scripts/refresh-shared-skills.py",
     "ownership manifest",
     "prune mode removes obsolete skills",
-    "Keep Codex adapter metadata under adapters/codex/skills",
+    "Keep Codex openai.yaml metadata beside each source SKILL.md",
     "Before renaming or deleting a source skill",
     "role definitions",
     "dispatch profiles",
@@ -124,17 +123,54 @@ DEVELOPMENT_METHODOLOGY_REQUIRED_PHRASES = (
     "Do not remove unowned local skills manually.",
     "standalone agent definition folders",
     "sweep the source repository for the old skill id",
-    "adapter metadata",
+    "Codex metadata",
     "aggregate workflow examples",
     "Load only the skills needed for the current job.",
     "Artifact Creation Routes",
     "create-agents-plan",
-    "agents-plan-template.md",
-    "AGENTS-PLAN.md",
+    "agents-plan-template.yaml",
+    "AGENTS-PLAN.yaml",
 )
 STRATEGY_REQUIRED_PHRASES = (
     "Before a rename or deletion",
-    "update role definitions, adapter metadata, skills, dispatch profiles",
+    "update role definitions, Codex metadata, skills, dispatch profiles",
+)
+AGENT_ROLE_MAP_REQUIRED_PHRASES = (
+    "Role Agent Categories",
+    "Methodology Maintenance Agents",
+    "Project Setup And Update Agents",
+    "Development Use Agents",
+    "ROLE_LOADOUTS",
+    "loadout-details",
+    "expand-button",
+    "agent-grid",
+    "grid-template-columns: repeat(3, minmax(0, 1fr));",
+    "Primary skills",
+    "Optional skills",
+    "Outputs",
+    ".tag.optional",
+    ".tag.output",
+)
+DEVELOPMENT_USE_LOADOUTS = (
+    "Development Orchestrator",
+    "Coding Agent",
+    "Code Review Agent",
+    "QA And Verification Agent",
+    "Documentation Architect",
+    "Artifact Review Agent",
+    "E2E Browser Agent",
+    "UX Designer Or Reviewer",
+    "Security Reviewer",
+    "Runtime Diagnostician",
+    "Prompt Contract Reviewer",
+)
+AGENT_ROLE_MAP_FORBIDDEN_PHRASES = (
+    "Default Skill Loadouts",
+    "loadout-title",
+    "Optional Specialist Roles",
+    "specialists-title",
+    "card specialist",
+    "tag specialist",
 )
 README_FORBIDDEN_PHRASES = (
     "Copy documentation-methodology.md",
@@ -160,8 +196,8 @@ AGENTS_REQUIRED_PHRASES = (
     "Do not create separate skill files for repo-local maintenance procedures.",
     "Update README.md when the public skill inventory",
     "Update the design HTML files that describe skills, agents",
-    "Keep Codex adapter metadata under adapters/codex/skills",
-    "Do not place agents/openai.yaml inside source skill directories.",
+    "Keep Codex openai.yaml metadata beside each source SKILL.md",
+    "Run scripts/openai_metadata.py skills after skill name or description changes so derived Codex interface fields stay aligned while policy and dependencies remain hand-authored.",
     "python3 scripts/validate-agent-skills.py skills",
     "python3 scripts/refresh-shared-skills.py",
 )
@@ -176,7 +212,7 @@ def completed_review_checklist_suffix(review_target: str) -> str:
 
 
 def openai_metadata_path(skill_name: str) -> Path:
-    return CODEX_ADAPTER_SKILLS_ROOT / skill_name / "agents" / "openai.yaml"
+    return SKILLS_ROOT / skill_name / "agents" / "openai.yaml"
 
 
 class BundleContentTests(unittest.TestCase):
@@ -258,8 +294,9 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("Replace every TODO instruction", skill_text)
         self.assertIn("documentation-page-verifier", skill_text)
         self.assertIn("customer-safe examples", skill_text)
-        self.assertIn("Proprietary Validation Notes", template_text)
-        self.assertIn("Nested AGENTS-PLAN Files", template_text)
+        self.assertIn("schema: agents-plan", template_text)
+        self.assertIn("proprietary_validation_notes:", template_text)
+        self.assertIn("nested_agents_plan_files:", template_text)
         self.assertIn(AGENTS_PLAN_SKILL, development_methodology_text)
         self.assertIn(AGENTS_PLAN_TEMPLATE, development_methodology_text)
         self.assertIn("documentation-page-verifier", development_methodology_text)
@@ -378,6 +415,26 @@ class BundleContentTests(unittest.TestCase):
         for phrase in STRATEGY_REQUIRED_PHRASES:
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, strategy_text)
+
+    def test_agent_role_map_separates_lifecycle_categories(self) -> None:
+        role_map_text = (
+            REPOSITORY_ROOT / "design" / "agent-role-skill-map.html"
+        ).read_text(encoding="utf-8")
+
+        for phrase in AGENT_ROLE_MAP_REQUIRED_PHRASES:
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, role_map_text)
+
+        for role_name in DEVELOPMENT_USE_LOADOUTS:
+            with self.subTest(role_name=role_name):
+                self.assertIn(
+                    f"\"{role_name}\": {{",
+                    role_map_text,
+                )
+
+        for phrase in AGENT_ROLE_MAP_FORBIDDEN_PHRASES:
+            with self.subTest(phrase=phrase):
+                self.assertNotIn(phrase, role_map_text)
 
     def test_reverse_engineering_uses_structural_code_discovery(self) -> None:
         skill_text = (

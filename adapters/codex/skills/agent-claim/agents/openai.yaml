@@ -1,7 +1,0 @@
-interface:
-  display_name: "Agent Claim"
-  short_description: "Coordinate shared files and runtime resources"
-  default_prompt: "Use $agent-claim to coordinate file and runtime claims before this multi-agent repository task."
-
-policy:
-  allow_implicit_invocation: true

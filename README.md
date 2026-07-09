@@ -15,7 +15,7 @@ This repository distributes portable Agent Skills for software project documenta
 
 Use the installed skills as the operating surface. The repository README is only the entry point for installing and refreshing the bundle.
 
-Project agent and skill setup uses AGENTS-PLAN.md as the reviewable planning artifact. The create-agents-plan skill creates root and nested plans that explain which role agents and skills apply to a project before durable routing guidance is copied into AGENTS.md.
+Project agent and skill setup starts with AGENTS-PLAN.yaml as the reviewable planning artifact. The create-agents-plan skill creates root and nested plans that explain which role agents and skills apply to a project, then that validated plan drives durable routing guidance in AGENTS.md.
 
 The core methodology keeps one shared wiki-compatible page contract and five document shapes. Each document shape has a focused creation skill, a reusable template asset, and an artifact review skill:
 
@@ -31,9 +31,9 @@ The shared page contract starts every durable page with Current Understanding, A
 
 - skills contains the portable Agent Skills.
 - skills/development-methodology/assets/templates contains the reusable TODO-driven template assets.
-- Keep Codex adapter metadata under adapters/codex/skills when a skill needs Codex metadata.
+- Keep Codex openai.yaml metadata beside each source SKILL.md when a skill needs Codex app metadata, invocation policy, or tool dependencies.
 - scripts/install-skills.py installs the bundled skills through adapter profiles for generic Agent Skills, Codex, Gemini CLI, Claude Code, and JetBrains Junie CLI.
-- scripts/sync_openai_metadata.py refreshes derived Codex interface fields from SKILL.md while preserving hand-authored policy and dependencies.
+- scripts/openai_metadata.py refreshes derived Codex interface fields from SKILL.md while preserving hand-authored policy and dependencies.
 - scripts/refresh-shared-skills.py refreshes the machine-wide shared skill installs from this source repository.
 - scripts contains regression tests for installer behavior and bundle content.
 - AGENTS.md contains repo-local maintenance directives for agents working on this source repository.
@@ -93,12 +93,12 @@ Each shared destination keeps an ownership manifest named .dev-methodology-insta
 
 Runtime agent metadata packaged inside an owned skill is refreshed and pruned with that skill. Future standalone agent definition folders should be added to the ownership manifest before any prune path is allowed to remove them.
 
-Before renaming or deleting a source skill, sweep this repository for the old skill id. Update or remove references in skill files, companion-skill lists, adapter metadata, role definitions, dispatch profiles, aggregate workflow examples, design documents, README content, scripts, and tests before refreshing shared installs.
+Before renaming or deleting a source skill, sweep this repository for the old skill id. Update or remove references in skill files, companion-skill lists, Codex metadata, role definitions, dispatch profiles, aggregate workflow examples, design documents, README content, scripts, and tests before refreshing shared installs.
 
 After changing skill names or descriptions, run the metadata sync before validation:
 
 ```bash
-python3 scripts/sync_openai_metadata.py skills
+python3 scripts/openai_metadata.py skills
 ```
 
 When a source skill is renamed or deleted, use the dry run to confirm that the old owned skill is reported as obsolete before running the real refresh.
@@ -188,7 +188,7 @@ Artifact-specific review skills pass the artifact, source evidence, and complete
 
 1. Install or refresh the bundle on the target machine.
 2. In the target repository, use documentation-bootstrap for first-time setup.
-3. Use create-agents-plan to create AGENTS-PLAN.md when the project needs role agents, skill loadouts, folder routing, nested plan placement, or customer-safe example planning.
+3. Use create-agents-plan to create AGENTS-PLAN.yaml when the project needs role agents, skill loadouts, folder routing, nested plan placement, or customer-safe example planning.
 4. Use development-methodology to choose the artifact type and load only the creation or review skill needed for the current job.
 5. Use documentation-reverse-engineering when an existing codebase needs a source-backed documentation set.
 6. Use code-project-wiki when docs/wiki needs code-aware maintenance, commit-range review, Related Code upkeep, or Related Tests upkeep.
@@ -203,8 +203,8 @@ Artifact-specific review skills pass the artifact, source evidence, and complete
 - [documentation-root]/architecture
 - [documentation-root]/high-level
 - [documentation-root]/modules
-- AGENTS-PLAN.md
-- [technology-subfolder]/AGENTS-PLAN.md when a subfolder has distinct technology, data, runtime, or verification guidance
+- AGENTS-PLAN.yaml
+- [technology-subfolder]/AGENTS-PLAN.yaml when a subfolder has distinct technology, data, runtime, or verification guidance
 - docs/wiki
 - raw/wiki-fragments
 - raw/processed

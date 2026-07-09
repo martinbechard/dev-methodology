@@ -1,4 +1,0 @@
-interface:
-  display_name: "Project Wiki Topic Writer"
-  short_description: "Write and split durable wiki topic pages"
-  default_prompt: "Use $project-wiki-topic-writer to rewrite docs/wiki topic pages and loop with the verifier until accepted."

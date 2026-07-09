@@ -462,7 +462,7 @@
 
       <article class="card agent">
         <h3>Project Agent Setup Agent</h3>
-        <p>Creates AGENTS-PLAN.md so the project can validate role agents, skill loadouts, folder routing, nested plan placement, and AGENTS.md reference before normal development work.</p>
+        <p>Creates AGENTS-PLAN.yaml so the project can validate role agents, skill loadouts, folder routing, nested plan placement, and AGENTS.md reference before normal development work.</p>
         <div class="tag-row">
           <span class="tag agent">create-agents-plan</span>
           <span class="tag agent">development-methodology</span>
@@ -826,7 +826,7 @@ Nested AGENTS.md examples:
             <td><span class="name">Agent setup</span></td>
             <td>Project Agent Setup Agent</td>
             <td>Reads AGENTS.md files, source roots, tests, docs, procedures, package metadata, and project taxonomy.</td>
-            <td>Root AGENTS-PLAN.md, nested plan recommendations, role map, skill loadouts, and validation evidence.</td>
+            <td>Root AGENTS-PLAN.yaml, nested AGENTS-PLAN.yaml recommendations, role map, skill loadouts, and validation evidence.</td>
           </tr>
           <tr>
             <td><span class="name">Execution</span></td>
@@ -880,9 +880,9 @@ Nested AGENTS.md examples:
         <p>These files provide the project-specific facts the skills router reads before choosing which shared skills to load.</p>
         <ul>
           <li><code>AGENTS.md</code> is the root project contract. It declares the project family, application tiers, validation commands, data rules, and default guidance for this repository.</li>
-          <li><code>AGENTS-PLAN.md</code> is the setup and validation artifact that explains why project role agents, skill loadouts, nested plans, and AGENTS.md routing references exist.</li>
+          <li><code>AGENTS-PLAN.yaml</code> is the setup and validation artifact that explains why project role agents, skill loadouts, nested plans, and AGENTS.md routing references exist.</li>
           <li><code>&lt;subtree&gt;/AGENTS.md</code> narrows the root contract for a folder that has different tier, stack, validation, or data-handling needs. The nearest file applies to work in that subtree.</li>
-          <li><code>&lt;subtree&gt;/AGENTS-PLAN.md</code> is used only when the subtree has distinct technology, runtime, data, or verification evidence that would make the root plan too noisy.</li>
+          <li><code>&lt;subtree&gt;/AGENTS-PLAN.yaml</code> is used only when the subtree has distinct technology, runtime, data, or verification evidence that would make the root plan too noisy.</li>
           <li><code>docs/project-taxonomy.md</code> defines the project families, artifact types, and placement concepts used by the router and Project Organiser when AGENTS.md points at taxonomy terms.</li>
         </ul>
       </article>

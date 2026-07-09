@@ -1,0 +1,17 @@
+# Codex app metadata for this skill.
+# Derived interface fields are refreshed from SKILL.md by scripts/openai_metadata.py.
+interface:
+  # User-facing name shown in Codex skill surfaces.
+  display_name: Playwright
+  # User-facing summary shown in Codex skill surfaces.
+  short_description: Use when creating, reviewing, debugging, or running Playwright end-to-end tests, browser...
+  # Prompt Codex can use when launching this skill directly.
+  default_prompt: Use $playwright for browser workflows, authenticated E2E tests, traces, and UI regression checks.
+
+# Optional invocation policy placeholder.
+# policy:
+#   allow_implicit_invocation: false
+
+# Optional tool dependency placeholder.
+# dependencies:
+#   tools: []

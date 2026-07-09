@@ -59,7 +59,7 @@ class ValidateAgentSkillsTests(unittest.TestCase):
         self.assertEqual(1, len(findings))
         self.assertIn("unexpected frontmatter keys: type", findings[0].message)
 
-    def test_rejects_source_side_openai_metadata(self) -> None:
+    def test_accepts_source_side_openai_metadata(self) -> None:
         validator = load_validator()
 
         with tempfile.TemporaryDirectory() as directory:
@@ -75,8 +75,29 @@ class ValidateAgentSkillsTests(unittest.TestCase):
 
             findings = validator.validate_skill_paths([root])
 
+        self.assertEqual([], findings)
+
+    def test_rejects_invalid_openai_metadata_policy(self) -> None:
+        validator = load_validator()
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            skill_dir = self.create_skill(
+                root,
+                "careful-coding",
+                "---\nname: careful-coding\ndescription: Use when coding carefully.\n---",
+            )
+            metadata = skill_dir / "agents" / "openai.yaml"
+            metadata.parent.mkdir()
+            metadata.write_text(
+                "policy:\n  allow_implicit_invocation: maybe\n",
+                encoding="utf-8",
+            )
+
+            findings = validator.validate_skill_paths([root])
+
         self.assertEqual(1, len(findings))
-        self.assertIn("source skills must not include agents/openai.yaml", findings[0].message)
+        self.assertIn("policy allow_implicit_invocation must be a boolean", findings[0].message)
 
     def test_rejects_name_that_does_not_match_directory(self) -> None:
         validator = load_validator()

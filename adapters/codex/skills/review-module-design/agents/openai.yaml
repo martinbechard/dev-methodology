@@ -1,4 +1,0 @@
-interface:
-  display_name: "Module Design Review"
-  short_description: "Review module design artifacts"
-  default_prompt: "Use $review-module-design to review this module design against its methodology checklist."

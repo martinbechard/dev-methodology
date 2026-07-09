@@ -33,8 +33,8 @@ When adding, renaming, deleting, or materially changing a distributed skill:
 
 - Update the source skill under skills.
 - Keep the skill frontmatter name aligned with the skill directory name.
-- Keep Codex adapter metadata under adapters/codex/skills when the skill needs Codex metadata.
-- Do not place agents/openai.yaml inside source skill directories.
+- Keep Codex openai.yaml metadata beside each source SKILL.md when a skill needs Codex app metadata, invocation policy, or tool dependencies.
+- Run scripts/openai_metadata.py skills after skill name or description changes so derived Codex interface fields stay aligned while policy and dependencies remain hand-authored.
 - Update README.md when the public skill inventory, setup flow, verification flow, or bundle purpose changes.
 - Update the design HTML files that describe skills, agents, role maps, specialization strategy, operating model, or examples whenever the catalog, role model, adapter model, or examples change.
 - Update scripts/test_bundle_content.py so the bundle regression tests describe the current catalog.
@@ -102,4 +102,4 @@ If a build script is introduced later, run the repository build after code, impo
 
 - Commit verified repository-maintenance work when the change is coherent and the worktree allows a clean scoped commit.
 - Do not include unrelated untracked files in the commit.
-- Include README.md, AGENTS.md, design HTML, tests, adapter metadata, and shared-install refresh effects in the same change when they are part of the same catalog or workflow update.
+- Include README.md, AGENTS.md, design HTML, tests, Codex metadata, and shared-install refresh effects in the same change when they are part of the same catalog or workflow update.

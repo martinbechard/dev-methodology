@@ -1,4 +1,0 @@
-interface:
-  display_name: "Code Project Wiki"
-  short_description: "Maintain code-aware project wiki pages"
-  default_prompt: "Use $code-project-wiki to sync docs/wiki with recent code, tests, and documentation changes."

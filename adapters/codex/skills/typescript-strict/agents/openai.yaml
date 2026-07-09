@@ -1,4 +1,0 @@
-interface:
-  display_name: "TypeScript Strict"
-  short_description: "Strict TypeScript guidance"
-  default_prompt: "Use $typescript-strict for precise domain types, null safety, no any usage, and exact contracts."

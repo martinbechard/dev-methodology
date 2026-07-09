@@ -1,4 +1,0 @@
-interface:
-  display_name: "Electron Preload"
-  short_description: "Electron preload and context bridge guidance"
-  default_prompt: "Use $electron-preload for context bridge APIs, preload scripts, and renderer-to-main IPC contracts."

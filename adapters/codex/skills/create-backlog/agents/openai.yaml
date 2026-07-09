@@ -1,4 +1,0 @@
-interface:
-  display_name: "Create Backlog"
-  short_description: "Draft structured backlog items"
-  default_prompt: "Use $create-backlog to turn these notes into backlog items."

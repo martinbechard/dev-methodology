@@ -1,4 +1,0 @@
-interface:
-  display_name: "Playwright"
-  short_description: "Playwright E2E guidance"
-  default_prompt: "Use $playwright for browser workflows, authenticated E2E tests, traces, and UI regression checks."

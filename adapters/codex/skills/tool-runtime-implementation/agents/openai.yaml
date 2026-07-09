@@ -1,4 +1,0 @@
-interface:
-  display_name: "Tool Runtime Implementation"
-  short_description: "Product tool runtime guidance"
-  default_prompt: "Use $tool-runtime-implementation for product code that parses, routes, executes, or audits tool calls."

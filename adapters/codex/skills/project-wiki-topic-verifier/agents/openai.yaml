@@ -1,4 +1,0 @@
-interface:
-  display_name: "Project Wiki Topic Verifier"
-  short_description: "Verify durable wiki topic pages"
-  default_prompt: "Use $project-wiki-topic-verifier to verify created or updated docs/wiki topic pages after raw source ingest."

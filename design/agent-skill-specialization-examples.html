@@ -434,15 +434,15 @@
     <div class="legend" aria-label="Legend">
       <span class="pill"><span class="dot agent"></span> Role agent</span>
       <span class="pill"><span class="dot skill"></span> Routed skill</span>
-      <span class="pill"><span class="dot config"></span> AGENTS-PLAN.md</span>
+      <span class="pill"><span class="dot config"></span> AGENTS-PLAN.yaml</span>
       <span class="pill"><span class="dot reference"></span> AGENTS.md reference</span>
       <span class="pill"><span class="dot case"></span> Fictitious project</span>
     </div>
     <h1 id="page-title">Agent Skill Specialization Examples</h1>
     <p class="lede">
-      These customer-safe examples use fictitious projects to show how AGENTS-PLAN.md organizes role agents,
-      skill loadouts, nested routing, and validation evidence. AGENTS-PLAN.md stays a Markdown planning artifact;
-      YAML-shaped blocks on this page are compact structural views of that plan, not AGENTS-PLAN.yaml files.
+      These customer-safe examples use fictitious projects to show how AGENTS-PLAN.yaml organizes role agents,
+      skill loadouts, nested routing, and validation evidence. AGENTS-PLAN.yaml is the checked-in YAML planning
+      artifact; the samples below show the file content directly.
       The generic strategy lives in
       <a href="agent-skill-specialization-strategy.html">Agent And Skill Specialization Strategy</a>.
     </p>
@@ -452,23 +452,18 @@
     <h2 id="usage-title">Standalone Planning Artifact</h2>
     <div class="grid">
       <article class="card config">
-        <h3>AGENTS-PLAN.md</h3>
-        <p>AGENTS-PLAN.md is the project-owned setup document for validating agent roles and skill routing before durable guidance is copied into AGENTS.md. It can live at the repository root and, when needed, inside technology-specific subfolders.</p>
-      </article>
-
-      <article class="card config">
-        <h3>Markdown Plan, Structured Content</h3>
-        <p>Keep AGENTS-PLAN.md as Markdown because humans and agents read it during setup review. The YAML-shaped samples below are scan-friendly structural sketches of the same sections.</p>
+        <h3>AGENTS-PLAN.yaml</h3>
+        <p>AGENTS-PLAN.yaml is the project-owned setup document for validating agent roles and skill routing before durable guidance is copied into AGENTS.md. It can live at the repository root and, when needed, inside technology-specific subfolders.</p>
       </article>
 
       <article class="card agent">
         <h3>Project Agent Setup Agent</h3>
-        <p>This setup role uses development-methodology and create-agents-plan to inspect the project, classify tiers, choose skill loadouts, and create the root and nested AGENTS-PLAN.md files.</p>
+        <p>This setup role uses development-methodology and create-agents-plan to inspect the project, classify tiers, choose skill loadouts, and create the root and nested AGENTS-PLAN.yaml files.</p>
       </article>
 
       <article class="card case">
         <h3>Private Validation</h3>
-        <p>For proprietary projects, create AGENTS-PLAN.md inside the private project folder. Keep project names, internal workflows, private architecture, customer data, and validation notes inside that repository.</p>
+        <p>For proprietary projects, create AGENTS-PLAN.yaml inside the private project folder. Keep project names, internal workflows, private architecture, customer data, and validation notes inside that repository.</p>
       </article>
 
       <article class="card skill">
@@ -479,7 +474,7 @@
   </section>
 
   <section class="section" aria-labelledby="template-title">
-    <h2 id="template-title">AGENTS-PLAN.md Template Sections</h2>
+    <h2 id="template-title">AGENTS-PLAN.yaml Template Sections</h2>
     <div class="matrix">
       <table>
         <thead>
@@ -526,8 +521,8 @@
             <td>Lets the router decide quickly whether a task is front-end, API, DB, docs, testing, or tool work.</td>
           </tr>
           <tr>
-            <td><span class="name">Nested AGENTS.md And AGENTS-PLAN Files</span></td>
-            <td>Lists subfolders that need nested operational AGENTS.md references, and notes when a subtree also needs its own local AGENTS-PLAN.md because it has distinct evidence.</td>
+            <td><span class="name">Nested AGENTS.md And AGENTS-PLAN.yaml Files</span></td>
+            <td>Lists subfolders that need nested operational AGENTS.md references, and notes when a subtree also needs its own local AGENTS-PLAN.yaml because it has distinct evidence.</td>
             <td>Keeps root guidance compact while making local loadouts and setup evidence explicit.</td>
           </tr>
           <tr>
@@ -549,7 +544,7 @@
           <li>Family: local developer tooling.</li>
           <li>Application tiers: CLI, file processing, generated artifacts, tests, documentation.</li>
           <li>Primary skills: node-cli, typescript-esm, typescript-strict, vitest, careful-coding, fix-explanation.</li>
-          <li>Plan shape: one root AGENTS-PLAN.md because folder rules are simple and shared.</li>
+          <li>Plan shape: one root AGENTS-PLAN.yaml because folder rules are simple and shared.</li>
         </ul>
       </article>
 
@@ -559,7 +554,7 @@
           <li>Family: web application.</li>
           <li>Application tiers: front-end, API, static pages, DB, documentation.</li>
           <li>Primary skills: nextjs-app-router, react-server-components, api-routes, postgres-drizzle, typescript-strict, jest, playwright.</li>
-          <li>Plan shape: root AGENTS-PLAN.md plus nested AGENTS.md references for API and database folders.</li>
+          <li>Plan shape: root AGENTS-PLAN.yaml plus nested AGENTS.md references for API and database folders.</li>
         </ul>
       </article>
 
@@ -569,7 +564,7 @@
           <li>Family: documentation and project wiki repository.</li>
           <li>Application tiers: source collection, wiki synthesis, verification, publication.</li>
           <li>Primary skills: project-wiki, project-wiki-research, project-wiki-topic-writer, project-wiki-topic-verifier, code-project-wiki.</li>
-          <li>Plan shape: root AGENTS-PLAN.md plus nested AGENTS.md reference for raw source processing when the queue has strict rules.</li>
+          <li>Plan shape: root AGENTS-PLAN.yaml plus nested AGENTS.md reference for raw source processing when the queue has strict rules.</li>
         </ul>
       </article>
     </div>
@@ -581,7 +576,7 @@
       <article class="card case">
         <h3>Root plan</h3>
         <ul>
-          <li>AGENTS-PLAN.md records the CLI entry points, generated artifact rules, fixture locations, and test commands.</li>
+          <li>AGENTS-PLAN.yaml records the CLI entry points, generated artifact rules, fixture locations, and test commands.</li>
           <li>No nested AGENTS.md reference or local plan is needed while the source tree uses one TypeScript runtime and one verification workflow.</li>
           <li>Root AGENTS.md can stay short because the plan carries the setup evidence.</li>
         </ul>
@@ -652,6 +647,31 @@
 
     <div class="snippet" data-expanded="false">
       <div class="snippet-head">
+        <h3>Northwind AGENTS-PLAN.yaml</h3>
+        <button class="snippet-toggle" type="button" aria-expanded="false" aria-controls="northwind-plan-sample">Expand</button>
+      </div>
+      <p class="snippet-note">This is the root YAML plan for a simple tooling repository.</p>
+      <pre id="northwind-plan-sample" class="config-block clamp-block"><code>schema: agents-plan
+schema_version: 1
+project:
+  name: Northwind Tools
+  family: local-developer-tooling
+  application_tiers: [cli, file-processing, generated-artifacts, tests, documentation]
+root_agents_reference:
+  file: AGENTS.md
+  purpose: short router contract for CLI, generated artifacts, and tests
+nested_agents_reference:
+  required: false
+  reason: one TypeScript runtime and one verification workflow
+skill_loadouts:
+  cli: [node-cli, typescript-esm, typescript-strict]
+  tests: [vitest, careful-coding]
+validation:
+  commands: [pnpm test, pnpm run build]</code></pre>
+    </div>
+
+    <div class="snippet" data-expanded="false">
+      <div class="snippet-head">
         <h3>Northwind AGENTS.md Reference</h3>
         <button class="snippet-toggle" type="button" aria-expanded="false" aria-controls="northwind-agents-sample">Expand</button>
       </div>
@@ -668,30 +688,6 @@ Routing:
 Validation:
   pnpm test
   pnpm run build</code></pre>
-    </div>
-
-    <div class="snippet" data-expanded="false">
-      <div class="snippet-head">
-        <h3>Northwind AGENTS-PLAN.md Structural View</h3>
-        <button class="snippet-toggle" type="button" aria-expanded="false" aria-controls="northwind-plan-sample">Expand</button>
-      </div>
-      <p class="snippet-note">This is a compact view of the Markdown plan sections, not a YAML file checked into the project.</p>
-      <pre id="northwind-plan-sample" class="config-block clamp-block"><code>artifact: AGENTS-PLAN.md
-format: Markdown authored plan
-project:
-  name: Northwind Tools
-  family: local-developer-tooling
-root_agents_reference:
-  file: AGENTS.md
-  purpose: short router contract for CLI, generated artifacts, and tests
-nested_agents_reference:
-  required: false
-  reason: one TypeScript runtime and one verification workflow
-skill_loadouts:
-  cli: [node-cli, typescript-esm, typescript-strict]
-  tests: [vitest, careful-coding]
-validation:
-  commands: [pnpm test, pnpm run build]</code></pre>
     </div>
   </section>
 
@@ -757,42 +753,12 @@ validation:
 
     <div class="snippet" data-expanded="false">
       <div class="snippet-head">
-        <h3>Acme Root And Nested AGENTS.md References</h3>
-        <button class="snippet-toggle" type="button" aria-expanded="false" aria-controls="acme-agents-sample">Expand</button>
-      </div>
-      <p class="snippet-note">The root file names shared routing. Nested AGENTS.md files add local API and database rules without forking the shared role catalog.</p>
-      <pre id="acme-agents-sample" class="config-block clamp-block"><code>AGENTS.md
-Project family: web application.
-Application tiers:
-  Front-end: app/(authenticated)/** and components/**
-  API: app/api/**/route.ts
-  Static pages: app/(marketing)/**
-  DB: db/** and drizzle/**
-Routing:
-  Read nested AGENTS.md before changing app/api/** or db/**.
-Validation:
-  pnpm test
-  pnpm run build
-
-app/api/AGENTS.md
-Local tier: API routes.
-Load skills: api-routes, clerk-auth, postgres-drizzle, typescript-strict, jest.
-Local checks: auth boundary tests, request validation tests, persistence tests.
-
-db/AGENTS.md
-Local tier: database schema and persistence.
-Load skills: postgres-drizzle, typescript-strict, jest.
-Local checks: schema checks, migration review, seed data tests.</code></pre>
-    </div>
-
-    <div class="snippet" data-expanded="false">
-      <div class="snippet-head">
-        <h3>Acme AGENTS-PLAN.md Structural View</h3>
+        <h3>Acme AGENTS-PLAN.yaml</h3>
         <button class="snippet-toggle" type="button" aria-expanded="false" aria-controls="acme-plan-sample">Expand</button>
       </div>
-      <p class="snippet-note">AGENTS-PLAN.md remains the Markdown planning artifact; this block exposes the routing structure that the plan describes.</p>
-      <pre id="acme-plan-sample" class="config-block clamp-block"><code>artifact: AGENTS-PLAN.md
-format: Markdown authored plan
+      <p class="snippet-note">This root plan points to nested operational AGENTS.md references for API and database local rules.</p>
+      <pre id="acme-plan-sample" class="config-block clamp-block"><code>schema: agents-plan
+schema_version: 1
 project:
   name: Acme Ledger
   family: web-application
@@ -824,6 +790,36 @@ dispatch:
         add_skills: [api-routes, clerk-auth, postgres-drizzle, jest]
       - match: db/**
         add_skills: [postgres-drizzle, typescript-strict, jest]</code></pre>
+    </div>
+
+    <div class="snippet" data-expanded="false">
+      <div class="snippet-head">
+        <h3>Acme Root And Nested AGENTS.md References</h3>
+        <button class="snippet-toggle" type="button" aria-expanded="false" aria-controls="acme-agents-sample">Expand</button>
+      </div>
+      <p class="snippet-note">The operational AGENTS.md files are derived from the validated plan and carry the concise runtime routing rules.</p>
+      <pre id="acme-agents-sample" class="config-block clamp-block"><code>AGENTS.md
+Project family: web application.
+Application tiers:
+  Front-end: app/(authenticated)/** and components/**
+  API: app/api/**/route.ts
+  Static pages: app/(marketing)/**
+  DB: db/** and drizzle/**
+Routing:
+  Read nested AGENTS.md before changing app/api/** or db/**.
+Validation:
+  pnpm test
+  pnpm run build
+
+app/api/AGENTS.md
+Local tier: API routes.
+Load skills: api-routes, clerk-auth, postgres-drizzle, typescript-strict, jest.
+Local checks: auth boundary tests, request validation tests, persistence tests.
+
+db/AGENTS.md
+Local tier: database schema and persistence.
+Load skills: postgres-drizzle, typescript-strict, jest.
+Local checks: schema checks, migration review, seed data tests.</code></pre>
     </div>
   </section>
 
@@ -868,10 +864,39 @@ dispatch:
 
     <div class="snippet" data-expanded="false">
       <div class="snippet-head">
+        <h3>Beacon AGENTS-PLAN.yaml</h3>
+        <button class="snippet-toggle" type="button" aria-expanded="false" aria-controls="beacon-plan-sample">Expand</button>
+      </div>
+      <p class="snippet-note">The plan records why Beacon needs a local raw queue reference and which checks prove the wiki workflow is usable.</p>
+      <pre id="beacon-plan-sample" class="config-block clamp-block"><code>schema: agents-plan
+schema_version: 1
+project:
+  name: Beacon Knowledge Base
+  family: documentation-and-project-wiki
+operational_references:
+  root: AGENTS.md
+  nested: [raw/AGENTS.md]
+application_tiers:
+  source_collection:
+    paths: [raw/inbox/**, raw/fragments/**]
+    skills: [project-wiki-research]
+    nested_agents_reference: raw/AGENTS.md
+  wiki_synthesis:
+    paths: [docs/wiki/**]
+    skills: [project-wiki, project-wiki-topic-writer, project-wiki-topic-verifier]
+  publication:
+    paths: [docs/wiki/digests/**]
+    skills: [project-wiki-topic-verifier, structured-explanation]
+validation:
+  commands: [wiki_ops.py status, wiki_ops.py lint, wiki_ops.py okf-validate]</code></pre>
+    </div>
+
+    <div class="snippet" data-expanded="false">
+      <div class="snippet-head">
         <h3>Beacon Root And Nested AGENTS.md References</h3>
         <button class="snippet-toggle" type="button" aria-expanded="false" aria-controls="beacon-agents-sample">Expand</button>
       </div>
-      <p class="snippet-note">Beacon uses a nested raw/AGENTS.md when source collection has rules that should not be repeated across wiki-writing guidance.</p>
+      <p class="snippet-note">Beacon uses the validated plan to derive root AGENTS.md guidance and a nested raw/AGENTS.md for source collection rules.</p>
       <pre id="beacon-agents-sample" class="config-block clamp-block"><code>AGENTS.md
 Project family: documentation and project wiki repository.
 Application tiers:
@@ -895,41 +920,12 @@ Skills:
   project-wiki-research for source reports.
   project-wiki-topic-writer and project-wiki-topic-verifier for wiki pages.</code></pre>
     </div>
-
-    <div class="snippet" data-expanded="false">
-      <div class="snippet-head">
-        <h3>Beacon AGENTS-PLAN.md Structural View</h3>
-        <button class="snippet-toggle" type="button" aria-expanded="false" aria-controls="beacon-plan-sample">Expand</button>
-      </div>
-      <p class="snippet-note">The plan records why Beacon needs a local raw queue reference and which checks prove the wiki workflow is usable.</p>
-      <pre id="beacon-plan-sample" class="config-block clamp-block"><code>artifact: AGENTS-PLAN.md
-format: Markdown authored plan
-project:
-  name: Beacon Knowledge Base
-  family: documentation-and-project-wiki
-operational_references:
-  root: AGENTS.md
-  nested: [raw/AGENTS.md]
-application_tiers:
-  source_collection:
-    paths: [raw/inbox/**, raw/fragments/**]
-    skills: [project-wiki-research]
-    nested_agents_reference: raw/AGENTS.md
-  wiki_synthesis:
-    paths: [docs/wiki/**]
-    skills: [project-wiki, project-wiki-topic-writer, project-wiki-topic-verifier]
-  publication:
-    paths: [docs/wiki/digests/**]
-    skills: [project-wiki-topic-verifier, structured-explanation]
-validation:
-  commands: [wiki_ops.py status, wiki_ops.py lint, wiki_ops.py okf-validate]</code></pre>
-    </div>
   </section>
 
   <section class="section" aria-labelledby="validation-title">
     <h2 id="validation-title">Private Project Validation Flow</h2>
     <div class="panel">
-      <p>Run this flow separately inside each private project. The distributable bundle keeps only the template, setup skill, and fictitious examples; the project-specific AGENTS-PLAN.md files stay with the private repositories they describe.</p>
+      <p>Run this flow separately inside each private project. The distributable bundle keeps only the template, setup skill, and fictitious examples; the project-specific AGENTS-PLAN.yaml files stay with the private repositories they describe.</p>
     </div>
     <div class="matrix section">
       <table>
@@ -963,7 +959,7 @@ validation:
           <tr>
             <td><span class="name">Nest</span></td>
             <td>Subfolders with different technology, runtime setup, data handling, or verification commands.</td>
-            <td>Nested AGENTS.md references and local AGENTS-PLAN.md files where local detail is valuable.</td>
+            <td>Nested AGENTS.md references and local AGENTS-PLAN.yaml files where local detail is valuable.</td>
             <td>Does nesting reduce cognitive load without hiding repository-wide rules?</td>
           </tr>
           <tr>

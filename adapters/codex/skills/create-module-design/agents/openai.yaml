@@ -1,4 +1,0 @@
-interface:
-  display_name: "Module Design Creation"
-  short_description: "Create module design artifacts"
-  default_prompt: "Use $create-module-design to create a source-backed module design from its template."

@@ -13,6 +13,8 @@ import yaml
 MAX_SKILL_NAME_LENGTH = 64
 MAX_DESCRIPTION_LENGTH = 1024
 SKILL_FILE_NAME = "SKILL.md"
+AGENTS_FOLDER_NAME = "agents"
+OPENAI_METADATA_FILE_NAME = "openai.yaml"
 FRONTMATTER_DELIMITER = "---"
 ALLOWED_FRONTMATTER_KEYS = {
     "allowed-tools",
@@ -24,6 +26,16 @@ ALLOWED_FRONTMATTER_KEYS = {
 NAME_PATTERN = re.compile(r"^[a-z0-9-]+$")
 SUCCESS_EXIT_CODE = 0
 ERROR_EXIT_CODE = 1
+OPENAI_METADATA_TOP_LEVEL_KEYS = {"dependencies", "interface", "policy"}
+OPENAI_METADATA_INTERFACE_KEYS = {
+    "brand_color",
+    "default_prompt",
+    "display_name",
+    "icon_large",
+    "icon_small",
+    "short_description",
+}
+OPENAI_METADATA_POLICY_KEYS = {"allow_implicit_invocation"}
 
 
 @dataclass(frozen=True)
@@ -98,8 +110,57 @@ def validate_skill_file(skill_file: Path) -> list[SkillFinding]:
         if len(normalized_description) > MAX_DESCRIPTION_LENGTH:
             findings.append(SkillFinding(skill_file, f"frontmatter description must be at most {MAX_DESCRIPTION_LENGTH} characters"))
 
-    if (skill_file.parent / "agents" / "openai.yaml").exists():
-        findings.append(SkillFinding(skill_file, "source skills must not include agents/openai.yaml; use adapters instead"))
+    findings.extend(validate_openai_metadata(skill_file.parent))
+
+    return findings
+
+
+def validate_openai_metadata(skill_directory: Path) -> list[SkillFinding]:
+    metadata_path = skill_directory / AGENTS_FOLDER_NAME / OPENAI_METADATA_FILE_NAME
+    if not metadata_path.exists():
+        return []
+    if not metadata_path.is_file():
+        return [SkillFinding(metadata_path, "openai.yaml must be a file")]
+
+    try:
+        metadata = yaml.safe_load(metadata_path.read_text(encoding="utf-8"))
+    except yaml.YAMLError as error:
+        return [SkillFinding(metadata_path, f"openai.yaml YAML is invalid: {error}")]
+
+    if metadata is None:
+        return [SkillFinding(metadata_path, "openai.yaml must not be empty")]
+    if not isinstance(metadata, dict):
+        return [SkillFinding(metadata_path, "openai.yaml must be a YAML object")]
+
+    findings: list[SkillFinding] = []
+    unexpected_keys = sorted(set(metadata) - OPENAI_METADATA_TOP_LEVEL_KEYS)
+    if unexpected_keys:
+        findings.append(SkillFinding(metadata_path, "unexpected openai.yaml top-level keys: " + ", ".join(unexpected_keys)))
+
+    interface = metadata.get("interface")
+    if interface is not None:
+        if not isinstance(interface, dict):
+            findings.append(SkillFinding(metadata_path, "interface must be a YAML object"))
+        else:
+            unexpected_interface_keys = sorted(set(interface) - OPENAI_METADATA_INTERFACE_KEYS)
+            if unexpected_interface_keys:
+                findings.append(SkillFinding(metadata_path, "unexpected interface keys: " + ", ".join(unexpected_interface_keys)))
+
+    policy = metadata.get("policy")
+    if policy is not None:
+        if not isinstance(policy, dict):
+            findings.append(SkillFinding(metadata_path, "policy must be a YAML object"))
+        else:
+            unexpected_policy_keys = sorted(set(policy) - OPENAI_METADATA_POLICY_KEYS)
+            if unexpected_policy_keys:
+                findings.append(SkillFinding(metadata_path, "unexpected policy keys: " + ", ".join(unexpected_policy_keys)))
+            allow_implicit_invocation = policy.get("allow_implicit_invocation")
+            if allow_implicit_invocation is not None and not isinstance(allow_implicit_invocation, bool):
+                findings.append(SkillFinding(metadata_path, "policy allow_implicit_invocation must be a boolean"))
+
+    dependencies = metadata.get("dependencies")
+    if dependencies is not None and not isinstance(dependencies, dict):
+        findings.append(SkillFinding(metadata_path, "dependencies must be a YAML object"))
 
     return findings
 

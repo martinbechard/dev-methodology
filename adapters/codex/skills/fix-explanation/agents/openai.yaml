@@ -1,4 +1,0 @@
-interface:
-  display_name: "Fix Explanation"
-  short_description: "Explain fixes, relations, conformance, and classification"
-  default_prompt: "Use $fix-explanation to explain this fix with the structured-explanation skill, nest true child items under their parent, use explicit references for cross-links, identify any non-conformities with upstream requirements or design, classify it as new functionality, a functional improvement, an optimization, backwards-compatibility work, or a migration, and save it to a tracked file when it will guide ongoing work."

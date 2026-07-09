@@ -1,0 +1,17 @@
+# Codex app metadata for this skill.
+# Derived interface fields are refreshed from SKILL.md by scripts/openai_metadata.py.
+interface:
+  # User-facing name shown in Codex skill surfaces.
+  display_name: Fix Explanation
+  # User-facing summary shown in Codex skill surfaces.
+  short_description: Explain a code fix or patch in a structured way, using the structured-explanation skill and...
+  # Prompt Codex can use when launching this skill directly.
+  default_prompt: Use $fix-explanation to explain this fix with the structured-explanation skill, nest true child items under their parent, use explicit references for cross-links, identify any non-conformities with upstream requirements or design, classify it as new functionality, a functional improvement, an optimization, backwards-compatibility work, or a migration, and save it to a tracked file when it will guide ongoing work.
+
+# Optional invocation policy placeholder.
+# policy:
+#   allow_implicit_invocation: false
+
+# Optional tool dependency placeholder.
+# dependencies:
+#   tools: []

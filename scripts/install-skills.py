@@ -28,12 +28,9 @@ AGENTS_HOME_FOLDER_NAME = ".agents"
 CLAUDE_HOME_FOLDER_NAME = ".claude"
 JUNIE_HOME_FOLDER_NAME = ".junie"
 SKILL_MANIFEST_FILE_NAME = "SKILL.md"
-ADAPTERS_FOLDER_NAME = "adapters"
 GENERATED_CACHE_FOLDER_NAME = "__pycache__"
 PYTHON_BYTECODE_PATTERN = "*.pyc"
 MACOS_METADATA_FILE_NAME = ".DS_Store"
-AGENTS_METADATA_FOLDER_NAME = "agents"
-OPENAI_METADATA_FILE_NAME = "openai.yaml"
 INSTALL_MANIFEST_FILE_NAME = ".dev-methodology-install.json"
 BUNDLE_ID = "dev-methodology"
 MANIFEST_SCHEMA_VERSION_KEY = "schema_version"
@@ -53,7 +50,6 @@ class Adapter(NamedTuple):
     name: str
     home_environment_variable: Optional[str]
     default_home_folder_name: str
-    install_openai_metadata: bool
 
 
 class SkillInstallResult(NamedTuple):
@@ -67,41 +63,32 @@ ADAPTERS = {
         name=GENERIC_ADAPTER_NAME,
         home_environment_variable=AGENTS_HOME_ENVIRONMENT_VARIABLE,
         default_home_folder_name=AGENTS_HOME_FOLDER_NAME,
-        install_openai_metadata=False,
     ),
     CODEX_ADAPTER_NAME: Adapter(
         name=CODEX_ADAPTER_NAME,
         home_environment_variable=AGENTS_HOME_ENVIRONMENT_VARIABLE,
         default_home_folder_name=AGENTS_HOME_FOLDER_NAME,
-        install_openai_metadata=True,
     ),
     GEMINI_ADAPTER_NAME: Adapter(
         name=GEMINI_ADAPTER_NAME,
         home_environment_variable=AGENTS_HOME_ENVIRONMENT_VARIABLE,
         default_home_folder_name=AGENTS_HOME_FOLDER_NAME,
-        install_openai_metadata=False,
     ),
     CLAUDE_ADAPTER_NAME: Adapter(
         name=CLAUDE_ADAPTER_NAME,
         home_environment_variable=CLAUDE_HOME_ENVIRONMENT_VARIABLE,
         default_home_folder_name=CLAUDE_HOME_FOLDER_NAME,
-        install_openai_metadata=False,
     ),
     JUNIE_ADAPTER_NAME: Adapter(
         name=JUNIE_ADAPTER_NAME,
         home_environment_variable=None,
         default_home_folder_name=JUNIE_HOME_FOLDER_NAME,
-        install_openai_metadata=False,
     ),
 }
 
 
 def default_source() -> Path:
     return Path(__file__).resolve().parents[1] / DEFAULT_SKILLS_FOLDER_NAME
-
-
-def default_adapter_metadata_source(source: Path, adapter_name: str) -> Path:
-    return source.expanduser().resolve().parent / ADAPTERS_FOLDER_NAME / adapter_name / DEFAULT_SKILLS_FOLDER_NAME
 
 
 def default_destination(adapter_name: str = DEFAULT_ADAPTER_NAME) -> Path:
@@ -164,29 +151,6 @@ def iter_skill_directories(source: Path) -> list[Path]:
         raise FileNotFoundError(f"Skill source directory does not exist: {source}")
 
     return sorted(path for path in source.iterdir() if is_skill_directory(path))
-
-
-def remove_openai_metadata(skill: Path) -> None:
-    metadata = skill / AGENTS_METADATA_FOLDER_NAME / OPENAI_METADATA_FILE_NAME
-    if not metadata.exists():
-        return
-
-    metadata.unlink()
-    agents_directory = metadata.parent
-    if not any(agents_directory.iterdir()):
-        agents_directory.rmdir()
-
-
-def copy_openai_metadata(adapter_metadata_source: Path, skill_name: str, destination_skill: Path) -> None:
-    metadata_source = (
-        adapter_metadata_source / skill_name / AGENTS_METADATA_FOLDER_NAME / OPENAI_METADATA_FILE_NAME
-    )
-    if not metadata_source.is_file():
-        return
-
-    metadata_destination = destination_skill / AGENTS_METADATA_FOLDER_NAME / OPENAI_METADATA_FILE_NAME
-    metadata_destination.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(metadata_source, metadata_destination)
 
 
 def remove_existing_destination(path: Path) -> None:
@@ -309,8 +273,6 @@ def copy_skill(
     destination_skill: Path,
     replace: bool,
     dry_run: bool,
-    adapter: Adapter,
-    adapter_metadata_source: Path,
 ) -> SkillInstallResult:
     if destination_skill.exists():
         if not replace:
@@ -334,9 +296,6 @@ def copy_skill(
             MACOS_METADATA_FILE_NAME,
         ),
     )
-    remove_openai_metadata(destination_skill)
-    if adapter.install_openai_metadata:
-        copy_openai_metadata(adapter_metadata_source, source_skill.name, destination_skill)
     return SkillInstallResult(f"{action} {source_skill.name}", source_skill.name, True)
 
 
@@ -352,7 +311,6 @@ def install_skills(
     source_skills = iter_skill_directories(resolved_source)
     current_skill_names = {source_skill.name for source_skill in source_skills}
     destination = destination.expanduser()
-    adapter_metadata_source = default_adapter_metadata_source(source, adapter.name)
     previous_manifest = load_install_manifest(destination)
 
     if not dry_run:
@@ -377,8 +335,6 @@ def install_skills(
             destination_skill,
             replace,
             dry_run,
-            adapter,
-            adapter_metadata_source,
         )
         results.append(install_result.message)
         if install_result.owns_destination:

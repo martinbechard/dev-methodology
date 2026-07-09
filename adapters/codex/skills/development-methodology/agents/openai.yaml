@@ -1,4 +1,0 @@
-interface:
-  display_name: "Development Methodology"
-  short_description: "Route methodology documentation work"
-  default_prompt: "Use $development-methodology to choose the right documentation workflow, template, and verification path."

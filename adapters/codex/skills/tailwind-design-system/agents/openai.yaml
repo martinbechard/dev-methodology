@@ -1,4 +1,0 @@
-interface:
-  display_name: "Tailwind Design System"
-  short_description: "Tailwind design system guidance"
-  default_prompt: "Use $tailwind-design-system for Tailwind tokens, responsive UI, component styling, and accessibility states."

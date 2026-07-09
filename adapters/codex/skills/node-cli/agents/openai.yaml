@@ -1,4 +1,0 @@
-interface:
-  display_name: "Node CLI"
-  short_description: "Node.js command line guidance"
-  default_prompt: "Use $node-cli for Node command line entrypoints, scripts, filesystem work, and process behavior."

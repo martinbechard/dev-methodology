@@ -1,4 +1,0 @@
-interface:
-  display_name: "High-Level Design Creation"
-  short_description: "Create high-level design artifacts"
-  default_prompt: "Use $create-high-level-design to create a source-backed high-level design from its template."

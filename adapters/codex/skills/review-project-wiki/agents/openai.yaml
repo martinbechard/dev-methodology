@@ -1,4 +1,0 @@
-interface:
-  display_name: "Project Wiki Review"
-  short_description: "Review project wiki methodology artifacts"
-  default_prompt: "Use $review-project-wiki to review this project wiki artifact against its methodology checklist."

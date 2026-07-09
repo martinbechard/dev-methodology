@@ -1,4 +1,0 @@
-interface:
-  display_name: "Careful Coding"
-  short_description: "Cautious, simple coding behavior"
-  default_prompt: "Use $careful-coding to make a surgical, verified code change."

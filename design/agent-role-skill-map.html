@@ -14,7 +14,7 @@
       --color-role: #2563eb;
       --color-router: #0f766e;
       --color-skill: #b45309;
-      --color-specialist: #7c3aed;
+      --color-optional: #7c3aed;
       --color-evidence: #be123c;
       --color-soft-blue: #e8f0ff;
       --color-soft-green: #e4f7f4;
@@ -35,6 +35,7 @@
       --content-max: 1220px;
       --font-sm: 0.92rem;
       --font-xs: 0.78rem;
+      --loadout-collapsed-height: 14rem;
     }
 
     * {
@@ -166,8 +167,8 @@
       background: var(--color-skill);
     }
 
-    .dot.specialist {
-      background: var(--color-specialist);
+    .dot.optional {
+      background: var(--color-optional);
     }
 
     .dot.evidence {
@@ -182,6 +183,10 @@
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: var(--space-4);
+    }
+
+    .agent-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
     .wide-grid {
@@ -213,16 +218,16 @@
       border-top-color: var(--color-role);
     }
 
+    .agent-card {
+      align-content: start;
+    }
+
     .card.router {
       border-top-color: var(--color-router);
     }
 
     .card.skill {
       border-top-color: var(--color-skill);
-    }
-
-    .card.specialist {
-      border-top-color: var(--color-specialist);
     }
 
     .card.evidence {
@@ -252,6 +257,30 @@
       gap: var(--space-2);
     }
 
+    .loadout-details {
+      display: grid;
+      gap: var(--space-3);
+      max-height: var(--loadout-collapsed-height);
+      overflow: hidden;
+      transition: max-height 180ms ease;
+    }
+
+    .agent-card.is-expanded .loadout-details {
+      max-height: none;
+    }
+
+    .tag-group {
+      display: grid;
+      gap: var(--space-2);
+    }
+
+    .tag-label {
+      color: var(--color-ink);
+      font-size: var(--font-xs);
+      font-weight: 780;
+      text-transform: uppercase;
+    }
+
     .tag {
       display: inline-flex;
       padding: 0.25rem 0.48rem;
@@ -277,14 +306,40 @@
       color: var(--color-skill);
     }
 
-    .tag.specialist {
+    .tag.optional {
       background: var(--color-soft-purple);
-      color: var(--color-specialist);
+      color: var(--color-optional);
     }
 
+    .tag.output,
     .tag.evidence {
       background: var(--color-soft-rose);
       color: var(--color-evidence);
+    }
+
+    .expand-button {
+      display: none;
+      width: max-content;
+      margin-top: calc(-1 * var(--space-2));
+      padding: 0.35rem 0.6rem;
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius-small);
+      background: var(--color-panel);
+      color: var(--color-role);
+      cursor: pointer;
+      font: inherit;
+      font-size: var(--font-xs);
+      font-weight: 780;
+    }
+
+    .agent-card.is-expandable .expand-button {
+      display: inline-flex;
+    }
+
+    .expand-button:hover,
+    .expand-button:focus-visible {
+      border-color: var(--color-role);
+      outline: none;
     }
 
     .matrix {
@@ -373,6 +428,10 @@
       table {
         min-width: 820px;
       }
+
+      .agent-grid {
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      }
     }
   </style>
 </head>
@@ -384,14 +443,14 @@
     <div class="legend" aria-label="Legend">
       <span class="pill"><span class="dot role"></span> Core role</span>
       <span class="pill"><span class="dot router"></span> Router input</span>
-      <span class="pill"><span class="dot skill"></span> Skill group</span>
-      <span class="pill"><span class="dot specialist"></span> Specialist role</span>
-      <span class="pill"><span class="dot evidence"></span> Evidence</span>
+      <span class="pill"><span class="dot skill"></span> Primary skill</span>
+      <span class="pill"><span class="dot optional"></span> Optional skill</span>
+      <span class="pill"><span class="dot evidence"></span> Output</span>
     </div>
     <h1 id="page-title">Agent Roles and Skill Loadouts</h1>
     <p class="lede">
       This reference defines the portable agent roles and skill loadouts in the development methodology bundle.
-      It is customer-ready: roles are generic, project-specific setup is documented in AGENTS-PLAN.md, operational routing comes from AGENTS.md files, and skills stay small enough to load only when the current job needs them.
+      It is customer-ready: roles are generic, project-specific setup is documented in AGENTS-PLAN.yaml, operational routing comes from AGENTS.md files, and skills stay small enough to load only when the current job needs them.
     </p>
   </section>
 
@@ -425,23 +484,78 @@
   </section>
 
   <section class="section" aria-labelledby="roles-title">
-    <h2 id="roles-title">Core Role Agents</h2>
-    <div class="grid">
+    <h2 id="roles-title">Role Agent Categories</h2>
+    <p class="note">
+      The role model has three operating categories: agents that maintain this methodology bundle, agents that set up or update a downstream project, and agents used during normal development in that downstream project.
+    </p>
+  </section>
+
+  <section class="section" aria-labelledby="methodology-maintenance-title">
+    <h2 id="methodology-maintenance-title">Methodology Maintenance Agents</h2>
+    <div class="grid agent-grid">
       <article class="card role">
-        <h3>Development Orchestrator</h3>
-        <p>Coordinates multi-step work across agents while preserving bounded context, explicit handoffs, and verification evidence.</p>
+        <h3>Methodology Maintainer</h3>
+        <p>Maintains the reusable methodology artifacts, skill catalog, adapter metadata, README, design HTML, scripts, and regression tests in this repository.</p>
         <div class="tag-row">
-          <span class="tag role">task decomposition</span>
-          <span class="tag role">context packs</span>
-          <span class="tag role">agent routing</span>
-          <span class="tag role">retry policy</span>
-          <span class="tag role">merge policy</span>
+          <span class="tag role">bundle source</span>
+          <span class="tag role">skill catalog</span>
+          <span class="tag role">adapter metadata</span>
+          <span class="tag role">regression tests</span>
+        </div>
+      </article>
+
+      <article class="card role">
+        <h3>Methodology Artifact Reviewer</h3>
+        <p>Reviews changed methodology artifacts for catalog drift, source and adapter mismatch, stale examples, missing tests, and unclear maintenance rules.</p>
+        <div class="tag-row">
+          <span class="tag role">review checklist</span>
+          <span class="tag role">design alignment</span>
+          <span class="tag role">metadata alignment</span>
+          <span class="tag role">verification evidence</span>
+        </div>
+      </article>
+
+      <article class="card role">
+        <h3>Shared Install Verifier</h3>
+        <p>Validates source skills, checks generated Codex metadata, runs repository tests, and refreshes shared installs when distributed skill content changes.</p>
+        <div class="tag-row">
+          <span class="tag role">validate skills</span>
+          <span class="tag role">metadata check</span>
+          <span class="tag role">shared refresh</span>
+          <span class="tag role">diff hygiene</span>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="project-setup-title">
+    <h2 id="project-setup-title">Project Setup And Update Agents</h2>
+    <div class="grid agent-grid">
+      <article class="card role">
+        <h3>Project Agent Setup Agent</h3>
+        <p>Creates or updates AGENTS-PLAN.yaml so a downstream project can validate role agents, skill loadouts, folder routing, nested plans, and AGENTS.md reference before normal work begins.</p>
+        <div class="tag-row">
+          <span class="tag role">create-agents-plan</span>
+          <span class="tag role">development-methodology</span>
+          <span class="tag role">AGENTS-PLAN.yaml</span>
+          <span class="tag role">setup validation</span>
+        </div>
+      </article>
+
+      <article class="card role">
+        <h3>Project Bootstrap Agent</h3>
+        <p>Installs the methodology in a downstream repository, applies initial documentation routes, and writes local AGENTS.md guidance from project evidence.</p>
+        <div class="tag-row">
+          <span class="tag role">documentation-bootstrap</span>
+          <span class="tag role">repository survey</span>
+          <span class="tag role">local routing</span>
+          <span class="tag role">validation commands</span>
         </div>
       </article>
 
       <article class="card role">
         <h3>Project Organiser</h3>
-        <p>Classifies artifacts by purpose, chooses paths from the project taxonomy, applies path intent, and audits generated files after runs.</p>
+        <p>Classifies downstream project artifacts by purpose, chooses paths from the project taxonomy, applies path intent, and audits generated files after setup or update runs.</p>
         <div class="tag-row">
           <span class="tag role">project taxonomy</span>
           <span class="tag role">path intent</span>
@@ -450,14 +564,20 @@
         </div>
       </article>
 
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="development-use-title">
+    <h2 id="development-use-title">Development Use Agents</h2>
+    <div class="grid agent-grid">
       <article class="card role">
-        <h3>Project Agent Setup Agent</h3>
-        <p>Creates AGENTS-PLAN.md so a project can validate role agents, skill loadouts, folder routing, nested plans, and AGENTS.md reference before normal work begins.</p>
+        <h3>Development Orchestrator</h3>
+        <p>Coordinates multi-step downstream development work across agents while preserving bounded context, explicit handoffs, and verification evidence.</p>
         <div class="tag-row">
-          <span class="tag role">create-agents-plan</span>
-          <span class="tag role">development-methodology</span>
-          <span class="tag role">AGENTS-PLAN.md</span>
-          <span class="tag role">setup validation</span>
+          <span class="tag role">task decomposition</span>
+          <span class="tag role">context packs</span>
+          <span class="tag role">agent routing</span>
+          <span class="tag role">merge policy</span>
         </div>
       </article>
 
@@ -496,7 +616,7 @@
 
       <article class="card role">
         <h3>Documentation Architect</h3>
-        <p>Selects the right documentation route and loads one focused artifact creation skill for the requested methodology artifact.</p>
+        <p>Selects the right downstream documentation route and loads one focused artifact creation skill for the requested methodology artifact.</p>
         <div class="tag-row">
           <span class="tag role">development-methodology</span>
           <span class="tag role">artifact creation</span>
@@ -507,7 +627,7 @@
 
       <article class="card role">
         <h3>Artifact Review Agent</h3>
-        <p>Reviews finished methodology artifacts with an artifact-specific checklist and passes evidence to the shared page verifier.</p>
+        <p>Reviews finished downstream methodology artifacts with an artifact-specific checklist and passes evidence to the shared page verifier.</p>
         <div class="tag-row">
           <span class="tag role">artifact checklist</span>
           <span class="tag role">documentation-page-verifier</span>
@@ -566,155 +686,54 @@
           <span class="tag role">branch evidence</span>
         </div>
       </article>
-    </div>
-  </section>
 
-  <section class="section" aria-labelledby="loadout-title">
-    <h2 id="loadout-title">Default Skill Loadouts</h2>
-    <div class="matrix">
-      <table>
-        <thead>
-          <tr>
-            <th>Role</th>
-            <th>Primary skills</th>
-            <th>Conditional skills</th>
-            <th>Output contract</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><span class="name">Development Orchestrator</span></td>
-            <td>structured-design, structured-explanation, manage-backlog, agent-claim, agent-work-merge.</td>
-            <td>project-wiki-query for repo context; review-structured when assessing agent outputs.</td>
-            <td>Task breakdown, context pack list, assigned roles, handoff plan, retry or escalation decision.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Project Organiser</span></td>
-            <td>project-wiki-query, structured-design, structured-explanation.</td>
-            <td>code-project-wiki when file placement affects docs/wiki; agent-claim when coordinating multi-agent ownership.</td>
-            <td>Approved path, placement rationale, taxonomy update, or file-placement audit.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Project Agent Setup Agent</span></td>
-            <td>development-methodology, create-agents-plan, documentation-page-verifier.</td>
-            <td>documentation-bootstrap for first-time repository setup; code-project-wiki when docs/wiki routes need code-aware evidence.</td>
-            <td>Root AGENTS-PLAN.md, nested AGENTS-PLAN.md recommendations, role and skill loadout map, and validation evidence.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Coding Agent</span></td>
-            <td>careful-coding, ast-grep, fix-explanation, project-wiki-query.</td>
-            <td>Stack skills selected from AGENTS.md: TypeScript, Next.js, Electron, API routes, DB, LangGraph, tests, or local model integration.</td>
-            <td>Patch, verification evidence, changed-file summary, and concise fix explanation.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Code Review Agent</span></td>
-            <td>review-structured, ast-grep, careful-coding, project-wiki-query.</td>
-            <td>Stack skills matching the diff; documentation-page-verifier for documentation artifacts.</td>
-            <td>Findings first, severity, file references, open questions, and residual risk.</td>
-          </tr>
-          <tr>
-            <td><span class="name">QA And Verification Agent</span></td>
-            <td>jest, vitest, playwright, review-structured, structured-explanation.</td>
-            <td>Stack skills matching the validation target; project-wiki when wiki checks are required.</td>
-            <td>Command results, coverage notes, skipped-check rationale, and PASS WARN FAIL status.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Documentation Architect</span></td>
-            <td>development-methodology plus one creation skill: create-project-wiki, create-functional-spec, create-architecture, create-high-level-design, or create-module-design.</td>
-            <td>documentation-bootstrap, documentation-reverse-engineering, code-project-wiki, project-wiki-query, documentation-page-verifier.</td>
-            <td>Source-backed methodology artifact that follows the shared page contract and selected template.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Artifact Review Agent</span></td>
-            <td>One artifact review skill: review-project-wiki, review-functional-spec, review-architecture, review-high-level-design, or review-module-design.</td>
-            <td>documentation-page-verifier for shared checks; project-wiki-query for repo context.</td>
-            <td>Completed review checklist, verifier assessment, findings, and required corrections.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Wiki Query Agent</span></td>
-            <td>project-wiki-query, project-wiki-research, code-project-wiki.</td>
-            <td>documentation-page-verifier when an answer exposes a durable documentation gap.</td>
-            <td>Wiki-backed answer, source verification notes, and raw fragment recommendation when needed.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Wiki Ingest Agent</span></td>
-            <td>project-wiki, project-wiki-topic-writer, project-wiki-topic-verifier.</td>
-            <td>project-wiki-research for raw reports; code-project-wiki for code-aware pages.</td>
-            <td>Durable wiki page, processed-source links, lint and verifier evidence, digest or leaf updates.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Public Source Collector</span></td>
-            <td>project-wiki-research, project-wiki.</td>
-            <td>project-wiki-topic-verifier when validating source fit; structured-explanation for collection summaries.</td>
-            <td>Raw-only source artifact, timestamp window, exclusions, and ingest handoff.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Backlog Steward</span></td>
-            <td>create-backlog, manage-backlog, agent-claim, structured-explanation.</td>
-            <td>project-wiki-query when backlog items depend on documented system context.</td>
-            <td>Backlog item, status update, claim record, blocked reason, or completion summary.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Merge Coordinator</span></td>
-            <td>agent-work-merge, agent-claim, review-structured, fix-explanation.</td>
-            <td>Stack skills for conflict resolution; QA skills for post-merge verification.</td>
-            <td>Merged branch, conflict resolution record, verification evidence, and follow-up ownership.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="specialists-title">
-    <h2 id="specialists-title">Optional Specialist Roles</h2>
-    <div class="grid">
-      <article class="card specialist">
+      <article class="card role">
         <h3>E2E Browser Agent</h3>
         <p>Owns browser state, dev server coordination, authenticated workflows, and Playwright diagnostics when E2E work needs a distinct runtime boundary.</p>
         <div class="tag-row">
-          <span class="tag specialist">playwright</span>
-          <span class="tag specialist">browser state</span>
-          <span class="tag specialist">console checks</span>
+          <span class="tag role">playwright</span>
+          <span class="tag role">browser state</span>
+          <span class="tag role">console checks</span>
         </div>
       </article>
 
-      <article class="card specialist">
+      <article class="card role">
         <h3>UX Designer Or Reviewer</h3>
         <p>Handles design artifacts, interaction review, accessibility concerns, and independent usability assessment without changing code authority.</p>
         <div class="tag-row">
-          <span class="tag specialist">tailwind-design-system</span>
-          <span class="tag specialist">react-server-components</span>
-          <span class="tag specialist">visual review</span>
+          <span class="tag role">tailwind-design-system</span>
+          <span class="tag role">react-server-components</span>
+          <span class="tag role">visual review</span>
         </div>
       </article>
 
-      <article class="card specialist">
+      <article class="card role">
         <h3>Security Reviewer</h3>
         <p>Reviews threat, data, dependency, auth, logging, prompt, and exploitability concerns with read-only authority and explicit findings.</p>
         <div class="tag-row">
-          <span class="tag specialist">data rules</span>
-          <span class="tag specialist">auth boundary</span>
-          <span class="tag specialist">supply chain</span>
+          <span class="tag role">data rules</span>
+          <span class="tag role">auth boundary</span>
+          <span class="tag role">supply chain</span>
         </div>
       </article>
 
-      <article class="card specialist">
+      <article class="card role">
         <h3>Runtime Diagnostician</h3>
         <p>Investigates long-running local runtime failures with logs, processes, exclusive resources, and a tight reproduction loop.</p>
         <div class="tag-row">
-          <span class="tag specialist">logs</span>
-          <span class="tag specialist">runtime state</span>
-          <span class="tag specialist">reproduction</span>
+          <span class="tag role">logs</span>
+          <span class="tag role">runtime state</span>
+          <span class="tag role">reproduction</span>
         </div>
       </article>
 
-      <article class="card specialist">
+      <article class="card role">
         <h3>Prompt Contract Reviewer</h3>
         <p>Reviews prompt protocol, tool-call safety, schema promises, evaluation coverage, and model-facing data boundaries.</p>
         <div class="tag-row">
-          <span class="tag specialist">langgraph</span>
-          <span class="tag specialist">harness-implementation</span>
-          <span class="tag specialist">evaluation</span>
+          <span class="tag role">langgraph</span>
+          <span class="tag role">harness-implementation</span>
+          <span class="tag role">evaluation</span>
         </div>
       </article>
     </div>
@@ -825,6 +844,16 @@
         </thead>
         <tbody>
           <tr>
+            <td><span class="name">User changes this methodology bundle</span></td>
+            <td>Use a Methodology Maintenance Agent so source skills, metadata, README, design HTML, tests, and shared-install behavior stay aligned.</td>
+            <td>development-methodology, review-structured, documentation-page-verifier, validation scripts, and metadata scripts as needed.</td>
+          </tr>
+          <tr>
+            <td><span class="name">User sets up or updates a downstream project</span></td>
+            <td>Use a Project Setup And Update Agent to create or refresh AGENTS-PLAN.yaml, local AGENTS.md routing, documentation routes, and project-specific validation evidence.</td>
+            <td>development-methodology, create-agents-plan, documentation-bootstrap, documentation-page-verifier, and code-project-wiki when code-aware docs are involved.</td>
+          </tr>
+          <tr>
             <td><span class="name">User asks for code change</span></td>
             <td>Use Coding Agent unless the task is primarily review, verification, documentation, or merge coordination.</td>
             <td>careful-coding, ast-grep, project-wiki-query, plus stack skills from AGENTS.md.</td>
@@ -841,7 +870,7 @@
           </tr>
           <tr>
             <td><span class="name">User asks to set up project agents or skills</span></td>
-            <td>Use Project Agent Setup Agent to create AGENTS-PLAN.md and decide whether nested plans are needed.</td>
+            <td>Use Project Agent Setup Agent to create AGENTS-PLAN.yaml and decide whether nested plans are needed.</td>
             <td>development-methodology, create-agents-plan, documentation-page-verifier, and documentation-bootstrap for first-time setup.</td>
           </tr>
           <tr>
@@ -886,5 +915,182 @@
     </div>
   </section>
 </main>
+  <script>
+    const OVERFLOW_TOLERANCE_PX = 1;
+
+    const ROLE_LOADOUTS = {
+      "Methodology Maintainer": {
+        primary: ["development-methodology", "skill-specific creation or review skills", "structured-design", "structured-explanation"],
+        optional: ["openai_metadata.py", "install scripts", "validation scripts"],
+        outputs: ["aligned source skill", "aligned metadata", "README alignment", "design HTML alignment", "test evidence"]
+      },
+      "Methodology Artifact Reviewer": {
+        primary: ["review-structured", "documentation-page-verifier", "development-methodology"],
+        optional: ["artifact-specific review skills", "template review", "checklist review"],
+        outputs: ["finding-first review", "alignment notes", "required corrections", "residual risk"]
+      },
+      "Shared Install Verifier": {
+        primary: ["validate-agent-skills.py", "openai_metadata.py", "unittest discovery", "refresh-shared-skills.py"],
+        optional: ["project wiki checks", "wiki status", "wiki lint"],
+        outputs: ["source coherence", "metadata coherence", "test results", "shared install evidence"]
+      },
+      "Project Agent Setup Agent": {
+        primary: ["development-methodology", "create-agents-plan", "documentation-page-verifier"],
+        optional: ["documentation-bootstrap", "code-project-wiki", "code-aware routing"],
+        outputs: ["root AGENTS-PLAN.yaml", "nested AGENTS-PLAN.yaml recommendations", "role map", "skill loadout map", "validation evidence"]
+      },
+      "Project Bootstrap Agent": {
+        primary: ["documentation-bootstrap", "development-methodology", "structured-design"],
+        optional: ["documentation-reverse-engineering", "create-project-wiki", "existing codebase survey"],
+        outputs: ["initial documentation", "local routing guidance", "setup evidence", "validation commands"]
+      },
+      "Project Organiser": {
+        primary: ["project-wiki-query", "structured-design", "structured-explanation"],
+        optional: ["code-project-wiki", "agent-claim", "multi-agent ownership"],
+        outputs: ["approved path", "placement rationale", "taxonomy update", "file-placement audit"]
+      },
+      "Development Orchestrator": {
+        primary: ["structured-design", "structured-explanation", "manage-backlog", "agent-claim", "agent-work-merge"],
+        optional: ["project-wiki-query", "review-structured", "agent output review"],
+        outputs: ["task breakdown", "context pack list", "assigned roles", "handoff plan", "retry decision"]
+      },
+      "Coding Agent": {
+        primary: ["careful-coding", "ast-grep", "fix-explanation", "project-wiki-query"],
+        optional: ["typescript", "nextjs", "electron", "api-routes", "database", "langgraph", "tests"],
+        outputs: ["patch", "verification evidence", "changed-file summary", "fix explanation"]
+      },
+      "Code Review Agent": {
+        primary: ["review-structured", "ast-grep", "careful-coding", "project-wiki-query"],
+        optional: ["stack skills matching diff", "documentation-page-verifier"],
+        outputs: ["findings first", "severity", "file references", "open questions", "residual risk"]
+      },
+      "QA And Verification Agent": {
+        primary: ["jest", "vitest", "playwright", "review-structured", "structured-explanation"],
+        optional: ["stack skills matching target", "project-wiki"],
+        outputs: ["command results", "coverage notes", "skipped-check rationale", "PASS WARN FAIL status"]
+      },
+      "Documentation Architect": {
+        primary: ["development-methodology", "create-project-wiki", "create-functional-spec", "create-architecture", "create-high-level-design", "create-module-design"],
+        optional: ["documentation-bootstrap", "documentation-reverse-engineering", "code-project-wiki", "project-wiki-query", "documentation-page-verifier"],
+        outputs: ["source-backed artifact", "shared page contract", "selected template"]
+      },
+      "Artifact Review Agent": {
+        primary: ["review-project-wiki", "review-functional-spec", "review-architecture", "review-high-level-design", "review-module-design"],
+        optional: ["documentation-page-verifier", "project-wiki-query"],
+        outputs: ["completed review checklist", "verifier assessment", "findings", "required corrections"]
+      },
+      "Wiki Query Agent": {
+        primary: ["project-wiki-query", "project-wiki-research", "code-project-wiki"],
+        optional: ["documentation-page-verifier", "durable documentation gap"],
+        outputs: ["wiki-backed answer", "source verification notes", "raw fragment recommendation"]
+      },
+      "Wiki Ingest Agent": {
+        primary: ["project-wiki", "project-wiki-topic-writer", "project-wiki-topic-verifier"],
+        optional: ["project-wiki-research", "code-project-wiki"],
+        outputs: ["durable wiki page", "processed-source links", "lint evidence", "verifier evidence", "digest or leaf updates"]
+      },
+      "Public Source Collector": {
+        primary: ["project-wiki-research", "project-wiki"],
+        optional: ["project-wiki-topic-verifier", "structured-explanation"],
+        outputs: ["raw-only source artifact", "timestamp window", "exclusions", "ingest handoff"]
+      },
+      "Backlog Steward": {
+        primary: ["create-backlog", "manage-backlog", "agent-claim", "structured-explanation"],
+        optional: ["project-wiki-query", "documented system context"],
+        outputs: ["backlog item", "status update", "claim record", "blocked reason", "completion summary"]
+      },
+      "Merge Coordinator": {
+        primary: ["agent-work-merge", "agent-claim", "review-structured", "fix-explanation"],
+        optional: ["stack skills for conflict resolution", "QA skills"],
+        outputs: ["merged branch", "conflict resolution record", "verification evidence", "follow-up ownership"]
+      },
+      "E2E Browser Agent": {
+        primary: ["playwright", "structured-explanation", "project-wiki-query"],
+        optional: ["stack skills matching app", "browser tools", "runtime tools"],
+        outputs: ["browser-state notes", "E2E evidence", "console findings", "network findings", "reproduction steps"]
+      },
+      "UX Designer Or Reviewer": {
+        primary: ["tailwind-design-system", "react-server-components", "review-structured"],
+        optional: ["frontend stack skills", "playwright", "visual behavior evidence"],
+        outputs: ["design recommendation", "usability finding", "accessibility note", "visual verification evidence"]
+      },
+      "Security Reviewer": {
+        primary: ["review-structured", "project-wiki-query", "structured-explanation"],
+        optional: ["auth skills", "api skills", "database skills", "prompt skills", "runtime skills", "dependency skills"],
+        outputs: ["threat report", "finding report", "severity", "evidence", "affected files", "residual risk"]
+      },
+      "Runtime Diagnostician": {
+        primary: ["structured-explanation", "careful-coding", "project-wiki-query"],
+        optional: ["stack skills", "test skills", "playwright", "browser-visible failures"],
+        outputs: ["reproduction", "logs", "suspected boundary", "fix path", "escalation path", "verification result"]
+      },
+      "Prompt Contract Reviewer": {
+        primary: ["langgraph", "harness-implementation", "review-structured"],
+        optional: ["tool-runtime-implementation", "plan-engine-implementation", "local-model-integration", "evaluation skills"],
+        outputs: ["prompt contract findings", "schema risks", "tool-call safety notes", "evaluation gaps"]
+      }
+    };
+
+    function createTag(text, kind) {
+      const tag = document.createElement("span");
+      tag.className = `tag ${kind}`;
+      tag.textContent = text;
+      return tag;
+    }
+
+    function createTagGroup(label, tags, kind) {
+      const group = document.createElement("div");
+      group.className = "tag-group";
+
+      const heading = document.createElement("span");
+      heading.className = "tag-label";
+      heading.textContent = label;
+      group.appendChild(heading);
+
+      const row = document.createElement("div");
+      row.className = "tag-row";
+      tags.forEach((tagText) => row.appendChild(createTag(tagText, kind)));
+      group.appendChild(row);
+
+      return group;
+    }
+
+    function renderRoleLoadouts() {
+      document.querySelectorAll("article.card.role").forEach((card) => {
+        const roleName = card.querySelector("h3")?.textContent?.trim();
+        const loadout = ROLE_LOADOUTS[roleName];
+        if (!loadout) return;
+
+        card.classList.add("agent-card");
+
+        const details = document.createElement("div");
+        details.className = "loadout-details";
+        details.appendChild(createTagGroup("Primary skills", loadout.primary, "skill"));
+        details.appendChild(createTagGroup("Optional skills", loadout.optional, "optional"));
+        details.appendChild(createTagGroup("Outputs", loadout.outputs, "output"));
+        card.appendChild(details);
+
+        const button = document.createElement("button");
+        button.className = "expand-button";
+        button.type = "button";
+        button.setAttribute("aria-expanded", "false");
+        button.textContent = "Show more";
+        button.addEventListener("click", () => {
+          const isExpanded = card.classList.toggle("is-expanded");
+          button.setAttribute("aria-expanded", String(isExpanded));
+          button.textContent = isExpanded ? "Show less" : "Show more";
+        });
+        card.appendChild(button);
+
+        requestAnimationFrame(() => {
+          if (details.scrollHeight > details.clientHeight + OVERFLOW_TOLERANCE_PX) {
+            card.classList.add("is-expandable");
+          }
+        });
+      });
+    }
+
+    renderRoleLoadouts();
+  </script>
 </body>
 </html>

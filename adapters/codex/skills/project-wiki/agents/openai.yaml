@@ -1,4 +1,0 @@
-interface:
-  display_name: "project-wiki"
-  short_description: "Opinionated docs/wiki synthesis maintenance"
-  default_prompt: "Use $project-wiki to create, lint, or update the repository docs/wiki synthesis layer."

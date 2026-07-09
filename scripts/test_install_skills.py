@@ -19,7 +19,6 @@ SECOND_SKILL_FILE_CONTENT = "---\nname: beta\ndescription: Beta skill.\n---\n"
 SYMLINK_TARGET_SKILL_FILE_CONTENT = "---\nname: alpha\ndescription: Symlink target skill.\n---\n"
 CACHE_FILE_CONTENT = "compiled"
 SOURCE_OPENAI_METADATA = "display_name: Source Alpha\n"
-ADAPTER_OPENAI_METADATA = "display_name: Adapter Alpha\n"
 MANIFEST_SCHEMA_VERSION = 1
 BUNDLE_ID = "dev-methodology"
 SKILL_ARTIFACT_TYPE = "skill"
@@ -188,7 +187,7 @@ class InstallSkillsTests(unittest.TestCase):
                 (destination / "alpha" / "SKILL.md").read_text(encoding="utf-8"),
             )
 
-    def test_generic_install_excludes_openai_metadata_from_core_skill(self) -> None:
+    def test_install_keeps_openai_metadata_with_source_skill(self) -> None:
         installer = load_installer()
 
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -205,9 +204,12 @@ class InstallSkillsTests(unittest.TestCase):
                 exit_code = installer.main(["--source", str(source), "--dest", str(destination)])
 
             self.assertEqual(exit_code, installer.SUCCESS_EXIT_CODE)
-            self.assertFalse((destination / "alpha" / "agents" / "openai.yaml").exists())
+            self.assertEqual(
+                SOURCE_OPENAI_METADATA,
+                (destination / "alpha" / "agents" / "openai.yaml").read_text(encoding="utf-8"),
+            )
 
-    def test_codex_install_uses_adapter_openai_metadata(self) -> None:
+    def test_codex_install_keeps_openai_metadata_with_source_skill(self) -> None:
         installer = load_installer()
 
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -218,17 +220,13 @@ class InstallSkillsTests(unittest.TestCase):
             source_metadata = alpha / "agents" / "openai.yaml"
             source_metadata.parent.mkdir()
             source_metadata.write_text(SOURCE_OPENAI_METADATA, encoding="utf-8")
-            adapter_metadata = root / "adapters" / "codex" / "skills" / "alpha" / "agents" / "openai.yaml"
-            adapter_metadata.parent.mkdir(parents=True)
-            adapter_metadata.write_text(ADAPTER_OPENAI_METADATA, encoding="utf-8")
-
             output = io.StringIO()
             with redirect_stdout(output):
                 exit_code = installer.main(["--adapter", "codex", "--source", str(source), "--dest", str(destination)])
 
             self.assertEqual(exit_code, installer.SUCCESS_EXIT_CODE)
             self.assertEqual(
-                ADAPTER_OPENAI_METADATA,
+                SOURCE_OPENAI_METADATA,
                 (destination / "alpha" / "agents" / "openai.yaml").read_text(encoding="utf-8"),
             )
 

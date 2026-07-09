@@ -420,7 +420,7 @@
           <li>Coding Agent edits code across stacks through skill dispatch.</li>
           <li>Code Review Agent reviews with fresh context and read-only authority.</li>
           <li>QA And Verification Agent proves outcomes with commands and evidence.</li>
-          <li>Project Agent Setup Agent creates AGENTS-PLAN.md for role and skill routing setup.</li>
+          <li>Project Agent Setup Agent creates AGENTS-PLAN.yaml for role and skill routing setup.</li>
           <li>Project Organiser owns file placement and project taxonomy.</li>
         </ul>
       </article>
@@ -447,16 +447,16 @@
         <ul>
           <li>It names the companion skills for setup, reverse engineering, project wiki work, artifact creation, artifact review, and page verification.</li>
           <li>It enforces loading discipline: load the routing skill, then exactly one matching creation skill for a normal artifact creation job.</li>
-          <li>It chooses the document route: AGENTS-PLAN.md, project wiki, functional specification, architecture, high-level design, or module design.</li>
+          <li>It chooses the document route: AGENTS-PLAN.yaml, project wiki, functional specification, architecture, high-level design, or module design.</li>
           <li>It provides the shared page contract and verification expectations so every routed artifact has the same durable structure.</li>
         </ul>
       </article>
 
       <article class="card config">
-        <h3>AGENTS-PLAN.md</h3>
-        <p>AGENTS-PLAN.md is the setup and validation artifact for project agent roles, skill loadouts, folder routing, nested plan placement, and customer-safe example boundaries.</p>
+        <h3>AGENTS-PLAN.yaml</h3>
+        <p>AGENTS-PLAN.yaml is the setup and validation artifact for project agent roles, skill loadouts, folder routing, nested plan placement, and customer-safe example boundaries.</p>
         <ul>
-          <li>It is created with create-agents-plan before routing guidance is copied into AGENTS.md.</li>
+          <li>It is created with create-agents-plan before AGENTS.md routing guidance is written or refreshed.</li>
           <li>It records source evidence for role and skill choices, including proprietary validation notes when the file lives inside a private project.</li>
           <li>It can exist at the project root and inside subfolders with distinct technology, runtime, data, or verification needs.</li>
           <li>It is a planning artifact, not the normal runtime reference loaded for every task.</li>
@@ -504,7 +504,7 @@
         <ul>
           <li><code>scripts/refresh-shared-skills.py</code> replaces the shared machine installs from the current source tree.</li>
           <li><code>.dev-methodology-install.json</code> records the skills this catalog installed into each shared destination.</li>
-          <li>Before a rename or deletion, sweep the source catalog for the old skill id and update role definitions, adapter metadata, skills, dispatch profiles, workflow examples, design documents, scripts, and tests.</li>
+          <li>Before a rename or deletion, sweep the source catalog for the old skill id and update role definitions, Codex metadata, skills, dispatch profiles, workflow examples, design documents, scripts, and tests.</li>
           <li>Creation skills keep one artifact template route each and load only when that artifact type is the job at hand.</li>
           <li>Review skills keep checklist templates named review-checklist-review-target.md and completed checklist artifacts named artifact-name.review-checklist-review-target.md.</li>
           <li>Renamed or deleted skills are pruned only when the ownership manifest says this catalog installed the old artifact.</li>
@@ -657,7 +657,7 @@
         <p>The root AGENTS.md is the repository's contract with the shared catalog. Agent routers load it after host safety rules and before nested AGENTS.md files.</p>
         <ul>
           <li>Project family and application tiers tell the router what kind of system it is handling.</li>
-          <li>AGENTS-PLAN.md is the setup artifact that explains why these routing choices exist.</li>
+          <li>AGENTS-PLAN.yaml is the setup artifact that explains why these routing choices exist.</li>
           <li>Tier-to-path mappings tell the router which local paths imply Front-end, API, static pages, DB, or other guidance.</li>
           <li>Skills router notes name the shared skills normally loaded for those tiers.</li>
           <li>Validation and data rules tell role agents which checks and boundaries apply after work is done.</li>

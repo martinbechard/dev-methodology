@@ -1,4 +1,0 @@
-interface:
-  display_name: "Project Wiki Creation"
-  short_description: "Create project wiki methodology artifacts"
-  default_prompt: "Use $create-project-wiki to create a source-backed project wiki methodology artifact from its template."

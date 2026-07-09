@@ -1,4 +1,0 @@
-interface:
-  display_name: "TypeScript ESM"
-  short_description: "TypeScript ECMAScript module guidance"
-  default_prompt: "Use $typescript-esm for TypeScript ESM imports, exports, builds, or runtime module behavior."
