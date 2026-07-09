@@ -657,8 +657,6 @@ agents:
       append_startup_reads:
         - AGENTS.md
         - package.json
-      append_common_skills:
-        - project-local-coding-rules
     qa-and-verification-agent:
       validation_commands:
         build: pnpm run build
@@ -666,11 +664,6 @@ agents:
 
 skills:
   packs:
-    project-local-coding-rules:
-      includes:
-        - careful-coding
-        - ast-grep
-        - review-structured
     nextjs-api-work:
       includes:
         - typescript-strict
