@@ -67,6 +67,7 @@ def build_install_command(target: RefreshTarget, dry_run: bool) -> list[str]:
         "--adapter",
         target.adapter,
         "--replace",
+        "--prune-owned",
     ]
     if target.destination is not None:
         command.extend(["--dest", str(target.destination)])

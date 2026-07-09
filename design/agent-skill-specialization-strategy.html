@@ -444,6 +444,18 @@
           <li>Folder definitions are for routing and narrowing, not for creating folder-specific agents.</li>
         </ul>
       </article>
+
+      <article class="card rule">
+        <h3>Shared Catalog Lifecycle</h3>
+        <p>Shared installs are synchronized from this source catalog and keep an ownership boundary for cleanup.</p>
+        <ul>
+          <li><code>scripts/refresh-shared-skills.py</code> replaces the shared machine installs from the current source tree.</li>
+          <li><code>.dev-methodology-install.json</code> records the skills this catalog installed into each shared destination.</li>
+          <li>Renamed or deleted skills are pruned only when the ownership manifest says this catalog installed the old artifact.</li>
+          <li>Runtime agent metadata packaged inside a skill is refreshed and pruned with that owned skill.</li>
+          <li>The first refresh without a manifest writes the baseline and skips pruning so unowned local skills stay untouched.</li>
+        </ul>
+      </article>
     </div>
   </section>
 

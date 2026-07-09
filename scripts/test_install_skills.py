@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib.util
 import io
+import json
 import os
 import tempfile
 import unittest
@@ -19,6 +20,9 @@ SYMLINK_TARGET_SKILL_FILE_CONTENT = "---\nname: alpha\ndescription: Symlink targ
 CACHE_FILE_CONTENT = "compiled"
 SOURCE_OPENAI_METADATA = "display_name: Source Alpha\n"
 ADAPTER_OPENAI_METADATA = "display_name: Adapter Alpha\n"
+MANIFEST_SCHEMA_VERSION = 1
+BUNDLE_ID = "dev-methodology"
+SKILL_ARTIFACT_TYPE = "skill"
 
 
 def load_installer() -> ModuleType:
@@ -37,6 +41,37 @@ class InstallSkillsTests(unittest.TestCase):
         skill.mkdir(parents=True)
         (skill / "SKILL.md").write_text(content, encoding="utf-8")
         return skill
+
+    def create_manifest(self, destination: Path, skill_names: list[str]) -> None:
+        manifest = {
+            "schema_version": MANIFEST_SCHEMA_VERSION,
+            "bundle_id": BUNDLE_ID,
+            "adapter": "generic",
+            "source": "test-source",
+            "artifacts": [
+                {
+                    "type": SKILL_ARTIFACT_TYPE,
+                    "name": skill_name,
+                    "path": skill_name,
+                }
+                for skill_name in skill_names
+            ],
+        }
+        destination.mkdir(parents=True, exist_ok=True)
+        (destination / ".dev-methodology-install.json").write_text(
+            json.dumps(manifest, sort_keys=True),
+            encoding="utf-8",
+        )
+
+    def read_manifest_skill_names(self, destination: Path) -> list[str]:
+        manifest = json.loads(
+            (destination / ".dev-methodology-install.json").read_text(encoding="utf-8")
+        )
+        return [
+            artifact["name"]
+            for artifact in manifest["artifacts"]
+            if artifact["type"] == SKILL_ARTIFACT_TYPE
+        ]
 
     def test_installs_skill_directories_and_ignores_generated_cache(self) -> None:
         installer = load_installer()
@@ -217,6 +252,103 @@ class InstallSkillsTests(unittest.TestCase):
             self.assertIn(f"destination {destination}", output.getvalue())
             self.assertIn("would install alpha", output.getvalue())
             self.assertFalse(destination.exists())
+
+    def test_prune_owned_removes_deleted_skill_but_preserves_unowned_skill(self) -> None:
+        installer = load_installer()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            source = root / "source"
+            destination = root / "dest"
+            self.create_skill(source, "alpha")
+            self.create_skill(destination, "alpha", UPDATED_SKILL_FILE_CONTENT)
+            self.create_skill(destination, "obsolete", SECOND_SKILL_FILE_CONTENT)
+            self.create_skill(destination, "local-only", SECOND_SKILL_FILE_CONTENT)
+            self.create_manifest(destination, ["alpha", "obsolete"])
+
+            output = io.StringIO()
+            with redirect_stdout(output):
+                exit_code = installer.main(
+                    [
+                        "--source",
+                        str(source),
+                        "--dest",
+                        str(destination),
+                        "--replace",
+                        "--prune-owned",
+                    ]
+                )
+
+            self.assertEqual(exit_code, installer.SUCCESS_EXIT_CODE)
+            self.assertFalse((destination / "obsolete").exists())
+            self.assertTrue((destination / "local-only" / "SKILL.md").is_file())
+            self.assertEqual(["alpha"], self.read_manifest_skill_names(destination))
+            self.assertIn("pruned obsolete obsolete", output.getvalue())
+
+    def test_prune_owned_bootstraps_manifest_without_deleting_unknown_destination(self) -> None:
+        installer = load_installer()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            source = root / "source"
+            destination = root / "dest"
+            self.create_skill(source, "alpha")
+            self.create_skill(destination, "legacy", SECOND_SKILL_FILE_CONTENT)
+
+            output = io.StringIO()
+            with redirect_stdout(output):
+                exit_code = installer.main(
+                    [
+                        "--source",
+                        str(source),
+                        "--dest",
+                        str(destination),
+                        "--replace",
+                        "--prune-owned",
+                    ]
+                )
+
+            self.assertEqual(exit_code, installer.SUCCESS_EXIT_CODE)
+            self.assertTrue((destination / "legacy" / "SKILL.md").is_file())
+            self.assertEqual(["alpha"], self.read_manifest_skill_names(destination))
+            self.assertIn("prune skipped; no ownership manifest", output.getvalue())
+
+    def test_dry_run_prune_owned_reports_without_deleting_or_rewriting_manifest(self) -> None:
+        installer = load_installer()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            source = root / "source"
+            destination = root / "dest"
+            self.create_skill(source, "alpha")
+            self.create_skill(destination, "alpha", UPDATED_SKILL_FILE_CONTENT)
+            self.create_skill(destination, "obsolete", SECOND_SKILL_FILE_CONTENT)
+            self.create_manifest(destination, ["alpha", "obsolete"])
+
+            before_manifest = (destination / ".dev-methodology-install.json").read_text(
+                encoding="utf-8"
+            )
+            output = io.StringIO()
+            with redirect_stdout(output):
+                exit_code = installer.main(
+                    [
+                        "--source",
+                        str(source),
+                        "--dest",
+                        str(destination),
+                        "--replace",
+                        "--prune-owned",
+                        "--dry-run",
+                    ]
+                )
+
+            self.assertEqual(exit_code, installer.SUCCESS_EXIT_CODE)
+            self.assertTrue((destination / "obsolete" / "SKILL.md").is_file())
+            self.assertEqual(
+                before_manifest,
+                (destination / ".dev-methodology-install.json").read_text(encoding="utf-8"),
+            )
+            self.assertIn("would prune obsolete obsolete", output.getvalue())
 
 
 if __name__ == "__main__":

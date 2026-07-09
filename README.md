@@ -85,6 +85,12 @@ The refresh covers the shared AGENTS_HOME or ~/.agents install, the direct ~/.co
 python3 scripts/refresh-shared-skills.py --dry-run
 ```
 
+Each shared destination keeps an ownership manifest named .dev-methodology-install.json. During shared refresh, prune mode removes obsolete skills that this repository previously installed and leaves unowned local skills alone. If a destination has no ownership manifest, the refresh writes one and skips pruning for that run. Run a refresh before planned renames or deletions so later cleanup has an ownership baseline.
+
+Runtime agent metadata packaged inside an owned skill is refreshed and pruned with that skill. Future standalone agent definition folders should be added to the ownership manifest before any prune path is allowed to remove them.
+
+When a source skill is renamed or deleted, use the dry run to confirm that the old owned skill is reported as obsolete before running the real refresh.
+
 ## Bundled Skill Inventory
 
 The wiki and development-wiki skills are:

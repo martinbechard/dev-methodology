@@ -2,16 +2,19 @@
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import shutil
 import sys
 from collections.abc import Sequence
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import NamedTuple, Optional
 
 
 SUCCESS_EXIT_CODE = 0
 ERROR_EXIT_CODE = 1
+MANIFEST_SCHEMA_VERSION = 1
 DEFAULT_SKILLS_FOLDER_NAME = "skills"
 DEFAULT_ADAPTER_NAME = "generic"
 GENERIC_ADAPTER_NAME = "generic"
@@ -31,6 +34,19 @@ PYTHON_BYTECODE_PATTERN = "*.pyc"
 MACOS_METADATA_FILE_NAME = ".DS_Store"
 AGENTS_METADATA_FOLDER_NAME = "agents"
 OPENAI_METADATA_FILE_NAME = "openai.yaml"
+INSTALL_MANIFEST_FILE_NAME = ".dev-methodology-install.json"
+BUNDLE_ID = "dev-methodology"
+MANIFEST_SCHEMA_VERSION_KEY = "schema_version"
+MANIFEST_BUNDLE_ID_KEY = "bundle_id"
+MANIFEST_ADAPTER_KEY = "adapter"
+MANIFEST_SOURCE_KEY = "source"
+MANIFEST_UPDATED_AT_KEY = "updated_at"
+MANIFEST_ARTIFACTS_KEY = "artifacts"
+MANIFEST_ARTIFACT_TYPE_KEY = "type"
+MANIFEST_ARTIFACT_NAME_KEY = "name"
+MANIFEST_ARTIFACT_PATH_KEY = "path"
+MANIFEST_SKILL_ARTIFACT_TYPE = "skill"
+PRUNE_SKIPPED_NO_MANIFEST_MESSAGE = "prune skipped; no ownership manifest"
 
 
 class Adapter(NamedTuple):
@@ -38,6 +54,12 @@ class Adapter(NamedTuple):
     home_environment_variable: Optional[str]
     default_home_folder_name: str
     install_openai_metadata: bool
+
+
+class SkillInstallResult(NamedTuple):
+    message: str
+    skill_name: str
+    owns_destination: bool
 
 
 ADAPTERS = {
@@ -125,6 +147,11 @@ def parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
         action="store_true",
         help="Print the install plan without copying files.",
     )
+    parser.add_argument(
+        "--prune-owned",
+        action="store_true",
+        help="Remove obsolete skills previously installed by this bundle.",
+    )
     return parser.parse_args(argv)
 
 
@@ -170,6 +197,113 @@ def remove_existing_destination(path: Path) -> None:
     shutil.rmtree(path)
 
 
+def manifest_path(destination: Path) -> Path:
+    return destination / INSTALL_MANIFEST_FILE_NAME
+
+
+def load_install_manifest(destination: Path) -> Optional[dict[str, object]]:
+    path = manifest_path(destination)
+    if not path.is_file():
+        return None
+
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        raise ValueError(f"Install manifest is not an object: {path}")
+    if data.get(MANIFEST_BUNDLE_ID_KEY) != BUNDLE_ID:
+        raise ValueError(f"Install manifest belongs to a different bundle: {path}")
+    return data
+
+
+def manifest_skill_names(manifest: Optional[dict[str, object]]) -> set[str]:
+    if manifest is None:
+        return set()
+
+    artifacts = manifest.get(MANIFEST_ARTIFACTS_KEY)
+    if not isinstance(artifacts, list):
+        return set()
+
+    skill_names: set[str] = set()
+    for artifact in artifacts:
+        if not isinstance(artifact, dict):
+            continue
+        if artifact.get(MANIFEST_ARTIFACT_TYPE_KEY) != MANIFEST_SKILL_ARTIFACT_TYPE:
+            continue
+        name = artifact.get(MANIFEST_ARTIFACT_NAME_KEY)
+        if isinstance(name, str):
+            skill_names.add(name)
+
+    return skill_names
+
+
+def skill_artifact(skill_name: str) -> dict[str, str]:
+    return {
+        MANIFEST_ARTIFACT_TYPE_KEY: MANIFEST_SKILL_ARTIFACT_TYPE,
+        MANIFEST_ARTIFACT_NAME_KEY: skill_name,
+        MANIFEST_ARTIFACT_PATH_KEY: skill_name,
+    }
+
+
+def build_install_manifest(
+    source: Path,
+    adapter: Adapter,
+    owned_skill_names: set[str],
+) -> dict[str, object]:
+    return {
+        MANIFEST_SCHEMA_VERSION_KEY: MANIFEST_SCHEMA_VERSION,
+        MANIFEST_BUNDLE_ID_KEY: BUNDLE_ID,
+        MANIFEST_ADAPTER_KEY: adapter.name,
+        MANIFEST_SOURCE_KEY: str(source.expanduser().resolve()),
+        MANIFEST_UPDATED_AT_KEY: datetime.now(timezone.utc).isoformat(),
+        MANIFEST_ARTIFACTS_KEY: [
+            skill_artifact(skill_name) for skill_name in sorted(owned_skill_names)
+        ],
+    }
+
+
+def write_install_manifest(
+    destination: Path,
+    source: Path,
+    adapter: Adapter,
+    owned_skill_names: set[str],
+) -> None:
+    manifest_path(destination).write_text(
+        json.dumps(
+            build_install_manifest(source, adapter, owned_skill_names),
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+
+def prune_obsolete_owned_skills(
+    destination: Path,
+    previous_manifest: Optional[dict[str, object]],
+    current_skill_names: set[str],
+    dry_run: bool,
+) -> list[str]:
+    if previous_manifest is None:
+        return [PRUNE_SKIPPED_NO_MANIFEST_MESSAGE]
+
+    previous_skill_names = manifest_skill_names(previous_manifest)
+    obsolete_skill_names = sorted(previous_skill_names - current_skill_names)
+    results: list[str] = []
+    for skill_name in obsolete_skill_names:
+        destination_skill = destination / skill_name
+        if dry_run:
+            results.append(f"would prune obsolete {skill_name}")
+            continue
+
+        if destination_skill.exists() or destination_skill.is_symlink():
+            remove_existing_destination(destination_skill)
+            results.append(f"pruned obsolete {skill_name}")
+        else:
+            results.append(f"obsolete already absent {skill_name}")
+
+    return results
+
+
 def copy_skill(
     source_skill: Path,
     destination_skill: Path,
@@ -177,19 +311,19 @@ def copy_skill(
     dry_run: bool,
     adapter: Adapter,
     adapter_metadata_source: Path,
-) -> str:
+) -> SkillInstallResult:
     if destination_skill.exists():
         if not replace:
-            return f"skipped {source_skill.name}"
+            return SkillInstallResult(f"skipped {source_skill.name}", source_skill.name, False)
         if dry_run:
-            return f"would replace {source_skill.name}"
+            return SkillInstallResult(f"would replace {source_skill.name}", source_skill.name, True)
         remove_existing_destination(destination_skill)
         action = "replaced"
     else:
         action = "installed"
 
     if dry_run:
-        return f"would install {source_skill.name}"
+        return SkillInstallResult(f"would install {source_skill.name}", source_skill.name, True)
 
     shutil.copytree(
         source_skill,
@@ -203,7 +337,7 @@ def copy_skill(
     remove_openai_metadata(destination_skill)
     if adapter.install_openai_metadata:
         copy_openai_metadata(adapter_metadata_source, source_skill.name, destination_skill)
-    return f"{action} {source_skill.name}"
+    return SkillInstallResult(f"{action} {source_skill.name}", source_skill.name, True)
 
 
 def install_skills(
@@ -212,27 +346,51 @@ def install_skills(
     replace: bool,
     dry_run: bool,
     adapter: Adapter,
+    prune_owned: bool,
 ) -> list[str]:
-    source_skills = iter_skill_directories(source.expanduser().resolve())
+    resolved_source = source.expanduser().resolve()
+    source_skills = iter_skill_directories(resolved_source)
+    current_skill_names = {source_skill.name for source_skill in source_skills}
     destination = destination.expanduser()
     adapter_metadata_source = default_adapter_metadata_source(source, adapter.name)
+    previous_manifest = load_install_manifest(destination)
 
     if not dry_run:
         destination.mkdir(parents=True, exist_ok=True)
 
     results: list[str] = []
-    for source_skill in source_skills:
-        destination_skill = destination / source_skill.name
-        results.append(
-            copy_skill(
-                source_skill,
-                destination_skill,
-                replace,
+    if prune_owned:
+        results.extend(
+            prune_obsolete_owned_skills(
+                destination,
+                previous_manifest,
+                current_skill_names,
                 dry_run,
-                adapter,
-                adapter_metadata_source,
             )
         )
+
+    newly_owned_skill_names: set[str] = set()
+    for source_skill in source_skills:
+        destination_skill = destination / source_skill.name
+        install_result = copy_skill(
+            source_skill,
+            destination_skill,
+            replace,
+            dry_run,
+            adapter,
+            adapter_metadata_source,
+        )
+        results.append(install_result.message)
+        if install_result.owns_destination:
+            newly_owned_skill_names.add(install_result.skill_name)
+
+    if not dry_run:
+        previously_owned_current_skills = (
+            manifest_skill_names(previous_manifest) & current_skill_names
+        )
+        owned_skill_names = previously_owned_current_skills | newly_owned_skill_names
+        write_install_manifest(destination, resolved_source, adapter, owned_skill_names)
+        results.append("wrote ownership manifest")
 
     return results
 
@@ -242,8 +400,15 @@ def main(argv: Sequence[str] | None = None) -> int:
     adapter = ADAPTERS[args.adapter]
     destination = args.dest if args.dest is not None else default_destination(args.adapter)
     try:
-        results = install_skills(args.source, destination, args.replace, args.dry_run, adapter)
-    except OSError as error:
+        results = install_skills(
+            args.source,
+            destination,
+            args.replace,
+            args.dry_run,
+            adapter,
+            args.prune_owned,
+        )
+    except (OSError, ValueError) as error:
         print(error, file=sys.stderr)
         return ERROR_EXIT_CODE
 

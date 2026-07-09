@@ -42,6 +42,9 @@ class RefreshSharedSkillsTests(unittest.TestCase):
         self.assertEqual(refresh_script.SUCCESS_EXIT_CODE, exit_code)
         self.assertEqual(EXPECTED_DEFAULT_TARGET_COUNT, len(commands))
         self.assertIn("--dry-run", commands[FIRST_COMMAND_INDEX])
+        for command in commands:
+            with self.subTest(command=command):
+                self.assertIn("--prune-owned", command)
         self.assertEqual(
             ["--adapter", "codex"],
             commands[FIRST_COMMAND_INDEX][ADAPTER_ARGUMENT_START_INDEX:ADAPTER_ARGUMENT_END_INDEX],

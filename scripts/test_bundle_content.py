@@ -67,6 +67,14 @@ README_REQUIRED_PHRASES = (
     "skills/development-methodology/assets/templates",
     "python3 scripts/validate-agent-skills.py skills",
     "python3 scripts/refresh-shared-skills.py",
+    "ownership manifest",
+    "prune mode removes obsolete skills",
+    "Runtime agent metadata packaged inside an owned skill",
+)
+DEVELOPMENT_METHODOLOGY_REQUIRED_PHRASES = (
+    "When a skill was renamed or deleted",
+    "Do not remove unowned local skills manually.",
+    "standalone agent definition folders",
 )
 README_FORBIDDEN_PHRASES = (
     "Copy documentation-methodology.md",
@@ -177,6 +185,15 @@ class BundleContentTests(unittest.TestCase):
         for phrase in README_FORBIDDEN_PHRASES:
             with self.subTest(phrase=phrase):
                 self.assertNotIn(phrase, readme_text)
+
+    def test_development_methodology_guides_skill_rename_cleanup(self) -> None:
+        skill_text = (
+            SKILLS_ROOT / "development-methodology" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+
+        for phrase in DEVELOPMENT_METHODOLOGY_REQUIRED_PHRASES:
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, skill_text)
 
     def test_reverse_engineering_uses_structural_code_discovery(self) -> None:
         skill_text = (
