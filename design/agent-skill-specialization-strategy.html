@@ -91,6 +91,32 @@
       font-size: 0.9em;
     }
 
+    .home-link {
+      display: inline-flex;
+      width: max-content;
+      align-items: center;
+      gap: var(--space-2);
+      margin-bottom: var(--space-6);
+      padding: 0.45rem 0.75rem;
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      background: var(--color-panel);
+      color: var(--color-muted);
+      font-size: var(--font-sm);
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: var(--shadow-panel);
+      transition: border-color 160ms ease, color 160ms ease, transform 160ms ease;
+    }
+
+    .home-link:hover,
+    .home-link:focus-visible {
+      transform: translateY(-1px);
+      border-color: var(--color-rule);
+      color: var(--color-ink);
+      outline: none;
+    }
+
     .hero {
       display: grid;
       gap: var(--space-6);
@@ -364,19 +390,21 @@
 </head>
 <body>
 <main>
+  <a class="home-link" href="../index.html"><span aria-hidden="true">&larr;</span> Documentation Index</a>
+
   <section class="hero" aria-labelledby="page-title">
     <div class="legend" aria-label="Legend">
       <span class="pill"><span class="dot agent"></span> Role agent</span>
       <span class="pill"><span class="dot skill"></span> Routed skill</span>
-      <span class="pill"><span class="dot config"></span> Project config</span>
+      <span class="pill"><span class="dot config"></span> AGENTS.md reference</span>
       <span class="pill"><span class="dot rule"></span> Dispatch rule</span>
       <span class="pill"><span class="dot case"></span> Repo application</span>
     </div>
     <h1 id="page-title">Agent And Skill Specialization Strategy</h1>
     <p class="lede">
-      The methodology has a shared catalog of role agents and skills that every project can use. A project-specific definition selects,
-      overrides, dispatches, and aggregates that shared catalog without forking the common role source. Role agents act as skill routers:
-      they read caller parameters and project configuration, classify the work, load the smallest relevant skill set, and produce the
+      The methodology has a shared catalog of role agents and skills that every project can use. AGENTS.md files provide the project-local
+      reference that lets those shared skills route work without forking the common role source. Role agents act as skill routers:
+      they read caller parameters and AGENTS.md reference, classify the work, load the smallest relevant skill set, and produce the
       role's contracted output.
     </p>
   </section>
@@ -392,6 +420,7 @@
           <li>Coding Agent edits code across stacks through skill dispatch.</li>
           <li>Code Review Agent reviews with fresh context and read-only authority.</li>
           <li>QA And Verification Agent proves outcomes with commands and evidence.</li>
+          <li>Project Agent Setup Agent creates AGENTS-PLAN.md for role and skill routing setup.</li>
           <li>Project Organiser owns file placement and project taxonomy.</li>
         </ul>
       </article>
@@ -413,35 +442,59 @@
     <h2 id="configuration-layers-title">Configuration Layers</h2>
     <div class="wide-grid">
       <article class="card rule">
-        <h3>Shared Catalog</h3>
-        <p>The shared catalog is the default source for reusable agents, reusable skills, base dispatch rules, and host adapter templates.</p>
+        <h3>development-methodology Skill</h3>
+        <p>The development-methodology skill is the shared router for documentation work. It does not know the target repository by itself; it defines how to classify a documentation request once repository facts are available.</p>
         <ul>
-          <li><code>agents/roles/*.role.yaml</code> defines portable role agents.</li>
-          <li><code>skills/*/SKILL.md</code> defines portable skills.</li>
-          <li><code>profiles/base/*.yaml</code> defines common project families, tiers, and stack packs.</li>
-          <li><code>adapters/*</code> maps shared roles and skills into runtime-specific files.</li>
+          <li>It names the companion skills for setup, reverse engineering, project wiki work, artifact creation, artifact review, and page verification.</li>
+          <li>It enforces loading discipline: load the routing skill, then exactly one matching creation skill for a normal artifact creation job.</li>
+          <li>It chooses the document route: AGENTS-PLAN.md, project wiki, functional specification, architecture, high-level design, or module design.</li>
+          <li>It provides the shared page contract and verification expectations so every routed artifact has the same durable structure.</li>
         </ul>
       </article>
 
       <article class="card config">
-        <h3>Project Definition</h3>
-        <p>The project definition selects and adapts the shared catalog for a repository.</p>
+        <h3>AGENTS-PLAN.md</h3>
+        <p>AGENTS-PLAN.md is the setup and validation artifact for project agent roles, skill loadouts, folder routing, nested plan placement, and customer-safe example boundaries.</p>
         <ul>
-          <li><code>.agents/project-profile.yaml</code> selects project family, tier, stacks, roles, skill packs, commands, and data rules.</li>
-          <li><code>docs/project-taxonomy.md</code> defines project-specific file placement and artifact categories.</li>
-          <li>Project-specific definitions can append skills, narrow dispatch rules, override validation commands, and aggregate workflows.</li>
-          <li>Project-specific definitions cannot silently change a shared role's authority or output contract.</li>
+          <li>It is created with create-agents-plan before routing guidance is copied into AGENTS.md.</li>
+          <li>It records source evidence for role and skill choices, including proprietary validation notes when the file lives inside a private project.</li>
+          <li>It can exist at the project root and inside subfolders with distinct technology, runtime, data, or verification needs.</li>
+          <li>It is a planning artifact, not the normal runtime reference loaded for every task.</li>
         </ul>
       </article>
 
       <article class="card config">
-        <h3>Folder Definition</h3>
-        <p>Folder definitions add local routing for subtrees that use different stacks, generated artifacts, data rules, or verification commands.</p>
+        <h3>Root AGENTS.md</h3>
+        <p>The root AGENTS.md supplies the project-specific reference that the skills router needs before it can apply shared routing rules to this repository.</p>
         <ul>
-          <li><code>&lt;subtree&gt;/.agents/folder-profile.yaml</code> governs the subtree where it lives.</li>
-          <li>The nearest folder profile applies after the root project profile.</li>
-          <li>Folder definitions contain only local differences from the root profile.</li>
-          <li>Folder definitions are for routing and narrowing, not for creating folder-specific agents.</li>
+          <li>It declares the project family, application tiers, important paths, validation commands, privacy rules, and local terminology.</li>
+          <li>It tells role agents which source roots, test roots, wiki roots, procedure files, and taxonomy pages matter first.</li>
+          <li>It can say which skills normally apply to Front-end, API, static pages, DB, documentation, or other local tiers.</li>
+          <li>It selects local reference and policy; it does not copy the full body of shared skills or redefine role authority.</li>
+        </ul>
+      </article>
+
+      <article class="card config">
+        <h3>Nested AGENTS.md</h3>
+        <p>Nested AGENTS.md files narrow the root reference for a subtree. They are useful when one folder has a different tier, stack, data rule, generated-file policy, or verification command.</p>
+        <ul>
+          <li><code>&lt;subtree&gt;/AGENTS.md</code> applies to work inside that subtree.</li>
+          <li>The nearest AGENTS.md adds local reference after the root AGENTS.md has established the repository-wide model.</li>
+          <li>Nested AGENTS.md files should contain only local differences, such as API contract checks or DB migration rules.</li>
+          <li>They route skills and local checks; they do not create folder-specific agents.</li>
+        </ul>
+      </article>
+
+      <article class="card case">
+        <h3>Fictitious Example</h3>
+        <p>Acme Ledger is a web application with Front-end, API, static pages, and DB tiers. Its root AGENTS.md says API work lives under src/app/api and DB work lives under src/db.</p>
+        <ul>
+          <li>The user asks for a design for invoice retry behavior.</li>
+          <li>The Documentation Architect loads development-methodology because the request is documentation work.</li>
+          <li>development-methodology classifies the artifact as a high-level design because retry behavior crosses API routes, DB state, and user-visible status.</li>
+          <li>The skills router reads AGENTS.md and sees that the relevant folders imply api-routes, postgres-drizzle, typescript-strict, and jest guidance.</li>
+          <li>If src/db/AGENTS.md says migration changes need a rollback note, that local rule is included in the design and verification checklist.</li>
+          <li>This works because shared routing answers what kind of artifact to create, while AGENTS.md answers which project facts and tier-specific skills make that route correct here.</li>
         </ul>
       </article>
 
@@ -470,12 +523,12 @@
         <p>Parse caller parameters: role, task intent, target files, constraints, requested verification, and allowed authority.</p>
       </div>
       <div class="flow-step">
-        <strong>2. Load config</strong>
-        <p>Read the root project profile, nearest folder profile, local instructions, package metadata, wiki map, and relevant procedures.</p>
+        <strong>2. Load AGENTS.md reference</strong>
+        <p>Read the root AGENTS.md, nearest nested AGENTS.md, local instructions, package metadata, wiki map, and relevant procedures.</p>
       </div>
       <div class="flow-step">
         <strong>3. Classify work</strong>
-        <p>Determine project family, tier, artifact type, language, runtime container, data sensitivity, and validation surface.</p>
+        <p>Determine project family, application tier, artifact type, language, runtime container, data sensitivity, and validation surface.</p>
       </div>
       <div class="flow-step">
         <strong>4. Select skills</strong>
@@ -543,8 +596,8 @@
         <h3>Dispatch Inputs</h3>
         <ul>
           <li>Caller-supplied task intent and file paths.</li>
-          <li><code>.agents/project-profile.yaml</code> project family, tier, stacks, and validation commands.</li>
-          <li>Nearest <code>.agents/folder-profile.yaml</code> for local stack or policy overrides.</li>
+          <li><code>AGENTS.md</code> project family, application tiers, stacks, validation commands, and data rules.</li>
+          <li>Nearest <code>&lt;subtree&gt;/AGENTS.md</code> for local stack, validation, or policy reference.</li>
           <li>Repository files such as <code>package.json</code>, <code>tsconfig.json</code>, framework configs, and procedure files.</li>
           <li>Wiki or design pages that describe the touched subsystem.</li>
         </ul>
@@ -597,115 +650,71 @@
   </section>
 
   <section class="section" aria-labelledby="config-title">
-    <h2 id="config-title">Project Definition Shape</h2>
+    <h2 id="config-title">Root AGENTS.md Shape</h2>
     <div class="wide-grid">
       <article class="panel">
-        <h3>Root profile</h3>
-        <p>The root profile is the repository's contract with the shared catalog. Agent routers load it after host safety rules and before folder profiles.</p>
+        <h3>Repository contract</h3>
+        <p>The root AGENTS.md is the repository's contract with the shared catalog. Agent routers load it after host safety rules and before nested AGENTS.md files.</p>
         <ul>
-          <li><code>extends</code> imports shared catalog versions.</li>
-          <li><code>agents</code> enables shared roles and adds project-specific startup reads or common skills.</li>
-          <li><code>skills</code> selects shared packs and defines project-local packs.</li>
-          <li><code>application_domains</code> names product internals that development agents may need to understand.</li>
-          <li><code>dispatch</code> maps paths, artifact types, and task intents to skills.</li>
-          <li><code>aggregates</code> names multi-agent workflows without creating new agent types.</li>
+          <li>Project family and application tiers tell the router what kind of system it is handling.</li>
+          <li>AGENTS-PLAN.md is the setup artifact that explains why these routing choices exist.</li>
+          <li>Tier-to-path mappings tell the router which local paths imply Front-end, API, static pages, DB, or other guidance.</li>
+          <li>Skills router notes name the shared skills normally loaded for those tiers.</li>
+          <li>Validation and data rules tell role agents which checks and boundaries apply after work is done.</li>
+          <li>Local taxonomy links give the Project Organiser and Documentation Architect the vocabulary for placement and artifacts.</li>
         </ul>
       </article>
 
       <article class="panel">
-        <h3>Override forms</h3>
-        <p>Overrides are explicit and scoped. They adapt the shared catalog without mutating it.</p>
+        <h3>Local reference forms</h3>
+        <p>Local reference is explicit and scoped. It adapts shared skill routing without mutating the shared skill files.</p>
         <ul>
-          <li><span class="name">Append</span>: add project skills, reads, checks, or commands to a shared role.</li>
-          <li><span class="name">Narrow</span>: restrict a rule to a path, artifact type, stack, or task intent.</li>
-          <li><span class="name">Replace</span>: substitute a project-owned skill pack for a shared pack by name.</li>
-          <li><span class="name">Disable</span>: turn off a shared pack or role with an explicit reason.</li>
-          <li><span class="name">Aggregate</span>: define a named workflow that invokes several agents and skill packs in order.</li>
+          <li><span class="name">Select</span>: name the skills normally used for a tier or artifact family.</li>
+          <li><span class="name">Narrow</span>: restrict routing to a path, artifact type, stack, or task intent.</li>
+          <li><span class="name">Add evidence</span>: point agents to wiki pages, procedures, source roots, and test roots.</li>
+          <li><span class="name">Add checks</span>: name build, unit, E2E, contract, or migration commands.</li>
+          <li><span class="name">Set boundaries</span>: declare PII, company-internal data, generated files, or approval rules.</li>
         </ul>
       </article>
     </div>
 
-    <pre class="config-block"><code>version: 1
+    <pre class="config-block"><code>AGENTS.md
 
-extends:
-  catalog: dev-methodology
-  roles_version: current
-  skills_version: current
+Project family: web-application
 
-project:
-  family: full-stack-product
-  tier: greenfield-product
-  stacks:
-    - nextjs-app-router
-    - typescript
-    - postgres
-  application_domains:
-    - questionnaire-workflow
-    - analysis-engine
-    - authenticated-user-experience
+Application tiers:
+  Front-end tier:
+    Paths: src/app/(app), src/components
+    Skills router loads: nextjs-app-router, react-server-components, tailwind-design-system, playwright
+  API tier:
+    Paths: src/app/api, src/lib/server
+    Skills router loads: api-routes, typescript-strict, clerk-auth, jest
+  DB tier:
+    Paths: src/db, migrations
+    Skills router loads: postgres-drizzle, typescript-strict, jest
 
-agents:
-  enabled:
-    - development-orchestrator
-    - project-organiser
-    - coding-agent
-    - code-review-agent
-    - qa-and-verification-agent
-    - documentation-architect
-  overrides:
-    coding-agent:
-      append_startup_reads:
-        - AGENTS.md
-        - package.json
-    qa-and-verification-agent:
-      validation_commands:
-        build: pnpm run build
-        unit: pnpm test
+Documentation routing:
+  Use development-methodology for methodology artifacts.
+  Use create-functional-spec for user-visible behavior.
+  Use create-high-level-design for cross-tier feature designs.
+  Use create-module-design for one service, component, or utility.
 
-skills:
-  packs:
-    nextjs-api-work:
-      includes:
-        - typescript-strict
-        - nextjs-app-router
-        - api-routes
-        - clerk-auth
-        - jest
+Validation:
+  Build: pnpm run build
+  Unit tests: pnpm test
+  E2E: pnpm exec playwright test
 
-dispatch:
-  coding-agent:
-    common_skills:
-      - careful-coding
-      - ast-grep
-    rules:
-      - match: src/app/api/**/route.ts
-        artifact: api-route
-        add_skills:
-          - nextjs-api-work
-      - match: src/components/**
-        artifact: frontend-ui
-        add_skills:
-          - react-server-components
-          - tailwind-design-system
-          - playwright
-
-aggregates:
-  verified-code-change:
-    sequence:
-      - agent: project-organiser
-        when: creates_or_moves_files
-      - agent: coding-agent
-      - agent: code-review-agent
-      - agent: qa-and-verification-agent
-    final_output: verified_patch_summary</code></pre>
+Data rules:
+  PII to external LLM: forbidden
+  Company internal information to external LLM: forbidden</code></pre>
   </section>
 
   <section class="section" aria-labelledby="folder-title">
-    <h2 id="folder-title">Folder Definition Shape</h2>
+    <h2 id="folder-title">Nested AGENTS.md Shape</h2>
     <div class="wide-grid">
       <article class="panel">
         <h3>Folder scope</h3>
-        <p>A folder profile applies to its subtree and is read after the root project profile.</p>
+        <p>A nested AGENTS.md applies to its subtree and is read after the root AGENTS.md.</p>
         <ul>
           <li>It can add path-local stack skills.</li>
           <li>It can select path-local validation commands.</li>
@@ -716,7 +725,7 @@ aggregates:
 
       <article class="panel">
         <h3>Folder constraints</h3>
-        <p>A folder profile narrows routing. It does not fork the role catalog.</p>
+        <p>A nested AGENTS.md narrows routing. It does not fork the role catalog.</p>
         <ul>
           <li>It cannot change an agent's write authority.</li>
           <li>It cannot change a review verdict schema.</li>
@@ -727,27 +736,23 @@ aggregates:
       </article>
     </div>
 
-    <pre class="config-block"><code>scope:
-  path: src/app/api
-  artifact_family: api
+    <pre class="config-block"><code>src/app/api/AGENTS.md
 
-dispatch:
-  coding-agent:
-    append_common_skills:
-      - api-routes
-      - clerk-auth
-      - typescript-strict
-      - jest
+Tier: API
 
-validation:
-  focused:
-    - pnpm test -- src/app/api
-  always_after_code:
-    - pnpm run build
+Skills router loads:
+  - api-routes
+  - clerk-auth
+  - typescript-strict
+  - jest
 
-data_rules:
-  pii_to_external_llm: forbidden
-  log_sensitive_payloads: forbidden</code></pre>
+Validation:
+  Focused tests: pnpm test -- src/app/api
+  Always after code: pnpm run build
+
+Data rules:
+  PII to external LLM: forbidden
+  Log sensitive payloads: forbidden</code></pre>
   </section>
 
   <section class="section" aria-labelledby="examples-title">

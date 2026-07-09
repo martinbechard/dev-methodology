@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Agent Role and Skill Map</title>
+  <title>Agent Roles and Skill Loadouts</title>
   <style>
     :root {
       --color-ink: #18212f;
@@ -11,14 +11,16 @@
       --color-page: #f6f8fb;
       --color-panel: #ffffff;
       --color-line: #d9e0ea;
-      --color-codex: #2563eb;
-      --color-wiki: #0f766e;
-      --color-gemma: #b45309;
-      --color-proposed: #7c3aed;
+      --color-role: #2563eb;
+      --color-router: #0f766e;
+      --color-skill: #b45309;
+      --color-specialist: #7c3aed;
+      --color-evidence: #be123c;
       --color-soft-blue: #e8f0ff;
       --color-soft-green: #e4f7f4;
       --color-soft-amber: #fff1d8;
       --color-soft-purple: #f0e8ff;
+      --color-soft-rose: #ffe5ec;
       --color-soft-gray: #edf1f6;
       --shadow-panel: 0 12px 30px rgba(31, 41, 55, 0.08);
       --space-2: 0.5rem;
@@ -30,7 +32,7 @@
       --space-10: 2.5rem;
       --radius: 0.5rem;
       --radius-small: 0.35rem;
-      --content-max: 1180px;
+      --content-max: 1220px;
       --font-sm: 0.92rem;
       --font-xs: 0.78rem;
     }
@@ -60,17 +62,17 @@
     h3 {
       margin: 0;
       line-height: 1.15;
+      letter-spacing: 0;
     }
 
     h1 {
-      max-width: 860px;
+      max-width: 920px;
       font-size: clamp(2rem, 4vw, 3.6rem);
-      letter-spacing: 0;
     }
 
     h2 {
       margin-bottom: var(--space-4);
-      font-size: clamp(1.4rem, 2vw, 2rem);
+      font-size: clamp(1.35rem, 2vw, 2rem);
     }
 
     h3 {
@@ -89,6 +91,32 @@
       font-size: 0.9em;
     }
 
+    .home-link {
+      display: inline-flex;
+      width: max-content;
+      align-items: center;
+      gap: var(--space-2);
+      margin-bottom: var(--space-6);
+      padding: 0.45rem 0.75rem;
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      background: var(--color-panel);
+      color: var(--color-muted);
+      font-size: var(--font-sm);
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: var(--shadow-panel);
+      transition: border-color 160ms ease, color 160ms ease, transform 160ms ease;
+    }
+
+    .home-link:hover,
+    .home-link:focus-visible {
+      transform: translateY(-1px);
+      border-color: var(--color-role);
+      color: var(--color-ink);
+      outline: none;
+    }
+
     .hero {
       display: grid;
       gap: var(--space-6);
@@ -96,7 +124,7 @@
     }
 
     .lede {
-      max-width: 860px;
+      max-width: 920px;
       font-size: 1.08rem;
     }
 
@@ -126,20 +154,24 @@
       border-radius: 50%;
     }
 
-    .dot.codex {
-      background: var(--color-codex);
+    .dot.role {
+      background: var(--color-role);
     }
 
-    .dot.wiki {
-      background: var(--color-wiki);
+    .dot.router {
+      background: var(--color-router);
     }
 
-    .dot.gemma {
-      background: var(--color-gemma);
+    .dot.skill {
+      background: var(--color-skill);
     }
 
-    .dot.proposed {
-      background: var(--color-proposed);
+    .dot.specialist {
+      background: var(--color-specialist);
+    }
+
+    .dot.evidence {
+      background: var(--color-evidence);
     }
 
     .section {
@@ -149,6 +181,12 @@
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: var(--space-4);
+    }
+
+    .wide-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: var(--space-4);
     }
 
@@ -162,6 +200,33 @@
 
     .panel {
       padding: var(--space-5);
+    }
+
+    .card {
+      display: grid;
+      gap: var(--space-4);
+      padding: var(--space-5);
+      border-top: 0.35rem solid var(--color-line);
+    }
+
+    .card.role {
+      border-top-color: var(--color-role);
+    }
+
+    .card.router {
+      border-top-color: var(--color-router);
+    }
+
+    .card.skill {
+      border-top-color: var(--color-skill);
+    }
+
+    .card.specialist {
+      border-top-color: var(--color-specialist);
+    }
+
+    .card.evidence {
+      border-top-color: var(--color-evidence);
     }
 
     .panel h3,
@@ -181,29 +246,6 @@
       margin-top: 0.35rem;
     }
 
-    .card {
-      display: grid;
-      gap: var(--space-4);
-      padding: var(--space-5);
-      border-top: 0.35rem solid var(--color-line);
-    }
-
-    .card.codex {
-      border-top-color: var(--color-codex);
-    }
-
-    .card.wiki {
-      border-top-color: var(--color-wiki);
-    }
-
-    .card.gemma {
-      border-top-color: var(--color-gemma);
-    }
-
-    .card.proposed {
-      border-top-color: var(--color-proposed);
-    }
-
     .tag-row {
       display: flex;
       flex-wrap: wrap;
@@ -220,24 +262,29 @@
       font-weight: 650;
     }
 
-    .tag.codex {
+    .tag.role {
       background: var(--color-soft-blue);
-      color: var(--color-codex);
+      color: var(--color-role);
     }
 
-    .tag.wiki {
+    .tag.router {
       background: var(--color-soft-green);
-      color: var(--color-wiki);
+      color: var(--color-router);
     }
 
-    .tag.gemma {
+    .tag.skill {
       background: var(--color-soft-amber);
-      color: var(--color-gemma);
+      color: var(--color-skill);
     }
 
-    .tag.proposed {
+    .tag.specialist {
       background: var(--color-soft-purple);
-      color: var(--color-proposed);
+      color: var(--color-specialist);
+    }
+
+    .tag.evidence {
+      background: var(--color-soft-rose);
+      color: var(--color-evidence);
     }
 
     .matrix {
@@ -250,8 +297,8 @@
 
     table {
       width: 100%;
+      min-width: 980px;
       border-collapse: collapse;
-      min-width: 860px;
     }
 
     th,
@@ -312,37 +359,10 @@
     .note {
       margin-top: var(--space-4);
       padding: var(--space-4);
-      border-left: 0.3rem solid var(--color-proposed);
+      border-left: 0.3rem solid var(--color-router);
       border-radius: var(--radius-small);
-      background: var(--color-soft-purple);
+      background: var(--color-soft-green);
       color: var(--color-ink);
-    }
-
-    .source-list {
-      display: grid;
-      gap: var(--space-2);
-      margin-top: var(--space-4);
-      color: var(--color-muted);
-      font-size: var(--font-sm);
-    }
-
-    .config-block {
-      margin: var(--space-4) 0 0;
-      padding: var(--space-4);
-      overflow-x: auto;
-      border: 1px solid var(--color-line);
-      border-radius: var(--radius-small);
-      background: #101827;
-      color: #eef4ff;
-      font-size: var(--font-sm);
-      line-height: 1.45;
-    }
-
-    .config-block code {
-      padding: 0;
-      background: transparent;
-      color: inherit;
-      font-size: inherit;
     }
 
     @media (max-width: 820px) {
@@ -351,562 +371,518 @@
       }
 
       table {
-        min-width: 720px;
+        min-width: 820px;
       }
     }
   </style>
 </head>
 <body>
 <main>
+  <a class="home-link" href="../index.html"><span aria-hidden="true">&larr;</span> Documentation Index</a>
+
   <section class="hero" aria-labelledby="page-title">
     <div class="legend" aria-label="Legend">
-      <span class="pill"><span class="dot codex"></span> Existing adapter metadata</span>
-      <span class="pill"><span class="dot wiki"></span> Wiki workflow usage</span>
-      <span class="pill"><span class="dot gemma"></span> Gemma Code runtime mode</span>
-      <span class="pill"><span class="dot proposed"></span> Proposed composite role</span>
+      <span class="pill"><span class="dot role"></span> Core role</span>
+      <span class="pill"><span class="dot router"></span> Router input</span>
+      <span class="pill"><span class="dot skill"></span> Skill group</span>
+      <span class="pill"><span class="dot specialist"></span> Specialist role</span>
+      <span class="pill"><span class="dot evidence"></span> Evidence</span>
     </div>
     <h1 id="page-title">Agent Roles and Skill Loadouts</h1>
     <p class="lede">
-      The methodology should separate four things that are currently easy to blur:
-      agent definition files describe a role, skills describe reusable procedures,
-      project profiles select the pertinent best practices, and repo automations or prompt modes describe
-      how a role is run in a specific environment.
+      This reference defines the portable agent roles and skill loadouts in the development methodology bundle.
+      It is customer-ready: roles are generic, project-specific setup is documented in AGENTS-PLAN.md, operational routing comes from AGENTS.md files, and skills stay small enough to load only when the current job needs them.
     </p>
   </section>
 
   <section class="section" aria-labelledby="model-title">
-    <h2 id="model-title">Working Model</h2>
+    <h2 id="model-title">Reference Model</h2>
     <div class="flow">
       <div class="flow-step">
-        <strong>1. Role definition</strong>
-        <p>A named agent such as Orchestrator Agent, Coding Agent, Code Review Agent, Wiki Ingest Agent, or Project Organiser.</p>
+        <strong>1. Role</strong>
+        <p>A role is an invokable job boundary with stable authority, inputs, outputs, and handoff expectations.</p>
       </div>
       <div class="flow-step">
-        <strong>2. Skill loadout</strong>
-        <p>Short reusable procedures loaded only when the current job needs them, such as careful-coding, ast-grep, or project-wiki-topic-verifier.</p>
+        <strong>2. Router Reference</strong>
+        <p>Root and nested AGENTS.md files describe project family, application tiers, paths, checks, data rules, and local terminology.</p>
       </div>
       <div class="flow-step">
-        <strong>3. Project profile</strong>
-        <p>A root or folder-local selector for project type, tier, stack, conventions, enabled agents, and best-practice packs.</p>
+        <strong>3. Skill Selection</strong>
+        <p>The role loads only the methodology, stack, quality, wiki, or domain skills needed for the current request.</p>
       </div>
       <div class="flow-step">
-        <strong>4. Runtime adapter</strong>
-        <p>The concrete file format for a host, such as the current Codex openai.yaml metadata files.</p>
+        <strong>4. Runtime Adapter</strong>
+        <p>Codex, Claude Code, Gemini CLI, Junie, or another host receives a runtime-specific role file or skill metadata.</p>
       </div>
       <div class="flow-step">
-        <strong>5. Repo workflow</strong>
-        <p>The local operating surface, such as raw-only collectors, leaf watches, Gemma prompt modes, worktree runs, or orchestrated subagent queues.</p>
+        <strong>5. Evidence</strong>
+        <p>Review checklists, verification notes, handoffs, and run records make the work inspectable after completion.</p>
       </div>
     </div>
     <p class="note">
-      Proposed direction: define composite role agents once, then generate or copy runtime-specific definitions for Codex, Claude Code, and other hosts.
-      Skills remain reusable and shared across roles, while project profiles decide which guidance is relevant for a given repo or folder.
+      AGENTS.md is the project-local selector. It should point the skills router to the right tiers, paths, validation commands, and data rules without copying the body of shared skills or redefining role authority.
     </p>
   </section>
 
-  <section class="section" aria-labelledby="current-title">
-    <h2 id="current-title">Current State From The Repos</h2>
-    <div class="matrix">
-      <table>
-        <thead>
-          <tr>
-            <th>Source</th>
-            <th>Role definitions found</th>
-            <th>Skills or procedures used</th>
-            <th>What is missing</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><span class="name">dev-methodology</span></td>
-            <td>Codex adapter metadata exists under <code>adapters/codex/skills/*/agents/openai.yaml</code>, but it is one metadata file per skill.</td>
-            <td>
-              <div class="stack">
-                <span class="tag codex">development-methodology</span>
-                <span class="tag codex">project-wiki family</span>
-                <span class="tag codex">artifact creation skills</span>
-                <span class="tag codex">artifact review skills</span>
-                <span class="tag codex">careful-coding</span>
-                <span class="tag codex">ast-grep</span>
-                <span class="tag codex">agent-claim</span>
-                <span class="tag codex">agent-work-merge</span>
-              </div>
-            </td>
-            <td>No composite role layer. The current Codex files expose skills as launchable agents, not larger job roles that combine skills.</td>
-          </tr>
-          <tr>
-            <td><span class="name">agent-runner</span></td>
-            <td><code>CLAUDE.md</code> and a project-organiser design describe a dedicated subagent for file placement before creating new files.</td>
-            <td>
-              <div class="stack">
-                <span class="tag proposed">project-organiser</span>
-                <span class="tag proposed">docs/project-taxonomy.md</span>
-                <span class="tag proposed">purpose-first layout</span>
-                <span class="tag proposed">path governance</span>
-                <span class="tag proposed">methodology runner phases</span>
-              </div>
-            </td>
-            <td>The organiser pattern is strong, but it is repo-local. It should become a portable role plus a project-local taxonomy file.</td>
-          </tr>
-          <tr>
-            <td><span class="name">mpact-insight-questionnaire</span></td>
-            <td><code>.Codex/agents</code> contains invokable role files for coder, code reviewer, frontend coder, QA auditor, UX roles, verifiers, and planner roles.</td>
-            <td>
-              <div class="stack">
-                <span class="tag proposed">.Codex/orchestrator-config.yaml</span>
-                <span class="tag proposed">coder</span>
-                <span class="tag proposed">code-reviewer</span>
-                <span class="tag proposed">qa-auditor</span>
-                <span class="tag proposed">validator</span>
-                <span class="tag proposed">local skills</span>
-              </div>
-            </td>
-            <td>The role surface exists, but stack and tier rules are embedded in prompts. A profile layer would select those rules instead.</td>
-          </tr>
-          <tr>
-            <td><span class="name">ai-wiki</span></td>
-            <td><code>AGENTS.md</code> defines project-wide wiki behavior, not named role files.</td>
-            <td>
-              <div class="stack">
-                <span class="tag wiki">project-wiki-query</span>
-                <span class="tag wiki">project-wiki-research</span>
-                <span class="tag wiki">raw project-wiki monitor</span>
-                <span class="tag wiki">entity update watch</span>
-                <span class="tag wiki">provider collector</span>
-                <span class="tag wiki">framework collector</span>
-                <span class="tag wiki">MCP collector</span>
-                <span class="tag wiki">cybersecurity collector</span>
-              </div>
-            </td>
-            <td>The repo has working collector and ingest roles, but they are automations and conventions rather than reusable agent definition files.</td>
-          </tr>
-          <tr>
-            <td><span class="name">ai-dev-wiki</span></td>
-            <td><code>AGENTS.md</code> plus <code>.Codex/agent-claims.json</code>. No reusable role definition files were found in the repo root.</td>
-            <td>
-              <div class="stack">
-                <span class="tag wiki">project-wiki-query</span>
-                <span class="tag wiki">project-wiki-research</span>
-                <span class="tag wiki">topic news collector</span>
-                <span class="tag wiki">leaf update watch</span>
-                <span class="tag wiki">raw project-wiki monitor</span>
-                <span class="tag wiki">federation routing</span>
-                <span class="tag wiki">topic verifier checklist</span>
-              </div>
-            </td>
-            <td>It has the clearest workflow model, but the roles are still encoded as pages, automation records, and habits rather than portable agent definitions.</td>
-          </tr>
-          <tr>
-            <td><span class="name">gemma-chat-public</span></td>
-            <td>Gemma prompt files define runtime personas: <code>Gemma.chat.md</code>, <code>Gemma.code.md</code>, <code>Gemma.plan.md</code>, <code>Gemma.execute.md</code>, and <code>Gemma.build.md</code>.</td>
-            <td>
-              <div class="stack">
-                <span class="tag gemma">chat mode</span>
-                <span class="tag gemma">code discuss mode</span>
-                <span class="tag gemma">plan mode</span>
-                <span class="tag gemma">execute mode</span>
-                <span class="tag gemma">build mode</span>
-                <span class="tag gemma">semantic review</span>
-                <span class="tag gemma">verification</span>
-                <span class="tag wiki">project-wiki-query</span>
-                <span class="tag wiki">project-wiki-research</span>
-              </div>
-            </td>
-            <td>Gemma Code has strong runtime modes, but they are product prompt contexts rather than portable methodology agents.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
   <section class="section" aria-labelledby="roles-title">
-    <h2 id="roles-title">Proposed Composite Agent Definitions</h2>
+    <h2 id="roles-title">Core Role Agents</h2>
     <div class="grid">
-      <article class="card proposed">
+      <article class="card role">
         <h3>Development Orchestrator</h3>
-        <p>Breaks long-running work into subagent jobs, gives each agent a bounded context pack, tracks handoffs, and decides when to review, retry, merge, or escalate.</p>
+        <p>Coordinates multi-step work across agents while preserving bounded context, explicit handoffs, and verification evidence.</p>
         <div class="tag-row">
-          <span class="tag proposed">structured-design</span>
-          <span class="tag proposed">manage-backlog</span>
-          <span class="tag proposed">agent-claim</span>
-          <span class="tag proposed">agent-work-merge</span>
-          <span class="tag proposed">verification gates</span>
-          <span class="tag proposed">project profile</span>
+          <span class="tag role">task decomposition</span>
+          <span class="tag role">context packs</span>
+          <span class="tag role">agent routing</span>
+          <span class="tag role">retry policy</span>
+          <span class="tag role">merge policy</span>
         </div>
       </article>
 
-      <article class="card proposed">
+      <article class="card role">
         <h3>Project Organiser</h3>
-        <p>Classifies new artifacts by purpose, chooses paths from a living taxonomy, and checks that generated files landed in the right project folder.</p>
+        <p>Classifies artifacts by purpose, chooses paths from the project taxonomy, applies path intent, and audits generated files after runs.</p>
         <div class="tag-row">
-          <span class="tag proposed">project-organiser-use</span>
-          <span class="tag proposed">project taxonomy</span>
-          <span class="tag proposed">path intent</span>
-          <span class="tag proposed">folder profile</span>
-          <span class="tag proposed">post-run audit</span>
+          <span class="tag role">project taxonomy</span>
+          <span class="tag role">path intent</span>
+          <span class="tag role">nested AGENTS.md</span>
+          <span class="tag role">file placement audit</span>
         </div>
       </article>
 
-      <article class="card proposed">
+      <article class="card role">
+        <h3>Project Agent Setup Agent</h3>
+        <p>Creates AGENTS-PLAN.md so a project can validate role agents, skill loadouts, folder routing, nested plans, and AGENTS.md reference before normal work begins.</p>
+        <div class="tag-row">
+          <span class="tag role">create-agents-plan</span>
+          <span class="tag role">development-methodology</span>
+          <span class="tag role">AGENTS-PLAN.md</span>
+          <span class="tag role">setup validation</span>
+        </div>
+      </article>
+
+      <article class="card role">
         <h3>Coding Agent</h3>
-        <p>Owns a scoped source change from repo orientation through patch, focused tests, build, and final explanation using the active stack guidance.</p>
+        <p>Implements scoped source changes using applicable AGENTS.md instructions, repository patterns, focused tests, and build commands.</p>
         <div class="tag-row">
-          <span class="tag proposed">careful-coding</span>
-          <span class="tag proposed">ast-grep</span>
-          <span class="tag proposed">project-wiki-query</span>
-          <span class="tag proposed">code-project-wiki</span>
-          <span class="tag proposed">fix-explanation</span>
-          <span class="tag proposed">agent-claim</span>
-          <span class="tag proposed">stack skill pack</span>
+          <span class="tag role">careful-coding</span>
+          <span class="tag role">ast-grep</span>
+          <span class="tag role">stack skill packs</span>
+          <span class="tag role">fix-explanation</span>
         </div>
       </article>
 
-      <article class="card proposed">
+      <article class="card role">
         <h3>Code Review Agent</h3>
-        <p>Reviews a patch for regressions, missing tests, weak verification, unsafe abstractions, and profile-specific rule violations, with findings grounded in a completed review checklist.</p>
+        <p>Reviews diffs for regressions, missing tests, weak verification, unsafe abstractions, rule violations, and documentation drift.</p>
         <div class="tag-row">
-          <span class="tag proposed">review-structured</span>
-          <span class="tag proposed">ast-grep</span>
-          <span class="tag proposed">careful-coding</span>
-          <span class="tag proposed">code-project-wiki</span>
-          <span class="tag proposed">documentation-page-verifier</span>
-          <span class="tag proposed">tier policy</span>
+          <span class="tag role">review-structured</span>
+          <span class="tag role">source evidence</span>
+          <span class="tag role">finding report</span>
+          <span class="tag role">fresh context</span>
         </div>
       </article>
 
-      <article class="card proposed">
+      <article class="card role">
+        <h3>QA And Verification Agent</h3>
+        <p>Runs acceptance checks, builds, unit tests, integration tests, E2E tests, lint gates, and artifact-specific verification.</p>
+        <div class="tag-row">
+          <span class="tag role">validation</span>
+          <span class="tag role">test execution</span>
+          <span class="tag role">coverage matrix</span>
+          <span class="tag role">PASS WARN FAIL</span>
+        </div>
+      </article>
+
+      <article class="card role">
         <h3>Documentation Architect</h3>
-        <p>Chooses the right documentation shape, then loads the one artifact creation skill needed to create a source-backed project wiki, functional specification, architecture, high-level design, or module design artifact.</p>
+        <p>Selects the right documentation route and loads one focused artifact creation skill for the requested methodology artifact.</p>
         <div class="tag-row">
-          <span class="tag proposed">development-methodology</span>
-          <span class="tag proposed">create-project-wiki</span>
-          <span class="tag proposed">create-functional-spec</span>
-          <span class="tag proposed">create-architecture</span>
-          <span class="tag proposed">create-high-level-design</span>
-          <span class="tag proposed">create-module-design</span>
-          <span class="tag proposed">documentation-bootstrap</span>
-          <span class="tag proposed">documentation-reverse-engineering</span>
-          <span class="tag proposed">documentation-page-verifier</span>
-          <span class="tag proposed">project-wiki</span>
+          <span class="tag role">development-methodology</span>
+          <span class="tag role">artifact creation</span>
+          <span class="tag role">source-backed docs</span>
+          <span class="tag role">page contract</span>
         </div>
       </article>
 
-      <article class="card proposed">
+      <article class="card role">
         <h3>Artifact Review Agent</h3>
-        <p>Acts as a fresh-context reviewer for one finished methodology artifact and saves a completed checklist named artifact-name.review-checklist-review-target.md before assessment.</p>
+        <p>Reviews finished methodology artifacts with an artifact-specific checklist and passes evidence to the shared page verifier.</p>
         <div class="tag-row">
-          <span class="tag proposed">review-project-wiki</span>
-          <span class="tag proposed">review-functional-spec</span>
-          <span class="tag proposed">review-architecture</span>
-          <span class="tag proposed">review-high-level-design</span>
-          <span class="tag proposed">review-module-design</span>
-          <span class="tag proposed">documentation-page-verifier</span>
+          <span class="tag role">artifact checklist</span>
+          <span class="tag role">documentation-page-verifier</span>
+          <span class="tag role">quoted evidence</span>
+          <span class="tag role">review report</span>
         </div>
       </article>
 
-      <article class="card proposed">
+      <article class="card role">
         <h3>Wiki Query Agent</h3>
-        <p>Answers project questions from docs/wiki first, verifies against authoritative files, and captures durable gaps as raw fragments.</p>
+        <p>Answers project questions from docs/wiki first, verifies against authoritative files, and records durable knowledge gaps.</p>
         <div class="tag-row">
-          <span class="tag proposed">project-wiki-query</span>
-          <span class="tag proposed">project-wiki-research</span>
-          <span class="tag proposed">code-project-wiki</span>
+          <span class="tag role">project-wiki-query</span>
+          <span class="tag role">project-wiki-research</span>
+          <span class="tag role">code-project-wiki</span>
         </div>
       </article>
 
-      <article class="card proposed">
+      <article class="card role">
         <h3>Wiki Ingest Agent</h3>
-        <p>Processes raw artifacts into durable leaves, digest entries, processed-source links, lint, and verifier loops.</p>
+        <p>Processes raw inputs into durable wiki leaves, digest entries, processed-source links, linted pages, and verifier evidence.</p>
         <div class="tag-row">
-          <span class="tag proposed">project-wiki</span>
-          <span class="tag proposed">project-wiki-topic-writer</span>
-          <span class="tag proposed">project-wiki-topic-verifier</span>
-          <span class="tag proposed">project-wiki-research</span>
+          <span class="tag role">project-wiki</span>
+          <span class="tag role">topic writer</span>
+          <span class="tag role">topic verifier</span>
+          <span class="tag role">link leaves</span>
         </div>
       </article>
 
-      <article class="card proposed">
+      <article class="card role">
         <h3>Public Source Collector</h3>
-        <p>Runs raw-only public sweeps for approved topics, records exclusions, validates artifacts, and leaves wiki edits to ingest.</p>
+        <p>Collects public raw source artifacts for approved topics, records exclusions, and leaves synthesis to wiki ingest.</p>
         <div class="tag-row">
-          <span class="tag proposed">project-wiki-research</span>
-          <span class="tag proposed">project-wiki</span>
-          <span class="tag proposed">topic feed rules</span>
-          <span class="tag proposed">raw-only boundary</span>
+          <span class="tag role">raw-only boundary</span>
+          <span class="tag role">public evidence</span>
+          <span class="tag role">source windows</span>
         </div>
       </article>
 
-      <article class="card proposed">
-        <h3>Leaf Watch Agent</h3>
-        <p>Checks existing durable leaves for public updates using a deterministic ledger and saves qualifying updates as raw artifacts.</p>
-        <div class="tag-row">
-          <span class="tag proposed">project-wiki</span>
-          <span class="tag proposed">project-wiki-topic-verifier</span>
-          <span class="tag proposed">source reconciliation</span>
-          <span class="tag proposed">ledger discipline</span>
-        </div>
-      </article>
-
-      <article class="card proposed">
+      <article class="card role">
         <h3>Backlog Steward</h3>
-        <p>Creates, claims, resumes, blocks, completes, or archives typed backlog work with recoverable status evidence.</p>
+        <p>Creates, claims, resumes, blocks, completes, and archives typed backlog work with recoverable status evidence.</p>
         <div class="tag-row">
-          <span class="tag proposed">create-backlog</span>
-          <span class="tag proposed">manage-backlog</span>
-          <span class="tag proposed">agent-claim</span>
-          <span class="tag proposed">structured-explanation</span>
+          <span class="tag role">create-backlog</span>
+          <span class="tag role">manage-backlog</span>
+          <span class="tag role">agent-claim</span>
         </div>
       </article>
 
-      <article class="card proposed">
+      <article class="card role">
         <h3>Merge Coordinator</h3>
-        <p>Integrates multiple agent worktree branches while preserving claims, verification evidence, and conflict ownership.</p>
+        <p>Integrates work from multiple agents or worktrees while preserving claims, ownership, verification, and conflict evidence.</p>
         <div class="tag-row">
-          <span class="tag proposed">agent-work-merge</span>
-          <span class="tag proposed">agent-claim</span>
-          <span class="tag proposed">review-structured</span>
-          <span class="tag proposed">fix-explanation</span>
+          <span class="tag role">agent-work-merge</span>
+          <span class="tag role">conflict routing</span>
+          <span class="tag role">branch evidence</span>
         </div>
       </article>
     </div>
   </section>
 
-  <section class="section" aria-labelledby="taxonomy-title">
-    <h2 id="taxonomy-title">Project Type And Stack Taxonomy</h2>
-    <div class="grid">
-      <article class="panel">
-        <h3>Project families</h3>
-        <p>Families answer what kind of work the repository mainly supports.</p>
-        <ul>
-          <li>Frontend web app or design system.</li>
-          <li>API service or backend domain service.</li>
-          <li>Full-stack product with web, server, data, and deployment concerns.</li>
-          <li>CLI, local tooling, or developer productivity utility.</li>
-          <li>Data, analytics, ingestion, or reporting pipeline.</li>
-          <li>AI agent harness, eval runner, prompt system, or orchestration framework.</li>
-          <li>Documentation, wiki, research, or curriculum repository.</li>
-          <li>Library, package, SDK, or reusable component set.</li>
-          <li>Enterprise integration, workflow, or systems automation project.</li>
-        </ul>
-      </article>
-
-      <article class="panel">
-        <h3>Project tiers</h3>
-        <p>Tiers answer how much rigor the role should apply before changing or approving work.</p>
-        <ul>
-          <li>Prototype or spike: fast learning, low ceremony, explicit throwaway boundaries.</li>
-          <li>Greenfield product: simple steady-state design, strong refactoring, no legacy fallbacks.</li>
-          <li>Internal tool: practical reliability, clear ownership, lean documentation.</li>
-          <li>Production service: full build and test gates, monitoring, security, rollback clarity.</li>
-          <li>Regulated or high-risk system: traceability, audit evidence, privacy and security reviews.</li>
-          <li>Legacy maintenance: compatibility constraints, migration plans, conservative change scope.</li>
-        </ul>
-      </article>
-
-      <article class="panel">
-        <h3>Stack packs</h3>
-        <p>Stack packs select concrete best practices without baking them into every agent prompt.</p>
-        <ul>
-          <li>Next.js full-stack: nextjs-app-router, react-server-components, typescript-strict, api-routes, clerk-auth, postgres-drizzle, langgraph, tailwind-design-system, jest, and playwright.</li>
-          <li>Electron local model app: typescript-esm, electron-main, electron-preload, react-vite-renderer, node-cli, vitest, and local-model-integration.</li>
-          <li>Custom harness domain: harness-implementation, tool-runtime-implementation, plan-engine-implementation, and local-model-integration.</li>
-          <li>Wiki or documentation repo: source separation, durable leaves, raw ingest, link validation, topic verification.</li>
-          <li>Additional languages and frameworks can add packs through the same catalog shape.</li>
-        </ul>
-      </article>
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="runtime-title">
-    <h2 id="runtime-title">Runtime Definition Strategy</h2>
-    <div class="grid">
-      <article class="panel">
-        <h3>Current Codex adapter</h3>
-        <p>Keep the existing skill metadata files. They are useful launch shortcuts, but they should not be mistaken for full role definitions.</p>
-        <ul>
-          <li>Current shape: <code>adapters/codex/skills/*/agents/openai.yaml</code></li>
-          <li>Current behavior: one skill gets one display name and one default prompt.</li>
-          <li>Gap: no role-level file that references a multi-skill loadout.</li>
-        </ul>
-      </article>
-
-      <article class="panel">
-        <h3>Proposed role source</h3>
-        <p>Add a source-of-truth folder for composite role definitions, then adapt it to host-specific locations.</p>
-        <ul>
-          <li>Candidate source folder: <code>agents/roles</code></li>
-          <li>Candidate fields: role, purpose, trigger, inputs, allowed tools, skills, outputs, verification, handoff.</li>
-          <li>Installer change: copy or generate runtime files for Codex and Claude Code from the shared role source.</li>
-        </ul>
-      </article>
-
-      <article class="panel">
-        <h3>Skill boundary</h3>
-        <p>A skill should stay small and procedural. A role can combine skills, decide when to use each one, and define the final output contract.</p>
-        <ul>
-          <li>One role can use many skills.</li>
-          <li>One skill can serve many roles.</li>
-          <li>Automations can bind a role to a schedule or queue.</li>
-        </ul>
-      </article>
-
-      <article class="panel">
-        <h3>Subagent boundary</h3>
-        <p>For long-running development, the orchestrator should give each subagent a narrow brief and its own context, then reconcile outputs through review and verification.</p>
-        <ul>
-          <li>Interactive use: a human invokes a named role directly.</li>
-          <li>Autonomous use: the orchestrator invokes roles as bounded work units.</li>
-          <li>Review use: fresh-context agents inspect outputs without inheriting implementation assumptions.</li>
-        </ul>
-      </article>
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="profile-title">
-    <h2 id="profile-title">Project Profile And Folder Overrides</h2>
-    <div class="grid">
-      <article class="panel">
-        <h3>Minimal config pattern</h3>
-        <p>Use one root profile as the normal selector, then allow folder-local overrides only when a subtree really follows a different stack or policy.</p>
-        <ul>
-          <li>Root profile candidate: <code>.agents/project-profile.yaml</code></li>
-          <li>Folder override candidate: <code>.agents/folder-profile.yaml</code> in the subtree it governs.</li>
-          <li>Folder overrides should add or narrow guidance, not duplicate the whole root profile.</li>
-          <li>The profile should select skills; it should not become a second agent prompt language.</li>
-        </ul>
-      </article>
-
-      <article class="panel">
-        <h3>Resolution order</h3>
-        <p>The runtime should resolve guidance from broad to narrow, with explicit safety and privacy rules treated as hard constraints.</p>
-        <ul>
-          <li>Host defaults and global safety rules.</li>
-          <li>Methodology bundle and role definition.</li>
-          <li>Root project profile.</li>
-          <li>Nearest folder profile for the files being touched.</li>
-          <li>Task prompt and source evidence.</li>
-        </ul>
-      </article>
-    </div>
-<pre class="config-block"><code>project:
-  type: full-stack-product
-  tier: greenfield-product
-  primary_stack: nextjs-app-router
-  secondary_stacks:
-    - postgres-drizzle
-    - langgraph
-
-agents:
-  default_orchestrator: development-orchestrator
-  enabled_roles:
-    - coding-agent
-    - code-review-agent
-    - project-organiser
-    - qa-auditor
-
-best_practices:
-  skill_packs:
-    - nextjs-app-router
-    - react-server-components
-    - typescript-strict
-    - api-routes
-    - clerk-auth
-    - postgres-drizzle
-    - jest
-    - playwright
-
-folders:
-  src/app:
-    stack: nextjs-app-router
-    skills:
-      - react-server-components
-      - tailwind-design-system
-  src/lib/server:
-    skills:
-      - postgres-drizzle
-      - langgraph</code></pre>
-  </section>
-
-  <section class="section" aria-labelledby="repo-title">
-    <h2 id="repo-title">Repo Fit</h2>
+  <section class="section" aria-labelledby="loadout-title">
+    <h2 id="loadout-title">Default Skill Loadouts</h2>
     <div class="matrix">
       <table>
         <thead>
           <tr>
-            <th>Composite role</th>
-            <th>ai-wiki</th>
-            <th>ai-dev-wiki</th>
-            <th>Gemma Code</th>
+            <th>Role</th>
+            <th>Primary skills</th>
+            <th>Conditional skills</th>
+            <th>Output contract</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td><span class="name">Development Orchestrator</span></td>
-            <td>Medium fit for scheduled collector, ingest, and review pipelines.</td>
-            <td>High fit because federation, raw queues, claims, and validation gates already need coordination.</td>
-            <td>High fit for long-running code work split across planning, implementation, review, and validation agents.</td>
+            <td>structured-design, structured-explanation, manage-backlog, agent-claim, agent-work-merge.</td>
+            <td>project-wiki-query for repo context; review-structured when assessing agent outputs.</td>
+            <td>Task breakdown, context pack list, assigned roles, handoff plan, retry or escalation decision.</td>
           </tr>
           <tr>
             <td><span class="name">Project Organiser</span></td>
-            <td>Medium fit for keeping raw artifacts, durable leaves, scripts, and generated fragments in the right place.</td>
-            <td>High fit because federation folders and wiki boundaries are easy to blur during automation work.</td>
-            <td>High fit for multi-stack repos where prompts, runtime code, tests, and docs need consistent placement.</td>
+            <td>project-wiki-query, structured-design, structured-explanation.</td>
+            <td>code-project-wiki when file placement affects docs/wiki; agent-claim when coordinating multi-agent ownership.</td>
+            <td>Approved path, placement rationale, taxonomy update, or file-placement audit.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Project Agent Setup Agent</span></td>
+            <td>development-methodology, create-agents-plan, documentation-page-verifier.</td>
+            <td>documentation-bootstrap for first-time repository setup; code-project-wiki when docs/wiki routes need code-aware evidence.</td>
+            <td>Root AGENTS-PLAN.md, nested AGENTS-PLAN.md recommendations, role and skill loadout map, and validation evidence.</td>
           </tr>
           <tr>
             <td><span class="name">Coding Agent</span></td>
-            <td>Low direct fit. Mostly documentation and source artifact work.</td>
-            <td>Medium fit for wiki tooling or workflow guidance edits.</td>
-            <td>High fit. This maps to Code Auto and execute-plan workflows.</td>
+            <td>careful-coding, ast-grep, fix-explanation, project-wiki-query.</td>
+            <td>Stack skills selected from AGENTS.md: TypeScript, Next.js, Electron, API routes, DB, LangGraph, tests, or local model integration.</td>
+            <td>Patch, verification evidence, changed-file summary, and concise fix explanation.</td>
           </tr>
           <tr>
             <td><span class="name">Code Review Agent</span></td>
-            <td>Medium fit for generated scripts or validation helpers.</td>
-            <td>Medium fit for automation and workflow-guidance edits.</td>
-            <td>High fit. Useful for Gemma Code patch review and harness changes.</td>
+            <td>review-structured, ast-grep, careful-coding, project-wiki-query.</td>
+            <td>Stack skills matching the diff; documentation-page-verifier for documentation artifacts.</td>
+            <td>Findings first, severity, file references, open questions, and residual risk.</td>
+          </tr>
+          <tr>
+            <td><span class="name">QA And Verification Agent</span></td>
+            <td>jest, vitest, playwright, review-structured, structured-explanation.</td>
+            <td>Stack skills matching the validation target; project-wiki when wiki checks are required.</td>
+            <td>Command results, coverage notes, skipped-check rationale, and PASS WARN FAIL status.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Documentation Architect</span></td>
+            <td>development-methodology plus one creation skill: create-project-wiki, create-functional-spec, create-architecture, create-high-level-design, or create-module-design.</td>
+            <td>documentation-bootstrap, documentation-reverse-engineering, code-project-wiki, project-wiki-query, documentation-page-verifier.</td>
+            <td>Source-backed methodology artifact that follows the shared page contract and selected template.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Artifact Review Agent</span></td>
+            <td>One artifact review skill: review-project-wiki, review-functional-spec, review-architecture, review-high-level-design, or review-module-design.</td>
+            <td>documentation-page-verifier for shared checks; project-wiki-query for repo context.</td>
+            <td>Completed review checklist, verifier assessment, findings, and required corrections.</td>
           </tr>
           <tr>
             <td><span class="name">Wiki Query Agent</span></td>
-            <td>High fit. Already present through AGENTS.md guidance.</td>
-            <td>High fit. Already present with federation checks.</td>
-            <td>Medium fit. Present for repo questions and durable knowledge gaps.</td>
+            <td>project-wiki-query, project-wiki-research, code-project-wiki.</td>
+            <td>documentation-page-verifier when an answer exposes a durable documentation gap.</td>
+            <td>Wiki-backed answer, source verification notes, and raw fragment recommendation when needed.</td>
           </tr>
           <tr>
             <td><span class="name">Wiki Ingest Agent</span></td>
-            <td>High fit. This is the raw project-wiki monitor role.</td>
-            <td>High fit. This is the raw monitor plus federation routing.</td>
-            <td>Low to medium fit. Mostly for raw fragments and docs/wiki updates.</td>
+            <td>project-wiki, project-wiki-topic-writer, project-wiki-topic-verifier.</td>
+            <td>project-wiki-research for raw reports; code-project-wiki for code-aware pages.</td>
+            <td>Durable wiki page, processed-source links, lint and verifier evidence, digest or leaf updates.</td>
           </tr>
           <tr>
             <td><span class="name">Public Source Collector</span></td>
-            <td>High fit. Provider, framework, MCP, cybersecurity, and entity feeds already operate this way.</td>
-            <td>High fit. Topic news collector operates this way.</td>
-            <td>Low fit. Use only for explicit external research tasks.</td>
+            <td>project-wiki-research, project-wiki.</td>
+            <td>project-wiki-topic-verifier when validating source fit; structured-explanation for collection summaries.</td>
+            <td>Raw-only source artifact, timestamp window, exclusions, and ingest handoff.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Backlog Steward</span></td>
+            <td>create-backlog, manage-backlog, agent-claim, structured-explanation.</td>
+            <td>project-wiki-query when backlog items depend on documented system context.</td>
+            <td>Backlog item, status update, claim record, blocked reason, or completion summary.</td>
           </tr>
           <tr>
             <td><span class="name">Merge Coordinator</span></td>
-            <td>Medium fit if parallel wiki branches become common.</td>
-            <td>Medium fit because claims already exist.</td>
-            <td>High fit when CLI worktree runs produce multiple branches.</td>
+            <td>agent-work-merge, agent-claim, review-structured, fix-explanation.</td>
+            <td>Stack skills for conflict resolution; QA skills for post-merge verification.</td>
+            <td>Merged branch, conflict resolution record, verification evidence, and follow-up ownership.</td>
           </tr>
         </tbody>
       </table>
     </div>
   </section>
 
-  <section class="section" aria-labelledby="next-title">
-    <h2 id="next-title">Recommended Next Cut</h2>
-    <div class="panel">
-      <p>
-        The missing grouping layer is real. A practical next step is to add a small role-definition source model,
-        then create first-pass role files for Development Orchestrator, Project Organiser, Coding Agent, Code Review Agent, Wiki Query Agent, Wiki Ingest Agent,
-        Public Source Collector, Leaf Watch Agent, Documentation Architect, Artifact Review Agent, Backlog Steward,
-        and Merge Coordinator. In parallel, define the project-profile schema narrowly enough to select skills and folder policies without becoming a full framework.
-      </p>
-      <div class="source-list">
-        <span>Primary local evidence: <code>README.md</code>, <code>skills/*/SKILL.md</code>, <code>adapters/codex/skills/*/agents/openai.yaml</code>.</span>
-        <span>Comparison repos inspected: <code>/Users/martinbechard/dev/ai-wiki</code>, <code>/Users/martinbechard/dev/ai-dev-wiki</code>, <code>/Users/martinbechard/dev/gemma-chat-public</code>, <code>/Users/martinbechard/dev/agent-runner</code>, and <code>/Users/martinbechard/dev/mpact-insight-questionnaire</code>.</span>
-        <span>Implementation note: verify exact Claude Code role-file conventions before adding a Claude adapter generator.</span>
-      </div>
+  <section class="section" aria-labelledby="specialists-title">
+    <h2 id="specialists-title">Optional Specialist Roles</h2>
+    <div class="grid">
+      <article class="card specialist">
+        <h3>E2E Browser Agent</h3>
+        <p>Owns browser state, dev server coordination, authenticated workflows, and Playwright diagnostics when E2E work needs a distinct runtime boundary.</p>
+        <div class="tag-row">
+          <span class="tag specialist">playwright</span>
+          <span class="tag specialist">browser state</span>
+          <span class="tag specialist">console checks</span>
+        </div>
+      </article>
+
+      <article class="card specialist">
+        <h3>UX Designer Or Reviewer</h3>
+        <p>Handles design artifacts, interaction review, accessibility concerns, and independent usability assessment without changing code authority.</p>
+        <div class="tag-row">
+          <span class="tag specialist">tailwind-design-system</span>
+          <span class="tag specialist">react-server-components</span>
+          <span class="tag specialist">visual review</span>
+        </div>
+      </article>
+
+      <article class="card specialist">
+        <h3>Security Reviewer</h3>
+        <p>Reviews threat, data, dependency, auth, logging, prompt, and exploitability concerns with read-only authority and explicit findings.</p>
+        <div class="tag-row">
+          <span class="tag specialist">data rules</span>
+          <span class="tag specialist">auth boundary</span>
+          <span class="tag specialist">supply chain</span>
+        </div>
+      </article>
+
+      <article class="card specialist">
+        <h3>Runtime Diagnostician</h3>
+        <p>Investigates long-running local runtime failures with logs, processes, exclusive resources, and a tight reproduction loop.</p>
+        <div class="tag-row">
+          <span class="tag specialist">logs</span>
+          <span class="tag specialist">runtime state</span>
+          <span class="tag specialist">reproduction</span>
+        </div>
+      </article>
+
+      <article class="card specialist">
+        <h3>Prompt Contract Reviewer</h3>
+        <p>Reviews prompt protocol, tool-call safety, schema promises, evaluation coverage, and model-facing data boundaries.</p>
+        <div class="tag-row">
+          <span class="tag specialist">langgraph</span>
+          <span class="tag specialist">harness-implementation</span>
+          <span class="tag specialist">evaluation</span>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="skills-title">
+    <h2 id="skills-title">Skill Catalog</h2>
+    <div class="wide-grid">
+      <article class="panel">
+        <h3>Wiki and knowledge skills</h3>
+        <div class="tag-row">
+          <span class="tag skill">project-wiki</span>
+          <span class="tag skill">project-wiki-query</span>
+          <span class="tag skill">project-wiki-research</span>
+          <span class="tag skill">project-wiki-topic-writer</span>
+          <span class="tag skill">project-wiki-topic-verifier</span>
+          <span class="tag skill">code-project-wiki</span>
+        </div>
+      </article>
+
+      <article class="panel">
+        <h3>Documentation methodology skills</h3>
+        <div class="tag-row">
+          <span class="tag skill">development-methodology</span>
+          <span class="tag skill">documentation-bootstrap</span>
+          <span class="tag skill">documentation-reverse-engineering</span>
+          <span class="tag skill">documentation-page-verifier</span>
+          <span class="tag skill">create-agents-plan</span>
+        </div>
+      </article>
+
+      <article class="panel">
+        <h3>Artifact creation skills</h3>
+        <div class="tag-row">
+          <span class="tag skill">create-project-wiki</span>
+          <span class="tag skill">create-functional-spec</span>
+          <span class="tag skill">create-architecture</span>
+          <span class="tag skill">create-high-level-design</span>
+          <span class="tag skill">create-module-design</span>
+        </div>
+      </article>
+
+      <article class="panel">
+        <h3>Artifact review skills</h3>
+        <div class="tag-row">
+          <span class="tag skill">review-project-wiki</span>
+          <span class="tag skill">review-functional-spec</span>
+          <span class="tag skill">review-architecture</span>
+          <span class="tag skill">review-high-level-design</span>
+          <span class="tag skill">review-module-design</span>
+          <span class="tag skill">review-structured</span>
+        </div>
+      </article>
+
+      <article class="panel">
+        <h3>Development practice skills</h3>
+        <div class="tag-row">
+          <span class="tag skill">careful-coding</span>
+          <span class="tag skill">ast-grep</span>
+          <span class="tag skill">create-backlog</span>
+          <span class="tag skill">manage-backlog</span>
+          <span class="tag skill">fix-explanation</span>
+          <span class="tag skill">structured-explanation</span>
+          <span class="tag skill">structured-design</span>
+          <span class="tag skill">agent-claim</span>
+          <span class="tag skill">agent-work-merge</span>
+        </div>
+      </article>
+
+      <article class="panel">
+        <h3>Stack and domain skills</h3>
+        <div class="tag-row">
+          <span class="tag skill">typescript-esm</span>
+          <span class="tag skill">typescript-strict</span>
+          <span class="tag skill">electron-main</span>
+          <span class="tag skill">electron-preload</span>
+          <span class="tag skill">react-vite-renderer</span>
+          <span class="tag skill">nextjs-app-router</span>
+          <span class="tag skill">react-server-components</span>
+          <span class="tag skill">node-cli</span>
+          <span class="tag skill">api-routes</span>
+          <span class="tag skill">clerk-auth</span>
+          <span class="tag skill">postgres-drizzle</span>
+          <span class="tag skill">langgraph</span>
+          <span class="tag skill">tailwind-design-system</span>
+          <span class="tag skill">jest</span>
+          <span class="tag skill">vitest</span>
+          <span class="tag skill">playwright</span>
+          <span class="tag skill">harness-implementation</span>
+          <span class="tag skill">tool-runtime-implementation</span>
+          <span class="tag skill">plan-engine-implementation</span>
+          <span class="tag skill">local-model-integration</span>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="routing-title">
+    <h2 id="routing-title">Routing Rules</h2>
+    <div class="matrix">
+      <table>
+        <thead>
+          <tr>
+            <th>Signal</th>
+            <th>Router action</th>
+            <th>Example loadout</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="name">User asks for code change</span></td>
+            <td>Use Coding Agent unless the task is primarily review, verification, documentation, or merge coordination.</td>
+            <td>careful-coding, ast-grep, project-wiki-query, plus stack skills from AGENTS.md.</td>
+          </tr>
+          <tr>
+            <td><span class="name">User asks for review</span></td>
+            <td>Use Code Review Agent with fresh context and finding-first output.</td>
+            <td>review-structured, relevant stack skill, source-reading tools, test evidence.</td>
+          </tr>
+          <tr>
+            <td><span class="name">User asks for documentation artifact</span></td>
+            <td>Use Documentation Architect and development-methodology to select exactly one creation route.</td>
+            <td>development-methodology plus create-functional-spec, create-architecture, create-high-level-design, create-module-design, or create-project-wiki.</td>
+          </tr>
+          <tr>
+            <td><span class="name">User asks to set up project agents or skills</span></td>
+            <td>Use Project Agent Setup Agent to create AGENTS-PLAN.md and decide whether nested plans are needed.</td>
+            <td>development-methodology, create-agents-plan, documentation-page-verifier, and documentation-bootstrap for first-time setup.</td>
+          </tr>
+          <tr>
+            <td><span class="name">User asks for artifact review</span></td>
+            <td>Use Artifact Review Agent with the matching artifact review skill and completed checklist evidence.</td>
+            <td>review-architecture, review-functional-spec, review-high-level-design, review-module-design, or review-project-wiki.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Target files are in a specialized subtree</span></td>
+            <td>Read the nearest nested AGENTS.md and add only the local skills, checks, and data rules named there.</td>
+            <td>api-routes and clerk-auth under an API subtree; postgres-drizzle under a DB subtree; playwright under E2E tests.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Work spans multiple phases or agents</span></td>
+            <td>Use Development Orchestrator to split the work and preserve handoff, claim, and verification records.</td>
+            <td>structured-design, manage-backlog, agent-claim, agent-work-merge, review-structured.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="contracts-title">
+    <h2 id="contracts-title">Customer Deployment Contracts</h2>
+    <div class="grid">
+      <article class="card router">
+        <h3>AGENTS.md Is Local Reference</h3>
+        <p>Root and nested AGENTS.md files select project family, tiers, paths, validation commands, and data boundaries. They do not duplicate shared skills.</p>
+      </article>
+      <article class="card skill">
+        <h3>Skills Stay Reusable</h3>
+        <p>Skills contain portable procedures. They are loaded by role and task, not copied into project instructions or role prompts.</p>
+      </article>
+      <article class="card role">
+        <h3>Roles Keep Authority Stable</h3>
+        <p>New roles are added only when authority, output contract, lifecycle phase, context isolation, or runtime resource ownership changes.</p>
+      </article>
+      <article class="card evidence">
+        <h3>Evidence Is Required</h3>
+        <p>Reviews, verification, handoffs, and wiki updates should leave enough evidence for another agent or human to inspect the decision later.</p>
+      </article>
     </div>
   </section>
 </main>

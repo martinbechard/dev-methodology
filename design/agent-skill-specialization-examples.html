@@ -94,6 +94,32 @@
       font-weight: 700;
     }
 
+    .home-link {
+      display: inline-flex;
+      width: max-content;
+      align-items: center;
+      gap: var(--space-2);
+      margin-bottom: var(--space-6);
+      padding: 0.45rem 0.75rem;
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      background: var(--color-panel);
+      color: var(--color-muted);
+      font-size: var(--font-sm);
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: var(--shadow-panel);
+      transition: border-color 160ms ease, color 160ms ease, transform 160ms ease;
+    }
+
+    .home-link:hover,
+    .home-link:focus-visible {
+      transform: translateY(-1px);
+      border-color: var(--color-config);
+      color: var(--color-ink);
+      outline: none;
+    }
+
     .hero {
       display: grid;
       gap: var(--space-6);
@@ -278,289 +304,318 @@
 </head>
 <body>
 <main>
+  <a class="home-link" href="../index.html"><span aria-hidden="true">&larr;</span> Documentation Index</a>
+
   <section class="hero" aria-labelledby="page-title">
     <h1 id="page-title">Agent Skill Specialization Examples</h1>
     <p class="lede">
-      These examples apply the shared agent and skill specialization strategy to two concrete repositories.
-      The generic strategy lives in <a href="agent-skill-specialization-strategy.html">Agent And Skill Specialization Strategy</a>.
+      These customer-safe examples use fictitious projects to show how AGENTS-PLAN.md organizes role agents,
+      skill loadouts, nested routing, and validation evidence. The generic strategy lives in
+      <a href="agent-skill-specialization-strategy.html">Agent And Skill Specialization Strategy</a>.
     </p>
   </section>
 
-  <section class="section" aria-labelledby="gemma-title">
-    <h2 id="gemma-title">gemma-chat-public</h2>
+  <section class="section" aria-labelledby="usage-title">
+    <h2 id="usage-title">Standalone Planning Artifact</h2>
     <div class="grid">
-      <article class="card case">
-        <h3>Project classification</h3>
-        <ul>
-          <li>Family: local-model experimentation app, Electron desktop app, custom harness.</li>
-          <li>Tier: greenfield experimental product with local-first verification.</li>
-          <li>Primary stacks: TypeScript, Electron, Vite, React, Node, Vitest.</li>
-          <li>Application domains: custom harness, product tool runtime, plan engine, local MLX serving, configured remote model endpoints.</li>
-        </ul>
+      <article class="card config">
+        <h3>AGENTS-PLAN.md</h3>
+        <p>AGENTS-PLAN.md is the project-owned setup document for validating agent roles and skill routing before durable guidance is copied into AGENTS.md. It can live at the repository root and, when needed, inside technology-specific subfolders.</p>
       </article>
 
       <article class="card agent">
-        <h3>Shared agents selected</h3>
-        <div class="tag-row">
-          <span class="tag agent">Development Orchestrator</span>
-          <span class="tag agent">Coding Agent</span>
-          <span class="tag agent">Code Review Agent</span>
-          <span class="tag agent">QA And Verification Agent</span>
-          <span class="tag agent">Documentation Architect</span>
-          <span class="tag agent">Wiki Query Agent</span>
-          <span class="tag agent">Project Organiser</span>
-        </div>
+        <h3>Project Agent Setup Agent</h3>
+        <p>This setup role uses development-methodology and create-agents-plan to inspect the project, classify tiers, choose skill loadouts, and create the root and nested AGENTS-PLAN.md files.</p>
+      </article>
+
+      <article class="card case">
+        <h3>Private Validation</h3>
+        <p>For proprietary projects, create AGENTS-PLAN.md inside the private project folder. Keep project names, internal workflows, private architecture, customer data, and validation notes inside that repository.</p>
       </article>
 
       <article class="card skill">
-        <h3>Development skill packs</h3>
-        <div class="tag-row">
-          <span class="tag skill">typescript-esm</span>
-          <span class="tag skill">electron-main</span>
-          <span class="tag skill">electron-preload</span>
-          <span class="tag skill">react-vite-renderer</span>
-          <span class="tag skill">node-cli</span>
-          <span class="tag skill">vitest</span>
-          <span class="tag skill">project-wiki</span>
-          <span class="tag skill">artifact creation skills</span>
-        </div>
-      </article>
-
-      <article class="card skill">
-        <h3>Application-domain skill packs</h3>
-        <div class="tag-row">
-          <span class="tag skill">harness-implementation</span>
-          <span class="tag skill">tool-runtime-implementation</span>
-          <span class="tag skill">plan-engine-implementation</span>
-          <span class="tag skill">local-model-integration</span>
-        </div>
+        <h3>Customer Examples</h3>
+        <p>Customer-facing examples use fictitious product names, synthetic paths, and generic behavior. They show the routing pattern without leaking private project details.</p>
       </article>
     </div>
+  </section>
 
-    <div class="panel section">
-      <h3>Boundary rule</h3>
-      <p>Gemma's own harness, tools, planning loop, prompts, and local model runtime are product internals. Development agents load skills for those domains when they code, review, test, or document the project; documentation work loads only the artifact creation skill for the current document type. Independent review roles keep a completed review checklist before producing findings.</p>
-    </div>
-
-    <div class="matrix section">
+  <section class="section" aria-labelledby="template-title">
+    <h2 id="template-title">AGENTS-PLAN.md Template Sections</h2>
+    <div class="matrix">
       <table>
         <thead>
           <tr>
-            <th>Work target</th>
-            <th>Coding Agent dispatch</th>
-            <th>Verification dispatch</th>
-            <th>Specialized agent?</th>
+            <th>Section</th>
+            <th>Purpose</th>
+            <th>How it validates routing</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><span class="name">src/renderer/**</span></td>
-            <td>Load react-vite-renderer, electron-preload, typescript-esm, and vitest. Apply project renderer-state and accessibility rules from the profile.</td>
-            <td>Run focused renderer Vitest tests, then full tests and build for completed code work.</td>
-            <td>No. This is a frontend skill route inside Coding Agent.</td>
+            <td><span class="name">Current Understanding</span></td>
+            <td>Summarizes the project purpose, stage, and reason agent routing is needed.</td>
+            <td>Prevents a role map from being created without a source-backed project boundary.</td>
           </tr>
           <tr>
-            <td><span class="name">src/main/**</span></td>
-            <td>Load electron-main, electron-preload, node-cli, typescript-esm, and local-model-integration when model routing is touched.</td>
-            <td>Run focused main tests, typecheck or build, and full test suite when behavior changes.</td>
-            <td>No. Main-process work is a stack and runtime route.</td>
+            <td><span class="name">Authoritative Sources</span></td>
+            <td>Lists README files, AGENTS.md files, procedures, packages, tests, docs, and source roots inspected.</td>
+            <td>Makes the setup reviewable because every role and skill decision can be traced to evidence.</td>
           </tr>
           <tr>
-            <td><span class="name">src/main/tools/**</span></td>
-            <td>Load tool-runtime-implementation, tool-contract, prompt-surface, action-parser, protected-file, and tool registry skills.</td>
-            <td>Run tool tests and prompt tests such as action parser, tool layout, and code system prompt coverage.</td>
-            <td>No for normal tools. The tool runtime is product code. A dedicated Tool Contract Reviewer is useful for independent review only.</td>
+            <td><span class="name">Project Taxonomy</span></td>
+            <td>Classifies project family, application tiers, technology stacks, runtime boundaries, and documentation surfaces.</td>
+            <td>Gives the skills router stable terms such as web application, front-end tier, API tier, static pages tier, DB tier, documentation tier, or CLI tier.</td>
           </tr>
           <tr>
-            <td><span class="name">src/main/plan/**</span></td>
-            <td>Load plan-engine-implementation, YAML parsing, semantic review, evidence, retry policy, and verification prompt skills.</td>
-            <td>Run focused plan tests and CLI plan prompt tests.</td>
-            <td>No for implementation. The plan engine is product code. Code Review Agent stays separate for fresh-context review.</td>
+            <td><span class="name">Root AGENTS.md Routing Reference</span></td>
+            <td>Explains what the operational AGENTS.md file should tell agents when they enter the repository.</td>
+            <td>Separates planning evidence from the concise routing instructions agents load during normal work.</td>
           </tr>
           <tr>
-            <td><span class="name">Gemma*.md</span></td>
-            <td>Load harness-implementation, tool-runtime-implementation, and plan-engine-implementation. Apply prompt contract rules from the project profile.</td>
-            <td>Run prompt-related tests and inspect affected mode behavior.</td>
-            <td>Sometimes. A Prompt Contract Reviewer is useful when prompt safety and tool protocol need independent review.</td>
+            <td><span class="name">Role Agent Set</span></td>
+            <td>Defines each project role, the work it owns, handoff boundaries, loaded skills, and completion checks.</td>
+            <td>Shows when a reusable role is enough and when a specialist reviewer or verification agent is justified.</td>
           </tr>
           <tr>
-            <td><span class="name">MLX runtime</span></td>
-            <td>Load local-model-integration, Python environment, cache, server lifecycle, and runtime diagnostics skills.</td>
-            <td>Run MLX-focused tests or smoke checks where local resources allow.</td>
-            <td>Sometimes. Runtime Diagnostician is a development support agent for setup failures and logs, not a Gemma runtime agent.</td>
+            <td><span class="name">Skill Loadouts</span></td>
+            <td>Maps each tier, technology, workflow, or path family to reusable skills.</td>
+            <td>Keeps skill specialization factual and avoids turning every project behavior into a one-off agent.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Folder Routing</span></td>
+            <td>Maps folders and path patterns to roles, tiers, skills, source evidence, and verification commands.</td>
+            <td>Lets the router decide quickly whether a task is front-end, API, DB, docs, testing, or tool work.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Nested AGENTS-PLAN Files</span></td>
+            <td>Lists subfolders that need their own local plan because they have distinct technology or verification rules.</td>
+            <td>Keeps root guidance compact while allowing deeper project areas to document local loadouts.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Validation Plan</span></td>
+            <td>Defines commands and checks used to prove the role and skill setup is usable.</td>
+            <td>Turns the plan into a standalone validation artifact for private projects and customer deployments.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="customer-title">
+    <h2 id="customer-title">Fictitious Customer Examples</h2>
+    <div class="grid">
+      <article class="card case">
+        <h3>Acme Ledger</h3>
+        <ul>
+          <li>Family: web application.</li>
+          <li>Application tiers: front-end, API, static pages, DB, documentation.</li>
+          <li>Primary skills: nextjs-app-router, react-server-components, api-routes, postgres-drizzle, typescript-strict, jest, playwright.</li>
+          <li>Plan shape: root AGENTS-PLAN.md plus nested plans for API and database folders.</li>
+        </ul>
+      </article>
+
+      <article class="card agent">
+        <h3>Northwind Tools</h3>
+        <ul>
+          <li>Family: local developer tooling.</li>
+          <li>Application tiers: CLI, file processing, generated artifacts, tests, documentation.</li>
+          <li>Primary skills: node-cli, typescript-esm, typescript-strict, vitest, careful-coding, fix-explanation.</li>
+          <li>Plan shape: one root AGENTS-PLAN.md because folder rules are simple and shared.</li>
+        </ul>
+      </article>
+
+      <article class="card skill">
+        <h3>Beacon Knowledge Base</h3>
+        <ul>
+          <li>Family: documentation and project wiki repository.</li>
+          <li>Application tiers: source collection, wiki synthesis, verification, publication.</li>
+          <li>Primary skills: project-wiki, project-wiki-research, project-wiki-topic-writer, project-wiki-topic-verifier, code-project-wiki.</li>
+          <li>Plan shape: root AGENTS-PLAN.md plus nested plan for raw source processing when the queue has strict rules.</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="web-title">
+    <h2 id="web-title">Example: Acme Ledger Web Application</h2>
+    <div class="matrix">
+      <table>
+        <thead>
+          <tr>
+            <th>Work target</th>
+            <th>Application tier</th>
+            <th>Role and skills</th>
+            <th>Validation</th>
+            <th>Plan placement</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="name">app/(authenticated)/**</span></td>
+            <td>Front-end tier.</td>
+            <td>Coding Agent loads nextjs-app-router, react-server-components, typescript-strict, tailwind-design-system, jest, and playwright.</td>
+            <td>Run focused unit tests, route smoke checks, accessibility checks, and build.</td>
+            <td>Root AGENTS-PLAN.md is enough unless a product area has its own workflow rules.</td>
+          </tr>
+          <tr>
+            <td><span class="name">app/api/**/route.ts</span></td>
+            <td>API tier.</td>
+            <td>Coding Agent loads api-routes, clerk-auth, nextjs-app-router, postgres-drizzle, typescript-strict, and jest.</td>
+            <td>Run API unit tests, auth boundary checks, persistence tests, and build.</td>
+            <td>Nested app/api/AGENTS-PLAN.md when many routes share API-specific contracts.</td>
+          </tr>
+          <tr>
+            <td><span class="name">app/(marketing)/**</span></td>
+            <td>Static pages tier.</td>
+            <td>Coding Agent loads nextjs-app-router, react-server-components, tailwind-design-system, and playwright.</td>
+            <td>Run build, link checks, responsive screenshots, and smoke checks for forms or calls to action.</td>
+            <td>Root AGENTS-PLAN.md unless the static site is maintained by a separate content workflow.</td>
+          </tr>
+          <tr>
+            <td><span class="name">db/** and drizzle/**</span></td>
+            <td>DB tier.</td>
+            <td>Coding Agent loads postgres-drizzle, typescript-strict, and jest. Code Review Agent checks schema boundaries and migration assumptions.</td>
+            <td>Run schema checks, persistence tests, seed checks, and build.</td>
+            <td>Nested db/AGENTS-PLAN.md when data ownership, migrations, or privacy rules require local evidence.</td>
           </tr>
           <tr>
             <td><span class="name">docs/wiki/**</span></td>
-            <td>Route to Documentation Architect or Wiki Ingest Agent instead of Coding Agent.</td>
-            <td>Run wiki status, lint, and relevant link checks.</td>
-            <td>Yes. Documentation and wiki synthesis have different output contracts.</td>
+            <td>Documentation tier.</td>
+            <td>Documentation Architect loads project-wiki, code-project-wiki, and the relevant artifact creation or review skill.</td>
+            <td>Run wiki status, lint, link checks, and OKF validation when topic pages change.</td>
+            <td>Root AGENTS-PLAN.md plus docs/wiki/AGENTS-PLAN.md only when wiki workflow rules are extensive.</td>
+          </tr>
+          <tr>
+            <td><span class="name">tests/e2e/**</span></td>
+            <td>Verification tier.</td>
+            <td>QA And Verification Agent or E2E Browser Agent loads playwright, nextjs-app-router, and project-specific test data rules.</td>
+            <td>Run targeted browser flows with console and network inspection before broader suite runs.</td>
+            <td>Nested tests/e2e/AGENTS-PLAN.md when the browser runtime has special setup or shared-state constraints.</td>
           </tr>
         </tbody>
       </table>
     </div>
 
     <pre class="config-block"><code>project:
-  family: agentic-development-harness
-  tier: greenfield-product
-  stacks:
-    - typescript-esm
-    - electron
-    - vite
-    - react
-    - node-cli
-    - vitest
-  application_domains:
-    - custom-harness
-    - product-tool-runtime
-    - plan-engine
-    - local-model-runtime
+  name: Acme Ledger
+  family: web-application
+  root_plan: AGENTS-PLAN.md
+  application_tiers:
+    front_end:
+      paths: [app/(authenticated)/**, components/**]
+      skills: [nextjs-app-router, react-server-components, tailwind-design-system]
+    api:
+      paths: [app/api/**/route.ts]
+      skills: [api-routes, clerk-auth, postgres-drizzle]
+      nested_plan: app/api/AGENTS-PLAN.md
+    static_pages:
+      paths: [app/(marketing)/**]
+      skills: [nextjs-app-router, react-server-components, playwright]
+    db:
+      paths: [db/**, drizzle/**]
+      skills: [postgres-drizzle, typescript-strict, jest]
+      nested_plan: db/AGENTS-PLAN.md
 
 dispatch:
+  project-agent-setup-agent:
+    skills: [development-methodology, create-agents-plan, documentation-page-verifier]
   coding-agent:
     rules:
-      - match: src/renderer/**
-        add_skills: [react-vite-renderer, electron-preload, typescript-esm, vitest]
-      - match: src/main/**
-        add_skills: [electron-main, electron-preload, node-cli, typescript-esm]
-      - match: src/main/tools/**
-        add_skills: [tool-runtime-implementation, harness-implementation, vitest]
-      - match: src/main/plan/**
-        add_skills: [plan-engine-implementation, harness-implementation, vitest]
-      - match: Gemma*.md
-        add_skills: [harness-implementation, tool-runtime-implementation, plan-engine-implementation]
-      - match: MLX runtime
-        add_skills: [local-model-integration, electron-main, node-cli]</code></pre>
+      - match: app/api/**/route.ts
+        add_skills: [api-routes, clerk-auth, postgres-drizzle, jest]
+      - match: db/**
+        add_skills: [postgres-drizzle, typescript-strict, jest]</code></pre>
   </section>
 
-  <section class="section" aria-labelledby="mpact-title">
-    <h2 id="mpact-title">mpact-insight-questionnaire</h2>
+  <section class="section" aria-labelledby="tools-title">
+    <h2 id="tools-title">Example: Northwind Tools</h2>
     <div class="grid">
       <article class="card case">
-        <h3>Project classification</h3>
+        <h3>Root plan</h3>
         <ul>
-          <li>Family: full-stack web product, API service, analysis workflow, documentation-rich application.</li>
-          <li>Tier: greenfield product with production-style verification and no legacy compatibility layer.</li>
-          <li>Primary stacks: Next.js 15, React 19, TypeScript, PostgreSQL, Drizzle, Clerk, Tailwind, Jest, Playwright.</li>
-          <li>Special runtime: LangGraph analysis flows, Vercel AI Gateway, QStash, chatbot RAG, Dev versus QA runtime boundary.</li>
+          <li>AGENTS-PLAN.md records the CLI entry points, generated artifact rules, fixture locations, and test commands.</li>
+          <li>No nested plan is needed while the source tree uses one TypeScript runtime and one verification workflow.</li>
+          <li>Root AGENTS.md can stay short because the plan carries the setup evidence.</li>
         </ul>
       </article>
 
       <article class="card agent">
-        <h3>Shared agents selected</h3>
+        <h3>Role agents</h3>
         <div class="tag-row">
+          <span class="tag agent">Project Agent Setup Agent</span>
           <span class="tag agent">Development Orchestrator</span>
-          <span class="tag agent">Project Organiser</span>
           <span class="tag agent">Coding Agent</span>
           <span class="tag agent">Code Review Agent</span>
           <span class="tag agent">QA And Verification Agent</span>
-          <span class="tag agent">E2E Browser Agent</span>
-          <span class="tag agent">UX Reviewer</span>
           <span class="tag agent">Documentation Architect</span>
         </div>
       </article>
 
       <article class="card skill">
-        <h3>Project skill packs</h3>
+        <h3>Skill loadout</h3>
         <div class="tag-row">
-          <span class="tag skill">nextjs-app-router</span>
-          <span class="tag skill">react-server-components</span>
+          <span class="tag skill">node-cli</span>
+          <span class="tag skill">typescript-esm</span>
           <span class="tag skill">typescript-strict</span>
-          <span class="tag skill">api-routes</span>
-          <span class="tag skill">clerk-auth</span>
-          <span class="tag skill">postgres-drizzle</span>
-          <span class="tag skill">langgraph</span>
-          <span class="tag skill">tailwind-design-system</span>
-          <span class="tag skill">jest</span>
-          <span class="tag skill">playwright</span>
-          <span class="tag skill">project-wiki</span>
-          <span class="tag skill">artifact creation skills</span>
+          <span class="tag skill">vitest</span>
+          <span class="tag skill">careful-coding</span>
+          <span class="tag skill">fix-explanation</span>
+          <span class="tag skill">structured-explanation</span>
         </div>
       </article>
     </div>
+  </section>
 
+  <section class="section" aria-labelledby="validation-title">
+    <h2 id="validation-title">Private Project Validation Flow</h2>
+    <div class="panel">
+      <p>Run this flow separately inside each private project. The distributable bundle keeps only the template, setup skill, and fictitious examples; the project-specific AGENTS-PLAN.md files stay with the private repositories they describe.</p>
+    </div>
     <div class="matrix section">
       <table>
         <thead>
           <tr>
-            <th>Work target</th>
-            <th>Coding Agent dispatch</th>
-            <th>Verification dispatch</th>
-            <th>Specialized agent?</th>
+            <th>Step</th>
+            <th>What the setup agent inspects</th>
+            <th>Output</th>
+            <th>Validation question</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><span class="name">src/app/** page or layout</span></td>
-            <td>Load Next.js App Router, React Server Components, TypeScript, auth boundary, and UI composition skills.</td>
-            <td>Run relevant Jest tests, build, and smoke checks for routing, layout, middleware, or auth changes.</td>
-            <td>No. This is a Coding Agent route.</td>
+            <td><span class="name">Inventory</span></td>
+            <td>README files, AGENTS.md files, package metadata, source roots, tests, docs, wiki pages, and procedures.</td>
+            <td>Current Understanding and Authoritative Sources sections.</td>
+            <td>Does the plan describe the actual project rather than a remembered project shape?</td>
           </tr>
           <tr>
-            <td><span class="name">src/app/api/**/route.ts</span></td>
-            <td>Load api-routes, clerk-auth, nextjs-app-router, typescript-strict, postgres-drizzle, and jest.</td>
-            <td>Run API unit or integration tests, build, and affected E2E tests when user-visible.</td>
-            <td>No. API language and framework knowledge is a skill route.</td>
+            <td><span class="name">Classify</span></td>
+            <td>Runtime folders, application tiers, persistent data, generated artifacts, and documentation surfaces.</td>
+            <td>Project Taxonomy and Folder Routing sections.</td>
+            <td>Can the skills router identify front-end, API, static pages, DB, docs, test, or CLI work from paths?</td>
           </tr>
           <tr>
-            <td><span class="name">src/components/**</span></td>
-            <td>Load react-server-components, tailwind-design-system, typescript-strict, and playwright when workflow coverage is affected.</td>
-            <td>Run component tests and E2E tests for changed user workflows.</td>
-            <td>No for coding. UX Reviewer remains separate for independent design review.</td>
+            <td><span class="name">Assign</span></td>
+            <td>Reusable roles, project-specific verification needs, privacy constraints, and handoff points.</td>
+            <td>Role Agent Set and Skill Loadouts sections.</td>
+            <td>Are specialist roles justified by distinct output contracts rather than by folder names alone?</td>
           </tr>
           <tr>
-            <td><span class="name">src/lib/server/**</span></td>
-            <td>Load typescript-strict, postgres-drizzle, langgraph, clerk-auth, and jest based on the touched server subfolder.</td>
-            <td>Run focused Jest tests, build, and integration tests for persistence or workflow changes.</td>
-            <td>No. Server area changes are routed skills unless they need a separate verifier.</td>
+            <td><span class="name">Nest</span></td>
+            <td>Subfolders with different technology, runtime setup, data handling, or verification commands.</td>
+            <td>Nested AGENTS-PLAN.md files where local detail is valuable.</td>
+            <td>Does nesting reduce cognitive load without hiding repository-wide rules?</td>
           </tr>
           <tr>
-            <td><span class="name">src/prompts/**</span></td>
-            <td>Load langgraph, typescript-strict, and jest. Apply project prompt, fixture, RAG, and data-safety rules from the profile.</td>
-            <td>Run prompt fixture tests, index generation checks, and affected analysis tests.</td>
-            <td>Sometimes. Prompt Review Agent is useful for independent prompt safety or evaluation review.</td>
-          </tr>
-          <tr>
-            <td><span class="name">tests/*.spec.ts</span></td>
-            <td>Route to E2E Browser Agent when creating or fixing Playwright workflows, because browser state and runtime resources are exclusive.</td>
-            <td>Run targeted Playwright command against Dev, not QA, with console error checks.</td>
-            <td>Yes. E2E work owns a distinct runtime and output contract.</td>
-          </tr>
-          <tr>
-            <td><span class="name">docs or docs/wiki</span></td>
-            <td>Route to Documentation Architect or Wiki Ingest Agent for specs, project wiki, chatbot RAG docs, and user-facing docs.</td>
-            <td>Run wiki lint and docs-specific checks, plus build when docs feed generated app artifacts.</td>
-            <td>Yes. Documentation has a distinct artifact contract.</td>
+            <td><span class="name">Verify</span></td>
+            <td>Build commands, test commands, docs checks, wiki checks, and page verifier results.</td>
+            <td>Validation Plan, Open Questions, and Maintenance Notes sections.</td>
+            <td>Can another agent use the plan to update AGENTS.md and load the right skills?</td>
           </tr>
         </tbody>
       </table>
     </div>
-
-    <pre class="config-block"><code>project:
-  family: full-stack-product
-  tier: greenfield-product
-  stacks:
-    - nextjs-app-router
-    - typescript-strict
-    - postgres-drizzle
-    - clerk-auth
-    - jest
-    - playwright
-
-dispatch:
-  coding-agent:
-    rules:
-      - match: src/app/**/*
-        add_skills: [nextjs-app-router, react-server-components, typescript-strict]
-      - match: src/app/api/**/route.ts
-        add_skills: [api-routes, clerk-auth, postgres-drizzle, jest]
-      - match: src/components/**
-        add_skills: [react-server-components, tailwind-design-system, playwright]
-      - match: src/lib/server/**
-        add_skills: [typescript-strict, postgres-drizzle, langgraph, jest]
-      - match: src/prompts/**
-        add_skills: [langgraph, typescript-strict, jest]
-      - match: tests/*.spec.ts
-        route_to_agent: e2e-browser-agent</code></pre>
   </section>
 </main>
 </body>

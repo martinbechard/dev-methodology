@@ -22,7 +22,11 @@ NEW_WORKFLOW_SKILLS = (
     "documentation-reverse-engineering",
     "code-project-wiki",
     "documentation-page-verifier",
+    "create-agents-plan",
 )
+AGENTS_PLAN_SKILL = "create-agents-plan"
+AGENTS_PLAN_TEMPLATE = "agents-plan-template.md"
+AGENTS_PLAN_ARTIFACT = "AGENTS-PLAN.md"
 ARTIFACT_CREATION_SKILLS = (
     (
         "create-project-wiki",
@@ -88,6 +92,8 @@ README_REQUIRED_PHRASES = (
     "documentation-reverse-engineering",
     "code-project-wiki",
     "documentation-page-verifier",
+    "create-agents-plan",
+    "AGENTS-PLAN.md",
     "create-project-wiki",
     "create-functional-spec",
     "create-architecture",
@@ -105,7 +111,7 @@ README_REQUIRED_PHRASES = (
     "python3 scripts/refresh-shared-skills.py",
     "ownership manifest",
     "prune mode removes obsolete skills",
-    "Runtime agent metadata packaged inside an owned skill",
+    "Keep Codex adapter metadata under adapters/codex/skills",
     "Before renaming or deleting a source skill",
     "role definitions",
     "dispatch profiles",
@@ -122,6 +128,9 @@ DEVELOPMENT_METHODOLOGY_REQUIRED_PHRASES = (
     "aggregate workflow examples",
     "Load only the skills needed for the current job.",
     "Artifact Creation Routes",
+    "create-agents-plan",
+    "agents-plan-template.md",
+    "AGENTS-PLAN.md",
 )
 STRATEGY_REQUIRED_PHRASES = (
     "Before a rename or deletion",
@@ -151,6 +160,7 @@ AGENTS_REQUIRED_PHRASES = (
     "Do not create separate skill files for repo-local maintenance procedures.",
     "Update README.md when the public skill inventory",
     "Update the design HTML files that describe skills, agents",
+    "Keep Codex adapter metadata under adapters/codex/skills",
     "Do not place agents/openai.yaml inside source skill directories.",
     "python3 scripts/validate-agent-skills.py skills",
     "python3 scripts/refresh-shared-skills.py",
@@ -163,6 +173,10 @@ def review_checklist_name(review_target: str) -> str:
 
 def completed_review_checklist_suffix(review_target: str) -> str:
     return f".review-checklist-{review_target}.md"
+
+
+def openai_metadata_path(skill_name: str) -> Path:
+    return CODEX_ADAPTER_SKILLS_ROOT / skill_name / "agents" / "openai.yaml"
 
 
 class BundleContentTests(unittest.TestCase):
@@ -185,14 +199,7 @@ class BundleContentTests(unittest.TestCase):
         for skill_name in NEW_WORKFLOW_SKILLS:
             with self.subTest(skill_name=skill_name):
                 self.assertTrue((SKILLS_ROOT / skill_name / "SKILL.md").is_file())
-                self.assertTrue(
-                    (
-                        CODEX_ADAPTER_SKILLS_ROOT
-                        / skill_name
-                        / "agents"
-                        / "openai.yaml"
-                    ).is_file()
-                )
+                self.assertTrue(openai_metadata_path(skill_name).is_file())
 
     def test_artifact_creation_skills_route_to_templates_and_reviews(self) -> None:
         development_methodology_text = (
@@ -209,12 +216,7 @@ class BundleContentTests(unittest.TestCase):
                     / "templates"
                     / template_name
                 )
-                metadata_path = (
-                    CODEX_ADAPTER_SKILLS_ROOT
-                    / skill_name
-                    / "agents"
-                    / "openai.yaml"
-                )
+                metadata_path = openai_metadata_path(skill_name)
 
                 self.assertTrue(skill_path.is_file())
                 self.assertTrue(template_path.is_file())
@@ -230,6 +232,38 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(template_name, development_methodology_text)
                 self.assertIn(review_skill_name, development_methodology_text)
 
+    def test_agents_plan_skill_routes_to_template_and_verifier(self) -> None:
+        development_methodology_text = (
+            SKILLS_ROOT / "development-methodology" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        skill_path = SKILLS_ROOT / AGENTS_PLAN_SKILL / "SKILL.md"
+        template_path = (
+            SKILLS_ROOT
+            / "development-methodology"
+            / "assets"
+            / "templates"
+            / AGENTS_PLAN_TEMPLATE
+        )
+        metadata_path = openai_metadata_path(AGENTS_PLAN_SKILL)
+
+        self.assertTrue(skill_path.is_file())
+        self.assertTrue(template_path.is_file())
+        self.assertTrue(metadata_path.is_file())
+
+        skill_text = skill_path.read_text(encoding="utf-8")
+        template_text = template_path.read_text(encoding="utf-8")
+
+        self.assertIn(AGENTS_PLAN_TEMPLATE, skill_text)
+        self.assertIn(AGENTS_PLAN_ARTIFACT, skill_text)
+        self.assertIn("Replace every TODO instruction", skill_text)
+        self.assertIn("documentation-page-verifier", skill_text)
+        self.assertIn("customer-safe examples", skill_text)
+        self.assertIn("Proprietary Validation Notes", template_text)
+        self.assertIn("Nested AGENTS-PLAN Files", template_text)
+        self.assertIn(AGENTS_PLAN_SKILL, development_methodology_text)
+        self.assertIn(AGENTS_PLAN_TEMPLATE, development_methodology_text)
+        self.assertIn("documentation-page-verifier", development_methodology_text)
+
     def test_artifact_review_skills_have_checklists_and_metadata(self) -> None:
         development_methodology_text = (
             SKILLS_ROOT / "development-methodology" / "SKILL.md"
@@ -240,12 +274,7 @@ class BundleContentTests(unittest.TestCase):
                 checklist_name = review_checklist_name(review_target)
                 skill_path = SKILLS_ROOT / skill_name / "SKILL.md"
                 checklist_path = SKILLS_ROOT / skill_name / "references" / checklist_name
-                metadata_path = (
-                    CODEX_ADAPTER_SKILLS_ROOT
-                    / skill_name
-                    / "agents"
-                    / "openai.yaml"
-                )
+                metadata_path = openai_metadata_path(skill_name)
 
                 self.assertTrue(skill_path.is_file())
                 self.assertTrue(checklist_path.is_file())
@@ -296,17 +325,8 @@ class BundleContentTests(unittest.TestCase):
         for skill_name in EXAMPLE_PROJECT_SKILL_PACKS:
             with self.subTest(skill_name=skill_name):
                 skill_path = SKILLS_ROOT / skill_name / "SKILL.md"
-                source_metadata_path = SKILLS_ROOT / skill_name / "agents" / "openai.yaml"
-                adapter_metadata_path = (
-                    CODEX_ADAPTER_SKILLS_ROOT
-                    / skill_name
-                    / "agents"
-                    / "openai.yaml"
-                )
-
                 self.assertTrue(skill_path.is_file())
-                self.assertTrue(adapter_metadata_path.is_file())
-                self.assertFalse(source_metadata_path.exists())
+                self.assertTrue(openai_metadata_path(skill_name).is_file())
 
     def test_skill_frontmatter_uses_agent_skill_schema(self) -> None:
         for skill_path in sorted(SKILLS_ROOT.glob("*/SKILL.md")):

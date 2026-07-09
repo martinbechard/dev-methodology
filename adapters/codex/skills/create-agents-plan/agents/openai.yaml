@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agents Plan Creation"
+  short_description: "Create AGENTS-PLAN.md routing plans"
+  default_prompt: "Use $create-agents-plan to create a source-backed AGENTS-PLAN.md for project agent roles, skill loadouts, and routing."

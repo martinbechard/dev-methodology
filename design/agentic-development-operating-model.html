@@ -14,7 +14,7 @@
       --color-orchestrator: #2563eb;
       --color-agent: #0f766e;
       --color-skill: #b45309;
-      --color-profile: #7c3aed;
+      --color-reference: #7c3aed;
       --color-folder: #be123c;
       --color-soft-blue: #e8f0ff;
       --color-soft-green: #e4f7f4;
@@ -91,6 +91,32 @@
       font-size: 0.9em;
     }
 
+    .home-link {
+      display: inline-flex;
+      width: max-content;
+      align-items: center;
+      gap: var(--space-2);
+      margin-bottom: var(--space-6);
+      padding: 0.45rem 0.75rem;
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      background: var(--color-panel);
+      color: var(--color-muted);
+      font-size: var(--font-sm);
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: var(--shadow-panel);
+      transition: border-color 160ms ease, color 160ms ease, transform 160ms ease;
+    }
+
+    .home-link:hover,
+    .home-link:focus-visible {
+      transform: translateY(-1px);
+      border-color: var(--color-orchestrator);
+      color: var(--color-ink);
+      outline: none;
+    }
+
     .hero {
       display: grid;
       gap: var(--space-6);
@@ -140,8 +166,8 @@
       background: var(--color-skill);
     }
 
-    .dot.profile {
-      background: var(--color-profile);
+    .dot.reference {
+      background: var(--color-reference);
     }
 
     .dot.folder {
@@ -195,8 +221,8 @@
       border-top-color: var(--color-skill);
     }
 
-    .card.profile {
-      border-top-color: var(--color-profile);
+    .card.reference {
+      border-top-color: var(--color-reference);
     }
 
     .card.folder {
@@ -251,9 +277,9 @@
       color: var(--color-skill);
     }
 
-    .tag.profile {
+    .tag.reference {
       background: var(--color-soft-purple);
-      color: var(--color-profile);
+      color: var(--color-reference);
     }
 
     .tag.folder {
@@ -345,7 +371,7 @@
 
     .note {
       padding: var(--space-4);
-      border-left: 0.3rem solid var(--color-profile);
+      border-left: 0.3rem solid var(--color-reference);
       border-radius: var(--radius-small);
       background: var(--color-soft-purple);
       color: var(--color-ink);
@@ -364,18 +390,20 @@
 </head>
 <body>
 <main>
+  <a class="home-link" href="../index.html"><span aria-hidden="true">&larr;</span> Documentation Index</a>
+
   <section class="hero" aria-labelledby="page-title">
     <div class="legend" aria-label="Legend">
       <span class="pill"><span class="dot orchestrator"></span> Orchestration</span>
       <span class="pill"><span class="dot agent"></span> Role agents</span>
       <span class="pill"><span class="dot skill"></span> Skills</span>
-      <span class="pill"><span class="dot profile"></span> Project profile</span>
-      <span class="pill"><span class="dot folder"></span> Folder policy</span>
+      <span class="pill"><span class="dot reference"></span> AGENTS.md reference</span>
+      <span class="pill"><span class="dot folder"></span> Nested AGENTS.md</span>
     </div>
     <h1 id="page-title">Agentic Development Operating Model</h1>
     <p class="lede">
       The methodology uses named role agents for human and orchestrated work, short skills for load-on-demand procedures,
-      project profiles for selecting stack and tier guidance, and folder policies for local overrides. Each layer has one job,
+      AGENTS.md files for router-facing project-family, application-tier, stack, validation, and data-handling reference. Each layer has one job,
       so long-running development can split into subagents without making every context carry every rule.
     </p>
   </section>
@@ -384,8 +412,8 @@
     <h2 id="layers-title">Operating Layers</h2>
     <div class="flow">
       <div class="flow-step">
-        <strong>1. Project Profile</strong>
-        <p>Declares project type, tier, stack packs, enabled agents, validation commands, data rules, and folder policy roots.</p>
+        <strong>1. AGENTS.md Reference</strong>
+        <p>Declares the project family, application tiers, stack packs, validation commands, data rules, and local reference information used by the skills router.</p>
       </div>
       <div class="flow-step">
         <strong>2. Role Agent</strong>
@@ -427,14 +455,25 @@
         <div class="tag-row">
           <span class="tag folder">project taxonomy</span>
           <span class="tag folder">path intent</span>
-          <span class="tag folder">folder profile</span>
+          <span class="tag folder">nested AGENTS.md</span>
           <span class="tag folder">file placement audit</span>
         </div>
       </article>
 
       <article class="card agent">
+        <h3>Project Agent Setup Agent</h3>
+        <p>Creates AGENTS-PLAN.md so the project can validate role agents, skill loadouts, folder routing, nested plan placement, and AGENTS.md reference before normal development work.</p>
+        <div class="tag-row">
+          <span class="tag agent">create-agents-plan</span>
+          <span class="tag agent">development-methodology</span>
+          <span class="tag agent">documentation-page-verifier</span>
+          <span class="tag agent">setup evidence</span>
+        </div>
+      </article>
+
+      <article class="card agent">
         <h3>Coding Agent</h3>
-        <p>Implements scoped source changes using the active project profile, folder policy, repository patterns, tests, and build commands.</p>
+        <p>Implements scoped source changes using the applicable AGENTS.md instructions, repository patterns, tests, and build commands.</p>
         <div class="tag-row">
           <span class="tag agent">careful-coding</span>
           <span class="tag agent">ast-grep</span>
@@ -448,7 +487,7 @@
         <p>Reviews diffs for regressions, rule violations, missing tests, weak verification, unsafe abstractions, and documentation drift, then derives findings from a completed review checklist.</p>
         <div class="tag-row">
           <span class="tag agent">review-structured</span>
-          <span class="tag agent">tier policy</span>
+          <span class="tag agent">application tier policy</span>
           <span class="tag agent">source evidence</span>
           <span class="tag agent">finding report</span>
         </div>
@@ -551,13 +590,13 @@
           <li>A skill is not an agent persona.</li>
           <li>A role agent loads the skill only when the task needs it.</li>
           <li>A skill stays portable across projects and runtimes.</li>
-          <li>Project-specific selection lives in the project profile.</li>
+          <li>Project-specific selection lives in AGENTS.md files.</li>
         </ul>
       </article>
 
       <article class="panel">
         <h3>Skill groups</h3>
-        <p>The profile selects skill groups by project type, stack, tier, and folder scope.</p>
+        <p>The skills router selects skill groups from AGENTS.md reference information by project family, application tier, stack, and folder scope.</p>
         <ul>
           <li>Methodology skills for docs, wiki, artifact creation, structured design, review, backlog, and merge work.</li>
           <li>Stack skills for Next.js, Electron, TypeScript, Postgres, LangGraph, local model integration, and browser tests.</li>
@@ -576,28 +615,22 @@
           <tr>
             <th>Project family</th>
             <th>Default roles</th>
-            <th>Typical stack packs</th>
+            <th>Tier and stack guidance</th>
             <th>Primary validation</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><span class="name">Frontend web app</span></td>
-            <td>Orchestrator, Coding Agent, Code Review Agent, QA And Verification Agent, UX Reviewer.</td>
-            <td>nextjs-app-router, react-server-components, tailwind-design-system, playwright.</td>
-            <td>Build, lint, component tests, E2E tests, visual and accessibility checks.</td>
+            <td><span class="name">Web application</span></td>
+            <td>Orchestrator, Project Organiser, Coding Agent, Code Review Agent, QA And Verification Agent, UX Reviewer, Documentation Architect.</td>
+            <td>Front-end, API, static pages, and DB tiers with Next.js, React Server Components, API routes, auth, Postgres, Drizzle, Jest, and Playwright guidance.</td>
+            <td>Build, lint, unit tests, integration tests, E2E tests, visual checks, accessibility checks, and data access checks.</td>
           </tr>
           <tr>
             <td><span class="name">API service</span></td>
             <td>Orchestrator, Coding Agent, Code Review Agent, QA And Verification Agent, Documentation Architect.</td>
             <td>api-routes, typescript-strict, clerk-auth, postgres-drizzle, jest.</td>
             <td>Build, unit tests, integration tests, contract tests, OpenAPI or route checks.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Full-stack product</span></td>
-            <td>Orchestrator, Project Organiser, Coding Agent, Code Review Agent, QA And Verification Agent.</td>
-            <td>nextjs-app-router, react-server-components, api-routes, clerk-auth, postgres-drizzle, langgraph, jest, playwright.</td>
-            <td>Build, unit tests, integration tests, E2E tests, smoke tests, release gates.</td>
           </tr>
           <tr>
             <td><span class="name">CLI or local tooling</span></td>
@@ -641,114 +674,98 @@
   </section>
 
   <section class="section" aria-labelledby="tiers-title">
-    <h2 id="tiers-title">Project Tiers</h2>
+    <h2 id="tiers-title">Application Tiers</h2>
     <div class="grid">
       <article class="panel">
-        <h3>Prototype or spike</h3>
-        <p>Fast learning, narrow scope, explicit throwaway boundaries, lightweight tests for important assumptions.</p>
+        <h3>Front-end tier</h3>
+        <p>User-facing application screens, interactive components, client/server rendering boundaries, styling, accessibility, and browser workflow guidance.</p>
       </article>
       <article class="panel">
-        <h3>Greenfield product</h3>
-        <p>Simple steady-state design, active refactoring, full build verification, minimal migration ceremony.</p>
+        <h3>API tier</h3>
+        <p>Route handlers, server actions, controllers, services, authentication boundaries, request validation, contracts, and integration test guidance.</p>
       </article>
       <article class="panel">
-        <h3>Internal tool</h3>
-        <p>Practical reliability, clear ownership, repeatable setup, focused docs, and efficient verification.</p>
+        <h3>Static pages tier</h3>
+        <p>Marketing, documentation, legal, and static content routes with content structure, SEO, accessibility, static rendering, and visual verification guidance.</p>
       </article>
       <article class="panel">
-        <h3>Production service</h3>
-        <p>Build and test gates, observability, security checks, rollback clarity, and operational runbooks.</p>
-      </article>
-      <article class="panel">
-        <h3>Regulated or high-risk system</h3>
-        <p>Traceability, privacy controls, audit evidence, threat review, and explicit approval records.</p>
-      </article>
-      <article class="panel">
-        <h3>Legacy maintenance</h3>
-        <p>Compatibility constraints, conservative edits, migration plans, fixture coverage, and regression review.</p>
+        <h3>DB tier</h3>
+        <p>Schema, migrations, queries, persistence modules, seed data, data sensitivity rules, repository patterns, and database integration test guidance.</p>
       </article>
     </div>
+    <p class="note">
+      A web application declares these tiers by default. Other project families declare only the tiers they actually contain, then map each tier to the relevant stack packs, nested AGENTS.md guidance, and validation commands.
+    </p>
   </section>
 
-  <section class="section" aria-labelledby="profile-title">
-    <h2 id="profile-title">Project Profile</h2>
+  <section class="section" aria-labelledby="agents-reference-title">
+    <h2 id="agents-reference-title">AGENTS.md Routing Reference</h2>
     <div class="wide-grid">
       <article class="panel">
-        <h3>Root profile</h3>
-        <p>The root profile is the normal selector for project family, tier, stack packs, role availability, validation commands, and data handling rules.</p>
+        <h3>Root AGENTS.md</h3>
+        <p>The root AGENTS.md is the normal source for project family, application tiers, stack packs, validation commands, data handling rules, and skills-router reference information.</p>
         <ul>
-          <li>Canonical path: <code>.agents/project-profile.yaml</code></li>
-          <li>Host adapters may mirror selected fields into runtime-specific config files.</li>
-          <li>The profile selects skills and policies; it does not duplicate full skill bodies or role prompts.</li>
+          <li>Canonical path: <code>AGENTS.md</code></li>
+          <li>It tells the skills router what guidance to load for common work in the repository.</li>
+          <li>It selects skills and policies; it does not duplicate full skill bodies or role prompts.</li>
         </ul>
       </article>
 
       <article class="panel">
-        <h3>Folder profile</h3>
-        <p>Folder profiles narrow or add guidance for subtrees with a different stack, test policy, artifact type, or data sensitivity.</p>
+        <h3>Nested AGENTS.md</h3>
+        <p>Nested AGENTS.md files narrow or add guidance for subtrees with a different application tier, stack, test policy, artifact type, or data sensitivity.</p>
         <ul>
-          <li>Canonical path: <code>.agents/folder-profile.yaml</code> inside the governed subtree.</li>
-          <li>Nearest folder profile wins for files inside that subtree.</li>
-          <li>Folder profiles contain only the fields that differ from the root profile.</li>
+          <li>Canonical path: <code>AGENTS.md</code> inside the governed subtree.</li>
+          <li>The nearest nested AGENTS.md supplies local router reference for files inside that subtree.</li>
+          <li>Nested files contain only the fields and rules that differ from the root AGENTS.md.</li>
         </ul>
       </article>
     </div>
 
-<pre class="config-block"><code>project:
-  name: example-product
-  family: full-stack-product
-  tier: greenfield-product
-  primary_stack: nextjs-app-router
-  secondary_stacks:
-    - postgres-drizzle
-    - langgraph
+<pre class="config-block"><code>AGENTS.md
 
-agents:
-  default_orchestrator: development-orchestrator
-  enabled_roles:
-    - project-organiser
-    - coding-agent
-    - code-review-agent
-    - qa-and-verification-agent
-    - documentation-architect
+Project family: web-application
 
-skills:
-  methodology:
-    - careful-coding
-    - review-structured
-    - fix-explanation
-  stack_packs:
-    - nextjs-app-router
-    - react-server-components
-    - typescript-strict
-    - api-routes
-    - clerk-auth
-    - postgres-drizzle
-    - langgraph
-    - jest
-    - playwright
-  quality:
-    - review-structured
-    - project-wiki-query
+Application tiers:
+  Front-end tier:
+    Paths: src/app/(app), src/components
+    Skills router loads: nextjs-app-router, react-server-components, tailwind-design-system, playwright
+  API tier:
+    Paths: src/app/api, src/lib/server
+    Skills router loads: api-routes, typescript-strict, clerk-auth, jest
+  Static pages tier:
+    Paths: src/app/(marketing), docs
+    Skills router loads: nextjs-app-router, react-server-components, tailwind-design-system, playwright
+  DB tier:
+    Paths: src/db, drizzle, migrations
+    Skills router loads: postgres-drizzle, typescript-strict, jest
 
-validation:
-  build: ./mvnw test
-  api_contract: ./mvnw verify -Pcontract
+Supporting stacks:
+  - langgraph
 
-data_rules:
-  pii_to_llm: forbidden
-  company_internal_to_external_llm: forbidden
+Default role agents:
+  - project-organiser
+  - coding-agent
+  - code-review-agent
+  - qa-and-verification-agent
+  - documentation-architect
 
-folders:
-  src/app:
-    stack: nextjs-app-router
-    skills:
-      - react-server-components
-      - tailwind-design-system
-  src/lib/server:
-    skills:
-      - postgres-drizzle
-      - langgraph</code></pre>
+Validation:
+  Build: pnpm run build
+  Unit tests: pnpm test
+  E2E: pnpm exec playwright test
+
+Data rules:
+  PII to LLM: forbidden
+  Company internal information to external LLM: forbidden
+
+Nested AGENTS.md examples:
+  src/app/api/AGENTS.md:
+    Tier: API
+    Additional router guidance: load api-routes, clerk-auth, and contract-test guidance.
+  src/db/AGENTS.md:
+    Tier: DB
+    Additional router guidance: load postgres-drizzle and migration-safety guidance.</code></pre>
   </section>
 
   <section class="section" aria-labelledby="resolution-title">
@@ -763,12 +780,12 @@ folders:
         <p>The selected agent role supplies purpose, input requirements, allowed tools, output shape, and handoff behavior.</p>
       </div>
       <div class="flow-step">
-        <strong>Root profile</strong>
-        <p>The project profile selects project family, tier, stacks, skill packs, and validation commands.</p>
+        <strong>Root AGENTS.md</strong>
+        <p>The root AGENTS.md names the project family, application tiers, stacks, skill packs, and validation commands for the skills router.</p>
       </div>
       <div class="flow-step">
-        <strong>Folder profile</strong>
-        <p>The nearest folder profile supplies local stack or policy overrides for the touched files.</p>
+        <strong>Nested AGENTS.md</strong>
+        <p>The nearest nested AGENTS.md supplies local stack, tier, validation, or policy reference for the touched files.</p>
       </div>
       <div class="flow-step">
         <strong>Task evidence</strong>
@@ -796,7 +813,7 @@ folders:
           <tr>
             <td><span class="name">Intake</span></td>
             <td>Development Orchestrator</td>
-            <td>Reads the user request, project profile, relevant folder profiles, backlog, and repo status.</td>
+            <td>Reads the user request, applicable AGENTS.md files, backlog, and repo status.</td>
             <td>Task breakdown, agent assignments, context pack list, validation plan.</td>
           </tr>
           <tr>
@@ -806,15 +823,21 @@ folders:
             <td>Approved paths, taxonomy updates when needed, placement rationale.</td>
           </tr>
           <tr>
+            <td><span class="name">Agent setup</span></td>
+            <td>Project Agent Setup Agent</td>
+            <td>Reads AGENTS.md files, source roots, tests, docs, procedures, package metadata, and project taxonomy.</td>
+            <td>Root AGENTS-PLAN.md, nested plan recommendations, role map, skill loadouts, and validation evidence.</td>
+          </tr>
+          <tr>
             <td><span class="name">Execution</span></td>
             <td>Coding Agent or Documentation Architect</td>
-            <td>Receives only the files, skills, profile excerpts, and acceptance criteria needed for the assigned job.</td>
+            <td>Receives only the files, skills, AGENTS.md excerpts, and acceptance criteria needed for the assigned job.</td>
             <td>Patch, artifact, test evidence, build evidence, implementation notes.</td>
           </tr>
           <tr>
             <td><span class="name">Review</span></td>
             <td>Code Review Agent or Artifact Review Agent</td>
-            <td>Receives the diff, source evidence, role contract, and profile rules without the executor's full scratch context.</td>
+            <td>Receives the diff, source evidence, role contract, and AGENTS.md rules without the executor's full scratch context.</td>
             <td>PASS WARN FAIL verdict with file and rule references.</td>
           </tr>
           <tr>
@@ -836,43 +859,53 @@ folders:
 
   <section class="section" aria-labelledby="files-title">
     <h2 id="files-title">File Contracts</h2>
+    <p class="lede">
+      File contracts make the operating model concrete. They tell agents where durable role definitions live, where project-local router reference lives,
+      which files adapt shared definitions to a runtime, and where completed runs leave evidence. A small project can start with AGENTS.md and add the other contracts as orchestration becomes useful.
+    </p>
     <div class="grid">
       <article class="panel">
         <h3>Shared role source</h3>
+        <p>These files define reusable role behavior before it is rendered into Codex, Claude Code, or another host.</p>
         <ul>
-          <li><code>agents/roles/development-orchestrator.role.yaml</code></li>
-          <li><code>agents/roles/project-organiser.role.yaml</code></li>
-          <li><code>agents/roles/coding-agent.role.yaml</code></li>
-          <li><code>agents/roles/code-review-agent.role.yaml</code></li>
+          <li><code>agents/roles/development-orchestrator.role.yaml</code> defines the coordinator role that breaks work into bounded tasks, selects agents, and preserves handoff and verification expectations.</li>
+          <li><code>agents/roles/project-organiser.role.yaml</code> defines the placement role that applies taxonomy, path intent, and file-organization rules before artifacts or code are created.</li>
+          <li><code>agents/roles/coding-agent.role.yaml</code> defines the implementation role used for ordinary code changes after the skills router has selected the right guidance.</li>
+          <li><code>agents/roles/code-review-agent.role.yaml</code> defines the review role, including finding-first output, severity expectations, evidence requirements, and verification checks.</li>
         </ul>
       </article>
 
       <article class="panel">
-        <h3>Project selectors</h3>
+        <h3>Router reference</h3>
+        <p>These files provide the project-specific facts the skills router reads before choosing which shared skills to load.</p>
         <ul>
-          <li><code>.agents/project-profile.yaml</code></li>
-          <li><code>docs/project-taxonomy.md</code></li>
-          <li><code>&lt;subtree&gt;/.agents/folder-profile.yaml</code></li>
+          <li><code>AGENTS.md</code> is the root project contract. It declares the project family, application tiers, validation commands, data rules, and default guidance for this repository.</li>
+          <li><code>AGENTS-PLAN.md</code> is the setup and validation artifact that explains why project role agents, skill loadouts, nested plans, and AGENTS.md routing references exist.</li>
+          <li><code>&lt;subtree&gt;/AGENTS.md</code> narrows the root contract for a folder that has different tier, stack, validation, or data-handling needs. The nearest file applies to work in that subtree.</li>
+          <li><code>&lt;subtree&gt;/AGENTS-PLAN.md</code> is used only when the subtree has distinct technology, runtime, data, or verification evidence that would make the root plan too noisy.</li>
+          <li><code>docs/project-taxonomy.md</code> defines the project families, artifact types, and placement concepts used by the router and Project Organiser when AGENTS.md points at taxonomy terms.</li>
         </ul>
       </article>
 
       <article class="panel">
         <h3>Runtime adapters</h3>
+        <p>These files translate shared roles and skills into the format a specific agent runtime actually consumes.</p>
         <ul>
-          <li><code>.Codex/agents/*.md</code></li>
-          <li><code>.Codex/orchestrator-config.yaml</code></li>
-          <li><code>.claude/agents/*.md</code></li>
-          <li><code>adapters/codex/**/openai.yaml</code></li>
+          <li><code>.Codex/agents/*.md</code> contains Codex-facing role files generated or maintained from the shared role source so Codex can invoke the same roles.</li>
+          <li><code>.Codex/orchestrator-config.yaml</code> records Codex-specific orchestration wiring, such as available roles, dispatch defaults, and handoff behavior.</li>
+          <li><code>.claude/agents/*.md</code> contains Claude Code-facing role files for the same shared roles when the project is used from Claude Code.</li>
+          <li><code>skills/*/agents/openai.yaml</code> stores optional Codex metadata beside the source skill so deployment matches the Codex skill layout while sync tooling keeps derived interface fields aligned.</li>
         </ul>
       </article>
 
       <article class="panel">
         <h3>Execution evidence</h3>
+        <p>These files make an orchestrated run inspectable after the fact, so another agent or human can see what context was used and what was verified.</p>
         <ul>
-          <li><code>.agents/runs/&lt;run-id&gt;/context-pack.json</code></li>
-          <li><code>.agents/runs/&lt;run-id&gt;/agent-results.jsonl</code></li>
-          <li><code>.agents/runs/&lt;run-id&gt;/verification.md</code></li>
-          <li><code>.agents/runs/&lt;run-id&gt;/handoff.md</code></li>
+          <li><code>.agents/runs/&lt;run-id&gt;/context-pack.json</code> captures the files, AGENTS.md excerpts, task constraints, and selected skills given to the assigned agent.</li>
+          <li><code>.agents/runs/&lt;run-id&gt;/agent-results.jsonl</code> records agent outputs and status events in order, which supports replay, audit, and merge coordination.</li>
+          <li><code>.agents/runs/&lt;run-id&gt;/verification.md</code> records the checks that were run, their results, unresolved risks, and any reason a normal check was skipped.</li>
+          <li><code>.agents/runs/&lt;run-id&gt;/handoff.md</code> summarizes what changed, what remains, who owns follow-up work, and what context the next agent needs.</li>
         </ul>
       </article>
     </div>
