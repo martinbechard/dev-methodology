@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Development Methodology Documentation</title>
+  <style>
+    :root {
+      --color-ink: #172033;
+      --color-muted: #5b6678;
+      --color-page: #f6f8fb;
+      --color-panel: #ffffff;
+      --color-line: #d9e1ea;
+      --color-blue: #2563eb;
+      --color-green: #0f766e;
+      --color-amber: #b45309;
+      --color-purple: #7c3aed;
+      --color-soft-blue: #e8f0ff;
+      --color-soft-green: #e4f7f4;
+      --color-soft-amber: #fff1d8;
+      --color-soft-purple: #f0e8ff;
+      --shadow-panel: 0 14px 32px rgba(31, 41, 55, 0.08);
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.25rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --space-10: 2.5rem;
+      --radius: 0.5rem;
+      --content-max: 1120px;
+      --font-sm: 0.92rem;
+      --font-xs: 0.78rem;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--color-ink);
+      background:
+        linear-gradient(180deg, rgba(232, 240, 255, 0.9), rgba(246, 248, 251, 0) 340px),
+        var(--color-page);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.52;
+    }
+
+    main {
+      max-width: var(--content-max);
+      margin: 0 auto;
+      padding: var(--space-10) var(--space-6);
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      max-width: 860px;
+      font-size: clamp(2rem, 4vw, 3.65rem);
+    }
+
+    h2 {
+      margin-bottom: var(--space-4);
+      font-size: clamp(1.35rem, 2vw, 2rem);
+    }
+
+    h3 {
+      font-size: 1.05rem;
+    }
+
+    p {
+      margin: 0;
+      color: var(--color-muted);
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .hero {
+      display: grid;
+      gap: var(--space-5);
+      margin-bottom: var(--space-8);
+    }
+
+    .lede {
+      max-width: 840px;
+      font-size: 1.08rem;
+    }
+
+    .summary {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: 0.35rem 0.6rem;
+      border: 1px solid var(--color-line);
+      border-radius: 999px;
+      background: var(--color-panel);
+      color: var(--color-muted);
+      font-size: var(--font-xs);
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .dot {
+      width: 0.65rem;
+      height: 0.65rem;
+      border-radius: 50%;
+    }
+
+    .dot.blue {
+      background: var(--color-blue);
+    }
+
+    .dot.green {
+      background: var(--color-green);
+    }
+
+    .dot.amber {
+      background: var(--color-amber);
+    }
+
+    .dot.purple {
+      background: var(--color-purple);
+    }
+
+    .doc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: var(--space-4);
+    }
+
+    .doc-card {
+      display: grid;
+      min-height: 100%;
+      gap: var(--space-4);
+      padding: var(--space-5);
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      background: var(--color-panel);
+      box-shadow: var(--shadow-panel);
+      text-decoration: none;
+      transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+    }
+
+    .doc-card:hover,
+    .doc-card:focus-visible {
+      transform: translateY(-2px);
+      border-color: var(--card-color);
+      box-shadow: 0 18px 38px rgba(31, 41, 55, 0.12);
+      outline: none;
+    }
+
+    .doc-card header {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-3);
+    }
+
+    .icon {
+      display: inline-grid;
+      flex: 0 0 auto;
+      width: 2.15rem;
+      height: 2.15rem;
+      place-items: center;
+      border-radius: var(--radius);
+      background: var(--card-soft);
+      color: var(--card-color);
+      font-weight: 800;
+    }
+
+    .doc-card p {
+      font-size: var(--font-sm);
+    }
+
+    .path {
+      align-self: end;
+      padding-top: var(--space-2);
+      color: var(--color-muted);
+      font-size: var(--font-xs);
+      word-break: break-word;
+    }
+
+    .blue {
+      --card-color: var(--color-blue);
+      --card-soft: var(--color-soft-blue);
+    }
+
+    .green {
+      --card-color: var(--color-green);
+      --card-soft: var(--color-soft-green);
+    }
+
+    .amber {
+      --card-color: var(--color-amber);
+      --card-soft: var(--color-soft-amber);
+    }
+
+    .purple {
+      --card-color: var(--color-purple);
+      --card-soft: var(--color-soft-purple);
+    }
+
+    .footer {
+      margin-top: var(--space-8);
+      padding: var(--space-5);
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      background: var(--color-panel);
+      color: var(--color-muted);
+      font-size: var(--font-sm);
+    }
+
+    @media (max-width: 680px) {
+      main {
+        padding: var(--space-8) var(--space-4);
+      }
+
+      .doc-card {
+        padding: var(--space-4);
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero" aria-labelledby="page-title">
+      <h1 id="page-title">Development Methodology Documentation</h1>
+      <p class="lede">A compact entry point for the HTML design documents that describe the shared agent, skill, project profile, and specialization model.</p>
+      <div class="summary" aria-label="Documentation areas">
+        <span class="pill"><span class="dot blue"></span>Operating model</span>
+        <span class="pill"><span class="dot green"></span>Specialization</span>
+        <span class="pill"><span class="dot amber"></span>Agent roles</span>
+        <span class="pill"><span class="dot purple"></span>Examples</span>
+      </div>
+    </section>
+
+    <section aria-labelledby="documents-title">
+      <h2 id="documents-title">HTML Documents</h2>
+      <div class="doc-grid">
+        <a class="doc-card blue" href="design/agentic-development-operating-model.html">
+          <header>
+            <span class="icon" aria-hidden="true">01</span>
+            <h3>Agentic Development Operating Model</h3>
+          </header>
+          <p>Defines the orchestrator, role agents, skill loading model, project taxonomy, tiers, and project profile flow.</p>
+          <span class="path">design/agentic-development-operating-model.html</span>
+        </a>
+
+        <a class="doc-card green" href="design/agent-skill-specialization-strategy.html">
+          <header>
+            <span class="icon" aria-hidden="true">02</span>
+            <h3>Agent And Skill Specialization Strategy</h3>
+          </header>
+          <p>Defines how shared agents route work through stack, project-type, tier, folder, and project-specific skills.</p>
+          <span class="path">design/agent-skill-specialization-strategy.html</span>
+        </a>
+
+        <a class="doc-card amber" href="design/agent-role-skill-map.html">
+          <header>
+            <span class="icon" aria-hidden="true">03</span>
+            <h3>Agent Roles And Skill Loadouts</h3>
+          </header>
+          <p>Maps composite agent roles to the skill packs and project profile inputs they rely on during development work.</p>
+          <span class="path">design/agent-role-skill-map.html</span>
+        </a>
+
+        <a class="doc-card purple" href="design/agent-skill-specialization-examples.html">
+          <header>
+            <span class="icon" aria-hidden="true">04</span>
+            <h3>Agent Skill Specialization Examples</h3>
+          </header>
+          <p>Shows how the strategy resolves skills and agents for gemma-chat-public and mpact-insight-questionnaire.</p>
+          <span class="path">design/agent-skill-specialization-examples.html</span>
+        </a>
+      </div>
+    </section>
+
+    <p class="footer">The source skill bundle lives in this repository; project-specific files can aggregate, override, or dispatch the shared guidance without changing these common definitions.</p>
+  </main>
+</body>
+</html>
