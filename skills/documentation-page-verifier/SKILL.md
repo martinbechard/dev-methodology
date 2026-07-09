@@ -1,5 +1,4 @@
 ---
-type: Skill
 name: documentation-page-verifier
 description: Use when verifying mixed, unknown, custom, or shared methodology documentation concerns that do not have a clearer artifact-specific review skill.
 ---

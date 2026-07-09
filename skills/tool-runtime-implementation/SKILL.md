@@ -1,5 +1,4 @@
 ---
-type: Skill
 name: tool-runtime-implementation
 description: Use when coding, reviewing, or testing product code that implements tool registries, tool calls, action parsing, protected file rules, tool logs, or runtime tool execution.
 ---

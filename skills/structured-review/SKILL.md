@@ -1,5 +1,4 @@
 ---
-type: Skill
 name: structured-review
 description: |
   Use this skill when reviewing a structured design, plan, architecture,
@@ -11,7 +10,6 @@ description: |
   asserted requirements are actually supported by the inputs. It supports a
   generic base checklist first and allows artifact-specific checklist
   supplements when available.
-version: 0.1.0
 ---
 
 # Structured Review

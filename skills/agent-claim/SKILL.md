@@ -1,5 +1,4 @@
 ---
-type: Skill
 name: agent-claim
 description: Use when multiple agents may edit the same repository, share runtime resources, touch overlapping files, run builds or tests concurrently, or need claim coordination before modifying files.
 ---

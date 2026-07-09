@@ -1,5 +1,4 @@
 ---
-type: Skill
 name: playwright
 description: Use when creating, reviewing, debugging, or running Playwright end-to-end tests, browser workflows, authenticated flows, dev server coordination, page objects, traces, or UI regression checks.
 ---

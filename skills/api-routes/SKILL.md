@@ -1,5 +1,4 @@
 ---
-type: Skill
 name: api-routes
 description: Use when coding, reviewing, or testing API route handlers, HTTP request and response contracts, validation, auth boundaries, error semantics, or integration endpoints.
 ---

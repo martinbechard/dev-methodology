@@ -1,5 +1,4 @@
 ---
-type: Skill
 name: architecture-review
 description: Use when reviewing an architecture artifact for system scope, runtime assumptions, boundaries, dependency direction, cross-cutting concerns, and verification.
 ---

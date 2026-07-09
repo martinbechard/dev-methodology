@@ -65,11 +65,13 @@ README_REQUIRED_PHRASES = (
     "Junie CLI",
     "--adapter junie",
     "skills/development-methodology/assets/templates",
+    "python3 scripts/validate-agent-skills.py skills",
 )
 README_FORBIDDEN_PHRASES = (
     "Copy documentation-methodology.md",
     "Copy the templates folder",
     "procedure-reverse-engineer-project-documentation.md before treating the wiki as complete",
+    "okf-skill-validate skills/*",
 )
 REVERSE_ENGINEERING_DISCOVERY_PHRASES = (
     "## Code Discovery Tools",
@@ -153,6 +155,16 @@ class BundleContentTests(unittest.TestCase):
                 self.assertTrue(skill_path.is_file())
                 self.assertTrue(adapter_metadata_path.is_file())
                 self.assertFalse(source_metadata_path.exists())
+
+    def test_skill_frontmatter_uses_agent_skill_schema(self) -> None:
+        for skill_path in sorted(SKILLS_ROOT.glob("*/SKILL.md")):
+            with self.subTest(skill_path=skill_path):
+                skill_text = skill_path.read_text(encoding="utf-8")
+                frontmatter = skill_text.split("---", maxsplit=2)[1]
+
+                self.assertIn("name:", frontmatter)
+                self.assertIn("description:", frontmatter)
+                self.assertNotIn("type: Skill", frontmatter)
 
     def test_readme_points_to_skill_based_setup(self) -> None:
         readme_text = README_PATH.read_text(encoding="utf-8")

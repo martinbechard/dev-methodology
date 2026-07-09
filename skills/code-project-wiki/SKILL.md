@@ -1,5 +1,4 @@
 ---
-type: Skill
 name: code-project-wiki
 description: Use when maintaining docs/wiki for a code repository, syncing recent commits, updating Related Code or Related Tests, or recording skipped wiki updates.
 ---

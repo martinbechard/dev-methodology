@@ -1,5 +1,4 @@
 ---
-type: Skill
 name: agent-work-merge
 description: Use when integrating work from multiple agents, linked git worktrees, parallel task branches, claim-coordinated repositories, subagent outputs, or concurrent implementation lanes.
 ---

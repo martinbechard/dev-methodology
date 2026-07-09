@@ -162,7 +162,7 @@ The project wiki should live at docs/wiki. It is a synthesized navigation and un
 Before publishing changes to this bundle, run:
 
 ```bash
+python3 scripts/validate-agent-skills.py skills
 python3 -m unittest discover scripts
 PYTHONPATH=skills/project-wiki/scripts python3 -m unittest discover skills/project-wiki/scripts
-python3 skills/project-wiki/scripts/wiki_ops.py okf-skill-validate skills/*
 ```

@@ -1,5 +1,4 @@
 ---
-type: Skill
 name: postgres-drizzle
 description: Use when coding, reviewing, or testing PostgreSQL persistence with Drizzle ORM, schemas, migrations, queries, transactions, indexes, relational models, or typed database access.
 ---

@@ -1,5 +1,4 @@
 ---
-type: Skill
 name: project-wiki-review
 description: Use when reviewing a project wiki page or project-wiki-template artifact for source authority, wiki structure, maintenance rules, and code-aware navigation.
 ---

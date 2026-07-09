@@ -1,5 +1,4 @@
 ---
-type: Skill
 name: project-wiki-topic-verifier
 description: Verify created or updated repository docs/wiki topic pages against project-wiki quality rules after raw source ingest or wiki maintenance. Use when the agent needs an independent, read-only review of created or updated topic pages, durable leaf coverage, hub versus leaf granularity, source links, digest updates, federation boundaries, and project-wiki lint before accepting wiki content. The verifier judges the topic pages, not the source material.
 ---

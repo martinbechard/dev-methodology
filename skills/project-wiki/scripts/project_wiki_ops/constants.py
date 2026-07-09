@@ -93,8 +93,6 @@ TEXT_FORMAT = "text"
 JSON_FORMAT = "json"
 OUTPUT_FORMATS = (TEXT_FORMAT, JSON_FORMAT)
 OKF_VERSION = "0.1"
-SKILL_FILE_NAME = "SKILL.md"
-OKF_SKILL_TYPE = "Skill"
 OKF_RESERVED_FILE_NAMES = {
     "index.md",
     "log.md",

@@ -1,5 +1,4 @@
 ---
-type: Skill
 name: create-backlog
 description: Create structured markdown backlog items from requests, notes, bug reports, feature ideas, investigations, or analysis needs. Use when the user asks to add something to a backlog, capture work for later, split work into backlog items, classify work as a defect, feature, analysis, or investigation, or prepare backlog files that another agent can execute later.
 ---

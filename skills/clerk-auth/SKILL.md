@@ -1,5 +1,4 @@
 ---
-type: Skill
 name: clerk-auth
 description: Use when coding, reviewing, or testing Clerk authentication, sessions, organization context, protected routes, server-side user lookup, auth middleware, or permission boundaries.
 ---

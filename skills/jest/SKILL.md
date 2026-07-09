@@ -1,5 +1,4 @@
 ---
-type: Skill
 name: jest
 description: Use when creating, reviewing, debugging, or running Jest tests for TypeScript, React, Next.js, server logic, database boundaries, mocks, fixtures, or regression coverage.
 ---

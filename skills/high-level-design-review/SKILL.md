@@ -1,5 +1,4 @@
 ---
-type: Skill
 name: high-level-design-review
 description: Use when reviewing a high-level design artifact for subsystem scope, component collaboration, data contracts, invariants, implementation order, and verification.
 ---

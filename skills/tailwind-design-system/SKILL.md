@@ -1,5 +1,4 @@
 ---
-type: Skill
 name: tailwind-design-system
 description: Use when coding, reviewing, or testing Tailwind CSS design systems, tokens, responsive layouts, component styling, accessibility states, or consistent UI surfaces.
 ---

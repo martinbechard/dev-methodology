@@ -1,5 +1,4 @@
 ---
-type: Skill
 name: local-model-integration
 description: Use when coding, reviewing, or testing local model integration, model downloads, MLX serving, cache paths, runtime startup, resource limits, logs, or local versus remote model routing.
 ---

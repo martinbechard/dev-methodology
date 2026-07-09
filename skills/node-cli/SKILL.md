@@ -1,5 +1,4 @@
 ---
-type: Skill
 name: node-cli
 description: Use when coding, reviewing, or testing Node.js command line interfaces, scripts, process arguments, filesystem operations, exit codes, logging, or local automation.
 ---

@@ -1,5 +1,4 @@
 ---
-type: Skill
 name: functional-spec-review
 description: Use when reviewing a functional specification artifact for actor workflow, entry points, states, permissions, acceptance behavior, and verification evidence.
 ---

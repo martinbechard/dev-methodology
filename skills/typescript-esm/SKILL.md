@@ -1,5 +1,4 @@
 ---
-type: Skill
 name: typescript-esm
 description: Use when coding, reviewing, or testing TypeScript projects that use ECMAScript modules, package module mode, modern imports and exports, Node ESM, or bundler ESM behavior.
 ---

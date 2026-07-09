@@ -23,10 +23,8 @@ from .core import (
 )
 from .models import LintResult
 from .okf import (
-    migrate_skill_files_to_okf,
     migrate_wiki_to_okf,
     okf_summary,
-    validate_okf_skill_files,
     validate_okf_wiki,
 )
 
@@ -88,29 +86,6 @@ def print_okf_migrate(dry_run: bool) -> int:
         if changed_count > MAX_DISPLAY_ITEMS:
             remaining_count = changed_count - MAX_DISPLAY_ITEMS
             print(f"- ... {remaining_count} more documents")
-    return 0
-
-
-def print_okf_skill_validate(paths: list[str]) -> int:
-    findings = validate_okf_skill_files([Path(path) for path in paths])
-    if not findings:
-        print("OKF skill validation passed.")
-        return 0
-    print_lint_findings(findings)
-    return 1
-
-
-def print_okf_skill_migrate(dry_run: bool, paths: list[str]) -> int:
-    results = migrate_skill_files_to_okf([Path(path) for path in paths], dry_run=dry_run)
-    changed_count, skill_count = okf_summary(results)
-    action = "would update" if dry_run else "updated"
-    print(f"OKF skill migration {action} {changed_count} of {skill_count} skill files.")
-    if changed_count:
-        for result in [item for item in results if item.changed][:MAX_DISPLAY_ITEMS]:
-            print(f"- {stable_path_key(result.path)}")
-        if changed_count > MAX_DISPLAY_ITEMS:
-            remaining_count = changed_count - MAX_DISPLAY_ITEMS
-            print(f"- ... {remaining_count} more skill files")
     return 0
 
 
@@ -221,17 +196,6 @@ def build_parser() -> argparse.ArgumentParser:
     okf_validate_parser.set_defaults(command="okf-validate")
     okf_migrate_parser = subparsers.add_parser("okf-migrate", help="Add or refresh OKF frontmatter")
     okf_migrate_parser.add_argument("--dry-run", action="store_true", help="Show documents that would change")
-    okf_skill_validate_parser = subparsers.add_parser(
-        "okf-skill-validate",
-        help="Validate OKF frontmatter for SKILL.md files",
-    )
-    okf_skill_validate_parser.add_argument("paths", nargs="+", help="Skill directories or SKILL.md files")
-    okf_skill_migrate_parser = subparsers.add_parser(
-        "okf-skill-migrate",
-        help="Add OKF frontmatter to SKILL.md files",
-    )
-    okf_skill_migrate_parser.add_argument("paths", nargs="+", help="Skill directories or SKILL.md files")
-    okf_skill_migrate_parser.add_argument("--dry-run", action="store_true", help="Show skill files that would change")
     suggest_parser = subparsers.add_parser("suggest", help="Suggest wiki pages for source paths")
     suggest_parser.add_argument("paths", nargs="*", help="Source paths to map to wiki pages")
     suggest_parser.add_argument("--changed", action="store_true", help="Use files changed since HEAD")
@@ -261,10 +225,6 @@ def main() -> int:
         return print_okf_validate()
     if args.command == "okf-migrate":
         return print_okf_migrate(args.dry_run)
-    if args.command == "okf-skill-validate":
-        return print_okf_skill_validate(args.paths)
-    if args.command == "okf-skill-migrate":
-        return print_okf_skill_migrate(args.dry_run, args.paths)
     if args.command == "suggest":
         return print_suggest(args.changed, args.paths)
     if args.command == "sources":

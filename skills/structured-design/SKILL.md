@@ -1,5 +1,4 @@
 ---
-type: Skill
 name: structured-design
 description: |
   Use this skill when you need to write or revise a structured design,
@@ -10,7 +9,6 @@ description: |
   and CHAIN-OF-THOUGHT only as the bridge from the parent item to that
   BECAUSE. Use embedded IDs on root-level items when review or
   cross-reference matters. This skill returns markdown text only.
-version: 0.7.0
 ---
 
 # Structured Design

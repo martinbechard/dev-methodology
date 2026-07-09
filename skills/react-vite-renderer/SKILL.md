@@ -1,5 +1,4 @@
 ---
-type: Skill
 name: react-vite-renderer
 description: Use when coding, reviewing, or testing React renderer code in a Vite application, including Electron renderers, browser state, component composition, assets, and client-side interaction.
 ---

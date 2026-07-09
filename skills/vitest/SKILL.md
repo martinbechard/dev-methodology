@@ -1,5 +1,4 @@
 ---
-type: Skill
 name: vitest
 description: Use when creating, reviewing, debugging, or running Vitest unit and integration tests for TypeScript, Vite, React, Electron-adjacent modules, or Node code.
 ---

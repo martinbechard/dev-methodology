@@ -1,5 +1,4 @@
 ---
-type: Skill
 name: careful-coding
 description: Use when the agent is about to implement, modify, refactor, or debug code and should bias toward explicit assumptions, simple designs, surgical diffs, and verified success criteria.
 ---

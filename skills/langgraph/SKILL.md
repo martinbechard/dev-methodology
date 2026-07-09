@@ -1,5 +1,4 @@
 ---
-type: Skill
 name: langgraph
 description: Use when coding, reviewing, or testing LangGraph workflows, graph state, nodes, edges, tools, checkpoints, retries, streaming, or AI analysis pipelines.
 ---

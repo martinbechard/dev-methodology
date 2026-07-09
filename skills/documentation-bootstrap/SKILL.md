@@ -1,5 +1,4 @@
 ---
-type: Skill
 name: documentation-bootstrap
 description: Use when applying the development methodology bundle to a target repository for the first time, choosing documentation roots, templates, AGENTS guidance, or wiki setup.
 ---
@@ -58,7 +57,8 @@ When local templates are copied, place them under the target project's chosen do
 Before finishing:
 
 1. Run project wiki status and lint when docs/wiki exists.
-2. Run OKF validation when wiki pages or skill-like markdown changed.
-3. Run repository build or documentation checks only if setup changed code, imports, generated artifacts, project metadata, or documented commands.
-4. Search for unresolved TODO markers outside intentionally copied templates.
-5. Report the documentation root, wiki root, local templates copied, AGENTS.md guidance changed, verification commands run, and unresolved questions.
+2. Run OKF validation when wiki pages changed.
+3. Run agent-skill validation when skill files changed.
+4. Run repository build or documentation checks only if setup changed code, imports, generated artifacts, project metadata, or documented commands.
+5. Search for unresolved TODO markers outside intentionally copied templates.
+6. Report the documentation root, wiki root, local templates copied, AGENTS.md guidance changed, verification commands run, and unresolved questions.

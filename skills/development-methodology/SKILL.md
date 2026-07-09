@@ -1,5 +1,4 @@
 ---
-type: Skill
 name: development-methodology
 description: Use when creating or revising software project documentation, choosing a methodology template, or routing setup, reverse engineering, code wiki, or page verification work.
 ---
@@ -79,10 +78,11 @@ Before finishing documentation or wiki work:
 1. Use the artifact-specific review skill when the artifact type is project wiki, functional specification, architecture, high-level design, or module design.
 2. Use documentation-page-verifier for mixed, unknown, or custom documentation artifacts.
 3. Run project wiki status and lint when docs/wiki exists.
-4. Run OKF validation when topic pages or skill files changed.
-5. Run the target project build when code, imports, generated artifacts, or project metadata changed.
-6. Search generated documents for unresolved TODO markers that are not intentional.
-7. Confirm every created document names related source, tests, or Not yet identified.
-8. Confirm wiki changes follow the project-wiki verifier checklist when topic pages changed.
+4. Run OKF validation when topic pages changed.
+5. Run the repository agent-skill validator when skill files changed.
+6. Run the target project build when code, imports, generated artifacts, or project metadata changed.
+7. Search generated documents for unresolved TODO markers that are not intentional.
+8. Confirm every created document names related source, tests, or Not yet identified.
+9. Confirm wiki changes follow the project-wiki verifier checklist when topic pages changed.
 
 Do not send private, proprietary, sensitive, PII, or company-internal material to an external service unless the user explicitly authorizes it.

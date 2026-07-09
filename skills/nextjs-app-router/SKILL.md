@@ -1,5 +1,4 @@
 ---
-type: Skill
 name: nextjs-app-router
 description: Use when coding, reviewing, or testing Next.js App Router projects, including app routes, layouts, loading and error boundaries, metadata, server actions, routing, and deployment build behavior.
 ---

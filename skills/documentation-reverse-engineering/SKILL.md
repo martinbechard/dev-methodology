@@ -1,5 +1,4 @@
 ---
-type: Skill
 name: documentation-reverse-engineering
 description: Use when deriving functional, architecture, high-level design, module design, README, or wiki documentation from an existing codebase.
 ---

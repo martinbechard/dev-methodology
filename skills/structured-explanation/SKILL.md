@@ -1,5 +1,4 @@
 ---
-type: Skill
 name: structured-explanation
 description: |
   Use this skill when you need to explain reasoning in a structured way using
@@ -7,7 +6,6 @@ description: |
   break a question into smaller questions, ground each answer in concrete
   facts, separate guesses from knowns, and keep the final answer easy to
   inspect.
-version: 0.1.0
 ---
 
 # Structured Explanation

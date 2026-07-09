@@ -1,5 +1,4 @@
 ---
-type: Skill
 name: project-wiki-topic-writer
 description: Create, rewrite, split, and verify repository docs/wiki topic pages. Use when the agent needs a topic writer to correct verifier findings, split broad pages into durable leaf pages, update folder hubs and topic indexes, preserve source-backed wiki content, run project-wiki lint, invoke $project-wiki-topic-verifier, and apply verifier corrections in a loop until the updated topic pages are accepted.
 ---

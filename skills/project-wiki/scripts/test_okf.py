@@ -9,10 +9,8 @@ from pathlib import Path
 
 from project_wiki_ops.core import lint_page
 from project_wiki_ops.okf import (
-    migrate_skill_file_to_okf,
     migrate_page_to_okf,
     split_frontmatter,
-    validate_okf_skill_file,
     validate_okf_page,
 )
 
@@ -133,46 +131,6 @@ class OkfMigrationTest(unittest.TestCase):
             frontmatter, _body, _parsed = split_frontmatter(page.read_text(encoding="utf-8"))
 
         self.assertEqual("The raw monitor checks Clippings before raw files.", frontmatter["description"])
-
-    def test_skill_migration_adds_type_without_rewriting_existing_fields(self) -> None:
-        with tempfile.TemporaryDirectory() as directory:
-            skill_dir = Path(directory) / "skills" / "careful-coding"
-            skill_dir.mkdir(parents=True)
-            skill_file = skill_dir / "SKILL.md"
-            skill_file.write_text(
-                "\n".join(
-                    [
-                        "---",
-                        "name: careful-coding",
-                        "description: Use when coding carefully.",
-                        "metadata:",
-                        "  short-description: Code carefully",
-                        "---",
-                        "",
-                        "# Careful Coding",
-                    ]
-                ),
-                encoding="utf-8",
-            )
-
-            result = migrate_skill_file_to_okf(skill_dir)
-            findings = validate_okf_skill_file(skill_file)
-            text = skill_file.read_text(encoding="utf-8")
-
-        self.assertTrue(result.changed)
-        self.assertEqual(EXPECTED_NO_FINDINGS, len(findings))
-        self.assertTrue(text.startswith("---\ntype: Skill\nname: careful-coding\n"))
-        self.assertIn("metadata:\n  short-description: Code carefully", text)
-
-    def test_skill_validation_requires_skill_type(self) -> None:
-        with tempfile.TemporaryDirectory() as directory:
-            skill_file = Path(directory) / "SKILL.md"
-            skill_file.write_text("---\nname: demo\ndescription: Demo skill.\n---\n\n# Demo\n", encoding="utf-8")
-
-            findings = validate_okf_skill_file(skill_file)
-
-        self.assertEqual(EXPECTED_ONE_FINDING, len(findings))
-        self.assertIn("type: Skill", findings[0].message)
 
 
 if __name__ == "__main__":

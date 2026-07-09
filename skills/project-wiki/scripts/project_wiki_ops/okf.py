@@ -18,8 +18,6 @@ from .constants import (
     OKF_REQUIRED_FRONTMATTER_FIELD,
     OKF_RESERVED_FILE_NAMES,
     OKF_ROOT_FILE_TYPES,
-    OKF_SKILL_TYPE,
-    SKILL_FILE_NAME,
     WIKI_DIR,
 )
 from .core import extract_h1_title, read_text, relative_path, wiki_pages, write_text
@@ -267,66 +265,3 @@ def validate_okf_wiki() -> list[LintResult]:
 def okf_summary(results: list[OkfMigrationResult]) -> tuple[int, int]:
     changed_count = sum(1 for result in results if result.changed)
     return changed_count, len(results)
-
-
-def skill_file_for_target(target: Path) -> Path:
-    if target.name == SKILL_FILE_NAME:
-        return target
-    return target / SKILL_FILE_NAME
-
-
-def insert_skill_type_frontmatter(text: str) -> str:
-    lines = text.splitlines(keepends=True)
-    for index, line in enumerate(lines[1:], start=1):
-        if ":" in line:
-            key, _raw_value = line.split(":", maxsplit=1)
-            if key.strip() == OKF_REQUIRED_FRONTMATTER_FIELD:
-                lines[index] = f"{OKF_REQUIRED_FRONTMATTER_FIELD}: {OKF_SKILL_TYPE}\n"
-                return "".join(lines)
-        if line.strip() == OKF_FRONTMATTER_DELIMITER:
-            lines.insert(1, f"{OKF_REQUIRED_FRONTMATTER_FIELD}: {OKF_SKILL_TYPE}\n")
-            return "".join(lines)
-    return text
-
-
-def migrate_skill_file_to_okf(path: Path, dry_run: bool = False) -> OkfMigrationResult:
-    skill_file = skill_file_for_target(path)
-    if not skill_file.exists():
-        return OkfMigrationResult(path=skill_file, changed=False)
-    original_text = read_text(skill_file)
-    frontmatter, _body, parsed = split_frontmatter(original_text)
-    current_type = frontmatter.get(OKF_REQUIRED_FRONTMATTER_FIELD)
-    if isinstance(current_type, str) and current_type.strip():
-        return OkfMigrationResult(path=skill_file, changed=False)
-    if not parsed:
-        return OkfMigrationResult(path=skill_file, changed=False)
-    migrated_text = insert_skill_type_frontmatter(original_text)
-    changed = migrated_text != original_text
-    if changed and not dry_run:
-        write_text(skill_file, migrated_text)
-    return OkfMigrationResult(path=skill_file, changed=changed)
-
-
-def migrate_skill_files_to_okf(paths: list[Path], dry_run: bool = False) -> list[OkfMigrationResult]:
-    return [migrate_skill_file_to_okf(path, dry_run=dry_run) for path in paths]
-
-
-def validate_okf_skill_file(path: Path) -> list[LintResult]:
-    skill_file = skill_file_for_target(path)
-    if not skill_file.exists():
-        return [LintResult(skill_file, "OKF skill file is missing")]
-    text = read_text(skill_file)
-    frontmatter, _body, parsed = split_frontmatter(text)
-    if not parsed:
-        return [LintResult(skill_file, "OKF skill must start with YAML frontmatter")]
-    skill_type = frontmatter.get(OKF_REQUIRED_FRONTMATTER_FIELD)
-    if skill_type != OKF_SKILL_TYPE:
-        return [LintResult(skill_file, "OKF skill must have type: Skill frontmatter")]
-    return []
-
-
-def validate_okf_skill_files(paths: list[Path]) -> list[LintResult]:
-    findings: list[LintResult] = []
-    for path in paths:
-        findings.extend(validate_okf_skill_file(path))
-    return findings
