@@ -564,7 +564,7 @@
           <li>Family: documentation and project wiki repository.</li>
           <li>Application tiers: source collection, wiki synthesis, verification, publication.</li>
           <li>Primary skills: project-wiki, project-wiki-research, project-wiki-topic-writer, project-wiki-topic-verifier, code-project-wiki.</li>
-          <li>Plan shape: root AGENTS-PLAN.yaml plus nested AGENTS.md reference for raw source processing when the queue has strict rules.</li>
+          <li>Plan shape: one root AGENTS-PLAN.yaml because the repository owns one wiki workflow; nested wiki AGENTS.md is only needed when multiple wiki roots have different rules.</li>
         </ul>
       </article>
     </div>
@@ -842,14 +842,14 @@ Local checks: schema checks, migration review, seed data tests.</code></pre>
             <td>Source collection tier.</td>
             <td>Research Agent loads project-wiki-research and follows raw-only collection rules.</td>
             <td>Confirm source metadata, date boundaries, and queue placement before synthesis.</td>
-            <td>Nested raw/AGENTS.md when source queues have strict handling rules.</td>
+            <td>Root AGENTS.md because this wiki-only project has one source and wiki workflow.</td>
           </tr>
           <tr>
             <td><span class="name">docs/wiki/**</span></td>
             <td>Wiki synthesis tier.</td>
             <td>Documentation Architect loads project-wiki, project-wiki-topic-writer, and code-project-wiki when source links depend on code.</td>
             <td>Run wiki status, lint, and OKF validation.</td>
-            <td>Root AGENTS.md plus docs/wiki/AGENTS.md only when the wiki has local writing rules.</td>
+            <td>Root AGENTS.md; use a nested wiki AGENTS.md only when another wiki root in the same project has different rules.</td>
           </tr>
           <tr>
             <td><span class="name">docs/wiki/digests/**</span></td>
@@ -867,7 +867,7 @@ Local checks: schema checks, migration review, seed data tests.</code></pre>
         <h3>Beacon AGENTS-PLAN.yaml</h3>
         <button class="snippet-toggle" type="button" aria-expanded="false" aria-controls="beacon-plan-sample">Expand</button>
       </div>
-      <p class="snippet-note">The plan records why Beacon needs a local raw queue reference and which checks prove the wiki workflow is usable.</p>
+      <p class="snippet-note">The plan records why root guidance is enough for Beacon's single wiki workflow and which checks prove that workflow is usable.</p>
       <pre id="beacon-plan-sample" class="config-block clamp-block"><code>schema: agents-plan
 schema_version: 1
 project:
@@ -875,12 +875,12 @@ project:
   family: documentation-and-project-wiki
 operational_references:
   root: AGENTS.md
-  nested: [raw/AGENTS.md]
+  nested: []
+  nested_reference_rule: use a nested &lt;wiki-root&gt;/AGENTS.md only when the same project has multiple wiki roots with different rules
 application_tiers:
   source_collection:
     paths: [raw/inbox/**, raw/fragments/**]
     skills: [project-wiki-research]
-    nested_agents_reference: raw/AGENTS.md
   wiki_synthesis:
     paths: [docs/wiki/**]
     skills: [project-wiki, project-wiki-topic-writer, project-wiki-topic-verifier]
@@ -893,10 +893,10 @@ validation:
 
     <div class="snippet" data-expanded="false">
       <div class="snippet-head">
-        <h3>Beacon Root And Nested AGENTS.md References</h3>
+        <h3>Beacon AGENTS.md Reference</h3>
         <button class="snippet-toggle" type="button" aria-expanded="false" aria-controls="beacon-agents-sample">Expand</button>
       </div>
-      <p class="snippet-note">Beacon uses the validated plan to derive root AGENTS.md guidance and a nested raw/AGENTS.md for source collection rules.</p>
+      <p class="snippet-note">Beacon uses the validated plan to derive root AGENTS.md guidance for both raw source collection and wiki synthesis.</p>
       <pre id="beacon-agents-sample" class="config-block clamp-block"><code>AGENTS.md
 Project family: documentation and project wiki repository.
 Application tiers:
@@ -906,19 +906,11 @@ Application tiers:
 Routing:
   Collection runs are raw-only.
   Ingest runs read raw sources before editing docs/wiki.
+  Use a nested &lt;wiki-root&gt;/AGENTS.md only when this project hosts multiple wiki roots with different rules.
 Validation:
   wiki_ops.py status
   wiki_ops.py lint
-  wiki_ops.py okf-validate
-
-raw/AGENTS.md
-Local scope: unprocessed source queue.
-Rules:
-  Keep raw collection separate from wiki synthesis.
-  Move processed items only after synthesis and validation.
-Skills:
-  project-wiki-research for source reports.
-  project-wiki-topic-writer and project-wiki-topic-verifier for wiki pages.</code></pre>
+  wiki_ops.py okf-validate</code></pre>
     </div>
   </section>
 
