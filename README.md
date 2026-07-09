@@ -33,6 +33,7 @@ The shared page contract starts every durable page with Current Understanding, A
 - scripts/install-skills.py installs the bundled skills through adapter profiles for generic Agent Skills, Codex, Gemini CLI, Claude Code, and JetBrains Junie CLI.
 - scripts/refresh-shared-skills.py refreshes the machine-wide shared skill installs from this source repository.
 - scripts contains regression tests for installer behavior and bundle content.
+- AGENTS.md contains repo-local maintenance directives for agents working on this source repository.
 
 Reusable templates live inside the development-methodology skill assets so there is one distribution surface for agents. Target projects may copy individual template files when they need local editable documents, but the methodology itself is delivered through skills.
 

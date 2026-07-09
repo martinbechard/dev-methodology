@@ -6,6 +6,7 @@ from pathlib import Path
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 README_PATH = REPOSITORY_ROOT / "README.md"
+AGENTS_PATH = REPOSITORY_ROOT / "AGENTS.md"
 SKILLS_ROOT = REPOSITORY_ROOT / "skills"
 CODEX_ADAPTER_SKILLS_ROOT = REPOSITORY_ROOT / "adapters" / "codex" / "skills"
 REMOVED_ROOT_FILES = (
@@ -98,6 +99,15 @@ REVERSE_ENGINEERING_DISCOVERY_PHRASES = (
     "Before using ast-grep, run ast-grep --version.",
     "If ast-grep is unavailable, continue with rg, grep, repository file walking, and direct source reading.",
     "Do not treat ast-grep matches as documentation evidence until the matched code has been read.",
+)
+AGENTS_REQUIRED_PHRASES = (
+    "repo-local operating contract",
+    "Do not create separate skill files for repo-local maintenance procedures.",
+    "Update README.md when the public skill inventory",
+    "Update the design HTML files that describe skills, agents",
+    "Do not place agents/openai.yaml inside source skill directories.",
+    "python3 scripts/validate-agent-skills.py skills",
+    "python3 scripts/refresh-shared-skills.py",
 )
 
 
@@ -195,6 +205,18 @@ class BundleContentTests(unittest.TestCase):
         for phrase in README_FORBIDDEN_PHRASES:
             with self.subTest(phrase=phrase):
                 self.assertNotIn(phrase, readme_text)
+
+    def test_agents_guidance_keeps_repo_maintenance_local(self) -> None:
+        agents_text = AGENTS_PATH.read_text(encoding="utf-8")
+        readme_text = README_PATH.read_text(encoding="utf-8")
+
+        self.assertIn(
+            "AGENTS.md contains repo-local maintenance directives",
+            readme_text,
+        )
+        for phrase in AGENTS_REQUIRED_PHRASES:
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, agents_text)
 
     def test_development_methodology_guides_skill_rename_cleanup(self) -> None:
         skill_text = (
