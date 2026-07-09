@@ -66,6 +66,7 @@ README_REQUIRED_PHRASES = (
     "--adapter junie",
     "skills/development-methodology/assets/templates",
     "python3 scripts/validate-agent-skills.py skills",
+    "python3 scripts/refresh-shared-skills.py",
 )
 README_FORBIDDEN_PHRASES = (
     "Copy documentation-methodology.md",

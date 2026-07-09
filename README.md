@@ -31,6 +31,7 @@ The shared page contract starts every durable page with Current Understanding, A
 - skills/development-methodology/assets/templates contains the reusable TODO-driven template assets.
 - adapters contains runtime-specific metadata that is copied only by matching installer adapters.
 - scripts/install-skills.py installs the bundled skills through adapter profiles for generic Agent Skills, Codex, Gemini CLI, Claude Code, and JetBrains Junie CLI.
+- scripts/refresh-shared-skills.py refreshes the machine-wide shared skill installs from this source repository.
 - scripts contains regression tests for installer behavior and bundle content.
 
 Reusable templates live inside the development-methodology skill assets so there is one distribution surface for agents. Target projects may copy individual template files when they need local editable documents, but the methodology itself is delivered through skills.
@@ -69,6 +70,20 @@ python3 scripts/install-skills.py --dry-run
 Refresh or restart the target agent runtime after installing skills if it does not detect new skill files automatically.
 
 Junie support follows JetBrains documentation for [Agent skills](https://junie.jetbrains.com/docs/agent-skills.html) and [CLI parameters](https://junie.jetbrains.com/docs/parameters.html). JetBrains documents project-scope skills under .junie/skills, user-scope skills under ~/.junie/skills, and additional skill folders through the Junie CLI --skill-location option.
+
+## Shared Skill Refresh
+
+This repository is the source for shared project skills on this machine. After changing source skills, refresh the shared installs before using the bundle from other projects.
+
+```bash
+python3 scripts/refresh-shared-skills.py
+```
+
+The refresh covers the shared AGENTS_HOME or ~/.agents install, the direct ~/.codex install, and the Claude install. To inspect the refresh plan without replacing files, run:
+
+```bash
+python3 scripts/refresh-shared-skills.py --dry-run
+```
 
 ## Bundled Skill Inventory
 
@@ -165,4 +180,5 @@ Before publishing changes to this bundle, run:
 python3 scripts/validate-agent-skills.py skills
 python3 -m unittest discover scripts
 PYTHONPATH=skills/project-wiki/scripts python3 -m unittest discover skills/project-wiki/scripts
+python3 scripts/refresh-shared-skills.py
 ```

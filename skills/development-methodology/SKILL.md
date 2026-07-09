@@ -80,9 +80,10 @@ Before finishing documentation or wiki work:
 3. Run project wiki status and lint when docs/wiki exists.
 4. Run OKF validation when topic pages changed.
 5. Run the repository agent-skill validator when skill files changed.
-6. Run the target project build when code, imports, generated artifacts, or project metadata changed.
-7. Search generated documents for unresolved TODO markers that are not intentional.
-8. Confirm every created document names related source, tests, or Not yet identified.
-9. Confirm wiki changes follow the project-wiki verifier checklist when topic pages changed.
+6. Refresh shared skill installs from this source repository when bundled skill files changed.
+7. Run the target project build when code, imports, generated artifacts, or project metadata changed.
+8. Search generated documents for unresolved TODO markers that are not intentional.
+9. Confirm every created document names related source, tests, or Not yet identified.
+10. Confirm wiki changes follow the project-wiki verifier checklist when topic pages changed.
 
 Do not send private, proprietary, sensitive, PII, or company-internal material to an external service unless the user explicitly authorizes it.
