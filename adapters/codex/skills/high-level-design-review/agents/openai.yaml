@@ -1,4 +1,0 @@
-interface:
-  display_name: "High-Level Design Review"
-  short_description: "Review high-level design artifacts"
-  default_prompt: "Use $high-level-design-review to review this high-level design against its methodology checklist."

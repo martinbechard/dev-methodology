@@ -1,0 +1,4 @@
+interface:
+  display_name: "Functional Spec Review"
+  short_description: "Review functional specification artifacts"
+  default_prompt: "Use $review-functional-spec to review this functional specification against its methodology checklist."

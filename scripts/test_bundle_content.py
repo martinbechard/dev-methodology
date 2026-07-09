@@ -23,11 +23,11 @@ NEW_WORKFLOW_SKILLS = (
     "documentation-page-verifier",
 )
 ARTIFACT_REVIEW_SKILLS = (
-    ("project-wiki-review", "project-wiki-review-checklist.md"),
-    ("functional-spec-review", "functional-spec-review-checklist.md"),
-    ("architecture-review", "architecture-review-checklist.md"),
-    ("high-level-design-review", "high-level-design-review-checklist.md"),
-    ("module-design-review", "module-design-review-checklist.md"),
+    ("review-project-wiki", "review-project-wiki-checklist.md"),
+    ("review-functional-spec", "review-functional-spec-checklist.md"),
+    ("review-architecture", "review-architecture-checklist.md"),
+    ("review-high-level-design", "review-high-level-design-checklist.md"),
+    ("review-module-design", "review-module-design-checklist.md"),
 )
 EXAMPLE_PROJECT_SKILL_PACKS = (
     "api-routes",
@@ -57,11 +57,11 @@ README_REQUIRED_PHRASES = (
     "documentation-reverse-engineering",
     "code-project-wiki",
     "documentation-page-verifier",
-    "project-wiki-review",
-    "functional-spec-review",
-    "architecture-review",
-    "high-level-design-review",
-    "module-design-review",
+    "review-project-wiki",
+    "review-functional-spec",
+    "review-architecture",
+    "review-high-level-design",
+    "review-module-design",
     "Junie CLI",
     "--adapter junie",
     "skills/development-methodology/assets/templates",

@@ -12,11 +12,11 @@ Use this skill as the router for software project documentation work from this b
 - Use documentation-bootstrap for first-time setup in a target repository.
 - Use documentation-reverse-engineering when deriving documentation from an existing codebase.
 - Use code-project-wiki for code-aware docs/wiki maintenance, commit-range sync, Related Code upkeep, or Related Tests upkeep.
-- Use project-wiki-review before finishing project wiki pages or project-wiki-template artifacts.
-- Use functional-spec-review before finishing functional specification artifacts.
-- Use architecture-review before finishing architecture artifacts.
-- Use high-level-design-review before finishing high-level design artifacts.
-- Use module-design-review before finishing module design artifacts.
+- Use review-project-wiki before finishing project wiki pages or project-wiki-template artifacts.
+- Use review-functional-spec before finishing functional specification artifacts.
+- Use review-architecture before finishing architecture artifacts.
+- Use review-high-level-design before finishing high-level design artifacts.
+- Use review-module-design before finishing module design artifacts.
 - Use documentation-page-verifier for shared checks on mixed, unknown, or custom documentation artifacts.
 - Use project-wiki before creating, maintaining, or validating docs/wiki content.
 - Use project-wiki-query for wiki-backed project questions.

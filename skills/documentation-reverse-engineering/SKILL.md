@@ -113,11 +113,11 @@ When the project uses docs/wiki:
 
 After the passes:
 
-1. Use module-design-review on created or changed module design documents.
-2. Use high-level-design-review on created or changed high-level design documents.
-3. Use architecture-review on created or changed architecture documents.
-4. Use functional-spec-review on created or changed functional specifications.
-5. Use project-wiki-review on created or changed project wiki methodology pages.
+1. Use review-module-design on created or changed module design documents.
+2. Use review-high-level-design on created or changed high-level design documents.
+3. Use review-architecture on created or changed architecture documents.
+4. Use review-functional-spec on created or changed functional specifications.
+5. Use review-project-wiki on created or changed project wiki methodology pages.
 6. Use documentation-page-verifier for mixed, unknown, or custom documentation artifacts.
 7. Run the project's build command when documentation work changed code, generated artifacts, or project metadata that can affect the build.
 8. Run documentation or wiki lint when available.

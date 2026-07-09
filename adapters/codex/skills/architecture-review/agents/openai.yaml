@@ -1,4 +1,0 @@
-interface:
-  display_name: "Architecture Review"
-  short_description: "Review architecture methodology artifacts"
-  default_prompt: "Use $architecture-review to review this architecture document against its methodology checklist."

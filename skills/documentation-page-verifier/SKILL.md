@@ -9,11 +9,11 @@ Use this skill for shared methodology documentation checks when the artifact typ
 
 ## Prefer Artifact-Specific Review
 
-- Use project-wiki-review for project wiki pages and project-wiki-template artifacts.
-- Use functional-spec-review for functional specification artifacts.
-- Use architecture-review for architecture artifacts.
-- Use high-level-design-review for high-level design artifacts.
-- Use module-design-review for module design artifacts.
+- Use review-project-wiki for project wiki pages and project-wiki-template artifacts.
+- Use review-functional-spec for functional specification artifacts.
+- Use review-architecture for architecture artifacts.
+- Use review-high-level-design for high-level design artifacts.
+- Use review-module-design for module design artifacts.
 
 ## Verification Inputs
 

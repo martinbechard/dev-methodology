@@ -113,11 +113,11 @@ The documentation methodology skills are:
 
 The artifact review skills are:
 
-- project-wiki-review
-- functional-spec-review
-- architecture-review
-- high-level-design-review
-- module-design-review
+- review-project-wiki
+- review-functional-spec
+- review-architecture
+- review-high-level-design
+- review-module-design
 
 The development practice skills are:
 
@@ -128,7 +128,7 @@ The development practice skills are:
 - fix-explanation
 - structured-explanation
 - structured-design
-- structured-review
+- review-structured
 - agent-claim
 - agent-work-merge
 
