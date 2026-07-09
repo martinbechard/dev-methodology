@@ -441,7 +441,7 @@
     <h1 id="page-title">Agent Skill Specialization Examples</h1>
     <p class="lede">
       These customer-safe examples use fictitious projects to show how AGENTS-PLAN.yaml organizes role agents,
-      skill loadouts, nested routing, and validation evidence. AGENTS-PLAN.yaml is the checked-in YAML planning
+      skill loadouts, nested routing, setup evidence, and verification checks. AGENTS-PLAN.yaml is the checked-in YAML planning
       artifact; the samples below show the file content directly.
       The generic strategy lives in
       <a href="agent-skill-specialization-strategy.html">Agent And Skill Specialization Strategy</a>.
@@ -453,7 +453,7 @@
     <div class="grid">
       <article class="card config">
         <h3>AGENTS-PLAN.yaml</h3>
-        <p>AGENTS-PLAN.yaml is the project-owned setup document for validating agent roles and skill routing before durable guidance is copied into AGENTS.md. It can live at the repository root and, when needed, inside technology-specific subfolders.</p>
+        <p>AGENTS-PLAN.yaml is the project-owned setup document for planning agent roles and skill routing before durable guidance is copied into AGENTS.md. It can live at the repository root and, when needed, inside technology-specific subfolders.</p>
       </article>
 
       <article class="card agent">
@@ -462,13 +462,13 @@
       </article>
 
       <article class="card case">
-        <h3>Private Validation</h3>
-        <p>For proprietary projects, create AGENTS-PLAN.yaml inside the private project folder. Keep project names, internal workflows, private architecture, customer data, and validation notes inside that repository.</p>
+        <h3>Project-Owned Setup</h3>
+        <p>Create AGENTS-PLAN.yaml inside the project folder it describes. Public samples, internal projects, and customer deployments follow the same setup flow; only the source evidence and local rules change.</p>
       </article>
 
       <article class="card skill">
         <h3>Customer Examples</h3>
-        <p>Customer-facing examples use fictitious product names, synthetic paths, and generic behavior. They show the routing pattern without leaking private project details.</p>
+        <p>Customer-facing examples use fictitious product names, synthetic paths, and generic behavior. They show the routing pattern without depending on real project details.</p>
       </article>
     </div>
   </section>
@@ -481,7 +481,7 @@
           <tr>
             <th>Section</th>
             <th>Purpose</th>
-            <th>How it validates routing</th>
+            <th>What it establishes</th>
           </tr>
         </thead>
         <tbody>
@@ -527,8 +527,8 @@
           </tr>
           <tr>
             <td><span class="name">Validation Plan</span></td>
-            <td>Defines commands and checks used to prove the role and skill setup is usable.</td>
-            <td>Turns the plan into a standalone validation artifact for private projects and customer deployments.</td>
+            <td>Defines commands and checks used to confirm the role and skill setup is usable.</td>
+            <td>Makes the setup plan verifiable without making validation the reason the plan exists.</td>
           </tr>
         </tbody>
       </table>
@@ -914,10 +914,10 @@ Validation:
     </div>
   </section>
 
-  <section class="section" aria-labelledby="validation-title">
-    <h2 id="validation-title">Private Project Validation Flow</h2>
+  <section class="section" aria-labelledby="setup-flow-title">
+    <h2 id="setup-flow-title">Project Setup Flow</h2>
     <div class="panel">
-      <p>Run this flow separately inside each private project. The distributable bundle keeps only the template, setup skill, and fictitious examples; the project-specific AGENTS-PLAN.yaml files stay with the private repositories they describe.</p>
+      <p>Run this flow inside each project before writing or refreshing AGENTS.md. The setup work creates AGENTS-PLAN.yaml, chooses where nested guidance belongs, and records evidence; validation confirms that the resulting setup is usable.</p>
     </div>
     <div class="matrix section">
       <table>
@@ -925,8 +925,8 @@ Validation:
           <tr>
             <th>Step</th>
             <th>What the setup agent inspects</th>
-            <th>Output</th>
-            <th>Validation question</th>
+            <th>Setup output</th>
+            <th>Completion check</th>
           </tr>
         </thead>
         <tbody>
@@ -934,31 +934,31 @@ Validation:
             <td><span class="name">Inventory</span></td>
             <td>README files, AGENTS.md files, package metadata, source roots, tests, docs, wiki pages, and procedures.</td>
             <td>Current Understanding and Authoritative Sources sections.</td>
-            <td>Does the plan describe the actual project rather than a remembered project shape?</td>
+            <td>The plan describes the actual project rather than a remembered project shape.</td>
           </tr>
           <tr>
             <td><span class="name">Classify</span></td>
             <td>Runtime folders, application tiers, persistent data, generated artifacts, and documentation surfaces.</td>
             <td>Project Taxonomy and Folder Routing sections.</td>
-            <td>Can the skills router identify front-end, API, static pages, DB, docs, test, or CLI work from paths?</td>
+            <td>The skills router can identify front-end, API, static pages, DB, docs, test, or CLI work from paths.</td>
           </tr>
           <tr>
             <td><span class="name">Assign</span></td>
             <td>Reusable roles, project-specific verification needs, privacy constraints, and handoff points.</td>
             <td>Role Agent Set and Skill Loadouts sections.</td>
-            <td>Are specialist roles justified by distinct output contracts rather than by folder names alone?</td>
+            <td>Specialist roles are justified by distinct output contracts rather than by folder names alone.</td>
           </tr>
           <tr>
-            <td><span class="name">Nest</span></td>
+            <td><span class="name">Place</span></td>
             <td>Subfolders with different technology, runtime setup, data handling, or verification commands.</td>
             <td>Nested AGENTS.md references and local AGENTS-PLAN.yaml files where local detail is valuable.</td>
-            <td>Does nesting reduce cognitive load without hiding repository-wide rules?</td>
+            <td>Nested guidance reduces cognitive load without hiding repository-wide rules.</td>
           </tr>
           <tr>
             <td><span class="name">Verify</span></td>
             <td>Build commands, test commands, docs checks, wiki checks, and page verifier results.</td>
             <td>Validation Plan, Open Questions, and Maintenance Notes sections.</td>
-            <td>Can another agent use the plan to update AGENTS.md and load the right skills?</td>
+            <td>Another agent can use the plan to update AGENTS.md and load the right skills.</td>
           </tr>
         </tbody>
       </table>
