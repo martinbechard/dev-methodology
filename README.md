@@ -15,13 +15,13 @@ This repository distributes portable Agent Skills for software project documenta
 
 Use the installed skills as the operating surface. The repository README is only the entry point for installing and refreshing the bundle.
 
-The core methodology keeps one shared wiki-compatible page contract and five document shapes:
+The core methodology keeps one shared wiki-compatible page contract and five document shapes. Each document shape has a focused creation skill, a reusable template asset, and an artifact review skill:
 
-1. Project wiki page
-2. Functional specification
-3. Architecture
-4. High-level design
-5. Module design
+1. Project wiki page: create-project-wiki, project-wiki-template.md, review-project-wiki
+2. Functional specification: create-functional-spec, functional-spec-template.md, review-functional-spec
+3. Architecture: create-architecture, architecture-template.md, review-architecture
+4. High-level design: create-high-level-design, high-level-design-template.md, review-high-level-design
+5. Module design: create-module-design, module-design-template.md, review-module-design
 
 The shared page contract starts every durable page with Current Understanding, Authoritative Sources, Related Code, Related Tests, Related Backlog Items, Related Wiki Pages, Open Questions, and Maintenance Notes. Specialized documents keep those sections first, then add their own sections.
 
@@ -112,6 +112,14 @@ The documentation methodology skills are:
 - documentation-reverse-engineering
 - documentation-page-verifier
 
+The artifact creation skills are:
+
+- create-project-wiki
+- create-functional-spec
+- create-architecture
+- create-high-level-design
+- create-module-design
+
 The artifact review skills are:
 
 - review-project-wiki
@@ -170,12 +178,13 @@ Artifact-specific review skills pass the artifact, source evidence, and complete
 
 1. Install or refresh the bundle on the target machine.
 2. In the target repository, use documentation-bootstrap for first-time setup.
-3. Use development-methodology when creating or revising functional specs, architecture, high-level designs, module designs, or wiki-compatible documentation.
+3. Use development-methodology to choose the artifact type and load only the creation or review skill needed for the current job.
 4. Use documentation-reverse-engineering when an existing codebase needs a source-backed documentation set.
 5. Use code-project-wiki when docs/wiki needs code-aware maintenance, commit-range review, Related Code upkeep, or Related Tests upkeep.
-6. Use the artifact-specific review skill before finishing a project wiki page, functional specification, architecture document, high-level design, or module design.
-7. Use documentation-page-verifier as the shared verifier for mixed, unknown, or custom documentation artifacts.
-8. Use the project-wiki family for docs/wiki setup, topic writing, topic verification, wiki-backed answers, and raw research.
+6. Use create-project-wiki, create-functional-spec, create-architecture, create-high-level-design, or create-module-design when creating one methodology artifact from its template.
+7. Use the artifact-specific review skill before finishing a project wiki page, functional specification, architecture document, high-level design, or module design.
+8. Use documentation-page-verifier as the shared verifier for mixed, unknown, or custom documentation artifacts.
+9. Use the project-wiki family for docs/wiki setup, topic writing, topic verification, wiki-backed answers, and raw research.
 
 ## Neutral Target Project Layout
 

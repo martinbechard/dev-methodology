@@ -12,6 +12,11 @@ Use this skill as the router for software project documentation work from this b
 - Use documentation-bootstrap for first-time setup in a target repository.
 - Use documentation-reverse-engineering when deriving documentation from an existing codebase.
 - Use code-project-wiki for code-aware docs/wiki maintenance, commit-range sync, Related Code upkeep, or Related Tests upkeep.
+- Use create-project-wiki when creating or substantially rewriting a project wiki methodology artifact from the project wiki template.
+- Use create-functional-spec when creating or substantially rewriting a functional specification artifact from the functional specification template.
+- Use create-architecture when creating or substantially rewriting an architecture artifact from the architecture template.
+- Use create-high-level-design when creating or substantially rewriting a high-level design artifact from the high-level design template.
+- Use create-module-design when creating or substantially rewriting a module design artifact from the module design template.
 - Use review-project-wiki before finishing project wiki pages or project-wiki-template artifacts.
 - Use review-functional-spec before finishing functional specification artifacts.
 - Use review-architecture before finishing architecture artifacts.
@@ -22,6 +27,12 @@ Use this skill as the router for software project documentation work from this b
 - Use project-wiki-query for wiki-backed project questions.
 - Use project-wiki-research for sourced raw reports that should feed a wiki later.
 - Use project-wiki-topic-writer and project-wiki-topic-verifier when editing or validating topic pages.
+
+## Loading Discipline
+
+Load only the skills needed for the current job. Use this skill to choose the artifact type and route, then load the matching creation skill or review skill for that artifact. Do not load every creation or review skill just because the catalog contains them.
+
+For a normal creation job, load this skill and exactly one artifact creation skill, plus source-domain skills that the repository evidence requires. Load the matching review skill only when the artifact is ready to review. Use documentation-page-verifier for mixed, unknown, or custom artifacts, or when an artifact review skill calls for it.
 
 ## Shared Page Contract
 
@@ -48,6 +59,18 @@ Use the smallest document type that fully explains the work:
 - High-level design: coherent subsystem, feature family, system slice, integration path, or multi-module implementation plan.
 - Module design: one module, service, class, task, utility, UI component, or tightly scoped feature unit.
 
+## Artifact Creation Routes
+
+Use this route table when the task is to create or substantially rewrite a methodology artifact:
+
+- Project wiki methodology artifact: use create-project-wiki, template project-wiki-template.md, and review-project-wiki.
+- Functional specification artifact: use create-functional-spec, template functional-spec-template.md, and review-functional-spec.
+- Architecture artifact: use create-architecture, template architecture-template.md, and review-architecture.
+- High-level design artifact: use create-high-level-design, template high-level-design-template.md, and review-high-level-design.
+- Module design artifact: use create-module-design, template module-design-template.md, and review-module-design.
+
+Use project-wiki-topic-writer for ordinary docs/wiki topic pages that summarize or link source material without becoming one of the specialized methodology artifacts. Use documentation-reverse-engineering when the user asks for a source-derived documentation set rather than one artifact.
+
 ## Template Assets
 
 Template assets live under skills/development-methodology/assets/templates.
@@ -64,12 +87,13 @@ When a target project needs a local editable document, copy only the matching te
 
 1. Inspect the target repository before writing documentation. Identify source roots, test roots, existing docs, wiki root, procedures, backlog files, build commands, and current worktree status.
 2. Choose the document type from the source evidence and the user's requested outcome.
-3. Copy the matching template asset only when a new or refreshed document is needed.
-4. Replace every TODO instruction with project-specific content backed by source links.
-5. Remove a section only when it is genuinely not applicable.
-6. Write steady-state documentation. Do not frame the page around old versus new behavior unless the section is explicitly historical.
-7. Link code, tests, procedures, backlog items, source documents, and wiki pages at the point where the prose depends on them.
-8. Add diagrams only where a real relationship is easier to inspect visually, such as sequence, ownership, dependency, lifecycle, data flow, or verification coverage.
+3. Load the matching artifact creation skill from the route table when creating or substantially rewriting a methodology artifact.
+4. Copy the matching template asset only when a new or refreshed document is needed.
+5. Replace every TODO instruction with project-specific content backed by source links.
+6. Remove a section only when it is genuinely not applicable.
+7. Write steady-state documentation. Do not frame the page around old versus new behavior unless the section is explicitly historical.
+8. Link code, tests, procedures, backlog items, source documents, and wiki pages at the point where the prose depends on them.
+9. Add diagrams only where a real relationship is easier to inspect visually, such as sequence, ownership, dependency, lifecycle, data flow, or verification coverage.
 
 ## Verification
 

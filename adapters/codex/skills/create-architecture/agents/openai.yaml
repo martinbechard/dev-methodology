@@ -1,0 +1,4 @@
+interface:
+  display_name: "Architecture Creation"
+  short_description: "Create architecture methodology artifacts"
+  default_prompt: "Use $create-architecture to create a source-backed architecture document from its template."

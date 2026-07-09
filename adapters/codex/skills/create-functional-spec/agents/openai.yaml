@@ -1,0 +1,4 @@
+interface:
+  display_name: "Functional Spec Creation"
+  short_description: "Create functional specification artifacts"
+  default_prompt: "Use $create-functional-spec to create a source-backed functional specification from its template."

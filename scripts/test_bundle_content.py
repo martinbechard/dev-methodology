@@ -23,6 +23,33 @@ NEW_WORKFLOW_SKILLS = (
     "code-project-wiki",
     "documentation-page-verifier",
 )
+ARTIFACT_CREATION_SKILLS = (
+    (
+        "create-project-wiki",
+        "project-wiki-template.md",
+        "review-project-wiki",
+    ),
+    (
+        "create-functional-spec",
+        "functional-spec-template.md",
+        "review-functional-spec",
+    ),
+    (
+        "create-architecture",
+        "architecture-template.md",
+        "review-architecture",
+    ),
+    (
+        "create-high-level-design",
+        "high-level-design-template.md",
+        "review-high-level-design",
+    ),
+    (
+        "create-module-design",
+        "module-design-template.md",
+        "review-module-design",
+    ),
+)
 ARTIFACT_REVIEW_SKILLS = (
     ("review-project-wiki", "project-wiki"),
     ("review-functional-spec", "functional-spec"),
@@ -61,6 +88,11 @@ README_REQUIRED_PHRASES = (
     "documentation-reverse-engineering",
     "code-project-wiki",
     "documentation-page-verifier",
+    "create-project-wiki",
+    "create-functional-spec",
+    "create-architecture",
+    "create-high-level-design",
+    "create-module-design",
     "review-project-wiki",
     "review-functional-spec",
     "review-architecture",
@@ -88,6 +120,8 @@ DEVELOPMENT_METHODOLOGY_REQUIRED_PHRASES = (
     "sweep the source repository for the old skill id",
     "adapter metadata",
     "aggregate workflow examples",
+    "Load only the skills needed for the current job.",
+    "Artifact Creation Routes",
 )
 STRATEGY_REQUIRED_PHRASES = (
     "Before a rename or deletion",
@@ -159,6 +193,42 @@ class BundleContentTests(unittest.TestCase):
                         / "openai.yaml"
                     ).is_file()
                 )
+
+    def test_artifact_creation_skills_route_to_templates_and_reviews(self) -> None:
+        development_methodology_text = (
+            SKILLS_ROOT / "development-methodology" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+
+        for skill_name, template_name, review_skill_name in ARTIFACT_CREATION_SKILLS:
+            with self.subTest(skill_name=skill_name):
+                skill_path = SKILLS_ROOT / skill_name / "SKILL.md"
+                template_path = (
+                    SKILLS_ROOT
+                    / "development-methodology"
+                    / "assets"
+                    / "templates"
+                    / template_name
+                )
+                metadata_path = (
+                    CODEX_ADAPTER_SKILLS_ROOT
+                    / skill_name
+                    / "agents"
+                    / "openai.yaml"
+                )
+
+                self.assertTrue(skill_path.is_file())
+                self.assertTrue(template_path.is_file())
+                self.assertTrue(metadata_path.is_file())
+
+                skill_text = skill_path.read_text(encoding="utf-8")
+
+                self.assertIn(template_name, skill_text)
+                self.assertIn(review_skill_name, skill_text)
+                self.assertIn("Replace every TODO instruction", skill_text)
+                self.assertIn("documentation-page-verifier", skill_text)
+                self.assertIn(skill_name, development_methodology_text)
+                self.assertIn(template_name, development_methodology_text)
+                self.assertIn(review_skill_name, development_methodology_text)
 
     def test_artifact_review_skills_have_checklists_and_metadata(self) -> None:
         development_methodology_text = (
