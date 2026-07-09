@@ -17,10 +17,12 @@ Use this skill to review a project wiki artifact created from the methodology te
 ## Workflow
 
 1. Read the artifact and identify the wiki page type, source scope, and intended maintenance role.
-2. Read references/review-project-wiki-checklist.md.
-3. Use documentation-page-verifier for shared page contract, source authority, link, diagram, and steady-state checks.
-4. Verify project-wiki-specific sections against the checklist, especially authority order, page subclassing, topic pages, code pages, local source links, update workflow, automation, and verification.
-5. Return findings first, ordered by severity, with file paths and section names.
+2. Read references/review-checklist-project-wiki.md.
+3. Complete every applicable checklist question with status, quoted evidence, and assessment.
+4. Save the completed review checklist next to the artifact using this form: artifact-name.review-checklist-project-wiki.md.
+5. Use documentation-page-verifier with the artifact, source evidence, and completed review checklist for shared page contract, source authority, link, diagram, and steady-state checks.
+6. Verify project-wiki-specific sections against the checklist, especially authority order, page subclassing, topic pages, code pages, local source links, update workflow, automation, and verification.
+7. Return findings first, ordered by severity, with file paths and section names. Derive each finding or pass assessment from the completed review checklist.
 
 ## Output
 

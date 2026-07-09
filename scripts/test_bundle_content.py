@@ -24,11 +24,14 @@ NEW_WORKFLOW_SKILLS = (
     "documentation-page-verifier",
 )
 ARTIFACT_REVIEW_SKILLS = (
-    ("review-project-wiki", "review-project-wiki-checklist.md"),
-    ("review-functional-spec", "review-functional-spec-checklist.md"),
-    ("review-architecture", "review-architecture-checklist.md"),
-    ("review-high-level-design", "review-high-level-design-checklist.md"),
-    ("review-module-design", "review-module-design-checklist.md"),
+    ("review-project-wiki", "project-wiki"),
+    ("review-functional-spec", "functional-spec"),
+    ("review-architecture", "architecture"),
+    ("review-high-level-design", "high-level-design"),
+    ("review-module-design", "module-design"),
+)
+ALL_REVIEW_SKILLS = ARTIFACT_REVIEW_SKILLS + (
+    ("review-structured", "structured"),
 )
 EXAMPLE_PROJECT_SKILL_PACKS = (
     "api-routes",
@@ -74,6 +77,9 @@ README_REQUIRED_PHRASES = (
     "Before renaming or deleting a source skill",
     "role definitions",
     "dispatch profiles",
+    "Review Skill Checklist Convention",
+    "review-checklist-[review-target].md",
+    "artifact-name.review-checklist-[review-target].md",
 )
 DEVELOPMENT_METHODOLOGY_REQUIRED_PHRASES = (
     "When a skill was renamed or deleted",
@@ -100,6 +106,12 @@ REVERSE_ENGINEERING_DISCOVERY_PHRASES = (
     "If ast-grep is unavailable, continue with rg, grep, repository file walking, and direct source reading.",
     "Do not treat ast-grep matches as documentation evidence until the matched code has been read.",
 )
+DOCUMENTATION_PAGE_VERIFIER_REVIEW_PHRASES = (
+    "completed review checklist",
+    "quoted evidence",
+    "assessment",
+    "Do not complete verification from memory",
+)
 AGENTS_REQUIRED_PHRASES = (
     "repo-local operating contract",
     "Do not create separate skill files for repo-local maintenance procedures.",
@@ -109,6 +121,14 @@ AGENTS_REQUIRED_PHRASES = (
     "python3 scripts/validate-agent-skills.py skills",
     "python3 scripts/refresh-shared-skills.py",
 )
+
+
+def review_checklist_name(review_target: str) -> str:
+    return f"review-checklist-{review_target}.md"
+
+
+def completed_review_checklist_suffix(review_target: str) -> str:
+    return f".review-checklist-{review_target}.md"
 
 
 class BundleContentTests(unittest.TestCase):
@@ -145,8 +165,9 @@ class BundleContentTests(unittest.TestCase):
             SKILLS_ROOT / "development-methodology" / "SKILL.md"
         ).read_text(encoding="utf-8")
 
-        for skill_name, checklist_name in ARTIFACT_REVIEW_SKILLS:
+        for skill_name, review_target in ARTIFACT_REVIEW_SKILLS:
             with self.subTest(skill_name=skill_name):
+                checklist_name = review_checklist_name(review_target)
                 skill_path = SKILLS_ROOT / skill_name / "SKILL.md"
                 checklist_path = SKILLS_ROOT / skill_name / "references" / checklist_name
                 metadata_path = (
@@ -168,6 +189,38 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn("Review Checklist", checklist_text)
                 self.assertIn("Findings", checklist_text)
                 self.assertIn(skill_name, development_methodology_text)
+
+    def test_review_skills_follow_checklist_evidence_contract(self) -> None:
+        for skill_name, review_target in ALL_REVIEW_SKILLS:
+            with self.subTest(skill_name=skill_name):
+                checklist_name = review_checklist_name(review_target)
+                completed_suffix = completed_review_checklist_suffix(review_target)
+                skill_path = SKILLS_ROOT / skill_name / "SKILL.md"
+                checklist_path = SKILLS_ROOT / skill_name / "references" / checklist_name
+
+                self.assertTrue(skill_path.is_file())
+                self.assertTrue(checklist_path.is_file())
+
+                skill_text = skill_path.read_text(encoding="utf-8")
+                checklist_text = checklist_path.read_text(encoding="utf-8")
+
+                self.assertIn(checklist_name, skill_text)
+                self.assertIn(completed_suffix, skill_text)
+                self.assertIn("completed review checklist", skill_text)
+                self.assertIn("Question:", checklist_text)
+                self.assertIn("Status:", checklist_text)
+                self.assertIn("Quoted evidence:", checklist_text)
+                self.assertIn("Assessment:", checklist_text)
+                self.assertIn("?", checklist_text)
+
+    def test_documentation_page_verifier_uses_completed_checklist_evidence(self) -> None:
+        skill_text = (
+            SKILLS_ROOT / "documentation-page-verifier" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+
+        for phrase in DOCUMENTATION_PAGE_VERIFIER_REVIEW_PHRASES:
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, skill_text)
 
     def test_example_project_skill_packs_are_packaged(self) -> None:
         for skill_name in EXAMPLE_PROJECT_SKILL_PACKS:

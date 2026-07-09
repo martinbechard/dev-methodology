@@ -19,8 +19,20 @@ Use this skill for shared methodology documentation checks when the artifact typ
 
 - The page being verified.
 - The matching template from development-methodology assets.
+- The completed review checklist when an artifact-specific review skill produced one.
 - Related source files, tests, procedures, backlog items, wiki pages, and project metadata.
 - Project-specific documentation rules from AGENTS.md or procedures.
+
+## Completed Review Checklist Evidence
+
+When a completed review checklist is available, use it as the evidence record for verification.
+
+1. Read the completed review checklist before writing the assessment.
+2. Check that each applicable item has status, question, quoted evidence, and assessment.
+3. Use the quoted evidence to complete shared page contract, source authority, link, diagram, and steady-state verification.
+4. Re-read the cited source text when quoted evidence is unclear, incomplete, or contradicted.
+5. Do not complete verification from memory or from the checklist question text alone.
+6. Base the final assessment on the completed review checklist plus any source text rechecked during verification.
 
 ## Shared Page Contract
 

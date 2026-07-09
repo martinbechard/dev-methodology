@@ -16,10 +16,12 @@ Use this skill to review a module design artifact created from the methodology t
 ## Workflow
 
 1. Read the artifact and identify runtime path, responsibility, callers, dependencies, contracts, internal state, processing rules, error handling, and verification claims.
-2. Read references/review-module-design-checklist.md.
-3. Use documentation-page-verifier for shared page contract, source authority, link, diagram, and steady-state checks.
-4. Verify module sections against the checklist, especially purpose, runtime path, responsibilities, callers, dependencies, public contracts, internal data, processing rules, invariants, configuration, external interfaces, UI behavior, errors, and verification.
-5. Return findings first, ordered by severity, with file paths and section names.
+2. Read references/review-checklist-module-design.md.
+3. Complete every applicable checklist question with status, quoted evidence, and assessment.
+4. Save the completed review checklist next to the artifact using this form: artifact-name.review-checklist-module-design.md.
+5. Use documentation-page-verifier with the artifact, source evidence, and completed review checklist for shared page contract, source authority, link, diagram, and steady-state checks.
+6. Verify module sections against the checklist, especially purpose, runtime path, responsibilities, callers, dependencies, public contracts, internal data, processing rules, invariants, configuration, external interfaces, UI behavior, errors, and verification.
+7. Return findings first, ordered by severity, with file paths and section names. Derive each finding or pass assessment from the completed review checklist.
 
 ## Output
 

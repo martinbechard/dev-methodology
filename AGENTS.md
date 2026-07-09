@@ -40,6 +40,7 @@ When adding, renaming, deleting, or materially changing a distributed skill:
 - Update scripts/test_bundle_content.py so the bundle regression tests describe the current catalog.
 - Sweep the repository for old skill ids before and after renames or deletions.
 - Refresh shared installs after source skill changes.
+- Keep review skill checklists named review-checklist-[review-target].md, and keep completed checklist guidance aligned with artifact-name.review-checklist-[review-target].md.
 
 ## README And Design HTML
 

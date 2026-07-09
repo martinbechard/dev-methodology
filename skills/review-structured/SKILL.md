@@ -52,7 +52,7 @@ they can be traced during review.
 
 Always load the generic base checklist:
 
-- `references/generic-structured-document-checklist.md`
+- references/review-checklist-structured.md
 
 If a more specific checklist exists for the artifact type or technology,
 load it in addition to the generic base checklist, not instead of it.
@@ -61,13 +61,14 @@ load it in addition to the generic base checklist, not instead of it.
 
 By default, write two files next to the review target:
 
-- `<target-base>.review-checklist.md`
-- `<target-base>.review-findings.md`
+- target-name.review-checklist-structured.md
+- target-name.review-findings.md
 
 If the user specifies different output paths, use those instead.
 
-The checklist file comes first. The findings file must be derived from the
-completed checklist rather than written as an independent opinion.
+The completed review checklist comes first. The findings file must be derived
+from the completed review checklist rather than written as an independent
+opinion.
 
 ## Workflow
 
@@ -82,15 +83,17 @@ Before scoring checklist items, record:
 - checklist set used
 
 If the target uses structured-design conventions, prefer citing root-level
-IDs such as `REQ-1`, `ENTITY-3`, or `TASK-7`. Otherwise cite the clearest
+IDs such as REQ-1, ENTITY-3, or TASK-7. Otherwise cite the clearest
 available headings, section names, or file-relative references.
 
 ### 2. Complete the checklist
 
 Complete every applicable checklist item with:
 
-- `STATUS: pass | fail | question | n/a`
-- short evidence grounded in the target and the inputs
+- Status: pass, fail, question, or n/a
+- Question: the objective question being answered
+- Quoted evidence: exact quoted target or input text
+- Assessment: short judgment grounded in the quoted evidence
 - optional note if the item is blocked or uncertain
 
 Do not skip failed items just because they will later appear in findings.
@@ -103,7 +106,7 @@ supposed to apply:
 
 - mark whether it is covered
 - cite where it is covered
-- mark it `fail` if it is missing or contradicted
+- mark it fail if it is missing or contradicted
 
 Do not silently forgive omitted directives.
 
@@ -163,8 +166,8 @@ Specifically check whether:
 - the document uses plain English, short sentences, and simple words
 - jargon, buzzwords, and abstract phrasing are avoided unless clearly needed
 - technical terms are defined once when first introduced
-- vague words such as `robust`, `seamless`, `optimize`, `leverage`, and
-  `enhance` are removed or made specific
+- vague words such as robust, seamless, optimize, leverage, and enhance are
+  removed or made specific
 - the document stays concrete and actionable
 - the document includes finality, technical directives, constraints,
   definition of good, and test cases when those sections are relevant to the
@@ -174,11 +177,11 @@ Specifically check whether:
 
 When the target is a component design document, specifically check whether:
 
-- `Finality` is used for why the component exists
-- `Technical Directives` is used for implementation-shaping technical choices
+- Finality is used for why the component exists
+- Technical Directives is used for implementation-shaping technical choices
   and best-practice rules
-- `Definition Of Good` is used for pass-quality or success conditions
-- a top-level `Requirements` section is only present when it is genuinely the
+- Definition Of Good is used for pass-quality or success conditions
+- a top-level Requirements section is only present when it is genuinely the
   right model for that artifact, rather than a default carry-over
 - the document does not blur finality, technical directives, and definition of
   good into one mixed section
@@ -191,24 +194,24 @@ reviewability, or execution.
 
 When the target is an architecture document, specifically check whether:
 
-- `Finality` is used for why the architecture exists
-- `System Shape` is used for the main parts of the system and their roles
-- `Boundaries And Interactions` is used for real boundaries and interaction
+- Finality is used for why the architecture exists
+- System Shape is used for the main parts of the system and their roles
+- Boundaries And Interactions is used for real boundaries and interaction
   surfaces, or explicitly says there are none
-- `Constraints` is used for architecture-shaping limits and prohibitions
-- `Definition Of Good` is used for architecture pass conditions
-- `Test Cases` is used only when architecture-level checks are relevant
+- Constraints is used for architecture-shaping limits and prohibitions
+- Definition Of Good is used for architecture pass conditions
+- Test Cases is used only when architecture-level checks are relevant
 - the document does not quietly fall back to an ordinary prose outline when it
-  claims to use the `structured-design` skill
+  claims to use the structured-design skill
 - if the target is YAML, the top-level keys stay:
-  - `finality`
-  - `system_shape`
-  - `boundaries_and_interactions`
-  - `constraints`
-  - `definition_of_good`
-  - `test_cases` when relevant
-- if the target is YAML, semantic substitutes such as `architecture_scope`,
-  `boundary_decision`, or `technology_choices` are treated as section-model
+  - finality
+  - system_shape
+  - boundaries_and_interactions
+  - constraints
+  - definition_of_good
+  - test_cases when relevant
+- if the target is YAML, semantic substitutes such as architecture_scope,
+  boundary_decision, or technology_choices are treated as section-model
   drift unless the prompt explicitly asked for a different schema
 
 Record architecture-section-model problems in the checklist and elevate them
@@ -224,10 +227,10 @@ specifically check whether:
 - the YAML preserves the markdown document's real section structure
 - section names stay as section keys rather than being converted into item
   names
-- grouped items such as `goals`, `rules`, `processes`, `files`, or `entities`
+- grouped items such as goals, rules, processes, files, or entities
   remain grouped in YAML
 - stable IDs are preserved in the YAML entries
-- the YAML avoids generic `type` fields unless the task explicitly called for
+- the YAML avoids generic type fields unless the task explicitly called for
   that style
 - the YAML companion is not harder to understand than the markdown authority
 
@@ -257,9 +260,9 @@ The checklist is not a formality. It is the review method.
 
 - Do not write findings first and retrofit the checklist later.
 - Do not collapse several failures into one vague checklist note.
-- Do not mark an item `pass` without evidence.
-- Do not mark an item `n/a` unless the item truly does not apply.
-- Use `question` when the evidence is genuinely ambiguous.
+- Do not mark an item pass without evidence.
+- Do not mark an item n/a unless the item truly does not apply.
+- Use question when the evidence is genuinely ambiguous.
 
 ## Findings format
 
@@ -270,19 +273,19 @@ Use this shape for the findings file:
 
 ## Scope
 
-- Target: `<path>`
+- Target: <path>
 - Inputs:
-  - `<path>`
-  - `<path>`
+  - <path>
+  - <path>
 - Checklist:
-  - `generic-structured-document-checklist.md`
+    - review-checklist-structured.md
 
 ## Findings
 
 - **FINDING: FIND-1** <short title>
   - **SEVERITY:** critical | high | medium | low
-  - **CHECKS:** `<check-id>`, `<check-id>`
-  - **TARGET:** `<root-level id or heading>`
+  - **CHECKS:** <check-id>, <check-id>
+  - **TARGET:** <root-level id or heading>
   - **SYNOPSIS:** <what is wrong>
   - **BECAUSE:** <why it matters>
 ```
@@ -308,8 +311,8 @@ When deciding what becomes a finding, prioritize:
 1. missing or contradicted input directives
 2. internally inconsistent logic
 3. undefined or misordered concepts that create blind spots
-4. `BECAUSE` clauses that do not justify their parent
-5. `CHAIN-OF-THOUGHT` clauses that do not justify the `BECAUSE`
+4. BECAUSE clauses that do not justify their parent
+5. CHAIN-OF-THOUGHT clauses that do not justify the BECAUSE
 6. requirements that are really solution choices
 7. unsupported requirements or claims
 8. stale or retired references mixed into active design
@@ -326,7 +329,7 @@ When deciding what becomes a finding, prioritize:
 14. architecture documents that drift into design-level detail without need
 15. component design documents that silently redesign architecture boundaries
 16. YAML companions that distort the markdown structure or force a generic
-    `type` schema without justification
+    type schema without justification
 
 ## Self-review before returning
 

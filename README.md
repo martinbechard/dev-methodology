@@ -156,6 +156,16 @@ The stack and project-domain skill packs are:
 - plan-engine-implementation
 - local-model-integration
 
+## Review Skill Checklist Convention
+
+Every review skill uses a reference checklist named review-checklist-[review-target].md under that skill's references folder. For example, review-architecture uses review-checklist-architecture.md.
+
+Review checklists are evidence-capture templates. Each checklist question requires status, the objective question, quoted evidence from the artifact or source material, and an assessment grounded in that quote.
+
+When a review skill runs, it saves a completed review checklist next to the reviewed artifact using this form: artifact-name.review-checklist-[review-target].md. For example, a coding review of test.ts saves test.ts.review-checklist-coding.md.
+
+Artifact-specific review skills pass the artifact, source evidence, and completed review checklist to documentation-page-verifier. The verifier uses the completed checklist evidence to complete the shared page-contract, source-authority, link, diagram, and steady-state assessment.
+
 ## Applying This Bundle To A Project
 
 1. Install or refresh the bundle on the target machine.

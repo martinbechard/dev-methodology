@@ -452,6 +452,7 @@
           <li><code>scripts/refresh-shared-skills.py</code> replaces the shared machine installs from the current source tree.</li>
           <li><code>.dev-methodology-install.json</code> records the skills this catalog installed into each shared destination.</li>
           <li>Before a rename or deletion, sweep the source catalog for the old skill id and update role definitions, adapter metadata, skills, dispatch profiles, workflow examples, design documents, scripts, and tests.</li>
+          <li>Review skills keep checklist templates named review-checklist-review-target.md and completed checklist artifacts named artifact-name.review-checklist-review-target.md.</li>
           <li>Renamed or deleted skills are pruned only when the ownership manifest says this catalog installed the old artifact.</li>
           <li>Runtime agent metadata packaged inside a skill is refreshed and pruned with that owned skill.</li>
           <li>The first refresh without a manifest writes the baseline and skips pruning so unowned local skills stay untouched.</li>
@@ -725,6 +726,7 @@ aggregates:
         <ul>
           <li>It cannot change an agent's write authority.</li>
           <li>It cannot change a review verdict schema.</li>
+          <li>It cannot bypass the completed checklist evidence record for review roles.</li>
           <li>It cannot disable host safety or project data rules.</li>
           <li>If authority or output contract changes, define a specialized role in the shared catalog or project role directory.</li>
         </ul>
