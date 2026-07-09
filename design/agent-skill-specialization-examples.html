@@ -14,10 +14,12 @@
       --color-agent: #0f766e;
       --color-skill: #b45309;
       --color-config: #7c3aed;
+      --color-reference: #2563eb;
       --color-case: #be123c;
       --color-soft-agent: #e4f7f4;
       --color-soft-skill: #fff1d8;
       --color-soft-config: #f0e8ff;
+      --color-soft-reference: #e6efff;
       --color-soft-case: #ffe5ec;
       --color-soft-gray: #edf1f6;
       --shadow-panel: 0 14px 32px rgba(31, 41, 55, 0.08);
@@ -33,6 +35,8 @@
       --content-max: 1240px;
       --font-sm: 0.92rem;
       --font-xs: 0.78rem;
+      --code-collapsed-lines: 3;
+      --code-line-height: 1.45;
     }
 
     * {
@@ -131,6 +135,52 @@
       font-size: 1.08rem;
     }
 
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: 0.35rem 0.6rem;
+      border: 1px solid var(--color-line);
+      border-radius: 999px;
+      background: var(--color-panel);
+      color: var(--color-muted);
+      font-size: var(--font-xs);
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .dot {
+      width: 0.65rem;
+      height: 0.65rem;
+      border-radius: 50%;
+    }
+
+    .dot.agent {
+      background: var(--color-agent);
+    }
+
+    .dot.skill {
+      background: var(--color-skill);
+    }
+
+    .dot.config {
+      background: var(--color-config);
+    }
+
+    .dot.reference {
+      background: var(--color-reference);
+    }
+
+    .dot.case {
+      background: var(--color-case);
+    }
+
     .section {
       margin-top: var(--space-8);
     }
@@ -224,6 +274,11 @@
       color: var(--color-config);
     }
 
+    .tag.reference {
+      background: var(--color-soft-reference);
+      color: var(--color-reference);
+    }
+
     .tag.case {
       background: var(--color-soft-case);
       color: var(--color-case);
@@ -281,7 +336,8 @@
       background: #101827;
       color: #eef4ff;
       font-size: var(--font-sm);
-      line-height: 1.45;
+      line-height: var(--code-line-height);
+      position: relative;
     }
 
     .config-block code {
@@ -289,6 +345,74 @@
       background: transparent;
       color: inherit;
       font-size: inherit;
+    }
+
+    .snippet {
+      margin-top: var(--space-4);
+    }
+
+    .snippet-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+    }
+
+    .snippet-head h3 {
+      margin: 0;
+    }
+
+    .snippet-note {
+      margin-top: var(--space-2);
+      font-size: var(--font-sm);
+    }
+
+    .snippet-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 2.25rem;
+      padding: 0.35rem 0.75rem;
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius-small);
+      background: var(--color-panel);
+      color: var(--color-config);
+      font: inherit;
+      font-size: var(--font-xs);
+      font-weight: 800;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: border-color 160ms ease, color 160ms ease, transform 160ms ease;
+    }
+
+    .snippet-toggle:hover,
+    .snippet-toggle:focus-visible {
+      transform: translateY(-1px);
+      border-color: var(--color-config);
+      color: var(--color-ink);
+      outline: none;
+    }
+
+    .clamp-block {
+      max-height: calc((var(--code-line-height) * 1em * var(--code-collapsed-lines)) + (var(--space-4) * 2));
+      overflow-y: hidden;
+    }
+
+    .snippet[data-expanded="true"] .clamp-block {
+      max-height: none;
+      overflow-y: visible;
+    }
+
+    .snippet[data-expanded="false"] .clamp-block::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      height: 2.8rem;
+      background: linear-gradient(180deg, rgba(16, 24, 39, 0), #101827 82%);
+      pointer-events: none;
     }
 
     @media (max-width: 820px) {
@@ -307,10 +431,19 @@
   <a class="home-link" href="../index.html"><span aria-hidden="true">&larr;</span> Documentation Index</a>
 
   <section class="hero" aria-labelledby="page-title">
+    <div class="legend" aria-label="Legend">
+      <span class="pill"><span class="dot agent"></span> Role agent</span>
+      <span class="pill"><span class="dot skill"></span> Routed skill</span>
+      <span class="pill"><span class="dot config"></span> AGENTS-PLAN.md</span>
+      <span class="pill"><span class="dot reference"></span> AGENTS.md reference</span>
+      <span class="pill"><span class="dot case"></span> Fictitious project</span>
+    </div>
     <h1 id="page-title">Agent Skill Specialization Examples</h1>
     <p class="lede">
       These customer-safe examples use fictitious projects to show how AGENTS-PLAN.md organizes role agents,
-      skill loadouts, nested routing, and validation evidence. The generic strategy lives in
+      skill loadouts, nested routing, and validation evidence. AGENTS-PLAN.md stays a Markdown planning artifact;
+      YAML-shaped blocks on this page are compact structural views of that plan, not AGENTS-PLAN.yaml files.
+      The generic strategy lives in
       <a href="agent-skill-specialization-strategy.html">Agent And Skill Specialization Strategy</a>.
     </p>
   </section>
@@ -321,6 +454,11 @@
       <article class="card config">
         <h3>AGENTS-PLAN.md</h3>
         <p>AGENTS-PLAN.md is the project-owned setup document for validating agent roles and skill routing before durable guidance is copied into AGENTS.md. It can live at the repository root and, when needed, inside technology-specific subfolders.</p>
+      </article>
+
+      <article class="card config">
+        <h3>Markdown Plan, Structured Content</h3>
+        <p>Keep AGENTS-PLAN.md as Markdown because humans and agents read it during setup review. The YAML-shaped samples below are scan-friendly structural sketches of the same sections.</p>
       </article>
 
       <article class="card agent">
@@ -388,9 +526,9 @@
             <td>Lets the router decide quickly whether a task is front-end, API, DB, docs, testing, or tool work.</td>
           </tr>
           <tr>
-            <td><span class="name">Nested AGENTS-PLAN Files</span></td>
-            <td>Lists subfolders that need their own local plan because they have distinct technology or verification rules.</td>
-            <td>Keeps root guidance compact while allowing deeper project areas to document local loadouts.</td>
+            <td><span class="name">Nested AGENTS.md And AGENTS-PLAN Files</span></td>
+            <td>Lists subfolders that need nested operational AGENTS.md references, and notes when a subtree also needs its own local AGENTS-PLAN.md because it has distinct evidence.</td>
+            <td>Keeps root guidance compact while making local loadouts and setup evidence explicit.</td>
           </tr>
           <tr>
             <td><span class="name">Validation Plan</span></td>
@@ -405,16 +543,6 @@
   <section class="section" aria-labelledby="customer-title">
     <h2 id="customer-title">Fictitious Customer Examples</h2>
     <div class="grid">
-      <article class="card case">
-        <h3>Acme Ledger</h3>
-        <ul>
-          <li>Family: web application.</li>
-          <li>Application tiers: front-end, API, static pages, DB, documentation.</li>
-          <li>Primary skills: nextjs-app-router, react-server-components, api-routes, postgres-drizzle, typescript-strict, jest, playwright.</li>
-          <li>Plan shape: root AGENTS-PLAN.md plus nested plans for API and database folders.</li>
-        </ul>
-      </article>
-
       <article class="card agent">
         <h3>Northwind Tools</h3>
         <ul>
@@ -425,107 +553,26 @@
         </ul>
       </article>
 
+      <article class="card case">
+        <h3>Acme Ledger</h3>
+        <ul>
+          <li>Family: web application.</li>
+          <li>Application tiers: front-end, API, static pages, DB, documentation.</li>
+          <li>Primary skills: nextjs-app-router, react-server-components, api-routes, postgres-drizzle, typescript-strict, jest, playwright.</li>
+          <li>Plan shape: root AGENTS-PLAN.md plus nested AGENTS.md references for API and database folders.</li>
+        </ul>
+      </article>
+
       <article class="card skill">
         <h3>Beacon Knowledge Base</h3>
         <ul>
           <li>Family: documentation and project wiki repository.</li>
           <li>Application tiers: source collection, wiki synthesis, verification, publication.</li>
           <li>Primary skills: project-wiki, project-wiki-research, project-wiki-topic-writer, project-wiki-topic-verifier, code-project-wiki.</li>
-          <li>Plan shape: root AGENTS-PLAN.md plus nested plan for raw source processing when the queue has strict rules.</li>
+          <li>Plan shape: root AGENTS-PLAN.md plus nested AGENTS.md reference for raw source processing when the queue has strict rules.</li>
         </ul>
       </article>
     </div>
-  </section>
-
-  <section class="section" aria-labelledby="web-title">
-    <h2 id="web-title">Example: Acme Ledger Web Application</h2>
-    <div class="matrix">
-      <table>
-        <thead>
-          <tr>
-            <th>Work target</th>
-            <th>Application tier</th>
-            <th>Role and skills</th>
-            <th>Validation</th>
-            <th>Plan placement</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><span class="name">app/(authenticated)/**</span></td>
-            <td>Front-end tier.</td>
-            <td>Coding Agent loads nextjs-app-router, react-server-components, typescript-strict, tailwind-design-system, jest, and playwright.</td>
-            <td>Run focused unit tests, route smoke checks, accessibility checks, and build.</td>
-            <td>Root AGENTS-PLAN.md is enough unless a product area has its own workflow rules.</td>
-          </tr>
-          <tr>
-            <td><span class="name">app/api/**/route.ts</span></td>
-            <td>API tier.</td>
-            <td>Coding Agent loads api-routes, clerk-auth, nextjs-app-router, postgres-drizzle, typescript-strict, and jest.</td>
-            <td>Run API unit tests, auth boundary checks, persistence tests, and build.</td>
-            <td>Nested app/api/AGENTS-PLAN.md when many routes share API-specific contracts.</td>
-          </tr>
-          <tr>
-            <td><span class="name">app/(marketing)/**</span></td>
-            <td>Static pages tier.</td>
-            <td>Coding Agent loads nextjs-app-router, react-server-components, tailwind-design-system, and playwright.</td>
-            <td>Run build, link checks, responsive screenshots, and smoke checks for forms or calls to action.</td>
-            <td>Root AGENTS-PLAN.md unless the static site is maintained by a separate content workflow.</td>
-          </tr>
-          <tr>
-            <td><span class="name">db/** and drizzle/**</span></td>
-            <td>DB tier.</td>
-            <td>Coding Agent loads postgres-drizzle, typescript-strict, and jest. Code Review Agent checks schema boundaries and migration assumptions.</td>
-            <td>Run schema checks, persistence tests, seed checks, and build.</td>
-            <td>Nested db/AGENTS-PLAN.md when data ownership, migrations, or privacy rules require local evidence.</td>
-          </tr>
-          <tr>
-            <td><span class="name">docs/wiki/**</span></td>
-            <td>Documentation tier.</td>
-            <td>Documentation Architect loads project-wiki, code-project-wiki, and the relevant artifact creation or review skill.</td>
-            <td>Run wiki status, lint, link checks, and OKF validation when topic pages change.</td>
-            <td>Root AGENTS-PLAN.md plus docs/wiki/AGENTS-PLAN.md only when wiki workflow rules are extensive.</td>
-          </tr>
-          <tr>
-            <td><span class="name">tests/e2e/**</span></td>
-            <td>Verification tier.</td>
-            <td>QA And Verification Agent or E2E Browser Agent loads playwright, nextjs-app-router, and project-specific test data rules.</td>
-            <td>Run targeted browser flows with console and network inspection before broader suite runs.</td>
-            <td>Nested tests/e2e/AGENTS-PLAN.md when the browser runtime has special setup or shared-state constraints.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <pre class="config-block"><code>project:
-  name: Acme Ledger
-  family: web-application
-  root_plan: AGENTS-PLAN.md
-  application_tiers:
-    front_end:
-      paths: [app/(authenticated)/**, components/**]
-      skills: [nextjs-app-router, react-server-components, tailwind-design-system]
-    api:
-      paths: [app/api/**/route.ts]
-      skills: [api-routes, clerk-auth, postgres-drizzle]
-      nested_plan: app/api/AGENTS-PLAN.md
-    static_pages:
-      paths: [app/(marketing)/**]
-      skills: [nextjs-app-router, react-server-components, playwright]
-    db:
-      paths: [db/**, drizzle/**]
-      skills: [postgres-drizzle, typescript-strict, jest]
-      nested_plan: db/AGENTS-PLAN.md
-
-dispatch:
-  project-agent-setup-agent:
-    skills: [development-methodology, create-agents-plan, documentation-page-verifier]
-  coding-agent:
-    rules:
-      - match: app/api/**/route.ts
-        add_skills: [api-routes, clerk-auth, postgres-drizzle, jest]
-      - match: db/**
-        add_skills: [postgres-drizzle, typescript-strict, jest]</code></pre>
   </section>
 
   <section class="section" aria-labelledby="tools-title">
@@ -535,7 +582,7 @@ dispatch:
         <h3>Root plan</h3>
         <ul>
           <li>AGENTS-PLAN.md records the CLI entry points, generated artifact rules, fixture locations, and test commands.</li>
-          <li>No nested plan is needed while the source tree uses one TypeScript runtime and one verification workflow.</li>
+          <li>No nested AGENTS.md reference or local plan is needed while the source tree uses one TypeScript runtime and one verification workflow.</li>
           <li>Root AGENTS.md can stay short because the plan carries the setup evidence.</li>
         </ul>
       </article>
@@ -564,6 +611,318 @@ dispatch:
           <span class="tag skill">structured-explanation</span>
         </div>
       </article>
+    </div>
+
+    <div class="matrix section">
+      <table>
+        <thead>
+          <tr>
+            <th>Work target</th>
+            <th>Application tier</th>
+            <th>Role and skills</th>
+            <th>Validation</th>
+            <th>Reference placement</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="name">src/commands/**</span></td>
+            <td>CLI tier.</td>
+            <td>Coding Agent loads node-cli, typescript-esm, typescript-strict, and vitest.</td>
+            <td>Run focused command tests, argument parsing tests, and build.</td>
+            <td>Root AGENTS.md reference is enough because command rules share one runtime.</td>
+          </tr>
+          <tr>
+            <td><span class="name">src/readers/** and src/writers/**</span></td>
+            <td>File processing tier.</td>
+            <td>Coding Agent loads node-cli, careful-coding, typescript-strict, and vitest.</td>
+            <td>Run fixture tests, generated artifact snapshots, and build.</td>
+            <td>Root AGENTS.md names fixture and artifact rules.</td>
+          </tr>
+          <tr>
+            <td><span class="name">tests/**</span></td>
+            <td>Verification tier.</td>
+            <td>QA And Verification Agent loads vitest and project-specific fixture rules.</td>
+            <td>Run targeted tests before the full test command.</td>
+            <td>Root AGENTS.md names the standard test workflow.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="snippet" data-expanded="false">
+      <div class="snippet-head">
+        <h3>Northwind AGENTS.md Reference</h3>
+        <button class="snippet-toggle" type="button" aria-expanded="false" aria-controls="northwind-agents-sample">Expand</button>
+      </div>
+      <p class="snippet-note">The operational AGENTS.md stays concise because Northwind has one runtime and no folder-specific policy split.</p>
+      <pre id="northwind-agents-sample" class="config-block clamp-block"><code>AGENTS.md
+Project family: local developer tooling.
+Application tiers:
+  CLI commands: src/commands/**
+  File processing: src/readers/** and src/writers/**
+  Generated artifacts: dist/** and samples/output/**
+Routing:
+  Source changes load node-cli, typescript-esm, typescript-strict, and vitest.
+  Artifact changes verify the generator path before changing checked-in examples.
+Validation:
+  pnpm test
+  pnpm run build</code></pre>
+    </div>
+
+    <div class="snippet" data-expanded="false">
+      <div class="snippet-head">
+        <h3>Northwind AGENTS-PLAN.md Structural View</h3>
+        <button class="snippet-toggle" type="button" aria-expanded="false" aria-controls="northwind-plan-sample">Expand</button>
+      </div>
+      <p class="snippet-note">This is a compact view of the Markdown plan sections, not a YAML file checked into the project.</p>
+      <pre id="northwind-plan-sample" class="config-block clamp-block"><code>artifact: AGENTS-PLAN.md
+format: Markdown authored plan
+project:
+  name: Northwind Tools
+  family: local-developer-tooling
+root_agents_reference:
+  file: AGENTS.md
+  purpose: short router contract for CLI, generated artifacts, and tests
+nested_agents_reference:
+  required: false
+  reason: one TypeScript runtime and one verification workflow
+skill_loadouts:
+  cli: [node-cli, typescript-esm, typescript-strict]
+  tests: [vitest, careful-coding]
+validation:
+  commands: [pnpm test, pnpm run build]</code></pre>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="web-title">
+    <h2 id="web-title">Example: Acme Ledger Web Application</h2>
+    <div class="matrix">
+      <table>
+        <thead>
+          <tr>
+            <th>Work target</th>
+            <th>Application tier</th>
+            <th>Role and skills</th>
+            <th>Validation</th>
+            <th>Reference placement</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="name">app/(authenticated)/**</span></td>
+            <td>Front-end tier.</td>
+            <td>Coding Agent loads nextjs-app-router, react-server-components, typescript-strict, tailwind-design-system, jest, and playwright.</td>
+            <td>Run focused unit tests, route smoke checks, accessibility checks, and build.</td>
+            <td>Root AGENTS.md is enough unless a product area has its own workflow rules.</td>
+          </tr>
+          <tr>
+            <td><span class="name">app/api/**/route.ts</span></td>
+            <td>API tier.</td>
+            <td>Coding Agent loads api-routes, clerk-auth, nextjs-app-router, postgres-drizzle, typescript-strict, and jest.</td>
+            <td>Run API unit tests, auth boundary checks, persistence tests, and build.</td>
+            <td>Nested app/api/AGENTS.md when many routes share API-specific contracts.</td>
+          </tr>
+          <tr>
+            <td><span class="name">app/(marketing)/**</span></td>
+            <td>Static pages tier.</td>
+            <td>Coding Agent loads nextjs-app-router, react-server-components, tailwind-design-system, and playwright.</td>
+            <td>Run build, link checks, responsive screenshots, and smoke checks for forms or calls to action.</td>
+            <td>Root AGENTS.md unless the static site is maintained by a separate content workflow.</td>
+          </tr>
+          <tr>
+            <td><span class="name">db/** and drizzle/**</span></td>
+            <td>DB tier.</td>
+            <td>Coding Agent loads postgres-drizzle, typescript-strict, and jest. Code Review Agent checks schema boundaries and migration assumptions.</td>
+            <td>Run schema checks, persistence tests, seed checks, and build.</td>
+            <td>Nested db/AGENTS.md when data ownership, migrations, or privacy rules require local evidence.</td>
+          </tr>
+          <tr>
+            <td><span class="name">docs/wiki/**</span></td>
+            <td>Documentation tier.</td>
+            <td>Documentation Architect loads project-wiki, code-project-wiki, and the relevant artifact creation or review skill.</td>
+            <td>Run wiki status, lint, link checks, and OKF validation when topic pages change.</td>
+            <td>Root AGENTS.md plus docs/wiki/AGENTS.md only when wiki workflow rules are extensive.</td>
+          </tr>
+          <tr>
+            <td><span class="name">tests/e2e/**</span></td>
+            <td>Verification tier.</td>
+            <td>QA And Verification Agent or E2E Browser Agent loads playwright, nextjs-app-router, and project-specific test data rules.</td>
+            <td>Run targeted browser flows with console and network inspection before broader suite runs.</td>
+            <td>Nested tests/e2e/AGENTS.md when the browser runtime has special setup or shared-state constraints.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="snippet" data-expanded="false">
+      <div class="snippet-head">
+        <h3>Acme Root And Nested AGENTS.md References</h3>
+        <button class="snippet-toggle" type="button" aria-expanded="false" aria-controls="acme-agents-sample">Expand</button>
+      </div>
+      <p class="snippet-note">The root file names shared routing. Nested AGENTS.md files add local API and database rules without forking the shared role catalog.</p>
+      <pre id="acme-agents-sample" class="config-block clamp-block"><code>AGENTS.md
+Project family: web application.
+Application tiers:
+  Front-end: app/(authenticated)/** and components/**
+  API: app/api/**/route.ts
+  Static pages: app/(marketing)/**
+  DB: db/** and drizzle/**
+Routing:
+  Read nested AGENTS.md before changing app/api/** or db/**.
+Validation:
+  pnpm test
+  pnpm run build
+
+app/api/AGENTS.md
+Local tier: API routes.
+Load skills: api-routes, clerk-auth, postgres-drizzle, typescript-strict, jest.
+Local checks: auth boundary tests, request validation tests, persistence tests.
+
+db/AGENTS.md
+Local tier: database schema and persistence.
+Load skills: postgres-drizzle, typescript-strict, jest.
+Local checks: schema checks, migration review, seed data tests.</code></pre>
+    </div>
+
+    <div class="snippet" data-expanded="false">
+      <div class="snippet-head">
+        <h3>Acme AGENTS-PLAN.md Structural View</h3>
+        <button class="snippet-toggle" type="button" aria-expanded="false" aria-controls="acme-plan-sample">Expand</button>
+      </div>
+      <p class="snippet-note">AGENTS-PLAN.md remains the Markdown planning artifact; this block exposes the routing structure that the plan describes.</p>
+      <pre id="acme-plan-sample" class="config-block clamp-block"><code>artifact: AGENTS-PLAN.md
+format: Markdown authored plan
+project:
+  name: Acme Ledger
+  family: web-application
+operational_references:
+  root: AGENTS.md
+  nested: [app/api/AGENTS.md, db/AGENTS.md]
+application_tiers:
+  front_end:
+    paths: [app/(authenticated)/**, components/**]
+    skills: [nextjs-app-router, react-server-components, tailwind-design-system]
+  api:
+    paths: [app/api/**/route.ts]
+    skills: [api-routes, clerk-auth, postgres-drizzle]
+    nested_agents_reference: app/api/AGENTS.md
+  static_pages:
+    paths: [app/(marketing)/**]
+    skills: [nextjs-app-router, react-server-components, playwright]
+  db:
+    paths: [db/**, drizzle/**]
+    skills: [postgres-drizzle, typescript-strict, jest]
+    nested_agents_reference: db/AGENTS.md
+
+dispatch:
+  project-agent-setup-agent:
+    skills: [development-methodology, create-agents-plan, documentation-page-verifier]
+  coding-agent:
+    rules:
+      - match: app/api/**/route.ts
+        add_skills: [api-routes, clerk-auth, postgres-drizzle, jest]
+      - match: db/**
+        add_skills: [postgres-drizzle, typescript-strict, jest]</code></pre>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="wiki-title">
+    <h2 id="wiki-title">Example: Beacon Knowledge Base</h2>
+    <div class="matrix">
+      <table>
+        <thead>
+          <tr>
+            <th>Work target</th>
+            <th>Application tier</th>
+            <th>Role and skills</th>
+            <th>Validation</th>
+            <th>Reference placement</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="name">raw/inbox/** and raw/fragments/**</span></td>
+            <td>Source collection tier.</td>
+            <td>Research Agent loads project-wiki-research and follows raw-only collection rules.</td>
+            <td>Confirm source metadata, date boundaries, and queue placement before synthesis.</td>
+            <td>Nested raw/AGENTS.md when source queues have strict handling rules.</td>
+          </tr>
+          <tr>
+            <td><span class="name">docs/wiki/**</span></td>
+            <td>Wiki synthesis tier.</td>
+            <td>Documentation Architect loads project-wiki, project-wiki-topic-writer, and code-project-wiki when source links depend on code.</td>
+            <td>Run wiki status, lint, and OKF validation.</td>
+            <td>Root AGENTS.md plus docs/wiki/AGENTS.md only when the wiki has local writing rules.</td>
+          </tr>
+          <tr>
+            <td><span class="name">docs/wiki/digests/**</span></td>
+            <td>Publication tier.</td>
+            <td>Documentation Architect loads project-wiki-topic-verifier and structured-explanation.</td>
+            <td>Run link checks, topic verifier checks, and digest coverage checks.</td>
+            <td>Root AGENTS.md names publication conventions.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="snippet" data-expanded="false">
+      <div class="snippet-head">
+        <h3>Beacon Root And Nested AGENTS.md References</h3>
+        <button class="snippet-toggle" type="button" aria-expanded="false" aria-controls="beacon-agents-sample">Expand</button>
+      </div>
+      <p class="snippet-note">Beacon uses a nested raw/AGENTS.md when source collection has rules that should not be repeated across wiki-writing guidance.</p>
+      <pre id="beacon-agents-sample" class="config-block clamp-block"><code>AGENTS.md
+Project family: documentation and project wiki repository.
+Application tiers:
+  Source collection: raw/inbox/** and raw/fragments/**
+  Wiki synthesis: docs/wiki/**
+  Verification: skills/project-wiki/scripts/**
+Routing:
+  Collection runs are raw-only.
+  Ingest runs read raw sources before editing docs/wiki.
+Validation:
+  wiki_ops.py status
+  wiki_ops.py lint
+  wiki_ops.py okf-validate
+
+raw/AGENTS.md
+Local scope: unprocessed source queue.
+Rules:
+  Keep raw collection separate from wiki synthesis.
+  Move processed items only after synthesis and validation.
+Skills:
+  project-wiki-research for source reports.
+  project-wiki-topic-writer and project-wiki-topic-verifier for wiki pages.</code></pre>
+    </div>
+
+    <div class="snippet" data-expanded="false">
+      <div class="snippet-head">
+        <h3>Beacon AGENTS-PLAN.md Structural View</h3>
+        <button class="snippet-toggle" type="button" aria-expanded="false" aria-controls="beacon-plan-sample">Expand</button>
+      </div>
+      <p class="snippet-note">The plan records why Beacon needs a local raw queue reference and which checks prove the wiki workflow is usable.</p>
+      <pre id="beacon-plan-sample" class="config-block clamp-block"><code>artifact: AGENTS-PLAN.md
+format: Markdown authored plan
+project:
+  name: Beacon Knowledge Base
+  family: documentation-and-project-wiki
+operational_references:
+  root: AGENTS.md
+  nested: [raw/AGENTS.md]
+application_tiers:
+  source_collection:
+    paths: [raw/inbox/**, raw/fragments/**]
+    skills: [project-wiki-research]
+    nested_agents_reference: raw/AGENTS.md
+  wiki_synthesis:
+    paths: [docs/wiki/**]
+    skills: [project-wiki, project-wiki-topic-writer, project-wiki-topic-verifier]
+  publication:
+    paths: [docs/wiki/digests/**]
+    skills: [project-wiki-topic-verifier, structured-explanation]
+validation:
+  commands: [wiki_ops.py status, wiki_ops.py lint, wiki_ops.py okf-validate]</code></pre>
     </div>
   </section>
 
@@ -604,7 +963,7 @@ dispatch:
           <tr>
             <td><span class="name">Nest</span></td>
             <td>Subfolders with different technology, runtime setup, data handling, or verification commands.</td>
-            <td>Nested AGENTS-PLAN.md files where local detail is valuable.</td>
+            <td>Nested AGENTS.md references and local AGENTS-PLAN.md files where local detail is valuable.</td>
             <td>Does nesting reduce cognitive load without hiding repository-wide rules?</td>
           </tr>
           <tr>
@@ -618,5 +977,24 @@ dispatch:
     </div>
   </section>
 </main>
+<script>
+  const EXPANDED_BUTTON_LABEL = "Collapse";
+  const COLLAPSED_BUTTON_LABEL = "Expand";
+
+  document.querySelectorAll(".snippet").forEach((snippet) => {
+    const toggle = snippet.querySelector(".snippet-toggle");
+
+    if (!(toggle instanceof HTMLButtonElement)) {
+      return;
+    }
+
+    toggle.addEventListener("click", () => {
+      const nextExpanded = snippet.dataset.expanded !== "true";
+      snippet.dataset.expanded = String(nextExpanded);
+      toggle.setAttribute("aria-expanded", String(nextExpanded));
+      toggle.textContent = nextExpanded ? EXPANDED_BUTTON_LABEL : COLLAPSED_BUTTON_LABEL;
+    });
+  });
+</script>
 </body>
 </html>
