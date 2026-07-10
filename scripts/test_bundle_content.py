@@ -544,6 +544,11 @@ class BundleContentTests(unittest.TestCase):
                     for invocation in example["runtimeInvocations"].values():
                         self.assertIsInstance(invocation, str)
                         self.assertTrue(invocation.strip())
+                if role.name == "documentation-writer":
+                    for example in role_payload["roles"][role.name]["examples"]:
+                        self.assertTrue(
+                            example["runtimeInvocations"]["codex"].startswith("$documentation-writer ")
+                        )
                 codex_agent_path = (
                     GENERATED_ADAPTERS_ROOT / "codex" / "agents" / f"{role.filename}.toml"
                 )

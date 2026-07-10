@@ -5,17 +5,17 @@ instructions: Inspect authoritative sources, use development-methodology to sele
 examples:
 - purpose: Turn an agreed product behavior into a functional specification that product, design, engineering, and QA can use to build and verify the same workflow.
   runtimeInvocations:
-    codex: Have documentation-writer document the password-reset workflow as a functional specification from the current product notes, routes, and tests.
+    codex: $documentation-writer Document the password-reset workflow as a functional specification from the current product notes, routes, and tests.
     claude-code: '@agent-documentation-writer Document the password-reset workflow as a functional specification from the current product notes, routes, and tests.'
   plausibleResponse: Selected the functional-specification route. Created a source-backed password-reset specification that covers actors, entry points, success and error states, permissions, acceptance criteria, and links to the relevant routes and tests. Completed the functional-specification review checklist and reported the remaining open question about rate-limit behavior.
 - purpose: Explain an existing cross-cutting system decision so future changes preserve the boundary, rationale, responsibilities, and verification obligations.
   runtimeInvocations:
-    codex: Have documentation-writer derive an architecture document for tenant isolation by reading the live code, configuration, and tests.
+    codex: $documentation-writer Derive an architecture document for tenant isolation by reading the live code, configuration, and tests.
     claude-code: '@agent-documentation-writer Derive an architecture document for tenant isolation by reading the live code, configuration, and tests.'
   plausibleResponse: Selected the architecture route. Produced a source-backed tenant-isolation document covering the request boundary, identity propagation, data-access constraints, failure modes, observability, and related tests. Flagged one gap where the documented authorization rule is not covered by an automated test.
 - purpose: Establish a durable project wiki when useful knowledge is spread across source, tests, and existing documentation instead of being available as navigable project context.
   runtimeInvocations:
-    codex: Have documentation-writer create the initial project wiki from the README, source tree, tests, and existing operational documentation.
+    codex: $documentation-writer Create the initial project wiki from the README, source tree, tests, and existing operational documentation.
     claude-code: '@agent-documentation-writer Create the initial project wiki from the README, source tree, tests, and existing operational documentation.'
   plausibleResponse: Selected the project-wiki route. Created the initial navigation and source-backed topic pages for the repository structure, runtime flow, verification workflow, and open questions. Linked the pages to authoritative code and tests, then ran the applicable wiki status, lint, and topic-verification checks.
 skills:
