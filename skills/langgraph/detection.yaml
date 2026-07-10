@@ -1,18 +1,17 @@
-schema: dev-methodology-skill-routing
+schema: dev-methodology-technology-detection
 version: 1
 skill: langgraph
 kind: technology
 label: LangGraph
 capabilities:
-  - workflow-runtime
-applicableRoles:
-  - code-review-agent
-  - coding-agent
-  - prompt-contract-reviewer
-  - qa-and-verification-agent
-  - runtime-diagnostician
+- workflow-runtime
 activation:
-  fileExtensions: [.ts, .tsx, .js, .jsx, .py]
+  fileExtensions:
+  - ".ts"
+  - ".tsx"
+  - ".js"
+  - ".jsx"
+  - ".py"
   manifestDependencies:
-    - "@langchain/langgraph"
-    - langgraph
+  - "@langchain/langgraph"
+  - langgraph

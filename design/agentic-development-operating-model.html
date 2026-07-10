@@ -403,7 +403,7 @@
     <h1 id="page-title">Agentic Development Operating Model</h1>
     <p class="lede">
       The methodology uses named role agents for human and orchestrated work, short skills for load-on-demand procedures,
-      AGENTS.md files for router-facing project-family, application-tier, stack, validation, and data-handling reference. Each layer has one job,
+      AGENTS.md files for operational project-family, application-tier, folder-skill, validation, and data-handling reference. Each layer has one job,
       so long-running development can split into subagents without making every context carry every rule.
     </p>
   </section>
@@ -413,7 +413,7 @@
     <div class="flow">
       <div class="flow-step">
         <strong>1. AGENTS.md Reference</strong>
-        <p>Declares the project family, application tiers, stack packs, validation commands, data rules, and local reference information used by the skills router.</p>
+        <p>Declares the project family, application tiers, unconditional folder technology loadouts, validation commands, data rules, and local reference information.</p>
       </div>
       <div class="flow-step">
         <strong>2. Role Agent</strong>
@@ -598,13 +598,13 @@
 
       <article class="panel">
         <h3>Skill groups</h3>
-        <p>The skills router selects specialized guidance from generated activation metadata, source-backed AGENTS.md bindings, and the actual file scope. Prompt keywords may suggest inspection but never select a skill.</p>
+        <p>Project Agent Setup detects specialized guidance once from generated activation metadata and representative folder evidence. AGENTS.md then tells ordinary agents which folder skills to load before acting.</p>
         <ul>
           <li>Methodology skills for docs, wiki, artifact creation, structured design, review, backlog, and merge work.</li>
           <li>Specialized skills for languages, frameworks, persistence, identity, runtimes, interface systems, tests, and optional tools.</li>
           <li>Quality skills for tests, security, privacy, performance, observability, and release checks.</li>
           <li>Repository skills for local procedures, taxonomy, scripts, templates, generated artifact conventions, and deterministic path bindings.</li>
-          <li>Routing receipts distinguish selection and availability from captured proof that each skill file was read.</li>
+          <li>Detection results record setup evidence and availability; runtime harness evidence separately proves whether a skill file was read.</li>
         </ul>
       </article>
     </div>
@@ -702,14 +702,14 @@
   </section>
 
   <section class="section" aria-labelledby="agents-reference-title">
-    <h2 id="agents-reference-title">AGENTS.md Routing Reference</h2>
+    <h2 id="agents-reference-title">AGENTS.md Operational Reference</h2>
     <div class="wide-grid">
       <article class="panel">
         <h3>Root AGENTS.md</h3>
-        <p>The root AGENTS.md is the normal source for project family, application tiers, stack packs, validation commands, data handling rules, and skills-router reference information.</p>
+        <p>The root AGENTS.md is the normal source for project family, application tiers, folder technology loadouts, validation commands, and data handling rules.</p>
         <ul>
           <li>Canonical path: <code>AGENTS.md</code></li>
-          <li>It tells the skills router what guidance to load for common work in the repository.</li>
+          <li>It tells every agent which folder technology skills to load before acting.</li>
           <li>It selects skills and policies; it does not duplicate full skill bodies or role prompts.</li>
         </ul>
       </article>
@@ -784,7 +784,7 @@ Nested AGENTS.md examples:
       </div>
       <div class="flow-step">
         <strong>Root AGENTS.md</strong>
-        <p>The root AGENTS.md names the project family, application tiers, stacks, skill packs, and validation commands for the skills router.</p>
+        <p>The root AGENTS.md names the project family, application tiers, folder technology loadouts, and validation commands.</p>
       </div>
       <div class="flow-step">
         <strong>Nested AGENTS.md</strong>
@@ -792,7 +792,7 @@ Nested AGENTS.md examples:
       </div>
       <div class="flow-step">
         <strong>Task evidence</strong>
-        <p>The task prompt and repository evidence select the smallest relevant subset of skills for the job.</p>
+        <p>The task and folder determine which fixed-role skills and pre-established AGENTS.md loadout apply.</p>
       </div>
     </div>
     <p class="note">
@@ -863,7 +863,7 @@ Nested AGENTS.md examples:
   <section class="section" aria-labelledby="files-title">
     <h2 id="files-title">File Contracts</h2>
     <p class="lede">
-      File contracts make the operating model concrete. They tell agents where durable role definitions live, where project-local router reference lives,
+      File contracts make the operating model concrete. They tell agents where durable role definitions live, where project-local operational guidance lives,
       which files adapt shared definitions to a runtime, and where completed runs leave evidence. A small project can start with AGENTS.md and add the other contracts as orchestration becomes useful.
     </p>
     <div class="grid">
@@ -873,21 +873,21 @@ Nested AGENTS.md examples:
         <ul>
           <li><code>agents/roles/development-use/development-orchestrator.role.yaml</code> defines the coordinator role that breaks work into bounded tasks, selects agents, and preserves handoff and verification expectations.</li>
           <li><code>agents/roles/project-setup/project-organiser.role.yaml</code> defines the placement role that applies taxonomy, path intent, and file-organization rules before artifacts or code are created.</li>
-          <li><code>agents/roles/development-use/coding-agent.role.yaml</code> defines the implementation role used for ordinary code changes after the skills router has selected the right guidance.</li>
+          <li><code>agents/roles/development-use/coding-agent.role.yaml</code> defines the implementation role used for ordinary code changes after fixed and folder skills are loaded.</li>
           <li><code>agents/roles/development-use/code-review-agent.role.yaml</code> defines the review role, including finding-first output, severity expectations, evidence requirements, and verification checks.</li>
         </ul>
       </article>
 
       <article class="panel">
-        <h3>Router reference</h3>
-        <p>These files provide the project-specific facts the skills router reads before choosing which shared skills to load.</p>
+        <h3>Operational reference</h3>
+        <p>These files provide project-specific facts and unconditional folder skill loadouts.</p>
         <ul>
           <li><code>AGENTS.md</code> is the root project contract. It declares the project family, application tiers, validation commands, data rules, and default guidance for this repository.</li>
-          <li><code>AGENTS-PLAN.yaml</code> is the setup and validation artifact that explains why project role agents, skill loadouts, nested plans, and AGENTS.md routing references exist.</li>
+          <li><code>AGENTS-PLAN.yaml</code> is the setup and validation artifact that explains why project role agents, folder technology loadouts, nested plans, and AGENTS.md references exist.</li>
           <li><code>&lt;subtree&gt;/AGENTS.md</code> narrows the root contract for a folder that has different tier, stack, validation, or data-handling needs. The nearest file applies to work in that subtree.</li>
           <li><code>CLAUDE.md</code> is a thin Claude Code bridge that imports the colocated <code>AGENTS.md</code>; create the same bridge beside nested guidance when Claude needs that subtree.</li>
           <li><code>&lt;subtree&gt;/AGENTS-PLAN.yaml</code> is used only when the subtree has distinct technology, runtime, data, or verification evidence that would make the root plan too noisy.</li>
-          <li><code>docs/project-taxonomy.md</code> defines the project families, artifact types, and placement concepts used by the router and Project Organiser when AGENTS.md points at taxonomy terms.</li>
+          <li><code>docs/project-taxonomy.md</code> defines the project families, artifact types, and placement concepts used by Project Agent Setup and Project Organiser.</li>
         </ul>
       </article>
 

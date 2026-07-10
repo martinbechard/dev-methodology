@@ -1,13 +1,13 @@
 ---
 name: create-agents-plan
-description: Use when creating or substantially rewriting an AGENTS-PLAN.yaml project agent and skill routing plan from the development-methodology agents-plan-template.yaml asset, including root and nested plan placement, role agents, skill loadouts, folder routing, file contracts, proprietary validation notes, and customer-safe examples.
+description: Use when creating or substantially rewriting an AGENTS-PLAN.yaml project agent and skill setup plan from the development-methodology agents-plan-template.yaml asset, including root and nested plan placement, role agents, folder technology loadouts, file contracts, proprietary validation notes, and customer-safe examples.
 metadata:
   category: documentation-methodology
 ---
 
 # Create Agents Plan
 
-Use this skill to create or substantially rewrite an AGENTS-PLAN.yaml artifact. The artifact explains how a project should organize role agents, skill loadouts, AGENTS.md routing references, nested guidance, and validation evidence.
+Use this skill to create or substantially rewrite an AGENTS-PLAN.yaml artifact. The artifact explains how a project should organize role agents, folder technology loadouts, AGENTS.md operational guidance, nested guidance, and validation evidence.
 
 ## Template
 
@@ -21,7 +21,7 @@ Create one root AGENTS-PLAN.yaml when the project needs a reviewable setup plan 
 
 Create nested AGENTS-PLAN.yaml files only when a subfolder has distinct technology, runtime ownership, data boundaries, verification commands, or agent loadouts that would distract from root-level routing.
 
-Create or update AGENTS-PLAN.yaml before writing AGENTS.md routing guidance. AGENTS-PLAN.yaml is the setup and validation artifact that explains what AGENTS.md should contain, why the roles and skills were chosen, and where project-specific evidence belongs. AGENTS.md is the operational routing reference that agents actually load after the plan has been validated. When the target uses Claude Code, create a thin CLAUDE.md beside each applicable AGENTS.md that imports the colocated guidance instead of duplicating it.
+Create or update AGENTS-PLAN.yaml before writing AGENTS.md guidance. AGENTS-PLAN.yaml is the setup and validation artifact that explains what AGENTS.md should contain, why the roles and skills were chosen, and where project-specific evidence belongs. AGENTS.md is the operational reference that agents actually load after the plan has been validated. When the target uses Claude Code, create a thin CLAUDE.md beside each applicable AGENTS.md that imports the colocated guidance instead of duplicating it.
 
 ## Workflow
 
@@ -29,13 +29,13 @@ Create or update AGENTS-PLAN.yaml before writing AGENTS.md routing guidance. AGE
 2. Classify the project family, application tiers, technology stacks, documentation surfaces, runtime boundaries, data boundaries, and verification commands.
 3. Identify the role agents needed for the project. Prefer shared reusable roles such as Development Orchestrator, Project Agent Setup Agent, Coding Agent, Code Review Agent, QA And Verification Agent, Documentation Writer, Wiki Query Agent, and specialist reviewer roles only when the project evidence requires them.
 4. Map each tier, technology, folder, or workflow to the reusable skills it needs.
-5. Use route-technology-skills and its generated registry to resolve specialized variants from source paths, manifests, configuration, and build evidence. Do not use prompt keywords as the primary detector.
-6. Record deterministic skill_loadouts and folder_routing bindings, including the activation evidence and required-load failure policy.
+5. As Project Agent Setup, use detect-technology-skills and its generated registry once for representative folder scopes. Review source paths, owning manifests, configuration, and build evidence.
+6. Record deterministic technology_skill_loadouts and folder bindings, including source evidence, missing required skills, exclusive conflicts, and explicit no-variant results.
 7. Decide whether the root AGENTS-PLAN.yaml is sufficient or whether one or more subfolders need nested AGENTS-PLAN.yaml files.
 8. Copy the template into each required location and replace every TODO with source-backed project content.
 9. Keep proprietary project validation notes inside the target project repository. Do not copy private project names, internal implementation details, customer data, secrets, or non-public workflows into distributable examples.
 10. Use fictitious names, synthetic paths, and generic behavior for customer-safe examples.
-11. After the plan is validated, generate the specialized routing section with route-technology-skills scripts/render_agents_routing.py, then create or update root and nested AGENTS.md files from the plan.
+11. After the plan is validated, run scripts/render-agents-technology-skills.py and create or update root and nested AGENTS.md files with unconditional folder skill-loading instructions.
 12. When Claude Code is used, create thin CLAUDE.md bridge files that import the colocated AGENTS.md without copying its rules.
 13. Say Not yet identified for related sources, tests, commands, or roles that do not exist yet.
 14. Keep the artifact steady-state. Do not describe it as new, revised, or enhanced unless the document is explicitly a change plan.
@@ -47,8 +47,8 @@ Before finishing:
 1. Use documentation-page-verifier on every created or materially rewritten AGENTS-PLAN.yaml file.
 2. Search each AGENTS-PLAN.yaml for unresolved TODO markers that are not intentional.
 3. Confirm every role, skill loadout, folder route, validation command, and file contract has source evidence or an open question.
-4. Run the resolver for representative paths in every declared tier. Confirm the result matches the planned binding and every required skill is available.
-5. Confirm AGENTS.md contains the generated routing section and its bindings match AGENTS-PLAN.yaml.
+4. Run setup-time detection for representative folders in every declared tier. Confirm each result matches the planned loadout and every required skill is available.
+5. Confirm AGENTS.md contains unconditional folder skill-loading instructions, does not tell ordinary agents to rerun detection, and matches AGENTS-PLAN.yaml.
 6. Confirm root and nested AGENTS-PLAN.yaml files do not duplicate broad guidance that belongs in root AGENTS.md.
 7. Confirm every planned AGENTS.md exists and matches the validated routing plan.
 8. When Claude Code is used, confirm every applicable AGENTS.md has a thin colocated CLAUDE.md import and that no guidance is duplicated between them.

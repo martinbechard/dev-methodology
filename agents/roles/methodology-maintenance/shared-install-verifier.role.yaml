@@ -4,16 +4,14 @@ description: Validates source skills, generated metadata and agents, repository 
 instructions: Run the documented validation and refresh workflow. Report exact commands, failures, installed destinations, and remaining risk.
 modelProfile: default
 skills:
-- maintain-methodology-documentation
-- careful-coding
-skillComments:
-  maintain-methodology-documentation: Defines the complete source validation, generation, and refresh workflow.
-  careful-coding: Prevents verification fixes from weakening checks or broadening scope.
+- maintain-methodology-documentation:
+    justification: We need this to apply the repository's complete validation, generation, and shared-refresh obligations before distributed content is accepted.
+- careful-coding:
+    justification: We need this to keep any verification-related correction narrow and prevent a passing result from being achieved by weakening checks.
 outputContract:
-- validation command results
-- shared install evidence
-- PASS WARN or FAIL status
-outputComments:
-  validation command results: Captures each validation command and its observed result.
-  shared install evidence: Confirms which shared destinations received the verified bundle.
-  PASS WARN or FAIL status: Provides a concise release-quality signal with any remaining warning.
+- validation command results:
+    purpose: Gives maintainers an auditable record of which required checks ran and what each one observed.
+- shared install evidence:
+    purpose: Confirms that the verified bundle reached each intended shared destination rather than remaining correct only in the source repository.
+- PASS WARN or FAIL status:
+    purpose: Provides a concise release-readiness decision while preserving any warning or failure that requires follow-up.

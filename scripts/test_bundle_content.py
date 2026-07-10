@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import importlib.util
 import sys
+import tempfile
 import tomllib
 import unittest
+from dataclasses import replace
 from pathlib import Path
 from types import ModuleType
 
@@ -45,7 +47,7 @@ NEW_WORKFLOW_SKILLS = (
     "maintain-methodology-documentation",
 )
 NEW_DEVELOPMENT_SKILLS = (
-    "route-technology-skills",
+    "detect-technology-skills",
     "code-discovery",
     "test-strategy",
     "end-to-end-verification",
@@ -60,6 +62,8 @@ NEW_DEVELOPMENT_SKILLS = (
     "create-unit-test-plan",
     "review-unit-test-plan",
     "typescript-coding",
+    "python-coding",
+    "fastapi",
     "java-coding",
     "spring-boot",
     "sql-coding",
@@ -144,10 +148,10 @@ README_REQUIRED_PHRASES = (
     "documentation-page-verifier",
     "create-agents-plan",
     "AGENTS-PLAN.yaml",
-    "routing.yaml",
-    "python3 scripts/build-skill-routing.py",
-    "route-technology-skills",
-    "Prompt keywords are advisory discovery hints only",
+    "detection.yaml",
+    "python3 scripts/build-technology-detection.py",
+    "detect-technology-skills",
+    "Agent role, task wording, prompt keywords, read confirmation, and optional local commands are not detection inputs",
     "create-project-wiki",
     "create-functional-spec",
     "create-architecture",
@@ -247,7 +251,7 @@ AGENT_DEFINITION_FORMATS_REQUIRED_PHRASES = (
     "Generate Runtime Adapters",
     "Validate Against Skills",
     "Keep HTML Pure",
-    "Generic Roles And Specialized Routing",
+    "Fixed Roles And Setup-Time Technology Detection",
     "design/generated/role-definitions.js",
 )
 DEVELOPMENT_USE_LOADOUTS = (
@@ -573,8 +577,28 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(role=role.name):
                 self.assertTrue(set(role.skills).issubset(skill_names))
                 role_source = yaml.safe_load(role.yaml)
-                self.assertEqual(set(role.skills), set(role_source["skillComments"]))
-                self.assertEqual(set(role.output_contract), set(role_source["outputComments"]))
+                self.assertNotIn("skillComments", role_source)
+                self.assertNotIn("outputComments", role_source)
+                self.assertEqual(
+                    list(role.skills),
+                    [next(iter(entry)) for entry in role_source["skills"]],
+                )
+                self.assertEqual(
+                    list(role.output_contract),
+                    [next(iter(entry)) for entry in role_source["outputContract"]],
+                )
+                self.assertTrue(
+                    all(
+                        set(next(iter(entry.values()))) == {"justification"}
+                        for entry in role_source["skills"]
+                    )
+                )
+                self.assertTrue(
+                    all(
+                        set(next(iter(entry.values()))) == {"purpose"}
+                        for entry in role_source["outputContract"]
+                    )
+                )
                 self.assertEqual(
                     (REPOSITORY_ROOT / role.source_path).read_text(encoding="utf-8"),
                     role.yaml,
@@ -583,11 +607,11 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIsInstance(role_payload["roles"][role.name]["examples"], list)
                 self.assertEqual(
                     set(role.skills),
-                    set(role_payload["roles"][role.name]["skillComments"]),
+                    set(role_payload["roles"][role.name]["skillJustifications"]),
                 )
                 self.assertEqual(
                     set(role.output_contract),
-                    set(role_payload["roles"][role.name]["outputComments"]),
+                    set(role_payload["roles"][role.name]["outputPurposes"]),
                 )
                 for example in role_payload["roles"][role.name]["examples"]:
                     self.assertEqual(
@@ -612,20 +636,125 @@ class BundleContentTests(unittest.TestCase):
                 self.assertTrue(codex_agent_path.is_file())
                 codex_agent_text = codex_agent_path.read_text(encoding="utf-8")
                 self.assertIn('developer_instructions = """\n', codex_agent_text)
-                self.assertIn("# Skill comments:", codex_agent_text)
-                self.assertIn("# Output comments:", codex_agent_text)
+                self.assertIn("# Skill justifications:", codex_agent_text)
+                self.assertIn("# Output purposes:", codex_agent_text)
                 self.assertEqual(
                     build_skill_docs.role_instruction_text(role),
                     tomllib.loads(codex_agent_text)["developer_instructions"],
                 )
+                self.assertIn(
+                    "Before acting, load these fixed-role skills completely; they govern the work:",
+                    codex_agent_text,
+                )
+                if "skillAvailability" not in role.optional_fields:
+                    self.assertNotIn("[[skills.config]]", codex_agent_text)
                 self.assertTrue(
                     (GENERATED_ADAPTERS_ROOT / "claude" / "agents" / f"{role.filename}.md").is_file()
                 )
                 claude_agent_text = (
                     GENERATED_ADAPTERS_ROOT / "claude" / "agents" / f"{role.filename}.md"
                 ).read_text(encoding="utf-8")
-                self.assertIn("Skill comments:", claude_agent_text)
-                self.assertIn("Output comments:", claude_agent_text)
+                self.assertIn("Skill justifications:", claude_agent_text)
+                self.assertIn("Output purposes:", claude_agent_text)
+                claude_frontmatter = yaml.safe_load(claude_agent_text.split("---", 2)[1])
+                self.assertEqual(list(role.skills), claude_frontmatter["skills"])
+                self.assertIn("These fixed-role skills are preloaded and govern the work", claude_agent_text)
+
+        non_setup_roles = [
+            role for role in roles
+            if role.name != "project-agent-setup-agent"
+        ]
+        self.assertTrue(all("detect-technology-skills" not in role.skills for role in non_setup_roles))
+        setup_role = next(role for role in roles if role.name == "project-agent-setup-agent")
+        self.assertIn("detect-technology-skills", setup_role.skills)
+
+    def test_dynamic_folder_skills_require_claude_skill_tool_in_restrictive_allowlist(self) -> None:
+        build_skill_docs = load_build_skill_docs_module()
+        skill_payload = build_skill_docs.build_payload()
+        required, allowed, groups = build_skill_docs.load_role_schema()
+        model_profiles = set(build_skill_docs.load_model_profiles())
+        source_role = load_yaml_object(
+            REPOSITORY_ROOT / "agents" / "roles" / "development-use" / "coding-agent.role.yaml"
+        )
+        source_role["tools"] = ["Read", "Grep"]
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "development-use" / "coding-agent.role.yaml"
+            path.parent.mkdir()
+            path.write_text(yaml.safe_dump(source_role, sort_keys=False), encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "must include Skill"):
+                build_skill_docs.load_role_definition(
+                    path,
+                    required,
+                    allowed,
+                    groups,
+                    set(skill_payload["skills"]),
+                    model_profiles,
+                )
+
+    def test_nested_role_annotations_reject_invalid_shapes(self) -> None:
+        build_skill_docs = load_build_skill_docs_module()
+        skill_payload = build_skill_docs.build_payload()
+        required, allowed, groups = build_skill_docs.load_role_schema()
+        model_profiles = set(build_skill_docs.load_model_profiles())
+        source_path = (
+            REPOSITORY_ROOT
+            / "agents"
+            / "roles"
+            / "development-use"
+            / "documentation-writer.role.yaml"
+        )
+
+        wrong_annotation = load_yaml_object(source_path)
+        first_skill = next(iter(wrong_annotation["skills"][0]))
+        wrong_annotation["skills"][0][first_skill] = {"comment": "Describes the skill."}
+
+        parallel_legacy_map = load_yaml_object(source_path)
+        parallel_legacy_map["skillComments"] = {
+            next(iter(entry)): "Legacy comment."
+            for entry in parallel_legacy_map["skills"]
+        }
+
+        for role_source, expected_error in (
+            (wrong_annotation, "must contain only justification"),
+            (parallel_legacy_map, "unknown fields"),
+        ):
+            with self.subTest(expected_error=expected_error), tempfile.TemporaryDirectory() as directory:
+                path = Path(directory) / "development-use" / "documentation-writer.role.yaml"
+                path.parent.mkdir()
+                path.write_text(yaml.safe_dump(role_source, sort_keys=False), encoding="utf-8")
+                with self.assertRaisesRegex(ValueError, expected_error):
+                    build_skill_docs.load_role_definition(
+                        path,
+                        required,
+                        allowed,
+                        groups,
+                        set(skill_payload["skills"]),
+                        model_profiles,
+                    )
+
+    def test_codex_skill_availability_supports_name_and_path_overrides(self) -> None:
+        build_skill_docs = load_build_skill_docs_module()
+        skill_payload = build_skill_docs.build_payload()
+        model_profiles = set(build_skill_docs.load_model_profiles())
+        role = next(
+            role for role in build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
+            if role.name == "coding-agent"
+        )
+        availability = [
+            {"name": "python-coding", "enabled": False},
+            {"path": "/opt/skills/fastapi", "enabled": True},
+        ]
+        role = replace(role, optional_fields={**role.optional_fields, "skillAvailability": availability})
+        profiles = build_skill_docs.load_adapter_model_profiles("codex", model_profiles)
+        rendered = build_skill_docs.render_codex_agent(role, profiles)
+        parsed = tomllib.loads(rendered)
+        self.assertEqual(
+            [
+                {"name": "python-coding", "enabled": False},
+                {"path": "/opt/skills/fastapi", "enabled": True},
+            ],
+            parsed["skills"]["config"],
+        )
 
     def test_model_profiles_are_semantic_and_adapter_complete(self) -> None:
         canonical = load_yaml_object(MODEL_PROFILES_PATH)["profiles"]
@@ -757,8 +886,8 @@ class BundleContentTests(unittest.TestCase):
             "Plausible response",
             "enhance-skill-definitions",
             ".skill-modal:not([hidden])",
-            "skillComments",
-            "outputComments",
+            "skillJustifications",
+            "outputPurposes",
             "agent-modal__pill-comment",
             "runtimeInvocations",
             "agent-modal__runtime-select",

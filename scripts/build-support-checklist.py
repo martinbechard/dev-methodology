@@ -14,7 +14,7 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT_PATH = ROOT / "design" / "agent-skill-test-coverage-checklist.md"
 EXPLORER_PATH = ROOT / "design" / "generated" / "agent-skill-explorer-data.js"
-REGISTRY_PATH = ROOT / "skills" / "route-technology-skills" / "references" / "technology-skill-registry.yaml"
+REGISTRY_PATH = ROOT / "skills" / "detect-technology-skills" / "references" / "technology-skill-detection-registry.yaml"
 EVIDENCE_ROOT = ROOT / "evals" / "evidence"
 EVAL_RUNNER_PATH = ROOT / "scripts" / "run-agent-skill-evals.py"
 
@@ -32,6 +32,21 @@ def load_yaml(path: Path) -> dict[str, object]:
     if not isinstance(value, dict):
         raise ValueError(f"Expected a mapping in {path}")
     return value
+
+
+def role_skill_names(role: dict[str, object]) -> list[str]:
+    value = role.get("skills")
+    if not isinstance(value, list):
+        raise ValueError(f"Role {role.get('name')} skills must be a list.")
+    names: list[str] = []
+    for item in value:
+        if isinstance(item, str):
+            names.append(item)
+        elif isinstance(item, dict) and len(item) == 1:
+            names.append(str(next(iter(item))))
+        else:
+            raise ValueError(f"Role {role.get('name')} has an invalid skill entry: {item}")
+    return names
 
 
 def load_eval_runner() -> ModuleType:
@@ -111,12 +126,12 @@ def render() -> str:
     categories = load_yaml(ROOT / "design" / "skill-categories.yaml")["categories"]
     category_labels = {str(item["id"]): str(item["label"]) for item in categories}
 
-    specialized = [entry for entry in registry["skills"] if entry["kind"] != "generic"]
+    specialized = list(registry["skills"])
 
     lines = [
         "# Agent, Skill, Technology, And Test Coverage Checklist",
         "",
-        "This page is generated from the canonical roles, bundled skill frontmatter, specialized skill registry, declared evaluation cases, and verified evidence receipts. Regenerate it with scripts/build-support-checklist.py.",
+        "This page is generated from the canonical roles, bundled skill frontmatter, setup-time technology detection registry, declared evaluation cases, and verified evidence receipts. Regenerate it with scripts/build-support-checklist.py.",
         "",
         "## Status Meaning",
         "",
@@ -145,16 +160,16 @@ def render() -> str:
 
     lines.extend([
         "",
-        "## Specialized Skill Registry",
+        "## Technology Detection Registry",
         "",
-        "| Skill | Kind | Label | Capabilities | Applicable roles | Declared cases | Verified behavior |",
-        "| --- | --- | --- | --- | --- | --- | --- |",
+        "| Skill | Kind | Label | Capabilities | Declared cases | Verified behavior |",
+        "| --- | --- | --- | --- | --- | --- |",
     ])
     for entry in specialized:
         skill = str(entry["skill"])
         verified_text = ", ".join(verified_skills.get(skill, [])) or "None"
         lines.append(
-            f"| {skill} | {entry['kind']} | {entry['label']} | {', '.join(entry['capabilities'])} | {', '.join(entry['applicableRoles']) or 'Any'} | {', '.join(declared_skills.get(skill, [])) or 'None'} | {checkbox(bool(verified_skills.get(skill)))} {verified_text} |"
+            f"| {skill} | {entry['kind']} | {entry['label']} | {', '.join(entry['capabilities'])} | {', '.join(declared_skills.get(skill, [])) or 'None'} | {checkbox(bool(verified_skills.get(skill)))} {verified_text} |"
         )
 
     lines.extend([
@@ -210,32 +225,29 @@ def render_explorer_data() -> str:
     roles = load_roles()
     declared_agents, declared_skills, verified_agents, verified_skills = load_evaluation_coverage()
     registry = load_yaml(REGISTRY_PATH)
-    routing = {str(entry["skill"]): entry for entry in registry["skills"]}
+    detection = {str(entry["skill"]): entry for entry in registry["skills"]}
     role_items = []
     edges = []
     for role_id, role in sorted(roles.items()):
+        fixed_skills = role_skill_names(role)
         role_items.append({
             "id": role_id,
             "label": role.get("label", role_id),
             "description": role.get("description", ""),
             "modelProfile": role["modelProfile"],
-            "fixedSkills": role.get("skills", []),
-            "routedCapabilities": role.get("routedCapabilities", []),
+            "fixedSkills": fixed_skills,
+            "dynamicFolderSkills": bool(role.get("dynamicFolderSkills", False)),
             "declaredCases": declared_agents.get(role_id, []),
             "verifiedCases": verified_agents.get(role_id, []),
         })
-        edges.extend({"role": role_id, "skill": skill, "kind": "fixed"} for skill in role.get("skills", []))
-    for skill_id, entry in routing.items():
-        if entry["kind"] == "generic":
-            continue
-        edges.extend({"role": role, "skill": skill_id, "kind": "routed"} for role in entry.get("applicableRoles", []))
+        edges.extend({"role": role_id, "skill": skill, "kind": "fixed"} for skill in fixed_skills)
     skill_items = []
     for skill_id, category in sorted(skills.items()):
-        entry = routing.get(skill_id)
+        entry = detection.get(skill_id)
         skill_items.append({
             "id": skill_id,
             "category": category,
-            "routing": entry,
+            "detection": entry,
             "declaredCases": declared_skills.get(skill_id, []),
             "verifiedCases": verified_skills.get(skill_id, []),
         })

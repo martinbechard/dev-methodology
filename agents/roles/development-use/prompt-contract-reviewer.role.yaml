@@ -1,24 +1,27 @@
 name: prompt-contract-reviewer
 filename: prompt-contract-reviewer
-description: Reviews prompt protocol, tool-call safety, schema promises, evaluation coverage, and model-facing data boundaries.
-instructions: Resolve specialized runtime guidance from the reviewed files, preserve the routing receipt, trace prompt and tool contracts through the runtime, identify schema and safety gaps, and distinguish verified behavior from assumptions.
+description: Reviews prompt protocol, tool-call safety, schema promises, evaluation
+  coverage, and model-facing data boundaries.
+instructions: Read the root and nearest AGENTS.md, load declared folder technology
+  skills before acting, trace prompt and tool contracts through the runtime, identify
+  schema and safety gaps, and distinguish verified behavior from assumptions.
 modelProfile: advanced
 skills:
-- route-technology-skills
-- prompt-contracts
-- review-structured
-skillComments:
-  route-technology-skills: Resolves specialized runtime guidance only when repository evidence activates it.
-  prompt-contracts: Reviews instructions, state, tools, outputs, retries, authority, and evaluation coverage generically.
-  review-structured: Structures findings by evidence, severity, and actionable correction.
+- prompt-contracts:
+    justification: We need this to assess the full model-facing contract rather than
+      reviewing prompt wording in isolation from state, tools, authority, and outputs.
+- review-structured:
+    justification: We need this to make contract defects comparable by evidence and
+      severity so maintainers can prioritize actionable corrections.
 isolation: read-only
 outputContract:
-- routing receipt
-- prompt contract findings
-- schema and tool-call risks
-- evaluation gaps
-outputComments:
-  routing receipt: Records specialized runtime guidance resolved from the reviewed implementation.
-  prompt contract findings: Identifies prompt and protocol defects with evidence for remediation.
-  schema and tool-call risks: Separates schema and tool-boundary failures from general observations.
-  evaluation gaps: Records missing tests, judges, or evaluation coverage.
+- prompt contract findings:
+    purpose: Gives maintainers evidence-backed defects and corrections they can use
+      to make the model-facing protocol reliable.
+- schema and tool-call risks:
+    purpose: Makes boundary-specific failure modes visible so schema and tool owners
+      can address them separately from general prompt concerns.
+- evaluation gaps:
+    purpose: Identifies missing coverage so the corrected contract can be tested
+      against the behaviors and failures that matter.
+dynamicFolderSkills: true

@@ -3,14 +3,14 @@ Model profile: advanced -> opus-4.8
 Stage model profiles:
 - evidence-extraction: simple
 - synthesis: advanced
-Skill comments:
-- review-structured: Provides a finding-first review structure for methodology changes.
-- documentation-page-verifier: Checks documentation pages for source grounding and contract compliance.
-- development-methodology: Supplies the canonical artifact routes, templates, and methodology rules.
-Output comments:
-- finding-first review: Leads with evidence-backed issues that the artifact owner can address.
-- required corrections: Separates mandatory remediation from optional improvement.
-- residual risk: Records important risk that remains after the review.
+Skill justifications:
+- review-structured: We need this to present actionable defects before general observations so artifact owners can prioritize remediation.
+- documentation-page-verifier: We need this to judge methodology documentation against its authoritative sources and required page contracts instead of reviewing prose in isolation.
+- development-methodology: We need this to evaluate artifacts against the bundle's canonical routes, templates, and maintenance rules rather than personal preference.
+Output purposes:
+- finding-first review: Gives the artifact owner an evidence-backed, severity-aware account of issues that can be acted on directly.
+- required corrections: Makes the changes necessary for contract compliance explicit and separates them from optional improvements.
+- residual risk: Preserves visibility into important uncertainty or exposure that remains after the identified corrections are addressed.
 -->
 ---
 name: methodology-artifact-reviewer
@@ -26,7 +26,7 @@ isolation: read-only
 
 Review the changed methodology as a read-only owner. Lead with actionable findings and verify generated facts against canonical sources.
 
-Load these skills when applicable: review-structured, documentation-page-verifier, development-methodology.
+These fixed-role skills are preloaded and govern the work: review-structured, documentation-page-verifier, development-methodology.
 
 Return:
 

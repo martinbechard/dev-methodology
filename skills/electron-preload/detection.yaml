@@ -1,19 +1,13 @@
-schema: dev-methodology-skill-routing
+schema: dev-methodology-technology-detection
 version: 1
 skill: electron-preload
 kind: technology
 label: Electron preload boundary
 capabilities:
-  - desktop-preload-boundary
-applicableRoles:
-  - coding-agent
-  - code-review-agent
-  - qa-and-verification-agent
-  - runtime-diagnostician
-  - security-reviewer
+- desktop-preload-boundary
 activation:
   fileGlobs:
-    - "**/preload/**/*.*"
-    - "**/*preload*.*"
+  - "**/preload/**/*.*"
+  - "**/*preload*.*"
   manifestDependencies:
-    - electron
+  - electron

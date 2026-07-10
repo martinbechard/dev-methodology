@@ -1,6 +1,6 @@
 # Document The Cross-Harness Skill Lifecycle
 
-Status: Proposed
+Status: Blocked
 
 Type: Feature
 

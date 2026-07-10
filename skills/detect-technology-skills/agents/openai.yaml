@@ -2,11 +2,11 @@
 # Derived interface fields are refreshed from SKILL.md by scripts/openai_metadata.py.
 interface:
   # User-facing name shown in Codex skill surfaces.
-  display_name: Route Technology Skills
+  display_name: Detect Technology Skills
   # User-facing summary shown in Codex skill surfaces.
-  short_description: Resolve specialized skills for a role and file scope from project bindings and machine-readable...
+  short_description: Detect specialized technology and domain skills from source-backed folder scopes during Project...
   # Prompt Codex can use when launching this skill directly.
-  default_prompt: Use $route-technology-skills to resolve and verify the specialized skill loadout for the current role and file scope.
+  default_prompt: Use $detect-technology-skills during Project Agent Setup to create source-backed folder technology loadouts.
 
 # Optional invocation policy placeholder.
 # policy:

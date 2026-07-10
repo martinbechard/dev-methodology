@@ -6,7 +6,7 @@ Each case contains:
 
 - A small buildable project.
 - A bounded implementation task.
-- Required skill routing.
+- Required fixed-role and folder skill loadouts.
 - Review-evidence identifiers.
 - Baseline verification commands.
 

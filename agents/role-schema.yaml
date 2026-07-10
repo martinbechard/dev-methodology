@@ -6,30 +6,27 @@ required:
   - description
   - instructions
   - skills
-  - skillComments
   - modelProfile
   - outputContract
-  - outputComments
 properties:
   name: slug
   filename: slug
   description: string
   instructions: string
-  skills: string-list
-  skillComments: string-map
+  skills: skill-entry-list
+  dynamicFolderSkills: boolean
+  skillAvailability: skill-availability-list
   tools: string-list
   disallowedTools: string-list
   mcpServers: string-list
   modelProfile: model-profile
   modelStages: model-profile-map
-  routedCapabilities: string-list
   maxTurns: integer
   timeout: integer
   permissionMode: string
   isolation: string
   memory: string
-  outputContract: string-list
-  outputComments: string-map
+  outputContract: output-entry-list
   examples: role-example-list
 fixedBehavior:
   target: local-development

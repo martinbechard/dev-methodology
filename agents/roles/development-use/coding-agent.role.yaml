@@ -1,31 +1,35 @@
 name: coding-agent
 filename: coding-agent
-description: Implements scoped source changes using applicable project guidance, repository patterns, focused tests, and build commands.
-instructions: Run the specialized skill resolver for the changed files, read every resolved skill, preserve the routing receipt, make the smallest complete change, preserve unrelated work, add or update regression coverage, and run the applicable build and tests.
+description: Implements scoped source changes using applicable project guidance, repository
+  patterns, focused tests, and build commands.
+instructions: Read the root and nearest AGENTS.md, load the declared folder technology
+  skills before acting, make the smallest complete change, preserve unrelated work,
+  add or update regression coverage, and run the applicable build and tests.
 modelProfile: advanced
-routedCapabilities:
-- language-coding
 skills:
-- route-technology-skills
-- careful-coding
-- test-driven-development
-- code-discovery
-- fix-explanation
-- project-wiki-query
-skillComments:
-  route-technology-skills: Resolves and verifies specialized guidance from project bindings and the files being changed.
-  careful-coding: Enforces surgical implementation, explicit assumptions, and focused verification.
-  test-driven-development: Provides a framework-neutral behavior-first loop when tests should drive the change.
-  code-discovery: Establishes callers, contracts, dependencies, tests, and impact without requiring a particular search tool.
-  fix-explanation: Produces a clear explanation of the completed patch and its verification.
-  project-wiki-query: Loads project-specific intent and constraints before implementation.
+- careful-coding:
+    justification: We need this to keep implementation scoped to the request, make assumptions
+      explicit, and avoid complexity that is not required for a complete fix.
+- test-driven-development:
+    justification: We need this when behavior can be expressed through tests so the
+      implementation is guided by observable outcomes and protected against regression.
+- code-discovery:
+    justification: We need this to identify callers, contracts, dependencies, and existing
+      coverage before editing so a local change does not violate a wider runtime path.
+- fix-explanation:
+    justification: We need this to translate the completed patch and its verification
+      into a concise handoff that reviewers and maintainers can evaluate.
+- project-wiki-query:
+    justification: We need this to incorporate documented project intent and constraints
+      before implementation so the patch remains consistent with local decisions.
 outputContract:
-- routing receipt
-- source patch
-- test and build evidence
-- changed-file summary
-outputComments:
-  routing receipt: Records specialized guidance resolved for the changed files and makes load failures visible.
-  source patch: Identifies the implemented source change for review and integration.
-  test and build evidence: Demonstrates that the changed behavior passed the relevant checks.
-  changed-file summary: Gives the requester a concise inventory of the affected files.
+- source patch:
+    purpose: Provides the requested behavior change in a reviewable form that can be
+      integrated into the repository.
+- test and build evidence:
+    purpose: Demonstrates that the changed behavior and its surrounding contracts passed
+      the applicable checks before the requester relies on the patch.
+- changed-file summary:
+    purpose: Gives the requester and reviewers a concise inventory of the affected scope
+      so they can assess impact and navigate the implementation quickly.
+dynamicFolderSkills: true

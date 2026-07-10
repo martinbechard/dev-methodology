@@ -395,17 +395,16 @@
   <section class="hero" aria-labelledby="page-title">
     <div class="legend" aria-label="Legend">
       <span class="pill"><span class="dot agent"></span> Role agent</span>
-      <span class="pill"><span class="dot skill"></span> Routed skill</span>
+      <span class="pill"><span class="dot skill"></span> Fixed or folder skill</span>
       <span class="pill"><span class="dot config"></span> AGENTS.md reference</span>
-      <span class="pill"><span class="dot rule"></span> Dispatch rule</span>
+      <span class="pill"><span class="dot rule"></span> Loading rule</span>
       <span class="pill"><span class="dot case"></span> Repo application</span>
     </div>
     <h1 id="page-title">Agent And Skill Specialization Strategy</h1>
     <p class="lede">
-      The methodology has a shared catalog of role agents and skills that every project can use. AGENTS.md files provide the project-local
-      reference that lets those shared skills route work without forking the common role source. Role agents act as skill routers:
-      they read caller parameters and AGENTS.md reference, classify the work, load the smallest relevant skill set, and produce the
-      role's contracted output.
+      The methodology has a shared catalog of role agents and skills that every project can use. Canonical roles own generic fixed-role
+      skills. Project Agent Setup detects stable folder technology loadouts and records them in AGENTS-PLAN.yaml and AGENTS.md. Ordinary
+      role agents load their fixed skills and the nearest folder skills before acting without rerunning detection.
     </p>
   </section>
 
@@ -420,7 +419,7 @@
           <li>Coding Agent edits code across stacks through skill dispatch.</li>
           <li>Code Review Agent reviews with fresh context and read-only authority.</li>
           <li>QA And Verification Agent proves outcomes with commands and evidence.</li>
-          <li>Project Agent Setup Agent creates AGENTS-PLAN.yaml for role and skill routing setup.</li>
+          <li>Project Agent Setup Agent creates AGENTS-PLAN.yaml for role and folder-skill setup.</li>
           <li>Project Organiser owns file placement and project taxonomy.</li>
         </ul>
       </article>
@@ -440,7 +439,7 @@
   </section>
 
   <section class="section" aria-labelledby="technology-routing-title">
-    <h2 id="technology-routing-title">Deterministic Specialized Skill Routing</h2>
+    <h2 id="technology-routing-title">Deterministic Setup-Time Technology Detection</h2>
     <div class="wide-grid">
       <article class="card rule">
         <h3>Generic canonical loadouts</h3>
@@ -448,23 +447,23 @@
       </article>
       <article class="card skill">
         <h3>Skill-owned activation</h3>
-        <p>Each specialized skill owns routing.yaml with capabilities, applicable roles, deterministic file, manifest, content, or command evidence, companion skills, and required-load policy. Scope selectors are OR alternatives, project signals are OR alternatives, and a variant that defines both groups needs one match from each.</p>
+        <p>Each specialized technology or domain skill owns detection.yaml with capabilities, deterministic file, manifest, dependency, or content evidence, companion skills, and required-load policy. Generic fixed-role skills and optional local tools are absent from detection metadata.</p>
       </article>
       <article class="card config">
         <h3>Generated registry</h3>
-        <p>scripts/build-skill-routing.py validates every specialized variant, rejects specialized fixed role skills and technology leakage in registered generic skills, then generates the portable registry and exploration data.</p>
+        <p>scripts/build-technology-detection.py validates every specialized variant, rejects task-time fields and specialized fixed role skills, generates the portable registry, and verifies the installed detector mirror against the canonical script.</p>
       </article>
       <article class="card agent">
-        <h3>Early and late binding</h3>
-        <p>Project setup records deterministic path and tier bindings in AGENTS-PLAN.yaml and AGENTS.md. At task time, route-technology-skills validates those bindings against the actual file scope and emits a routing receipt.</p>
+        <h3>Setup ownership</h3>
+        <p>Project Agent Setup selects representative folder scopes, runs detection once, records source-backed loadouts in AGENTS-PLAN.yaml, and renders unconditional folder skill-loading instructions into AGENTS.md. Ordinary agents do not rerun detection.</p>
       </article>
       <article class="card rule">
         <h3>Truthful proof boundary</h3>
-        <p>The resolver proves selection, availability, and content digests. Only captured harness tool calls prove that an agent read the selected skill. Missing required guidance blocks instead of silently falling back.</p>
+        <p>The detector records scope evidence, installed availability, missing required skills, exclusive conflicts, and explicit no-variant results. Runtime activation remains a separate harness-verification concern.</p>
       </article>
       <article class="card rule">
-        <h3>Keyword fallback</h3>
-        <p>Prompt keywords are advisory discovery hints only and never select a skill. Source-backed bindings and live scoped evidence are the correctness boundary for coding, review, verification, security, interface, prompt, and documentation work.</p>
+        <h3>Stable inputs</h3>
+        <p>Agent role, task wording, prompt keywords, skill-read confirmation, and optional local commands are not detector inputs. Setup-selected folder scopes and repository evidence are the correctness boundary.</p>
       </article>
     </div>
   </section>
@@ -510,7 +509,7 @@
 
       <article class="card config">
         <h3>Root AGENTS.md</h3>
-        <p>The root AGENTS.md supplies the project-specific reference that the skills router needs before it can apply shared routing rules to this repository.</p>
+        <p>The root AGENTS.md supplies project-specific folder skill loadouts and operational rules that ordinary agents read before acting.</p>
         <ul>
           <li>It declares the project family, application tiers, important paths, validation commands, privacy rules, and local terminology.</li>
           <li>It tells role agents which source roots, test roots, wiki roots, procedure files, and taxonomy pages matter first.</li>
@@ -537,7 +536,8 @@
           <li>The user asks for a design for invoice retry behavior.</li>
           <li>The Documentation Writer loads development-methodology because the request is documentation work.</li>
           <li>development-methodology classifies the artifact as a high-level design because retry behavior crosses API routes, DB state, and user-visible status.</li>
-          <li>The deterministic resolver combines AGENTS.md bindings with the referenced files and registry activation evidence, then records the exact specialized guidance and content digests in a routing receipt.</li>
+          <li>Project Agent Setup has already recorded source-backed API and DB folder loadouts in AGENTS-PLAN.yaml and rendered them into AGENTS.md.</li>
+          <li>The Documentation Writer reads AGENTS.md and loads the declared folder skills before interpreting the referenced files. It does not rerun detection.</li>
           <li>If src/db/AGENTS.md says migration changes need a rollback note, that local rule is included in the design and verification checklist.</li>
           <li>This works because shared routing answers what kind of artifact to create, while AGENTS.md answers which project facts and tier-specific skills make that route correct here.</li>
         </ul>
@@ -635,7 +635,7 @@
   </section>
 
   <section class="section" aria-labelledby="coding-title">
-    <h2 id="coding-title">Coding Agent As Skill Router</h2>
+    <h2 id="coding-title">Coding Agent Loads Folder Skills</h2>
     <div class="grid">
       <article class="card config">
         <h3>Dispatch Inputs</h3>
@@ -657,7 +657,6 @@
           <span class="tag skill">runtime-evidence-collection</span>
           <span class="tag skill">code-discovery</span>
           <span class="tag skill">project-wiki-query</span>
-          <span class="tag skill">route-technology-skills</span>
           <span class="tag skill">fix-explanation</span>
           <span class="tag skill">review-structured</span>
         </div>
@@ -669,6 +668,8 @@
           <span class="tag skill">typescript-esm</span>
           <span class="tag skill">typescript-strict</span>
           <span class="tag skill">typescript-coding</span>
+          <span class="tag skill">python-coding</span>
+          <span class="tag skill">fastapi</span>
           <span class="tag skill">java-coding</span>
           <span class="tag skill">spring-boot</span>
           <span class="tag skill">sql-coding</span>
@@ -706,12 +707,12 @@
     <div class="wide-grid">
       <article class="panel">
         <h3>Repository contract</h3>
-        <p>The root AGENTS.md is the repository's contract with the shared catalog. Agent routers load it after host safety rules and before nested AGENTS.md files.</p>
+        <p>The root AGENTS.md is the repository's operational contract with the shared catalog. Agents read it after host safety rules and before nested AGENTS.md files.</p>
         <ul>
-          <li>Project family and application tiers tell the router what kind of system it is handling.</li>
+          <li>Project family and application tiers describe the system boundary established during setup.</li>
           <li>AGENTS-PLAN.yaml is the setup artifact that explains why these routing choices exist.</li>
-          <li>Tier-to-path mappings tell the router which local paths imply Front-end, API, static pages, DB, or other guidance.</li>
-          <li>Skills router notes name the shared skills normally loaded for those tiers.</li>
+          <li>Tier-to-path mappings tell agents which local paths imply Front-end, API, static pages, DB, or other guidance.</li>
+          <li>Folder loadouts name the shared technology skills every agent must load before acting under those paths.</li>
           <li>Validation and data rules tell role agents which checks and boundaries apply after work is done.</li>
           <li>Local taxonomy links give the Project Organiser and Documentation Writer the vocabulary for placement and artifacts.</li>
         </ul>
@@ -719,10 +720,10 @@
 
       <article class="panel">
         <h3>Local reference forms</h3>
-        <p>Local reference is explicit and scoped. It adapts shared skill routing without mutating the shared skill files.</p>
+        <p>Local reference is explicit and scoped. It binds shared technology skills to folders without mutating the shared skill files.</p>
         <ul>
           <li><span class="name">Select</span>: name the skills normally used for a tier or artifact family.</li>
-          <li><span class="name">Narrow</span>: restrict routing to a path, artifact type, stack, or task intent.</li>
+          <li><span class="name">Narrow</span>: restrict a loadout to a path or stack boundary.</li>
           <li><span class="name">Add evidence</span>: point agents to wiki pages, procedures, source roots, and test roots.</li>
           <li><span class="name">Add checks</span>: name build, unit, E2E, contract, or migration commands.</li>
           <li><span class="name">Set boundaries</span>: declare PII, company-internal data, generated files, or approval rules.</li>
@@ -737,13 +738,13 @@ Project family: web-application
 Application tiers:
   Front-end tier:
     Paths: src/app/(app), src/components
-    Skills router loads: nextjs-app-router, react-server-components, tailwind-design-system, playwright
+    Load before acting: nextjs-app-router, react-server-components, tailwind-design-system, playwright
   API tier:
     Paths: src/app/api, src/lib/server
-    Skills router loads: api-routes, typescript-strict, clerk-auth, jest
+    Load before acting: api-routes, typescript-strict, clerk-auth, jest
   DB tier:
     Paths: src/db, migrations
-    Skills router loads: postgres-drizzle, typescript-strict, jest
+    Load before acting: postgres-drizzle, typescript-strict, jest
 
 Documentation routing:
   Use development-methodology for methodology artifacts.

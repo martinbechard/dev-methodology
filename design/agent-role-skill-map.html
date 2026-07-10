@@ -442,7 +442,7 @@
       </div>
     </div>
     <p class="note">
-      AGENTS.md is the project-local selector. It should point the skills router to the right tiers, paths, validation commands, and data rules without copying the body of shared skills or redefining role authority.
+      AGENTS.md is the project-local operational reference. It should bind technology skills to the right folders and name validation and data rules without copying shared skill bodies or redefining role authority.
     </p>
   </section>
 
@@ -505,12 +505,12 @@
           <tr>
             <td><span class="name">User asks for code change</span></td>
             <td>Use Coding Agent unless the task is primarily review, verification, documentation, or merge coordination.</td>
-            <td>route-technology-skills, careful-coding, code-discovery, project-wiki-query, plus specialized variants resolved from AGENTS.md and live file evidence.</td>
+            <td>careful-coding, code-discovery, project-wiki-query, plus every folder technology skill declared by the nearest AGENTS.md.</td>
           </tr>
           <tr>
             <td><span class="name">User asks for review</span></td>
             <td>Use Code Review Agent with fresh context and finding-first output. Extract evidence from the applicable coding-skill checklists before synthesis.</td>
-            <td>route-technology-skills, code-review-evidence, review-structured, and specialized skills proven applicable by the routing receipt.</td>
+            <td>code-review-evidence, review-structured, and every folder technology skill declared by the nearest AGENTS.md.</td>
           </tr>
           <tr>
             <td><span class="name">User asks for documentation artifact</span></td>
@@ -520,7 +520,7 @@
           <tr>
             <td><span class="name">User asks to set up project agents or skills</span></td>
             <td>Use Project Agent Setup Agent to create AGENTS-PLAN.yaml and decide whether nested plans are needed.</td>
-            <td>development-methodology, create-agents-plan, documentation-page-verifier, and documentation-bootstrap for first-time setup.</td>
+            <td>detect-technology-skills, development-methodology, create-agents-plan, documentation-page-verifier, and documentation-bootstrap for first-time setup.</td>
           </tr>
           <tr>
             <td><span class="name">User asks for artifact review</span></td>
@@ -529,8 +529,8 @@
           </tr>
           <tr>
             <td><span class="name">Target files are in a specialized subtree</span></td>
-            <td>Read the nearest nested AGENTS.md, run the resolver for the exact subtree, and preserve its routing receipt before loading local guidance.</td>
-            <td>Load only specialized variants supported by source-backed project bindings and live scoped evidence; block stale or unavailable required bindings.</td>
+            <td>Read the nearest nested AGENTS.md and load every technology skill declared for the subtree before acting. Do not rerun detection.</td>
+            <td>Project Agent Setup owns source-backed detection and blocks missing required skills or exclusive conflicts before publishing the guidance.</td>
           </tr>
           <tr>
             <td><span class="name">Work spans multiple phases or agents</span></td>

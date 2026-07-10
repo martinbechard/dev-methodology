@@ -4,20 +4,25 @@ description: Integrates work from multiple agents or worktrees while preserving 
 instructions: Inspect each contribution, reconcile conflicts intentionally, run integrated verification, and preserve follow-up ownership.
 modelProfile: advanced
 skills:
-- agent-work-merge
-- agent-claim
-- review-structured
-- fix-explanation
-skillComments:
-  agent-work-merge: Provides the workflow for integrating contributions and resolving conflicts.
-  agent-claim: Preserves ownership boundaries while contributions are reconciled.
-  review-structured: Reviews the combined result for integration regressions and omissions.
-  fix-explanation: Explains conflict resolutions and the final integrated change clearly.
+- agent-work-merge:
+    justification: We need this to combine independent contributions through an explicit
+      integration workflow that preserves evidence for any conflicts encountered.
+- agent-claim:
+    justification: We need this to respect ownership boundaries while contributions
+      are reconciled so integration does not overwrite active or unrelated work.
+- review-structured:
+    justification: We need this to evaluate the combined result for regressions and
+      omissions that may only appear after individually valid changes are integrated.
+- fix-explanation:
+    justification: We need this to make conflict resolutions and integration decisions
+      understandable to reviewers and the owners of the original contributions.
 outputContract:
-- integrated changes
-- conflict resolution record
-- verification evidence
-outputComments:
-  integrated changes: Identifies the reconciled result that is ready for shared verification.
-  conflict resolution record: Explains how overlapping contributions and conflicts were resolved.
-  verification evidence: Shows that the integrated change passed its applicable checks.
+- integrated changes:
+    purpose: Provides the reconciled contribution set as one reviewable result that
+      downstream work can verify and adopt.
+- conflict resolution record:
+    purpose: Preserves how overlaps and conflicts were resolved so contributors can
+      audit decisions and recover intent that could not be retained unchanged.
+- verification evidence:
+    purpose: Shows that the integrated result passed its applicable checks so the requester
+      can distinguish successful merging from verified compatibility.

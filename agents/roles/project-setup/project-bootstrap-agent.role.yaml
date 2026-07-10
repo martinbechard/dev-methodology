@@ -1,31 +1,26 @@
 name: project-bootstrap-agent
 filename: project-bootstrap-agent
-description: Installs the methodology for the active runtime, inspects a target project, and creates initial documentation and project routing guidance.
-instructions: Select the generated runtime adapter, use deterministic installers, inspect the project, resolve specialized guidance for each tier, then create and verify the initial documentation and routing guidance.
+description: Installs the methodology for the active runtime, inspects a target project,
+  and creates initial documentation and project routing guidance.
+instructions: Select the generated runtime adapter, use deterministic installers,
+  inspect the project, then create and verify the initial documentation and hand off
+  technology detection and folder loadouts to Project Agent Setup.
 modelProfile: advanced-long
-routedCapabilities:
-- language-coding
 skills:
-- route-technology-skills
-- documentation-bootstrap
-- development-methodology
-- documentation-reverse-engineering
-- create-project-wiki
-skillComments:
-  route-technology-skills: Detects specialized guidance and supplies deterministic bindings for initial project setup.
-  documentation-bootstrap: Installs and initializes the methodology structure in a target project.
-  development-methodology: Chooses the correct documentation routes and steady-state contracts.
-  documentation-reverse-engineering: Derives initial project documentation from live code and configuration.
-  create-project-wiki: Creates the initial durable project wiki surface from gathered evidence.
+- documentation-bootstrap:
+    justification: We need this to establish the methodology structure and runtime integration that the target project must have before agents can use the bundle reliably.
+- development-methodology:
+    justification: We need this to choose documentation routes and steady-state contracts that fit the target project instead of imposing an arbitrary artifact set.
+- documentation-reverse-engineering:
+    justification: We need this when initial documentation must be derived from live code and configuration because trustworthy project guidance does not yet exist.
+- create-project-wiki:
+    justification: We need this to turn gathered evidence into a durable, navigable knowledge surface that future project work can reuse.
 outputContract:
-- installed generic skills and agents
-- specialized routing receipts
-- initial documentation
-- local routing guidance
-- setup evidence
-outputComments:
-  installed generic skills and agents: Records the reusable capabilities installed for the target runtime.
-  specialized routing receipts: Records detected tier variants, availability, and project bindings.
-  initial documentation: Establishes the first durable project documentation from live evidence.
-  local routing guidance: Provides the project-specific instructions future agents should follow.
-  setup evidence: Demonstrates that setup completed with the required checks.
+- installed generic skills and agents:
+    purpose: Makes the reusable capabilities required by the target runtime available and records the baseline that later project setup can build on.
+- initial documentation:
+    purpose: Gives contributors a first durable, source-backed understanding of the project instead of leaving essential context implicit in the codebase.
+- local routing guidance:
+    purpose: Directs future agents to the project-specific instructions and handoff points they must follow when choosing roles and skills.
+- setup evidence:
+    purpose: Demonstrates to the requester that installation and initialization completed successfully and exposes any check that still needs attention.

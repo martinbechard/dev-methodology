@@ -1,21 +1,20 @@
-schema: dev-methodology-skill-routing
+schema: dev-methodology-technology-detection
 version: 1
 skill: typescript-esm
 kind: technology
 label: TypeScript ECMAScript modules
 capabilities:
-  - module-system
-applicableRoles:
-  - code-review-agent
-  - coding-agent
-  - qa-and-verification-agent
-  - runtime-diagnostician
+- module-system
 activation:
-  fileExtensions: [.ts, .tsx, .mts, .cts]
+  fileExtensions:
+  - ".ts"
+  - ".tsx"
+  - ".mts"
+  - ".cts"
   contentPatterns:
-    - glob: package.json
-      contains: '"type": "module"'
-    - glob: "tsconfig*.json"
-      contains: NodeNext
+  - glob: package.json
+    contains: '"type": "module"'
+  - glob: tsconfig*.json
+    contains: NodeNext
 companions:
-  - typescript-coding
+- typescript-coding

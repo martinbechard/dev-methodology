@@ -1,6 +1,6 @@
 # Verify Codex CLI Skill Activation
 
-Status: Proposed
+Status: Blocked
 
 Type: Feature
 

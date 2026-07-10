@@ -1,16 +1,11 @@
-schema: dev-methodology-skill-routing
+schema: dev-methodology-technology-detection
 version: 1
 skill: api-routes
 kind: technology
 label: Application route handlers
 capabilities:
-  - http-api
-applicableRoles:
-  - coding-agent
-  - code-review-agent
-  - qa-and-verification-agent
-  - security-reviewer
+- http-api
 activation:
   fileGlobs:
-    - "**/app/api/**/route.*"
-    - "**/pages/api/**"
+  - "**/app/api/**/route.*"
+  - "**/pages/api/**"

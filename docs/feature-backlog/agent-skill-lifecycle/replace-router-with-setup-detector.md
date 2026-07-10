@@ -1,6 +1,6 @@
 # Replace Task-Time Routing With Setup-Time Technology Detection
 
-Status: Proposed
+Status: Completed
 
 Type: Feature
 
@@ -59,6 +59,16 @@ None.
 - Refresh shared Codex, Agents, and Claude installs.
 - Execute installed detection against TypeScript, Spring Boot, Python, FastAPI, mixed, missing-skill, and conflict fixtures.
 - Run git diff checks and an independent read-only audit.
+
+## Completion Evidence
+
+- Agent Skill validation passed.
+- Technology detection, generated documentation, hierarchy, and support-checklist freshness checks passed.
+- Repository unit tests passed with 78 tests.
+- Project-wiki unit tests passed with 16 tests.
+- Shared Agents, Codex, and Claude installs were refreshed.
+- The installed detector produced the expected TypeScript, Spring Boot, Python, and FastAPI loadouts.
+- Git diff validation passed.
 
 ## Notes
 

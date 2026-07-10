@@ -1,46 +1,16 @@
-schema: dev-methodology-technology-skill-registry
+schema: dev-methodology-technology-skill-detection-registry
 version: 1
 selectionPolicy:
-  projectBindings: required
-  repositoryEvidence: deterministic
-  promptKeywords: advisory-only-not-selection
+  scopeEvidence: deterministic
   missingRequiredSkill: blocked
-  missingVariant: generic-guidance-with-explicit-gap
-roleCapabilityExpectations:
-  artifact-review-agent:
-  - language-coding
-  code-review-agent:
-  - language-coding
-  coding-agent:
-  - language-coding
-  documentation-writer:
-  - language-coding
-  e2e-browser-agent:
-  - end-to-end-framework
-  qa-and-verification-agent:
-  - test-framework
-  runtime-diagnostician:
-  - language-coding
-  - test-framework
-  security-reviewer:
-  - language-coding
-  project-agent-setup-agent:
-  - language-coding
-  project-bootstrap-agent:
-  - language-coding
-  project-organiser:
-  - language-coding
+  exclusiveConflict: blocked
+  noVariant: explicit-empty-loadout
 skills:
 - skill: api-routes
   kind: technology
   label: Application route handlers
   capabilities:
   - http-api
-  applicableRoles:
-  - coding-agent
-  - code-review-agent
-  - qa-and-verification-agent
-  - security-reviewer
   activation:
     fileGlobs:
     - '**/app/api/**/route.*'
@@ -48,30 +18,12 @@ skills:
   companions: []
   selection: additive
   priority: 100
-  requiredWhenMatched: true
-- skill: application-security
-  kind: generic
-  label: Application security
-  capabilities:
-  - application-security
-  applicableRoles:
-  - code-review-agent
-  - security-reviewer
-  activation: {}
-  companions: []
-  selection: additive
-  priority: 100
-  requiredWhenMatched: true
+  requiredWhenDetected: true
 - skill: clerk-auth
   kind: technology
   label: Clerk identity integration
   capabilities:
   - identity-provider
-  applicableRoles:
-  - coding-agent
-  - code-review-agent
-  - qa-and-verification-agent
-  - security-reviewer
   activation:
     fileExtensions:
     - .ts
@@ -86,32 +38,12 @@ skills:
   companions: []
   selection: additive
   priority: 100
-  requiredWhenMatched: true
-- skill: code-discovery
-  kind: generic
-  label: Code discovery
-  capabilities:
-  - code-discovery
-  applicableRoles:
-  - coding-agent
-  - code-review-agent
-  - runtime-diagnostician
-  activation: {}
-  companions: []
-  selection: additive
-  priority: 100
-  requiredWhenMatched: true
+  requiredWhenDetected: true
 - skill: electron-main
   kind: technology
   label: Electron main process
   capabilities:
   - desktop-main-runtime
-  applicableRoles:
-  - coding-agent
-  - code-review-agent
-  - qa-and-verification-agent
-  - runtime-diagnostician
-  - security-reviewer
   activation:
     fileGlobs:
     - '**/main/**/*.*'
@@ -121,18 +53,12 @@ skills:
   companions: []
   selection: additive
   priority: 100
-  requiredWhenMatched: true
+  requiredWhenDetected: true
 - skill: electron-preload
   kind: technology
   label: Electron preload boundary
   capabilities:
   - desktop-preload-boundary
-  applicableRoles:
-  - coding-agent
-  - code-review-agent
-  - qa-and-verification-agent
-  - runtime-diagnostician
-  - security-reviewer
   activation:
     fileGlobs:
     - '**/preload/**/*.*'
@@ -142,33 +68,32 @@ skills:
   companions: []
   selection: additive
   priority: 100
-  requiredWhenMatched: true
-- skill: end-to-end-verification
-  kind: generic
-  label: End-to-end verification
+  requiredWhenDetected: true
+- skill: fastapi
+  kind: technology
+  label: FastAPI
   capabilities:
-  - end-to-end-verification
-  applicableRoles:
-  - e2e-browser-agent
-  - qa-and-verification-agent
-  - runtime-diagnostician
-  - ux-designer-or-reviewer
-  activation: {}
-  companions: []
+  - web-application-framework
+  activation:
+    fileExtensions:
+    - .py
+    manifestDependencies:
+    - fastapi
+    contentPatterns:
+    - glob: '**/*.py'
+      contains: from fastapi
+    - glob: '**/*.py'
+      contains: import fastapi
+  companions:
+  - python-coding
   selection: additive
   priority: 100
-  requiredWhenMatched: true
+  requiredWhenDetected: true
 - skill: harness-implementation
   kind: domain
   label: Agent harness implementation
   capabilities:
   - agent-harness-runtime
-  applicableRoles:
-  - coding-agent
-  - code-review-agent
-  - prompt-contract-reviewer
-  - qa-and-verification-agent
-  - runtime-diagnostician
   activation:
     fileGlobs:
     - '**/*harness*.*'
@@ -177,40 +102,24 @@ skills:
   companions: []
   selection: additive
   priority: 100
-  requiredWhenMatched: true
+  requiredWhenDetected: true
 - skill: java-coding
   kind: technology
   label: Java
   capabilities:
   - language-coding
-  applicableRoles:
-  - artifact-review-agent
-  - code-review-agent
-  - coding-agent
-  - documentation-writer
-  - qa-and-verification-agent
-  - runtime-diagnostician
-  - security-reviewer
-  - project-agent-setup-agent
-  - project-bootstrap-agent
-  - project-organiser
   activation:
     fileExtensions:
     - .java
   companions: []
   selection: additive
   priority: 100
-  requiredWhenMatched: true
+  requiredWhenDetected: true
 - skill: jest
   kind: technology
   label: Jest
   capabilities:
   - test-framework
-  applicableRoles:
-  - code-review-agent
-  - coding-agent
-  - qa-and-verification-agent
-  - runtime-diagnostician
   activation:
     fileExtensions:
     - .ts
@@ -229,18 +138,12 @@ skills:
   companions: []
   selection: additive
   priority: 100
-  requiredWhenMatched: true
+  requiredWhenDetected: true
 - skill: langgraph
   kind: technology
   label: LangGraph
   capabilities:
   - workflow-runtime
-  applicableRoles:
-  - code-review-agent
-  - coding-agent
-  - prompt-contract-reviewer
-  - qa-and-verification-agent
-  - runtime-diagnostician
   activation:
     fileExtensions:
     - .ts
@@ -254,18 +157,12 @@ skills:
   companions: []
   selection: additive
   priority: 100
-  requiredWhenMatched: true
+  requiredWhenDetected: true
 - skill: local-model-integration
   kind: domain
   label: Local model integration
   capabilities:
   - local-model-runtime
-  applicableRoles:
-  - code-review-agent
-  - coding-agent
-  - prompt-contract-reviewer
-  - qa-and-verification-agent
-  - runtime-diagnostician
   activation:
     contentPatterns:
     - glob: '**/*model*.*'
@@ -273,21 +170,12 @@ skills:
   companions: []
   selection: additive
   priority: 100
-  requiredWhenMatched: true
+  requiredWhenDetected: true
 - skill: nextjs-app-router
   kind: technology
   label: Next.js App Router
   capabilities:
   - web-application-framework
-  applicableRoles:
-  - artifact-review-agent
-  - code-review-agent
-  - coding-agent
-  - documentation-writer
-  - qa-and-verification-agent
-  - runtime-diagnostician
-  - security-reviewer
-  - ux-designer-or-reviewer
   activation:
     manifestDependencies:
     - next
@@ -296,17 +184,12 @@ skills:
   companions: []
   selection: additive
   priority: 100
-  requiredWhenMatched: true
+  requiredWhenDetected: true
 - skill: node-cli
   kind: technology
   label: Node command line application
   capabilities:
   - command-line-runtime
-  applicableRoles:
-  - code-review-agent
-  - coding-agent
-  - qa-and-verification-agent
-  - runtime-diagnostician
   activation:
     fileGlobs:
     - '**/bin/**/*.*'
@@ -314,18 +197,12 @@ skills:
   companions: []
   selection: additive
   priority: 100
-  requiredWhenMatched: true
+  requiredWhenDetected: true
 - skill: plan-engine-implementation
   kind: domain
   label: Plan engine implementation
   capabilities:
   - planning-runtime
-  applicableRoles:
-  - code-review-agent
-  - coding-agent
-  - prompt-contract-reviewer
-  - qa-and-verification-agent
-  - runtime-diagnostician
   activation:
     fileGlobs:
     - '**/*plan*engine*.*'
@@ -333,17 +210,12 @@ skills:
   companions: []
   selection: additive
   priority: 100
-  requiredWhenMatched: true
+  requiredWhenDetected: true
 - skill: playwright
   kind: technology
   label: Playwright
   capabilities:
   - end-to-end-framework
-  applicableRoles:
-  - e2e-browser-agent
-  - qa-and-verification-agent
-  - runtime-diagnostician
-  - ux-designer-or-reviewer
   activation:
     fileExtensions:
     - .ts
@@ -362,20 +234,12 @@ skills:
   companions: []
   selection: additive
   priority: 100
-  requiredWhenMatched: true
+  requiredWhenDetected: true
 - skill: postgres-drizzle
   kind: technology
   label: PostgreSQL with Drizzle
   capabilities:
   - persistence-framework
-  applicableRoles:
-  - artifact-review-agent
-  - code-review-agent
-  - coding-agent
-  - documentation-writer
-  - qa-and-verification-agent
-  - runtime-diagnostician
-  - security-reviewer
   activation:
     fileExtensions:
     - .ts
@@ -391,32 +255,25 @@ skills:
   - sql-coding
   selection: additive
   priority: 100
-  requiredWhenMatched: true
-- skill: prompt-contracts
-  kind: generic
-  label: Prompt contracts
+  requiredWhenDetected: true
+- skill: python-coding
+  kind: technology
+  label: Python
   capabilities:
-  - prompt-contract-review
-  applicableRoles:
-  - prompt-contract-reviewer
-  activation: {}
+  - language-coding
+  activation:
+    fileExtensions:
+    - .py
+    - .pyi
   companions: []
   selection: additive
   priority: 100
-  requiredWhenMatched: true
+  requiredWhenDetected: true
 - skill: react-server-components
   kind: technology
   label: React Server Components
   capabilities:
   - server-user-interface
-  applicableRoles:
-  - artifact-review-agent
-  - code-review-agent
-  - coding-agent
-  - documentation-writer
-  - qa-and-verification-agent
-  - security-reviewer
-  - ux-designer-or-reviewer
   activation:
     fileGlobs:
     - '**/app/**/*.tsx'
@@ -424,20 +281,12 @@ skills:
   companions: []
   selection: additive
   priority: 100
-  requiredWhenMatched: true
+  requiredWhenDetected: true
 - skill: react-vite-renderer
   kind: technology
   label: React renderer with Vite
   capabilities:
   - client-user-interface
-  applicableRoles:
-  - artifact-review-agent
-  - code-review-agent
-  - coding-agent
-  - documentation-writer
-  - qa-and-verification-agent
-  - runtime-diagnostician
-  - ux-designer-or-reviewer
   activation:
     fileExtensions:
     - .tsx
@@ -450,31 +299,12 @@ skills:
   companions: []
   selection: additive
   priority: 100
-  requiredWhenMatched: true
-- skill: route-technology-skills
-  kind: generic
-  label: Specialized skill routing
-  capabilities:
-  - skill-routing
-  applicableRoles: []
-  activation: {}
-  companions: []
-  selection: additive
-  priority: 100
-  requiredWhenMatched: true
+  requiredWhenDetected: true
 - skill: spring-boot
   kind: technology
   label: Spring Boot
   capabilities:
   - application-framework
-  applicableRoles:
-  - artifact-review-agent
-  - code-review-agent
-  - coding-agent
-  - documentation-writer
-  - qa-and-verification-agent
-  - runtime-diagnostician
-  - security-reviewer
   activation:
     fileExtensions:
     - .java
@@ -487,37 +317,24 @@ skills:
   - java-coding
   selection: additive
   priority: 100
-  requiredWhenMatched: true
+  requiredWhenDetected: true
 - skill: sql-coding
   kind: technology
   label: SQL
   capabilities:
   - query-language
-  applicableRoles:
-  - artifact-review-agent
-  - code-review-agent
-  - coding-agent
-  - documentation-writer
-  - qa-and-verification-agent
-  - runtime-diagnostician
-  - security-reviewer
   activation:
     fileExtensions:
     - .sql
   companions: []
   selection: additive
   priority: 100
-  requiredWhenMatched: true
+  requiredWhenDetected: true
 - skill: tailwind-design-system
   kind: technology
   label: Tailwind design system
   capabilities:
   - styling-system
-  applicableRoles:
-  - code-review-agent
-  - coding-agent
-  - qa-and-verification-agent
-  - ux-designer-or-reviewer
   activation:
     fileExtensions:
     - .ts
@@ -532,34 +349,12 @@ skills:
   companions: []
   selection: additive
   priority: 100
-  requiredWhenMatched: true
-- skill: test-strategy
-  kind: generic
-  label: Test strategy
-  capabilities:
-  - test-strategy
-  applicableRoles:
-  - coding-agent
-  - code-review-agent
-  - qa-and-verification-agent
-  - runtime-diagnostician
-  activation: {}
-  companions: []
-  selection: additive
-  priority: 100
-  requiredWhenMatched: true
+  requiredWhenDetected: true
 - skill: tool-runtime-implementation
   kind: domain
   label: Tool runtime implementation
   capabilities:
   - tool-runtime
-  applicableRoles:
-  - code-review-agent
-  - coding-agent
-  - prompt-contract-reviewer
-  - qa-and-verification-agent
-  - runtime-diagnostician
-  - security-reviewer
   activation:
     fileGlobs:
     - '**/*tool*registry*.*'
@@ -568,24 +363,12 @@ skills:
   companions: []
   selection: additive
   priority: 100
-  requiredWhenMatched: true
+  requiredWhenDetected: true
 - skill: typescript-coding
   kind: technology
   label: TypeScript
   capabilities:
   - language-coding
-  applicableRoles:
-  - artifact-review-agent
-  - code-review-agent
-  - coding-agent
-  - documentation-writer
-  - qa-and-verification-agent
-  - runtime-diagnostician
-  - security-reviewer
-  - ux-designer-or-reviewer
-  - project-agent-setup-agent
-  - project-bootstrap-agent
-  - project-organiser
   activation:
     fileExtensions:
     - .ts
@@ -595,17 +378,12 @@ skills:
   companions: []
   selection: additive
   priority: 100
-  requiredWhenMatched: true
+  requiredWhenDetected: true
 - skill: typescript-esm
   kind: technology
   label: TypeScript ECMAScript modules
   capabilities:
   - module-system
-  applicableRoles:
-  - code-review-agent
-  - coding-agent
-  - qa-and-verification-agent
-  - runtime-diagnostician
   activation:
     fileExtensions:
     - .ts
@@ -621,20 +399,12 @@ skills:
   - typescript-coding
   selection: additive
   priority: 100
-  requiredWhenMatched: true
+  requiredWhenDetected: true
 - skill: typescript-strict
   kind: technology
   label: Strict TypeScript
   capabilities:
   - strict-type-system
-  applicableRoles:
-  - artifact-review-agent
-  - code-review-agent
-  - coding-agent
-  - documentation-writer
-  - qa-and-verification-agent
-  - runtime-diagnostician
-  - security-reviewer
   activation:
     fileExtensions:
     - .ts
@@ -648,29 +418,12 @@ skills:
   - typescript-coding
   selection: additive
   priority: 100
-  requiredWhenMatched: true
-- skill: user-experience-review
-  kind: generic
-  label: User experience review
-  capabilities:
-  - user-experience-review
-  applicableRoles:
-  - ux-designer-or-reviewer
-  activation: {}
-  companions: []
-  selection: additive
-  priority: 100
-  requiredWhenMatched: true
+  requiredWhenDetected: true
 - skill: vitest
   kind: technology
   label: Vitest
   capabilities:
   - test-framework
-  applicableRoles:
-  - code-review-agent
-  - coding-agent
-  - qa-and-verification-agent
-  - runtime-diagnostician
   activation:
     fileExtensions:
     - .ts
@@ -688,20 +441,4 @@ skills:
   companions: []
   selection: additive
   priority: 100
-  requiredWhenMatched: true
-- skill: ast-grep
-  kind: tool
-  label: Structure-aware search tool
-  capabilities:
-  - structural-search
-  applicableRoles:
-  - coding-agent
-  - code-review-agent
-  - runtime-diagnostician
-  activation:
-    commands:
-    - ast-grep
-  companions: []
-  selection: additive
-  priority: 200
-  requiredWhenMatched: false
+  requiredWhenDetected: true

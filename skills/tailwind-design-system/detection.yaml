@@ -1,18 +1,18 @@
-schema: dev-methodology-skill-routing
+schema: dev-methodology-technology-detection
 version: 1
 skill: tailwind-design-system
 kind: technology
 label: Tailwind design system
 capabilities:
-  - styling-system
-applicableRoles:
-  - code-review-agent
-  - coding-agent
-  - qa-and-verification-agent
-  - ux-designer-or-reviewer
+- styling-system
 activation:
-  fileExtensions: [.ts, .tsx, .js, .jsx, .css]
+  fileExtensions:
+  - ".ts"
+  - ".tsx"
+  - ".js"
+  - ".jsx"
+  - ".css"
   manifestDependencies:
-    - tailwindcss
+  - tailwindcss
   manifestFiles:
-    - "tailwind.config.*"
+  - tailwind.config.*

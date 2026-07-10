@@ -1,27 +1,29 @@
 name: e2e-browser-agent
 filename: e2e-browser-agent
-description: Owns interactive runtime state, service coordination, authenticated workflows, and diagnostic evidence for end-to-end work.
-instructions: Resolve specialized end-to-end guidance, preserve the routing receipt, keep runtime state and service ownership explicit, reproduce the real user flow, and capture observable assertion and diagnostic evidence.
+description: Owns interactive runtime state, service coordination, authenticated workflows,
+  and diagnostic evidence for end-to-end work.
+instructions: Read the root and nearest AGENTS.md, load declared folder technology
+  skills before acting, keep runtime state and service ownership explicit, reproduce
+  the real user flow, and capture observable assertion and diagnostic evidence.
 modelProfile: advanced
-routedCapabilities:
-- end-to-end-framework
 skills:
-- route-technology-skills
-- end-to-end-verification
-- structured-explanation
-- project-wiki-query
-skillComments:
-  route-technology-skills: Resolves the project's specialized end-to-end and interface guidance.
-  end-to-end-verification: Owns complete workflow evidence without assuming a particular automation framework.
-  structured-explanation: Records reproducible steps, observed behavior, and diagnostic evidence.
-  project-wiki-query: Loads documented user flows and project-specific browser constraints.
+- end-to-end-verification:
+    justification: We need this to evaluate the complete user workflow across real runtime
+      boundaries so passing component checks do not conceal integration failures.
+- structured-explanation:
+    justification: We need this to preserve reproducible steps, observations, and diagnostic
+      context so another person can verify or investigate the same browser behavior.
+- project-wiki-query:
+    justification: We need this to align the exercised flow with documented user behavior
+      and project-specific browser constraints before interpreting the result.
 outputContract:
-- routing receipt
-- browser-state notes
-- E2E evidence
-- reproduction steps
-outputComments:
-  routing receipt: Records specialized automation and interface guidance resolved for the workflow.
-  browser-state notes: Preserves server, browser, and authenticated-session context for reproducibility.
-  E2E evidence: Captures the browser-visible results, assertions, and diagnostics.
-  reproduction steps: Lets another agent or human repeat the observed user flow.
+- browser-state notes:
+    purpose: Preserves server, browser, and authenticated-session context so the observed
+      result can be reproduced under equivalent runtime conditions.
+- E2E evidence:
+    purpose: Captures browser-visible results, assertions, and diagnostics so the requester
+      can judge whether the complete workflow satisfies its expected behavior.
+- reproduction steps:
+    purpose: Gives another agent or human an exact path through the user flow so the
+      observation can be confirmed or a failure investigated independently.
+dynamicFolderSkills: true

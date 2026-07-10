@@ -1,6 +1,6 @@
 # Build The Agent And Skill Mind Map
 
-Status: Proposed
+Status: Blocked
 
 Type: Feature
 

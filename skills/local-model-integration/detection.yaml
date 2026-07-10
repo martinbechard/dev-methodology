@@ -1,17 +1,11 @@
-schema: dev-methodology-skill-routing
+schema: dev-methodology-technology-detection
 version: 1
 skill: local-model-integration
 kind: domain
 label: Local model integration
 capabilities:
-  - local-model-runtime
-applicableRoles:
-  - code-review-agent
-  - coding-agent
-  - prompt-contract-reviewer
-  - qa-and-verification-agent
-  - runtime-diagnostician
+- local-model-runtime
 activation:
   contentPatterns:
-    - glob: "**/*model*.*"
-      contains: localModel
+  - glob: "**/*model*.*"
+    contains: localModel

@@ -14,7 +14,7 @@ Keep these instructions simple. If a maintenance rule needs a long explanation, 
 - AGENTS.md is the agent-facing maintenance contract for this repository.
 - skills contains portable Agent Skills distributed to other projects and machines.
 - agents contains the canonical customer-independent role schema and role definitions.
-- routing.yaml beside a skill is the source for generic or specialized routing metadata and activation evidence.
+- detection.yaml beside a specialized technology or domain skill is the source for setup-time detection metadata and activation evidence.
 - adapters contains runtime-specific metadata for those distributed skills.
 - generated/adapters contains generated native agent definitions and must be regenerated from canonical roles rather than edited manually.
 - design contains the HTML explanations of the skill and agent model.
@@ -38,7 +38,7 @@ When adding, renaming, deleting, or materially changing a distributed skill:
 - Keep the skill frontmatter name aligned with the skill directory name.
 - Keep Codex openai.yaml metadata beside each source SKILL.md when a skill needs Codex app metadata, invocation policy, or tool dependencies.
 - Run scripts/openai_metadata.py skills after skill name or description changes so derived Codex interface fields stay aligned while policy and dependencies remain hand-authored.
-- Run scripts/build-skill-routing.py after routing metadata, generic role loadouts, or specialized activation criteria change.
+- Run scripts/build-technology-detection.py after detection metadata or specialized activation criteria change.
 - Update README.md when the public skill inventory, setup flow, verification flow, or bundle purpose changes.
 - Update the design HTML files that describe skills, agents, role maps, specialization strategy, operating model, or examples whenever the catalog, role model, adapter model, or examples change.
 - Update scripts/test_bundle_content.py so the bundle regression tests describe the current catalog.
@@ -90,7 +90,7 @@ For skill or bundle changes, run:
 
 ```bash
 python3 scripts/validate-agent-skills.py skills
-python3 scripts/build-skill-routing.py --check
+python3 scripts/build-technology-detection.py --check
 python3 scripts/build-skill-docs.py --check
 python3 scripts/build-agent-skill-hierarchy.py --check
 python3 scripts/build-support-checklist.py --check

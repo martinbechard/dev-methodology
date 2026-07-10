@@ -1,22 +1,20 @@
-schema: dev-methodology-skill-routing
+schema: dev-methodology-technology-detection
 version: 1
 skill: postgres-drizzle
 kind: technology
 label: PostgreSQL with Drizzle
 capabilities:
-  - persistence-framework
-applicableRoles:
-  - artifact-review-agent
-  - code-review-agent
-  - coding-agent
-  - documentation-writer
-  - qa-and-verification-agent
-  - runtime-diagnostician
-  - security-reviewer
+- persistence-framework
 activation:
-  fileExtensions: [.ts, .tsx, .js, .jsx, .mts, .cts]
+  fileExtensions:
+  - ".ts"
+  - ".tsx"
+  - ".js"
+  - ".jsx"
+  - ".mts"
+  - ".cts"
   manifestDependencies:
-    - drizzle-orm
-    - drizzle-kit
+  - drizzle-orm
+  - drizzle-kit
 companions:
-  - sql-coding
+- sql-coding

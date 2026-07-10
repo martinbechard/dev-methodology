@@ -7,19 +7,17 @@ modelStages:
   evidence-extraction: simple
   synthesis: advanced
 skills:
-- review-structured
-- documentation-page-verifier
-- development-methodology
-skillComments:
-  review-structured: Provides a finding-first review structure for methodology changes.
-  documentation-page-verifier: Checks documentation pages for source grounding and contract compliance.
-  development-methodology: Supplies the canonical artifact routes, templates, and methodology rules.
+- review-structured:
+    justification: We need this to present actionable defects before general observations so artifact owners can prioritize remediation.
+- documentation-page-verifier:
+    justification: We need this to judge methodology documentation against its authoritative sources and required page contracts instead of reviewing prose in isolation.
+- development-methodology:
+    justification: We need this to evaluate artifacts against the bundle's canonical routes, templates, and maintenance rules rather than personal preference.
 isolation: read-only
 outputContract:
-- finding-first review
-- required corrections
-- residual risk
-outputComments:
-  finding-first review: Leads with evidence-backed issues that the artifact owner can address.
-  required corrections: Separates mandatory remediation from optional improvement.
-  residual risk: Records important risk that remains after the review.
+- finding-first review:
+    purpose: Gives the artifact owner an evidence-backed, severity-aware account of issues that can be acted on directly.
+- required corrections:
+    purpose: Makes the changes necessary for contract compliance explicit and separates them from optional improvements.
+- residual risk:
+    purpose: Preserves visibility into important uncertainty or exposure that remains after the identified corrections are addressed.

@@ -1,17 +1,11 @@
-schema: dev-methodology-skill-routing
+schema: dev-methodology-technology-detection
 version: 1
 skill: plan-engine-implementation
 kind: domain
 label: Plan engine implementation
 capabilities:
-  - planning-runtime
-applicableRoles:
-  - code-review-agent
-  - coding-agent
-  - prompt-contract-reviewer
-  - qa-and-verification-agent
-  - runtime-diagnostician
+- planning-runtime
 activation:
   fileGlobs:
-    - "**/*plan*engine*.*"
-    - "**/plans/**/*.yaml"
+  - "**/*plan*engine*.*"
+  - "**/plans/**/*.yaml"

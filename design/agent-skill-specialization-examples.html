@@ -453,12 +453,12 @@
     <div class="grid">
       <article class="card config">
         <h3>AGENTS-PLAN.yaml</h3>
-        <p>AGENTS-PLAN.yaml is the project-owned setup document for planning agent roles and deterministic specialized-skill routing before durable guidance is copied into AGENTS.md. It can live at the repository root and, when needed, inside subfolders with distinct runtime or verification boundaries.</p>
+        <p>AGENTS-PLAN.yaml is the project-owned setup document for planning agent roles and source-backed folder technology loadouts before durable guidance is copied into AGENTS.md. It can live at the repository root and, when needed, inside subfolders with distinct runtime or verification boundaries.</p>
       </article>
 
       <article class="card agent">
         <h3>Project Agent Setup Agent</h3>
-        <p>This setup role uses development-methodology, create-agents-plan, and route-technology-skills to inspect the project, classify tiers, resolve variants from registry evidence, choose skill loadouts, and create the root and nested AGENTS-PLAN.yaml files.</p>
+        <p>This setup role uses development-methodology, create-agents-plan, and detect-technology-skills to inspect the project, classify tiers, detect variants for representative folder scopes, record source evidence, and create the root and nested AGENTS-PLAN.yaml files.</p>
       </article>
 
       <article class="card case">
@@ -498,7 +498,7 @@
           <tr>
             <td><span class="name">Project Taxonomy</span></td>
             <td>Classifies project family, application tiers, technology stacks, runtime boundaries, and documentation surfaces.</td>
-            <td>Gives the skills router stable terms such as web application, front-end tier, API tier, static pages tier, DB tier, documentation tier, or CLI tier.</td>
+            <td>Gives Project Agent Setup stable terms such as web application, front-end tier, API tier, static pages tier, DB tier, documentation tier, or CLI tier.</td>
           </tr>
           <tr>
             <td><span class="name">Root AGENTS.md Routing Reference</span></td>
@@ -511,14 +511,14 @@
             <td>Shows when a reusable role is enough and when a specialist reviewer or verification agent is justified.</td>
           </tr>
           <tr>
-            <td><span class="name">Skill Loadouts</span></td>
-            <td>Maps each tier, workflow, or path family to reusable skills with activation evidence, required-load policy, and representative routing receipts.</td>
+            <td><span class="name">Technology Skill Loadouts</span></td>
+            <td>Maps each folder scope to reusable technology skills with source evidence, required-load policy, and missing or conflicting results.</td>
             <td>Keeps skill specialization factual and avoids turning every project behavior into a one-off agent.</td>
           </tr>
           <tr>
             <td><span class="name">Folder Routing</span></td>
             <td>Maps folders and path patterns to roles, tiers, skills, source evidence, and verification commands.</td>
-            <td>Lets the router decide quickly whether a task is front-end, API, DB, docs, testing, or tool work.</td>
+            <td>Lets every agent load the established folder skills without rerunning setup-time detection.</td>
           </tr>
           <tr>
             <td><span class="name">Nested AGENTS.md And AGENTS-PLAN.yaml Files</span></td>
@@ -673,9 +673,13 @@ root_agents_reference:
 nested_agents_reference:
   required: false
   reason: one TypeScript runtime and one verification workflow
-skill_loadouts:
-  cli: [node-cli, typescript-esm, typescript-strict]
-  tests: [vitest, careful-coding]
+technology_skill_loadouts:
+  - scope: CLI source
+    pathPattern: src/**
+    skills: [node-cli, typescript-esm, typescript-strict, vitest]
+    sourceEvidence:
+      - skill: node-cli
+        evidence: [scope path **/commands/**: src/commands/build.ts]
 validation:
   commands: [pnpm test, pnpm run build]</code></pre>
     </div>
@@ -692,8 +696,9 @@ Application tiers:
   CLI commands: src/commands/**
   File processing: src/readers/** and src/writers/**
   Generated artifacts: dist/** and samples/output/**
-Routing:
-  Source changes load node-cli, typescript-esm, typescript-strict, and vitest.
+Technology skills:
+  Before acting on source changes, load node-cli, typescript-esm, typescript-strict, and vitest.
+  Do not rerun technology detection during ordinary work.
   Artifact changes verify the generator path before changing checked-in examples.
 Validation:
   pnpm test
@@ -815,7 +820,7 @@ Application tiers:
   API: app/api/**/route.ts
   Static pages: app/(marketing)/**
   DB: db/** and drizzle/**
-Routing:
+Technology skills:
   Read nested AGENTS.md before changing app/api/** or db/**.
 Validation:
   pnpm test
@@ -913,7 +918,7 @@ Application tiers:
   Source collection: raw/inbox/** and raw/fragments/**
   Wiki synthesis: docs/wiki/**
   Verification: skills/project-wiki/scripts/**
-Routing:
+Operational rules:
   Collection runs are raw-only.
   Ingest runs read raw sources before editing docs/wiki.
   Use a nested &lt;wiki-root&gt;/AGENTS.md only when this project hosts multiple wiki roots with different rules.
@@ -956,7 +961,7 @@ Validation:
             <td><span class="name">Classify</span></td>
             <td>Runtime folders, application tiers, persistent data, generated artifacts, and documentation surfaces.</td>
             <td>Project Taxonomy and Folder Routing sections.</td>
-            <td>The skills router can identify front-end, API, static pages, DB, docs, test, or CLI work from paths.</td>
+            <td>Project Agent Setup can identify separate front-end, API, static pages, DB, docs, test, or CLI folder scopes.</td>
           </tr>
           <tr>
             <td><span class="name">Assign</span></td>

@@ -14,51 +14,46 @@ def load_yaml(path: Path) -> dict[str, object]:
     return value
 
 
-def render(plan: dict[str, object]) -> str:
+def loadouts(value: dict[str, object]) -> list[dict[str, object]]:
+    rows = value.get("technology_skill_loadouts", value.get("loadouts", []))
+    return [row for row in rows if isinstance(row, dict)] if isinstance(rows, list) else []
+
+
+def render(value: dict[str, object]) -> str:
     lines = [
-        "## Specialized Skill Routing",
+        "## Technology Skills",
         "",
-        "Before source implementation, review, verification, diagnosis, security, interface, prompt, or technical documentation work:",
+        "Technology detection is owned by Project Agent Setup. Do not rerun detection during ordinary work.",
         "",
-        "1. Read the root and nearest AGENTS.md.",
-        "2. Run the Route Technology Skills resolver for the active role and exact file scope.",
-        "3. Read every resolved skill file and preserve the final routing receipt.",
-        "4. Stop when a required project-bound skill is unavailable.",
-        "5. When no bundled variant exists, use generic guidance and report the specialized-guidance gap.",
+        "Before acting on files under a matching folder, every agent must read each listed skill completely. These folder skills govern technology-specific implementation, review, diagnosis, verification, security, interface, prompt, and technical documentation work together with the agent's fixed-role skills.",
         "",
-        "Project bindings:",
+        "Folder loadouts:",
         "",
     ]
-    rows = 0
-    for item in plan.get("skill_loadouts", []):
-        if not isinstance(item, dict):
+    rendered = 0
+    for item in loadouts(value):
+        pattern = item.get("pathPattern", item.get("pattern"))
+        skills = item.get("skills", item.get("required_skills", []))
+        if not isinstance(pattern, str) or not isinstance(skills, list) or not skills:
             continue
-        scope = str(item.get("scope", "Unnamed scope"))
-        paths = [str(value) for value in item.get("paths", []) if isinstance(value, str)]
-        skills = [str(value) for value in item.get("skills", []) if isinstance(value, str)]
-        if paths and skills:
-            lines.append(f"- {scope}: paths {', '.join(paths)}; required skills {', '.join(skills)}")
-            rows += 1
-    for item in plan.get("folder_routing", []):
-        if not isinstance(item, dict):
+        names = [str(skill) for skill in skills if isinstance(skill, str)]
+        if not names:
             continue
-        pattern = item.get("pattern")
-        skills = [str(value) for value in item.get("required_skills", []) if isinstance(value, str)]
-        if isinstance(pattern, str) and skills:
-            lines.append(f"- Folder route {pattern}: required skills {', '.join(skills)}")
-            rows += 1
-    if rows == 0:
-        lines.append("- No specialized project bindings were identified. Runtime routing must report this gap rather than inventing bindings.")
-    lines.extend([
-        "",
-        "The routing receipt proves deterministic selection, availability, and content digests. Harness tool-call evidence is required to prove the selected skill files were actually read.",
-        "",
-    ])
+        lines.append(f"- {pattern}: load {', '.join(names)} before acting.")
+        for evidence in item.get("sourceEvidence", item.get("source_evidence", [])):
+            if isinstance(evidence, dict) and isinstance(evidence.get("skill"), str):
+                facts = evidence.get("evidence", [])
+                if isinstance(facts, list) and facts:
+                    lines.append(f"  - {evidence['skill']} evidence: {'; '.join(str(fact) for fact in facts)}")
+        rendered += 1
+    if rendered == 0:
+        lines.append("- No bundled technology variant was detected for the analyzed folders.")
+    lines.append("")
     return "\n".join(lines)
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Render the AGENTS.md specialized skill routing section from AGENTS-PLAN.yaml.")
+    parser = argparse.ArgumentParser(description="Render unconditional AGENTS.md technology skill guidance.")
     parser.add_argument("--agents-plan", type=Path, required=True)
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()

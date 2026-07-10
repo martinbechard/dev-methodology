@@ -14,7 +14,7 @@ Use this skill as the router for software project documentation work from this b
 - Use documentation-bootstrap for first-time setup in a target repository.
 - Use documentation-reverse-engineering when deriving documentation from an existing codebase.
 - Use code-project-wiki for code-aware docs/wiki maintenance, commit-range sync, Related Code upkeep, or Related Tests upkeep.
-- Use create-agents-plan when creating or substantially rewriting an AGENTS-PLAN.yaml project agent and skill routing plan.
+- Use create-agents-plan when creating or substantially rewriting an AGENTS-PLAN.yaml project agent and skill setup plan.
 - Use maintain-methodology-documentation when changing this bundle's skills, canonical roles, generated adapters, generated documentation data, or design pages.
 - Use create-project-wiki when creating or substantially rewriting a project wiki methodology artifact from the project wiki template.
 - Use create-functional-spec when creating or substantially rewriting a functional specification artifact from the functional specification template.
@@ -76,7 +76,7 @@ Use the smallest document type that fully explains the work:
 Use this route table when the task is to create or substantially rewrite a methodology artifact:
 
 - Project wiki methodology artifact: use create-project-wiki, template project-wiki-template.md, and review-project-wiki.
-- Agent and skill routing plan: use create-agents-plan, template agents-plan-template.yaml, and documentation-page-verifier.
+- Agent and skill setup plan: use create-agents-plan, template agents-plan-template.yaml, and documentation-page-verifier.
 - Functional specification artifact: use create-functional-spec, template functional-spec-template.md, and review-functional-spec.
 - Architecture artifact: use create-architecture, template architecture-template.md, and review-architecture.
 - High-level design artifact: use create-high-level-design, template high-level-design-template.md, and review-high-level-design.
@@ -90,7 +90,7 @@ Use project-wiki-topic-writer for ordinary docs/wiki topic pages that summarize 
 Template assets live under skills/development-methodology/assets/templates.
 
 - project-wiki-template.md defines project wiki setup and code-aware maintenance rules.
-- agents-plan-template.yaml defines project agent roles, skill loadouts, AGENTS.md routing references, folder routing, nested plan placement, proprietary validation notes, and customer-safe example boundaries.
+- agents-plan-template.yaml defines project agent roles, folder technology loadouts, AGENTS.md operational guidance, nested plan placement, proprietary validation notes, and customer-safe example boundaries.
 - functional-spec-template.md defines user-visible workflow and acceptance documentation.
 - architecture-template.md defines project-wide and cross-cutting architecture documentation.
 - high-level-design-template.md defines subsystem and feature-family documentation.

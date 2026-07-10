@@ -1,6 +1,6 @@
 # Agent, Skill, Technology, And Test Coverage Checklist
 
-This page is generated from the canonical roles, bundled skill frontmatter, specialized skill registry, declared evaluation cases, and verified evidence receipts. Regenerate it with scripts/build-support-checklist.py.
+This page is generated from the canonical roles, bundled skill frontmatter, setup-time technology detection registry, declared evaluation cases, and verified evidence receipts. Regenerate it with scripts/build-support-checklist.py.
 
 ## Status Meaning
 
@@ -14,7 +14,7 @@ This page is generated from the canonical roles, bundled skill frontmatter, spec
 ## Summary
 
 - [x] 22 canonical agents are defined and generate through the supported native role adapters.
-- [x] 70 bundled skills pass catalog and Agent Skill validation.
+- [x] 72 bundled skills pass catalog and Agent Skill validation.
 - [x] 2 agents and 10 skills are named in current evaluation cases.
 - [ ] 0 agents and 0 skills have independently verified behavior evidence under the current proof contract.
 - TypeScript implementation, Java and Spring Boot implementation, SQL behavior, and TypeScript code review have useful manual observations that must be rerun with truthful receipts.
@@ -29,35 +29,36 @@ This page is generated from the canonical roles, bundled skill frontmatter, spec
 | Gemini CLI | [x] | [ ] | [ ] | Skill installation behavior is unit-tested; native role generation and behavior are not covered. |
 | JetBrains Junie CLI | [x] | [ ] | [ ] | Destination and dry-run installation behavior are unit-tested; native role generation and behavior are not covered. |
 
-## Specialized Skill Registry
+## Technology Detection Registry
 
-| Skill | Kind | Label | Capabilities | Applicable roles | Declared cases | Verified behavior |
-| --- | --- | --- | --- | --- | --- | --- |
-| api-routes | technology | Application route handlers | http-api | coding-agent, code-review-agent, qa-and-verification-agent, security-reviewer | None | [ ] None |
-| clerk-auth | technology | Clerk identity integration | identity-provider | coding-agent, code-review-agent, qa-and-verification-agent, security-reviewer | None | [ ] None |
-| electron-main | technology | Electron main process | desktop-main-runtime | coding-agent, code-review-agent, qa-and-verification-agent, runtime-diagnostician, security-reviewer | None | [ ] None |
-| electron-preload | technology | Electron preload boundary | desktop-preload-boundary | coding-agent, code-review-agent, qa-and-verification-agent, runtime-diagnostician, security-reviewer | None | [ ] None |
-| harness-implementation | domain | Agent harness implementation | agent-harness-runtime | coding-agent, code-review-agent, prompt-contract-reviewer, qa-and-verification-agent, runtime-diagnostician | None | [ ] None |
-| java-coding | technology | Java | language-coding | artifact-review-agent, code-review-agent, coding-agent, documentation-writer, qa-and-verification-agent, runtime-diagnostician, security-reviewer, project-agent-setup-agent, project-bootstrap-agent, project-organiser | spring-boot-order-cancellation | [ ] None |
-| jest | technology | Jest | test-framework | code-review-agent, coding-agent, qa-and-verification-agent, runtime-diagnostician | None | [ ] None |
-| langgraph | technology | LangGraph | workflow-runtime | code-review-agent, coding-agent, prompt-contract-reviewer, qa-and-verification-agent, runtime-diagnostician | None | [ ] None |
-| local-model-integration | domain | Local model integration | local-model-runtime | code-review-agent, coding-agent, prompt-contract-reviewer, qa-and-verification-agent, runtime-diagnostician | None | [ ] None |
-| nextjs-app-router | technology | Next.js App Router | web-application-framework | artifact-review-agent, code-review-agent, coding-agent, documentation-writer, qa-and-verification-agent, runtime-diagnostician, security-reviewer, ux-designer-or-reviewer | None | [ ] None |
-| node-cli | technology | Node command line application | command-line-runtime | code-review-agent, coding-agent, qa-and-verification-agent, runtime-diagnostician | None | [ ] None |
-| plan-engine-implementation | domain | Plan engine implementation | planning-runtime | code-review-agent, coding-agent, prompt-contract-reviewer, qa-and-verification-agent, runtime-diagnostician | None | [ ] None |
-| playwright | technology | Playwright | end-to-end-framework | e2e-browser-agent, qa-and-verification-agent, runtime-diagnostician, ux-designer-or-reviewer | None | [ ] None |
-| postgres-drizzle | technology | PostgreSQL with Drizzle | persistence-framework | artifact-review-agent, code-review-agent, coding-agent, documentation-writer, qa-and-verification-agent, runtime-diagnostician, security-reviewer | None | [ ] None |
-| react-server-components | technology | React Server Components | server-user-interface | artifact-review-agent, code-review-agent, coding-agent, documentation-writer, qa-and-verification-agent, security-reviewer, ux-designer-or-reviewer | None | [ ] None |
-| react-vite-renderer | technology | React renderer with Vite | client-user-interface | artifact-review-agent, code-review-agent, coding-agent, documentation-writer, qa-and-verification-agent, runtime-diagnostician, ux-designer-or-reviewer | None | [ ] None |
-| spring-boot | technology | Spring Boot | application-framework | artifact-review-agent, code-review-agent, coding-agent, documentation-writer, qa-and-verification-agent, runtime-diagnostician, security-reviewer | spring-boot-order-cancellation | [ ] None |
-| sql-coding | technology | SQL | query-language | artifact-review-agent, code-review-agent, coding-agent, documentation-writer, qa-and-verification-agent, runtime-diagnostician, security-reviewer | spring-boot-order-cancellation | [ ] None |
-| tailwind-design-system | technology | Tailwind design system | styling-system | code-review-agent, coding-agent, qa-and-verification-agent, ux-designer-or-reviewer | None | [ ] None |
-| tool-runtime-implementation | domain | Tool runtime implementation | tool-runtime | code-review-agent, coding-agent, prompt-contract-reviewer, qa-and-verification-agent, runtime-diagnostician, security-reviewer | None | [ ] None |
-| typescript-coding | technology | TypeScript | language-coding | artifact-review-agent, code-review-agent, coding-agent, documentation-writer, qa-and-verification-agent, runtime-diagnostician, security-reviewer, ux-designer-or-reviewer, project-agent-setup-agent, project-bootstrap-agent, project-organiser | typescript-order-pricing, typescript-code-review | [ ] None |
-| typescript-esm | technology | TypeScript ECMAScript modules | module-system | code-review-agent, coding-agent, qa-and-verification-agent, runtime-diagnostician | typescript-order-pricing, typescript-code-review | [ ] None |
-| typescript-strict | technology | Strict TypeScript | strict-type-system | artifact-review-agent, code-review-agent, coding-agent, documentation-writer, qa-and-verification-agent, runtime-diagnostician, security-reviewer | typescript-order-pricing, typescript-code-review | [ ] None |
-| vitest | technology | Vitest | test-framework | code-review-agent, coding-agent, qa-and-verification-agent, runtime-diagnostician | None | [ ] None |
-| ast-grep | tool | Structure-aware search tool | structural-search | coding-agent, code-review-agent, runtime-diagnostician | None | [ ] None |
+| Skill | Kind | Label | Capabilities | Declared cases | Verified behavior |
+| --- | --- | --- | --- | --- | --- |
+| api-routes | technology | Application route handlers | http-api | None | [ ] None |
+| clerk-auth | technology | Clerk identity integration | identity-provider | None | [ ] None |
+| electron-main | technology | Electron main process | desktop-main-runtime | None | [ ] None |
+| electron-preload | technology | Electron preload boundary | desktop-preload-boundary | None | [ ] None |
+| fastapi | technology | FastAPI | web-application-framework | None | [ ] None |
+| harness-implementation | domain | Agent harness implementation | agent-harness-runtime | None | [ ] None |
+| java-coding | technology | Java | language-coding | spring-boot-order-cancellation | [ ] None |
+| jest | technology | Jest | test-framework | None | [ ] None |
+| langgraph | technology | LangGraph | workflow-runtime | None | [ ] None |
+| local-model-integration | domain | Local model integration | local-model-runtime | None | [ ] None |
+| nextjs-app-router | technology | Next.js App Router | web-application-framework | None | [ ] None |
+| node-cli | technology | Node command line application | command-line-runtime | None | [ ] None |
+| plan-engine-implementation | domain | Plan engine implementation | planning-runtime | None | [ ] None |
+| playwright | technology | Playwright | end-to-end-framework | None | [ ] None |
+| postgres-drizzle | technology | PostgreSQL with Drizzle | persistence-framework | None | [ ] None |
+| python-coding | technology | Python | language-coding | None | [ ] None |
+| react-server-components | technology | React Server Components | server-user-interface | None | [ ] None |
+| react-vite-renderer | technology | React renderer with Vite | client-user-interface | None | [ ] None |
+| spring-boot | technology | Spring Boot | application-framework | spring-boot-order-cancellation | [ ] None |
+| sql-coding | technology | SQL | query-language | spring-boot-order-cancellation | [ ] None |
+| tailwind-design-system | technology | Tailwind design system | styling-system | None | [ ] None |
+| tool-runtime-implementation | domain | Tool runtime implementation | tool-runtime | None | [ ] None |
+| typescript-coding | technology | TypeScript | language-coding | typescript-order-pricing, typescript-code-review | [ ] None |
+| typescript-esm | technology | TypeScript ECMAScript modules | module-system | typescript-order-pricing, typescript-code-review | [ ] None |
+| typescript-strict | technology | Strict TypeScript | strict-type-system | typescript-order-pricing, typescript-code-review | [ ] None |
+| vitest | technology | Vitest | test-framework | None | [ ] None |
 
 ## Canonical Agent Checklist
 
@@ -136,12 +137,12 @@ This page is generated from the canonical roles, bundled skill frontmatter, spec
 - [x] code-execution-tracing — structural; declared: none; verified behavior: [ ] none
 - [x] code-review-evidence — structural; declared: typescript-order-pricing, spring-boot-order-cancellation, typescript-code-review; verified behavior: [ ] none
 - [x] create-backlog — structural; declared: none; verified behavior: [ ] none
+- [x] detect-technology-skills — structural; declared: none; verified behavior: [ ] none
 - [x] end-to-end-verification — structural; declared: none; verified behavior: [ ] none
 - [x] fix-explanation — structural; declared: none; verified behavior: [ ] none
 - [x] manage-backlog — structural; declared: none; verified behavior: [ ] none
 - [x] prompt-contracts — structural; declared: none; verified behavior: [ ] none
 - [x] root-cause-analysis — structural; declared: none; verified behavior: [ ] none
-- [x] route-technology-skills — structural; declared: none; verified behavior: [ ] none
 - [x] runtime-evidence-collection — structural; declared: none; verified behavior: [ ] none
 - [x] structured-design — structural; declared: none; verified behavior: [ ] none
 - [x] structured-explanation — structural; declared: none; verified behavior: [ ] none
@@ -155,6 +156,7 @@ This page is generated from the canonical roles, bundled skill frontmatter, spec
 - [x] clerk-auth — structural; declared: none; verified behavior: [ ] none
 - [x] electron-main — structural; declared: none; verified behavior: [ ] none
 - [x] electron-preload — structural; declared: none; verified behavior: [ ] none
+- [x] fastapi — structural; declared: none; verified behavior: [ ] none
 - [x] harness-implementation — structural; declared: none; verified behavior: [ ] none
 - [x] java-coding — structural; declared: spring-boot-order-cancellation; verified behavior: [ ] none
 - [x] jest — structural; declared: none; verified behavior: [ ] none
@@ -165,6 +167,7 @@ This page is generated from the canonical roles, bundled skill frontmatter, spec
 - [x] plan-engine-implementation — structural; declared: none; verified behavior: [ ] none
 - [x] playwright — structural; declared: none; verified behavior: [ ] none
 - [x] postgres-drizzle — structural; declared: none; verified behavior: [ ] none
+- [x] python-coding — structural; declared: none; verified behavior: [ ] none
 - [x] react-server-components — structural; declared: none; verified behavior: [ ] none
 - [x] react-vite-renderer — structural; declared: none; verified behavior: [ ] none
 - [x] spring-boot — structural; declared: spring-boot-order-cancellation; verified behavior: [ ] none

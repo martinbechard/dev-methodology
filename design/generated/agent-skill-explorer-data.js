@@ -38,56 +38,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     },
     {
       "kind": "fixed",
-      "role": "artifact-review-agent",
-      "skill": "route-technology-skills"
-    },
-    {
-      "kind": "routed",
-      "role": "artifact-review-agent",
-      "skill": "java-coding"
-    },
-    {
-      "kind": "routed",
-      "role": "artifact-review-agent",
-      "skill": "nextjs-app-router"
-    },
-    {
-      "kind": "routed",
-      "role": "artifact-review-agent",
-      "skill": "postgres-drizzle"
-    },
-    {
-      "kind": "routed",
-      "role": "artifact-review-agent",
-      "skill": "react-server-components"
-    },
-    {
-      "kind": "routed",
-      "role": "artifact-review-agent",
-      "skill": "react-vite-renderer"
-    },
-    {
-      "kind": "routed",
-      "role": "artifact-review-agent",
-      "skill": "spring-boot"
-    },
-    {
-      "kind": "routed",
-      "role": "artifact-review-agent",
-      "skill": "sql-coding"
-    },
-    {
-      "kind": "routed",
-      "role": "artifact-review-agent",
-      "skill": "typescript-coding"
-    },
-    {
-      "kind": "routed",
-      "role": "artifact-review-agent",
-      "skill": "typescript-strict"
-    },
-    {
-      "kind": "fixed",
       "role": "backlog-steward",
       "skill": "agent-claim"
     },
@@ -133,131 +83,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     },
     {
       "kind": "fixed",
-      "role": "code-review-agent",
-      "skill": "route-technology-skills"
-    },
-    {
-      "kind": "routed",
-      "role": "code-review-agent",
-      "skill": "api-routes"
-    },
-    {
-      "kind": "routed",
-      "role": "code-review-agent",
-      "skill": "ast-grep"
-    },
-    {
-      "kind": "routed",
-      "role": "code-review-agent",
-      "skill": "clerk-auth"
-    },
-    {
-      "kind": "routed",
-      "role": "code-review-agent",
-      "skill": "electron-main"
-    },
-    {
-      "kind": "routed",
-      "role": "code-review-agent",
-      "skill": "electron-preload"
-    },
-    {
-      "kind": "routed",
-      "role": "code-review-agent",
-      "skill": "harness-implementation"
-    },
-    {
-      "kind": "routed",
-      "role": "code-review-agent",
-      "skill": "java-coding"
-    },
-    {
-      "kind": "routed",
-      "role": "code-review-agent",
-      "skill": "jest"
-    },
-    {
-      "kind": "routed",
-      "role": "code-review-agent",
-      "skill": "langgraph"
-    },
-    {
-      "kind": "routed",
-      "role": "code-review-agent",
-      "skill": "local-model-integration"
-    },
-    {
-      "kind": "routed",
-      "role": "code-review-agent",
-      "skill": "nextjs-app-router"
-    },
-    {
-      "kind": "routed",
-      "role": "code-review-agent",
-      "skill": "node-cli"
-    },
-    {
-      "kind": "routed",
-      "role": "code-review-agent",
-      "skill": "plan-engine-implementation"
-    },
-    {
-      "kind": "routed",
-      "role": "code-review-agent",
-      "skill": "postgres-drizzle"
-    },
-    {
-      "kind": "routed",
-      "role": "code-review-agent",
-      "skill": "react-server-components"
-    },
-    {
-      "kind": "routed",
-      "role": "code-review-agent",
-      "skill": "react-vite-renderer"
-    },
-    {
-      "kind": "routed",
-      "role": "code-review-agent",
-      "skill": "spring-boot"
-    },
-    {
-      "kind": "routed",
-      "role": "code-review-agent",
-      "skill": "sql-coding"
-    },
-    {
-      "kind": "routed",
-      "role": "code-review-agent",
-      "skill": "tailwind-design-system"
-    },
-    {
-      "kind": "routed",
-      "role": "code-review-agent",
-      "skill": "tool-runtime-implementation"
-    },
-    {
-      "kind": "routed",
-      "role": "code-review-agent",
-      "skill": "typescript-coding"
-    },
-    {
-      "kind": "routed",
-      "role": "code-review-agent",
-      "skill": "typescript-esm"
-    },
-    {
-      "kind": "routed",
-      "role": "code-review-agent",
-      "skill": "typescript-strict"
-    },
-    {
-      "kind": "routed",
-      "role": "code-review-agent",
-      "skill": "vitest"
-    },
-    {
-      "kind": "fixed",
       "role": "coding-agent",
       "skill": "careful-coding"
     },
@@ -279,132 +104,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "kind": "fixed",
       "role": "coding-agent",
-      "skill": "route-technology-skills"
-    },
-    {
-      "kind": "fixed",
-      "role": "coding-agent",
       "skill": "test-driven-development"
-    },
-    {
-      "kind": "routed",
-      "role": "coding-agent",
-      "skill": "api-routes"
-    },
-    {
-      "kind": "routed",
-      "role": "coding-agent",
-      "skill": "ast-grep"
-    },
-    {
-      "kind": "routed",
-      "role": "coding-agent",
-      "skill": "clerk-auth"
-    },
-    {
-      "kind": "routed",
-      "role": "coding-agent",
-      "skill": "electron-main"
-    },
-    {
-      "kind": "routed",
-      "role": "coding-agent",
-      "skill": "electron-preload"
-    },
-    {
-      "kind": "routed",
-      "role": "coding-agent",
-      "skill": "harness-implementation"
-    },
-    {
-      "kind": "routed",
-      "role": "coding-agent",
-      "skill": "java-coding"
-    },
-    {
-      "kind": "routed",
-      "role": "coding-agent",
-      "skill": "jest"
-    },
-    {
-      "kind": "routed",
-      "role": "coding-agent",
-      "skill": "langgraph"
-    },
-    {
-      "kind": "routed",
-      "role": "coding-agent",
-      "skill": "local-model-integration"
-    },
-    {
-      "kind": "routed",
-      "role": "coding-agent",
-      "skill": "nextjs-app-router"
-    },
-    {
-      "kind": "routed",
-      "role": "coding-agent",
-      "skill": "node-cli"
-    },
-    {
-      "kind": "routed",
-      "role": "coding-agent",
-      "skill": "plan-engine-implementation"
-    },
-    {
-      "kind": "routed",
-      "role": "coding-agent",
-      "skill": "postgres-drizzle"
-    },
-    {
-      "kind": "routed",
-      "role": "coding-agent",
-      "skill": "react-server-components"
-    },
-    {
-      "kind": "routed",
-      "role": "coding-agent",
-      "skill": "react-vite-renderer"
-    },
-    {
-      "kind": "routed",
-      "role": "coding-agent",
-      "skill": "spring-boot"
-    },
-    {
-      "kind": "routed",
-      "role": "coding-agent",
-      "skill": "sql-coding"
-    },
-    {
-      "kind": "routed",
-      "role": "coding-agent",
-      "skill": "tailwind-design-system"
-    },
-    {
-      "kind": "routed",
-      "role": "coding-agent",
-      "skill": "tool-runtime-implementation"
-    },
-    {
-      "kind": "routed",
-      "role": "coding-agent",
-      "skill": "typescript-coding"
-    },
-    {
-      "kind": "routed",
-      "role": "coding-agent",
-      "skill": "typescript-esm"
-    },
-    {
-      "kind": "routed",
-      "role": "coding-agent",
-      "skill": "typescript-strict"
-    },
-    {
-      "kind": "routed",
-      "role": "coding-agent",
-      "skill": "vitest"
     },
     {
       "kind": "fixed",
@@ -425,11 +125,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "fixed",
       "role": "development-orchestrator",
       "skill": "review-structured"
-    },
-    {
-      "kind": "fixed",
-      "role": "development-orchestrator",
-      "skill": "route-technology-skills"
     },
     {
       "kind": "fixed",
@@ -498,56 +193,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     },
     {
       "kind": "fixed",
-      "role": "documentation-writer",
-      "skill": "route-technology-skills"
-    },
-    {
-      "kind": "routed",
-      "role": "documentation-writer",
-      "skill": "java-coding"
-    },
-    {
-      "kind": "routed",
-      "role": "documentation-writer",
-      "skill": "nextjs-app-router"
-    },
-    {
-      "kind": "routed",
-      "role": "documentation-writer",
-      "skill": "postgres-drizzle"
-    },
-    {
-      "kind": "routed",
-      "role": "documentation-writer",
-      "skill": "react-server-components"
-    },
-    {
-      "kind": "routed",
-      "role": "documentation-writer",
-      "skill": "react-vite-renderer"
-    },
-    {
-      "kind": "routed",
-      "role": "documentation-writer",
-      "skill": "spring-boot"
-    },
-    {
-      "kind": "routed",
-      "role": "documentation-writer",
-      "skill": "sql-coding"
-    },
-    {
-      "kind": "routed",
-      "role": "documentation-writer",
-      "skill": "typescript-coding"
-    },
-    {
-      "kind": "routed",
-      "role": "documentation-writer",
-      "skill": "typescript-strict"
-    },
-    {
-      "kind": "fixed",
       "role": "e2e-browser-agent",
       "skill": "end-to-end-verification"
     },
@@ -559,17 +204,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "kind": "fixed",
       "role": "e2e-browser-agent",
-      "skill": "route-technology-skills"
-    },
-    {
-      "kind": "fixed",
-      "role": "e2e-browser-agent",
       "skill": "structured-explanation"
-    },
-    {
-      "kind": "routed",
-      "role": "e2e-browser-agent",
-      "skill": "playwright"
     },
     {
       "kind": "fixed",
@@ -634,6 +269,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "kind": "fixed",
       "role": "project-agent-setup-agent",
+      "skill": "detect-technology-skills"
+    },
+    {
+      "kind": "fixed",
+      "role": "project-agent-setup-agent",
       "skill": "development-methodology"
     },
     {
@@ -645,21 +285,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "fixed",
       "role": "project-agent-setup-agent",
       "skill": "documentation-page-verifier"
-    },
-    {
-      "kind": "fixed",
-      "role": "project-agent-setup-agent",
-      "skill": "route-technology-skills"
-    },
-    {
-      "kind": "routed",
-      "role": "project-agent-setup-agent",
-      "skill": "java-coding"
-    },
-    {
-      "kind": "routed",
-      "role": "project-agent-setup-agent",
-      "skill": "typescript-coding"
     },
     {
       "kind": "fixed",
@@ -683,21 +308,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     },
     {
       "kind": "fixed",
-      "role": "project-bootstrap-agent",
-      "skill": "route-technology-skills"
-    },
-    {
-      "kind": "routed",
-      "role": "project-bootstrap-agent",
-      "skill": "java-coding"
-    },
-    {
-      "kind": "routed",
-      "role": "project-bootstrap-agent",
-      "skill": "typescript-coding"
-    },
-    {
-      "kind": "fixed",
       "role": "project-organiser",
       "skill": "code-project-wiki"
     },
@@ -705,11 +315,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "fixed",
       "role": "project-organiser",
       "skill": "project-wiki-query"
-    },
-    {
-      "kind": "fixed",
-      "role": "project-organiser",
-      "skill": "route-technology-skills"
     },
     {
       "kind": "fixed",
@@ -722,16 +327,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "structured-explanation"
     },
     {
-      "kind": "routed",
-      "role": "project-organiser",
-      "skill": "java-coding"
-    },
-    {
-      "kind": "routed",
-      "role": "project-organiser",
-      "skill": "typescript-coding"
-    },
-    {
       "kind": "fixed",
       "role": "prompt-contract-reviewer",
       "skill": "prompt-contracts"
@@ -740,36 +335,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "fixed",
       "role": "prompt-contract-reviewer",
       "skill": "review-structured"
-    },
-    {
-      "kind": "fixed",
-      "role": "prompt-contract-reviewer",
-      "skill": "route-technology-skills"
-    },
-    {
-      "kind": "routed",
-      "role": "prompt-contract-reviewer",
-      "skill": "harness-implementation"
-    },
-    {
-      "kind": "routed",
-      "role": "prompt-contract-reviewer",
-      "skill": "langgraph"
-    },
-    {
-      "kind": "routed",
-      "role": "prompt-contract-reviewer",
-      "skill": "local-model-integration"
-    },
-    {
-      "kind": "routed",
-      "role": "prompt-contract-reviewer",
-      "skill": "plan-engine-implementation"
-    },
-    {
-      "kind": "routed",
-      "role": "prompt-contract-reviewer",
-      "skill": "tool-runtime-implementation"
     },
     {
       "kind": "fixed",
@@ -814,11 +379,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "kind": "fixed",
       "role": "qa-and-verification-agent",
-      "skill": "route-technology-skills"
-    },
-    {
-      "kind": "fixed",
-      "role": "qa-and-verification-agent",
       "skill": "runtime-evidence-collection"
     },
     {
@@ -830,126 +390,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "fixed",
       "role": "qa-and-verification-agent",
       "skill": "test-strategy"
-    },
-    {
-      "kind": "routed",
-      "role": "qa-and-verification-agent",
-      "skill": "api-routes"
-    },
-    {
-      "kind": "routed",
-      "role": "qa-and-verification-agent",
-      "skill": "clerk-auth"
-    },
-    {
-      "kind": "routed",
-      "role": "qa-and-verification-agent",
-      "skill": "electron-main"
-    },
-    {
-      "kind": "routed",
-      "role": "qa-and-verification-agent",
-      "skill": "electron-preload"
-    },
-    {
-      "kind": "routed",
-      "role": "qa-and-verification-agent",
-      "skill": "harness-implementation"
-    },
-    {
-      "kind": "routed",
-      "role": "qa-and-verification-agent",
-      "skill": "java-coding"
-    },
-    {
-      "kind": "routed",
-      "role": "qa-and-verification-agent",
-      "skill": "jest"
-    },
-    {
-      "kind": "routed",
-      "role": "qa-and-verification-agent",
-      "skill": "langgraph"
-    },
-    {
-      "kind": "routed",
-      "role": "qa-and-verification-agent",
-      "skill": "local-model-integration"
-    },
-    {
-      "kind": "routed",
-      "role": "qa-and-verification-agent",
-      "skill": "nextjs-app-router"
-    },
-    {
-      "kind": "routed",
-      "role": "qa-and-verification-agent",
-      "skill": "node-cli"
-    },
-    {
-      "kind": "routed",
-      "role": "qa-and-verification-agent",
-      "skill": "plan-engine-implementation"
-    },
-    {
-      "kind": "routed",
-      "role": "qa-and-verification-agent",
-      "skill": "playwright"
-    },
-    {
-      "kind": "routed",
-      "role": "qa-and-verification-agent",
-      "skill": "postgres-drizzle"
-    },
-    {
-      "kind": "routed",
-      "role": "qa-and-verification-agent",
-      "skill": "react-server-components"
-    },
-    {
-      "kind": "routed",
-      "role": "qa-and-verification-agent",
-      "skill": "react-vite-renderer"
-    },
-    {
-      "kind": "routed",
-      "role": "qa-and-verification-agent",
-      "skill": "spring-boot"
-    },
-    {
-      "kind": "routed",
-      "role": "qa-and-verification-agent",
-      "skill": "sql-coding"
-    },
-    {
-      "kind": "routed",
-      "role": "qa-and-verification-agent",
-      "skill": "tailwind-design-system"
-    },
-    {
-      "kind": "routed",
-      "role": "qa-and-verification-agent",
-      "skill": "tool-runtime-implementation"
-    },
-    {
-      "kind": "routed",
-      "role": "qa-and-verification-agent",
-      "skill": "typescript-coding"
-    },
-    {
-      "kind": "routed",
-      "role": "qa-and-verification-agent",
-      "skill": "typescript-esm"
-    },
-    {
-      "kind": "routed",
-      "role": "qa-and-verification-agent",
-      "skill": "typescript-strict"
-    },
-    {
-      "kind": "routed",
-      "role": "qa-and-verification-agent",
-      "skill": "vitest"
     },
     {
       "kind": "fixed",
@@ -979,11 +419,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "kind": "fixed",
       "role": "runtime-diagnostician",
-      "skill": "route-technology-skills"
-    },
-    {
-      "kind": "fixed",
-      "role": "runtime-diagnostician",
       "skill": "runtime-evidence-collection"
     },
     {
@@ -995,111 +430,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "fixed",
       "role": "runtime-diagnostician",
       "skill": "test-strategy"
-    },
-    {
-      "kind": "routed",
-      "role": "runtime-diagnostician",
-      "skill": "ast-grep"
-    },
-    {
-      "kind": "routed",
-      "role": "runtime-diagnostician",
-      "skill": "electron-main"
-    },
-    {
-      "kind": "routed",
-      "role": "runtime-diagnostician",
-      "skill": "electron-preload"
-    },
-    {
-      "kind": "routed",
-      "role": "runtime-diagnostician",
-      "skill": "harness-implementation"
-    },
-    {
-      "kind": "routed",
-      "role": "runtime-diagnostician",
-      "skill": "java-coding"
-    },
-    {
-      "kind": "routed",
-      "role": "runtime-diagnostician",
-      "skill": "jest"
-    },
-    {
-      "kind": "routed",
-      "role": "runtime-diagnostician",
-      "skill": "langgraph"
-    },
-    {
-      "kind": "routed",
-      "role": "runtime-diagnostician",
-      "skill": "local-model-integration"
-    },
-    {
-      "kind": "routed",
-      "role": "runtime-diagnostician",
-      "skill": "nextjs-app-router"
-    },
-    {
-      "kind": "routed",
-      "role": "runtime-diagnostician",
-      "skill": "node-cli"
-    },
-    {
-      "kind": "routed",
-      "role": "runtime-diagnostician",
-      "skill": "plan-engine-implementation"
-    },
-    {
-      "kind": "routed",
-      "role": "runtime-diagnostician",
-      "skill": "playwright"
-    },
-    {
-      "kind": "routed",
-      "role": "runtime-diagnostician",
-      "skill": "postgres-drizzle"
-    },
-    {
-      "kind": "routed",
-      "role": "runtime-diagnostician",
-      "skill": "react-vite-renderer"
-    },
-    {
-      "kind": "routed",
-      "role": "runtime-diagnostician",
-      "skill": "spring-boot"
-    },
-    {
-      "kind": "routed",
-      "role": "runtime-diagnostician",
-      "skill": "sql-coding"
-    },
-    {
-      "kind": "routed",
-      "role": "runtime-diagnostician",
-      "skill": "tool-runtime-implementation"
-    },
-    {
-      "kind": "routed",
-      "role": "runtime-diagnostician",
-      "skill": "typescript-coding"
-    },
-    {
-      "kind": "routed",
-      "role": "runtime-diagnostician",
-      "skill": "typescript-esm"
-    },
-    {
-      "kind": "routed",
-      "role": "runtime-diagnostician",
-      "skill": "typescript-strict"
-    },
-    {
-      "kind": "routed",
-      "role": "runtime-diagnostician",
-      "skill": "vitest"
     },
     {
       "kind": "fixed",
@@ -1119,77 +449,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "kind": "fixed",
       "role": "security-reviewer",
-      "skill": "route-technology-skills"
-    },
-    {
-      "kind": "fixed",
-      "role": "security-reviewer",
       "skill": "structured-explanation"
-    },
-    {
-      "kind": "routed",
-      "role": "security-reviewer",
-      "skill": "api-routes"
-    },
-    {
-      "kind": "routed",
-      "role": "security-reviewer",
-      "skill": "clerk-auth"
-    },
-    {
-      "kind": "routed",
-      "role": "security-reviewer",
-      "skill": "electron-main"
-    },
-    {
-      "kind": "routed",
-      "role": "security-reviewer",
-      "skill": "electron-preload"
-    },
-    {
-      "kind": "routed",
-      "role": "security-reviewer",
-      "skill": "java-coding"
-    },
-    {
-      "kind": "routed",
-      "role": "security-reviewer",
-      "skill": "nextjs-app-router"
-    },
-    {
-      "kind": "routed",
-      "role": "security-reviewer",
-      "skill": "postgres-drizzle"
-    },
-    {
-      "kind": "routed",
-      "role": "security-reviewer",
-      "skill": "react-server-components"
-    },
-    {
-      "kind": "routed",
-      "role": "security-reviewer",
-      "skill": "spring-boot"
-    },
-    {
-      "kind": "routed",
-      "role": "security-reviewer",
-      "skill": "sql-coding"
-    },
-    {
-      "kind": "routed",
-      "role": "security-reviewer",
-      "skill": "tool-runtime-implementation"
-    },
-    {
-      "kind": "routed",
-      "role": "security-reviewer",
-      "skill": "typescript-coding"
-    },
-    {
-      "kind": "routed",
-      "role": "security-reviewer",
-      "skill": "typescript-strict"
     },
     {
       "kind": "fixed",
@@ -1214,42 +474,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "kind": "fixed",
       "role": "ux-designer-or-reviewer",
-      "skill": "route-technology-skills"
-    },
-    {
-      "kind": "fixed",
-      "role": "ux-designer-or-reviewer",
       "skill": "user-experience-review"
-    },
-    {
-      "kind": "routed",
-      "role": "ux-designer-or-reviewer",
-      "skill": "nextjs-app-router"
-    },
-    {
-      "kind": "routed",
-      "role": "ux-designer-or-reviewer",
-      "skill": "playwright"
-    },
-    {
-      "kind": "routed",
-      "role": "ux-designer-or-reviewer",
-      "skill": "react-server-components"
-    },
-    {
-      "kind": "routed",
-      "role": "ux-designer-or-reviewer",
-      "skill": "react-vite-renderer"
-    },
-    {
-      "kind": "routed",
-      "role": "ux-designer-or-reviewer",
-      "skill": "tailwind-design-system"
-    },
-    {
-      "kind": "routed",
-      "role": "ux-designer-or-reviewer",
-      "skill": "typescript-coding"
     },
     {
       "kind": "fixed",
@@ -1307,8 +532,8 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "declaredCases": [],
       "description": "Reviews finished methodology artifacts with an artifact-specific checklist and passes evidence to the shared page verifier.",
+      "dynamicFolderSkills": true,
       "fixedSkills": [
-        "route-technology-skills",
         "review-project-wiki",
         "review-functional-spec",
         "review-architecture",
@@ -1320,14 +545,12 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "id": "artifact-review-agent",
       "label": "artifact-review-agent",
       "modelProfile": "advanced",
-      "routedCapabilities": [
-        "language-coding"
-      ],
       "verifiedCases": []
     },
     {
       "declaredCases": [],
       "description": "Creates, claims, resumes, blocks, completes, and archives typed backlog work with recoverable status evidence.",
+      "dynamicFolderSkills": false,
       "fixedSkills": [
         "create-backlog",
         "manage-backlog",
@@ -1338,7 +561,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "id": "backlog-steward",
       "label": "backlog-steward",
       "modelProfile": "default",
-      "routedCapabilities": [],
       "verifiedCases": []
     },
     {
@@ -1346,8 +568,8 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "typescript-code-review"
       ],
       "description": "Reviews diffs for regressions, missing tests, weak verification, unsafe abstractions, rule violations, and documentation drift.",
+      "dynamicFolderSkills": true,
       "fixedSkills": [
-        "route-technology-skills",
         "code-review-evidence",
         "review-structured",
         "careful-coding",
@@ -1356,9 +578,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "id": "code-review-agent",
       "label": "code-review-agent",
       "modelProfile": "advanced",
-      "routedCapabilities": [
-        "language-coding"
-      ],
       "verifiedCases": []
     },
     {
@@ -1367,8 +586,8 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "spring-boot-order-cancellation"
       ],
       "description": "Implements scoped source changes using applicable project guidance, repository patterns, focused tests, and build commands.",
+      "dynamicFolderSkills": true,
       "fixedSkills": [
-        "route-technology-skills",
         "careful-coding",
         "test-driven-development",
         "code-discovery",
@@ -1378,16 +597,13 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "id": "coding-agent",
       "label": "coding-agent",
       "modelProfile": "advanced",
-      "routedCapabilities": [
-        "language-coding"
-      ],
       "verifiedCases": []
     },
     {
       "declaredCases": [],
       "description": "Coordinates multi-step development work across agents while preserving bounded context, explicit handoffs, and verification evidence.",
+      "dynamicFolderSkills": false,
       "fixedSkills": [
-        "route-technology-skills",
         "structured-design",
         "structured-explanation",
         "manage-backlog",
@@ -1398,14 +614,13 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "id": "development-orchestrator",
       "label": "development-orchestrator",
       "modelProfile": "advanced-long",
-      "routedCapabilities": [],
       "verifiedCases": []
     },
     {
       "declaredCases": [],
       "description": "Writes source-backed documentation by selecting one appropriate artifact route and creation skill for the requested outcome.",
+      "dynamicFolderSkills": true,
       "fixedSkills": [
-        "route-technology-skills",
         "development-methodology",
         "create-project-wiki",
         "create-functional-spec",
@@ -1421,16 +636,13 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "id": "documentation-writer",
       "label": "documentation-writer",
       "modelProfile": "default",
-      "routedCapabilities": [
-        "language-coding"
-      ],
       "verifiedCases": []
     },
     {
       "declaredCases": [],
       "description": "Owns interactive runtime state, service coordination, authenticated workflows, and diagnostic evidence for end-to-end work.",
+      "dynamicFolderSkills": true,
       "fixedSkills": [
-        "route-technology-skills",
         "end-to-end-verification",
         "structured-explanation",
         "project-wiki-query"
@@ -1438,14 +650,12 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "id": "e2e-browser-agent",
       "label": "e2e-browser-agent",
       "modelProfile": "advanced",
-      "routedCapabilities": [
-        "end-to-end-framework"
-      ],
       "verifiedCases": []
     },
     {
       "declaredCases": [],
       "description": "Integrates work from multiple agents or worktrees while preserving claims, ownership, verification, and conflict evidence.",
+      "dynamicFolderSkills": false,
       "fixedSkills": [
         "agent-work-merge",
         "agent-claim",
@@ -1455,12 +665,12 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "id": "merge-coordinator",
       "label": "merge-coordinator",
       "modelProfile": "advanced",
-      "routedCapabilities": [],
       "verifiedCases": []
     },
     {
       "declaredCases": [],
       "description": "Reviews methodology artifacts for catalog drift, source and adapter mismatch, stale examples, missing tests, and unclear maintenance rules.",
+      "dynamicFolderSkills": false,
       "fixedSkills": [
         "review-structured",
         "documentation-page-verifier",
@@ -1469,12 +679,12 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "id": "methodology-artifact-reviewer",
       "label": "methodology-artifact-reviewer",
       "modelProfile": "advanced",
-      "routedCapabilities": [],
       "verifiedCases": []
     },
     {
       "declaredCases": [],
       "description": "Maintains the reusable methodology artifacts, skill catalog, canonical roles, generated adapters, documentation, scripts, and regression tests.",
+      "dynamicFolderSkills": false,
       "fixedSkills": [
         "maintain-methodology-documentation",
         "development-methodology",
@@ -1484,14 +694,14 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "id": "methodology-maintainer",
       "label": "methodology-maintainer",
       "modelProfile": "advanced",
-      "routedCapabilities": [],
       "verifiedCases": []
     },
     {
       "declaredCases": [],
       "description": "Creates or updates AGENTS-PLAN.yaml and validates role agents, skill loadouts, folder routing, nested plans, AGENTS.md guidance, and Claude bridges.",
+      "dynamicFolderSkills": false,
       "fixedSkills": [
-        "route-technology-skills",
+        "detect-technology-skills",
         "create-agents-plan",
         "development-methodology",
         "documentation-bootstrap",
@@ -1500,16 +710,13 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "id": "project-agent-setup-agent",
       "label": "project-agent-setup-agent",
       "modelProfile": "default",
-      "routedCapabilities": [
-        "language-coding"
-      ],
       "verifiedCases": []
     },
     {
       "declaredCases": [],
       "description": "Installs the methodology for the active runtime, inspects a target project, and creates initial documentation and project routing guidance.",
+      "dynamicFolderSkills": false,
       "fixedSkills": [
-        "route-technology-skills",
         "documentation-bootstrap",
         "development-methodology",
         "documentation-reverse-engineering",
@@ -1518,16 +725,13 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "id": "project-bootstrap-agent",
       "label": "project-bootstrap-agent",
       "modelProfile": "advanced-long",
-      "routedCapabilities": [
-        "language-coding"
-      ],
       "verifiedCases": []
     },
     {
       "declaredCases": [],
       "description": "Classifies project artifacts by purpose, chooses paths from the project taxonomy, applies path intent, and audits generated files.",
+      "dynamicFolderSkills": false,
       "fixedSkills": [
-        "route-technology-skills",
         "project-wiki-query",
         "structured-design",
         "structured-explanation",
@@ -1536,28 +740,25 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "id": "project-organiser",
       "label": "project-organiser",
       "modelProfile": "default",
-      "routedCapabilities": [
-        "language-coding"
-      ],
       "verifiedCases": []
     },
     {
       "declaredCases": [],
       "description": "Reviews prompt protocol, tool-call safety, schema promises, evaluation coverage, and model-facing data boundaries.",
+      "dynamicFolderSkills": true,
       "fixedSkills": [
-        "route-technology-skills",
         "prompt-contracts",
         "review-structured"
       ],
       "id": "prompt-contract-reviewer",
       "label": "prompt-contract-reviewer",
       "modelProfile": "advanced",
-      "routedCapabilities": [],
       "verifiedCases": []
     },
     {
       "declaredCases": [],
       "description": "Collects public raw source artifacts for approved topics, records exclusions, and leaves synthesis to wiki ingest.",
+      "dynamicFolderSkills": false,
       "fixedSkills": [
         "project-wiki-research",
         "project-wiki",
@@ -1567,14 +768,13 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "id": "public-source-collector",
       "label": "public-source-collector",
       "modelProfile": "simple",
-      "routedCapabilities": [],
       "verifiedCases": []
     },
     {
       "declaredCases": [],
       "description": "Runs acceptance checks, builds, unit tests, integration tests, E2E tests, lint gates, and artifact-specific verification.",
+      "dynamicFolderSkills": true,
       "fixedSkills": [
-        "route-technology-skills",
         "test-strategy",
         "end-to-end-verification",
         "root-cause-analysis",
@@ -1586,16 +786,13 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "id": "qa-and-verification-agent",
       "label": "qa-and-verification-agent",
       "modelProfile": "advanced",
-      "routedCapabilities": [
-        "test-framework"
-      ],
       "verifiedCases": []
     },
     {
       "declaredCases": [],
       "description": "Investigates long-running local runtime failures with logs, processes, exclusive resources, and a tight reproduction loop.",
+      "dynamicFolderSkills": true,
       "fixedSkills": [
-        "route-technology-skills",
         "code-discovery",
         "test-strategy",
         "root-cause-analysis",
@@ -1608,17 +805,13 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "id": "runtime-diagnostician",
       "label": "runtime-diagnostician",
       "modelProfile": "advanced",
-      "routedCapabilities": [
-        "language-coding",
-        "test-framework"
-      ],
       "verifiedCases": []
     },
     {
       "declaredCases": [],
       "description": "Reviews threat, data, dependency, authentication, logging, prompt, and exploitability concerns with read-only authority.",
+      "dynamicFolderSkills": true,
       "fixedSkills": [
-        "route-technology-skills",
         "application-security",
         "review-structured",
         "project-wiki-query",
@@ -1627,14 +820,12 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "id": "security-reviewer",
       "label": "security-reviewer",
       "modelProfile": "advanced",
-      "routedCapabilities": [
-        "language-coding"
-      ],
       "verifiedCases": []
     },
     {
       "declaredCases": [],
       "description": "Validates source skills, generated metadata and agents, repository tests, and shared installs after distributed content changes.",
+      "dynamicFolderSkills": false,
       "fixedSkills": [
         "maintain-methodology-documentation",
         "careful-coding"
@@ -1642,14 +833,13 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "id": "shared-install-verifier",
       "label": "shared-install-verifier",
       "modelProfile": "default",
-      "routedCapabilities": [],
       "verifiedCases": []
     },
     {
       "declaredCases": [],
       "description": "Handles interaction design, accessibility concerns, visual review, and independent usability assessment without changing code authority.",
+      "dynamicFolderSkills": true,
       "fixedSkills": [
-        "route-technology-skills",
         "user-experience-review",
         "end-to-end-verification",
         "review-structured"
@@ -1657,12 +847,12 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "id": "ux-designer-or-reviewer",
       "label": "ux-designer-or-reviewer",
       "modelProfile": "default",
-      "routedCapabilities": [],
       "verifiedCases": []
     },
     {
       "declaredCases": [],
       "description": "Processes raw inputs into durable wiki leaves, digest entries, processed-source links, linted pages, and verifier evidence.",
+      "dynamicFolderSkills": false,
       "fixedSkills": [
         "project-wiki",
         "project-wiki-topic-writer",
@@ -1673,12 +863,12 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "id": "wiki-ingest-agent",
       "label": "wiki-ingest-agent",
       "modelProfile": "default",
-      "routedCapabilities": [],
       "verifiedCases": []
     },
     {
       "declaredCases": [],
       "description": "Answers project questions from docs/wiki first, verifies against authoritative files, and records durable knowledge gaps.",
+      "dynamicFolderSkills": false,
       "fixedSkills": [
         "project-wiki-query",
         "project-wiki-research",
@@ -1688,7 +878,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "id": "wiki-query-agent",
       "label": "wiki-query-agent",
       "modelProfile": "default",
-      "routedCapabilities": [],
       "verifiedCases": []
     }
   ],
@@ -1697,34 +886,27 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "category": "development-practice",
       "declaredCases": [],
+      "detection": null,
       "id": "agent-claim",
-      "routing": null,
       "verifiedCases": []
     },
     {
       "category": "development-practice",
       "declaredCases": [],
+      "detection": null,
       "id": "agent-work-merge",
-      "routing": null,
       "verifiedCases": []
     },
     {
       "category": "stack-and-domain",
       "declaredCases": [],
-      "id": "api-routes",
-      "routing": {
+      "detection": {
         "activation": {
           "fileGlobs": [
             "**/app/api/**/route.*",
             "**/pages/api/**"
           ]
         },
-        "applicableRoles": [
-          "coding-agent",
-          "code-review-agent",
-          "qa-and-verification-agent",
-          "security-reviewer"
-        ],
         "capabilities": [
           "http-api"
         ],
@@ -1732,61 +914,25 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "kind": "technology",
         "label": "Application route handlers",
         "priority": 100,
-        "requiredWhenMatched": true,
+        "requiredWhenDetected": true,
         "selection": "additive",
         "skill": "api-routes"
       },
+      "id": "api-routes",
       "verifiedCases": []
     },
     {
       "category": "development-practice",
       "declaredCases": [],
+      "detection": null,
       "id": "application-security",
-      "routing": {
-        "activation": {},
-        "applicableRoles": [
-          "code-review-agent",
-          "security-reviewer"
-        ],
-        "capabilities": [
-          "application-security"
-        ],
-        "companions": [],
-        "kind": "generic",
-        "label": "Application security",
-        "priority": 100,
-        "requiredWhenMatched": true,
-        "selection": "additive",
-        "skill": "application-security"
-      },
       "verifiedCases": []
     },
     {
       "category": "development-practice",
       "declaredCases": [],
+      "detection": null,
       "id": "ast-grep",
-      "routing": {
-        "activation": {
-          "commands": [
-            "ast-grep"
-          ]
-        },
-        "applicableRoles": [
-          "coding-agent",
-          "code-review-agent",
-          "runtime-diagnostician"
-        ],
-        "capabilities": [
-          "structural-search"
-        ],
-        "companions": [],
-        "kind": "tool",
-        "label": "Structure-aware search tool",
-        "priority": 200,
-        "requiredWhenMatched": false,
-        "selection": "additive",
-        "skill": "ast-grep"
-      },
       "verifiedCases": []
     },
     {
@@ -1796,15 +942,14 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "spring-boot-order-cancellation",
         "typescript-code-review"
       ],
+      "detection": null,
       "id": "careful-coding",
-      "routing": null,
       "verifiedCases": []
     },
     {
       "category": "stack-and-domain",
       "declaredCases": [],
-      "id": "clerk-auth",
-      "routing": {
+      "detection": {
         "activation": {
           "fileExtensions": [
             ".ts",
@@ -1819,12 +964,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
             "@clerk/clerk-react"
           ]
         },
-        "applicableRoles": [
-          "coding-agent",
-          "code-review-agent",
-          "qa-and-verification-agent",
-          "security-reviewer"
-        ],
         "capabilities": [
           "identity-provider"
         ],
@@ -1832,48 +971,32 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "kind": "technology",
         "label": "Clerk identity integration",
         "priority": 100,
-        "requiredWhenMatched": true,
+        "requiredWhenDetected": true,
         "selection": "additive",
         "skill": "clerk-auth"
       },
+      "id": "clerk-auth",
       "verifiedCases": []
     },
     {
       "category": "development-practice",
       "declaredCases": [],
+      "detection": null,
       "id": "code-discovery",
-      "routing": {
-        "activation": {},
-        "applicableRoles": [
-          "coding-agent",
-          "code-review-agent",
-          "runtime-diagnostician"
-        ],
-        "capabilities": [
-          "code-discovery"
-        ],
-        "companions": [],
-        "kind": "generic",
-        "label": "Code discovery",
-        "priority": 100,
-        "requiredWhenMatched": true,
-        "selection": "additive",
-        "skill": "code-discovery"
-      },
       "verifiedCases": []
     },
     {
       "category": "development-practice",
       "declaredCases": [],
+      "detection": null,
       "id": "code-execution-tracing",
-      "routing": null,
       "verifiedCases": []
     },
     {
       "category": "wiki-and-knowledge",
       "declaredCases": [],
+      "detection": null,
       "id": "code-project-wiki",
-      "routing": null,
       "verifiedCases": []
     },
     {
@@ -1883,99 +1006,105 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "spring-boot-order-cancellation",
         "typescript-code-review"
       ],
+      "detection": null,
       "id": "code-review-evidence",
-      "routing": null,
       "verifiedCases": []
     },
     {
       "category": "documentation-methodology",
       "declaredCases": [],
+      "detection": null,
       "id": "create-agents-plan",
-      "routing": null,
       "verifiedCases": []
     },
     {
       "category": "artifact-creation",
       "declaredCases": [],
+      "detection": null,
       "id": "create-architecture",
-      "routing": null,
       "verifiedCases": []
     },
     {
       "category": "development-practice",
       "declaredCases": [],
+      "detection": null,
       "id": "create-backlog",
-      "routing": null,
       "verifiedCases": []
     },
     {
       "category": "artifact-creation",
       "declaredCases": [],
+      "detection": null,
       "id": "create-functional-spec",
-      "routing": null,
       "verifiedCases": []
     },
     {
       "category": "artifact-creation",
       "declaredCases": [],
+      "detection": null,
       "id": "create-high-level-design",
-      "routing": null,
       "verifiedCases": []
     },
     {
       "category": "artifact-creation",
       "declaredCases": [],
+      "detection": null,
       "id": "create-module-design",
-      "routing": null,
       "verifiedCases": []
     },
     {
       "category": "artifact-creation",
       "declaredCases": [],
+      "detection": null,
       "id": "create-project-wiki",
-      "routing": null,
       "verifiedCases": []
     },
     {
       "category": "artifact-creation",
       "declaredCases": [],
+      "detection": null,
       "id": "create-unit-test-plan",
-      "routing": null,
+      "verifiedCases": []
+    },
+    {
+      "category": "development-practice",
+      "declaredCases": [],
+      "detection": null,
+      "id": "detect-technology-skills",
       "verifiedCases": []
     },
     {
       "category": "documentation-methodology",
       "declaredCases": [],
+      "detection": null,
       "id": "development-methodology",
-      "routing": null,
       "verifiedCases": []
     },
     {
       "category": "documentation-methodology",
       "declaredCases": [],
+      "detection": null,
       "id": "documentation-bootstrap",
-      "routing": null,
       "verifiedCases": []
     },
     {
       "category": "documentation-methodology",
       "declaredCases": [],
+      "detection": null,
       "id": "documentation-page-verifier",
-      "routing": null,
       "verifiedCases": []
     },
     {
       "category": "documentation-methodology",
       "declaredCases": [],
+      "detection": null,
       "id": "documentation-reverse-engineering",
-      "routing": null,
       "verifiedCases": []
     },
     {
       "category": "stack-and-domain",
       "declaredCases": [],
-      "id": "electron-main",
-      "routing": {
+      "detection": {
         "activation": {
           "fileGlobs": [
             "**/main/**/*.*",
@@ -1985,13 +1114,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
             "electron"
           ]
         },
-        "applicableRoles": [
-          "coding-agent",
-          "code-review-agent",
-          "qa-and-verification-agent",
-          "runtime-diagnostician",
-          "security-reviewer"
-        ],
         "capabilities": [
           "desktop-main-runtime"
         ],
@@ -1999,17 +1121,17 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "kind": "technology",
         "label": "Electron main process",
         "priority": 100,
-        "requiredWhenMatched": true,
+        "requiredWhenDetected": true,
         "selection": "additive",
         "skill": "electron-main"
       },
+      "id": "electron-main",
       "verifiedCases": []
     },
     {
       "category": "stack-and-domain",
       "declaredCases": [],
-      "id": "electron-preload",
-      "routing": {
+      "detection": {
         "activation": {
           "fileGlobs": [
             "**/preload/**/*.*",
@@ -2019,13 +1141,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
             "electron"
           ]
         },
-        "applicableRoles": [
-          "coding-agent",
-          "code-review-agent",
-          "qa-and-verification-agent",
-          "runtime-diagnostician",
-          "security-reviewer"
-        ],
         "capabilities": [
           "desktop-preload-boundary"
         ],
@@ -2033,49 +1148,69 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "kind": "technology",
         "label": "Electron preload boundary",
         "priority": 100,
-        "requiredWhenMatched": true,
+        "requiredWhenDetected": true,
         "selection": "additive",
         "skill": "electron-preload"
       },
+      "id": "electron-preload",
       "verifiedCases": []
     },
     {
       "category": "development-practice",
       "declaredCases": [],
+      "detection": null,
       "id": "end-to-end-verification",
-      "routing": {
-        "activation": {},
-        "applicableRoles": [
-          "e2e-browser-agent",
-          "qa-and-verification-agent",
-          "runtime-diagnostician",
-          "ux-designer-or-reviewer"
-        ],
-        "capabilities": [
-          "end-to-end-verification"
-        ],
-        "companions": [],
-        "kind": "generic",
-        "label": "End-to-end verification",
-        "priority": 100,
-        "requiredWhenMatched": true,
-        "selection": "additive",
-        "skill": "end-to-end-verification"
-      },
-      "verifiedCases": []
-    },
-    {
-      "category": "development-practice",
-      "declaredCases": [],
-      "id": "fix-explanation",
-      "routing": null,
       "verifiedCases": []
     },
     {
       "category": "stack-and-domain",
       "declaredCases": [],
-      "id": "harness-implementation",
-      "routing": {
+      "detection": {
+        "activation": {
+          "contentPatterns": [
+            {
+              "contains": "from fastapi",
+              "glob": "**/*.py"
+            },
+            {
+              "contains": "import fastapi",
+              "glob": "**/*.py"
+            }
+          ],
+          "fileExtensions": [
+            ".py"
+          ],
+          "manifestDependencies": [
+            "fastapi"
+          ]
+        },
+        "capabilities": [
+          "web-application-framework"
+        ],
+        "companions": [
+          "python-coding"
+        ],
+        "kind": "technology",
+        "label": "FastAPI",
+        "priority": 100,
+        "requiredWhenDetected": true,
+        "selection": "additive",
+        "skill": "fastapi"
+      },
+      "id": "fastapi",
+      "verifiedCases": []
+    },
+    {
+      "category": "development-practice",
+      "declaredCases": [],
+      "detection": null,
+      "id": "fix-explanation",
+      "verifiedCases": []
+    },
+    {
+      "category": "stack-and-domain",
+      "declaredCases": [],
+      "detection": {
         "activation": {
           "fileGlobs": [
             "**/*harness*.*",
@@ -2083,13 +1218,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
             "**/runtime/agents/**/*.*"
           ]
         },
-        "applicableRoles": [
-          "coding-agent",
-          "code-review-agent",
-          "prompt-contract-reviewer",
-          "qa-and-verification-agent",
-          "runtime-diagnostician"
-        ],
         "capabilities": [
           "agent-harness-runtime"
         ],
@@ -2097,10 +1225,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "kind": "domain",
         "label": "Agent harness implementation",
         "priority": 100,
-        "requiredWhenMatched": true,
+        "requiredWhenDetected": true,
         "selection": "additive",
         "skill": "harness-implementation"
       },
+      "id": "harness-implementation",
       "verifiedCases": []
     },
     {
@@ -2108,25 +1237,12 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "declaredCases": [
         "spring-boot-order-cancellation"
       ],
-      "id": "java-coding",
-      "routing": {
+      "detection": {
         "activation": {
           "fileExtensions": [
             ".java"
           ]
         },
-        "applicableRoles": [
-          "artifact-review-agent",
-          "code-review-agent",
-          "coding-agent",
-          "documentation-writer",
-          "qa-and-verification-agent",
-          "runtime-diagnostician",
-          "security-reviewer",
-          "project-agent-setup-agent",
-          "project-bootstrap-agent",
-          "project-organiser"
-        ],
         "capabilities": [
           "language-coding"
         ],
@@ -2134,17 +1250,17 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "kind": "technology",
         "label": "Java",
         "priority": 100,
-        "requiredWhenMatched": true,
+        "requiredWhenDetected": true,
         "selection": "additive",
         "skill": "java-coding"
       },
+      "id": "java-coding",
       "verifiedCases": []
     },
     {
       "category": "stack-and-domain",
       "declaredCases": [],
-      "id": "jest",
-      "routing": {
+      "detection": {
         "activation": {
           "fileExtensions": [
             ".ts",
@@ -2164,12 +1280,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
             "jest.config.*"
           ]
         },
-        "applicableRoles": [
-          "code-review-agent",
-          "coding-agent",
-          "qa-and-verification-agent",
-          "runtime-diagnostician"
-        ],
         "capabilities": [
           "test-framework"
         ],
@@ -2177,17 +1287,17 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "kind": "technology",
         "label": "Jest",
         "priority": 100,
-        "requiredWhenMatched": true,
+        "requiredWhenDetected": true,
         "selection": "additive",
         "skill": "jest"
       },
+      "id": "jest",
       "verifiedCases": []
     },
     {
       "category": "stack-and-domain",
       "declaredCases": [],
-      "id": "langgraph",
-      "routing": {
+      "detection": {
         "activation": {
           "fileExtensions": [
             ".ts",
@@ -2201,13 +1311,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
             "langgraph"
           ]
         },
-        "applicableRoles": [
-          "code-review-agent",
-          "coding-agent",
-          "prompt-contract-reviewer",
-          "qa-and-verification-agent",
-          "runtime-diagnostician"
-        ],
         "capabilities": [
           "workflow-runtime"
         ],
@@ -2215,17 +1318,17 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "kind": "technology",
         "label": "LangGraph",
         "priority": 100,
-        "requiredWhenMatched": true,
+        "requiredWhenDetected": true,
         "selection": "additive",
         "skill": "langgraph"
       },
+      "id": "langgraph",
       "verifiedCases": []
     },
     {
       "category": "stack-and-domain",
       "declaredCases": [],
-      "id": "local-model-integration",
-      "routing": {
+      "detection": {
         "activation": {
           "contentPatterns": [
             {
@@ -2234,13 +1337,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
             }
           ]
         },
-        "applicableRoles": [
-          "code-review-agent",
-          "coding-agent",
-          "prompt-contract-reviewer",
-          "qa-and-verification-agent",
-          "runtime-diagnostician"
-        ],
         "capabilities": [
           "local-model-runtime"
         ],
@@ -2248,31 +1344,31 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "kind": "domain",
         "label": "Local model integration",
         "priority": 100,
-        "requiredWhenMatched": true,
+        "requiredWhenDetected": true,
         "selection": "additive",
         "skill": "local-model-integration"
       },
+      "id": "local-model-integration",
       "verifiedCases": []
     },
     {
       "category": "documentation-methodology",
       "declaredCases": [],
+      "detection": null,
       "id": "maintain-methodology-documentation",
-      "routing": null,
       "verifiedCases": []
     },
     {
       "category": "development-practice",
       "declaredCases": [],
+      "detection": null,
       "id": "manage-backlog",
-      "routing": null,
       "verifiedCases": []
     },
     {
       "category": "stack-and-domain",
       "declaredCases": [],
-      "id": "nextjs-app-router",
-      "routing": {
+      "detection": {
         "activation": {
           "fileGlobs": [
             "**/app/**/*.*"
@@ -2281,16 +1377,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
             "next"
           ]
         },
-        "applicableRoles": [
-          "artifact-review-agent",
-          "code-review-agent",
-          "coding-agent",
-          "documentation-writer",
-          "qa-and-verification-agent",
-          "runtime-diagnostician",
-          "security-reviewer",
-          "ux-designer-or-reviewer"
-        ],
         "capabilities": [
           "web-application-framework"
         ],
@@ -2298,29 +1384,23 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "kind": "technology",
         "label": "Next.js App Router",
         "priority": 100,
-        "requiredWhenMatched": true,
+        "requiredWhenDetected": true,
         "selection": "additive",
         "skill": "nextjs-app-router"
       },
+      "id": "nextjs-app-router",
       "verifiedCases": []
     },
     {
       "category": "stack-and-domain",
       "declaredCases": [],
-      "id": "node-cli",
-      "routing": {
+      "detection": {
         "activation": {
           "fileGlobs": [
             "**/bin/**/*.*",
             "**/*cli*.*"
           ]
         },
-        "applicableRoles": [
-          "code-review-agent",
-          "coding-agent",
-          "qa-and-verification-agent",
-          "runtime-diagnostician"
-        ],
         "capabilities": [
           "command-line-runtime"
         ],
@@ -2328,30 +1408,23 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "kind": "technology",
         "label": "Node command line application",
         "priority": 100,
-        "requiredWhenMatched": true,
+        "requiredWhenDetected": true,
         "selection": "additive",
         "skill": "node-cli"
       },
+      "id": "node-cli",
       "verifiedCases": []
     },
     {
       "category": "stack-and-domain",
       "declaredCases": [],
-      "id": "plan-engine-implementation",
-      "routing": {
+      "detection": {
         "activation": {
           "fileGlobs": [
             "**/*plan*engine*.*",
             "**/plans/**/*.yaml"
           ]
         },
-        "applicableRoles": [
-          "code-review-agent",
-          "coding-agent",
-          "prompt-contract-reviewer",
-          "qa-and-verification-agent",
-          "runtime-diagnostician"
-        ],
         "capabilities": [
           "planning-runtime"
         ],
@@ -2359,17 +1432,17 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "kind": "domain",
         "label": "Plan engine implementation",
         "priority": 100,
-        "requiredWhenMatched": true,
+        "requiredWhenDetected": true,
         "selection": "additive",
         "skill": "plan-engine-implementation"
       },
+      "id": "plan-engine-implementation",
       "verifiedCases": []
     },
     {
       "category": "stack-and-domain",
       "declaredCases": [],
-      "id": "playwright",
-      "routing": {
+      "detection": {
         "activation": {
           "fileExtensions": [
             ".ts",
@@ -2389,12 +1462,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
             "playwright.config.*"
           ]
         },
-        "applicableRoles": [
-          "e2e-browser-agent",
-          "qa-and-verification-agent",
-          "runtime-diagnostician",
-          "ux-designer-or-reviewer"
-        ],
         "capabilities": [
           "end-to-end-framework"
         ],
@@ -2402,17 +1469,17 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "kind": "technology",
         "label": "Playwright",
         "priority": 100,
-        "requiredWhenMatched": true,
+        "requiredWhenDetected": true,
         "selection": "additive",
         "skill": "playwright"
       },
+      "id": "playwright",
       "verifiedCases": []
     },
     {
       "category": "stack-and-domain",
       "declaredCases": [],
-      "id": "postgres-drizzle",
-      "routing": {
+      "detection": {
         "activation": {
           "fileExtensions": [
             ".ts",
@@ -2427,15 +1494,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
             "drizzle-kit"
           ]
         },
-        "applicableRoles": [
-          "artifact-review-agent",
-          "code-review-agent",
-          "coding-agent",
-          "documentation-writer",
-          "qa-and-verification-agent",
-          "runtime-diagnostician",
-          "security-reviewer"
-        ],
         "capabilities": [
           "persistence-framework"
         ],
@@ -2445,89 +1503,89 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "kind": "technology",
         "label": "PostgreSQL with Drizzle",
         "priority": 100,
-        "requiredWhenMatched": true,
+        "requiredWhenDetected": true,
         "selection": "additive",
         "skill": "postgres-drizzle"
       },
+      "id": "postgres-drizzle",
       "verifiedCases": []
     },
     {
       "category": "wiki-and-knowledge",
       "declaredCases": [],
+      "detection": null,
       "id": "project-wiki",
-      "routing": null,
       "verifiedCases": []
     },
     {
       "category": "wiki-and-knowledge",
       "declaredCases": [],
+      "detection": null,
       "id": "project-wiki-query",
-      "routing": null,
       "verifiedCases": []
     },
     {
       "category": "wiki-and-knowledge",
       "declaredCases": [],
+      "detection": null,
       "id": "project-wiki-research",
-      "routing": null,
       "verifiedCases": []
     },
     {
       "category": "wiki-and-knowledge",
       "declaredCases": [],
+      "detection": null,
       "id": "project-wiki-topic-verifier",
-      "routing": null,
       "verifiedCases": []
     },
     {
       "category": "wiki-and-knowledge",
       "declaredCases": [],
+      "detection": null,
       "id": "project-wiki-topic-writer",
-      "routing": null,
       "verifiedCases": []
     },
     {
       "category": "development-practice",
       "declaredCases": [],
+      "detection": null,
       "id": "prompt-contracts",
-      "routing": {
-        "activation": {},
-        "applicableRoles": [
-          "prompt-contract-reviewer"
-        ],
-        "capabilities": [
-          "prompt-contract-review"
-        ],
-        "companions": [],
-        "kind": "generic",
-        "label": "Prompt contracts",
-        "priority": 100,
-        "requiredWhenMatched": true,
-        "selection": "additive",
-        "skill": "prompt-contracts"
-      },
       "verifiedCases": []
     },
     {
       "category": "stack-and-domain",
       "declaredCases": [],
-      "id": "react-server-components",
-      "routing": {
+      "detection": {
+        "activation": {
+          "fileExtensions": [
+            ".py",
+            ".pyi"
+          ]
+        },
+        "capabilities": [
+          "language-coding"
+        ],
+        "companions": [],
+        "kind": "technology",
+        "label": "Python",
+        "priority": 100,
+        "requiredWhenDetected": true,
+        "selection": "additive",
+        "skill": "python-coding"
+      },
+      "id": "python-coding",
+      "verifiedCases": []
+    },
+    {
+      "category": "stack-and-domain",
+      "declaredCases": [],
+      "detection": {
         "activation": {
           "fileGlobs": [
             "**/app/**/*.tsx",
             "**/app/**/*.jsx"
           ]
         },
-        "applicableRoles": [
-          "artifact-review-agent",
-          "code-review-agent",
-          "coding-agent",
-          "documentation-writer",
-          "qa-and-verification-agent",
-          "security-reviewer",
-          "ux-designer-or-reviewer"
-        ],
         "capabilities": [
           "server-user-interface"
         ],
@@ -2535,17 +1593,17 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "kind": "technology",
         "label": "React Server Components",
         "priority": 100,
-        "requiredWhenMatched": true,
+        "requiredWhenDetected": true,
         "selection": "additive",
         "skill": "react-server-components"
       },
+      "id": "react-server-components",
       "verifiedCases": []
     },
     {
       "category": "stack-and-domain",
       "declaredCases": [],
-      "id": "react-vite-renderer",
-      "routing": {
+      "detection": {
         "activation": {
           "contentPatterns": [
             {
@@ -2562,15 +1620,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
             ".jsx"
           ]
         },
-        "applicableRoles": [
-          "artifact-review-agent",
-          "code-review-agent",
-          "coding-agent",
-          "documentation-writer",
-          "qa-and-verification-agent",
-          "runtime-diagnostician",
-          "ux-designer-or-reviewer"
-        ],
         "capabilities": [
           "client-user-interface"
         ],
@@ -2578,45 +1627,46 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "kind": "technology",
         "label": "React renderer with Vite",
         "priority": 100,
-        "requiredWhenMatched": true,
+        "requiredWhenDetected": true,
         "selection": "additive",
         "skill": "react-vite-renderer"
       },
+      "id": "react-vite-renderer",
       "verifiedCases": []
     },
     {
       "category": "artifact-review",
       "declaredCases": [],
+      "detection": null,
       "id": "review-architecture",
-      "routing": null,
       "verifiedCases": []
     },
     {
       "category": "artifact-review",
       "declaredCases": [],
+      "detection": null,
       "id": "review-functional-spec",
-      "routing": null,
       "verifiedCases": []
     },
     {
       "category": "artifact-review",
       "declaredCases": [],
+      "detection": null,
       "id": "review-high-level-design",
-      "routing": null,
       "verifiedCases": []
     },
     {
       "category": "artifact-review",
       "declaredCases": [],
+      "detection": null,
       "id": "review-module-design",
-      "routing": null,
       "verifiedCases": []
     },
     {
       "category": "artifact-review",
       "declaredCases": [],
+      "detection": null,
       "id": "review-project-wiki",
-      "routing": null,
       "verifiedCases": []
     },
     {
@@ -2624,49 +1674,29 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "declaredCases": [
         "typescript-code-review"
       ],
+      "detection": null,
       "id": "review-structured",
-      "routing": null,
       "verifiedCases": []
     },
     {
       "category": "artifact-review",
       "declaredCases": [],
+      "detection": null,
       "id": "review-unit-test-plan",
-      "routing": null,
       "verifiedCases": []
     },
     {
       "category": "development-practice",
       "declaredCases": [],
+      "detection": null,
       "id": "root-cause-analysis",
-      "routing": null,
       "verifiedCases": []
     },
     {
       "category": "development-practice",
       "declaredCases": [],
-      "id": "route-technology-skills",
-      "routing": {
-        "activation": {},
-        "applicableRoles": [],
-        "capabilities": [
-          "skill-routing"
-        ],
-        "companions": [],
-        "kind": "generic",
-        "label": "Specialized skill routing",
-        "priority": 100,
-        "requiredWhenMatched": true,
-        "selection": "additive",
-        "skill": "route-technology-skills"
-      },
-      "verifiedCases": []
-    },
-    {
-      "category": "development-practice",
-      "declaredCases": [],
+      "detection": null,
       "id": "runtime-evidence-collection",
-      "routing": null,
       "verifiedCases": []
     },
     {
@@ -2674,8 +1704,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "declaredCases": [
         "spring-boot-order-cancellation"
       ],
-      "id": "spring-boot",
-      "routing": {
+      "detection": {
         "activation": {
           "contentPatterns": [
             {
@@ -2691,15 +1720,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
             ".java"
           ]
         },
-        "applicableRoles": [
-          "artifact-review-agent",
-          "code-review-agent",
-          "coding-agent",
-          "documentation-writer",
-          "qa-and-verification-agent",
-          "runtime-diagnostician",
-          "security-reviewer"
-        ],
         "capabilities": [
           "application-framework"
         ],
@@ -2709,10 +1729,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "kind": "technology",
         "label": "Spring Boot",
         "priority": 100,
-        "requiredWhenMatched": true,
+        "requiredWhenDetected": true,
         "selection": "additive",
         "skill": "spring-boot"
       },
+      "id": "spring-boot",
       "verifiedCases": []
     },
     {
@@ -2720,22 +1741,12 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "declaredCases": [
         "spring-boot-order-cancellation"
       ],
-      "id": "sql-coding",
-      "routing": {
+      "detection": {
         "activation": {
           "fileExtensions": [
             ".sql"
           ]
         },
-        "applicableRoles": [
-          "artifact-review-agent",
-          "code-review-agent",
-          "coding-agent",
-          "documentation-writer",
-          "qa-and-verification-agent",
-          "runtime-diagnostician",
-          "security-reviewer"
-        ],
         "capabilities": [
           "query-language"
         ],
@@ -2743,31 +1754,31 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "kind": "technology",
         "label": "SQL",
         "priority": 100,
-        "requiredWhenMatched": true,
+        "requiredWhenDetected": true,
         "selection": "additive",
         "skill": "sql-coding"
       },
+      "id": "sql-coding",
       "verifiedCases": []
     },
     {
       "category": "development-practice",
       "declaredCases": [],
+      "detection": null,
       "id": "structured-design",
-      "routing": null,
       "verifiedCases": []
     },
     {
       "category": "development-practice",
       "declaredCases": [],
+      "detection": null,
       "id": "structured-explanation",
-      "routing": null,
       "verifiedCases": []
     },
     {
       "category": "stack-and-domain",
       "declaredCases": [],
-      "id": "tailwind-design-system",
-      "routing": {
+      "detection": {
         "activation": {
           "fileExtensions": [
             ".ts",
@@ -2783,12 +1794,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
             "tailwind.config.*"
           ]
         },
-        "applicableRoles": [
-          "code-review-agent",
-          "coding-agent",
-          "qa-and-verification-agent",
-          "ux-designer-or-reviewer"
-        ],
         "capabilities": [
           "styling-system"
         ],
@@ -2796,10 +1801,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "kind": "technology",
         "label": "Tailwind design system",
         "priority": 100,
-        "requiredWhenMatched": true,
+        "requiredWhenDetected": true,
         "selection": "additive",
         "skill": "tailwind-design-system"
       },
+      "id": "tailwind-design-system",
       "verifiedCases": []
     },
     {
@@ -2808,40 +1814,21 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "typescript-order-pricing",
         "spring-boot-order-cancellation"
       ],
+      "detection": null,
       "id": "test-driven-development",
-      "routing": null,
       "verifiedCases": []
     },
     {
       "category": "development-practice",
       "declaredCases": [],
+      "detection": null,
       "id": "test-strategy",
-      "routing": {
-        "activation": {},
-        "applicableRoles": [
-          "coding-agent",
-          "code-review-agent",
-          "qa-and-verification-agent",
-          "runtime-diagnostician"
-        ],
-        "capabilities": [
-          "test-strategy"
-        ],
-        "companions": [],
-        "kind": "generic",
-        "label": "Test strategy",
-        "priority": 100,
-        "requiredWhenMatched": true,
-        "selection": "additive",
-        "skill": "test-strategy"
-      },
       "verifiedCases": []
     },
     {
       "category": "stack-and-domain",
       "declaredCases": [],
-      "id": "tool-runtime-implementation",
-      "routing": {
+      "detection": {
         "activation": {
           "fileGlobs": [
             "**/*tool*registry*.*",
@@ -2849,14 +1836,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
             "**/tools/**/*.*"
           ]
         },
-        "applicableRoles": [
-          "code-review-agent",
-          "coding-agent",
-          "prompt-contract-reviewer",
-          "qa-and-verification-agent",
-          "runtime-diagnostician",
-          "security-reviewer"
-        ],
         "capabilities": [
           "tool-runtime"
         ],
@@ -2864,10 +1843,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "kind": "domain",
         "label": "Tool runtime implementation",
         "priority": 100,
-        "requiredWhenMatched": true,
+        "requiredWhenDetected": true,
         "selection": "additive",
         "skill": "tool-runtime-implementation"
       },
+      "id": "tool-runtime-implementation",
       "verifiedCases": []
     },
     {
@@ -2876,8 +1856,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "typescript-order-pricing",
         "typescript-code-review"
       ],
-      "id": "typescript-coding",
-      "routing": {
+      "detection": {
         "activation": {
           "fileExtensions": [
             ".ts",
@@ -2886,19 +1865,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
             ".cts"
           ]
         },
-        "applicableRoles": [
-          "artifact-review-agent",
-          "code-review-agent",
-          "coding-agent",
-          "documentation-writer",
-          "qa-and-verification-agent",
-          "runtime-diagnostician",
-          "security-reviewer",
-          "ux-designer-or-reviewer",
-          "project-agent-setup-agent",
-          "project-bootstrap-agent",
-          "project-organiser"
-        ],
         "capabilities": [
           "language-coding"
         ],
@@ -2906,10 +1872,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "kind": "technology",
         "label": "TypeScript",
         "priority": 100,
-        "requiredWhenMatched": true,
+        "requiredWhenDetected": true,
         "selection": "additive",
         "skill": "typescript-coding"
       },
+      "id": "typescript-coding",
       "verifiedCases": []
     },
     {
@@ -2918,8 +1885,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "typescript-order-pricing",
         "typescript-code-review"
       ],
-      "id": "typescript-esm",
-      "routing": {
+      "detection": {
         "activation": {
           "contentPatterns": [
             {
@@ -2938,12 +1904,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
             ".cts"
           ]
         },
-        "applicableRoles": [
-          "code-review-agent",
-          "coding-agent",
-          "qa-and-verification-agent",
-          "runtime-diagnostician"
-        ],
         "capabilities": [
           "module-system"
         ],
@@ -2953,10 +1913,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "kind": "technology",
         "label": "TypeScript ECMAScript modules",
         "priority": 100,
-        "requiredWhenMatched": true,
+        "requiredWhenDetected": true,
         "selection": "additive",
         "skill": "typescript-esm"
       },
+      "id": "typescript-esm",
       "verifiedCases": []
     },
     {
@@ -2965,8 +1926,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "typescript-order-pricing",
         "typescript-code-review"
       ],
-      "id": "typescript-strict",
-      "routing": {
+      "detection": {
         "activation": {
           "contentPatterns": [
             {
@@ -2981,15 +1941,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
             ".cts"
           ]
         },
-        "applicableRoles": [
-          "artifact-review-agent",
-          "code-review-agent",
-          "coding-agent",
-          "documentation-writer",
-          "qa-and-verification-agent",
-          "runtime-diagnostician",
-          "security-reviewer"
-        ],
         "capabilities": [
           "strict-type-system"
         ],
@@ -2999,39 +1950,24 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "kind": "technology",
         "label": "Strict TypeScript",
         "priority": 100,
-        "requiredWhenMatched": true,
+        "requiredWhenDetected": true,
         "selection": "additive",
         "skill": "typescript-strict"
       },
+      "id": "typescript-strict",
       "verifiedCases": []
     },
     {
       "category": "development-practice",
       "declaredCases": [],
+      "detection": null,
       "id": "user-experience-review",
-      "routing": {
-        "activation": {},
-        "applicableRoles": [
-          "ux-designer-or-reviewer"
-        ],
-        "capabilities": [
-          "user-experience-review"
-        ],
-        "companions": [],
-        "kind": "generic",
-        "label": "User experience review",
-        "priority": 100,
-        "requiredWhenMatched": true,
-        "selection": "additive",
-        "skill": "user-experience-review"
-      },
       "verifiedCases": []
     },
     {
       "category": "stack-and-domain",
       "declaredCases": [],
-      "id": "vitest",
-      "routing": {
+      "detection": {
         "activation": {
           "fileExtensions": [
             ".ts",
@@ -3050,12 +1986,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
             "vitest.config.*"
           ]
         },
-        "applicableRoles": [
-          "code-review-agent",
-          "coding-agent",
-          "qa-and-verification-agent",
-          "runtime-diagnostician"
-        ],
         "capabilities": [
           "test-framework"
         ],
@@ -3063,10 +1993,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "kind": "technology",
         "label": "Vitest",
         "priority": 100,
-        "requiredWhenMatched": true,
+        "requiredWhenDetected": true,
         "selection": "additive",
         "skill": "vitest"
       },
+      "id": "vitest",
       "verifiedCases": []
     }
   ],

@@ -4,20 +4,18 @@ description: Maintains the reusable methodology artifacts, skill catalog, canoni
 instructions: Keep canonical sources and derived artifacts aligned. Regenerate outputs, run the complete validation workflow, and return the changed scope with evidence.
 modelProfile: advanced
 skills:
-- maintain-methodology-documentation
-- development-methodology
-- structured-design
-- structured-explanation
-skillComments:
-  maintain-methodology-documentation: Owns canonical sources, generation, adapters, validation, and shared refresh.
-  development-methodology: Preserves the methodology's artifact routing and documentation contracts.
-  structured-design: Makes catalog, role, and operating-model changes explicit before implementation.
-  structured-explanation: Reports the changed scope, decisions, validation, and remaining risk clearly.
+- maintain-methodology-documentation:
+    justification: We need this to keep canonical sources, generated artifacts, adapters, validation, and shared installs synchronized across a maintenance change.
+- development-methodology:
+    justification: We need this to preserve the bundle's artifact routing and documentation contracts while its own methodology is changed.
+- structured-design:
+    justification: We need this when catalog, role, or operating-model changes require explicit boundaries and relationships before implementation.
+- structured-explanation:
+    justification: We need this to hand off the changed scope, decisions, verification evidence, and remaining risk without ambiguity.
 outputContract:
-- aligned canonical sources
-- regenerated adapter and documentation data
-- verification evidence
-outputComments:
-  aligned canonical sources: Confirms that source roles, skills, documentation, and tests agree.
-  regenerated adapter and documentation data: Identifies the derived files refreshed from those canonical sources.
-  verification evidence: Shows the validation results supporting the completed maintenance work.
+- aligned canonical sources:
+    purpose: Ensures source roles, skills, documentation, and tests express one consistent methodology for maintainers and consumers.
+- regenerated adapter and documentation data:
+    purpose: Makes runtime adapters and published documentation reflect the canonical changes so downstream users do not receive stale behavior or guidance.
+- verification evidence:
+    purpose: Gives maintainers confidence that the coordinated change passes the required generation, validation, and installation checks.

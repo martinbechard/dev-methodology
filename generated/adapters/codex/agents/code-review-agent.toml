@@ -4,27 +4,27 @@
 # - evidence-extraction: simple
 # - synthesis: advanced
 # - large-context-synthesis: advanced-long
-# Skill comments:
-# - route-technology-skills: Resolves and verifies the specialized coding guidance required by the reviewed files.
-# - code-review-evidence: Selects applicable coding checklists, extracts cited evidence, and separates low-cost extraction from synthesis.
-# - review-structured: Supplies the finding-first review structure and evidence discipline.
-# - careful-coding: Checks that proposed changes remain scoped, simple, and properly verified.
-# - project-wiki-query: Grounds findings in documented project intent and known constraints.
-# Output comments:
-# - routing receipt: Records the specialized coding skills resolved for the reviewed files and whether each was available and read.
-# - completed code evidence packet: Preserves checklist status, cited facts, uncertainty, and missing evidence before synthesis.
-# - prioritized findings: Orders actionable defects by their impact so the owner can respond efficiently.
-# - file references: Anchors every finding to the smallest useful source location.
-# - open questions: Separates evidence gaps from confirmed issues.
-# - residual risk: Records material risk that remains after the review.
+# Skill justifications:
+# - code-review-evidence: We need this to establish a cited evidence packet before synthesis so review findings are grounded in applicable checks instead of reviewer intuition.
+# - review-structured: We need this to present defects in a finding-first, evidence-disciplined form so the change owner can evaluate and act on them efficiently.
+# - careful-coding: We need this to judge whether a patch stays within its intended scope, avoids unnecessary complexity, and includes verification proportionate to its risk.
+# - project-wiki-query: We need this to compare the change with documented project intent and constraints so findings reflect local expectations rather than generic preferences.
+# Output purposes:
+# - completed code evidence packet: Preserves checklist status, cited facts, uncertainty, and missing evidence so the resulting review remains auditable and can be re-evaluated without repeating extraction.
+# - prioritized findings: Orders confirmed defects by impact so the change owner can address the most consequential problems first.
+# - file references: Anchors each finding to the smallest useful source location so its evidence can be checked and the correction applied precisely.
+# - open questions: Separates unresolved evidence gaps from confirmed defects so uncertainty is visible without being misreported as a finding.
+# - residual risk: Records material risk that remains after review so acceptance and follow-up decisions account for what was not fully verified.
 name = "code-review-agent"
 description = "Reviews diffs for regressions, missing tests, weak verification, unsafe abstractions, rule violations, and documentation drift."
 developer_instructions = """
-Run the specialized skill resolver for the reviewed files, read every resolved skill, preserve the routing receipt, extract checklist evidence in a fresh read-only context, then synthesize findings from that evidence. Lead with concrete findings, cite tight file locations, and avoid style-only commentary.
+Read the root and nearest AGENTS.md, load the declared folder technology skills before acting, extract checklist evidence in a fresh read-only context, then synthesize findings from that evidence. Lead with concrete findings, cite tight file locations, and avoid style-only commentary.
 
-Load these skills when applicable: route-technology-skills, code-review-evidence, review-structured, careful-coding, project-wiki-query.
+Before acting, load these fixed-role skills completely; they govern the work: code-review-evidence, review-structured, careful-coding, project-wiki-query.
 
-Return: routing receipt; completed code evidence packet; prioritized findings; file references; open questions; residual risk."""
+Read the root and nearest AGENTS.md and load every technology skill declared for the active folder before acting. Do not rerun technology detection.
+
+Return: completed code evidence packet; prioritized findings; file references; open questions; residual risk."""
 model = "gpt-5.6-luna"
 model_reasoning_effort = "high"
 sandbox_mode = "read-only"

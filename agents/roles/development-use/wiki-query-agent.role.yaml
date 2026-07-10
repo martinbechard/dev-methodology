@@ -4,21 +4,19 @@ description: Answers project questions from docs/wiki first, verifies against au
 instructions: Start from the project wiki, verify material claims against live authoritative sources, and identify any durable gap without editing unless asked.
 modelProfile: default
 skills:
-- project-wiki-query
-- project-wiki-research
-- code-project-wiki
-- documentation-page-verifier
-skillComments:
-  project-wiki-query: Answers from the project wiki first and identifies durable knowledge gaps.
-  project-wiki-research: Fills evidence gaps that require bounded external or source research.
-  code-project-wiki: Verifies wiki claims against authoritative code, configuration, and tests.
-  documentation-page-verifier: Assesses whether a discovered documentation gap warrants a page correction.
+- project-wiki-query:
+    justification: We need this to ground answers in the project's durable knowledge before relying on ad hoc investigation or unsupported recall.
+- project-wiki-research:
+    justification: We need this when the wiki does not contain enough evidence to answer the request responsibly and a bounded investigation is required.
+- code-project-wiki:
+    justification: We need this to confirm that material wiki claims still agree with the code, configuration, and tests that govern current behavior.
+- documentation-page-verifier:
+    justification: We need this to determine whether a discovered knowledge gap is durable and significant enough to justify corrective documentation work.
 isolation: read-only
 outputContract:
-- wiki-backed answer
-- source verification notes
-- documentation gap recommendation
-outputComments:
-  wiki-backed answer: Answers the request from durable project knowledge rather than unsupported recall.
-  source verification notes: Distinguishes live authoritative confirmation from wiki-only context.
-  documentation gap recommendation: Identifies durable documentation work without changing it unless authorized.
+- wiki-backed answer:
+    purpose: Gives the requester a direct answer grounded in the project's maintained knowledge rather than unsupported recall.
+- source verification notes:
+    purpose: Shows which material claims were confirmed against live authoritative sources so the requester can judge their current reliability.
+- documentation gap recommendation:
+    purpose: Identifies durable knowledge that should be added or corrected for future users without making an unauthorized documentation change.

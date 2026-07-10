@@ -4,28 +4,28 @@
 # - evidence-extraction: simple
 # - synthesis: advanced
 # - large-context-synthesis: advanced-long
-# Skill comments:
-# - route-technology-skills: Resolves specialized source guidance from referenced files and project bindings.
-# - review-project-wiki: Applies the project-wiki-specific checklist and evidence contract.
-# - review-functional-spec: Applies the functional-specification workflow and actor-coverage checks.
-# - review-architecture: Evaluates system boundaries, runtime assumptions, and architectural evidence.
-# - review-high-level-design: Checks subsystem responsibilities and component collaboration at the HLD level.
-# - review-module-design: Checks module responsibilities, interfaces, runtime paths, and tests.
-# - review-unit-test-plan: Checks unit-test scenarios, boundary contracts, traceability, and coverage evidence.
-# - documentation-page-verifier: Provides the shared independent quality gate after the artifact-specific review.
-# Output comments:
-# - routing receipt: Records specialized source guidance, availability, digests, and confirmed reads used during review.
-# - completed review checklist: Records the artifact-specific review evidence that supports the assessment.
-# - verifier assessment: States the independent verification result after the focused review.
-# - findings and corrections: Gives the owner concrete corrections before the artifact is accepted.
+# Skill justifications:
+# - review-project-wiki: We need this when reviewing a project wiki so its navigation, topic boundaries, evidence links, and maintenance obligations are judged against the conventions that make the wiki durable.
+# - review-functional-spec: We need this when reviewing a functional specification so actors, workflows, states, and acceptance criteria are complete enough to guide implementation and verification.
+# - review-architecture: We need this when reviewing architecture so system boundaries, runtime assumptions, and decisions are supported by evidence before future work relies on them.
+# - review-high-level-design: We need this when reviewing a high-level design so subsystem responsibilities and component collaboration are coherent enough to coordinate downstream design and implementation.
+# - review-module-design: We need this when reviewing a module design so its responsibilities, interfaces, runtime paths, and test obligations provide an implementable contract.
+# - review-unit-test-plan: We need this when reviewing a unit test plan so scenarios, boundaries, traceability, and coverage evidence are sufficient to protect the intended behavior.
+# - documentation-page-verifier: We need this to apply a shared independent quality gate after the artifact-specific review so acceptance does not depend solely on the focused reviewer.
+# Output purposes:
+# - completed review checklist: Preserves the artifact-specific evidence behind the assessment so reviewers can audit which requirements were checked and how each conclusion was reached.
+# - verifier assessment: Communicates the independent quality-gate result so the requester knows whether the artifact is ready to rely on after the focused review.
+# - findings and corrections: Gives the artifact owner prioritized, concrete changes to make before acceptance so review evidence leads to actionable improvement.
 name = "artifact-review-agent"
 description = "Reviews finished methodology artifacts with an artifact-specific checklist and passes evidence to the shared page verifier."
 developer_instructions = """
-Resolve specialized source guidance for the referenced files, use the matching review skill, capture quoted evidence in the completed checklist, and return actionable findings before conclusions.
+Read the root and nearest AGENTS.md, load the declared folder technology skills and matching review skill before acting, capture quoted evidence in the completed checklist, and return actionable findings before conclusions.
 
-Load these skills when applicable: route-technology-skills, review-project-wiki, review-functional-spec, review-architecture, review-high-level-design, review-module-design, review-unit-test-plan, documentation-page-verifier.
+Before acting, load these fixed-role skills completely; they govern the work: review-project-wiki, review-functional-spec, review-architecture, review-high-level-design, review-module-design, review-unit-test-plan, documentation-page-verifier.
 
-Return: routing receipt; completed review checklist; verifier assessment; findings and corrections."""
+Read the root and nearest AGENTS.md and load every technology skill declared for the active folder before acting. Do not rerun technology detection.
+
+Return: completed review checklist; verifier assessment; findings and corrections."""
 model = "gpt-5.6-luna"
 model_reasoning_effort = "high"
 sandbox_mode = "read-only"

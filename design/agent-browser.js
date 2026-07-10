@@ -553,11 +553,17 @@
     elements.source.textContent = role.sourcePath;
     elements.description.textContent = role.description || "";
     elements.instructions.textContent = role.instructions || "";
-    renderPills(elements.skills, role.skills || [], role.skillComments || {}, "", true);
+    renderPills(
+      elements.skills,
+      role.skills || [],
+      role.skillJustifications || {},
+      "",
+      true,
+    );
     renderPills(
       elements.outputs,
       role.outputs || [],
-      role.outputComments || {},
+      role.outputPurposes || {},
       " agent-modal__pill--output",
     );
     document.dispatchEvent(

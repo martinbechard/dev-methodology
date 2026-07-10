@@ -1,16 +1,11 @@
-schema: dev-methodology-skill-routing
+schema: dev-methodology-technology-detection
 version: 1
 skill: node-cli
 kind: technology
 label: Node command line application
 capabilities:
-  - command-line-runtime
-applicableRoles:
-  - code-review-agent
-  - coding-agent
-  - qa-and-verification-agent
-  - runtime-diagnostician
+- command-line-runtime
 activation:
   fileGlobs:
-    - "**/bin/**/*.*"
-    - "**/*cli*.*"
+  - "**/bin/**/*.*"
+  - "**/*cli*.*"

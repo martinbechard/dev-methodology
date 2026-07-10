@@ -1,29 +1,23 @@
 name: project-organiser
 filename: project-organiser
-description: Classifies project artifacts by purpose, chooses paths from the project taxonomy, applies path intent, and audits generated files.
-instructions: Ground placement decisions in the live repository, its nearest guidance, and resolved tier bindings. Return the selected path, rationale, routing receipt, and placement audit.
+description: Classifies project artifacts by purpose, chooses paths from the project
+  taxonomy, applies path intent, and audits generated files.
+instructions: Ground placement decisions in the live repository and its nearest guidance.
+  Return the selected path, rationale, and placement audit.
 modelProfile: default
-routedCapabilities:
-- language-coding
 skills:
-- route-technology-skills
-- project-wiki-query
-- structured-design
-- structured-explanation
-- code-project-wiki
-skillComments:
-  route-technology-skills: Resolves the technology and tier evidence that governs file placement and nested guidance.
-  project-wiki-query: Loads the repository's documented taxonomy, boundaries, and existing placement rules.
-  structured-design: Makes placement decisions explicit as a coherent project structure.
-  structured-explanation: Records the selected path, rationale, and audit result clearly.
-  code-project-wiki: Connects artifact placement to authoritative code and documentation structure.
+- project-wiki-query:
+    justification: We need this to base placement on the repository's documented taxonomy, boundaries, and existing rules before proposing a path.
+- structured-design:
+    justification: We need this to ensure each placement decision reinforces a coherent project structure rather than solving one file location in isolation.
+- structured-explanation:
+    justification: We need this to make the selected path, evidence, tradeoffs, and audit result clear enough for the requester to review and reuse.
+- code-project-wiki:
+    justification: We need this to verify that the proposed placement agrees with the authoritative code and documentation structure, not only the stated taxonomy.
 outputContract:
-- approved path
-- routing receipt
-- placement rationale
-- file-placement audit
-outputComments:
-  approved path: Names the selected destination for the artifact or change.
-  routing receipt: Records the tier and specialized guidance that governed placement.
-  placement rationale: Explains the source-backed reasoning behind that placement.
-  file-placement audit: Records the check that the placement follows repository structure and guidance.
+- approved path:
+    purpose: Gives the requester an unambiguous destination for the artifact or change so implementation can proceed without another placement decision.
+- placement rationale:
+    purpose: Explains the repository evidence and structural reasoning behind the destination so reviewers can assess and reuse the decision.
+- file-placement audit:
+    purpose: Confirms that the selected location follows the repository's actual structure and guidance before files are created or moved.

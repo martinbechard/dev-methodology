@@ -413,7 +413,7 @@
           <tr>
             <td><span class="name">Skills</span></td>
             <td><code>skills</code></td>
-            <td>Names reusable Agent Skills the role should load or reference. Some runtimes use a native skills list; Codex uses <code>[[skills.config]]</code> entries for per-agent skill configuration, such as enabling or disabling installed skill paths.</td>
+            <td>Names generic fixed-role skills. Claude preloads them through its native skills property. Codex receives deterministic developer instructions to load them before acting; optional <code>skillAvailability</code> entries generate explicit name-based or path-based <code>[[skills.config]]</code> availability overrides.</td>
           </tr>
           <tr>
             <td><span class="name">Tools</span></td>
@@ -441,9 +441,9 @@
             <td>Declares intended semantic profiles for bounded stages. Separate stage invocations must be implemented and captured before staged execution is considered verified.</td>
           </tr>
           <tr>
-            <td><span class="name">Routed capabilities</span></td>
-            <td><code>routedCapabilities</code></td>
-            <td>Names specialized capability families the role expects. The resolver reports an explicit generic fallback when no bundled variant matches.</td>
+            <td><span class="name">Dynamic folder skills</span></td>
+            <td><code>dynamicFolderSkills</code></td>
+            <td>Requires the role to read the nearest AGENTS.md and load its declared folder technology skills before acting without rerunning detection.</td>
           </tr>
           <tr>
             <td><span class="name">Max turns</span></td>
@@ -517,11 +517,11 @@
         </article>
         <article class="card skill">
           <h3>Skills, Tools, And MCP</h3>
-          <p>Codex subagents use the tools available to the parent task, and custom agent files can include supported Codex config keys in the same TOML file. Use <code>[mcp_servers.name]</code> sections to define agent-specific MCP servers and <code>[[skills.config]]</code> entries to configure installed skills for that agent. The schema does not define a simple role-level <code>tools</code> or <code>skills</code> array, so tool and skill-use guidance should still be written into <code>developer_instructions</code> and validated against the shared skill catalog.</p>
+          <p>Codex subagents use the tools available to the parent task. Fixed-role skills are written as unconditional loading requirements in <code>developer_instructions</code>. Use <code>[mcp_servers.name]</code> for agent-specific MCP servers and emit <code>[[skills.config]]</code> only when the canonical role explicitly requests a name-based or path-based availability override; availability configuration is not preloading or read proof.</p>
         </article>
         <article class="card risk">
           <h3>Runtime Controls</h3>
-          <p>Because custom agents are config layers, the common source can map <code>model</code>, <code>model_reasoning_effort</code>, <code>sandbox_mode</code>, <code>mcp_servers</code>, and <code>skills.config</code> into native TOML when those fields are intentional for that custom agent. Global controls such as <code>agents.max_threads</code>, <code>agents.max_depth</code>, and <code>agents.job_max_runtime_seconds</code> remain under <code>[agents]</code> in normal Codex config.</p>
+          <p>Because custom agents are config layers, the common source can map <code>model</code>, <code>model_reasoning_effort</code>, <code>sandbox_mode</code>, <code>mcp_servers</code>, and explicitly requested <code>skills.config</code> availability overrides into native TOML. Fixed-role skills alone do not create redundant config entries. Global controls such as <code>agents.max_threads</code>, <code>agents.max_depth</code>, and <code>agents.job_max_runtime_seconds</code> remain under <code>[agents]</code> in normal Codex config.</p>
         </article>
         <article class="card source">
           <h3>Config Files</h3>
@@ -569,7 +569,7 @@
         </article>
         <article class="card skill">
           <h3>Skills, Tools, And MCP</h3>
-          <p>Gemini CLI documents Agent Skills and shared skill discovery tiers, but the current subagent schema does not document a <code>skills</code> frontmatter field. Role skill routing should be emitted into the prompt body and backed by shared skill installation.</p>
+          <p>Gemini CLI documents Agent Skills and shared skill discovery tiers, but the current subagent schema does not document a <code>skills</code> frontmatter field. Fixed-role and folder skill-loading requirements should be emitted into the prompt body and backed by shared skill installation.</p>
         </article>
         <article class="card risk">
           <h3>Runtime Controls</h3>
@@ -662,8 +662,8 @@
           </tr>
           <tr>
             <td><span class="name">skills</span></td>
-            <td>Write skill-use guidance in <code>developer_instructions</code>. Add <code>[[skills.config]]</code> entries in the same TOML file when the agent should enable or disable specific installed skill paths.</td>
-            <td><code>skills</code></td>
+            <td>Require every fixed-role skill to be loaded before acting in <code>developer_instructions</code>. Emit <code>[[skills.config]]</code> only for explicit name-based or path-based availability overrides.</td>
+            <td><code>skills</code> preloads fixed-role skill content.</td>
             <td>Emit into body and rely on installed skills.</td>
             <td><code>skills</code></td>
             <td>Emit into body and rely on Copilot-compatible skill folders.</td>
@@ -701,9 +701,9 @@
             <td><code>model</code></td>
           </tr>
           <tr>
-            <td><span class="name">routedCapabilities</span></td>
-            <td>Resolved through prompt instructions and the portable registry.</td>
-            <td>Resolved through prompt instructions and the portable registry.</td>
+            <td><span class="name">dynamicFolderSkills</span></td>
+            <td>Load the folder skills declared by the nearest <code>AGENTS.md</code> through unconditional developer instructions.</td>
+            <td>Load the folder skills declared by the nearest <code>AGENTS.md</code> through the <code>Skill</code> tool. Restrictive tool allowlists must include <code>Skill</code>.</td>
             <td>Resolved through shared skill guidance.</td>
             <td>Resolved through shared skill guidance.</td>
             <td>Resolved through shared skill guidance.</td>
@@ -805,7 +805,7 @@
       <div class="flow">
         <div class="flow-row">
           <h3>Use A Common Role Source</h3>
-          <p>Canonical files under <code>agents/roles/</code> own name, filename, description, instructions, generic skills, routed capabilities, tools, disallowed tools, MCP servers, modelProfile, modelStages, max turns, timeout, permission mode, isolation, memory, and output contract. The generator validates them against <code>agents/role-schema.yaml</code>.</p>
+          <p>Canonical files under <code>agents/roles/</code> own name, filename, description, instructions, generic fixed-role skills, dynamic folder-skill policy, optional skill availability overrides, tools, disallowed tools, MCP servers, modelProfile, modelStages, max turns, timeout, permission mode, isolation, memory, and output contract. The generator validates them against <code>agents/role-schema.yaml</code>.</p>
         </div>
         <div class="flow-row">
           <h3>Generate Runtime Adapters</h3>
@@ -813,7 +813,7 @@
         </div>
         <div class="flow-row">
           <h3>Validate Against Skills</h3>
-          <p>The generators build the skill catalog and specialized routing registry before roles. Every canonical <code>skills</code> entry must resolve to a bundled generic skill; specialized variants are linked through validated routing metadata.</p>
+          <p>The generators build the skill catalog and setup-time technology detection registry before roles. Every canonical <code>skills</code> entry must resolve to a bundled generic skill; specialized variants are recorded in project AGENTS-PLAN.yaml and AGENTS.md instead of canonical roles.</p>
         </div>
         <div class="flow-row">
           <h3>Keep HTML Pure</h3>
@@ -823,16 +823,16 @@
     </section>
 
     <section class="section" aria-labelledby="role-skills-title">
-      <h2 id="role-skills-title">Generic Roles And Specialized Routing</h2>
+      <h2 id="role-skills-title">Fixed Roles And Setup-Time Technology Detection</h2>
       <div class="panel">
         <p>
-          Canonical role files own responsibility, authority, generic workflow skills, and output contracts. route-technology-skills owns the portable selection protocol, while each specialized skill owns its activation evidence in routing.yaml.
+          Canonical role files own responsibility, authority, generic fixed-role skills, and output contracts. Project Agent Setup uses detect-technology-skills once for representative folders, while each specialized technology or domain skill owns its activation evidence in detection.yaml.
         </p>
         <ul>
-          <li>Project setup performs early binding by writing source-backed path and tier loadouts into AGENTS-PLAN.yaml and AGENTS.md.</li>
-          <li>Task execution performs late validation against actual scoped files and generated registry evidence.</li>
-          <li>The routing build rejects specialized skills fixed directly into canonical role loadouts.</li>
-          <li>The resolver records selection, availability, and digests; harness traces are required to prove actual skill reads.</li>
+          <li>Project setup writes source-backed folder loadouts into AGENTS-PLAN.yaml and unconditional loading instructions into AGENTS.md.</li>
+          <li>Task execution loads fixed-role skills and the nearest AGENTS.md folder skills without rerunning detection.</li>
+          <li>The detection build rejects specialized skills fixed directly into canonical role loadouts and rejects generic skills in detection metadata.</li>
+          <li>Claude preloads fixed-role skills natively; Codex receives deterministic loading instructions. Harness traces remain necessary to prove runtime reads.</li>
         </ul>
       </div>
     </section>

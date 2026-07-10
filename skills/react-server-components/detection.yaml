@@ -1,19 +1,11 @@
-schema: dev-methodology-skill-routing
+schema: dev-methodology-technology-detection
 version: 1
 skill: react-server-components
 kind: technology
 label: React Server Components
 capabilities:
-  - server-user-interface
-applicableRoles:
-  - artifact-review-agent
-  - code-review-agent
-  - coding-agent
-  - documentation-writer
-  - qa-and-verification-agent
-  - security-reviewer
-  - ux-designer-or-reviewer
+- server-user-interface
 activation:
   fileGlobs:
-    - "**/app/**/*.tsx"
-    - "**/app/**/*.jsx"
+  - "**/app/**/*.tsx"
+  - "**/app/**/*.jsx"
