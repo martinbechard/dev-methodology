@@ -57,8 +57,8 @@ class AgentSkillHierarchyTests(unittest.TestCase):
         ]
         self.assertEqual("Stack And Domain", skill_group_nodes[-1].text)
 
-    def test_agents_expose_selection_and_keyboard_hooks(self) -> None:
-        """Every canonical role should be an accessible selector with mapped edges."""
+    def test_agents_and_skills_expose_selection_and_keyboard_hooks(self) -> None:
+        """Every role and skill should be an accessible selector with mapped edges."""
         role_nodes = self.root.findall(
             f".//{{{SVG_NAMESPACE}}}g[@class='role-node']"
         )
@@ -71,12 +71,26 @@ class AgentSkillHierarchyTests(unittest.TestCase):
                 self.assertTrue(node.attrib.get("data-role"))
                 self.assertTrue(node.attrib.get("data-display-name"))
 
+        skill_nodes = self.root.findall(
+            f".//{{{SVG_NAMESPACE}}}g[@class='skill-node']"
+        )
+        self.assertTrue(skill_nodes)
+        for node in skill_nodes:
+            with self.subTest(skill=node.attrib.get("data-skill")):
+                self.assertEqual("button", node.attrib.get("role"))
+                self.assertEqual("0", node.attrib.get("tabindex"))
+                self.assertEqual("false", node.attrib.get("aria-pressed"))
+                self.assertTrue(node.attrib.get("data-skill"))
+
         edges = self.root.findall(f".//{{{SVG_NAMESPACE}}}path[@data-role]")
         self.assertTrue(edges)
         self.assertTrue(all(edge.attrib.get("data-skill") for edge in edges))
         self.assertIn('event.key === "Enter"', self.rendered)
         self.assertIn('event.key === "Escape"', self.rendered)
         self.assertIn('aria-live="polite"', self.rendered)
+        self.assertIn("function selectSkill(skillName)", self.rendered)
+        self.assertIn("edge.dataset.skill === selectedSkill", self.rendered)
+        self.assertIn("canonical agents use", self.rendered)
 
     def test_agent_groups_follow_the_canonical_schema_order(self) -> None:
         """The visual reading order should match the maintained role-group contract."""

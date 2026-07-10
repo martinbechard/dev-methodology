@@ -143,7 +143,10 @@ def _skill_node(
     modifier: str,
 ) -> str:
     return (
-        f'<g class="skill-node" data-skill="{_escape(skill_name)}">'
+        f'<g class="skill-node" data-skill="{_escape(skill_name)}" role="button" '
+        f'tabindex="0" aria-pressed="false" '
+        f'aria-label="Select skill {_escape(skill_name)}">'
+        f'<title>Select {_escape(skill_name)} to isolate the agents using it</title>'
         f'<rect x="{SKILL_X}" y="{y}" width="{SKILL_WIDTH}" height="24" rx="5" '
         f'class="node skill{modifier}"/>'
         f'<path d="M {SKILL_X + 1} {y + 5} V {y + 19}" class="selection-marker"/>'
@@ -220,7 +223,7 @@ def build_svg() -> str:
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{SVG_WIDTH}" height="{height}" '
         f'viewBox="0 0 {SVG_WIDTH} {height}" role="group" aria-labelledby="title desc">',
         '<title id="title">Interactive canonical agent and skill hierarchy</title>',
-        '<desc id="desc">Select an agent to highlight only its fixed and request-specific skill connections. Stack and domain skills appear separately at the bottom because project setup assigns them to folders rather than canonical roles.</desc>',
+        '<desc id="desc">Select an agent to highlight its skills, or select a skill to highlight every canonical agent using it. Stack and domain skills appear separately at the bottom because project setup assigns them to folders rather than canonical roles.</desc>',
         """<style><![CDATA[
 text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
 .heading{font-size:18px;font-weight:700}.group{font-size:13px;font-weight:700;fill:#334155}
@@ -231,21 +234,22 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
 .node.skill.conditional{fill:#eeeafd;stroke:#7c3aed}.node.skill.technology{fill:#e0f2fe;stroke:#0284c7}
 .edge{fill:none;stroke:#94a3b8;stroke-width:1;opacity:.07;transition:opacity 150ms ease,stroke 150ms ease,stroke-width 150ms ease}
 .edge.conditional-edge{stroke:#7c3aed}.edge.active{stroke:#0f766e;stroke-width:2.4;opacity:.96}.edge.dimmed{opacity:.012}
-.role-node,.skill-node{transition:opacity 150ms ease}.role-node{cursor:pointer;outline:none}
-.role-node:hover .node,.role-node:focus .node{stroke:#0f766e;stroke-width:2.2}
-.role-node:focus .node{stroke-dasharray:4 2}.role-node.selected .node{fill:#dff7f0;stroke:#0f766e;stroke-width:3;stroke-dasharray:none}
+.role-node,.skill-node{cursor:pointer;outline:none;transition:opacity 150ms ease}
+.role-node:hover .node,.role-node:focus .node,.skill-node:hover .node,.skill-node:focus .node{stroke:#0f766e;stroke-width:2.2}
+.role-node:focus .node,.skill-node:focus .node{stroke-dasharray:4 2}
+.role-node.selected .node,.skill-node.selected .node{fill:#dff7f0;stroke:#0f766e;stroke-width:3;stroke-dasharray:none}
 .role-node.dimmed .node,.skill-node.dimmed .node{fill:#f8fafc;stroke:#64748b}
-.role-node.dimmed text,.skill-node.dimmed text{fill:#64748b}.skill-node.active .node{stroke:#0f766e;stroke-width:2.6}
-.selection-marker{fill:none;stroke:#0f766e;stroke-width:4;opacity:0}.skill-node.active .selection-marker{opacity:1}
+.role-node.dimmed text,.skill-node.dimmed text{fill:#64748b}.role-node.active .node,.skill-node.active .node{stroke:#0f766e;stroke-width:2.6}
+.selection-marker{fill:none;stroke:#0f766e;stroke-width:4;opacity:0}.skill-node.active .selection-marker,.skill-node.selected .selection-marker{opacity:1}
 .reset-control{cursor:pointer;outline:none}.reset-control rect{fill:#fff;stroke:#0f766e}.reset-control text{font-size:11px;font-weight:700;fill:#0f766e}
 .reset-control:hover rect,.reset-control:focus rect{stroke-width:2}.reset-control:focus rect{stroke-dasharray:4 2}
 .reset-control.disabled{cursor:default;opacity:.35}.reset-control.disabled:hover rect{stroke-width:1}
 @media (prefers-reduced-motion:reduce){.node,.edge,.role-node,.skill-node{transition:none}}
 ]]></style>""",
-        '<text x="30" y="38" class="heading">Choose an agent. See only its loadout.</text>',
-        '<text x="30" y="64" class="instruction">Click an agent or use Enter or Space. Select it again, use Clear selection, or press Escape to reset.</text>',
+        '<text x="30" y="38" class="heading">Choose an agent or skill. Trace its relationships.</text>',
+        '<text x="30" y="64" class="instruction">Click an agent or skill, or use Enter or Space. Select it again, use Clear selection, or press Escape to reset.</text>',
         '<text x="30" y="88" id="selection-status" class="status" role="status" aria-live="polite">All agents and skills shown. Connections are intentionally faint until selection.</text>',
-        f'<g class="reset-control disabled" role="button" tabindex="-1" aria-disabled="true" aria-label="Clear agent selection"><rect x="{SVG_WIDTH - 150}" y="24" width="120" height="30" rx="15"/><text x="{SVG_WIDTH - 90}" y="43" text-anchor="middle">Clear selection</text></g>',
+        f'<g class="reset-control disabled" role="button" tabindex="-1" aria-disabled="true" aria-label="Clear map selection"><rect x="{SVG_WIDTH - 150}" y="24" width="120" height="30" rx="15"/><text x="{SVG_WIDTH - 90}" y="43" text-anchor="middle">Clear selection</text></g>',
         f'<text x="{ROLE_X}" y="126" class="heading">Canonical agents</text>',
         f'<text x="{SKILL_X}" y="126" class="heading">Bundled skills</text>',
     ]
@@ -337,61 +341,118 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
   const resetControl = document.querySelector(".reset-control");
   const status = document.getElementById("selection-status");
   let selectedRole = "";
+  let selectedSkill = "";
 
-  function applySelection(roleName) {
-    selectedRole = selectedRole === roleName ? "" : roleName;
+  function renderSelection() {
+    const hasSelection = Boolean(selectedRole || selectedSkill);
     const activeSkills = new Set(
-      edges
-        .filter((edge) => edge.dataset.role === selectedRole)
-        .map((edge) => edge.dataset.skill)
+      selectedRole
+        ? edges
+            .filter((edge) => edge.dataset.role === selectedRole)
+            .map((edge) => edge.dataset.skill)
+        : selectedSkill
+          ? [selectedSkill]
+          : []
+    );
+    const activeRoles = new Set(
+      selectedSkill
+        ? edges
+            .filter((edge) => edge.dataset.skill === selectedSkill)
+            .map((edge) => edge.dataset.role)
+        : selectedRole
+          ? [selectedRole]
+          : []
     );
 
     roleNodes.forEach((node) => {
       const isSelected = node.dataset.role === selectedRole;
+      const isActive = activeRoles.has(node.dataset.role);
       node.classList.toggle("selected", isSelected);
-      node.classList.toggle("dimmed", Boolean(selectedRole) && !isSelected);
+      node.classList.toggle("active", isActive && !isSelected);
+      node.classList.toggle("dimmed", hasSelection && !isActive);
       node.setAttribute("aria-pressed", String(isSelected));
     });
     edges.forEach((edge) => {
-      const isActive = edge.dataset.role === selectedRole;
+      const isActive = selectedRole
+        ? edge.dataset.role === selectedRole
+        : edge.dataset.skill === selectedSkill;
       edge.classList.toggle("active", isActive);
-      edge.classList.toggle("dimmed", Boolean(selectedRole) && !isActive);
+      edge.classList.toggle("dimmed", hasSelection && !isActive);
     });
     skillNodes.forEach((node) => {
+      const isSelected = node.dataset.skill === selectedSkill;
       const isActive = activeSkills.has(node.dataset.skill);
-      node.classList.toggle("active", isActive);
-      node.classList.toggle("dimmed", Boolean(selectedRole) && !isActive);
+      node.classList.toggle("selected", isSelected);
+      node.classList.toggle("active", isActive && !isSelected);
+      node.classList.toggle("dimmed", hasSelection && !isActive);
+      node.setAttribute("aria-pressed", String(isSelected));
     });
 
-    const activeNode = roleNodes.find((node) => node.dataset.role === selectedRole);
-    status.textContent = activeNode
-      ? `${activeNode.dataset.displayName}: ${activeSkills.size} linked skills highlighted.`
-      : "All agents and skills shown. Connections are intentionally faint until selection.";
-    resetControl.classList.toggle("disabled", !selectedRole);
-    resetControl.setAttribute("aria-disabled", String(!selectedRole));
-    resetControl.setAttribute("tabindex", selectedRole ? "0" : "-1");
+    const activeRoleNode = roleNodes.find(
+      (node) => node.dataset.role === selectedRole
+    );
+    if (activeRoleNode) {
+      status.textContent = `${activeRoleNode.dataset.displayName}: ${activeSkills.size} linked skills highlighted.`;
+    } else if (selectedSkill) {
+      const agentLabel = activeRoles.size === 1 ? "canonical agent uses" : "canonical agents use";
+      status.textContent = `${selectedSkill}: ${activeRoles.size} ${agentLabel} this skill.`;
+    } else {
+      status.textContent = "All agents and skills shown. Connections are intentionally faint until selection.";
+    }
+    resetControl.classList.toggle("disabled", !hasSelection);
+    resetControl.setAttribute("aria-disabled", String(!hasSelection));
+    resetControl.setAttribute("tabindex", hasSelection ? "0" : "-1");
+  }
+
+  function selectRole(roleName) {
+    const shouldClear = selectedRole === roleName && !selectedSkill;
+    selectedRole = shouldClear ? "" : roleName;
+    selectedSkill = "";
+    renderSelection();
+  }
+
+  function selectSkill(skillName) {
+    const shouldClear = selectedSkill === skillName && !selectedRole;
+    selectedSkill = shouldClear ? "" : skillName;
+    selectedRole = "";
+    renderSelection();
+  }
+
+  function clearSelection() {
+    selectedRole = "";
+    selectedSkill = "";
+    renderSelection();
   }
 
   roleNodes.forEach((node) => {
-    node.addEventListener("click", () => applySelection(node.dataset.role));
+    node.addEventListener("click", () => selectRole(node.dataset.role));
     node.addEventListener("keydown", (event) => {
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
-        applySelection(node.dataset.role);
+        selectRole(node.dataset.role);
+      }
+    });
+  });
+  skillNodes.forEach((node) => {
+    node.addEventListener("click", () => selectSkill(node.dataset.skill));
+    node.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        selectSkill(node.dataset.skill);
       }
     });
   });
   resetControl.addEventListener("click", () => {
-    if (selectedRole) applySelection("");
+    if (selectedRole || selectedSkill) clearSelection();
   });
   resetControl.addEventListener("keydown", (event) => {
-    if (selectedRole && (event.key === "Enter" || event.key === " ")) {
+    if ((selectedRole || selectedSkill) && (event.key === "Enter" || event.key === " ")) {
       event.preventDefault();
-      applySelection("");
+      clearSelection();
     }
   });
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && selectedRole) applySelection("");
+    if (event.key === "Escape" && (selectedRole || selectedSkill)) clearSelection();
   });
 })();
 ]]></script>""")

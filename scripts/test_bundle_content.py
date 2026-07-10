@@ -257,7 +257,7 @@ AGENT_ROLE_MAP_REQUIRED_PHRASES = (
     ".tag.technology-skill",
     "technology-skill-detection-registry.js",
     "Interactive Agent And Skill Map",
-    "Select an agent to isolate its fixed and request-specific skills.",
+    "select a skill to see every canonical agent that uses it.",
     '<object class="hierarchy-embed"',
     "Open the interactive SVG diagram",
 )
