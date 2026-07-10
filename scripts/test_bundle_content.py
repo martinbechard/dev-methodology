@@ -606,6 +606,7 @@ class BundleContentTests(unittest.TestCase):
         ):
             with self.subTest(agent_browser_phrase=phrase):
                 self.assertIn(phrase, agent_browser_text)
+        self.assertIn(".agent-modal__yaml code {\n", agent_browser_text)
 
     def test_agent_definition_formats_document_runtime_adapters(self) -> None:
         index_text = (REPOSITORY_ROOT / "index.html").read_text(encoding="utf-8")

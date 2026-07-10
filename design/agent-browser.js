@@ -159,6 +159,15 @@
       white-space: pre;
     }
 
+    .agent-modal__yaml code {
+      display: block;
+      padding: 0;
+      border-radius: 0;
+      background: transparent;
+      color: inherit;
+      font: inherit;
+    }
+
     @media (max-width: 700px) {
       .agent-modal {
         padding: 0.75rem;
