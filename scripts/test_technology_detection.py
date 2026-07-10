@@ -1,3 +1,7 @@
+# Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+# AI attribution: Modified with AI assistance.
+# Summary: Verifies setup-time technology detection, folder ownership, generated mirrors, and AGENTS.md rendering.
+
 from __future__ import annotations
 
 import json
@@ -63,6 +67,40 @@ class TechnologyDetectionTests(unittest.TestCase):
             with self.subTest(detector=detector):
                 result = run_detection(ROOT / "evals" / "projects" / "python-inventory", "src", detector=detector)
                 self.assertEqual(["python-coding"], result["loadouts"][0]["skills"])
+
+    def test_python_cli_filename_does_not_activate_node_cli(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "src").mkdir()
+            (root / "src" / "cli.py").write_text("def main():\n    return 0\n", encoding="utf-8")
+            (root / "pyproject.toml").write_text(
+                '[project]\nname="python-cli"\nversion="1"\n',
+                encoding="utf-8",
+            )
+            for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+                with self.subTest(detector=detector):
+                    result = run_detection(root, "src", detector=detector)
+                    self.assertEqual(["python-coding"], result["loadouts"][0]["skills"])
+
+    def test_node_cli_requires_a_javascript_or_typescript_cli_path(self) -> None:
+        cases = (
+            ("tool-cli.js", ["node-cli"]),
+            ("tool-cli.ts", ["node-cli", "typescript-coding"]),
+            ("client.ts", ["typescript-coding"]),
+        )
+        for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+            for file_name, expected in cases:
+                with self.subTest(detector=detector, file_name=file_name):
+                    with tempfile.TemporaryDirectory() as directory:
+                        root = Path(directory)
+                        (root / "src").mkdir()
+                        (root / "src" / file_name).write_text("export const run = () => 0;\n", encoding="utf-8")
+                        (root / "package.json").write_text(
+                            '{"name":"node-cli","version":"1","bin":{"tool":"src/tool-cli.js"}}\n',
+                            encoding="utf-8",
+                        )
+                        result = run_detection(root, "src", detector=detector)
+                        self.assertEqual(expected, result["loadouts"][0]["skills"])
 
     def test_fastapi_scope_composes_with_python(self) -> None:
         for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):

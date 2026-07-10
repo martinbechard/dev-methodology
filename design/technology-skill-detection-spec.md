@@ -84,6 +84,8 @@ The detector skill contains a generated runtime mirror only so a standalone inst
 - A TypeScript folder produces TypeScript skills and no Java skills.
 - A Spring Boot folder produces Java and Spring Boot skills.
 - A FastAPI folder produces Python and FastAPI skills.
+- A Node-owned JavaScript or TypeScript CLI path produces Node CLI skills.
+- A Python cli.py path produces Python skills without Node CLI.
 - A mixed repository produces separate loadouts for separate analyzed scopes.
 - A child package does not inherit unrelated root workspace dependencies.
 - Equal-priority exclusive matches block setup.

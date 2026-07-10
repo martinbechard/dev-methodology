@@ -261,8 +261,39 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
     {
       "activation": {
         "fileGlobs": [
-          "**/bin/**/*.*",
-          "**/*cli*.*"
+          "bin/*.js",
+          "*/bin/*.js",
+          "cli.js",
+          "*[/.-]cli.js",
+          "*[/]cli-*.js",
+          "bin/*.mjs",
+          "*/bin/*.mjs",
+          "cli.mjs",
+          "*[/.-]cli.mjs",
+          "*[/]cli-*.mjs",
+          "bin/*.cjs",
+          "*/bin/*.cjs",
+          "cli.cjs",
+          "*[/.-]cli.cjs",
+          "*[/]cli-*.cjs",
+          "bin/*.ts",
+          "*/bin/*.ts",
+          "cli.ts",
+          "*[/.-]cli.ts",
+          "*[/]cli-*.ts",
+          "bin/*.mts",
+          "*/bin/*.mts",
+          "cli.mts",
+          "*[/.-]cli.mts",
+          "*[/]cli-*.mts",
+          "bin/*.cts",
+          "*/bin/*.cts",
+          "cli.cts",
+          "*[/.-]cli.cts",
+          "*[/]cli-*.cts"
+        ],
+        "manifestFiles": [
+          "package.json"
         ]
       },
       "capabilities": [

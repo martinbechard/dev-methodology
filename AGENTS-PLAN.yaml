@@ -228,7 +228,7 @@ technology_skill_loadouts:
     status: READY
     required_load_failure: BLOCKED
     local_rules_source: AGENTS.md
-    notes: "The detector's node-cli match came only from the Python filename project_wiki_ops/cli.py and was rejected because this scope has no Node.js runtime."
+    notes: "The detector returns only python-coding. Node CLI activation requires a Node-owned JavaScript or TypeScript CLI path, so project_wiki_ops/cli.py does not activate node-cli."
   - scope: "Technology detector mirror"
     pathPattern: skills/detect-technology-skills/scripts/**
     skills:
@@ -384,7 +384,7 @@ validation_plan:
   technology_detection_checks:
     - "Run setup-time detection for scripts, skills/project-wiki/scripts, skills/detect-technology-skills/scripts, evals/projects/python-inventory, and evals/projects/fastapi-orders."
     - "Reject fastapi for scripts because its evidence is detector-test content rather than an owning FastAPI runtime."
-    - "Reject node-cli for skills/project-wiki/scripts because cli.py is a Python module rather than Node.js evidence."
+    - "Confirm skills/project-wiki/scripts produces only python-coding because cli.py is Python rather than a Node-owned JavaScript or TypeScript CLI path."
     - "Confirm python-coding and fastapi are installed and every accepted loadout retains source evidence."
     - "Confirm AGENTS.md requires matching folder skills before acting and does not tell ordinary agents to rerun detection."
   privacy_checks:
