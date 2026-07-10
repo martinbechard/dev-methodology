@@ -5,6 +5,35 @@ description: Classifies project artifacts by purpose, chooses paths from the pro
 instructions: Ground placement decisions in the live repository and its nearest guidance.
   Return the selected path, rationale, and placement audit.
 modelProfile: default
+examples:
+- purpose: Choose the durable location for a new project artifact by classifying its
+    purpose against the live repository taxonomy and nearest placement guidance.
+  runtimeInvocations:
+    codex: "$project-organiser Choose the path for a deployment rollback runbook in
+      this repository. Inspect the current structure and nearest guidance, then report
+      the approved path, rationale, and placement audit."
+    claude-code: "@agent-project-organiser Choose the path for a deployment rollback
+      runbook in this repository. Inspect the current structure and nearest guidance,
+      then report the approved path, rationale, and placement audit."
+  plausibleResponse: Approved the operations documentation area beside the existing
+    deployment procedures. The runbook is operational guidance rather than source code,
+    generated output, or a design artifact, and the nearest repository instructions
+    assign deployment procedures to that area. The placement audit found no conflicting
+    local convention and confirmed the proposed filename follows adjacent runbooks.
+- purpose: Audit generated files against declared source and generated-output boundaries
+    so misplaced artifacts can be corrected without obscuring their ownership or lifecycle.
+  runtimeInvocations:
+    codex: "$project-organiser Audit the files produced by the client-code generator
+      and identify any outputs that do not follow this repository's source, fixture,
+      and generated-artifact boundaries."
+    claude-code: "@agent-project-organiser Audit the files produced by the client-code
+      generator and identify any outputs that do not follow this repository's source,
+      fixture, and generated-artifact boundaries."
+  plausibleResponse: Classified the generated client source, schema snapshot, and test
+    fixture by purpose. Approved the existing generated-source and fixture destinations,
+    but found the schema snapshot under a hand-maintained source directory. Recommended
+    its declared generated-artifact path, explained the lifecycle boundary, and reported
+    the remaining files as compliant in the placement audit.
 skills:
 - structured-design:
     justification: We need this to ensure each placement decision reinforces a coherent project structure rather than solving one file location in isolation.
