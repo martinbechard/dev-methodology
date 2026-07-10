@@ -241,14 +241,16 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
 .role-node.dimmed .node,.skill-node.dimmed .node{fill:#f8fafc;stroke:#64748b}
 .role-node.dimmed text,.skill-node.dimmed text{fill:#64748b}.role-node.active .node,.skill-node.active .node{stroke:#0f766e;stroke-width:2.6}
 .selection-marker{fill:none;stroke:#0f766e;stroke-width:4;opacity:0}.skill-node.active .selection-marker,.skill-node.selected .selection-marker{opacity:1}
-.reset-control{cursor:pointer;outline:none}.reset-control rect{fill:#fff;stroke:#0f766e}.reset-control text{font-size:11px;font-weight:700;fill:#0f766e}
-.reset-control:hover rect,.reset-control:focus rect{stroke-width:2}.reset-control:focus rect{stroke-dasharray:4 2}
-.reset-control.disabled{cursor:default;opacity:.35}.reset-control.disabled:hover rect{stroke-width:1}
+.reset-control,.view-control{cursor:pointer;outline:none}.reset-control rect{fill:#fff;stroke:#0f766e}.reset-control text{font-size:11px;font-weight:700;fill:#0f766e}
+.view-control rect{fill:#0f766e;stroke:#0f766e}.view-control text{font-size:11px;font-weight:700;fill:#fff}
+.reset-control:hover rect,.reset-control:focus rect,.view-control:hover rect,.view-control:focus rect{stroke-width:2}.reset-control:focus rect,.view-control:focus rect{stroke-dasharray:4 2}
+.reset-control.disabled,.view-control.disabled{cursor:default;opacity:.35}.reset-control.disabled:hover rect,.view-control.disabled:hover rect{stroke-width:1}
 @media (prefers-reduced-motion:reduce){.node,.edge,.role-node,.skill-node{transition:none}}
 ]]></style>""",
         '<text x="30" y="38" class="heading">Choose an agent or skill. Trace its relationships.</text>',
-        '<text x="30" y="64" class="instruction">Click an agent or skill, or use Enter or Space. Select it again, use Clear selection, or press Escape to reset.</text>',
+        '<text x="30" y="64" class="instruction">Click an agent or skill, or use Enter or Space. Use View definition for details; Clear selection or Escape resets.</text>',
         '<text x="30" y="88" id="selection-status" class="status" role="status" aria-live="polite">All agents and skills shown. Connections are intentionally faint until selection.</text>',
+        f'<g class="view-control disabled" role="button" tabindex="-1" aria-disabled="true" aria-label="Select an agent or skill to view its definition"><rect x="{SVG_WIDTH - 330}" y="24" width="160" height="30" rx="15"/><text x="{SVG_WIDTH - 250}" y="43" text-anchor="middle">View definition</text></g>',
         f'<g class="reset-control disabled" role="button" tabindex="-1" aria-disabled="true" aria-label="Clear map selection"><rect x="{SVG_WIDTH - 150}" y="24" width="120" height="30" rx="15"/><text x="{SVG_WIDTH - 90}" y="43" text-anchor="middle">Clear selection</text></g>',
         f'<text x="{ROLE_X}" y="126" class="heading">Canonical agents</text>',
         f'<text x="{SKILL_X}" y="126" class="heading">Bundled skills</text>',
@@ -338,8 +340,10 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
   const roleNodes = Array.from(document.querySelectorAll(".role-node"));
   const skillNodes = Array.from(document.querySelectorAll(".skill-node"));
   const edges = Array.from(document.querySelectorAll(".edge"));
+  const viewControl = document.querySelector(".view-control");
   const resetControl = document.querySelector(".reset-control");
   const status = document.getElementById("selection-status");
+  const viewDefinitionMessage = "dev-methodology:view-definition";
   let selectedRole = "";
   let selectedSkill = "";
 
@@ -399,6 +403,22 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
     } else {
       status.textContent = "All agents and skills shown. Connections are intentionally faint until selection.";
     }
+    const selectedKind = selectedRole ? "agent" : selectedSkill ? "skill" : "";
+    const selectedName = selectedRole || selectedSkill;
+    const selectedLabel = activeRoleNode
+      ? activeRoleNode.dataset.displayName
+      : selectedSkill;
+    viewControl.classList.toggle("disabled", !hasSelection);
+    viewControl.setAttribute("aria-disabled", String(!hasSelection));
+    viewControl.setAttribute("tabindex", hasSelection ? "0" : "-1");
+    viewControl.setAttribute(
+      "aria-label",
+      hasSelection
+        ? `View ${selectedLabel} definition`
+        : "Select an agent or skill to view its definition"
+    );
+    viewControl.dataset.definitionKind = selectedKind;
+    viewControl.dataset.definitionName = selectedName;
     resetControl.classList.toggle("disabled", !hasSelection);
     resetControl.setAttribute("aria-disabled", String(!hasSelection));
     resetControl.setAttribute("tabindex", hasSelection ? "0" : "-1");
@@ -424,6 +444,21 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
     renderSelection();
   }
 
+  function viewSelectedDefinition() {
+    const kind = viewControl.dataset.definitionKind;
+    const name = viewControl.dataset.definitionName;
+    if (!kind || !name) return;
+    if (window.parent === window) {
+      const target = new URL("agent-role-skill-map.html", window.location.href);
+      target.searchParams.set("definitionKind", kind);
+      target.searchParams.set("definitionName", name);
+      target.hash = "hierarchy-title";
+      window.location.href = target.href;
+      return;
+    }
+    window.parent.postMessage({ type: viewDefinitionMessage, kind, name }, "*");
+  }
+
   roleNodes.forEach((node) => {
     node.addEventListener("click", () => selectRole(node.dataset.role));
     node.addEventListener("keydown", (event) => {
@@ -441,6 +476,15 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
         selectSkill(node.dataset.skill);
       }
     });
+  });
+  viewControl.addEventListener("click", () => {
+    if (selectedRole || selectedSkill) viewSelectedDefinition();
+  });
+  viewControl.addEventListener("keydown", (event) => {
+    if ((selectedRole || selectedSkill) && (event.key === "Enter" || event.key === " ")) {
+      event.preventDefault();
+      viewSelectedDefinition();
+    }
   });
   resetControl.addEventListener("click", () => {
     if (selectedRole || selectedSkill) clearSelection();

@@ -112,6 +112,20 @@ class AgentSkillHierarchyTests(unittest.TestCase):
             role_group_labels,
         )
 
+    def test_selected_items_expose_the_definition_view_bridge(self) -> None:
+        """A selected role or skill should enable a reusable definition control."""
+        view_control = self.root.find(
+            f".//{{{SVG_NAMESPACE}}}g[@class='view-control disabled']"
+        )
+        self.assertIsNotNone(view_control)
+        self.assertEqual("button", view_control.attrib.get("role"))
+        self.assertEqual("-1", view_control.attrib.get("tabindex"))
+        self.assertEqual("true", view_control.attrib.get("aria-disabled"))
+        self.assertIn("View definition", " ".join(self.root.itertext()))
+        self.assertIn('"dev-methodology:view-definition"', self.rendered)
+        self.assertIn("window.parent.postMessage", self.rendered)
+        self.assertIn('target.searchParams.set("definitionKind", kind)', self.rendered)
+
 
 if __name__ == "__main__":
     unittest.main()

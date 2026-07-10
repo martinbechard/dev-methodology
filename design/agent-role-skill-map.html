@@ -473,9 +473,9 @@
 
   <section class="section" aria-labelledby="hierarchy-title">
     <h2 id="hierarchy-title">Interactive Agent And Skill Map</h2>
-    <p class="note">Select an agent to isolate its fixed and request-specific skills, or select a skill to see every canonical agent that uses it. Stack and domain skills appear separately at the bottom because project setup assigns them to folders rather than canonical roles.</p>
+    <p class="note">Select an agent to isolate its fixed and request-specific skills, or select a skill to see every canonical agent that uses it. Use View definition to open the same generated detail shown by the cards below. Stack and domain skills appear separately at the bottom because project setup assigns them to folders rather than canonical roles.</p>
     <p><a href="agent-skill-hierarchy.svg">Open the interactive SVG diagram</a></p>
-    <object class="hierarchy-embed" data="agent-skill-hierarchy.svg" type="image/svg+xml" aria-label="Interactive hierarchy connecting canonical agents to bundled skills">
+    <object id="agent-skill-hierarchy" class="hierarchy-embed" data="agent-skill-hierarchy.svg" type="image/svg+xml" tabindex="-1" aria-label="Interactive hierarchy connecting canonical agents to bundled skills">
       <a href="agent-skill-hierarchy.svg">Open the interactive agent and skill map</a>
     </object>
   </section>
@@ -635,6 +635,9 @@
     const ROLE_DATA_GLOBAL_NAME = "DEV_METHODOLOGY_ROLE_DEFINITIONS";
     const SKILL_DATA_GLOBAL_NAME = "DEV_METHODOLOGY_SKILL_DEFINITIONS";
     const TECHNOLOGY_DATA_GLOBAL_NAME = "DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY";
+    const HIERARCHY_VIEW_DEFINITION_MESSAGE = "dev-methodology:view-definition";
+    const DEFINITION_KIND_QUERY_PARAMETER = "definitionKind";
+    const DEFINITION_NAME_QUERY_PARAMETER = "definitionName";
 
     function createTag(text, kind) {
       const tag = document.createElement("span");
@@ -749,8 +752,42 @@
       });
     }
 
+    function openDefinitionFromHierarchy(kind, name) {
+      if (!name || (kind !== "agent" && kind !== "skill")) return false;
+      const hierarchyMap = document.getElementById("agent-skill-hierarchy");
+      const selector = kind === "agent"
+        ? "[data-agent-definition]"
+        : "[data-skill-definition]";
+      const dataKey = kind === "agent" ? "agentDefinition" : "skillDefinition";
+      const trigger = Array.from(document.querySelectorAll(selector))
+        .find((element) => element.dataset[dataKey] === name);
+      if (!(trigger instanceof HTMLElement)) return false;
+      if (hierarchyMap) {
+        trigger.addEventListener("focus", () => hierarchyMap.focus(), { once: true });
+      }
+      trigger.click();
+      return true;
+    }
+
+    function handleHierarchyDefinitionMessage(event) {
+      const hierarchyMap = document.getElementById("agent-skill-hierarchy");
+      if (!hierarchyMap || event.source !== hierarchyMap.contentWindow) return;
+      const request = event.data;
+      if (!request || typeof request !== "object") return;
+      if (request.type !== HIERARCHY_VIEW_DEFINITION_MESSAGE) return;
+      openDefinitionFromHierarchy(request.kind, request.name);
+    }
+
     renderRoleCatalog();
     renderSkillCatalog();
+    window.addEventListener("message", handleHierarchyDefinitionMessage);
+    window.addEventListener("load", () => {
+      const parameters = new URLSearchParams(window.location.search);
+      openDefinitionFromHierarchy(
+        parameters.get(DEFINITION_KIND_QUERY_PARAMETER),
+        parameters.get(DEFINITION_NAME_QUERY_PARAMETER),
+      );
+    }, { once: true });
   </script>
   <script src="agent-browser.js"></script>
   <script src="skill-browser.js"></script>
