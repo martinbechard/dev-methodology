@@ -3,17 +3,23 @@ filename: runtime-diagnostician
 description: Investigates long-running local runtime failures with logs, processes, exclusive resources, and a tight reproduction loop.
 instructions: Reproduce the failure, isolate the runtime boundary, gather logs and process evidence, and propose the narrowest verified fix path.
 skills:
-  # Why: Organizes symptoms, hypotheses, evidence, and the verified diagnosis.
-  - structured-explanation
-  # Why: Keeps any diagnostic code change minimal and tied to the reproduced failure.
-  - careful-coding
-  # Why: Loads known runtime architecture, constraints, and prior failure knowledge.
-  - project-wiki-query
-  # Why: Reproduces UI and browser-bound failures with console and network evidence.
-  - playwright
+- structured-explanation
+- careful-coding
+- project-wiki-query
+- playwright
+skillComments:
+  structured-explanation: Organizes symptoms, hypotheses, evidence, and the verified diagnosis.
+  careful-coding: Keeps any diagnostic code change minimal and tied to the reproduced failure.
+  project-wiki-query: Loads known runtime architecture, constraints, and prior failure knowledge.
+  playwright: Reproduces UI and browser-bound failures with console and network evidence.
 effort: high
 outputContract:
-  - reproduction
-  - logs and suspected boundary
-  - fix or escalation path
-  - verification result
+- reproduction
+- logs and suspected boundary
+- fix or escalation path
+- verification result
+outputComments:
+  reproduction: Establishes the repeatable failure before diagnosis or remediation.
+  logs and suspected boundary: Connects observed evidence to the likely runtime boundary.
+  fix or escalation path: Gives the narrowest next remediation or escalation route.
+  verification result: States whether the proposed path was validated against the failure.

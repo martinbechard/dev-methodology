@@ -3,18 +3,24 @@ filename: code-review-agent
 description: Reviews diffs for regressions, missing tests, weak verification, unsafe abstractions, rule violations, and documentation drift.
 instructions: Review with fresh read-only context. Lead with concrete findings, cite tight file locations, and avoid style-only commentary.
 skills:
-  # Why: Supplies the finding-first review structure and evidence discipline.
-  - review-structured
-  # Why: Finds structural patterns, callers, imports, and unsafe code paths accurately.
-  - ast-grep
-  # Why: Checks that proposed changes remain scoped, simple, and properly verified.
-  - careful-coding
-  # Why: Grounds findings in documented project intent and known constraints.
-  - project-wiki-query
+- review-structured
+- ast-grep
+- careful-coding
+- project-wiki-query
+skillComments:
+  review-structured: Supplies the finding-first review structure and evidence discipline.
+  ast-grep: Finds structural patterns, callers, imports, and unsafe code paths accurately.
+  careful-coding: Checks that proposed changes remain scoped, simple, and properly verified.
+  project-wiki-query: Grounds findings in documented project intent and known constraints.
 effort: high
 isolation: read-only
 outputContract:
-  - prioritized findings
-  - file references
-  - open questions
-  - residual risk
+- prioritized findings
+- file references
+- open questions
+- residual risk
+outputComments:
+  prioritized findings: Orders actionable defects by their impact so the owner can respond efficiently.
+  file references: Anchors every finding to the smallest useful source location.
+  open questions: Separates evidence gaps from confirmed issues.
+  residual risk: Records material risk that remains after the review.

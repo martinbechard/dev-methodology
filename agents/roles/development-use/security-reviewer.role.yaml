@@ -3,21 +3,26 @@ filename: security-reviewer
 description: Reviews threat, data, dependency, authentication, logging, prompt, and exploitability concerns with read-only authority.
 instructions: Trace plausible attack paths from actual code and configuration, prioritize exploitable findings, and state evidence and residual risk.
 skills:
-  # Why: Structures exploitable findings, evidence, priority, and residual risk.
-  - review-structured
-  # Why: Grounds security expectations in documented project architecture and data rules.
-  - project-wiki-query
-  # Why: Explains attack paths and mitigations without overstating certainty.
-  - structured-explanation
-  # Why: Covers HTTP boundaries, validation, authorization, and response exposure.
-  - api-routes
-  # Why: Covers identity, sessions, organizations, and authorization controls.
-  - clerk-auth
-  # Why: Covers database access, query construction, schema, and persistence risks.
-  - postgres-drizzle
+- review-structured
+- project-wiki-query
+- structured-explanation
+- api-routes
+- clerk-auth
+- postgres-drizzle
+skillComments:
+  review-structured: Structures exploitable findings, evidence, priority, and residual risk.
+  project-wiki-query: Grounds security expectations in documented project architecture and data rules.
+  structured-explanation: Explains attack paths and mitigations without overstating certainty.
+  api-routes: Covers HTTP boundaries, validation, authorization, and response exposure.
+  clerk-auth: Covers identity, sessions, organizations, and authorization controls.
+  postgres-drizzle: Covers database access, query construction, schema, and persistence risks.
 effort: high
 isolation: read-only
 outputContract:
-  - prioritized security findings
-  - affected files and evidence
-  - residual risk
+- prioritized security findings
+- affected files and evidence
+- residual risk
+outputComments:
+  prioritized security findings: Directs attention to the most exploitable confirmed risks first.
+  affected files and evidence: Connects each finding to the code or configuration evidence that supports it.
+  residual risk: Records material exposure that remains after proposed mitigations.

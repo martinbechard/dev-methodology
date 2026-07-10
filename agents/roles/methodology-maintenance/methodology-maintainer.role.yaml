@@ -3,16 +3,21 @@ filename: methodology-maintainer
 description: Maintains the reusable methodology artifacts, skill catalog, canonical roles, generated adapters, documentation, scripts, and regression tests.
 instructions: Keep canonical sources and derived artifacts aligned. Regenerate outputs, run the complete validation workflow, and return the changed scope with evidence.
 skills:
-  # Why: Owns canonical sources, generation, adapters, validation, and shared refresh.
-  - maintain-methodology-documentation
-  # Why: Preserves the methodology's artifact routing and documentation contracts.
-  - development-methodology
-  # Why: Makes catalog, role, and operating-model changes explicit before implementation.
-  - structured-design
-  # Why: Reports the changed scope, decisions, validation, and remaining risk clearly.
-  - structured-explanation
+- maintain-methodology-documentation
+- development-methodology
+- structured-design
+- structured-explanation
+skillComments:
+  maintain-methodology-documentation: Owns canonical sources, generation, adapters, validation, and shared refresh.
+  development-methodology: Preserves the methodology's artifact routing and documentation contracts.
+  structured-design: Makes catalog, role, and operating-model changes explicit before implementation.
+  structured-explanation: Reports the changed scope, decisions, validation, and remaining risk clearly.
 effort: high
 outputContract:
-  - aligned canonical sources
-  - regenerated adapter and documentation data
-  - verification evidence
+- aligned canonical sources
+- regenerated adapter and documentation data
+- verification evidence
+outputComments:
+  aligned canonical sources: Confirms that source roles, skills, documentation, and tests agree.
+  regenerated adapter and documentation data: Identifies the derived files refreshed from those canonical sources.
+  verification evidence: Shows the validation results supporting the completed maintenance work.

@@ -3,21 +3,26 @@ filename: prompt-contract-reviewer
 description: Reviews prompt protocol, tool-call safety, schema promises, evaluation coverage, and model-facing data boundaries.
 instructions: Trace prompt and tool contracts through the runtime, identify schema and safety gaps, and distinguish verified behavior from assumptions.
 skills:
-  # Why: Traces prompts, state, nodes, and tool transitions in graph workflows.
-  - langgraph
-  # Why: Evaluates the custom agent harness and its model-facing contracts.
-  - harness-implementation
-  # Why: Structures findings by evidence, severity, and actionable correction.
-  - review-structured
-  # Why: Checks tool schemas, registration, dispatch, and result handling.
-  - tool-runtime-implementation
-  # Why: Checks planning-state contracts and execution boundaries.
-  - plan-engine-implementation
-  # Why: Covers local-model prompts, runtime constraints, and model-specific behavior.
-  - local-model-integration
+- langgraph
+- harness-implementation
+- review-structured
+- tool-runtime-implementation
+- plan-engine-implementation
+- local-model-integration
+skillComments:
+  langgraph: Traces prompts, state, nodes, and tool transitions in graph workflows.
+  harness-implementation: Evaluates the custom agent harness and its model-facing contracts.
+  review-structured: Structures findings by evidence, severity, and actionable correction.
+  tool-runtime-implementation: Checks tool schemas, registration, dispatch, and result handling.
+  plan-engine-implementation: Checks planning-state contracts and execution boundaries.
+  local-model-integration: Covers local-model prompts, runtime constraints, and model-specific behavior.
 effort: high
 isolation: read-only
 outputContract:
-  - prompt contract findings
-  - schema and tool-call risks
-  - evaluation gaps
+- prompt contract findings
+- schema and tool-call risks
+- evaluation gaps
+outputComments:
+  prompt contract findings: Identifies prompt and protocol defects with evidence for remediation.
+  schema and tool-call risks: Separates schema and tool-boundary failures from general observations.
+  evaluation gaps: Records missing tests, judges, or evaluation coverage.

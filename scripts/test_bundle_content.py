@@ -515,21 +515,23 @@ class BundleContentTests(unittest.TestCase):
         for role in roles:
             with self.subTest(role=role.name):
                 self.assertTrue(set(role.skills).issubset(skill_names))
-                role_source_lines = role.yaml.splitlines()
-                skills_start = role_source_lines.index("skills:")
-                skill_lines = [
-                    index
-                    for index, line in enumerate(role_source_lines[skills_start + 1 :], start=skills_start + 1)
-                    if line.startswith("  - ")
-                ]
-                for skill_line in skill_lines[: len(role.skills)]:
-                    self.assertRegex(role_source_lines[skill_line - 1], r"^  # Why: .+")
+                role_source = yaml.safe_load(role.yaml)
+                self.assertEqual(set(role.skills), set(role_source["skillComments"]))
+                self.assertEqual(set(role.output_contract), set(role_source["outputComments"]))
                 self.assertEqual(
                     (REPOSITORY_ROOT / role.source_path).read_text(encoding="utf-8"),
                     role.yaml,
                 )
                 self.assertEqual(role.yaml, role_payload["roles"][role.name]["yaml"])
                 self.assertIsInstance(role_payload["roles"][role.name]["examples"], list)
+                self.assertEqual(
+                    set(role.skills),
+                    set(role_payload["roles"][role.name]["skillComments"]),
+                )
+                self.assertEqual(
+                    set(role.output_contract),
+                    set(role_payload["roles"][role.name]["outputComments"]),
+                )
                 for example in role_payload["roles"][role.name]["examples"]:
                     self.assertEqual(
                         set(example),
@@ -544,6 +546,8 @@ class BundleContentTests(unittest.TestCase):
                 self.assertTrue(codex_agent_path.is_file())
                 codex_agent_text = codex_agent_path.read_text(encoding="utf-8")
                 self.assertIn('developer_instructions = """\n', codex_agent_text)
+                self.assertIn("# Skill comments:", codex_agent_text)
+                self.assertIn("# Output comments:", codex_agent_text)
                 self.assertEqual(
                     build_skill_docs.role_instruction_text(role),
                     tomllib.loads(codex_agent_text)["developer_instructions"],
@@ -551,6 +555,12 @@ class BundleContentTests(unittest.TestCase):
                 self.assertTrue(
                     (GENERATED_ADAPTERS_ROOT / "claude" / "agents" / f"{role.filename}.md").is_file()
                 )
+                claude_agent_text = (
+                    GENERATED_ADAPTERS_ROOT / "claude" / "agents" / f"{role.filename}.md"
+                ).read_text(encoding="utf-8")
+                self.assertIn("Skill comments:", claude_agent_text)
+                self.assertIn("Output comments:", claude_agent_text)
+
 
     def test_readme_points_to_skill_based_setup(self) -> None:
         readme_text = README_PATH.read_text(encoding="utf-8")
@@ -627,6 +637,9 @@ class BundleContentTests(unittest.TestCase):
             "Plausible response",
             "enhance-skill-definitions",
             ".skill-modal:not([hidden])",
+            "skillComments",
+            "outputComments",
+            "agent-modal__pill-comment",
         ):
             with self.subTest(agent_browser_phrase=phrase):
                 self.assertIn(phrase, agent_browser_text)

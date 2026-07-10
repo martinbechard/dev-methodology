@@ -195,19 +195,28 @@
       gap: 0.45rem;
     }
 
-    .agent-modal__tag {
-      display: inline-flex;
-      padding: 0.25rem 0.48rem;
+    .agent-modal__pill {
+      display: grid;
+      flex: 1 1 13rem;
+      gap: 0.25rem;
+      padding: 0.6rem 0.7rem;
       border-radius: var(--radius-small, 0.35rem);
       background: var(--color-soft-amber, #fff1d8);
       color: #8a4609;
       font-size: var(--font-xs, 0.78rem);
-      font-weight: 650;
+      font-weight: 700;
     }
 
-    .agent-modal__tag--output {
+    .agent-modal__pill--output {
       background: var(--color-soft-green, #e4f7f4);
       color: #0f766e;
+    }
+
+    .agent-modal__pill-comment {
+      color: var(--color-muted, #596579);
+      font-size: 0.86rem;
+      font-weight: 500;
+      line-height: 1.38;
     }
 
     .agent-modal__scenario-grid {
@@ -432,16 +441,25 @@
     return modalElements;
   }
 
-  function renderTags(container, values, modifier = "", areSkillDefinitions = false) {
+  function renderPills(container, values, comments, modifier = "", areSkillDefinitions = false) {
     container.replaceChildren();
     values.forEach((value) => {
-      const tag = document.createElement("span");
-      tag.className = `agent-modal__tag tag${modifier}`;
+      const pill = document.createElement("span");
+      pill.className = `agent-modal__pill tag${modifier}`;
       if (areSkillDefinitions) {
-        tag.dataset.skillDefinition = value;
+        pill.dataset.skillDefinition = value;
       }
-      tag.textContent = value;
-      container.appendChild(tag);
+      const label = document.createElement("span");
+      label.textContent = value;
+      pill.appendChild(label);
+      const comment = comments[value];
+      if (comment) {
+        const detail = document.createElement("span");
+        detail.className = "agent-modal__pill-comment";
+        detail.textContent = comment;
+        pill.appendChild(detail);
+      }
+      container.appendChild(pill);
     });
   }
 
@@ -484,8 +502,13 @@
     elements.source.textContent = role.sourcePath;
     elements.description.textContent = role.description || "";
     elements.instructions.textContent = role.instructions || "";
-    renderTags(elements.skills, role.skills || [], "", true);
-    renderTags(elements.outputs, role.outputs || [], " agent-modal__tag--output");
+    renderPills(elements.skills, role.skills || [], role.skillComments || {}, "", true);
+    renderPills(
+      elements.outputs,
+      role.outputs || [],
+      role.outputComments || {},
+      " agent-modal__pill--output",
+    );
     document.dispatchEvent(
       new CustomEvent(ENHANCE_SKILL_DEFINITIONS_EVENT, { detail: elements.skills }),
     );

@@ -57,6 +57,8 @@ ROLE_DESCRIPTION_FIELD_NAME = "description"
 ROLE_INSTRUCTIONS_FIELD_NAME = "instructions"
 ROLE_SKILLS_FIELD_NAME = "skills"
 ROLE_OUTPUT_CONTRACT_FIELD_NAME = "outputContract"
+ROLE_SKILL_COMMENTS_FIELD_NAME = "skillComments"
+ROLE_OUTPUT_COMMENTS_FIELD_NAME = "outputComments"
 ROLE_EXAMPLES_FIELD_NAME = "examples"
 ROLE_EXAMPLE_REQUIRED_FIELDS = ("purpose", "invocation", "plausibleResponse")
 ROLE_LIST_FIELDS = (
@@ -132,7 +134,9 @@ class RoleDefinition:
     description: str
     instructions: str
     skills: tuple[str, ...]
+    skill_comments: dict[str, str]
     output_contract: tuple[str, ...]
+    output_comments: dict[str, str]
     examples: tuple[dict[str, str], ...]
     group: str
     group_label: str
@@ -392,6 +396,27 @@ def validate_role_examples(value: object, source_path: Path) -> tuple[dict[str, 
     return tuple(examples)
 
 
+def validate_comment_map(
+    value: object,
+    field_name: str,
+    expected_keys: tuple[str, ...],
+    source_path: Path,
+) -> dict[str, str]:
+    if not isinstance(value, dict):
+        raise ValueError(f"Role {field_name} must be a mapping: {source_path}")
+    if set(value) != set(expected_keys):
+        raise ValueError(
+            f"Role {field_name} keys must match {expected_keys}: {source_path}"
+        )
+    comments: dict[str, str] = {}
+    for key in expected_keys:
+        comment = value[key]
+        if not isinstance(comment, str) or not comment.strip():
+            raise ValueError(f"Role {field_name} {key} must be a non-empty string: {source_path}")
+        comments[key] = comment.strip()
+    return comments
+
+
 def load_role_schema() -> tuple[set[str], set[str], set[str]]:
     schema = read_yaml_object(ROLE_SCHEMA_PATH)
     required = validate_string_list(
@@ -471,6 +496,20 @@ def load_role_definition(
     if unknown_skills:
         raise ValueError(f"Role references unknown skills {unknown_skills}: {source_path}")
 
+    skill_comments = validate_comment_map(
+        parsed[ROLE_SKILL_COMMENTS_FIELD_NAME],
+        ROLE_SKILL_COMMENTS_FIELD_NAME,
+        role_skills,
+        source_path,
+    )
+    output_contract = list_values[ROLE_OUTPUT_CONTRACT_FIELD_NAME]
+    output_comments = validate_comment_map(
+        parsed[ROLE_OUTPUT_COMMENTS_FIELD_NAME],
+        ROLE_OUTPUT_COMMENTS_FIELD_NAME,
+        output_contract,
+        source_path,
+    )
+
     optional_fields = {
         field_name: parsed[field_name]
         for field_name in sorted(set(parsed) - required_fields - {ROLE_EXAMPLES_FIELD_NAME})
@@ -490,7 +529,9 @@ def load_role_definition(
         description=description.strip(),
         instructions=instructions.strip(),
         skills=role_skills,
-        output_contract=list_values[ROLE_OUTPUT_CONTRACT_FIELD_NAME],
+        skill_comments=skill_comments,
+        output_contract=output_contract,
+        output_comments=output_comments,
         examples=examples,
         group=group,
         group_label=ROLE_GROUP_LABELS[group],
@@ -571,7 +612,9 @@ def build_role_payload(roles: Sequence[RoleDefinition]) -> dict[str, object]:
                 "description": role.description,
                 "instructions": role.instructions,
                 "skills": list(role.skills),
+                "skillComments": role.skill_comments,
                 "outputs": list(role.output_contract),
+                "outputComments": role.output_comments,
                 "examples": list(role.examples),
                 "group": role.group,
                 "groupLabel": role.group_label,
@@ -602,6 +645,17 @@ def role_instruction_text(role: RoleDefinition) -> str:
     )
 
 
+def role_adapter_comments(role: RoleDefinition, prefix: str) -> str:
+    lines = [f"{prefix}Skill comments:"]
+    lines.extend(f"{prefix}- {skill}: {role.skill_comments[skill]}" for skill in role.skills)
+    lines.append(f"{prefix}Output comments:")
+    lines.extend(
+        f"{prefix}- {output}: {role.output_comments[output]}"
+        for output in role.output_contract
+    )
+    return "\n".join(lines)
+
+
 def render_toml_multiline_basic_string(value: str) -> str:
     escaped = value.replace("\\", "\\\\").replace('"', '\\"')
     return (
@@ -613,6 +667,7 @@ def render_toml_multiline_basic_string(value: str) -> str:
 def render_codex_agent(role: RoleDefinition) -> str:
     fields = [
         f"# {GENERATED_FILE_HEADER}",
+        role_adapter_comments(role, "# "),
         f"name = {json.dumps(role.name)}",
         f"description = {json.dumps(role.description)}",
         "developer_instructions = "
@@ -652,7 +707,7 @@ def render_claude_agent(role: RoleDefinition) -> str:
     frontmatter_text = yaml.safe_dump(frontmatter, sort_keys=False).strip()
     output_lines = "\n".join(f"- {item}" for item in role.output_contract)
     return (
-        f"<!-- {GENERATED_FILE_HEADER} -->\n"
+        f"<!-- {GENERATED_FILE_HEADER}\n{role_adapter_comments(role, '')}\n-->\n"
         f"---\n{frontmatter_text}\n---\n\n"
         f"{role.instructions}\n\n"
         f"Load these skills when applicable: {', '.join(role.skills)}.\n\n"

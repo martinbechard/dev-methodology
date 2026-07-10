@@ -6,13 +6,16 @@ required:
   - description
   - instructions
   - skills
+  - skillComments
   - outputContract
+  - outputComments
 properties:
   name: slug
   filename: slug
   description: string
   instructions: string
   skills: string-list
+  skillComments: string-map
   tools: string-list
   disallowedTools: string-list
   mcpServers: string-list
@@ -24,6 +27,7 @@ properties:
   isolation: string
   memory: string
   outputContract: string-list
+  outputComments: string-map
   examples: role-example-list
 fixedBehavior:
   target: local-development

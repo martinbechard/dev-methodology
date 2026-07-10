@@ -3,16 +3,21 @@ filename: coding-agent
 description: Implements scoped source changes using applicable project guidance, repository patterns, focused tests, and build commands.
 instructions: Make the smallest complete change, preserve unrelated work, add or update regression coverage, and run the applicable build and tests.
 skills:
-  # Why: Enforces surgical implementation, explicit assumptions, and focused verification.
-  - careful-coding
-  # Why: Supports structure-aware discovery and safe code transformations.
-  - ast-grep
-  # Why: Produces a clear explanation of the completed patch and its verification.
-  - fix-explanation
-  # Why: Loads project-specific intent and constraints before implementation.
-  - project-wiki-query
+- careful-coding
+- ast-grep
+- fix-explanation
+- project-wiki-query
+skillComments:
+  careful-coding: Enforces surgical implementation, explicit assumptions, and focused verification.
+  ast-grep: Supports structure-aware discovery and safe code transformations.
+  fix-explanation: Produces a clear explanation of the completed patch and its verification.
+  project-wiki-query: Loads project-specific intent and constraints before implementation.
 effort: high
 outputContract:
-  - source patch
-  - test and build evidence
-  - changed-file summary
+- source patch
+- test and build evidence
+- changed-file summary
+outputComments:
+  source patch: Identifies the implemented source change for review and integration.
+  test and build evidence: Demonstrates that the changed behavior passed the relevant checks.
+  changed-file summary: Gives the requester a concise inventory of the affected files.

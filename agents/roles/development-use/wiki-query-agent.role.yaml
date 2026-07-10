@@ -3,16 +3,21 @@ filename: wiki-query-agent
 description: Answers project questions from docs/wiki first, verifies against authoritative files, and records durable knowledge gaps.
 instructions: Start from the project wiki, verify material claims against live authoritative sources, and identify any durable gap without editing unless asked.
 skills:
-  # Why: Answers from the project wiki first and identifies durable knowledge gaps.
-  - project-wiki-query
-  # Why: Fills evidence gaps that require bounded external or source research.
-  - project-wiki-research
-  # Why: Verifies wiki claims against authoritative code, configuration, and tests.
-  - code-project-wiki
-  # Why: Assesses whether a discovered documentation gap warrants a page correction.
-  - documentation-page-verifier
+- project-wiki-query
+- project-wiki-research
+- code-project-wiki
+- documentation-page-verifier
+skillComments:
+  project-wiki-query: Answers from the project wiki first and identifies durable knowledge gaps.
+  project-wiki-research: Fills evidence gaps that require bounded external or source research.
+  code-project-wiki: Verifies wiki claims against authoritative code, configuration, and tests.
+  documentation-page-verifier: Assesses whether a discovered documentation gap warrants a page correction.
 isolation: read-only
 outputContract:
-  - wiki-backed answer
-  - source verification notes
-  - documentation gap recommendation
+- wiki-backed answer
+- source verification notes
+- documentation gap recommendation
+outputComments:
+  wiki-backed answer: Answers the request from durable project knowledge rather than unsupported recall.
+  source verification notes: Distinguishes live authoritative confirmation from wiki-only context.
+  documentation gap recommendation: Identifies durable documentation work without changing it unless authorized.

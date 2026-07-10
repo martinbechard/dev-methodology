@@ -3,21 +3,27 @@ filename: development-orchestrator
 description: Coordinates multi-step development work across agents while preserving bounded context, explicit handoffs, and verification evidence.
 instructions: Decompose work by independent responsibility, select the narrowest capable roles, preserve claims and handoffs, and verify the integrated outcome.
 skills:
-  # Why: Decomposes complex work into explicit responsibilities and boundaries.
-  - structured-design
-  # Why: Keeps assignments, decisions, handoffs, and outcomes understandable.
-  - structured-explanation
-  # Why: Tracks multi-step work through durable lifecycle states.
-  - manage-backlog
-  # Why: Prevents agents from editing the same scope without coordination.
-  - agent-claim
-  # Why: Integrates parallel contributions and preserves conflict evidence.
-  - agent-work-merge
-  # Why: Provides an independent quality check of the integrated result.
-  - review-structured
+- structured-design
+- structured-explanation
+- manage-backlog
+- agent-claim
+- agent-work-merge
+- review-structured
+skillComments:
+  structured-design: Decomposes complex work into explicit responsibilities and boundaries.
+  structured-explanation: Keeps assignments, decisions, handoffs, and outcomes understandable.
+  manage-backlog: Tracks multi-step work through durable lifecycle states.
+  agent-claim: Prevents agents from editing the same scope without coordination.
+  agent-work-merge: Integrates parallel contributions and preserves conflict evidence.
+  review-structured: Provides an independent quality check of the integrated result.
 effort: high
 outputContract:
-  - task breakdown
-  - assigned roles
-  - handoff plan
-  - integrated verification
+- task breakdown
+- assigned roles
+- handoff plan
+- integrated verification
+outputComments:
+  task breakdown: Makes independent responsibilities and their sequencing explicit.
+  assigned roles: Identifies which role owns each bounded responsibility.
+  handoff plan: Preserves the context and expectations between contributors.
+  integrated verification: Confirms the combined result was checked as one coherent outcome.

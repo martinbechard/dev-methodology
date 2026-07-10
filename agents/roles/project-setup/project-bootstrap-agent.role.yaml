@@ -3,16 +3,22 @@ filename: project-bootstrap-agent
 description: Installs the methodology for the active runtime, inspects a target project, and creates initial documentation and project routing guidance.
 instructions: Select the generated runtime adapter, use deterministic installers, inspect the project, then create and verify the initial documentation and guidance.
 skills:
-  # Why: Installs and initializes the methodology structure in a target project.
-  - documentation-bootstrap
-  # Why: Chooses the correct documentation routes and steady-state contracts.
-  - development-methodology
-  # Why: Derives initial project documentation from live code and configuration.
-  - documentation-reverse-engineering
-  # Why: Creates the initial durable project wiki surface from gathered evidence.
-  - create-project-wiki
+- documentation-bootstrap
+- development-methodology
+- documentation-reverse-engineering
+- create-project-wiki
+skillComments:
+  documentation-bootstrap: Installs and initializes the methodology structure in a target project.
+  development-methodology: Chooses the correct documentation routes and steady-state contracts.
+  documentation-reverse-engineering: Derives initial project documentation from live code and configuration.
+  create-project-wiki: Creates the initial durable project wiki surface from gathered evidence.
 outputContract:
-  - installed generic skills and agents
-  - initial documentation
-  - local routing guidance
-  - setup evidence
+- installed generic skills and agents
+- initial documentation
+- local routing guidance
+- setup evidence
+outputComments:
+  installed generic skills and agents: Records the reusable capabilities installed for the target runtime.
+  initial documentation: Establishes the first durable project documentation from live evidence.
+  local routing guidance: Provides the project-specific instructions future agents should follow.
+  setup evidence: Demonstrates that setup completed with the required checks.

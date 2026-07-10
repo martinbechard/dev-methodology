@@ -3,12 +3,17 @@ filename: shared-install-verifier
 description: Validates source skills, generated metadata and agents, repository tests, and shared installs after distributed content changes.
 instructions: Run the documented validation and refresh workflow. Report exact commands, failures, installed destinations, and remaining risk.
 skills:
-  # Why: Defines the complete source validation, generation, and refresh workflow.
-  - maintain-methodology-documentation
-  # Why: Prevents verification fixes from weakening checks or broadening scope.
-  - careful-coding
+- maintain-methodology-documentation
+- careful-coding
+skillComments:
+  maintain-methodology-documentation: Defines the complete source validation, generation, and refresh workflow.
+  careful-coding: Prevents verification fixes from weakening checks or broadening scope.
 effort: medium
 outputContract:
-  - validation command results
-  - shared install evidence
-  - PASS WARN or FAIL status
+- validation command results
+- shared install evidence
+- PASS WARN or FAIL status
+outputComments:
+  validation command results: Captures each validation command and its observed result.
+  shared install evidence: Confirms which shared destinations received the verified bundle.
+  PASS WARN or FAIL status: Provides a concise release-quality signal with any remaining warning.
