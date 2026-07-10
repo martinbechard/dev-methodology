@@ -276,6 +276,8 @@
     }
 
     .agent-modal__invocation-text {
+      margin: 0;
+      overflow-wrap: anywhere;
       padding: 0.65rem;
       border: 1px solid var(--color-line, #d9e0ea);
       border-radius: var(--radius-small, 0.35rem);
@@ -284,6 +286,15 @@
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
       font-size: 0.82rem;
       line-height: 1.45;
+      white-space: pre-wrap;
+    }
+
+    .agent-modal__invocation-text code {
+      padding: 0;
+      border-radius: 0;
+      background: transparent;
+      color: inherit;
+      font: inherit;
     }
 
     .agent-modal__yaml-details {
@@ -543,10 +554,12 @@
       if ("codex" in invocations) {
         runtimeSelect.value = "codex";
       }
-      const invocationText = document.createElement("p");
+      const invocationText = document.createElement("pre");
       invocationText.className = "agent-modal__invocation-text";
+      const invocationCode = document.createElement("code");
+      invocationText.appendChild(invocationCode);
       const showInvocation = () => {
-        invocationText.textContent = invocations[runtimeSelect.value] || "";
+        invocationCode.textContent = invocations[runtimeSelect.value] || "";
       };
       runtimeSelect.addEventListener("change", showInvocation);
       showInvocation();

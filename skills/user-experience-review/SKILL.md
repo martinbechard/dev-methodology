@@ -14,8 +14,9 @@ Judge the real task flow from observable user states and outcomes.
 1. Identify the user goal, entry point, required information, actions, success state, and recovery paths.
 2. Route specialized interface, design-system, and automation guidance from repository evidence.
 3. Inspect the workflow at relevant input, viewport, keyboard, assistive, loading, empty, error, denied, and success states.
-4. Separate usability and accessibility defects from personal visual preference.
-5. Capture observable evidence, user impact, correction, and residual uncertainty.
+4. Measure text and essential non-text color contrast in every relevant component and interaction state, including code blocks and syntax highlighting.
+5. Separate usability and accessibility defects from personal visual preference.
+6. Capture observable evidence, user impact, correction, and residual uncertainty.
 
 ## Review Evidence
 

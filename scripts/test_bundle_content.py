@@ -383,6 +383,43 @@ def load_yaml_object_from_frontmatter(path: Path) -> dict[str, object]:
     return parsed
 
 
+def css_hex_property(styles: str, selector: str, property_name: str) -> str:
+    rule_marker = f"{selector} {{"
+    if rule_marker not in styles:
+        raise AssertionError(f"Missing CSS selector {selector}")
+    rule_body = styles.split(rule_marker, maxsplit=1)[1].split("}", maxsplit=1)[0]
+    property_marker = f"{property_name}:"
+    for declaration in rule_body.split(";"):
+        if declaration.strip().startswith(property_marker):
+            return declaration.split(":", maxsplit=1)[1].strip()
+    raise AssertionError(f"Missing CSS property {property_name} in {selector}")
+
+
+def wcag_contrast_ratio(first_hex: str, second_hex: str) -> float:
+    def relative_luminance(hex_color: str) -> float:
+        channels = [
+            int(hex_color[index:index + 2], 16) / 255
+            for index in (1, 3, 5)
+        ]
+        linear_channels = [
+            channel / 12.92
+            if channel <= 0.04045
+            else ((channel + 0.055) / 1.055) ** 2.4
+            for channel in channels
+        ]
+        return (
+            0.2126 * linear_channels[0]
+            + 0.7152 * linear_channels[1]
+            + 0.0722 * linear_channels[2]
+        )
+
+    first_luminance = relative_luminance(first_hex)
+    second_luminance = relative_luminance(second_hex)
+    lighter = max(first_luminance, second_luminance)
+    darker = min(first_luminance, second_luminance)
+    return (lighter + 0.05) / (darker + 0.05)
+
+
 class BundleContentTests(unittest.TestCase):
     def test_redundant_root_manuals_are_removed(self) -> None:
         for file_name in REMOVED_ROOT_FILES:
@@ -979,11 +1016,47 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(agent_browser_phrase=phrase):
                 self.assertIn(phrase, agent_browser_text)
         self.assertIn(".agent-modal__yaml code {\n", agent_browser_text)
+        self.assertIn(
+            ".agent-modal__invocation-text code {\n",
+            agent_browser_text,
+        )
+        self.assertIn('document.createElement("pre")', agent_browser_text)
+        invocation_foreground = css_hex_property(
+            agent_browser_text,
+            ".agent-modal__invocation-text",
+            "color",
+        )
+        invocation_background = css_hex_property(
+            agent_browser_text,
+            ".agent-modal__invocation-text",
+            "background",
+        )
+        self.assertGreaterEqual(
+            wcag_contrast_ratio(invocation_foreground, invocation_background),
+            4.5,
+        )
         self.assertNotIn("Condition:", agent_browser_text)
 
         skill_browser_text = (REPOSITORY_ROOT / "design" / "skill-browser.js").read_text(encoding="utf-8")
         self.assertIn("enhance-skill-definitions", skill_browser_text)
         self.assertIn("[data-skill-definition]", skill_browser_text)
+
+    def test_user_experience_review_requires_measured_color_contrast(self) -> None:
+        skill_root = SKILLS_ROOT / "user-experience-review"
+        skill_text = (skill_root / "SKILL.md").read_text(encoding="utf-8")
+        checklist_text = (
+            skill_root / "references" / "review-checklist-user-experience-review.md"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn("Measure text and essential non-text color contrast", skill_text)
+        for phrase in (
+            "code and syntax color",
+            "at least 4.5:1 contrast",
+            "at least 3:1 contrast",
+            "default, hover, focus, selected, disabled, error",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, checklist_text)
 
     def test_agent_definition_formats_document_runtime_adapters(self) -> None:
         index_text = (REPOSITORY_ROOT / "index.html").read_text(encoding="utf-8")
