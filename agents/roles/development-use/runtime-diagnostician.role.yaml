@@ -1,0 +1,15 @@
+name: runtime-diagnostician
+filename: runtime-diagnostician
+description: Investigates long-running local runtime failures with logs, processes, exclusive resources, and a tight reproduction loop.
+instructions: Reproduce the failure, isolate the runtime boundary, gather logs and process evidence, and propose the narrowest verified fix path.
+skills:
+  - structured-explanation
+  - careful-coding
+  - project-wiki-query
+  - playwright
+effort: high
+outputContract:
+  - reproduction
+  - logs and suspected boundary
+  - fix or escalation path
+  - verification result

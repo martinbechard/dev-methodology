@@ -15,10 +15,12 @@
       --color-green: #0f766e;
       --color-amber: #b45309;
       --color-purple: #7c3aed;
+      --color-rose: #be123c;
       --color-soft-blue: #e8f0ff;
       --color-soft-green: #e4f7f4;
       --color-soft-amber: #fff1d8;
       --color-soft-purple: #f0e8ff;
+      --color-soft-rose: #ffe5ec;
       --shadow-panel: 0 14px 32px rgba(31, 41, 55, 0.08);
       --space-2: 0.5rem;
       --space-3: 0.75rem;
@@ -137,6 +139,10 @@
       background: var(--color-purple);
     }
 
+    .dot.rose {
+      background: var(--color-rose);
+    }
+
     .doc-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -214,6 +220,11 @@
       --card-soft: var(--color-soft-purple);
     }
 
+    .rose {
+      --card-color: var(--color-rose);
+      --card-soft: var(--color-soft-rose);
+    }
+
     .footer {
       margin-top: var(--space-8);
       padding: var(--space-5);
@@ -244,6 +255,7 @@
         <span class="pill"><span class="dot blue"></span>Operating model</span>
         <span class="pill"><span class="dot green"></span>Specialization</span>
         <span class="pill"><span class="dot amber"></span>Agent roles</span>
+        <span class="pill"><span class="dot rose"></span>Runtime formats</span>
         <span class="pill"><span class="dot purple"></span>Examples</span>
       </div>
     </section>
@@ -285,6 +297,15 @@
           </header>
           <p>Shows how the strategy resolves skills and agents for gemma-chat-public and mpact-insight-questionnaire.</p>
           <span class="path">design/agent-skill-specialization-examples.html</span>
+        </a>
+
+        <a class="doc-card rose" href="design/agent-definition-runtime-formats.html">
+          <header>
+            <span class="icon" aria-hidden="true">05</span>
+            <h3>Agent Definition Runtime Formats</h3>
+          </header>
+          <p>Compares Codex, Claude Code, Gemini CLI, Junie CLI, and GitHub Copilot agent definition formats and recommends a common role source plus generated adapters.</p>
+          <span class="path">design/agent-definition-runtime-formats.html</span>
         </a>
       </div>
     </section>

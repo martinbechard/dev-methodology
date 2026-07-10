@@ -1,6 +1,8 @@
 ---
 name: create-high-level-design
 description: Use when creating or substantially rewriting a high-level design artifact from the development-methodology high-level-design-template asset, including subsystem scope, parent architecture, data anchors, constituent components, interaction model, lifecycle, contracts, configuration, implementation order, invariants, and verification.
+metadata:
+  category: artifact-creation
 ---
 
 # Create High-Level Design

@@ -1,6 +1,8 @@
 ---
 name: create-architecture
 description: Use when creating or substantially rewriting an architecture artifact from the development-methodology architecture-template asset, including system scope, context, technology stack, file organization, layers, components, data flow, lifecycle, cross-cutting concerns, risks, invariants, and verification.
+metadata:
+  category: artifact-creation
 ---
 
 # Create Architecture

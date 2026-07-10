@@ -1,6 +1,8 @@
 ---
 name: documentation-bootstrap
 description: Use when applying the development methodology bundle to a target repository for the first time, choosing documentation roots, templates, AGENTS guidance, or wiki setup.
+metadata:
+  category: documentation-methodology
 ---
 
 # Documentation Bootstrap

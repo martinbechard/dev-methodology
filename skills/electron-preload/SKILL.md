@@ -1,6 +1,8 @@
 ---
 name: electron-preload
 description: Use when coding, reviewing, or testing Electron preload scripts, context bridge APIs, renderer exposure, IPC client contracts, or desktop trust boundaries.
+metadata:
+  category: stack-and-domain
 ---
 
 # Electron Preload

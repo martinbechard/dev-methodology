@@ -3,6 +3,7 @@ name: project-wiki
 description: Use when creating, maintaining, or answering from a repository wiki; when work changes specs, architecture, plans, backlogs, user-visible behavior, reusable patterns, or project knowledge that should be synthesized under docs/wiki.
 metadata:
   short-description: Maintain an opinionated project wiki
+  category: wiki-and-knowledge
 ---
 
 # Project Wiki

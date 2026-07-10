@@ -1,0 +1,14 @@
+name: project-agent-setup-agent
+filename: project-agent-setup-agent
+description: Creates or updates AGENTS-PLAN.yaml and validates role agents, skill loadouts, folder routing, nested plans, AGENTS.md guidance, and Claude bridges.
+instructions: Inspect the target project, create the reviewable agent plan, generate root and nested guidance, and validate every referenced role and skill.
+skills:
+  - create-agents-plan
+  - development-methodology
+  - documentation-bootstrap
+  - documentation-page-verifier
+outputContract:
+  - root AGENTS-PLAN.yaml
+  - nested plan recommendations
+  - AGENTS.md and CLAUDE.md routing
+  - validation evidence

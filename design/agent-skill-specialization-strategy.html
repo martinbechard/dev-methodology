@@ -709,6 +709,28 @@ Data rules:
   Company internal information to external LLM: forbidden</code></pre>
   </section>
 
+  <section class="section" aria-labelledby="customer-customization-title">
+    <h2 id="customer-customization-title">Customer Installation And Direct Customization</h2>
+    <div class="wide-grid">
+      <article class="panel">
+        <h3>Build and install boundary</h3>
+        <p>The source build contains customer-independent skills, canonical roles, documentation data, support scripts, and generated runtime adapters. On the customer machine, the setup agent selects the active runtime and invokes deterministic installers.</p>
+      </article>
+      <article class="panel">
+        <h3>Stable-name customization</h3>
+        <p>Customer maintainers may edit an installed skill or native agent definition directly. Preserve its original name so skills, loadouts, and AGENTS.md guidance keep resolving it.</p>
+      </article>
+      <article class="panel">
+        <h3>Deliberate upgrades</h3>
+        <p>A refresh must not silently replace customized files. An update uses three-way discrepancy analysis across the old generic, installed customer, and new generic definitions before the user chooses what to keep, merge, replace, or remove.</p>
+      </article>
+      <article class="panel">
+        <h3>Project grounding</h3>
+        <p>AGENTS-PLAN.yaml explains selected roles and skills. Root and nested AGENTS.md files contain operational project guidance, with thin colocated CLAUDE.md bridges where Claude Code is used.</p>
+      </article>
+    </div>
+  </section>
+
   <section class="section" aria-labelledby="folder-title">
     <h2 id="folder-title">Nested AGENTS.md Shape</h2>
     <div class="wide-grid">
@@ -816,5 +838,7 @@ Data rules:
     </div>
   </section>
 </main>
+<script src="generated/skill-definitions.js"></script>
+<script src="skill-browser.js"></script>
 </body>
 </html>

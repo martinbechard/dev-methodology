@@ -1,6 +1,8 @@
 ---
 name: review-architecture
 description: Use when reviewing an architecture artifact for system scope, runtime assumptions, boundaries, dependency direction, cross-cutting concerns, and verification.
+metadata:
+  category: artifact-review
 ---
 
 # Architecture Review

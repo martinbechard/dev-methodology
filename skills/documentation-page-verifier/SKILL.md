@@ -1,11 +1,13 @@
 ---
 name: documentation-page-verifier
 description: Use when verifying mixed, unknown, custom, or shared methodology documentation concerns that do not have a clearer artifact-specific review skill.
+metadata:
+  category: documentation-methodology
 ---
 
 # Documentation Page Verifier
 
-Use this skill for shared methodology documentation checks when the artifact type is mixed, unknown, custom, or not covered by a clearer artifact-specific review skill. The verifier checks that a page is source-backed, wiki-compatible, steady-state, and useful to future agents.
+Use this skill for shared methodology documentation checks when the artifact type is mixed, unknown, custom, or not covered by a clearer artifact-specific review skill. The verifier checks that a page is source-backed, format-appropriate, steady-state, and useful to future agents.
 
 ## Prefer Artifact-Specific Review
 
@@ -23,6 +25,14 @@ Use this skill for shared methodology documentation checks when the artifact typ
 - Related source files, tests, procedures, backlog items, wiki pages, and project metadata.
 - Project-specific documentation rules from AGENTS.md or procedures.
 
+## Format Selection
+
+Before checking sections, identify the selected structure from the user request, file type, runtime schema, existing document, surrounding documentation, or methodology template.
+
+When a specific structure or format is indicated, that structure is authoritative. Verify source support, links, steady-state prose, completeness, diagrams, and unresolved questions within the indicated format. Do not require shared page sections unless the selected artifact is a docs/wiki page, a project wiki methodology artifact, or another methodology template that explicitly uses the shared page contract.
+
+Examples of format-owned artifacts include design HTML pages, README files, runtime adapter profiles, generated data files, native agent definition files, package metadata, and vendor schema documents.
+
 ## Completed Review Checklist Evidence
 
 When a completed review checklist is available, use it as the evidence record for verification.
@@ -36,7 +46,9 @@ When a completed review checklist is available, use it as the evidence record fo
 
 ## Shared Page Contract
 
-Confirm the page starts with the shared sections in this order:
+Apply this section only when the selected artifact type uses the shared page contract. When a specific non-wiki structure is indicated, skip this section and verify the indicated format instead.
+
+For shared-page-contract artifacts, confirm the page starts with these sections in this order:
 
 1. Current Understanding
 2. Authoritative Sources

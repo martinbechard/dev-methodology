@@ -1,0 +1,41 @@
+schema: dev-methodology-role
+version: 1
+required:
+  - name
+  - filename
+  - description
+  - instructions
+  - skills
+  - outputContract
+properties:
+  name: slug
+  filename: slug
+  description: string
+  instructions: string
+  skills: string-list
+  tools: string-list
+  disallowedTools: string-list
+  mcpServers: string-list
+  model: string
+  effort: string
+  maxTurns: integer
+  timeout: integer
+  permissionMode: string
+  isolation: string
+  memory: string
+  outputContract: string-list
+fixedBehavior:
+  target: local-development
+  userInvocable: true
+  automaticDelegation: true
+excludedProperties:
+  - hooks
+  - target
+  - kind
+  - color
+  - nickname_candidates
+  - metadata
+roleGroups:
+  - methodology-maintenance
+  - project-setup
+  - development-use

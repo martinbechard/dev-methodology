@@ -1,6 +1,8 @@
 ---
 name: review-project-wiki
 description: Use when reviewing a project wiki page or project-wiki-template artifact for source authority, wiki structure, maintenance rules, and code-aware navigation.
+metadata:
+  category: artifact-review
 ---
 
 # Project Wiki Review

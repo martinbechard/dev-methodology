@@ -45,6 +45,9 @@ class RefreshSharedSkillsTests(unittest.TestCase):
         for command in commands:
             with self.subTest(command=command):
                 self.assertIn("--prune-owned", command)
+        self.assertNotIn("--install-agents", commands[FIRST_COMMAND_INDEX])
+        self.assertIn("--install-agents", commands[SECOND_COMMAND_INDEX])
+        self.assertIn("--install-agents", commands[THIRD_COMMAND_INDEX])
         self.assertEqual(
             ["--adapter", "codex"],
             commands[FIRST_COMMAND_INDEX][ADAPTER_ARGUMENT_START_INDEX:ADAPTER_ARGUMENT_END_INDEX],

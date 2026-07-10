@@ -1,6 +1,8 @@
 ---
 name: create-project-wiki
 description: Use when creating or substantially rewriting a project wiki methodology artifact from the development-methodology project-wiki-template asset, including wiki setup, authority order, base page contract, page subclassing, update workflow, automation, and verification guidance.
+metadata:
+  category: artifact-creation
 ---
 
 # Create Project Wiki Artifact

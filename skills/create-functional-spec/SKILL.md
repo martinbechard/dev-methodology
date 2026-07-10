@@ -1,6 +1,8 @@
 ---
 name: create-functional-spec
 description: Use when creating or substantially rewriting a functional specification artifact from the development-methodology functional-spec-template asset, including actors, entry points, workflows, states, edge cases, acceptance behavior, and verification evidence.
+metadata:
+  category: artifact-creation
 ---
 
 # Create Functional Specification

@@ -1,13 +1,25 @@
 from __future__ import annotations
 
+import importlib.util
+import sys
 import unittest
 from pathlib import Path
+from types import ModuleType
+
+import yaml
 
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 README_PATH = REPOSITORY_ROOT / "README.md"
 AGENTS_PATH = REPOSITORY_ROOT / "AGENTS.md"
 SKILLS_ROOT = REPOSITORY_ROOT / "skills"
+SKILL_CATEGORIES_PATH = REPOSITORY_ROOT / "design" / "skill-categories.yaml"
+SKILL_DEFINITIONS_PATH = REPOSITORY_ROOT / "design" / "generated" / "skill-definitions.js"
+ROLE_SCHEMA_PATH = REPOSITORY_ROOT / "agents" / "role-schema.yaml"
+ROLE_DEFINITIONS_PATH = REPOSITORY_ROOT / "design" / "generated" / "role-definitions.js"
+GENERATED_ADAPTERS_ROOT = REPOSITORY_ROOT / "generated" / "adapters"
+BUILD_SKILL_DOCS_PATH = REPOSITORY_ROOT / "scripts" / "build-skill-docs.py"
+BUILD_SKILL_DOCS_MODULE_NAME = "build_skill_docs"
 REMOVED_ROOT_FILES = (
     "documentation-methodology.md",
     "procedure-reverse-engineer-project-documentation.md",
@@ -22,6 +34,7 @@ NEW_WORKFLOW_SKILLS = (
     "code-project-wiki",
     "documentation-page-verifier",
     "create-agents-plan",
+    "maintain-methodology-documentation",
 )
 AGENTS_PLAN_SKILL = "create-agents-plan"
 AGENTS_PLAN_TEMPLATE = "agents-plan-template.yaml"
@@ -117,11 +130,22 @@ README_REQUIRED_PHRASES = (
     "Review Skill Checklist Convention",
     "review-checklist-[review-target].md",
     "artifact-name.review-checklist-[review-target].md",
+    "python3 scripts/build-skill-docs.py",
+    "design/generated/skill-definitions.js",
+    "design/generated/role-definitions.js",
+    "design/skill-categories.yaml",
+    "agents/role-schema.yaml",
+    "generated/adapters",
+    "--install-agents",
+    "--replace-customized",
+    "maintain-methodology-documentation",
+    "three-way discrepancy analysis",
+    "repoRoot query parameter",
 )
 DEVELOPMENT_METHODOLOGY_REQUIRED_PHRASES = (
-    "When a skill was renamed or deleted",
-    "Do not remove unowned local skills manually.",
-    "standalone agent definition folders",
+    "When a skill or role was renamed or deleted",
+    "Do not remove unowned local skills or agents manually.",
+    "generated agent installs",
     "sweep the source repository for the old skill id",
     "Codex metadata",
     "aggregate workflow examples",
@@ -130,6 +154,8 @@ DEVELOPMENT_METHODOLOGY_REQUIRED_PHRASES = (
     "create-agents-plan",
     "agents-plan-template.yaml",
     "AGENTS-PLAN.yaml",
+    "When the user, target file type, runtime schema, existing document, or surrounding documentation indicates a specific structure or format, preserve that structure.",
+    "Use the shared page contract only when the selected artifact type requires it.",
 )
 STRATEGY_REQUIRED_PHRASES = (
     "Before a rename or deletion",
@@ -140,16 +166,43 @@ AGENT_ROLE_MAP_REQUIRED_PHRASES = (
     "Methodology Maintenance Agents",
     "Project Setup And Update Agents",
     "Development Use Agents",
-    "ROLE_LOADOUTS",
+    "DEV_METHODOLOGY_ROLE_DEFINITIONS",
     "loadout-details",
-    "expand-button",
+    "generated/skill-definitions.js",
+    "generated/role-definitions.js",
+    "skill-browser.js",
     "agent-grid",
     "grid-template-columns: repeat(3, minmax(0, 1fr));",
-    "Primary skills",
-    "Optional skills",
+    "Skills",
     "Outputs",
-    ".tag.optional",
     ".tag.output",
+)
+AGENT_DEFINITION_FORMATS_REQUIRED_PHRASES = (
+    "Agent Definition Runtime Formats",
+    "OpenAI Codex Subagents",
+    "Claude Code Subagents",
+    "Gemini CLI Subagents",
+    "Junie CLI Custom Subagents",
+    "GitHub Copilot Agent Mode",
+    "GitHub Copilot Custom Agents",
+    "GitHub Copilot Agent Skills",
+    "Properties We Use",
+    "Properties We Ignore",
+    "Behavior We Default",
+    "Skills, Tools, And MCP",
+    "Runtime Controls",
+    "[mcp_servers.name]",
+    "[[skills.config]]",
+    "~/.codex/config.toml",
+    ".codex/config.toml",
+    "prefix_rule",
+    "Common Source Mapping",
+    "Use A Common Role Source",
+    "Generate Runtime Adapters",
+    "Validate Against Skills",
+    "Keep HTML Pure",
+    "Role Router Skills",
+    "design/generated/role-definitions.js",
 )
 DEVELOPMENT_USE_LOADOUTS = (
     "Development Orchestrator",
@@ -165,10 +218,16 @@ DEVELOPMENT_USE_LOADOUTS = (
     "Prompt Contract Reviewer",
 )
 AGENT_ROLE_MAP_FORBIDDEN_PHRASES = (
+    "const ROLE_LOADOUTS",
     "Default Skill Loadouts",
     "loadout-title",
+    "Primary skills",
+    "Optional skills",
+    "expand-button",
+    ".tag.optional",
     "Optional Specialist Roles",
     "specialists-title",
+    "<span class=\"tag role\">",
     "card specialist",
     "tag specialist",
 )
@@ -190,6 +249,9 @@ DOCUMENTATION_PAGE_VERIFIER_REVIEW_PHRASES = (
     "quoted evidence",
     "assessment",
     "Do not complete verification from memory",
+    "## Format Selection",
+    "When a specific structure or format is indicated, that structure is authoritative.",
+    "Do not require shared page sections unless the selected artifact is a docs/wiki page",
 )
 AGENTS_REQUIRED_PHRASES = (
     "repo-local operating contract",
@@ -213,6 +275,26 @@ def completed_review_checklist_suffix(review_target: str) -> str:
 
 def openai_metadata_path(skill_name: str) -> Path:
     return SKILLS_ROOT / skill_name / "agents" / "openai.yaml"
+
+
+def load_build_skill_docs_module() -> ModuleType:
+    spec = importlib.util.spec_from_file_location(
+        BUILD_SKILL_DOCS_MODULE_NAME,
+        BUILD_SKILL_DOCS_PATH,
+    )
+    if spec is None or spec.loader is None:
+        raise RuntimeError("Unable to load build-skill-docs.py.")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[BUILD_SKILL_DOCS_MODULE_NAME] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def load_yaml_object(path: Path) -> dict[str, object]:
+    parsed = yaml.safe_load(path.read_text(encoding="utf-8"))
+    if not isinstance(parsed, dict):
+        raise AssertionError(f"Expected YAML object in {path}")
+    return parsed
 
 
 class BundleContentTests(unittest.TestCase):
@@ -297,6 +379,8 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("schema: agents-plan", template_text)
         self.assertIn("proprietary_validation_notes:", template_text)
         self.assertIn("nested_agents_plan_files:", template_text)
+        self.assertIn("claude_bridge_files:", template_text)
+        self.assertIn("thin CLAUDE.md", skill_text)
         self.assertIn(AGENTS_PLAN_SKILL, development_methodology_text)
         self.assertIn(AGENTS_PLAN_TEMPLATE, development_methodology_text)
         self.assertIn("documentation-page-verifier", development_methodology_text)
@@ -369,11 +453,68 @@ class BundleContentTests(unittest.TestCase):
         for skill_path in sorted(SKILLS_ROOT.glob("*/SKILL.md")):
             with self.subTest(skill_path=skill_path):
                 skill_text = skill_path.read_text(encoding="utf-8")
-                frontmatter = skill_text.split("---", maxsplit=2)[1]
+                frontmatter_text = skill_text.split("---", maxsplit=2)[1]
+                frontmatter = yaml.safe_load(frontmatter_text)
 
-                self.assertIn("name:", frontmatter)
-                self.assertIn("description:", frontmatter)
-                self.assertNotIn("type: Skill", frontmatter)
+                self.assertIsInstance(frontmatter, dict)
+                self.assertIn("name", frontmatter)
+                self.assertIn("description", frontmatter)
+                self.assertNotIn("type", frontmatter)
+
+    def test_skill_categories_are_declared_in_skill_metadata(self) -> None:
+        category_data = load_yaml_object(SKILL_CATEGORIES_PATH)
+        categories = category_data.get("categories")
+        self.assertIsInstance(categories, list)
+        category_ids = {
+            category["id"]
+            for category in categories
+            if isinstance(category, dict) and isinstance(category.get("id"), str)
+        }
+
+        for skill_path in sorted(SKILLS_ROOT.glob("*/SKILL.md")):
+            with self.subTest(skill_path=skill_path):
+                skill_text = skill_path.read_text(encoding="utf-8")
+                frontmatter = yaml.safe_load(skill_text.split("---", maxsplit=2)[1])
+                self.assertIsInstance(frontmatter, dict)
+                metadata = frontmatter.get("metadata")
+                self.assertIsInstance(metadata, dict)
+                category = metadata.get("category")
+                self.assertIn(category, category_ids)
+
+    def test_generated_skill_definition_data_is_current(self) -> None:
+        build_skill_docs = load_build_skill_docs_module()
+        rendered = build_skill_docs.render_javascript(build_skill_docs.build_payload())
+        self.assertEqual(
+            rendered,
+            SKILL_DEFINITIONS_PATH.read_text(encoding="utf-8"),
+        )
+
+    def test_canonical_roles_generate_current_documentation_and_adapters(self) -> None:
+        build_skill_docs = load_build_skill_docs_module()
+        skill_payload = build_skill_docs.build_payload()
+        roles = build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
+        expected_outputs = build_skill_docs.expected_role_outputs(roles)
+
+        self.assertTrue(ROLE_SCHEMA_PATH.is_file())
+        self.assertEqual(
+            expected_outputs[ROLE_DEFINITIONS_PATH],
+            ROLE_DEFINITIONS_PATH.read_text(encoding="utf-8"),
+        )
+        for output_path, expected_content in expected_outputs.items():
+            with self.subTest(output_path=output_path):
+                self.assertTrue(output_path.is_file())
+                self.assertEqual(expected_content, output_path.read_text(encoding="utf-8"))
+
+        skill_names = set(skill_payload["skills"])
+        for role in roles:
+            with self.subTest(role=role.name):
+                self.assertTrue(set(role.skills).issubset(skill_names))
+                self.assertTrue(
+                    (GENERATED_ADAPTERS_ROOT / "codex" / "agents" / f"{role.filename}.toml").is_file()
+                )
+                self.assertTrue(
+                    (GENERATED_ADAPTERS_ROOT / "claude" / "agents" / f"{role.filename}.md").is_file()
+                )
 
     def test_readme_points_to_skill_based_setup(self) -> None:
         readme_text = README_PATH.read_text(encoding="utf-8")
@@ -425,16 +566,29 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, role_map_text)
 
+        role_definitions_text = ROLE_DEFINITIONS_PATH.read_text(encoding="utf-8")
         for role_name in DEVELOPMENT_USE_LOADOUTS:
             with self.subTest(role_name=role_name):
                 self.assertIn(
-                    f"\"{role_name}\": {{",
-                    role_map_text,
+                    f'\"displayName\": \"{role_name}\"',
+                    role_definitions_text,
                 )
 
         for phrase in AGENT_ROLE_MAP_FORBIDDEN_PHRASES:
             with self.subTest(phrase=phrase):
                 self.assertNotIn(phrase, role_map_text)
+
+    def test_agent_definition_formats_document_runtime_adapters(self) -> None:
+        index_text = (REPOSITORY_ROOT / "index.html").read_text(encoding="utf-8")
+        format_text = (
+            REPOSITORY_ROOT / "design" / "agent-definition-runtime-formats.html"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn("design/agent-definition-runtime-formats.html", index_text)
+
+        for phrase in AGENT_DEFINITION_FORMATS_REQUIRED_PHRASES:
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, format_text)
 
     def test_reverse_engineering_uses_structural_code_discovery(self) -> None:
         skill_text = (

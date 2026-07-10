@@ -9,6 +9,8 @@ description: |
   and CHAIN-OF-THOUGHT only as the bridge from the parent item to that
   BECAUSE. Use embedded IDs on root-level items when review or
   cross-reference matters. This skill returns markdown text only.
+metadata:
+  category: development-practice
 ---
 
 # Structured Design

@@ -917,7 +917,7 @@ Validation:
   <section class="section" aria-labelledby="setup-flow-title">
     <h2 id="setup-flow-title">Project Setup Flow</h2>
     <div class="panel">
-      <p>Run this flow inside each project before writing or refreshing AGENTS.md. The setup work creates AGENTS-PLAN.yaml, chooses where nested guidance belongs, and records evidence; validation confirms that the resulting setup is usable.</p>
+      <p>Run this flow on the customer machine before writing or refreshing project guidance. The setup agent installs the selected runtime adapter, creates AGENTS-PLAN.yaml, chooses where nested guidance belongs, emits AGENTS.md and thin CLAUDE.md bridges where needed, and records evidence.</p>
     </div>
     <div class="matrix section">
       <table>
@@ -930,6 +930,12 @@ Validation:
           </tr>
         </thead>
         <tbody>
+          <tr>
+            <td><span class="name">Install</span></td>
+            <td>Detected runtime, generated native agent package, generic skills, support scripts, and destination scope.</td>
+            <td>Owned user-scope skills and native agent definitions.</td>
+            <td>The runtime discovers the installed skills and agents, and generic assets contain no customer material.</td>
+          </tr>
           <tr>
             <td><span class="name">Inventory</span></td>
             <td>README files, AGENTS.md files, package metadata, source roots, tests, docs, wiki pages, and procedures.</td>
@@ -951,8 +957,8 @@ Validation:
           <tr>
             <td><span class="name">Place</span></td>
             <td>Subfolders with different technology, runtime setup, data handling, or verification commands.</td>
-            <td>Nested AGENTS.md references and local AGENTS-PLAN.yaml files where local detail is valuable.</td>
-            <td>Nested guidance reduces cognitive load without hiding repository-wide rules.</td>
+            <td>Nested AGENTS.md references, thin colocated CLAUDE.md imports, and local AGENTS-PLAN.yaml files where local detail is valuable.</td>
+            <td>Nested guidance reduces cognitive load without hiding repository-wide rules or duplicating Claude guidance.</td>
           </tr>
           <tr>
             <td><span class="name">Verify</span></td>
@@ -962,6 +968,14 @@ Validation:
           </tr>
         </tbody>
       </table>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="customer-edit-example-title">
+    <h2 id="customer-edit-example-title">Example: Direct Customer Customization</h2>
+    <div class="panel">
+      <p>A customer edits an installed code-review skill to add audit evidence rules while keeping the skill name stable. Existing agents and AGENTS.md references continue to resolve it.</p>
+      <p>During a later update, an agent compares the old generic skill, the installed customer skill, and the new generic skill. The customer chooses which differences to retain, merge, replace, or remove before any file is updated.</p>
     </div>
   </section>
 </main>
@@ -984,5 +998,7 @@ Validation:
     });
   });
 </script>
+<script src="generated/skill-definitions.js"></script>
+<script src="skill-browser.js"></script>
 </body>
 </html>

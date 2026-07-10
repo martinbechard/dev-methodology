@@ -6,7 +6,7 @@ import json
 import os
 import tempfile
 import unittest
-from contextlib import redirect_stdout
+from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 from types import ModuleType
 from unittest.mock import patch
@@ -22,6 +22,8 @@ SOURCE_OPENAI_METADATA = "display_name: Source Alpha\n"
 MANIFEST_SCHEMA_VERSION = 1
 BUNDLE_ID = "dev-methodology"
 SKILL_ARTIFACT_TYPE = "skill"
+AGENT_ARTIFACT_TYPE = "agent"
+AGENT_FILE_CONTENT = 'name = "reviewer"\ndescription = "Review."\ndeveloper_instructions = "Review."\n'
 
 
 def load_installer() -> ModuleType:
@@ -70,6 +72,16 @@ class InstallSkillsTests(unittest.TestCase):
             artifact["name"]
             for artifact in manifest["artifacts"]
             if artifact["type"] == SKILL_ARTIFACT_TYPE
+        ]
+
+    def read_manifest_agent_names(self, destination: Path) -> list[str]:
+        manifest = json.loads(
+            (destination / ".dev-methodology-install.json").read_text(encoding="utf-8")
+        )
+        return [
+            artifact["name"]
+            for artifact in manifest["artifacts"]
+            if artifact["type"] == AGENT_ARTIFACT_TYPE
         ]
 
     def test_installs_skill_directories_and_ignores_generated_cache(self) -> None:
@@ -123,6 +135,54 @@ class InstallSkillsTests(unittest.TestCase):
 
             self.assertEqual(replace_exit_code, installer.SUCCESS_EXIT_CODE)
             self.assertEqual((destination / "alpha" / "SKILL.md").read_text(encoding="utf-8"), UPDATED_SKILL_FILE_CONTENT)
+
+    def test_owned_customization_requires_discrepancy_analysis_override(self) -> None:
+        installer = load_installer()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            source = root / "source"
+            destination = root / "dest"
+            alpha = self.create_skill(source, "alpha")
+
+            with redirect_stdout(io.StringIO()):
+                first_exit_code = installer.main(["--source", str(source), "--dest", str(destination)])
+            self.assertEqual(installer.SUCCESS_EXIT_CODE, first_exit_code)
+
+            customized_content = "---\nname: alpha\ndescription: Customer customization.\n---\n"
+            (destination / "alpha" / "SKILL.md").write_text(customized_content, encoding="utf-8")
+            (alpha / "SKILL.md").write_text(UPDATED_SKILL_FILE_CONTENT, encoding="utf-8")
+
+            error_output = io.StringIO()
+            with redirect_stdout(io.StringIO()), redirect_stderr(error_output):
+                protected_exit_code = installer.main(
+                    ["--source", str(source), "--dest", str(destination), "--replace"]
+                )
+
+            self.assertEqual(installer.ERROR_EXIT_CODE, protected_exit_code)
+            self.assertIn("require discrepancy analysis", error_output.getvalue())
+            self.assertEqual(
+                customized_content,
+                (destination / "alpha" / "SKILL.md").read_text(encoding="utf-8"),
+            )
+
+            with redirect_stdout(io.StringIO()):
+                approved_exit_code = installer.main(
+                    [
+                        "--source",
+                        str(source),
+                        "--dest",
+                        str(destination),
+                        "--replace",
+                        "--replace-customized",
+                    ]
+                )
+
+            self.assertEqual(installer.SUCCESS_EXIT_CODE, approved_exit_code)
+            self.assertEqual(
+                UPDATED_SKILL_FILE_CONTENT,
+                (destination / "alpha" / "SKILL.md").read_text(encoding="utf-8"),
+            )
 
     def test_adapter_default_destinations_use_agent_claude_and_junie_homes(self) -> None:
         installer = load_installer()
@@ -250,6 +310,45 @@ class InstallSkillsTests(unittest.TestCase):
             self.assertIn(f"destination {destination}", output.getvalue())
             self.assertIn("would install alpha", output.getvalue())
             self.assertFalse(destination.exists())
+
+    def test_installs_generated_codex_agents_with_separate_ownership_manifest(self) -> None:
+        installer = load_installer()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            source = root / "source"
+            destination = root / "skills-dest"
+            agents_source = root / "agents-source"
+            agents_destination = root / "agents-dest"
+            self.create_skill(source, "alpha")
+            agents_source.mkdir()
+            (agents_source / "reviewer.toml").write_text(AGENT_FILE_CONTENT, encoding="utf-8")
+
+            output = io.StringIO()
+            with redirect_stdout(output):
+                exit_code = installer.main(
+                    [
+                        "--adapter",
+                        "codex",
+                        "--source",
+                        str(source),
+                        "--dest",
+                        str(destination),
+                        "--install-agents",
+                        "--agents-source",
+                        str(agents_source),
+                        "--agents-dest",
+                        str(agents_destination),
+                    ]
+                )
+
+            self.assertEqual(installer.SUCCESS_EXIT_CODE, exit_code)
+            self.assertEqual(
+                AGENT_FILE_CONTENT,
+                (agents_destination / "reviewer.toml").read_text(encoding="utf-8"),
+            )
+            self.assertEqual(["reviewer"], self.read_manifest_agent_names(agents_destination))
+            self.assertIn(f"agents destination {agents_destination}", output.getvalue())
 
     def test_prune_owned_removes_deleted_skill_but_preserves_unowned_skill(self) -> None:
         installer = load_installer()

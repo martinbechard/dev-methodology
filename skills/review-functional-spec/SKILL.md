@@ -1,6 +1,8 @@
 ---
 name: review-functional-spec
 description: Use when reviewing a functional specification artifact for actor workflow, entry points, states, permissions, acceptance behavior, and verification evidence.
+metadata:
+  category: artifact-review
 ---
 
 # Functional Spec Review

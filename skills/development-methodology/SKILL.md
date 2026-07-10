@@ -1,11 +1,13 @@
 ---
 name: development-methodology
 description: Use when creating or revising software project documentation, choosing a methodology template, or routing setup, reverse engineering, code wiki, or page verification work.
+metadata:
+  category: documentation-methodology
 ---
 
 # Development Methodology
 
-Use this skill as the router for software project documentation work from this bundle. It keeps the shared page contract, document type selection, and template asset policy in one place while delegating specialized workflows to focused skills.
+Use this skill as the router for software project documentation work from this bundle. It keeps artifact selection, format selection, the shared page contract, and template asset policy in one place while delegating specialized workflows to focused skills.
 
 ## Required Companion Skills
 
@@ -13,6 +15,7 @@ Use this skill as the router for software project documentation work from this b
 - Use documentation-reverse-engineering when deriving documentation from an existing codebase.
 - Use code-project-wiki for code-aware docs/wiki maintenance, commit-range sync, Related Code upkeep, or Related Tests upkeep.
 - Use create-agents-plan when creating or substantially rewriting an AGENTS-PLAN.yaml project agent and skill routing plan.
+- Use maintain-methodology-documentation when changing this bundle's skills, canonical roles, generated adapters, generated documentation data, or design pages.
 - Use create-project-wiki when creating or substantially rewriting a project wiki methodology artifact from the project wiki template.
 - Use create-functional-spec when creating or substantially rewriting a functional specification artifact from the functional specification template.
 - Use create-architecture when creating or substantially rewriting an architecture artifact from the architecture template.
@@ -37,7 +40,11 @@ For a normal creation job, load this skill and exactly one artifact creation ski
 
 ## Shared Page Contract
 
-Every durable documentation page starts with these sections:
+The shared page contract applies to docs/wiki topic pages and methodology artifacts created from this bundle's templates.
+
+When the user, target file type, runtime schema, existing document, or surrounding documentation indicates a specific structure or format, preserve that structure. Verify source support, links, steady-state prose, and completeness inside the indicated format instead of adding shared page sections. Do not impose the shared page contract on design HTML pages, README files, runtime adapter profiles, generated data files, or agent definition files unless the user asks to convert them into a methodology artifact or wiki-compatible page.
+
+Pages that use the shared page contract start with these sections:
 
 - Current Understanding
 - Authoritative Sources
@@ -91,13 +98,14 @@ When a target project needs a local editable document, copy only the matching te
 
 1. Inspect the target repository before writing documentation. Identify source roots, test roots, existing docs, wiki root, procedures, backlog files, build commands, and current worktree status.
 2. Choose the document type from the source evidence and the user's requested outcome.
-3. Load the matching artifact creation skill from the route table when creating or substantially rewriting a methodology artifact.
-4. Copy the matching template asset only when a new or refreshed document is needed.
-5. Replace every TODO instruction with project-specific content backed by source links.
-6. Remove a section only when it is genuinely not applicable.
-7. Write steady-state documentation. Do not frame the page around old versus new behavior unless the section is explicitly historical.
-8. Link code, tests, procedures, backlog items, source documents, and wiki pages at the point where the prose depends on them.
-9. Add diagrams only where a real relationship is easier to inspect visually, such as sequence, ownership, dependency, lifecycle, data flow, or verification coverage.
+3. Choose the document structure from the user request, existing file, runtime schema, selected template, or docs/wiki contract before writing.
+4. Load the matching artifact creation skill from the route table when creating or substantially rewriting a methodology artifact.
+5. Copy the matching template asset only when a new or refreshed document is needed.
+6. Replace every TODO instruction with project-specific content backed by source links.
+7. Remove a section only when it is genuinely not applicable.
+8. Write steady-state documentation. Do not frame the page around old versus new behavior unless the section is explicitly historical.
+9. Link code, tests, procedures, backlog items, source documents, and wiki pages at the point where the prose depends on them.
+10. Add diagrams only where a real relationship is easier to inspect visually, such as sequence, ownership, dependency, lifecycle, data flow, or verification coverage.
 
 ## Verification
 
@@ -105,15 +113,16 @@ Before finishing documentation or wiki work:
 
 1. Use the artifact-specific review skill when the artifact type is project wiki, functional specification, architecture, high-level design, or module design.
 2. Use documentation-page-verifier for mixed, unknown, or custom documentation artifacts.
-3. Run project wiki status and lint when docs/wiki exists.
-4. Run OKF validation when topic pages changed.
-5. Run the repository agent-skill validator when skill files changed.
-6. When a bundled skill is renamed or deleted, sweep the source repository for the old skill id and update or remove references in skills, companion-skill lists, Codex metadata, role definitions, dispatch profiles, aggregate workflow examples, design documents, scripts, and tests.
-7. Run scripts/openai_metadata.py skills after bundled skill name or description changes so Codex interface metadata stays aligned with SKILL.md while policy and dependencies remain hand-authored.
-8. Refresh shared skill installs from this source repository when bundled skill files changed. When a skill was renamed or deleted, confirm the refresh reports the obsolete owned skill as pruned or reports that prune was skipped because no ownership manifest existed. Do not remove unowned local skills manually. If standalone agent definition folders are added later, track them in the ownership manifest before enabling prune behavior for them.
-9. Run the target project build when code, imports, generated artifacts, or project metadata changed.
-10. Search generated documents for unresolved TODO markers that are not intentional.
-11. Confirm every created document names related source, tests, or Not yet identified.
-12. Confirm wiki changes follow the project-wiki verifier checklist when topic pages changed.
+3. Confirm the document follows the selected structure or format. Use the shared page contract only when the selected artifact type requires it.
+4. Run project wiki status and lint when docs/wiki exists.
+5. Run OKF validation when topic pages changed.
+6. Run the repository agent-skill validator when skill files changed.
+7. When a bundled skill is renamed or deleted, sweep the source repository for the old skill id and update or remove references in skills, companion-skill lists, Codex metadata, role definitions, dispatch profiles, aggregate workflow examples, design documents, scripts, and tests.
+8. Run scripts/openai_metadata.py skills after bundled skill name or description changes so Codex interface metadata stays aligned with SKILL.md while policy and dependencies remain hand-authored.
+9. Refresh shared skill and generated agent installs from this source repository when distributed content changed. When a skill or role was renamed or deleted, confirm the refresh reports the obsolete owned artifact as pruned or reports that prune was skipped because no ownership manifest existed. Do not remove unowned local skills or agents manually.
+10. Run the target project build when code, imports, generated artifacts, or project metadata changed.
+11. Search generated documents for unresolved TODO markers that are not intentional.
+12. Confirm every created document names related source, tests, or Not yet identified inside the selected format.
+13. Confirm wiki changes follow the project-wiki verifier checklist when topic pages changed.
 
 Do not send private, proprietary, sensitive, PII, or company-internal material to an external service unless the user explicitly authorizes it.

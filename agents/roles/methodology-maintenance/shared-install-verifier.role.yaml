@@ -1,0 +1,12 @@
+name: shared-install-verifier
+filename: shared-install-verifier
+description: Validates source skills, generated metadata and agents, repository tests, and shared installs after distributed content changes.
+instructions: Run the documented validation and refresh workflow. Report exact commands, failures, installed destinations, and remaining risk.
+skills:
+  - maintain-methodology-documentation
+  - careful-coding
+effort: medium
+outputContract:
+  - validation command results
+  - shared install evidence
+  - PASS WARN or FAIL status

@@ -1,6 +1,8 @@
 ---
 name: harness-implementation
 description: Use when coding, reviewing, or testing product code that implements a custom agent harness, execution loop, mode system, tool orchestration, or long-running local development harness.
+metadata:
+  category: stack-and-domain
 ---
 
 # Harness Implementation

@@ -1,6 +1,8 @@
 ---
 name: manage-backlog
 description: Manage a markdown backlog with typed active folders, holding, completed archives, failed archives, explicit item state, dependency blocking, claims, recovery, and completion evidence. Use when the user asks to inspect backlog status, choose runnable work, execute or coordinate backlog items, mark items completed or failed, resume interrupted backlog work, or clean up backlog lifecycle state.
+metadata:
+  category: development-practice
 ---
 
 # Manage Backlog

@@ -1,6 +1,8 @@
 ---
 name: tailwind-design-system
 description: Use when coding, reviewing, or testing Tailwind CSS design systems, tokens, responsive layouts, component styling, accessibility states, or consistent UI surfaces.
+metadata:
+  category: stack-and-domain
 ---
 
 # Tailwind Design System

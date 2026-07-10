@@ -1,6 +1,8 @@
 ---
 name: fix-explanation
 description: Explain a code fix or patch in a structured way, using the structured-explanation skill and classifying the nature of the fix. Use when the agent needs to explain what changed, why it was needed, and whether the fix is new functionality, a functional improvement, an optimization, backwards-compatibility work, or a migration.
+metadata:
+  category: development-practice
 ---
 
 # Fix Explanation

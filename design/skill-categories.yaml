@@ -1,0 +1,13 @@
+categories:
+  - id: wiki-and-knowledge
+    label: Wiki and knowledge skills
+  - id: documentation-methodology
+    label: Documentation methodology skills
+  - id: artifact-creation
+    label: Artifact creation skills
+  - id: artifact-review
+    label: Artifact review skills
+  - id: development-practice
+    label: Development practice skills
+  - id: stack-and-domain
+    label: Stack and domain skills

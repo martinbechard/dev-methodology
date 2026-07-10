@@ -1,0 +1,852 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agent Definition Runtime Formats</title>
+  <style>
+    :root {
+      --color-ink: #18212f;
+      --color-muted: #596579;
+      --color-page: #f6f8fb;
+      --color-panel: #ffffff;
+      --color-line: #d9e0ea;
+      --color-role: #2563eb;
+      --color-skill: #b45309;
+      --color-source: #0f766e;
+      --color-risk: #be123c;
+      --color-soft-blue: #e8f0ff;
+      --color-soft-amber: #fff1d8;
+      --color-soft-green: #e4f7f4;
+      --color-soft-rose: #ffe5ec;
+      --shadow-panel: 0 12px 30px rgba(31, 41, 55, 0.08);
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.25rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --space-10: 2.5rem;
+      --radius: 0.5rem;
+      --radius-small: 0.35rem;
+      --content-max: 1160px;
+      --font-sm: 0.92rem;
+      --font-xs: 0.78rem;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--color-ink);
+      background:
+        linear-gradient(180deg, rgba(232, 240, 255, 0.8), rgba(246, 248, 251, 0) 360px),
+        var(--color-page);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.52;
+    }
+
+    main {
+      max-width: var(--content-max);
+      margin: 0 auto;
+      padding: var(--space-10) var(--space-6);
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      max-width: 900px;
+      font-size: clamp(2rem, 4vw, 3.55rem);
+    }
+
+    h2 {
+      margin-bottom: var(--space-4);
+      font-size: clamp(1.35rem, 2vw, 2rem);
+    }
+
+    h3 {
+      font-size: 1rem;
+    }
+
+    p {
+      margin: 0;
+      color: var(--color-muted);
+    }
+
+    a {
+      color: var(--color-role);
+      font-weight: 700;
+    }
+
+    code {
+      padding: 0.1rem 0.24rem;
+      border-radius: 0.25rem;
+      background: #edf1f6;
+      font-size: 0.9em;
+    }
+
+    .home-link {
+      display: inline-flex;
+      width: max-content;
+      align-items: center;
+      gap: var(--space-2);
+      margin-bottom: var(--space-6);
+      padding: 0.45rem 0.75rem;
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      background: var(--color-panel);
+      color: var(--color-muted);
+      font-size: var(--font-sm);
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: var(--shadow-panel);
+    }
+
+    .hero {
+      display: grid;
+      gap: var(--space-5);
+      margin-bottom: var(--space-8);
+    }
+
+    .lede {
+      max-width: 900px;
+      font-size: 1.08rem;
+    }
+
+    .section {
+      margin-top: var(--space-8);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: var(--space-4);
+    }
+
+    .panel,
+    .card {
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      background: var(--color-panel);
+      box-shadow: var(--shadow-panel);
+    }
+
+    .panel {
+      padding: var(--space-5);
+    }
+
+    .card {
+      display: grid;
+      gap: var(--space-3);
+      padding: var(--space-5);
+      border-top: 0.35rem solid var(--color-role);
+    }
+
+    .card.source {
+      border-top-color: var(--color-source);
+    }
+
+    .card.skill {
+      border-top-color: var(--color-skill);
+    }
+
+    .card.risk {
+      border-top-color: var(--color-risk);
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: 0.35rem 0.6rem;
+      border: 1px solid var(--color-line);
+      border-radius: 999px;
+      background: var(--color-panel);
+      color: var(--color-muted);
+      font-size: var(--font-xs);
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .dot {
+      width: 0.65rem;
+      height: 0.65rem;
+      border-radius: 50%;
+      background: var(--color-role);
+    }
+
+    .dot.source {
+      background: var(--color-source);
+    }
+
+    .dot.skill {
+      background: var(--color-skill);
+    }
+
+    .dot.risk {
+      background: var(--color-risk);
+    }
+
+    ul,
+    ol {
+      margin: var(--space-3) 0 0;
+      padding-left: var(--space-5);
+      color: var(--color-muted);
+    }
+
+    li + li {
+      margin-top: var(--space-2);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      background: var(--color-panel);
+      box-shadow: var(--shadow-panel);
+    }
+
+    th,
+    td {
+      padding: 0.85rem;
+      border-bottom: 1px solid var(--color-line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--color-soft-blue);
+      color: var(--color-ink);
+      font-size: var(--font-xs);
+      text-transform: uppercase;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .name {
+      color: var(--color-ink);
+      font-weight: 800;
+    }
+
+    .flow {
+      display: grid;
+      gap: var(--space-3);
+      padding: var(--space-5);
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      background: var(--color-panel);
+      box-shadow: var(--shadow-panel);
+    }
+
+    .flow-row {
+      display: grid;
+      grid-template-columns: minmax(180px, 0.7fr) minmax(0, 1.3fr);
+      gap: var(--space-4);
+      align-items: start;
+    }
+
+    .flow-row + .flow-row {
+      padding-top: var(--space-3);
+      border-top: 1px solid var(--color-line);
+    }
+
+    @media (max-width: 720px) {
+      main {
+        padding: var(--space-8) var(--space-4);
+      }
+
+      .flow-row {
+        grid-template-columns: 1fr;
+      }
+
+      table {
+        display: block;
+        overflow-x: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <a class="home-link" href="../index.html">Back to documentation index</a>
+
+    <section class="hero" aria-labelledby="page-title">
+      <h1 id="page-title">Agent Definition Runtime Formats</h1>
+      <p class="lede">
+        This page defines the common information needed to describe reusable methodology roles once, validate those roles against the skill catalog, render them into native runtime files, and expose them to the HTML role map without a second hand-written loadout source.
+      </p>
+      <div class="pill-row" aria-label="Document facets">
+        <span class="pill"><span class="dot"></span>Role source</span>
+        <span class="pill"><span class="dot source"></span>Runtime adapters</span>
+        <span class="pill"><span class="dot skill"></span>Skill validation</span>
+        <span class="pill"><span class="dot risk"></span>Drift control</span>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="understanding-title">
+      <h2 id="understanding-title">Current Understanding</h2>
+      <div class="grid">
+        <article class="card">
+          <h3>Single Source Of Truth</h3>
+          <p>Bundled skills remain sourced from <code>skills/*/SKILL.md</code>. Role definitions should live in real role files and list only skill IDs that exist in the generated skill catalog.</p>
+        </article>
+        <article class="card source">
+          <h3>Generated Role Data</h3>
+          <p><code>agent-role-skill-map.html</code> should not hardcode role loadouts. It should read generated role data that was produced from role source files and validated against generated skill definitions.</p>
+        </article>
+        <article class="card skill">
+          <h3>Runtime Differences</h3>
+          <p>Codex uses one standalone TOML configuration file per custom agent type. Claude Code, Gemini CLI, Junie CLI, and GitHub Copilot use Markdown files with YAML metadata or frontmatter. Field names and skill-loading semantics differ enough that one native file cannot serve every runtime.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="sources-title">
+      <h2 id="sources-title">Authoritative Sources</h2>
+      <div class="panel">
+        <ul>
+          <li><a href="https://learn.chatgpt.com/docs/agent-configuration/subagents?surface=app">OpenAI Codex Subagents</a> documents custom agents under project <code>.codex/agents/</code> and user <code>~/.codex/agents/</code> folders, one standalone TOML file per custom agent, required <code>name</code>, <code>description</code>, and <code>developer_instructions</code> fields, and supported Codex config keys such as <code>model</code>, <code>model_reasoning_effort</code>, <code>sandbox_mode</code>, <code>mcp_servers</code>, and <code>skills.config</code>.</li>
+          <li><a href="https://learn.chatgpt.com/docs/config-file/config-basic">OpenAI Codex Config Basics</a> documents user config at <code>~/.codex/config.toml</code>, project overrides through trusted <code>.codex/config.toml</code> files, precedence across CLI overrides, project config, profiles, user config, system config, and built-in defaults, plus common model, approval, sandbox, permission, and MCP settings.</li>
+          <li><a href="https://learn.chatgpt.com/docs/config-file/config-advanced">OpenAI Codex Advanced Config</a> documents named profile files such as <code>~/.codex/deep-review.config.toml</code>, one-off <code>--config</code> overrides, trusted project config loading, project-local key restrictions, and hooks loaded from config-adjacent locations.</li>
+          <li><a href="https://learn.chatgpt.com/docs/agent-configuration/rules">OpenAI Codex Rules</a> documents <code>.rules</code> files under <code>rules/</code> folders next to active config layers, <code>prefix_rule</code> entries, and decisions such as <code>allow</code>, <code>prompt</code>, and <code>forbidden</code> for commands outside the sandbox.</li>
+          <li><a href="https://developers.openai.com/codex/skills">OpenAI Codex Skills</a> documents the shared Agent Skills structure, required <code>SKILL.md</code> fields, and optional <code>agents/openai.yaml</code> metadata.</li>
+          <li><a href="https://code.claude.com/docs/en/sub-agents">Claude Code Subagents</a> documents Markdown files with YAML frontmatter under <code>.claude/agents/</code> or <code>~/.claude/agents/</code>, required <code>name</code> and <code>description</code>, optional <code>tools</code>, <code>model</code>, <code>skills</code>, and other fields, and a Markdown body used as the subagent prompt.</li>
+          <li><a href="https://github.com/google-gemini/gemini-cli/blob/main/docs/core/subagents.md">Gemini CLI Subagents</a> documents Markdown files under <code>.gemini/agents/</code> or <code>~/.gemini/agents/</code>, YAML frontmatter, required <code>name</code> and <code>description</code>, optional tool, model, temperature, turn, timeout, and MCP fields.</li>
+          <li><a href="https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/using-agent-skills.md">Gemini CLI Agent Skills</a> documents skill discovery from built-in, extension, user, and workspace skill locations, including <code>.gemini/skills/</code> and <code>.agents/skills/</code>.</li>
+          <li><a href="https://junie.jetbrains.com/docs/junie-cli-subagents.html">Junie CLI Custom Subagents</a> documents Markdown files with YAML metadata under <code>.junie/agents/</code>, <code>.agents/</code>, and user equivalents, with optional <code>skills</code>, <code>tools</code>, model, MCP, reasoning, and turn fields.</li>
+          <li><a href="https://junie.jetbrains.com/docs/agent-skills.html">Junie Agent Skills</a> documents portable Agent Skills and Junie skill discovery under project and user <code>.junie/skills/</code> paths.</li>
+          <li><a href="https://junie.jetbrains.com/docs/guidelines-and-memory.html">Junie Guidelines And Memory</a> documents <code>AGENTS.md</code> and <code>.junie/AGENTS.md</code> as persistent project guidance sources.</li>
+          <li><a href="https://code.visualstudio.com/docs/agent-customization/custom-agents">VS Code Custom Agents</a> documents GitHub Copilot custom agents as <code>.agent.md</code> Markdown files under workspace <code>.github/agents</code>, Claude-format <code>.claude/agents</code>, or user <code>~/.copilot/agents</code> locations, with YAML frontmatter for description, name, tools, subagents, model, and visibility.</li>
+          <li><a href="https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/create-custom-agents">GitHub Copilot Custom Agents</a> documents cloud-agent profiles as Markdown files with YAML frontmatter for name, description, tools, MCP server configuration, model, target, and a Markdown prompt body.</li>
+          <li><a href="https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/add-skills">GitHub Copilot Agent Skills</a> documents <code>SKILL.md</code> folders for project and personal skills, including <code>.github/skills</code>, <code>.claude/skills</code>, <code>.agents/skills</code>, <code>~/.copilot/skills</code>, and <code>~/.agents/skills</code>.</li>
+          <li><a href="https://docs.github.com/en/copilot/reference/custom-instructions-support">GitHub Copilot Custom Instructions Support</a> documents which Copilot surfaces support <code>.github/copilot-instructions.md</code>, path-specific instruction files, and agent instructions such as <code>AGENTS.md</code>.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="related-code-title">
+      <h2 id="related-code-title">Related Code</h2>
+      <div class="panel">
+        <ul>
+          <li><code>design/agent-role-skill-map.html</code> renders role cards and loadouts from <code>design/generated/role-definitions.js</code>.</li>
+          <li><code>scripts/build-skill-docs.py</code> already scans <code>skills/*/SKILL.md</code> and emits <code>design/generated/skill-definitions.js</code>.</li>
+          <li><code>design/generated/skill-definitions.js</code> is the intermediate skill catalog that role generation should validate against.</li>
+          <li><code>scripts/test_bundle_content.py</code> should enforce that the new role-definition documentation remains linked and that future generated role loadouts are validated against real skill IDs.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="related-tests-title">
+      <h2 id="related-tests-title">Related Tests</h2>
+      <div class="panel">
+        <ul>
+          <li><code>scripts/test_bundle_content.py</code> covers maintained documentation phrases and generated skill browser consistency.</li>
+          <li>Future generator tests should prove that every role skill ID resolves to <code>design/generated/skill-definitions.js</code> and that non-skills cannot render under a Skills label.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="related-backlog-title">
+      <h2 id="related-backlog-title">Related Backlog Items</h2>
+      <div class="panel">
+        <p>Not yet identified.</p>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="related-wiki-title">
+      <h2 id="related-wiki-title">Related Wiki Pages</h2>
+      <div class="panel">
+        <p>Not yet identified.</p>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="information-model-title">
+      <h2 id="information-model-title">Properties We Use</h2>
+      <p class="lede">The canonical role source uses Claude Code property names where Claude has an equivalent concept. Filename and outputContract cover methodology-owned information that Claude stores outside frontmatter.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Element</th>
+            <th>Canonical Property</th>
+            <th>Role In A Reusable Agent Definition</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="name">Name</span></td>
+            <td><code>name</code></td>
+            <td>Names the agent type used by routing, references, generated files, and UI display. Use a stable, short name that can survive adapter generation.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Filename</span></td>
+            <td><code>filename</code></td>
+            <td>Controls discovery and precedence in runtimes that load agent files from scoped folders. Keep it aligned with the name unless the runtime explicitly allows a different display name.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Description</span></td>
+            <td><code>description</code></td>
+            <td>Explains the agent's purpose and when a parent agent or user should delegate to it. This is a routing field, so it should be concise and specific.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Instructions</span></td>
+            <td><code>instructions</code></td>
+            <td>Defines behavior, boundaries, workflow, deliverables, and handoff expectations. Use this for portable role behavior when a runtime has no native field for a concern.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Skills</span></td>
+            <td><code>skills</code></td>
+            <td>Names reusable Agent Skills the role should load or reference. Some runtimes use a native skills list; Codex uses <code>[[skills.config]]</code> entries for per-agent skill configuration, such as enabling or disabling installed skill paths.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Tools</span></td>
+            <td><code>tools</code></td>
+            <td>Lists tools or tool groups the agent may use. Some runtimes treat this as an allowlist; some default to all tools when omitted.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Disallowed tools</span></td>
+            <td><code>disallowedTools</code></td>
+            <td>Lists tools or tool groups the agent must not use. Keep this separate from tools because allowlists and denylists resolve differently across runtimes.</td>
+          </tr>
+          <tr>
+            <td><span class="name">MCP servers</span></td>
+            <td><code>mcpServers</code></td>
+            <td>Names or configures MCP servers available to the agent. Keep server access separate from tool names because several runtimes expose both fields.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Model</span></td>
+            <td><code>model</code></td>
+            <td>Selects the default model or model alias for the agent when it should differ from the parent session.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Reasoning effort</span></td>
+            <td><code>effort</code></td>
+            <td>Sets the reasoning effort or equivalent provider-specific control when supported. Keep it separate from model so adapters can inherit one without forcing the other.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Max turns</span></td>
+            <td><code>maxTurns</code></td>
+            <td>Caps the number of agentic turns or steps before the agent must return.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Timeout</span></td>
+            <td><code>timeout</code></td>
+            <td>Caps elapsed execution time or startup wait time. Keep this separate from max turns because timeouts are wall-clock constraints.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Permission mode</span></td>
+            <td><code>permissionMode</code></td>
+            <td>Controls when actions run automatically, ask for approval, or are blocked. This is not the same as tools because a visible tool or command may still require an approval decision.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Isolation</span></td>
+            <td><code>isolation</code></td>
+            <td>Controls filesystem, network, or workspace isolation where supported. Keep it separate from permission mode because sandboxing changes what the agent can reach, not only what it may ask to do.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Memory</span></td>
+            <td><code>memory</code></td>
+            <td>Controls persistent memory scope or names the guidance sources the agent should read before working.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Output contract</span></td>
+            <td><code>outputContract</code></td>
+            <td>Describes what the agent returns, what evidence it includes, and how another agent or human should continue from its result.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" aria-labelledby="ignored-properties-title">
+      <h2 id="ignored-properties-title">Properties We Ignore</h2>
+      <table>
+        <thead><tr><th>Property</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td><code>hooks</code></td><td>Hooks remain vendor configuration rather than portable role behavior.</td></tr>
+          <tr><td><code>target</code> and Gemini <code>kind</code></td><td>The methodology assumes local development and does not model local-versus-remote or editor-versus-cloud targets.</td></tr>
+          <tr><td>Display metadata, colors, and nicknames</td><td>Presentation-only values do not change authority, routing, skills, or outputs.</td></tr>
+          <tr><td>Other vendor-only presentation fields</td><td>Adapters omit decoration that is not necessary for correct runtime behavior.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" aria-labelledby="defaulted-properties-title">
+      <h2 id="defaulted-properties-title">Behavior We Default</h2>
+      <table>
+        <thead><tr><th>Behavior</th><th>Methodology Default</th><th>Adapter Rule</th></tr></thead>
+        <tbody>
+          <tr><td>Human invocation</td><td>Every installed role is user-invocable.</td><td>Use the runtime's normal installed-agent behavior and emit an explicit field where the runtime supports one.</td></tr>
+          <tr><td>Automatic invocation</td><td>Every installed role remains available for automatic delegation.</td><td>Use descriptions and runtime invocation fields to preserve automatic selection.</td></tr>
+          <tr><td>Execution target</td><td>Local development.</td><td>Install the generated agent in the runtime's local user or project agent folder.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" aria-labelledby="codex-title">
+      <h2 id="codex-title">Codex</h2>
+      <div class="grid">
+        <article class="card">
+          <h3>Native Definition</h3>
+          <p>Codex custom agents are standalone TOML files under project <code>.codex/agents/</code> or user <code>~/.codex/agents/</code>. Each file defines one custom agent type and is loaded as a configuration layer for spawned sessions.</p>
+        </article>
+        <article class="card source">
+          <h3>Identity And Prompt</h3>
+          <p>The documented required fields are <code>name</code>, <code>description</code>, and <code>developer_instructions</code>. Codex identifies the agent from the <code>name</code> field rather than the filename.</p>
+        </article>
+        <article class="card skill">
+          <h3>Skills, Tools, And MCP</h3>
+          <p>Codex subagents use the tools available to the parent task, and custom agent files can include supported Codex config keys in the same TOML file. Use <code>[mcp_servers.name]</code> sections to define agent-specific MCP servers and <code>[[skills.config]]</code> entries to configure installed skills for that agent. The schema does not define a simple role-level <code>tools</code> or <code>skills</code> array, so tool and skill-use guidance should still be written into <code>developer_instructions</code> and validated against the shared skill catalog.</p>
+        </article>
+        <article class="card risk">
+          <h3>Runtime Controls</h3>
+          <p>Because custom agents are config layers, the common source can map <code>model</code>, <code>model_reasoning_effort</code>, <code>sandbox_mode</code>, <code>mcp_servers</code>, and <code>skills.config</code> into native TOML when those fields are intentional for that custom agent. Global controls such as <code>agents.max_threads</code>, <code>agents.max_depth</code>, and <code>agents.job_max_runtime_seconds</code> remain under <code>[agents]</code> in normal Codex config.</p>
+        </article>
+        <article class="card source">
+          <h3>Config Files</h3>
+          <p>Codex also reads user config from <code>~/.codex/config.toml</code>, project overrides from trusted <code>.codex/config.toml</code> files, profile files such as <code>~/.codex/deep-review.config.toml</code>, and one-off <code>--config</code> overrides. These layers are Codex implementation surfaces for shared concepts such as model, reasoning, permission mode, sandbox, MCP servers, hooks, and trust scope.</p>
+        </article>
+        <article class="card risk">
+          <h3>Rules Files</h3>
+          <p>Codex rules files live under <code>rules/</code> folders next to active config layers, such as <code>~/.codex/rules/default.rules</code> or project-local <code>.codex/rules/*.rules</code>. Rules use <code>prefix_rule</code> entries to allow, prompt, or forbid matching commands outside the sandbox, so they map to the common permission-mode concept rather than becoming a separate role field.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="claude-title">
+      <h2 id="claude-title">Claude Code</h2>
+      <div class="grid">
+        <article class="card">
+          <h3>Native Definition</h3>
+          <p>Claude Code subagents are Markdown files with YAML frontmatter under <code>.claude/agents/</code> for project scope or <code>~/.claude/agents/</code> for user scope.</p>
+        </article>
+        <article class="card source">
+          <h3>Identity And Prompt</h3>
+          <p>Only <code>name</code> and <code>description</code> are required. The Markdown body becomes the subagent system prompt.</p>
+        </article>
+        <article class="card skill">
+          <h3>Skills, Tools, And MCP</h3>
+          <p>Claude Code documents a <code>skills</code> frontmatter field that preloads listed skills into the subagent context at startup. The common role source can map directly to this field for role skill lists.</p>
+        </article>
+        <article class="card risk">
+          <h3>Runtime Controls</h3>
+          <p>Claude Code frontmatter can carry tool allowlists, model choice, permission or isolation behavior, MCP server configuration, hook behavior, memory handling, and turn limits. Unsupported common fields should remain in the body as explicit role constraints.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="gemini-title">
+      <h2 id="gemini-title">Gemini CLI</h2>
+      <div class="grid">
+        <article class="card">
+          <h3>Native Definition</h3>
+          <p>Gemini CLI custom agents are Markdown files with YAML frontmatter under <code>.gemini/agents/</code> or <code>~/.gemini/agents/</code>. The Markdown body becomes the agent system prompt.</p>
+        </article>
+        <article class="card source">
+          <h3>Identity And Prompt</h3>
+          <p>The documented configuration schema requires <code>name</code> and <code>description</code>, with optional <code>kind</code>, <code>tools</code>, <code>mcpServers</code>, <code>model</code>, <code>temperature</code>, <code>max_turns</code>, and <code>timeout_mins</code>.</p>
+        </article>
+        <article class="card skill">
+          <h3>Skills, Tools, And MCP</h3>
+          <p>Gemini CLI documents Agent Skills and shared skill discovery tiers, but the current subagent schema does not document a <code>skills</code> frontmatter field. Role skill routing should be emitted into the prompt body and backed by shared skill installation.</p>
+        </article>
+        <article class="card risk">
+          <h3>Runtime Controls</h3>
+          <p>Gemini CLI maps the common source cleanly for tools, MCP servers, model, maximum turns, and timeout minutes. Adapter-specific controls such as temperature should be generated only when the Gemini adapter needs them. Permission, sandbox, memory, hook, and output rules that do not have native fields should stay in the body and in project guidelines.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="junie-title">
+      <h2 id="junie-title">Junie CLI</h2>
+      <div class="grid">
+        <article class="card">
+          <h3>Native Definition</h3>
+          <p>Junie CLI custom subagents are Markdown files with YAML metadata under project <code>.junie/agents/</code>, project <code>.agents/</code>, and matching user-scope locations.</p>
+        </article>
+        <article class="card source">
+          <h3>Identity And Prompt</h3>
+          <p><code>description</code> is required. <code>name</code> is optional because Junie can infer it from the filename, but shared generation should emit explicit names for stability.</p>
+        </article>
+        <article class="card skill">
+          <h3>Skills, Tools, And MCP</h3>
+          <p>Junie documents a <code>skills</code> field containing agent skill IDs or names for the subagent worker, when the environment supports it. The common role source can map role skill IDs directly to this field.</p>
+        </article>
+        <article class="card risk">
+          <h3>Runtime Controls</h3>
+          <p>Junie metadata can carry tool and disallowed-tool fields, MCP server selection, model and reasoning preferences, maximum turns, and prompt-argument handling. Generation should keep the Markdown body as the authority for role behavior and output expectations.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="copilot-title">
+      <h2 id="copilot-title">GitHub Copilot Agent Mode</h2>
+      <div class="grid">
+        <article class="card">
+          <h3>Native Definition</h3>
+          <p>GitHub Copilot custom agents use Markdown files with a <code>.agent.md</code> extension. VS Code discovers workspace agents under <code>.github/agents</code>, supports Claude-format <code>.claude/agents</code>, and uses <code>~/.copilot/agents</code> for user profile agents. Copilot cloud agent creation also starts from <code>.github/agents/*.agent.md</code> for repository agents.</p>
+        </article>
+        <article class="card source">
+          <h3>Identity And Prompt</h3>
+          <p>Copilot custom agent profiles use YAML frontmatter plus a Markdown prompt body. Documented fields include <code>name</code>, <code>description</code>, <code>tools</code>, <code>agents</code>, <code>model</code>, <code>mcp-servers</code>, <code>target</code>, and visibility or invocation controls. The profile body defines the agent behavior, expertise, and instructions.</p>
+        </article>
+        <article class="card skill">
+          <h3>Skills, Tools, And MCP</h3>
+          <p>GitHub Copilot supports Agent Skills as <code>SKILL.md</code> folders and documents that those skills work with Copilot cloud agent, code review, CLI, the Copilot app, and agent mode in VS Code. The custom agent profile schema does not document a role-level <code>skills</code> frontmatter field, so role skill IDs should be emitted into the prompt body and backed by generated or installed Copilot skill folders.</p>
+        </article>
+        <article class="card risk">
+          <h3>Runtime Controls</h3>
+          <p>Copilot profiles can carry tools, subagent references, MCP server configuration, model selection, target surface, invocation controls, and visibility metadata. Turn limits and output contracts should stay in the prompt body unless the target Copilot surface documents a native field.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="mapping-title">
+      <h2 id="mapping-title">Common Source Mapping</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Common Source Element</th>
+            <th>Codex</th>
+            <th>Claude Code</th>
+            <th>Gemini CLI</th>
+            <th>Junie CLI</th>
+            <th>GitHub Copilot</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="name">name</span></td>
+            <td><code>name</code></td>
+            <td><code>name</code></td>
+            <td><code>name</code></td>
+            <td><code>name</code>, or filename when omitted</td>
+            <td><code>name</code></td>
+          </tr>
+          <tr>
+            <td><span class="name">description</span></td>
+            <td><code>description</code></td>
+            <td><code>description</code></td>
+            <td><code>description</code></td>
+            <td><code>description</code></td>
+            <td><code>description</code></td>
+          </tr>
+          <tr>
+            <td><span class="name">instructions</span></td>
+            <td><code>developer_instructions</code></td>
+            <td>Markdown body</td>
+            <td>Markdown body</td>
+            <td>Markdown body</td>
+            <td>Markdown body</td>
+          </tr>
+          <tr>
+            <td><span class="name">skills</span></td>
+            <td>Write skill-use guidance in <code>developer_instructions</code>. Add <code>[[skills.config]]</code> entries in the same TOML file when the agent should enable or disable specific installed skill paths.</td>
+            <td><code>skills</code></td>
+            <td>Emit into body and rely on installed skills.</td>
+            <td><code>skills</code></td>
+            <td>Emit into body and rely on Copilot-compatible skill folders.</td>
+          </tr>
+          <tr>
+            <td><span class="name">tools</span></td>
+            <td>Subagents use the tools available to the parent task. Add agent-specific MCP servers with <code>[mcp_servers.name]</code> and keep tool-use guidance in <code>developer_instructions</code>.</td>
+            <td><code>tools</code></td>
+            <td><code>tools</code></td>
+            <td><code>tools</code></td>
+            <td><code>tools</code></td>
+          </tr>
+          <tr>
+            <td><span class="name">disallowedTools</span></td>
+            <td>No generic role-level field; use <code>developer_instructions</code>, <code>sandbox_mode</code>, and scoped MCP server definitions to constrain tool use.</td>
+            <td><code>disallowedTools</code></td>
+            <td>No documented field.</td>
+            <td><code>disallowedTools</code></td>
+            <td>No documented field.</td>
+          </tr>
+          <tr>
+            <td><span class="name">mcpServers</span></td>
+            <td><code>[mcp_servers.name]</code> sections in the custom agent TOML file.</td>
+            <td><code>mcpServers</code></td>
+            <td><code>mcpServers</code></td>
+            <td><code>mcpServers</code></td>
+            <td><code>mcp-servers</code></td>
+          </tr>
+          <tr>
+            <td><span class="name">model</span></td>
+            <td><code>model</code></td>
+            <td><code>model</code></td>
+            <td><code>model</code></td>
+            <td><code>model</code></td>
+            <td><code>model</code></td>
+          </tr>
+          <tr>
+            <td><span class="name">reasoning</span></td>
+            <td><code>model_reasoning_effort</code></td>
+            <td><code>effort</code></td>
+            <td>No documented field.</td>
+            <td><code>reasoningLevel</code> or <code>effort</code></td>
+            <td>No documented field.</td>
+          </tr>
+          <tr>
+            <td><span class="name">maxTurns</span></td>
+            <td>No documented custom-agent field.</td>
+            <td><code>maxTurns</code></td>
+            <td><code>max_turns</code></td>
+            <td><code>maxTurns</code></td>
+            <td>No documented field.</td>
+          </tr>
+          <tr>
+            <td><span class="name">timeout</span></td>
+            <td><code>startup_timeout_sec</code> inside an agent-specific <code>[mcp_servers.name]</code> section, or global agent job runtime settings under <code>[agents]</code>.</td>
+            <td>No documented field.</td>
+            <td><code>timeout_mins</code></td>
+            <td>No documented field.</td>
+            <td>No documented field.</td>
+          </tr>
+          <tr>
+            <td><span class="name">permissionMode</span></td>
+            <td><code>approval_policy</code> in Codex config and <code>prefix_rule</code> entries in Codex rules files.</td>
+            <td><code>permissionMode</code></td>
+            <td>No documented field.</td>
+            <td>No documented field.</td>
+            <td>No documented field.</td>
+          </tr>
+          <tr>
+            <td><span class="name">sandbox</span></td>
+            <td><code>sandbox_mode</code></td>
+            <td><code>isolation</code> for workspace isolation; permission behavior uses <code>permissionMode</code></td>
+            <td>No documented field.</td>
+            <td>No documented field.</td>
+            <td>No documented field.</td>
+          </tr>
+          <tr>
+            <td><span class="name">memory</span></td>
+            <td>Project guidance or instructions.</td>
+            <td><code>memory</code></td>
+            <td>Project guidance or instructions.</td>
+            <td>Guidelines and memory files.</td>
+            <td>Custom instructions and prompt body.</td>
+          </tr>
+          <tr>
+            <td><span class="name">hooks</span></td>
+            <td>Config-adjacent hook files and hook settings.</td>
+            <td><code>hooks</code></td>
+            <td>No documented field.</td>
+            <td>No documented field.</td>
+            <td>No documented field.</td>
+          </tr>
+          <tr>
+            <td><span class="name">target</span></td>
+            <td>No documented field.</td>
+            <td>No documented field.</td>
+            <td><code>kind</code> identifies local or remote subagent behavior.</td>
+            <td>No documented field.</td>
+            <td><code>target</code></td>
+          </tr>
+          <tr>
+            <td><span class="name">user-invocable</span></td>
+            <td>No native field; generate or install the custom agent only where Codex should expose it for explicit use.</td>
+            <td>No native field; match by install scope and prompt/body guidance for manual use.</td>
+            <td>No native field; match by install scope and prompt/body guidance for manual use.</td>
+            <td>No native field; match by install scope and prompt/body guidance for manual use.</td>
+            <td><code>user-invocable</code></td>
+          </tr>
+          <tr>
+            <td><span class="name">autoInvocation</span></td>
+            <td>No native field; match through the custom agent description, parent delegation instructions, or by not generating the agent for automatic routing.</td>
+            <td>No native field; match through description and parent delegation instructions.</td>
+            <td>No native field; match through description and parent delegation instructions.</td>
+            <td>No native field; match through description and parent delegation instructions.</td>
+            <td><code>disable-model-invocation</code> when automatic model selection should be disabled.</td>
+          </tr>
+          <tr>
+            <td><span class="name">metadata</span></td>
+            <td><code>nickname_candidates</code> for display nicknames; generator metadata should live outside the native file.</td>
+            <td><code>color</code> plus generator comments when useful.</td>
+            <td>Generator comments when useful.</td>
+            <td>Generator comments when useful.</td>
+            <td><code>metadata</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" aria-labelledby="decision-title">
+      <h2 id="decision-title">Decision</h2>
+      <div class="flow">
+        <div class="flow-row">
+          <h3>Use A Common Role Source</h3>
+          <p>Canonical files under <code>agents/roles/</code> own name, filename, description, instructions, skills, tools, disallowed tools, MCP servers, model, effort, max turns, timeout, permission mode, isolation, memory, and output contract. The generator validates them against <code>agents/role-schema.yaml</code>.</p>
+        </div>
+        <div class="flow-row">
+          <h3>Generate Runtime Adapters</h3>
+          <p><code>scripts/build-skill-docs.py</code> emits Codex TOML, Claude Code Markdown, and <code>design/generated/role-definitions.js</code> from the canonical files. Gemini CLI, Junie CLI, and GitHub Copilot adapters follow the same source model in later adapter milestones.</p>
+        </div>
+        <div class="flow-row">
+          <h3>Validate Against Skills</h3>
+          <p>The generator builds the skill catalog before roles. Every canonical <code>skills</code> entry must resolve to a bundled skill; descriptive phrases, scripts, commands, and tool groups fail generation.</p>
+        </div>
+        <div class="flow-row">
+          <h3>Keep HTML Pure</h3>
+          <p><code>agent-role-skill-map.html</code> renders role cards, loadouts, outputs, and the skill inventory from generated data rather than defining a second catalog inline.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="role-skills-title">
+      <h2 id="role-skills-title">Role Router Skills</h2>
+      <div class="panel">
+        <p>
+          A role-level skill layer may be useful, but it should not be the first source of truth. Start with canonical role definition files that list granular skill IDs directly. Add role-router skills only when a role repeatedly needs a compact workflow that selects among many granular skills, or when a runtime cannot reliably preserve role skill routing in its native agent format.
+        </p>
+        <ul>
+          <li>Good use: a <code>coding-agent-router</code> skill that explains how to choose among TypeScript, Next.js, Electron, database, testing, and wiki skills after inspecting the task.</li>
+          <li>Bad use: a role-router skill that simply duplicates every role definition and creates another catalog to maintain.</li>
+          <li>Generation rule: if a role-router skill exists, the role source should list both the router skill and the granular skills it is allowed to route to, so the HTML and tests can still show exact coverage.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="open-questions-title">
+      <h2 id="open-questions-title">Next Adapter Work</h2>
+      <div class="panel">
+        <ul>
+          <li>Add Gemini CLI generation from the canonical schema and verify its model, turn, timeout, and MCP mappings.</li>
+          <li>Add Junie CLI generation and verify user-scope and project-scope installation paths.</li>
+          <li>Add GitHub Copilot generation with explicit user invocation and automatic delegation fields.</li>
+          <li>Add role-router skills only if direct granular skill lists show repeated routing drift in a supported runtime.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="maintenance-title">
+      <h2 id="maintenance-title">Maintenance Notes</h2>
+      <div class="panel">
+        <ol>
+          <li>Keep <code>skills/*/SKILL.md</code> as the skill source of truth.</li>
+          <li>Keep common role source files as the role source of truth.</li>
+          <li>Generate skill browser data and role browser data before publishing design pages.</li>
+          <li>Fail tests when a role loadout names a non-skill under a Skills label.</li>
+          <li>Update runtime adapters and HTML pages in the same change when the role model changes.</li>
+        </ol>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

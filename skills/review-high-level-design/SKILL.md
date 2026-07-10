@@ -1,6 +1,8 @@
 ---
 name: review-high-level-design
 description: Use when reviewing a high-level design artifact for subsystem scope, component collaboration, data contracts, invariants, implementation order, and verification.
+metadata:
+  category: artifact-review
 ---
 
 # High-Level Design Review

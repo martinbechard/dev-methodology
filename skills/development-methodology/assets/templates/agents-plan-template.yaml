@@ -54,6 +54,15 @@ root_agents_reference:
   required_content:
     - "Repository-wide rules, privacy constraints, build and test commands, documentation locations, and taxonomy terms used by the skills router."
 
+claude_bridge_files:
+  enabled: false
+  root_file: "TODO: CLAUDE.md or Not applicable."
+  import_target: "TODO: Colocated AGENTS.md or Not applicable."
+  nested_files:
+    - path: "TODO: Nested CLAUDE.md path or Not applicable."
+      import_target: "TODO: Colocated nested AGENTS.md path or Not applicable."
+  rule: "Keep each CLAUDE.md thin and import the colocated AGENTS.md without duplicating project guidance."
+
 role_agent_set:
   - role: "TODO: Role name."
     purpose: "TODO: Explain why this role is needed."
@@ -100,6 +109,8 @@ documentation_and_file_contracts:
     purpose: "Operational routing reference loaded by agents."
   - path: AGENTS-PLAN.yaml
     purpose: "Setup and validation artifact for role agents, skill loadouts, folder routing, nested plans, and evidence."
+  - path: "TODO: CLAUDE.md or Not applicable."
+    purpose: "Thin Claude Code bridge that imports the colocated AGENTS.md without duplicating guidance."
   - path: "TODO: README.md, design document, docs/wiki page, procedure, backlog file, test plan, generated artifact, or Not yet identified."
     purpose: "TODO: Explain why agents should consult or maintain this file."
 

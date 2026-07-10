@@ -1,6 +1,8 @@
 ---
 name: review-module-design
 description: Use when reviewing a module design artifact for runtime path, responsibilities, contracts, dependencies, processing rules, errors, and verification evidence.
+metadata:
+  category: artifact-review
 ---
 
 # Module Design Review

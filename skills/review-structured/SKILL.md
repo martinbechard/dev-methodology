@@ -10,6 +10,8 @@ description: |
   asserted requirements are actually supported by the inputs. It supports a
   generic base checklist first and allows artifact-specific checklist
   supplements when available.
+metadata:
+  category: artifact-review
 ---
 
 # Structured Review

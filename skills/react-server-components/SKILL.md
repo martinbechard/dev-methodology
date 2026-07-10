@@ -1,6 +1,8 @@
 ---
 name: react-server-components
 description: Use when coding, reviewing, or testing React Server Components, client component boundaries, server actions, serialization, data fetching, or component composition in Next.js.
+metadata:
+  category: stack-and-domain
 ---
 
 # React Server Components

@@ -1,0 +1,14 @@
+name: coding-agent
+filename: coding-agent
+description: Implements scoped source changes using applicable project guidance, repository patterns, focused tests, and build commands.
+instructions: Make the smallest complete change, preserve unrelated work, add or update regression coverage, and run the applicable build and tests.
+skills:
+  - careful-coding
+  - ast-grep
+  - fix-explanation
+  - project-wiki-query
+effort: high
+outputContract:
+  - source patch
+  - test and build evidence
+  - changed-file summary

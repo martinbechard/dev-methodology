@@ -26,6 +26,7 @@ class RefreshTarget(NamedTuple):
     adapter: str
     destination: Optional[Path]
     description: str
+    install_agents: bool
 
 
 REFRESH_TARGETS = (
@@ -34,18 +35,21 @@ REFRESH_TARGETS = (
         adapter=CODEX_ADAPTER_NAME,
         destination=None,
         description="AGENTS_HOME or ~/.agents shared skills with Codex metadata",
+        install_agents=False,
     ),
     RefreshTarget(
         name=TARGET_CODEX_HOME,
         adapter=CODEX_ADAPTER_NAME,
         destination=CODEX_HOME_SKILLS_PATH,
         description="direct ~/.codex shared skills with Codex metadata",
+        install_agents=True,
     ),
     RefreshTarget(
         name=TARGET_CLAUDE,
         adapter=CLAUDE_ADAPTER_NAME,
         destination=None,
         description="CLAUDE_HOME or ~/.claude shared skills",
+        install_agents=True,
     ),
 )
 REFRESH_TARGETS_BY_NAME = {target.name: target for target in REFRESH_TARGETS}
@@ -71,6 +75,8 @@ def build_install_command(target: RefreshTarget, dry_run: bool) -> list[str]:
     ]
     if target.destination is not None:
         command.extend(["--dest", str(target.destination)])
+    if target.install_agents:
+        command.append("--install-agents")
     if dry_run:
         command.append("--dry-run")
     return command

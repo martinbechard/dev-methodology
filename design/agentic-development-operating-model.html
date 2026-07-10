@@ -868,10 +868,10 @@ Nested AGENTS.md examples:
         <h3>Shared role source</h3>
         <p>These files define reusable role behavior before it is rendered into Codex, Claude Code, or another host.</p>
         <ul>
-          <li><code>agents/roles/development-orchestrator.role.yaml</code> defines the coordinator role that breaks work into bounded tasks, selects agents, and preserves handoff and verification expectations.</li>
-          <li><code>agents/roles/project-organiser.role.yaml</code> defines the placement role that applies taxonomy, path intent, and file-organization rules before artifacts or code are created.</li>
-          <li><code>agents/roles/coding-agent.role.yaml</code> defines the implementation role used for ordinary code changes after the skills router has selected the right guidance.</li>
-          <li><code>agents/roles/code-review-agent.role.yaml</code> defines the review role, including finding-first output, severity expectations, evidence requirements, and verification checks.</li>
+          <li><code>agents/roles/development-use/development-orchestrator.role.yaml</code> defines the coordinator role that breaks work into bounded tasks, selects agents, and preserves handoff and verification expectations.</li>
+          <li><code>agents/roles/project-setup/project-organiser.role.yaml</code> defines the placement role that applies taxonomy, path intent, and file-organization rules before artifacts or code are created.</li>
+          <li><code>agents/roles/development-use/coding-agent.role.yaml</code> defines the implementation role used for ordinary code changes after the skills router has selected the right guidance.</li>
+          <li><code>agents/roles/development-use/code-review-agent.role.yaml</code> defines the review role, including finding-first output, severity expectations, evidence requirements, and verification checks.</li>
         </ul>
       </article>
 
@@ -882,6 +882,7 @@ Nested AGENTS.md examples:
           <li><code>AGENTS.md</code> is the root project contract. It declares the project family, application tiers, validation commands, data rules, and default guidance for this repository.</li>
           <li><code>AGENTS-PLAN.yaml</code> is the setup and validation artifact that explains why project role agents, skill loadouts, nested plans, and AGENTS.md routing references exist.</li>
           <li><code>&lt;subtree&gt;/AGENTS.md</code> narrows the root contract for a folder that has different tier, stack, validation, or data-handling needs. The nearest file applies to work in that subtree.</li>
+          <li><code>CLAUDE.md</code> is a thin Claude Code bridge that imports the colocated <code>AGENTS.md</code>; create the same bridge beside nested guidance when Claude needs that subtree.</li>
           <li><code>&lt;subtree&gt;/AGENTS-PLAN.yaml</code> is used only when the subtree has distinct technology, runtime, data, or verification evidence that would make the root plan too noisy.</li>
           <li><code>docs/project-taxonomy.md</code> defines the project families, artifact types, and placement concepts used by the router and Project Organiser when AGENTS.md points at taxonomy terms.</li>
         </ul>
@@ -891,11 +892,20 @@ Nested AGENTS.md examples:
         <h3>Runtime adapters</h3>
         <p>These files translate shared roles and skills into the format a specific agent runtime actually consumes.</p>
         <ul>
-          <li><code>.Codex/agents/*.md</code> contains Codex-facing role files generated or maintained from the shared role source so Codex can invoke the same roles.</li>
-          <li><code>.Codex/orchestrator-config.yaml</code> records Codex-specific orchestration wiring, such as available roles, dispatch defaults, and handoff behavior.</li>
-          <li><code>.claude/agents/*.md</code> contains Claude Code-facing role files for the same shared roles when the project is used from Claude Code.</li>
+          <li><code>generated/adapters/codex/agents/*.toml</code> contains generated Codex custom-agent definitions ready for installation under <code>.codex/agents/</code> or <code>~/.codex/agents/</code>.</li>
+          <li><code>generated/adapters/claude/agents/*.md</code> contains generated Claude Code definitions ready for installation under <code>.claude/agents/</code> or <code>~/.claude/agents/</code>.</li>
           <li><code>skills/*/agents/openai.yaml</code> stores optional Codex metadata beside the source skill so deployment matches the Codex skill layout while sync tooling keeps derived interface fields aligned.</li>
         </ul>
+      </article>
+
+      <article class="panel">
+        <h3>Generated documentation</h3>
+        <p>The HTML pages are views over canonical skill and role catalogs. The maintain-methodology-documentation skill updates sources, regenerates browser data and runtime adapters, then runs stale-output and consistency checks.</p>
+      </article>
+
+      <article class="panel">
+        <h3>Customer installation and maintenance</h3>
+        <p>Deterministic installers copy generic skills and native agents with ownership manifests. Customer edits keep stable names, are never silently overwritten, and are reconciled through three-way discrepancy analysis during an update.</p>
       </article>
 
       <article class="panel">
@@ -911,5 +921,7 @@ Nested AGENTS.md examples:
     </div>
   </section>
 </main>
+<script src="generated/skill-definitions.js"></script>
+<script src="skill-browser.js"></script>
 </body>
 </html>

@@ -1,0 +1,14 @@
+name: project-bootstrap-agent
+filename: project-bootstrap-agent
+description: Installs the methodology for the active runtime, inspects a target project, and creates initial documentation and project routing guidance.
+instructions: Select the generated runtime adapter, use deterministic installers, inspect the project, then create and verify the initial documentation and guidance.
+skills:
+  - documentation-bootstrap
+  - development-methodology
+  - documentation-reverse-engineering
+  - create-project-wiki
+outputContract:
+  - installed generic skills and agents
+  - initial documentation
+  - local routing guidance
+  - setup evidence

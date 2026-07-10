@@ -1,6 +1,8 @@
 ---
 name: ast-grep
 description: Use when the agent needs structure-aware code search, AST pattern matching, syntax-aware refactor discovery, codemod planning, or rule authoring with ast-grep. Trigger for requests such as finding async functions without error handling, locating React components using a hook, finding calls inside specific constructs, searching for functions with too many parameters, or any code query where plain text search is too imprecise.
+metadata:
+  category: development-practice
 ---
 
 # ast-grep

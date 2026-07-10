@@ -13,7 +13,9 @@ Keep these instructions simple. If a maintenance rule needs a long explanation, 
 - README.md is the human-facing entry point for the bundle.
 - AGENTS.md is the agent-facing maintenance contract for this repository.
 - skills contains portable Agent Skills distributed to other projects and machines.
+- agents contains the canonical customer-independent role schema and role definitions.
 - adapters contains runtime-specific metadata for those distributed skills.
+- generated/adapters contains generated native agent definitions and must be regenerated from canonical roles rather than edited manually.
 - design contains the HTML explanations of the skill and agent model.
 - scripts contains installer, refresh, validation, and regression-test support.
 
@@ -41,6 +43,15 @@ When adding, renaming, deleting, or materially changing a distributed skill:
 - Sweep the repository for old skill ids before and after renames or deletions.
 - Refresh shared installs after source skill changes.
 - Keep review skill checklists named review-checklist-[review-target].md, and keep completed checklist guidance aligned with artifact-name.review-checklist-[review-target].md.
+
+When adding, renaming, deleting, or materially changing a canonical role:
+
+- Update the source role under agents/roles.
+- Keep its filename field aligned with the role source filename.
+- Use only bundled skill IDs in the skills list.
+- Run scripts/build-skill-docs.py so role documentation data and native adapters are regenerated together.
+- Update README.md and the relevant design HTML when role policy, runtime support, installation, or customization behavior changes.
+- Never edit design/generated or generated/adapters by hand.
 
 ## README And Design HTML
 
@@ -77,6 +88,7 @@ For skill or bundle changes, run:
 
 ```bash
 python3 scripts/validate-agent-skills.py skills
+python3 scripts/build-skill-docs.py --check
 python3 -m unittest discover scripts
 PYTHONPATH=skills/project-wiki/scripts python3 -m unittest discover skills/project-wiki/scripts
 python3 scripts/refresh-shared-skills.py

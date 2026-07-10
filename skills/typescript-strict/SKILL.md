@@ -1,6 +1,8 @@
 ---
 name: typescript-strict
 description: Use when coding, reviewing, or testing strict TypeScript projects that require precise domain types, no any usage, null safety, discriminated unions, or exact API contracts.
+metadata:
+  category: stack-and-domain
 ---
 
 # TypeScript Strict

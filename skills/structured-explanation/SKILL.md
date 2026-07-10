@@ -6,6 +6,8 @@ description: |
   break a question into smaller questions, ground each answer in concrete
   facts, separate guesses from knowns, and keep the final answer easy to
   inspect.
+metadata:
+  category: development-practice
 ---
 
 # Structured Explanation

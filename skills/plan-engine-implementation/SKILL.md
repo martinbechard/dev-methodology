@@ -1,6 +1,8 @@
 ---
 name: plan-engine-implementation
 description: Use when coding, reviewing, or testing product code that implements planning engines, YAML plans, semantic review loops, evidence tracking, retry policy, or plan verification prompts.
+metadata:
+  category: stack-and-domain
 ---
 
 # Plan Engine Implementation

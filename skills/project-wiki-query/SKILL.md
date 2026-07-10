@@ -1,6 +1,8 @@
 ---
 name: project-wiki-query
 description: Answer questions from a repository docs/wiki synthesis layer and authoritative project files. Use when the agent is asked what the project knows, how a documented workflow works, what a wiki-covered concept means, or any repo question where docs/wiki should be checked first. Also use when an interactive answer reveals durable, source-backed project knowledge that is absent, scattered, or only implied in the wiki, so the agent can save a raw query fragment for later project-wiki ingest instead of editing docs/wiki immediately.
+metadata:
+  category: wiki-and-knowledge
 ---
 
 # Project Wiki Query

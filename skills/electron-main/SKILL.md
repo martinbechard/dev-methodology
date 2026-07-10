@@ -1,6 +1,8 @@
 ---
 name: electron-main
 description: Use when coding, reviewing, or testing Electron main-process code, app lifecycle, windows, IPC handlers, background tasks, native resources, or desktop runtime startup.
+metadata:
+  category: stack-and-domain
 ---
 
 # Electron Main

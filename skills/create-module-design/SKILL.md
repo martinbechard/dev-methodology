@@ -1,6 +1,8 @@
 ---
 name: create-module-design
 description: Use when creating or substantially rewriting a module design artifact from the development-methodology module-design-template asset, including runtime path, parent context, responsibilities, callers, dependencies, public contracts, internal state, processing rules, invariants, configuration, external interfaces, UI behavior, error handling, and verification.
+metadata:
+  category: artifact-creation
 ---
 
 # Create Module Design

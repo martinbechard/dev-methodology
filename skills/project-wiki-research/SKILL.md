@@ -1,6 +1,8 @@
 ---
 name: project-wiki-research
 description: Use when a user asks for ad-hoc or on-demand research for a repository project wiki topic, asks whether the wiki already covers a topic before researching it, or wants a sourced report saved under raw for later project-wiki ingest.
+metadata:
+  category: wiki-and-knowledge
 ---
 
 # Project Wiki Research
