@@ -103,6 +103,26 @@ ARTIFACT_CREATION_SKILLS = (
         "review-unit-test-plan",
     ),
 )
+WIKI_ROLE_SKILLS = {
+    "project-wiki",
+    "project-wiki-query",
+    "project-wiki-research",
+    "project-wiki-topic-writer",
+    "project-wiki-topic-verifier",
+    "code-project-wiki",
+    "create-project-wiki",
+    "review-project-wiki",
+}
+WIKI_ACTIVITY_ROLES = {
+    "public-source-collector",
+    "wiki-artifact-reviewer",
+    "wiki-ingest-agent",
+    "wiki-query-agent",
+    "wiki-research-agent",
+    "wiki-setup-agent",
+    "wiki-topic-verifier",
+    "wiki-writer-agent",
+}
 ARTIFACT_REVIEW_SKILLS = (
     ("review-project-wiki", "project-wiki"),
     ("review-functional-spec", "functional-spec"),
@@ -704,6 +724,21 @@ class BundleContentTests(unittest.TestCase):
         self.assertTrue(all("detect-technology-skills" not in role.skills for role in non_setup_roles))
         setup_role = next(role for role in roles if role.name == "project-agent-setup-agent")
         self.assertIn("detect-technology-skills", setup_role.skills)
+
+    def test_wiki_skills_are_owned_by_wiki_activity_roles(self) -> None:
+        build_skill_docs = load_build_skill_docs_module()
+        skill_payload = build_skill_docs.build_payload()
+        roles = build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
+        wiki_roles = {role.name for role in roles if role.group == "wiki-activities"}
+
+        self.assertEqual(WIKI_ACTIVITY_ROLES, wiki_roles)
+        for role in roles:
+            wiki_skills = set(role.skills) & WIKI_ROLE_SKILLS
+            with self.subTest(role=role.name):
+                if role.group == "wiki-activities":
+                    self.assertTrue(wiki_skills)
+                else:
+                    self.assertFalse(wiki_skills)
 
     def test_dynamic_folder_skills_require_claude_skill_tool_in_restrictive_allowlist(self) -> None:
         build_skill_docs = load_build_skill_docs_module()

@@ -6,14 +6,10 @@ instructions: Ground placement decisions in the live repository and its nearest 
   Return the selected path, rationale, and placement audit.
 modelProfile: default
 skills:
-- project-wiki-query:
-    justification: We need this to base placement on the repository's documented taxonomy, boundaries, and existing rules before proposing a path.
 - structured-design:
     justification: We need this to ensure each placement decision reinforces a coherent project structure rather than solving one file location in isolation.
 - structured-explanation:
     justification: We need this to make the selected path, evidence, tradeoffs, and audit result clear enough for the requester to review and reuse.
-- code-project-wiki:
-    justification: We need this to verify that the proposed placement agrees with the authoritative code and documentation structure, not only the stated taxonomy.
 outputContract:
 - approved path:
     purpose: Gives the requester an unambiguous destination for the artifact or change so implementation can proceed without another placement decision.

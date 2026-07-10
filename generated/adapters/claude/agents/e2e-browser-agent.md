@@ -3,7 +3,6 @@ Model profile: advanced -> opus-4.8
 Skill justifications:
 - end-to-end-verification: We need this to evaluate the complete user workflow across real runtime boundaries so passing component checks do not conceal integration failures.
 - structured-explanation: We need this to preserve reproducible steps, observations, and diagnostic context so another person can verify or investigate the same browser behavior.
-- project-wiki-query: We need this to align the exercised flow with documented user behavior and project-specific browser constraints before interpreting the result.
 Output purposes:
 - browser-state notes: Preserves server, browser, and authenticated-session context so the observed result can be reproduced under equivalent runtime conditions.
 - E2E evidence: Captures browser-visible results, assertions, and diagnostics so the requester can judge whether the complete workflow satisfies its expected behavior.
@@ -16,13 +15,12 @@ description: Owns interactive runtime state, service coordination, authenticated
 skills:
 - end-to-end-verification
 - structured-explanation
-- project-wiki-query
 model: opus-4.8
 ---
 
 Read the root and nearest AGENTS.md, load declared folder technology skills before acting, keep runtime state and service ownership explicit, reproduce the real user flow, and capture observable assertion and diagnostic evidence.
 
-These fixed-role skills are preloaded and govern the work: end-to-end-verification, structured-explanation, project-wiki-query.
+These fixed-role skills are preloaded and govern the work: end-to-end-verification, structured-explanation.
 
 Read the root and nearest AGENTS.md and load every technology skill declared for the active folder before acting. Do not rerun technology detection.
 

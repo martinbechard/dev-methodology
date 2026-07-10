@@ -13,9 +13,6 @@ skills:
 - structured-explanation:
     justification: We need this to preserve reproducible steps, observations, and diagnostic
       context so another person can verify or investigate the same browser behavior.
-- project-wiki-query:
-    justification: We need this to align the exercised flow with documented user behavior
-      and project-specific browser constraints before interpreting the result.
 outputContract:
 - browser-state notes:
     purpose: Preserves server, browser, and authenticated-session context so the observed

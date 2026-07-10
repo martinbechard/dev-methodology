@@ -470,7 +470,7 @@
   <section class="section" aria-labelledby="roles-title">
     <h2 id="roles-title">Role Agent Categories</h2>
     <p class="note">
-      The role model has three operating categories: agents that maintain this methodology bundle, agents that set up or update a downstream project, and agents used during normal development in that downstream project.
+      The role model has four operating categories: agents that maintain this methodology bundle, agents that set up or update a downstream project, agents that own wiki activities, and agents used during normal development in that downstream project.
     </p>
     <p class="note">
       Amber skills are fixed role skills. Violet skills are request-specific and are loaded only when their condition applies. Blue skills in the catalog are setup-time technology skills; Project Agent Setup binds them to folders through AGENTS.md rather than assigning them to one canonical role.
@@ -485,6 +485,11 @@
   <section class="section" aria-labelledby="project-setup-title">
     <h2 id="project-setup-title">Project Setup And Update Agents</h2>
     <div class="grid agent-grid" data-role-group="project-setup"></div>
+  </section>
+
+  <section class="section" aria-labelledby="wiki-activities-title">
+    <h2 id="wiki-activities-title">Wiki Activity Agents</h2>
+    <div class="grid agent-grid" data-role-group="wiki-activities"></div>
   </section>
 
   <section class="section" aria-labelledby="development-use-title">
@@ -518,12 +523,12 @@
           <tr>
             <td><span class="name">User sets up or updates a downstream project</span></td>
             <td>Use a Project Setup And Update Agent to create or refresh AGENTS-PLAN.yaml, local AGENTS.md routing, documentation routes, and project-specific validation evidence.</td>
-            <td>development-methodology, create-agents-plan, documentation-bootstrap, documentation-page-verifier, and code-project-wiki when code-aware docs are involved.</td>
+            <td>development-methodology, create-agents-plan, documentation-bootstrap, and documentation-page-verifier.</td>
           </tr>
           <tr>
             <td><span class="name">User asks for code change</span></td>
             <td>Use Coding Agent unless the task is primarily review, verification, documentation, or merge coordination.</td>
-            <td>careful-coding, code-discovery, project-wiki-query, plus every folder technology skill declared by the nearest AGENTS.md.</td>
+            <td>careful-coding, code-discovery, plus every folder technology skill declared by the nearest AGENTS.md.</td>
           </tr>
           <tr>
             <td><span class="name">User asks for review</span></td>
@@ -532,8 +537,8 @@
           </tr>
           <tr>
             <td><span class="name">User asks for documentation artifact</span></td>
-            <td>Use Documentation Writer and development-methodology to select exactly one creation route and write the source-backed artifact.</td>
-            <td>development-methodology plus create-functional-spec, create-architecture, create-high-level-design, create-module-design, create-unit-test-plan, or create-project-wiki.</td>
+            <td>Use Documentation Writer and development-methodology to select exactly one non-wiki creation route and write the source-backed artifact.</td>
+            <td>development-methodology plus create-functional-spec, create-architecture, create-high-level-design, create-module-design, or create-unit-test-plan.</td>
           </tr>
           <tr>
             <td><span class="name">User asks to set up project agents or skills</span></td>
@@ -542,8 +547,28 @@
           </tr>
           <tr>
             <td><span class="name">User asks for artifact review</span></td>
-            <td>Use Artifact Review Agent with the matching artifact review skill and completed checklist evidence.</td>
-            <td>review-architecture, review-functional-spec, review-high-level-design, review-module-design, review-unit-test-plan, or review-project-wiki.</td>
+            <td>Use Artifact Review Agent with the matching non-wiki artifact review skill and completed checklist evidence.</td>
+            <td>review-architecture, review-functional-spec, review-high-level-design, review-module-design, or review-unit-test-plan.</td>
+          </tr>
+          <tr>
+            <td><span class="name">User asks for wiki setup or restructuring</span></td>
+            <td>Use Wiki Setup Agent to establish roots, ownership, federation, source workflow, navigation, and setup verification.</td>
+            <td>project-wiki, with create-project-wiki or documentation-bootstrap only when their request-specific conditions apply.</td>
+          </tr>
+          <tr>
+            <td><span class="name">User asks for wiki content or ingest</span></td>
+            <td>Use Wiki Writer Agent for ordinary durable maintenance or Wiki Ingest Agent for raw-to-processed synthesis.</td>
+            <td>project-wiki, project-wiki-topic-writer, project-wiki-topic-verifier, and code-project-wiki only for code-aware maintenance.</td>
+          </tr>
+          <tr>
+            <td><span class="name">User asks a wiki-backed question or requests research</span></td>
+            <td>Use Wiki Query Agent for maintained knowledge and Wiki Research Agent or Public Source Collector when missing coverage requires a raw-only source artifact.</td>
+            <td>project-wiki-query and project-wiki-research, with collection kept separate from durable synthesis.</td>
+          </tr>
+          <tr>
+            <td><span class="name">User asks for wiki verification or review</span></td>
+            <td>Use Wiki Topic Verifier for changed topic pages or Wiki Artifact Reviewer for a project-wiki methodology artifact.</td>
+            <td>project-wiki-topic-verifier, or review-project-wiki plus documentation-page-verifier.</td>
           </tr>
           <tr>
             <td><span class="name">Target files are in a specialized subtree</span></td>

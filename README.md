@@ -39,7 +39,7 @@ The shared page contract starts every durable page with Current Understanding, A
 - agents/role-schema.yaml defines the canonical customer-independent role schema.
 - agents/model-profiles.yaml defines semantic simple, default, advanced, and advanced-long model profiles without provider identifiers.
 - adapters/[runtime]/model-profiles.yaml maps semantic profiles to concrete models, reasoning effort, and context settings for each harness.
-- agents/roles contains canonical role files grouped by methodology maintenance, project setup, and normal development use.
+- agents/roles contains canonical role files grouped by methodology maintenance, project setup, wiki activities, and normal development use.
 - generated/adapters contains ready-to-copy native agent definitions. The current milestone generates Codex and Claude definitions from the same canonical roles.
 - design/generated/technology-skill-detection-registry.js exposes the same detection registry for documentation and the future interactive agent-skill explorer.
 - scripts/openai_metadata.py refreshes derived Codex interface fields from SKILL.md while preserving hand-authored policy and dependencies.
@@ -183,6 +183,21 @@ Customer maintainers may edit an installed skill or agent definition directly. K
 
 Customized files must not be silently overwritten. A requested update uses an agent-assisted three-way discrepancy analysis between the old generic definition, the installed customer definition, and the new generic definition. The user decides which differences to keep, merge, replace, or remove.
 
+## Wiki Activity Agents
+
+Wiki responsibilities are isolated from general documentation, coding, review, backlog, and project-setup roles. The dedicated wiki category contains:
+
+- Wiki Setup Agent for initial wiki structure, ownership, federation, source workflow, and setup verification.
+- Wiki Query Agent for wiki-first answers and bounded research handoffs.
+- Wiki Research Agent for on-demand raw research reports.
+- Public Source Collector for approved raw-only public source windows.
+- Wiki Writer Agent for ordinary durable topic, hub, digest, and code-aware maintenance.
+- Wiki Ingest Agent for raw-to-processed synthesis.
+- Wiki Topic Verifier for independent topic-page acceptance.
+- Wiki Artifact Reviewer for project-wiki methodology artifacts and their completed review checklists.
+
+Documentation Writer owns functional specifications, architecture, high-level designs, module designs, and unit test plans. Artifact Review Agent owns the matching non-wiki artifact reviews. Work that needs durable wiki context or changes is handed to the appropriate wiki activity role instead of loading wiki skills into a general role.
+
 ## Bundled Skill Inventory
 
 The wiki and development-wiki skills are:
@@ -296,13 +311,16 @@ Artifact-specific review skills pass the artifact, source evidence, and complete
 2. In the target repository, use documentation-bootstrap for first-time setup.
 3. Use create-agents-plan to create AGENTS-PLAN.yaml when the project needs role agents, skill loadouts, folder routing, nested plan placement, or customer-safe example planning; generate AGENTS.md and thin CLAUDE.md bridge files where Claude Code is used.
 4. As Project Agent Setup, use detect-technology-skills once for representative folder scopes, record source-backed loadouts in AGENTS-PLAN.yaml, and render unconditional folder skill-loading instructions into AGENTS.md.
-5. Use development-methodology to choose the artifact type and apply the request-specific skill conditions, loading only the creation or review skill needed for the current job.
+5. Use development-methodology to choose the non-wiki documentation artifact type and apply the request-specific skill conditions, loading only the creation or review skill needed for the current job.
 6. Use documentation-reverse-engineering when an existing codebase needs a source-backed documentation set.
-7. Use code-project-wiki when docs/wiki needs code-aware maintenance, commit-range review, Related Code upkeep, or Related Tests upkeep.
-8. Use create-project-wiki, create-functional-spec, create-architecture, create-high-level-design, create-module-design, or create-unit-test-plan when creating one methodology artifact from its template.
-9. Use the artifact-specific review skill before finishing a project wiki page, functional specification, architecture document, high-level design, module design, or unit test plan.
-10. Use documentation-page-verifier as the shared verifier for mixed, unknown, or custom documentation artifacts.
-11. Use the project-wiki family for docs/wiki setup, topic writing, topic verification, wiki-backed answers, and raw research.
+7. Use Wiki Setup Agent for initial wiki creation or substantial restructuring, including the create-project-wiki artifact route when that durable contract is needed.
+8. Use Wiki Writer Agent when docs/wiki needs ordinary topic maintenance, code-aware synchronization, commit-range review, Related Code upkeep, or Related Tests upkeep.
+9. Use Wiki Ingest Agent for raw-source synthesis and Wiki Topic Verifier for the independent acceptance loop.
+10. Use Wiki Query Agent for wiki-backed answers, Wiki Research Agent for bounded on-demand research, and Public Source Collector for approved raw-only collection windows.
+11. Use create-functional-spec, create-architecture, create-high-level-design, create-module-design, or create-unit-test-plan when Documentation Writer creates one non-wiki methodology artifact from its template.
+12. Use the matching non-wiki artifact review skill through Artifact Review Agent before finishing a functional specification, architecture document, high-level design, module design, or unit test plan.
+13. Use Wiki Artifact Reviewer before accepting a project-wiki methodology artifact.
+14. Use documentation-page-verifier as the shared verifier for mixed, unknown, or custom documentation artifacts.
 
 ## Neutral Target Project Layout
 

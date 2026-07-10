@@ -751,7 +751,7 @@ Validation:
           <tr>
             <td><span class="name">docs/wiki/**</span></td>
             <td>Documentation tier.</td>
-            <td>Documentation Writer loads project-wiki, code-project-wiki, and the selected artifact creation or review skill.</td>
+            <td>Wiki Writer Agent loads project-wiki and project-wiki-topic-writer, adding code-project-wiki only when the wiki change depends on code or test evidence.</td>
             <td>Run wiki status, lint, link checks, and OKF validation when topic pages change.</td>
             <td>Root AGENTS.md plus docs/wiki/AGENTS.md only when wiki workflow rules are extensive.</td>
           </tr>
@@ -855,21 +855,21 @@ Local checks: schema checks, migration review, seed data tests.</code></pre>
           <tr>
             <td><span class="name">raw/inbox/** and raw/fragments/**</span></td>
             <td>Source collection tier.</td>
-            <td>Research Agent loads project-wiki-research and follows raw-only collection rules.</td>
+            <td>Wiki Research Agent handles bounded on-demand gaps; Public Source Collector handles approved public source windows. Both keep collection raw-only.</td>
             <td>Confirm source metadata, date boundaries, and queue placement before synthesis.</td>
             <td>Root AGENTS.md because this wiki-only project has one source and wiki workflow.</td>
           </tr>
           <tr>
             <td><span class="name">docs/wiki/**</span></td>
             <td>Wiki synthesis tier.</td>
-            <td>Documentation Writer loads project-wiki, project-wiki-topic-writer, and code-project-wiki when source links depend on code.</td>
+            <td>Wiki Writer Agent owns ordinary durable maintenance; Wiki Ingest Agent owns raw-to-processed synthesis. Either adds code-project-wiki only when claims depend on code or tests.</td>
             <td>Run wiki status, lint, and OKF validation.</td>
             <td>Root AGENTS.md; use a nested wiki AGENTS.md only when another wiki root in the same project has different rules.</td>
           </tr>
           <tr>
             <td><span class="name">docs/wiki/digests/**</span></td>
             <td>Publication tier.</td>
-            <td>Documentation Writer loads project-wiki-topic-verifier and structured-explanation.</td>
+            <td>Wiki Writer Agent maintains item-level digest entries, and Wiki Topic Verifier independently checks digest ordering, links, source coverage, and page quality.</td>
             <td>Run link checks, topic verifier checks, and digest coverage checks.</td>
             <td>Root AGENTS.md names publication conventions.</td>
           </tr>
@@ -902,6 +902,23 @@ application_tiers:
   publication:
     paths: [docs/wiki/digests/**]
     skills: [project-wiki-topic-verifier, structured-explanation]
+dispatch:
+  wiki-setup-agent:
+    work: initial structure, ownership, federation, and workflow setup
+  wiki-query-agent:
+    work: wiki-backed answers and durable gap detection
+  wiki-research-agent:
+    work: bounded raw-only research when maintained coverage is insufficient
+  public-source-collector:
+    work: approved public source windows and exclusions
+  wiki-writer-agent:
+    work: ordinary durable topic, hub, link, and digest maintenance
+  wiki-ingest-agent:
+    work: raw-to-processed synthesis
+  wiki-topic-verifier:
+    work: independent topic-page acceptance
+  wiki-artifact-reviewer:
+    work: project-wiki methodology artifact review
 validation:
   commands: [wiki_ops.py status, wiki_ops.py lint, wiki_ops.py okf-validate]</code></pre>
     </div>

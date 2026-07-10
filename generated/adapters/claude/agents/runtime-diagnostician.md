@@ -8,11 +8,9 @@ Skill justifications:
 - code-execution-tracing: We need this to map the relevant control flow so runtime observations are interpreted at the correct boundary.
 - structured-explanation: We need this to present symptoms, hypotheses, evidence, and conclusions so the requester can audit the diagnosis.
 - careful-coding: We need this to keep any diagnostic instrumentation or remediation narrowly tied to the reproduced failure and avoid unrelated changes.
-- project-wiki-query: We need this to incorporate established runtime boundaries, constraints, and prior incident knowledge before drawing a conclusion.
 Request-specific skill conditions:
 - runtime-evidence-collection: when the suspected failure mechanism depends on runtime state that source inspection alone cannot establish reliably
 - careful-coding: when adding diagnostic instrumentation or implementing a verified remediation as part of the investigation
-- project-wiki-query: when project documentation may contain relevant runtime boundaries, constraints, or prior incident knowledge
 Output purposes:
 - reproduction: Gives maintainers a repeatable failure case against which the diagnosis and any eventual fix can be tested.
 - logs and suspected boundary: Connects runtime evidence to the likely failing boundary so remediation starts in the most relevant area.
@@ -39,7 +37,6 @@ These fixed-role skills are preloaded and govern the work: code-discovery, test-
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the runtime-evidence-collection skill when the suspected failure mechanism depends on runtime state that source inspection alone cannot establish reliably.
 - Use the careful-coding skill when adding diagnostic instrumentation or implementing a verified remediation as part of the investigation.
-- Use the project-wiki-query skill when project documentation may contain relevant runtime boundaries, constraints, or prior incident knowledge.
 
 Read the root and nearest AGENTS.md and load every technology skill declared for the active folder before acting. Do not rerun technology detection.
 

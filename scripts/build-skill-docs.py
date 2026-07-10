@@ -94,6 +94,7 @@ ROLE_BOOLEAN_FIELDS = (ROLE_DYNAMIC_FOLDER_SKILLS_FIELD_NAME,)
 ROLE_GROUP_LABELS = {
     "methodology-maintenance": "Methodology Maintenance Agents",
     "project-setup": "Project Setup And Update Agents",
+    "wiki-activities": "Wiki Activity Agents",
     "development-use": "Development Use Agents",
 }
 CODEX_ADAPTER_NAME = "codex"

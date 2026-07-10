@@ -15,8 +15,6 @@ skills:
     justification: We need this when initial documentation must be derived from live code and configuration because trustworthy project guidance does not yet exist.
     condition: when trustworthy initial documentation must be derived from live
       code and configuration
-- create-project-wiki:
-    justification: We need this to turn gathered evidence into a durable, navigable knowledge surface that future project work can reuse.
 outputContract:
 - installed generic skills and agents:
     purpose: Makes the reusable capabilities required by the target runtime available and records the baseline that later project setup can build on.

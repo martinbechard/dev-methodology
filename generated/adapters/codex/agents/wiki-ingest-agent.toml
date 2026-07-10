@@ -3,8 +3,6 @@
 # Skill justifications:
 # - project-wiki: We need this to preserve queue boundaries, provenance, linking, validation, and closeout obligations throughout the ingest workflow.
 # - project-wiki-topic-writer: We need this to turn approved source material into durable pages whose topic boundaries and navigation remain maintainable over time.
-# - project-wiki-topic-verifier: We need this to establish that ingested pages are complete, linked, and grounded before the source is marked processed.
-# - project-wiki-research: We need this to interpret collected research without losing the source evidence and scope decisions that make synthesis trustworthy.
 # - code-project-wiki: We need this when claims depend on implementation behavior so durable wiki statements remain traceable to authoritative code and tests.
 # Request-specific skill conditions:
 # - code-project-wiki: when durable wiki claims depend on implementation behavior that must remain traceable to authoritative code and tests
@@ -17,7 +15,7 @@ description = "Processes raw inputs into durable wiki leaves, digest entries, pr
 developer_instructions = """
 Preserve the raw-to-processed boundary, synthesize durable pages, link leaves, run wiki validation, and recheck queues before completion.
 
-Before acting, load these fixed-role skills completely; they govern the work: project-wiki, project-wiki-topic-writer, project-wiki-topic-verifier, project-wiki-research.
+Before acting, load these fixed-role skills completely; they govern the work: project-wiki, project-wiki-topic-writer.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the code-project-wiki skill when durable wiki claims depend on implementation behavior that must remain traceable to authoritative code and tests.

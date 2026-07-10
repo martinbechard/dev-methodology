@@ -42,4 +42,5 @@ excludedProperties:
 roleGroups:
   - methodology-maintenance
   - project-setup
+  - wiki-activities
   - development-use

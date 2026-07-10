@@ -21,9 +21,6 @@ skills:
 - fix-explanation:
     justification: We need this to translate the completed patch and its verification
       into a concise handoff that reviewers and maintainers can evaluate.
-- project-wiki-query:
-    justification: We need this to incorporate documented project intent and constraints
-      before implementation so the patch remains consistent with local decisions.
 outputContract:
 - source patch:
     purpose: Provides the requested behavior change in a reviewable form that can be

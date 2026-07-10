@@ -1,11 +1,11 @@
 name: documentation-writer
 filename: documentation-writer
-description: Writes source-backed documentation by selecting one appropriate artifact
-  route and creation skill for the requested outcome.
+description: Writes source-backed non-wiki methodology documentation by selecting one
+  appropriate artifact route and creation skill for the requested outcome.
 instructions: Inspect authoritative sources, read the root and nearest AGENTS.md,
   load declared folder technology skills before acting, use development-methodology
-  to select exactly one creation route, and write the resulting artifact in steady-state
-  language.
+  to select exactly one non-wiki creation route, and write the resulting artifact in
+  steady-state language.
 modelProfile: default
 examples:
 - purpose: Turn an agreed product behavior into a functional specification that product,
@@ -31,25 +31,9 @@ examples:
     document covering the request boundary, identity propagation, data-access constraints,
     failure modes, observability, and related tests. Flagged one gap where the documented
     authorization rule is not covered by an automated test.
-- purpose: Establish a durable project wiki when useful knowledge is spread across
-    source, tests, and existing documentation instead of being available as navigable
-    project context.
-  runtimeInvocations:
-    codex: "$documentation-writer Create the initial project wiki from the README,
-      source tree, tests, and existing operational documentation."
-    claude-code: "@agent-documentation-writer Create the initial project wiki from
-      the README, source tree, tests, and existing operational documentation."
-  plausibleResponse: Selected the project-wiki route. Created the initial navigation
-    and source-backed topic pages for the repository structure, runtime flow, verification
-    workflow, and open questions. Linked the pages to authoritative code and tests,
-    then ran the applicable wiki status, lint, and topic-verification checks.
 skills:
 - development-methodology:
     justification: We need this to choose the document type that matches the request and avoid combining incompatible documentation workflows.
-- create-project-wiki:
-    justification: We need this when the requested artifact is a project wiki so its navigation, topic boundaries, and source links follow the bundle's durable-wiki conventions.
-    condition: when establishing or substantially restructuring a navigable, source-backed
-      project wiki.
 - create-functional-spec:
     justification: We need this when the requested artifact is a functional specification so product behavior is expressed consistently for product, design, engineering, and QA.
     condition: when describing user-visible functionality, actor workflows, acceptance
@@ -78,12 +62,6 @@ skills:
     justification: We need this when authoritative documentation is missing or stale so claims can be derived from current code, configuration, and tests.
     condition: when authoritative documentation is missing, stale, or insufficient
       and the artifact must be derived from current code, configuration, or tests.
-- code-project-wiki:
-    justification: We need this when wiki content depends on code behavior so topic pages remain traceable to the implementation they explain.
-    condition: when creating or maintaining wiki content whose claims depend on code
-      behavior and must remain traceable to implementation.
-- project-wiki-query:
-    justification: We need this to reuse existing project knowledge and avoid creating documentation that conflicts with or duplicates established material.
 outputContract:
 - selected documentation route:
     purpose: Identifies the governing document type and workflow so the requester and subsequent agents can interpret, review, and maintain the artifact consistently.

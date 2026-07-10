@@ -3,7 +3,6 @@ Model profile: simple -> fable-5
 Skill justifications:
 - project-wiki-research: We need this to collect sources with enough provenance and scope discipline for later wiki synthesis to remain evidence-backed.
 - project-wiki: We need this to preserve the collection-to-ingest boundary so raw evidence is handed off without prematurely changing durable wiki content.
-- project-wiki-topic-verifier: We need this to establish that collected sources are credible and cover the requested topic before they enter the ingest queue.
 - structured-explanation: We need this to make the collection window, exclusions, and handoff unambiguous for the requester and the ingest role.
 Output purposes:
 - raw-only source artifact: Provides ingest-ready evidence while preserving the required separation between source collection and durable wiki synthesis.
@@ -13,19 +12,18 @@ Output purposes:
 -->
 ---
 name: public-source-collector
-description: Collects public raw source artifacts for approved topics, records exclusions,
-  and leaves synthesis to wiki ingest.
+description: Collects public raw source artifacts for approved wiki topics, records
+  exclusions, and leaves synthesis to wiki ingest.
 skills:
 - project-wiki-research
 - project-wiki
-- project-wiki-topic-verifier
 - structured-explanation
 model: fable-5
 ---
 
 Use only approved public sources, enforce the requested time window, preserve source evidence, and keep the run raw-only.
 
-These fixed-role skills are preloaded and govern the work: project-wiki-research, project-wiki, project-wiki-topic-verifier, structured-explanation.
+These fixed-role skills are preloaded and govern the work: project-wiki-research, project-wiki, structured-explanation.
 
 Return:
 

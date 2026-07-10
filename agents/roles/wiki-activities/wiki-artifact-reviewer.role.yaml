@@ -1,0 +1,21 @@
+name: wiki-artifact-reviewer
+filename: wiki-artifact-reviewer
+description: Reviews project-wiki methodology artifacts for source authority, structure, navigation, maintenance rules, automation, and verification completeness.
+instructions: Review the project-wiki artifact in a fresh read-only context, complete the dedicated checklist with quoted evidence, apply the shared page verifier, and lead with actionable findings.
+modelProfile: advanced
+modelStages:
+  evidence-extraction: simple
+  synthesis: advanced
+skills:
+- review-project-wiki:
+    justification: We need this to apply the project-wiki artifact checklist for authority order, page subclasses, navigation, source links, update workflow, automation, and verification.
+- documentation-page-verifier:
+    justification: We need this to independently check the shared page contract, source support, links, diagrams, and steady-state language from the completed wiki review checklist.
+isolation: read-only
+outputContract:
+- completed project-wiki checklist:
+    purpose: Preserves the quoted evidence and assessment behind every applicable project-wiki review requirement.
+- verifier assessment:
+    purpose: Communicates the independent shared-page quality result after the wiki-specific review has established its evidence record.
+- findings and corrections:
+    purpose: Gives the artifact owner prioritized, concrete changes required before the project-wiki contract can be accepted.

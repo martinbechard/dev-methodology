@@ -1,22 +1,16 @@
 name: artifact-review-agent
 filename: artifact-review-agent
-description: Reviews finished methodology artifacts with an artifact-specific checklist
-  and passes evidence to the shared page verifier.
+description: Reviews finished non-wiki methodology artifacts with an artifact-specific
+  checklist and passes evidence to the shared page verifier.
 instructions: Read the root and nearest AGENTS.md, load the declared folder technology
-  skills and matching review skill before acting, capture quoted evidence in the completed
-  checklist, and return actionable findings before conclusions.
+  skills and matching non-wiki review skill before acting, capture quoted evidence in
+  the completed checklist, and return actionable findings before conclusions.
 modelProfile: advanced
 modelStages:
   evidence-extraction: simple
   synthesis: advanced
   large-context-synthesis: advanced-long
 skills:
-- review-project-wiki:
-    justification: We need this when reviewing a project wiki so its navigation, topic
-      boundaries, evidence links, and maintenance obligations are judged against the
-      conventions that make the wiki durable.
-    condition: when reviewing a project wiki or its navigation, topic boundaries,
-      evidence links, or maintenance obligations.
 - review-functional-spec:
     justification: We need this when reviewing a functional specification so actors,
       workflows, states, and acceptance criteria are complete enough to guide implementation

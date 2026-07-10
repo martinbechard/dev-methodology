@@ -13,7 +13,7 @@ This page is generated from the canonical roles, bundled skill frontmatter, setu
 
 ## Summary
 
-- [x] 22 canonical agents are defined and generate through the supported native role adapters.
+- [x] 27 canonical agents are defined and generate through the supported native role adapters.
 - [x] 72 bundled skills pass catalog and Agent Skill validation.
 - [x] 2 agents and 10 skills are named in current evaluation cases.
 - [ ] 0 agents and 0 skills have independently verified behavior evidence under the current proof contract.
@@ -84,8 +84,13 @@ This page is generated from the canonical roles, bundled skill frontmatter, setu
 | security-reviewer | advanced | [x] | None | [ ] | None |
 | shared-install-verifier | default | [x] | None | [ ] | None |
 | ux-designer-or-reviewer | default | [x] | None | [ ] | None |
+| wiki-artifact-reviewer | advanced | [x] | None | [ ] | None |
 | wiki-ingest-agent | default | [x] | None | [ ] | None |
 | wiki-query-agent | default | [x] | None | [ ] | None |
+| wiki-research-agent | default | [x] | None | [ ] | None |
+| wiki-setup-agent | advanced | [x] | None | [ ] | None |
+| wiki-topic-verifier | advanced | [x] | None | [ ] | None |
+| wiki-writer-agent | default | [x] | None | [ ] | None |
 
 ## Bundled Skill Checklist
 

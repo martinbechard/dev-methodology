@@ -32,11 +32,6 @@ skills:
       narrowly tied to the reproduced failure and avoid unrelated changes.
     condition: when adding diagnostic instrumentation or implementing a verified
       remediation as part of the investigation.
-- project-wiki-query:
-    justification: We need this to incorporate established runtime boundaries, constraints,
-      and prior incident knowledge before drawing a conclusion.
-    condition: when project documentation may contain relevant runtime boundaries,
-      constraints, or prior incident knowledge.
 outputContract:
 - reproduction:
     purpose: Gives maintainers a repeatable failure case against which the diagnosis

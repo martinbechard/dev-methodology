@@ -19,11 +19,6 @@ skills:
 - structured-explanation:
     justification: We need this so status, blocked, completion, and handoff records leave
       enough context for the next person to make a sound decision.
-- project-wiki-query:
-    justification: We need this to check established project knowledge before creating
-      or changing backlog work so the backlog reflects current intent and avoids duplicates.
-    condition: when creating or changing backlog work that should be reconciled with
-      established project knowledge or checked for duplication.
 outputContract:
 - backlog item or status update:
     purpose: Makes the requested work or lifecycle transition durable and explicit so

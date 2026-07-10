@@ -436,6 +436,7 @@
 
   <section class="section" aria-labelledby="roles-title">
     <h2 id="roles-title">Role Agent Set</h2>
+    <p class="lede">Wiki setup, query, research, collection, writing, ingest, topic verification, and project-wiki artifact review form a dedicated activity category. General documentation, coding, review, backlog, and project-setup roles do not load wiki skills.</p>
     <div class="grid">
       <article class="card orchestrator">
         <h3>Development Orchestrator</h3>
@@ -507,7 +508,7 @@
 
       <article class="card agent">
         <h3>Documentation Writer</h3>
-        <p>Selects one document shape and creation skill, then writes a source-backed functional, architecture, high-level design, module, or project wiki artifact.</p>
+        <p>Selects one non-wiki document shape and creation skill, then writes a source-backed functional specification, architecture, high-level design, module design, or unit test plan.</p>
         <div class="tag-row">
           <span class="tag agent">development-methodology</span>
           <span class="tag agent">artifact creation skill</span>
@@ -519,22 +520,54 @@
 
       <article class="card agent">
         <h3>Artifact Review Agent</h3>
-        <p>Performs fresh-context review of finished methodology artifacts using the artifact-specific verifier for the document type.</p>
+        <p>Performs fresh-context review of finished non-wiki methodology artifacts using the artifact-specific verifier for the document type.</p>
         <div class="tag-row">
           <span class="tag agent">functional spec review</span>
           <span class="tag agent">architecture review</span>
           <span class="tag agent">module review</span>
-          <span class="tag agent">wiki review</span>
+          <span class="tag agent">unit test plan review</span>
+        </div>
+      </article>
+
+      <article class="card agent">
+        <h3>Wiki Setup Agent</h3>
+        <p>Establishes wiki roots, ownership, federation, source workflow, navigation, automations, and setup verification from an approved recommendation pack.</p>
+        <div class="tag-row">
+          <span class="tag agent">project-wiki</span>
+          <span class="tag agent">setup recommendations</span>
+          <span class="tag agent">federation</span>
+          <span class="tag agent">source boundaries</span>
         </div>
       </article>
 
       <article class="card agent">
         <h3>Wiki Query Agent</h3>
-        <p>Answers project questions from docs/wiki first, verifies against authoritative files, and records durable knowledge gaps.</p>
+        <p>Answers project questions from docs/wiki first, verifies against authoritative files, and hands missing or stale coverage to the research role.</p>
+        <div class="tag-row">
+          <span class="tag agent">project-wiki-query</span>
+          <span class="tag agent">source verification</span>
+          <span class="tag agent">research handoff</span>
+        </div>
+      </article>
+
+      <article class="card agent">
+        <h3>Wiki Research Agent</h3>
+        <p>Checks maintained and federated coverage, researches only the bounded gap, and saves one sourced raw report for later ingest.</p>
         <div class="tag-row">
           <span class="tag agent">project-wiki-query</span>
           <span class="tag agent">project-wiki-research</span>
-          <span class="tag agent">code-project-wiki</span>
+          <span class="tag agent">raw-only report</span>
+        </div>
+      </article>
+
+      <article class="card agent">
+        <h3>Wiki Writer Agent</h3>
+        <p>Creates and maintains durable topic pages, hubs, links, digests, and code-aware project knowledge outside raw-source ingest.</p>
+        <div class="tag-row">
+          <span class="tag agent">topic writer</span>
+          <span class="tag agent">code-aware sync</span>
+          <span class="tag agent">leaf linking</span>
+          <span class="tag agent">wiki validation</span>
         </div>
       </article>
 
@@ -556,6 +589,26 @@
           <span class="tag agent">raw-only boundary</span>
           <span class="tag agent">public evidence</span>
           <span class="tag agent">source windows</span>
+        </div>
+      </article>
+
+      <article class="card agent">
+        <h3>Wiki Topic Verifier</h3>
+        <p>Independently checks changed topic pages, durable leaf coverage, source links, digests, federation boundaries, lint, and OKF status without editing.</p>
+        <div class="tag-row">
+          <span class="tag agent">fresh context</span>
+          <span class="tag agent">read-only verdict</span>
+          <span class="tag agent">GOOD or NEEDS_CORRECTION</span>
+        </div>
+      </article>
+
+      <article class="card agent">
+        <h3>Wiki Artifact Reviewer</h3>
+        <p>Reviews project-wiki methodology artifacts with the dedicated checklist and shared documentation verifier.</p>
+        <div class="tag-row">
+          <span class="tag agent">review-project-wiki</span>
+          <span class="tag agent">completed checklist</span>
+          <span class="tag agent">page verifier</span>
         </div>
       </article>
 
@@ -655,7 +708,7 @@
           </tr>
           <tr>
             <td><span class="name">Documentation or wiki repository</span></td>
-            <td>Documentation Writer, Wiki Query Agent, Wiki Ingest Agent, Public Source Collector, Artifact Review Agent.</td>
+            <td>Wiki Setup Agent, Wiki Query Agent, Wiki Research Agent, Public Source Collector, Wiki Writer Agent, Wiki Ingest Agent, Wiki Topic Verifier, and Wiki Artifact Reviewer.</td>
             <td>Project wiki, source collection, durable synthesis, link validation.</td>
             <td>Wiki status, lint, topic verification, source reconciliation.</td>
           </tr>
@@ -833,13 +886,13 @@ Nested AGENTS.md examples:
           </tr>
           <tr>
             <td><span class="name">Execution</span></td>
-            <td>Coding Agent or Documentation Writer</td>
+            <td>Coding Agent, Documentation Writer, Wiki Writer Agent, or Wiki Ingest Agent</td>
             <td>Receives only the files, skills, AGENTS.md excerpts, and acceptance criteria needed for the assigned job.</td>
             <td>Patch, artifact, test evidence, build evidence, implementation notes.</td>
           </tr>
           <tr>
             <td><span class="name">Review</span></td>
-            <td>Code Review Agent or Artifact Review Agent</td>
+            <td>Code Review Agent, Artifact Review Agent, Wiki Topic Verifier, or Wiki Artifact Reviewer</td>
             <td>Receives the diff, source evidence, role contract, and AGENTS.md rules without the executor's full scratch context.</td>
             <td>PASS WARN FAIL verdict with file and rule references.</td>
           </tr>
@@ -875,6 +928,7 @@ Nested AGENTS.md examples:
           <li><code>agents/roles/project-setup/project-organiser.role.yaml</code> defines the placement role that applies taxonomy, path intent, and file-organization rules before artifacts or code are created.</li>
           <li><code>agents/roles/development-use/coding-agent.role.yaml</code> defines the implementation role used for ordinary code changes after fixed and folder skills are loaded.</li>
           <li><code>agents/roles/development-use/code-review-agent.role.yaml</code> defines the review role, including finding-first output, severity expectations, evidence requirements, and verification checks.</li>
+          <li><code>agents/roles/wiki-activities/*.role.yaml</code> defines the separate wiki setup, query, research, collection, writing, ingest, verification, and project-wiki artifact review responsibilities.</li>
         </ul>
       </article>
 

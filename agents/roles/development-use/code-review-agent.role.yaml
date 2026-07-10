@@ -21,9 +21,6 @@ skills:
 - careful-coding:
     justification: We need this to judge whether a patch stays within its intended scope,
       avoids unnecessary complexity, and includes verification proportionate to its risk.
-- project-wiki-query:
-    justification: We need this to compare the change with documented project intent
-      and constraints so findings reflect local expectations rather than generic preferences.
 isolation: read-only
 outputContract:
 - completed code evidence packet:

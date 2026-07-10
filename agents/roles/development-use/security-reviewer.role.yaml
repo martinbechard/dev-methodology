@@ -13,11 +13,6 @@ skills:
 - review-structured:
     justification: We need this to separate confirmed exploitable findings from lower-confidence
       concerns and prioritize remediation by evidence and impact.
-- project-wiki-query:
-    justification: We need this to ground expected security boundaries in the project's
-      documented architecture, data rules, and operating constraints.
-    condition: when documented architecture, data rules, or operating constraints
-      are relevant to the expected security boundary.
 - structured-explanation:
     justification: We need this to communicate attack paths, mitigations, uncertainty,
       and residual exposure clearly enough for owners to act safely.

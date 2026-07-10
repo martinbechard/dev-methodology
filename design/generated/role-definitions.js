@@ -10,20 +10,24 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       "label": "Project Setup And Update Agents"
     },
     {
+      "id": "wiki-activities",
+      "label": "Wiki Activity Agents"
+    },
+    {
       "id": "development-use",
       "label": "Development Use Agents"
     }
   ],
   "roles": {
     "artifact-review-agent": {
-      "description": "Reviews finished methodology artifacts with an artifact-specific checklist and passes evidence to the shared page verifier.",
+      "description": "Reviews finished non-wiki methodology artifacts with an artifact-specific checklist and passes evidence to the shared page verifier.",
       "displayName": "Artifact Review Agent",
       "dynamicFolderSkills": true,
       "examples": [],
       "filename": "artifact-review-agent",
       "group": "development-use",
       "groupLabel": "Development Use Agents",
-      "instructions": "Read the root and nearest AGENTS.md, load the declared folder technology skills and matching review skill before acting, capture quoted evidence in the completed checklist, and return actionable findings before conclusions.",
+      "instructions": "Read the root and nearest AGENTS.md, load the declared folder technology skills and matching non-wiki review skill before acting, capture quoted evidence in the completed checklist, and return actionable findings before conclusions.",
       "isolation": "read-only",
       "modelProfile": "advanced",
       "modelStages": {
@@ -47,7 +51,6 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "review-functional-spec": "when reviewing a functional specification for its actors, workflows, states, acceptance criteria, or verification obligations",
         "review-high-level-design": "when reviewing subsystem responsibilities, component collaboration, or a high-level design that coordinates downstream work",
         "review-module-design": "when reviewing module responsibilities, interfaces, runtime paths, test obligations, or another focused implementation contract",
-        "review-project-wiki": "when reviewing a project wiki or its navigation, topic boundaries, evidence links, or maintenance obligations",
         "review-unit-test-plan": "when reviewing planned unit-test scenarios, boundaries, traceability, or coverage evidence"
       },
       "skillJustifications": {
@@ -56,11 +59,9 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "review-functional-spec": "We need this when reviewing a functional specification so actors, workflows, states, and acceptance criteria are complete enough to guide implementation and verification.",
         "review-high-level-design": "We need this when reviewing a high-level design so subsystem responsibilities and component collaboration are coherent enough to coordinate downstream design and implementation.",
         "review-module-design": "We need this when reviewing a module design so its responsibilities, interfaces, runtime paths, and test obligations provide an implementable contract.",
-        "review-project-wiki": "We need this when reviewing a project wiki so its navigation, topic boundaries, evidence links, and maintenance obligations are judged against the conventions that make the wiki durable.",
         "review-unit-test-plan": "We need this when reviewing a unit test plan so scenarios, boundaries, traceability, and coverage evidence are sufficient to protect the intended behavior."
       },
       "skills": [
-        "review-project-wiki",
         "review-functional-spec",
         "review-architecture",
         "review-high-level-design",
@@ -69,7 +70,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "documentation-page-verifier"
       ],
       "sourcePath": "agents/roles/development-use/artifact-review-agent.role.yaml",
-      "yaml": "name: artifact-review-agent\nfilename: artifact-review-agent\ndescription: Reviews finished methodology artifacts with an artifact-specific checklist\n  and passes evidence to the shared page verifier.\ninstructions: Read the root and nearest AGENTS.md, load the declared folder technology\n  skills and matching review skill before acting, capture quoted evidence in the completed\n  checklist, and return actionable findings before conclusions.\nmodelProfile: advanced\nmodelStages:\n  evidence-extraction: simple\n  synthesis: advanced\n  large-context-synthesis: advanced-long\nskills:\n- review-project-wiki:\n    justification: We need this when reviewing a project wiki so its navigation, topic\n      boundaries, evidence links, and maintenance obligations are judged against the\n      conventions that make the wiki durable.\n    condition: when reviewing a project wiki or its navigation, topic boundaries,\n      evidence links, or maintenance obligations.\n- review-functional-spec:\n    justification: We need this when reviewing a functional specification so actors,\n      workflows, states, and acceptance criteria are complete enough to guide implementation\n      and verification.\n    condition: when reviewing a functional specification for its actors, workflows,\n      states, acceptance criteria, or verification obligations.\n- review-architecture:\n    justification: We need this when reviewing architecture so system boundaries,\n      runtime assumptions, and decisions are supported by evidence before future work\n      relies on them.\n    condition: when reviewing system-wide boundaries, runtime assumptions, architectural\n      decisions, or their supporting evidence.\n- review-high-level-design:\n    justification: We need this when reviewing a high-level design so subsystem responsibilities\n      and component collaboration are coherent enough to coordinate downstream design\n      and implementation.\n    condition: when reviewing subsystem responsibilities, component collaboration,\n      or a high-level design that coordinates downstream work.\n- review-module-design:\n    justification: We need this when reviewing a module design so its responsibilities,\n      interfaces, runtime paths, and test obligations provide an implementable contract.\n    condition: when reviewing module responsibilities, interfaces, runtime paths,\n      test obligations, or another focused implementation contract.\n- review-unit-test-plan:\n    justification: We need this when reviewing a unit test plan so scenarios, boundaries,\n      traceability, and coverage evidence are sufficient to protect the intended behavior.\n    condition: when reviewing planned unit-test scenarios, boundaries, traceability,\n      or coverage evidence.\n- documentation-page-verifier:\n    justification: We need this to apply a shared independent quality gate after the\n      artifact-specific review so acceptance does not depend solely on the focused reviewer.\nisolation: read-only\noutputContract:\n- completed review checklist:\n    purpose: Preserves the artifact-specific evidence behind the assessment so reviewers\n      can audit which requirements were checked and how each conclusion was reached.\n- verifier assessment:\n    purpose: Communicates the independent quality-gate result so the requester knows\n      whether the artifact is ready to rely on after the focused review.\n- findings and corrections:\n    purpose: Gives the artifact owner prioritized, concrete changes to make before\n      acceptance so review evidence leads to actionable improvement.\ndynamicFolderSkills: true\n"
+      "yaml": "name: artifact-review-agent\nfilename: artifact-review-agent\ndescription: Reviews finished non-wiki methodology artifacts with an artifact-specific\n  checklist and passes evidence to the shared page verifier.\ninstructions: Read the root and nearest AGENTS.md, load the declared folder technology\n  skills and matching non-wiki review skill before acting, capture quoted evidence in\n  the completed checklist, and return actionable findings before conclusions.\nmodelProfile: advanced\nmodelStages:\n  evidence-extraction: simple\n  synthesis: advanced\n  large-context-synthesis: advanced-long\nskills:\n- review-functional-spec:\n    justification: We need this when reviewing a functional specification so actors,\n      workflows, states, and acceptance criteria are complete enough to guide implementation\n      and verification.\n    condition: when reviewing a functional specification for its actors, workflows,\n      states, acceptance criteria, or verification obligations.\n- review-architecture:\n    justification: We need this when reviewing architecture so system boundaries,\n      runtime assumptions, and decisions are supported by evidence before future work\n      relies on them.\n    condition: when reviewing system-wide boundaries, runtime assumptions, architectural\n      decisions, or their supporting evidence.\n- review-high-level-design:\n    justification: We need this when reviewing a high-level design so subsystem responsibilities\n      and component collaboration are coherent enough to coordinate downstream design\n      and implementation.\n    condition: when reviewing subsystem responsibilities, component collaboration,\n      or a high-level design that coordinates downstream work.\n- review-module-design:\n    justification: We need this when reviewing a module design so its responsibilities,\n      interfaces, runtime paths, and test obligations provide an implementable contract.\n    condition: when reviewing module responsibilities, interfaces, runtime paths,\n      test obligations, or another focused implementation contract.\n- review-unit-test-plan:\n    justification: We need this when reviewing a unit test plan so scenarios, boundaries,\n      traceability, and coverage evidence are sufficient to protect the intended behavior.\n    condition: when reviewing planned unit-test scenarios, boundaries, traceability,\n      or coverage evidence.\n- documentation-page-verifier:\n    justification: We need this to apply a shared independent quality gate after the\n      artifact-specific review so acceptance does not depend solely on the focused reviewer.\nisolation: read-only\noutputContract:\n- completed review checklist:\n    purpose: Preserves the artifact-specific evidence behind the assessment so reviewers\n      can audit which requirements were checked and how each conclusion was reached.\n- verifier assessment:\n    purpose: Communicates the independent quality-gate result so the requester knows\n      whether the artifact is ready to rely on after the focused review.\n- findings and corrections:\n    purpose: Gives the artifact owner prioritized, concrete changes to make before\n      acceptance so review evidence leads to actionable improvement.\ndynamicFolderSkills: true\n"
     },
     "backlog-steward": {
       "description": "Creates, claims, resumes, blocks, completes, and archives typed backlog work with recoverable status evidence.",
@@ -94,25 +95,22 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       ],
       "skillConditions": {
         "agent-claim": "when backlog work is being claimed, resumed, or assigned exclusive ownership",
-        "create-backlog": "when turning an incoming request into a durable, typed backlog item",
-        "project-wiki-query": "when creating or changing backlog work that should be reconciled with established project knowledge or checked for duplication"
+        "create-backlog": "when turning an incoming request into a durable, typed backlog item"
       },
       "skillJustifications": {
         "agent-claim": "We need this to preserve exclusive, visible ownership when work is claimed or resumed so contributors do not unknowingly overlap.",
         "create-backlog": "We need this to turn incoming requests into consistently typed backlog items that another contributor can understand, prioritize, and execute.",
         "manage-backlog": "We need this to keep lifecycle transitions, archival state, and recovery evidence consistent as work moves from creation through completion or blockage.",
-        "project-wiki-query": "We need this to check established project knowledge before creating or changing backlog work so the backlog reflects current intent and avoids duplicates.",
         "structured-explanation": "We need this so status, blocked, completion, and handoff records leave enough context for the next person to make a sound decision."
       },
       "skills": [
         "create-backlog",
         "manage-backlog",
         "agent-claim",
-        "structured-explanation",
-        "project-wiki-query"
+        "structured-explanation"
       ],
       "sourcePath": "agents/roles/development-use/backlog-steward.role.yaml",
-      "yaml": "name: backlog-steward\nfilename: backlog-steward\ndescription: Creates, claims, resumes, blocks, completes, and archives typed backlog work with recoverable status evidence.\ninstructions: Maintain the repository backlog contract, preserve ownership and status evidence, and leave every item recoverable by another agent.\nmodelProfile: default\nskills:\n- create-backlog:\n    justification: We need this to turn incoming requests into consistently typed backlog\n      items that another contributor can understand, prioritize, and execute.\n    condition: when turning an incoming request into a durable, typed backlog item.\n- manage-backlog:\n    justification: We need this to keep lifecycle transitions, archival state, and recovery\n      evidence consistent as work moves from creation through completion or blockage.\n- agent-claim:\n    justification: We need this to preserve exclusive, visible ownership when work is\n      claimed or resumed so contributors do not unknowingly overlap.\n    condition: when backlog work is being claimed, resumed, or assigned exclusive\n      ownership.\n- structured-explanation:\n    justification: We need this so status, blocked, completion, and handoff records leave\n      enough context for the next person to make a sound decision.\n- project-wiki-query:\n    justification: We need this to check established project knowledge before creating\n      or changing backlog work so the backlog reflects current intent and avoids duplicates.\n    condition: when creating or changing backlog work that should be reconciled with\n      established project knowledge or checked for duplication.\noutputContract:\n- backlog item or status update:\n    purpose: Makes the requested work or lifecycle transition durable and explicit so\n      the backlog remains a trustworthy source of current state.\n- ownership record:\n    purpose: Identifies who controls the work so other contributors can coordinate\n      without creating conflicting claims or edits.\n- completion or blocked summary:\n    purpose: Preserves the outcome, remaining obstacle, and next decision so another\n      contributor can recover the work without reconstructing its history.\n"
+      "yaml": "name: backlog-steward\nfilename: backlog-steward\ndescription: Creates, claims, resumes, blocks, completes, and archives typed backlog work with recoverable status evidence.\ninstructions: Maintain the repository backlog contract, preserve ownership and status evidence, and leave every item recoverable by another agent.\nmodelProfile: default\nskills:\n- create-backlog:\n    justification: We need this to turn incoming requests into consistently typed backlog\n      items that another contributor can understand, prioritize, and execute.\n    condition: when turning an incoming request into a durable, typed backlog item.\n- manage-backlog:\n    justification: We need this to keep lifecycle transitions, archival state, and recovery\n      evidence consistent as work moves from creation through completion or blockage.\n- agent-claim:\n    justification: We need this to preserve exclusive, visible ownership when work is\n      claimed or resumed so contributors do not unknowingly overlap.\n    condition: when backlog work is being claimed, resumed, or assigned exclusive\n      ownership.\n- structured-explanation:\n    justification: We need this so status, blocked, completion, and handoff records leave\n      enough context for the next person to make a sound decision.\noutputContract:\n- backlog item or status update:\n    purpose: Makes the requested work or lifecycle transition durable and explicit so\n      the backlog remains a trustworthy source of current state.\n- ownership record:\n    purpose: Identifies who controls the work so other contributors can coordinate\n      without creating conflicting claims or edits.\n- completion or blocked summary:\n    purpose: Preserves the outcome, remaining obstacle, and next decision so another\n      contributor can recover the work without reconstructing its history.\n"
     },
     "code-review-agent": {
       "description": "Reviews diffs for regressions, missing tests, weak verification, unsafe abstractions, rule violations, and documentation drift.",
@@ -149,17 +147,15 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       "skillJustifications": {
         "careful-coding": "We need this to judge whether a patch stays within its intended scope, avoids unnecessary complexity, and includes verification proportionate to its risk.",
         "code-review-evidence": "We need this to establish a cited evidence packet before synthesis so review findings are grounded in applicable checks instead of reviewer intuition.",
-        "project-wiki-query": "We need this to compare the change with documented project intent and constraints so findings reflect local expectations rather than generic preferences.",
         "review-structured": "We need this to present defects in a finding-first, evidence-disciplined form so the change owner can evaluate and act on them efficiently."
       },
       "skills": [
         "code-review-evidence",
         "review-structured",
-        "careful-coding",
-        "project-wiki-query"
+        "careful-coding"
       ],
       "sourcePath": "agents/roles/development-use/code-review-agent.role.yaml",
-      "yaml": "name: code-review-agent\nfilename: code-review-agent\ndescription: Reviews diffs for regressions, missing tests, weak verification, unsafe\n  abstractions, rule violations, and documentation drift.\ninstructions: Read the root and nearest AGENTS.md, load the declared folder technology\n  skills before acting, extract checklist evidence in a fresh read-only context, then\n  synthesize findings from that evidence. Lead with concrete findings, cite tight\n  file locations, and avoid style-only commentary.\nmodelProfile: advanced\nmodelStages:\n  evidence-extraction: simple\n  synthesis: advanced\n  large-context-synthesis: advanced-long\nskills:\n- code-review-evidence:\n    justification: We need this to establish a cited evidence packet before synthesis\n      so review findings are grounded in applicable checks instead of reviewer intuition.\n- review-structured:\n    justification: We need this to present defects in a finding-first, evidence-disciplined\n      form so the change owner can evaluate and act on them efficiently.\n- careful-coding:\n    justification: We need this to judge whether a patch stays within its intended scope,\n      avoids unnecessary complexity, and includes verification proportionate to its risk.\n- project-wiki-query:\n    justification: We need this to compare the change with documented project intent\n      and constraints so findings reflect local expectations rather than generic preferences.\nisolation: read-only\noutputContract:\n- completed code evidence packet:\n    purpose: Preserves checklist status, cited facts, uncertainty, and missing evidence\n      so the resulting review remains auditable and can be re-evaluated without repeating\n      extraction.\n- prioritized findings:\n    purpose: Orders confirmed defects by impact so the change owner can address the\n      most consequential problems first.\n- file references:\n    purpose: Anchors each finding to the smallest useful source location so its evidence\n      can be checked and the correction applied precisely.\n- open questions:\n    purpose: Separates unresolved evidence gaps from confirmed defects so uncertainty\n      is visible without being misreported as a finding.\n- residual risk:\n    purpose: Records material risk that remains after review so acceptance and follow-up\n      decisions account for what was not fully verified.\ndynamicFolderSkills: true\n"
+      "yaml": "name: code-review-agent\nfilename: code-review-agent\ndescription: Reviews diffs for regressions, missing tests, weak verification, unsafe\n  abstractions, rule violations, and documentation drift.\ninstructions: Read the root and nearest AGENTS.md, load the declared folder technology\n  skills before acting, extract checklist evidence in a fresh read-only context, then\n  synthesize findings from that evidence. Lead with concrete findings, cite tight\n  file locations, and avoid style-only commentary.\nmodelProfile: advanced\nmodelStages:\n  evidence-extraction: simple\n  synthesis: advanced\n  large-context-synthesis: advanced-long\nskills:\n- code-review-evidence:\n    justification: We need this to establish a cited evidence packet before synthesis\n      so review findings are grounded in applicable checks instead of reviewer intuition.\n- review-structured:\n    justification: We need this to present defects in a finding-first, evidence-disciplined\n      form so the change owner can evaluate and act on them efficiently.\n- careful-coding:\n    justification: We need this to judge whether a patch stays within its intended scope,\n      avoids unnecessary complexity, and includes verification proportionate to its risk.\nisolation: read-only\noutputContract:\n- completed code evidence packet:\n    purpose: Preserves checklist status, cited facts, uncertainty, and missing evidence\n      so the resulting review remains auditable and can be re-evaluated without repeating\n      extraction.\n- prioritized findings:\n    purpose: Orders confirmed defects by impact so the change owner can address the\n      most consequential problems first.\n- file references:\n    purpose: Anchors each finding to the smallest useful source location so its evidence\n      can be checked and the correction applied precisely.\n- open questions:\n    purpose: Separates unresolved evidence gaps from confirmed defects so uncertainty\n      is visible without being misreported as a finding.\n- residual risk:\n    purpose: Records material risk that remains after review so acceptance and follow-up\n      decisions account for what was not fully verified.\ndynamicFolderSkills: true\n"
     },
     "coding-agent": {
       "description": "Implements scoped source changes using applicable project guidance, repository patterns, focused tests, and build commands.",
@@ -190,18 +186,16 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "careful-coding": "We need this to keep implementation scoped to the request, make assumptions explicit, and avoid complexity that is not required for a complete fix.",
         "code-discovery": "We need this to identify callers, contracts, dependencies, and existing coverage before editing so a local change does not violate a wider runtime path.",
         "fix-explanation": "We need this to translate the completed patch and its verification into a concise handoff that reviewers and maintainers can evaluate.",
-        "project-wiki-query": "We need this to incorporate documented project intent and constraints before implementation so the patch remains consistent with local decisions.",
         "test-driven-development": "We need this when behavior can be expressed through tests so the implementation is guided by observable outcomes and protected against regression."
       },
       "skills": [
         "careful-coding",
         "test-driven-development",
         "code-discovery",
-        "fix-explanation",
-        "project-wiki-query"
+        "fix-explanation"
       ],
       "sourcePath": "agents/roles/development-use/coding-agent.role.yaml",
-      "yaml": "name: coding-agent\nfilename: coding-agent\ndescription: Implements scoped source changes using applicable project guidance, repository\n  patterns, focused tests, and build commands.\ninstructions: Read the root and nearest AGENTS.md, load the declared folder technology\n  skills before acting, make the smallest complete change, preserve unrelated work,\n  add or update regression coverage, and run the applicable build and tests.\nmodelProfile: advanced\nskills:\n- careful-coding:\n    justification: We need this to keep implementation scoped to the request, make assumptions\n      explicit, and avoid complexity that is not required for a complete fix.\n- test-driven-development:\n    justification: We need this when behavior can be expressed through tests so the\n      implementation is guided by observable outcomes and protected against regression.\n    condition: when the requested behavior can be expressed through executable tests\n      that should guide implementation.\n- code-discovery:\n    justification: We need this to identify callers, contracts, dependencies, and existing\n      coverage before editing so a local change does not violate a wider runtime path.\n- fix-explanation:\n    justification: We need this to translate the completed patch and its verification\n      into a concise handoff that reviewers and maintainers can evaluate.\n- project-wiki-query:\n    justification: We need this to incorporate documented project intent and constraints\n      before implementation so the patch remains consistent with local decisions.\noutputContract:\n- source patch:\n    purpose: Provides the requested behavior change in a reviewable form that can be\n      integrated into the repository.\n- test and build evidence:\n    purpose: Demonstrates that the changed behavior and its surrounding contracts passed\n      the applicable checks before the requester relies on the patch.\n- changed-file summary:\n    purpose: Gives the requester and reviewers a concise inventory of the affected scope\n      so they can assess impact and navigate the implementation quickly.\ndynamicFolderSkills: true\n"
+      "yaml": "name: coding-agent\nfilename: coding-agent\ndescription: Implements scoped source changes using applicable project guidance, repository\n  patterns, focused tests, and build commands.\ninstructions: Read the root and nearest AGENTS.md, load the declared folder technology\n  skills before acting, make the smallest complete change, preserve unrelated work,\n  add or update regression coverage, and run the applicable build and tests.\nmodelProfile: advanced\nskills:\n- careful-coding:\n    justification: We need this to keep implementation scoped to the request, make assumptions\n      explicit, and avoid complexity that is not required for a complete fix.\n- test-driven-development:\n    justification: We need this when behavior can be expressed through tests so the\n      implementation is guided by observable outcomes and protected against regression.\n    condition: when the requested behavior can be expressed through executable tests\n      that should guide implementation.\n- code-discovery:\n    justification: We need this to identify callers, contracts, dependencies, and existing\n      coverage before editing so a local change does not violate a wider runtime path.\n- fix-explanation:\n    justification: We need this to translate the completed patch and its verification\n      into a concise handoff that reviewers and maintainers can evaluate.\noutputContract:\n- source patch:\n    purpose: Provides the requested behavior change in a reviewable form that can be\n      integrated into the repository.\n- test and build evidence:\n    purpose: Demonstrates that the changed behavior and its surrounding contracts passed\n      the applicable checks before the requester relies on the patch.\n- changed-file summary:\n    purpose: Gives the requester and reviewers a concise inventory of the affected scope\n      so they can assess impact and navigate the implementation quickly.\ndynamicFolderSkills: true\n"
     },
     "development-orchestrator": {
       "description": "Coordinates multi-step development work across agents while preserving bounded context, explicit handoffs, and verification evidence.",
@@ -251,7 +245,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       "yaml": "name: development-orchestrator\nfilename: development-orchestrator\ndescription: Coordinates multi-step development work across agents while preserving\n  bounded context, explicit handoffs, and verification evidence.\ninstructions: Decompose work by independent responsibility, use project guidance to\n  select narrow role loadouts, preserve claims and handoffs, and verify the integrated\n  outcome.\nmodelProfile: advanced-long\nskills:\n- structured-design:\n    justification: We need this to divide complex work into bounded responsibilities\n      and dependencies that can be assigned without losing the intended system outcome.\n- structured-explanation:\n    justification: We need this so assignments, decisions, handoffs, and outcomes remain\n      understandable across contributors with separate working contexts.\n- manage-backlog:\n    justification: We need this to preserve durable lifecycle state for multi-step work\n      so progress and unresolved responsibilities remain recoverable.\n- agent-claim:\n    justification: We need this to establish explicit ownership boundaries so parallel\n      contributors do not edit the same scope without coordination.\n- agent-work-merge:\n    justification: We need this to reconcile parallel contributions intentionally and\n      preserve conflict evidence when combining them into one result.\n    condition: when parallel contributions must be reconciled into one integrated\n      result.\n- review-structured:\n    justification: We need this to apply an independent quality check to the integrated\n      outcome so omissions and cross-contribution regressions are found before handoff.\noutputContract:\n- task breakdown:\n    purpose: Makes bounded responsibilities, dependencies, and sequencing explicit so\n      contributors can work independently toward the same outcome.\n- resolved role loadouts:\n    purpose: Records the project bindings and specialized skills selected for each\n      work lane so assignments use the guidance appropriate to their scope.\n- assigned roles:\n    purpose: Identifies the owner of each responsibility so accountability and coordination\n      remain clear throughout execution.\n- handoff plan:\n    purpose: Preserves the evidence, context, and acceptance expectations that must pass\n      between contributors for downstream work to continue safely.\n- integrated verification:\n    purpose: Confirms that the combined result was checked as one coherent outcome so\n      successful individual contributions do not hide integration defects.\n"
     },
     "documentation-writer": {
-      "description": "Writes source-backed documentation by selecting one appropriate artifact route and creation skill for the requested outcome.",
+      "description": "Writes source-backed non-wiki methodology documentation by selecting one appropriate artifact route and creation skill for the requested outcome.",
       "displayName": "Documentation Writer",
       "dynamicFolderSkills": true,
       "examples": [
@@ -270,20 +264,12 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
             "claude-code": "@agent-documentation-writer Derive an architecture document for tenant isolation by reading the live code, configuration, and tests.",
             "codex": "$documentation-writer Derive an architecture document for tenant isolation by reading the live code, configuration, and tests."
           }
-        },
-        {
-          "plausibleResponse": "Selected the project-wiki route. Created the initial navigation and source-backed topic pages for the repository structure, runtime flow, verification workflow, and open questions. Linked the pages to authoritative code and tests, then ran the applicable wiki status, lint, and topic-verification checks.",
-          "purpose": "Establish a durable project wiki when useful knowledge is spread across source, tests, and existing documentation instead of being available as navigable project context.",
-          "runtimeInvocations": {
-            "claude-code": "@agent-documentation-writer Create the initial project wiki from the README, source tree, tests, and existing operational documentation.",
-            "codex": "$documentation-writer Create the initial project wiki from the README, source tree, tests, and existing operational documentation."
-          }
         }
       ],
       "filename": "documentation-writer",
       "group": "development-use",
       "groupLabel": "Development Use Agents",
-      "instructions": "Inspect authoritative sources, read the root and nearest AGENTS.md, load declared folder technology skills before acting, use development-methodology to select exactly one creation route, and write the resulting artifact in steady-state language.",
+      "instructions": "Inspect authoritative sources, read the root and nearest AGENTS.md, load declared folder technology skills before acting, use development-methodology to select exactly one non-wiki creation route, and write the resulting artifact in steady-state language.",
       "modelProfile": "default",
       "modelStages": {},
       "name": "documentation-writer",
@@ -298,44 +284,36 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "verification evidence"
       ],
       "skillConditions": {
-        "code-project-wiki": "when creating or maintaining wiki content whose claims depend on code behavior and must remain traceable to implementation",
         "create-architecture": "when describing system-wide boundaries, architectural decisions, cross-cutting responsibilities, or enduring constraints",
         "create-functional-spec": "when describing user-visible functionality, actor workflows, acceptance criteria, permissions, states, or error behavior",
         "create-high-level-design": "when coordinating a subsystem or feature family through component responsibilities and interactions at a high level of abstraction",
         "create-module-design": "when guiding focused implementation through explicit module responsibilities, interfaces, runtime behavior, or test obligations",
-        "create-project-wiki": "when establishing or substantially restructuring a navigable, source-backed project wiki",
         "create-unit-test-plan": "when defining durable unit-test scenarios, boundaries, traceability, or coverage expectations before implementation or review",
         "documentation-bootstrap": "when the target project lacks the documentation structure needed to place and maintain the requested artifact",
         "documentation-reverse-engineering": "when authoritative documentation is missing, stale, or insufficient and the artifact must be derived from current code, configuration, or tests"
       },
       "skillJustifications": {
-        "code-project-wiki": "We need this when wiki content depends on code behavior so topic pages remain traceable to the implementation they explain.",
         "create-architecture": "We need this when the requested artifact describes system-wide boundaries and decisions so future changes preserve the intended responsibilities and constraints.",
         "create-functional-spec": "We need this when the requested artifact is a functional specification so product behavior is expressed consistently for product, design, engineering, and QA.",
         "create-high-level-design": "We need this when the requested artifact coordinates a subsystem or feature family so its components and interactions are documented at a consistent level of abstraction.",
         "create-module-design": "We need this when the requested artifact guides focused implementation work so module responsibilities, interfaces, and behavior are explicit before coding.",
-        "create-project-wiki": "We need this when the requested artifact is a project wiki so its navigation, topic boundaries, and source links follow the bundle's durable-wiki conventions.",
         "create-unit-test-plan": "We need this when the requested artifact must define durable test coverage so implementation, review, and handoff use the same behavioral scenarios.",
         "development-methodology": "We need this to choose the document type that matches the request and avoid combining incompatible documentation workflows.",
         "documentation-bootstrap": "We need this when the target project lacks the methodology structure required to place and maintain the requested documentation correctly.",
-        "documentation-reverse-engineering": "We need this when authoritative documentation is missing or stale so claims can be derived from current code, configuration, and tests.",
-        "project-wiki-query": "We need this to reuse existing project knowledge and avoid creating documentation that conflicts with or duplicates established material."
+        "documentation-reverse-engineering": "We need this when authoritative documentation is missing or stale so claims can be derived from current code, configuration, and tests."
       },
       "skills": [
         "development-methodology",
-        "create-project-wiki",
         "create-functional-spec",
         "create-architecture",
         "create-high-level-design",
         "create-module-design",
         "create-unit-test-plan",
         "documentation-bootstrap",
-        "documentation-reverse-engineering",
-        "code-project-wiki",
-        "project-wiki-query"
+        "documentation-reverse-engineering"
       ],
       "sourcePath": "agents/roles/development-use/documentation-writer.role.yaml",
-      "yaml": "name: documentation-writer\nfilename: documentation-writer\ndescription: Writes source-backed documentation by selecting one appropriate artifact\n  route and creation skill for the requested outcome.\ninstructions: Inspect authoritative sources, read the root and nearest AGENTS.md,\n  load declared folder technology skills before acting, use development-methodology\n  to select exactly one creation route, and write the resulting artifact in steady-state\n  language.\nmodelProfile: default\nexamples:\n- purpose: Turn an agreed product behavior into a functional specification that product,\n    design, engineering, and QA can use to build and verify the same workflow.\n  runtimeInvocations:\n    codex: \"$documentation-writer Document the password-reset workflow as a functional\n      specification from the current product notes, routes, and tests.\"\n    claude-code: \"@agent-documentation-writer Document the password-reset workflow\n      as a functional specification from the current product notes, routes, and tests.\"\n  plausibleResponse: Selected the functional-specification route. Created a source-backed\n    password-reset specification that covers actors, entry points, success and error\n    states, permissions, acceptance criteria, and links to the relevant routes and\n    tests. Completed the functional-specification review checklist and reported the\n    remaining open question about rate-limit behavior.\n- purpose: Explain an existing cross-cutting system decision so future changes preserve\n    the boundary, rationale, responsibilities, and verification obligations.\n  runtimeInvocations:\n    codex: \"$documentation-writer Derive an architecture document for tenant isolation\n      by reading the live code, configuration, and tests.\"\n    claude-code: \"@agent-documentation-writer Derive an architecture document for\n      tenant isolation by reading the live code, configuration, and tests.\"\n  plausibleResponse: Selected the architecture route. Produced a source-backed tenant-isolation\n    document covering the request boundary, identity propagation, data-access constraints,\n    failure modes, observability, and related tests. Flagged one gap where the documented\n    authorization rule is not covered by an automated test.\n- purpose: Establish a durable project wiki when useful knowledge is spread across\n    source, tests, and existing documentation instead of being available as navigable\n    project context.\n  runtimeInvocations:\n    codex: \"$documentation-writer Create the initial project wiki from the README,\n      source tree, tests, and existing operational documentation.\"\n    claude-code: \"@agent-documentation-writer Create the initial project wiki from\n      the README, source tree, tests, and existing operational documentation.\"\n  plausibleResponse: Selected the project-wiki route. Created the initial navigation\n    and source-backed topic pages for the repository structure, runtime flow, verification\n    workflow, and open questions. Linked the pages to authoritative code and tests,\n    then ran the applicable wiki status, lint, and topic-verification checks.\nskills:\n- development-methodology:\n    justification: We need this to choose the document type that matches the request and avoid combining incompatible documentation workflows.\n- create-project-wiki:\n    justification: We need this when the requested artifact is a project wiki so its navigation, topic boundaries, and source links follow the bundle's durable-wiki conventions.\n    condition: when establishing or substantially restructuring a navigable, source-backed\n      project wiki.\n- create-functional-spec:\n    justification: We need this when the requested artifact is a functional specification so product behavior is expressed consistently for product, design, engineering, and QA.\n    condition: when describing user-visible functionality, actor workflows, acceptance\n      criteria, permissions, states, or error behavior.\n- create-architecture:\n    justification: We need this when the requested artifact describes system-wide boundaries and decisions so future changes preserve the intended responsibilities and constraints.\n    condition: when describing system-wide boundaries, architectural decisions,\n      cross-cutting responsibilities, or enduring constraints.\n- create-high-level-design:\n    justification: We need this when the requested artifact coordinates a subsystem or feature family so its components and interactions are documented at a consistent level of abstraction.\n    condition: when coordinating a subsystem or feature family through component\n      responsibilities and interactions at a high level of abstraction.\n- create-module-design:\n    justification: We need this when the requested artifact guides focused implementation work so module responsibilities, interfaces, and behavior are explicit before coding.\n    condition: when guiding focused implementation through explicit module responsibilities,\n      interfaces, runtime behavior, or test obligations.\n- create-unit-test-plan:\n    justification: We need this when the requested artifact must define durable test coverage so implementation, review, and handoff use the same behavioral scenarios.\n    condition: when defining durable unit-test scenarios, boundaries, traceability,\n      or coverage expectations before implementation or review.\n- documentation-bootstrap:\n    justification: We need this when the target project lacks the methodology structure required to place and maintain the requested documentation correctly.\n    condition: when the target project lacks the documentation structure needed to\n      place and maintain the requested artifact.\n- documentation-reverse-engineering:\n    justification: We need this when authoritative documentation is missing or stale so claims can be derived from current code, configuration, and tests.\n    condition: when authoritative documentation is missing, stale, or insufficient\n      and the artifact must be derived from current code, configuration, or tests.\n- code-project-wiki:\n    justification: We need this when wiki content depends on code behavior so topic pages remain traceable to the implementation they explain.\n    condition: when creating or maintaining wiki content whose claims depend on code\n      behavior and must remain traceable to implementation.\n- project-wiki-query:\n    justification: We need this to reuse existing project knowledge and avoid creating documentation that conflicts with or duplicates established material.\noutputContract:\n- selected documentation route:\n    purpose: Identifies the governing document type and workflow so the requester and subsequent agents can interpret, review, and maintain the artifact consistently.\n- source-backed artifact:\n    purpose: Provides the durable documentation requested by the user while keeping its claims traceable to authoritative project evidence.\n- verification evidence:\n    purpose: Gives reviewers confidence that the artifact satisfies its applicable checks and exposes any remaining gaps before the documentation is relied upon.\ndynamicFolderSkills: true\n"
+      "yaml": "name: documentation-writer\nfilename: documentation-writer\ndescription: Writes source-backed non-wiki methodology documentation by selecting one\n  appropriate artifact route and creation skill for the requested outcome.\ninstructions: Inspect authoritative sources, read the root and nearest AGENTS.md,\n  load declared folder technology skills before acting, use development-methodology\n  to select exactly one non-wiki creation route, and write the resulting artifact in\n  steady-state language.\nmodelProfile: default\nexamples:\n- purpose: Turn an agreed product behavior into a functional specification that product,\n    design, engineering, and QA can use to build and verify the same workflow.\n  runtimeInvocations:\n    codex: \"$documentation-writer Document the password-reset workflow as a functional\n      specification from the current product notes, routes, and tests.\"\n    claude-code: \"@agent-documentation-writer Document the password-reset workflow\n      as a functional specification from the current product notes, routes, and tests.\"\n  plausibleResponse: Selected the functional-specification route. Created a source-backed\n    password-reset specification that covers actors, entry points, success and error\n    states, permissions, acceptance criteria, and links to the relevant routes and\n    tests. Completed the functional-specification review checklist and reported the\n    remaining open question about rate-limit behavior.\n- purpose: Explain an existing cross-cutting system decision so future changes preserve\n    the boundary, rationale, responsibilities, and verification obligations.\n  runtimeInvocations:\n    codex: \"$documentation-writer Derive an architecture document for tenant isolation\n      by reading the live code, configuration, and tests.\"\n    claude-code: \"@agent-documentation-writer Derive an architecture document for\n      tenant isolation by reading the live code, configuration, and tests.\"\n  plausibleResponse: Selected the architecture route. Produced a source-backed tenant-isolation\n    document covering the request boundary, identity propagation, data-access constraints,\n    failure modes, observability, and related tests. Flagged one gap where the documented\n    authorization rule is not covered by an automated test.\nskills:\n- development-methodology:\n    justification: We need this to choose the document type that matches the request and avoid combining incompatible documentation workflows.\n- create-functional-spec:\n    justification: We need this when the requested artifact is a functional specification so product behavior is expressed consistently for product, design, engineering, and QA.\n    condition: when describing user-visible functionality, actor workflows, acceptance\n      criteria, permissions, states, or error behavior.\n- create-architecture:\n    justification: We need this when the requested artifact describes system-wide boundaries and decisions so future changes preserve the intended responsibilities and constraints.\n    condition: when describing system-wide boundaries, architectural decisions,\n      cross-cutting responsibilities, or enduring constraints.\n- create-high-level-design:\n    justification: We need this when the requested artifact coordinates a subsystem or feature family so its components and interactions are documented at a consistent level of abstraction.\n    condition: when coordinating a subsystem or feature family through component\n      responsibilities and interactions at a high level of abstraction.\n- create-module-design:\n    justification: We need this when the requested artifact guides focused implementation work so module responsibilities, interfaces, and behavior are explicit before coding.\n    condition: when guiding focused implementation through explicit module responsibilities,\n      interfaces, runtime behavior, or test obligations.\n- create-unit-test-plan:\n    justification: We need this when the requested artifact must define durable test coverage so implementation, review, and handoff use the same behavioral scenarios.\n    condition: when defining durable unit-test scenarios, boundaries, traceability,\n      or coverage expectations before implementation or review.\n- documentation-bootstrap:\n    justification: We need this when the target project lacks the methodology structure required to place and maintain the requested documentation correctly.\n    condition: when the target project lacks the documentation structure needed to\n      place and maintain the requested artifact.\n- documentation-reverse-engineering:\n    justification: We need this when authoritative documentation is missing or stale so claims can be derived from current code, configuration, and tests.\n    condition: when authoritative documentation is missing, stale, or insufficient\n      and the artifact must be derived from current code, configuration, or tests.\noutputContract:\n- selected documentation route:\n    purpose: Identifies the governing document type and workflow so the requester and subsequent agents can interpret, review, and maintain the artifact consistently.\n- source-backed artifact:\n    purpose: Provides the durable documentation requested by the user while keeping its claims traceable to authoritative project evidence.\n- verification evidence:\n    purpose: Gives reviewers confidence that the artifact satisfies its applicable checks and exposes any remaining gaps before the documentation is relied upon.\ndynamicFolderSkills: true\n"
     },
     "e2e-browser-agent": {
       "description": "Owns interactive runtime state, service coordination, authenticated workflows, and diagnostic evidence for end-to-end work.",
@@ -362,16 +340,14 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       "skillConditions": {},
       "skillJustifications": {
         "end-to-end-verification": "We need this to evaluate the complete user workflow across real runtime boundaries so passing component checks do not conceal integration failures.",
-        "project-wiki-query": "We need this to align the exercised flow with documented user behavior and project-specific browser constraints before interpreting the result.",
         "structured-explanation": "We need this to preserve reproducible steps, observations, and diagnostic context so another person can verify or investigate the same browser behavior."
       },
       "skills": [
         "end-to-end-verification",
-        "structured-explanation",
-        "project-wiki-query"
+        "structured-explanation"
       ],
       "sourcePath": "agents/roles/development-use/e2e-browser-agent.role.yaml",
-      "yaml": "name: e2e-browser-agent\nfilename: e2e-browser-agent\ndescription: Owns interactive runtime state, service coordination, authenticated workflows,\n  and diagnostic evidence for end-to-end work.\ninstructions: Read the root and nearest AGENTS.md, load declared folder technology\n  skills before acting, keep runtime state and service ownership explicit, reproduce\n  the real user flow, and capture observable assertion and diagnostic evidence.\nmodelProfile: advanced\nskills:\n- end-to-end-verification:\n    justification: We need this to evaluate the complete user workflow across real runtime\n      boundaries so passing component checks do not conceal integration failures.\n- structured-explanation:\n    justification: We need this to preserve reproducible steps, observations, and diagnostic\n      context so another person can verify or investigate the same browser behavior.\n- project-wiki-query:\n    justification: We need this to align the exercised flow with documented user behavior\n      and project-specific browser constraints before interpreting the result.\noutputContract:\n- browser-state notes:\n    purpose: Preserves server, browser, and authenticated-session context so the observed\n      result can be reproduced under equivalent runtime conditions.\n- E2E evidence:\n    purpose: Captures browser-visible results, assertions, and diagnostics so the requester\n      can judge whether the complete workflow satisfies its expected behavior.\n- reproduction steps:\n    purpose: Gives another agent or human an exact path through the user flow so the\n      observation can be confirmed or a failure investigated independently.\ndynamicFolderSkills: true\n"
+      "yaml": "name: e2e-browser-agent\nfilename: e2e-browser-agent\ndescription: Owns interactive runtime state, service coordination, authenticated workflows,\n  and diagnostic evidence for end-to-end work.\ninstructions: Read the root and nearest AGENTS.md, load declared folder technology\n  skills before acting, keep runtime state and service ownership explicit, reproduce\n  the real user flow, and capture observable assertion and diagnostic evidence.\nmodelProfile: advanced\nskills:\n- end-to-end-verification:\n    justification: We need this to evaluate the complete user workflow across real runtime\n      boundaries so passing component checks do not conceal integration failures.\n- structured-explanation:\n    justification: We need this to preserve reproducible steps, observations, and diagnostic\n      context so another person can verify or investigate the same browser behavior.\noutputContract:\n- browser-state notes:\n    purpose: Preserves server, browser, and authenticated-session context so the observed\n      result can be reproduced under equivalent runtime conditions.\n- E2E evidence:\n    purpose: Captures browser-visible results, assertions, and diagnostics so the requester\n      can judge whether the complete workflow satisfies its expected behavior.\n- reproduction steps:\n    purpose: Gives another agent or human an exact path through the user flow so the\n      observation can be confirmed or a failure investigated independently.\ndynamicFolderSkills: true\n"
     },
     "merge-coordinator": {
       "description": "Integrates work from multiple agents or worktrees while preserving claims, ownership, verification, and conflict evidence.",
@@ -560,7 +536,6 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "documentation-reverse-engineering": "when trustworthy initial documentation must be derived from live code and configuration"
       },
       "skillJustifications": {
-        "create-project-wiki": "We need this to turn gathered evidence into a durable, navigable knowledge surface that future project work can reuse.",
         "development-methodology": "We need this to choose documentation routes and steady-state contracts that fit the target project instead of imposing an arbitrary artifact set.",
         "documentation-bootstrap": "We need this to establish the methodology structure and runtime integration that the target project must have before agents can use the bundle reliably.",
         "documentation-reverse-engineering": "We need this when initial documentation must be derived from live code and configuration because trustworthy project guidance does not yet exist."
@@ -568,11 +543,10 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       "skills": [
         "documentation-bootstrap",
         "development-methodology",
-        "documentation-reverse-engineering",
-        "create-project-wiki"
+        "documentation-reverse-engineering"
       ],
       "sourcePath": "agents/roles/project-setup/project-bootstrap-agent.role.yaml",
-      "yaml": "name: project-bootstrap-agent\nfilename: project-bootstrap-agent\ndescription: Installs the methodology for the active runtime, inspects a target project,\n  and creates initial documentation and project routing guidance.\ninstructions: Select the generated runtime adapter, use deterministic installers,\n  inspect the project, then create and verify the initial documentation and hand off\n  technology detection and folder loadouts to Project Agent Setup.\nmodelProfile: advanced-long\nskills:\n- documentation-bootstrap:\n    justification: We need this to establish the methodology structure and runtime integration that the target project must have before agents can use the bundle reliably.\n- development-methodology:\n    justification: We need this to choose documentation routes and steady-state contracts that fit the target project instead of imposing an arbitrary artifact set.\n- documentation-reverse-engineering:\n    justification: We need this when initial documentation must be derived from live code and configuration because trustworthy project guidance does not yet exist.\n    condition: when trustworthy initial documentation must be derived from live\n      code and configuration\n- create-project-wiki:\n    justification: We need this to turn gathered evidence into a durable, navigable knowledge surface that future project work can reuse.\noutputContract:\n- installed generic skills and agents:\n    purpose: Makes the reusable capabilities required by the target runtime available and records the baseline that later project setup can build on.\n- initial documentation:\n    purpose: Gives contributors a first durable, source-backed understanding of the project instead of leaving essential context implicit in the codebase.\n- local routing guidance:\n    purpose: Directs future agents to the project-specific instructions and handoff points they must follow when choosing roles and skills.\n- setup evidence:\n    purpose: Demonstrates to the requester that installation and initialization completed successfully and exposes any check that still needs attention.\n"
+      "yaml": "name: project-bootstrap-agent\nfilename: project-bootstrap-agent\ndescription: Installs the methodology for the active runtime, inspects a target project,\n  and creates initial documentation and project routing guidance.\ninstructions: Select the generated runtime adapter, use deterministic installers,\n  inspect the project, then create and verify the initial documentation and hand off\n  technology detection and folder loadouts to Project Agent Setup.\nmodelProfile: advanced-long\nskills:\n- documentation-bootstrap:\n    justification: We need this to establish the methodology structure and runtime integration that the target project must have before agents can use the bundle reliably.\n- development-methodology:\n    justification: We need this to choose documentation routes and steady-state contracts that fit the target project instead of imposing an arbitrary artifact set.\n- documentation-reverse-engineering:\n    justification: We need this when initial documentation must be derived from live code and configuration because trustworthy project guidance does not yet exist.\n    condition: when trustworthy initial documentation must be derived from live\n      code and configuration\noutputContract:\n- installed generic skills and agents:\n    purpose: Makes the reusable capabilities required by the target runtime available and records the baseline that later project setup can build on.\n- initial documentation:\n    purpose: Gives contributors a first durable, source-backed understanding of the project instead of leaving essential context implicit in the codebase.\n- local routing guidance:\n    purpose: Directs future agents to the project-specific instructions and handoff points they must follow when choosing roles and skills.\n- setup evidence:\n    purpose: Demonstrates to the requester that installation and initialization completed successfully and exposes any check that still needs attention.\n"
     },
     "project-organiser": {
       "description": "Classifies project artifacts by purpose, chooses paths from the project taxonomy, applies path intent, and audits generated files.",
@@ -597,19 +571,15 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       ],
       "skillConditions": {},
       "skillJustifications": {
-        "code-project-wiki": "We need this to verify that the proposed placement agrees with the authoritative code and documentation structure, not only the stated taxonomy.",
-        "project-wiki-query": "We need this to base placement on the repository's documented taxonomy, boundaries, and existing rules before proposing a path.",
         "structured-design": "We need this to ensure each placement decision reinforces a coherent project structure rather than solving one file location in isolation.",
         "structured-explanation": "We need this to make the selected path, evidence, tradeoffs, and audit result clear enough for the requester to review and reuse."
       },
       "skills": [
-        "project-wiki-query",
         "structured-design",
-        "structured-explanation",
-        "code-project-wiki"
+        "structured-explanation"
       ],
       "sourcePath": "agents/roles/project-setup/project-organiser.role.yaml",
-      "yaml": "name: project-organiser\nfilename: project-organiser\ndescription: Classifies project artifacts by purpose, chooses paths from the project\n  taxonomy, applies path intent, and audits generated files.\ninstructions: Ground placement decisions in the live repository and its nearest guidance.\n  Return the selected path, rationale, and placement audit.\nmodelProfile: default\nskills:\n- project-wiki-query:\n    justification: We need this to base placement on the repository's documented taxonomy, boundaries, and existing rules before proposing a path.\n- structured-design:\n    justification: We need this to ensure each placement decision reinforces a coherent project structure rather than solving one file location in isolation.\n- structured-explanation:\n    justification: We need this to make the selected path, evidence, tradeoffs, and audit result clear enough for the requester to review and reuse.\n- code-project-wiki:\n    justification: We need this to verify that the proposed placement agrees with the authoritative code and documentation structure, not only the stated taxonomy.\noutputContract:\n- approved path:\n    purpose: Gives the requester an unambiguous destination for the artifact or change so implementation can proceed without another placement decision.\n- placement rationale:\n    purpose: Explains the repository evidence and structural reasoning behind the destination so reviewers can assess and reuse the decision.\n- file-placement audit:\n    purpose: Confirms that the selected location follows the repository's actual structure and guidance before files are created or moved.\n"
+      "yaml": "name: project-organiser\nfilename: project-organiser\ndescription: Classifies project artifacts by purpose, chooses paths from the project\n  taxonomy, applies path intent, and audits generated files.\ninstructions: Ground placement decisions in the live repository and its nearest guidance.\n  Return the selected path, rationale, and placement audit.\nmodelProfile: default\nskills:\n- structured-design:\n    justification: We need this to ensure each placement decision reinforces a coherent project structure rather than solving one file location in isolation.\n- structured-explanation:\n    justification: We need this to make the selected path, evidence, tradeoffs, and audit result clear enough for the requester to review and reuse.\noutputContract:\n- approved path:\n    purpose: Gives the requester an unambiguous destination for the artifact or change so implementation can proceed without another placement decision.\n- placement rationale:\n    purpose: Explains the repository evidence and structural reasoning behind the destination so reviewers can assess and reuse the decision.\n- file-placement audit:\n    purpose: Confirms that the selected location follows the repository's actual structure and guidance before files are created or moved.\n"
     },
     "prompt-contract-reviewer": {
       "description": "Reviews prompt protocol, tool-call safety, schema promises, evaluation coverage, and model-facing data boundaries.",
@@ -647,12 +617,12 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       "yaml": "name: prompt-contract-reviewer\nfilename: prompt-contract-reviewer\ndescription: Reviews prompt protocol, tool-call safety, schema promises, evaluation\n  coverage, and model-facing data boundaries.\ninstructions: Read the root and nearest AGENTS.md, load declared folder technology\n  skills before acting, trace prompt and tool contracts through the runtime, identify\n  schema and safety gaps, and distinguish verified behavior from assumptions.\nmodelProfile: advanced\nskills:\n- prompt-contracts:\n    justification: We need this to assess the full model-facing contract rather than\n      reviewing prompt wording in isolation from state, tools, authority, and outputs.\n- review-structured:\n    justification: We need this to make contract defects comparable by evidence and\n      severity so maintainers can prioritize actionable corrections.\nisolation: read-only\noutputContract:\n- prompt contract findings:\n    purpose: Gives maintainers evidence-backed defects and corrections they can use\n      to make the model-facing protocol reliable.\n- schema and tool-call risks:\n    purpose: Makes boundary-specific failure modes visible so schema and tool owners\n      can address them separately from general prompt concerns.\n- evaluation gaps:\n    purpose: Identifies missing coverage so the corrected contract can be tested\n      against the behaviors and failures that matter.\ndynamicFolderSkills: true\n"
     },
     "public-source-collector": {
-      "description": "Collects public raw source artifacts for approved topics, records exclusions, and leaves synthesis to wiki ingest.",
+      "description": "Collects public raw source artifacts for approved wiki topics, records exclusions, and leaves synthesis to wiki ingest.",
       "displayName": "Public Source Collector",
       "examples": [],
       "filename": "public-source-collector",
-      "group": "development-use",
-      "groupLabel": "Development Use Agents",
+      "group": "wiki-activities",
+      "groupLabel": "Wiki Activity Agents",
       "instructions": "Use only approved public sources, enforce the requested time window, preserve source evidence, and keep the run raw-only.",
       "modelProfile": "simple",
       "modelStages": {},
@@ -673,17 +643,15 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       "skillJustifications": {
         "project-wiki": "We need this to preserve the collection-to-ingest boundary so raw evidence is handed off without prematurely changing durable wiki content.",
         "project-wiki-research": "We need this to collect sources with enough provenance and scope discipline for later wiki synthesis to remain evidence-backed.",
-        "project-wiki-topic-verifier": "We need this to establish that collected sources are credible and cover the requested topic before they enter the ingest queue.",
         "structured-explanation": "We need this to make the collection window, exclusions, and handoff unambiguous for the requester and the ingest role."
       },
       "skills": [
         "project-wiki-research",
         "project-wiki",
-        "project-wiki-topic-verifier",
         "structured-explanation"
       ],
-      "sourcePath": "agents/roles/development-use/public-source-collector.role.yaml",
-      "yaml": "name: public-source-collector\nfilename: public-source-collector\ndescription: Collects public raw source artifacts for approved topics, records exclusions, and leaves synthesis to wiki ingest.\ninstructions: Use only approved public sources, enforce the requested time window, preserve source evidence, and keep the run raw-only.\nmodelProfile: simple\nskills:\n- project-wiki-research:\n    justification: We need this to collect sources with enough provenance and scope\n      discipline for later wiki synthesis to remain evidence-backed.\n- project-wiki:\n    justification: We need this to preserve the collection-to-ingest boundary so raw\n      evidence is handed off without prematurely changing durable wiki content.\n- project-wiki-topic-verifier:\n    justification: We need this to establish that collected sources are credible and\n      cover the requested topic before they enter the ingest queue.\n- structured-explanation:\n    justification: We need this to make the collection window, exclusions, and handoff\n      unambiguous for the requester and the ingest role.\noutputContract:\n- raw-only source artifact:\n    purpose: Provides ingest-ready evidence while preserving the required separation\n      between source collection and durable wiki synthesis.\n- timestamp window:\n    purpose: Lets the requester audit that every included source falls within the\n      requested collection period.\n- exclusions:\n    purpose: Preserves rejected and ambiguous candidates so collection scope and\n      boundary decisions can be reviewed without repeating the search.\n- ingest handoff:\n    purpose: Gives the ingest role a clear inventory of material ready for durable\n      synthesis and any follow-up still required.\n"
+      "sourcePath": "agents/roles/wiki-activities/public-source-collector.role.yaml",
+      "yaml": "name: public-source-collector\nfilename: public-source-collector\ndescription: Collects public raw source artifacts for approved wiki topics, records exclusions, and leaves synthesis to wiki ingest.\ninstructions: Use only approved public sources, enforce the requested time window, preserve source evidence, and keep the run raw-only.\nmodelProfile: simple\nskills:\n- project-wiki-research:\n    justification: We need this to collect sources with enough provenance and scope discipline for later wiki synthesis to remain evidence-backed.\n- project-wiki:\n    justification: We need this to preserve the collection-to-ingest boundary so raw evidence is handed off without prematurely changing durable wiki content.\n- structured-explanation:\n    justification: We need this to make the collection window, exclusions, and handoff unambiguous for the requester and the ingest role.\noutputContract:\n- raw-only source artifact:\n    purpose: Provides ingest-ready evidence while preserving the required separation between source collection and durable wiki synthesis.\n- timestamp window:\n    purpose: Lets the requester audit that every included source falls within the requested collection period.\n- exclusions:\n    purpose: Preserves rejected and ambiguous candidates so collection scope and boundary decisions can be reviewed without repeating the search.\n- ingest handoff:\n    purpose: Gives the ingest role a clear inventory of material ready for durable synthesis and any follow-up still required.\n"
     },
     "qa-and-verification-agent": {
       "description": "Runs acceptance checks, builds, unit tests, integration tests, E2E tests, lint gates, and artifact-specific verification.",
@@ -762,14 +730,12 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       ],
       "skillConditions": {
         "careful-coding": "when adding diagnostic instrumentation or implementing a verified remediation as part of the investigation",
-        "project-wiki-query": "when project documentation may contain relevant runtime boundaries, constraints, or prior incident knowledge",
         "runtime-evidence-collection": "when the suspected failure mechanism depends on runtime state that source inspection alone cannot establish reliably"
       },
       "skillJustifications": {
         "careful-coding": "We need this to keep any diagnostic instrumentation or remediation narrowly tied to the reproduced failure and avoid unrelated changes.",
         "code-discovery": "We need this to locate the source, configuration, and tests that define the failing behavior before forming diagnostic hypotheses.",
         "code-execution-tracing": "We need this to map the relevant control flow so runtime observations are interpreted at the correct boundary.",
-        "project-wiki-query": "We need this to incorporate established runtime boundaries, constraints, and prior incident knowledge before drawing a conclusion.",
         "root-cause-analysis": "We need this to test competing hypotheses and establish the mechanism of failure before recommending remediation.",
         "runtime-evidence-collection": "We need this when the failure mechanism depends on runtime state that cannot be established reliably from source inspection alone.",
         "structured-explanation": "We need this to present symptoms, hypotheses, evidence, and conclusions so the requester can audit the diagnosis.",
@@ -782,11 +748,10 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "runtime-evidence-collection",
         "code-execution-tracing",
         "structured-explanation",
-        "careful-coding",
-        "project-wiki-query"
+        "careful-coding"
       ],
       "sourcePath": "agents/roles/development-use/runtime-diagnostician.role.yaml",
-      "yaml": "name: runtime-diagnostician\nfilename: runtime-diagnostician\ndescription: Investigates long-running local runtime failures with logs, processes,\n  exclusive resources, and a tight reproduction loop.\ninstructions: Read the root and nearest AGENTS.md, load declared folder technology\n  skills before acting, reproduce the failure, isolate the runtime boundary, gather\n  logs and process evidence, and propose the narrowest verified fix path.\nmodelProfile: advanced\nskills:\n- code-discovery:\n    justification: We need this to locate the source, configuration, and tests that\n      define the failing behavior before forming diagnostic hypotheses.\n- test-strategy:\n    justification: We need this to design a focused reproduction and regression check\n      that can distinguish the suspected cause from nearby behavior.\n- root-cause-analysis:\n    justification: We need this to test competing hypotheses and establish the mechanism\n      of failure before recommending remediation.\n- runtime-evidence-collection:\n    justification: We need this when the failure mechanism depends on runtime state\n      that cannot be established reliably from source inspection alone.\n    condition: when the suspected failure mechanism depends on runtime state that\n      source inspection alone cannot establish reliably.\n- code-execution-tracing:\n    justification: We need this to map the relevant control flow so runtime observations\n      are interpreted at the correct boundary.\n- structured-explanation:\n    justification: We need this to present symptoms, hypotheses, evidence, and conclusions\n      so the requester can audit the diagnosis.\n- careful-coding:\n    justification: We need this to keep any diagnostic instrumentation or remediation\n      narrowly tied to the reproduced failure and avoid unrelated changes.\n    condition: when adding diagnostic instrumentation or implementing a verified\n      remediation as part of the investigation.\n- project-wiki-query:\n    justification: We need this to incorporate established runtime boundaries, constraints,\n      and prior incident knowledge before drawing a conclusion.\n    condition: when project documentation may contain relevant runtime boundaries,\n      constraints, or prior incident knowledge.\noutputContract:\n- reproduction:\n    purpose: Gives maintainers a repeatable failure case against which the diagnosis\n      and any eventual fix can be tested.\n- logs and suspected boundary:\n    purpose: Connects runtime evidence to the likely failing boundary so remediation\n      starts in the most relevant area.\n- fix or escalation path:\n    purpose: Gives the requester the narrowest actionable next step when the diagnosis\n      is conclusive or identifies the owner and evidence needed when it is not.\n- verification result:\n    purpose: States whether the proposed resolution path changes the reproduced failure\n      as expected so unverified advice is not mistaken for a confirmed fix.\ndynamicFolderSkills: true\n"
+      "yaml": "name: runtime-diagnostician\nfilename: runtime-diagnostician\ndescription: Investigates long-running local runtime failures with logs, processes,\n  exclusive resources, and a tight reproduction loop.\ninstructions: Read the root and nearest AGENTS.md, load declared folder technology\n  skills before acting, reproduce the failure, isolate the runtime boundary, gather\n  logs and process evidence, and propose the narrowest verified fix path.\nmodelProfile: advanced\nskills:\n- code-discovery:\n    justification: We need this to locate the source, configuration, and tests that\n      define the failing behavior before forming diagnostic hypotheses.\n- test-strategy:\n    justification: We need this to design a focused reproduction and regression check\n      that can distinguish the suspected cause from nearby behavior.\n- root-cause-analysis:\n    justification: We need this to test competing hypotheses and establish the mechanism\n      of failure before recommending remediation.\n- runtime-evidence-collection:\n    justification: We need this when the failure mechanism depends on runtime state\n      that cannot be established reliably from source inspection alone.\n    condition: when the suspected failure mechanism depends on runtime state that\n      source inspection alone cannot establish reliably.\n- code-execution-tracing:\n    justification: We need this to map the relevant control flow so runtime observations\n      are interpreted at the correct boundary.\n- structured-explanation:\n    justification: We need this to present symptoms, hypotheses, evidence, and conclusions\n      so the requester can audit the diagnosis.\n- careful-coding:\n    justification: We need this to keep any diagnostic instrumentation or remediation\n      narrowly tied to the reproduced failure and avoid unrelated changes.\n    condition: when adding diagnostic instrumentation or implementing a verified\n      remediation as part of the investigation.\noutputContract:\n- reproduction:\n    purpose: Gives maintainers a repeatable failure case against which the diagnosis\n      and any eventual fix can be tested.\n- logs and suspected boundary:\n    purpose: Connects runtime evidence to the likely failing boundary so remediation\n      starts in the most relevant area.\n- fix or escalation path:\n    purpose: Gives the requester the narrowest actionable next step when the diagnosis\n      is conclusive or identifies the owner and evidence needed when it is not.\n- verification result:\n    purpose: States whether the proposed resolution path changes the reproduced failure\n      as expected so unverified advice is not mistaken for a confirmed fix.\ndynamicFolderSkills: true\n"
     },
     "security-reviewer": {
       "description": "Reviews threat, data, dependency, authentication, logging, prompt, and exploitability concerns with read-only authority.",
@@ -811,23 +776,19 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "affected files and evidence",
         "residual risk"
       ],
-      "skillConditions": {
-        "project-wiki-query": "when documented architecture, data rules, or operating constraints are relevant to the expected security boundary"
-      },
+      "skillConditions": {},
       "skillJustifications": {
         "application-security": "We need this to examine trust, authority, validation, data, and secret boundaries consistently when determining whether a change is exploitable.",
-        "project-wiki-query": "We need this to ground expected security boundaries in the project's documented architecture, data rules, and operating constraints.",
         "review-structured": "We need this to separate confirmed exploitable findings from lower-confidence concerns and prioritize remediation by evidence and impact.",
         "structured-explanation": "We need this to communicate attack paths, mitigations, uncertainty, and residual exposure clearly enough for owners to act safely."
       },
       "skills": [
         "application-security",
         "review-structured",
-        "project-wiki-query",
         "structured-explanation"
       ],
       "sourcePath": "agents/roles/development-use/security-reviewer.role.yaml",
-      "yaml": "name: security-reviewer\nfilename: security-reviewer\ndescription: Reviews threat, data, dependency, authentication, logging, prompt, and\n  exploitability concerns with read-only authority.\ninstructions: Read the root and nearest AGENTS.md, load declared folder technology\n  skills before acting, trace plausible attack paths from actual code and configuration,\n  prioritize exploitable findings, and state evidence and residual risk.\nmodelProfile: advanced\nskills:\n- application-security:\n    justification: We need this to examine trust, authority, validation, data, and\n      secret boundaries consistently when determining whether a change is exploitable.\n- review-structured:\n    justification: We need this to separate confirmed exploitable findings from lower-confidence\n      concerns and prioritize remediation by evidence and impact.\n- project-wiki-query:\n    justification: We need this to ground expected security boundaries in the project's\n      documented architecture, data rules, and operating constraints.\n    condition: when documented architecture, data rules, or operating constraints\n      are relevant to the expected security boundary.\n- structured-explanation:\n    justification: We need this to communicate attack paths, mitigations, uncertainty,\n      and residual exposure clearly enough for owners to act safely.\nisolation: read-only\noutputContract:\n- prioritized security findings:\n    purpose: Directs remediation effort toward the most exploitable and consequential\n      confirmed risks first.\n- affected files and evidence:\n    purpose: Lets maintainers reproduce and verify each finding against the exact code\n      or configuration that supports it.\n- residual risk:\n    purpose: Makes remaining exposure explicit so decision-makers can accept, mitigate,\n      or escalate it with informed ownership.\ndynamicFolderSkills: true\n"
+      "yaml": "name: security-reviewer\nfilename: security-reviewer\ndescription: Reviews threat, data, dependency, authentication, logging, prompt, and\n  exploitability concerns with read-only authority.\ninstructions: Read the root and nearest AGENTS.md, load declared folder technology\n  skills before acting, trace plausible attack paths from actual code and configuration,\n  prioritize exploitable findings, and state evidence and residual risk.\nmodelProfile: advanced\nskills:\n- application-security:\n    justification: We need this to examine trust, authority, validation, data, and\n      secret boundaries consistently when determining whether a change is exploitable.\n- review-structured:\n    justification: We need this to separate confirmed exploitable findings from lower-confidence\n      concerns and prioritize remediation by evidence and impact.\n- structured-explanation:\n    justification: We need this to communicate attack paths, mitigations, uncertainty,\n      and residual exposure clearly enough for owners to act safely.\nisolation: read-only\noutputContract:\n- prioritized security findings:\n    purpose: Directs remediation effort toward the most exploitable and consequential\n      confirmed risks first.\n- affected files and evidence:\n    purpose: Lets maintainers reproduce and verify each finding against the exact code\n      or configuration that supports it.\n- residual risk:\n    purpose: Makes remaining exposure explicit so decision-makers can accept, mitigate,\n      or escalate it with informed ownership.\ndynamicFolderSkills: true\n"
     },
     "shared-install-verifier": {
       "description": "Validates source skills, generated metadata and agents, repository tests, and shared installs after distributed content changes.",
@@ -901,13 +862,50 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       "sourcePath": "agents/roles/development-use/ux-designer-or-reviewer.role.yaml",
       "yaml": "name: ux-designer-or-reviewer\nfilename: ux-designer-or-reviewer\ndescription: Handles interaction design, accessibility concerns, visual review, and\n  independent usability assessment without changing code authority.\ninstructions: Read the root and nearest AGENTS.md, load declared folder technology\n  skills before acting, evaluate the real interface and user flow, distinguish design\n  recommendations from implementation changes, and provide observable evidence.\nmodelProfile: default\nskills:\n- user-experience-review:\n    justification: We need this to evaluate whether people can complete the intended\n      task with clear, accessible feedback and recover from errors across supported layouts.\n- end-to-end-verification:\n    justification: We need this to observe the complete interaction flow and its visible\n      states rather than judging isolated screens without workflow evidence.\n- review-structured:\n    justification: We need this to distinguish evidence-backed usability and accessibility\n      issues from preferences and prioritize actionable findings.\nisolation: read-only\noutputContract:\n- design recommendation:\n    purpose: Gives product and implementation owners an actionable direction while\n      leaving the final design and implementation decision with the authorized owner.\n- usability and accessibility findings:\n    purpose: Identifies barriers in the observed workflow so teams can improve task\n      completion, clarity, recovery, and inclusive access.\n- visual verification evidence:\n    purpose: Preserves observable proof for each finding so reviewers can validate\n      the recommendation against the actual interface states.\ndynamicFolderSkills: true\n"
     },
+    "wiki-artifact-reviewer": {
+      "description": "Reviews project-wiki methodology artifacts for source authority, structure, navigation, maintenance rules, automation, and verification completeness.",
+      "displayName": "Wiki Artifact Reviewer",
+      "examples": [],
+      "filename": "wiki-artifact-reviewer",
+      "group": "wiki-activities",
+      "groupLabel": "Wiki Activity Agents",
+      "instructions": "Review the project-wiki artifact in a fresh read-only context, complete the dedicated checklist with quoted evidence, apply the shared page verifier, and lead with actionable findings.",
+      "isolation": "read-only",
+      "modelProfile": "advanced",
+      "modelStages": {
+        "evidence-extraction": "simple",
+        "synthesis": "advanced"
+      },
+      "name": "wiki-artifact-reviewer",
+      "outputPurposes": {
+        "completed project-wiki checklist": "Preserves the quoted evidence and assessment behind every applicable project-wiki review requirement.",
+        "findings and corrections": "Gives the artifact owner prioritized, concrete changes required before the project-wiki contract can be accepted.",
+        "verifier assessment": "Communicates the independent shared-page quality result after the wiki-specific review has established its evidence record."
+      },
+      "outputs": [
+        "completed project-wiki checklist",
+        "verifier assessment",
+        "findings and corrections"
+      ],
+      "skillConditions": {},
+      "skillJustifications": {
+        "documentation-page-verifier": "We need this to independently check the shared page contract, source support, links, diagrams, and steady-state language from the completed wiki review checklist.",
+        "review-project-wiki": "We need this to apply the project-wiki artifact checklist for authority order, page subclasses, navigation, source links, update workflow, automation, and verification."
+      },
+      "skills": [
+        "review-project-wiki",
+        "documentation-page-verifier"
+      ],
+      "sourcePath": "agents/roles/wiki-activities/wiki-artifact-reviewer.role.yaml",
+      "yaml": "name: wiki-artifact-reviewer\nfilename: wiki-artifact-reviewer\ndescription: Reviews project-wiki methodology artifacts for source authority, structure, navigation, maintenance rules, automation, and verification completeness.\ninstructions: Review the project-wiki artifact in a fresh read-only context, complete the dedicated checklist with quoted evidence, apply the shared page verifier, and lead with actionable findings.\nmodelProfile: advanced\nmodelStages:\n  evidence-extraction: simple\n  synthesis: advanced\nskills:\n- review-project-wiki:\n    justification: We need this to apply the project-wiki artifact checklist for authority order, page subclasses, navigation, source links, update workflow, automation, and verification.\n- documentation-page-verifier:\n    justification: We need this to independently check the shared page contract, source support, links, diagrams, and steady-state language from the completed wiki review checklist.\nisolation: read-only\noutputContract:\n- completed project-wiki checklist:\n    purpose: Preserves the quoted evidence and assessment behind every applicable project-wiki review requirement.\n- verifier assessment:\n    purpose: Communicates the independent shared-page quality result after the wiki-specific review has established its evidence record.\n- findings and corrections:\n    purpose: Gives the artifact owner prioritized, concrete changes required before the project-wiki contract can be accepted.\n"
+    },
     "wiki-ingest-agent": {
       "description": "Processes raw inputs into durable wiki leaves, digest entries, processed-source links, linted pages, and verifier evidence.",
       "displayName": "Wiki Ingest Agent",
       "examples": [],
       "filename": "wiki-ingest-agent",
-      "group": "development-use",
-      "groupLabel": "Development Use Agents",
+      "group": "wiki-activities",
+      "groupLabel": "Wiki Activity Agents",
       "instructions": "Preserve the raw-to-processed boundary, synthesize durable pages, link leaves, run wiki validation, and recheck queues before completion.",
       "modelProfile": "default",
       "modelStages": {},
@@ -928,61 +926,191 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       "skillJustifications": {
         "code-project-wiki": "We need this when claims depend on implementation behavior so durable wiki statements remain traceable to authoritative code and tests.",
         "project-wiki": "We need this to preserve queue boundaries, provenance, linking, validation, and closeout obligations throughout the ingest workflow.",
-        "project-wiki-research": "We need this to interpret collected research without losing the source evidence and scope decisions that make synthesis trustworthy.",
-        "project-wiki-topic-verifier": "We need this to establish that ingested pages are complete, linked, and grounded before the source is marked processed.",
         "project-wiki-topic-writer": "We need this to turn approved source material into durable pages whose topic boundaries and navigation remain maintainable over time."
       },
       "skills": [
         "project-wiki",
         "project-wiki-topic-writer",
-        "project-wiki-topic-verifier",
-        "project-wiki-research",
         "code-project-wiki"
       ],
-      "sourcePath": "agents/roles/development-use/wiki-ingest-agent.role.yaml",
-      "yaml": "name: wiki-ingest-agent\nfilename: wiki-ingest-agent\ndescription: Processes raw inputs into durable wiki leaves, digest entries, processed-source links, linted pages, and verifier evidence.\ninstructions: Preserve the raw-to-processed boundary, synthesize durable pages, link leaves, run wiki validation, and recheck queues before completion.\nmodelProfile: default\nskills:\n- project-wiki:\n    justification: We need this to preserve queue boundaries, provenance, linking,\n      validation, and closeout obligations throughout the ingest workflow.\n- project-wiki-topic-writer:\n    justification: We need this to turn approved source material into durable pages\n      whose topic boundaries and navigation remain maintainable over time.\n- project-wiki-topic-verifier:\n    justification: We need this to establish that ingested pages are complete, linked,\n      and grounded before the source is marked processed.\n- project-wiki-research:\n    justification: We need this to interpret collected research without losing the\n      source evidence and scope decisions that make synthesis trustworthy.\n- code-project-wiki:\n    justification: We need this when claims depend on implementation behavior so durable\n      wiki statements remain traceable to authoritative code and tests.\n    condition: when durable wiki claims depend on implementation behavior that must\n      remain traceable to authoritative code and tests.\noutputContract:\n- durable wiki pages:\n    purpose: Provides maintainable, navigable project knowledge that downstream users\n      and agents can rely on after the ingest queue item is closed.\n- processed-source links:\n    purpose: Preserves a traceable path from each durable claim to its ingested source\n      and records which queue material has been completed.\n- lint and verifier evidence:\n    purpose: Gives reviewers confidence that the resulting pages satisfy required\n      structure, linkage, coverage, and source-grounding checks.\n"
+      "sourcePath": "agents/roles/wiki-activities/wiki-ingest-agent.role.yaml",
+      "yaml": "name: wiki-ingest-agent\nfilename: wiki-ingest-agent\ndescription: Processes raw inputs into durable wiki leaves, digest entries, processed-source links, linted pages, and verifier evidence.\ninstructions: Preserve the raw-to-processed boundary, synthesize durable pages, link leaves, run wiki validation, and recheck queues before completion.\nmodelProfile: default\nskills:\n- project-wiki:\n    justification: We need this to preserve queue boundaries, provenance, linking, validation, and closeout obligations throughout the ingest workflow.\n- project-wiki-topic-writer:\n    justification: We need this to turn approved source material into durable pages whose topic boundaries and navigation remain maintainable over time.\n- code-project-wiki:\n    justification: We need this when claims depend on implementation behavior so durable wiki statements remain traceable to authoritative code and tests.\n    condition: when durable wiki claims depend on implementation behavior that must remain traceable to authoritative code and tests.\noutputContract:\n- durable wiki pages:\n    purpose: Provides maintainable, navigable project knowledge that downstream users and agents can rely on after the ingest queue item is closed.\n- processed-source links:\n    purpose: Preserves a traceable path from each durable claim to its ingested source and records which queue material has been completed.\n- lint and verifier evidence:\n    purpose: Gives reviewers confidence that the resulting pages satisfy required structure, linkage, coverage, and source-grounding checks.\n"
     },
     "wiki-query-agent": {
-      "description": "Answers project questions from docs/wiki first, verifies against authoritative files, and records durable knowledge gaps.",
+      "description": "Answers project questions from docs/wiki first, verifies against authoritative files, and identifies durable knowledge gaps.",
       "displayName": "Wiki Query Agent",
       "examples": [],
       "filename": "wiki-query-agent",
-      "group": "development-use",
-      "groupLabel": "Development Use Agents",
+      "group": "wiki-activities",
+      "groupLabel": "Wiki Activity Agents",
       "instructions": "Start from the project wiki, verify material claims against live authoritative sources, and identify any durable gap without editing unless asked.",
       "isolation": "read-only",
       "modelProfile": "default",
       "modelStages": {},
       "name": "wiki-query-agent",
       "outputPurposes": {
-        "documentation gap recommendation": "Identifies durable knowledge that should be added or corrected for future users without making an unauthorized documentation change.",
+        "research handoff": "Identifies missing or stale coverage that warrants a bounded Wiki Research Agent assignment without expanding the query role into research or wiki edits.",
         "source verification notes": "Shows which material claims were confirmed against live authoritative sources so the requester can judge their current reliability.",
         "wiki-backed answer": "Gives the requester a direct answer grounded in the project's maintained knowledge rather than unsupported recall."
       },
       "outputs": [
         "wiki-backed answer",
         "source verification notes",
-        "documentation gap recommendation"
+        "research handoff"
       ],
-      "skillConditions": {
-        "code-project-wiki": "when material wiki claims depend on current code, configuration, or test behavior that needs authoritative confirmation",
-        "documentation-page-verifier": "when investigation reveals a possible durable knowledge gap whose significance for corrective documentation must be assessed",
-        "project-wiki-research": "when the wiki does not contain enough evidence to answer the request responsibly and a bounded investigation is warranted"
-      },
+      "skillConditions": {},
       "skillJustifications": {
-        "code-project-wiki": "We need this to confirm that material wiki claims still agree with the code, configuration, and tests that govern current behavior.",
-        "documentation-page-verifier": "We need this to determine whether a discovered knowledge gap is durable and significant enough to justify corrective documentation work.",
-        "project-wiki-query": "We need this to ground answers in the project's durable knowledge before relying on ad hoc investigation or unsupported recall.",
-        "project-wiki-research": "We need this when the wiki does not contain enough evidence to answer the request responsibly and a bounded investigation is required."
+        "project-wiki-query": "We need this to ground answers in the project's durable knowledge before relying on ad hoc investigation or unsupported recall."
+      },
+      "skills": [
+        "project-wiki-query"
+      ],
+      "sourcePath": "agents/roles/wiki-activities/wiki-query-agent.role.yaml",
+      "yaml": "name: wiki-query-agent\nfilename: wiki-query-agent\ndescription: Answers project questions from docs/wiki first, verifies against authoritative files, and identifies durable knowledge gaps.\ninstructions: Start from the project wiki, verify material claims against live authoritative sources, and identify any durable gap without editing unless asked.\nmodelProfile: default\nskills:\n- project-wiki-query:\n    justification: We need this to ground answers in the project's durable knowledge before relying on ad hoc investigation or unsupported recall.\nisolation: read-only\noutputContract:\n- wiki-backed answer:\n    purpose: Gives the requester a direct answer grounded in the project's maintained knowledge rather than unsupported recall.\n- source verification notes:\n    purpose: Shows which material claims were confirmed against live authoritative sources so the requester can judge their current reliability.\n- research handoff:\n    purpose: Identifies missing or stale coverage that warrants a bounded Wiki Research Agent assignment without expanding the query role into research or wiki edits.\n"
+    },
+    "wiki-research-agent": {
+      "description": "Performs bounded on-demand research for wiki gaps and saves sourced raw reports for later ingest without editing durable wiki pages.",
+      "displayName": "Wiki Research Agent",
+      "examples": [],
+      "filename": "wiki-research-agent",
+      "group": "wiki-activities",
+      "groupLabel": "Wiki Activity Agents",
+      "instructions": "Check local and federated wiki coverage first, research only the missing or stale scope, save one collision-safe raw report, and leave docs/wiki unchanged.",
+      "modelProfile": "default",
+      "modelStages": {},
+      "name": "wiki-research-agent",
+      "outputPurposes": {
+        "existing coverage assessment": "Shows whether the requested topic was already answered by local or upstream durable pages and why research was or was not needed.",
+        "ingest recommendation": "Names the likely durable destinations, cross-links, conflicts, and follow-up the Wiki Ingest Agent should evaluate.",
+        "raw research report": "Provides a source-backed, collision-safe artifact for later wiki ingest without bypassing the raw-source boundary."
+      },
+      "outputs": [
+        "existing coverage assessment",
+        "raw research report",
+        "ingest recommendation"
+      ],
+      "skillConditions": {},
+      "skillJustifications": {
+        "project-wiki-query": "We need this to determine whether maintained local or federated wiki coverage already answers the request before starting external research.",
+        "project-wiki-research": "We need this to research a bounded coverage gap, preserve source provenance and exclusions, and save an ingest-ready report under raw."
       },
       "skills": [
         "project-wiki-query",
-        "project-wiki-research",
-        "code-project-wiki",
-        "documentation-page-verifier"
+        "project-wiki-research"
       ],
-      "sourcePath": "agents/roles/development-use/wiki-query-agent.role.yaml",
-      "yaml": "name: wiki-query-agent\nfilename: wiki-query-agent\ndescription: Answers project questions from docs/wiki first, verifies against authoritative files, and records durable knowledge gaps.\ninstructions: Start from the project wiki, verify material claims against live authoritative sources, and identify any durable gap without editing unless asked.\nmodelProfile: default\nskills:\n- project-wiki-query:\n    justification: We need this to ground answers in the project's durable knowledge before relying on ad hoc investigation or unsupported recall.\n- project-wiki-research:\n    justification: We need this when the wiki does not contain enough evidence to answer the request responsibly and a bounded investigation is required.\n    condition: when the wiki does not contain enough evidence to answer the request\n      responsibly and a bounded investigation is warranted.\n- code-project-wiki:\n    justification: We need this to confirm that material wiki claims still agree with the code, configuration, and tests that govern current behavior.\n    condition: when material wiki claims depend on current code, configuration, or\n      test behavior that needs authoritative confirmation.\n- documentation-page-verifier:\n    justification: We need this to determine whether a discovered knowledge gap is durable and significant enough to justify corrective documentation work.\n    condition: when investigation reveals a possible durable knowledge gap whose\n      significance for corrective documentation must be assessed.\nisolation: read-only\noutputContract:\n- wiki-backed answer:\n    purpose: Gives the requester a direct answer grounded in the project's maintained knowledge rather than unsupported recall.\n- source verification notes:\n    purpose: Shows which material claims were confirmed against live authoritative sources so the requester can judge their current reliability.\n- documentation gap recommendation:\n    purpose: Identifies durable knowledge that should be added or corrected for future users without making an unauthorized documentation change.\n"
+      "sourcePath": "agents/roles/wiki-activities/wiki-research-agent.role.yaml",
+      "yaml": "name: wiki-research-agent\nfilename: wiki-research-agent\ndescription: Performs bounded on-demand research for wiki gaps and saves sourced raw reports for later ingest without editing durable wiki pages.\ninstructions: Check local and federated wiki coverage first, research only the missing or stale scope, save one collision-safe raw report, and leave docs/wiki unchanged.\nmodelProfile: default\nskills:\n- project-wiki-query:\n    justification: We need this to determine whether maintained local or federated wiki coverage already answers the request before starting external research.\n- project-wiki-research:\n    justification: We need this to research a bounded coverage gap, preserve source provenance and exclusions, and save an ingest-ready report under raw.\noutputContract:\n- existing coverage assessment:\n    purpose: Shows whether the requested topic was already answered by local or upstream durable pages and why research was or was not needed.\n- raw research report:\n    purpose: Provides a source-backed, collision-safe artifact for later wiki ingest without bypassing the raw-source boundary.\n- ingest recommendation:\n    purpose: Names the likely durable destinations, cross-links, conflicts, and follow-up the Wiki Ingest Agent should evaluate.\n"
+    },
+    "wiki-setup-agent": {
+      "description": "Establishes or substantially restructures a project wiki, its ownership boundaries, source workflow, navigation, and verification contract.",
+      "displayName": "Wiki Setup Agent",
+      "examples": [],
+      "filename": "wiki-setup-agent",
+      "group": "wiki-activities",
+      "groupLabel": "Wiki Activity Agents",
+      "instructions": "Inspect the repository, present the required setup recommendation pack, confirm wiki roots and federation boundaries, initialize the approved structure, and verify the resulting wiki contract.",
+      "modelProfile": "advanced",
+      "modelStages": {},
+      "name": "wiki-setup-agent",
+      "outputPurposes": {
+        "initialized wiki contract": "Establishes the approved navigation, ownership, source boundaries, and maintenance guidance future wiki agents must follow.",
+        "setup recommendation pack": "Gives the requester a concrete proposal for wiki purpose, roots, federation, workflows, automations, feeds, and operational folders before mappings are finalized.",
+        "setup verification evidence": "Demonstrates that the initialized wiki passes the applicable status, lint, link, and OKF checks and identifies any remaining setup decision."
+      },
+      "outputs": [
+        "setup recommendation pack",
+        "initialized wiki contract",
+        "setup verification evidence"
+      ],
+      "skillConditions": {
+        "create-project-wiki": "when the target repository needs a project-wiki methodology artifact in addition to the operational wiki structure",
+        "documentation-bootstrap": "when the repository lacks established documentation roots or ownership guidance needed for wiki setup"
+      },
+      "skillJustifications": {
+        "create-project-wiki": "We need this when setup requires a durable project-wiki methodology artifact that explains how the target wiki is structured, sourced, maintained, and verified.",
+        "documentation-bootstrap": "We need this when the repository lacks the documentation roots or ownership decisions required to place and maintain the wiki correctly.",
+        "project-wiki": "We need this to define the standard wiki shape, setup recommendation pack, federation boundaries, source workflow, and validation obligations."
+      },
+      "skills": [
+        "project-wiki",
+        "create-project-wiki",
+        "documentation-bootstrap"
+      ],
+      "sourcePath": "agents/roles/wiki-activities/wiki-setup-agent.role.yaml",
+      "yaml": "name: wiki-setup-agent\nfilename: wiki-setup-agent\ndescription: Establishes or substantially restructures a project wiki, its ownership boundaries, source workflow, navigation, and verification contract.\ninstructions: Inspect the repository, present the required setup recommendation pack, confirm wiki roots and federation boundaries, initialize the approved structure, and verify the resulting wiki contract.\nmodelProfile: advanced\nskills:\n- project-wiki:\n    justification: We need this to define the standard wiki shape, setup recommendation pack, federation boundaries, source workflow, and validation obligations.\n- create-project-wiki:\n    justification: We need this when setup requires a durable project-wiki methodology artifact that explains how the target wiki is structured, sourced, maintained, and verified.\n    condition: when the target repository needs a project-wiki methodology artifact in addition to the operational wiki structure.\n- documentation-bootstrap:\n    justification: We need this when the repository lacks the documentation roots or ownership decisions required to place and maintain the wiki correctly.\n    condition: when the repository lacks established documentation roots or ownership guidance needed for wiki setup.\noutputContract:\n- setup recommendation pack:\n    purpose: Gives the requester a concrete proposal for wiki purpose, roots, federation, workflows, automations, feeds, and operational folders before mappings are finalized.\n- initialized wiki contract:\n    purpose: Establishes the approved navigation, ownership, source boundaries, and maintenance guidance future wiki agents must follow.\n- setup verification evidence:\n    purpose: Demonstrates that the initialized wiki passes the applicable status, lint, link, and OKF checks and identifies any remaining setup decision.\n"
+    },
+    "wiki-topic-verifier": {
+      "description": "Independently verifies created or updated wiki topic pages, durable leaf coverage, source links, digests, federation boundaries, lint, and OKF status.",
+      "displayName": "Wiki Topic Verifier",
+      "examples": [],
+      "filename": "wiki-topic-verifier",
+      "group": "wiki-activities",
+      "groupLabel": "Wiki Activity Agents",
+      "instructions": "Work in a fresh read-only context, review only the supplied topic pages against the shared checklist and evidence, run available wiki checks, and return the required verdict without editing files.",
+      "isolation": "read-only",
+      "modelProfile": "advanced",
+      "modelStages": {
+        "evidence-extraction": "simple",
+        "synthesis": "advanced"
+      },
+      "name": "wiki-topic-verifier",
+      "outputPurposes": {
+        "actionable corrections": "Names only concrete file-specific corrections when the topic pages do not yet satisfy the wiki acceptance contract.",
+        "reviewed-page inventory": "Identifies exactly which topic pages and evidence sources were evaluated so the verdict is bounded and auditable.",
+        "verification verdict": "Returns the required GOOD or NEEDS_CORRECTION decision for the supplied topic pages so writers and ingest agents have an independent acceptance gate."
+      },
+      "outputs": [
+        "verification verdict",
+        "reviewed-page inventory",
+        "actionable corrections"
+      ],
+      "skillConditions": {},
+      "skillJustifications": {
+        "project-wiki-topic-verifier": "We need this to apply the dedicated read-only acceptance contract for topic pages, leaf granularity, source links, digests, federation, lint, and OKF validation."
+      },
+      "skills": [
+        "project-wiki-topic-verifier"
+      ],
+      "sourcePath": "agents/roles/wiki-activities/wiki-topic-verifier.role.yaml",
+      "yaml": "name: wiki-topic-verifier\nfilename: wiki-topic-verifier\ndescription: Independently verifies created or updated wiki topic pages, durable leaf coverage, source links, digests, federation boundaries, lint, and OKF status.\ninstructions: Work in a fresh read-only context, review only the supplied topic pages against the shared checklist and evidence, run available wiki checks, and return the required verdict without editing files.\nmodelProfile: advanced\nmodelStages:\n  evidence-extraction: simple\n  synthesis: advanced\nskills:\n- project-wiki-topic-verifier:\n    justification: We need this to apply the dedicated read-only acceptance contract for topic pages, leaf granularity, source links, digests, federation, lint, and OKF validation.\nisolation: read-only\noutputContract:\n- verification verdict:\n    purpose: Returns the required GOOD or NEEDS_CORRECTION decision for the supplied topic pages so writers and ingest agents have an independent acceptance gate.\n- reviewed-page inventory:\n    purpose: Identifies exactly which topic pages and evidence sources were evaluated so the verdict is bounded and auditable.\n- actionable corrections:\n    purpose: Names only concrete file-specific corrections when the topic pages do not yet satisfy the wiki acceptance contract.\n"
+    },
+    "wiki-writer-agent": {
+      "description": "Creates and maintains durable wiki topic pages, hubs, links, digests, and code-aware project knowledge outside raw-source ingest.",
+      "displayName": "Wiki Writer Agent",
+      "dynamicFolderSkills": true,
+      "examples": [],
+      "filename": "wiki-writer-agent",
+      "group": "wiki-activities",
+      "groupLabel": "Wiki Activity Agents",
+      "instructions": "Work within the assigned wiki scope, read authoritative evidence before editing, preserve granular topic boundaries, run leaf linking and wiki validation, and obtain independent topic verification.",
+      "modelProfile": "default",
+      "modelStages": {},
+      "name": "wiki-writer-agent",
+      "outputPurposes": {
+        "durable wiki changes": "Provides the requested topic pages, leaf splits, hub updates, links, and digest entries within the assigned wiki scope.",
+        "lint and verifier evidence": "Demonstrates that changed pages satisfy wiki structure, source-link, leaf-granularity, and OKF expectations before handoff.",
+        "source traceability": "Connects material wiki claims to authoritative sources and records unresolved conflicts instead of allowing the synthesis layer to replace source truth."
+      },
+      "outputs": [
+        "durable wiki changes",
+        "source traceability",
+        "lint and verifier evidence"
+      ],
+      "skillConditions": {
+        "code-project-wiki": "when wiki maintenance depends on code, tests, procedures, backlog state, or commit-range evidence"
+      },
+      "skillJustifications": {
+        "code-project-wiki": "We need this when wiki maintenance follows code, test, procedure, backlog, or commit changes so durable claims remain synchronized with authoritative project behavior.",
+        "project-wiki": "We need this to preserve the wiki authority order, page contract, topic granularity, navigation, linking, and closeout rules.",
+        "project-wiki-topic-writer": "We need this to create, rewrite, split, and repair durable topic pages while keeping hubs, leaves, indexes, and digests coherent."
+      },
+      "skills": [
+        "project-wiki",
+        "project-wiki-topic-writer",
+        "code-project-wiki"
+      ],
+      "sourcePath": "agents/roles/wiki-activities/wiki-writer-agent.role.yaml",
+      "yaml": "name: wiki-writer-agent\nfilename: wiki-writer-agent\ndescription: Creates and maintains durable wiki topic pages, hubs, links, digests, and code-aware project knowledge outside raw-source ingest.\ninstructions: Work within the assigned wiki scope, read authoritative evidence before editing, preserve granular topic boundaries, run leaf linking and wiki validation, and obtain independent topic verification.\nmodelProfile: default\nskills:\n- project-wiki:\n    justification: We need this to preserve the wiki authority order, page contract, topic granularity, navigation, linking, and closeout rules.\n- project-wiki-topic-writer:\n    justification: We need this to create, rewrite, split, and repair durable topic pages while keeping hubs, leaves, indexes, and digests coherent.\n- code-project-wiki:\n    justification: We need this when wiki maintenance follows code, test, procedure, backlog, or commit changes so durable claims remain synchronized with authoritative project behavior.\n    condition: when wiki maintenance depends on code, tests, procedures, backlog state, or commit-range evidence.\noutputContract:\n- durable wiki changes:\n    purpose: Provides the requested topic pages, leaf splits, hub updates, links, and digest entries within the assigned wiki scope.\n- source traceability:\n    purpose: Connects material wiki claims to authoritative sources and records unresolved conflicts instead of allowing the synthesis layer to replace source truth.\n- lint and verifier evidence:\n    purpose: Demonstrates that changed pages satisfy wiki structure, source-link, leaf-granularity, and OKF expectations before handoff.\ndynamicFolderSkills: true\n"
     }
   }
 };
