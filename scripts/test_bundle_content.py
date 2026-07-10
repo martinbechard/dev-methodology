@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib.util
 import sys
+import tomllib
 import unittest
 from pathlib import Path
 from types import ModuleType
@@ -509,8 +510,15 @@ class BundleContentTests(unittest.TestCase):
         for role in roles:
             with self.subTest(role=role.name):
                 self.assertTrue(set(role.skills).issubset(skill_names))
-                self.assertTrue(
-                    (GENERATED_ADAPTERS_ROOT / "codex" / "agents" / f"{role.filename}.toml").is_file()
+                codex_agent_path = (
+                    GENERATED_ADAPTERS_ROOT / "codex" / "agents" / f"{role.filename}.toml"
+                )
+                self.assertTrue(codex_agent_path.is_file())
+                codex_agent_text = codex_agent_path.read_text(encoding="utf-8")
+                self.assertIn('developer_instructions = """\n', codex_agent_text)
+                self.assertEqual(
+                    build_skill_docs.role_instruction_text(role),
+                    tomllib.loads(codex_agent_text)["developer_instructions"],
                 )
                 self.assertTrue(
                     (GENERATED_ADAPTERS_ROOT / "claude" / "agents" / f"{role.filename}.md").is_file()
