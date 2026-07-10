@@ -73,9 +73,9 @@ The detection build validates every specialized technology and domain skill, rej
 
 Project Agent Setup selects representative folder scopes and runs detection once. Agent role, task wording, prompt keywords, read confirmation, and optional local commands are not detection inputs. Accepted source-backed loadouts are recorded in AGENTS-PLAN.yaml and rendered as unconditional folder skill-loading guidance in AGENTS.md.
 
-Detection is scope-safe in mixed repositories. File extensions and globs form the scoped selector group; owning manifests, dependencies, and content markers form the project-signal group. A detected variant with both groups needs evidence from both. Dependency and configuration evidence comes from the nearest owning package or project manifest, so sibling modules and root workspace dependencies cannot activate stacks for an independently owned child package.
+Detection is scope-safe in mixed repositories. Every definition names the skill it selects and expresses activation as explicit any-of and all-of clauses over file extensions, same-file path and extension matches, owning manifests, dependencies, content markers, or parsed source imports. A skill activates only when one complete any-of branch succeeds, and the matched artifacts become its source evidence. Parsed Python imports ignore comments and string literals. Dependency and configuration evidence comes from the nearest owning package or project manifest, so sibling modules and root workspace dependencies cannot activate stacks for an independently owned child package.
 
-The generated [agent and skill hierarchy](design/agent-skill-hierarchy.svg) shows model profiles, every canonical role, fixed generic skill edges, and the specialized skills available for setup-time folder detection. Regenerate it with:
+The generated [interactive agent and skill hierarchy](design/agent-skill-hierarchy.svg) lets users select a canonical role to isolate its fixed and request-specific skill edges. Specialized stack and domain skills remain in a separate bottom section because project setup assigns them to folders during setup-time detection. Regenerate it with:
 
 ```bash
 python3 scripts/build-agent-skill-hierarchy.py

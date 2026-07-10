@@ -1,258 +1,305 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1540" height="2642" viewBox="0 0 1540 2642" role="img" aria-labelledby="title desc">
-<title id="title">Canonical model profile, agent, and skill hierarchy</title>
-<desc id="desc">Every canonical role is connected to its semantic model profile, fixed generic skills, and conditionally loaded request-specific skills. Technology and domain skills are labeled as setup-time detected skills without task-time role edges.</desc>
-<style>text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}.heading{font-size:18px;font-weight:600}.group{font-size:13px;font-weight:600;fill:#334155}.secondary{font-size:9px;fill:#64748b}.node{fill:#f8fafc;stroke:#94a3b8}.node.conditional{fill:#eeeafd;stroke:#7c3aed}.node.technology{fill:#e0f2fe;stroke:#0284c7}.model{fill:#e0f2fe;stroke:#0284c7}.edge{fill:none;stroke:#94a3b8;stroke-width:1;opacity:.32}.conditional-edge{stroke:#7c3aed;opacity:.55}.model-edge{stroke:#0284c7;opacity:.45}</style>
-<text x="30" y="44" class="heading">Model profiles</text>
-<text x="360" y="44" class="heading">Canonical agents</text>
-<text x="1120" y="44" class="heading">Bundled skills</text>
-<text x="30" y="70" class="secondary">Adapter mappings resolve concrete models</text>
-<text x="360" y="70" class="secondary">Roles own fixed and request-specific skills</text>
-<text x="1120" y="70" class="secondary">Violet is conditional; blue is setup-time technology</text>
-<rect x="30" y="110" width="280" height="42" rx="6" class="model"/>
-<text x="42" y="126">simple</text>
-<text x="42" y="142" class="secondary">Extraction, classification, lookup, and...</text>
-<rect x="30" y="164" width="280" height="42" rx="6" class="model"/>
-<text x="42" y="180">default</text>
-<text x="42" y="196" class="secondary">Normal implementation, documentation, a...</text>
-<rect x="30" y="218" width="280" height="42" rx="6" class="model"/>
-<text x="42" y="234">advanced</text>
-<text x="42" y="250" class="secondary">Review synthesis, architecture, diagnos...</text>
-<rect x="30" y="272" width="280" height="42" rx="6" class="model"/>
-<text x="42" y="288">advanced-long</text>
-<text x="42" y="304" class="secondary">Advanced reasoning over unusually large...</text>
-<path d="M 310 239 C 330 239, 330 152, 360 152" class="edge model-edge"/>
-<path d="M 660 152 C 820 152, 940 2372, 1120 2372" class="edge conditional-edge"/>
-<path d="M 660 152 C 820 152, 940 2342, 1120 2342" class="edge conditional-edge"/>
-<path d="M 660 152 C 820 152, 940 2402, 1120 2402" class="edge conditional-edge"/>
-<path d="M 660 152 C 820 152, 940 2432, 1120 2432" class="edge conditional-edge"/>
-<path d="M 660 152 C 820 152, 940 2522, 1120 2522" class="edge conditional-edge"/>
-<path d="M 660 152 C 820 152, 940 1988, 1120 1988" class="edge"/>
-<path d="M 310 185 C 330 185, 330 182, 360 182" class="edge model-edge"/>
-<path d="M 660 182 C 820 182, 940 422, 1120 422" class="edge conditional-edge"/>
-<path d="M 660 182 C 820 182, 940 542, 1120 542" class="edge"/>
-<path d="M 660 182 C 820 182, 940 152, 1120 152" class="edge conditional-edge"/>
-<path d="M 660 182 C 820 182, 940 692, 1120 692" class="edge"/>
-<path d="M 310 239 C 330 239, 330 212, 360 212" class="edge model-edge"/>
-<path d="M 660 212 C 820 212, 940 392, 1120 392" class="edge"/>
-<path d="M 660 212 C 820 212, 940 2492, 1120 2492" class="edge"/>
-<path d="M 660 212 C 820 212, 940 272, 1120 272" class="edge"/>
-<path d="M 660 212 C 820 212, 940 302, 1120 302" class="edge"/>
-<path d="M 310 239 C 330 239, 330 242, 360 242" class="edge model-edge"/>
-<path d="M 660 242 C 820 242, 940 272, 1120 272" class="edge"/>
-<path d="M 660 242 C 820 242, 940 302, 1120 302" class="edge"/>
-<path d="M 660 242 C 820 242, 940 722, 1120 722" class="edge conditional-edge"/>
-<path d="M 660 242 C 820 242, 940 332, 1120 332" class="edge"/>
-<path d="M 660 242 C 820 242, 940 512, 1120 512" class="edge"/>
-<path d="M 310 293 C 330 293, 330 272, 360 272" class="edge model-edge"/>
-<path d="M 660 272 C 820 272, 940 662, 1120 662" class="edge"/>
-<path d="M 660 272 C 820 272, 940 692, 1120 692" class="edge"/>
-<path d="M 660 272 C 820 272, 940 542, 1120 542" class="edge"/>
-<path d="M 660 272 C 820 272, 940 152, 1120 152" class="edge"/>
-<path d="M 660 272 C 820 272, 940 182, 1120 182" class="edge conditional-edge"/>
-<path d="M 660 272 C 820 272, 940 2492, 1120 2492" class="edge"/>
-<path d="M 310 185 C 330 185, 330 302, 360 302" class="edge model-edge"/>
-<path d="M 660 302 C 820 302, 940 1928, 1120 1928" class="edge"/>
-<path d="M 660 302 C 820 302, 940 2150, 1120 2150" class="edge conditional-edge"/>
-<path d="M 660 302 C 820 302, 940 2120, 1120 2120" class="edge conditional-edge"/>
-<path d="M 660 302 C 820 302, 940 2180, 1120 2180" class="edge conditional-edge"/>
-<path d="M 660 302 C 820 302, 940 2210, 1120 2210" class="edge conditional-edge"/>
-<path d="M 660 302 C 820 302, 940 2270, 1120 2270" class="edge conditional-edge"/>
-<path d="M 660 302 C 820 302, 940 1958, 1120 1958" class="edge conditional-edge"/>
-<path d="M 660 302 C 820 302, 940 2018, 1120 2018" class="edge conditional-edge"/>
-<path d="M 310 239 C 330 239, 330 332, 360 332" class="edge model-edge"/>
-<path d="M 660 332 C 820 332, 940 482, 1120 482" class="edge"/>
-<path d="M 660 332 C 820 332, 940 692, 1120 692" class="edge"/>
-<path d="M 310 239 C 330 239, 330 362, 360 362" class="edge model-edge"/>
-<path d="M 660 362 C 820 362, 940 182, 1120 182" class="edge"/>
-<path d="M 660 362 C 820 362, 940 152, 1120 152" class="edge"/>
-<path d="M 660 362 C 820 362, 940 2492, 1120 2492" class="edge"/>
-<path d="M 660 362 C 820 362, 940 512, 1120 512" class="edge"/>
-<path d="M 310 239 C 330 239, 330 392, 360 392" class="edge model-edge"/>
-<path d="M 660 392 C 820 392, 940 572, 1120 572" class="edge"/>
-<path d="M 660 392 C 820 392, 940 2492, 1120 2492" class="edge"/>
-<path d="M 310 239 C 330 239, 330 422, 360 422" class="edge model-edge"/>
-<path d="M 660 422 C 820 422, 940 752, 1120 752" class="edge"/>
-<path d="M 660 422 C 820 422, 940 482, 1120 482" class="edge conditional-edge"/>
-<path d="M 660 422 C 820 422, 940 602, 1120 602" class="edge conditional-edge"/>
-<path d="M 660 422 C 820 422, 940 632, 1120 632" class="edge conditional-edge"/>
-<path d="M 660 422 C 820 422, 940 362, 1120 362" class="edge conditional-edge"/>
-<path d="M 660 422 C 820 422, 940 2492, 1120 2492" class="edge"/>
-<path d="M 660 422 C 820 422, 940 692, 1120 692" class="edge"/>
-<path d="M 310 239 C 330 239, 330 452, 360 452" class="edge model-edge"/>
-<path d="M 660 452 C 820 452, 940 332, 1120 332" class="edge"/>
-<path d="M 660 452 C 820 452, 940 752, 1120 752" class="edge"/>
-<path d="M 660 452 C 820 452, 940 602, 1120 602" class="edge"/>
-<path d="M 660 452 C 820 452, 940 632, 1120 632" class="edge conditional-edge"/>
-<path d="M 660 452 C 820 452, 940 362, 1120 362" class="edge"/>
-<path d="M 660 452 C 820 452, 940 692, 1120 692" class="edge"/>
-<path d="M 660 452 C 820 452, 940 272, 1120 272" class="edge conditional-edge"/>
-<path d="M 310 239 C 330 239, 330 482, 360 482" class="edge model-edge"/>
-<path d="M 660 482 C 820 482, 940 212, 1120 212" class="edge"/>
-<path d="M 660 482 C 820 482, 940 2492, 1120 2492" class="edge"/>
-<path d="M 660 482 C 820 482, 940 692, 1120 692" class="edge"/>
-<path d="M 310 185 C 330 185, 330 512, 360 512" class="edge model-edge"/>
-<path d="M 660 512 C 820 512, 940 782, 1120 782" class="edge"/>
-<path d="M 660 512 C 820 512, 940 482, 1120 482" class="edge"/>
-<path d="M 660 512 C 820 512, 940 2492, 1120 2492" class="edge"/>
-<path d="M 310 239 C 330 239, 330 584, 360 584" class="edge model-edge"/>
-<path d="M 660 584 C 820 584, 940 2492, 1120 2492" class="edge"/>
-<path d="M 660 584 C 820 584, 940 1988, 1120 1988" class="edge"/>
-<path d="M 660 584 C 820 584, 940 1928, 1120 1928" class="edge"/>
-<path d="M 310 239 C 330 239, 330 614, 360 614" class="edge model-edge"/>
-<path d="M 660 614 C 820 614, 940 2048, 1120 2048" class="edge"/>
-<path d="M 660 614 C 820 614, 940 1928, 1120 1928" class="edge"/>
-<path d="M 660 614 C 820 614, 940 662, 1120 662" class="edge conditional-edge"/>
-<path d="M 660 614 C 820 614, 940 692, 1120 692" class="edge"/>
-<path d="M 310 185 C 330 185, 330 644, 360 644" class="edge model-edge"/>
-<path d="M 660 644 C 820 644, 940 2048, 1120 2048" class="edge"/>
-<path d="M 660 644 C 820 644, 940 272, 1120 272" class="edge conditional-edge"/>
-<path d="M 310 185 C 330 185, 330 716, 360 716" class="edge model-edge"/>
-<path d="M 660 716 C 820 716, 940 452, 1120 452" class="edge"/>
-<path d="M 660 716 C 820 716, 940 1898, 1120 1898" class="edge"/>
-<path d="M 660 716 C 820 716, 940 1928, 1120 1928" class="edge"/>
-<path d="M 660 716 C 820 716, 940 1958, 1120 1958" class="edge conditional-edge"/>
-<path d="M 660 716 C 820 716, 940 1988, 1120 1988" class="edge"/>
-<path d="M 310 293 C 330 293, 330 746, 360 746" class="edge model-edge"/>
-<path d="M 660 746 C 820 746, 940 1958, 1120 1958" class="edge"/>
-<path d="M 660 746 C 820 746, 940 1928, 1120 1928" class="edge"/>
-<path d="M 660 746 C 820 746, 940 2018, 1120 2018" class="edge conditional-edge"/>
-<path d="M 310 185 C 330 185, 330 776, 360 776" class="edge model-edge"/>
-<path d="M 660 776 C 820 776, 940 662, 1120 662" class="edge"/>
-<path d="M 660 776 C 820 776, 940 692, 1120 692" class="edge"/>
-<path d="M 310 131 C 330 131, 330 848, 360 848" class="edge model-edge"/>
-<path d="M 660 848 C 820 848, 940 1766, 1120 1766" class="edge"/>
-<path d="M 660 848 C 820 848, 940 1706, 1120 1706" class="edge"/>
-<path d="M 660 848 C 820 848, 940 692, 1120 692" class="edge"/>
-<path d="M 310 239 C 330 239, 330 878, 360 878" class="edge model-edge"/>
-<path d="M 660 878 C 820 878, 940 2462, 1120 2462" class="edge"/>
-<path d="M 660 878 C 820 878, 940 1988, 1120 1988" class="edge"/>
-<path d="M 310 185 C 330 185, 330 908, 360 908" class="edge model-edge"/>
-<path d="M 660 908 C 820 908, 940 1706, 1120 1706" class="edge"/>
-<path d="M 660 908 C 820 908, 940 1826, 1120 1826" class="edge"/>
-<path d="M 660 908 C 820 908, 940 1676, 1120 1676" class="edge conditional-edge"/>
-<path d="M 310 185 C 330 185, 330 938, 360 938" class="edge model-edge"/>
-<path d="M 660 938 C 820 938, 940 1736, 1120 1736" class="edge"/>
-<path d="M 310 185 C 330 185, 330 968, 360 968" class="edge model-edge"/>
-<path d="M 660 968 C 820 968, 940 1736, 1120 1736" class="edge"/>
-<path d="M 660 968 C 820 968, 940 1766, 1120 1766" class="edge"/>
-<path d="M 310 239 C 330 239, 330 998, 360 998" class="edge model-edge"/>
-<path d="M 660 998 C 820 998, 940 1706, 1120 1706" class="edge"/>
-<path d="M 660 998 C 820 998, 940 2240, 1120 2240" class="edge conditional-edge"/>
-<path d="M 660 998 C 820 998, 940 1958, 1120 1958" class="edge conditional-edge"/>
-<path d="M 310 239 C 330 239, 330 1028, 360 1028" class="edge model-edge"/>
-<path d="M 660 1028 C 820 1028, 940 1796, 1120 1796" class="edge"/>
-<path d="M 310 185 C 330 185, 330 1058, 360 1058" class="edge model-edge"/>
-<path d="M 660 1058 C 820 1058, 940 1706, 1120 1706" class="edge"/>
-<path d="M 660 1058 C 820 1058, 940 1826, 1120 1826" class="edge"/>
-<path d="M 660 1058 C 820 1058, 940 1676, 1120 1676" class="edge conditional-edge"/>
-<text x="360" y="128" class="group">Development Use</text>
-<g><rect x="360" y="140" width="300" height="24" rx="5" class="node"/><text x="372" y="156">artifact-review-agent</text><text x="648" y="156" text-anchor="end" class="secondary">advanced; 3 stage profiles</text></g>
-<g><rect x="360" y="170" width="300" height="24" rx="5" class="node"/><text x="372" y="186">backlog-steward</text><text x="648" y="186" text-anchor="end" class="secondary">default</text></g>
-<g><rect x="360" y="200" width="300" height="24" rx="5" class="node"/><text x="372" y="216">code-review-agent</text><text x="648" y="216" text-anchor="end" class="secondary">advanced; 3 stage profiles</text></g>
-<g><rect x="360" y="230" width="300" height="24" rx="5" class="node"/><text x="372" y="246">coding-agent</text><text x="648" y="246" text-anchor="end" class="secondary">advanced</text></g>
-<g><rect x="360" y="260" width="300" height="24" rx="5" class="node"/><text x="372" y="276">development-orchestrator</text><text x="648" y="276" text-anchor="end" class="secondary">advanced-long</text></g>
-<g><rect x="360" y="290" width="300" height="24" rx="5" class="node"/><text x="372" y="306">documentation-writer</text><text x="648" y="306" text-anchor="end" class="secondary">default</text></g>
-<g><rect x="360" y="320" width="300" height="24" rx="5" class="node"/><text x="372" y="336">e2e-browser-agent</text><text x="648" y="336" text-anchor="end" class="secondary">advanced</text></g>
-<g><rect x="360" y="350" width="300" height="24" rx="5" class="node"/><text x="372" y="366">merge-coordinator</text><text x="648" y="366" text-anchor="end" class="secondary">advanced</text></g>
-<g><rect x="360" y="380" width="300" height="24" rx="5" class="node"/><text x="372" y="396">prompt-contract-reviewer</text><text x="648" y="396" text-anchor="end" class="secondary">advanced</text></g>
-<g><rect x="360" y="410" width="300" height="24" rx="5" class="node"/><text x="372" y="426">qa-and-verification-agent</text><text x="648" y="426" text-anchor="end" class="secondary">advanced</text></g>
-<g><rect x="360" y="440" width="300" height="24" rx="5" class="node"/><text x="372" y="456">runtime-diagnostician</text><text x="648" y="456" text-anchor="end" class="secondary">advanced</text></g>
-<g><rect x="360" y="470" width="300" height="24" rx="5" class="node"/><text x="372" y="486">security-reviewer</text><text x="648" y="486" text-anchor="end" class="secondary">advanced</text></g>
-<g><rect x="360" y="500" width="300" height="24" rx="5" class="node"/><text x="372" y="516">ux-designer-or-reviewer</text><text x="648" y="516" text-anchor="end" class="secondary">default</text></g>
-<text x="360" y="560" class="group">Methodology Maintenance</text>
-<g><rect x="360" y="572" width="300" height="24" rx="5" class="node"/><text x="372" y="588">methodology-artifact-reviewer</text><text x="648" y="588" text-anchor="end" class="secondary">advanced; 2 stage profiles</text></g>
-<g><rect x="360" y="602" width="300" height="24" rx="5" class="node"/><text x="372" y="618">methodology-maintainer</text><text x="648" y="618" text-anchor="end" class="secondary">advanced</text></g>
-<g><rect x="360" y="632" width="300" height="24" rx="5" class="node"/><text x="372" y="648">shared-install-verifier</text><text x="648" y="648" text-anchor="end" class="secondary">default</text></g>
-<text x="360" y="692" class="group">Project Setup</text>
-<g><rect x="360" y="704" width="300" height="24" rx="5" class="node"/><text x="372" y="720">project-agent-setup-agent</text><text x="648" y="720" text-anchor="end" class="secondary">default</text></g>
-<g><rect x="360" y="734" width="300" height="24" rx="5" class="node"/><text x="372" y="750">project-bootstrap-agent</text><text x="648" y="750" text-anchor="end" class="secondary">advanced-long</text></g>
-<g><rect x="360" y="764" width="300" height="24" rx="5" class="node"/><text x="372" y="780">project-organiser</text><text x="648" y="780" text-anchor="end" class="secondary">default</text></g>
-<text x="360" y="824" class="group">Wiki Activities</text>
-<g><rect x="360" y="836" width="300" height="24" rx="5" class="node"/><text x="372" y="852">public-source-collector</text><text x="648" y="852" text-anchor="end" class="secondary">simple</text></g>
-<g><rect x="360" y="866" width="300" height="24" rx="5" class="node"/><text x="372" y="882">wiki-artifact-reviewer</text><text x="648" y="882" text-anchor="end" class="secondary">advanced; 2 stage profiles</text></g>
-<g><rect x="360" y="896" width="300" height="24" rx="5" class="node"/><text x="372" y="912">wiki-ingest-agent</text><text x="648" y="912" text-anchor="end" class="secondary">default</text></g>
-<g><rect x="360" y="926" width="300" height="24" rx="5" class="node"/><text x="372" y="942">wiki-query-agent</text><text x="648" y="942" text-anchor="end" class="secondary">default</text></g>
-<g><rect x="360" y="956" width="300" height="24" rx="5" class="node"/><text x="372" y="972">wiki-research-agent</text><text x="648" y="972" text-anchor="end" class="secondary">default</text></g>
-<g><rect x="360" y="986" width="300" height="24" rx="5" class="node"/><text x="372" y="1002">wiki-setup-agent</text><text x="648" y="1002" text-anchor="end" class="secondary">advanced</text></g>
-<g><rect x="360" y="1016" width="300" height="24" rx="5" class="node"/><text x="372" y="1032">wiki-topic-verifier</text><text x="648" y="1032" text-anchor="end" class="secondary">advanced; 2 stage profiles</text></g>
-<g><rect x="360" y="1046" width="300" height="24" rx="5" class="node"/><text x="372" y="1062">wiki-writer-agent</text><text x="648" y="1062" text-anchor="end" class="secondary">default</text></g>
-<text x="1120" y="128" class="group">Development Practice</text>
-<g><rect x="1120" y="140" width="360" height="24" rx="5" class="node"/><text x="1132" y="156">agent-claim</text><text x="1468" y="156" text-anchor="end" class="secondary">fixed / request-specific</text></g>
-<g><rect x="1120" y="170" width="360" height="24" rx="5" class="node"/><text x="1132" y="186">agent-work-merge</text><text x="1468" y="186" text-anchor="end" class="secondary">fixed / request-specific</text></g>
-<g><rect x="1120" y="200" width="360" height="24" rx="5" class="node"/><text x="1132" y="216">application-security</text><text x="1468" y="216" text-anchor="end" class="secondary">fixed</text></g>
-<g><rect x="1120" y="230" width="360" height="24" rx="5" class="node"/><text x="1132" y="246">ast-grep</text><text x="1468" y="246" text-anchor="end" class="secondary">unassigned</text></g>
-<g><rect x="1120" y="260" width="360" height="24" rx="5" class="node"/><text x="1132" y="276">careful-coding</text><text x="1468" y="276" text-anchor="end" class="secondary">fixed / request-specific</text></g>
-<g><rect x="1120" y="290" width="360" height="24" rx="5" class="node"/><text x="1132" y="306">code-comments</text><text x="1468" y="306" text-anchor="end" class="secondary">fixed</text></g>
-<g><rect x="1120" y="320" width="360" height="24" rx="5" class="node"/><text x="1132" y="336">code-discovery</text><text x="1468" y="336" text-anchor="end" class="secondary">fixed</text></g>
-<g><rect x="1120" y="350" width="360" height="24" rx="5" class="node"/><text x="1132" y="366">code-execution-tracing</text><text x="1468" y="366" text-anchor="end" class="secondary">fixed / request-specific</text></g>
-<g><rect x="1120" y="380" width="360" height="24" rx="5" class="node"/><text x="1132" y="396">code-review-evidence</text><text x="1468" y="396" text-anchor="end" class="secondary">fixed</text></g>
-<g><rect x="1120" y="410" width="360" height="24" rx="5" class="node conditional"/><text x="1132" y="426">create-backlog</text><text x="1468" y="426" text-anchor="end" class="secondary">request-specific</text></g>
-<g><rect x="1120" y="440" width="360" height="24" rx="5" class="node"/><text x="1132" y="456">detect-technology-skills</text><text x="1468" y="456" text-anchor="end" class="secondary">fixed</text></g>
-<g><rect x="1120" y="470" width="360" height="24" rx="5" class="node"/><text x="1132" y="486">end-to-end-verification</text><text x="1468" y="486" text-anchor="end" class="secondary">fixed / request-specific</text></g>
-<g><rect x="1120" y="500" width="360" height="24" rx="5" class="node"/><text x="1132" y="516">fix-explanation</text><text x="1468" y="516" text-anchor="end" class="secondary">fixed</text></g>
-<g><rect x="1120" y="530" width="360" height="24" rx="5" class="node"/><text x="1132" y="546">manage-backlog</text><text x="1468" y="546" text-anchor="end" class="secondary">fixed</text></g>
-<g><rect x="1120" y="560" width="360" height="24" rx="5" class="node"/><text x="1132" y="576">prompt-contracts</text><text x="1468" y="576" text-anchor="end" class="secondary">fixed</text></g>
-<g><rect x="1120" y="590" width="360" height="24" rx="5" class="node"/><text x="1132" y="606">root-cause-analysis</text><text x="1468" y="606" text-anchor="end" class="secondary">fixed / request-specific</text></g>
-<g><rect x="1120" y="620" width="360" height="24" rx="5" class="node conditional"/><text x="1132" y="636">runtime-evidence-collection</text><text x="1468" y="636" text-anchor="end" class="secondary">request-specific</text></g>
-<g><rect x="1120" y="650" width="360" height="24" rx="5" class="node"/><text x="1132" y="666">structured-design</text><text x="1468" y="666" text-anchor="end" class="secondary">fixed / request-specific</text></g>
-<g><rect x="1120" y="680" width="360" height="24" rx="5" class="node"/><text x="1132" y="696">structured-explanation</text><text x="1468" y="696" text-anchor="end" class="secondary">fixed</text></g>
-<g><rect x="1120" y="710" width="360" height="24" rx="5" class="node conditional"/><text x="1132" y="726">test-driven-development</text><text x="1468" y="726" text-anchor="end" class="secondary">request-specific</text></g>
-<g><rect x="1120" y="740" width="360" height="24" rx="5" class="node"/><text x="1132" y="756">test-strategy</text><text x="1468" y="756" text-anchor="end" class="secondary">fixed</text></g>
-<g><rect x="1120" y="770" width="360" height="24" rx="5" class="node"/><text x="1132" y="786">user-experience-review</text><text x="1468" y="786" text-anchor="end" class="secondary">fixed</text></g>
-<text x="1120" y="830" class="group">Stack And Domain</text>
-<g><rect x="1120" y="842" width="360" height="24" rx="5" class="node technology"/><text x="1132" y="858">api-routes</text><text x="1468" y="858" text-anchor="end" class="secondary">setup-time technology</text></g>
-<g><rect x="1120" y="872" width="360" height="24" rx="5" class="node technology"/><text x="1132" y="888">clerk-auth</text><text x="1468" y="888" text-anchor="end" class="secondary">setup-time technology</text></g>
-<g><rect x="1120" y="902" width="360" height="24" rx="5" class="node technology"/><text x="1132" y="918">electron-main</text><text x="1468" y="918" text-anchor="end" class="secondary">setup-time technology</text></g>
-<g><rect x="1120" y="932" width="360" height="24" rx="5" class="node technology"/><text x="1132" y="948">electron-preload</text><text x="1468" y="948" text-anchor="end" class="secondary">setup-time technology</text></g>
-<g><rect x="1120" y="962" width="360" height="24" rx="5" class="node technology"/><text x="1132" y="978">fastapi</text><text x="1468" y="978" text-anchor="end" class="secondary">setup-time technology</text></g>
-<g><rect x="1120" y="992" width="360" height="24" rx="5" class="node technology"/><text x="1132" y="1008">harness-implementation</text><text x="1468" y="1008" text-anchor="end" class="secondary">setup-time domain</text></g>
-<g><rect x="1120" y="1022" width="360" height="24" rx="5" class="node technology"/><text x="1132" y="1038">java-coding</text><text x="1468" y="1038" text-anchor="end" class="secondary">setup-time technology</text></g>
-<g><rect x="1120" y="1052" width="360" height="24" rx="5" class="node technology"/><text x="1132" y="1068">jest</text><text x="1468" y="1068" text-anchor="end" class="secondary">setup-time technology</text></g>
-<g><rect x="1120" y="1082" width="360" height="24" rx="5" class="node technology"/><text x="1132" y="1098">langgraph</text><text x="1468" y="1098" text-anchor="end" class="secondary">setup-time technology</text></g>
-<g><rect x="1120" y="1112" width="360" height="24" rx="5" class="node technology"/><text x="1132" y="1128">local-model-integration</text><text x="1468" y="1128" text-anchor="end" class="secondary">setup-time domain</text></g>
-<g><rect x="1120" y="1142" width="360" height="24" rx="5" class="node technology"/><text x="1132" y="1158">nextjs-app-router</text><text x="1468" y="1158" text-anchor="end" class="secondary">setup-time technology</text></g>
-<g><rect x="1120" y="1172" width="360" height="24" rx="5" class="node technology"/><text x="1132" y="1188">node-cli</text><text x="1468" y="1188" text-anchor="end" class="secondary">setup-time technology</text></g>
-<g><rect x="1120" y="1202" width="360" height="24" rx="5" class="node technology"/><text x="1132" y="1218">plan-engine-implementation</text><text x="1468" y="1218" text-anchor="end" class="secondary">setup-time domain</text></g>
-<g><rect x="1120" y="1232" width="360" height="24" rx="5" class="node technology"/><text x="1132" y="1248">playwright</text><text x="1468" y="1248" text-anchor="end" class="secondary">setup-time technology</text></g>
-<g><rect x="1120" y="1262" width="360" height="24" rx="5" class="node technology"/><text x="1132" y="1278">postgres-drizzle</text><text x="1468" y="1278" text-anchor="end" class="secondary">setup-time technology</text></g>
-<g><rect x="1120" y="1292" width="360" height="24" rx="5" class="node technology"/><text x="1132" y="1308">python-coding</text><text x="1468" y="1308" text-anchor="end" class="secondary">setup-time technology</text></g>
-<g><rect x="1120" y="1322" width="360" height="24" rx="5" class="node technology"/><text x="1132" y="1338">react-server-components</text><text x="1468" y="1338" text-anchor="end" class="secondary">setup-time technology</text></g>
-<g><rect x="1120" y="1352" width="360" height="24" rx="5" class="node technology"/><text x="1132" y="1368">react-vite-renderer</text><text x="1468" y="1368" text-anchor="end" class="secondary">setup-time technology</text></g>
-<g><rect x="1120" y="1382" width="360" height="24" rx="5" class="node technology"/><text x="1132" y="1398">spring-boot</text><text x="1468" y="1398" text-anchor="end" class="secondary">setup-time technology</text></g>
-<g><rect x="1120" y="1412" width="360" height="24" rx="5" class="node technology"/><text x="1132" y="1428">sql-coding</text><text x="1468" y="1428" text-anchor="end" class="secondary">setup-time technology</text></g>
-<g><rect x="1120" y="1442" width="360" height="24" rx="5" class="node technology"/><text x="1132" y="1458">tailwind-design-system</text><text x="1468" y="1458" text-anchor="end" class="secondary">setup-time technology</text></g>
-<g><rect x="1120" y="1472" width="360" height="24" rx="5" class="node technology"/><text x="1132" y="1488">tool-runtime-implementation</text><text x="1468" y="1488" text-anchor="end" class="secondary">setup-time domain</text></g>
-<g><rect x="1120" y="1502" width="360" height="24" rx="5" class="node technology"/><text x="1132" y="1518">typescript-coding</text><text x="1468" y="1518" text-anchor="end" class="secondary">setup-time technology</text></g>
-<g><rect x="1120" y="1532" width="360" height="24" rx="5" class="node technology"/><text x="1132" y="1548">typescript-esm</text><text x="1468" y="1548" text-anchor="end" class="secondary">setup-time technology</text></g>
-<g><rect x="1120" y="1562" width="360" height="24" rx="5" class="node technology"/><text x="1132" y="1578">typescript-strict</text><text x="1468" y="1578" text-anchor="end" class="secondary">setup-time technology</text></g>
-<g><rect x="1120" y="1592" width="360" height="24" rx="5" class="node technology"/><text x="1132" y="1608">vitest</text><text x="1468" y="1608" text-anchor="end" class="secondary">setup-time technology</text></g>
-<text x="1120" y="1652" class="group">Wiki And Knowledge</text>
-<g><rect x="1120" y="1664" width="360" height="24" rx="5" class="node conditional"/><text x="1132" y="1680">code-project-wiki</text><text x="1468" y="1680" text-anchor="end" class="secondary">request-specific</text></g>
-<g><rect x="1120" y="1694" width="360" height="24" rx="5" class="node"/><text x="1132" y="1710">project-wiki</text><text x="1468" y="1710" text-anchor="end" class="secondary">fixed</text></g>
-<g><rect x="1120" y="1724" width="360" height="24" rx="5" class="node"/><text x="1132" y="1740">project-wiki-query</text><text x="1468" y="1740" text-anchor="end" class="secondary">fixed</text></g>
-<g><rect x="1120" y="1754" width="360" height="24" rx="5" class="node"/><text x="1132" y="1770">project-wiki-research</text><text x="1468" y="1770" text-anchor="end" class="secondary">fixed</text></g>
-<g><rect x="1120" y="1784" width="360" height="24" rx="5" class="node"/><text x="1132" y="1800">project-wiki-topic-verifier</text><text x="1468" y="1800" text-anchor="end" class="secondary">fixed</text></g>
-<g><rect x="1120" y="1814" width="360" height="24" rx="5" class="node"/><text x="1132" y="1830">project-wiki-topic-writer</text><text x="1468" y="1830" text-anchor="end" class="secondary">fixed</text></g>
-<text x="1120" y="1874" class="group">Documentation Methodology</text>
-<g><rect x="1120" y="1886" width="360" height="24" rx="5" class="node"/><text x="1132" y="1902">create-agents-plan</text><text x="1468" y="1902" text-anchor="end" class="secondary">fixed</text></g>
-<g><rect x="1120" y="1916" width="360" height="24" rx="5" class="node"/><text x="1132" y="1932">development-methodology</text><text x="1468" y="1932" text-anchor="end" class="secondary">fixed</text></g>
-<g><rect x="1120" y="1946" width="360" height="24" rx="5" class="node"/><text x="1132" y="1962">documentation-bootstrap</text><text x="1468" y="1962" text-anchor="end" class="secondary">fixed / request-specific</text></g>
-<g><rect x="1120" y="1976" width="360" height="24" rx="5" class="node"/><text x="1132" y="1992">documentation-page-verifier</text><text x="1468" y="1992" text-anchor="end" class="secondary">fixed</text></g>
-<g><rect x="1120" y="2006" width="360" height="24" rx="5" class="node conditional"/><text x="1132" y="2022">documentation-reverse-engineering</text><text x="1468" y="2022" text-anchor="end" class="secondary">request-specific</text></g>
-<g><rect x="1120" y="2036" width="360" height="24" rx="5" class="node"/><text x="1132" y="2052">maintain-methodology-documentation</text><text x="1468" y="2052" text-anchor="end" class="secondary">fixed</text></g>
-<text x="1120" y="2096" class="group">Artifact Creation</text>
-<g><rect x="1120" y="2108" width="360" height="24" rx="5" class="node conditional"/><text x="1132" y="2124">create-architecture</text><text x="1468" y="2124" text-anchor="end" class="secondary">request-specific</text></g>
-<g><rect x="1120" y="2138" width="360" height="24" rx="5" class="node conditional"/><text x="1132" y="2154">create-functional-spec</text><text x="1468" y="2154" text-anchor="end" class="secondary">request-specific</text></g>
-<g><rect x="1120" y="2168" width="360" height="24" rx="5" class="node conditional"/><text x="1132" y="2184">create-high-level-design</text><text x="1468" y="2184" text-anchor="end" class="secondary">request-specific</text></g>
-<g><rect x="1120" y="2198" width="360" height="24" rx="5" class="node conditional"/><text x="1132" y="2214">create-module-design</text><text x="1468" y="2214" text-anchor="end" class="secondary">request-specific</text></g>
-<g><rect x="1120" y="2228" width="360" height="24" rx="5" class="node conditional"/><text x="1132" y="2244">create-project-wiki</text><text x="1468" y="2244" text-anchor="end" class="secondary">request-specific</text></g>
-<g><rect x="1120" y="2258" width="360" height="24" rx="5" class="node conditional"/><text x="1132" y="2274">create-unit-test-plan</text><text x="1468" y="2274" text-anchor="end" class="secondary">request-specific</text></g>
-<text x="1120" y="2318" class="group">Artifact Review</text>
-<g><rect x="1120" y="2330" width="360" height="24" rx="5" class="node conditional"/><text x="1132" y="2346">review-architecture</text><text x="1468" y="2346" text-anchor="end" class="secondary">request-specific</text></g>
-<g><rect x="1120" y="2360" width="360" height="24" rx="5" class="node conditional"/><text x="1132" y="2376">review-functional-spec</text><text x="1468" y="2376" text-anchor="end" class="secondary">request-specific</text></g>
-<g><rect x="1120" y="2390" width="360" height="24" rx="5" class="node conditional"/><text x="1132" y="2406">review-high-level-design</text><text x="1468" y="2406" text-anchor="end" class="secondary">request-specific</text></g>
-<g><rect x="1120" y="2420" width="360" height="24" rx="5" class="node conditional"/><text x="1132" y="2436">review-module-design</text><text x="1468" y="2436" text-anchor="end" class="secondary">request-specific</text></g>
-<g><rect x="1120" y="2450" width="360" height="24" rx="5" class="node"/><text x="1132" y="2466">review-project-wiki</text><text x="1468" y="2466" text-anchor="end" class="secondary">fixed</text></g>
-<g><rect x="1120" y="2480" width="360" height="24" rx="5" class="node"/><text x="1132" y="2496">review-structured</text><text x="1468" y="2496" text-anchor="end" class="secondary">fixed</text></g>
-<g><rect x="1120" y="2510" width="360" height="24" rx="5" class="node conditional"/><text x="1132" y="2526">review-unit-test-plan</text><text x="1468" y="2526" text-anchor="end" class="secondary">request-specific</text></g>
+<svg xmlns="http://www.w3.org/2000/svg" width="1150" height="2682" viewBox="0 0 1150 2682" role="group" aria-labelledby="title desc">
+<title id="title">Interactive canonical agent and skill hierarchy</title>
+<desc id="desc">Select an agent to highlight only its fixed and request-specific skill connections. Stack and domain skills appear separately at the bottom because project setup assigns them to folders rather than canonical roles.</desc>
+<style><![CDATA[
+text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
+.heading{font-size:18px;font-weight:700}.group{font-size:13px;font-weight:700;fill:#334155}
+.secondary{font-size:9px;fill:#64748b}.instruction{font-size:11px;fill:#475569}
+.status{font-size:11px;font-weight:650;fill:#0f766e}
+.node{transition:fill 150ms ease,stroke 150ms ease,stroke-width 150ms ease}
+.node.role{fill:#f8fafc;stroke:#64748b}.node.skill{fill:#fff7e6;stroke:#b45309}
+.node.skill.conditional{fill:#eeeafd;stroke:#7c3aed}.node.skill.technology{fill:#e0f2fe;stroke:#0284c7}
+.edge{fill:none;stroke:#94a3b8;stroke-width:1;opacity:.07;transition:opacity 150ms ease,stroke 150ms ease,stroke-width 150ms ease}
+.edge.conditional-edge{stroke:#7c3aed}.edge.active{stroke:#0f766e;stroke-width:2.4;opacity:.96}.edge.dimmed{opacity:.012}
+.role-node,.skill-node{transition:opacity 150ms ease}.role-node{cursor:pointer;outline:none}
+.role-node:hover .node,.role-node:focus .node{stroke:#0f766e;stroke-width:2.2}
+.role-node:focus .node{stroke-dasharray:4 2}.role-node.selected .node{fill:#dff7f0;stroke:#0f766e;stroke-width:3;stroke-dasharray:none}
+.role-node.dimmed .node,.skill-node.dimmed .node{fill:#f8fafc;stroke:#64748b}
+.role-node.dimmed text,.skill-node.dimmed text{fill:#64748b}.skill-node.active .node{stroke:#0f766e;stroke-width:2.6}
+.selection-marker{fill:none;stroke:#0f766e;stroke-width:4;opacity:0}.skill-node.active .selection-marker{opacity:1}
+.reset-control{cursor:pointer;outline:none}.reset-control rect{fill:#fff;stroke:#0f766e}.reset-control text{font-size:11px;font-weight:700;fill:#0f766e}
+.reset-control:hover rect,.reset-control:focus rect{stroke-width:2}.reset-control:focus rect{stroke-dasharray:4 2}
+.reset-control.disabled{cursor:default;opacity:.35}.reset-control.disabled:hover rect{stroke-width:1}
+@media (prefers-reduced-motion:reduce){.node,.edge,.role-node,.skill-node{transition:none}}
+]]></style>
+<text x="30" y="38" class="heading">Choose an agent. See only its loadout.</text>
+<text x="30" y="64" class="instruction">Click an agent or use Enter or Space. Select it again, use Clear selection, or press Escape to reset.</text>
+<text x="30" y="88" id="selection-status" class="status" role="status" aria-live="polite">All agents and skills shown. Connections are intentionally faint until selection.</text>
+<g class="reset-control disabled" role="button" tabindex="-1" aria-disabled="true" aria-label="Clear agent selection"><rect x="1000" y="24" width="120" height="30" rx="15"/><text x="1060" y="43" text-anchor="middle">Clear selection</text></g>
+<text x="30" y="126" class="heading">Canonical agents</text>
+<text x="760" y="126" class="heading">Bundled skills</text>
+<path d="M 350 738 C 500 738, 620 888, 760 888" class="edge conditional-edge" data-role="artifact-review-agent" data-skill="review-functional-spec"/>
+<path d="M 350 738 C 500 738, 620 858, 760 858" class="edge conditional-edge" data-role="artifact-review-agent" data-skill="review-architecture"/>
+<path d="M 350 738 C 500 738, 620 918, 760 918" class="edge conditional-edge" data-role="artifact-review-agent" data-skill="review-high-level-design"/>
+<path d="M 350 738 C 500 738, 620 948, 760 948" class="edge conditional-edge" data-role="artifact-review-agent" data-skill="review-module-design"/>
+<path d="M 350 738 C 500 738, 620 1038, 760 1038" class="edge conditional-edge" data-role="artifact-review-agent" data-skill="review-unit-test-plan"/>
+<path d="M 350 738 C 500 738, 620 504, 760 504" class="edge" data-role="artifact-review-agent" data-skill="documentation-page-verifier"/>
+<path d="M 350 768 C 500 768, 620 1380, 760 1380" class="edge conditional-edge" data-role="backlog-steward" data-skill="create-backlog"/>
+<path d="M 350 768 C 500 768, 620 1500, 760 1500" class="edge" data-role="backlog-steward" data-skill="manage-backlog"/>
+<path d="M 350 768 C 500 768, 620 1110, 760 1110" class="edge conditional-edge" data-role="backlog-steward" data-skill="agent-claim"/>
+<path d="M 350 768 C 500 768, 620 1650, 760 1650" class="edge" data-role="backlog-steward" data-skill="structured-explanation"/>
+<path d="M 350 798 C 500 798, 620 1350, 760 1350" class="edge" data-role="code-review-agent" data-skill="code-review-evidence"/>
+<path d="M 350 798 C 500 798, 620 1008, 760 1008" class="edge" data-role="code-review-agent" data-skill="review-structured"/>
+<path d="M 350 798 C 500 798, 620 1230, 760 1230" class="edge" data-role="code-review-agent" data-skill="careful-coding"/>
+<path d="M 350 798 C 500 798, 620 1260, 760 1260" class="edge" data-role="code-review-agent" data-skill="code-comments"/>
+<path d="M 350 828 C 500 828, 620 1230, 760 1230" class="edge" data-role="coding-agent" data-skill="careful-coding"/>
+<path d="M 350 828 C 500 828, 620 1260, 760 1260" class="edge" data-role="coding-agent" data-skill="code-comments"/>
+<path d="M 350 828 C 500 828, 620 1680, 760 1680" class="edge conditional-edge" data-role="coding-agent" data-skill="test-driven-development"/>
+<path d="M 350 828 C 500 828, 620 1290, 760 1290" class="edge" data-role="coding-agent" data-skill="code-discovery"/>
+<path d="M 350 828 C 500 828, 620 1470, 760 1470" class="edge" data-role="coding-agent" data-skill="fix-explanation"/>
+<path d="M 350 858 C 500 858, 620 1620, 760 1620" class="edge" data-role="development-orchestrator" data-skill="structured-design"/>
+<path d="M 350 858 C 500 858, 620 1650, 760 1650" class="edge" data-role="development-orchestrator" data-skill="structured-explanation"/>
+<path d="M 350 858 C 500 858, 620 1500, 760 1500" class="edge" data-role="development-orchestrator" data-skill="manage-backlog"/>
+<path d="M 350 858 C 500 858, 620 1110, 760 1110" class="edge" data-role="development-orchestrator" data-skill="agent-claim"/>
+<path d="M 350 858 C 500 858, 620 1140, 760 1140" class="edge conditional-edge" data-role="development-orchestrator" data-skill="agent-work-merge"/>
+<path d="M 350 858 C 500 858, 620 1008, 760 1008" class="edge" data-role="development-orchestrator" data-skill="review-structured"/>
+<path d="M 350 888 C 500 888, 620 444, 760 444" class="edge" data-role="documentation-writer" data-skill="development-methodology"/>
+<path d="M 350 888 C 500 888, 620 666, 760 666" class="edge conditional-edge" data-role="documentation-writer" data-skill="create-functional-spec"/>
+<path d="M 350 888 C 500 888, 620 636, 760 636" class="edge conditional-edge" data-role="documentation-writer" data-skill="create-architecture"/>
+<path d="M 350 888 C 500 888, 620 696, 760 696" class="edge conditional-edge" data-role="documentation-writer" data-skill="create-high-level-design"/>
+<path d="M 350 888 C 500 888, 620 726, 760 726" class="edge conditional-edge" data-role="documentation-writer" data-skill="create-module-design"/>
+<path d="M 350 888 C 500 888, 620 786, 760 786" class="edge conditional-edge" data-role="documentation-writer" data-skill="create-unit-test-plan"/>
+<path d="M 350 888 C 500 888, 620 474, 760 474" class="edge conditional-edge" data-role="documentation-writer" data-skill="documentation-bootstrap"/>
+<path d="M 350 888 C 500 888, 620 534, 760 534" class="edge conditional-edge" data-role="documentation-writer" data-skill="documentation-reverse-engineering"/>
+<path d="M 350 918 C 500 918, 620 1440, 760 1440" class="edge" data-role="e2e-browser-agent" data-skill="end-to-end-verification"/>
+<path d="M 350 918 C 500 918, 620 1650, 760 1650" class="edge" data-role="e2e-browser-agent" data-skill="structured-explanation"/>
+<path d="M 350 948 C 500 948, 620 1140, 760 1140" class="edge" data-role="merge-coordinator" data-skill="agent-work-merge"/>
+<path d="M 350 948 C 500 948, 620 1110, 760 1110" class="edge" data-role="merge-coordinator" data-skill="agent-claim"/>
+<path d="M 350 948 C 500 948, 620 1008, 760 1008" class="edge" data-role="merge-coordinator" data-skill="review-structured"/>
+<path d="M 350 948 C 500 948, 620 1470, 760 1470" class="edge" data-role="merge-coordinator" data-skill="fix-explanation"/>
+<path d="M 350 978 C 500 978, 620 1530, 760 1530" class="edge" data-role="prompt-contract-reviewer" data-skill="prompt-contracts"/>
+<path d="M 350 978 C 500 978, 620 1008, 760 1008" class="edge" data-role="prompt-contract-reviewer" data-skill="review-structured"/>
+<path d="M 350 1008 C 500 1008, 620 1710, 760 1710" class="edge" data-role="qa-and-verification-agent" data-skill="test-strategy"/>
+<path d="M 350 1008 C 500 1008, 620 1440, 760 1440" class="edge conditional-edge" data-role="qa-and-verification-agent" data-skill="end-to-end-verification"/>
+<path d="M 350 1008 C 500 1008, 620 1560, 760 1560" class="edge conditional-edge" data-role="qa-and-verification-agent" data-skill="root-cause-analysis"/>
+<path d="M 350 1008 C 500 1008, 620 1590, 760 1590" class="edge conditional-edge" data-role="qa-and-verification-agent" data-skill="runtime-evidence-collection"/>
+<path d="M 350 1008 C 500 1008, 620 1320, 760 1320" class="edge conditional-edge" data-role="qa-and-verification-agent" data-skill="code-execution-tracing"/>
+<path d="M 350 1008 C 500 1008, 620 1008, 760 1008" class="edge" data-role="qa-and-verification-agent" data-skill="review-structured"/>
+<path d="M 350 1008 C 500 1008, 620 1650, 760 1650" class="edge" data-role="qa-and-verification-agent" data-skill="structured-explanation"/>
+<path d="M 350 1038 C 500 1038, 620 1290, 760 1290" class="edge" data-role="runtime-diagnostician" data-skill="code-discovery"/>
+<path d="M 350 1038 C 500 1038, 620 1710, 760 1710" class="edge" data-role="runtime-diagnostician" data-skill="test-strategy"/>
+<path d="M 350 1038 C 500 1038, 620 1560, 760 1560" class="edge" data-role="runtime-diagnostician" data-skill="root-cause-analysis"/>
+<path d="M 350 1038 C 500 1038, 620 1590, 760 1590" class="edge conditional-edge" data-role="runtime-diagnostician" data-skill="runtime-evidence-collection"/>
+<path d="M 350 1038 C 500 1038, 620 1320, 760 1320" class="edge" data-role="runtime-diagnostician" data-skill="code-execution-tracing"/>
+<path d="M 350 1038 C 500 1038, 620 1650, 760 1650" class="edge" data-role="runtime-diagnostician" data-skill="structured-explanation"/>
+<path d="M 350 1038 C 500 1038, 620 1230, 760 1230" class="edge conditional-edge" data-role="runtime-diagnostician" data-skill="careful-coding"/>
+<path d="M 350 1068 C 500 1068, 620 1170, 760 1170" class="edge" data-role="security-reviewer" data-skill="application-security"/>
+<path d="M 350 1068 C 500 1068, 620 1008, 760 1008" class="edge" data-role="security-reviewer" data-skill="review-structured"/>
+<path d="M 350 1068 C 500 1068, 620 1650, 760 1650" class="edge" data-role="security-reviewer" data-skill="structured-explanation"/>
+<path d="M 350 1098 C 500 1098, 620 1740, 760 1740" class="edge" data-role="ux-designer-or-reviewer" data-skill="user-experience-review"/>
+<path d="M 350 1098 C 500 1098, 620 1440, 760 1440" class="edge" data-role="ux-designer-or-reviewer" data-skill="end-to-end-verification"/>
+<path d="M 350 1098 C 500 1098, 620 1008, 760 1008" class="edge" data-role="ux-designer-or-reviewer" data-skill="review-structured"/>
+<path d="M 350 192 C 500 192, 620 1008, 760 1008" class="edge" data-role="methodology-artifact-reviewer" data-skill="review-structured"/>
+<path d="M 350 192 C 500 192, 620 504, 760 504" class="edge" data-role="methodology-artifact-reviewer" data-skill="documentation-page-verifier"/>
+<path d="M 350 192 C 500 192, 620 444, 760 444" class="edge" data-role="methodology-artifact-reviewer" data-skill="development-methodology"/>
+<path d="M 350 222 C 500 222, 620 564, 760 564" class="edge" data-role="methodology-maintainer" data-skill="maintain-methodology-documentation"/>
+<path d="M 350 222 C 500 222, 620 444, 760 444" class="edge" data-role="methodology-maintainer" data-skill="development-methodology"/>
+<path d="M 350 222 C 500 222, 620 1620, 760 1620" class="edge conditional-edge" data-role="methodology-maintainer" data-skill="structured-design"/>
+<path d="M 350 222 C 500 222, 620 1650, 760 1650" class="edge" data-role="methodology-maintainer" data-skill="structured-explanation"/>
+<path d="M 350 252 C 500 252, 620 564, 760 564" class="edge" data-role="shared-install-verifier" data-skill="maintain-methodology-documentation"/>
+<path d="M 350 252 C 500 252, 620 1230, 760 1230" class="edge conditional-edge" data-role="shared-install-verifier" data-skill="careful-coding"/>
+<path d="M 350 324 C 500 324, 620 1410, 760 1410" class="edge" data-role="project-agent-setup-agent" data-skill="detect-technology-skills"/>
+<path d="M 350 324 C 500 324, 620 414, 760 414" class="edge" data-role="project-agent-setup-agent" data-skill="create-agents-plan"/>
+<path d="M 350 324 C 500 324, 620 444, 760 444" class="edge" data-role="project-agent-setup-agent" data-skill="development-methodology"/>
+<path d="M 350 324 C 500 324, 620 474, 760 474" class="edge conditional-edge" data-role="project-agent-setup-agent" data-skill="documentation-bootstrap"/>
+<path d="M 350 324 C 500 324, 620 504, 760 504" class="edge" data-role="project-agent-setup-agent" data-skill="documentation-page-verifier"/>
+<path d="M 350 354 C 500 354, 620 474, 760 474" class="edge" data-role="project-bootstrap-agent" data-skill="documentation-bootstrap"/>
+<path d="M 350 354 C 500 354, 620 444, 760 444" class="edge" data-role="project-bootstrap-agent" data-skill="development-methodology"/>
+<path d="M 350 354 C 500 354, 620 534, 760 534" class="edge conditional-edge" data-role="project-bootstrap-agent" data-skill="documentation-reverse-engineering"/>
+<path d="M 350 384 C 500 384, 620 1620, 760 1620" class="edge" data-role="project-organiser" data-skill="structured-design"/>
+<path d="M 350 384 C 500 384, 620 1650, 760 1650" class="edge" data-role="project-organiser" data-skill="structured-explanation"/>
+<path d="M 350 456 C 500 456, 620 282, 760 282" class="edge" data-role="public-source-collector" data-skill="project-wiki-research"/>
+<path d="M 350 456 C 500 456, 620 222, 760 222" class="edge" data-role="public-source-collector" data-skill="project-wiki"/>
+<path d="M 350 456 C 500 456, 620 1650, 760 1650" class="edge" data-role="public-source-collector" data-skill="structured-explanation"/>
+<path d="M 350 486 C 500 486, 620 978, 760 978" class="edge" data-role="wiki-artifact-reviewer" data-skill="review-project-wiki"/>
+<path d="M 350 486 C 500 486, 620 504, 760 504" class="edge" data-role="wiki-artifact-reviewer" data-skill="documentation-page-verifier"/>
+<path d="M 350 516 C 500 516, 620 222, 760 222" class="edge" data-role="wiki-ingest-agent" data-skill="project-wiki"/>
+<path d="M 350 516 C 500 516, 620 342, 760 342" class="edge" data-role="wiki-ingest-agent" data-skill="project-wiki-topic-writer"/>
+<path d="M 350 516 C 500 516, 620 192, 760 192" class="edge conditional-edge" data-role="wiki-ingest-agent" data-skill="code-project-wiki"/>
+<path d="M 350 546 C 500 546, 620 252, 760 252" class="edge" data-role="wiki-query-agent" data-skill="project-wiki-query"/>
+<path d="M 350 576 C 500 576, 620 252, 760 252" class="edge" data-role="wiki-research-agent" data-skill="project-wiki-query"/>
+<path d="M 350 576 C 500 576, 620 282, 760 282" class="edge" data-role="wiki-research-agent" data-skill="project-wiki-research"/>
+<path d="M 350 606 C 500 606, 620 222, 760 222" class="edge" data-role="wiki-setup-agent" data-skill="project-wiki"/>
+<path d="M 350 606 C 500 606, 620 756, 760 756" class="edge conditional-edge" data-role="wiki-setup-agent" data-skill="create-project-wiki"/>
+<path d="M 350 606 C 500 606, 620 474, 760 474" class="edge conditional-edge" data-role="wiki-setup-agent" data-skill="documentation-bootstrap"/>
+<path d="M 350 636 C 500 636, 620 312, 760 312" class="edge" data-role="wiki-topic-verifier" data-skill="project-wiki-topic-verifier"/>
+<path d="M 350 666 C 500 666, 620 222, 760 222" class="edge" data-role="wiki-writer-agent" data-skill="project-wiki"/>
+<path d="M 350 666 C 500 666, 620 342, 760 342" class="edge" data-role="wiki-writer-agent" data-skill="project-wiki-topic-writer"/>
+<path d="M 350 666 C 500 666, 620 192, 760 192" class="edge conditional-edge" data-role="wiki-writer-agent" data-skill="code-project-wiki"/>
+<text x="30" y="168" class="group">Methodology Maintenance</text>
+<g class="role-node" data-role="methodology-artifact-reviewer" data-display-name="Methodology Artifact Reviewer" role="button" tabindex="0" aria-pressed="false" aria-label="Select Methodology Artifact Reviewer"><title>Select Methodology Artifact Reviewer to isolate its skill loadout</title><rect x="30" y="180" width="320" height="24" rx="5" class="node role"/><text x="42" y="196">methodology-artifact-reviewer</text><text x="338" y="196" text-anchor="end" class="secondary">3 skills</text></g>
+<g class="role-node" data-role="methodology-maintainer" data-display-name="Methodology Maintainer" role="button" tabindex="0" aria-pressed="false" aria-label="Select Methodology Maintainer"><title>Select Methodology Maintainer to isolate its skill loadout</title><rect x="30" y="210" width="320" height="24" rx="5" class="node role"/><text x="42" y="226">methodology-maintainer</text><text x="338" y="226" text-anchor="end" class="secondary">4 skills · 1 conditional</text></g>
+<g class="role-node" data-role="shared-install-verifier" data-display-name="Shared Install Verifier" role="button" tabindex="0" aria-pressed="false" aria-label="Select Shared Install Verifier"><title>Select Shared Install Verifier to isolate its skill loadout</title><rect x="30" y="240" width="320" height="24" rx="5" class="node role"/><text x="42" y="256">shared-install-verifier</text><text x="338" y="256" text-anchor="end" class="secondary">2 skills · 1 conditional</text></g>
+<text x="30" y="300" class="group">Project Setup</text>
+<g class="role-node" data-role="project-agent-setup-agent" data-display-name="Project Agent Setup Agent" role="button" tabindex="0" aria-pressed="false" aria-label="Select Project Agent Setup Agent"><title>Select Project Agent Setup Agent to isolate its skill loadout</title><rect x="30" y="312" width="320" height="24" rx="5" class="node role"/><text x="42" y="328">project-agent-setup-agent</text><text x="338" y="328" text-anchor="end" class="secondary">5 skills · 1 conditional</text></g>
+<g class="role-node" data-role="project-bootstrap-agent" data-display-name="Project Bootstrap Agent" role="button" tabindex="0" aria-pressed="false" aria-label="Select Project Bootstrap Agent"><title>Select Project Bootstrap Agent to isolate its skill loadout</title><rect x="30" y="342" width="320" height="24" rx="5" class="node role"/><text x="42" y="358">project-bootstrap-agent</text><text x="338" y="358" text-anchor="end" class="secondary">3 skills · 1 conditional</text></g>
+<g class="role-node" data-role="project-organiser" data-display-name="Project Organiser" role="button" tabindex="0" aria-pressed="false" aria-label="Select Project Organiser"><title>Select Project Organiser to isolate its skill loadout</title><rect x="30" y="372" width="320" height="24" rx="5" class="node role"/><text x="42" y="388">project-organiser</text><text x="338" y="388" text-anchor="end" class="secondary">2 skills</text></g>
+<text x="30" y="432" class="group">Wiki Activities</text>
+<g class="role-node" data-role="public-source-collector" data-display-name="Public Source Collector" role="button" tabindex="0" aria-pressed="false" aria-label="Select Public Source Collector"><title>Select Public Source Collector to isolate its skill loadout</title><rect x="30" y="444" width="320" height="24" rx="5" class="node role"/><text x="42" y="460">public-source-collector</text><text x="338" y="460" text-anchor="end" class="secondary">3 skills</text></g>
+<g class="role-node" data-role="wiki-artifact-reviewer" data-display-name="Wiki Artifact Reviewer" role="button" tabindex="0" aria-pressed="false" aria-label="Select Wiki Artifact Reviewer"><title>Select Wiki Artifact Reviewer to isolate its skill loadout</title><rect x="30" y="474" width="320" height="24" rx="5" class="node role"/><text x="42" y="490">wiki-artifact-reviewer</text><text x="338" y="490" text-anchor="end" class="secondary">2 skills</text></g>
+<g class="role-node" data-role="wiki-ingest-agent" data-display-name="Wiki Ingest Agent" role="button" tabindex="0" aria-pressed="false" aria-label="Select Wiki Ingest Agent"><title>Select Wiki Ingest Agent to isolate its skill loadout</title><rect x="30" y="504" width="320" height="24" rx="5" class="node role"/><text x="42" y="520">wiki-ingest-agent</text><text x="338" y="520" text-anchor="end" class="secondary">3 skills · 1 conditional</text></g>
+<g class="role-node" data-role="wiki-query-agent" data-display-name="Wiki Query Agent" role="button" tabindex="0" aria-pressed="false" aria-label="Select Wiki Query Agent"><title>Select Wiki Query Agent to isolate its skill loadout</title><rect x="30" y="534" width="320" height="24" rx="5" class="node role"/><text x="42" y="550">wiki-query-agent</text><text x="338" y="550" text-anchor="end" class="secondary">1 skills</text></g>
+<g class="role-node" data-role="wiki-research-agent" data-display-name="Wiki Research Agent" role="button" tabindex="0" aria-pressed="false" aria-label="Select Wiki Research Agent"><title>Select Wiki Research Agent to isolate its skill loadout</title><rect x="30" y="564" width="320" height="24" rx="5" class="node role"/><text x="42" y="580">wiki-research-agent</text><text x="338" y="580" text-anchor="end" class="secondary">2 skills</text></g>
+<g class="role-node" data-role="wiki-setup-agent" data-display-name="Wiki Setup Agent" role="button" tabindex="0" aria-pressed="false" aria-label="Select Wiki Setup Agent"><title>Select Wiki Setup Agent to isolate its skill loadout</title><rect x="30" y="594" width="320" height="24" rx="5" class="node role"/><text x="42" y="610">wiki-setup-agent</text><text x="338" y="610" text-anchor="end" class="secondary">3 skills · 2 conditional</text></g>
+<g class="role-node" data-role="wiki-topic-verifier" data-display-name="Wiki Topic Verifier" role="button" tabindex="0" aria-pressed="false" aria-label="Select Wiki Topic Verifier"><title>Select Wiki Topic Verifier to isolate its skill loadout</title><rect x="30" y="624" width="320" height="24" rx="5" class="node role"/><text x="42" y="640">wiki-topic-verifier</text><text x="338" y="640" text-anchor="end" class="secondary">1 skills</text></g>
+<g class="role-node" data-role="wiki-writer-agent" data-display-name="Wiki Writer Agent" role="button" tabindex="0" aria-pressed="false" aria-label="Select Wiki Writer Agent"><title>Select Wiki Writer Agent to isolate its skill loadout</title><rect x="30" y="654" width="320" height="24" rx="5" class="node role"/><text x="42" y="670">wiki-writer-agent</text><text x="338" y="670" text-anchor="end" class="secondary">3 skills · 1 conditional</text></g>
+<text x="30" y="714" class="group">Development Use</text>
+<g class="role-node" data-role="artifact-review-agent" data-display-name="Artifact Review Agent" role="button" tabindex="0" aria-pressed="false" aria-label="Select Artifact Review Agent"><title>Select Artifact Review Agent to isolate its skill loadout</title><rect x="30" y="726" width="320" height="24" rx="5" class="node role"/><text x="42" y="742">artifact-review-agent</text><text x="338" y="742" text-anchor="end" class="secondary">6 skills · 5 conditional</text></g>
+<g class="role-node" data-role="backlog-steward" data-display-name="Backlog Steward" role="button" tabindex="0" aria-pressed="false" aria-label="Select Backlog Steward"><title>Select Backlog Steward to isolate its skill loadout</title><rect x="30" y="756" width="320" height="24" rx="5" class="node role"/><text x="42" y="772">backlog-steward</text><text x="338" y="772" text-anchor="end" class="secondary">4 skills · 2 conditional</text></g>
+<g class="role-node" data-role="code-review-agent" data-display-name="Code Review Agent" role="button" tabindex="0" aria-pressed="false" aria-label="Select Code Review Agent"><title>Select Code Review Agent to isolate its skill loadout</title><rect x="30" y="786" width="320" height="24" rx="5" class="node role"/><text x="42" y="802">code-review-agent</text><text x="338" y="802" text-anchor="end" class="secondary">4 skills</text></g>
+<g class="role-node" data-role="coding-agent" data-display-name="Coding Agent" role="button" tabindex="0" aria-pressed="false" aria-label="Select Coding Agent"><title>Select Coding Agent to isolate its skill loadout</title><rect x="30" y="816" width="320" height="24" rx="5" class="node role"/><text x="42" y="832">coding-agent</text><text x="338" y="832" text-anchor="end" class="secondary">5 skills · 1 conditional</text></g>
+<g class="role-node" data-role="development-orchestrator" data-display-name="Development Orchestrator" role="button" tabindex="0" aria-pressed="false" aria-label="Select Development Orchestrator"><title>Select Development Orchestrator to isolate its skill loadout</title><rect x="30" y="846" width="320" height="24" rx="5" class="node role"/><text x="42" y="862">development-orchestrator</text><text x="338" y="862" text-anchor="end" class="secondary">6 skills · 1 conditional</text></g>
+<g class="role-node" data-role="documentation-writer" data-display-name="Documentation Writer" role="button" tabindex="0" aria-pressed="false" aria-label="Select Documentation Writer"><title>Select Documentation Writer to isolate its skill loadout</title><rect x="30" y="876" width="320" height="24" rx="5" class="node role"/><text x="42" y="892">documentation-writer</text><text x="338" y="892" text-anchor="end" class="secondary">8 skills · 7 conditional</text></g>
+<g class="role-node" data-role="e2e-browser-agent" data-display-name="E2E Browser Agent" role="button" tabindex="0" aria-pressed="false" aria-label="Select E2E Browser Agent"><title>Select E2E Browser Agent to isolate its skill loadout</title><rect x="30" y="906" width="320" height="24" rx="5" class="node role"/><text x="42" y="922">e2e-browser-agent</text><text x="338" y="922" text-anchor="end" class="secondary">2 skills</text></g>
+<g class="role-node" data-role="merge-coordinator" data-display-name="Merge Coordinator" role="button" tabindex="0" aria-pressed="false" aria-label="Select Merge Coordinator"><title>Select Merge Coordinator to isolate its skill loadout</title><rect x="30" y="936" width="320" height="24" rx="5" class="node role"/><text x="42" y="952">merge-coordinator</text><text x="338" y="952" text-anchor="end" class="secondary">4 skills</text></g>
+<g class="role-node" data-role="prompt-contract-reviewer" data-display-name="Prompt Contract Reviewer" role="button" tabindex="0" aria-pressed="false" aria-label="Select Prompt Contract Reviewer"><title>Select Prompt Contract Reviewer to isolate its skill loadout</title><rect x="30" y="966" width="320" height="24" rx="5" class="node role"/><text x="42" y="982">prompt-contract-reviewer</text><text x="338" y="982" text-anchor="end" class="secondary">2 skills</text></g>
+<g class="role-node" data-role="qa-and-verification-agent" data-display-name="QA And Verification Agent" role="button" tabindex="0" aria-pressed="false" aria-label="Select QA And Verification Agent"><title>Select QA And Verification Agent to isolate its skill loadout</title><rect x="30" y="996" width="320" height="24" rx="5" class="node role"/><text x="42" y="1012">qa-and-verification-agent</text><text x="338" y="1012" text-anchor="end" class="secondary">7 skills · 4 conditional</text></g>
+<g class="role-node" data-role="runtime-diagnostician" data-display-name="Runtime Diagnostician" role="button" tabindex="0" aria-pressed="false" aria-label="Select Runtime Diagnostician"><title>Select Runtime Diagnostician to isolate its skill loadout</title><rect x="30" y="1026" width="320" height="24" rx="5" class="node role"/><text x="42" y="1042">runtime-diagnostician</text><text x="338" y="1042" text-anchor="end" class="secondary">7 skills · 2 conditional</text></g>
+<g class="role-node" data-role="security-reviewer" data-display-name="Security Reviewer" role="button" tabindex="0" aria-pressed="false" aria-label="Select Security Reviewer"><title>Select Security Reviewer to isolate its skill loadout</title><rect x="30" y="1056" width="320" height="24" rx="5" class="node role"/><text x="42" y="1072">security-reviewer</text><text x="338" y="1072" text-anchor="end" class="secondary">3 skills</text></g>
+<g class="role-node" data-role="ux-designer-or-reviewer" data-display-name="UX Designer Or Reviewer" role="button" tabindex="0" aria-pressed="false" aria-label="Select UX Designer Or Reviewer"><title>Select UX Designer Or Reviewer to isolate its skill loadout</title><rect x="30" y="1086" width="320" height="24" rx="5" class="node role"/><text x="42" y="1102">ux-designer-or-reviewer</text><text x="338" y="1102" text-anchor="end" class="secondary">3 skills</text></g>
+<text x="760" y="168" class="group">Wiki And Knowledge</text>
+<g class="skill-node" data-skill="code-project-wiki"><rect x="760" y="180" width="360" height="24" rx="5" class="node skill conditional"/><path d="M 761 185 V 199" class="selection-marker"/><text x="772" y="196">code-project-wiki</text><text x="1108" y="196" text-anchor="end" class="secondary">request-specific</text></g>
+<g class="skill-node" data-skill="project-wiki"><rect x="760" y="210" width="360" height="24" rx="5" class="node skill"/><path d="M 761 215 V 229" class="selection-marker"/><text x="772" y="226">project-wiki</text><text x="1108" y="226" text-anchor="end" class="secondary">fixed</text></g>
+<g class="skill-node" data-skill="project-wiki-query"><rect x="760" y="240" width="360" height="24" rx="5" class="node skill"/><path d="M 761 245 V 259" class="selection-marker"/><text x="772" y="256">project-wiki-query</text><text x="1108" y="256" text-anchor="end" class="secondary">fixed</text></g>
+<g class="skill-node" data-skill="project-wiki-research"><rect x="760" y="270" width="360" height="24" rx="5" class="node skill"/><path d="M 761 275 V 289" class="selection-marker"/><text x="772" y="286">project-wiki-research</text><text x="1108" y="286" text-anchor="end" class="secondary">fixed</text></g>
+<g class="skill-node" data-skill="project-wiki-topic-verifier"><rect x="760" y="300" width="360" height="24" rx="5" class="node skill"/><path d="M 761 305 V 319" class="selection-marker"/><text x="772" y="316">project-wiki-topic-verifier</text><text x="1108" y="316" text-anchor="end" class="secondary">fixed</text></g>
+<g class="skill-node" data-skill="project-wiki-topic-writer"><rect x="760" y="330" width="360" height="24" rx="5" class="node skill"/><path d="M 761 335 V 349" class="selection-marker"/><text x="772" y="346">project-wiki-topic-writer</text><text x="1108" y="346" text-anchor="end" class="secondary">fixed</text></g>
+<text x="760" y="390" class="group">Documentation Methodology</text>
+<g class="skill-node" data-skill="create-agents-plan"><rect x="760" y="402" width="360" height="24" rx="5" class="node skill"/><path d="M 761 407 V 421" class="selection-marker"/><text x="772" y="418">create-agents-plan</text><text x="1108" y="418" text-anchor="end" class="secondary">fixed</text></g>
+<g class="skill-node" data-skill="development-methodology"><rect x="760" y="432" width="360" height="24" rx="5" class="node skill"/><path d="M 761 437 V 451" class="selection-marker"/><text x="772" y="448">development-methodology</text><text x="1108" y="448" text-anchor="end" class="secondary">fixed</text></g>
+<g class="skill-node" data-skill="documentation-bootstrap"><rect x="760" y="462" width="360" height="24" rx="5" class="node skill"/><path d="M 761 467 V 481" class="selection-marker"/><text x="772" y="478">documentation-bootstrap</text><text x="1108" y="478" text-anchor="end" class="secondary">fixed / request-specific</text></g>
+<g class="skill-node" data-skill="documentation-page-verifier"><rect x="760" y="492" width="360" height="24" rx="5" class="node skill"/><path d="M 761 497 V 511" class="selection-marker"/><text x="772" y="508">documentation-page-verifier</text><text x="1108" y="508" text-anchor="end" class="secondary">fixed</text></g>
+<g class="skill-node" data-skill="documentation-reverse-engineering"><rect x="760" y="522" width="360" height="24" rx="5" class="node skill conditional"/><path d="M 761 527 V 541" class="selection-marker"/><text x="772" y="538">documentation-reverse-engineering</text><text x="1108" y="538" text-anchor="end" class="secondary">request-specific</text></g>
+<g class="skill-node" data-skill="maintain-methodology-documentation"><rect x="760" y="552" width="360" height="24" rx="5" class="node skill"/><path d="M 761 557 V 571" class="selection-marker"/><text x="772" y="568">maintain-methodology-documentation</text><text x="1108" y="568" text-anchor="end" class="secondary">fixed</text></g>
+<text x="760" y="612" class="group">Artifact Creation</text>
+<g class="skill-node" data-skill="create-architecture"><rect x="760" y="624" width="360" height="24" rx="5" class="node skill conditional"/><path d="M 761 629 V 643" class="selection-marker"/><text x="772" y="640">create-architecture</text><text x="1108" y="640" text-anchor="end" class="secondary">request-specific</text></g>
+<g class="skill-node" data-skill="create-functional-spec"><rect x="760" y="654" width="360" height="24" rx="5" class="node skill conditional"/><path d="M 761 659 V 673" class="selection-marker"/><text x="772" y="670">create-functional-spec</text><text x="1108" y="670" text-anchor="end" class="secondary">request-specific</text></g>
+<g class="skill-node" data-skill="create-high-level-design"><rect x="760" y="684" width="360" height="24" rx="5" class="node skill conditional"/><path d="M 761 689 V 703" class="selection-marker"/><text x="772" y="700">create-high-level-design</text><text x="1108" y="700" text-anchor="end" class="secondary">request-specific</text></g>
+<g class="skill-node" data-skill="create-module-design"><rect x="760" y="714" width="360" height="24" rx="5" class="node skill conditional"/><path d="M 761 719 V 733" class="selection-marker"/><text x="772" y="730">create-module-design</text><text x="1108" y="730" text-anchor="end" class="secondary">request-specific</text></g>
+<g class="skill-node" data-skill="create-project-wiki"><rect x="760" y="744" width="360" height="24" rx="5" class="node skill conditional"/><path d="M 761 749 V 763" class="selection-marker"/><text x="772" y="760">create-project-wiki</text><text x="1108" y="760" text-anchor="end" class="secondary">request-specific</text></g>
+<g class="skill-node" data-skill="create-unit-test-plan"><rect x="760" y="774" width="360" height="24" rx="5" class="node skill conditional"/><path d="M 761 779 V 793" class="selection-marker"/><text x="772" y="790">create-unit-test-plan</text><text x="1108" y="790" text-anchor="end" class="secondary">request-specific</text></g>
+<text x="760" y="834" class="group">Artifact Review</text>
+<g class="skill-node" data-skill="review-architecture"><rect x="760" y="846" width="360" height="24" rx="5" class="node skill conditional"/><path d="M 761 851 V 865" class="selection-marker"/><text x="772" y="862">review-architecture</text><text x="1108" y="862" text-anchor="end" class="secondary">request-specific</text></g>
+<g class="skill-node" data-skill="review-functional-spec"><rect x="760" y="876" width="360" height="24" rx="5" class="node skill conditional"/><path d="M 761 881 V 895" class="selection-marker"/><text x="772" y="892">review-functional-spec</text><text x="1108" y="892" text-anchor="end" class="secondary">request-specific</text></g>
+<g class="skill-node" data-skill="review-high-level-design"><rect x="760" y="906" width="360" height="24" rx="5" class="node skill conditional"/><path d="M 761 911 V 925" class="selection-marker"/><text x="772" y="922">review-high-level-design</text><text x="1108" y="922" text-anchor="end" class="secondary">request-specific</text></g>
+<g class="skill-node" data-skill="review-module-design"><rect x="760" y="936" width="360" height="24" rx="5" class="node skill conditional"/><path d="M 761 941 V 955" class="selection-marker"/><text x="772" y="952">review-module-design</text><text x="1108" y="952" text-anchor="end" class="secondary">request-specific</text></g>
+<g class="skill-node" data-skill="review-project-wiki"><rect x="760" y="966" width="360" height="24" rx="5" class="node skill"/><path d="M 761 971 V 985" class="selection-marker"/><text x="772" y="982">review-project-wiki</text><text x="1108" y="982" text-anchor="end" class="secondary">fixed</text></g>
+<g class="skill-node" data-skill="review-structured"><rect x="760" y="996" width="360" height="24" rx="5" class="node skill"/><path d="M 761 1001 V 1015" class="selection-marker"/><text x="772" y="1012">review-structured</text><text x="1108" y="1012" text-anchor="end" class="secondary">fixed</text></g>
+<g class="skill-node" data-skill="review-unit-test-plan"><rect x="760" y="1026" width="360" height="24" rx="5" class="node skill conditional"/><path d="M 761 1031 V 1045" class="selection-marker"/><text x="772" y="1042">review-unit-test-plan</text><text x="1108" y="1042" text-anchor="end" class="secondary">request-specific</text></g>
+<text x="760" y="1086" class="group">Development Practice</text>
+<g class="skill-node" data-skill="agent-claim"><rect x="760" y="1098" width="360" height="24" rx="5" class="node skill"/><path d="M 761 1103 V 1117" class="selection-marker"/><text x="772" y="1114">agent-claim</text><text x="1108" y="1114" text-anchor="end" class="secondary">fixed / request-specific</text></g>
+<g class="skill-node" data-skill="agent-work-merge"><rect x="760" y="1128" width="360" height="24" rx="5" class="node skill"/><path d="M 761 1133 V 1147" class="selection-marker"/><text x="772" y="1144">agent-work-merge</text><text x="1108" y="1144" text-anchor="end" class="secondary">fixed / request-specific</text></g>
+<g class="skill-node" data-skill="application-security"><rect x="760" y="1158" width="360" height="24" rx="5" class="node skill"/><path d="M 761 1163 V 1177" class="selection-marker"/><text x="772" y="1174">application-security</text><text x="1108" y="1174" text-anchor="end" class="secondary">fixed</text></g>
+<g class="skill-node" data-skill="ast-grep"><rect x="760" y="1188" width="360" height="24" rx="5" class="node skill"/><path d="M 761 1193 V 1207" class="selection-marker"/><text x="772" y="1204">ast-grep</text><text x="1108" y="1204" text-anchor="end" class="secondary">unassigned</text></g>
+<g class="skill-node" data-skill="careful-coding"><rect x="760" y="1218" width="360" height="24" rx="5" class="node skill"/><path d="M 761 1223 V 1237" class="selection-marker"/><text x="772" y="1234">careful-coding</text><text x="1108" y="1234" text-anchor="end" class="secondary">fixed / request-specific</text></g>
+<g class="skill-node" data-skill="code-comments"><rect x="760" y="1248" width="360" height="24" rx="5" class="node skill"/><path d="M 761 1253 V 1267" class="selection-marker"/><text x="772" y="1264">code-comments</text><text x="1108" y="1264" text-anchor="end" class="secondary">fixed</text></g>
+<g class="skill-node" data-skill="code-discovery"><rect x="760" y="1278" width="360" height="24" rx="5" class="node skill"/><path d="M 761 1283 V 1297" class="selection-marker"/><text x="772" y="1294">code-discovery</text><text x="1108" y="1294" text-anchor="end" class="secondary">fixed</text></g>
+<g class="skill-node" data-skill="code-execution-tracing"><rect x="760" y="1308" width="360" height="24" rx="5" class="node skill"/><path d="M 761 1313 V 1327" class="selection-marker"/><text x="772" y="1324">code-execution-tracing</text><text x="1108" y="1324" text-anchor="end" class="secondary">fixed / request-specific</text></g>
+<g class="skill-node" data-skill="code-review-evidence"><rect x="760" y="1338" width="360" height="24" rx="5" class="node skill"/><path d="M 761 1343 V 1357" class="selection-marker"/><text x="772" y="1354">code-review-evidence</text><text x="1108" y="1354" text-anchor="end" class="secondary">fixed</text></g>
+<g class="skill-node" data-skill="create-backlog"><rect x="760" y="1368" width="360" height="24" rx="5" class="node skill conditional"/><path d="M 761 1373 V 1387" class="selection-marker"/><text x="772" y="1384">create-backlog</text><text x="1108" y="1384" text-anchor="end" class="secondary">request-specific</text></g>
+<g class="skill-node" data-skill="detect-technology-skills"><rect x="760" y="1398" width="360" height="24" rx="5" class="node skill"/><path d="M 761 1403 V 1417" class="selection-marker"/><text x="772" y="1414">detect-technology-skills</text><text x="1108" y="1414" text-anchor="end" class="secondary">fixed</text></g>
+<g class="skill-node" data-skill="end-to-end-verification"><rect x="760" y="1428" width="360" height="24" rx="5" class="node skill"/><path d="M 761 1433 V 1447" class="selection-marker"/><text x="772" y="1444">end-to-end-verification</text><text x="1108" y="1444" text-anchor="end" class="secondary">fixed / request-specific</text></g>
+<g class="skill-node" data-skill="fix-explanation"><rect x="760" y="1458" width="360" height="24" rx="5" class="node skill"/><path d="M 761 1463 V 1477" class="selection-marker"/><text x="772" y="1474">fix-explanation</text><text x="1108" y="1474" text-anchor="end" class="secondary">fixed</text></g>
+<g class="skill-node" data-skill="manage-backlog"><rect x="760" y="1488" width="360" height="24" rx="5" class="node skill"/><path d="M 761 1493 V 1507" class="selection-marker"/><text x="772" y="1504">manage-backlog</text><text x="1108" y="1504" text-anchor="end" class="secondary">fixed</text></g>
+<g class="skill-node" data-skill="prompt-contracts"><rect x="760" y="1518" width="360" height="24" rx="5" class="node skill"/><path d="M 761 1523 V 1537" class="selection-marker"/><text x="772" y="1534">prompt-contracts</text><text x="1108" y="1534" text-anchor="end" class="secondary">fixed</text></g>
+<g class="skill-node" data-skill="root-cause-analysis"><rect x="760" y="1548" width="360" height="24" rx="5" class="node skill"/><path d="M 761 1553 V 1567" class="selection-marker"/><text x="772" y="1564">root-cause-analysis</text><text x="1108" y="1564" text-anchor="end" class="secondary">fixed / request-specific</text></g>
+<g class="skill-node" data-skill="runtime-evidence-collection"><rect x="760" y="1578" width="360" height="24" rx="5" class="node skill conditional"/><path d="M 761 1583 V 1597" class="selection-marker"/><text x="772" y="1594">runtime-evidence-collection</text><text x="1108" y="1594" text-anchor="end" class="secondary">request-specific</text></g>
+<g class="skill-node" data-skill="structured-design"><rect x="760" y="1608" width="360" height="24" rx="5" class="node skill"/><path d="M 761 1613 V 1627" class="selection-marker"/><text x="772" y="1624">structured-design</text><text x="1108" y="1624" text-anchor="end" class="secondary">fixed / request-specific</text></g>
+<g class="skill-node" data-skill="structured-explanation"><rect x="760" y="1638" width="360" height="24" rx="5" class="node skill"/><path d="M 761 1643 V 1657" class="selection-marker"/><text x="772" y="1654">structured-explanation</text><text x="1108" y="1654" text-anchor="end" class="secondary">fixed</text></g>
+<g class="skill-node" data-skill="test-driven-development"><rect x="760" y="1668" width="360" height="24" rx="5" class="node skill conditional"/><path d="M 761 1673 V 1687" class="selection-marker"/><text x="772" y="1684">test-driven-development</text><text x="1108" y="1684" text-anchor="end" class="secondary">request-specific</text></g>
+<g class="skill-node" data-skill="test-strategy"><rect x="760" y="1698" width="360" height="24" rx="5" class="node skill"/><path d="M 761 1703 V 1717" class="selection-marker"/><text x="772" y="1714">test-strategy</text><text x="1108" y="1714" text-anchor="end" class="secondary">fixed</text></g>
+<g class="skill-node" data-skill="user-experience-review"><rect x="760" y="1728" width="360" height="24" rx="5" class="node skill"/><path d="M 761 1733 V 1747" class="selection-marker"/><text x="772" y="1744">user-experience-review</text><text x="1108" y="1744" text-anchor="end" class="secondary">fixed</text></g>
+<text x="760" y="1788" class="group">Stack And Domain</text>
+<g class="skill-node" data-skill="api-routes"><rect x="760" y="1800" width="360" height="24" rx="5" class="node skill technology"/><path d="M 761 1805 V 1819" class="selection-marker"/><text x="772" y="1816">api-routes</text><text x="1108" y="1816" text-anchor="end" class="secondary">setup-time technology</text></g>
+<g class="skill-node" data-skill="clerk-auth"><rect x="760" y="1830" width="360" height="24" rx="5" class="node skill technology"/><path d="M 761 1835 V 1849" class="selection-marker"/><text x="772" y="1846">clerk-auth</text><text x="1108" y="1846" text-anchor="end" class="secondary">setup-time technology</text></g>
+<g class="skill-node" data-skill="electron-main"><rect x="760" y="1860" width="360" height="24" rx="5" class="node skill technology"/><path d="M 761 1865 V 1879" class="selection-marker"/><text x="772" y="1876">electron-main</text><text x="1108" y="1876" text-anchor="end" class="secondary">setup-time technology</text></g>
+<g class="skill-node" data-skill="electron-preload"><rect x="760" y="1890" width="360" height="24" rx="5" class="node skill technology"/><path d="M 761 1895 V 1909" class="selection-marker"/><text x="772" y="1906">electron-preload</text><text x="1108" y="1906" text-anchor="end" class="secondary">setup-time technology</text></g>
+<g class="skill-node" data-skill="fastapi"><rect x="760" y="1920" width="360" height="24" rx="5" class="node skill technology"/><path d="M 761 1925 V 1939" class="selection-marker"/><text x="772" y="1936">fastapi</text><text x="1108" y="1936" text-anchor="end" class="secondary">setup-time technology</text></g>
+<g class="skill-node" data-skill="harness-implementation"><rect x="760" y="1950" width="360" height="24" rx="5" class="node skill technology"/><path d="M 761 1955 V 1969" class="selection-marker"/><text x="772" y="1966">harness-implementation</text><text x="1108" y="1966" text-anchor="end" class="secondary">setup-time domain</text></g>
+<g class="skill-node" data-skill="java-coding"><rect x="760" y="1980" width="360" height="24" rx="5" class="node skill technology"/><path d="M 761 1985 V 1999" class="selection-marker"/><text x="772" y="1996">java-coding</text><text x="1108" y="1996" text-anchor="end" class="secondary">setup-time technology</text></g>
+<g class="skill-node" data-skill="jest"><rect x="760" y="2010" width="360" height="24" rx="5" class="node skill technology"/><path d="M 761 2015 V 2029" class="selection-marker"/><text x="772" y="2026">jest</text><text x="1108" y="2026" text-anchor="end" class="secondary">setup-time technology</text></g>
+<g class="skill-node" data-skill="langgraph"><rect x="760" y="2040" width="360" height="24" rx="5" class="node skill technology"/><path d="M 761 2045 V 2059" class="selection-marker"/><text x="772" y="2056">langgraph</text><text x="1108" y="2056" text-anchor="end" class="secondary">setup-time technology</text></g>
+<g class="skill-node" data-skill="local-model-integration"><rect x="760" y="2070" width="360" height="24" rx="5" class="node skill technology"/><path d="M 761 2075 V 2089" class="selection-marker"/><text x="772" y="2086">local-model-integration</text><text x="1108" y="2086" text-anchor="end" class="secondary">setup-time domain</text></g>
+<g class="skill-node" data-skill="nextjs-app-router"><rect x="760" y="2100" width="360" height="24" rx="5" class="node skill technology"/><path d="M 761 2105 V 2119" class="selection-marker"/><text x="772" y="2116">nextjs-app-router</text><text x="1108" y="2116" text-anchor="end" class="secondary">setup-time technology</text></g>
+<g class="skill-node" data-skill="node-cli"><rect x="760" y="2130" width="360" height="24" rx="5" class="node skill technology"/><path d="M 761 2135 V 2149" class="selection-marker"/><text x="772" y="2146">node-cli</text><text x="1108" y="2146" text-anchor="end" class="secondary">setup-time technology</text></g>
+<g class="skill-node" data-skill="plan-engine-implementation"><rect x="760" y="2160" width="360" height="24" rx="5" class="node skill technology"/><path d="M 761 2165 V 2179" class="selection-marker"/><text x="772" y="2176">plan-engine-implementation</text><text x="1108" y="2176" text-anchor="end" class="secondary">setup-time domain</text></g>
+<g class="skill-node" data-skill="playwright"><rect x="760" y="2190" width="360" height="24" rx="5" class="node skill technology"/><path d="M 761 2195 V 2209" class="selection-marker"/><text x="772" y="2206">playwright</text><text x="1108" y="2206" text-anchor="end" class="secondary">setup-time technology</text></g>
+<g class="skill-node" data-skill="postgres-drizzle"><rect x="760" y="2220" width="360" height="24" rx="5" class="node skill technology"/><path d="M 761 2225 V 2239" class="selection-marker"/><text x="772" y="2236">postgres-drizzle</text><text x="1108" y="2236" text-anchor="end" class="secondary">setup-time technology</text></g>
+<g class="skill-node" data-skill="python-coding"><rect x="760" y="2250" width="360" height="24" rx="5" class="node skill technology"/><path d="M 761 2255 V 2269" class="selection-marker"/><text x="772" y="2266">python-coding</text><text x="1108" y="2266" text-anchor="end" class="secondary">setup-time technology</text></g>
+<g class="skill-node" data-skill="react-server-components"><rect x="760" y="2280" width="360" height="24" rx="5" class="node skill technology"/><path d="M 761 2285 V 2299" class="selection-marker"/><text x="772" y="2296">react-server-components</text><text x="1108" y="2296" text-anchor="end" class="secondary">setup-time technology</text></g>
+<g class="skill-node" data-skill="react-vite-renderer"><rect x="760" y="2310" width="360" height="24" rx="5" class="node skill technology"/><path d="M 761 2315 V 2329" class="selection-marker"/><text x="772" y="2326">react-vite-renderer</text><text x="1108" y="2326" text-anchor="end" class="secondary">setup-time technology</text></g>
+<g class="skill-node" data-skill="spring-boot"><rect x="760" y="2340" width="360" height="24" rx="5" class="node skill technology"/><path d="M 761 2345 V 2359" class="selection-marker"/><text x="772" y="2356">spring-boot</text><text x="1108" y="2356" text-anchor="end" class="secondary">setup-time technology</text></g>
+<g class="skill-node" data-skill="sql-coding"><rect x="760" y="2370" width="360" height="24" rx="5" class="node skill technology"/><path d="M 761 2375 V 2389" class="selection-marker"/><text x="772" y="2386">sql-coding</text><text x="1108" y="2386" text-anchor="end" class="secondary">setup-time technology</text></g>
+<g class="skill-node" data-skill="tailwind-design-system"><rect x="760" y="2400" width="360" height="24" rx="5" class="node skill technology"/><path d="M 761 2405 V 2419" class="selection-marker"/><text x="772" y="2416">tailwind-design-system</text><text x="1108" y="2416" text-anchor="end" class="secondary">setup-time technology</text></g>
+<g class="skill-node" data-skill="tool-runtime-implementation"><rect x="760" y="2430" width="360" height="24" rx="5" class="node skill technology"/><path d="M 761 2435 V 2449" class="selection-marker"/><text x="772" y="2446">tool-runtime-implementation</text><text x="1108" y="2446" text-anchor="end" class="secondary">setup-time domain</text></g>
+<g class="skill-node" data-skill="typescript-coding"><rect x="760" y="2460" width="360" height="24" rx="5" class="node skill technology"/><path d="M 761 2465 V 2479" class="selection-marker"/><text x="772" y="2476">typescript-coding</text><text x="1108" y="2476" text-anchor="end" class="secondary">setup-time technology</text></g>
+<g class="skill-node" data-skill="typescript-esm"><rect x="760" y="2490" width="360" height="24" rx="5" class="node skill technology"/><path d="M 761 2495 V 2509" class="selection-marker"/><text x="772" y="2506">typescript-esm</text><text x="1108" y="2506" text-anchor="end" class="secondary">setup-time technology</text></g>
+<g class="skill-node" data-skill="typescript-strict"><rect x="760" y="2520" width="360" height="24" rx="5" class="node skill technology"/><path d="M 761 2525 V 2539" class="selection-marker"/><text x="772" y="2536">typescript-strict</text><text x="1108" y="2536" text-anchor="end" class="secondary">setup-time technology</text></g>
+<g class="skill-node" data-skill="vitest"><rect x="760" y="2550" width="360" height="24" rx="5" class="node skill technology"/><path d="M 761 2555 V 2569" class="selection-marker"/><text x="772" y="2566">vitest</text><text x="1108" y="2566" text-anchor="end" class="secondary">setup-time technology</text></g>
+<script><![CDATA[
+(function () {
+  const roleNodes = Array.from(document.querySelectorAll(".role-node"));
+  const skillNodes = Array.from(document.querySelectorAll(".skill-node"));
+  const edges = Array.from(document.querySelectorAll(".edge"));
+  const resetControl = document.querySelector(".reset-control");
+  const status = document.getElementById("selection-status");
+  let selectedRole = "";
+
+  function applySelection(roleName) {
+    selectedRole = selectedRole === roleName ? "" : roleName;
+    const activeSkills = new Set(
+      edges
+        .filter((edge) => edge.dataset.role === selectedRole)
+        .map((edge) => edge.dataset.skill)
+    );
+
+    roleNodes.forEach((node) => {
+      const isSelected = node.dataset.role === selectedRole;
+      node.classList.toggle("selected", isSelected);
+      node.classList.toggle("dimmed", Boolean(selectedRole) && !isSelected);
+      node.setAttribute("aria-pressed", String(isSelected));
+    });
+    edges.forEach((edge) => {
+      const isActive = edge.dataset.role === selectedRole;
+      edge.classList.toggle("active", isActive);
+      edge.classList.toggle("dimmed", Boolean(selectedRole) && !isActive);
+    });
+    skillNodes.forEach((node) => {
+      const isActive = activeSkills.has(node.dataset.skill);
+      node.classList.toggle("active", isActive);
+      node.classList.toggle("dimmed", Boolean(selectedRole) && !isActive);
+    });
+
+    const activeNode = roleNodes.find((node) => node.dataset.role === selectedRole);
+    status.textContent = activeNode
+      ? `${activeNode.dataset.displayName}: ${activeSkills.size} linked skills highlighted.`
+      : "All agents and skills shown. Connections are intentionally faint until selection.";
+    resetControl.classList.toggle("disabled", !selectedRole);
+    resetControl.setAttribute("aria-disabled", String(!selectedRole));
+    resetControl.setAttribute("tabindex", selectedRole ? "0" : "-1");
+  }
+
+  roleNodes.forEach((node) => {
+    node.addEventListener("click", () => applySelection(node.dataset.role));
+    node.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        applySelection(node.dataset.role);
+      }
+    });
+  });
+  resetControl.addEventListener("click", () => {
+    if (selectedRole) applySelection("");
+  });
+  resetControl.addEventListener("keydown", (event) => {
+    if (selectedRole && (event.key === "Enter" || event.key === " ")) {
+      event.preventDefault();
+      applySelection("");
+    }
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && selectedRole) applySelection("");
+  });
+})();
+]]></script>
 </svg>

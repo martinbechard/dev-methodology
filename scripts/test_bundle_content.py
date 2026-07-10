@@ -256,6 +256,10 @@ AGENT_ROLE_MAP_REQUIRED_PHRASES = (
     ".tag.conditional-skill",
     ".tag.technology-skill",
     "technology-skill-detection-registry.js",
+    "Interactive Agent And Skill Map",
+    "Select an agent to isolate its fixed and request-specific skills.",
+    '<object class="hierarchy-embed"',
+    "Open the interactive SVG diagram",
 )
 AGENT_DEFINITION_FORMATS_REQUIRED_PHRASES = (
     "Agent Definition Runtime Formats",
@@ -312,6 +316,8 @@ AGENT_ROLE_MAP_FORBIDDEN_PHRASES = (
     "<span class=\"tag role\">",
     "card specialist",
     "tag specialist",
+    "Full Model, Agent, And Skill Hierarchy",
+    '<img src="agent-skill-hierarchy.svg"',
 )
 README_FORBIDDEN_PHRASES = (
     "Copy documentation-methodology.md",

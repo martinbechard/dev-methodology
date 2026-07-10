@@ -398,6 +398,17 @@
       color: var(--color-ink);
     }
 
+    .hierarchy-embed {
+      display: block;
+      width: 100%;
+      height: auto;
+      margin-top: var(--space-4);
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      background: var(--color-panel);
+      box-shadow: var(--shadow-panel);
+    }
+
     @media (max-width: 820px) {
       main {
         padding: var(--space-8) var(--space-4);
@@ -461,10 +472,12 @@
   </section>
 
   <section class="section" aria-labelledby="hierarchy-title">
-    <h2 id="hierarchy-title">Full Model, Agent, And Skill Hierarchy</h2>
-    <p class="note">Canonical roles request semantic model profiles. Runtime adapters resolve those profiles to concrete models, and each role loads its bounded skill set. Detailed coding and review-evidence rules remain in the applicable skills.</p>
-    <p><a href="agent-skill-hierarchy.svg">Open the full SVG diagram</a></p>
-    <img src="agent-skill-hierarchy.svg" alt="Full hierarchy connecting model profiles to canonical agents and bundled skills" style="display:block;width:100%;height:auto;" />
+    <h2 id="hierarchy-title">Interactive Agent And Skill Map</h2>
+    <p class="note">Select an agent to isolate its fixed and request-specific skills. Stack and domain skills appear separately at the bottom because project setup assigns them to folders rather than canonical roles.</p>
+    <p><a href="agent-skill-hierarchy.svg">Open the interactive SVG diagram</a></p>
+    <object class="hierarchy-embed" data="agent-skill-hierarchy.svg" type="image/svg+xml" aria-label="Interactive hierarchy connecting canonical agents to bundled skills">
+      <a href="agent-skill-hierarchy.svg">Open the interactive agent and skill map</a>
+    </object>
   </section>
 
   <section class="section" aria-labelledby="roles-title">
