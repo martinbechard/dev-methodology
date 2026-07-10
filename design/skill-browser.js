@@ -2,6 +2,7 @@
   "use strict";
 
   const DATA_GLOBAL_NAME = "DEV_METHODOLOGY_SKILL_DEFINITIONS";
+  const ENHANCE_SKILL_DEFINITIONS_EVENT = "dev-methodology:enhance-skill-definitions";
   const EMPTY_INDEX = 0;
   const NEXT_INDEX = 1;
   const KEY_ENTER = "Enter";
@@ -351,12 +352,12 @@
     }
   }
 
-  function enhanceSkillBadges() {
+  function enhanceSkillBadges(root = document) {
     const skills = skillData().skills || {};
-    document.querySelectorAll(".tag").forEach((tag) => {
-      const skillName = (tag.textContent || "").trim();
+    root.querySelectorAll(".tag, [data-skill-definition]").forEach((tag) => {
+      const skillName = tag.dataset.skillDefinition || (tag.textContent || "").trim();
       const skill = skills[skillName];
-      if (!skill || tag.dataset.skillDefinition) {
+      if (!skill || tag.classList.contains("skill-definition-trigger")) {
         return;
       }
 
@@ -381,6 +382,11 @@
     injectStyle();
     ensureModal();
     enhanceSkillBadges();
+    document.addEventListener(ENHANCE_SKILL_DEFINITIONS_EVENT, (event) => {
+      if (event.detail instanceof Element) {
+        enhanceSkillBadges(event.detail);
+      }
+    });
   }
 
   if (document.readyState === DOM_READY_STATE_LOADING) {

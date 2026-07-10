@@ -2,6 +2,7 @@
   "use strict";
 
   const DATA_GLOBAL_NAME = "DEV_METHODOLOGY_ROLE_DEFINITIONS";
+  const ENHANCE_SKILL_DEFINITIONS_EVENT = "dev-methodology:enhance-skill-definitions";
   const DEFINITION_SELECTOR = "[data-agent-definition]";
   const EDITOR_QUERY_PARAMETER = "editor";
   const REPOSITORY_ROOT_QUERY_PARAMETER = "repoRoot";
@@ -419,7 +420,11 @@
       trigger.addEventListener("click", closeModal);
     });
     document.addEventListener("keydown", (event) => {
-      if (!modal.hidden && event.key === KEY_ESCAPE) {
+      if (
+        !modal.hidden &&
+        !document.querySelector(".skill-modal:not([hidden])") &&
+        event.key === KEY_ESCAPE
+      ) {
         closeModal();
       }
     });
@@ -427,11 +432,14 @@
     return modalElements;
   }
 
-  function renderTags(container, values, modifier = "") {
+  function renderTags(container, values, modifier = "", areSkillDefinitions = false) {
     container.replaceChildren();
     values.forEach((value) => {
       const tag = document.createElement("span");
-      tag.className = `agent-modal__tag${modifier}`;
+      tag.className = `agent-modal__tag tag${modifier}`;
+      if (areSkillDefinitions) {
+        tag.dataset.skillDefinition = value;
+      }
       tag.textContent = value;
       container.appendChild(tag);
     });
@@ -476,8 +484,11 @@
     elements.source.textContent = role.sourcePath;
     elements.description.textContent = role.description || "";
     elements.instructions.textContent = role.instructions || "";
-    renderTags(elements.skills, role.skills || []);
+    renderTags(elements.skills, role.skills || [], "", true);
     renderTags(elements.outputs, role.outputs || [], " agent-modal__tag--output");
+    document.dispatchEvent(
+      new CustomEvent(ENHANCE_SKILL_DEFINITIONS_EVENT, { detail: elements.skills }),
+    );
     const examples = Array.isArray(role.examples) ? role.examples : [];
     elements.examplesSection.hidden = examples.length === 0;
     renderExamples(elements.examples, examples);
