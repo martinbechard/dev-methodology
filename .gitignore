@@ -1,0 +1,6 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+.agents/agent-claims.json
+.codex/
+.obsidian/
