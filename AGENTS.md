@@ -89,6 +89,7 @@ For skill or bundle changes, run:
 ```bash
 python3 scripts/validate-agent-skills.py skills
 python3 scripts/build-skill-docs.py --check
+python3 scripts/build-support-checklist.py --check
 python3 -m unittest discover scripts
 PYTHONPATH=skills/project-wiki/scripts python3 -m unittest discover skills/project-wiki/scripts
 python3 scripts/refresh-shared-skills.py

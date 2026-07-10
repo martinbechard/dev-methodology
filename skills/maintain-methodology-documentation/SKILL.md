@@ -26,6 +26,7 @@ Keep canonical sources, generated outputs, documentation, installers, and tests 
 python3 scripts/openai_metadata.py skills
 python3 scripts/build-skill-docs.py
 python3 scripts/build-skill-docs.py --check
+python3 scripts/build-support-checklist.py --check
 python3 scripts/validate-agent-skills.py skills
 python3 -m unittest discover scripts
 PYTHONPATH=skills/project-wiki/scripts python3 -m unittest discover skills/project-wiki/scripts

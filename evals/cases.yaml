@@ -6,6 +6,8 @@ cases:
     task: TASK.md
     install: npm install
     verify: npm test
+    requiredAgents:
+      - coding-agent
     requiredSkills:
       - careful-coding
       - test-driven-development
@@ -24,6 +26,8 @@ cases:
     task: TASK.md
     install: mvn -q -DskipTests package
     verify: mvn -q test
+    requiredAgents:
+      - coding-agent
     requiredSkills:
       - careful-coding
       - test-driven-development
@@ -44,6 +48,8 @@ cases:
     install: npm install
     verify: npm test
     expectVerifyFailure: true
+    requiredAgents:
+      - code-review-agent
     requiredSkills:
       - code-review-evidence
       - review-structured

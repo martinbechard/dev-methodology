@@ -62,6 +62,12 @@ The generated [agent and skill hierarchy](design/agent-skill-hierarchy.svg) show
 python3 scripts/build-agent-skill-hierarchy.py
 ```
 
+The generated [agent, skill, technology, and test coverage checklist](design/agent-skill-test-coverage-checklist.md) inventories every canonical agent and bundled skill, groups the stack skills by supported technology, and distinguishes structural validation from direct live behavior evaluation. Regenerate it with:
+
+```bash
+python3 scripts/build-support-checklist.py
+```
+
 Role cards, scenario examples, skill inventories, loadout tables, and runtime definitions are generated from canonical data rather than maintained independently in HTML. Canonical role examples show a scenario purpose, invocation, and plausible response. Role YAML stores skillComments and outputComments as explicit maps keyed by their skill and output identifiers; the generated role modal displays those rationales with the enlarged pills, and native adapters render them as comments. The generator rejects canonical roles that reference missing skill IDs.
 
 Use maintain-methodology-documentation when changing skills, roles, categories, adapters, or design pages. That skill owns the canonical-source update, regeneration, stale-output check, validation, and diff-review workflow.

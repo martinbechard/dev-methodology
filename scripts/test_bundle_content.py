@@ -23,6 +23,7 @@ ADAPTER_MODEL_PROFILE_PATHS = {
     "claude": REPOSITORY_ROOT / "adapters" / "claude" / "model-profiles.yaml",
 }
 ROLE_DEFINITIONS_PATH = REPOSITORY_ROOT / "design" / "generated" / "role-definitions.js"
+SUPPORT_CHECKLIST_PATH = REPOSITORY_ROOT / "design" / "agent-skill-test-coverage-checklist.md"
 AGENT_BROWSER_PATH = REPOSITORY_ROOT / "design" / "agent-browser.js"
 GENERATED_ADAPTERS_ROOT = REPOSITORY_ROOT / "generated" / "adapters"
 BUILD_SKILL_DOCS_PATH = REPOSITORY_ROOT / "scripts" / "build-skill-docs.py"
@@ -161,6 +162,7 @@ README_REQUIRED_PHRASES = (
     "review-checklist-[review-target].md",
     "artifact-name.review-checklist-[review-target].md",
     "python3 scripts/build-skill-docs.py",
+    "python3 scripts/build-support-checklist.py",
     "design/generated/skill-definitions.js",
     "design/generated/role-definitions.js",
     "design/skill-categories.yaml",
@@ -327,6 +329,16 @@ def load_yaml_object(path: Path) -> dict[str, object]:
     parsed = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(parsed, dict):
         raise AssertionError(f"Expected YAML object in {path}")
+    return parsed
+
+
+def load_yaml_object_from_frontmatter(path: Path) -> dict[str, object]:
+    parts = path.read_text(encoding="utf-8").split("---", maxsplit=2)
+    if len(parts) != 3:
+        raise AssertionError(f"Expected YAML frontmatter in {path}")
+    parsed = yaml.safe_load(parts[1])
+    if not isinstance(parsed, dict):
+        raise AssertionError(f"Expected YAML frontmatter object in {path}")
     return parsed
 
 
@@ -644,6 +656,19 @@ class BundleContentTests(unittest.TestCase):
         self.assertTrue(review_case["expectVerifyFailure"])
         self.assertIn("code-review-evidence", review_case["requiredSkills"])
         self.assertEqual(3, len(review_case["requiredFindings"]))
+
+    def test_support_checklist_covers_every_agent_and_skill(self) -> None:
+        checklist = SUPPORT_CHECKLIST_PATH.read_text(encoding="utf-8")
+
+        for role_path in sorted((REPOSITORY_ROOT / "agents" / "roles").glob("*/*.role.yaml")):
+            role = load_yaml_object(role_path)
+            with self.subTest(agent=role["name"]):
+                self.assertIn(f"| {role['name']} |", checklist)
+
+        for skill_path in sorted(SKILLS_ROOT.glob("*/SKILL.md")):
+            skill_name = load_yaml_object_from_frontmatter(skill_path)["name"]
+            with self.subTest(skill=skill_name):
+                self.assertIn(f"- [x] {skill_name} — structural;", checklist)
 
 
     def test_readme_points_to_skill_based_setup(self) -> None:
