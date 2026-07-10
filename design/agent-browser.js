@@ -228,13 +228,6 @@
       line-height: 1.38;
     }
 
-    .agent-modal__pill-condition {
-      color: #6d28d9;
-      font-size: 0.84rem;
-      font-weight: 650;
-      line-height: 1.38;
-    }
-
     .agent-modal__scenario-grid {
       display: grid;
       gap: 0.75rem;
@@ -505,12 +498,6 @@
         detail.className = "agent-modal__pill-comment";
         detail.textContent = comment;
         pill.appendChild(detail);
-      }
-      if (condition) {
-        const conditionDetail = document.createElement("span");
-        conditionDetail.className = "agent-modal__pill-condition";
-        conditionDetail.textContent = `Condition: ${condition}.`;
-        pill.appendChild(conditionDetail);
       }
       container.appendChild(pill);
     });

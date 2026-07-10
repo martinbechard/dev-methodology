@@ -938,13 +938,13 @@ class BundleContentTests(unittest.TestCase):
             "outputPurposes",
             "agent-modal__pill-comment",
             "agent-modal__pill--conditional",
-            "agent-modal__pill-condition",
             "runtimeInvocations",
             "agent-modal__runtime-select",
         ):
             with self.subTest(agent_browser_phrase=phrase):
                 self.assertIn(phrase, agent_browser_text)
         self.assertIn(".agent-modal__yaml code {\n", agent_browser_text)
+        self.assertNotIn("Condition:", agent_browser_text)
 
         skill_browser_text = (REPOSITORY_ROOT / "design" / "skill-browser.js").read_text(encoding="utf-8")
         self.assertIn("enhance-skill-definitions", skill_browser_text)
