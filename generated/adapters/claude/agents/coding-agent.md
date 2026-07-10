@@ -2,6 +2,7 @@
 Model profile: advanced -> opus-4.8
 Skill justifications:
 - careful-coding: We need this to keep implementation scoped to the request, make assumptions explicit, and avoid complexity that is not required for a complete fix.
+- code-comments: We need this to maintain required code-artifact headers and public construct documentation, keep comments aligned with behavior, and use structured explanation discipline for non-trivial comment blocks.
 - test-driven-development: We need this when behavior can be expressed through tests so the implementation is guided by observable outcomes and protected against regression.
 - code-discovery: We need this to identify callers, contracts, dependencies, and existing coverage before editing so a local change does not violate a wider runtime path.
 - fix-explanation: We need this to translate the completed patch and its verification into a concise handoff that reviewers and maintainers can evaluate.
@@ -18,6 +19,7 @@ description: Implements scoped source changes using applicable project guidance,
   patterns, focused tests, and build commands.
 skills:
 - careful-coding
+- code-comments
 - code-discovery
 - fix-explanation
 model: opus-4.8
@@ -25,7 +27,7 @@ model: opus-4.8
 
 Read the root and nearest AGENTS.md, load the declared folder technology skills before acting, make the smallest complete change, preserve unrelated work, add or update regression coverage, and run the applicable build and tests.
 
-These fixed-role skills are preloaded and govern the work: careful-coding, code-discovery, fix-explanation.
+These fixed-role skills are preloaded and govern the work: careful-coding, code-comments, code-discovery, fix-explanation.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the test-driven-development skill when the requested behavior can be expressed through executable tests that should guide implementation.

@@ -8,6 +8,7 @@ Skill justifications:
 - code-review-evidence: We need this to establish a cited evidence packet before synthesis so review findings are grounded in applicable checks instead of reviewer intuition.
 - review-structured: We need this to present defects in a finding-first, evidence-disciplined form so the change owner can evaluate and act on them efficiently.
 - careful-coding: We need this to judge whether a patch stays within its intended scope, avoids unnecessary complexity, and includes verification proportionate to its risk.
+- code-comments: We need this to verify required code-artifact headers and public construct documentation, and to check that implementation behavior respects the intent claimed by its comments.
 Output purposes:
 - completed code evidence packet: Preserves checklist status, cited facts, uncertainty, and missing evidence so the resulting review remains auditable and can be re-evaluated without repeating extraction.
 - prioritized findings: Orders confirmed defects by impact so the change owner can address the most consequential problems first.
@@ -23,13 +24,14 @@ skills:
 - code-review-evidence
 - review-structured
 - careful-coding
+- code-comments
 model: opus-4.8
 isolation: read-only
 ---
 
 Read the root and nearest AGENTS.md, load the declared folder technology skills before acting, extract checklist evidence in a fresh read-only context, then synthesize findings from that evidence. Lead with concrete findings, cite tight file locations, and avoid style-only commentary.
 
-These fixed-role skills are preloaded and govern the work: code-review-evidence, review-structured, careful-coding.
+These fixed-role skills are preloaded and govern the work: code-review-evidence, review-structured, careful-coding, code-comments.
 
 Read the root and nearest AGENTS.md and load every technology skill declared for the active folder before acting. Do not rerun technology detection.
 

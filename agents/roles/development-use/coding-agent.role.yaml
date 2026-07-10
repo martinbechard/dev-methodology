@@ -36,6 +36,10 @@ skills:
 - careful-coding:
     justification: We need this to keep implementation scoped to the request, make assumptions
       explicit, and avoid complexity that is not required for a complete fix.
+- code-comments:
+    justification: We need this to maintain required code-artifact headers and public construct
+      documentation, keep comments aligned with behavior, and use structured explanation
+      discipline for non-trivial comment blocks.
 - test-driven-development:
     justification: We need this when behavior can be expressed through tests so the
       implementation is guided by observable outcomes and protected against regression.

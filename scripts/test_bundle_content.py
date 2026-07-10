@@ -1,3 +1,7 @@
+# Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+# AI attribution: Modified with AI assistance.
+# Summary: Verifies the distributable methodology bundle, generated artifacts, roles, and documentation contracts.
+
 from __future__ import annotations
 
 import importlib.util
@@ -54,6 +58,7 @@ NEW_DEVELOPMENT_SKILLS = (
     "application-security",
     "user-experience-review",
     "prompt-contracts",
+    "code-comments",
     "code-review-evidence",
     "test-driven-development",
     "code-execution-tracing",
@@ -209,6 +214,7 @@ README_REQUIRED_PHRASES = (
     "three-way discrepancy analysis",
     "A skill entry with a condition is request-specific",
     "repoRoot query parameter",
+    "Code Comments is a fixed skill for Coding Agent and Code Review Agent.",
 )
 DEVELOPMENT_METHODOLOGY_REQUIRED_PHRASES = (
     "When a skill or role was renamed or deleted",
@@ -447,6 +453,55 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(skill_name=skill_name):
                 self.assertTrue((SKILLS_ROOT / skill_name / "SKILL.md").is_file())
                 self.assertTrue(openai_metadata_path(skill_name).is_file())
+
+    def test_code_comments_is_a_core_coding_and_review_contract(self) -> None:
+        skill_root = SKILLS_ROOT / "code-comments"
+        skill_text = (skill_root / "SKILL.md").read_text(encoding="utf-8")
+        checklist_text = (
+            skill_root / "references" / "review-checklist-code-comments.md"
+        ).read_text(encoding="utf-8")
+
+        for phrase in (
+            "Mandatory Code Artifact Header",
+            "Do not require code headers in configuration",
+            "load structured-explanation",
+            "copyright statement defined by the applicable root, nearest, or global AGENTS.md",
+            "accurate AI attribution",
+            "AI attribution: Generated with AI assistance.",
+            "public or exported construct",
+            "valid values",
+            "Observable side effects",
+            "verify the implementation against it",
+        ):
+            with self.subTest(skill_phrase=phrase):
+                self.assertIn(phrase, skill_text)
+
+        for phrase in (
+            "applicable AGENTS.md exactly",
+            "generated with AI assistance",
+            "public or exported construct",
+            "respect the intent claimed by its comments",
+        ):
+            with self.subTest(checklist_phrase=phrase):
+                self.assertIn(phrase, checklist_text)
+
+        for role_name in ("coding-agent", "code-review-agent"):
+            role_path = (
+                REPOSITORY_ROOT
+                / "agents"
+                / "roles"
+                / "development-use"
+                / f"{role_name}.role.yaml"
+            )
+            role_source = load_yaml_object(role_path)
+            code_comments_entries = [
+                entry["code-comments"]
+                for entry in role_source["skills"]
+                if "code-comments" in entry
+            ]
+            with self.subTest(role_name=role_name):
+                self.assertEqual(1, len(code_comments_entries))
+                self.assertEqual({"justification"}, set(code_comments_entries[0]))
 
     def test_artifact_creation_skills_route_to_templates_and_reviews(self) -> None:
         development_methodology_text = (
@@ -911,6 +966,9 @@ class BundleContentTests(unittest.TestCase):
 
         self.assertIn("typescript-order-pricing", by_id)
         self.assertIn("spring-boot-order-cancellation", by_id)
+        for case in by_id.values():
+            with self.subTest(code_comments_case=case["id"]):
+                self.assertIn("code-comments", case["requiredSkills"])
         review_case = by_id["typescript-code-review"]
         self.assertTrue(review_case["expectVerifyFailure"])
         self.assertIn("code-review-evidence", review_case["requiredSkills"])

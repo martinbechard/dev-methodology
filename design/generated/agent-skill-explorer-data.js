@@ -66,6 +66,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "kind": "fixed",
       "role": "code-review-agent",
+      "skill": "code-comments"
+    },
+    {
+      "kind": "fixed",
+      "role": "code-review-agent",
       "skill": "code-review-evidence"
     },
     {
@@ -83,6 +88,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "fixed",
       "role": "coding-agent",
       "skill": "careful-coding"
+    },
+    {
+      "kind": "fixed",
+      "role": "coding-agent",
+      "skill": "code-comments"
     },
     {
       "kind": "fixed",
@@ -514,7 +524,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
   ],
   "evidenceStatus": {
     "declaredAgentCount": 2,
-    "declaredSkillCount": 10,
+    "declaredSkillCount": 11,
     "verifiedAgentCount": 0,
     "verifiedSkillCount": 0
   },
@@ -565,7 +575,8 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "fixedSkills": [
         "code-review-evidence",
         "review-structured",
-        "careful-coding"
+        "careful-coding",
+        "code-comments"
       ],
       "id": "code-review-agent",
       "label": "code-review-agent",
@@ -584,6 +595,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "dynamicFolderSkills": true,
       "fixedSkills": [
         "careful-coding",
+        "code-comments",
         "code-discovery",
         "fix-explanation"
       ],
@@ -1054,6 +1066,17 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "skill": "clerk-auth"
       },
       "id": "clerk-auth",
+      "verifiedCases": []
+    },
+    {
+      "category": "development-practice",
+      "declaredCases": [
+        "typescript-order-pricing",
+        "spring-boot-order-cancellation",
+        "typescript-code-review"
+      ],
+      "detection": null,
+      "id": "code-comments",
       "verifiedCases": []
     },
     {

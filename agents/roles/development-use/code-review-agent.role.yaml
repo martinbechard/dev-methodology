@@ -48,6 +48,10 @@ skills:
 - careful-coding:
     justification: We need this to judge whether a patch stays within its intended scope,
       avoids unnecessary complexity, and includes verification proportionate to its risk.
+- code-comments:
+    justification: We need this to verify required code-artifact headers and public construct
+      documentation, and to check that implementation behavior respects the intent claimed
+      by its comments.
 isolation: read-only
 outputContract:
 - completed code evidence packet:

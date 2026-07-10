@@ -246,6 +246,7 @@ The development practice skills are:
 - user-experience-review
 - prompt-contracts
 - careful-coding
+- code-comments
 - create-backlog
 - manage-backlog
 - fix-explanation
@@ -300,6 +301,8 @@ Every review skill uses a reference checklist named review-checklist-[review-tar
 Review checklists are evidence-capture templates. Each checklist question requires status, the objective question, quoted evidence from the artifact or source material, and an assessment grounded in that quote.
 
 Code review follows the same evidence philosophy without one massive universal review skill. The Code Review Agent reads the root and nearest AGENTS.md, loads every fixed-role skill and folder technology skill declared for the review scope, completes the applicable focused evidence checklists, and then synthesizes findings from the evidence packet. It does not rerun technology detection. Stage declarations do not prove staged execution; verification requires captured worker and synthesis invocations.
+
+Code Comments is a fixed skill for Coding Agent and Code Review Agent. It governs mandatory headers for code artifacts, public construct documentation, concise rationale comments, and review evidence that checks implementation behavior against documented intent. Non-trivial comment blocks use Structured Explanation discipline. Configuration and other non-code files are outside the mandatory header rule.
 
 When a review skill runs, it saves a completed review checklist next to the reviewed artifact using this form: artifact-name.review-checklist-[review-target].md. For example, a coding review of test.ts saves test.ts.review-checklist-coding.md.
 

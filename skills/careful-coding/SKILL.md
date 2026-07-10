@@ -54,8 +54,6 @@ Every changed line must trace directly to the user's request.
 
 Handle errors at the boundary that owns recovery, translation, retry, or user communication. Preserve useful causes and do not swallow failures to make a test or command appear successful.
 
-Keep comments for intent, constraints, invariants, and non-obvious trade-offs. Remove comments made false or redundant by the current change, but do not rewrite unrelated commentary.
-
 ## Goal-Driven Execution
 
 Define success criteria and loop until verified.
