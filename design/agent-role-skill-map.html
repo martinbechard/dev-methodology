@@ -608,6 +608,14 @@
       description.textContent = role.description;
       card.appendChild(description);
 
+      const definitionButton = document.createElement("button");
+      definitionButton.type = "button";
+      definitionButton.className = "agent-definition-button";
+      definitionButton.dataset.agentDefinition = role.name;
+      definitionButton.setAttribute("aria-haspopup", "dialog");
+      definitionButton.textContent = "View definition";
+      card.appendChild(definitionButton);
+
       const details = document.createElement("div");
       details.className = "loadout-details";
       details.appendChild(createTagGroup("Skills", role.skills, "skill"));
@@ -656,6 +664,7 @@
     renderRoleCatalog();
     renderSkillCatalog();
   </script>
+  <script src="agent-browser.js"></script>
   <script src="skill-browser.js"></script>
 </body>
 </html>

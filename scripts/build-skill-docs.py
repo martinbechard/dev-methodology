@@ -134,6 +134,7 @@ class RoleDefinition:
     group: str
     group_label: str
     source_path: str
+    yaml: str
     optional_fields: dict[str, object]
 
 
@@ -459,6 +460,7 @@ def load_role_definition(
         group=group,
         group_label=ROLE_GROUP_LABELS[group],
         source_path=str(source_path.relative_to(REPOSITORY_ROOT)),
+        yaml=source_path.read_text(encoding="utf-8"),
         optional_fields=optional_fields,
     )
 
@@ -538,6 +540,7 @@ def build_role_payload(roles: Sequence[RoleDefinition]) -> dict[str, object]:
                 "group": role.group,
                 "groupLabel": role.group_label,
                 "sourcePath": role.source_path,
+                "yaml": role.yaml,
                 **role.optional_fields,
             }
             for role in roles

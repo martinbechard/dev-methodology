@@ -18,6 +18,7 @@ SKILL_CATEGORIES_PATH = REPOSITORY_ROOT / "design" / "skill-categories.yaml"
 SKILL_DEFINITIONS_PATH = REPOSITORY_ROOT / "design" / "generated" / "skill-definitions.js"
 ROLE_SCHEMA_PATH = REPOSITORY_ROOT / "agents" / "role-schema.yaml"
 ROLE_DEFINITIONS_PATH = REPOSITORY_ROOT / "design" / "generated" / "role-definitions.js"
+AGENT_BROWSER_PATH = REPOSITORY_ROOT / "design" / "agent-browser.js"
 GENERATED_ADAPTERS_ROOT = REPOSITORY_ROOT / "generated" / "adapters"
 BUILD_SKILL_DOCS_PATH = REPOSITORY_ROOT / "scripts" / "build-skill-docs.py"
 BUILD_SKILL_DOCS_MODULE_NAME = "build_skill_docs"
@@ -171,7 +172,9 @@ AGENT_ROLE_MAP_REQUIRED_PHRASES = (
     "loadout-details",
     "generated/skill-definitions.js",
     "generated/role-definitions.js",
+    "agent-browser.js",
     "skill-browser.js",
+    "View definition",
     "agent-grid",
     "grid-template-columns: repeat(3, minmax(0, 1fr));",
     "Skills",
@@ -507,9 +510,15 @@ class BundleContentTests(unittest.TestCase):
                 self.assertEqual(expected_content, output_path.read_text(encoding="utf-8"))
 
         skill_names = set(skill_payload["skills"])
+        role_payload = build_skill_docs.build_role_payload(roles)
         for role in roles:
             with self.subTest(role=role.name):
                 self.assertTrue(set(role.skills).issubset(skill_names))
+                self.assertEqual(
+                    (REPOSITORY_ROOT / role.source_path).read_text(encoding="utf-8"),
+                    role.yaml,
+                )
+                self.assertEqual(role.yaml, role_payload["roles"][role.name]["yaml"])
                 codex_agent_path = (
                     GENERATED_ADAPTERS_ROOT / "codex" / "agents" / f"{role.filename}.toml"
                 )
@@ -585,6 +594,18 @@ class BundleContentTests(unittest.TestCase):
         for phrase in AGENT_ROLE_MAP_FORBIDDEN_PHRASES:
             with self.subTest(phrase=phrase):
                 self.assertNotIn(phrase, role_map_text)
+
+        agent_browser_text = AGENT_BROWSER_PATH.read_text(encoding="utf-8")
+        for phrase in (
+            "DEV_METHODOLOGY_ROLE_DEFINITIONS",
+            "data-agent-definition",
+            "agent-modal",
+            "role.yaml",
+            "repoRoot",
+            "Escape",
+        ):
+            with self.subTest(agent_browser_phrase=phrase):
+                self.assertIn(phrase, agent_browser_text)
 
     def test_agent_definition_formats_document_runtime_adapters(self) -> None:
         index_text = (REPOSITORY_ROOT / "index.html").read_text(encoding="utf-8")
