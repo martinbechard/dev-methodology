@@ -1,0 +1,81 @@
+# Procedure: Creating Usage Scenarios
+
+## Purpose and Scope
+
+This document defines the process for creating usage scenarios that illustrate how building blocks work in realistic contexts. Usage scenarios help validate requirements and provide clear examples for implementation.
+
+## Process
+
+**RULE:** Begin by inventorying all core responsibilities and key behaviors from the specification that need to be illustrated.
+- **BECAUSE:** This ensures complete coverage of all requirements.
+  - **BECAUSE:** Missing responsibilities or behaviors would leave gaps in validating the requirements.
+
+**RULE:** Plan a set of coherent scenarios that collectively cover all core responsibilities and key behaviors.
+- **BECAUSE:** Strategic planning ensures efficient coverage with the minimum number of scenarios.
+  - **BECAUSE:** Proper grouping of related responsibilities and behaviors creates more realistic and meaningful scenarios.
+
+**RULE:** For each scenario, select 2-3 core responsibilities and 2-3 key behaviors from the specification that work naturally together.
+- **BECAUSE:** This focuses the scenario on demonstrating the most important functionality.
+  - **BECAUSE:** Covering too many responsibilities or behaviors in one scenario would make it overly complex and harder to understand.
+
+**RULE:** Create the scenario document following the exact structure in the usage-scenario-template.md.
+- **BECAUSE:** Consistent structure ensures all scenarios are formatted similarly for easy comprehension.
+  - **BECAUSE:** Standardized formats reduce cognitive load when reviewing multiple scenarios.
+
+**RULE:** Name the scenario file following the pattern: `<building-block>-<scenario-focus>.md`.
+- **BECAUSE:** Consistent naming makes it easy to identify and locate specific scenarios.
+  - **BECAUSE:** The name should clearly indicate which building block and functionality the scenario covers.
+
+**RULE:** Create a mermaid sequence diagram showing the interaction flow with steps clearly numbered (1, 2, 3, etc.).
+- **BECAUSE:** The diagram visually represents the flow of the scenario for easier understanding.
+  - **BECAUSE:** Numbering steps creates reference points that can be used in the step-by-step breakdown.
+
+**RULE:** Add explicit note blocks in the diagram highlighting the core responsibilities and key behaviors.
+- **BECAUSE:** This directly connects the scenario to the specification requirements.
+  - **BECAUSE:** Notes make it clear which parts of the diagram demonstrate which responsibilities and behaviors.
+
+**RULE:** In the step-by-step breakdown, use matching hierarchical numbering (1, 2, 3, etc.) that corresponds to the sequence diagram steps.
+- **BECAUSE:** This creates clear correlation between the diagram and detailed explanations.
+  - **BECAUSE:** Readers can easily find the detailed explanation for any step they see in the diagram.
+
+**RULE:** For each mermaid diagram, create an artifact
+- **BECAUSE:** it's easier to visualize the mermaid diagram on its own
+
+**RULE:** For each step, provide realistic example input/output data in JSON format.
+- **BECAUSE:** Example data makes the abstract concepts concrete and implementable.
+  - **BECAUSE:** JSON format is standardized and easily understandable by developers.
+
+**RULE:** Include detailed processing descriptions for each step that explain exactly what happens.
+- **BECAUSE:** Clear descriptions ensure the scenario is fully understood.
+  - **BECAUSE:** Processing details reveal the internal logic that isn't visible in the diagram.
+
+**RULE:** Only use components, terms, and behaviors explicitly mentioned in the specification document.
+- **BECAUSE:** This maintains consistency with the specification.
+  - **BECAUSE:** Introducing new concepts could create confusion or scope creep.
+
+**RULE:** Add a link back to the original specification document using the format `[[/requirements/component-name-specification.md]]`.
+- **BECAUSE:** This creates bidirectional traceability.
+  - **BECAUSE:** Readers can easily navigate between the specification and its related scenarios.
+
+**RULE:** Each scenario needs to be approved by the user
+- **BECAUSE:** There can be misunderstanding of the user's
+
+**RULE:** After the scenario is approved, update the original specification document with a link to the new scenario.
+- **BECAUSE:** This completes the traceability between requirements and scenarios.
+  - **BECAUSE:** It ensures anyone reading the specification can find all related scenarios.
+
+## Example
+
+See the [Access Control Service Node Permission Inheritance scenario](/scenarios/access-control-service-node-permission-inheritance.md) for an example that follows this procedure.
+
+## Copyright and License
+
+Copyright (c) 2024 Martin Bechard [martin.bechard@DevConsult.ca](mailto:martin.bechard@DevConsult.ca)
+
+This software is licensed under the MIT License.
+
+File path: procedures/procedure-creating-usage-scenarios.md
+
+This was generated by Claude Sonnet 3.5, with the assistance of my human mentor
+
+*"A good example is worth a thousand words of specification." - The Pragmatic Requirements Engineer*
