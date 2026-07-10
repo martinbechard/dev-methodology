@@ -258,6 +258,7 @@ AGENT_ROLE_MAP_REQUIRED_PHRASES = (
     "technology-skill-detection-registry.js",
     "Interactive Agent And Skill Map",
     "select a skill to see every canonical agent that uses it.",
+    "intentionally omitted from this map.",
     'class="hierarchy-embed"',
     "Open the interactive SVG diagram",
     'id="agent-skill-hierarchy"',

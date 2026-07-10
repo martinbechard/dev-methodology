@@ -17,12 +17,6 @@ ROLES_ROOT = ROOT / "agents" / "roles"
 ROLE_SCHEMA_PATH = ROOT / "agents" / "role-schema.yaml"
 SKILLS_ROOT = ROOT / "skills"
 CATEGORIES_PATH = ROOT / "design" / "skill-categories.yaml"
-DETECTION_REGISTRY_PATH = (
-    SKILLS_ROOT
-    / "detect-technology-skills"
-    / "references"
-    / "technology-skill-detection-registry.yaml"
-)
 OUTPUT_PATH = ROOT / "design" / "agent-skill-hierarchy.svg"
 STACK_AND_DOMAIN_CATEGORY = "stack-and-domain"
 ROW_HEIGHT = 30
@@ -85,7 +79,7 @@ def _display_name(identifier: str) -> str:
     )
 
 
-def _ordered_skill_categories(
+def _visible_skill_categories(
     skills_by_category: dict[str, list[str]],
 ) -> list[tuple[str, list[str]]]:
     category_data = _load_yaml(CATEGORIES_PATH).get("categories")
@@ -102,16 +96,14 @@ def _ordered_skill_categories(
             "Skills reference unknown categories: "
             + ", ".join(sorted(unknown_categories))
         )
-    ordered_ids = [
+    visible_category_ids = [
         category_id
         for category_id in category_order
         if category_id != STACK_AND_DOMAIN_CATEGORY
     ]
-    if STACK_AND_DOMAIN_CATEGORY in skills_by_category:
-        ordered_ids.append(STACK_AND_DOMAIN_CATEGORY)
     return [
         (category_id, sorted(skills_by_category[category_id]))
-        for category_id in ordered_ids
+        for category_id in visible_category_ids
         if category_id in skills_by_category
     ]
 
@@ -175,17 +167,7 @@ def build_svg() -> str:
     for path in sorted(SKILLS_ROOT.glob("*/SKILL.md")):
         name, category = _skill_category(path)
         skills_by_category.setdefault(category, []).append(name)
-    ordered_skill_categories = _ordered_skill_categories(skills_by_category)
-
-    detection_registry = _load_yaml(DETECTION_REGISTRY_PATH)
-    detection_entries = detection_registry.get("skills")
-    if not isinstance(detection_entries, list):
-        raise ValueError("Technology skill detection entries must be a list.")
-    detection_by_skill = {
-        str(entry["skill"]): entry
-        for entry in detection_entries
-        if isinstance(entry, dict) and "skill" in entry
-    }
+    visible_skill_categories = _visible_skill_categories(skills_by_category)
 
     role_y: dict[str, int] = {}
     current_y = TOP
@@ -211,7 +193,7 @@ def build_svg() -> str:
 
     skill_y: dict[str, int] = {}
     skill_current_y = TOP
-    for _, skill_names in ordered_skill_categories:
+    for _, skill_names in visible_skill_categories:
         skill_current_y += ROW_HEIGHT
         for skill_name in skill_names:
             skill_y[skill_name] = skill_current_y
@@ -223,7 +205,7 @@ def build_svg() -> str:
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{SVG_WIDTH}" height="{height}" '
         f'viewBox="0 0 {SVG_WIDTH} {height}" role="group" aria-labelledby="title desc">',
         '<title id="title">Interactive canonical agent and skill hierarchy</title>',
-        '<desc id="desc">Select an agent to highlight its skills, or select a skill to highlight every canonical agent using it. Stack and domain skills appear separately at the bottom because project setup assigns them to folders rather than canonical roles.</desc>',
+        '<desc id="desc">Select an agent to highlight its skills, or select a skill to highlight every canonical agent using it. Setup-time stack and domain skills are intentionally omitted because canonical roles do not link to them.</desc>',
         """<style><![CDATA[
 text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
 .heading{font-size:18px;font-weight:700}.group{font-size:13px;font-weight:700;fill:#334155}
@@ -231,7 +213,7 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
 .status{font-size:11px;font-weight:650;fill:#0f766e}
 .node{transition:fill 150ms ease,stroke 150ms ease,stroke-width 150ms ease}
 .node.role{fill:#f8fafc;stroke:#64748b}.node.skill{fill:#fff7e6;stroke:#b45309}
-.node.skill.conditional{fill:#eeeafd;stroke:#7c3aed}.node.skill.technology{fill:#e0f2fe;stroke:#0284c7}
+.node.skill.conditional{fill:#eeeafd;stroke:#7c3aed}
 .edge{fill:none;stroke:#94a3b8;stroke-width:1;opacity:.07;transition:opacity 150ms ease,stroke 150ms ease,stroke-width 150ms ease}
 .edge.conditional-edge{stroke:#7c3aed}.edge.active{stroke:#0f766e;stroke-width:2.4;opacity:.96}.edge.dimmed{opacity:.012}
 .role-node,.skill-node{cursor:pointer;outline:none;transition:opacity 150ms ease}
@@ -303,24 +285,17 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
             )
 
     skill_current_y = TOP
-    for category, skill_names in ordered_skill_categories:
+    for category, skill_names in visible_skill_categories:
         parts.append(
             f'<text x="{SKILL_X}" y="{skill_current_y + 18}" class="group">'
             f'{_escape(category.replace("-", " ").title())}</text>'
         )
         skill_current_y += ROW_HEIGHT
         for skill_name in skill_names:
-            detection = detection_by_skill.get(skill_name)
             assignment_kinds = skill_assignment_kinds.get(skill_name, set())
-            secondary = (
-                f"setup-time {detection['kind']}"
-                if detection
-                else " / ".join(sorted(assignment_kinds)) or "unassigned"
-            )
+            secondary = " / ".join(sorted(assignment_kinds)) or "unassigned"
             modifier = (
-                " technology"
-                if detection
-                else " conditional"
+                " conditional"
                 if assignment_kinds == {"request-specific"}
                 else ""
             )

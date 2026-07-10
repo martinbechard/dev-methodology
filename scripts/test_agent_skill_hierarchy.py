@@ -10,11 +10,20 @@ import xml.etree.ElementTree as element_tree
 from pathlib import Path
 from types import ModuleType
 
+import yaml
+
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 SCRIPT_PATH = REPOSITORY_ROOT / "scripts" / "build-agent-skill-hierarchy.py"
 OUTPUT_PATH = REPOSITORY_ROOT / "design" / "agent-skill-hierarchy.svg"
 ROLES_ROOT = REPOSITORY_ROOT / "agents" / "roles"
+DETECTION_REGISTRY_PATH = (
+    REPOSITORY_ROOT
+    / "skills"
+    / "detect-technology-skills"
+    / "references"
+    / "technology-skill-detection-registry.yaml"
+)
 SVG_NAMESPACE = "http://www.w3.org/2000/svg"
 
 
@@ -42,8 +51,8 @@ class AgentSkillHierarchyTests(unittest.TestCase):
         """The committed SVG must exactly match the canonical generator output."""
         self.assertEqual(self.rendered, OUTPUT_PATH.read_text(encoding="utf-8"))
 
-    def test_hierarchy_omits_model_profiles_and_puts_stack_skills_last(self) -> None:
-        """The visual map should reserve its final skill group for setup-time stacks."""
+    def test_hierarchy_omits_model_profiles_and_setup_time_skills(self) -> None:
+        """The visual map should contain role relationships without setup-time clutter."""
         visible_text = " ".join(text.strip() for text in self.root.itertext() if text.strip())
         self.assertNotIn("Model profiles", visible_text)
         self.assertNotIn("model-edge", self.rendered)
@@ -52,10 +61,27 @@ class AgentSkillHierarchyTests(unittest.TestCase):
         group_nodes = self.root.findall(
             f".//{{{SVG_NAMESPACE}}}text[@class='group']"
         )
-        skill_group_nodes = [
-            node for node in group_nodes if int(node.attrib["x"]) == self.module.SKILL_X
+        skill_group_labels = [
+            node.text
+            for node in group_nodes
+            if int(node.attrib["x"]) == self.module.SKILL_X
         ]
-        self.assertEqual("Stack And Domain", skill_group_nodes[-1].text)
+        self.assertNotIn("Stack And Domain", skill_group_labels)
+        self.assertNotIn("setup-time technology", visible_text)
+        visible_skills = {
+            node.attrib["data-skill"]
+            for node in self.root.findall(
+                f".//{{{SVG_NAMESPACE}}}g[@class='skill-node']"
+            )
+        }
+        detection_registry = yaml.safe_load(
+            DETECTION_REGISTRY_PATH.read_text(encoding="utf-8")
+        )
+        detected_skills = {
+            entry["skill"] for entry in detection_registry["skills"]
+        }
+        self.assertTrue(detected_skills)
+        self.assertTrue(visible_skills.isdisjoint(detected_skills))
 
     def test_agents_and_skills_expose_selection_and_keyboard_hooks(self) -> None:
         """Every role and skill should be an accessible selector with mapped edges."""
