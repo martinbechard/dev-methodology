@@ -1,0 +1,22 @@
+schema: dev-methodology-skill-routing
+version: 1
+skill: react-vite-renderer
+kind: technology
+label: React renderer with Vite
+capabilities:
+  - client-user-interface
+applicableRoles:
+  - artifact-review-agent
+  - code-review-agent
+  - coding-agent
+  - documentation-writer
+  - qa-and-verification-agent
+  - runtime-diagnostician
+  - ux-designer-or-reviewer
+activation:
+  fileExtensions: [.tsx, .jsx]
+  contentPatterns:
+    - glob: package.json
+      contains: "@vitejs/plugin-react"
+    - glob: "vite.config.*"
+      contains: "react"

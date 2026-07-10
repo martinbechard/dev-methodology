@@ -29,14 +29,16 @@ Create or update AGENTS-PLAN.yaml before writing AGENTS.md routing guidance. AGE
 2. Classify the project family, application tiers, technology stacks, documentation surfaces, runtime boundaries, data boundaries, and verification commands.
 3. Identify the role agents needed for the project. Prefer shared reusable roles such as Development Orchestrator, Project Agent Setup Agent, Coding Agent, Code Review Agent, QA And Verification Agent, Documentation Writer, Wiki Query Agent, and specialist reviewer roles only when the project evidence requires them.
 4. Map each tier, technology, folder, or workflow to the reusable skills it needs.
-5. Decide whether the root AGENTS-PLAN.yaml is sufficient or whether one or more subfolders need nested AGENTS-PLAN.yaml files.
-6. Copy the template into each required location and replace every TODO with source-backed project content.
-7. Keep proprietary project validation notes inside the target project repository. Do not copy private project names, internal implementation details, customer data, secrets, or non-public workflows into distributable examples.
-8. Use fictitious names, synthetic paths, and generic behavior for customer-safe examples.
-9. After the plan is validated, create or update root and nested AGENTS.md files from the plan.
-10. When Claude Code is used, create thin CLAUDE.md bridge files that import the colocated AGENTS.md without copying its rules.
-11. Say Not yet identified for related sources, tests, commands, or roles that do not exist yet.
-12. Keep the artifact steady-state. Do not describe it as new, revised, or enhanced unless the document is explicitly a change plan.
+5. Use route-technology-skills and its generated registry to resolve specialized variants from source paths, manifests, configuration, and build evidence. Do not use prompt keywords as the primary detector.
+6. Record deterministic skill_loadouts and folder_routing bindings, including the activation evidence and required-load failure policy.
+7. Decide whether the root AGENTS-PLAN.yaml is sufficient or whether one or more subfolders need nested AGENTS-PLAN.yaml files.
+8. Copy the template into each required location and replace every TODO with source-backed project content.
+9. Keep proprietary project validation notes inside the target project repository. Do not copy private project names, internal implementation details, customer data, secrets, or non-public workflows into distributable examples.
+10. Use fictitious names, synthetic paths, and generic behavior for customer-safe examples.
+11. After the plan is validated, generate the specialized routing section with route-technology-skills scripts/render_agents_routing.py, then create or update root and nested AGENTS.md files from the plan.
+12. When Claude Code is used, create thin CLAUDE.md bridge files that import the colocated AGENTS.md without copying its rules.
+13. Say Not yet identified for related sources, tests, commands, or roles that do not exist yet.
+14. Keep the artifact steady-state. Do not describe it as new, revised, or enhanced unless the document is explicitly a change plan.
 
 ## Verification
 
@@ -45,11 +47,13 @@ Before finishing:
 1. Use documentation-page-verifier on every created or materially rewritten AGENTS-PLAN.yaml file.
 2. Search each AGENTS-PLAN.yaml for unresolved TODO markers that are not intentional.
 3. Confirm every role, skill loadout, folder route, validation command, and file contract has source evidence or an open question.
-4. Confirm root and nested AGENTS-PLAN.yaml files do not duplicate broad guidance that belongs in root AGENTS.md.
-5. Confirm every planned AGENTS.md exists and matches the validated routing plan.
-6. When Claude Code is used, confirm every applicable AGENTS.md has a thin colocated CLAUDE.md import and that no guidance is duplicated between them.
-7. Confirm customer-shareable examples are fictitious and proprietary examples remain only inside their target repositories.
-8. Run project wiki status and lint when docs/wiki exists and the plan references wiki pages.
-9. Run the target project build when code, imports, generated artifacts, or project metadata changed.
+4. Run the resolver for representative paths in every declared tier. Confirm the result matches the planned binding and every required skill is available.
+5. Confirm AGENTS.md contains the generated routing section and its bindings match AGENTS-PLAN.yaml.
+6. Confirm root and nested AGENTS-PLAN.yaml files do not duplicate broad guidance that belongs in root AGENTS.md.
+7. Confirm every planned AGENTS.md exists and matches the validated routing plan.
+8. When Claude Code is used, confirm every applicable AGENTS.md has a thin colocated CLAUDE.md import and that no guidance is duplicated between them.
+9. Confirm customer-shareable examples are fictitious and proprietary examples remain only inside their target repositories.
+10. Run project wiki status and lint when docs/wiki exists and the plan references wiki pages.
+11. Run the target project build when code, imports, generated artifacts, or project metadata changed.
 
 Do not send private, proprietary, sensitive, PII, or company-internal material to an external service unless the user explicitly authorizes it.

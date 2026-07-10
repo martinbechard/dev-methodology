@@ -1,0 +1,22 @@
+schema: dev-methodology-skill-routing
+version: 1
+skill: typescript-strict
+kind: technology
+label: Strict TypeScript
+capabilities:
+  - strict-type-system
+applicableRoles:
+  - artifact-review-agent
+  - code-review-agent
+  - coding-agent
+  - documentation-writer
+  - qa-and-verification-agent
+  - runtime-diagnostician
+  - security-reviewer
+activation:
+  fileExtensions: [.ts, .tsx, .mts, .cts]
+  contentPatterns:
+    - glob: "tsconfig*.json"
+      contains: '"strict": true'
+companions:
+  - typescript-coding

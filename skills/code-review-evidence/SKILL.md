@@ -18,12 +18,14 @@ Keep review knowledge with the skills that create the code. This skill owns the 
 
 ## Workflow
 
-1. Inventory the changed files and select the same coding and stack skills that should have governed their implementation.
-2. Load references/review-checklist-code-evidence.md plus each selected skill's review checklist.
-3. Extract evidence before writing findings. A lower-cost model may perform this stage when the harness supports staged model profiles.
+1. Inventory the changed files and run route-technology-skills for the Code Review Agent and exact review scope.
+2. Read every resolved SKILL.md, preserve the routing receipt, and load references/review-checklist-code-evidence.md plus each selected skill's review checklist.
+3. Extract evidence before writing findings. A lower-cost model may perform this stage only when the harness dispatches and records a separate evidence worker.
 4. Record each checklist item as supported, contradicted, unknown, or not applicable. Cite the smallest useful file, symbol, location, command, or test result.
 5. Treat extracted evidence as observations, not final judgment. Preserve uncertainty and conflicts.
 6. Use the synthesis model to reconcile the evidence, assess impact, and produce findings, passes, open questions, and residual risk.
+
+Do not claim staged execution from modelStages metadata or comments. Verification requires separate captured worker and synthesis invocations.
 
 ## Evidence Packet
 

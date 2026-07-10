@@ -1,0 +1,16 @@
+schema: dev-methodology-skill-routing
+version: 1
+skill: ast-grep
+kind: tool
+label: Structure-aware search tool
+capabilities:
+  - structural-search
+applicableRoles:
+  - coding-agent
+  - code-review-agent
+  - runtime-diagnostician
+activation:
+  commands:
+    - ast-grep
+requiredWhenMatched: false
+priority: 200

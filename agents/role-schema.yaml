@@ -22,6 +22,7 @@ properties:
   mcpServers: string-list
   modelProfile: model-profile
   modelStages: model-profile-map
+  routedCapabilities: string-list
   maxTurns: integer
   timeout: integer
   permissionMode: string

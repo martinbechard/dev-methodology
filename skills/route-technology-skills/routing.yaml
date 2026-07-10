@@ -1,0 +1,8 @@
+schema: dev-methodology-skill-routing
+version: 1
+skill: route-technology-skills
+kind: generic
+label: Specialized skill routing
+capabilities:
+  - skill-routing
+applicableRoles: []

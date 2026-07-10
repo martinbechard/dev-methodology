@@ -53,6 +53,14 @@ root_agents_reference:
   purpose: "TODO: Explain what the root AGENTS.md should tell agents before they work in this repository."
   required_content:
     - "Repository-wide rules, privacy constraints, build and test commands, documentation locations, and taxonomy terms used by the skills router."
+    - "Deterministic specialized-skill bindings generated from this plan, the required-load failure policy, and the routing receipt requirement."
+
+technology_skill_routing:
+  registry: "Installed route-technology-skills registry resolved by the router."
+  selection_policy: "Project bindings first and scoped repository evidence second. Prompt keywords may suggest inspection but never select a skill."
+  required_load_failure: "BLOCKED"
+  missing_variant_policy: "Use generic guidance and report that no bundled specialized variant exists."
+  proof_boundary: "The resolver proves selection, availability, and content digests. Harness tool-call evidence proves the selected skill files were read."
 
 claude_bridge_files:
   enabled: false
@@ -81,6 +89,9 @@ skill_loadouts:
       - "TODO: Path or glob."
     skills:
       - "TODO: Reusable skill id."
+    activation_evidence:
+      - "TODO: Source path, manifest, configuration, or other deterministic evidence that activates this loadout."
+    required_load_failure: "BLOCKED"
     local_rules_source: "TODO: AGENTS.md, nested AGENTS.md, procedure, or Not yet identified."
     notes: "TODO: Keep skills reusable and portable. Keep project-specific rules in AGENTS.md or AGENTS-PLAN.yaml until they are promoted into a reusable skill."
 
@@ -119,7 +130,9 @@ validation_plan:
     - command: "TODO: Syntax, build, test, lint, docs, or wiki check."
       proves: "TODO: Explain what this command validates."
   skill_routing_checks:
-    - "TODO: Explain how to verify that each role loads the expected skills."
+    - "TODO: Run the specialized skill resolver for representative paths in every tier and compare the receipt with skill_loadouts and folder_routing."
+    - "TODO: Confirm every required skill is available and that harness evidence proves each resolved SKILL.md was read."
+    - "TODO: Confirm missing variants and load failures remain explicit gaps rather than silent model-knowledge fallbacks."
   privacy_checks:
     - "TODO: Explain how to verify that private or proprietary examples remain inside the target repository."
   customer_safe_example_checks:

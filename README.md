@@ -31,6 +31,8 @@ The shared page contract starts every durable page with Current Understanding, A
 ## Repository Shape
 
 - skills contains the portable Agent Skills.
+- Specialized skills own portable activation metadata in routing.yaml beside SKILL.md.
+- skills/route-technology-skills contains the deterministic resolver, AGENTS.md routing renderer, and generated portable technology registry.
 - skills/development-methodology/assets/templates contains the reusable TODO-driven template assets.
 - Keep Codex openai.yaml metadata beside each source SKILL.md when a skill needs Codex app metadata, invocation policy, or tool dependencies.
 - scripts/install-skills.py installs the bundled skills through adapter profiles for generic Agent Skills, Codex, Gemini CLI, Claude Code, and JetBrains Junie CLI.
@@ -39,6 +41,7 @@ The shared page contract starts every durable page with Current Understanding, A
 - adapters/[runtime]/model-profiles.yaml maps semantic profiles to concrete models, reasoning effort, and context settings for each harness.
 - agents/roles contains canonical role files grouped by methodology maintenance, project setup, and normal development use.
 - generated/adapters contains ready-to-copy native agent definitions. The current milestone generates Codex and Claude definitions from the same canonical roles.
+- design/generated/technology-skill-registry.js exposes the same routing registry for documentation and the future interactive agent-skill explorer.
 - scripts/openai_metadata.py refreshes derived Codex interface fields from SKILL.md while preserving hand-authored policy and dependencies.
 - scripts/refresh-shared-skills.py refreshes the machine-wide shared skill installs from this source repository.
 - scripts contains regression tests for installer behavior and bundle content.
@@ -56,13 +59,27 @@ The script reads each bundled SKILL.md file, the adjacent Codex openai.yaml meta
 
 Canonical roles request modelProfile and may assign modelStages for work such as low-cost evidence extraction followed by advanced synthesis. Provider model identifiers stay in adapter mappings. Every supported adapter must map every canonical profile.
 
-The generated [agent and skill hierarchy](design/agent-skill-hierarchy.svg) shows model profiles, every canonical role, and each role's bundled skill loadout. Regenerate it with:
+Model stage fields describe intended dispatch stages; generated single-agent definitions do not execute those stages by themselves. A staged evaluation must capture separate evidence-worker and synthesis invocations before the behavior is marked verified.
+
+Build the portable specialized-skill registry before generating role and documentation views:
+
+```bash
+python3 scripts/build-skill-routing.py
+```
+
+The routing build validates every specialized skill and activation criterion, rejects specialized skills in canonical fixed role loadouts, rejects specialized terms in registered or canonically loaded generic skills, and writes the portable YAML registry. The support-checklist build also writes joined agent-skill explorer data with fixed and routed edges plus declared and verified evidence counts.
+
+Prompt keywords are advisory discovery hints only and never select a skill. Source-backed project bindings and live scoped repository evidence are the deterministic routing sources.
+
+Activation is scope-safe in mixed repositories. File extensions and globs form the scoped selector group; manifests, dependencies, content markers, and commands form the project-signal group. A registered variant with both groups needs at least one match from each group. Alternatives inside a group are OR conditions. Manifest and content evidence is limited to the scoped files and their ancestor directories, and dependency evidence comes from the nearest owning package manifest for each scoped file. Sibling modules and root workspace dependencies therefore cannot activate stacks for an independently owned child package.
+
+The generated [agent and skill hierarchy](design/agent-skill-hierarchy.svg) shows model profiles, every canonical role, fixed generic skill edges, and evidence-routed specialized skill edges. Regenerate it with:
 
 ```bash
 python3 scripts/build-agent-skill-hierarchy.py
 ```
 
-The generated [agent, skill, technology, and test coverage checklist](design/agent-skill-test-coverage-checklist.md) inventories every canonical agent and bundled skill, groups the stack skills by supported technology, and distinguishes structural validation from direct live behavior evaluation. Regenerate it with:
+The generated [agent, skill, technology, and test coverage checklist](design/agent-skill-test-coverage-checklist.md) inventories every canonical agent and bundled skill, shows specialized activation coverage, and distinguishes declarations and manual observations from independently verified behavior. Regenerate it with:
 
 ```bash
 python3 scripts/build-support-checklist.py
@@ -204,8 +221,14 @@ The artifact review skills are:
 
 The development practice skills are:
 
+- route-technology-skills
+- code-discovery
+- test-strategy
+- end-to-end-verification
+- application-security
+- user-experience-review
+- prompt-contracts
 - careful-coding
-- ast-grep
 - create-backlog
 - manage-backlog
 - fix-explanation
@@ -247,13 +270,17 @@ The stack and project-domain skill packs are:
 - plan-engine-implementation
 - local-model-integration
 
+The optional tool variants are:
+
+- ast-grep
+
 ## Review Skill Checklist Convention
 
 Every review skill uses a reference checklist named review-checklist-[review-target].md under that skill's references folder. For example, review-architecture uses review-checklist-architecture.md.
 
 Review checklists are evidence-capture templates. Each checklist question requires status, the objective question, quoted evidence from the artifact or source material, and an assessment grounded in that quote.
 
-Code review follows the same evidence philosophy without one massive universal review skill. The Code Review Agent loads the coding and stack skills applicable to the changed files, completes their focused evidence checklists, and then synthesizes findings from the evidence packet. Canonical model stages allow a simple model to extract evidence and an advanced model to perform synthesis.
+Code review follows the same evidence philosophy without one massive universal review skill. The Code Review Agent runs route-technology-skills against the changed files, reads each resolved specialized skill, preserves the routing receipt, completes the applicable focused evidence checklists, and then synthesizes findings from the evidence packet. Stage declarations do not prove staged execution; verification requires captured worker and synthesis invocations.
 
 When a review skill runs, it saves a completed review checklist next to the reviewed artifact using this form: artifact-name.review-checklist-[review-target].md. For example, a coding review of test.ts saves test.ts.review-checklist-coding.md.
 
@@ -264,13 +291,14 @@ Artifact-specific review skills pass the artifact, source evidence, and complete
 1. Use the Project Bootstrap Agent to detect the runtime and install the matching generic skills and generated native agents.
 2. In the target repository, use documentation-bootstrap for first-time setup.
 3. Use create-agents-plan to create AGENTS-PLAN.yaml when the project needs role agents, skill loadouts, folder routing, nested plan placement, or customer-safe example planning; generate AGENTS.md and thin CLAUDE.md bridge files where Claude Code is used.
-4. Use development-methodology to choose the artifact type and load only the creation or review skill needed for the current job.
-5. Use documentation-reverse-engineering when an existing codebase needs a source-backed documentation set.
-6. Use code-project-wiki when docs/wiki needs code-aware maintenance, commit-range review, Related Code upkeep, or Related Tests upkeep.
-7. Use create-project-wiki, create-functional-spec, create-architecture, create-high-level-design, or create-module-design when creating one methodology artifact from its template.
-8. Use the artifact-specific review skill before finishing a project wiki page, functional specification, architecture document, high-level design, or module design.
-9. Use documentation-page-verifier as the shared verifier for mixed, unknown, or custom documentation artifacts.
-10. Use the project-wiki family for docs/wiki setup, topic writing, topic verification, wiki-backed answers, and raw research.
+4. Use route-technology-skills to resolve specialized variants for representative tier paths, record deterministic bindings in AGENTS-PLAN.yaml, and render the operational routing section into AGENTS.md.
+5. Use development-methodology to choose the artifact type and load only the creation or review skill needed for the current job.
+6. Use documentation-reverse-engineering when an existing codebase needs a source-backed documentation set.
+7. Use code-project-wiki when docs/wiki needs code-aware maintenance, commit-range review, Related Code upkeep, or Related Tests upkeep.
+8. Use create-project-wiki, create-functional-spec, create-architecture, create-high-level-design, create-module-design, or create-unit-test-plan when creating one methodology artifact from its template.
+9. Use the artifact-specific review skill before finishing a project wiki page, functional specification, architecture document, high-level design, module design, or unit test plan.
+10. Use documentation-page-verifier as the shared verifier for mixed, unknown, or custom documentation artifacts.
+11. Use the project-wiki family for docs/wiki setup, topic writing, topic verification, wiki-backed answers, and raw research.
 
 ## Neutral Target Project Layout
 
@@ -294,7 +322,10 @@ Before publishing changes to this bundle, run:
 
 ```bash
 python3 scripts/validate-agent-skills.py skills
+python3 scripts/build-skill-routing.py --check
 python3 scripts/build-skill-docs.py --check
+python3 scripts/build-agent-skill-hierarchy.py --check
+python3 scripts/build-support-checklist.py --check
 python3 -m unittest discover scripts
 PYTHONPATH=skills/project-wiki/scripts python3 -m unittest discover skills/project-wiki/scripts
 python3 scripts/refresh-shared-skills.py

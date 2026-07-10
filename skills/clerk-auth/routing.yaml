@@ -1,0 +1,17 @@
+schema: dev-methodology-skill-routing
+version: 1
+skill: clerk-auth
+kind: technology
+label: Clerk identity integration
+capabilities:
+  - identity-provider
+applicableRoles:
+  - coding-agent
+  - code-review-agent
+  - qa-and-verification-agent
+  - security-reviewer
+activation:
+  fileExtensions: [.ts, .tsx, .js, .jsx, .mts, .cts]
+  manifestDependencies:
+    - "@clerk/nextjs"
+    - "@clerk/clerk-react"

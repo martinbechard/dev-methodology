@@ -438,7 +438,12 @@
           <tr>
             <td><span class="name">Stage model profiles</span></td>
             <td><code>modelStages</code></td>
-            <td>Assigns semantic profiles to bounded stages such as evidence extraction, synthesis, or large-context synthesis.</td>
+            <td>Declares intended semantic profiles for bounded stages. Separate stage invocations must be implemented and captured before staged execution is considered verified.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Routed capabilities</span></td>
+            <td><code>routedCapabilities</code></td>
+            <td>Names specialized capability families the role expects. The resolver reports an explicit generic fallback when no bundled variant matches.</td>
           </tr>
           <tr>
             <td><span class="name">Max turns</span></td>
@@ -696,6 +701,14 @@
             <td><code>model</code></td>
           </tr>
           <tr>
+            <td><span class="name">routedCapabilities</span></td>
+            <td>Resolved through prompt instructions and the portable registry.</td>
+            <td>Resolved through prompt instructions and the portable registry.</td>
+            <td>Resolved through shared skill guidance.</td>
+            <td>Resolved through shared skill guidance.</td>
+            <td>Resolved through shared skill guidance.</td>
+          </tr>
+          <tr>
             <td><span class="name">adapter profile settings</span></td>
             <td><code>model_reasoning_effort</code></td>
             <td><code>effort</code></td>
@@ -792,7 +805,7 @@
       <div class="flow">
         <div class="flow-row">
           <h3>Use A Common Role Source</h3>
-          <p>Canonical files under <code>agents/roles/</code> own name, filename, description, instructions, skills, tools, disallowed tools, MCP servers, modelProfile, modelStages, max turns, timeout, permission mode, isolation, memory, and output contract. The generator validates them against <code>agents/role-schema.yaml</code>.</p>
+          <p>Canonical files under <code>agents/roles/</code> own name, filename, description, instructions, generic skills, routed capabilities, tools, disallowed tools, MCP servers, modelProfile, modelStages, max turns, timeout, permission mode, isolation, memory, and output contract. The generator validates them against <code>agents/role-schema.yaml</code>.</p>
         </div>
         <div class="flow-row">
           <h3>Generate Runtime Adapters</h3>
@@ -800,7 +813,7 @@
         </div>
         <div class="flow-row">
           <h3>Validate Against Skills</h3>
-          <p>The generator builds the skill catalog before roles. Every canonical <code>skills</code> entry must resolve to a bundled skill; descriptive phrases, scripts, commands, and tool groups fail generation.</p>
+          <p>The generators build the skill catalog and specialized routing registry before roles. Every canonical <code>skills</code> entry must resolve to a bundled generic skill; specialized variants are linked through validated routing metadata.</p>
         </div>
         <div class="flow-row">
           <h3>Keep HTML Pure</h3>
@@ -810,15 +823,16 @@
     </section>
 
     <section class="section" aria-labelledby="role-skills-title">
-      <h2 id="role-skills-title">Role Router Skills</h2>
+      <h2 id="role-skills-title">Generic Roles And Specialized Routing</h2>
       <div class="panel">
         <p>
-          A role-level skill layer may be useful, but it should not be the first source of truth. Start with canonical role definition files that list granular skill IDs directly. Add role-router skills only when a role repeatedly needs a compact workflow that selects among many granular skills, or when a runtime cannot reliably preserve role skill routing in its native agent format.
+          Canonical role files own responsibility, authority, generic workflow skills, and output contracts. route-technology-skills owns the portable selection protocol, while each specialized skill owns its activation evidence in routing.yaml.
         </p>
         <ul>
-          <li>Good use: a <code>coding-agent-router</code> skill that explains how to choose among TypeScript, Next.js, Electron, database, testing, and wiki skills after inspecting the task.</li>
-          <li>Bad use: a role-router skill that simply duplicates every role definition and creates another catalog to maintain.</li>
-          <li>Generation rule: if a role-router skill exists, the role source should list both the router skill and the granular skills it is allowed to route to, so the HTML and tests can still show exact coverage.</li>
+          <li>Project setup performs early binding by writing source-backed path and tier loadouts into AGENTS-PLAN.yaml and AGENTS.md.</li>
+          <li>Task execution performs late validation against actual scoped files and generated registry evidence.</li>
+          <li>The routing build rejects specialized skills fixed directly into canonical role loadouts.</li>
+          <li>The resolver records selection, availability, and digests; harness traces are required to prove actual skill reads.</li>
         </ul>
       </div>
     </section>
@@ -830,7 +844,7 @@
           <li>Add Gemini CLI generation from the canonical schema and verify its model, turn, timeout, and MCP mappings.</li>
           <li>Add Junie CLI generation and verify user-scope and project-scope installation paths.</li>
           <li>Add GitHub Copilot generation with explicit user invocation and automatic delegation fields.</li>
-          <li>Add role-router skills only if direct granular skill lists show repeated routing drift in a supported runtime.</li>
+          <li>Build the interactive mind-map view over design/generated/agent-skill-explorer-data.js, which already joins roles, fixed and routed skill edges, capabilities, activation metadata, and declared or verified evidence.</li>
         </ul>
       </div>
     </section>

@@ -1,0 +1,18 @@
+schema: dev-methodology-skill-routing
+version: 1
+skill: vitest
+kind: technology
+label: Vitest
+capabilities:
+  - test-framework
+applicableRoles:
+  - code-review-agent
+  - coding-agent
+  - qa-and-verification-agent
+  - runtime-diagnostician
+activation:
+  fileExtensions: [.ts, .tsx, .js, .jsx, .mts, .cts, .mjs, .cjs]
+  manifestDependencies:
+    - vitest
+  manifestFiles:
+    - "vitest.config.*"

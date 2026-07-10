@@ -453,12 +453,12 @@
     <div class="grid">
       <article class="card config">
         <h3>AGENTS-PLAN.yaml</h3>
-        <p>AGENTS-PLAN.yaml is the project-owned setup document for planning agent roles and skill routing before durable guidance is copied into AGENTS.md. It can live at the repository root and, when needed, inside technology-specific subfolders.</p>
+        <p>AGENTS-PLAN.yaml is the project-owned setup document for planning agent roles and deterministic specialized-skill routing before durable guidance is copied into AGENTS.md. It can live at the repository root and, when needed, inside subfolders with distinct runtime or verification boundaries.</p>
       </article>
 
       <article class="card agent">
         <h3>Project Agent Setup Agent</h3>
-        <p>This setup role uses development-methodology and create-agents-plan to inspect the project, classify tiers, choose skill loadouts, and create the root and nested AGENTS-PLAN.yaml files.</p>
+        <p>This setup role uses development-methodology, create-agents-plan, and route-technology-skills to inspect the project, classify tiers, resolve variants from registry evidence, choose skill loadouts, and create the root and nested AGENTS-PLAN.yaml files.</p>
       </article>
 
       <article class="card case">
@@ -512,7 +512,7 @@
           </tr>
           <tr>
             <td><span class="name">Skill Loadouts</span></td>
-            <td>Maps each tier, technology, workflow, or path family to reusable skills.</td>
+            <td>Maps each tier, workflow, or path family to reusable skills with activation evidence, required-load policy, and representative routing receipts.</td>
             <td>Keeps skill specialization factual and avoids turning every project behavior into a one-off agent.</td>
           </tr>
           <tr>
@@ -564,7 +564,7 @@
           <li>Family: Spring Boot service.</li>
           <li>Application tiers: HTTP controllers, services, persistence, SQL migrations, tests, and operations.</li>
           <li>Primary skills: java-coding, spring-boot, sql-coding, test-driven-development, root-cause-analysis, and code-review-evidence.</li>
-          <li>Review flow: extract evidence from Java, Spring Boot, SQL, and test checklists with the simple model stage, then synthesize findings with the advanced stage.</li>
+          <li>Review flow: extract evidence from Java, Spring Boot, SQL, and test checklists, then synthesize findings. Simple and advanced stages remain dispatch intent until the harness captures separate invocations.</li>
         </ul>
       </article>
 

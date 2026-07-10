@@ -1,0 +1,19 @@
+schema: dev-methodology-skill-routing
+version: 1
+skill: tool-runtime-implementation
+kind: domain
+label: Tool runtime implementation
+capabilities:
+  - tool-runtime
+applicableRoles:
+  - code-review-agent
+  - coding-agent
+  - prompt-contract-reviewer
+  - qa-and-verification-agent
+  - runtime-diagnostician
+  - security-reviewer
+activation:
+  fileGlobs:
+    - "**/*tool*registry*.*"
+    - "**/*tool*runtime*.*"
+    - "**/tools/**/*.*"

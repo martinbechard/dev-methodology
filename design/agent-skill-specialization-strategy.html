@@ -429,12 +429,42 @@
         <h3>Skills Specialize By Expertise</h3>
         <p>Skills stay small and composable, so a single role can load the right knowledge for a specific job without carrying unrelated guidance.</p>
         <ul>
-          <li>Stack skills cover React, Next.js, Electron, Spring Boot, Python, Drizzle, Postgres, or MLX.</li>
-          <li>Language and data skills such as typescript-coding, java-coding, spring-boot, and sql-coding own both implementation rules and focused review-evidence questions.</li>
+          <li>Generic skills define portable best practices without language, framework, vendor, or special-tool dependencies.</li>
+          <li>Specialized skills own machine-readable activation evidence beside their implementation and review guidance.</li>
           <li>Artifact skills cover API routes, UI components, prompts, CLI commands, tests, docs, and wiki pages.</li>
           <li>Quality skills cover testing, security, accessibility, privacy, performance, and observability.</li>
           <li>Project skills cover local rules, folder taxonomy, commands, generated files, and data boundaries.</li>
         </ul>
+      </article>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="technology-routing-title">
+    <h2 id="technology-routing-title">Deterministic Specialized Skill Routing</h2>
+    <div class="wide-grid">
+      <article class="card rule">
+        <h3>Generic canonical loadouts</h3>
+        <p>Canonical roles contain stable responsibility skills only. Test frameworks, interface frameworks, identity providers, persistence libraries, orchestration runtimes, and optional analysis tools are not fixed into generic agents.</p>
+      </article>
+      <article class="card skill">
+        <h3>Skill-owned activation</h3>
+        <p>Each specialized skill owns routing.yaml with capabilities, applicable roles, deterministic file, manifest, content, or command evidence, companion skills, and required-load policy. Scope selectors are OR alternatives, project signals are OR alternatives, and a variant that defines both groups needs one match from each.</p>
+      </article>
+      <article class="card config">
+        <h3>Generated registry</h3>
+        <p>scripts/build-skill-routing.py validates every specialized variant, rejects specialized fixed role skills and technology leakage in registered generic skills, then generates the portable registry and exploration data.</p>
+      </article>
+      <article class="card agent">
+        <h3>Early and late binding</h3>
+        <p>Project setup records deterministic path and tier bindings in AGENTS-PLAN.yaml and AGENTS.md. At task time, route-technology-skills validates those bindings against the actual file scope and emits a routing receipt.</p>
+      </article>
+      <article class="card rule">
+        <h3>Truthful proof boundary</h3>
+        <p>The resolver proves selection, availability, and content digests. Only captured harness tool calls prove that an agent read the selected skill. Missing required guidance blocks instead of silently falling back.</p>
+      </article>
+      <article class="card rule">
+        <h3>Keyword fallback</h3>
+        <p>Prompt keywords are advisory discovery hints only and never select a skill. Source-backed bindings and live scoped evidence are the correctness boundary for coding, review, verification, security, interface, prompt, and documentation work.</p>
       </article>
     </div>
   </section>
@@ -444,11 +474,11 @@
     <div class="wide-grid">
       <article class="card config">
         <h3>Canonical roles</h3>
-        <p>Roles request simple, default, advanced, or advanced-long through modelProfile. A role may assign modelStages when evidence extraction and synthesis need different capability or context.</p>
+        <p>Roles request simple, default, advanced, or advanced-long through modelProfile. modelStages records intended stage profiles but does not by itself execute separate workers.</p>
       </article>
       <article class="card rule">
         <h3>Runtime adapters</h3>
-        <p>Runtime adapters map semantic profiles to concrete model identifiers, reasoning settings, and context modes. Provider names do not appear in canonical roles.</p>
+        <p>Runtime adapters map semantic profiles to concrete model identifiers, reasoning settings, and context modes. Staged behavior is verified only when separate worker and synthesis invocations are captured.</p>
       </article>
     </div>
   </section>
@@ -507,7 +537,7 @@
           <li>The user asks for a design for invoice retry behavior.</li>
           <li>The Documentation Writer loads development-methodology because the request is documentation work.</li>
           <li>development-methodology classifies the artifact as a high-level design because retry behavior crosses API routes, DB state, and user-visible status.</li>
-          <li>The skills router reads AGENTS.md and sees that the relevant folders imply api-routes, postgres-drizzle, typescript-strict, and jest guidance.</li>
+          <li>The deterministic resolver combines AGENTS.md bindings with the referenced files and registry activation evidence, then records the exact specialized guidance and content digests in a routing receipt.</li>
           <li>If src/db/AGENTS.md says migration changes need a rollback note, that local rule is included in the design and verification checklist.</li>
           <li>This works because shared routing answers what kind of artifact to create, while AGENTS.md answers which project facts and tier-specific skills make that route correct here.</li>
         </ul>
@@ -625,9 +655,9 @@
           <span class="tag skill">test-driven-development</span>
           <span class="tag skill">code-execution-tracing</span>
           <span class="tag skill">runtime-evidence-collection</span>
-          <span class="tag skill">ast-grep</span>
+          <span class="tag skill">code-discovery</span>
           <span class="tag skill">project-wiki-query</span>
-          <span class="tag skill">project-organiser-use</span>
+          <span class="tag skill">route-technology-skills</span>
           <span class="tag skill">fix-explanation</span>
           <span class="tag skill">review-structured</span>
         </div>

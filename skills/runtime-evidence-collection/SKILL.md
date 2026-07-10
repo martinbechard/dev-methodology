@@ -17,10 +17,10 @@ metadata:
 6. Reproduce the behavior and preserve the evidence needed for diagnosis.
 7. Remove temporary instrumentation and rerun the relevant test or build.
 
-## Technology Fallbacks
+## Portable Fallbacks
 
-- TypeScript may use temporary console output when the project has no logger. Use an identifiable prefix and remove it before completion.
-- Java may use temporary language-native output only when no project logging facade is available. Spring Boot code should prefer its established logging facade.
-- SQL should use transaction-safe diagnostic queries or the database's normal plan and session facilities when available.
+- Prefer the project's established logging and diagnostic facilities.
+- When none exist, use temporary language-native output with an identifiable prefix, safe values, bounded volume, and mandatory cleanup.
+- For persistence behavior, use transaction-safe diagnostic reads and the data store's normal plan or session facilities when available.
 
 Do not require a custom Tracer API, fixed logging format, dedicated sink, or external observability product.

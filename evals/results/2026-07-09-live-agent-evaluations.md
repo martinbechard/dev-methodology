@@ -1,8 +1,10 @@
-# Live Agent Evaluation Results
+# Manual Agent Evaluation Observations
+
+These runs provide useful command and output observations but predate the receipt-based evidence contract. They do not independently verify agent identity, actual skill reads, or staged model execution and must not be counted as verified behavior.
 
 ## TypeScript Order Pricing
 
-- Outcome: PASS
+- Outcome: MANUAL OBSERVATION
 - Agent behavior: implemented the coupon boundary with a behavior-first loop, then produced a checklist-backed evidence packet and review synthesis.
 - Verification: eight tests passed and the TypeScript project built successfully.
 - Required evidence: TS-BOUNDARY, TS-CONTRACT, TS-ASYNC, TS-TESTS, and REVIEW-SYNTHESIS were present.
@@ -10,7 +12,7 @@
 
 ## Spring Boot Order Cancellation
 
-- Outcome: PASS
+- Outcome: MANUAL OBSERVATION
 - Agent behavior: implemented controller, service, transaction, repository, and conditional SQL behavior with service and Spring integration tests, then produced a checklist-backed evidence packet and review synthesis.
 - Verification: ten Maven tests passed, including persisted-state, success, conflict, and not-found scenarios.
 - Required evidence: JAVA-CONTRACT, SPRING-BOUNDARY, SPRING-TRANSACTION, SQL-STATE, JAVA-TESTS, and REVIEW-SYNTHESIS were present.
@@ -18,7 +20,7 @@
 
 ## TypeScript Code Review
 
-- Outcome: PASS
+- Outcome: MANUAL OBSERVATION
 - Agent behavior: independently reviewed a deliberately defective implementation in a read-only sandbox, loaded the applicable coding checklists, extracted evidence before synthesis, and did not modify the project.
 - Findings: correctly identified the unawaited coupon result, swallowed provider failure, and missing percentage range validation as three high-impact correctness defects.
 - Verification: strict typechecking passed while all three focused runtime tests failed for the expected behavioral reasons.

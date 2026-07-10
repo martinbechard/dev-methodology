@@ -1,0 +1,19 @@
+schema: dev-methodology-skill-routing
+version: 1
+skill: jest
+kind: technology
+label: Jest
+capabilities:
+  - test-framework
+applicableRoles:
+  - code-review-agent
+  - coding-agent
+  - qa-and-verification-agent
+  - runtime-diagnostician
+activation:
+  fileExtensions: [.ts, .tsx, .js, .jsx, .mts, .cts, .mjs, .cjs]
+  manifestDependencies:
+    - jest
+    - ts-jest
+  manifestFiles:
+    - "jest.config.*"

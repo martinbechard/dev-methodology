@@ -1,162 +1,187 @@
 # Agent, Skill, Technology, And Test Coverage Checklist
 
-This page is generated from the canonical roles, bundled skill frontmatter, technology classification, and evaluation cases. Regenerate it with scripts/build-support-checklist.py.
+This page is generated from the canonical roles, bundled skill frontmatter, specialized skill registry, declared evaluation cases, and verified evidence receipts. Regenerate it with scripts/build-support-checklist.py.
 
 ## Status Meaning
 
 - [x] Structural means the item exists in the canonical catalog and is covered by repository validation or generation checks.
-- [x] Live behavior means the item participated in a recorded live agent evaluation.
-- [ ] Live behavior means no dedicated live evaluation currently proves that item.
+- Declared means an evaluation case names the item. Declaration does not prove invocation or behavior.
+- Manual means a human-observed run exists without a complete machine-verifiable invocation and skill-read receipt.
+- [x] Verified behavior requires captured agent identity, concrete model, skill content digests, skill-read tool evidence, deterministic assertions, and an independent verdict.
+- [ ] Verified behavior means that proof is absent.
 - A passing structural check is not a substitute for a behavior evaluation.
 
 ## Summary
 
 - [x] 22 canonical agents are defined and generate through the supported native role adapters.
-- [x] 63 bundled skills pass catalog and Agent Skill validation.
-- [x] 2 agents have direct live behavior evidence.
-- [x] 10 skills have direct live behavior evidence.
-- [x] TypeScript implementation, Java and Spring Boot implementation, SQL behavior, and TypeScript code review have live evaluation evidence.
-- [ ] The remaining agents, skills, technologies, and harnesses need dedicated behavior evaluations as marked below.
+- [x] 70 bundled skills pass catalog and Agent Skill validation.
+- [x] 2 agents and 10 skills are named in current evaluation cases.
+- [ ] 0 agents and 0 skills have independently verified behavior evidence under the current proof contract.
+- TypeScript implementation, Java and Spring Boot implementation, SQL behavior, and TypeScript code review have useful manual observations that must be rerun with truthful receipts.
 
 ## Harness Support
 
-| Harness | Structural | Live behavior | Coverage |
-| --- | --- | --- | --- |
-| Generic Agent Skills | [x] | [ ] | Installer behavior is unit-tested; no native role format or live harness run. |
-| Codex | [x] | [x] | Skill installation, native role generation, semantic model resolution, and live evaluations passed. |
-| Claude Code | [x] | [ ] | Skill installation and native role generation are tested; no live behavior evaluation yet. |
-| Gemini CLI | [x] | [ ] | Skill installation behavior is unit-tested; native role generation and live behavior are not covered. |
-| JetBrains Junie CLI | [x] | [ ] | Destination and dry-run installation behavior are unit-tested; native role generation and live behavior are not covered. |
+| Harness | Structural | Manual run | Verified behavior | Coverage |
+| --- | --- | --- | --- | --- |
+| Generic Agent Skills | [x] | [ ] | [ ] | Installer behavior is unit-tested; no native role format or captured behavior evidence. |
+| Codex | [x] | [x] | [ ] | Native generation and manual runs exist; current evidence lacks machine-verifiable load and invocation receipts. |
+| Claude Code | [x] | [ ] | [ ] | Skill installation and native role generation are tested; no captured behavior evidence. |
+| Gemini CLI | [x] | [ ] | [ ] | Skill installation behavior is unit-tested; native role generation and behavior are not covered. |
+| JetBrains Junie CLI | [x] | [ ] | [ ] | Destination and dry-run installation behavior are unit-tested; native role generation and behavior are not covered. |
 
-## Supported Technology Skills
+## Specialized Skill Registry
 
-| Technology | Skills | Structural | Direct live coverage |
-| --- | --- | --- | --- |
-| TypeScript and Node.js | typescript-coding, typescript-strict, typescript-esm, node-cli, jest, vitest | [x] | typescript-coding: typescript-order-pricing, typescript-code-review; typescript-strict: typescript-order-pricing, typescript-code-review; typescript-esm: typescript-order-pricing, typescript-code-review |
-| Java and Spring Boot | java-coding, spring-boot | [x] | java-coding: spring-boot-order-cancellation; spring-boot: spring-boot-order-cancellation |
-| SQL and PostgreSQL | sql-coding, postgres-drizzle | [x] | sql-coding: spring-boot-order-cancellation |
-| React, Next.js, Vite, and Tailwind | nextjs-app-router, react-server-components, react-vite-renderer, tailwind-design-system | [x] | None |
-| Electron | electron-main, electron-preload | [x] | None |
-| Browser automation | playwright | [x] | None |
-| HTTP APIs and authentication | api-routes, clerk-auth | [x] | None |
-| Agent and model runtimes | harness-implementation, langgraph, local-model-integration, plan-engine-implementation, tool-runtime-implementation | [x] | None |
+| Skill | Kind | Label | Capabilities | Applicable roles | Declared cases | Verified behavior |
+| --- | --- | --- | --- | --- | --- | --- |
+| api-routes | technology | Application route handlers | http-api | coding-agent, code-review-agent, qa-and-verification-agent, security-reviewer | None | [ ] None |
+| clerk-auth | technology | Clerk identity integration | identity-provider | coding-agent, code-review-agent, qa-and-verification-agent, security-reviewer | None | [ ] None |
+| electron-main | technology | Electron main process | desktop-main-runtime | coding-agent, code-review-agent, qa-and-verification-agent, runtime-diagnostician, security-reviewer | None | [ ] None |
+| electron-preload | technology | Electron preload boundary | desktop-preload-boundary | coding-agent, code-review-agent, qa-and-verification-agent, runtime-diagnostician, security-reviewer | None | [ ] None |
+| harness-implementation | domain | Agent harness implementation | agent-harness-runtime | coding-agent, code-review-agent, prompt-contract-reviewer, qa-and-verification-agent, runtime-diagnostician | None | [ ] None |
+| java-coding | technology | Java | language-coding | artifact-review-agent, code-review-agent, coding-agent, documentation-writer, qa-and-verification-agent, runtime-diagnostician, security-reviewer, project-agent-setup-agent, project-bootstrap-agent, project-organiser | spring-boot-order-cancellation | [ ] None |
+| jest | technology | Jest | test-framework | code-review-agent, coding-agent, qa-and-verification-agent, runtime-diagnostician | None | [ ] None |
+| langgraph | technology | LangGraph | workflow-runtime | code-review-agent, coding-agent, prompt-contract-reviewer, qa-and-verification-agent, runtime-diagnostician | None | [ ] None |
+| local-model-integration | domain | Local model integration | local-model-runtime | code-review-agent, coding-agent, prompt-contract-reviewer, qa-and-verification-agent, runtime-diagnostician | None | [ ] None |
+| nextjs-app-router | technology | Next.js App Router | web-application-framework | artifact-review-agent, code-review-agent, coding-agent, documentation-writer, qa-and-verification-agent, runtime-diagnostician, security-reviewer, ux-designer-or-reviewer | None | [ ] None |
+| node-cli | technology | Node command line application | command-line-runtime | code-review-agent, coding-agent, qa-and-verification-agent, runtime-diagnostician | None | [ ] None |
+| plan-engine-implementation | domain | Plan engine implementation | planning-runtime | code-review-agent, coding-agent, prompt-contract-reviewer, qa-and-verification-agent, runtime-diagnostician | None | [ ] None |
+| playwright | technology | Playwright | end-to-end-framework | e2e-browser-agent, qa-and-verification-agent, runtime-diagnostician, ux-designer-or-reviewer | None | [ ] None |
+| postgres-drizzle | technology | PostgreSQL with Drizzle | persistence-framework | artifact-review-agent, code-review-agent, coding-agent, documentation-writer, qa-and-verification-agent, runtime-diagnostician, security-reviewer | None | [ ] None |
+| react-server-components | technology | React Server Components | server-user-interface | artifact-review-agent, code-review-agent, coding-agent, documentation-writer, qa-and-verification-agent, security-reviewer, ux-designer-or-reviewer | None | [ ] None |
+| react-vite-renderer | technology | React renderer with Vite | client-user-interface | artifact-review-agent, code-review-agent, coding-agent, documentation-writer, qa-and-verification-agent, runtime-diagnostician, ux-designer-or-reviewer | None | [ ] None |
+| spring-boot | technology | Spring Boot | application-framework | artifact-review-agent, code-review-agent, coding-agent, documentation-writer, qa-and-verification-agent, runtime-diagnostician, security-reviewer | spring-boot-order-cancellation | [ ] None |
+| sql-coding | technology | SQL | query-language | artifact-review-agent, code-review-agent, coding-agent, documentation-writer, qa-and-verification-agent, runtime-diagnostician, security-reviewer | spring-boot-order-cancellation | [ ] None |
+| tailwind-design-system | technology | Tailwind design system | styling-system | code-review-agent, coding-agent, qa-and-verification-agent, ux-designer-or-reviewer | None | [ ] None |
+| tool-runtime-implementation | domain | Tool runtime implementation | tool-runtime | code-review-agent, coding-agent, prompt-contract-reviewer, qa-and-verification-agent, runtime-diagnostician, security-reviewer | None | [ ] None |
+| typescript-coding | technology | TypeScript | language-coding | artifact-review-agent, code-review-agent, coding-agent, documentation-writer, qa-and-verification-agent, runtime-diagnostician, security-reviewer, ux-designer-or-reviewer, project-agent-setup-agent, project-bootstrap-agent, project-organiser | typescript-order-pricing, typescript-code-review | [ ] None |
+| typescript-esm | technology | TypeScript ECMAScript modules | module-system | code-review-agent, coding-agent, qa-and-verification-agent, runtime-diagnostician | typescript-order-pricing, typescript-code-review | [ ] None |
+| typescript-strict | technology | Strict TypeScript | strict-type-system | artifact-review-agent, code-review-agent, coding-agent, documentation-writer, qa-and-verification-agent, runtime-diagnostician, security-reviewer | typescript-order-pricing, typescript-code-review | [ ] None |
+| vitest | technology | Vitest | test-framework | code-review-agent, coding-agent, qa-and-verification-agent, runtime-diagnostician | None | [ ] None |
+| ast-grep | tool | Structure-aware search tool | structural-search | coding-agent, code-review-agent, runtime-diagnostician | None | [ ] None |
 
 ## Canonical Agent Checklist
 
-| Agent | Profile | Structural | Live behavior | Evaluation evidence |
-| --- | --- | --- | --- | --- |
-| artifact-review-agent | advanced | [x] | [ ] | None |
-| backlog-steward | default | [x] | [ ] | None |
-| code-review-agent | advanced | [x] | [x] | typescript-code-review |
-| coding-agent | advanced | [x] | [x] | typescript-order-pricing, spring-boot-order-cancellation |
-| development-orchestrator | advanced-long | [x] | [ ] | None |
-| documentation-writer | default | [x] | [ ] | None |
-| e2e-browser-agent | advanced | [x] | [ ] | None |
-| merge-coordinator | advanced | [x] | [ ] | None |
-| methodology-artifact-reviewer | advanced | [x] | [ ] | None |
-| methodology-maintainer | advanced | [x] | [ ] | None |
-| project-agent-setup-agent | default | [x] | [ ] | None |
-| project-bootstrap-agent | advanced-long | [x] | [ ] | None |
-| project-organiser | default | [x] | [ ] | None |
-| prompt-contract-reviewer | advanced | [x] | [ ] | None |
-| public-source-collector | simple | [x] | [ ] | None |
-| qa-and-verification-agent | advanced | [x] | [ ] | None |
-| runtime-diagnostician | advanced | [x] | [ ] | None |
-| security-reviewer | advanced | [x] | [ ] | None |
-| shared-install-verifier | default | [x] | [ ] | None |
-| ux-designer-or-reviewer | default | [x] | [ ] | None |
-| wiki-ingest-agent | default | [x] | [ ] | None |
-| wiki-query-agent | default | [x] | [ ] | None |
+| Agent | Profile | Structural | Declared cases | Verified behavior | Verified evidence |
+| --- | --- | --- | --- | --- | --- |
+| artifact-review-agent | advanced | [x] | None | [ ] | None |
+| backlog-steward | default | [x] | None | [ ] | None |
+| code-review-agent | advanced | [x] | typescript-code-review | [ ] | None |
+| coding-agent | advanced | [x] | typescript-order-pricing, spring-boot-order-cancellation | [ ] | None |
+| development-orchestrator | advanced-long | [x] | None | [ ] | None |
+| documentation-writer | default | [x] | None | [ ] | None |
+| e2e-browser-agent | advanced | [x] | None | [ ] | None |
+| merge-coordinator | advanced | [x] | None | [ ] | None |
+| methodology-artifact-reviewer | advanced | [x] | None | [ ] | None |
+| methodology-maintainer | advanced | [x] | None | [ ] | None |
+| project-agent-setup-agent | default | [x] | None | [ ] | None |
+| project-bootstrap-agent | advanced-long | [x] | None | [ ] | None |
+| project-organiser | default | [x] | None | [ ] | None |
+| prompt-contract-reviewer | advanced | [x] | None | [ ] | None |
+| public-source-collector | simple | [x] | None | [ ] | None |
+| qa-and-verification-agent | advanced | [x] | None | [ ] | None |
+| runtime-diagnostician | advanced | [x] | None | [ ] | None |
+| security-reviewer | advanced | [x] | None | [ ] | None |
+| shared-install-verifier | default | [x] | None | [ ] | None |
+| ux-designer-or-reviewer | default | [x] | None | [ ] | None |
+| wiki-ingest-agent | default | [x] | None | [ ] | None |
+| wiki-query-agent | default | [x] | None | [ ] | None |
 
 ## Bundled Skill Checklist
 
 ### Wiki and knowledge skills
 
-- [x] code-project-wiki — structural; [ ] Live behavior: no dedicated evaluation
-- [x] project-wiki — structural; [ ] Live behavior: no dedicated evaluation
-- [x] project-wiki-query — structural; [ ] Live behavior: no dedicated evaluation
-- [x] project-wiki-research — structural; [ ] Live behavior: no dedicated evaluation
-- [x] project-wiki-topic-verifier — structural; [ ] Live behavior: no dedicated evaluation
-- [x] project-wiki-topic-writer — structural; [ ] Live behavior: no dedicated evaluation
+- [x] code-project-wiki — structural; declared: none; verified behavior: [ ] none
+- [x] project-wiki — structural; declared: none; verified behavior: [ ] none
+- [x] project-wiki-query — structural; declared: none; verified behavior: [ ] none
+- [x] project-wiki-research — structural; declared: none; verified behavior: [ ] none
+- [x] project-wiki-topic-verifier — structural; declared: none; verified behavior: [ ] none
+- [x] project-wiki-topic-writer — structural; declared: none; verified behavior: [ ] none
 
 ### Documentation methodology skills
 
-- [x] create-agents-plan — structural; [ ] Live behavior: no dedicated evaluation
-- [x] development-methodology — structural; [ ] Live behavior: no dedicated evaluation
-- [x] documentation-bootstrap — structural; [ ] Live behavior: no dedicated evaluation
-- [x] documentation-page-verifier — structural; [ ] Live behavior: no dedicated evaluation
-- [x] documentation-reverse-engineering — structural; [ ] Live behavior: no dedicated evaluation
-- [x] maintain-methodology-documentation — structural; [ ] Live behavior: no dedicated evaluation
+- [x] create-agents-plan — structural; declared: none; verified behavior: [ ] none
+- [x] development-methodology — structural; declared: none; verified behavior: [ ] none
+- [x] documentation-bootstrap — structural; declared: none; verified behavior: [ ] none
+- [x] documentation-page-verifier — structural; declared: none; verified behavior: [ ] none
+- [x] documentation-reverse-engineering — structural; declared: none; verified behavior: [ ] none
+- [x] maintain-methodology-documentation — structural; declared: none; verified behavior: [ ] none
 
 ### Artifact creation skills
 
-- [x] create-architecture — structural; [ ] Live behavior: no dedicated evaluation
-- [x] create-functional-spec — structural; [ ] Live behavior: no dedicated evaluation
-- [x] create-high-level-design — structural; [ ] Live behavior: no dedicated evaluation
-- [x] create-module-design — structural; [ ] Live behavior: no dedicated evaluation
-- [x] create-project-wiki — structural; [ ] Live behavior: no dedicated evaluation
-- [x] create-unit-test-plan — structural; [ ] Live behavior: no dedicated evaluation
+- [x] create-architecture — structural; declared: none; verified behavior: [ ] none
+- [x] create-functional-spec — structural; declared: none; verified behavior: [ ] none
+- [x] create-high-level-design — structural; declared: none; verified behavior: [ ] none
+- [x] create-module-design — structural; declared: none; verified behavior: [ ] none
+- [x] create-project-wiki — structural; declared: none; verified behavior: [ ] none
+- [x] create-unit-test-plan — structural; declared: none; verified behavior: [ ] none
 
 ### Artifact review skills
 
-- [x] review-architecture — structural; [ ] Live behavior: no dedicated evaluation
-- [x] review-functional-spec — structural; [ ] Live behavior: no dedicated evaluation
-- [x] review-high-level-design — structural; [ ] Live behavior: no dedicated evaluation
-- [x] review-module-design — structural; [ ] Live behavior: no dedicated evaluation
-- [x] review-project-wiki — structural; [ ] Live behavior: no dedicated evaluation
-- [x] review-structured — structural; [x] Live behavior: typescript-code-review
-- [x] review-unit-test-plan — structural; [ ] Live behavior: no dedicated evaluation
+- [x] review-architecture — structural; declared: none; verified behavior: [ ] none
+- [x] review-functional-spec — structural; declared: none; verified behavior: [ ] none
+- [x] review-high-level-design — structural; declared: none; verified behavior: [ ] none
+- [x] review-module-design — structural; declared: none; verified behavior: [ ] none
+- [x] review-project-wiki — structural; declared: none; verified behavior: [ ] none
+- [x] review-structured — structural; declared: typescript-code-review; verified behavior: [ ] none
+- [x] review-unit-test-plan — structural; declared: none; verified behavior: [ ] none
 
 ### Development practice skills
 
-- [x] agent-claim — structural; [ ] Live behavior: no dedicated evaluation
-- [x] agent-work-merge — structural; [ ] Live behavior: no dedicated evaluation
-- [x] ast-grep — structural; [ ] Live behavior: no dedicated evaluation
-- [x] careful-coding — structural; [x] Live behavior: typescript-order-pricing, spring-boot-order-cancellation, typescript-code-review
-- [x] code-execution-tracing — structural; [ ] Live behavior: no dedicated evaluation
-- [x] code-review-evidence — structural; [x] Live behavior: typescript-order-pricing, spring-boot-order-cancellation, typescript-code-review
-- [x] create-backlog — structural; [ ] Live behavior: no dedicated evaluation
-- [x] fix-explanation — structural; [ ] Live behavior: no dedicated evaluation
-- [x] manage-backlog — structural; [ ] Live behavior: no dedicated evaluation
-- [x] root-cause-analysis — structural; [ ] Live behavior: no dedicated evaluation
-- [x] runtime-evidence-collection — structural; [ ] Live behavior: no dedicated evaluation
-- [x] structured-design — structural; [ ] Live behavior: no dedicated evaluation
-- [x] structured-explanation — structural; [ ] Live behavior: no dedicated evaluation
-- [x] test-driven-development — structural; [x] Live behavior: typescript-order-pricing, spring-boot-order-cancellation
+- [x] agent-claim — structural; declared: none; verified behavior: [ ] none
+- [x] agent-work-merge — structural; declared: none; verified behavior: [ ] none
+- [x] application-security — structural; declared: none; verified behavior: [ ] none
+- [x] ast-grep — structural; declared: none; verified behavior: [ ] none
+- [x] careful-coding — structural; declared: typescript-order-pricing, spring-boot-order-cancellation, typescript-code-review; verified behavior: [ ] none
+- [x] code-discovery — structural; declared: none; verified behavior: [ ] none
+- [x] code-execution-tracing — structural; declared: none; verified behavior: [ ] none
+- [x] code-review-evidence — structural; declared: typescript-order-pricing, spring-boot-order-cancellation, typescript-code-review; verified behavior: [ ] none
+- [x] create-backlog — structural; declared: none; verified behavior: [ ] none
+- [x] end-to-end-verification — structural; declared: none; verified behavior: [ ] none
+- [x] fix-explanation — structural; declared: none; verified behavior: [ ] none
+- [x] manage-backlog — structural; declared: none; verified behavior: [ ] none
+- [x] prompt-contracts — structural; declared: none; verified behavior: [ ] none
+- [x] root-cause-analysis — structural; declared: none; verified behavior: [ ] none
+- [x] route-technology-skills — structural; declared: none; verified behavior: [ ] none
+- [x] runtime-evidence-collection — structural; declared: none; verified behavior: [ ] none
+- [x] structured-design — structural; declared: none; verified behavior: [ ] none
+- [x] structured-explanation — structural; declared: none; verified behavior: [ ] none
+- [x] test-driven-development — structural; declared: typescript-order-pricing, spring-boot-order-cancellation; verified behavior: [ ] none
+- [x] test-strategy — structural; declared: none; verified behavior: [ ] none
+- [x] user-experience-review — structural; declared: none; verified behavior: [ ] none
 
 ### Stack and domain skills
 
-- [x] api-routes — structural; [ ] Live behavior: no dedicated evaluation
-- [x] clerk-auth — structural; [ ] Live behavior: no dedicated evaluation
-- [x] electron-main — structural; [ ] Live behavior: no dedicated evaluation
-- [x] electron-preload — structural; [ ] Live behavior: no dedicated evaluation
-- [x] harness-implementation — structural; [ ] Live behavior: no dedicated evaluation
-- [x] java-coding — structural; [x] Live behavior: spring-boot-order-cancellation
-- [x] jest — structural; [ ] Live behavior: no dedicated evaluation
-- [x] langgraph — structural; [ ] Live behavior: no dedicated evaluation
-- [x] local-model-integration — structural; [ ] Live behavior: no dedicated evaluation
-- [x] nextjs-app-router — structural; [ ] Live behavior: no dedicated evaluation
-- [x] node-cli — structural; [ ] Live behavior: no dedicated evaluation
-- [x] plan-engine-implementation — structural; [ ] Live behavior: no dedicated evaluation
-- [x] playwright — structural; [ ] Live behavior: no dedicated evaluation
-- [x] postgres-drizzle — structural; [ ] Live behavior: no dedicated evaluation
-- [x] react-server-components — structural; [ ] Live behavior: no dedicated evaluation
-- [x] react-vite-renderer — structural; [ ] Live behavior: no dedicated evaluation
-- [x] spring-boot — structural; [x] Live behavior: spring-boot-order-cancellation
-- [x] sql-coding — structural; [x] Live behavior: spring-boot-order-cancellation
-- [x] tailwind-design-system — structural; [ ] Live behavior: no dedicated evaluation
-- [x] tool-runtime-implementation — structural; [ ] Live behavior: no dedicated evaluation
-- [x] typescript-coding — structural; [x] Live behavior: typescript-order-pricing, typescript-code-review
-- [x] typescript-esm — structural; [x] Live behavior: typescript-order-pricing, typescript-code-review
-- [x] typescript-strict — structural; [x] Live behavior: typescript-order-pricing, typescript-code-review
-- [x] vitest — structural; [ ] Live behavior: no dedicated evaluation
+- [x] api-routes — structural; declared: none; verified behavior: [ ] none
+- [x] clerk-auth — structural; declared: none; verified behavior: [ ] none
+- [x] electron-main — structural; declared: none; verified behavior: [ ] none
+- [x] electron-preload — structural; declared: none; verified behavior: [ ] none
+- [x] harness-implementation — structural; declared: none; verified behavior: [ ] none
+- [x] java-coding — structural; declared: spring-boot-order-cancellation; verified behavior: [ ] none
+- [x] jest — structural; declared: none; verified behavior: [ ] none
+- [x] langgraph — structural; declared: none; verified behavior: [ ] none
+- [x] local-model-integration — structural; declared: none; verified behavior: [ ] none
+- [x] nextjs-app-router — structural; declared: none; verified behavior: [ ] none
+- [x] node-cli — structural; declared: none; verified behavior: [ ] none
+- [x] plan-engine-implementation — structural; declared: none; verified behavior: [ ] none
+- [x] playwright — structural; declared: none; verified behavior: [ ] none
+- [x] postgres-drizzle — structural; declared: none; verified behavior: [ ] none
+- [x] react-server-components — structural; declared: none; verified behavior: [ ] none
+- [x] react-vite-renderer — structural; declared: none; verified behavior: [ ] none
+- [x] spring-boot — structural; declared: spring-boot-order-cancellation; verified behavior: [ ] none
+- [x] sql-coding — structural; declared: spring-boot-order-cancellation; verified behavior: [ ] none
+- [x] tailwind-design-system — structural; declared: none; verified behavior: [ ] none
+- [x] tool-runtime-implementation — structural; declared: none; verified behavior: [ ] none
+- [x] typescript-coding — structural; declared: typescript-order-pricing, typescript-code-review; verified behavior: [ ] none
+- [x] typescript-esm — structural; declared: typescript-order-pricing, typescript-code-review; verified behavior: [ ] none
+- [x] typescript-strict — structural; declared: typescript-order-pricing, typescript-code-review; verified behavior: [ ] none
+- [x] vitest — structural; declared: none; verified behavior: [ ] none
 
-## Recorded Live Evaluations
+## Manual Evaluation Observations Requiring Receipt-Based Reruns
 
-- [x] TypeScript order pricing: Coding Agent implementation, eight passing tests, build, coding checklist evidence, and review synthesis.
-- [x] Spring Boot order cancellation: Coding Agent implementation, ten passing tests, HTTP, transaction, persisted-state, and conditional SQL evidence.
-- [x] TypeScript code review: read-only Code Review Agent found the unawaited lookup, swallowed provider failure, and missing percentage validation in a deliberately defective change.
-- [x] Codex model mapping: the live review exposed the rejected friendly alias and passed after generation switched to the concrete gpt-5.6-luna identifier.
+- [ ] TypeScript order pricing produced eight passing tests and a build, but lacks a machine-verifiable agent and skill-read receipt.
+- [ ] Spring Boot order cancellation produced ten passing tests and useful boundary evidence, but lacks a machine-verifiable agent and skill-read receipt.
+- [ ] TypeScript code review truthfully found all seeded defects in a read-only run, but lacks a complete captured invocation and skill-read receipt.
+- [ ] Staged model execution remains unverified until separate evidence-extraction and synthesis invocations are captured.
 
 ## Repository Verification Layers
 
@@ -166,4 +191,5 @@ This page is generated from the canonical roles, bundled skill frontmatter, tech
 - [x] Generic, Codex, Gemini CLI, Claude Code, and Junie CLI installer behavior tests.
 - [x] Generated documentation and agent-skill hierarchy freshness checks.
 - [x] Shared installation refresh exercised for Agents, Codex, and Claude destinations.
-- [x] Evaluation fixture runner verifies expected passing and intentionally failing behavior.
+- [x] Evaluation fixture runner verifies expected project behavior, including intentionally failing review fixtures.
+- [ ] Agent and skill attribution remains unchecked until a valid evidence receipt is supplied.

@@ -1,0 +1,12 @@
+schema: dev-methodology-skill-routing
+version: 1
+skill: end-to-end-verification
+kind: generic
+label: End-to-end verification
+capabilities:
+  - end-to-end-verification
+applicableRoles:
+  - e2e-browser-agent
+  - qa-and-verification-agent
+  - runtime-diagnostician
+  - ux-designer-or-reviewer

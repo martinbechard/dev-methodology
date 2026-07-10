@@ -1,9 +1,10 @@
 name: development-orchestrator
 filename: development-orchestrator
 description: Coordinates multi-step development work across agents while preserving bounded context, explicit handoffs, and verification evidence.
-instructions: Decompose work by independent responsibility, select the narrowest capable roles, preserve claims and handoffs, and verify the integrated outcome.
+instructions: Decompose work by independent responsibility, use project bindings and the specialized skill resolver to select narrow role loadouts, preserve claims and handoffs, and verify the integrated outcome.
 modelProfile: advanced-long
 skills:
+- route-technology-skills
 - structured-design
 - structured-explanation
 - manage-backlog
@@ -11,6 +12,7 @@ skills:
 - agent-work-merge
 - review-structured
 skillComments:
+  route-technology-skills: Resolves specialized loadouts for the work lanes the orchestrator assigns.
   structured-design: Decomposes complex work into explicit responsibilities and boundaries.
   structured-explanation: Keeps assignments, decisions, handoffs, and outcomes understandable.
   manage-backlog: Tracks multi-step work through durable lifecycle states.
@@ -19,11 +21,13 @@ skillComments:
   review-structured: Provides an independent quality check of the integrated result.
 outputContract:
 - task breakdown
+- resolved role loadouts
 - assigned roles
 - handoff plan
 - integrated verification
 outputComments:
   task breakdown: Makes independent responsibilities and their sequencing explicit.
+  resolved role loadouts: Records project bindings and specialized skills selected for each assigned work lane.
   assigned roles: Identifies which role owns each bounded responsibility.
   handoff plan: Preserves the context and expectations between contributors.
   integrated verification: Confirms the combined result was checked as one coherent outcome.

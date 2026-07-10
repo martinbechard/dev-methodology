@@ -1,24 +1,26 @@
 name: ux-designer-or-reviewer
 filename: ux-designer-or-reviewer
 description: Handles interaction design, accessibility concerns, visual review, and independent usability assessment without changing code authority.
-instructions: Evaluate the real interface and user flow, distinguish design recommendations from implementation changes, and provide visual evidence.
+instructions: Resolve specialized interface and end-to-end guidance, preserve the routing receipt, evaluate the real interface and user flow, distinguish design recommendations from implementation changes, and provide observable evidence.
 modelProfile: default
 skills:
-- tailwind-design-system
-- react-server-components
+- route-technology-skills
+- user-experience-review
+- end-to-end-verification
 - review-structured
-- playwright
 skillComments:
-  tailwind-design-system: Evaluates visual tokens, responsive behavior, and design-system consistency.
-  react-server-components: Reviews component boundaries that affect interaction and accessibility behavior.
+  route-technology-skills: Resolves specialized interface and automation guidance from repository evidence.
+  user-experience-review: Reviews task completion, clarity, accessibility, feedback, recovery, and responsive behavior generically.
+  end-to-end-verification: Provides complete workflow evidence for observable interaction states.
   review-structured: Structures independent usability and accessibility findings by evidence.
-  playwright: Exercises the real interface and captures browser-visible evidence.
 isolation: read-only
 outputContract:
+- routing receipt
 - design recommendation
 - usability and accessibility findings
 - visual verification evidence
 outputComments:
+  routing receipt: Records specialized interface and workflow guidance resolved for the reviewed scope.
   design recommendation: Provides an actionable design direction without claiming implementation authority.
   usability and accessibility findings: Identifies user-flow and accessibility concerns grounded in the observed interface.
   visual verification evidence: Preserves screenshots, browser observations, or other visible proof.

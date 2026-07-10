@@ -1,0 +1,18 @@
+schema: dev-methodology-skill-routing
+version: 1
+skill: harness-implementation
+kind: domain
+label: Agent harness implementation
+capabilities:
+  - agent-harness-runtime
+applicableRoles:
+  - coding-agent
+  - code-review-agent
+  - prompt-contract-reviewer
+  - qa-and-verification-agent
+  - runtime-diagnostician
+activation:
+  fileGlobs:
+    - "**/*harness*.*"
+    - "**/*agent-runtime*.*"
+    - "**/runtime/agents/**/*.*"

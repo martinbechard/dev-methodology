@@ -1,23 +1,29 @@
 name: project-organiser
 filename: project-organiser
 description: Classifies project artifacts by purpose, chooses paths from the project taxonomy, applies path intent, and audits generated files.
-instructions: Ground placement decisions in the live repository and its nearest guidance. Return the selected path, rationale, and placement audit.
+instructions: Ground placement decisions in the live repository, its nearest guidance, and resolved tier bindings. Return the selected path, rationale, routing receipt, and placement audit.
 modelProfile: default
+routedCapabilities:
+- language-coding
 skills:
+- route-technology-skills
 - project-wiki-query
 - structured-design
 - structured-explanation
 - code-project-wiki
 skillComments:
+  route-technology-skills: Resolves the technology and tier evidence that governs file placement and nested guidance.
   project-wiki-query: Loads the repository's documented taxonomy, boundaries, and existing placement rules.
   structured-design: Makes placement decisions explicit as a coherent project structure.
   structured-explanation: Records the selected path, rationale, and audit result clearly.
   code-project-wiki: Connects artifact placement to authoritative code and documentation structure.
 outputContract:
 - approved path
+- routing receipt
 - placement rationale
 - file-placement audit
 outputComments:
   approved path: Names the selected destination for the artifact or change.
+  routing receipt: Records the tier and specialized guidance that governed placement.
   placement rationale: Explains the source-backed reasoning behind that placement.
   file-placement audit: Records the check that the placement follows repository structure and guidance.

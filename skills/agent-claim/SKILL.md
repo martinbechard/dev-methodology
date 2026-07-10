@@ -46,7 +46,7 @@ Expected shape:
 Claim before:
 
 - Editing, moving, deleting, formatting, staging, or generating files.
-- Running commands that monopolize shared state such as production builds, Playwright servers, dev server ports, browser profiles, database resets, seed data, generated output refreshes, or long-running test servers.
+- Running commands that monopolize shared state such as production builds, browser-test servers, dev server ports, browser profiles, database resets, seed data, generated output refreshes, or long-running test servers.
 - Inspecting is safe without a claim, unless the inspection command mutates caches, generated files, databases, browser state, or server state.
 
 Use the smallest useful claim. Claim exact files when known. If discovery is still in progress, claim the narrow directory or resource, then narrow it once the target files are known.
@@ -73,8 +73,8 @@ build:production
 build:next
 test:unit
 test:e2e
-playwright:chromium
-playwright:test-server
+browser-test:primary
+browser-test:server
 database:seed
 database:e2e
 generated:reports

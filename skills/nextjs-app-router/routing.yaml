@@ -1,0 +1,21 @@
+schema: dev-methodology-skill-routing
+version: 1
+skill: nextjs-app-router
+kind: technology
+label: Next.js App Router
+capabilities:
+  - web-application-framework
+applicableRoles:
+  - artifact-review-agent
+  - code-review-agent
+  - coding-agent
+  - documentation-writer
+  - qa-and-verification-agent
+  - runtime-diagnostician
+  - security-reviewer
+  - ux-designer-or-reviewer
+activation:
+  manifestDependencies:
+    - next
+  fileGlobs:
+    - "**/app/**/*.*"

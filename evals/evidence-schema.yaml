@@ -1,0 +1,45 @@
+schema: dev-methodology-eval-evidence-schema
+version: 1
+required:
+  - schema
+  - version
+  - case
+  - verdict
+  - captureProvenance
+  - agent
+  - skills
+  - behaviorAssertions
+  - commands
+  - independentVerifier
+agentRequired:
+  - id
+  - harness
+  - model
+  - invocationEvidence
+skillRequired:
+  - id
+  - contentDigest
+  - readEvidence
+behaviorAssertionRequired:
+  - id
+  - verdict
+  - evidence
+commandRequired:
+  - command
+  - exitCode
+  - expectation
+  - evidence
+independentVerifierRequired:
+  - kind
+  - reference
+captureProvenanceRequired:
+  - kind
+  - reference
+notes:
+  - A declared case is not verified evidence.
+  - Skill readEvidence must reference captured harness tool calls, not an agent-authored claim.
+  - Every evidence reference must use relative file#marker syntax and resolve inside the receipt directory.
+  - The referenced UTF-8 artifact must exist and contain the named marker.
+  - Invocation and skill-read references must resolve to unique JSON Lines harness events with matching identity and digest fields.
+  - Receipt validation proves internal consistency; trusted capture provenance remains an external evaluator responsibility.
+  - Read-only cases also require equal projectHashBefore and projectHashAfter values.

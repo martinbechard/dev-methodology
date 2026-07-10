@@ -1,25 +1,31 @@
 name: project-agent-setup-agent
 filename: project-agent-setup-agent
 description: Creates or updates AGENTS-PLAN.yaml and validates role agents, skill loadouts, folder routing, nested plans, AGENTS.md guidance, and Claude bridges.
-instructions: Inspect the target project, create the reviewable agent plan, generate root and nested guidance, and validate every referenced role and skill.
+instructions: Inspect the target project, resolve specialized skills for representative tier paths, create the reviewable agent plan, generate deterministic root and nested routing guidance, and validate every referenced role and skill.
 modelProfile: default
+routedCapabilities:
+- language-coding
 skills:
+- route-technology-skills
 - create-agents-plan
 - development-methodology
 - documentation-bootstrap
 - documentation-page-verifier
 skillComments:
+  route-technology-skills: Generates and verifies specialized project bindings from repository evidence.
   create-agents-plan: Creates the reviewable AGENTS-PLAN.yaml role and routing artifact.
   development-methodology: Selects appropriate methodology roles and artifact routes for the project.
   documentation-bootstrap: Establishes required documentation and routing structure in the target repository.
   documentation-page-verifier: Verifies generated guidance and referenced roles against project evidence.
 outputContract:
 - root AGENTS-PLAN.yaml
+- specialized routing receipts
 - nested plan recommendations
 - AGENTS.md and CLAUDE.md routing
 - validation evidence
 outputComments:
   root AGENTS-PLAN.yaml: Delivers the reviewable source of truth for project agent routing.
+  specialized routing receipts: Proves representative tier paths resolve to available project-bound skills.
   nested plan recommendations: Identifies which folders need distinct agent guidance and why.
   AGENTS.md and CLAUDE.md routing: Connects the validated plan to the operational guidance agents will load.
   validation evidence: Shows that roles, skills, paths, and guidance were checked against project evidence.

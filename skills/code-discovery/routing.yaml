@@ -1,0 +1,11 @@
+schema: dev-methodology-skill-routing
+version: 1
+skill: code-discovery
+kind: generic
+label: Code discovery
+capabilities:
+  - code-discovery
+applicableRoles:
+  - coding-agent
+  - code-review-agent
+  - runtime-diagnostician

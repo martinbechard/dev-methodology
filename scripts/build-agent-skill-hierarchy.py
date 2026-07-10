@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 ROLES_ROOT = ROOT / "agents" / "roles"
 MODEL_PROFILES_PATH = ROOT / "agents" / "model-profiles.yaml"
 SKILLS_ROOT = ROOT / "skills"
+ROUTING_REGISTRY_PATH = SKILLS_ROOT / "route-technology-skills" / "references" / "technology-skill-registry.yaml"
 OUTPUT_PATH = ROOT / "design" / "agent-skill-hierarchy.svg"
 ROW_HEIGHT = 30
 TOP = 110
@@ -72,6 +73,8 @@ def build_svg() -> str:
     for path in sorted(SKILLS_ROOT.glob("*/SKILL.md")):
         name, category = skill_category(path)
         skills_by_category.setdefault(category, []).append(name)
+    routing_registry = load_yaml(ROUTING_REGISTRY_PATH)
+    routing_by_skill = {str(entry["skill"]): entry for entry in routing_registry["skills"]}
 
     role_y: dict[str, int] = {}
     current_y = TOP
@@ -99,14 +102,14 @@ def build_svg() -> str:
     parts = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-labelledby="title desc">',
         '<title id="title">Canonical model profile, agent, and skill hierarchy</title>',
-        '<desc id="desc">Every canonical role is connected to its semantic model profile and bundled skill loadout.</desc>',
-        '<style>text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}.heading{font-size:18px;font-weight:600}.group{font-size:13px;font-weight:600;fill:#334155}.secondary{font-size:9px;fill:#64748b}.node{fill:#f8fafc;stroke:#94a3b8}.model{fill:#e0f2fe;stroke:#0284c7}.edge{fill:none;stroke:#94a3b8;stroke-width:1;opacity:.32}.model-edge{stroke:#0284c7;opacity:.45}</style>',
+        '<desc id="desc">Every canonical role is connected to its semantic model profile, fixed generic skills, and evidence-routed specialized skills.</desc>',
+        '<style>text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}.heading{font-size:18px;font-weight:600}.group{font-size:13px;font-weight:600;fill:#334155}.secondary{font-size:9px;fill:#64748b}.node{fill:#f8fafc;stroke:#94a3b8}.model{fill:#e0f2fe;stroke:#0284c7}.edge{fill:none;stroke:#94a3b8;stroke-width:1;opacity:.32}.routed-edge{fill:none;stroke:#7c3aed;stroke-width:1;stroke-dasharray:4 3;opacity:.22}.model-edge{stroke:#0284c7;opacity:.45}</style>',
         '<text x="30" y="44" class="heading">Model profiles</text>',
         '<text x="360" y="44" class="heading">Canonical agents</text>',
         '<text x="1120" y="44" class="heading">Bundled skills</text>',
         '<text x="30" y="70" class="secondary">Adapter mappings resolve concrete models</text>',
-        '<text x="360" y="70" class="secondary">Roles request semantic profiles and load skills</text>',
-        '<text x="1120" y="70" class="secondary">Detailed coding and review evidence rules live here</text>',
+        '<text x="360" y="70" class="secondary">Roles load generic skills and route specialized variants</text>',
+        '<text x="1120" y="70" class="secondary">Solid edges are fixed; dashed edges are evidence-routed</text>',
     ]
 
     profile_y: dict[str, int] = {}
@@ -132,6 +135,15 @@ def build_svg() -> str:
             parts.append(
                 f'<path d="M {ROLE_X + NODE_WIDTH} {y + 12} C 820 {y + 12}, 940 {skill_y[skill_name] + 12}, {SKILL_X} {skill_y[skill_name] + 12}" class="edge"/>'
             )
+    for skill_name, entry in routing_by_skill.items():
+        if entry["kind"] == "generic":
+            continue
+        for role_name in entry.get("applicableRoles", []):
+            if role_name not in role_y:
+                continue
+            parts.append(
+                f'<path d="M {ROLE_X + NODE_WIDTH} {role_y[role_name] + 12} C 850 {role_y[role_name] + 12}, 970 {skill_y[skill_name] + 12}, {SKILL_X} {skill_y[skill_name] + 12}" class="routed-edge"/>'
+            )
 
     current_y = TOP
     for group, group_roles in grouped_roles.items():
@@ -149,7 +161,9 @@ def build_svg() -> str:
         parts.append(f'<text x="{SKILL_X}" y="{skill_current_y + 18}" class="group">{escape(category.replace("-", " ").title())}</text>')
         skill_current_y += ROW_HEIGHT
         for skill_name in skill_names:
-            parts.append(node(SKILL_X, skill_current_y, SKILL_WIDTH, skill_name))
+            routing = routing_by_skill.get(skill_name)
+            secondary = str(routing["kind"]) if routing else "fixed"
+            parts.append(node(SKILL_X, skill_current_y, SKILL_WIDTH, skill_name, secondary))
             skill_current_y += ROW_HEIGHT
         skill_current_y += 12
 

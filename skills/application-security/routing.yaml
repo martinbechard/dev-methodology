@@ -1,0 +1,10 @@
+schema: dev-methodology-skill-routing
+version: 1
+skill: application-security
+kind: generic
+label: Application security
+capabilities:
+  - application-security
+applicableRoles:
+  - code-review-agent
+  - security-reviewer

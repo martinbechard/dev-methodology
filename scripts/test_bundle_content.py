@@ -45,6 +45,13 @@ NEW_WORKFLOW_SKILLS = (
     "maintain-methodology-documentation",
 )
 NEW_DEVELOPMENT_SKILLS = (
+    "route-technology-skills",
+    "code-discovery",
+    "test-strategy",
+    "end-to-end-verification",
+    "application-security",
+    "user-experience-review",
+    "prompt-contracts",
     "code-review-evidence",
     "test-driven-development",
     "code-execution-tracing",
@@ -137,6 +144,10 @@ README_REQUIRED_PHRASES = (
     "documentation-page-verifier",
     "create-agents-plan",
     "AGENTS-PLAN.yaml",
+    "routing.yaml",
+    "python3 scripts/build-skill-routing.py",
+    "route-technology-skills",
+    "Prompt keywords are advisory discovery hints only",
     "create-project-wiki",
     "create-functional-spec",
     "create-architecture",
@@ -236,7 +247,7 @@ AGENT_DEFINITION_FORMATS_REQUIRED_PHRASES = (
     "Generate Runtime Adapters",
     "Validate Against Skills",
     "Keep HTML Pure",
-    "Role Router Skills",
+    "Generic Roles And Specialized Routing",
     "design/generated/role-definitions.js",
 )
 DEVELOPMENT_USE_LOADOUTS = (
@@ -274,10 +285,10 @@ README_FORBIDDEN_PHRASES = (
 )
 REVERSE_ENGINEERING_DISCOVERY_PHRASES = (
     "## Code Discovery Tools",
-    "Use ast-grep when discovery depends on syntax, nesting, imports, exports, callers, route declarations, component shapes, async flow, error handling, or test structure.",
-    "Before using ast-grep, run ast-grep --version.",
-    "If ast-grep is unavailable, continue with rg, grep, repository file walking, and direct source reading.",
-    "Do not treat ast-grep matches as documentation evidence until the matched code has been read.",
+    "Use a routed structure-aware search tool when discovery depends on syntax, nesting, imports, exports, callers, route declarations, component shapes, async flow, error handling, or test structure.",
+    "Confirm an optional search tool is available before using it.",
+    "If it is unavailable, continue with text search, repository file walking, and direct source reading.",
+    "Do not treat structural matches as documentation evidence until the matched code has been read.",
 )
 DOCUMENTATION_PAGE_VERIFIER_REVIEW_PHRASES = (
     "completed review checklist",

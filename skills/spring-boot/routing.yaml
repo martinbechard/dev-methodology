@@ -1,0 +1,24 @@
+schema: dev-methodology-skill-routing
+version: 1
+skill: spring-boot
+kind: technology
+label: Spring Boot
+capabilities:
+  - application-framework
+applicableRoles:
+  - artifact-review-agent
+  - code-review-agent
+  - coding-agent
+  - documentation-writer
+  - qa-and-verification-agent
+  - runtime-diagnostician
+  - security-reviewer
+activation:
+  fileExtensions: [.java]
+  contentPatterns:
+    - glob: pom.xml
+      contains: spring-boot
+    - glob: "build.gradle*"
+      contains: org.springframework.boot
+companions:
+  - java-coding

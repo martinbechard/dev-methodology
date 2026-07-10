@@ -1,28 +1,24 @@
 name: prompt-contract-reviewer
 filename: prompt-contract-reviewer
 description: Reviews prompt protocol, tool-call safety, schema promises, evaluation coverage, and model-facing data boundaries.
-instructions: Trace prompt and tool contracts through the runtime, identify schema and safety gaps, and distinguish verified behavior from assumptions.
+instructions: Resolve specialized runtime guidance from the reviewed files, preserve the routing receipt, trace prompt and tool contracts through the runtime, identify schema and safety gaps, and distinguish verified behavior from assumptions.
 modelProfile: advanced
 skills:
-- langgraph
-- harness-implementation
+- route-technology-skills
+- prompt-contracts
 - review-structured
-- tool-runtime-implementation
-- plan-engine-implementation
-- local-model-integration
 skillComments:
-  langgraph: Traces prompts, state, nodes, and tool transitions in graph workflows.
-  harness-implementation: Evaluates the custom agent harness and its model-facing contracts.
+  route-technology-skills: Resolves specialized runtime guidance only when repository evidence activates it.
+  prompt-contracts: Reviews instructions, state, tools, outputs, retries, authority, and evaluation coverage generically.
   review-structured: Structures findings by evidence, severity, and actionable correction.
-  tool-runtime-implementation: Checks tool schemas, registration, dispatch, and result handling.
-  plan-engine-implementation: Checks planning-state contracts and execution boundaries.
-  local-model-integration: Covers local-model prompts, runtime constraints, and model-specific behavior.
 isolation: read-only
 outputContract:
+- routing receipt
 - prompt contract findings
 - schema and tool-call risks
 - evaluation gaps
 outputComments:
+  routing receipt: Records specialized runtime guidance resolved from the reviewed implementation.
   prompt contract findings: Identifies prompt and protocol defects with evidence for remediation.
   schema and tool-call risks: Separates schema and tool-boundary failures from general observations.
   evaluation gaps: Records missing tests, judges, or evaluation coverage.

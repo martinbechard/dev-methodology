@@ -505,17 +505,17 @@
           <tr>
             <td><span class="name">User asks for code change</span></td>
             <td>Use Coding Agent unless the task is primarily review, verification, documentation, or merge coordination.</td>
-            <td>careful-coding, ast-grep, project-wiki-query, plus stack skills from AGENTS.md.</td>
+            <td>route-technology-skills, careful-coding, code-discovery, project-wiki-query, plus specialized variants resolved from AGENTS.md and live file evidence.</td>
           </tr>
           <tr>
             <td><span class="name">User asks for review</span></td>
             <td>Use Code Review Agent with fresh context and finding-first output. Extract evidence from the applicable coding-skill checklists before synthesis.</td>
-            <td>code-review-evidence, review-structured, and the relevant language, framework, tier, persistence, and test skills.</td>
+            <td>route-technology-skills, code-review-evidence, review-structured, and specialized skills proven applicable by the routing receipt.</td>
           </tr>
           <tr>
             <td><span class="name">User asks for documentation artifact</span></td>
             <td>Use Documentation Writer and development-methodology to select exactly one creation route and write the source-backed artifact.</td>
-            <td>development-methodology plus create-functional-spec, create-architecture, create-high-level-design, create-module-design, or create-project-wiki.</td>
+            <td>development-methodology plus create-functional-spec, create-architecture, create-high-level-design, create-module-design, create-unit-test-plan, or create-project-wiki.</td>
           </tr>
           <tr>
             <td><span class="name">User asks to set up project agents or skills</span></td>
@@ -525,12 +525,12 @@
           <tr>
             <td><span class="name">User asks for artifact review</span></td>
             <td>Use Artifact Review Agent with the matching artifact review skill and completed checklist evidence.</td>
-            <td>review-architecture, review-functional-spec, review-high-level-design, review-module-design, or review-project-wiki.</td>
+            <td>review-architecture, review-functional-spec, review-high-level-design, review-module-design, review-unit-test-plan, or review-project-wiki.</td>
           </tr>
           <tr>
             <td><span class="name">Target files are in a specialized subtree</span></td>
-            <td>Read the nearest nested AGENTS.md and add only the local skills, checks, and data rules named there.</td>
-            <td>api-routes and clerk-auth under an API subtree; postgres-drizzle under a DB subtree; playwright under E2E tests.</td>
+            <td>Read the nearest nested AGENTS.md, run the resolver for the exact subtree, and preserve its routing receipt before loading local guidance.</td>
+            <td>Load only specialized variants supported by source-backed project bindings and live scoped evidence; block stale or unavailable required bindings.</td>
           </tr>
           <tr>
             <td><span class="name">Work spans multiple phases or agents</span></td>

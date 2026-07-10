@@ -1,13 +1,16 @@
 name: artifact-review-agent
 filename: artifact-review-agent
 description: Reviews finished methodology artifacts with an artifact-specific checklist and passes evidence to the shared page verifier.
-instructions: Use the matching review skill, capture quoted evidence in the completed checklist, and return actionable findings before conclusions.
+instructions: Resolve specialized source guidance for the referenced files, use the matching review skill, capture quoted evidence in the completed checklist, and return actionable findings before conclusions.
 modelProfile: advanced
 modelStages:
   evidence-extraction: simple
   synthesis: advanced
   large-context-synthesis: advanced-long
+routedCapabilities:
+- language-coding
 skills:
+- route-technology-skills
 - review-project-wiki
 - review-functional-spec
 - review-architecture
@@ -16,6 +19,7 @@ skills:
 - review-unit-test-plan
 - documentation-page-verifier
 skillComments:
+  route-technology-skills: Resolves specialized source guidance from referenced files and project bindings.
   review-project-wiki: Applies the project-wiki-specific checklist and evidence contract.
   review-functional-spec: Applies the functional-specification workflow and actor-coverage checks.
   review-architecture: Evaluates system boundaries, runtime assumptions, and architectural evidence.
@@ -25,10 +29,12 @@ skillComments:
   documentation-page-verifier: Provides the shared independent quality gate after the artifact-specific review.
 isolation: read-only
 outputContract:
+- routing receipt
 - completed review checklist
 - verifier assessment
 - findings and corrections
 outputComments:
+  routing receipt: Records specialized source guidance, availability, digests, and confirmed reads used during review.
   completed review checklist: Records the artifact-specific review evidence that supports the assessment.
   verifier assessment: States the independent verification result after the focused review.
   findings and corrections: Gives the owner concrete corrections before the artifact is accepted.

@@ -1,30 +1,36 @@
 name: code-review-agent
 filename: code-review-agent
 description: Reviews diffs for regressions, missing tests, weak verification, unsafe abstractions, rule violations, and documentation drift.
-instructions: Load the applicable coding and stack skills, extract checklist evidence in a fresh read-only context, then synthesize findings from that evidence. Lead with concrete findings, cite tight file locations, and avoid style-only commentary.
+instructions: Run the specialized skill resolver for the reviewed files, read every resolved skill, preserve the routing receipt, extract checklist evidence in a fresh read-only context, then synthesize findings from that evidence. Lead with concrete findings, cite tight file locations, and avoid style-only commentary.
 modelProfile: advanced
 modelStages:
   evidence-extraction: simple
   synthesis: advanced
   large-context-synthesis: advanced-long
+routedCapabilities:
+- language-coding
 skills:
+- route-technology-skills
 - code-review-evidence
 - review-structured
 - careful-coding
 - project-wiki-query
 skillComments:
+  route-technology-skills: Resolves and verifies the specialized coding guidance required by the reviewed files.
   code-review-evidence: Selects applicable coding checklists, extracts cited evidence, and separates low-cost extraction from synthesis.
   review-structured: Supplies the finding-first review structure and evidence discipline.
   careful-coding: Checks that proposed changes remain scoped, simple, and properly verified.
   project-wiki-query: Grounds findings in documented project intent and known constraints.
 isolation: read-only
 outputContract:
+- routing receipt
 - completed code evidence packet
 - prioritized findings
 - file references
 - open questions
 - residual risk
 outputComments:
+  routing receipt: Records the specialized coding skills resolved for the reviewed files and whether each was available and read.
   completed code evidence packet: Preserves checklist status, cited facts, uncertainty, and missing evidence before synthesis.
   prioritized findings: Orders actionable defects by their impact so the owner can respond efficiently.
   file references: Anchors every finding to the smallest useful source location.

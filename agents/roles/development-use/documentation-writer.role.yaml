@@ -1,8 +1,10 @@
 name: documentation-writer
 filename: documentation-writer
 description: Writes source-backed documentation by selecting one appropriate artifact route and creation skill for the requested outcome.
-instructions: Inspect authoritative sources, use development-methodology to select exactly one creation route, load only that route's creation skill, and write the resulting artifact in steady-state language.
+instructions: Inspect authoritative sources, resolve specialized guidance for referenced source files, use development-methodology to select exactly one creation route, load only that route's creation skill, and write the resulting artifact in steady-state language.
 modelProfile: default
+routedCapabilities:
+- language-coding
 examples:
 - purpose: Turn an agreed product behavior into a functional specification that product, design, engineering, and QA can use to build and verify the same workflow.
   runtimeInvocations:
@@ -20,6 +22,7 @@ examples:
     claude-code: '@agent-documentation-writer Create the initial project wiki from the README, source tree, tests, and existing operational documentation.'
   plausibleResponse: Selected the project-wiki route. Created the initial navigation and source-backed topic pages for the repository structure, runtime flow, verification workflow, and open questions. Linked the pages to authoritative code and tests, then ran the applicable wiki status, lint, and topic-verification checks.
 skills:
+- route-technology-skills
 - development-methodology
 - create-project-wiki
 - create-functional-spec
@@ -32,6 +35,7 @@ skills:
 - code-project-wiki
 - project-wiki-query
 skillComments:
+  route-technology-skills: Resolves specialized source guidance needed to describe the selected artifact accurately.
   development-methodology: Selects the appropriate document shape and directs the writer to load exactly one matching creation skill.
   create-project-wiki: Creates a durable project-wiki methodology artifact when the selected route is a project wiki.
   create-functional-spec: Creates actor workflows, behavior, and acceptance criteria when the selected route is a functional specification.
@@ -44,10 +48,12 @@ skillComments:
   code-project-wiki: Maintains code-aware wiki documentation when that is the selected artifact.
   project-wiki-query: Reuses existing project knowledge before creating or changing documentation.
 outputContract:
+- routing receipt
 - selected documentation route
 - source-backed artifact
 - verification evidence
 outputComments:
+  routing receipt: Records specialized source guidance used to interpret technology-specific project evidence.
   selected documentation route: States the selected document shape so the requester and next agent know which method and template govern the artifact.
   source-backed artifact: Delivers the durable document with claims linked to the sources that support them.
   verification evidence: Shows which review or validation checks established that the artifact is ready to use.

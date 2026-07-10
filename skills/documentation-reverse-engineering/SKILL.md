@@ -43,11 +43,10 @@ Use source inventory first, then use structure-aware search where it adds eviden
 
 - Use rg or repository file walking for source roots, filenames, plain text references, configuration keys, route strings, generated artifacts, and broad source inventory.
 - Use grep only as a portability fallback when rg is unavailable.
-- Use ast-grep when discovery depends on syntax, nesting, imports, exports, callers, route declarations, component shapes, async flow, error handling, or test structure.
-- Before using ast-grep, run ast-grep --version.
-- If ast-grep is unavailable, continue with rg, grep, repository file walking, and direct source reading.
-- Do not treat ast-grep matches as documentation evidence until the matched code has been read.
-- Use ast-grep to seed candidate modules, callers, contracts, tests, and relationships; use source reading to decide responsibility, ownership, behavior, and document boundaries.
+- Use a routed structure-aware search tool when discovery depends on syntax, nesting, imports, exports, callers, route declarations, component shapes, async flow, error handling, or test structure.
+- Confirm an optional search tool is available before using it. If it is unavailable, continue with text search, repository file walking, and direct source reading.
+- Do not treat structural matches as documentation evidence until the matched code has been read.
+- Use structural search to seed candidate modules, callers, contracts, tests, and relationships; use source reading to decide responsibility, ownership, behavior, and document boundaries.
 
 ## Pass 1: Module Designs
 

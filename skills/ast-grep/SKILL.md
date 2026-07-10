@@ -22,13 +22,7 @@ Before using ast-grep in a new environment, verify the CLI is available:
 ast-grep --version
 ```
 
-If it is missing, tell the user it must be installed first. Common install options are:
-
-```bash
-brew install ast-grep
-npm install -g @ast-grep/cli
-cargo install ast-grep
-```
+If it is missing, report that the optional structural-search variant is unavailable and continue with code-discovery, text search, repository walking, and direct source reading. Ask about installation only when the user specifically needs a structural query whose accuracy cannot be established with the available fallback. Do not install it merely because the optional routing criterion did not match.
 
 ## Workflow
 

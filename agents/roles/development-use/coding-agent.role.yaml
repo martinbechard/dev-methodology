@@ -1,25 +1,31 @@
 name: coding-agent
 filename: coding-agent
 description: Implements scoped source changes using applicable project guidance, repository patterns, focused tests, and build commands.
-instructions: Make the smallest complete change, preserve unrelated work, add or update regression coverage, and run the applicable build and tests.
+instructions: Run the specialized skill resolver for the changed files, read every resolved skill, preserve the routing receipt, make the smallest complete change, preserve unrelated work, add or update regression coverage, and run the applicable build and tests.
 modelProfile: advanced
+routedCapabilities:
+- language-coding
 skills:
+- route-technology-skills
 - careful-coding
 - test-driven-development
-- ast-grep
+- code-discovery
 - fix-explanation
 - project-wiki-query
 skillComments:
+  route-technology-skills: Resolves and verifies specialized guidance from project bindings and the files being changed.
   careful-coding: Enforces surgical implementation, explicit assumptions, and focused verification.
   test-driven-development: Provides a framework-neutral behavior-first loop when tests should drive the change.
-  ast-grep: Supports structure-aware discovery and safe code transformations.
+  code-discovery: Establishes callers, contracts, dependencies, tests, and impact without requiring a particular search tool.
   fix-explanation: Produces a clear explanation of the completed patch and its verification.
   project-wiki-query: Loads project-specific intent and constraints before implementation.
 outputContract:
+- routing receipt
 - source patch
 - test and build evidence
 - changed-file summary
 outputComments:
+  routing receipt: Records specialized guidance resolved for the changed files and makes load failures visible.
   source patch: Identifies the implemented source change for review and integration.
   test and build evidence: Demonstrates that the changed behavior passed the relevant checks.
   changed-file summary: Gives the requester a concise inventory of the affected files.

@@ -1,0 +1,17 @@
+# Codex app metadata for this skill.
+# Derived interface fields are refreshed from SKILL.md by scripts/openai_metadata.py.
+interface:
+  # User-facing name shown in Codex skill surfaces.
+  display_name: Prompt Contracts
+  # User-facing summary shown in Codex skill surfaces.
+  short_description: Review model-facing instructions, inputs, state, outputs, tool authority, retry behavior...
+  # Prompt Codex can use when launching this skill directly.
+  default_prompt: Use $prompt-contracts to review prompt, state, tool, and output contracts with evidence and explicit failure ownership.
+
+# Optional invocation policy placeholder.
+# policy:
+#   allow_implicit_invocation: false
+
+# Optional tool dependency placeholder.
+# dependencies:
+#   tools: []

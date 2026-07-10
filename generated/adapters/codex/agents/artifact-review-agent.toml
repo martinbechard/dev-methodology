@@ -5,6 +5,7 @@
 # - synthesis: advanced
 # - large-context-synthesis: advanced-long
 # Skill comments:
+# - route-technology-skills: Resolves specialized source guidance from referenced files and project bindings.
 # - review-project-wiki: Applies the project-wiki-specific checklist and evidence contract.
 # - review-functional-spec: Applies the functional-specification workflow and actor-coverage checks.
 # - review-architecture: Evaluates system boundaries, runtime assumptions, and architectural evidence.
@@ -13,17 +14,18 @@
 # - review-unit-test-plan: Checks unit-test scenarios, boundary contracts, traceability, and coverage evidence.
 # - documentation-page-verifier: Provides the shared independent quality gate after the artifact-specific review.
 # Output comments:
+# - routing receipt: Records specialized source guidance, availability, digests, and confirmed reads used during review.
 # - completed review checklist: Records the artifact-specific review evidence that supports the assessment.
 # - verifier assessment: States the independent verification result after the focused review.
 # - findings and corrections: Gives the owner concrete corrections before the artifact is accepted.
 name = "artifact-review-agent"
 description = "Reviews finished methodology artifacts with an artifact-specific checklist and passes evidence to the shared page verifier."
 developer_instructions = """
-Use the matching review skill, capture quoted evidence in the completed checklist, and return actionable findings before conclusions.
+Resolve specialized source guidance for the referenced files, use the matching review skill, capture quoted evidence in the completed checklist, and return actionable findings before conclusions.
 
-Load these skills when applicable: review-project-wiki, review-functional-spec, review-architecture, review-high-level-design, review-module-design, review-unit-test-plan, documentation-page-verifier.
+Load these skills when applicable: route-technology-skills, review-project-wiki, review-functional-spec, review-architecture, review-high-level-design, review-module-design, review-unit-test-plan, documentation-page-verifier.
 
-Return: completed review checklist; verifier assessment; findings and corrections."""
+Return: routing receipt; completed review checklist; verifier assessment; findings and corrections."""
 model = "gpt-5.6-luna"
 model_reasoning_effort = "high"
 sandbox_mode = "read-only"

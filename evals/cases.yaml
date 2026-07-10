@@ -48,6 +48,7 @@ cases:
     install: npm install
     verify: npm test
     expectVerifyFailure: true
+    readOnly: true
     requiredAgents:
       - code-review-agent
     requiredSkills:
@@ -63,6 +64,6 @@ cases:
       - Boundary validation
       - Review Synthesis
     requiredFindings:
-      - await the provider
-      - provider failure
-      - valid range
+      - ASYNC-AWAIT
+      - ERROR-PROPAGATION
+      - PERCENT-RANGE
