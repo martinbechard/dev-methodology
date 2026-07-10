@@ -403,8 +403,8 @@
     <h1 id="page-title">Agent And Skill Specialization Strategy</h1>
     <p class="lede">
       The methodology has a shared catalog of role agents and skills that every project can use. Canonical roles own generic fixed-role
-      skills. Project Agent Setup detects stable folder technology loadouts and records them in AGENTS-PLAN.yaml and AGENTS.md. Ordinary
-      role agents load their fixed skills and the nearest folder skills before acting without rerunning detection.
+      skills and human-readable conditions for request-specific skills. Project Agent Setup detects stable folder technology loadouts and records them in AGENTS-PLAN.yaml and AGENTS.md. Ordinary
+      role agents always load fixed skills, use judgment to apply request-specific conditions, and load the nearest folder skills before acting without rerunning detection.
     </p>
   </section>
 
@@ -550,7 +550,7 @@
           <li><code>scripts/refresh-shared-skills.py</code> replaces the shared machine installs from the current source tree.</li>
           <li><code>.dev-methodology-install.json</code> records the skills this catalog installed into each shared destination.</li>
           <li>Before a rename or deletion, sweep the source catalog for the old skill id and update role definitions, Codex metadata, skills, dispatch profiles, workflow examples, design documents, scripts, and tests.</li>
-          <li>Creation skills keep one artifact template route each and load only when that artifact type is the job at hand.</li>
+          <li>Creation skills keep one artifact template route each. Their canonical role entries provide a <code>when ...</code> condition so generated agents load only the route that fits the requested outcome.</li>
           <li>Review skills keep checklist templates named review-checklist-review-target.md and completed checklist artifacts named artifact-name.review-checklist-review-target.md.</li>
           <li>Renamed or deleted skills are pruned only when the ownership manifest says this catalog installed the old artifact.</li>
           <li>Runtime agent metadata packaged inside a skill is refreshed and pruned with that owned skill.</li>
@@ -577,7 +577,7 @@
       </div>
       <div class="flow-step">
         <strong>4. Select skills</strong>
-        <p>Load common role skills, project skills, stack skills, artifact skills, quality skills, and folder-specific skills.</p>
+        <p>Load fixed role skills, apply request-specific conditions with judgment, then load the pre-established folder technology skills from AGENTS.md.</p>
       </div>
       <div class="flow-step">
         <strong>5. Execute contract</strong>

@@ -6,6 +6,8 @@
 # - development-methodology: We need this to select methodology roles and artifact routes that fit the target project's actual work and documentation needs.
 # - documentation-bootstrap: We need this when the target lacks the documentation and routing structure required for agents to load and follow the plan consistently.
 # - documentation-page-verifier: We need this to confirm that generated guidance and every referenced role or skill remain grounded in project evidence and bundle contracts.
+# Request-specific skill conditions:
+# - documentation-bootstrap: when the target lacks the documentation and routing structure needed for agents to load and follow the plan consistently
 # Output purposes:
 # - root AGENTS-PLAN.yaml: Gives reviewers and generators one inspectable source of truth for the project's agent roles, skill loadouts, and routing decisions.
 # - technology detection loadouts: Records the evidence-backed technology skills, missing requirements, conflicts, and no-variant outcomes that folder guidance must preserve.
@@ -17,7 +19,10 @@ description = "Creates or updates AGENTS-PLAN.yaml and validates role agents, sk
 developer_instructions = """
 Inspect the target project, select representative folder scopes, run setup-time technology detection, create the reviewable agent plan with source evidence, generate deterministic root and nested AGENTS.md loading guidance, and validate every referenced role and skill.
 
-Before acting, load these fixed-role skills completely; they govern the work: detect-technology-skills, create-agents-plan, development-methodology, documentation-bootstrap, documentation-page-verifier.
+Before acting, load these fixed-role skills completely; they govern the work: detect-technology-skills, create-agents-plan, development-methodology, documentation-page-verifier.
+
+Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
+- Use the documentation-bootstrap skill when the target lacks the documentation and routing structure needed for agents to load and follow the plan consistently.
 
 Return: root AGENTS-PLAN.yaml; technology detection loadouts; nested plan recommendations; AGENTS.md and CLAUDE.md routing; validation evidence."""
 model = "gpt-5.6-terra"

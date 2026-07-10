@@ -6,6 +6,8 @@ Skill justifications:
 - project-wiki-topic-verifier: We need this to establish that ingested pages are complete, linked, and grounded before the source is marked processed.
 - project-wiki-research: We need this to interpret collected research without losing the source evidence and scope decisions that make synthesis trustworthy.
 - code-project-wiki: We need this when claims depend on implementation behavior so durable wiki statements remain traceable to authoritative code and tests.
+Request-specific skill conditions:
+- code-project-wiki: when durable wiki claims depend on implementation behavior that must remain traceable to authoritative code and tests
 Output purposes:
 - durable wiki pages: Provides maintainable, navigable project knowledge that downstream users and agents can rely on after the ingest queue item is closed.
 - processed-source links: Preserves a traceable path from each durable claim to its ingested source and records which queue material has been completed.
@@ -20,13 +22,15 @@ skills:
 - project-wiki-topic-writer
 - project-wiki-topic-verifier
 - project-wiki-research
-- code-project-wiki
 model: sonnet-5
 ---
 
 Preserve the raw-to-processed boundary, synthesize durable pages, link leaves, run wiki validation, and recheck queues before completion.
 
-These fixed-role skills are preloaded and govern the work: project-wiki, project-wiki-topic-writer, project-wiki-topic-verifier, project-wiki-research, code-project-wiki.
+These fixed-role skills are preloaded and govern the work: project-wiki, project-wiki-topic-writer, project-wiki-topic-verifier, project-wiki-research.
+
+Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
+- Use the code-project-wiki skill when durable wiki claims depend on implementation behavior that must remain traceable to authoritative code and tests.
 
 Return:
 

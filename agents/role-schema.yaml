@@ -1,5 +1,5 @@
 schema: dev-methodology-role
-version: 1
+version: 2
 required:
   - name
   - filename
@@ -13,7 +13,7 @@ properties:
   filename: slug
   description: string
   instructions: string
-  skills: skill-entry-list
+  skills: conditional-skill-entry-list
   dynamicFolderSkills: boolean
   skillAvailability: skill-availability-list
   tools: string-list

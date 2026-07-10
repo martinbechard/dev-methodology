@@ -60,6 +60,7 @@ ROLE_INSTRUCTIONS_FIELD_NAME = "instructions"
 ROLE_SKILLS_FIELD_NAME = "skills"
 ROLE_OUTPUT_CONTRACT_FIELD_NAME = "outputContract"
 ROLE_SKILL_JUSTIFICATION_FIELD_NAME = "justification"
+ROLE_SKILL_CONDITION_FIELD_NAME = "condition"
 ROLE_OUTPUT_PURPOSE_FIELD_NAME = "purpose"
 ROLE_EXAMPLES_FIELD_NAME = "examples"
 ROLE_MODEL_PROFILE_FIELD_NAME = "modelProfile"
@@ -146,6 +147,7 @@ class RoleDefinition:
     instructions: str
     skills: tuple[str, ...]
     skill_justifications: dict[str, str]
+    skill_conditions: dict[str, str]
     output_contract: tuple[str, ...]
     output_purposes: dict[str, str]
     examples: tuple[dict[str, object], ...]
@@ -527,6 +529,51 @@ def validate_annotated_list(
     return tuple(names), annotations
 
 
+def validate_role_skills(
+    value: object,
+    source_path: Path,
+) -> tuple[tuple[str, ...], dict[str, str], dict[str, str]]:
+    if not isinstance(value, list) or not value:
+        raise ValueError(f"Role {ROLE_SKILLS_FIELD_NAME} must be a non-empty list: {source_path}")
+
+    names: list[str] = []
+    justifications: dict[str, str] = {}
+    conditions: dict[str, str] = {}
+    for item in value:
+        if not isinstance(item, dict) or len(item) != 1:
+            raise ValueError(
+                f"Role {ROLE_SKILLS_FIELD_NAME} entries must contain exactly one named mapping: {source_path}"
+            )
+        name, metadata = next(iter(item.items()))
+        if not isinstance(name, str) or not name.strip():
+            raise ValueError(f"Role {ROLE_SKILLS_FIELD_NAME} entry names must be non-empty strings: {source_path}")
+        normalized_name = name.strip()
+        if normalized_name in justifications:
+            raise ValueError(f"Role {ROLE_SKILLS_FIELD_NAME} contains duplicate {normalized_name}: {source_path}")
+        if not isinstance(metadata, dict) or set(metadata) not in (
+            {ROLE_SKILL_JUSTIFICATION_FIELD_NAME},
+            {ROLE_SKILL_JUSTIFICATION_FIELD_NAME, ROLE_SKILL_CONDITION_FIELD_NAME},
+        ):
+            raise ValueError(
+                f"Role {ROLE_SKILLS_FIELD_NAME} {normalized_name} must contain justification and optional condition only: {source_path}"
+            )
+        justification = metadata[ROLE_SKILL_JUSTIFICATION_FIELD_NAME]
+        if not isinstance(justification, str) or not justification.strip():
+            raise ValueError(
+                f"Role {ROLE_SKILLS_FIELD_NAME} {normalized_name} justification must be a non-empty string: {source_path}"
+            )
+        justifications[normalized_name] = justification.strip()
+        condition = metadata.get(ROLE_SKILL_CONDITION_FIELD_NAME)
+        if condition is not None:
+            if not isinstance(condition, str) or not condition.strip().startswith("when "):
+                raise ValueError(
+                    f"Role {ROLE_SKILLS_FIELD_NAME} {normalized_name} condition must be a non-empty fragment beginning with when: {source_path}"
+                )
+            conditions[normalized_name] = condition.strip().rstrip(".")
+        names.append(normalized_name)
+    return tuple(names), justifications, conditions
+
+
 def load_role_schema() -> tuple[set[str], set[str], set[str]]:
     schema = read_yaml_object(ROLE_SCHEMA_PATH)
     required = validate_string_list(
@@ -646,10 +693,8 @@ def load_role_definition(
     if ROLE_EXAMPLES_FIELD_NAME in parsed:
         examples = validate_role_examples(parsed[ROLE_EXAMPLES_FIELD_NAME], source_path)
 
-    role_skills, skill_justifications = validate_annotated_list(
+    role_skills, skill_justifications, skill_conditions = validate_role_skills(
         parsed[ROLE_SKILLS_FIELD_NAME],
-        ROLE_SKILLS_FIELD_NAME,
-        ROLE_SKILL_JUSTIFICATION_FIELD_NAME,
         source_path,
     )
     unknown_skills = sorted(set(role_skills) - skill_names)
@@ -683,6 +728,7 @@ def load_role_definition(
         instructions=instructions.strip(),
         skills=role_skills,
         skill_justifications=skill_justifications,
+        skill_conditions=skill_conditions,
         output_contract=output_contract,
         output_purposes=output_purposes,
         examples=examples,
@@ -770,6 +816,7 @@ def build_role_payload(roles: Sequence[RoleDefinition]) -> dict[str, object]:
                 "instructions": role.instructions,
                 "skills": list(role.skills),
                 "skillJustifications": role.skill_justifications,
+                "skillConditions": role.skill_conditions,
                 "outputs": list(role.output_contract),
                 "outputPurposes": role.output_purposes,
                 "examples": list(role.examples),
@@ -794,17 +841,49 @@ def render_role_javascript(roles: Sequence[RoleDefinition]) -> str:
     )
 
 
+def fixed_role_skills(role: RoleDefinition) -> tuple[str, ...]:
+    return tuple(skill for skill in role.skills if skill not in role.skill_conditions)
+
+
+def conditional_role_skills(role: RoleDefinition) -> tuple[str, ...]:
+    return tuple(skill for skill in role.skills if skill in role.skill_conditions)
+
+
+def role_loading_instruction_text(
+    role: RoleDefinition,
+    fixed_skills_preloaded: bool = False,
+) -> str:
+    sections: list[str] = []
+    fixed_skills = fixed_role_skills(role)
+    conditional_skills = conditional_role_skills(role)
+    if fixed_skills:
+        fixed_prefix = (
+            "These fixed-role skills are preloaded and govern the work:"
+            if fixed_skills_preloaded
+            else ROLE_SKILL_INSTRUCTION_PREFIX
+        )
+        sections.append(f"{fixed_prefix} {', '.join(fixed_skills)}.")
+    if conditional_skills:
+        route_lines = [
+            "Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.",
+        ]
+        route_lines.extend(
+            f"- Use the {skill} skill {role.skill_conditions[skill]}."
+            for skill in conditional_skills
+        )
+        sections.append("\n".join(route_lines))
+    if role.optional_fields.get(ROLE_DYNAMIC_FOLDER_SKILLS_FIELD_NAME):
+        sections.append(
+            "Read the root and nearest AGENTS.md and load every technology skill declared for the active folder before acting. Do not rerun technology detection."
+        )
+    return "\n\n".join(sections)
+
+
 def role_instruction_text(role: RoleDefinition) -> str:
-    skill_text = ", ".join(role.skills)
     output_text = "; ".join(role.output_contract)
-    folder_instruction = (
-        "\n\nRead the root and nearest AGENTS.md and load every technology skill declared for the active folder before acting. Do not rerun technology detection."
-        if role.optional_fields.get(ROLE_DYNAMIC_FOLDER_SKILLS_FIELD_NAME)
-        else ""
-    )
     return (
         f"{role.instructions}\n\n"
-        f"{ROLE_SKILL_INSTRUCTION_PREFIX} {skill_text}.{folder_instruction}\n\n"
+        f"{role_loading_instruction_text(role)}\n\n"
         f"{ROLE_OUTPUT_INSTRUCTION_PREFIX} {output_text}."
     )
 
@@ -826,6 +905,12 @@ def role_adapter_comments(
     lines.extend(
         f"{prefix}- {skill}: {role.skill_justifications[skill]}" for skill in role.skills
     )
+    if role.skill_conditions:
+        lines.append(f"{prefix}Request-specific skill conditions:")
+        lines.extend(
+            f"{prefix}- {skill}: {role.skill_conditions[skill]}"
+            for skill in conditional_role_skills(role)
+        )
     lines.append(f"{prefix}Output purposes:")
     lines.extend(
         f"{prefix}- {output}: {role.output_purposes[output]}"
@@ -881,7 +966,7 @@ def render_claude_agent(
     frontmatter: dict[str, object] = {
         ROLE_NAME_FIELD_NAME: role.name,
         ROLE_DESCRIPTION_FIELD_NAME: role.description,
-        ROLE_SKILLS_FIELD_NAME: list(role.skills),
+        ROLE_SKILLS_FIELD_NAME: list(fixed_role_skills(role)),
         "model": adapter_profile.model,
     }
     for field_name in (
@@ -901,12 +986,7 @@ def render_claude_agent(
         f"<!-- {GENERATED_FILE_HEADER}\n{role_adapter_comments(role, '', adapter_profile)}\n-->\n"
         f"---\n{frontmatter_text}\n---\n\n"
         f"{role.instructions}\n\n"
-        f"These fixed-role skills are preloaded and govern the work: {', '.join(role.skills)}.\n\n"
-        + (
-            "Read the root and nearest AGENTS.md and load every technology skill declared for the active folder before acting. Do not rerun technology detection.\n\n"
-            if role.optional_fields.get(ROLE_DYNAMIC_FOLDER_SKILLS_FIELD_NAME)
-            else ""
-        )
+        f"{role_loading_instruction_text(role, fixed_skills_preloaded=True)}\n\n"
         + f"Return:\n\n{output_lines}\n"
     )
 

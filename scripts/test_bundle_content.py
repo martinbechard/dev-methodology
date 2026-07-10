@@ -187,6 +187,7 @@ README_REQUIRED_PHRASES = (
     "--replace-customized",
     "maintain-methodology-documentation",
     "three-way discrepancy analysis",
+    "A skill entry with a condition is request-specific",
     "repoRoot query parameter",
 )
 DEVELOPMENT_METHODOLOGY_REQUIRED_PHRASES = (
@@ -226,6 +227,9 @@ AGENT_ROLE_MAP_REQUIRED_PHRASES = (
     "Skills",
     "Outputs",
     ".tag.output",
+    ".tag.conditional-skill",
+    ".tag.technology-skill",
+    "technology-skill-detection-registry.js",
 )
 AGENT_DEFINITION_FORMATS_REQUIRED_PHRASES = (
     "Agent Definition Runtime Formats",
@@ -252,6 +256,8 @@ AGENT_DEFINITION_FORMATS_REQUIRED_PHRASES = (
     "Validate Against Skills",
     "Keep HTML Pure",
     "Fixed Roles And Setup-Time Technology Detection",
+    "skills[].condition",
+    "request-specific skill conditions",
     "design/generated/role-definitions.js",
 )
 DEVELOPMENT_USE_LOADOUTS = (
@@ -562,6 +568,12 @@ class BundleContentTests(unittest.TestCase):
         expected_outputs = build_skill_docs.expected_role_outputs(roles)
 
         self.assertTrue(ROLE_SCHEMA_PATH.is_file())
+        role_schema = load_yaml_object(ROLE_SCHEMA_PATH)
+        self.assertEqual(2, role_schema["version"])
+        self.assertEqual(
+            "conditional-skill-entry-list",
+            role_schema["properties"]["skills"],
+        )
         self.assertEqual(
             expected_outputs[ROLE_DEFINITIONS_PATH],
             ROLE_DEFINITIONS_PATH.read_text(encoding="utf-8"),
@@ -587,12 +599,11 @@ class BundleContentTests(unittest.TestCase):
                     list(role.output_contract),
                     [next(iter(entry)) for entry in role_source["outputContract"]],
                 )
-                self.assertTrue(
-                    all(
-                        set(next(iter(entry.values()))) == {"justification"}
-                        for entry in role_source["skills"]
-                    )
-                )
+                self.assertTrue(all(
+                    set(next(iter(entry.values())))
+                    in ({"justification"}, {"justification", "condition"})
+                    for entry in role_source["skills"]
+                ))
                 self.assertTrue(
                     all(
                         set(next(iter(entry.values()))) == {"purpose"}
@@ -608,6 +619,17 @@ class BundleContentTests(unittest.TestCase):
                 self.assertEqual(
                     set(role.skills),
                     set(role_payload["roles"][role.name]["skillJustifications"]),
+                )
+                expected_conditions = {
+                    skill: metadata["condition"].rstrip(".")
+                    for entry in role_source["skills"]
+                    for skill, metadata in entry.items()
+                    if "condition" in metadata
+                }
+                self.assertEqual(expected_conditions, role.skill_conditions)
+                self.assertEqual(
+                    expected_conditions,
+                    role_payload["roles"][role.name]["skillConditions"],
                 )
                 self.assertEqual(
                     set(role.output_contract),
@@ -626,6 +648,10 @@ class BundleContentTests(unittest.TestCase):
                         self.assertIsInstance(invocation, str)
                         self.assertTrue(invocation.strip())
                 if role.name == "documentation-writer":
+                    self.assertEqual(
+                        "when describing user-visible functionality, actor workflows, acceptance criteria, permissions, states, or error behavior",
+                        role.skill_conditions["create-functional-spec"],
+                    )
                     for example in role_payload["roles"][role.name]["examples"]:
                         self.assertTrue(
                             example["runtimeInvocations"]["codex"].startswith("$documentation-writer ")
@@ -637,6 +663,11 @@ class BundleContentTests(unittest.TestCase):
                 codex_agent_text = codex_agent_path.read_text(encoding="utf-8")
                 self.assertIn('developer_instructions = """\n', codex_agent_text)
                 self.assertIn("# Skill justifications:", codex_agent_text)
+                if role.skill_conditions:
+                    self.assertIn("# Request-specific skill conditions:", codex_agent_text)
+                    self.assertIn("Use judgment when the request is ambiguous", codex_agent_text)
+                    for skill, condition in role.skill_conditions.items():
+                        self.assertIn(f"Use the {skill} skill {condition}.", codex_agent_text)
                 self.assertIn("# Output purposes:", codex_agent_text)
                 self.assertEqual(
                     build_skill_docs.role_instruction_text(role),
@@ -657,8 +688,14 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn("Skill justifications:", claude_agent_text)
                 self.assertIn("Output purposes:", claude_agent_text)
                 claude_frontmatter = yaml.safe_load(claude_agent_text.split("---", 2)[1])
-                self.assertEqual(list(role.skills), claude_frontmatter["skills"])
+                self.assertEqual(
+                    list(build_skill_docs.fixed_role_skills(role)),
+                    claude_frontmatter["skills"],
+                )
                 self.assertIn("These fixed-role skills are preloaded and govern the work", claude_agent_text)
+                for skill, condition in role.skill_conditions.items():
+                    self.assertNotIn(skill, claude_frontmatter["skills"])
+                    self.assertIn(f"Use the {skill} skill {condition}.", claude_agent_text)
 
         non_setup_roles = [
             role for role in roles
@@ -708,6 +745,15 @@ class BundleContentTests(unittest.TestCase):
         first_skill = next(iter(wrong_annotation["skills"][0]))
         wrong_annotation["skills"][0][first_skill] = {"comment": "Describes the skill."}
 
+        invalid_condition = load_yaml_object(source_path)
+        conditional_metadata = next(
+            metadata
+            for entry in invalid_condition["skills"]
+            for metadata in entry.values()
+            if "condition" in metadata
+        )
+        conditional_metadata["condition"] = "on a matching request"
+
         parallel_legacy_map = load_yaml_object(source_path)
         parallel_legacy_map["skillComments"] = {
             next(iter(entry)): "Legacy comment."
@@ -715,7 +761,8 @@ class BundleContentTests(unittest.TestCase):
         }
 
         for role_source, expected_error in (
-            (wrong_annotation, "must contain only justification"),
+            (wrong_annotation, "must contain justification and optional condition only"),
+            (invalid_condition, "condition must be a non-empty fragment beginning with when"),
             (parallel_legacy_map, "unknown fields"),
         ):
             with self.subTest(expected_error=expected_error), tempfile.TemporaryDirectory() as directory:
@@ -887,8 +934,11 @@ class BundleContentTests(unittest.TestCase):
             "enhance-skill-definitions",
             ".skill-modal:not([hidden])",
             "skillJustifications",
+            "skillConditions",
             "outputPurposes",
             "agent-modal__pill-comment",
+            "agent-modal__pill--conditional",
+            "agent-modal__pill-condition",
             "runtimeInvocations",
             "agent-modal__runtime-select",
         ):

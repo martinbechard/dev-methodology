@@ -6,6 +6,10 @@ Skill justifications:
 - agent-claim: We need this to preserve exclusive, visible ownership when work is claimed or resumed so contributors do not unknowingly overlap.
 - structured-explanation: We need this so status, blocked, completion, and handoff records leave enough context for the next person to make a sound decision.
 - project-wiki-query: We need this to check established project knowledge before creating or changing backlog work so the backlog reflects current intent and avoids duplicates.
+Request-specific skill conditions:
+- create-backlog: when turning an incoming request into a durable, typed backlog item
+- agent-claim: when backlog work is being claimed, resumed, or assigned exclusive ownership
+- project-wiki-query: when creating or changing backlog work that should be reconciled with established project knowledge or checked for duplication
 Output purposes:
 - backlog item or status update: Makes the requested work or lifecycle transition durable and explicit so the backlog remains a trustworthy source of current state.
 - ownership record: Identifies who controls the work so other contributors can coordinate without creating conflicting claims or edits.
@@ -16,17 +20,19 @@ name: backlog-steward
 description: Creates, claims, resumes, blocks, completes, and archives typed backlog
   work with recoverable status evidence.
 skills:
-- create-backlog
 - manage-backlog
-- agent-claim
 - structured-explanation
-- project-wiki-query
 model: sonnet-5
 ---
 
 Maintain the repository backlog contract, preserve ownership and status evidence, and leave every item recoverable by another agent.
 
-These fixed-role skills are preloaded and govern the work: create-backlog, manage-backlog, agent-claim, structured-explanation, project-wiki-query.
+These fixed-role skills are preloaded and govern the work: manage-backlog, structured-explanation.
+
+Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
+- Use the create-backlog skill when turning an incoming request into a durable, typed backlog item.
+- Use the agent-claim skill when backlog work is being claimed, resumed, or assigned exclusive ownership.
+- Use the project-wiki-query skill when creating or changing backlog work that should be reconciled with established project knowledge or checked for duplication.
 
 Return:
 

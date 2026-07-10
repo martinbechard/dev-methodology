@@ -15,11 +15,15 @@
       --color-router: #0f766e;
       --color-skill: #b45309;
       --color-evidence: #be123c;
+      --color-conditional-skill: #6d28d9;
+      --color-technology-skill: #0369a1;
       --color-soft-blue: #e8f0ff;
       --color-soft-green: #e4f7f4;
       --color-soft-amber: #fff1d8;
       --color-soft-rose: #ffe5ec;
       --color-soft-gray: #edf1f6;
+      --color-soft-violet: #eeeafd;
+      --color-soft-cyan: #e0f2fe;
       --shadow-panel: 0 12px 30px rgba(31, 41, 55, 0.08);
       --space-2: 0.5rem;
       --space-3: 0.75rem;
@@ -296,6 +300,16 @@
       color: var(--color-skill);
     }
 
+    .tag.conditional-skill {
+      background: var(--color-soft-violet);
+      color: var(--color-conditional-skill);
+    }
+
+    .tag.technology-skill {
+      background: var(--color-soft-cyan);
+      color: var(--color-technology-skill);
+    }
+
     .tag.output {
       background: var(--color-soft-green);
       color: var(--color-router);
@@ -458,6 +472,9 @@
     <p class="note">
       The role model has three operating categories: agents that maintain this methodology bundle, agents that set up or update a downstream project, and agents used during normal development in that downstream project.
     </p>
+    <p class="note">
+      Amber skills are fixed role skills. Violet skills are request-specific and are loaded only when their condition applies. Blue skills in the catalog are setup-time technology skills; Project Agent Setup binds them to folders through AGENTS.md rather than assigning them to one canonical role.
+    </p>
   </section>
 
   <section class="section" aria-labelledby="methodology-maintenance-title">
@@ -477,6 +494,7 @@
 
   <section class="section" aria-labelledby="skills-title">
     <h2 id="skills-title">Skill Catalog</h2>
+    <p class="note">Technology skills are blue because they are selected once from repository evidence and injected through folder AGENTS.md guidance. Other catalog skills remain amber until a role marks them violet with a request-time condition.</p>
     <div class="wide-grid" id="skill-catalog"></div>
   </section>
 
@@ -574,9 +592,11 @@
 </main>
   <script src="generated/skill-definitions.js"></script>
   <script src="generated/role-definitions.js"></script>
+  <script src="generated/technology-skill-detection-registry.js"></script>
   <script>
     const ROLE_DATA_GLOBAL_NAME = "DEV_METHODOLOGY_ROLE_DEFINITIONS";
     const SKILL_DATA_GLOBAL_NAME = "DEV_METHODOLOGY_SKILL_DEFINITIONS";
+    const TECHNOLOGY_DATA_GLOBAL_NAME = "DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY";
 
     function createTag(text, kind) {
       const tag = document.createElement("span");
@@ -596,7 +616,10 @@
 
       const row = document.createElement("div");
       row.className = "tag-row";
-      tags.forEach((tagText) => row.appendChild(createTag(tagText, kind)));
+      tags.forEach((tagText) => {
+        const tagKind = typeof kind === "function" ? kind(tagText) : kind;
+        row.appendChild(createTag(tagText, tagKind));
+      });
       group.appendChild(row);
 
       return group;
@@ -630,7 +653,13 @@
 
       const details = document.createElement("div");
       details.className = "loadout-details";
-      details.appendChild(createTagGroup("Skills", role.skills, "skill"));
+      details.appendChild(createTagGroup(
+        "Skills",
+        role.skills,
+        (skill) => role.skillConditions && role.skillConditions[skill]
+          ? "conditional-skill"
+          : "skill",
+      ));
       details.appendChild(createTagGroup("Outputs", role.outputs, "output"));
       card.appendChild(details);
       return card;
@@ -651,8 +680,14 @@
 
     function renderSkillCatalog() {
       const skillData = window[SKILL_DATA_GLOBAL_NAME];
+      const technologyData = window[TECHNOLOGY_DATA_GLOBAL_NAME];
       const catalog = document.getElementById("skill-catalog");
       if (!skillData || !skillData.skills || !catalog) return;
+      const technologySkills = new Set(
+        technologyData && Array.isArray(technologyData.skills)
+          ? technologyData.skills.map((entry) => entry.skill)
+          : [],
+      );
 
       skillData.categories.forEach((category) => {
         const panel = document.createElement("article");
@@ -667,7 +702,10 @@
         Object.values(skillData.skills)
           .filter((skill) => skill.category === category.id)
           .sort((left, right) => left.name.localeCompare(right.name))
-          .forEach((skill) => row.appendChild(createTag(skill.name, "skill")));
+          .forEach((skill) => row.appendChild(createTag(
+            skill.name,
+            technologySkills.has(skill.name) ? "technology-skill" : "skill",
+          )));
         panel.appendChild(row);
         catalog.appendChild(panel);
       });

@@ -13,6 +13,8 @@ skills:
     justification: We need this to choose documentation routes and steady-state contracts that fit the target project instead of imposing an arbitrary artifact set.
 - documentation-reverse-engineering:
     justification: We need this when initial documentation must be derived from live code and configuration because trustworthy project guidance does not yet exist.
+    condition: when trustworthy initial documentation must be derived from live
+      code and configuration
 - create-project-wiki:
     justification: We need this to turn gathered evidence into a durable, navigable knowledge surface that future project work can reuse.
 outputContract:

@@ -5,6 +5,8 @@ Skill justifications:
 - review-structured: We need this to separate confirmed exploitable findings from lower-confidence concerns and prioritize remediation by evidence and impact.
 - project-wiki-query: We need this to ground expected security boundaries in the project's documented architecture, data rules, and operating constraints.
 - structured-explanation: We need this to communicate attack paths, mitigations, uncertainty, and residual exposure clearly enough for owners to act safely.
+Request-specific skill conditions:
+- project-wiki-query: when documented architecture, data rules, or operating constraints are relevant to the expected security boundary
 Output purposes:
 - prioritized security findings: Directs remediation effort toward the most exploitable and consequential confirmed risks first.
 - affected files and evidence: Lets maintainers reproduce and verify each finding against the exact code or configuration that supports it.
@@ -17,7 +19,6 @@ description: Reviews threat, data, dependency, authentication, logging, prompt, 
 skills:
 - application-security
 - review-structured
-- project-wiki-query
 - structured-explanation
 model: opus-4.8
 isolation: read-only
@@ -25,7 +26,10 @@ isolation: read-only
 
 Read the root and nearest AGENTS.md, load declared folder technology skills before acting, trace plausible attack paths from actual code and configuration, prioritize exploitable findings, and state evidence and residual risk.
 
-These fixed-role skills are preloaded and govern the work: application-security, review-structured, project-wiki-query, structured-explanation.
+These fixed-role skills are preloaded and govern the work: application-security, review-structured, structured-explanation.
+
+Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
+- Use the project-wiki-query skill when documented architecture, data rules, or operating constraints are relevant to the expected security boundary.
 
 Read the root and nearest AGENTS.md and load every technology skill declared for the active folder before acting. Do not rerun technology detection.
 

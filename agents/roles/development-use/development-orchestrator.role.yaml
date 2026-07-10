@@ -22,6 +22,8 @@ skills:
 - agent-work-merge:
     justification: We need this to reconcile parallel contributions intentionally and
       preserve conflict evidence when combining them into one result.
+    condition: when parallel contributions must be reconciled into one integrated
+      result.
 - review-structured:
     justification: We need this to apply an independent quality check to the integrated
       outcome so omissions and cross-contribution regressions are found before handoff.

@@ -2,59 +2,68 @@
 window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
   "edges": [
     {
-      "kind": "fixed",
-      "role": "artifact-review-agent",
-      "skill": "documentation-page-verifier"
-    },
-    {
-      "kind": "fixed",
+      "condition": "when reviewing system-wide boundaries, runtime assumptions, architectural decisions, or their supporting evidence.",
+      "kind": "conditional",
       "role": "artifact-review-agent",
       "skill": "review-architecture"
     },
     {
-      "kind": "fixed",
+      "condition": "when reviewing a functional specification for its actors, workflows, states, acceptance criteria, or verification obligations.",
+      "kind": "conditional",
       "role": "artifact-review-agent",
       "skill": "review-functional-spec"
     },
     {
-      "kind": "fixed",
+      "condition": "when reviewing subsystem responsibilities, component collaboration, or a high-level design that coordinates downstream work.",
+      "kind": "conditional",
       "role": "artifact-review-agent",
       "skill": "review-high-level-design"
     },
     {
-      "kind": "fixed",
+      "condition": "when reviewing module responsibilities, interfaces, runtime paths, test obligations, or another focused implementation contract.",
+      "kind": "conditional",
       "role": "artifact-review-agent",
       "skill": "review-module-design"
     },
     {
-      "kind": "fixed",
+      "condition": "when reviewing a project wiki or its navigation, topic boundaries, evidence links, or maintenance obligations.",
+      "kind": "conditional",
       "role": "artifact-review-agent",
       "skill": "review-project-wiki"
     },
     {
-      "kind": "fixed",
+      "condition": "when reviewing planned unit-test scenarios, boundaries, traceability, or coverage evidence.",
+      "kind": "conditional",
       "role": "artifact-review-agent",
       "skill": "review-unit-test-plan"
     },
     {
       "kind": "fixed",
+      "role": "artifact-review-agent",
+      "skill": "documentation-page-verifier"
+    },
+    {
+      "condition": "when backlog work is being claimed, resumed, or assigned exclusive ownership.",
+      "kind": "conditional",
       "role": "backlog-steward",
       "skill": "agent-claim"
     },
     {
-      "kind": "fixed",
+      "condition": "when turning an incoming request into a durable, typed backlog item.",
+      "kind": "conditional",
       "role": "backlog-steward",
       "skill": "create-backlog"
+    },
+    {
+      "condition": "when creating or changing backlog work that should be reconciled with established project knowledge or checked for duplication.",
+      "kind": "conditional",
+      "role": "backlog-steward",
+      "skill": "project-wiki-query"
     },
     {
       "kind": "fixed",
       "role": "backlog-steward",
       "skill": "manage-backlog"
-    },
-    {
-      "kind": "fixed",
-      "role": "backlog-steward",
-      "skill": "project-wiki-query"
     },
     {
       "kind": "fixed",
@@ -82,6 +91,12 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "review-structured"
     },
     {
+      "condition": "when the requested behavior can be expressed through executable tests that should guide implementation.",
+      "kind": "conditional",
+      "role": "coding-agent",
+      "skill": "test-driven-development"
+    },
+    {
       "kind": "fixed",
       "role": "coding-agent",
       "skill": "careful-coding"
@@ -102,19 +117,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "project-wiki-query"
     },
     {
-      "kind": "fixed",
-      "role": "coding-agent",
-      "skill": "test-driven-development"
+      "condition": "when parallel contributions must be reconciled into one integrated result.",
+      "kind": "conditional",
+      "role": "development-orchestrator",
+      "skill": "agent-work-merge"
     },
     {
       "kind": "fixed",
       "role": "development-orchestrator",
       "skill": "agent-claim"
-    },
-    {
-      "kind": "fixed",
-      "role": "development-orchestrator",
-      "skill": "agent-work-merge"
     },
     {
       "kind": "fixed",
@@ -137,54 +148,63 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "structured-explanation"
     },
     {
-      "kind": "fixed",
+      "condition": "when creating or maintaining wiki content whose claims depend on code behavior and must remain traceable to implementation.",
+      "kind": "conditional",
       "role": "documentation-writer",
       "skill": "code-project-wiki"
     },
     {
-      "kind": "fixed",
+      "condition": "when describing system-wide boundaries, architectural decisions, cross-cutting responsibilities, or enduring constraints.",
+      "kind": "conditional",
       "role": "documentation-writer",
       "skill": "create-architecture"
     },
     {
-      "kind": "fixed",
+      "condition": "when describing user-visible functionality, actor workflows, acceptance criteria, permissions, states, or error behavior.",
+      "kind": "conditional",
       "role": "documentation-writer",
       "skill": "create-functional-spec"
     },
     {
-      "kind": "fixed",
+      "condition": "when coordinating a subsystem or feature family through component responsibilities and interactions at a high level of abstraction.",
+      "kind": "conditional",
       "role": "documentation-writer",
       "skill": "create-high-level-design"
     },
     {
-      "kind": "fixed",
+      "condition": "when guiding focused implementation through explicit module responsibilities, interfaces, runtime behavior, or test obligations.",
+      "kind": "conditional",
       "role": "documentation-writer",
       "skill": "create-module-design"
     },
     {
-      "kind": "fixed",
+      "condition": "when establishing or substantially restructuring a navigable, source-backed project wiki.",
+      "kind": "conditional",
       "role": "documentation-writer",
       "skill": "create-project-wiki"
     },
     {
-      "kind": "fixed",
+      "condition": "when defining durable unit-test scenarios, boundaries, traceability, or coverage expectations before implementation or review.",
+      "kind": "conditional",
       "role": "documentation-writer",
       "skill": "create-unit-test-plan"
+    },
+    {
+      "condition": "when the target project lacks the documentation structure needed to place and maintain the requested artifact.",
+      "kind": "conditional",
+      "role": "documentation-writer",
+      "skill": "documentation-bootstrap"
+    },
+    {
+      "condition": "when authoritative documentation is missing, stale, or insufficient and the artifact must be derived from current code, configuration, or tests.",
+      "kind": "conditional",
+      "role": "documentation-writer",
+      "skill": "documentation-reverse-engineering"
     },
     {
       "kind": "fixed",
       "role": "documentation-writer",
       "skill": "development-methodology"
-    },
-    {
-      "kind": "fixed",
-      "role": "documentation-writer",
-      "skill": "documentation-bootstrap"
-    },
-    {
-      "kind": "fixed",
-      "role": "documentation-writer",
-      "skill": "documentation-reverse-engineering"
     },
     {
       "kind": "fixed",
@@ -242,6 +262,12 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "review-structured"
     },
     {
+      "condition": "when catalog, role, or operating-model changes require explicit boundaries and relationships before implementation",
+      "kind": "conditional",
+      "role": "methodology-maintainer",
+      "skill": "structured-design"
+    },
+    {
       "kind": "fixed",
       "role": "methodology-maintainer",
       "skill": "development-methodology"
@@ -254,12 +280,13 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "kind": "fixed",
       "role": "methodology-maintainer",
-      "skill": "structured-design"
+      "skill": "structured-explanation"
     },
     {
-      "kind": "fixed",
-      "role": "methodology-maintainer",
-      "skill": "structured-explanation"
+      "condition": "when the target lacks the documentation and routing structure needed for agents to load and follow the plan consistently",
+      "kind": "conditional",
+      "role": "project-agent-setup-agent",
+      "skill": "documentation-bootstrap"
     },
     {
       "kind": "fixed",
@@ -279,12 +306,13 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "kind": "fixed",
       "role": "project-agent-setup-agent",
-      "skill": "documentation-bootstrap"
+      "skill": "documentation-page-verifier"
     },
     {
-      "kind": "fixed",
-      "role": "project-agent-setup-agent",
-      "skill": "documentation-page-verifier"
+      "condition": "when trustworthy initial documentation must be derived from live code and configuration",
+      "kind": "conditional",
+      "role": "project-bootstrap-agent",
+      "skill": "documentation-reverse-engineering"
     },
     {
       "kind": "fixed",
@@ -300,11 +328,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "fixed",
       "role": "project-bootstrap-agent",
       "skill": "documentation-bootstrap"
-    },
-    {
-      "kind": "fixed",
-      "role": "project-bootstrap-agent",
-      "skill": "documentation-reverse-engineering"
     },
     {
       "kind": "fixed",
@@ -357,29 +380,33 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "structured-explanation"
     },
     {
-      "kind": "fixed",
+      "condition": "when an observed outcome must be connected to source-level control flow or unconfirmed branches must be identified.",
+      "kind": "conditional",
       "role": "qa-and-verification-agent",
       "skill": "code-execution-tracing"
     },
     {
-      "kind": "fixed",
+      "condition": "when confidence depends on proving a complete user or system workflow across its real boundaries.",
+      "kind": "conditional",
       "role": "qa-and-verification-agent",
       "skill": "end-to-end-verification"
+    },
+    {
+      "condition": "when a verification check fails and its cause must be distinguished from test, environment, or evidence problems.",
+      "kind": "conditional",
+      "role": "qa-and-verification-agent",
+      "skill": "root-cause-analysis"
+    },
+    {
+      "condition": "when static checks alone cannot establish the behavior needed for a verification conclusion.",
+      "kind": "conditional",
+      "role": "qa-and-verification-agent",
+      "skill": "runtime-evidence-collection"
     },
     {
       "kind": "fixed",
       "role": "qa-and-verification-agent",
       "skill": "review-structured"
-    },
-    {
-      "kind": "fixed",
-      "role": "qa-and-verification-agent",
-      "skill": "root-cause-analysis"
-    },
-    {
-      "kind": "fixed",
-      "role": "qa-and-verification-agent",
-      "skill": "runtime-evidence-collection"
     },
     {
       "kind": "fixed",
@@ -392,9 +419,22 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "test-strategy"
     },
     {
-      "kind": "fixed",
+      "condition": "when adding diagnostic instrumentation or implementing a verified remediation as part of the investigation.",
+      "kind": "conditional",
       "role": "runtime-diagnostician",
       "skill": "careful-coding"
+    },
+    {
+      "condition": "when project documentation may contain relevant runtime boundaries, constraints, or prior incident knowledge.",
+      "kind": "conditional",
+      "role": "runtime-diagnostician",
+      "skill": "project-wiki-query"
+    },
+    {
+      "condition": "when the suspected failure mechanism depends on runtime state that source inspection alone cannot establish reliably.",
+      "kind": "conditional",
+      "role": "runtime-diagnostician",
+      "skill": "runtime-evidence-collection"
     },
     {
       "kind": "fixed",
@@ -409,17 +449,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "kind": "fixed",
       "role": "runtime-diagnostician",
-      "skill": "project-wiki-query"
-    },
-    {
-      "kind": "fixed",
-      "role": "runtime-diagnostician",
       "skill": "root-cause-analysis"
-    },
-    {
-      "kind": "fixed",
-      "role": "runtime-diagnostician",
-      "skill": "runtime-evidence-collection"
     },
     {
       "kind": "fixed",
@@ -432,14 +462,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "test-strategy"
     },
     {
-      "kind": "fixed",
+      "condition": "when documented architecture, data rules, or operating constraints are relevant to the expected security boundary.",
+      "kind": "conditional",
       "role": "security-reviewer",
-      "skill": "application-security"
+      "skill": "project-wiki-query"
     },
     {
       "kind": "fixed",
       "role": "security-reviewer",
-      "skill": "project-wiki-query"
+      "skill": "application-security"
     },
     {
       "kind": "fixed",
@@ -452,7 +483,8 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "structured-explanation"
     },
     {
-      "kind": "fixed",
+      "condition": "when verification exposes a defect that requires a narrow correction before validation can pass.",
+      "kind": "conditional",
       "role": "shared-install-verifier",
       "skill": "careful-coding"
     },
@@ -477,7 +509,8 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "user-experience-review"
     },
     {
-      "kind": "fixed",
+      "condition": "when durable wiki claims depend on implementation behavior that must remain traceable to authoritative code and tests.",
+      "kind": "conditional",
       "role": "wiki-ingest-agent",
       "skill": "code-project-wiki"
     },
@@ -502,24 +535,27 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "project-wiki-topic-writer"
     },
     {
-      "kind": "fixed",
+      "condition": "when material wiki claims depend on current code, configuration, or test behavior that needs authoritative confirmation.",
+      "kind": "conditional",
       "role": "wiki-query-agent",
       "skill": "code-project-wiki"
     },
     {
-      "kind": "fixed",
+      "condition": "when investigation reveals a possible durable knowledge gap whose significance for corrective documentation must be assessed.",
+      "kind": "conditional",
       "role": "wiki-query-agent",
       "skill": "documentation-page-verifier"
+    },
+    {
+      "condition": "when the wiki does not contain enough evidence to answer the request responsibly and a bounded investigation is warranted.",
+      "kind": "conditional",
+      "role": "wiki-query-agent",
+      "skill": "project-wiki-research"
     },
     {
       "kind": "fixed",
       "role": "wiki-query-agent",
       "skill": "project-wiki-query"
-    },
-    {
-      "kind": "fixed",
-      "role": "wiki-query-agent",
-      "skill": "project-wiki-research"
     }
   ],
   "evidenceStatus": {
@@ -530,16 +566,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
   },
   "roles": [
     {
+      "conditionalSkills": {
+        "review-architecture": "when reviewing system-wide boundaries, runtime assumptions, architectural decisions, or their supporting evidence.",
+        "review-functional-spec": "when reviewing a functional specification for its actors, workflows, states, acceptance criteria, or verification obligations.",
+        "review-high-level-design": "when reviewing subsystem responsibilities, component collaboration, or a high-level design that coordinates downstream work.",
+        "review-module-design": "when reviewing module responsibilities, interfaces, runtime paths, test obligations, or another focused implementation contract.",
+        "review-project-wiki": "when reviewing a project wiki or its navigation, topic boundaries, evidence links, or maintenance obligations.",
+        "review-unit-test-plan": "when reviewing planned unit-test scenarios, boundaries, traceability, or coverage evidence."
+      },
       "declaredCases": [],
       "description": "Reviews finished methodology artifacts with an artifact-specific checklist and passes evidence to the shared page verifier.",
       "dynamicFolderSkills": true,
       "fixedSkills": [
-        "review-project-wiki",
-        "review-functional-spec",
-        "review-architecture",
-        "review-high-level-design",
-        "review-module-design",
-        "review-unit-test-plan",
         "documentation-page-verifier"
       ],
       "id": "artifact-review-agent",
@@ -548,15 +586,17 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
+      "conditionalSkills": {
+        "agent-claim": "when backlog work is being claimed, resumed, or assigned exclusive ownership.",
+        "create-backlog": "when turning an incoming request into a durable, typed backlog item.",
+        "project-wiki-query": "when creating or changing backlog work that should be reconciled with established project knowledge or checked for duplication."
+      },
       "declaredCases": [],
       "description": "Creates, claims, resumes, blocks, completes, and archives typed backlog work with recoverable status evidence.",
       "dynamicFolderSkills": false,
       "fixedSkills": [
-        "create-backlog",
         "manage-backlog",
-        "agent-claim",
-        "structured-explanation",
-        "project-wiki-query"
+        "structured-explanation"
       ],
       "id": "backlog-steward",
       "label": "backlog-steward",
@@ -564,6 +604,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
+      "conditionalSkills": {},
       "declaredCases": [
         "typescript-code-review"
       ],
@@ -581,6 +622,9 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
+      "conditionalSkills": {
+        "test-driven-development": "when the requested behavior can be expressed through executable tests that should guide implementation."
+      },
       "declaredCases": [
         "typescript-order-pricing",
         "spring-boot-order-cancellation"
@@ -589,7 +633,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "dynamicFolderSkills": true,
       "fixedSkills": [
         "careful-coding",
-        "test-driven-development",
         "code-discovery",
         "fix-explanation",
         "project-wiki-query"
@@ -600,6 +643,9 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
+      "conditionalSkills": {
+        "agent-work-merge": "when parallel contributions must be reconciled into one integrated result."
+      },
       "declaredCases": [],
       "description": "Coordinates multi-step development work across agents while preserving bounded context, explicit handoffs, and verification evidence.",
       "dynamicFolderSkills": false,
@@ -608,7 +654,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "structured-explanation",
         "manage-backlog",
         "agent-claim",
-        "agent-work-merge",
         "review-structured"
       ],
       "id": "development-orchestrator",
@@ -617,20 +662,22 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
+      "conditionalSkills": {
+        "code-project-wiki": "when creating or maintaining wiki content whose claims depend on code behavior and must remain traceable to implementation.",
+        "create-architecture": "when describing system-wide boundaries, architectural decisions, cross-cutting responsibilities, or enduring constraints.",
+        "create-functional-spec": "when describing user-visible functionality, actor workflows, acceptance criteria, permissions, states, or error behavior.",
+        "create-high-level-design": "when coordinating a subsystem or feature family through component responsibilities and interactions at a high level of abstraction.",
+        "create-module-design": "when guiding focused implementation through explicit module responsibilities, interfaces, runtime behavior, or test obligations.",
+        "create-project-wiki": "when establishing or substantially restructuring a navigable, source-backed project wiki.",
+        "create-unit-test-plan": "when defining durable unit-test scenarios, boundaries, traceability, or coverage expectations before implementation or review.",
+        "documentation-bootstrap": "when the target project lacks the documentation structure needed to place and maintain the requested artifact.",
+        "documentation-reverse-engineering": "when authoritative documentation is missing, stale, or insufficient and the artifact must be derived from current code, configuration, or tests."
+      },
       "declaredCases": [],
       "description": "Writes source-backed documentation by selecting one appropriate artifact route and creation skill for the requested outcome.",
       "dynamicFolderSkills": true,
       "fixedSkills": [
         "development-methodology",
-        "create-project-wiki",
-        "create-functional-spec",
-        "create-architecture",
-        "create-high-level-design",
-        "create-module-design",
-        "create-unit-test-plan",
-        "documentation-bootstrap",
-        "documentation-reverse-engineering",
-        "code-project-wiki",
         "project-wiki-query"
       ],
       "id": "documentation-writer",
@@ -639,6 +686,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
+      "conditionalSkills": {},
       "declaredCases": [],
       "description": "Owns interactive runtime state, service coordination, authenticated workflows, and diagnostic evidence for end-to-end work.",
       "dynamicFolderSkills": true,
@@ -653,6 +701,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
+      "conditionalSkills": {},
       "declaredCases": [],
       "description": "Integrates work from multiple agents or worktrees while preserving claims, ownership, verification, and conflict evidence.",
       "dynamicFolderSkills": false,
@@ -668,6 +717,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
+      "conditionalSkills": {},
       "declaredCases": [],
       "description": "Reviews methodology artifacts for catalog drift, source and adapter mismatch, stale examples, missing tests, and unclear maintenance rules.",
       "dynamicFolderSkills": false,
@@ -682,13 +732,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
+      "conditionalSkills": {
+        "structured-design": "when catalog, role, or operating-model changes require explicit boundaries and relationships before implementation"
+      },
       "declaredCases": [],
       "description": "Maintains the reusable methodology artifacts, skill catalog, canonical roles, generated adapters, documentation, scripts, and regression tests.",
       "dynamicFolderSkills": false,
       "fixedSkills": [
         "maintain-methodology-documentation",
         "development-methodology",
-        "structured-design",
         "structured-explanation"
       ],
       "id": "methodology-maintainer",
@@ -697,6 +749,9 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
+      "conditionalSkills": {
+        "documentation-bootstrap": "when the target lacks the documentation and routing structure needed for agents to load and follow the plan consistently"
+      },
       "declaredCases": [],
       "description": "Creates or updates AGENTS-PLAN.yaml and validates role agents, skill loadouts, folder routing, nested plans, AGENTS.md guidance, and Claude bridges.",
       "dynamicFolderSkills": false,
@@ -704,7 +759,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "detect-technology-skills",
         "create-agents-plan",
         "development-methodology",
-        "documentation-bootstrap",
         "documentation-page-verifier"
       ],
       "id": "project-agent-setup-agent",
@@ -713,13 +767,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
+      "conditionalSkills": {
+        "documentation-reverse-engineering": "when trustworthy initial documentation must be derived from live code and configuration"
+      },
       "declaredCases": [],
       "description": "Installs the methodology for the active runtime, inspects a target project, and creates initial documentation and project routing guidance.",
       "dynamicFolderSkills": false,
       "fixedSkills": [
         "documentation-bootstrap",
         "development-methodology",
-        "documentation-reverse-engineering",
         "create-project-wiki"
       ],
       "id": "project-bootstrap-agent",
@@ -728,6 +784,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
+      "conditionalSkills": {},
       "declaredCases": [],
       "description": "Classifies project artifacts by purpose, chooses paths from the project taxonomy, applies path intent, and audits generated files.",
       "dynamicFolderSkills": false,
@@ -743,6 +800,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
+      "conditionalSkills": {},
       "declaredCases": [],
       "description": "Reviews prompt protocol, tool-call safety, schema promises, evaluation coverage, and model-facing data boundaries.",
       "dynamicFolderSkills": true,
@@ -756,6 +814,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
+      "conditionalSkills": {},
       "declaredCases": [],
       "description": "Collects public raw source artifacts for approved topics, records exclusions, and leaves synthesis to wiki ingest.",
       "dynamicFolderSkills": false,
@@ -771,15 +830,17 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
+      "conditionalSkills": {
+        "code-execution-tracing": "when an observed outcome must be connected to source-level control flow or unconfirmed branches must be identified.",
+        "end-to-end-verification": "when confidence depends on proving a complete user or system workflow across its real boundaries.",
+        "root-cause-analysis": "when a verification check fails and its cause must be distinguished from test, environment, or evidence problems.",
+        "runtime-evidence-collection": "when static checks alone cannot establish the behavior needed for a verification conclusion."
+      },
       "declaredCases": [],
       "description": "Runs acceptance checks, builds, unit tests, integration tests, E2E tests, lint gates, and artifact-specific verification.",
       "dynamicFolderSkills": true,
       "fixedSkills": [
         "test-strategy",
-        "end-to-end-verification",
-        "root-cause-analysis",
-        "runtime-evidence-collection",
-        "code-execution-tracing",
         "review-structured",
         "structured-explanation"
       ],
@@ -789,6 +850,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
+      "conditionalSkills": {
+        "careful-coding": "when adding diagnostic instrumentation or implementing a verified remediation as part of the investigation.",
+        "project-wiki-query": "when project documentation may contain relevant runtime boundaries, constraints, or prior incident knowledge.",
+        "runtime-evidence-collection": "when the suspected failure mechanism depends on runtime state that source inspection alone cannot establish reliably."
+      },
       "declaredCases": [],
       "description": "Investigates long-running local runtime failures with logs, processes, exclusive resources, and a tight reproduction loop.",
       "dynamicFolderSkills": true,
@@ -796,11 +862,8 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "code-discovery",
         "test-strategy",
         "root-cause-analysis",
-        "runtime-evidence-collection",
         "code-execution-tracing",
-        "structured-explanation",
-        "careful-coding",
-        "project-wiki-query"
+        "structured-explanation"
       ],
       "id": "runtime-diagnostician",
       "label": "runtime-diagnostician",
@@ -808,13 +871,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
+      "conditionalSkills": {
+        "project-wiki-query": "when documented architecture, data rules, or operating constraints are relevant to the expected security boundary."
+      },
       "declaredCases": [],
       "description": "Reviews threat, data, dependency, authentication, logging, prompt, and exploitability concerns with read-only authority.",
       "dynamicFolderSkills": true,
       "fixedSkills": [
         "application-security",
         "review-structured",
-        "project-wiki-query",
         "structured-explanation"
       ],
       "id": "security-reviewer",
@@ -823,12 +888,14 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
+      "conditionalSkills": {
+        "careful-coding": "when verification exposes a defect that requires a narrow correction before validation can pass."
+      },
       "declaredCases": [],
       "description": "Validates source skills, generated metadata and agents, repository tests, and shared installs after distributed content changes.",
       "dynamicFolderSkills": false,
       "fixedSkills": [
-        "maintain-methodology-documentation",
-        "careful-coding"
+        "maintain-methodology-documentation"
       ],
       "id": "shared-install-verifier",
       "label": "shared-install-verifier",
@@ -836,6 +903,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
+      "conditionalSkills": {},
       "declaredCases": [],
       "description": "Handles interaction design, accessibility concerns, visual review, and independent usability assessment without changing code authority.",
       "dynamicFolderSkills": true,
@@ -850,6 +918,9 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
+      "conditionalSkills": {
+        "code-project-wiki": "when durable wiki claims depend on implementation behavior that must remain traceable to authoritative code and tests."
+      },
       "declaredCases": [],
       "description": "Processes raw inputs into durable wiki leaves, digest entries, processed-source links, linted pages, and verifier evidence.",
       "dynamicFolderSkills": false,
@@ -857,8 +928,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "project-wiki",
         "project-wiki-topic-writer",
         "project-wiki-topic-verifier",
-        "project-wiki-research",
-        "code-project-wiki"
+        "project-wiki-research"
       ],
       "id": "wiki-ingest-agent",
       "label": "wiki-ingest-agent",
@@ -866,14 +936,16 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
+      "conditionalSkills": {
+        "code-project-wiki": "when material wiki claims depend on current code, configuration, or test behavior that needs authoritative confirmation.",
+        "documentation-page-verifier": "when investigation reveals a possible durable knowledge gap whose significance for corrective documentation must be assessed.",
+        "project-wiki-research": "when the wiki does not contain enough evidence to answer the request responsibly and a bounded investigation is warranted."
+      },
       "declaredCases": [],
       "description": "Answers project questions from docs/wiki first, verifies against authoritative files, and records durable knowledge gaps.",
       "dynamicFolderSkills": false,
       "fixedSkills": [
-        "project-wiki-query",
-        "project-wiki-research",
-        "code-project-wiki",
-        "documentation-page-verifier"
+        "project-wiki-query"
       ],
       "id": "wiki-query-agent",
       "label": "wiki-query-agent",

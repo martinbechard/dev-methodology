@@ -15,24 +15,36 @@ skills:
     justification: We need this when reviewing a project wiki so its navigation, topic
       boundaries, evidence links, and maintenance obligations are judged against the
       conventions that make the wiki durable.
+    condition: when reviewing a project wiki or its navigation, topic boundaries,
+      evidence links, or maintenance obligations.
 - review-functional-spec:
     justification: We need this when reviewing a functional specification so actors,
       workflows, states, and acceptance criteria are complete enough to guide implementation
       and verification.
+    condition: when reviewing a functional specification for its actors, workflows,
+      states, acceptance criteria, or verification obligations.
 - review-architecture:
     justification: We need this when reviewing architecture so system boundaries,
       runtime assumptions, and decisions are supported by evidence before future work
       relies on them.
+    condition: when reviewing system-wide boundaries, runtime assumptions, architectural
+      decisions, or their supporting evidence.
 - review-high-level-design:
     justification: We need this when reviewing a high-level design so subsystem responsibilities
       and component collaboration are coherent enough to coordinate downstream design
       and implementation.
+    condition: when reviewing subsystem responsibilities, component collaboration,
+      or a high-level design that coordinates downstream work.
 - review-module-design:
     justification: We need this when reviewing a module design so its responsibilities,
       interfaces, runtime paths, and test obligations provide an implementable contract.
+    condition: when reviewing module responsibilities, interfaces, runtime paths,
+      test obligations, or another focused implementation contract.
 - review-unit-test-plan:
     justification: We need this when reviewing a unit test plan so scenarios, boundaries,
       traceability, and coverage evidence are sufficient to protect the intended behavior.
+    condition: when reviewing planned unit-test scenarios, boundaries, traceability,
+      or coverage evidence.
 - documentation-page-verifier:
     justification: We need this to apply a shared independent quality gate after the
       artifact-specific review so acceptance does not depend solely on the focused reviewer.

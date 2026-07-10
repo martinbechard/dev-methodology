@@ -7,6 +7,8 @@
 # - agent-claim: We need this to establish explicit ownership boundaries so parallel contributors do not edit the same scope without coordination.
 # - agent-work-merge: We need this to reconcile parallel contributions intentionally and preserve conflict evidence when combining them into one result.
 # - review-structured: We need this to apply an independent quality check to the integrated outcome so omissions and cross-contribution regressions are found before handoff.
+# Request-specific skill conditions:
+# - agent-work-merge: when parallel contributions must be reconciled into one integrated result
 # Output purposes:
 # - task breakdown: Makes bounded responsibilities, dependencies, and sequencing explicit so contributors can work independently toward the same outcome.
 # - resolved role loadouts: Records the project bindings and specialized skills selected for each work lane so assignments use the guidance appropriate to their scope.
@@ -18,7 +20,10 @@ description = "Coordinates multi-step development work across agents while prese
 developer_instructions = """
 Decompose work by independent responsibility, use project guidance to select narrow role loadouts, preserve claims and handoffs, and verify the integrated outcome.
 
-Before acting, load these fixed-role skills completely; they govern the work: structured-design, structured-explanation, manage-backlog, agent-claim, agent-work-merge, review-structured.
+Before acting, load these fixed-role skills completely; they govern the work: structured-design, structured-explanation, manage-backlog, agent-claim, review-structured.
+
+Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
+- Use the agent-work-merge skill when parallel contributions must be reconciled into one integrated result.
 
 Return: task breakdown; resolved role loadouts; assigned roles; handoff plan; integrated verification."""
 model = "gpt-5.6-sol"

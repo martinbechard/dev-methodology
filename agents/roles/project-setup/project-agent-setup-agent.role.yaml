@@ -16,6 +16,8 @@ skills:
     justification: We need this to select methodology roles and artifact routes that fit the target project's actual work and documentation needs.
 - documentation-bootstrap:
     justification: We need this when the target lacks the documentation and routing structure required for agents to load and follow the plan consistently.
+    condition: when the target lacks the documentation and routing structure needed
+      for agents to load and follow the plan consistently
 - documentation-page-verifier:
     justification: We need this to confirm that generated guidance and every referenced role or skill remain grounded in project evidence and bundle contracts.
 outputContract:

@@ -12,6 +12,13 @@ Skill justifications:
 - review-module-design: We need this when reviewing a module design so its responsibilities, interfaces, runtime paths, and test obligations provide an implementable contract.
 - review-unit-test-plan: We need this when reviewing a unit test plan so scenarios, boundaries, traceability, and coverage evidence are sufficient to protect the intended behavior.
 - documentation-page-verifier: We need this to apply a shared independent quality gate after the artifact-specific review so acceptance does not depend solely on the focused reviewer.
+Request-specific skill conditions:
+- review-project-wiki: when reviewing a project wiki or its navigation, topic boundaries, evidence links, or maintenance obligations
+- review-functional-spec: when reviewing a functional specification for its actors, workflows, states, acceptance criteria, or verification obligations
+- review-architecture: when reviewing system-wide boundaries, runtime assumptions, architectural decisions, or their supporting evidence
+- review-high-level-design: when reviewing subsystem responsibilities, component collaboration, or a high-level design that coordinates downstream work
+- review-module-design: when reviewing module responsibilities, interfaces, runtime paths, test obligations, or another focused implementation contract
+- review-unit-test-plan: when reviewing planned unit-test scenarios, boundaries, traceability, or coverage evidence
 Output purposes:
 - completed review checklist: Preserves the artifact-specific evidence behind the assessment so reviewers can audit which requirements were checked and how each conclusion was reached.
 - verifier assessment: Communicates the independent quality-gate result so the requester knows whether the artifact is ready to rely on after the focused review.
@@ -22,12 +29,6 @@ name: artifact-review-agent
 description: Reviews finished methodology artifacts with an artifact-specific checklist
   and passes evidence to the shared page verifier.
 skills:
-- review-project-wiki
-- review-functional-spec
-- review-architecture
-- review-high-level-design
-- review-module-design
-- review-unit-test-plan
 - documentation-page-verifier
 model: opus-4.8
 isolation: read-only
@@ -35,7 +36,15 @@ isolation: read-only
 
 Read the root and nearest AGENTS.md, load the declared folder technology skills and matching review skill before acting, capture quoted evidence in the completed checklist, and return actionable findings before conclusions.
 
-These fixed-role skills are preloaded and govern the work: review-project-wiki, review-functional-spec, review-architecture, review-high-level-design, review-module-design, review-unit-test-plan, documentation-page-verifier.
+These fixed-role skills are preloaded and govern the work: documentation-page-verifier.
+
+Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
+- Use the review-project-wiki skill when reviewing a project wiki or its navigation, topic boundaries, evidence links, or maintenance obligations.
+- Use the review-functional-spec skill when reviewing a functional specification for its actors, workflows, states, acceptance criteria, or verification obligations.
+- Use the review-architecture skill when reviewing system-wide boundaries, runtime assumptions, architectural decisions, or their supporting evidence.
+- Use the review-high-level-design skill when reviewing subsystem responsibilities, component collaboration, or a high-level design that coordinates downstream work.
+- Use the review-module-design skill when reviewing module responsibilities, interfaces, runtime paths, test obligations, or another focused implementation contract.
+- Use the review-unit-test-plan skill when reviewing planned unit-test scenarios, boundaries, traceability, or coverage evidence.
 
 Read the root and nearest AGENTS.md and load every technology skill declared for the active folder before acting. Do not rerun technology detection.
 

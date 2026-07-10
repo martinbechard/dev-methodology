@@ -8,6 +8,8 @@ skills:
     justification: We need this to apply the repository's complete validation, generation, and shared-refresh obligations before distributed content is accepted.
 - careful-coding:
     justification: We need this to keep any verification-related correction narrow and prevent a passing result from being achieved by weakening checks.
+    condition: when verification exposes a defect that requires a narrow correction
+      before validation can pass.
 outputContract:
 - validation command results:
     purpose: Gives maintainers an auditable record of which required checks ran and what each one observed.

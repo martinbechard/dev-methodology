@@ -34,19 +34,25 @@ def load_yaml(path: Path) -> dict[str, object]:
     return value
 
 
-def role_skill_names(role: dict[str, object]) -> list[str]:
+def role_skill_entries(role: dict[str, object]) -> list[tuple[str, str | None]]:
     value = role.get("skills")
     if not isinstance(value, list):
         raise ValueError(f"Role {role.get('name')} skills must be a list.")
-    names: list[str] = []
+    entries: list[tuple[str, str | None]] = []
     for item in value:
         if isinstance(item, str):
-            names.append(item)
+            entries.append((item, None))
         elif isinstance(item, dict) and len(item) == 1:
-            names.append(str(next(iter(item))))
+            name, metadata = next(iter(item.items()))
+            condition = metadata.get("condition") if isinstance(metadata, dict) else None
+            entries.append((str(name), str(condition) if condition is not None else None))
         else:
             raise ValueError(f"Role {role.get('name')} has an invalid skill entry: {item}")
-    return names
+    return entries
+
+
+def role_skill_names(role: dict[str, object]) -> list[str]:
+    return [name for name, _condition in role_skill_entries(role)]
 
 
 def load_eval_runner() -> ModuleType:
@@ -229,18 +235,27 @@ def render_explorer_data() -> str:
     role_items = []
     edges = []
     for role_id, role in sorted(roles.items()):
-        fixed_skills = role_skill_names(role)
+        skill_entries = role_skill_entries(role)
+        fixed_skills = [name for name, condition in skill_entries if condition is None]
+        conditional_skills = {
+            name: condition for name, condition in skill_entries if condition is not None
+        }
         role_items.append({
             "id": role_id,
             "label": role.get("label", role_id),
             "description": role.get("description", ""),
             "modelProfile": role["modelProfile"],
             "fixedSkills": fixed_skills,
+            "conditionalSkills": conditional_skills,
             "dynamicFolderSkills": bool(role.get("dynamicFolderSkills", False)),
             "declaredCases": declared_agents.get(role_id, []),
             "verifiedCases": verified_agents.get(role_id, []),
         })
         edges.extend({"role": role_id, "skill": skill, "kind": "fixed"} for skill in fixed_skills)
+        edges.extend(
+            {"role": role_id, "skill": skill, "kind": "conditional", "condition": condition}
+            for skill, condition in conditional_skills.items()
+        )
     skill_items = []
     for skill_id, category in sorted(skills.items()):
         entry = detection.get(skill_id)

@@ -8,10 +8,16 @@ skills:
     justification: We need this to ground answers in the project's durable knowledge before relying on ad hoc investigation or unsupported recall.
 - project-wiki-research:
     justification: We need this when the wiki does not contain enough evidence to answer the request responsibly and a bounded investigation is required.
+    condition: when the wiki does not contain enough evidence to answer the request
+      responsibly and a bounded investigation is warranted.
 - code-project-wiki:
     justification: We need this to confirm that material wiki claims still agree with the code, configuration, and tests that govern current behavior.
+    condition: when material wiki claims depend on current code, configuration, or
+      test behavior that needs authoritative confirmation.
 - documentation-page-verifier:
     justification: We need this to determine whether a discovered knowledge gap is durable and significant enough to justify corrective documentation work.
+    condition: when investigation reveals a possible durable knowledge gap whose
+      significance for corrective documentation must be assessed.
 isolation: read-only
 outputContract:
 - wiki-backed answer:

@@ -13,15 +13,23 @@ skills:
 - end-to-end-verification:
     justification: We need this when confidence depends on proving that the complete
       user or system workflow works across its real boundaries.
+    condition: when confidence depends on proving a complete user or system workflow
+      across its real boundaries.
 - root-cause-analysis:
     justification: We need this when checks fail so the report distinguishes an actual
       product defect from test, environment, or evidence problems.
+    condition: when a verification check fails and its cause must be distinguished
+      from test, environment, or evidence problems.
 - runtime-evidence-collection:
     justification: We need this to support verification conclusions with bounded runtime
       observations when static checks alone cannot prove behavior.
+    condition: when static checks alone cannot establish the behavior needed for a
+      verification conclusion.
 - code-execution-tracing:
     justification: We need this to connect observed outcomes to the relevant source
       paths and identify branches that still require runtime confirmation.
+    condition: when an observed outcome must be connected to source-level control
+      flow or unconfirmed branches must be identified.
 - review-structured:
     justification: We need this to assess changed scope and acceptance criteria systematically
       so important verification gaps are not hidden by passing checks.

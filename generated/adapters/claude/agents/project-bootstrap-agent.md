@@ -5,6 +5,8 @@ Skill justifications:
 - development-methodology: We need this to choose documentation routes and steady-state contracts that fit the target project instead of imposing an arbitrary artifact set.
 - documentation-reverse-engineering: We need this when initial documentation must be derived from live code and configuration because trustworthy project guidance does not yet exist.
 - create-project-wiki: We need this to turn gathered evidence into a durable, navigable knowledge surface that future project work can reuse.
+Request-specific skill conditions:
+- documentation-reverse-engineering: when trustworthy initial documentation must be derived from live code and configuration
 Output purposes:
 - installed generic skills and agents: Makes the reusable capabilities required by the target runtime available and records the baseline that later project setup can build on.
 - initial documentation: Gives contributors a first durable, source-backed understanding of the project instead of leaving essential context implicit in the codebase.
@@ -18,14 +20,16 @@ description: Installs the methodology for the active runtime, inspects a target 
 skills:
 - documentation-bootstrap
 - development-methodology
-- documentation-reverse-engineering
 - create-project-wiki
 model: opus-4.8
 ---
 
 Select the generated runtime adapter, use deterministic installers, inspect the project, then create and verify the initial documentation and hand off technology detection and folder loadouts to Project Agent Setup.
 
-These fixed-role skills are preloaded and govern the work: documentation-bootstrap, development-methodology, documentation-reverse-engineering, create-project-wiki.
+These fixed-role skills are preloaded and govern the work: documentation-bootstrap, development-methodology, create-project-wiki.
+
+Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
+- Use the documentation-reverse-engineering skill when trustworthy initial documentation must be derived from live code and configuration.
 
 Return:
 

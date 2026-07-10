@@ -57,6 +57,8 @@ python3 scripts/build-skill-docs.py
 
 The script reads each bundled SKILL.md file, the adjacent Codex openai.yaml metadata, the ordered design/skill-categories.yaml catalog, agents/role-schema.yaml, agents/model-profiles.yaml, adapter model mappings, and the canonical role files. It writes design/generated/skill-definitions.js, design/generated/role-definitions.js, and native agent definitions for the supported runtime adapters.
 
+Canonical roles use three skill-loading paths. A skill entry without a condition is a fixed role skill and always loads. A skill entry with a condition is request-specific; generated agent instructions use the form Use the skill-name skill when condition, while telling the agent to inspect the requested outcome and available evidence when wording is ambiguous. Technology and domain skills remain outside role assignment: Project Agent Setup detects them once and writes unconditional folder loadouts into AGENTS-PLAN.yaml and AGENTS.md.
+
 Canonical roles request modelProfile and may assign modelStages for work such as low-cost evidence extraction followed by advanced synthesis. Provider model identifiers stay in adapter mappings. Every supported adapter must map every canonical profile.
 
 Model stage fields describe intended dispatch stages; generated single-agent definitions do not execute those stages by themselves. A staged evaluation must capture separate evidence-worker and synthesis invocations before the behavior is marked verified.
@@ -294,7 +296,7 @@ Artifact-specific review skills pass the artifact, source evidence, and complete
 2. In the target repository, use documentation-bootstrap for first-time setup.
 3. Use create-agents-plan to create AGENTS-PLAN.yaml when the project needs role agents, skill loadouts, folder routing, nested plan placement, or customer-safe example planning; generate AGENTS.md and thin CLAUDE.md bridge files where Claude Code is used.
 4. As Project Agent Setup, use detect-technology-skills once for representative folder scopes, record source-backed loadouts in AGENTS-PLAN.yaml, and render unconditional folder skill-loading instructions into AGENTS.md.
-5. Use development-methodology to choose the artifact type and load only the creation or review skill needed for the current job.
+5. Use development-methodology to choose the artifact type and apply the request-specific skill conditions, loading only the creation or review skill needed for the current job.
 6. Use documentation-reverse-engineering when an existing codebase needs a source-backed documentation set.
 7. Use code-project-wiki when docs/wiki needs code-aware maintenance, commit-range review, Related Code upkeep, or Related Tests upkeep.
 8. Use create-project-wiki, create-functional-spec, create-architecture, create-high-level-design, create-module-design, or create-unit-test-plan when creating one methodology artifact from its template.

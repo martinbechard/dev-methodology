@@ -8,6 +8,11 @@ Skill justifications:
 - code-execution-tracing: We need this to connect observed outcomes to the relevant source paths and identify branches that still require runtime confirmation.
 - review-structured: We need this to assess changed scope and acceptance criteria systematically so important verification gaps are not hidden by passing checks.
 - structured-explanation: We need this to communicate commands, outcomes, omissions, and residual risk in a form the requester can audit and act on.
+Request-specific skill conditions:
+- end-to-end-verification: when confidence depends on proving a complete user or system workflow across its real boundaries
+- root-cause-analysis: when a verification check fails and its cause must be distinguished from test, environment, or evidence problems
+- runtime-evidence-collection: when static checks alone cannot establish the behavior needed for a verification conclusion
+- code-execution-tracing: when an observed outcome must be connected to source-level control flow or unconfirmed branches must be identified
 Output purposes:
 - command results: Preserves the exact checks and observed outcomes so verification can be reproduced and independently assessed.
 - coverage notes: Shows which changed behaviors and acceptance criteria were proven and where evidence remains incomplete.
@@ -20,10 +25,6 @@ description: Runs acceptance checks, builds, unit tests, integration tests, E2E 
   lint gates, and artifact-specific verification.
 skills:
 - test-strategy
-- end-to-end-verification
-- root-cause-analysis
-- runtime-evidence-collection
-- code-execution-tracing
 - review-structured
 - structured-explanation
 model: opus-4.8
@@ -31,7 +32,13 @@ model: opus-4.8
 
 Read the root and nearest AGENTS.md, load declared folder technology skills before acting, select checks from actual behavior and risk, run them without weakening gates, and distinguish failures from skipped checks.
 
-These fixed-role skills are preloaded and govern the work: test-strategy, end-to-end-verification, root-cause-analysis, runtime-evidence-collection, code-execution-tracing, review-structured, structured-explanation.
+These fixed-role skills are preloaded and govern the work: test-strategy, review-structured, structured-explanation.
+
+Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
+- Use the end-to-end-verification skill when confidence depends on proving a complete user or system workflow across its real boundaries.
+- Use the root-cause-analysis skill when a verification check fails and its cause must be distinguished from test, environment, or evidence problems.
+- Use the runtime-evidence-collection skill when static checks alone cannot establish the behavior needed for a verification conclusion.
+- Use the code-execution-tracing skill when an observed outcome must be connected to source-level control flow or unconfirmed branches must be identified.
 
 Read the root and nearest AGENTS.md and load every technology skill declared for the active folder before acting. Do not rerun technology detection.
 

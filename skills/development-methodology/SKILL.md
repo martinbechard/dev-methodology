@@ -38,6 +38,8 @@ Use this skill as the router for software project documentation work from this b
 
 Load only the skills needed for the current job. Use this skill to choose the artifact type and route, then load the matching creation skill or review skill for that artifact. Do not load every creation or review skill just because the catalog contains them.
 
+Treat generated role conditions as judgment guidance, not deterministic prompt keywords. Interpret the requested outcome, existing artifact, and source evidence together when wording is ambiguous. Ask for clarification only when different plausible routes would materially change the result and the intended route cannot be inferred.
+
 For a normal creation job, load this skill and exactly one artifact creation skill, plus source-domain skills that the repository evidence requires. Load the matching review skill only when the artifact is ready to review. Use documentation-page-verifier for mixed, unknown, or custom artifacts, or when an artifact review skill calls for it.
 
 ## Shared Page Contract

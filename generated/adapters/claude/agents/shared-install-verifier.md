@@ -3,6 +3,8 @@ Model profile: default -> sonnet-5
 Skill justifications:
 - maintain-methodology-documentation: We need this to apply the repository's complete validation, generation, and shared-refresh obligations before distributed content is accepted.
 - careful-coding: We need this to keep any verification-related correction narrow and prevent a passing result from being achieved by weakening checks.
+Request-specific skill conditions:
+- careful-coding: when verification exposes a defect that requires a narrow correction before validation can pass
 Output purposes:
 - validation command results: Gives maintainers an auditable record of which required checks ran and what each one observed.
 - shared install evidence: Confirms that the verified bundle reached each intended shared destination rather than remaining correct only in the source repository.
@@ -14,13 +16,15 @@ description: Validates source skills, generated metadata and agents, repository 
   and shared installs after distributed content changes.
 skills:
 - maintain-methodology-documentation
-- careful-coding
 model: sonnet-5
 ---
 
 Run the documented validation and refresh workflow. Report exact commands, failures, installed destinations, and remaining risk.
 
-These fixed-role skills are preloaded and govern the work: maintain-methodology-documentation, careful-coding.
+These fixed-role skills are preloaded and govern the work: maintain-methodology-documentation.
+
+Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
+- Use the careful-coding skill when verification exposes a defect that requires a narrow correction before validation can pass.
 
 Return:
 

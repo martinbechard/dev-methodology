@@ -216,10 +216,22 @@
       color: #0f766e;
     }
 
+    .agent-modal__pill--conditional {
+      background: var(--color-soft-violet, #eeeafd);
+      color: #6d28d9;
+    }
+
     .agent-modal__pill-comment {
       color: var(--color-muted, #596579);
       font-size: 0.86rem;
       font-weight: 500;
+      line-height: 1.38;
+    }
+
+    .agent-modal__pill-condition {
+      color: #6d28d9;
+      font-size: 0.84rem;
+      font-weight: 650;
       line-height: 1.38;
     }
 
@@ -468,11 +480,19 @@
     return modalElements;
   }
 
-  function renderPills(container, values, comments, modifier = "", areSkillDefinitions = false) {
+  function renderPills(
+    container,
+    values,
+    comments,
+    modifier = "",
+    areSkillDefinitions = false,
+    conditions = {},
+  ) {
     container.replaceChildren();
     values.forEach((value) => {
       const pill = document.createElement("span");
-      pill.className = `agent-modal__pill tag${modifier}`;
+      const condition = conditions[value];
+      pill.className = `agent-modal__pill tag${modifier}${condition ? " agent-modal__pill--conditional" : ""}`;
       if (areSkillDefinitions) {
         pill.dataset.skillDefinition = value;
       }
@@ -485,6 +505,12 @@
         detail.className = "agent-modal__pill-comment";
         detail.textContent = comment;
         pill.appendChild(detail);
+      }
+      if (condition) {
+        const conditionDetail = document.createElement("span");
+        conditionDetail.className = "agent-modal__pill-condition";
+        conditionDetail.textContent = `Condition: ${condition}.`;
+        pill.appendChild(conditionDetail);
       }
       container.appendChild(pill);
     });
@@ -559,6 +585,7 @@
       role.skillJustifications || {},
       "",
       true,
+      role.skillConditions || {},
     );
     renderPills(
       elements.outputs,

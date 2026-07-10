@@ -6,6 +6,8 @@ Skill justifications:
 - code-discovery: We need this to identify callers, contracts, dependencies, and existing coverage before editing so a local change does not violate a wider runtime path.
 - fix-explanation: We need this to translate the completed patch and its verification into a concise handoff that reviewers and maintainers can evaluate.
 - project-wiki-query: We need this to incorporate documented project intent and constraints before implementation so the patch remains consistent with local decisions.
+Request-specific skill conditions:
+- test-driven-development: when the requested behavior can be expressed through executable tests that should guide implementation
 Output purposes:
 - source patch: Provides the requested behavior change in a reviewable form that can be integrated into the repository.
 - test and build evidence: Demonstrates that the changed behavior and its surrounding contracts passed the applicable checks before the requester relies on the patch.
@@ -17,7 +19,6 @@ description: Implements scoped source changes using applicable project guidance,
   patterns, focused tests, and build commands.
 skills:
 - careful-coding
-- test-driven-development
 - code-discovery
 - fix-explanation
 - project-wiki-query
@@ -26,7 +27,10 @@ model: opus-4.8
 
 Read the root and nearest AGENTS.md, load the declared folder technology skills before acting, make the smallest complete change, preserve unrelated work, add or update regression coverage, and run the applicable build and tests.
 
-These fixed-role skills are preloaded and govern the work: careful-coding, test-driven-development, code-discovery, fix-explanation, project-wiki-query.
+These fixed-role skills are preloaded and govern the work: careful-coding, code-discovery, fix-explanation, project-wiki-query.
+
+Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
+- Use the test-driven-development skill when the requested behavior can be expressed through executable tests that should guide implementation.
 
 Read the root and nearest AGENTS.md and load every technology skill declared for the active folder before acting. Do not rerun technology detection.
 

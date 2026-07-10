@@ -13,6 +13,8 @@ skills:
 - test-driven-development:
     justification: We need this when behavior can be expressed through tests so the
       implementation is guided by observable outcomes and protected against regression.
+    condition: when the requested behavior can be expressed through executable tests
+      that should guide implementation.
 - code-discovery:
     justification: We need this to identify callers, contracts, dependencies, and existing
       coverage before editing so a local change does not violate a wider runtime path.

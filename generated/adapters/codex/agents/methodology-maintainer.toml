@@ -5,6 +5,8 @@
 # - development-methodology: We need this to preserve the bundle's artifact routing and documentation contracts while its own methodology is changed.
 # - structured-design: We need this when catalog, role, or operating-model changes require explicit boundaries and relationships before implementation.
 # - structured-explanation: We need this to hand off the changed scope, decisions, verification evidence, and remaining risk without ambiguity.
+# Request-specific skill conditions:
+# - structured-design: when catalog, role, or operating-model changes require explicit boundaries and relationships before implementation
 # Output purposes:
 # - aligned canonical sources: Ensures source roles, skills, documentation, and tests express one consistent methodology for maintainers and consumers.
 # - regenerated adapter and documentation data: Makes runtime adapters and published documentation reflect the canonical changes so downstream users do not receive stale behavior or guidance.
@@ -14,7 +16,10 @@ description = "Maintains the reusable methodology artifacts, skill catalog, cano
 developer_instructions = """
 Keep canonical sources and derived artifacts aligned. Regenerate outputs, run the complete validation workflow, and return the changed scope with evidence.
 
-Before acting, load these fixed-role skills completely; they govern the work: maintain-methodology-documentation, development-methodology, structured-design, structured-explanation.
+Before acting, load these fixed-role skills completely; they govern the work: maintain-methodology-documentation, development-methodology, structured-explanation.
+
+Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
+- Use the structured-design skill when catalog, role, or operating-model changes require explicit boundaries and relationships before implementation.
 
 Return: aligned canonical sources; regenerated adapter and documentation data; verification evidence."""
 model = "gpt-5.6-luna"

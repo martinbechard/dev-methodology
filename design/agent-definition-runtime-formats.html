@@ -413,7 +413,12 @@
           <tr>
             <td><span class="name">Skills</span></td>
             <td><code>skills</code></td>
-            <td>Names generic fixed-role skills. Claude preloads them through its native skills property. Codex receives deterministic developer instructions to load them before acting; optional <code>skillAvailability</code> entries generate explicit name-based or path-based <code>[[skills.config]]</code> availability overrides.</td>
+            <td>Names the role's generic skill set. An entry without <code>condition</code> is fixed and always loads. An entry with <code>condition</code> is request-specific and is loaded only when the agent judges that condition applicable. Optional <code>skillAvailability</code> entries remain name-based or path-based Codex availability overrides, not routing conditions.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Skill condition</span></td>
+            <td><code>skills[].condition</code></td>
+            <td>Provides a human-readable <code>when ...</code> condition beneath one skill entry. The generator writes <code>Use the skill-name skill when condition</code> into runtime instructions and tells the agent to inspect the requested outcome and evidence when request wording is ambiguous.</td>
           </tr>
           <tr>
             <td><span class="name">Tools</span></td>
@@ -517,7 +522,7 @@
         </article>
         <article class="card skill">
           <h3>Skills, Tools, And MCP</h3>
-          <p>Codex subagents use the tools available to the parent task. Fixed-role skills are written as unconditional loading requirements in <code>developer_instructions</code>. Use <code>[mcp_servers.name]</code> for agent-specific MCP servers and emit <code>[[skills.config]]</code> only when the canonical role explicitly requests a name-based or path-based availability override; availability configuration is not preloading or read proof.</p>
+          <p>Codex subagents use the tools available to the parent task. Fixed-role skills are written as unconditional loading requirements in <code>developer_instructions</code>. Request-specific skills are written as conditional Use the skill instructions, including ambiguity guidance, and are not emitted as <code>[[skills.config]]</code>. Use <code>[mcp_servers.name]</code> for agent-specific MCP servers and emit <code>[[skills.config]]</code> only when the canonical role explicitly requests a name-based or path-based availability override; availability configuration is not preloading or read proof.</p>
         </article>
         <article class="card risk">
           <h3>Runtime Controls</h3>
@@ -547,7 +552,7 @@
         </article>
         <article class="card skill">
           <h3>Skills, Tools, And MCP</h3>
-          <p>Claude Code documents a <code>skills</code> frontmatter field that preloads listed skills into the subagent context at startup. The common role source can map directly to this field for role skill lists.</p>
+          <p>Claude Code documents a <code>skills</code> frontmatter field that preloads listed skills into the subagent context at startup. The generator maps only fixed role skills into that field. Request-specific skills stay out of frontmatter and appear as conditional loading instructions in the Markdown body.</p>
         </article>
         <article class="card risk">
           <h3>Runtime Controls</h3>
@@ -662,11 +667,11 @@
           </tr>
           <tr>
             <td><span class="name">skills</span></td>
-            <td>Require every fixed-role skill to be loaded before acting in <code>developer_instructions</code>. Emit <code>[[skills.config]]</code> only for explicit name-based or path-based availability overrides.</td>
-            <td><code>skills</code> preloads fixed-role skill content.</td>
-            <td>Emit into body and rely on installed skills.</td>
-            <td><code>skills</code></td>
-            <td>Emit into body and rely on Copilot-compatible skill folders.</td>
+            <td>Require fixed skills before acting and emit request-specific conditions in <code>developer_instructions</code>. Emit <code>[[skills.config]]</code> only for explicit availability overrides.</td>
+            <td><code>skills</code> preloads fixed skill content; request-specific conditions go in the body.</td>
+            <td>Emit fixed and request-specific loading instructions into the body and rely on installed skills.</td>
+            <td>Map fixed skills to <code>skills</code> and keep request-specific conditions in instructions.</td>
+            <td>Emit fixed and request-specific loading instructions into the body and rely on Copilot-compatible skill folders.</td>
           </tr>
           <tr>
             <td><span class="name">tools</span></td>
@@ -805,7 +810,7 @@
       <div class="flow">
         <div class="flow-row">
           <h3>Use A Common Role Source</h3>
-          <p>Canonical files under <code>agents/roles/</code> own name, filename, description, instructions, generic fixed-role skills, dynamic folder-skill policy, optional skill availability overrides, tools, disallowed tools, MCP servers, modelProfile, modelStages, max turns, timeout, permission mode, isolation, memory, and output contract. The generator validates them against <code>agents/role-schema.yaml</code>.</p>
+          <p>Canonical files under <code>agents/roles/</code> own name, filename, description, instructions, generic fixed-role skills, request-specific skill conditions, dynamic folder-skill policy, optional skill availability overrides, tools, disallowed tools, MCP servers, modelProfile, modelStages, max turns, timeout, permission mode, isolation, memory, and output contract. The generator validates them against <code>agents/role-schema.yaml</code>.</p>
         </div>
         <div class="flow-row">
           <h3>Generate Runtime Adapters</h3>
@@ -826,13 +831,13 @@
       <h2 id="role-skills-title">Fixed Roles And Setup-Time Technology Detection</h2>
       <div class="panel">
         <p>
-          Canonical role files own responsibility, authority, generic fixed-role skills, and output contracts. Project Agent Setup uses detect-technology-skills once for representative folders, while each specialized technology or domain skill owns its activation evidence in detection.yaml.
+          Canonical role files own responsibility, authority, generic fixed-role skills, request-specific skill conditions, and output contracts. Project Agent Setup uses detect-technology-skills once for representative folders, while each specialized technology or domain skill owns its activation evidence in detection.yaml.
         </p>
         <ul>
           <li>Project setup writes source-backed folder loadouts into AGENTS-PLAN.yaml and unconditional loading instructions into AGENTS.md.</li>
-          <li>Task execution loads fixed-role skills and the nearest AGENTS.md folder skills without rerunning detection.</li>
+          <li>Task execution loads fixed-role skills, conditionally loads request-specific skills after interpreting the request, and loads the nearest AGENTS.md folder skills without rerunning detection.</li>
           <li>The detection build rejects specialized skills fixed directly into canonical role loadouts and rejects generic skills in detection metadata.</li>
-          <li>Claude preloads fixed-role skills natively; Codex receives deterministic loading instructions. Harness traces remain necessary to prove runtime reads.</li>
+          <li>Claude preloads only fixed-role skills natively; Codex receives unconditional fixed-skill instructions. Both receive generated request-condition instructions. Harness traces remain necessary to prove runtime reads.</li>
         </ul>
       </div>
     </section>

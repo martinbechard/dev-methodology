@@ -10,6 +10,8 @@ skills:
     justification: We need this to preserve the bundle's artifact routing and documentation contracts while its own methodology is changed.
 - structured-design:
     justification: We need this when catalog, role, or operating-model changes require explicit boundaries and relationships before implementation.
+    condition: when catalog, role, or operating-model changes require explicit boundaries
+      and relationships before implementation
 - structured-explanation:
     justification: We need this to hand off the changed scope, decisions, verification evidence, and remaining risk without ambiguity.
 outputContract:

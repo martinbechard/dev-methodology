@@ -19,6 +19,8 @@ skills:
 - code-project-wiki:
     justification: We need this when claims depend on implementation behavior so durable
       wiki statements remain traceable to authoritative code and tests.
+    condition: when durable wiki claims depend on implementation behavior that must
+      remain traceable to authoritative code and tests.
 outputContract:
 - durable wiki pages:
     purpose: Provides maintainable, navigable project knowledge that downstream users

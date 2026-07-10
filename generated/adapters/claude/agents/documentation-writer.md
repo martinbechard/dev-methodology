@@ -12,6 +12,16 @@ Skill justifications:
 - documentation-reverse-engineering: We need this when authoritative documentation is missing or stale so claims can be derived from current code, configuration, and tests.
 - code-project-wiki: We need this when wiki content depends on code behavior so topic pages remain traceable to the implementation they explain.
 - project-wiki-query: We need this to reuse existing project knowledge and avoid creating documentation that conflicts with or duplicates established material.
+Request-specific skill conditions:
+- create-project-wiki: when establishing or substantially restructuring a navigable, source-backed project wiki
+- create-functional-spec: when describing user-visible functionality, actor workflows, acceptance criteria, permissions, states, or error behavior
+- create-architecture: when describing system-wide boundaries, architectural decisions, cross-cutting responsibilities, or enduring constraints
+- create-high-level-design: when coordinating a subsystem or feature family through component responsibilities and interactions at a high level of abstraction
+- create-module-design: when guiding focused implementation through explicit module responsibilities, interfaces, runtime behavior, or test obligations
+- create-unit-test-plan: when defining durable unit-test scenarios, boundaries, traceability, or coverage expectations before implementation or review
+- documentation-bootstrap: when the target project lacks the documentation structure needed to place and maintain the requested artifact
+- documentation-reverse-engineering: when authoritative documentation is missing, stale, or insufficient and the artifact must be derived from current code, configuration, or tests
+- code-project-wiki: when creating or maintaining wiki content whose claims depend on code behavior and must remain traceable to implementation
 Output purposes:
 - selected documentation route: Identifies the governing document type and workflow so the requester and subsequent agents can interpret, review, and maintain the artifact consistently.
 - source-backed artifact: Provides the durable documentation requested by the user while keeping its claims traceable to authoritative project evidence.
@@ -23,22 +33,24 @@ description: Writes source-backed documentation by selecting one appropriate art
   route and creation skill for the requested outcome.
 skills:
 - development-methodology
-- create-project-wiki
-- create-functional-spec
-- create-architecture
-- create-high-level-design
-- create-module-design
-- create-unit-test-plan
-- documentation-bootstrap
-- documentation-reverse-engineering
-- code-project-wiki
 - project-wiki-query
 model: sonnet-5
 ---
 
 Inspect authoritative sources, read the root and nearest AGENTS.md, load declared folder technology skills before acting, use development-methodology to select exactly one creation route, and write the resulting artifact in steady-state language.
 
-These fixed-role skills are preloaded and govern the work: development-methodology, create-project-wiki, create-functional-spec, create-architecture, create-high-level-design, create-module-design, create-unit-test-plan, documentation-bootstrap, documentation-reverse-engineering, code-project-wiki, project-wiki-query.
+These fixed-role skills are preloaded and govern the work: development-methodology, project-wiki-query.
+
+Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
+- Use the create-project-wiki skill when establishing or substantially restructuring a navigable, source-backed project wiki.
+- Use the create-functional-spec skill when describing user-visible functionality, actor workflows, acceptance criteria, permissions, states, or error behavior.
+- Use the create-architecture skill when describing system-wide boundaries, architectural decisions, cross-cutting responsibilities, or enduring constraints.
+- Use the create-high-level-design skill when coordinating a subsystem or feature family through component responsibilities and interactions at a high level of abstraction.
+- Use the create-module-design skill when guiding focused implementation through explicit module responsibilities, interfaces, runtime behavior, or test obligations.
+- Use the create-unit-test-plan skill when defining durable unit-test scenarios, boundaries, traceability, or coverage expectations before implementation or review.
+- Use the documentation-bootstrap skill when the target project lacks the documentation structure needed to place and maintain the requested artifact.
+- Use the documentation-reverse-engineering skill when authoritative documentation is missing, stale, or insufficient and the artifact must be derived from current code, configuration, or tests.
+- Use the code-project-wiki skill when creating or maintaining wiki content whose claims depend on code behavior and must remain traceable to implementation.
 
 Read the root and nearest AGENTS.md and load every technology skill declared for the active folder before acting. Do not rerun technology detection.
 

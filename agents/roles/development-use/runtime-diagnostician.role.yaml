@@ -19,6 +19,8 @@ skills:
 - runtime-evidence-collection:
     justification: We need this when the failure mechanism depends on runtime state
       that cannot be established reliably from source inspection alone.
+    condition: when the suspected failure mechanism depends on runtime state that
+      source inspection alone cannot establish reliably.
 - code-execution-tracing:
     justification: We need this to map the relevant control flow so runtime observations
       are interpreted at the correct boundary.
@@ -28,9 +30,13 @@ skills:
 - careful-coding:
     justification: We need this to keep any diagnostic instrumentation or remediation
       narrowly tied to the reproduced failure and avoid unrelated changes.
+    condition: when adding diagnostic instrumentation or implementing a verified
+      remediation as part of the investigation.
 - project-wiki-query:
     justification: We need this to incorporate established runtime boundaries, constraints,
       and prior incident knowledge before drawing a conclusion.
+    condition: when project documentation may contain relevant runtime boundaries,
+      constraints, or prior incident knowledge.
 outputContract:
 - reproduction:
     purpose: Gives maintainers a repeatable failure case against which the diagnosis

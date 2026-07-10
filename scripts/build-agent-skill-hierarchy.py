@@ -30,19 +30,20 @@ def load_yaml(path: Path) -> dict[str, object]:
     return value
 
 
-def role_skill_names(role: dict[str, object]) -> list[str]:
+def role_skill_entries(role: dict[str, object]) -> list[tuple[str, bool]]:
     value = role.get("skills")
     if not isinstance(value, list):
         raise ValueError(f"Role {role.get('name')} skills must be a list.")
-    names: list[str] = []
+    entries: list[tuple[str, bool]] = []
     for item in value:
         if isinstance(item, str):
-            names.append(item)
+            entries.append((item, False))
         elif isinstance(item, dict) and len(item) == 1:
-            names.append(str(next(iter(item))))
+            name, metadata = next(iter(item.items()))
+            entries.append((str(name), isinstance(metadata, dict) and "condition" in metadata))
         else:
             raise ValueError(f"Role {role.get('name')} has an invalid skill entry: {item}")
-    return names
+    return entries
 
 
 def skill_category(path: Path) -> tuple[str, str]:
@@ -61,14 +62,21 @@ def escape(value: object) -> str:
     return html.escape(str(value), quote=True)
 
 
-def node(x: int, y: int, width: int, label: str, secondary: str = "") -> str:
+def node(
+    x: int,
+    y: int,
+    width: int,
+    label: str,
+    secondary: str = "",
+    modifier: str = "",
+) -> str:
     secondary_text = (
         f'<text x="{x + width - 12}" y="{y + 16}" text-anchor="end" class="secondary">{escape(secondary)}</text>'
         if secondary
         else ""
     )
     return (
-        f'<g><rect x="{x}" y="{y}" width="{width}" height="24" rx="5" class="node"/>'
+        f'<g><rect x="{x}" y="{y}" width="{width}" height="24" rx="5" class="node{modifier}"/>'
         f'<text x="{x + 12}" y="{y + 16}">{escape(label)}</text>{secondary_text}</g>'
     )
 
@@ -117,14 +125,14 @@ def build_svg() -> str:
     parts = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-labelledby="title desc">',
         '<title id="title">Canonical model profile, agent, and skill hierarchy</title>',
-        '<desc id="desc">Every canonical role is connected to its semantic model profile and fixed generic skills. Technology and domain skills are labeled as setup-time detected skills without task-time role edges.</desc>',
-        '<style>text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}.heading{font-size:18px;font-weight:600}.group{font-size:13px;font-weight:600;fill:#334155}.secondary{font-size:9px;fill:#64748b}.node{fill:#f8fafc;stroke:#94a3b8}.model{fill:#e0f2fe;stroke:#0284c7}.edge{fill:none;stroke:#94a3b8;stroke-width:1;opacity:.32}.model-edge{stroke:#0284c7;opacity:.45}</style>',
+        '<desc id="desc">Every canonical role is connected to its semantic model profile, fixed generic skills, and conditionally loaded request-specific skills. Technology and domain skills are labeled as setup-time detected skills without task-time role edges.</desc>',
+        '<style>text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}.heading{font-size:18px;font-weight:600}.group{font-size:13px;font-weight:600;fill:#334155}.secondary{font-size:9px;fill:#64748b}.node{fill:#f8fafc;stroke:#94a3b8}.node.conditional{fill:#eeeafd;stroke:#7c3aed}.node.technology{fill:#e0f2fe;stroke:#0284c7}.model{fill:#e0f2fe;stroke:#0284c7}.edge{fill:none;stroke:#94a3b8;stroke-width:1;opacity:.32}.conditional-edge{stroke:#7c3aed;opacity:.55}.model-edge{stroke:#0284c7;opacity:.45}</style>',
         '<text x="30" y="44" class="heading">Model profiles</text>',
         '<text x="360" y="44" class="heading">Canonical agents</text>',
         '<text x="1120" y="44" class="heading">Bundled skills</text>',
         '<text x="30" y="70" class="secondary">Adapter mappings resolve concrete models</text>',
-        '<text x="360" y="70" class="secondary">Roles own fixed generic skills</text>',
-        '<text x="1120" y="70" class="secondary">Technology skills are detected by Project Agent Setup</text>',
+        '<text x="360" y="70" class="secondary">Roles own fixed and request-specific skills</text>',
+        '<text x="1120" y="70" class="secondary">Violet is conditional; blue is setup-time technology</text>',
     ]
 
     profile_y: dict[str, int] = {}
@@ -145,9 +153,9 @@ def build_svg() -> str:
         parts.append(
             f'<path d="M {MODEL_X + 280} {profile_y[profile] + 21} C 330 {profile_y[profile] + 21}, 330 {y + 12}, {ROLE_X} {y + 12}" class="edge model-edge"/>'
         )
-        for skill_name in role_skill_names(role):
+        for skill_name, conditional in role_skill_entries(role):
             parts.append(
-                f'<path d="M {ROLE_X + NODE_WIDTH} {y + 12} C 820 {y + 12}, 940 {skill_y[skill_name] + 12}, {SKILL_X} {skill_y[skill_name] + 12}" class="edge"/>'
+                f'<path d="M {ROLE_X + NODE_WIDTH} {y + 12} C 820 {y + 12}, 940 {skill_y[skill_name] + 12}, {SKILL_X} {skill_y[skill_name] + 12}" class="edge{" conditional-edge" if conditional else ""}"/>'
             )
     current_y = TOP
     for group, group_roles in grouped_roles.items():
@@ -161,13 +169,31 @@ def build_svg() -> str:
         current_y += 12
 
     skill_current_y = TOP
+    skill_assignment_kinds: dict[str, set[str]] = {}
+    for role in roles:
+        for skill_name, conditional in role_skill_entries(role):
+            skill_assignment_kinds.setdefault(skill_name, set()).add(
+                "request-specific" if conditional else "fixed"
+            )
     for category, skill_names in skills_by_category.items():
         parts.append(f'<text x="{SKILL_X}" y="{skill_current_y + 18}" class="group">{escape(category.replace("-", " ").title())}</text>')
         skill_current_y += ROW_HEIGHT
         for skill_name in skill_names:
             detection = detection_by_skill.get(skill_name)
-            secondary = f"detected {detection['kind']}" if detection else "fixed"
-            parts.append(node(SKILL_X, skill_current_y, SKILL_WIDTH, skill_name, secondary))
+            assignment_kinds = skill_assignment_kinds.get(skill_name, set())
+            secondary = (
+                f"setup-time {detection['kind']}"
+                if detection
+                else " / ".join(sorted(assignment_kinds)) or "unassigned"
+            )
+            modifier = (
+                " technology"
+                if detection
+                else " conditional"
+                if assignment_kinds == {"request-specific"}
+                else ""
+            )
+            parts.append(node(SKILL_X, skill_current_y, SKILL_WIDTH, skill_name, secondary, modifier))
             skill_current_y += ROW_HEIGHT
         skill_current_y += 12
 
