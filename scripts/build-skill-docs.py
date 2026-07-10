@@ -60,7 +60,13 @@ ROLE_OUTPUT_CONTRACT_FIELD_NAME = "outputContract"
 ROLE_SKILL_COMMENTS_FIELD_NAME = "skillComments"
 ROLE_OUTPUT_COMMENTS_FIELD_NAME = "outputComments"
 ROLE_EXAMPLES_FIELD_NAME = "examples"
-ROLE_EXAMPLE_REQUIRED_FIELDS = ("purpose", "invocation", "plausibleResponse")
+ROLE_EXAMPLE_RUNTIME_INVOCATIONS_FIELD_NAME = "runtimeInvocations"
+ROLE_EXAMPLE_REQUIRED_FIELDS = (
+    "purpose",
+    ROLE_EXAMPLE_RUNTIME_INVOCATIONS_FIELD_NAME,
+    "plausibleResponse",
+)
+ROLE_EXAMPLE_RUNTIME_IDS = ("codex", "claude-code")
 ROLE_LIST_FIELDS = (
     ROLE_SKILLS_FIELD_NAME,
     "tools",
@@ -137,7 +143,7 @@ class RoleDefinition:
     skill_comments: dict[str, str]
     output_contract: tuple[str, ...]
     output_comments: dict[str, str]
-    examples: tuple[dict[str, str], ...]
+    examples: tuple[dict[str, object], ...]
     group: str
     group_label: str
     source_path: str
@@ -369,11 +375,11 @@ def validate_string_list(value: object, field_name: str, source_path: Path) -> t
     return normalized
 
 
-def validate_role_examples(value: object, source_path: Path) -> tuple[dict[str, str], ...]:
+def validate_role_examples(value: object, source_path: Path) -> tuple[dict[str, object], ...]:
     if not isinstance(value, list) or not value:
         raise ValueError(f"Role {ROLE_EXAMPLES_FIELD_NAME} must be a non-empty list: {source_path}")
 
-    examples: list[dict[str, str]] = []
+    examples: list[dict[str, object]] = []
     for index, example in enumerate(value, start=MINIMUM_POSITIVE_INTEGER):
         if not isinstance(example, dict):
             raise ValueError(f"Role example {index} must be an object: {source_path}")
@@ -383,9 +389,24 @@ def validate_role_examples(value: object, source_path: Path) -> tuple[dict[str, 
             raise ValueError(
                 f"Role example {index} must contain only {ROLE_EXAMPLE_REQUIRED_FIELDS}: {source_path}"
             )
-        normalized = {}
+        normalized: dict[str, object] = {}
         for field_name in ROLE_EXAMPLE_REQUIRED_FIELDS:
             field_value = example[field_name]
+            if field_name == ROLE_EXAMPLE_RUNTIME_INVOCATIONS_FIELD_NAME:
+                if not isinstance(field_value, dict) or set(field_value) != set(ROLE_EXAMPLE_RUNTIME_IDS):
+                    raise ValueError(
+                        f"Role example {index} {field_name} keys must match {ROLE_EXAMPLE_RUNTIME_IDS}: {source_path}"
+                    )
+                invocations: dict[str, str] = {}
+                for runtime_id in ROLE_EXAMPLE_RUNTIME_IDS:
+                    invocation = field_value[runtime_id]
+                    if not isinstance(invocation, str) or not invocation.strip():
+                        raise ValueError(
+                            f"Role example {index} {field_name} {runtime_id} must be a non-empty string: {source_path}"
+                        )
+                    invocations[runtime_id] = invocation.strip()
+                normalized[field_name] = invocations
+                continue
             if not isinstance(field_value, str) or not field_value.strip():
                 raise ValueError(
                     f"Role example {index} {field_name} must be a non-empty string: {source_path}"

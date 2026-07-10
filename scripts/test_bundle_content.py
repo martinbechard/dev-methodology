@@ -214,7 +214,7 @@ DEVELOPMENT_USE_LOADOUTS = (
     "Coding Agent",
     "Code Review Agent",
     "QA And Verification Agent",
-    "Documentation Architect",
+    "Documentation Writer",
     "Artifact Review Agent",
     "E2E Browser Agent",
     "UX Designer Or Reviewer",
@@ -535,11 +535,15 @@ class BundleContentTests(unittest.TestCase):
                 for example in role_payload["roles"][role.name]["examples"]:
                     self.assertEqual(
                         set(example),
-                        {"purpose", "invocation", "plausibleResponse"},
+                        {"purpose", "runtimeInvocations", "plausibleResponse"},
                     )
-                    for value in example.values():
-                        self.assertIsInstance(value, str)
-                        self.assertTrue(value.strip())
+                    self.assertEqual(
+                        set(example["runtimeInvocations"]),
+                        {"codex", "claude-code"},
+                    )
+                    for invocation in example["runtimeInvocations"].values():
+                        self.assertIsInstance(invocation, str)
+                        self.assertTrue(invocation.strip())
                 codex_agent_path = (
                     GENERATED_ADAPTERS_ROOT / "codex" / "agents" / f"{role.filename}.toml"
                 )
@@ -640,6 +644,8 @@ class BundleContentTests(unittest.TestCase):
             "skillComments",
             "outputComments",
             "agent-modal__pill-comment",
+            "runtimeInvocations",
+            "agent-modal__runtime-select",
         ):
             with self.subTest(agent_browser_phrase=phrase):
                 self.assertIn(phrase, agent_browser_text)

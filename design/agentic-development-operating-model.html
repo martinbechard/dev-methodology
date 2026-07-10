@@ -505,8 +505,8 @@
       </article>
 
       <article class="card agent">
-        <h3>Documentation Architect</h3>
-        <p>Selects the right document shape and loads one focused creation skill to write a source-backed functional, architecture, high-level design, module, or project wiki artifact.</p>
+        <h3>Documentation Writer</h3>
+        <p>Selects one document shape and creation skill, then writes a source-backed functional, architecture, high-level design, module, or project wiki artifact.</p>
         <div class="tag-row">
           <span class="tag agent">development-methodology</span>
           <span class="tag agent">artifact creation skill</span>
@@ -622,19 +622,19 @@
         <tbody>
           <tr>
             <td><span class="name">Web application</span></td>
-            <td>Orchestrator, Project Organiser, Coding Agent, Code Review Agent, QA And Verification Agent, UX Reviewer, Documentation Architect.</td>
+            <td>Orchestrator, Project Organiser, Coding Agent, Code Review Agent, QA And Verification Agent, UX Reviewer, Documentation Writer.</td>
             <td>Front-end, API, static pages, and DB tiers with Next.js, React Server Components, API routes, auth, Postgres, Drizzle, Jest, and Playwright guidance.</td>
             <td>Build, lint, unit tests, integration tests, E2E tests, visual checks, accessibility checks, and data access checks.</td>
           </tr>
           <tr>
             <td><span class="name">API service</span></td>
-            <td>Orchestrator, Coding Agent, Code Review Agent, QA And Verification Agent, Documentation Architect.</td>
+            <td>Orchestrator, Coding Agent, Code Review Agent, QA And Verification Agent, Documentation Writer.</td>
             <td>api-routes, typescript-strict, clerk-auth, postgres-drizzle, jest.</td>
             <td>Build, unit tests, integration tests, contract tests, OpenAPI or route checks.</td>
           </tr>
           <tr>
             <td><span class="name">CLI or local tooling</span></td>
-            <td>Coding Agent, Code Review Agent, Documentation Architect, QA And Verification Agent.</td>
+            <td>Coding Agent, Code Review Agent, Documentation Writer, QA And Verification Agent.</td>
             <td>node-cli, typescript-esm, vitest.</td>
             <td>Unit tests, command snapshots, packaging checks, docs examples.</td>
           </tr>
@@ -652,19 +652,19 @@
           </tr>
           <tr>
             <td><span class="name">Documentation or wiki repository</span></td>
-            <td>Documentation Architect, Wiki Query Agent, Wiki Ingest Agent, Public Source Collector, Artifact Review Agent.</td>
+            <td>Documentation Writer, Wiki Query Agent, Wiki Ingest Agent, Public Source Collector, Artifact Review Agent.</td>
             <td>Project wiki, source collection, durable synthesis, link validation.</td>
             <td>Wiki status, lint, topic verification, source reconciliation.</td>
           </tr>
           <tr>
             <td><span class="name">Library, SDK, or package</span></td>
-            <td>Coding Agent, Code Review Agent, Documentation Architect, QA And Verification Agent.</td>
+            <td>Coding Agent, Code Review Agent, Documentation Writer, QA And Verification Agent.</td>
             <td>Public API design, compatibility policy, examples, release packaging.</td>
             <td>Unit tests, public API checks, docs examples, package build.</td>
           </tr>
           <tr>
             <td><span class="name">Enterprise workflow integration</span></td>
-            <td>Orchestrator, Coding Agent, Code Review Agent, Documentation Architect, QA And Verification Agent.</td>
+            <td>Orchestrator, Coding Agent, Code Review Agent, Documentation Writer, QA And Verification Agent.</td>
             <td>APIs, events, queues, auth, audit, data contracts.</td>
             <td>Contract tests, integration tests, audit checks, security review.</td>
           </tr>
@@ -748,7 +748,7 @@ Default role agents:
   - coding-agent
   - code-review-agent
   - qa-and-verification-agent
-  - documentation-architect
+  - documentation-writer
 
 Validation:
   Build: pnpm run build
@@ -830,7 +830,7 @@ Nested AGENTS.md examples:
           </tr>
           <tr>
             <td><span class="name">Execution</span></td>
-            <td>Coding Agent or Documentation Architect</td>
+            <td>Coding Agent or Documentation Writer</td>
             <td>Receives only the files, skills, AGENTS.md excerpts, and acceptance criteria needed for the assigned job.</td>
             <td>Patch, artifact, test evidence, build evidence, implementation notes.</td>
           </tr>

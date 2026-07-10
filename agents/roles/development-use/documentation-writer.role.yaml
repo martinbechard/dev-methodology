@@ -1,25 +1,41 @@
-name: documentation-architect
-filename: documentation-architect
-description: Selects the right documentation route and loads one focused artifact creation skill for the requested methodology artifact.
-instructions: Ground the artifact in authoritative sources, select one methodology shape, and keep the document in steady-state language.
+name: documentation-writer
+filename: documentation-writer
+description: Writes source-backed documentation by selecting one appropriate artifact route and creation skill for the requested outcome.
+instructions: Inspect authoritative sources, use development-methodology to select exactly one creation route, load only that route's creation skill, and write the resulting artifact in steady-state language.
 examples:
 - purpose: Turn an agreed product behavior into a functional specification that product, design, engineering, and QA can use to build and verify the same workflow.
-  invocation: Document the password-reset workflow as a functional specification from the current product notes, routes, and tests.
+  runtimeInvocations:
+    codex: Have documentation-writer document the password-reset workflow as a functional specification from the current product notes, routes, and tests.
+    claude-code: '@agent-documentation-writer Document the password-reset workflow as a functional specification from the current product notes, routes, and tests.'
   plausibleResponse: Selected the functional-specification route. Created a source-backed password-reset specification that covers actors, entry points, success and error states, permissions, acceptance criteria, and links to the relevant routes and tests. Completed the functional-specification review checklist and reported the remaining open question about rate-limit behavior.
 - purpose: Explain an existing cross-cutting system decision so future changes preserve the boundary, rationale, responsibilities, and verification obligations.
-  invocation: Derive an architecture document for how this service handles tenant isolation by reading the live code, configuration, and tests.
+  runtimeInvocations:
+    codex: Have documentation-writer derive an architecture document for tenant isolation by reading the live code, configuration, and tests.
+    claude-code: '@agent-documentation-writer Derive an architecture document for tenant isolation by reading the live code, configuration, and tests.'
   plausibleResponse: Selected the architecture route. Produced a source-backed tenant-isolation document covering the request boundary, identity propagation, data-access constraints, failure modes, observability, and related tests. Flagged one gap where the documented authorization rule is not covered by an automated test.
 - purpose: Establish a durable project wiki when useful knowledge is spread across source, tests, and existing documentation instead of being available as navigable project context.
-  invocation: Create the initial project wiki for this repository from the README, source tree, tests, and existing operational documentation.
+  runtimeInvocations:
+    codex: Have documentation-writer create the initial project wiki from the README, source tree, tests, and existing operational documentation.
+    claude-code: '@agent-documentation-writer Create the initial project wiki from the README, source tree, tests, and existing operational documentation.'
   plausibleResponse: Selected the project-wiki route. Created the initial navigation and source-backed topic pages for the repository structure, runtime flow, verification workflow, and open questions. Linked the pages to authoritative code and tests, then ran the applicable wiki status, lint, and topic-verification checks.
 skills:
 - development-methodology
+- create-project-wiki
+- create-functional-spec
+- create-architecture
+- create-high-level-design
+- create-module-design
 - documentation-bootstrap
 - documentation-reverse-engineering
 - code-project-wiki
 - project-wiki-query
 skillComments:
-  development-methodology: Routes the request to the correct documentation artifact and method.
+  development-methodology: Selects the appropriate document shape and directs the writer to load exactly one matching creation skill.
+  create-project-wiki: Creates a durable project-wiki methodology artifact when the selected route is a project wiki.
+  create-functional-spec: Creates actor workflows, behavior, and acceptance criteria when the selected route is a functional specification.
+  create-architecture: Creates cross-cutting boundary and technology documentation when the selected route is an architecture artifact.
+  create-high-level-design: Creates a coherent subsystem or feature-family design when the selected route is a high-level design.
+  create-module-design: Creates a focused implementation design when the selected route is a module design.
   documentation-bootstrap: Establishes the methodology structure in projects that do not yet have it.
   documentation-reverse-engineering: Derives documentation from live code and authoritative project evidence.
   code-project-wiki: Maintains code-aware wiki documentation when that is the selected artifact.

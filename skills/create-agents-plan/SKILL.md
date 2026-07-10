@@ -27,7 +27,7 @@ Create or update AGENTS-PLAN.yaml before writing AGENTS.md routing guidance. AGE
 
 1. Inspect the target repository before writing. Read README files, AGENTS.md files, package metadata, build configuration, source roots, tests, docs, wiki pages, procedures, backlog files, and current worktree status.
 2. Classify the project family, application tiers, technology stacks, documentation surfaces, runtime boundaries, data boundaries, and verification commands.
-3. Identify the role agents needed for the project. Prefer shared reusable roles such as Development Orchestrator, Project Agent Setup Agent, Coding Agent, Code Review Agent, QA And Verification Agent, Documentation Architect, Wiki Query Agent, and specialist reviewer roles only when the project evidence requires them.
+3. Identify the role agents needed for the project. Prefer shared reusable roles such as Development Orchestrator, Project Agent Setup Agent, Coding Agent, Code Review Agent, QA And Verification Agent, Documentation Writer, Wiki Query Agent, and specialist reviewer roles only when the project evidence requires them.
 4. Map each tier, technology, folder, or workflow to the reusable skills it needs.
 5. Decide whether the root AGENTS-PLAN.yaml is sufficient or whether one or more subfolders need nested AGENTS-PLAN.yaml files.
 6. Copy the template into each required location and replace every TODO with source-backed project content.

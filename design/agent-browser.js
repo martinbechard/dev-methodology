@@ -3,6 +3,10 @@
 
   const DATA_GLOBAL_NAME = "DEV_METHODOLOGY_ROLE_DEFINITIONS";
   const ENHANCE_SKILL_DEFINITIONS_EVENT = "dev-methodology:enhance-skill-definitions";
+  const RUNTIME_LABELS = {
+    codex: "Codex",
+    "claude-code": "Claude Code",
+  };
   const DEFINITION_SELECTOR = "[data-agent-definition]";
   const EDITOR_QUERY_PARAMETER = "editor";
   const REPOSITORY_ROOT_QUERY_PARAMETER = "repoRoot";
@@ -254,6 +258,29 @@
       color: var(--color-muted, #596579);
     }
 
+    .agent-modal__runtime-select {
+      width: max-content;
+      max-width: 100%;
+      padding: 0.38rem 0.5rem;
+      border: 1px solid var(--color-line, #d9e0ea);
+      border-radius: var(--radius-small, 0.35rem);
+      background: var(--color-panel, #ffffff);
+      color: var(--color-ink, #18212f);
+      font: inherit;
+      font-size: 0.86rem;
+    }
+
+    .agent-modal__invocation-text {
+      padding: 0.65rem;
+      border: 1px solid var(--color-line, #d9e0ea);
+      border-radius: var(--radius-small, 0.35rem);
+      background: #111827;
+      color: #f9fafb;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+
     .agent-modal__yaml-details {
       margin-top: 1.25rem;
     }
@@ -474,11 +501,8 @@
       label.textContent = `Scenario ${index + 1}`;
       card.appendChild(label);
 
-      [
-        ["Purpose", example.purpose],
-        ["How to invoke", example.invocation],
-        ["Plausible response", example.plausibleResponse],
-      ].forEach(([labelText, value]) => {
+      [["Purpose", example.purpose], ["Plausible response", example.plausibleResponse]].forEach(
+        ([labelText, value]) => {
         const field = document.createElement("div");
         field.className = "agent-modal__scenario-field";
         const heading = document.createElement("strong");
@@ -487,7 +511,34 @@
         text.textContent = value;
         field.append(heading, text);
         card.appendChild(field);
+        },
+      );
+
+      const invocations = example.runtimeInvocations || {};
+      const invocation = document.createElement("div");
+      invocation.className = "agent-modal__scenario-field";
+      const invocationHeading = document.createElement("strong");
+      invocationHeading.textContent = "How to invoke";
+      const runtimeSelect = document.createElement("select");
+      runtimeSelect.className = "agent-modal__runtime-select";
+      Object.keys(invocations).forEach((runtimeId) => {
+        const option = document.createElement("option");
+        option.value = runtimeId;
+        option.textContent = RUNTIME_LABELS[runtimeId] || runtimeId;
+        runtimeSelect.appendChild(option);
       });
+      if ("codex" in invocations) {
+        runtimeSelect.value = "codex";
+      }
+      const invocationText = document.createElement("p");
+      invocationText.className = "agent-modal__invocation-text";
+      const showInvocation = () => {
+        invocationText.textContent = invocations[runtimeSelect.value] || "";
+      };
+      runtimeSelect.addEventListener("change", showInvocation);
+      showInvocation();
+      invocation.append(invocationHeading, runtimeSelect, invocationText);
+      card.insertBefore(invocation, card.lastElementChild);
 
       container.appendChild(card);
     });

@@ -590,7 +590,7 @@
           <span class="tag agent">Coding Agent</span>
           <span class="tag agent">Code Review Agent</span>
           <span class="tag agent">QA And Verification Agent</span>
-          <span class="tag agent">Documentation Architect</span>
+          <span class="tag agent">Documentation Writer</span>
         </div>
       </article>
 
@@ -736,7 +736,7 @@ Validation:
           <tr>
             <td><span class="name">docs/wiki/**</span></td>
             <td>Documentation tier.</td>
-            <td>Documentation Architect loads project-wiki, code-project-wiki, and the relevant artifact creation or review skill.</td>
+            <td>Documentation Writer loads project-wiki, code-project-wiki, and the selected artifact creation or review skill.</td>
             <td>Run wiki status, lint, link checks, and OKF validation when topic pages change.</td>
             <td>Root AGENTS.md plus docs/wiki/AGENTS.md only when wiki workflow rules are extensive.</td>
           </tr>
@@ -847,14 +847,14 @@ Local checks: schema checks, migration review, seed data tests.</code></pre>
           <tr>
             <td><span class="name">docs/wiki/**</span></td>
             <td>Wiki synthesis tier.</td>
-            <td>Documentation Architect loads project-wiki, project-wiki-topic-writer, and code-project-wiki when source links depend on code.</td>
+            <td>Documentation Writer loads project-wiki, project-wiki-topic-writer, and code-project-wiki when source links depend on code.</td>
             <td>Run wiki status, lint, and OKF validation.</td>
             <td>Root AGENTS.md; use a nested wiki AGENTS.md only when another wiki root in the same project has different rules.</td>
           </tr>
           <tr>
             <td><span class="name">docs/wiki/digests/**</span></td>
             <td>Publication tier.</td>
-            <td>Documentation Architect loads project-wiki-topic-verifier and structured-explanation.</td>
+            <td>Documentation Writer loads project-wiki-topic-verifier and structured-explanation.</td>
             <td>Run link checks, topic verifier checks, and digest coverage checks.</td>
             <td>Root AGENTS.md names publication conventions.</td>
           </tr>
