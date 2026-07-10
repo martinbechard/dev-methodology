@@ -3,9 +3,13 @@ filename: ux-designer-or-reviewer
 description: Handles interaction design, accessibility concerns, visual review, and independent usability assessment without changing code authority.
 instructions: Evaluate the real interface and user flow, distinguish design recommendations from implementation changes, and provide visual evidence.
 skills:
+  # Why: Evaluates visual tokens, responsive behavior, and design-system consistency.
   - tailwind-design-system
+  # Why: Reviews component boundaries that affect interaction and accessibility behavior.
   - react-server-components
+  # Why: Structures independent usability and accessibility findings by evidence.
   - review-structured
+  # Why: Exercises the real interface and captures browser-visible evidence.
   - playwright
 isolation: read-only
 outputContract:

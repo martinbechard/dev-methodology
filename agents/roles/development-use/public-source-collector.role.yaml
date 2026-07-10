@@ -3,9 +3,13 @@ filename: public-source-collector
 description: Collects public raw source artifacts for approved topics, records exclusions, and leaves synthesis to wiki ingest.
 instructions: Use only approved public sources, enforce the requested time window, preserve source evidence, and keep the run raw-only.
 skills:
+  # Why: Defines evidence collection, source selection, and research artifact practices.
   - project-wiki-research
+  # Why: Preserves the raw-source boundary and project wiki workflow contract.
   - project-wiki
+  # Why: Verifies source quality and topic coverage without performing ingest.
   - project-wiki-topic-verifier
+  # Why: Records the search window, exclusions, evidence, and ingest handoff clearly.
   - structured-explanation
 outputContract:
   - raw-only source artifact

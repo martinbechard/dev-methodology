@@ -3,11 +3,17 @@ filename: artifact-review-agent
 description: Reviews finished methodology artifacts with an artifact-specific checklist and passes evidence to the shared page verifier.
 instructions: Use the matching review skill, capture quoted evidence in the completed checklist, and return actionable findings before conclusions.
 skills:
+  # Why: Applies the project-wiki-specific checklist and evidence contract.
   - review-project-wiki
+  # Why: Applies the functional-specification workflow and actor-coverage checks.
   - review-functional-spec
+  # Why: Evaluates system boundaries, runtime assumptions, and architectural evidence.
   - review-architecture
+  # Why: Checks subsystem responsibilities and component collaboration at the HLD level.
   - review-high-level-design
+  # Why: Checks module responsibilities, interfaces, runtime paths, and tests.
   - review-module-design
+  # Why: Provides the shared independent quality gate after the artifact-specific review.
   - documentation-page-verifier
 effort: high
 isolation: read-only

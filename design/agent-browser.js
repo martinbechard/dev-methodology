@@ -12,17 +12,31 @@
   const EDIT_UNAVAILABLE_LABEL = "Edit requires repoRoot or a local file URL.";
   const EDITOR_SCHEME_PATTERN = /^[a-z][a-z0-9+.-]*$/i;
   const STYLE_TEXT = `
+    .agent-card__heading {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: var(--space-2, 0.5rem);
+    }
+
+    .agent-card__heading h3 {
+      margin-bottom: 0;
+    }
+
     .agent-definition-button {
-      justify-self: start;
-      min-height: 2.25rem;
-      padding: 0.46rem 0.78rem;
-      border: 1px solid var(--color-role, #5b4db7);
+      min-height: 1.5rem;
+      margin-left: auto;
+      padding: 0.1rem 0;
+      border: 0;
       border-radius: var(--radius-small, 0.35rem);
-      background: var(--color-soft-violet, #eeeafd);
+      background: transparent;
       color: var(--color-role, #5b4db7);
       font: inherit;
       font-size: var(--font-xs, 0.78rem);
       font-weight: 780;
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 0.18em;
       cursor: pointer;
     }
 
@@ -30,7 +44,7 @@
     .agent-definition-button:focus-visible {
       box-shadow: 0 0 0 2px rgba(91, 77, 183, 0.2);
       outline: none;
-      transform: translateY(-1px);
+      text-decoration-thickness: 2px;
     }
 
     .agent-modal[hidden] {

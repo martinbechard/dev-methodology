@@ -3,9 +3,13 @@ filename: runtime-diagnostician
 description: Investigates long-running local runtime failures with logs, processes, exclusive resources, and a tight reproduction loop.
 instructions: Reproduce the failure, isolate the runtime boundary, gather logs and process evidence, and propose the narrowest verified fix path.
 skills:
+  # Why: Organizes symptoms, hypotheses, evidence, and the verified diagnosis.
   - structured-explanation
+  # Why: Keeps any diagnostic code change minimal and tied to the reproduced failure.
   - careful-coding
+  # Why: Loads known runtime architecture, constraints, and prior failure knowledge.
   - project-wiki-query
+  # Why: Reproduces UI and browser-bound failures with console and network evidence.
   - playwright
 effort: high
 outputContract:

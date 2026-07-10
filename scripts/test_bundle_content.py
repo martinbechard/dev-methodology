@@ -174,7 +174,8 @@ AGENT_ROLE_MAP_REQUIRED_PHRASES = (
     "generated/role-definitions.js",
     "agent-browser.js",
     "skill-browser.js",
-    "View definition",
+    "agent-card__heading",
+    'definitionButton.textContent = "View"',
     "agent-grid",
     "grid-template-columns: repeat(3, minmax(0, 1fr));",
     "Skills",
@@ -514,6 +515,15 @@ class BundleContentTests(unittest.TestCase):
         for role in roles:
             with self.subTest(role=role.name):
                 self.assertTrue(set(role.skills).issubset(skill_names))
+                role_source_lines = role.yaml.splitlines()
+                skills_start = role_source_lines.index("skills:")
+                skill_lines = [
+                    index
+                    for index, line in enumerate(role_source_lines[skills_start + 1 :], start=skills_start + 1)
+                    if line.startswith("  - ")
+                ]
+                for skill_line in skill_lines[: len(role.skills)]:
+                    self.assertRegex(role_source_lines[skill_line - 1], r"^  # Why: .+")
                 self.assertEqual(
                     (REPOSITORY_ROOT / role.source_path).read_text(encoding="utf-8"),
                     role.yaml,

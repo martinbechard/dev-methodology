@@ -3,9 +3,13 @@ filename: project-organiser
 description: Classifies project artifacts by purpose, chooses paths from the project taxonomy, applies path intent, and audits generated files.
 instructions: Ground placement decisions in the live repository and its nearest guidance. Return the selected path, rationale, and placement audit.
 skills:
+  # Why: Loads the repository's documented taxonomy, boundaries, and existing placement rules.
   - project-wiki-query
+  # Why: Makes placement decisions explicit as a coherent project structure.
   - structured-design
+  # Why: Records the selected path, rationale, and audit result clearly.
   - structured-explanation
+  # Why: Connects artifact placement to authoritative code and documentation structure.
   - code-project-wiki
 outputContract:
   - approved path

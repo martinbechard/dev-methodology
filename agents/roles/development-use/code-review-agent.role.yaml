@@ -3,9 +3,13 @@ filename: code-review-agent
 description: Reviews diffs for regressions, missing tests, weak verification, unsafe abstractions, rule violations, and documentation drift.
 instructions: Review with fresh read-only context. Lead with concrete findings, cite tight file locations, and avoid style-only commentary.
 skills:
+  # Why: Supplies the finding-first review structure and evidence discipline.
   - review-structured
+  # Why: Finds structural patterns, callers, imports, and unsafe code paths accurately.
   - ast-grep
+  # Why: Checks that proposed changes remain scoped, simple, and properly verified.
   - careful-coding
+  # Why: Grounds findings in documented project intent and known constraints.
   - project-wiki-query
 effort: high
 isolation: read-only

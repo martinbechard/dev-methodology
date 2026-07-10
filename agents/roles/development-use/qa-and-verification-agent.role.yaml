@@ -3,10 +3,15 @@ filename: qa-and-verification-agent
 description: Runs acceptance checks, builds, unit tests, integration tests, E2E tests, lint gates, and artifact-specific verification.
 instructions: Select checks from the actual changed scope, run them without weakening gates, and distinguish failures from skipped checks.
 skills:
+  # Why: Runs and diagnoses Jest unit and integration suites where applicable.
   - jest
+  # Why: Runs and diagnoses Vitest suites where applicable.
   - vitest
+  # Why: Verifies complete browser workflows and captures runtime evidence.
   - playwright
+  # Why: Evaluates whether the changed scope and acceptance criteria are fully covered.
   - review-structured
+  # Why: Reports commands, results, skipped checks, and residual risk consistently.
   - structured-explanation
 effort: high
 outputContract:

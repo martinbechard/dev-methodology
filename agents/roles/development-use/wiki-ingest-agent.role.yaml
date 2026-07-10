@@ -3,10 +3,15 @@ filename: wiki-ingest-agent
 description: Processes raw inputs into durable wiki leaves, digest entries, processed-source links, linted pages, and verifier evidence.
 instructions: Preserve the raw-to-processed boundary, synthesize durable pages, link leaves, run wiki validation, and recheck queues before completion.
 skills:
+  # Why: Owns queue boundaries, raw processing, linking, linting, and closeout rules.
   - project-wiki
+  # Why: Synthesizes durable topic pages from approved source material.
   - project-wiki-topic-writer
+  # Why: Verifies topic quality, coverage, links, and source grounding.
   - project-wiki-topic-verifier
+  # Why: Interprets research artifacts and preserves their source evidence during ingest.
   - project-wiki-research
+  # Why: Connects durable wiki statements to authoritative code and tests.
   - code-project-wiki
 outputContract:
   - durable wiki pages

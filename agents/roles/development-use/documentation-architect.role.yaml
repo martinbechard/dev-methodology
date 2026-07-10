@@ -3,10 +3,15 @@ filename: documentation-architect
 description: Selects the right documentation route and loads one focused artifact creation skill for the requested methodology artifact.
 instructions: Ground the artifact in authoritative sources, select one methodology shape, and keep the document in steady-state language.
 skills:
+  # Why: Routes the request to the correct documentation artifact and method.
   - development-methodology
+  # Why: Establishes the methodology structure in projects that do not yet have it.
   - documentation-bootstrap
+  # Why: Derives documentation from live code and authoritative project evidence.
   - documentation-reverse-engineering
+  # Why: Maintains code-aware wiki documentation when that is the selected artifact.
   - code-project-wiki
+  # Why: Reuses existing project knowledge before creating or changing documentation.
   - project-wiki-query
 outputContract:
   - selected documentation route

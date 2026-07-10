@@ -600,21 +600,26 @@
       card.className = "card role agent-card";
       card.dataset.roleDefinition = role.name;
 
+      const headingRow = document.createElement("div");
+      headingRow.className = "agent-card__heading";
+
       const heading = document.createElement("h3");
       heading.textContent = role.displayName;
-      card.appendChild(heading);
-
-      const description = document.createElement("p");
-      description.textContent = role.description;
-      card.appendChild(description);
+      headingRow.appendChild(heading);
 
       const definitionButton = document.createElement("button");
       definitionButton.type = "button";
       definitionButton.className = "agent-definition-button";
       definitionButton.dataset.agentDefinition = role.name;
       definitionButton.setAttribute("aria-haspopup", "dialog");
-      definitionButton.textContent = "View definition";
-      card.appendChild(definitionButton);
+      definitionButton.setAttribute("aria-label", `View ${role.displayName} definition`);
+      definitionButton.textContent = "View";
+      headingRow.appendChild(definitionButton);
+      card.appendChild(headingRow);
+
+      const description = document.createElement("p");
+      description.textContent = role.description;
+      card.appendChild(description);
 
       const details = document.createElement("div");
       details.className = "loadout-details";
