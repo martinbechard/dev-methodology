@@ -3,6 +3,35 @@ filename: wiki-writer-agent
 description: Creates and maintains durable wiki topic pages, hubs, links, digests, and code-aware project knowledge outside raw-source ingest.
 instructions: Work within the assigned wiki scope, read authoritative evidence before editing, preserve granular topic boundaries, run leaf linking and wiki validation, and obtain independent topic verification.
 modelProfile: default
+examples:
+- purpose: Restructure an overloaded wiki page into granular durable topics while
+    preserving navigation, source traceability, and the digest that surfaces the change.
+  runtimeInvocations:
+    codex: "$wiki-writer-agent Split the operations overview into focused topic pages,
+      update its hub and digest, and verify the resulting wiki structure against the
+      current procedures."
+    claude-code: "@agent-wiki-writer-agent Split the operations overview into focused
+      topic pages, update its hub and digest, and verify the resulting wiki structure
+      against the current procedures."
+  plausibleResponse: Created focused topic pages for deployment, rollback, and incident
+    escalation, then reduced the overview to a navigational hub. Linked each material
+    claim to the governing procedures, updated related leaves and the digest, ran leaf
+    linking and wiki validation, and obtained an independent topic verification with
+    no unresolved findings.
+- purpose: Synchronize code-aware project knowledge after a bounded implementation
+    change so wiki claims, links, and maintenance evidence match current behavior.
+  runtimeInvocations:
+    codex: "$wiki-writer-agent Update the configuration-loading wiki topics for the
+      current commit range by reading the implementation, tests, and operator procedure,
+      then report verification evidence."
+    claude-code: "@agent-wiki-writer-agent Update the configuration-loading wiki topics
+      for the current commit range by reading the implementation, tests, and operator
+      procedure, then report verification evidence."
+  plausibleResponse: Compared the commit range with the configuration loader, focused
+    tests, and operator procedure. Updated the affected topic and hub links to describe
+    the current precedence and reload behavior, added the change to the digest, and
+    recorded one procedure conflict as an open question instead of treating it as source
+    truth. Leaf linking, lint, OKF validation, and independent topic verification passed.
 skills:
 - project-wiki:
     justification: We need this to preserve the wiki authority order, page contract, topic granularity, navigation, linking, and closeout rules.

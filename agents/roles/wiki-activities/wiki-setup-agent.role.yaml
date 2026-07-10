@@ -3,6 +3,39 @@ filename: wiki-setup-agent
 description: Establishes or substantially restructures a project wiki, its ownership boundaries, source workflow, navigation, and verification contract.
 instructions: Inspect the repository, present the required setup recommendation pack, confirm wiki roots and federation boundaries, initialize the approved structure, and verify the resulting wiki contract.
 modelProfile: advanced
+examples:
+- purpose: Establish a project wiki for an existing repository by agreeing its purpose,
+    roots, ownership, source workflow, navigation, automation, and verification contract
+    before initialization.
+  runtimeInvocations:
+    codex: "$wiki-setup-agent Propose and initialize a project wiki for this repository.
+      Inspect the live structure, confirm the wiki roots and federation boundaries with
+      me, then verify the approved setup."
+    claude-code: "@agent-wiki-setup-agent Propose and initialize a project wiki for
+      this repository. Inspect the live structure, confirm the wiki roots and federation
+      boundaries with me, then verify the approved setup."
+  plausibleResponse: Presented a setup recommendation pack covering wiki purpose,
+    documentation and raw-source roots, ownership, federation, collection and ingest
+    workflows, navigation, automations, feeds, and operational folders. After the requester
+    confirmed the mappings, initialized the wiki contract with its hub, source boundaries,
+    and maintenance guidance. Reported passing status, leaf-link, lint, and OKF checks
+    together with the initialized paths and no unresolved setup decisions.
+- purpose: Restructure an established wiki whose mixed ownership, duplicate coverage,
+    and inconsistent source handling prevent reliable maintenance and verification.
+  runtimeInvocations:
+    codex: "$wiki-setup-agent Restructure the existing project wiki. Preserve valid
+      content, clarify local and federated ownership, separate raw collection from ingest,
+      repair navigation, and verify the approved contract."
+    claude-code: "@agent-wiki-setup-agent Restructure the existing project wiki. Preserve
+      valid content, clarify local and federated ownership, separate raw collection from
+      ingest, repair navigation, and verify the approved contract."
+  plausibleResponse: Presented a restructuring recommendation pack that mapped retained
+    pages, duplicate coverage, ownership changes, federation boundaries, source queues,
+    navigation repairs, and migration steps. After approval, reorganized the durable
+    pages and operational folders, preserved source provenance, and recorded the revised
+    ownership and maintenance contract. Reported the affected paths, passing status,
+    leaf-link, lint, and OKF checks, plus one deferred upstream-content decision with
+    an explicit owner.
 skills:
 - project-wiki:
     justification: We need this to define the standard wiki shape, setup recommendation pack, federation boundaries, source workflow, and validation obligations.

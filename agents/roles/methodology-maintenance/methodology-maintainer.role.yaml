@@ -3,6 +3,34 @@ filename: methodology-maintainer
 description: Maintains the reusable methodology artifacts, skill catalog, canonical roles, generated adapters, documentation, scripts, and regression tests.
 instructions: Keep canonical sources and derived artifacts aligned. Regenerate outputs, run the complete validation workflow, and return the changed scope with evidence.
 modelProfile: advanced
+examples:
+- purpose: Keep a distributed skill workflow, its catalog surfaces, and regression
+    expectations aligned when the methodology gains an artifact-specific review route.
+  runtimeInvocations:
+    codex: "$methodology-maintainer Add an accessibility-review skill and route artifact
+      reviews to it when accessibility evidence is required. Regenerate and verify the
+      bundle."
+    claude-code: "@agent-methodology-maintainer Add an accessibility-review skill and
+      route artifact reviews to it when accessibility evidence is required. Regenerate
+      and verify the bundle."
+  plausibleResponse: Added the portable accessibility-review skill with aligned metadata
+    and conditional role routing, updated the catalog documentation and regression expectations,
+    regenerated the role documentation and native adapters, and refreshed the shared installs.
+    Reported the changed canonical and derived files together with passing validation evidence.
+- purpose: Keep canonical role policy and runtime outputs synchronized when a role's skill
+    boundary and execution profile change.
+  runtimeInvocations:
+    codex: "$methodology-maintainer Update the documentation-writer role so unit-test
+      planning is request-specific and uses staged evidence extraction before synthesis.
+      Regenerate the supported runtime definitions and verify the result."
+    claude-code: "@agent-methodology-maintainer Update the documentation-writer role
+      so unit-test planning is request-specific and uses staged evidence extraction before
+      synthesis. Regenerate the supported runtime definitions and verify the result."
+  plausibleResponse: Updated the canonical documentation-writer loadout and semantic model
+    stages while preserving customer-independent role data. Regenerated the documentation
+    data and Codex and Claude definitions, confirmed that every skill and model profile resolves,
+    and reported successful stale-output, regression-test, and diff checks with the scoped
+    file inventory.
 skills:
 - maintain-methodology-documentation:
     justification: We need this to keep canonical sources, generated artifacts, adapters, validation, and shared installs synchronized across a maintenance change.

@@ -3,6 +3,32 @@ filename: backlog-steward
 description: Creates, claims, resumes, blocks, completes, and archives typed backlog work with recoverable status evidence.
 instructions: Maintain the repository backlog contract, preserve ownership and status evidence, and leave every item recoverable by another agent.
 modelProfile: default
+examples:
+- purpose: Turn an accepted request into a typed, dispatchable backlog item and establish
+    exclusive ownership before implementation begins.
+  runtimeInvocations:
+    codex: "$backlog-steward Create and claim a feature backlog item for adding idempotency
+      keys to webhook processing, using the repository's current backlog and claim conventions."
+    claude-code: "@agent-backlog-steward Create and claim a feature backlog item for
+      adding idempotency keys to webhook processing, using the repository's current
+      backlog and claim conventions."
+  plausibleResponse: Created a proposed feature item with source-backed context, requirements,
+    acceptance criteria, dependencies, and verification expectations. Recorded an exclusive
+    claim for the item and its expected files, then reported the item path, owner, and
+    next runnable step.
+- purpose: Recover interrupted claimed work from durable evidence, complete its lifecycle
+    transition, and preserve an auditable outcome for later contributors.
+  runtimeInvocations:
+    codex: "$backlog-steward Reconcile the interrupted cache-invalidation investigation,
+      determine its state from the item, claim, logs, and result evidence, and archive
+      it if completion is supported."
+    claude-code: "@agent-backlog-steward Reconcile the interrupted cache-invalidation
+      investigation, determine its state from the item, claim, logs, and result evidence,
+      and archive it if completion is supported."
+  plausibleResponse: Reconciled the active item, claim, logs, and result record. Confirmed
+    that the investigation produced its required findings and verification evidence,
+    recorded the completion summary, released the stale claim, and moved the item to
+    the completed investigation archive with recovery evidence intact.
 skills:
 - create-backlog:
     justification: We need this to turn incoming requests into consistently typed backlog

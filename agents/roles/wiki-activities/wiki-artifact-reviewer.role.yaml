@@ -6,6 +6,39 @@ modelProfile: advanced
 modelStages:
   evidence-extraction: simple
   synthesis: advanced
+examples:
+- purpose: Assess a project wiki's authority model, page structure, navigation, maintenance
+    rules, automation, and verification workflow before maintainers rely on it as a durable
+    operating surface.
+  runtimeInvocations:
+    codex: "$wiki-artifact-reviewer Review the project wiki index and maintenance procedure
+      for source authority, page subclasses, navigation, update rules, automation, and
+      verification completeness."
+    claude-code: "@agent-wiki-artifact-reviewer Review the project wiki index and maintenance
+      procedure for source authority, page subclasses, navigation, update rules, automation,
+      and verification completeness."
+  plausibleResponse: Completed the project-wiki checklist with quoted evidence and applied
+    the shared page verifier in a read-only context. Reported two prioritized corrections.
+    The maintenance procedure does not identify ownership for source refreshes, and the
+    automation path omits the documented link and validation checks. Confirmed that the
+    authority order, page subclasses, and hub navigation are otherwise consistent, and
+    identified the affected sections for the artifact owner.
+- purpose: Independently verify that a project-wiki topic page and its completed review
+    checklist support their claims with authoritative sources, valid links, editable diagrams,
+    and steady-state maintenance guidance.
+  runtimeInvocations:
+    codex: "$wiki-artifact-reviewer Independently review the service-lifecycle topic page
+      and its completed project-wiki checklist against the linked code, tests, procedures,
+      and neighboring wiki pages."
+    claude-code: "@agent-wiki-artifact-reviewer Independently review the service-lifecycle
+      topic page and its completed project-wiki checklist against the linked code, tests,
+      procedures, and neighboring wiki pages."
+  plausibleResponse: Re-read the checklist evidence and the cited sources, then completed
+    the verifier assessment without modifying the artifact. The page passes the shared
+    section-order, source-authority, navigation, diagram-source, and steady-state checks.
+    Reported one residual verification gap because the failure transition described in
+    Current Understanding has no linked automated test, and preserved that gap in the
+    findings and corrections handoff.
 skills:
 - review-project-wiki:
     justification: We need this to apply the project-wiki artifact checklist for authority order, page subclasses, navigation, source links, update workflow, automation, and verification.

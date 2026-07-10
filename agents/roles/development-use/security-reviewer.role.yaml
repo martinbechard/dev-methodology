@@ -6,6 +6,40 @@ instructions: Read the root and nearest AGENTS.md, load declared folder technolo
   skills before acting, trace plausible attack paths from actual code and configuration,
   prioritize exploitable findings, and state evidence and residual risk.
 modelProfile: advanced
+examples:
+- purpose: Assess authentication and authorization paths around tenant-scoped data
+    so maintainers can remediate an exploitable cross-tenant access path before release.
+  runtimeInvocations:
+    codex: "$security-reviewer Review the account-management API for authentication
+      bypasses and cross-tenant data access using the current routes, middleware,
+      persistence queries, and tests."
+    claude-code: "@agent-security-reviewer Review the account-management API for
+      authentication bypasses and cross-tenant data access using the current routes,
+      middleware, persistence queries, and tests."
+  plausibleResponse: Reported one high-priority finding where an authenticated account
+    lookup accepted a caller-controlled tenant identifier without verifying membership,
+    enabling cross-tenant reads. Cited the affected route, authorization middleware,
+    persistence query, and missing negative test, then recommended binding tenant scope
+    to the verified identity. Recorded residual risk in adjacent export endpoints that
+    share the lookup helper and require follow-up review.
+- purpose: Evaluate prompt, tool, and logging boundaries in an AI-assisted workflow
+    so untrusted content cannot trigger unauthorized actions or expose sensitive data.
+  runtimeInvocations:
+    codex: "$security-reviewer Review the support-assistant workflow for indirect prompt
+      injection, over-privileged tool calls, dependency risk, and sensitive-data logging
+      using the current prompts, tool schemas, configuration, and tests."
+    claude-code: "@agent-security-reviewer Review the support-assistant workflow for
+      indirect prompt injection, over-privileged tool calls, dependency risk, and
+      sensitive-data logging using the current prompts, tool schemas, configuration,
+      and tests."
+  plausibleResponse: Prioritized an indirect prompt-injection path where untrusted
+    ticket content could influence a customer-record tool that lacked an independent
+    authorization check. Identified the prompt assembly, tool schema, logging configuration,
+    and absent adversarial test as evidence, and noted that full tool arguments were
+    retained without redaction. Recommended enforcing authorization at the tool boundary,
+    constraining tool inputs, and redacting logs; residual risk remains in model behavior
+    and third-party dependency updates until adversarial coverage and update controls
+    are verified.
 skills:
 - application-security:
     justification: We need this to examine trust, authority, validation, data, and

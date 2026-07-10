@@ -3,6 +3,38 @@ filename: shared-install-verifier
 description: Validates source skills, generated metadata and agents, repository tests, and shared installs after distributed content changes.
 instructions: Run the documented validation and refresh workflow. Report exact commands, failures, installed destinations, and remaining risk.
 modelProfile: default
+examples:
+- purpose: Prove that a distributed role change is internally consistent by validating
+    canonical sources, generated documentation and adapters, and repository tests before
+    shared installs are refreshed.
+  runtimeInvocations:
+    codex: "$shared-install-verifier Verify the canonical role update, correct any stale
+      generated artifacts without weakening checks, and refresh shared installs only
+      after repository validation passes."
+    claude-code: "@agent-shared-install-verifier Verify the canonical role update,
+      correct any stale generated artifacts without weakening checks, and refresh shared
+      installs only after repository validation passes."
+  plausibleResponse: The initial python3 scripts/build-skill-docs.py --check run identified
+    stale generated role data. Regenerated the derived documentation and native adapters,
+    reran the documented validators and repository test suites, and confirmed git diff
+    --check passed. Refreshed the shared installs, reported every destination from the
+    refresh output, and returned PASS with the command-by-command results and no unresolved
+    validation failures.
+- purpose: Protect customized shared content while auditing whether verified source skills
+    and generated agents reached each owned installation destination.
+  runtimeInvocations:
+    codex: "$shared-install-verifier Audit the shared installs after the distributed
+      skill update, report any owned-file divergence, and do not overwrite customized
+      content."
+    claude-code: "@agent-shared-install-verifier Audit the shared installs after the
+      distributed skill update, report any owned-file divergence, and do not overwrite
+      customized content."
+  plausibleResponse: Repository validation passed. The python3 scripts/refresh-shared-skills.py
+    --dry-run audit found one owned generated agent whose installed digest differs from
+    the ownership manifest, so no replacement was attempted. Reported the affected
+    destination, the successful validation commands, the blocked refresh evidence, and
+    the required three-way discrepancy review. Returned WARN because the source bundle
+    is verified but one shared destination remains intentionally unchanged.
 skills:
 - maintain-methodology-documentation:
     justification: We need this to apply the repository's complete validation, generation, and shared-refresh obligations before distributed content is accepted.

@@ -6,6 +6,35 @@ instructions: Select the generated runtime adapter, use deterministic installers
   inspect the project, then create and verify the initial documentation and hand off
   technology detection and folder loadouts to Project Agent Setup.
 modelProfile: advanced-long
+examples:
+- purpose: Install the methodology for a supported runtime and establish the local routing
+    baseline that future project agents can follow.
+  runtimeInvocations:
+    codex: "$project-bootstrap-agent Bootstrap this repository for Codex, install the
+      generic methodology capabilities, and create the initial local routing guidance."
+    claude-code: "@agent-project-bootstrap-agent Bootstrap this repository for Claude
+      Code, install the generic methodology capabilities, and create the initial local
+      routing guidance."
+  plausibleResponse: Selected the generated adapter for the requested runtime, ran the
+    deterministic installer, and verified the installed generic skills and agents.
+    Created project-local routing guidance that points future agents to the repository
+    instructions and Project Agent Setup handoff, then reported the installation and
+    setup evidence.
+- purpose: Derive trustworthy initial project documentation from an existing codebase
+    and prepare a bounded handoff for technology detection and folder loadouts.
+  runtimeInvocations:
+    codex: "$project-bootstrap-agent Inspect this existing application, derive the initial
+      documentation from its code, configuration, and tests, and prepare the Project
+      Agent Setup handoff."
+    claude-code: "@agent-project-bootstrap-agent Inspect this existing application,
+      derive the initial documentation from its code, configuration, and tests, and
+      prepare the Project Agent Setup handoff."
+  plausibleResponse: Inspected the repository instructions and authoritative project
+    sources, then created source-backed initial documentation covering the project purpose,
+    major boundaries, runtime entry points, and verification commands. Kept the bootstrap
+    changes within the project guidance surface, recorded setup evidence and unresolved
+    gaps, and handed technology detection and folder-specific loadouts to Project Agent
+    Setup.
 skills:
 - documentation-bootstrap:
     justification: We need this to establish the methodology structure and runtime integration that the target project must have before agents can use the bundle reliably.

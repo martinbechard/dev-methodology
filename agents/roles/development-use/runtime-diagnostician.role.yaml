@@ -6,6 +6,34 @@ instructions: Read the root and nearest AGENTS.md, load declared folder technolo
   skills before acting, reproduce the failure, isolate the runtime boundary, gather
   logs and process evidence, and propose the narrowest verified fix path.
 modelProfile: advanced
+examples:
+- purpose: Diagnose a repeatable local service startup failure by identifying the process
+    lifecycle and exclusive resource that prevent a clean restart.
+  runtimeInvocations:
+    codex: "$runtime-diagnostician Investigate why the local service cannot bind its
+      configured port after a normal restart, and identify the narrowest verified resolution
+      path."
+    claude-code: "@agent-runtime-diagnostician Investigate why the local service cannot
+      bind its configured port after a normal restart, and identify the narrowest verified
+      resolution path."
+  plausibleResponse: Reproduced the failure with a start-stop-start sequence and correlated
+    the bind error with the process tree and shutdown logs. A child process survives
+    the normal stop path and retains the configured port. Identified the lifecycle boundary,
+    proposed waiting for child termination before restart, and verified that terminating
+    the retained process restores three consecutive clean restarts.
+- purpose: Isolate a long-running worker stall by combining a focused reproduction,
+    execution tracing, and runtime evidence to distinguish competing failure hypotheses.
+  runtimeInvocations:
+    codex: "$runtime-diagnostician Diagnose why the local background worker stops making
+      progress during a sustained test while the process remains alive."
+    claude-code: "@agent-runtime-diagnostician Diagnose why the local background worker
+      stops making progress during a sustained test while the process remains alive."
+  plausibleResponse: Reproduced the stall with a bounded workload and traced task handling
+    through the connection-leasing boundary. Logs and pool metrics ruled out queue starvation
+    and CPU saturation, then showed cancelled tasks retaining every available connection.
+    Identified the cancellation cleanup path as the suspected boundary, specified a focused
+    release-on-cancel regression test, and reported the sustained verification run required
+    to confirm the remediation.
 skills:
 - code-discovery:
     justification: We need this to locate the source, configuration, and tests that

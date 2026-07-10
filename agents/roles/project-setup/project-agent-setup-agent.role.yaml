@@ -7,6 +7,35 @@ instructions: Inspect the target project, select representative folder scopes, r
   generate deterministic root and nested AGENTS.md loading guidance, and validate
   every referenced role and skill.
 modelProfile: default
+examples:
+- purpose: Establish evidence-backed role and technology routing for a mixed repository
+    whose application, service, and infrastructure folders need distinct agent guidance.
+  runtimeInvocations:
+    codex: "$project-agent-setup-agent Inspect this repository, create AGENTS-PLAN.yaml,
+      and generate root and nested agent guidance for its application, service, and
+      infrastructure scopes."
+    claude-code: "@agent-project-agent-setup-agent Inspect this repository, create
+      AGENTS-PLAN.yaml, and generate root and nested agent guidance for its application,
+      service, and infrastructure scopes."
+  plausibleResponse: Inspected representative folder scopes, recorded the technology-detection
+    evidence and applicable role loadouts in the root AGENTS-PLAN.yaml, and identified
+    separate nested plans for the service and infrastructure boundaries. Generated
+    deterministic AGENTS.md guidance and matching CLAUDE.md bridges, then validated
+    every referenced role, skill, and path and reported the completed checks.
+- purpose: Reconcile an existing agent plan after project boundaries change so stale
+    loadouts and routing do not remain in operational guidance.
+  runtimeInvocations:
+    codex: "$project-agent-setup-agent Update the existing agent plan after the background
+      worker moved into its own package, and verify all role, skill, nested-plan, and
+      runtime-routing references."
+    claude-code: "@agent-project-agent-setup-agent Update the existing agent plan after
+      the background worker moved into its own package, and verify all role, skill,
+      nested-plan, and runtime-routing references."
+  plausibleResponse: Re-inspected the affected scopes, reran setup-time detection for
+    the worker package, and replaced the stale root loadout with a source-backed nested
+    plan recommendation. Updated AGENTS-PLAN.yaml, the applicable AGENTS.md guidance,
+    and its CLAUDE.md bridge without changing product source, then reported resolved
+    role and skill references, explicit no-variant results, and validation evidence.
 skills:
 - detect-technology-skills:
     justification: We need this to base each folder's technology loadout on repository evidence and to expose missing requirements, conflicts, or explicit no-variant results.

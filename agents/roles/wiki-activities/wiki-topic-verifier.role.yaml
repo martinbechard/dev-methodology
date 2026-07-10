@@ -6,6 +6,42 @@ modelProfile: advanced
 modelStages:
   evidence-extraction: simple
   synthesis: advanced
+examples:
+- purpose: Gate a newly written topic page and its folder hub by checking the page
+    contract, durable leaf granularity, source linkage, and leaf-link coverage before
+    acceptance.
+  runtimeInvocations:
+    codex: "$wiki-topic-verifier Verify docs/wiki/runtime/retry-policy.md and docs/wiki/runtime/index.md
+      against raw/processed/retry-guidance.md, including leaf granularity, source
+      links, leaf-link evidence, lint, and OKF validation."
+    claude-code: "@agent-wiki-topic-verifier Verify docs/wiki/runtime/retry-policy.md
+      and docs/wiki/runtime/index.md against raw/processed/retry-guidance.md, including
+      leaf granularity, source links, leaf-link evidence, lint, and OKF validation."
+  plausibleResponse: "VERDICT: NEEDS_CORRECTION. Reviewed docs/wiki/runtime/retry-policy.md
+    and docs/wiki/runtime/index.md against raw/processed/retry-guidance.md. The folder
+    hub keeps the independently changing circuit-breaker policy as an unlinked paragraph,
+    and the retry-policy page names the processed guidance without linking it at the
+    point of use. Create docs/wiki/runtime/circuit-breaker-policy.md, link the first
+    hub mention to that leaf, and add the relative source link to the retry-policy
+    page. Lint and OKF validation passed."
+- purpose: Confirm that a raw-to-processed ingest preserves provenance and ownership
+    across a durable leaf, monthly digest, and federation boundary while repository
+    checks pass.
+  runtimeInvocations:
+    codex: "$wiki-topic-verifier Verify docs/wiki/integrations/provider-routing.md,
+      docs/wiki/digests/2026-07.md, and docs/wiki/federation.md against raw/processed/provider-routing-review.md,
+      including source links, digest structure, federation ownership, lint, and OKF
+      validation."
+    claude-code: "@agent-wiki-topic-verifier Verify docs/wiki/integrations/provider-routing.md,
+      docs/wiki/digests/2026-07.md, and docs/wiki/federation.md against raw/processed/provider-routing-review.md,
+      including source links, digest structure, federation ownership, lint, and OKF
+      validation."
+  plausibleResponse: "VERDICT: GOOD. Reviewed docs/wiki/integrations/provider-routing.md,
+    docs/wiki/digests/2026-07.md, and docs/wiki/federation.md using raw/processed/provider-routing-review.md
+    as evidence. The leaf stays within local ownership, its relative source link resolves,
+    the digest uses an item-level content synopsis in reverse chronological order,
+    and the federation boundary does not duplicate upstream coverage. Lint and OKF
+    validation passed."
 skills:
 - project-wiki-topic-verifier:
     justification: We need this to apply the dedicated read-only acceptance contract for topic pages, leaf granularity, source links, digests, federation, lint, and OKF validation.

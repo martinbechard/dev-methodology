@@ -6,6 +6,32 @@ instructions: Read the root and nearest AGENTS.md, load the declared folder tech
   skills before acting, make the smallest complete change, preserve unrelated work,
   add or update regression coverage, and run the applicable build and tests.
 modelProfile: advanced
+examples:
+- purpose: Add a scoped behavior through executable tests while preserving the existing
+    service boundary and repository conventions.
+  runtimeInvocations:
+    codex: "$coding-agent Add cancellation support for queued jobs through the existing
+      service API, including regression coverage and the applicable build checks."
+    claude-code: "@agent-coding-agent Add cancellation support for queued jobs through
+      the existing service API, including regression coverage and the applicable build
+      checks."
+  plausibleResponse: Added queued-job cancellation through the existing service boundary
+    and covered successful cancellation, repeated requests, and non-cancellable states.
+    Ran the focused test suite and repository build successfully, then reported the
+    source patch, verification evidence, and changed files.
+- purpose: Repair a reproducible defect by tracing callers and contracts, then make the
+    smallest complete change with regression coverage.
+  runtimeInvocations:
+    codex: "$coding-agent Fix the configuration reload defect that leaves removed keys
+      in the active settings, and verify the affected callers without changing unrelated
+      configuration behavior."
+    claude-code: "@agent-coding-agent Fix the configuration reload defect that leaves
+      removed keys in the active settings, and verify the affected callers without changing
+      unrelated configuration behavior."
+  plausibleResponse: Traced configuration reload through its callers and found that the
+    active map was merged instead of replaced. Updated the reload path, added a regression
+    test for removed keys, and confirmed the focused tests and build pass. Summarized the
+    changed files and the preserved configuration behavior for review.
 skills:
 - careful-coding:
     justification: We need this to keep implementation scoped to the request, make assumptions

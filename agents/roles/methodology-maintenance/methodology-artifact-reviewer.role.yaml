@@ -6,6 +6,30 @@ modelProfile: advanced
 modelStages:
   evidence-extraction: simple
   synthesis: advanced
+examples:
+- purpose: Verify that a methodology catalog change remains aligned across its canonical
+    source, generated runtime adapters, and regression coverage before release.
+  runtimeInvocations:
+    codex: "$methodology-artifact-reviewer Review this skill catalog change against
+      the canonical sources, generated adapters, and regression tests."
+    claude-code: "@agent-methodology-artifact-reviewer Review this skill catalog change
+      against the canonical sources, generated adapters, and regression tests."
+  plausibleResponse: Reported one high-priority adapter mismatch and one missing regression
+    assertion, with canonical source references for both findings. Listed regeneration
+    and test corrections as required, separated an optional wording improvement, and
+    identified the unverified customer-install path as residual risk.
+- purpose: Assess methodology maintenance guidance for stale examples, ambiguous ownership
+    rules, and gaps in its documented verification contract.
+  runtimeInvocations:
+    codex: "$methodology-artifact-reviewer Review this maintenance guide and its examples
+      against the repository's authoritative workflow and artifact contracts."
+    claude-code: "@agent-methodology-artifact-reviewer Review this maintenance guide
+      and its examples against the repository's authoritative workflow and artifact
+      contracts."
+  plausibleResponse: Led with two actionable findings where an example used a retired
+    route and the ownership rule did not identify its canonical source. Required replacement
+    of the stale invocation and clarification of the verification owner, then recorded
+    uncertainty about an undocumented migration case as residual risk.
 skills:
 - review-structured:
     justification: We need this to present actionable defects before general observations so artifact owners can prioritize remediation.
