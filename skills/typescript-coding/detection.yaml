@@ -1,13 +1,13 @@
 schema: dev-methodology-technology-detection
-version: 1
+version: 2
 skill: typescript-coding
 kind: technology
 label: TypeScript
 capabilities:
 - language-coding
 activation:
-  fileExtensions:
-  - ".ts"
-  - ".tsx"
-  - ".mts"
-  - ".cts"
+  anyOf:
+  - fileExtension: .ts
+  - fileExtension: .tsx
+  - fileExtension: .mts
+  - fileExtension: .cts

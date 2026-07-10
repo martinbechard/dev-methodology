@@ -1,5 +1,5 @@
 schema: dev-methodology-technology-skill-detection-registry
-version: 1
+version: 2
 selectionPolicy:
   scopeEvidence: deterministic
   missingRequiredSkill: blocked
@@ -12,9 +12,32 @@ skills:
   capabilities:
   - http-api
   activation:
-    fileGlobs:
-    - '**/app/api/**/route.*'
-    - '**/pages/api/**'
+    anyOf:
+    - allOf:
+      - anyOf:
+        - fileMatch:
+            glob: '**/app/api/**/route.*'
+            extensions:
+            - .js
+            - .jsx
+            - .ts
+            - .tsx
+            - .mjs
+            - .cjs
+            - .mts
+            - .cts
+        - fileMatch:
+            glob: '**/pages/api/**/*'
+            extensions:
+            - .js
+            - .jsx
+            - .ts
+            - .tsx
+            - .mjs
+            - .cjs
+            - .mts
+            - .cts
+      - owningDependency: next
   companions: []
   selection: additive
   priority: 100
@@ -25,16 +48,18 @@ skills:
   capabilities:
   - identity-provider
   activation:
-    fileExtensions:
-    - .ts
-    - .tsx
-    - .js
-    - .jsx
-    - .mts
-    - .cts
-    manifestDependencies:
-    - '@clerk/nextjs'
-    - '@clerk/clerk-react'
+    anyOf:
+    - allOf:
+      - anyOf:
+        - fileExtension: .ts
+        - fileExtension: .tsx
+        - fileExtension: .js
+        - fileExtension: .jsx
+        - fileExtension: .mts
+        - fileExtension: .cts
+      - anyOf:
+        - owningDependency: '@clerk/nextjs'
+        - owningDependency: '@clerk/clerk-react'
   companions: []
   selection: additive
   priority: 100
@@ -45,11 +70,12 @@ skills:
   capabilities:
   - desktop-main-runtime
   activation:
-    fileGlobs:
-    - '**/main/**/*.*'
-    - '**/*electron*main*.*'
-    manifestDependencies:
-    - electron
+    anyOf:
+    - allOf:
+      - anyOf:
+        - fileGlob: '**/main/**/*.*'
+        - fileGlob: '**/*electron*main*.*'
+      - owningDependency: electron
   companions: []
   selection: additive
   priority: 100
@@ -60,11 +86,12 @@ skills:
   capabilities:
   - desktop-preload-boundary
   activation:
-    fileGlobs:
-    - '**/preload/**/*.*'
-    - '**/*preload*.*'
-    manifestDependencies:
-    - electron
+    anyOf:
+    - allOf:
+      - anyOf:
+        - fileGlob: '**/preload/**/*.*'
+        - fileGlob: '**/*preload*.*'
+      - owningDependency: electron
   companions: []
   selection: additive
   priority: 100
@@ -75,15 +102,14 @@ skills:
   capabilities:
   - web-application-framework
   activation:
-    fileExtensions:
-    - .py
-    manifestDependencies:
-    - fastapi
-    contentPatterns:
-    - glob: '**/*.py'
-      contains: from fastapi
-    - glob: '**/*.py'
-      contains: import fastapi
+    anyOf:
+    - allOf:
+      - fileExtension: .py
+      - owningDependency: fastapi
+    - sourceImport:
+        module: fastapi
+        extensions:
+        - .py
   companions:
   - python-coding
   selection: additive
@@ -95,10 +121,61 @@ skills:
   capabilities:
   - agent-harness-runtime
   activation:
-    fileGlobs:
-    - '**/*harness*.*'
-    - '**/*agent-runtime*.*'
-    - '**/runtime/agents/**/*.*'
+    anyOf:
+    - fileMatch:
+        glob: '**/*harness*.*'
+        extensions:
+        - .js
+        - .jsx
+        - .ts
+        - .tsx
+        - .mjs
+        - .cjs
+        - .mts
+        - .cts
+        - .py
+        - .pyi
+        - .java
+        - .kt
+        - .go
+        - .rs
+        - .cs
+    - fileMatch:
+        glob: '**/*agent-runtime*.*'
+        extensions:
+        - .js
+        - .jsx
+        - .ts
+        - .tsx
+        - .mjs
+        - .cjs
+        - .mts
+        - .cts
+        - .py
+        - .pyi
+        - .java
+        - .kt
+        - .go
+        - .rs
+        - .cs
+    - fileMatch:
+        glob: '**/runtime/agents/**/*'
+        extensions:
+        - .js
+        - .jsx
+        - .ts
+        - .tsx
+        - .mjs
+        - .cjs
+        - .mts
+        - .cts
+        - .py
+        - .pyi
+        - .java
+        - .kt
+        - .go
+        - .rs
+        - .cs
   companions: []
   selection: additive
   priority: 100
@@ -109,8 +186,8 @@ skills:
   capabilities:
   - language-coding
   activation:
-    fileExtensions:
-    - .java
+    anyOf:
+    - fileExtension: .java
   companions: []
   selection: additive
   priority: 100
@@ -121,20 +198,21 @@ skills:
   capabilities:
   - test-framework
   activation:
-    fileExtensions:
-    - .ts
-    - .tsx
-    - .js
-    - .jsx
-    - .mts
-    - .cts
-    - .mjs
-    - .cjs
-    manifestDependencies:
-    - jest
-    - ts-jest
-    manifestFiles:
-    - jest.config.*
+    anyOf:
+    - allOf:
+      - anyOf:
+        - fileExtension: .ts
+        - fileExtension: .tsx
+        - fileExtension: .js
+        - fileExtension: .jsx
+        - fileExtension: .mts
+        - fileExtension: .cts
+        - fileExtension: .mjs
+        - fileExtension: .cjs
+      - anyOf:
+        - owningDependency: jest
+        - owningDependency: ts-jest
+        - manifestFile: jest.config.*
   companions: []
   selection: additive
   priority: 100
@@ -145,15 +223,17 @@ skills:
   capabilities:
   - workflow-runtime
   activation:
-    fileExtensions:
-    - .ts
-    - .tsx
-    - .js
-    - .jsx
-    - .py
-    manifestDependencies:
-    - '@langchain/langgraph'
-    - langgraph
+    anyOf:
+    - allOf:
+      - anyOf:
+        - fileExtension: .ts
+        - fileExtension: .tsx
+        - fileExtension: .js
+        - fileExtension: .jsx
+        - fileExtension: .py
+      - anyOf:
+        - owningDependency: '@langchain/langgraph'
+        - owningDependency: langgraph
   companions: []
   selection: additive
   priority: 100
@@ -164,9 +244,25 @@ skills:
   capabilities:
   - local-model-runtime
   activation:
-    contentPatterns:
-    - glob: '**/*model*.*'
-      contains: localModel
+    anyOf:
+    - contentPattern:
+        glob: '**/*model*.js'
+        contains: localModel
+    - contentPattern:
+        glob: '**/*model*.jsx'
+        contains: localModel
+    - contentPattern:
+        glob: '**/*model*.ts'
+        contains: localModel
+    - contentPattern:
+        glob: '**/*model*.tsx'
+        contains: localModel
+    - contentPattern:
+        glob: '**/*model*.py'
+        contains: localModel
+    - contentPattern:
+        glob: '**/*model*.java'
+        contains: localModel
   companions: []
   selection: additive
   priority: 100
@@ -177,10 +273,20 @@ skills:
   capabilities:
   - web-application-framework
   activation:
-    manifestDependencies:
-    - next
-    fileGlobs:
-    - '**/app/**/*.*'
+    anyOf:
+    - allOf:
+      - fileMatch:
+          glob: '**/app/**/*'
+          extensions:
+          - .js
+          - .jsx
+          - .ts
+          - .tsx
+          - .mjs
+          - .cjs
+          - .mts
+          - .cts
+      - owningDependency: next
   companions: []
   selection: additive
   priority: 100
@@ -191,39 +297,46 @@ skills:
   capabilities:
   - command-line-runtime
   activation:
-    fileGlobs:
-    - bin/*.js
-    - '*/bin/*.js'
-    - cli.js
-    - '*[/.-]cli.js'
-    - '*[/]cli-*.js'
-    - bin/*.mjs
-    - '*/bin/*.mjs'
-    - cli.mjs
-    - '*[/.-]cli.mjs'
-    - '*[/]cli-*.mjs'
-    - bin/*.cjs
-    - '*/bin/*.cjs'
-    - cli.cjs
-    - '*[/.-]cli.cjs'
-    - '*[/]cli-*.cjs'
-    - bin/*.ts
-    - '*/bin/*.ts'
-    - cli.ts
-    - '*[/.-]cli.ts'
-    - '*[/]cli-*.ts'
-    - bin/*.mts
-    - '*/bin/*.mts'
-    - cli.mts
-    - '*[/.-]cli.mts'
-    - '*[/]cli-*.mts'
-    - bin/*.cts
-    - '*/bin/*.cts'
-    - cli.cts
-    - '*[/.-]cli.cts'
-    - '*[/]cli-*.cts'
-    manifestFiles:
-    - package.json
+    anyOf:
+    - allOf:
+      - anyOf:
+        - fileMatch:
+            glob: '**/bin/*'
+            extensions:
+            - .js
+            - .mjs
+            - .cjs
+            - .ts
+            - .mts
+            - .cts
+        - fileMatch:
+            glob: '**/cli.*'
+            extensions:
+            - .js
+            - .mjs
+            - .cjs
+            - .ts
+            - .mts
+            - .cts
+        - fileMatch:
+            glob: '**/*-cli.*'
+            extensions:
+            - .js
+            - .mjs
+            - .cjs
+            - .ts
+            - .mts
+            - .cts
+        - fileMatch:
+            glob: '**/cli-*.*'
+            extensions:
+            - .js
+            - .mjs
+            - .cjs
+            - .ts
+            - .mts
+            - .cts
+      - manifestFile: package.json
   companions: []
   selection: additive
   priority: 100
@@ -234,9 +347,25 @@ skills:
   capabilities:
   - planning-runtime
   activation:
-    fileGlobs:
-    - '**/*plan*engine*.*'
-    - '**/plans/**/*.yaml'
+    anyOf:
+    - fileMatch:
+        glob: '**/*plan*engine*.*'
+        extensions:
+        - .js
+        - .jsx
+        - .ts
+        - .tsx
+        - .mjs
+        - .cjs
+        - .mts
+        - .cts
+        - .py
+        - .pyi
+        - .java
+        - .kt
+        - .go
+        - .rs
+        - .cs
   companions: []
   selection: additive
   priority: 100
@@ -247,20 +376,21 @@ skills:
   capabilities:
   - end-to-end-framework
   activation:
-    fileExtensions:
-    - .ts
-    - .tsx
-    - .js
-    - .jsx
-    - .mts
-    - .cts
-    - .mjs
-    - .cjs
-    manifestDependencies:
-    - '@playwright/test'
-    - playwright
-    manifestFiles:
-    - playwright.config.*
+    anyOf:
+    - allOf:
+      - anyOf:
+        - fileExtension: .ts
+        - fileExtension: .tsx
+        - fileExtension: .js
+        - fileExtension: .jsx
+        - fileExtension: .mts
+        - fileExtension: .cts
+        - fileExtension: .mjs
+        - fileExtension: .cjs
+      - anyOf:
+        - owningDependency: '@playwright/test'
+        - owningDependency: playwright
+        - manifestFile: playwright.config.*
   companions: []
   selection: additive
   priority: 100
@@ -271,16 +401,18 @@ skills:
   capabilities:
   - persistence-framework
   activation:
-    fileExtensions:
-    - .ts
-    - .tsx
-    - .js
-    - .jsx
-    - .mts
-    - .cts
-    manifestDependencies:
-    - drizzle-orm
-    - drizzle-kit
+    anyOf:
+    - allOf:
+      - anyOf:
+        - fileExtension: .ts
+        - fileExtension: .tsx
+        - fileExtension: .js
+        - fileExtension: .jsx
+        - fileExtension: .mts
+        - fileExtension: .cts
+      - anyOf:
+        - owningDependency: drizzle-orm
+        - owningDependency: drizzle-kit
   companions:
   - sql-coding
   selection: additive
@@ -292,9 +424,9 @@ skills:
   capabilities:
   - language-coding
   activation:
-    fileExtensions:
-    - .py
-    - .pyi
+    anyOf:
+    - fileExtension: .py
+    - fileExtension: .pyi
   companions: []
   selection: additive
   priority: 100
@@ -305,9 +437,9 @@ skills:
   capabilities:
   - server-user-interface
   activation:
-    fileGlobs:
-    - '**/app/**/*.tsx'
-    - '**/app/**/*.jsx'
+    anyOf:
+    - fileGlob: '**/app/**/*.tsx'
+    - fileGlob: '**/app/**/*.jsx'
   companions: []
   selection: additive
   priority: 100
@@ -318,14 +450,18 @@ skills:
   capabilities:
   - client-user-interface
   activation:
-    fileExtensions:
-    - .tsx
-    - .jsx
-    contentPatterns:
-    - glob: package.json
-      contains: '@vitejs/plugin-react'
-    - glob: vite.config.*
-      contains: react
+    anyOf:
+    - allOf:
+      - anyOf:
+        - fileExtension: .tsx
+        - fileExtension: .jsx
+      - anyOf:
+        - contentPattern:
+            glob: package.json
+            contains: '@vitejs/plugin-react'
+        - contentPattern:
+            glob: vite.config.*
+            contains: react
   companions: []
   selection: additive
   priority: 100
@@ -336,13 +472,16 @@ skills:
   capabilities:
   - application-framework
   activation:
-    fileExtensions:
-    - .java
-    contentPatterns:
-    - glob: pom.xml
-      contains: spring-boot
-    - glob: build.gradle*
-      contains: org.springframework.boot
+    anyOf:
+    - allOf:
+      - fileExtension: .java
+      - anyOf:
+        - contentPattern:
+            glob: pom.xml
+            contains: spring-boot
+        - contentPattern:
+            glob: build.gradle*
+            contains: org.springframework.boot
   companions:
   - java-coding
   selection: additive
@@ -354,8 +493,8 @@ skills:
   capabilities:
   - query-language
   activation:
-    fileExtensions:
-    - .sql
+    anyOf:
+    - fileExtension: .sql
   companions: []
   selection: additive
   priority: 100
@@ -366,16 +505,17 @@ skills:
   capabilities:
   - styling-system
   activation:
-    fileExtensions:
-    - .ts
-    - .tsx
-    - .js
-    - .jsx
-    - .css
-    manifestDependencies:
-    - tailwindcss
-    manifestFiles:
-    - tailwind.config.*
+    anyOf:
+    - allOf:
+      - anyOf:
+        - fileExtension: .ts
+        - fileExtension: .tsx
+        - fileExtension: .js
+        - fileExtension: .jsx
+        - fileExtension: .css
+      - anyOf:
+        - owningDependency: tailwindcss
+        - manifestFile: tailwind.config.*
   companions: []
   selection: additive
   priority: 100
@@ -386,10 +526,61 @@ skills:
   capabilities:
   - tool-runtime
   activation:
-    fileGlobs:
-    - '**/*tool*registry*.*'
-    - '**/*tool*runtime*.*'
-    - '**/tools/**/*.*'
+    anyOf:
+    - fileMatch:
+        glob: '**/*tool*registry*.*'
+        extensions:
+        - .js
+        - .jsx
+        - .ts
+        - .tsx
+        - .mjs
+        - .cjs
+        - .mts
+        - .cts
+        - .py
+        - .pyi
+        - .java
+        - .kt
+        - .go
+        - .rs
+        - .cs
+    - fileMatch:
+        glob: '**/*tool*runtime*.*'
+        extensions:
+        - .js
+        - .jsx
+        - .ts
+        - .tsx
+        - .mjs
+        - .cjs
+        - .mts
+        - .cts
+        - .py
+        - .pyi
+        - .java
+        - .kt
+        - .go
+        - .rs
+        - .cs
+    - fileMatch:
+        glob: '**/tools/**/*'
+        extensions:
+        - .js
+        - .jsx
+        - .ts
+        - .tsx
+        - .mjs
+        - .cjs
+        - .mts
+        - .cts
+        - .py
+        - .pyi
+        - .java
+        - .kt
+        - .go
+        - .rs
+        - .cs
   companions: []
   selection: additive
   priority: 100
@@ -400,11 +591,11 @@ skills:
   capabilities:
   - language-coding
   activation:
-    fileExtensions:
-    - .ts
-    - .tsx
-    - .mts
-    - .cts
+    anyOf:
+    - fileExtension: .ts
+    - fileExtension: .tsx
+    - fileExtension: .mts
+    - fileExtension: .cts
   companions: []
   selection: additive
   priority: 100
@@ -415,16 +606,20 @@ skills:
   capabilities:
   - module-system
   activation:
-    fileExtensions:
-    - .ts
-    - .tsx
-    - .mts
-    - .cts
-    contentPatterns:
-    - glob: package.json
-      contains: '"type": "module"'
-    - glob: tsconfig*.json
-      contains: NodeNext
+    anyOf:
+    - allOf:
+      - anyOf:
+        - fileExtension: .ts
+        - fileExtension: .tsx
+        - fileExtension: .mts
+        - fileExtension: .cts
+      - anyOf:
+        - contentPattern:
+            glob: package.json
+            contains: '"type": "module"'
+        - contentPattern:
+            glob: tsconfig*.json
+            contains: NodeNext
   companions:
   - typescript-coding
   selection: additive
@@ -436,14 +631,16 @@ skills:
   capabilities:
   - strict-type-system
   activation:
-    fileExtensions:
-    - .ts
-    - .tsx
-    - .mts
-    - .cts
-    contentPatterns:
-    - glob: tsconfig*.json
-      contains: '"strict": true'
+    anyOf:
+    - allOf:
+      - anyOf:
+        - fileExtension: .ts
+        - fileExtension: .tsx
+        - fileExtension: .mts
+        - fileExtension: .cts
+      - contentPattern:
+          glob: tsconfig*.json
+          contains: '"strict": true'
   companions:
   - typescript-coding
   selection: additive
@@ -455,19 +652,20 @@ skills:
   capabilities:
   - test-framework
   activation:
-    fileExtensions:
-    - .ts
-    - .tsx
-    - .js
-    - .jsx
-    - .mts
-    - .cts
-    - .mjs
-    - .cjs
-    manifestDependencies:
-    - vitest
-    manifestFiles:
-    - vitest.config.*
+    anyOf:
+    - allOf:
+      - anyOf:
+        - fileExtension: .ts
+        - fileExtension: .tsx
+        - fileExtension: .js
+        - fileExtension: .jsx
+        - fileExtension: .mts
+        - fileExtension: .cts
+        - fileExtension: .mjs
+        - fileExtension: .cjs
+      - anyOf:
+        - owningDependency: vitest
+        - manifestFile: vitest.config.*
   companions: []
   selection: additive
   priority: 100

@@ -383,6 +383,9 @@ validation_plan:
       proves: "Tracked changes contain no whitespace errors."
   technology_detection_checks:
     - "Run setup-time detection for scripts, skills/project-wiki/scripts, skills/detect-technology-skills/scripts, evals/projects/python-inventory, and evals/projects/fastapi-orders."
+    - "Confirm every detection definition names its selected skill and uses a version 2 anyOf activation root."
+    - "Confirm allOf clauses require every predicate and sourceImport ignores Python comments and string literals."
+    - "Confirm leading globstar paths match root-level folders and fileMatch binds path and extension evidence to one code artifact."
     - "Reject fastapi for scripts because its evidence is detector-test content rather than an owning FastAPI runtime."
     - "Confirm skills/project-wiki/scripts produces only python-coding because cli.py is Python rather than a Node-owned JavaScript or TypeScript CLI path."
     - "Confirm python-coding and fastapi are installed and every accepted loadout retains source evidence."

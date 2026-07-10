@@ -1,11 +1,15 @@
 schema: dev-methodology-technology-detection
-version: 1
+version: 2
 skill: local-model-integration
 kind: domain
 label: Local model integration
 capabilities:
 - local-model-runtime
 activation:
-  contentPatterns:
-  - glob: "**/*model*.*"
-    contains: localModel
+  anyOf:
+  - contentPattern: {glob: "**/*model*.js", contains: localModel}
+  - contentPattern: {glob: "**/*model*.jsx", contains: localModel}
+  - contentPattern: {glob: "**/*model*.ts", contains: localModel}
+  - contentPattern: {glob: "**/*model*.tsx", contains: localModel}
+  - contentPattern: {glob: "**/*model*.py", contains: localModel}
+  - contentPattern: {glob: "**/*model*.java", contains: localModel}

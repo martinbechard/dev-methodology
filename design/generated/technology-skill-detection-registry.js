@@ -10,9 +10,48 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
   "skills": [
     {
       "activation": {
-        "fileGlobs": [
-          "**/app/api/**/route.*",
-          "**/pages/api/**"
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "fileMatch": {
+                      "extensions": [
+                        ".js",
+                        ".jsx",
+                        ".ts",
+                        ".tsx",
+                        ".mjs",
+                        ".cjs",
+                        ".mts",
+                        ".cts"
+                      ],
+                      "glob": "**/app/api/**/route.*"
+                    }
+                  },
+                  {
+                    "fileMatch": {
+                      "extensions": [
+                        ".js",
+                        ".jsx",
+                        ".ts",
+                        ".tsx",
+                        ".mjs",
+                        ".cjs",
+                        ".mts",
+                        ".cts"
+                      ],
+                      "glob": "**/pages/api/**/*"
+                    }
+                  }
+                ]
+              },
+              {
+                "owningDependency": "next"
+              }
+            ]
+          }
         ]
       },
       "capabilities": [
@@ -28,17 +67,43 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
     },
     {
       "activation": {
-        "fileExtensions": [
-          ".ts",
-          ".tsx",
-          ".js",
-          ".jsx",
-          ".mts",
-          ".cts"
-        ],
-        "manifestDependencies": [
-          "@clerk/nextjs",
-          "@clerk/clerk-react"
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "fileExtension": ".ts"
+                  },
+                  {
+                    "fileExtension": ".tsx"
+                  },
+                  {
+                    "fileExtension": ".js"
+                  },
+                  {
+                    "fileExtension": ".jsx"
+                  },
+                  {
+                    "fileExtension": ".mts"
+                  },
+                  {
+                    "fileExtension": ".cts"
+                  }
+                ]
+              },
+              {
+                "anyOf": [
+                  {
+                    "owningDependency": "@clerk/nextjs"
+                  },
+                  {
+                    "owningDependency": "@clerk/clerk-react"
+                  }
+                ]
+              }
+            ]
+          }
         ]
       },
       "capabilities": [
@@ -54,12 +119,24 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
     },
     {
       "activation": {
-        "fileGlobs": [
-          "**/main/**/*.*",
-          "**/*electron*main*.*"
-        ],
-        "manifestDependencies": [
-          "electron"
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "fileGlob": "**/main/**/*.*"
+                  },
+                  {
+                    "fileGlob": "**/*electron*main*.*"
+                  }
+                ]
+              },
+              {
+                "owningDependency": "electron"
+              }
+            ]
+          }
         ]
       },
       "capabilities": [
@@ -75,12 +152,24 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
     },
     {
       "activation": {
-        "fileGlobs": [
-          "**/preload/**/*.*",
-          "**/*preload*.*"
-        ],
-        "manifestDependencies": [
-          "electron"
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "fileGlob": "**/preload/**/*.*"
+                  },
+                  {
+                    "fileGlob": "**/*preload*.*"
+                  }
+                ]
+              },
+              {
+                "owningDependency": "electron"
+              }
+            ]
+          }
         ]
       },
       "capabilities": [
@@ -96,21 +185,25 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
     },
     {
       "activation": {
-        "contentPatterns": [
+        "anyOf": [
           {
-            "contains": "from fastapi",
-            "glob": "**/*.py"
+            "allOf": [
+              {
+                "fileExtension": ".py"
+              },
+              {
+                "owningDependency": "fastapi"
+              }
+            ]
           },
           {
-            "contains": "import fastapi",
-            "glob": "**/*.py"
+            "sourceImport": {
+              "extensions": [
+                ".py"
+              ],
+              "module": "fastapi"
+            }
           }
-        ],
-        "fileExtensions": [
-          ".py"
-        ],
-        "manifestDependencies": [
-          "fastapi"
         ]
       },
       "capabilities": [
@@ -128,10 +221,73 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
     },
     {
       "activation": {
-        "fileGlobs": [
-          "**/*harness*.*",
-          "**/*agent-runtime*.*",
-          "**/runtime/agents/**/*.*"
+        "anyOf": [
+          {
+            "fileMatch": {
+              "extensions": [
+                ".js",
+                ".jsx",
+                ".ts",
+                ".tsx",
+                ".mjs",
+                ".cjs",
+                ".mts",
+                ".cts",
+                ".py",
+                ".pyi",
+                ".java",
+                ".kt",
+                ".go",
+                ".rs",
+                ".cs"
+              ],
+              "glob": "**/*harness*.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".js",
+                ".jsx",
+                ".ts",
+                ".tsx",
+                ".mjs",
+                ".cjs",
+                ".mts",
+                ".cts",
+                ".py",
+                ".pyi",
+                ".java",
+                ".kt",
+                ".go",
+                ".rs",
+                ".cs"
+              ],
+              "glob": "**/*agent-runtime*.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".js",
+                ".jsx",
+                ".ts",
+                ".tsx",
+                ".mjs",
+                ".cjs",
+                ".mts",
+                ".cts",
+                ".py",
+                ".pyi",
+                ".java",
+                ".kt",
+                ".go",
+                ".rs",
+                ".cs"
+              ],
+              "glob": "**/runtime/agents/**/*"
+            }
+          }
         ]
       },
       "capabilities": [
@@ -147,8 +303,10 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
     },
     {
       "activation": {
-        "fileExtensions": [
-          ".java"
+        "anyOf": [
+          {
+            "fileExtension": ".java"
+          }
         ]
       },
       "capabilities": [
@@ -164,22 +322,52 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
     },
     {
       "activation": {
-        "fileExtensions": [
-          ".ts",
-          ".tsx",
-          ".js",
-          ".jsx",
-          ".mts",
-          ".cts",
-          ".mjs",
-          ".cjs"
-        ],
-        "manifestDependencies": [
-          "jest",
-          "ts-jest"
-        ],
-        "manifestFiles": [
-          "jest.config.*"
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "fileExtension": ".ts"
+                  },
+                  {
+                    "fileExtension": ".tsx"
+                  },
+                  {
+                    "fileExtension": ".js"
+                  },
+                  {
+                    "fileExtension": ".jsx"
+                  },
+                  {
+                    "fileExtension": ".mts"
+                  },
+                  {
+                    "fileExtension": ".cts"
+                  },
+                  {
+                    "fileExtension": ".mjs"
+                  },
+                  {
+                    "fileExtension": ".cjs"
+                  }
+                ]
+              },
+              {
+                "anyOf": [
+                  {
+                    "owningDependency": "jest"
+                  },
+                  {
+                    "owningDependency": "ts-jest"
+                  },
+                  {
+                    "manifestFile": "jest.config.*"
+                  }
+                ]
+              }
+            ]
+          }
         ]
       },
       "capabilities": [
@@ -195,16 +383,40 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
     },
     {
       "activation": {
-        "fileExtensions": [
-          ".ts",
-          ".tsx",
-          ".js",
-          ".jsx",
-          ".py"
-        ],
-        "manifestDependencies": [
-          "@langchain/langgraph",
-          "langgraph"
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "fileExtension": ".ts"
+                  },
+                  {
+                    "fileExtension": ".tsx"
+                  },
+                  {
+                    "fileExtension": ".js"
+                  },
+                  {
+                    "fileExtension": ".jsx"
+                  },
+                  {
+                    "fileExtension": ".py"
+                  }
+                ]
+              },
+              {
+                "anyOf": [
+                  {
+                    "owningDependency": "@langchain/langgraph"
+                  },
+                  {
+                    "owningDependency": "langgraph"
+                  }
+                ]
+              }
+            ]
+          }
         ]
       },
       "capabilities": [
@@ -220,10 +432,42 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
     },
     {
       "activation": {
-        "contentPatterns": [
+        "anyOf": [
           {
-            "contains": "localModel",
-            "glob": "**/*model*.*"
+            "contentPattern": {
+              "contains": "localModel",
+              "glob": "**/*model*.js"
+            }
+          },
+          {
+            "contentPattern": {
+              "contains": "localModel",
+              "glob": "**/*model*.jsx"
+            }
+          },
+          {
+            "contentPattern": {
+              "contains": "localModel",
+              "glob": "**/*model*.ts"
+            }
+          },
+          {
+            "contentPattern": {
+              "contains": "localModel",
+              "glob": "**/*model*.tsx"
+            }
+          },
+          {
+            "contentPattern": {
+              "contains": "localModel",
+              "glob": "**/*model*.py"
+            }
+          },
+          {
+            "contentPattern": {
+              "contains": "localModel",
+              "glob": "**/*model*.java"
+            }
           }
         ]
       },
@@ -240,11 +484,29 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
     },
     {
       "activation": {
-        "fileGlobs": [
-          "**/app/**/*.*"
-        ],
-        "manifestDependencies": [
-          "next"
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "fileMatch": {
+                  "extensions": [
+                    ".js",
+                    ".jsx",
+                    ".ts",
+                    ".tsx",
+                    ".mjs",
+                    ".cjs",
+                    ".mts",
+                    ".cts"
+                  ],
+                  "glob": "**/app/**/*"
+                }
+              },
+              {
+                "owningDependency": "next"
+              }
+            ]
+          }
         ]
       },
       "capabilities": [
@@ -260,40 +522,70 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
     },
     {
       "activation": {
-        "fileGlobs": [
-          "bin/*.js",
-          "*/bin/*.js",
-          "cli.js",
-          "*[/.-]cli.js",
-          "*[/]cli-*.js",
-          "bin/*.mjs",
-          "*/bin/*.mjs",
-          "cli.mjs",
-          "*[/.-]cli.mjs",
-          "*[/]cli-*.mjs",
-          "bin/*.cjs",
-          "*/bin/*.cjs",
-          "cli.cjs",
-          "*[/.-]cli.cjs",
-          "*[/]cli-*.cjs",
-          "bin/*.ts",
-          "*/bin/*.ts",
-          "cli.ts",
-          "*[/.-]cli.ts",
-          "*[/]cli-*.ts",
-          "bin/*.mts",
-          "*/bin/*.mts",
-          "cli.mts",
-          "*[/.-]cli.mts",
-          "*[/]cli-*.mts",
-          "bin/*.cts",
-          "*/bin/*.cts",
-          "cli.cts",
-          "*[/.-]cli.cts",
-          "*[/]cli-*.cts"
-        ],
-        "manifestFiles": [
-          "package.json"
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "fileMatch": {
+                      "extensions": [
+                        ".js",
+                        ".mjs",
+                        ".cjs",
+                        ".ts",
+                        ".mts",
+                        ".cts"
+                      ],
+                      "glob": "**/bin/*"
+                    }
+                  },
+                  {
+                    "fileMatch": {
+                      "extensions": [
+                        ".js",
+                        ".mjs",
+                        ".cjs",
+                        ".ts",
+                        ".mts",
+                        ".cts"
+                      ],
+                      "glob": "**/cli.*"
+                    }
+                  },
+                  {
+                    "fileMatch": {
+                      "extensions": [
+                        ".js",
+                        ".mjs",
+                        ".cjs",
+                        ".ts",
+                        ".mts",
+                        ".cts"
+                      ],
+                      "glob": "**/*-cli.*"
+                    }
+                  },
+                  {
+                    "fileMatch": {
+                      "extensions": [
+                        ".js",
+                        ".mjs",
+                        ".cjs",
+                        ".ts",
+                        ".mts",
+                        ".cts"
+                      ],
+                      "glob": "**/cli-*.*"
+                    }
+                  }
+                ]
+              },
+              {
+                "manifestFile": "package.json"
+              }
+            ]
+          }
         ]
       },
       "capabilities": [
@@ -309,9 +601,29 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
     },
     {
       "activation": {
-        "fileGlobs": [
-          "**/*plan*engine*.*",
-          "**/plans/**/*.yaml"
+        "anyOf": [
+          {
+            "fileMatch": {
+              "extensions": [
+                ".js",
+                ".jsx",
+                ".ts",
+                ".tsx",
+                ".mjs",
+                ".cjs",
+                ".mts",
+                ".cts",
+                ".py",
+                ".pyi",
+                ".java",
+                ".kt",
+                ".go",
+                ".rs",
+                ".cs"
+              ],
+              "glob": "**/*plan*engine*.*"
+            }
+          }
         ]
       },
       "capabilities": [
@@ -327,22 +639,52 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
     },
     {
       "activation": {
-        "fileExtensions": [
-          ".ts",
-          ".tsx",
-          ".js",
-          ".jsx",
-          ".mts",
-          ".cts",
-          ".mjs",
-          ".cjs"
-        ],
-        "manifestDependencies": [
-          "@playwright/test",
-          "playwright"
-        ],
-        "manifestFiles": [
-          "playwright.config.*"
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "fileExtension": ".ts"
+                  },
+                  {
+                    "fileExtension": ".tsx"
+                  },
+                  {
+                    "fileExtension": ".js"
+                  },
+                  {
+                    "fileExtension": ".jsx"
+                  },
+                  {
+                    "fileExtension": ".mts"
+                  },
+                  {
+                    "fileExtension": ".cts"
+                  },
+                  {
+                    "fileExtension": ".mjs"
+                  },
+                  {
+                    "fileExtension": ".cjs"
+                  }
+                ]
+              },
+              {
+                "anyOf": [
+                  {
+                    "owningDependency": "@playwright/test"
+                  },
+                  {
+                    "owningDependency": "playwright"
+                  },
+                  {
+                    "manifestFile": "playwright.config.*"
+                  }
+                ]
+              }
+            ]
+          }
         ]
       },
       "capabilities": [
@@ -358,17 +700,43 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
     },
     {
       "activation": {
-        "fileExtensions": [
-          ".ts",
-          ".tsx",
-          ".js",
-          ".jsx",
-          ".mts",
-          ".cts"
-        ],
-        "manifestDependencies": [
-          "drizzle-orm",
-          "drizzle-kit"
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "fileExtension": ".ts"
+                  },
+                  {
+                    "fileExtension": ".tsx"
+                  },
+                  {
+                    "fileExtension": ".js"
+                  },
+                  {
+                    "fileExtension": ".jsx"
+                  },
+                  {
+                    "fileExtension": ".mts"
+                  },
+                  {
+                    "fileExtension": ".cts"
+                  }
+                ]
+              },
+              {
+                "anyOf": [
+                  {
+                    "owningDependency": "drizzle-orm"
+                  },
+                  {
+                    "owningDependency": "drizzle-kit"
+                  }
+                ]
+              }
+            ]
+          }
         ]
       },
       "capabilities": [
@@ -386,9 +754,13 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
     },
     {
       "activation": {
-        "fileExtensions": [
-          ".py",
-          ".pyi"
+        "anyOf": [
+          {
+            "fileExtension": ".py"
+          },
+          {
+            "fileExtension": ".pyi"
+          }
         ]
       },
       "capabilities": [
@@ -404,9 +776,13 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
     },
     {
       "activation": {
-        "fileGlobs": [
-          "**/app/**/*.tsx",
-          "**/app/**/*.jsx"
+        "anyOf": [
+          {
+            "fileGlob": "**/app/**/*.tsx"
+          },
+          {
+            "fileGlob": "**/app/**/*.jsx"
+          }
         ]
       },
       "capabilities": [
@@ -422,19 +798,37 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
     },
     {
       "activation": {
-        "contentPatterns": [
+        "anyOf": [
           {
-            "contains": "@vitejs/plugin-react",
-            "glob": "package.json"
-          },
-          {
-            "contains": "react",
-            "glob": "vite.config.*"
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "fileExtension": ".tsx"
+                  },
+                  {
+                    "fileExtension": ".jsx"
+                  }
+                ]
+              },
+              {
+                "anyOf": [
+                  {
+                    "contentPattern": {
+                      "contains": "@vitejs/plugin-react",
+                      "glob": "package.json"
+                    }
+                  },
+                  {
+                    "contentPattern": {
+                      "contains": "react",
+                      "glob": "vite.config.*"
+                    }
+                  }
+                ]
+              }
+            ]
           }
-        ],
-        "fileExtensions": [
-          ".tsx",
-          ".jsx"
         ]
       },
       "capabilities": [
@@ -450,18 +844,30 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
     },
     {
       "activation": {
-        "contentPatterns": [
+        "anyOf": [
           {
-            "contains": "spring-boot",
-            "glob": "pom.xml"
-          },
-          {
-            "contains": "org.springframework.boot",
-            "glob": "build.gradle*"
+            "allOf": [
+              {
+                "fileExtension": ".java"
+              },
+              {
+                "anyOf": [
+                  {
+                    "contentPattern": {
+                      "contains": "spring-boot",
+                      "glob": "pom.xml"
+                    }
+                  },
+                  {
+                    "contentPattern": {
+                      "contains": "org.springframework.boot",
+                      "glob": "build.gradle*"
+                    }
+                  }
+                ]
+              }
+            ]
           }
-        ],
-        "fileExtensions": [
-          ".java"
         ]
       },
       "capabilities": [
@@ -479,8 +885,10 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
     },
     {
       "activation": {
-        "fileExtensions": [
-          ".sql"
+        "anyOf": [
+          {
+            "fileExtension": ".sql"
+          }
         ]
       },
       "capabilities": [
@@ -496,18 +904,40 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
     },
     {
       "activation": {
-        "fileExtensions": [
-          ".ts",
-          ".tsx",
-          ".js",
-          ".jsx",
-          ".css"
-        ],
-        "manifestDependencies": [
-          "tailwindcss"
-        ],
-        "manifestFiles": [
-          "tailwind.config.*"
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "fileExtension": ".ts"
+                  },
+                  {
+                    "fileExtension": ".tsx"
+                  },
+                  {
+                    "fileExtension": ".js"
+                  },
+                  {
+                    "fileExtension": ".jsx"
+                  },
+                  {
+                    "fileExtension": ".css"
+                  }
+                ]
+              },
+              {
+                "anyOf": [
+                  {
+                    "owningDependency": "tailwindcss"
+                  },
+                  {
+                    "manifestFile": "tailwind.config.*"
+                  }
+                ]
+              }
+            ]
+          }
         ]
       },
       "capabilities": [
@@ -523,10 +953,73 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
     },
     {
       "activation": {
-        "fileGlobs": [
-          "**/*tool*registry*.*",
-          "**/*tool*runtime*.*",
-          "**/tools/**/*.*"
+        "anyOf": [
+          {
+            "fileMatch": {
+              "extensions": [
+                ".js",
+                ".jsx",
+                ".ts",
+                ".tsx",
+                ".mjs",
+                ".cjs",
+                ".mts",
+                ".cts",
+                ".py",
+                ".pyi",
+                ".java",
+                ".kt",
+                ".go",
+                ".rs",
+                ".cs"
+              ],
+              "glob": "**/*tool*registry*.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".js",
+                ".jsx",
+                ".ts",
+                ".tsx",
+                ".mjs",
+                ".cjs",
+                ".mts",
+                ".cts",
+                ".py",
+                ".pyi",
+                ".java",
+                ".kt",
+                ".go",
+                ".rs",
+                ".cs"
+              ],
+              "glob": "**/*tool*runtime*.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".js",
+                ".jsx",
+                ".ts",
+                ".tsx",
+                ".mjs",
+                ".cjs",
+                ".mts",
+                ".cts",
+                ".py",
+                ".pyi",
+                ".java",
+                ".kt",
+                ".go",
+                ".rs",
+                ".cs"
+              ],
+              "glob": "**/tools/**/*"
+            }
+          }
         ]
       },
       "capabilities": [
@@ -542,11 +1035,19 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
     },
     {
       "activation": {
-        "fileExtensions": [
-          ".ts",
-          ".tsx",
-          ".mts",
-          ".cts"
+        "anyOf": [
+          {
+            "fileExtension": ".ts"
+          },
+          {
+            "fileExtension": ".tsx"
+          },
+          {
+            "fileExtension": ".mts"
+          },
+          {
+            "fileExtension": ".cts"
+          }
         ]
       },
       "capabilities": [
@@ -562,21 +1063,43 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
     },
     {
       "activation": {
-        "contentPatterns": [
+        "anyOf": [
           {
-            "contains": "\"type\": \"module\"",
-            "glob": "package.json"
-          },
-          {
-            "contains": "NodeNext",
-            "glob": "tsconfig*.json"
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "fileExtension": ".ts"
+                  },
+                  {
+                    "fileExtension": ".tsx"
+                  },
+                  {
+                    "fileExtension": ".mts"
+                  },
+                  {
+                    "fileExtension": ".cts"
+                  }
+                ]
+              },
+              {
+                "anyOf": [
+                  {
+                    "contentPattern": {
+                      "contains": "\"type\": \"module\"",
+                      "glob": "package.json"
+                    }
+                  },
+                  {
+                    "contentPattern": {
+                      "contains": "NodeNext",
+                      "glob": "tsconfig*.json"
+                    }
+                  }
+                ]
+              }
+            ]
           }
-        ],
-        "fileExtensions": [
-          ".ts",
-          ".tsx",
-          ".mts",
-          ".cts"
         ]
       },
       "capabilities": [
@@ -594,17 +1117,33 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
     },
     {
       "activation": {
-        "contentPatterns": [
+        "anyOf": [
           {
-            "contains": "\"strict\": true",
-            "glob": "tsconfig*.json"
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "fileExtension": ".ts"
+                  },
+                  {
+                    "fileExtension": ".tsx"
+                  },
+                  {
+                    "fileExtension": ".mts"
+                  },
+                  {
+                    "fileExtension": ".cts"
+                  }
+                ]
+              },
+              {
+                "contentPattern": {
+                  "contains": "\"strict\": true",
+                  "glob": "tsconfig*.json"
+                }
+              }
+            ]
           }
-        ],
-        "fileExtensions": [
-          ".ts",
-          ".tsx",
-          ".mts",
-          ".cts"
         ]
       },
       "capabilities": [
@@ -622,21 +1161,49 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
     },
     {
       "activation": {
-        "fileExtensions": [
-          ".ts",
-          ".tsx",
-          ".js",
-          ".jsx",
-          ".mts",
-          ".cts",
-          ".mjs",
-          ".cjs"
-        ],
-        "manifestDependencies": [
-          "vitest"
-        ],
-        "manifestFiles": [
-          "vitest.config.*"
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "fileExtension": ".ts"
+                  },
+                  {
+                    "fileExtension": ".tsx"
+                  },
+                  {
+                    "fileExtension": ".js"
+                  },
+                  {
+                    "fileExtension": ".jsx"
+                  },
+                  {
+                    "fileExtension": ".mts"
+                  },
+                  {
+                    "fileExtension": ".cts"
+                  },
+                  {
+                    "fileExtension": ".mjs"
+                  },
+                  {
+                    "fileExtension": ".cjs"
+                  }
+                ]
+              },
+              {
+                "anyOf": [
+                  {
+                    "owningDependency": "vitest"
+                  },
+                  {
+                    "manifestFile": "vitest.config.*"
+                  }
+                ]
+              }
+            ]
+          }
         ]
       },
       "capabilities": [
@@ -651,5 +1218,5 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
       "skill": "vitest"
     }
   ],
-  "version": 1
+  "version": 2
 };

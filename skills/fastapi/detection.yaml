@@ -1,19 +1,17 @@
 schema: dev-methodology-technology-detection
-version: 1
+version: 2
 skill: fastapi
 kind: technology
 label: FastAPI
 capabilities:
   - web-application-framework
 activation:
-  fileExtensions:
-    - .py
-  manifestDependencies:
-  - fastapi
-  contentPatterns:
-  - glob: "**/*.py"
-    contains: "from fastapi"
-  - glob: "**/*.py"
-    contains: "import fastapi"
+  anyOf:
+  - allOf:
+    - fileExtension: .py
+    - owningDependency: fastapi
+  - sourceImport:
+      module: fastapi
+      extensions: [.py]
 companions:
 - python-coding

@@ -1,11 +1,11 @@
 schema: dev-methodology-technology-detection
-version: 1
+version: 2
 skill: python-coding
 kind: technology
 label: Python
 capabilities:
   - language-coding
 activation:
-  fileExtensions:
-    - .py
-    - .pyi
+  anyOf:
+  - fileExtension: .py
+  - fileExtension: .pyi

@@ -1,7 +1,13 @@
 #!/usr/bin/env python3
+# Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+# AI attribution: Modified with AI assistance.
+# Summary: Detects setup-time technology skills from explicit repository evidence clauses.
+# Design: design/technology-skill-detection-spec.md
+
 from __future__ import annotations
 
 import argparse
+import ast
 import fnmatch
 import json
 import re
@@ -27,6 +33,7 @@ OWNER_FILE_GLOBS = ("build.gradle*", "requirements*.txt")
 
 
 def load_yaml(path: Path) -> dict[str, object]:
+    """Load one YAML mapping so malformed registry inputs fail at the command boundary."""
     value = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(value, dict):
         raise ValueError(f"Expected a YAML mapping: {path}")
@@ -34,6 +41,7 @@ def load_yaml(path: Path) -> dict[str, object]:
 
 
 def relative(path: Path, root: Path) -> str:
+    """Return a stable project-relative evidence path when the path belongs to the project."""
     try:
         return path.resolve().relative_to(root.resolve()).as_posix()
     except ValueError:
@@ -41,6 +49,7 @@ def relative(path: Path, root: Path) -> str:
 
 
 def is_ignored(path: Path, root: Path) -> bool:
+    """Report whether a path belongs to a generated, dependency, or environment directory."""
     try:
         parts = path.relative_to(root).parts
     except ValueError:
@@ -49,6 +58,7 @@ def is_ignored(path: Path, root: Path) -> bool:
 
 
 def scope_files(root: Path, scope: Path) -> list[Path]:
+    """List human-relevant files in a requested file or directory scope."""
     path = scope if scope.is_absolute() else root / scope
     if path.is_file():
         return [path]
@@ -58,6 +68,7 @@ def scope_files(root: Path, scope: Path) -> list[Path]:
 
 
 def owner_files(directory: Path) -> list[Path]:
+    """Find supported project manifests that can own files below one directory."""
     found = [directory / name for name in OWNER_FILE_NAMES if (directory / name).is_file()]
     for pattern in OWNER_FILE_GLOBS:
         found.extend(path for path in directory.glob(pattern) if path.is_file())
@@ -65,6 +76,7 @@ def owner_files(directory: Path) -> list[Path]:
 
 
 def nearest_owner_files(root: Path, scope: Path, files: list[Path]) -> list[Path]:
+    """Find the nearest owning manifests without allowing sibling project contamination."""
     candidates = files or [scope if scope.is_absolute() else root / scope]
     owners: set[Path] = set()
     for candidate in candidates:
@@ -83,6 +95,7 @@ def nearest_owner_files(root: Path, scope: Path, files: list[Path]) -> list[Path
 
 
 def manifest_dependencies(paths: list[Path]) -> set[str]:
+    """Extract normalized dependency names from supported owning manifests."""
     dependencies: set[str] = set()
     for path in paths:
         try:
@@ -123,64 +136,161 @@ def manifest_dependencies(paths: list[Path]) -> set[str]:
     return dependencies
 
 
+def glob_matches(value: str, pattern: str) -> bool:
+    """Match a project path with globstar segments that may span zero or more directories."""
+    expression = ""
+    index = 0
+    while index < len(pattern):
+        character = pattern[index]
+        if character == "*":
+            if index + 1 < len(pattern) and pattern[index + 1] == "*":
+                index += 2
+                if index < len(pattern) and pattern[index] == "/":
+                    expression += "(?:.*/)?"
+                    index += 1
+                else:
+                    expression += ".*"
+                continue
+            expression += "[^/]*"
+        elif character == "?":
+            expression += "[^/]"
+        elif character == "[":
+            closing = pattern.find("]", index + 1)
+            if closing == -1:
+                expression += re.escape(character)
+            else:
+                values = pattern[index + 1:closing]
+                if values.startswith("!"):
+                    values = "^" + values[1:]
+                expression += "[" + values.replace("\\", "\\\\") + "]"
+                index = closing
+        else:
+            expression += re.escape(character)
+        index += 1
+    return re.fullmatch(expression, value) is not None
+
+
+def python_imports_module(path: Path, module: str) -> bool:
+    """Report whether parsed Python code imports a module, excluding comments and string literals."""
+    try:
+        tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+    except (OSError, UnicodeDecodeError, SyntaxError):
+        return False
+    for node in ast.walk(tree):
+        names: list[str] = []
+        if isinstance(node, ast.Import):
+            names = [alias.name for alias in node.names]
+        elif isinstance(node, ast.ImportFrom) and node.module:
+            names = [node.module]
+        if any(name == module or name.startswith(module + ".") for name in names):
+            return True
+    return False
+
+
+def predicate_evidence(
+    predicate: dict[str, object],
+    root: Path,
+    files: list[Path],
+    owner_evidence: list[Path],
+    dependencies: set[str],
+) -> list[str]:
+    """Evaluate one atomic evidence predicate and return its concrete match, if any."""
+    key, expected = next(iter(predicate.items()))
+    if key == "fileExtension":
+        extension = str(expected).lower()
+        match = next((path for path in files if path.suffix.lower() == extension), None)
+        return [f"scope extension {extension}: {relative(match, root)}"] if match else []
+    if key == "fileGlob":
+        pattern = str(expected)
+        match = next((path for path in files if glob_matches(relative(path, root), pattern)), None)
+        return [f"scope path {pattern}: {relative(match, root)}"] if match else []
+    if key == "fileMatch":
+        pattern = str(expected["glob"])
+        extensions = {str(value).lower() for value in expected["extensions"]}
+        match = next(
+            (
+                path for path in files
+                if path.suffix.lower() in extensions and glob_matches(relative(path, root), pattern)
+            ),
+            None,
+        )
+        return [f"scope code path {pattern}: {relative(match, root)}"] if match else []
+    if key == "manifestFile":
+        pattern = str(expected)
+        match = next(
+            (
+                path for path in owner_evidence
+                if glob_matches(relative(path, root), pattern) or glob_matches(path.name, pattern)
+            ),
+            None,
+        )
+        return [f"owning manifest {pattern}: {relative(match, root)}"] if match else []
+    if key == "owningDependency":
+        dependency = str(expected).lower()
+        return [f"owning manifest dependency {expected}"] if dependency in dependencies else []
+    if key == "contentPattern":
+        pattern = str(expected["glob"])
+        for path in sorted(set(files + owner_evidence)):
+            if not glob_matches(relative(path, root), pattern) and not glob_matches(path.name, pattern):
+                continue
+            try:
+                text = path.read_text(encoding="utf-8")
+            except (OSError, UnicodeDecodeError):
+                continue
+            if str(expected["contains"]) in text:
+                return [f"content {expected['contains']}: {relative(path, root)}"]
+        return []
+    if key == "sourceImport":
+        module = str(expected["module"])
+        extensions = {str(value).lower() for value in expected["extensions"]}
+        match = next(
+            (
+                path for path in files
+                if path.suffix.lower() in extensions and python_imports_module(path, module)
+            ),
+            None,
+        )
+        return [f"source import {module}: {relative(match, root)}"] if match else []
+    raise ValueError(f"Unknown activation predicate: {key}")
+
+
+def clause_evidence(
+    clause: dict[str, object],
+    root: Path,
+    files: list[Path],
+    owner_evidence: list[Path],
+    dependencies: set[str],
+) -> list[str]:
+    """Evaluate a nested any-of or all-of clause and retain evidence from satisfied branches."""
+    if "anyOf" in clause:
+        evidence = [
+            item
+            for child in clause["anyOf"]
+            for item in clause_evidence(child, root, files, owner_evidence, dependencies)
+        ]
+        return list(dict.fromkeys(evidence))
+    if "allOf" in clause:
+        evidence: list[str] = []
+        for child in clause["allOf"]:
+            child_evidence = clause_evidence(child, root, files, owner_evidence, dependencies)
+            if not child_evidence:
+                return []
+            evidence.extend(child_evidence)
+        return list(dict.fromkeys(evidence))
+    return predicate_evidence(clause, root, files, owner_evidence, dependencies)
+
+
 def activation_evidence(
     entry: dict[str, object],
     root: Path,
     files: list[Path],
     manifests: list[Path],
 ) -> list[str]:
+    """Return evidence when at least one complete activation branch selects the skill."""
     activation = entry.get("activation", {})
-    scope_evidence: list[str] = []
-    project_evidence: list[str] = []
-    relative_files = [relative(path, root) for path in files]
-    extensions = {str(value).lower() for value in activation.get("fileExtensions", [])}
-    match = next((path for path in files if path.suffix.lower() in extensions), None)
-    if match:
-        scope_evidence.append(f"scope extension {match.suffix.lower()}: {relative(match, root)}")
-    for pattern in activation.get("fileGlobs", []):
-        matched = next((value for value in relative_files if fnmatch.fnmatch(value, str(pattern))), None)
-        if matched:
-            scope_evidence.append(f"scope path {pattern}: {matched}")
     owner_evidence = sorted(set(manifests + [child for path in manifests for child in path.parent.iterdir() if child.is_file()]))
-    manifest_relative = [relative(path, root) for path in owner_evidence]
-    for pattern in activation.get("manifestFiles", []):
-        matched = next(
-            (
-                value for value in manifest_relative
-                if fnmatch.fnmatch(value, str(pattern)) or fnmatch.fnmatch(Path(value).name, str(pattern))
-            ),
-            None,
-        )
-        if matched:
-            project_evidence.append(f"owning manifest {pattern}: {matched}")
     dependencies = manifest_dependencies(manifests)
-    for dependency in activation.get("manifestDependencies", []):
-        if str(dependency).lower() in dependencies:
-            project_evidence.append(f"owning manifest dependency {dependency}")
-    content_files = sorted(set(files + owner_evidence))
-    for pattern in activation.get("contentPatterns", []):
-        for path in content_files:
-            value = relative(path, root)
-            if not fnmatch.fnmatch(value, str(pattern["glob"])) and not fnmatch.fnmatch(path.name, str(pattern["glob"])):
-                continue
-            try:
-                text = path.read_text(encoding="utf-8")
-            except (OSError, UnicodeDecodeError):
-                continue
-            if str(pattern["contains"]) in text:
-                project_evidence.append(f"content {pattern['contains']}: {value}")
-                break
-    has_scope_selectors = bool(activation.get("fileExtensions") or activation.get("fileGlobs"))
-    has_project_signals = bool(
-        activation.get("manifestFiles")
-        or activation.get("manifestDependencies")
-        or activation.get("contentPatterns")
-    )
-    if has_scope_selectors and not scope_evidence:
-        return []
-    if has_project_signals and not project_evidence:
-        return []
-    return scope_evidence + project_evidence
+    return clause_evidence(activation, root, files, owner_evidence, dependencies)
 
 
 def detect_scope(
@@ -189,6 +299,7 @@ def detect_scope(
     registry: dict[str, object],
     skills_root: Path,
 ) -> dict[str, object]:
+    """Detect and validate one requested project scope, returning a durable folder loadout."""
     target = (scope if scope.is_absolute() else root / scope).resolve()
     try:
         scope_value = target.relative_to(root).as_posix()
@@ -301,6 +412,7 @@ def detect_scope(
 
 
 def detect(args: argparse.Namespace) -> tuple[dict[str, object], int]:
+    """Run detection for all requested scopes and return the aggregate process exit status."""
     root = args.project_root.resolve()
     registry = load_yaml(args.registry)
     loadouts = [detect_scope(root, Path(value), registry, args.skills_root) for value in args.scope]
@@ -316,6 +428,7 @@ def detect(args: argparse.Namespace) -> tuple[dict[str, object], int]:
 
 
 def main() -> int:
+    """Parse command-line inputs, run detection, and print JSON or YAML output."""
     parser = argparse.ArgumentParser(description="Detect setup-time technology skills for selected project folders.")
     parser.add_argument("--project-root", type=Path, required=True)
     parser.add_argument("--scope", action="append", required=True)

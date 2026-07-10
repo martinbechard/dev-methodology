@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+# AI attribution: Modified with AI assistance.
+# Summary: Validates technology detection definitions and generates their portable registry and detector mirror.
+# Design: design/technology-skill-detection-spec.md
+
 from __future__ import annotations
 
 import argparse
@@ -20,9 +25,14 @@ DETECTION_FILE = "detection.yaml"
 ALLOWED_KINDS = {"technology", "domain"}
 ALLOWED_SELECTIONS = {"additive", "exclusive"}
 SCHEMA = "dev-methodology-technology-detection"
+SCHEMA_VERSION = 2
+COMPOSITE_KEYS = {"allOf", "anyOf"}
+STRING_PREDICATES = {"fileExtension", "fileGlob", "manifestFile", "owningDependency"}
+MAPPING_PREDICATES = {"contentPattern", "fileMatch", "sourceImport"}
 
 
 def load_yaml(path: Path) -> dict[str, object]:
+    """Load one YAML mapping so malformed source definitions fail validation."""
     value = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(value, dict):
         raise ValueError(f"Expected a YAML mapping: {path}")
@@ -30,6 +40,7 @@ def load_yaml(path: Path) -> dict[str, object]:
 
 
 def role_skill_names(role: dict[str, object]) -> list[str]:
+    """Return canonical skill identifiers from string and justified role entries."""
     value = role.get("skills")
     if not isinstance(value, list):
         raise ValueError(f"Role {role.get('name')} skills must be a list.")
@@ -45,10 +56,12 @@ def role_skill_names(role: dict[str, object]) -> list[str]:
 
 
 def skill_names() -> set[str]:
+    """Return every bundled skill identifier available to detection definitions."""
     return {path.parent.name for path in SKILLS_ROOT.glob("*/SKILL.md")}
 
 
 def validate_string_list(value: object, field: str, path: Path, *, allow_empty: bool = True) -> list[str]:
+    """Validate a YAML list whose values must be non-empty strings."""
     if not isinstance(value, list) or any(not isinstance(item, str) or not item for item in value):
         raise ValueError(f"{field} must be a list of non-empty strings: {path}")
     if not allow_empty and not value:
@@ -56,45 +69,69 @@ def validate_string_list(value: object, field: str, path: Path, *, allow_empty: 
     return list(value)
 
 
-def validate_activation(value: object, path: Path) -> dict[str, list[object]]:
+def validate_mapping_predicate(key: str, value: object, field: str, path: Path) -> dict[str, object]:
+    """Validate predicates that bind multiple values to one observed artifact."""
     if not isinstance(value, dict):
-        raise ValueError(f"activation must be a mapping: {path}")
-    allowed = {
-        "contentPatterns",
-        "fileExtensions",
-        "fileGlobs",
-        "manifestDependencies",
-        "manifestFiles",
-    }
-    unexpected = sorted(set(value) - allowed)
-    if unexpected:
-        raise ValueError(f"Unknown activation keys {unexpected}: {path}")
-    normalized: dict[str, list[object]] = {}
-    for key, items in value.items():
-        if not isinstance(items, list):
-            raise ValueError(f"activation.{key} must be a list: {path}")
-        if key == "contentPatterns":
-            patterns: list[object] = []
-            for item in items:
-                if not isinstance(item, dict) or set(item) != {"glob", "contains"}:
-                    raise ValueError(f"contentPatterns entries need glob and contains: {path}")
-                if not all(isinstance(item[name], str) and item[name] for name in ("glob", "contains")):
-                    raise ValueError(f"contentPatterns values must be non-empty strings: {path}")
-                patterns.append(dict(item))
-            normalized[key] = patterns
+        raise ValueError(f"{field}.{key} must be a mapping: {path}")
+    required = {
+        "contentPattern": ("glob", "contains"),
+        "fileMatch": ("glob", "extensions"),
+        "sourceImport": ("module", "extensions"),
+    }[key]
+    if set(value) != set(required):
+        raise ValueError(f"{field}.{key} requires {sorted(required)}: {path}")
+    normalized: dict[str, object] = {}
+    for name in required:
+        item = value[name]
+        if name == "extensions":
+            extensions = validate_string_list(item, f"{field}.{key}.extensions", path, allow_empty=False)
+            if any(not extension.startswith(".") for extension in extensions):
+                raise ValueError(f"{field}.{key}.extensions values must start with a period: {path}")
+            if key == "sourceImport" and any(extension not in {".py", ".pyi"} for extension in extensions):
+                raise ValueError(f"{field}.sourceImport currently supports Python extensions only: {path}")
+            normalized[name] = extensions
+        elif not isinstance(item, str) or not item:
+            raise ValueError(f"{field}.{key}.{name} must be a non-empty string: {path}")
         else:
-            normalized[key] = validate_string_list(items, f"activation.{key}", path)
-    if not any(normalized.values()):
-        raise ValueError(f"activation must contain evidence: {path}")
+            normalized[name] = item
+    return normalized
+
+
+def validate_clause(value: object, field: str, path: Path) -> dict[str, object]:
+    """Validate one recursive activation clause with exactly one operator or predicate."""
+    if not isinstance(value, dict) or len(value) != 1:
+        raise ValueError(f"{field} must contain exactly one activation key: {path}")
+    key, item = next(iter(value.items()))
+    if key in COMPOSITE_KEYS:
+        if not isinstance(item, list) or not item:
+            raise ValueError(f"{field}.{key} must be a non-empty list: {path}")
+        return {key: [validate_clause(child, f"{field}.{key}", path) for child in item]}
+    if key in STRING_PREDICATES:
+        if not isinstance(item, str) or not item:
+            raise ValueError(f"{field}.{key} must be a non-empty string: {path}")
+        if key == "fileExtension" and not item.startswith("."):
+            raise ValueError(f"{field}.fileExtension must start with a period: {path}")
+        return {key: item}
+    if key in MAPPING_PREDICATES:
+        return {key: validate_mapping_predicate(key, item, field, path)}
+    raise ValueError(f"Unknown activation key {key}: {path}")
+
+
+def validate_activation(value: object, path: Path) -> dict[str, object]:
+    """Validate the root any-of activation rule used to select one named skill."""
+    normalized = validate_clause(value, "activation", path)
+    if set(normalized) != {"anyOf"}:
+        raise ValueError(f"activation must use anyOf as its root clause: {path}")
     return normalized
 
 
 def load_detection_entries() -> list[dict[str, object]]:
+    """Load and normalize every specialized skill detection definition."""
     available_skills = skill_names()
     entries: list[dict[str, object]] = []
     for path in sorted(SKILLS_ROOT.glob(f"*/{DETECTION_FILE}")):
         entry = load_yaml(path)
-        if entry.get("schema") != SCHEMA or entry.get("version") != 1:
+        if entry.get("schema") != SCHEMA or entry.get("version") != SCHEMA_VERSION:
             raise ValueError(f"Unsupported detection schema or version: {path}")
         allowed_fields = {
             "schema", "version", "skill", "kind", "label", "capabilities", "activation",
@@ -146,6 +183,7 @@ def load_detection_entries() -> list[dict[str, object]]:
 
 
 def validate_complete_coverage(entries: list[dict[str, object]]) -> None:
+    """Require every stack-and-domain skill to declare setup-time detection metadata."""
     detected = {str(entry["skill"]) for entry in entries}
     specialized: set[str] = set()
     for path in SKILLS_ROOT.glob("*/SKILL.md"):
@@ -158,6 +196,7 @@ def validate_complete_coverage(entries: list[dict[str, object]]) -> None:
 
 
 def validate_fixed_role_loadouts(entries: list[dict[str, object]]) -> None:
+    """Reject specialized detected skills from technology-neutral fixed role loadouts."""
     specialized = {str(entry["skill"]) for entry in entries}
     violations: list[str] = []
     for path in sorted((ROOT / "agents" / "roles").glob("*/*.role.yaml")):
@@ -171,9 +210,10 @@ def validate_fixed_role_loadouts(entries: list[dict[str, object]]) -> None:
 
 
 def registry(entries: list[dict[str, object]]) -> dict[str, object]:
+    """Build the portable registry document consumed by the detector and design pages."""
     return {
         "schema": "dev-methodology-technology-skill-detection-registry",
-        "version": 1,
+        "version": SCHEMA_VERSION,
         "selectionPolicy": {
             "scopeEvidence": "deterministic",
             "missingRequiredSkill": "blocked",
@@ -185,6 +225,7 @@ def registry(entries: list[dict[str, object]]) -> dict[str, object]:
 
 
 def render_js(value: dict[str, object]) -> str:
+    """Render the registry as deterministic browser data for static design pages."""
     payload = json.dumps(value, indent=2, sort_keys=True)
     return (
         "// Generated by scripts/build-technology-detection.py. Do not edit by hand.\n"
@@ -193,6 +234,7 @@ def render_js(value: dict[str, object]) -> str:
 
 
 def expected_outputs(entries: list[dict[str, object]]) -> dict[Path, str]:
+    """Return every generated output and its expected content for build or check mode."""
     value = registry(entries)
     return {
         REGISTRY_YAML: yaml.safe_dump(value, sort_keys=False, allow_unicode=False),
@@ -202,6 +244,7 @@ def expected_outputs(entries: list[dict[str, object]]) -> dict[Path, str]:
 
 
 def main() -> int:
+    """Validate canonical definitions and write or check all generated detection artifacts."""
     parser = argparse.ArgumentParser(description="Build and validate setup-time technology detection artifacts.")
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()

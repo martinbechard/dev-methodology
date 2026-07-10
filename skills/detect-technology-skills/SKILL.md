@@ -28,6 +28,30 @@ python3 [detector-skill]/scripts/detect.py --project-root [root] --scope [folder
 
 Repeat the scope option for separately analyzed folders. Keep each returned loadout separate.
 
+## Evidence Model
+
+- Each detection definition explicitly names the skill selected by its activation rule.
+- Activation uses an anyOf root. Each branch may be one evidence predicate or an allOf clause whose predicates must all match.
+- FileMatch binds a path glob and allowed extensions to the same file. Use it when a broad path name must not be satisfied by documentation or configuration files.
+- OwningDependency and manifestFile read only the nearest owning project boundary.
+- SourceImport parses supported source code so comments and string examples do not count as imports.
+- The detector records the concrete matches from every satisfied branch as source evidence.
+
+Example:
+
+```yaml
+skill: fastapi
+activation:
+  anyOf:
+    - allOf:
+        - fileExtension: .py
+        - owningDependency: fastapi
+    - sourceImport:
+        module: fastapi
+        extensions:
+          - .py
+```
+
 ## Boundaries
 
 - Detect only technology and domain skills with machine-readable detection metadata.
@@ -35,4 +59,5 @@ Repeat the scope option for separately analyzed folders. Keep each returned load
 - Do not add generic fixed-role skills to detector metadata.
 - Stop setup when a detected required skill is unavailable or equal-priority exclusive matches conflict.
 - Preserve explicit no-variant results instead of inventing support.
+- Require one complete activation branch before selecting its named skill.
 - Treat the bundled detector script as a generated mirror of the canonical repository script.

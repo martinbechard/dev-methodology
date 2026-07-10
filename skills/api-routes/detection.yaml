@@ -1,11 +1,18 @@
 schema: dev-methodology-technology-detection
-version: 1
+version: 2
 skill: api-routes
 kind: technology
 label: Application route handlers
 capabilities:
 - http-api
 activation:
-  fileGlobs:
-  - "**/app/api/**/route.*"
-  - "**/pages/api/**"
+  anyOf:
+  - allOf:
+    - anyOf:
+      - fileMatch:
+          glob: "**/app/api/**/route.*"
+          extensions: [.js, .jsx, .ts, .tsx, .mjs, .cjs, .mts, .cts]
+      - fileMatch:
+          glob: "**/pages/api/**/*"
+          extensions: [.js, .jsx, .ts, .tsx, .mjs, .cjs, .mts, .cts]
+    - owningDependency: next

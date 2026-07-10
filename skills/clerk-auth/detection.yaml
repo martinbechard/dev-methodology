@@ -1,18 +1,20 @@
 schema: dev-methodology-technology-detection
-version: 1
+version: 2
 skill: clerk-auth
 kind: technology
 label: Clerk identity integration
 capabilities:
 - identity-provider
 activation:
-  fileExtensions:
-  - ".ts"
-  - ".tsx"
-  - ".js"
-  - ".jsx"
-  - ".mts"
-  - ".cts"
-  manifestDependencies:
-  - "@clerk/nextjs"
-  - "@clerk/clerk-react"
+  anyOf:
+  - allOf:
+    - anyOf:
+      - fileExtension: .ts
+      - fileExtension: .tsx
+      - fileExtension: .js
+      - fileExtension: .jsx
+      - fileExtension: .mts
+      - fileExtension: .cts
+    - anyOf:
+      - owningDependency: "@clerk/nextjs"
+      - owningDependency: "@clerk/clerk-react"

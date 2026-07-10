@@ -1,18 +1,19 @@
 schema: dev-methodology-technology-detection
-version: 1
+version: 2
 skill: tailwind-design-system
 kind: technology
 label: Tailwind design system
 capabilities:
 - styling-system
 activation:
-  fileExtensions:
-  - ".ts"
-  - ".tsx"
-  - ".js"
-  - ".jsx"
-  - ".css"
-  manifestDependencies:
-  - tailwindcss
-  manifestFiles:
-  - tailwind.config.*
+  anyOf:
+  - allOf:
+    - anyOf:
+      - fileExtension: .ts
+      - fileExtension: .tsx
+      - fileExtension: .js
+      - fileExtension: .jsx
+      - fileExtension: .css
+    - anyOf:
+      - owningDependency: tailwindcss
+      - manifestFile: tailwind.config.*

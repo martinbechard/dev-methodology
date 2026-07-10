@@ -447,7 +447,7 @@
       </article>
       <article class="card skill">
         <h3>Skill-owned activation</h3>
-        <p>Each specialized technology or domain skill owns detection.yaml with capabilities, deterministic file, manifest, dependency, or content evidence, companion skills, and required-load policy. Generic fixed-role skills and optional local tools are absent from detection metadata.</p>
+        <p>Each specialized technology or domain skill owns detection.yaml with an explicit skill identifier and any-of activation branches. A branch may require all of several file, same-file path and extension, owning manifest, dependency, content, or parsed source-import predicates. Generic fixed-role skills and optional local tools are absent from detection metadata.</p>
       </article>
       <article class="card config">
         <h3>Generated registry</h3>
@@ -459,7 +459,7 @@
       </article>
       <article class="card rule">
         <h3>Truthful proof boundary</h3>
-        <p>The detector records scope evidence, installed availability, missing required skills, exclusive conflicts, and explicit no-variant results. Runtime activation remains a separate harness-verification concern.</p>
+        <p>The detector selects a named skill only when one complete activation branch succeeds. It records concrete scope evidence, installed availability, missing required skills, exclusive conflicts, and explicit no-variant results. Runtime activation remains a separate harness-verification concern.</p>
       </article>
       <article class="card rule">
         <h3>Stable inputs</h3>

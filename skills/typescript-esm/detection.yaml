@@ -1,20 +1,20 @@
 schema: dev-methodology-technology-detection
-version: 1
+version: 2
 skill: typescript-esm
 kind: technology
 label: TypeScript ECMAScript modules
 capabilities:
 - module-system
 activation:
-  fileExtensions:
-  - ".ts"
-  - ".tsx"
-  - ".mts"
-  - ".cts"
-  contentPatterns:
-  - glob: package.json
-    contains: '"type": "module"'
-  - glob: tsconfig*.json
-    contains: NodeNext
+  anyOf:
+  - allOf:
+    - anyOf:
+      - fileExtension: .ts
+      - fileExtension: .tsx
+      - fileExtension: .mts
+      - fileExtension: .cts
+    - anyOf:
+      - contentPattern: {glob: package.json, contains: '"type": "module"'}
+      - contentPattern: {glob: tsconfig*.json, contains: NodeNext}
 companions:
 - typescript-coding

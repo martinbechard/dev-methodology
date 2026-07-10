@@ -1,13 +1,14 @@
 schema: dev-methodology-technology-detection
-version: 1
+version: 2
 skill: electron-main
 kind: technology
 label: Electron main process
 capabilities:
 - desktop-main-runtime
 activation:
-  fileGlobs:
-  - "**/main/**/*.*"
-  - "**/*electron*main*.*"
-  manifestDependencies:
-  - electron
+  anyOf:
+  - allOf:
+    - anyOf:
+      - fileGlob: "**/main/**/*.*"
+      - fileGlob: "**/*electron*main*.*"
+    - owningDependency: electron

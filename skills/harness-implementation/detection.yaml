@@ -1,12 +1,18 @@
 schema: dev-methodology-technology-detection
-version: 1
+version: 2
 skill: harness-implementation
 kind: domain
 label: Agent harness implementation
 capabilities:
 - agent-harness-runtime
 activation:
-  fileGlobs:
-  - "**/*harness*.*"
-  - "**/*agent-runtime*.*"
-  - "**/runtime/agents/**/*.*"
+  anyOf:
+  - fileMatch:
+      glob: "**/*harness*.*"
+      extensions: [.js, .jsx, .ts, .tsx, .mjs, .cjs, .mts, .cts, .py, .pyi, .java, .kt, .go, .rs, .cs]
+  - fileMatch:
+      glob: "**/*agent-runtime*.*"
+      extensions: [.js, .jsx, .ts, .tsx, .mjs, .cjs, .mts, .cts, .py, .pyi, .java, .kt, .go, .rs, .cs]
+  - fileMatch:
+      glob: "**/runtime/agents/**/*"
+      extensions: [.js, .jsx, .ts, .tsx, .mjs, .cjs, .mts, .cts, .py, .pyi, .java, .kt, .go, .rs, .cs]

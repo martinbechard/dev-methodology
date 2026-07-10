@@ -1,17 +1,19 @@
 schema: dev-methodology-technology-detection
-version: 1
+version: 2
 skill: langgraph
 kind: technology
 label: LangGraph
 capabilities:
 - workflow-runtime
 activation:
-  fileExtensions:
-  - ".ts"
-  - ".tsx"
-  - ".js"
-  - ".jsx"
-  - ".py"
-  manifestDependencies:
-  - "@langchain/langgraph"
-  - langgraph
+  anyOf:
+  - allOf:
+    - anyOf:
+      - fileExtension: .ts
+      - fileExtension: .tsx
+      - fileExtension: .js
+      - fileExtension: .jsx
+      - fileExtension: .py
+    - anyOf:
+      - owningDependency: "@langchain/langgraph"
+      - owningDependency: langgraph

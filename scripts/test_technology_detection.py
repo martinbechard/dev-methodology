@@ -28,6 +28,7 @@ def run_detection(
     detector: Path = DETECT_SCRIPT,
     extra: list[str] | None = None,
 ) -> dict[str, object]:
+    """Run one detector implementation and return its parsed result at the expected exit boundary."""
     arguments = ["python3", str(detector), "--project-root", str(project)]
     for scope in scopes:
         arguments.extend(["--scope", scope])
@@ -39,6 +40,127 @@ def run_detection(
 
 
 class TechnologyDetectionTests(unittest.TestCase):
+    """Verify detector clauses, ownership isolation, generated mirrors, and routing output."""
+    def test_explicit_activation_clause_requires_every_condition(self) -> None:
+        for dependencies, expected in (([], False), (["example-framework"], True)):
+            with self.subTest(dependencies=dependencies):
+                with tempfile.TemporaryDirectory() as directory:
+                    root = Path(directory)
+                    project = root / "project"
+                    skills = root / "skills"
+                    project.mkdir()
+                    (project / "main.py").write_text("value = 1\n", encoding="utf-8")
+                    dependency_line = f"dependencies = {json.dumps(dependencies)}\n" if dependencies else ""
+                    (project / "pyproject.toml").write_text(
+                        '[project]\nname = "example"\nversion = "1"\n' + dependency_line,
+                        encoding="utf-8",
+                    )
+                    skill_root = skills / "example-framework"
+                    skill_root.mkdir(parents=True)
+                    (skill_root / "SKILL.md").write_text(
+                        "---\nname: example-framework\ndescription: Test framework.\n---\n",
+                        encoding="utf-8",
+                    )
+                    registry = root / "registry.yaml"
+                    registry.write_text(yaml.safe_dump({"skills": [{
+                        "skill": "example-framework",
+                        "kind": "technology",
+                        "capabilities": ["application-framework"],
+                        "activation": {"anyOf": [{"allOf": [
+                            {"fileExtension": ".py"},
+                            {"owningDependency": "example-framework"},
+                        ]}]},
+                        "companions": [],
+                        "selection": "additive",
+                        "priority": 100,
+                        "requiredWhenDetected": True,
+                    }]}), encoding="utf-8")
+
+                    result = run_detection(
+                        project,
+                        "main.py",
+                        extra=["--registry", str(registry), "--skills-root", str(skills)],
+                    )
+
+                    self.assertEqual(expected, "example-framework" in result["loadouts"][0]["skills"])
+
+    def test_source_import_is_code_evidence_not_comment_or_string_text(self) -> None:
+        cases = (
+            ("from fastapi import FastAPI\n", True),
+            ("# from fastapi import FastAPI\n", False),
+            ('EXAMPLE = "from fastapi import FastAPI"\n', False),
+        )
+        for source, expected in cases:
+            with self.subTest(source=source):
+                with tempfile.TemporaryDirectory() as directory:
+                    root = Path(directory)
+                    project = root / "project"
+                    skills = root / "skills"
+                    project.mkdir()
+                    (project / "main.py").write_text(source, encoding="utf-8")
+                    skill_root = skills / "example-framework"
+                    skill_root.mkdir(parents=True)
+                    (skill_root / "SKILL.md").write_text(
+                        "---\nname: example-framework\ndescription: Test framework.\n---\n",
+                        encoding="utf-8",
+                    )
+                    registry = root / "registry.yaml"
+                    registry.write_text(yaml.safe_dump({"skills": [{
+                        "skill": "example-framework",
+                        "kind": "technology",
+                        "capabilities": ["application-framework"],
+                        "activation": {"anyOf": [{"sourceImport": {
+                            "module": "fastapi",
+                            "extensions": [".py"],
+                        }}]},
+                        "companions": [],
+                        "selection": "additive",
+                        "priority": 100,
+                        "requiredWhenDetected": True,
+                    }]}), encoding="utf-8")
+
+                    result = run_detection(
+                        project,
+                        "main.py",
+                        extra=["--registry", str(registry), "--skills-root", str(skills)],
+                    )
+
+                    self.assertEqual(expected, "example-framework" in result["loadouts"][0]["skills"])
+
+    def test_root_level_globstar_path_matches(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            project = root / "project"
+            skills = root / "skills"
+            route = project / "app" / "api" / "users" / "route.ts"
+            route.parent.mkdir(parents=True)
+            route.write_text("export const GET = () => new Response();\n", encoding="utf-8")
+            skill_root = skills / "example-routes"
+            skill_root.mkdir(parents=True)
+            (skill_root / "SKILL.md").write_text(
+                "---\nname: example-routes\ndescription: Test routes.\n---\n",
+                encoding="utf-8",
+            )
+            registry = root / "registry.yaml"
+            registry.write_text(yaml.safe_dump({"skills": [{
+                "skill": "example-routes",
+                "kind": "technology",
+                "capabilities": ["http-api"],
+                "activation": {"anyOf": [{"fileGlob": "**/app/api/**/route.ts"}]},
+                "companions": [],
+                "selection": "additive",
+                "priority": 100,
+                "requiredWhenDetected": True,
+            }]}), encoding="utf-8")
+
+            result = run_detection(
+                project,
+                "app/api",
+                extra=["--registry", str(registry), "--skills-root", str(skills)],
+            )
+
+            self.assertEqual(["example-routes"], result["loadouts"][0]["skills"])
+
     def test_generated_registry_and_installed_detector_are_current(self) -> None:
         completed = subprocess.run(
             ["python3", str(BUILD_SCRIPT), "--check"],
@@ -110,6 +232,64 @@ class TechnologyDetectionTests(unittest.TestCase):
                 evidence = {row["skill"]: row["evidence"] for row in result["loadouts"][0]["sourceEvidence"]}
                 self.assertTrue(any("fastapi" in value.lower() for value in evidence["fastapi"]))
 
+    def test_fastapi_import_text_in_detector_tests_does_not_activate_fastapi(self) -> None:
+        result = run_detection(ROOT, "scripts")
+        self.assertEqual(["python-coding"], result["loadouts"][0]["skills"])
+
+    def test_next_api_routes_require_code_and_the_owning_next_dependency(self) -> None:
+        cases = (
+            ("route.py", {"next": "1"}, ["python-coding"]),
+            ("route.ts", {}, ["typescript-coding"]),
+            ("route.ts", {"next": "1"}, ["api-routes", "nextjs-app-router", "typescript-coding"]),
+        )
+        for file_name, dependencies, expected in cases:
+            with self.subTest(file_name=file_name, dependencies=dependencies):
+                with tempfile.TemporaryDirectory() as directory:
+                    root = Path(directory)
+                    route = root / "app" / "api" / "users" / file_name
+                    route.parent.mkdir(parents=True)
+                    route.write_text("value = 1\n", encoding="utf-8")
+                    (root / "package.json").write_text(
+                        json.dumps({"dependencies": dependencies}) + "\n",
+                        encoding="utf-8",
+                    )
+                    result = run_detection(root, "app")
+                    self.assertEqual(expected, result["loadouts"][0]["skills"])
+
+    def test_domain_detector_names_in_non_code_files_do_not_activate_product_skills(self) -> None:
+        cases = (
+            ("docs/harness-design.md", "agent harness\n"),
+            ("docs/tool-runtime.md", "tool runtime\n"),
+            ("docs/plan-engine.md", "plan engine\n"),
+            ("docs/local-model.md", "localModel\n"),
+            ("plans/example.yaml", "steps: []\n"),
+        )
+        for file_name, content in cases:
+            with self.subTest(file_name=file_name):
+                with tempfile.TemporaryDirectory() as directory:
+                    root = Path(directory)
+                    path = root / file_name
+                    path.parent.mkdir(parents=True)
+                    path.write_text(content, encoding="utf-8")
+                    result = run_detection(root, path.parent.relative_to(root).as_posix())
+                    self.assertEqual([], result["loadouts"][0]["skills"])
+
+    def test_domain_detectors_accept_matching_code_artifacts(self) -> None:
+        cases = (
+            ("agent-harness.ts", "export const value = 1;\n", ["harness-implementation", "typescript-coding"]),
+            ("tool-runtime.py", "value = 1\n", ["python-coding", "tool-runtime-implementation"]),
+            ("plan-engine.go", "package plan\n", ["plan-engine-implementation"]),
+            ("local-model.ts", "export const localModel = true;\n", ["local-model-integration", "typescript-coding"]),
+        )
+        for file_name, content, expected in cases:
+            with self.subTest(file_name=file_name):
+                with tempfile.TemporaryDirectory() as directory:
+                    root = Path(directory)
+                    (root / "src").mkdir()
+                    (root / "src" / file_name).write_text(content, encoding="utf-8")
+                    result = run_detection(root, "src")
+                    self.assertEqual(expected, result["loadouts"][0]["skills"])
+
     def test_mixed_repository_produces_separate_scope_loadouts(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -160,7 +340,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 "skill": "missing-python",
                 "kind": "technology",
                 "capabilities": ["language-coding"],
-                "activation": {"fileExtensions": [".py"]},
+                "activation": {"anyOf": [{"fileExtension": ".py"}]},
                 "companions": [],
                 "selection": "additive",
                 "priority": 100,
@@ -194,7 +374,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                     "skill": skill,
                     "kind": "technology",
                     "capabilities": ["language-coding"],
-                    "activation": {"fileExtensions": [".mix"]},
+                    "activation": {"anyOf": [{"fileExtension": ".mix"}]},
                     "companions": [],
                     "selection": "exclusive",
                     "exclusiveGroup": "mixed-language",
@@ -282,8 +462,11 @@ class TechnologyDetectionTests(unittest.TestCase):
 
     def test_registry_contains_only_specialized_skills(self) -> None:
         registry = yaml.safe_load(REGISTRY.read_text(encoding="utf-8"))
+        self.assertEqual(2, registry["version"])
         self.assertTrue(registry["skills"])
         self.assertEqual({"technology", "domain"}, {entry["kind"] for entry in registry["skills"]})
+        self.assertTrue(all(entry.get("skill") for entry in registry["skills"]))
+        self.assertTrue(all(set(entry["activation"]) == {"anyOf"} for entry in registry["skills"]))
         self.assertFalse({"careful-coding", "test-strategy", "detect-technology-skills"} & {entry["skill"] for entry in registry["skills"]})
 
 

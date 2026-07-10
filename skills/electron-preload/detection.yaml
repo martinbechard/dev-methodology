@@ -1,13 +1,14 @@
 schema: dev-methodology-technology-detection
-version: 1
+version: 2
 skill: electron-preload
 kind: technology
 label: Electron preload boundary
 capabilities:
 - desktop-preload-boundary
 activation:
-  fileGlobs:
-  - "**/preload/**/*.*"
-  - "**/*preload*.*"
-  manifestDependencies:
-  - electron
+  anyOf:
+  - allOf:
+    - anyOf:
+      - fileGlob: "**/preload/**/*.*"
+      - fileGlob: "**/*preload*.*"
+    - owningDependency: electron

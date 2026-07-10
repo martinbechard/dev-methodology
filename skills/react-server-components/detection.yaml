@@ -1,11 +1,11 @@
 schema: dev-methodology-technology-detection
-version: 1
+version: 2
 skill: react-server-components
 kind: technology
 label: React Server Components
 capabilities:
 - server-user-interface
 activation:
-  fileGlobs:
-  - "**/app/**/*.tsx"
-  - "**/app/**/*.jsx"
+  anyOf:
+  - fileGlob: "**/app/**/*.tsx"
+  - fileGlob: "**/app/**/*.jsx"

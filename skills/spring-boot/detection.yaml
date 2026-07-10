@@ -1,17 +1,16 @@
 schema: dev-methodology-technology-detection
-version: 1
+version: 2
 skill: spring-boot
 kind: technology
 label: Spring Boot
 capabilities:
 - application-framework
 activation:
-  fileExtensions:
-  - ".java"
-  contentPatterns:
-  - glob: pom.xml
-    contains: spring-boot
-  - glob: build.gradle*
-    contains: org.springframework.boot
+  anyOf:
+  - allOf:
+    - fileExtension: .java
+    - anyOf:
+      - contentPattern: {glob: pom.xml, contains: spring-boot}
+      - contentPattern: {glob: build.gradle*, contains: org.springframework.boot}
 companions:
 - java-coding

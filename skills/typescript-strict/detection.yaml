@@ -1,18 +1,18 @@
 schema: dev-methodology-technology-detection
-version: 1
+version: 2
 skill: typescript-strict
 kind: technology
 label: Strict TypeScript
 capabilities:
 - strict-type-system
 activation:
-  fileExtensions:
-  - ".ts"
-  - ".tsx"
-  - ".mts"
-  - ".cts"
-  contentPatterns:
-  - glob: tsconfig*.json
-    contains: '"strict": true'
+  anyOf:
+  - allOf:
+    - anyOf:
+      - fileExtension: .ts
+      - fileExtension: .tsx
+      - fileExtension: .mts
+      - fileExtension: .cts
+    - contentPattern: {glob: tsconfig*.json, contains: '"strict": true'}
 companions:
 - typescript-coding

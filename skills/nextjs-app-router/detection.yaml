@@ -1,12 +1,14 @@
 schema: dev-methodology-technology-detection
-version: 1
+version: 2
 skill: nextjs-app-router
 kind: technology
 label: Next.js App Router
 capabilities:
 - web-application-framework
 activation:
-  manifestDependencies:
-  - next
-  fileGlobs:
-  - "**/app/**/*.*"
+  anyOf:
+  - allOf:
+    - fileMatch:
+        glob: "**/app/**/*"
+        extensions: [.js, .jsx, .ts, .tsx, .mjs, .cjs, .mts, .cts]
+    - owningDependency: next
