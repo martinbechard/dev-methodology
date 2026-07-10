@@ -1,0 +1,17 @@
+# Codex app metadata for this skill.
+# Derived interface fields are refreshed from SKILL.md by scripts/openai_metadata.py.
+interface:
+  # User-facing name shown in Codex skill surfaces.
+  display_name: Review Unit Test Plan
+  # User-facing summary shown in Codex skill surfaces.
+  short_description: Use when reviewing a unit test plan for source authority, behavior coverage, boundary contracts...
+  # Prompt Codex can use when launching this skill directly.
+  default_prompt: Use $review-unit-test-plan to review this unit test plan with its evidence checklist.
+
+# Optional invocation policy placeholder.
+# policy:
+#   allow_implicit_invocation: false
+
+# Optional tool dependency placeholder.
+# dependencies:
+#   tools: []

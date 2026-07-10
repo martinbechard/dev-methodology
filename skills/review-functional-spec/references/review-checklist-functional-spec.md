@@ -44,6 +44,9 @@ Do not mark pass without quoted evidence.
 - Question: Do Verification blocks name test type, test files, scenario, steps, assertions, and current status?
 - Question: Do Related Documents link architecture, high-level design, module design, tests, and wiki pages that support the workflow?
 - Question: Does technical implementation detail stay in related technical documents unless users need it to understand behavior?
+- Question: When named scenarios are used, do they cover every material actor, entry point, state, permission, main path, alternate path, and recovery path?
+- Question: Are scenario prose, workflow diagrams, state tables, and machine-readable contracts consistent with each other?
+- Question: Does the artifact name the project-owned approval or acceptance authority when one exists, without inventing a universal gate?
 
 ## Findings
 

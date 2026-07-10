@@ -59,6 +59,7 @@ Use source inventory first, then use structure-aware search where it adds eviden
 6. Add a Processing Diagram only when conditional flow, retries, error handling, or state transitions are difficult to understand from prose alone.
 7. Link related tests and source files from each module document.
 8. Record missing tests, ambiguous ownership, and undocumented side effects as open questions.
+9. When an important value crosses module, persistence, serialization, external-system, security, or UI boundaries, trace its source, transformations, validations, ownership, storage, and consumers. Document only lineage that affects correctness, privacy, security, or operability.
 
 Prefer one module document for one coherent responsibility. Split only when separate responsibilities can change independently.
 

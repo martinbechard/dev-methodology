@@ -84,6 +84,8 @@ TODO: List the required runtime, language, package manager, build tools, test to
 
 TODO: Explain why each major stack choice is required for this system.
 
+TODO: For each material technology choice, state the boundary need, approved version source, configuration owner, validation command, and fallback or migration constraint. Keep project-specific approved stacks in project guidance.
+
 TODO: Identify stack choices that are forbidden or should not be introduced without a new architecture decision.
 
 TODO: Add a Stack Association Diagram only when stack items form runtime groups, build groups, deployment groups, or forbidden boundary groups that are easier to review visually.

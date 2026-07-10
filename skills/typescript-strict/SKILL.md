@@ -14,6 +14,7 @@ Use this pack when type quality is part of the project contract.
 - Load with Coding Agent for domain models, server code, UI props, API contracts, tests, and shared schemas.
 - Load with Code Review Agent when a change weakens typing, introduces casts, or moves data across boundaries.
 - Combine with framework, persistence, auth, and test packs.
+- Combine with TypeScript Coding for general implementation and review evidence.
 
 ## Guidance
 
@@ -27,3 +28,7 @@ Use this pack when type quality is part of the project contract.
 - Run typecheck or build after type changes.
 - Run focused tests where runtime validation narrows unknown data.
 - Inspect public interfaces and shared types after changing contracts.
+
+## Review Evidence
+
+Read references/review-checklist-typescript-strict.md during code review and use Code Review Evidence to synthesize findings.

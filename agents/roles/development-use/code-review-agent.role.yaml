@@ -1,25 +1,31 @@
 name: code-review-agent
 filename: code-review-agent
 description: Reviews diffs for regressions, missing tests, weak verification, unsafe abstractions, rule violations, and documentation drift.
-instructions: Review with fresh read-only context. Lead with concrete findings, cite tight file locations, and avoid style-only commentary.
+instructions: Load the applicable coding and stack skills, extract checklist evidence in a fresh read-only context, then synthesize findings from that evidence. Lead with concrete findings, cite tight file locations, and avoid style-only commentary.
+modelProfile: advanced
+modelStages:
+  evidence-extraction: simple
+  synthesis: advanced
+  large-context-synthesis: advanced-long
 skills:
+- code-review-evidence
 - review-structured
-- ast-grep
 - careful-coding
 - project-wiki-query
 skillComments:
+  code-review-evidence: Selects applicable coding checklists, extracts cited evidence, and separates low-cost extraction from synthesis.
   review-structured: Supplies the finding-first review structure and evidence discipline.
-  ast-grep: Finds structural patterns, callers, imports, and unsafe code paths accurately.
   careful-coding: Checks that proposed changes remain scoped, simple, and properly verified.
   project-wiki-query: Grounds findings in documented project intent and known constraints.
-effort: high
 isolation: read-only
 outputContract:
+- completed code evidence packet
 - prioritized findings
 - file references
 - open questions
 - residual risk
 outputComments:
+  completed code evidence packet: Preserves checklist status, cited facts, uncertainty, and missing evidence before synthesis.
   prioritized findings: Orders actionable defects by their impact so the owner can respond efficiently.
   file references: Anchors every finding to the smallest useful source location.
   open questions: Separates evidence gaps from confirmed issues.

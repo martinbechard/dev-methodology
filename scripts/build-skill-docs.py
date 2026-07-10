@@ -18,11 +18,13 @@ SKILLS_ROOT = REPOSITORY_ROOT / "skills"
 CATEGORIES_PATH = REPOSITORY_ROOT / "design" / "skill-categories.yaml"
 OUTPUT_PATH = REPOSITORY_ROOT / "design" / "generated" / "skill-definitions.js"
 ROLE_SCHEMA_PATH = REPOSITORY_ROOT / "agents" / "role-schema.yaml"
+MODEL_PROFILES_PATH = REPOSITORY_ROOT / "agents" / "model-profiles.yaml"
 ROLES_ROOT = REPOSITORY_ROOT / "agents" / "roles"
 ROLE_OUTPUT_PATH = REPOSITORY_ROOT / "design" / "generated" / "role-definitions.js"
 GENERATED_ADAPTERS_ROOT = REPOSITORY_ROOT / "generated" / "adapters"
 CODEX_AGENT_OUTPUT_ROOT = GENERATED_ADAPTERS_ROOT / "codex" / "agents"
 CLAUDE_AGENT_OUTPUT_ROOT = GENERATED_ADAPTERS_ROOT / "claude" / "agents"
+ADAPTERS_ROOT = REPOSITORY_ROOT / "adapters"
 SKILL_FILE_NAME = "SKILL.md"
 AGENTS_FOLDER_NAME = "agents"
 OPENAI_METADATA_FILE_NAME = "openai.yaml"
@@ -60,6 +62,8 @@ ROLE_OUTPUT_CONTRACT_FIELD_NAME = "outputContract"
 ROLE_SKILL_COMMENTS_FIELD_NAME = "skillComments"
 ROLE_OUTPUT_COMMENTS_FIELD_NAME = "outputComments"
 ROLE_EXAMPLES_FIELD_NAME = "examples"
+ROLE_MODEL_PROFILE_FIELD_NAME = "modelProfile"
+ROLE_MODEL_STAGES_FIELD_NAME = "modelStages"
 ROLE_EXAMPLE_RUNTIME_INVOCATIONS_FIELD_NAME = "runtimeInvocations"
 ROLE_EXAMPLE_REQUIRED_FIELDS = (
     "purpose",
@@ -79,8 +83,7 @@ ROLE_STRING_FIELDS = (
     ROLE_FILENAME_FIELD_NAME,
     ROLE_DESCRIPTION_FIELD_NAME,
     ROLE_INSTRUCTIONS_FIELD_NAME,
-    "model",
-    "effort",
+    ROLE_MODEL_PROFILE_FIELD_NAME,
     "permissionMode",
     "isolation",
     "memory",
@@ -105,6 +108,7 @@ ROLE_OUTPUT_INSTRUCTION_PREFIX = "Return:"
 ROLE_DISPLAY_ACRONYMS = {"e2e": "E2E", "qa": "QA", "ux": "UX"}
 MINIMUM_POSITIVE_INTEGER = 1
 CATEGORY_PATTERN = re.compile(r"^[a-z0-9][a-z0-9-]*$")
+MODEL_PROFILE_PATTERN = CATEGORY_PATTERN
 HEADING_PATTERN = re.compile(r"^(#{1,6})\s+(.*)$")
 BULLET_PATTERN = re.compile(r"^\s*-\s+(.*)$")
 ORDERED_PATTERN = re.compile(r"^\s*\d+\.\s+(.*)$")
@@ -148,7 +152,16 @@ class RoleDefinition:
     group_label: str
     source_path: str
     yaml: str
+    model_profile: str
+    model_stages: dict[str, str]
     optional_fields: dict[str, object]
+
+
+@dataclass(frozen=True)
+class AdapterModelProfile:
+    model: str
+    effort: str | None
+    context: str | None
 
 
 def split_frontmatter(text: str, source_path: Path) -> tuple[dict[str, object], str]:
@@ -171,6 +184,66 @@ def read_yaml_object(path: Path) -> dict[str, object]:
     if not isinstance(parsed, dict):
         raise ValueError(f"YAML file must contain an object: {path}")
     return parsed
+
+
+def load_model_profiles() -> dict[str, str]:
+    parsed = read_yaml_object(MODEL_PROFILES_PATH)
+    profiles = parsed.get("profiles")
+    if not isinstance(profiles, dict) or not profiles:
+        raise ValueError("model-profiles.yaml must define a profiles mapping.")
+    normalized: dict[str, str] = {}
+    for profile_id, profile in profiles.items():
+        if not isinstance(profile_id, str) or not MODEL_PROFILE_PATTERN.fullmatch(profile_id):
+            raise ValueError(f"Invalid model profile id: {profile_id}")
+        if not isinstance(profile, dict):
+            raise ValueError(f"Model profile {profile_id} must be an object.")
+        purpose = profile.get("purpose")
+        if not isinstance(purpose, str) or not purpose.strip():
+            raise ValueError(f"Model profile {profile_id} must define a purpose.")
+        normalized[profile_id] = purpose.strip()
+    return normalized
+
+
+def load_adapter_model_profiles(
+    adapter_name: str,
+    canonical_profile_ids: set[str],
+) -> dict[str, AdapterModelProfile]:
+    path = ADAPTERS_ROOT / adapter_name / "model-profiles.yaml"
+    parsed = read_yaml_object(path)
+    if parsed.get("adapter") != adapter_name:
+        raise ValueError(f"Adapter model profile name must be {adapter_name}: {path}")
+    profiles = parsed.get("profiles")
+    if not isinstance(profiles, dict):
+        raise ValueError(f"Adapter model profiles must be a mapping: {path}")
+    if set(profiles) != canonical_profile_ids:
+        raise ValueError(
+            f"Adapter {adapter_name} model profiles must match canonical profiles: {path}"
+        )
+    normalized: dict[str, AdapterModelProfile] = {}
+    for profile_id, profile in profiles.items():
+        if not isinstance(profile, dict):
+            raise ValueError(f"Adapter model profile {profile_id} must be an object: {path}")
+        unknown_fields = sorted(set(profile) - {"model", "effort", "context"})
+        if unknown_fields:
+            raise ValueError(
+                f"Adapter model profile {profile_id} has unknown fields {unknown_fields}: {path}"
+            )
+        model = profile.get("model")
+        effort = profile.get("effort")
+        context = profile.get("context")
+        if not isinstance(model, str) or not model.strip():
+            raise ValueError(f"Adapter model profile {profile_id} must define model: {path}")
+        for field_name, value in (("effort", effort), ("context", context)):
+            if value is not None and (not isinstance(value, str) or not value.strip()):
+                raise ValueError(
+                    f"Adapter model profile {profile_id} {field_name} must be a string: {path}"
+                )
+        normalized[profile_id] = AdapterModelProfile(
+            model.strip(),
+            effort.strip() if isinstance(effort, str) else None,
+            context.strip() if isinstance(context, str) else None,
+        )
+    return normalized
 
 
 def load_categories() -> list[Category]:
@@ -468,6 +541,7 @@ def load_role_definition(
     allowed_fields: set[str],
     allowed_groups: set[str],
     skill_names: set[str],
+    model_profile_ids: set[str],
 ) -> RoleDefinition:
     parsed = read_yaml_object(source_path)
     missing_fields = sorted(required_fields - set(parsed))
@@ -487,6 +561,21 @@ def load_role_definition(
             not isinstance(value, int) or isinstance(value, bool) or value < MINIMUM_POSITIVE_INTEGER
         ):
             raise ValueError(f"Role {field_name} must be a positive integer: {source_path}")
+
+    model_profile = parsed.get(ROLE_MODEL_PROFILE_FIELD_NAME)
+    if model_profile not in model_profile_ids:
+        raise ValueError(f"Role has unknown model profile {model_profile}: {source_path}")
+    model_stages = parsed.get(ROLE_MODEL_STAGES_FIELD_NAME)
+    if model_stages is not None:
+        if not isinstance(model_stages, dict) or not model_stages:
+            raise ValueError(f"Role modelStages must be a non-empty mapping: {source_path}")
+        for stage_name, stage_profile in model_stages.items():
+            if not isinstance(stage_name, str) or not CATEGORY_PATTERN.fullmatch(stage_name):
+                raise ValueError(f"Role modelStages has invalid stage {stage_name}: {source_path}")
+            if stage_profile not in model_profile_ids:
+                raise ValueError(
+                    f"Role modelStages {stage_name} has unknown profile {stage_profile}: {source_path}"
+                )
 
     role_name = parsed[ROLE_NAME_FIELD_NAME]
     filename = parsed[ROLE_FILENAME_FIELD_NAME]
@@ -558,12 +647,15 @@ def load_role_definition(
         group_label=ROLE_GROUP_LABELS[group],
         source_path=str(source_path.relative_to(REPOSITORY_ROOT)),
         yaml=source_path.read_text(encoding="utf-8"),
+        model_profile=model_profile,
+        model_stages=dict(model_stages) if isinstance(model_stages, dict) else {},
         optional_fields=optional_fields,
     )
 
 
 def load_role_definitions(skill_names: set[str]) -> list[RoleDefinition]:
     required_fields, allowed_fields, allowed_groups = load_role_schema()
+    model_profile_ids = set(load_model_profiles())
     roles = [
         load_role_definition(
             source_path,
@@ -571,6 +663,7 @@ def load_role_definitions(skill_names: set[str]) -> list[RoleDefinition]:
             allowed_fields,
             allowed_groups,
             skill_names,
+            model_profile_ids,
         )
         for source_path in role_source_paths()
     ]
@@ -641,6 +734,8 @@ def build_role_payload(roles: Sequence[RoleDefinition]) -> dict[str, object]:
                 "groupLabel": role.group_label,
                 "sourcePath": role.source_path,
                 "yaml": role.yaml,
+                ROLE_MODEL_PROFILE_FIELD_NAME: role.model_profile,
+                ROLE_MODEL_STAGES_FIELD_NAME: role.model_stages,
                 **role.optional_fields,
             }
             for role in roles
@@ -666,8 +761,20 @@ def role_instruction_text(role: RoleDefinition) -> str:
     )
 
 
-def role_adapter_comments(role: RoleDefinition, prefix: str) -> str:
-    lines = [f"{prefix}Skill comments:"]
+def role_adapter_comments(
+    role: RoleDefinition,
+    prefix: str,
+    adapter_profile: AdapterModelProfile,
+) -> str:
+    model_profile = role.model_profile
+    lines = [
+        f"{prefix}Model profile: {model_profile} -> {adapter_profile.model}",
+    ]
+    model_stages = role.model_stages
+    if model_stages:
+        lines.append(f"{prefix}Stage model profiles:")
+        lines.extend(f"{prefix}- {stage}: {profile}" for stage, profile in model_stages.items())
+    lines.append(f"{prefix}Skill comments:")
     lines.extend(f"{prefix}- {skill}: {role.skill_comments[skill]}" for skill in role.skills)
     lines.append(f"{prefix}Output comments:")
     lines.extend(
@@ -685,39 +792,45 @@ def render_toml_multiline_basic_string(value: str) -> str:
     )
 
 
-def render_codex_agent(role: RoleDefinition) -> str:
+def render_codex_agent(
+    role: RoleDefinition,
+    model_profiles: dict[str, AdapterModelProfile],
+) -> str:
+    profile_id = role.model_profile
+    adapter_profile = model_profiles[profile_id]
     fields = [
         f"# {GENERATED_FILE_HEADER}",
-        role_adapter_comments(role, "# "),
+        role_adapter_comments(role, "# ", adapter_profile),
         f"name = {json.dumps(role.name)}",
         f"description = {json.dumps(role.description)}",
         "developer_instructions = "
         + render_toml_multiline_basic_string(role_instruction_text(role)),
     ]
-    model = role.optional_fields.get("model")
-    if isinstance(model, str):
-        fields.append(f"model = {json.dumps(model)}")
-    effort = role.optional_fields.get("effort")
-    if isinstance(effort, str):
-        fields.append(f"{CODEX_REASONING_FIELD_NAME} = {json.dumps(effort)}")
+    fields.append(f"model = {json.dumps(adapter_profile.model)}")
+    if adapter_profile.effort is not None:
+        fields.append(f"{CODEX_REASONING_FIELD_NAME} = {json.dumps(adapter_profile.effort)}")
     isolation = role.optional_fields.get("isolation")
     if isolation == CODEX_READ_ONLY_ISOLATION:
         fields.append(f"{CODEX_SANDBOX_FIELD_NAME} = {json.dumps(isolation)}")
     return "\n".join(fields) + "\n"
 
 
-def render_claude_agent(role: RoleDefinition) -> str:
+def render_claude_agent(
+    role: RoleDefinition,
+    model_profiles: dict[str, AdapterModelProfile],
+) -> str:
+    profile_id = role.model_profile
+    adapter_profile = model_profiles[profile_id]
     frontmatter: dict[str, object] = {
         ROLE_NAME_FIELD_NAME: role.name,
         ROLE_DESCRIPTION_FIELD_NAME: role.description,
         ROLE_SKILLS_FIELD_NAME: list(role.skills),
+        "model": adapter_profile.model,
     }
     for field_name in (
         "tools",
         "disallowedTools",
         "mcpServers",
-        "model",
-        "effort",
         "maxTurns",
         "permissionMode",
         "isolation",
@@ -728,7 +841,7 @@ def render_claude_agent(role: RoleDefinition) -> str:
     frontmatter_text = yaml.safe_dump(frontmatter, sort_keys=False).strip()
     output_lines = "\n".join(f"- {item}" for item in role.output_contract)
     return (
-        f"<!-- {GENERATED_FILE_HEADER}\n{role_adapter_comments(role, '')}\n-->\n"
+        f"<!-- {GENERATED_FILE_HEADER}\n{role_adapter_comments(role, '', adapter_profile)}\n-->\n"
         f"---\n{frontmatter_text}\n---\n\n"
         f"{role.instructions}\n\n"
         f"Load these skills when applicable: {', '.join(role.skills)}.\n\n"
@@ -737,10 +850,17 @@ def render_claude_agent(role: RoleDefinition) -> str:
 
 
 def expected_role_outputs(roles: Sequence[RoleDefinition]) -> dict[Path, str]:
+    canonical_profile_ids = set(load_model_profiles())
+    codex_profiles = load_adapter_model_profiles(CODEX_ADAPTER_NAME, canonical_profile_ids)
+    claude_profiles = load_adapter_model_profiles(CLAUDE_ADAPTER_NAME, canonical_profile_ids)
     outputs = {ROLE_OUTPUT_PATH: render_role_javascript(roles)}
     for role in roles:
-        outputs[CODEX_AGENT_OUTPUT_ROOT / f"{role.filename}{CODEX_AGENT_EXTENSION}"] = render_codex_agent(role)
-        outputs[CLAUDE_AGENT_OUTPUT_ROOT / f"{role.filename}{CLAUDE_AGENT_EXTENSION}"] = render_claude_agent(role)
+        outputs[CODEX_AGENT_OUTPUT_ROOT / f"{role.filename}{CODEX_AGENT_EXTENSION}"] = render_codex_agent(
+            role, codex_profiles
+        )
+        outputs[CLAUDE_AGENT_OUTPUT_ROOT / f"{role.filename}{CLAUDE_AGENT_EXTENSION}"] = render_claude_agent(
+            role, claude_profiles
+        )
     return outputs
 
 

@@ -10,6 +10,9 @@ For every question record:
 - Question: copy the objective question being answered.
 - Quoted evidence: quote the exact target or input text that supports the status.
 - Assessment: explain why the quoted evidence passes, fails, is unclear, or is not applicable.
+- Correction: state the expected change for failed or questionable items.
+- Authority: cite the directive, source, contract, or project rule that supports the correction.
+- Impact: state the practical consequence if the issue remains unresolved.
 
 Do not mark pass without quoted evidence.
 
@@ -22,6 +25,8 @@ Do not mark pass without quoted evidence.
 - Question: Does the checklist exist before findings are written?
 - Question: Are findings derived from failed or questionable checklist items rather than independent opinion?
 - Question: Do findings cite checklist item IDs and target locations?
+- Question: Does every finding state a correction, authority, and impact?
+- Question: Is severity based on practical impact instead of writing preference?
 
 ## Input Coverage Questions
 

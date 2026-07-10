@@ -27,6 +27,8 @@ The review happens in two stages:
 The completed checklist is the primary audit trail. The findings are a
 compressed interpretation of that checklist.
 
+Use a lower-cost model for evidence extraction when the canonical role assigns that stage to a simple model profile. Use the synthesis model for corrections, severity, and final judgment.
+
 ## When this skill applies
 
 Use this skill when the task is one or more of:
@@ -98,8 +100,14 @@ Complete every applicable checklist item with:
 - Assessment: short judgment grounded in the quoted evidence
 - optional note if the item is blocked or uncertain
 
+For every failed or questionable item also record the expected correction, the authority for that expectation, and the practical impact if it remains unresolved.
+
 Do not skip failed items just because they will later appear in findings.
 The checklist is the full audit record.
+
+### 2A. Separate extraction from synthesis
+
+Evidence extraction records quotes, locations, status, and uncertainty without deciding final severity. Synthesis reconciles conflicting evidence, identifies the correction, and assigns severity from user, correctness, security, data, operability, or maintainability impact. Do not use writing preference alone as severity evidence.
 
 ### 3. Review directive coverage
 

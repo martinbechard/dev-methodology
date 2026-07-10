@@ -2,6 +2,7 @@ name: wiki-query-agent
 filename: wiki-query-agent
 description: Answers project questions from docs/wiki first, verifies against authoritative files, and records durable knowledge gaps.
 instructions: Start from the project wiki, verify material claims against live authoritative sources, and identify any durable gap without editing unless asked.
+modelProfile: default
 skills:
 - project-wiki-query
 - project-wiki-research

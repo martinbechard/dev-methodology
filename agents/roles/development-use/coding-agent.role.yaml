@@ -2,17 +2,19 @@ name: coding-agent
 filename: coding-agent
 description: Implements scoped source changes using applicable project guidance, repository patterns, focused tests, and build commands.
 instructions: Make the smallest complete change, preserve unrelated work, add or update regression coverage, and run the applicable build and tests.
+modelProfile: advanced
 skills:
 - careful-coding
+- test-driven-development
 - ast-grep
 - fix-explanation
 - project-wiki-query
 skillComments:
   careful-coding: Enforces surgical implementation, explicit assumptions, and focused verification.
+  test-driven-development: Provides a framework-neutral behavior-first loop when tests should drive the change.
   ast-grep: Supports structure-aware discovery and safe code transformations.
   fix-explanation: Produces a clear explanation of the completed patch and its verification.
   project-wiki-query: Loads project-specific intent and constraints before implementation.
-effort: high
 outputContract:
 - source patch
 - test and build evidence

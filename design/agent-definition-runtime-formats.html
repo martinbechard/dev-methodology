@@ -380,7 +380,7 @@
 
     <section class="section" aria-labelledby="information-model-title">
       <h2 id="information-model-title">Properties We Use</h2>
-      <p class="lede">The canonical role source uses Claude Code property names where Claude has an equivalent concept. Filename and outputContract cover methodology-owned information that Claude stores outside frontmatter.</p>
+      <p class="lede">The canonical role source uses portable role properties. Semantic model profiles remain provider-neutral; runtime adapters resolve them to native model and reasoning fields.</p>
       <table>
         <thead>
           <tr>
@@ -431,14 +431,14 @@
             <td>Names or configures MCP servers available to the agent. Keep server access separate from tool names because several runtimes expose both fields.</td>
           </tr>
           <tr>
-            <td><span class="name">Model</span></td>
-            <td><code>model</code></td>
-            <td>Selects the default model or model alias for the agent when it should differ from the parent session.</td>
+            <td><span class="name">Model profile</span></td>
+            <td><code>modelProfile</code></td>
+            <td>Selects simple, default, advanced, or advanced-long capability without naming a provider model. Adapter mappings resolve the native model and reasoning settings.</td>
           </tr>
           <tr>
-            <td><span class="name">Reasoning effort</span></td>
-            <td><code>effort</code></td>
-            <td>Sets the reasoning effort or equivalent provider-specific control when supported. Keep it separate from model so adapters can inherit one without forcing the other.</td>
+            <td><span class="name">Stage model profiles</span></td>
+            <td><code>modelStages</code></td>
+            <td>Assigns semantic profiles to bounded stages such as evidence extraction, synthesis, or large-context synthesis.</td>
           </tr>
           <tr>
             <td><span class="name">Max turns</span></td>
@@ -688,7 +688,7 @@
             <td><code>mcp-servers</code></td>
           </tr>
           <tr>
-            <td><span class="name">model</span></td>
+            <td><span class="name">modelProfile</span></td>
             <td><code>model</code></td>
             <td><code>model</code></td>
             <td><code>model</code></td>
@@ -696,7 +696,7 @@
             <td><code>model</code></td>
           </tr>
           <tr>
-            <td><span class="name">reasoning</span></td>
+            <td><span class="name">adapter profile settings</span></td>
             <td><code>model_reasoning_effort</code></td>
             <td><code>effort</code></td>
             <td>No documented field.</td>
@@ -792,11 +792,11 @@
       <div class="flow">
         <div class="flow-row">
           <h3>Use A Common Role Source</h3>
-          <p>Canonical files under <code>agents/roles/</code> own name, filename, description, instructions, skills, tools, disallowed tools, MCP servers, model, effort, max turns, timeout, permission mode, isolation, memory, and output contract. The generator validates them against <code>agents/role-schema.yaml</code>.</p>
+          <p>Canonical files under <code>agents/roles/</code> own name, filename, description, instructions, skills, tools, disallowed tools, MCP servers, modelProfile, modelStages, max turns, timeout, permission mode, isolation, memory, and output contract. The generator validates them against <code>agents/role-schema.yaml</code>.</p>
         </div>
         <div class="flow-row">
           <h3>Generate Runtime Adapters</h3>
-          <p><code>scripts/build-skill-docs.py</code> emits Codex TOML, Claude Code Markdown, and <code>design/generated/role-definitions.js</code> from the canonical files. Gemini CLI, Junie CLI, and GitHub Copilot adapters follow the same source model in later adapter milestones.</p>
+          <p><code>scripts/build-skill-docs.py</code> resolves <code>agents/model-profiles.yaml</code> through each adapter model mapping, then emits Codex TOML, Claude Code Markdown, and <code>design/generated/role-definitions.js</code>. Gemini CLI, Junie CLI, and GitHub Copilot adapters follow the same source model in later adapter milestones.</p>
         </div>
         <div class="flow-row">
           <h3>Validate Against Skills</h3>

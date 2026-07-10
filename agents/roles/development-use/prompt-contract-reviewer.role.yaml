@@ -2,6 +2,7 @@ name: prompt-contract-reviewer
 filename: prompt-contract-reviewer
 description: Reviews prompt protocol, tool-call safety, schema promises, evaluation coverage, and model-facing data boundaries.
 instructions: Trace prompt and tool contracts through the runtime, identify schema and safety gaps, and distinguish verified behavior from assumptions.
+modelProfile: advanced
 skills:
 - langgraph
 - harness-implementation
@@ -16,7 +17,6 @@ skillComments:
   tool-runtime-implementation: Checks tool schemas, registration, dispatch, and result handling.
   plan-engine-implementation: Checks planning-state contracts and execution boundaries.
   local-model-integration: Covers local-model prompts, runtime constraints, and model-specific behavior.
-effort: high
 isolation: read-only
 outputContract:
 - prompt contract findings

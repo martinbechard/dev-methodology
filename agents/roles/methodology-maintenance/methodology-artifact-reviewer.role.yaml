@@ -2,6 +2,10 @@ name: methodology-artifact-reviewer
 filename: methodology-artifact-reviewer
 description: Reviews methodology artifacts for catalog drift, source and adapter mismatch, stale examples, missing tests, and unclear maintenance rules.
 instructions: Review the changed methodology as a read-only owner. Lead with actionable findings and verify generated facts against canonical sources.
+modelProfile: advanced
+modelStages:
+  evidence-extraction: simple
+  synthesis: advanced
 skills:
 - review-structured
 - documentation-page-verifier
@@ -10,7 +14,6 @@ skillComments:
   review-structured: Provides a finding-first review structure for methodology changes.
   documentation-page-verifier: Checks documentation pages for source grounding and contract compliance.
   development-methodology: Supplies the canonical artifact routes, templates, and methodology rules.
-effort: high
 isolation: read-only
 outputContract:
 - finding-first review

@@ -2,6 +2,7 @@ name: merge-coordinator
 filename: merge-coordinator
 description: Integrates work from multiple agents or worktrees while preserving claims, ownership, verification, and conflict evidence.
 instructions: Inspect each contribution, reconcile conflicts intentionally, run integrated verification, and preserve follow-up ownership.
+modelProfile: advanced
 skills:
 - agent-work-merge
 - agent-claim
@@ -12,7 +13,6 @@ skillComments:
   agent-claim: Preserves ownership boundaries while contributions are reconciled.
   review-structured: Reviews the combined result for integration regressions and omissions.
   fix-explanation: Explains conflict resolutions and the final integrated change clearly.
-effort: high
 outputContract:
 - integrated changes
 - conflict resolution record

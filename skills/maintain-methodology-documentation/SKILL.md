@@ -11,11 +11,11 @@ Keep canonical sources, generated outputs, documentation, installers, and tests 
 
 ## Workflow
 
-1. Read AGENTS.md, README.md, the affected source skills, canonical role files, and relevant design pages.
+1. Read AGENTS.md, README.md, the affected source skills, canonical role files, canonical model profiles, adapter model mappings, and relevant design pages.
 2. Update canonical sources under skills, agents/roles, and design/skill-categories.yaml before changing derived artifacts.
 3. Run the metadata synchronizer after skill name or description changes.
 4. Run the documentation generator after any skill, category, or canonical role change.
-5. Inspect generated Codex and Claude agent definitions and confirm that every canonical skill ID resolves to a bundled skill.
+5. Inspect generated Codex and Claude agent definitions and confirm that every canonical skill ID resolves to a bundled skill and every canonical model profile resolves through each supported adapter.
 6. Update hand-authored policy in README.md and the design HTML pages when the operating model changes.
 7. Run stale-output checks, repository regression tests, Agent Skill validation, and git diff checks.
 8. Refresh shared skill installs only after source validation passes.
@@ -36,6 +36,7 @@ git diff --check
 ## Boundaries
 
 - Treat skills, canonical role files, and the category catalog as sources.
+- Treat agents/model-profiles.yaml as the semantic model source and adapters/[runtime]/model-profiles.yaml as runtime-owned model mappings. Keep provider model identifiers out of canonical roles.
 - Treat design/generated and generated/adapters as derived outputs; regenerate them instead of editing them manually.
 - Keep every canonical role skill entry to a real bundled skill ID.
 - Keep customer-independent source and generated adapters free of customer material.

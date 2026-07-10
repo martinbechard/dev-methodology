@@ -1,0 +1,17 @@
+schema: dev-methodology-adapter-model-profiles
+version: 1
+adapter: codex
+profiles:
+  simple:
+    model: gpt-5.6-sol
+    effort: medium
+  default:
+    model: gpt-5.6-terra
+    effort: medium
+  advanced:
+    model: gpt-5.6-luna
+    effort: high
+  advanced-long:
+    model: gpt-5.6-sol
+    effort: high
+    context: extra-long

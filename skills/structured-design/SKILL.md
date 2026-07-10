@@ -94,6 +94,8 @@ Component design should answer:
 - what rules it must obey
 - how we know it is good
 
+For process-heavy components, identify meaningful input and output boundaries, transformations, dispatch decisions, failure ownership, and cohesive sub-processes. Split a process when parts change independently or have distinct contracts; do not split only to make the diagram larger.
+
 Component design should assume the architecture is already chosen. It should
 not quietly redesign the system boundary unless the task is explicitly to
 revise the architecture.

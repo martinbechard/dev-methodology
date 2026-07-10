@@ -1,0 +1,249 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1540" height="2342" viewBox="0 0 1540 2342" role="img" aria-labelledby="title desc">
+<title id="title">Canonical model profile, agent, and skill hierarchy</title>
+<desc id="desc">Every canonical role is connected to its semantic model profile and bundled skill loadout.</desc>
+<style>text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}.heading{font-size:18px;font-weight:600}.group{font-size:13px;font-weight:600;fill:#334155}.secondary{font-size:9px;fill:#64748b}.node{fill:#f8fafc;stroke:#94a3b8}.model{fill:#e0f2fe;stroke:#0284c7}.edge{fill:none;stroke:#94a3b8;stroke-width:1;opacity:.32}.model-edge{stroke:#0284c7;opacity:.45}</style>
+<text x="30" y="44" class="heading">Model profiles</text>
+<text x="360" y="44" class="heading">Canonical agents</text>
+<text x="1120" y="44" class="heading">Bundled skills</text>
+<text x="30" y="70" class="secondary">Adapter mappings resolve concrete models</text>
+<text x="360" y="70" class="secondary">Roles request semantic profiles and load skills</text>
+<text x="1120" y="70" class="secondary">Detailed coding and review evidence rules live here</text>
+<rect x="30" y="110" width="280" height="42" rx="6" class="model"/>
+<text x="42" y="126">simple</text>
+<text x="42" y="142" class="secondary">Extraction, classification, lookup, and...</text>
+<rect x="30" y="164" width="280" height="42" rx="6" class="model"/>
+<text x="42" y="180">default</text>
+<text x="42" y="196" class="secondary">Normal implementation, documentation, a...</text>
+<rect x="30" y="218" width="280" height="42" rx="6" class="model"/>
+<text x="42" y="234">advanced</text>
+<text x="42" y="250" class="secondary">Review synthesis, architecture, diagnos...</text>
+<rect x="30" y="272" width="280" height="42" rx="6" class="model"/>
+<text x="42" y="288">advanced-long</text>
+<text x="42" y="304" class="secondary">Advanced reasoning over unusually large...</text>
+<path d="M 310 239 C 330 239, 330 152, 360 152" class="edge model-edge"/>
+<path d="M 660 152 C 820 152, 940 2162, 1120 2162" class="edge"/>
+<path d="M 660 152 C 820 152, 940 2072, 1120 2072" class="edge"/>
+<path d="M 660 152 C 820 152, 940 2042, 1120 2042" class="edge"/>
+<path d="M 660 152 C 820 152, 940 2102, 1120 2102" class="edge"/>
+<path d="M 660 152 C 820 152, 940 2132, 1120 2132" class="edge"/>
+<path d="M 660 152 C 820 152, 940 2222, 1120 2222" class="edge"/>
+<path d="M 660 152 C 820 152, 940 1688, 1120 1688" class="edge"/>
+<path d="M 310 185 C 330 185, 330 182, 360 182" class="edge model-edge"/>
+<path d="M 660 182 C 820 182, 940 332, 1120 332" class="edge"/>
+<path d="M 660 182 C 820 182, 940 392, 1120 392" class="edge"/>
+<path d="M 660 182 C 820 182, 940 152, 1120 152" class="edge"/>
+<path d="M 660 182 C 820 182, 940 512, 1120 512" class="edge"/>
+<path d="M 660 182 C 820 182, 940 1436, 1120 1436" class="edge"/>
+<path d="M 310 239 C 330 239, 330 212, 360 212" class="edge model-edge"/>
+<path d="M 660 212 C 820 212, 940 302, 1120 302" class="edge"/>
+<path d="M 660 212 C 820 212, 940 2192, 1120 2192" class="edge"/>
+<path d="M 660 212 C 820 212, 940 242, 1120 242" class="edge"/>
+<path d="M 660 212 C 820 212, 940 1436, 1120 1436" class="edge"/>
+<path d="M 310 239 C 330 239, 330 242, 360 242" class="edge model-edge"/>
+<path d="M 660 242 C 820 242, 940 242, 1120 242" class="edge"/>
+<path d="M 660 242 C 820 242, 940 542, 1120 542" class="edge"/>
+<path d="M 660 242 C 820 242, 940 212, 1120 212" class="edge"/>
+<path d="M 660 242 C 820 242, 940 362, 1120 362" class="edge"/>
+<path d="M 660 242 C 820 242, 940 1436, 1120 1436" class="edge"/>
+<path d="M 310 293 C 330 293, 330 272, 360 272" class="edge model-edge"/>
+<path d="M 660 272 C 820 272, 940 482, 1120 482" class="edge"/>
+<path d="M 660 272 C 820 272, 940 512, 1120 512" class="edge"/>
+<path d="M 660 272 C 820 272, 940 392, 1120 392" class="edge"/>
+<path d="M 660 272 C 820 272, 940 152, 1120 152" class="edge"/>
+<path d="M 660 272 C 820 272, 940 182, 1120 182" class="edge"/>
+<path d="M 660 272 C 820 272, 940 2192, 1120 2192" class="edge"/>
+<path d="M 310 185 C 330 185, 330 302, 360 302" class="edge model-edge"/>
+<path d="M 660 302 C 820 302, 940 1628, 1120 1628" class="edge"/>
+<path d="M 660 302 C 820 302, 940 1940, 1120 1940" class="edge"/>
+<path d="M 660 302 C 820 302, 940 1850, 1120 1850" class="edge"/>
+<path d="M 660 302 C 820 302, 940 1820, 1120 1820" class="edge"/>
+<path d="M 660 302 C 820 302, 940 1880, 1120 1880" class="edge"/>
+<path d="M 660 302 C 820 302, 940 1910, 1120 1910" class="edge"/>
+<path d="M 660 302 C 820 302, 940 1970, 1120 1970" class="edge"/>
+<path d="M 660 302 C 820 302, 940 1658, 1120 1658" class="edge"/>
+<path d="M 660 302 C 820 302, 940 1718, 1120 1718" class="edge"/>
+<path d="M 660 302 C 820 302, 940 1376, 1120 1376" class="edge"/>
+<path d="M 660 302 C 820 302, 940 1436, 1120 1436" class="edge"/>
+<path d="M 310 239 C 330 239, 330 332, 360 332" class="edge model-edge"/>
+<path d="M 660 332 C 820 332, 940 974, 1120 974" class="edge"/>
+<path d="M 660 332 C 820 332, 940 512, 1120 512" class="edge"/>
+<path d="M 660 332 C 820 332, 940 1436, 1120 1436" class="edge"/>
+<path d="M 310 239 C 330 239, 330 362, 360 362" class="edge model-edge"/>
+<path d="M 660 362 C 820 362, 940 182, 1120 182" class="edge"/>
+<path d="M 660 362 C 820 362, 940 152, 1120 152" class="edge"/>
+<path d="M 660 362 C 820 362, 940 2192, 1120 2192" class="edge"/>
+<path d="M 660 362 C 820 362, 940 362, 1120 362" class="edge"/>
+<path d="M 310 239 C 330 239, 330 392, 360 392" class="edge model-edge"/>
+<path d="M 660 392 C 820 392, 940 824, 1120 824" class="edge"/>
+<path d="M 660 392 C 820 392, 940 734, 1120 734" class="edge"/>
+<path d="M 660 392 C 820 392, 940 2192, 1120 2192" class="edge"/>
+<path d="M 660 392 C 820 392, 940 1184, 1120 1184" class="edge"/>
+<path d="M 660 392 C 820 392, 940 944, 1120 944" class="edge"/>
+<path d="M 660 392 C 820 392, 940 854, 1120 854" class="edge"/>
+<path d="M 310 131 C 330 131, 330 422, 360 422" class="edge model-edge"/>
+<path d="M 660 422 C 820 422, 940 1466, 1120 1466" class="edge"/>
+<path d="M 660 422 C 820 422, 940 1406, 1120 1406" class="edge"/>
+<path d="M 660 422 C 820 422, 940 1496, 1120 1496" class="edge"/>
+<path d="M 660 422 C 820 422, 940 512, 1120 512" class="edge"/>
+<path d="M 310 239 C 330 239, 330 452, 360 452" class="edge model-edge"/>
+<path d="M 660 452 C 820 452, 940 422, 1120 422" class="edge"/>
+<path d="M 660 452 C 820 452, 940 452, 1120 452" class="edge"/>
+<path d="M 660 452 C 820 452, 940 272, 1120 272" class="edge"/>
+<path d="M 660 452 C 820 452, 940 794, 1120 794" class="edge"/>
+<path d="M 660 452 C 820 452, 940 1304, 1120 1304" class="edge"/>
+<path d="M 660 452 C 820 452, 940 974, 1120 974" class="edge"/>
+<path d="M 660 452 C 820 452, 940 2192, 1120 2192" class="edge"/>
+<path d="M 660 452 C 820 452, 940 512, 1120 512" class="edge"/>
+<path d="M 310 239 C 330 239, 330 482, 360 482" class="edge model-edge"/>
+<path d="M 660 482 C 820 482, 940 422, 1120 422" class="edge"/>
+<path d="M 660 482 C 820 482, 940 452, 1120 452" class="edge"/>
+<path d="M 660 482 C 820 482, 940 272, 1120 272" class="edge"/>
+<path d="M 660 482 C 820 482, 940 512, 1120 512" class="edge"/>
+<path d="M 660 482 C 820 482, 940 242, 1120 242" class="edge"/>
+<path d="M 660 482 C 820 482, 940 1436, 1120 1436" class="edge"/>
+<path d="M 660 482 C 820 482, 940 974, 1120 974" class="edge"/>
+<path d="M 310 239 C 330 239, 330 512, 360 512" class="edge model-edge"/>
+<path d="M 660 512 C 820 512, 940 2192, 1120 2192" class="edge"/>
+<path d="M 660 512 C 820 512, 940 1436, 1120 1436" class="edge"/>
+<path d="M 660 512 C 820 512, 940 512, 1120 512" class="edge"/>
+<path d="M 660 512 C 820 512, 940 614, 1120 614" class="edge"/>
+<path d="M 660 512 C 820 512, 940 644, 1120 644" class="edge"/>
+<path d="M 660 512 C 820 512, 940 1004, 1120 1004" class="edge"/>
+<path d="M 310 185 C 330 185, 330 542, 360 542" class="edge model-edge"/>
+<path d="M 660 542 C 820 542, 940 1154, 1120 1154" class="edge"/>
+<path d="M 660 542 C 820 542, 940 1034, 1120 1034" class="edge"/>
+<path d="M 660 542 C 820 542, 940 2192, 1120 2192" class="edge"/>
+<path d="M 660 542 C 820 542, 940 974, 1120 974" class="edge"/>
+<path d="M 310 185 C 330 185, 330 572, 360 572" class="edge model-edge"/>
+<path d="M 660 572 C 820 572, 940 1406, 1120 1406" class="edge"/>
+<path d="M 660 572 C 820 572, 940 1526, 1120 1526" class="edge"/>
+<path d="M 660 572 C 820 572, 940 1496, 1120 1496" class="edge"/>
+<path d="M 660 572 C 820 572, 940 1466, 1120 1466" class="edge"/>
+<path d="M 660 572 C 820 572, 940 1376, 1120 1376" class="edge"/>
+<path d="M 310 185 C 330 185, 330 602, 360 602" class="edge model-edge"/>
+<path d="M 660 602 C 820 602, 940 1436, 1120 1436" class="edge"/>
+<path d="M 660 602 C 820 602, 940 1466, 1120 1466" class="edge"/>
+<path d="M 660 602 C 820 602, 940 1376, 1120 1376" class="edge"/>
+<path d="M 660 602 C 820 602, 940 1688, 1120 1688" class="edge"/>
+<path d="M 310 239 C 330 239, 330 674, 360 674" class="edge model-edge"/>
+<path d="M 660 674 C 820 674, 940 2192, 1120 2192" class="edge"/>
+<path d="M 660 674 C 820 674, 940 1688, 1120 1688" class="edge"/>
+<path d="M 660 674 C 820 674, 940 1628, 1120 1628" class="edge"/>
+<path d="M 310 239 C 330 239, 330 704, 360 704" class="edge model-edge"/>
+<path d="M 660 704 C 820 704, 940 1748, 1120 1748" class="edge"/>
+<path d="M 660 704 C 820 704, 940 1628, 1120 1628" class="edge"/>
+<path d="M 660 704 C 820 704, 940 482, 1120 482" class="edge"/>
+<path d="M 660 704 C 820 704, 940 512, 1120 512" class="edge"/>
+<path d="M 310 185 C 330 185, 330 734, 360 734" class="edge model-edge"/>
+<path d="M 660 734 C 820 734, 940 1748, 1120 1748" class="edge"/>
+<path d="M 660 734 C 820 734, 940 242, 1120 242" class="edge"/>
+<path d="M 310 185 C 330 185, 330 806, 360 806" class="edge model-edge"/>
+<path d="M 660 806 C 820 806, 940 1598, 1120 1598" class="edge"/>
+<path d="M 660 806 C 820 806, 940 1628, 1120 1628" class="edge"/>
+<path d="M 660 806 C 820 806, 940 1658, 1120 1658" class="edge"/>
+<path d="M 660 806 C 820 806, 940 1688, 1120 1688" class="edge"/>
+<path d="M 310 293 C 330 293, 330 836, 360 836" class="edge model-edge"/>
+<path d="M 660 836 C 820 836, 940 1658, 1120 1658" class="edge"/>
+<path d="M 660 836 C 820 836, 940 1628, 1120 1628" class="edge"/>
+<path d="M 660 836 C 820 836, 940 1718, 1120 1718" class="edge"/>
+<path d="M 660 836 C 820 836, 940 1940, 1120 1940" class="edge"/>
+<path d="M 310 185 C 330 185, 330 866, 360 866" class="edge model-edge"/>
+<path d="M 660 866 C 820 866, 940 1436, 1120 1436" class="edge"/>
+<path d="M 660 866 C 820 866, 940 482, 1120 482" class="edge"/>
+<path d="M 660 866 C 820 866, 940 512, 1120 512" class="edge"/>
+<path d="M 660 866 C 820 866, 940 1376, 1120 1376" class="edge"/>
+<text x="360" y="128" class="group">Development Use</text>
+<g><rect x="360" y="140" width="300" height="24" rx="5" class="node"/><text x="372" y="156">artifact-review-agent</text><text x="648" y="156" text-anchor="end" class="secondary">advanced; 3 stage profiles</text></g>
+<g><rect x="360" y="170" width="300" height="24" rx="5" class="node"/><text x="372" y="186">backlog-steward</text><text x="648" y="186" text-anchor="end" class="secondary">default</text></g>
+<g><rect x="360" y="200" width="300" height="24" rx="5" class="node"/><text x="372" y="216">code-review-agent</text><text x="648" y="216" text-anchor="end" class="secondary">advanced; 3 stage profiles</text></g>
+<g><rect x="360" y="230" width="300" height="24" rx="5" class="node"/><text x="372" y="246">coding-agent</text><text x="648" y="246" text-anchor="end" class="secondary">advanced</text></g>
+<g><rect x="360" y="260" width="300" height="24" rx="5" class="node"/><text x="372" y="276">development-orchestrator</text><text x="648" y="276" text-anchor="end" class="secondary">advanced-long</text></g>
+<g><rect x="360" y="290" width="300" height="24" rx="5" class="node"/><text x="372" y="306">documentation-writer</text><text x="648" y="306" text-anchor="end" class="secondary">default</text></g>
+<g><rect x="360" y="320" width="300" height="24" rx="5" class="node"/><text x="372" y="336">e2e-browser-agent</text><text x="648" y="336" text-anchor="end" class="secondary">advanced</text></g>
+<g><rect x="360" y="350" width="300" height="24" rx="5" class="node"/><text x="372" y="366">merge-coordinator</text><text x="648" y="366" text-anchor="end" class="secondary">advanced</text></g>
+<g><rect x="360" y="380" width="300" height="24" rx="5" class="node"/><text x="372" y="396">prompt-contract-reviewer</text><text x="648" y="396" text-anchor="end" class="secondary">advanced</text></g>
+<g><rect x="360" y="410" width="300" height="24" rx="5" class="node"/><text x="372" y="426">public-source-collector</text><text x="648" y="426" text-anchor="end" class="secondary">simple</text></g>
+<g><rect x="360" y="440" width="300" height="24" rx="5" class="node"/><text x="372" y="456">qa-and-verification-agent</text><text x="648" y="456" text-anchor="end" class="secondary">advanced</text></g>
+<g><rect x="360" y="470" width="300" height="24" rx="5" class="node"/><text x="372" y="486">runtime-diagnostician</text><text x="648" y="486" text-anchor="end" class="secondary">advanced</text></g>
+<g><rect x="360" y="500" width="300" height="24" rx="5" class="node"/><text x="372" y="516">security-reviewer</text><text x="648" y="516" text-anchor="end" class="secondary">advanced</text></g>
+<g><rect x="360" y="530" width="300" height="24" rx="5" class="node"/><text x="372" y="546">ux-designer-or-reviewer</text><text x="648" y="546" text-anchor="end" class="secondary">default</text></g>
+<g><rect x="360" y="560" width="300" height="24" rx="5" class="node"/><text x="372" y="576">wiki-ingest-agent</text><text x="648" y="576" text-anchor="end" class="secondary">default</text></g>
+<g><rect x="360" y="590" width="300" height="24" rx="5" class="node"/><text x="372" y="606">wiki-query-agent</text><text x="648" y="606" text-anchor="end" class="secondary">default</text></g>
+<text x="360" y="650" class="group">Methodology Maintenance</text>
+<g><rect x="360" y="662" width="300" height="24" rx="5" class="node"/><text x="372" y="678">methodology-artifact-reviewer</text><text x="648" y="678" text-anchor="end" class="secondary">advanced; 2 stage profiles</text></g>
+<g><rect x="360" y="692" width="300" height="24" rx="5" class="node"/><text x="372" y="708">methodology-maintainer</text><text x="648" y="708" text-anchor="end" class="secondary">advanced</text></g>
+<g><rect x="360" y="722" width="300" height="24" rx="5" class="node"/><text x="372" y="738">shared-install-verifier</text><text x="648" y="738" text-anchor="end" class="secondary">default</text></g>
+<text x="360" y="782" class="group">Project Setup</text>
+<g><rect x="360" y="794" width="300" height="24" rx="5" class="node"/><text x="372" y="810">project-agent-setup-agent</text><text x="648" y="810" text-anchor="end" class="secondary">default</text></g>
+<g><rect x="360" y="824" width="300" height="24" rx="5" class="node"/><text x="372" y="840">project-bootstrap-agent</text><text x="648" y="840" text-anchor="end" class="secondary">advanced-long</text></g>
+<g><rect x="360" y="854" width="300" height="24" rx="5" class="node"/><text x="372" y="870">project-organiser</text><text x="648" y="870" text-anchor="end" class="secondary">default</text></g>
+<text x="1120" y="128" class="group">Development Practice</text>
+<g><rect x="1120" y="140" width="360" height="24" rx="5" class="node"/><text x="1132" y="156">agent-claim</text></g>
+<g><rect x="1120" y="170" width="360" height="24" rx="5" class="node"/><text x="1132" y="186">agent-work-merge</text></g>
+<g><rect x="1120" y="200" width="360" height="24" rx="5" class="node"/><text x="1132" y="216">ast-grep</text></g>
+<g><rect x="1120" y="230" width="360" height="24" rx="5" class="node"/><text x="1132" y="246">careful-coding</text></g>
+<g><rect x="1120" y="260" width="360" height="24" rx="5" class="node"/><text x="1132" y="276">code-execution-tracing</text></g>
+<g><rect x="1120" y="290" width="360" height="24" rx="5" class="node"/><text x="1132" y="306">code-review-evidence</text></g>
+<g><rect x="1120" y="320" width="360" height="24" rx="5" class="node"/><text x="1132" y="336">create-backlog</text></g>
+<g><rect x="1120" y="350" width="360" height="24" rx="5" class="node"/><text x="1132" y="366">fix-explanation</text></g>
+<g><rect x="1120" y="380" width="360" height="24" rx="5" class="node"/><text x="1132" y="396">manage-backlog</text></g>
+<g><rect x="1120" y="410" width="360" height="24" rx="5" class="node"/><text x="1132" y="426">root-cause-analysis</text></g>
+<g><rect x="1120" y="440" width="360" height="24" rx="5" class="node"/><text x="1132" y="456">runtime-evidence-collection</text></g>
+<g><rect x="1120" y="470" width="360" height="24" rx="5" class="node"/><text x="1132" y="486">structured-design</text></g>
+<g><rect x="1120" y="500" width="360" height="24" rx="5" class="node"/><text x="1132" y="516">structured-explanation</text></g>
+<g><rect x="1120" y="530" width="360" height="24" rx="5" class="node"/><text x="1132" y="546">test-driven-development</text></g>
+<text x="1120" y="590" class="group">Stack And Domain</text>
+<g><rect x="1120" y="602" width="360" height="24" rx="5" class="node"/><text x="1132" y="618">api-routes</text></g>
+<g><rect x="1120" y="632" width="360" height="24" rx="5" class="node"/><text x="1132" y="648">clerk-auth</text></g>
+<g><rect x="1120" y="662" width="360" height="24" rx="5" class="node"/><text x="1132" y="678">electron-main</text></g>
+<g><rect x="1120" y="692" width="360" height="24" rx="5" class="node"/><text x="1132" y="708">electron-preload</text></g>
+<g><rect x="1120" y="722" width="360" height="24" rx="5" class="node"/><text x="1132" y="738">harness-implementation</text></g>
+<g><rect x="1120" y="752" width="360" height="24" rx="5" class="node"/><text x="1132" y="768">java-coding</text></g>
+<g><rect x="1120" y="782" width="360" height="24" rx="5" class="node"/><text x="1132" y="798">jest</text></g>
+<g><rect x="1120" y="812" width="360" height="24" rx="5" class="node"/><text x="1132" y="828">langgraph</text></g>
+<g><rect x="1120" y="842" width="360" height="24" rx="5" class="node"/><text x="1132" y="858">local-model-integration</text></g>
+<g><rect x="1120" y="872" width="360" height="24" rx="5" class="node"/><text x="1132" y="888">nextjs-app-router</text></g>
+<g><rect x="1120" y="902" width="360" height="24" rx="5" class="node"/><text x="1132" y="918">node-cli</text></g>
+<g><rect x="1120" y="932" width="360" height="24" rx="5" class="node"/><text x="1132" y="948">plan-engine-implementation</text></g>
+<g><rect x="1120" y="962" width="360" height="24" rx="5" class="node"/><text x="1132" y="978">playwright</text></g>
+<g><rect x="1120" y="992" width="360" height="24" rx="5" class="node"/><text x="1132" y="1008">postgres-drizzle</text></g>
+<g><rect x="1120" y="1022" width="360" height="24" rx="5" class="node"/><text x="1132" y="1038">react-server-components</text></g>
+<g><rect x="1120" y="1052" width="360" height="24" rx="5" class="node"/><text x="1132" y="1068">react-vite-renderer</text></g>
+<g><rect x="1120" y="1082" width="360" height="24" rx="5" class="node"/><text x="1132" y="1098">spring-boot</text></g>
+<g><rect x="1120" y="1112" width="360" height="24" rx="5" class="node"/><text x="1132" y="1128">sql-coding</text></g>
+<g><rect x="1120" y="1142" width="360" height="24" rx="5" class="node"/><text x="1132" y="1158">tailwind-design-system</text></g>
+<g><rect x="1120" y="1172" width="360" height="24" rx="5" class="node"/><text x="1132" y="1188">tool-runtime-implementation</text></g>
+<g><rect x="1120" y="1202" width="360" height="24" rx="5" class="node"/><text x="1132" y="1218">typescript-coding</text></g>
+<g><rect x="1120" y="1232" width="360" height="24" rx="5" class="node"/><text x="1132" y="1248">typescript-esm</text></g>
+<g><rect x="1120" y="1262" width="360" height="24" rx="5" class="node"/><text x="1132" y="1278">typescript-strict</text></g>
+<g><rect x="1120" y="1292" width="360" height="24" rx="5" class="node"/><text x="1132" y="1308">vitest</text></g>
+<text x="1120" y="1352" class="group">Wiki And Knowledge</text>
+<g><rect x="1120" y="1364" width="360" height="24" rx="5" class="node"/><text x="1132" y="1380">code-project-wiki</text></g>
+<g><rect x="1120" y="1394" width="360" height="24" rx="5" class="node"/><text x="1132" y="1410">project-wiki</text></g>
+<g><rect x="1120" y="1424" width="360" height="24" rx="5" class="node"/><text x="1132" y="1440">project-wiki-query</text></g>
+<g><rect x="1120" y="1454" width="360" height="24" rx="5" class="node"/><text x="1132" y="1470">project-wiki-research</text></g>
+<g><rect x="1120" y="1484" width="360" height="24" rx="5" class="node"/><text x="1132" y="1500">project-wiki-topic-verifier</text></g>
+<g><rect x="1120" y="1514" width="360" height="24" rx="5" class="node"/><text x="1132" y="1530">project-wiki-topic-writer</text></g>
+<text x="1120" y="1574" class="group">Documentation Methodology</text>
+<g><rect x="1120" y="1586" width="360" height="24" rx="5" class="node"/><text x="1132" y="1602">create-agents-plan</text></g>
+<g><rect x="1120" y="1616" width="360" height="24" rx="5" class="node"/><text x="1132" y="1632">development-methodology</text></g>
+<g><rect x="1120" y="1646" width="360" height="24" rx="5" class="node"/><text x="1132" y="1662">documentation-bootstrap</text></g>
+<g><rect x="1120" y="1676" width="360" height="24" rx="5" class="node"/><text x="1132" y="1692">documentation-page-verifier</text></g>
+<g><rect x="1120" y="1706" width="360" height="24" rx="5" class="node"/><text x="1132" y="1722">documentation-reverse-engineering</text></g>
+<g><rect x="1120" y="1736" width="360" height="24" rx="5" class="node"/><text x="1132" y="1752">maintain-methodology-documentation</text></g>
+<text x="1120" y="1796" class="group">Artifact Creation</text>
+<g><rect x="1120" y="1808" width="360" height="24" rx="5" class="node"/><text x="1132" y="1824">create-architecture</text></g>
+<g><rect x="1120" y="1838" width="360" height="24" rx="5" class="node"/><text x="1132" y="1854">create-functional-spec</text></g>
+<g><rect x="1120" y="1868" width="360" height="24" rx="5" class="node"/><text x="1132" y="1884">create-high-level-design</text></g>
+<g><rect x="1120" y="1898" width="360" height="24" rx="5" class="node"/><text x="1132" y="1914">create-module-design</text></g>
+<g><rect x="1120" y="1928" width="360" height="24" rx="5" class="node"/><text x="1132" y="1944">create-project-wiki</text></g>
+<g><rect x="1120" y="1958" width="360" height="24" rx="5" class="node"/><text x="1132" y="1974">create-unit-test-plan</text></g>
+<text x="1120" y="2018" class="group">Artifact Review</text>
+<g><rect x="1120" y="2030" width="360" height="24" rx="5" class="node"/><text x="1132" y="2046">review-architecture</text></g>
+<g><rect x="1120" y="2060" width="360" height="24" rx="5" class="node"/><text x="1132" y="2076">review-functional-spec</text></g>
+<g><rect x="1120" y="2090" width="360" height="24" rx="5" class="node"/><text x="1132" y="2106">review-high-level-design</text></g>
+<g><rect x="1120" y="2120" width="360" height="24" rx="5" class="node"/><text x="1132" y="2136">review-module-design</text></g>
+<g><rect x="1120" y="2150" width="360" height="24" rx="5" class="node"/><text x="1132" y="2166">review-project-wiki</text></g>
+<g><rect x="1120" y="2180" width="360" height="24" rx="5" class="node"/><text x="1132" y="2196">review-structured</text></g>
+<g><rect x="1120" y="2210" width="360" height="24" rx="5" class="node"/><text x="1132" y="2226">review-unit-test-plan</text></g>
+</svg>

@@ -17,13 +17,14 @@ Use the installed skills as the operating surface. The repository README is only
 
 Project agent and skill setup starts with AGENTS-PLAN.yaml as the reviewable planning artifact. The create-agents-plan skill creates root and nested plans that explain which role agents and skills apply to a project, then that validated plan drives durable routing guidance in AGENTS.md. Claude Code projects also receive a thin CLAUDE.md beside each applicable AGENTS.md so Claude imports the same project guidance without duplicating it.
 
-The core methodology keeps one shared wiki-compatible page contract and five document shapes. Each document shape has a focused creation skill, a reusable template asset, and an artifact review skill:
+The core methodology keeps one shared wiki-compatible page contract and six document shapes. Each document shape has a focused creation skill, a reusable template asset, and an artifact review skill:
 
 1. Project wiki page: create-project-wiki, project-wiki-template.md, review-project-wiki
 2. Functional specification: create-functional-spec, functional-spec-template.md, review-functional-spec
 3. Architecture: create-architecture, architecture-template.md, review-architecture
 4. High-level design: create-high-level-design, high-level-design-template.md, review-high-level-design
 5. Module design: create-module-design, module-design-template.md, review-module-design
+6. Unit test plan: create-unit-test-plan, unit-test-plan-template.md, review-unit-test-plan
 
 The shared page contract starts every durable page with Current Understanding, Authoritative Sources, Related Code, Related Tests, Related Backlog Items, Related Wiki Pages, Open Questions, and Maintenance Notes. Specialized documents keep those sections first, then add their own sections.
 
@@ -34,6 +35,8 @@ The shared page contract starts every durable page with Current Understanding, A
 - Keep Codex openai.yaml metadata beside each source SKILL.md when a skill needs Codex app metadata, invocation policy, or tool dependencies.
 - scripts/install-skills.py installs the bundled skills through adapter profiles for generic Agent Skills, Codex, Gemini CLI, Claude Code, and JetBrains Junie CLI.
 - agents/role-schema.yaml defines the canonical customer-independent role schema.
+- agents/model-profiles.yaml defines semantic simple, default, advanced, and advanced-long model profiles without provider identifiers.
+- adapters/[runtime]/model-profiles.yaml maps semantic profiles to concrete models, reasoning effort, and context settings for each harness.
 - agents/roles contains canonical role files grouped by methodology maintenance, project setup, and normal development use.
 - generated/adapters contains ready-to-copy native agent definitions. The current milestone generates Codex and Claude definitions from the same canonical roles.
 - scripts/openai_metadata.py refreshes derived Codex interface fields from SKILL.md while preserving hand-authored policy and dependencies.
@@ -49,7 +52,15 @@ Reusable templates live inside the development-methodology skill assets so there
 python3 scripts/build-skill-docs.py
 ```
 
-The script reads each bundled SKILL.md file, the adjacent Codex openai.yaml metadata, the ordered design/skill-categories.yaml catalog, agents/role-schema.yaml, and the canonical role files. It writes design/generated/skill-definitions.js, design/generated/role-definitions.js, and native agent definitions for the supported runtime adapters.
+The script reads each bundled SKILL.md file, the adjacent Codex openai.yaml metadata, the ordered design/skill-categories.yaml catalog, agents/role-schema.yaml, agents/model-profiles.yaml, adapter model mappings, and the canonical role files. It writes design/generated/skill-definitions.js, design/generated/role-definitions.js, and native agent definitions for the supported runtime adapters.
+
+Canonical roles request modelProfile and may assign modelStages for work such as low-cost evidence extraction followed by advanced synthesis. Provider model identifiers stay in adapter mappings. Every supported adapter must map every canonical profile.
+
+The generated [agent and skill hierarchy](design/agent-skill-hierarchy.svg) shows model profiles, every canonical role, and each role's bundled skill loadout. Regenerate it with:
+
+```bash
+python3 scripts/build-agent-skill-hierarchy.py
+```
 
 Role cards, scenario examples, skill inventories, loadout tables, and runtime definitions are generated from canonical data rather than maintained independently in HTML. Canonical role examples show a scenario purpose, invocation, and plausible response. Role YAML stores skillComments and outputComments as explicit maps keyed by their skill and output identifiers; the generated role modal displays those rationales with the enlarged pills, and native adapters render them as comments. The generator rejects canonical roles that reference missing skill IDs.
 
@@ -174,6 +185,7 @@ The artifact creation skills are:
 - create-architecture
 - create-high-level-design
 - create-module-design
+- create-unit-test-plan
 
 The artifact review skills are:
 
@@ -182,6 +194,7 @@ The artifact review skills are:
 - review-architecture
 - review-high-level-design
 - review-module-design
+- review-unit-test-plan
 
 The development practice skills are:
 
@@ -195,11 +208,20 @@ The development practice skills are:
 - review-structured
 - agent-claim
 - agent-work-merge
+- code-review-evidence
+- test-driven-development
+- code-execution-tracing
+- root-cause-analysis
+- runtime-evidence-collection
 
 The stack and project-domain skill packs are:
 
 - typescript-esm
 - typescript-strict
+- typescript-coding
+- java-coding
+- spring-boot
+- sql-coding
 - electron-main
 - electron-preload
 - react-vite-renderer
@@ -224,6 +246,8 @@ The stack and project-domain skill packs are:
 Every review skill uses a reference checklist named review-checklist-[review-target].md under that skill's references folder. For example, review-architecture uses review-checklist-architecture.md.
 
 Review checklists are evidence-capture templates. Each checklist question requires status, the objective question, quoted evidence from the artifact or source material, and an assessment grounded in that quote.
+
+Code review follows the same evidence philosophy without one massive universal review skill. The Code Review Agent loads the coding and stack skills applicable to the changed files, completes their focused evidence checklists, and then synthesizes findings from the evidence packet. Canonical model stages allow a simple model to extract evidence and an advanced model to perform synthesis.
 
 When a review skill runs, it saves a completed review checklist next to the reviewed artifact using this form: artifact-name.review-checklist-[review-target].md. For example, a coding review of test.ts saves test.ts.review-checklist-coding.md.
 

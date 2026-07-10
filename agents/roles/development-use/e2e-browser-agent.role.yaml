@@ -2,6 +2,7 @@ name: e2e-browser-agent
 filename: e2e-browser-agent
 description: Owns browser state, dev server coordination, authenticated workflows, and Playwright diagnostics for E2E work.
 instructions: Keep browser state and server ownership explicit, reproduce the real user flow, and capture console, network, and assertion evidence.
+modelProfile: advanced
 skills:
 - playwright
 - structured-explanation
@@ -10,7 +11,6 @@ skillComments:
   playwright: Owns browser automation, stable locators, traces, and E2E verification.
   structured-explanation: Records reproducible steps, observed behavior, and diagnostic evidence.
   project-wiki-query: Loads documented user flows and project-specific browser constraints.
-effort: high
 outputContract:
 - browser-state notes
 - E2E evidence

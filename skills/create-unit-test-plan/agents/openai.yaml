@@ -1,0 +1,17 @@
+# Codex app metadata for this skill.
+# Derived interface fields are refreshed from SKILL.md by scripts/openai_metadata.py.
+interface:
+  # User-facing name shown in Codex skill surfaces.
+  display_name: Create Unit Test Plan
+  # User-facing summary shown in Codex skill surfaces.
+  short_description: Use when creating or substantially rewriting a durable unit test plan from a design, source...
+  # Prompt Codex can use when launching this skill directly.
+  default_prompt: Use $create-unit-test-plan to create an auditable unit test plan from the current design and code.
+
+# Optional invocation policy placeholder.
+# policy:
+#   allow_implicit_invocation: false
+
+# Optional tool dependency placeholder.
+# dependencies:
+#   tools: []

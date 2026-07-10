@@ -446,6 +446,13 @@
     </p>
   </section>
 
+  <section class="section" aria-labelledby="hierarchy-title">
+    <h2 id="hierarchy-title">Full Model, Agent, And Skill Hierarchy</h2>
+    <p class="note">Canonical roles request semantic model profiles. Runtime adapters resolve those profiles to concrete models, and each role loads its bounded skill set. Detailed coding and review-evidence rules remain in the applicable skills.</p>
+    <p><a href="agent-skill-hierarchy.svg">Open the full SVG diagram</a></p>
+    <img src="agent-skill-hierarchy.svg" alt="Full hierarchy connecting model profiles to canonical agents and bundled skills" style="display:block;width:100%;height:auto;" />
+  </section>
+
   <section class="section" aria-labelledby="roles-title">
     <h2 id="roles-title">Role Agent Categories</h2>
     <p class="note">
@@ -502,8 +509,8 @@
           </tr>
           <tr>
             <td><span class="name">User asks for review</span></td>
-            <td>Use Code Review Agent with fresh context and finding-first output.</td>
-            <td>review-structured, relevant stack skill, source-reading tools, test evidence.</td>
+            <td>Use Code Review Agent with fresh context and finding-first output. Extract evidence from the applicable coding-skill checklists before synthesis.</td>
+            <td>code-review-evidence, review-structured, and the relevant language, framework, tier, persistence, and test skills.</td>
           </tr>
           <tr>
             <td><span class="name">User asks for documentation artifact</span></td>

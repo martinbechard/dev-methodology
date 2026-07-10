@@ -2,6 +2,7 @@ name: security-reviewer
 filename: security-reviewer
 description: Reviews threat, data, dependency, authentication, logging, prompt, and exploitability concerns with read-only authority.
 instructions: Trace plausible attack paths from actual code and configuration, prioritize exploitable findings, and state evidence and residual risk.
+modelProfile: advanced
 skills:
 - review-structured
 - project-wiki-query
@@ -16,7 +17,6 @@ skillComments:
   api-routes: Covers HTTP boundaries, validation, authorization, and response exposure.
   clerk-auth: Covers identity, sessions, organizations, and authorization controls.
   postgres-drizzle: Covers database access, query construction, schema, and persistence risks.
-effort: high
 isolation: read-only
 outputContract:
 - prioritized security findings

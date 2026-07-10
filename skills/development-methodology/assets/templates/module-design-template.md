@@ -70,6 +70,8 @@ TODO: Link the parent architecture or high-level design document.
 
 TODO: State how this module contributes to that parent design.
 
+TODO: Add a compact module context diagram when direct callers, dependencies, external interfaces, or ownership boundaries are difficult to understand from prose. Omit it when the topology is simple.
+
 ## Responsibilities
 
 TODO: List the responsibilities this module owns.
@@ -167,3 +169,5 @@ TODO: State which errors are returned, thrown, swallowed, or escalated.
 TODO: List unit tests, integration tests, regression tests, manual checks, and build checks that prove this module works.
 
 TODO: Include edge cases, invalid inputs, dependency failures, persistence behavior, and user-visible behavior when applicable.
+
+TODO: Name important test seams, fixtures, boundary doubles, and the contracts they preserve when those details affect implementation or review.

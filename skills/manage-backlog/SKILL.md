@@ -38,6 +38,7 @@ When managing a series:
 - Preserve links between index.md and child items.
 - Use dependencies between child item slugs when order matters.
 - Do not mark the whole series complete until every required child item is completed or intentionally abandoned.
+- Derive the series status from child evidence: active while required children remain runnable or running, blocked when every remaining required child is blocked, failed when a required terminal failure prevents the goal, and completed only when all required children have terminal successful or intentionally abandoned outcomes.
 - Archive child items according to their own outcomes. Move or mark the index according to project convention only when the series has reached a terminal state.
 
 ## State Principles

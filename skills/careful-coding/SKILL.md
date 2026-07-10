@@ -20,6 +20,7 @@ Before implementing:
 - If multiple interpretations exist, present them instead of picking silently.
 - If a simpler approach exists, say so. Push back when warranted.
 - If something is unclear, stop, name what is confusing, and ask.
+- Read the project intent, local guidance, callers, tests, and established patterns before deciding what the code should do.
 
 ## Simplicity First
 
@@ -32,6 +33,8 @@ Write the minimum code that solves the problem. Avoid speculative work.
 - If a 200-line solution could be 50 lines, rewrite it.
 
 Ask whether a senior engineer would call the solution overcomplicated. If yes, simplify.
+
+Prefer a named parameter object when several same-shaped arguments, optional arguments, or evolving call sites would otherwise make calls ambiguous. Prefer simple conditionals while the cases remain stable; use an explicit strategy or dispatch structure when independently changing cases would make one conditional brittle.
 
 ## Surgical Changes
 
@@ -48,6 +51,10 @@ When changes create orphans:
 - Do not remove pre-existing dead code unless explicitly asked.
 
 Every changed line must trace directly to the user's request.
+
+Handle errors at the boundary that owns recovery, translation, retry, or user communication. Preserve useful causes and do not swallow failures to make a test or command appear successful.
+
+Keep comments for intent, constraints, invariants, and non-obvious trade-offs. Remove comments made false or redundant by the current change, but do not rewrite unrelated commentary.
 
 ## Goal-Driven Execution
 

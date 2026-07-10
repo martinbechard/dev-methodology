@@ -17,6 +17,11 @@ SKILLS_ROOT = REPOSITORY_ROOT / "skills"
 SKILL_CATEGORIES_PATH = REPOSITORY_ROOT / "design" / "skill-categories.yaml"
 SKILL_DEFINITIONS_PATH = REPOSITORY_ROOT / "design" / "generated" / "skill-definitions.js"
 ROLE_SCHEMA_PATH = REPOSITORY_ROOT / "agents" / "role-schema.yaml"
+MODEL_PROFILES_PATH = REPOSITORY_ROOT / "agents" / "model-profiles.yaml"
+ADAPTER_MODEL_PROFILE_PATHS = {
+    "codex": REPOSITORY_ROOT / "adapters" / "codex" / "model-profiles.yaml",
+    "claude": REPOSITORY_ROOT / "adapters" / "claude" / "model-profiles.yaml",
+}
 ROLE_DEFINITIONS_PATH = REPOSITORY_ROOT / "design" / "generated" / "role-definitions.js"
 AGENT_BROWSER_PATH = REPOSITORY_ROOT / "design" / "agent-browser.js"
 GENERATED_ADAPTERS_ROOT = REPOSITORY_ROOT / "generated" / "adapters"
@@ -37,6 +42,19 @@ NEW_WORKFLOW_SKILLS = (
     "documentation-page-verifier",
     "create-agents-plan",
     "maintain-methodology-documentation",
+)
+NEW_DEVELOPMENT_SKILLS = (
+    "code-review-evidence",
+    "test-driven-development",
+    "code-execution-tracing",
+    "root-cause-analysis",
+    "runtime-evidence-collection",
+    "create-unit-test-plan",
+    "review-unit-test-plan",
+    "typescript-coding",
+    "java-coding",
+    "spring-boot",
+    "sql-coding",
 )
 AGENTS_PLAN_SKILL = "create-agents-plan"
 AGENTS_PLAN_TEMPLATE = "agents-plan-template.yaml"
@@ -67,6 +85,11 @@ ARTIFACT_CREATION_SKILLS = (
         "module-design-template.md",
         "review-module-design",
     ),
+    (
+        "create-unit-test-plan",
+        "unit-test-plan-template.md",
+        "review-unit-test-plan",
+    ),
 )
 ARTIFACT_REVIEW_SKILLS = (
     ("review-project-wiki", "project-wiki"),
@@ -74,6 +97,7 @@ ARTIFACT_REVIEW_SKILLS = (
     ("review-architecture", "architecture"),
     ("review-high-level-design", "high-level-design"),
     ("review-module-design", "module-design"),
+    ("review-unit-test-plan", "unit-test-plan"),
 )
 ALL_REVIEW_SKILLS = ARTIFACT_REVIEW_SKILLS + (
     ("review-structured", "structured"),
@@ -84,6 +108,7 @@ EXAMPLE_PROJECT_SKILL_PACKS = (
     "electron-main",
     "electron-preload",
     "harness-implementation",
+    "java-coding",
     "jest",
     "langgraph",
     "local-model-integration",
@@ -96,6 +121,9 @@ EXAMPLE_PROJECT_SKILL_PACKS = (
     "react-vite-renderer",
     "tailwind-design-system",
     "tool-runtime-implementation",
+    "spring-boot",
+    "sql-coding",
+    "typescript-coding",
     "typescript-esm",
     "typescript-strict",
     "vitest",
@@ -320,6 +348,12 @@ class BundleContentTests(unittest.TestCase):
 
     def test_workflow_skills_and_codex_metadata_are_packaged(self) -> None:
         for skill_name in NEW_WORKFLOW_SKILLS:
+            with self.subTest(skill_name=skill_name):
+                self.assertTrue((SKILLS_ROOT / skill_name / "SKILL.md").is_file())
+                self.assertTrue(openai_metadata_path(skill_name).is_file())
+
+    def test_new_development_skills_and_codex_metadata_are_packaged(self) -> None:
+        for skill_name in NEW_DEVELOPMENT_SKILLS:
             with self.subTest(skill_name=skill_name):
                 self.assertTrue((SKILLS_ROOT / skill_name / "SKILL.md").is_file())
                 self.assertTrue(openai_metadata_path(skill_name).is_file())
@@ -569,6 +603,47 @@ class BundleContentTests(unittest.TestCase):
                 ).read_text(encoding="utf-8")
                 self.assertIn("Skill comments:", claude_agent_text)
                 self.assertIn("Output comments:", claude_agent_text)
+
+    def test_model_profiles_are_semantic_and_adapter_complete(self) -> None:
+        canonical = load_yaml_object(MODEL_PROFILES_PATH)["profiles"]
+        self.assertEqual(
+            {"simple", "default", "advanced", "advanced-long"},
+            set(canonical),
+        )
+
+        adapter_profiles = {
+            adapter: load_yaml_object(path)["profiles"]
+            for adapter, path in ADAPTER_MODEL_PROFILE_PATHS.items()
+        }
+        for adapter, profiles in adapter_profiles.items():
+            with self.subTest(adapter=adapter):
+                self.assertEqual(set(canonical), set(profiles))
+                for profile in profiles.values():
+                    self.assertIsInstance(profile.get("model"), str)
+                    self.assertTrue(profile["model"].strip())
+
+        for profile in adapter_profiles["codex"].values():
+            self.assertTrue(profile["model"].startswith("gpt-5.6-"))
+
+        for role_path in sorted((REPOSITORY_ROOT / "agents" / "roles").glob("*/*.role.yaml")):
+            with self.subTest(role_path=role_path):
+                role = load_yaml_object(role_path)
+                self.assertIn(role["modelProfile"], canonical)
+                self.assertNotIn("model", role)
+                self.assertNotIn("effort", role)
+                for profile in role.get("modelStages", {}).values():
+                    self.assertIn(profile, canonical)
+
+    def test_agent_skill_evals_cover_implementation_and_independent_review(self) -> None:
+        evals = load_yaml_object(REPOSITORY_ROOT / "evals" / "cases.yaml")["cases"]
+        by_id = {case["id"]: case for case in evals}
+
+        self.assertIn("typescript-order-pricing", by_id)
+        self.assertIn("spring-boot-order-cancellation", by_id)
+        review_case = by_id["typescript-code-review"]
+        self.assertTrue(review_case["expectVerifyFailure"])
+        self.assertIn("code-review-evidence", review_case["requiredSkills"])
+        self.assertEqual(3, len(review_case["requiredFindings"]))
 
 
     def test_readme_points_to_skill_based_setup(self) -> None:

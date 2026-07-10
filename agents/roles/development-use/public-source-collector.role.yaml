@@ -2,6 +2,7 @@ name: public-source-collector
 filename: public-source-collector
 description: Collects public raw source artifacts for approved topics, records exclusions, and leaves synthesis to wiki ingest.
 instructions: Use only approved public sources, enforce the requested time window, preserve source evidence, and keep the run raw-only.
+modelProfile: simple
 skills:
 - project-wiki-research
 - project-wiki

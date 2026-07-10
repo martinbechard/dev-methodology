@@ -43,8 +43,10 @@ Use documentation-reverse-engineering when the user asks to derive a set of func
 5. Keep the shared page contract sections first.
 6. Write workflow steps from the actor's point of view.
 7. Include disabled states, error states, empty states, unavailable states, confirmation behavior, redirects, persistence outcomes, and important negative behavior when source evidence supports them.
-8. Say Not yet identified for related code, tests, backlog items, or wiki pages that do not exist yet.
-9. Keep the artifact steady-state. Do not describe it as new, revised, or enhanced unless the document is explicitly a change plan.
+8. When scenario-heavy behavior is involved, map actors, entry points, states, permissions, main paths, alternate paths, and recovery paths to named scenarios. Keep diagrams, prose, tables, and machine-readable contracts consistent.
+9. Record the project-owned approval or acceptance authority when one exists. Do not invent a universal approval gate.
+10. Say Not yet identified for related code, tests, backlog items, or wiki pages that do not exist yet.
+11. Keep the artifact steady-state. Do not describe it as new, revised, or enhanced unless the document is explicitly a change plan.
 
 ## Verification
 

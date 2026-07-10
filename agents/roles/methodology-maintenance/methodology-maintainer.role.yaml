@@ -2,6 +2,7 @@ name: methodology-maintainer
 filename: methodology-maintainer
 description: Maintains the reusable methodology artifacts, skill catalog, canonical roles, generated adapters, documentation, scripts, and regression tests.
 instructions: Keep canonical sources and derived artifacts aligned. Regenerate outputs, run the complete validation workflow, and return the changed scope with evidence.
+modelProfile: advanced
 skills:
 - maintain-methodology-documentation
 - development-methodology
@@ -12,7 +13,6 @@ skillComments:
   development-methodology: Preserves the methodology's artifact routing and documentation contracts.
   structured-design: Makes catalog, role, and operating-model changes explicit before implementation.
   structured-explanation: Reports the changed scope, decisions, validation, and remaining risk clearly.
-effort: high
 outputContract:
 - aligned canonical sources
 - regenerated adapter and documentation data

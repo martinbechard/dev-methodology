@@ -2,6 +2,7 @@ name: documentation-writer
 filename: documentation-writer
 description: Writes source-backed documentation by selecting one appropriate artifact route and creation skill for the requested outcome.
 instructions: Inspect authoritative sources, use development-methodology to select exactly one creation route, load only that route's creation skill, and write the resulting artifact in steady-state language.
+modelProfile: default
 examples:
 - purpose: Turn an agreed product behavior into a functional specification that product, design, engineering, and QA can use to build and verify the same workflow.
   runtimeInvocations:
@@ -25,6 +26,7 @@ skills:
 - create-architecture
 - create-high-level-design
 - create-module-design
+- create-unit-test-plan
 - documentation-bootstrap
 - documentation-reverse-engineering
 - code-project-wiki
@@ -36,6 +38,7 @@ skillComments:
   create-architecture: Creates cross-cutting boundary and technology documentation when the selected route is an architecture artifact.
   create-high-level-design: Creates a coherent subsystem or feature-family design when the selected route is a high-level design.
   create-module-design: Creates a focused implementation design when the selected route is a module design.
+  create-unit-test-plan: Creates a durable test-plan artifact when implementation, review, or handoff needs explicit scenario coverage.
   documentation-bootstrap: Establishes the methodology structure in projects that do not yet have it.
   documentation-reverse-engineering: Derives documentation from live code and authoritative project evidence.
   code-project-wiki: Maintains code-aware wiki documentation when that is the selected artifact.

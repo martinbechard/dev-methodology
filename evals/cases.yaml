@@ -1,0 +1,62 @@
+schema: dev-methodology-agent-skill-evals
+version: 1
+cases:
+  - id: typescript-order-pricing
+    project: evals/projects/typescript-order-pricing
+    task: TASK.md
+    install: npm install
+    verify: npm test
+    requiredSkills:
+      - careful-coding
+      - test-driven-development
+      - typescript-coding
+      - typescript-strict
+      - typescript-esm
+      - code-review-evidence
+    requiredEvidence:
+      - TS-BOUNDARY
+      - TS-CONTRACT
+      - TS-ASYNC
+      - TS-TESTS
+      - REVIEW-SYNTHESIS
+  - id: spring-boot-order-cancellation
+    project: evals/projects/spring-boot-order-cancellation
+    task: TASK.md
+    install: mvn -q -DskipTests package
+    verify: mvn -q test
+    requiredSkills:
+      - careful-coding
+      - test-driven-development
+      - java-coding
+      - spring-boot
+      - sql-coding
+      - code-review-evidence
+    requiredEvidence:
+      - JAVA-CONTRACT
+      - SPRING-BOUNDARY
+      - SPRING-TRANSACTION
+      - SQL-STATE
+      - JAVA-TESTS
+      - REVIEW-SYNTHESIS
+  - id: typescript-code-review
+    project: evals/projects/typescript-code-review
+    task: TASK.md
+    install: npm install
+    verify: npm test
+    expectVerifyFailure: true
+    requiredSkills:
+      - code-review-evidence
+      - review-structured
+      - careful-coding
+      - typescript-coding
+      - typescript-strict
+      - typescript-esm
+    requiredEvidence:
+      - Async ownership
+      - Error handling
+      - Boundary validation
+      - Review Synthesis
+    requiredFindings:
+      - await the provider
+      - provider failure
+      - valid range

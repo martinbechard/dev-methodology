@@ -1,0 +1,11 @@
+schema: dev-methodology-model-profiles
+version: 1
+profiles:
+  simple:
+    purpose: Extraction, classification, lookup, and mechanical evidence checks.
+  default:
+    purpose: Normal implementation, documentation, and bounded verification work.
+  advanced:
+    purpose: Review synthesis, architecture, diagnosis, and difficult implementation work.
+  advanced-long:
+    purpose: Advanced reasoning over unusually large evidence sets or cross-project context.

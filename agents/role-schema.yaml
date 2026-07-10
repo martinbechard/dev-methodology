@@ -7,6 +7,7 @@ required:
   - instructions
   - skills
   - skillComments
+  - modelProfile
   - outputContract
   - outputComments
 properties:
@@ -19,8 +20,8 @@ properties:
   tools: string-list
   disallowedTools: string-list
   mcpServers: string-list
-  model: string
-  effort: string
+  modelProfile: model-profile
+  modelStages: model-profile-map
   maxTurns: integer
   timeout: integer
   permissionMode: string

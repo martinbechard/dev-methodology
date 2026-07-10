@@ -21,11 +21,13 @@ Use this skill as the router for software project documentation work from this b
 - Use create-architecture when creating or substantially rewriting an architecture artifact from the architecture template.
 - Use create-high-level-design when creating or substantially rewriting a high-level design artifact from the high-level design template.
 - Use create-module-design when creating or substantially rewriting a module design artifact from the module design template.
+- Use create-unit-test-plan when creating or substantially rewriting a durable unit test plan from the unit test plan template.
 - Use review-project-wiki before finishing project wiki pages or project-wiki-template artifacts.
 - Use review-functional-spec before finishing functional specification artifacts.
 - Use review-architecture before finishing architecture artifacts.
 - Use review-high-level-design before finishing high-level design artifacts.
 - Use review-module-design before finishing module design artifacts.
+- Use review-unit-test-plan before finishing unit test plan artifacts.
 - Use documentation-page-verifier for shared checks on mixed, unknown, or custom documentation artifacts.
 - Use project-wiki before creating, maintaining, or validating docs/wiki content.
 - Use project-wiki-query for wiki-backed project questions.
@@ -67,6 +69,7 @@ Use the smallest document type that fully explains the work:
 - Architecture: project-wide boundary, technology choice, shared rule, cross-cutting concern, layer relationship, persistence, security, privacy, observability, or UI composition.
 - High-level design: coherent subsystem, feature family, system slice, integration path, or multi-module implementation plan.
 - Module design: one module, service, class, task, utility, UI component, or tightly scoped feature unit.
+- Unit test plan: durable scenario, boundary-double, failure, and coverage planning for one unit before or alongside test implementation.
 
 ## Artifact Creation Routes
 
@@ -78,6 +81,7 @@ Use this route table when the task is to create or substantially rewrite a metho
 - Architecture artifact: use create-architecture, template architecture-template.md, and review-architecture.
 - High-level design artifact: use create-high-level-design, template high-level-design-template.md, and review-high-level-design.
 - Module design artifact: use create-module-design, template module-design-template.md, and review-module-design.
+- Unit test plan artifact: use create-unit-test-plan, template unit-test-plan-template.md, and review-unit-test-plan.
 
 Use project-wiki-topic-writer for ordinary docs/wiki topic pages that summarize or link source material without becoming one of the specialized methodology artifacts. Use documentation-reverse-engineering when the user asks for a source-derived documentation set rather than one artifact.
 
@@ -91,6 +95,7 @@ Template assets live under skills/development-methodology/assets/templates.
 - architecture-template.md defines project-wide and cross-cutting architecture documentation.
 - high-level-design-template.md defines subsystem and feature-family documentation.
 - module-design-template.md defines one-module design documentation.
+- unit-test-plan-template.md defines one-unit scenario, boundary, failure, and traceability planning.
 
 When a target project needs a local editable document, copy only the matching template into that project's chosen documentation location and replace every TODO instruction with source-backed content. Do not create a second reusable template distribution in the target repository unless the user asks for local project-owned templates.
 
@@ -111,7 +116,7 @@ When a target project needs a local editable document, copy only the matching te
 
 Before finishing documentation or wiki work:
 
-1. Use the artifact-specific review skill when the artifact type is project wiki, functional specification, architecture, high-level design, or module design.
+1. Use the artifact-specific review skill when the artifact type is project wiki, functional specification, architecture, high-level design, module design, or unit test plan.
 2. Use documentation-page-verifier for mixed, unknown, or custom documentation artifacts.
 3. Confirm the document follows the selected structure or format. Use the shared page contract only when the selected artifact type requires it.
 4. Run project wiki status and lint when docs/wiki exists.

@@ -21,6 +21,9 @@ Use this pack for Vitest test design, focused test execution, mocks, fixtures, a
 - Prefer real parsing, validation, and state transitions over broad mocks.
 - Keep fixtures readable and tied to the contract under test.
 - Treat failing tests as implementation work until the root cause is understood.
+- For integration scenarios, connect setup, simulated dependency or clock, state transition, expected outcome, and negative path to source or plan evidence.
+- Choose mocks only for real external or nondeterministic boundaries. Prefer spies for observation, keep doubles local, test complex fakes against their contract, and restore timers, globals, and mock state after each test.
+- Reconcile generated tests with an existing unit test plan when the repository maintains one.
 
 ## Verification
 

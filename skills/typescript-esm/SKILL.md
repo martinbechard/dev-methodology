@@ -14,6 +14,7 @@ Use this pack when TypeScript module format can affect runtime behavior, test ex
 - Load with Coding Agent for TypeScript source, scripts, tests, package metadata, and tsconfig changes.
 - Load with Code Review Agent when a change affects module boundaries, generated output, path aliases, or runtime startup.
 - Combine with framework packs such as Electron, React Vite, Next.js, Node CLI, Jest, or Vitest.
+- Combine with TypeScript Coding for general implementation and review evidence.
 
 ## Guidance
 
@@ -27,3 +28,7 @@ Use this pack when TypeScript module format can affect runtime behavior, test ex
 - Run the project typecheck or build command after module-boundary changes.
 - Run focused tests for changed modules before broader test suites.
 - Inspect startup paths when changing entrypoints, package exports, or generated output.
+
+## Review Evidence
+
+Read references/review-checklist-typescript-esm.md during code review and use Code Review Evidence to synthesize findings.

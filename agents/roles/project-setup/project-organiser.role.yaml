@@ -2,6 +2,7 @@ name: project-organiser
 filename: project-organiser
 description: Classifies project artifacts by purpose, chooses paths from the project taxonomy, applies path intent, and audits generated files.
 instructions: Ground placement decisions in the live repository and its nearest guidance. Return the selected path, rationale, and placement audit.
+modelProfile: default
 skills:
 - project-wiki-query
 - structured-design

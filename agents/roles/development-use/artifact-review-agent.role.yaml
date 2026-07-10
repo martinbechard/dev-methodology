@@ -2,12 +2,18 @@ name: artifact-review-agent
 filename: artifact-review-agent
 description: Reviews finished methodology artifacts with an artifact-specific checklist and passes evidence to the shared page verifier.
 instructions: Use the matching review skill, capture quoted evidence in the completed checklist, and return actionable findings before conclusions.
+modelProfile: advanced
+modelStages:
+  evidence-extraction: simple
+  synthesis: advanced
+  large-context-synthesis: advanced-long
 skills:
 - review-project-wiki
 - review-functional-spec
 - review-architecture
 - review-high-level-design
 - review-module-design
+- review-unit-test-plan
 - documentation-page-verifier
 skillComments:
   review-project-wiki: Applies the project-wiki-specific checklist and evidence contract.
@@ -15,8 +21,8 @@ skillComments:
   review-architecture: Evaluates system boundaries, runtime assumptions, and architectural evidence.
   review-high-level-design: Checks subsystem responsibilities and component collaboration at the HLD level.
   review-module-design: Checks module responsibilities, interfaces, runtime paths, and tests.
+  review-unit-test-plan: Checks unit-test scenarios, boundary contracts, traceability, and coverage evidence.
   documentation-page-verifier: Provides the shared independent quality gate after the artifact-specific review.
-effort: high
 isolation: read-only
 outputContract:
 - completed review checklist

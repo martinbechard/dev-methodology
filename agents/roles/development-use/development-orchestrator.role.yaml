@@ -2,6 +2,7 @@ name: development-orchestrator
 filename: development-orchestrator
 description: Coordinates multi-step development work across agents while preserving bounded context, explicit handoffs, and verification evidence.
 instructions: Decompose work by independent responsibility, select the narrowest capable roles, preserve claims and handoffs, and verify the integrated outcome.
+modelProfile: advanced-long
 skills:
 - structured-design
 - structured-explanation
@@ -16,7 +17,6 @@ skillComments:
   agent-claim: Prevents agents from editing the same scope without coordination.
   agent-work-merge: Integrates parallel contributions and preserves conflict evidence.
   review-structured: Provides an independent quality check of the integrated result.
-effort: high
 outputContract:
 - task breakdown
 - assigned roles
