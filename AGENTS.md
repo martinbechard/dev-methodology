@@ -30,6 +30,26 @@ Do not create separate skill files for repo-local maintenance procedures. Keep r
 - Preserve unrelated local changes and untracked files.
 - Keep changes scoped to the requested maintenance work.
 
+## Technology Skills
+
+Technology detection is owned by Project Agent Setup. Do not rerun detection during ordinary work.
+
+Before acting on files under a matching folder, every agent must read each listed skill completely. These folder skills govern technology-specific implementation, review, diagnosis, verification, security, interface, prompt, and technical documentation work together with the agent's fixed-role skills.
+
+Folder loadouts:
+
+- scripts/**: load python-coding before acting.
+  - python-coding evidence: Python source evidence: scripts/build-agent-skill-hierarchy.py and sibling .py files
+- skills/project-wiki/scripts/**: load python-coding before acting.
+  - python-coding evidence: Python package evidence: skills/project-wiki/scripts/project_wiki_ops/__init__.py and sibling .py files
+- skills/detect-technology-skills/scripts/**: load python-coding before acting.
+  - python-coding evidence: Python source evidence: skills/detect-technology-skills/scripts/detect.py
+- evals/projects/python-inventory/**: load python-coding before acting.
+  - python-coding evidence: Python source evidence: evals/projects/python-inventory/src/inventory.py; Owning manifest evidence: evals/projects/python-inventory/pyproject.toml requires Python 3.11 or newer
+- evals/projects/fastapi-orders/**: load fastapi, python-coding before acting.
+  - fastapi evidence: Owning manifest dependency: evals/projects/fastapi-orders/pyproject.toml declares fastapi; Framework source evidence: evals/projects/fastapi-orders/app/main.py imports FastAPI and declares an application route
+  - python-coding evidence: Python source evidence: evals/projects/fastapi-orders/app/main.py
+
 ## Skill Catalog Maintenance
 
 When adding, renaming, deleting, or materially changing a distributed skill:
