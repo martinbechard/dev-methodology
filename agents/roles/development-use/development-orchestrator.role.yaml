@@ -6,6 +6,37 @@ instructions: Decompose work by independent responsibility, use project guidance
   select narrow role loadouts, preserve claims and handoffs, and verify the integrated
   outcome.
 modelProfile: advanced-long
+examples:
+- purpose: Break a cross-layer feature into independently owned work lanes with explicit
+    dependencies and handoffs so contributors can work in bounded contexts without
+    overlapping edits.
+  runtimeInvocations:
+    codex: "$development-orchestrator Coordinate implementation of an audit-log export
+      across the API, background worker, and administration UI, including role assignments,
+      ownership boundaries, handoffs, and integrated verification."
+    claude-code: "@agent-development-orchestrator Coordinate implementation of an audit-log
+      export across the API, background worker, and administration UI, including role
+      assignments, ownership boundaries, handoffs, and integrated verification."
+  plausibleResponse: Decomposed the audit-log export into API contract, background processing,
+    administration UI, and verification lanes. Resolved narrow role and folder skill loadouts,
+    assigned non-overlapping ownership claims, sequenced dependent work, and recorded the
+    evidence required at each handoff. Integrated the completed contributions and verified
+    the export workflow across the API, worker, and UI boundaries.
+- purpose: Reconcile completed parallel contributions into one coherent result while preserving
+    conflict evidence and verifying cross-contribution behavior before handoff.
+  runtimeInvocations:
+    codex: "$development-orchestrator Reconcile the completed client, API, and worker
+      contributions for a file-upload retry change, resolve integration conflicts, and
+      verify the combined outcome."
+    claude-code: "@agent-development-orchestrator Reconcile the completed client, API,
+      and worker contributions for a file-upload retry change, resolve integration conflicts,
+      and verify the combined outcome."
+  plausibleResponse: Reviewed the ownership claims, contribution summaries, and verification
+    evidence for all three work lanes. Reconciled the overlapping retry configuration while
+    preserving the conflict rationale, combined the contributions in dependency order, and
+    ran focused client, API, worker, and end-to-end checks. The integrated review found no
+    unresolved cross-contribution regressions, and the handoff records the final behavior
+    and validation evidence.
 skills:
 - structured-design:
     justification: We need this to divide complex work into bounded responsibilities
