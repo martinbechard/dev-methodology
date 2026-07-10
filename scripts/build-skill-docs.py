@@ -57,6 +57,8 @@ ROLE_DESCRIPTION_FIELD_NAME = "description"
 ROLE_INSTRUCTIONS_FIELD_NAME = "instructions"
 ROLE_SKILLS_FIELD_NAME = "skills"
 ROLE_OUTPUT_CONTRACT_FIELD_NAME = "outputContract"
+ROLE_EXAMPLES_FIELD_NAME = "examples"
+ROLE_EXAMPLE_REQUIRED_FIELDS = ("purpose", "invocation", "plausibleResponse")
 ROLE_LIST_FIELDS = (
     ROLE_SKILLS_FIELD_NAME,
     "tools",
@@ -131,6 +133,7 @@ class RoleDefinition:
     instructions: str
     skills: tuple[str, ...]
     output_contract: tuple[str, ...]
+    examples: tuple[dict[str, str], ...]
     group: str
     group_label: str
     source_path: str
@@ -362,6 +365,33 @@ def validate_string_list(value: object, field_name: str, source_path: Path) -> t
     return normalized
 
 
+def validate_role_examples(value: object, source_path: Path) -> tuple[dict[str, str], ...]:
+    if not isinstance(value, list) or not value:
+        raise ValueError(f"Role {ROLE_EXAMPLES_FIELD_NAME} must be a non-empty list: {source_path}")
+
+    examples: list[dict[str, str]] = []
+    for index, example in enumerate(value, start=MINIMUM_POSITIVE_INTEGER):
+        if not isinstance(example, dict):
+            raise ValueError(f"Role example {index} must be an object: {source_path}")
+        unknown_fields = sorted(set(example) - set(ROLE_EXAMPLE_REQUIRED_FIELDS))
+        missing_fields = sorted(set(ROLE_EXAMPLE_REQUIRED_FIELDS) - set(example))
+        if unknown_fields or missing_fields:
+            raise ValueError(
+                f"Role example {index} must contain only {ROLE_EXAMPLE_REQUIRED_FIELDS}: {source_path}"
+            )
+        normalized = {}
+        for field_name in ROLE_EXAMPLE_REQUIRED_FIELDS:
+            field_value = example[field_name]
+            if not isinstance(field_value, str) or not field_value.strip():
+                raise ValueError(
+                    f"Role example {index} {field_name} must be a non-empty string: {source_path}"
+                )
+            normalized[field_name] = field_value.strip()
+        examples.append(normalized)
+
+    return tuple(examples)
+
+
 def load_role_schema() -> tuple[set[str], set[str], set[str]]:
     schema = read_yaml_object(ROLE_SCHEMA_PATH)
     required = validate_string_list(
@@ -432,6 +462,10 @@ def load_role_definition(
         if value is not None:
             list_values[field_name] = validate_string_list(value, field_name, source_path)
 
+    examples = ()
+    if ROLE_EXAMPLES_FIELD_NAME in parsed:
+        examples = validate_role_examples(parsed[ROLE_EXAMPLES_FIELD_NAME], source_path)
+
     role_skills = list_values[ROLE_SKILLS_FIELD_NAME]
     unknown_skills = sorted(set(role_skills) - skill_names)
     if unknown_skills:
@@ -439,7 +473,7 @@ def load_role_definition(
 
     optional_fields = {
         field_name: parsed[field_name]
-        for field_name in sorted(set(parsed) - required_fields)
+        for field_name in sorted(set(parsed) - required_fields - {ROLE_EXAMPLES_FIELD_NAME})
     }
     for field_name, values in list_values.items():
         if field_name in optional_fields:
@@ -457,6 +491,7 @@ def load_role_definition(
         instructions=instructions.strip(),
         skills=role_skills,
         output_contract=list_values[ROLE_OUTPUT_CONTRACT_FIELD_NAME],
+        examples=examples,
         group=group,
         group_label=ROLE_GROUP_LABELS[group],
         source_path=str(source_path.relative_to(REPOSITORY_ROOT)),
@@ -537,6 +572,7 @@ def build_role_payload(roles: Sequence[RoleDefinition]) -> dict[str, object]:
                 "instructions": role.instructions,
                 "skills": list(role.skills),
                 "outputs": list(role.output_contract),
+                "examples": list(role.examples),
                 "group": role.group,
                 "groupLabel": role.group_label,
                 "sourcePath": role.source_path,

@@ -19,6 +19,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       "description": "Reviews finished methodology artifacts with an artifact-specific checklist and passes evidence to the shared page verifier.",
       "displayName": "Artifact Review Agent",
       "effort": "high",
+      "examples": [],
       "filename": "artifact-review-agent",
       "group": "development-use",
       "groupLabel": "Development Use Agents",
@@ -44,6 +45,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
     "backlog-steward": {
       "description": "Creates, claims, resumes, blocks, completes, and archives typed backlog work with recoverable status evidence.",
       "displayName": "Backlog Steward",
+      "examples": [],
       "filename": "backlog-steward",
       "group": "development-use",
       "groupLabel": "Development Use Agents",
@@ -68,6 +70,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       "description": "Reviews diffs for regressions, missing tests, weak verification, unsafe abstractions, rule violations, and documentation drift.",
       "displayName": "Code Review Agent",
       "effort": "high",
+      "examples": [],
       "filename": "code-review-agent",
       "group": "development-use",
       "groupLabel": "Development Use Agents",
@@ -93,6 +96,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       "description": "Implements scoped source changes using applicable project guidance, repository patterns, focused tests, and build commands.",
       "displayName": "Coding Agent",
       "effort": "high",
+      "examples": [],
       "filename": "coding-agent",
       "group": "development-use",
       "groupLabel": "Development Use Agents",
@@ -116,6 +120,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       "description": "Coordinates multi-step development work across agents while preserving bounded context, explicit handoffs, and verification evidence.",
       "displayName": "Development Orchestrator",
       "effort": "high",
+      "examples": [],
       "filename": "development-orchestrator",
       "group": "development-use",
       "groupLabel": "Development Use Agents",
@@ -141,6 +146,23 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
     "documentation-architect": {
       "description": "Selects the right documentation route and loads one focused artifact creation skill for the requested methodology artifact.",
       "displayName": "Documentation Architect",
+      "examples": [
+        {
+          "invocation": "Document the password-reset workflow as a functional specification from the current product notes, routes, and tests.",
+          "plausibleResponse": "Selected the functional-specification route. Created a source-backed password-reset specification that covers actors, entry points, success and error states, permissions, acceptance criteria, and links to the relevant routes and tests. Completed the functional-specification review checklist and reported the remaining open question about rate-limit behavior.",
+          "purpose": "Turn an agreed product behavior into a functional specification that product, design, engineering, and QA can use to build and verify the same workflow."
+        },
+        {
+          "invocation": "Derive an architecture document for how this service handles tenant isolation by reading the live code, configuration, and tests.",
+          "plausibleResponse": "Selected the architecture route. Produced a source-backed tenant-isolation document covering the request boundary, identity propagation, data-access constraints, failure modes, observability, and related tests. Flagged one gap where the documented authorization rule is not covered by an automated test.",
+          "purpose": "Explain an existing cross-cutting system decision so future changes preserve the boundary, rationale, responsibilities, and verification obligations."
+        },
+        {
+          "invocation": "Create the initial project wiki for this repository from the README, source tree, tests, and existing operational documentation.",
+          "plausibleResponse": "Selected the project-wiki route. Created the initial navigation and source-backed topic pages for the repository structure, runtime flow, verification workflow, and open questions. Linked the pages to authoritative code and tests, then ran the applicable wiki status, lint, and topic-verification checks.",
+          "purpose": "Establish a durable project wiki when useful knowledge is spread across source, tests, and existing documentation instead of being available as navigable project context."
+        }
+      ],
       "filename": "documentation-architect",
       "group": "development-use",
       "groupLabel": "Development Use Agents",
@@ -159,12 +181,13 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
         "project-wiki-query"
       ],
       "sourcePath": "agents/roles/development-use/documentation-architect.role.yaml",
-      "yaml": "name: documentation-architect\nfilename: documentation-architect\ndescription: Selects the right documentation route and loads one focused artifact creation skill for the requested methodology artifact.\ninstructions: Ground the artifact in authoritative sources, select one methodology shape, and keep the document in steady-state language.\nskills:\n  # Why: Routes the request to the correct documentation artifact and method.\n  - development-methodology\n  # Why: Establishes the methodology structure in projects that do not yet have it.\n  - documentation-bootstrap\n  # Why: Derives documentation from live code and authoritative project evidence.\n  - documentation-reverse-engineering\n  # Why: Maintains code-aware wiki documentation when that is the selected artifact.\n  - code-project-wiki\n  # Why: Reuses existing project knowledge before creating or changing documentation.\n  - project-wiki-query\noutputContract:\n  - selected documentation route\n  - source-backed artifact\n  - verification evidence\n"
+      "yaml": "name: documentation-architect\nfilename: documentation-architect\ndescription: Selects the right documentation route and loads one focused artifact creation skill for the requested methodology artifact.\ninstructions: Ground the artifact in authoritative sources, select one methodology shape, and keep the document in steady-state language.\nexamples:\n  - purpose: Turn an agreed product behavior into a functional specification that product, design, engineering, and QA can use to build and verify the same workflow.\n    invocation: Document the password-reset workflow as a functional specification from the current product notes, routes, and tests.\n    plausibleResponse: Selected the functional-specification route. Created a source-backed password-reset specification that covers actors, entry points, success and error states, permissions, acceptance criteria, and links to the relevant routes and tests. Completed the functional-specification review checklist and reported the remaining open question about rate-limit behavior.\n  - purpose: Explain an existing cross-cutting system decision so future changes preserve the boundary, rationale, responsibilities, and verification obligations.\n    invocation: Derive an architecture document for how this service handles tenant isolation by reading the live code, configuration, and tests.\n    plausibleResponse: Selected the architecture route. Produced a source-backed tenant-isolation document covering the request boundary, identity propagation, data-access constraints, failure modes, observability, and related tests. Flagged one gap where the documented authorization rule is not covered by an automated test.\n  - purpose: Establish a durable project wiki when useful knowledge is spread across source, tests, and existing documentation instead of being available as navigable project context.\n    invocation: Create the initial project wiki for this repository from the README, source tree, tests, and existing operational documentation.\n    plausibleResponse: Selected the project-wiki route. Created the initial navigation and source-backed topic pages for the repository structure, runtime flow, verification workflow, and open questions. Linked the pages to authoritative code and tests, then ran the applicable wiki status, lint, and topic-verification checks.\nskills:\n  # Why: Routes the request to the correct documentation artifact and method.\n  - development-methodology\n  # Why: Establishes the methodology structure in projects that do not yet have it.\n  - documentation-bootstrap\n  # Why: Derives documentation from live code and authoritative project evidence.\n  - documentation-reverse-engineering\n  # Why: Maintains code-aware wiki documentation when that is the selected artifact.\n  - code-project-wiki\n  # Why: Reuses existing project knowledge before creating or changing documentation.\n  - project-wiki-query\noutputContract:\n  - selected documentation route\n  - source-backed artifact\n  - verification evidence\n"
     },
     "e2e-browser-agent": {
       "description": "Owns browser state, dev server coordination, authenticated workflows, and Playwright diagnostics for E2E work.",
       "displayName": "E2E Browser Agent",
       "effort": "high",
+      "examples": [],
       "filename": "e2e-browser-agent",
       "group": "development-use",
       "groupLabel": "Development Use Agents",
@@ -187,6 +210,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       "description": "Integrates work from multiple agents or worktrees while preserving claims, ownership, verification, and conflict evidence.",
       "displayName": "Merge Coordinator",
       "effort": "high",
+      "examples": [],
       "filename": "merge-coordinator",
       "group": "development-use",
       "groupLabel": "Development Use Agents",
@@ -210,6 +234,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       "description": "Reviews methodology artifacts for catalog drift, source and adapter mismatch, stale examples, missing tests, and unclear maintenance rules.",
       "displayName": "Methodology Artifact Reviewer",
       "effort": "high",
+      "examples": [],
       "filename": "methodology-artifact-reviewer",
       "group": "methodology-maintenance",
       "groupLabel": "Methodology Maintenance Agents",
@@ -233,6 +258,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       "description": "Maintains the reusable methodology artifacts, skill catalog, canonical roles, generated adapters, documentation, scripts, and regression tests.",
       "displayName": "Methodology Maintainer",
       "effort": "high",
+      "examples": [],
       "filename": "methodology-maintainer",
       "group": "methodology-maintenance",
       "groupLabel": "Methodology Maintenance Agents",
@@ -255,6 +281,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
     "project-agent-setup-agent": {
       "description": "Creates or updates AGENTS-PLAN.yaml and validates role agents, skill loadouts, folder routing, nested plans, AGENTS.md guidance, and Claude bridges.",
       "displayName": "Project Agent Setup Agent",
+      "examples": [],
       "filename": "project-agent-setup-agent",
       "group": "project-setup",
       "groupLabel": "Project Setup And Update Agents",
@@ -278,6 +305,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
     "project-bootstrap-agent": {
       "description": "Installs the methodology for the active runtime, inspects a target project, and creates initial documentation and project routing guidance.",
       "displayName": "Project Bootstrap Agent",
+      "examples": [],
       "filename": "project-bootstrap-agent",
       "group": "project-setup",
       "groupLabel": "Project Setup And Update Agents",
@@ -301,6 +329,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
     "project-organiser": {
       "description": "Classifies project artifacts by purpose, chooses paths from the project taxonomy, applies path intent, and audits generated files.",
       "displayName": "Project Organiser",
+      "examples": [],
       "filename": "project-organiser",
       "group": "project-setup",
       "groupLabel": "Project Setup And Update Agents",
@@ -324,6 +353,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       "description": "Reviews prompt protocol, tool-call safety, schema promises, evaluation coverage, and model-facing data boundaries.",
       "displayName": "Prompt Contract Reviewer",
       "effort": "high",
+      "examples": [],
       "filename": "prompt-contract-reviewer",
       "group": "development-use",
       "groupLabel": "Development Use Agents",
@@ -349,6 +379,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
     "public-source-collector": {
       "description": "Collects public raw source artifacts for approved topics, records exclusions, and leaves synthesis to wiki ingest.",
       "displayName": "Public Source Collector",
+      "examples": [],
       "filename": "public-source-collector",
       "group": "development-use",
       "groupLabel": "Development Use Agents",
@@ -373,6 +404,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       "description": "Runs acceptance checks, builds, unit tests, integration tests, E2E tests, lint gates, and artifact-specific verification.",
       "displayName": "QA And Verification Agent",
       "effort": "high",
+      "examples": [],
       "filename": "qa-and-verification-agent",
       "group": "development-use",
       "groupLabel": "Development Use Agents",
@@ -398,6 +430,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       "description": "Investigates long-running local runtime failures with logs, processes, exclusive resources, and a tight reproduction loop.",
       "displayName": "Runtime Diagnostician",
       "effort": "high",
+      "examples": [],
       "filename": "runtime-diagnostician",
       "group": "development-use",
       "groupLabel": "Development Use Agents",
@@ -422,6 +455,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       "description": "Reviews threat, data, dependency, authentication, logging, prompt, and exploitability concerns with read-only authority.",
       "displayName": "Security Reviewer",
       "effort": "high",
+      "examples": [],
       "filename": "security-reviewer",
       "group": "development-use",
       "groupLabel": "Development Use Agents",
@@ -448,6 +482,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
       "description": "Validates source skills, generated metadata and agents, repository tests, and shared installs after distributed content changes.",
       "displayName": "Shared Install Verifier",
       "effort": "medium",
+      "examples": [],
       "filename": "shared-install-verifier",
       "group": "methodology-maintenance",
       "groupLabel": "Methodology Maintenance Agents",
@@ -468,6 +503,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
     "ux-designer-or-reviewer": {
       "description": "Handles interaction design, accessibility concerns, visual review, and independent usability assessment without changing code authority.",
       "displayName": "UX Designer Or Reviewer",
+      "examples": [],
       "filename": "ux-designer-or-reviewer",
       "group": "development-use",
       "groupLabel": "Development Use Agents",
@@ -491,6 +527,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
     "wiki-ingest-agent": {
       "description": "Processes raw inputs into durable wiki leaves, digest entries, processed-source links, linted pages, and verifier evidence.",
       "displayName": "Wiki Ingest Agent",
+      "examples": [],
       "filename": "wiki-ingest-agent",
       "group": "development-use",
       "groupLabel": "Development Use Agents",
@@ -514,6 +551,7 @@ window.DEV_METHODOLOGY_ROLE_DEFINITIONS = {
     "wiki-query-agent": {
       "description": "Answers project questions from docs/wiki first, verifies against authoritative files, and records durable knowledge gaps.",
       "displayName": "Wiki Query Agent",
+      "examples": [],
       "filename": "wiki-query-agent",
       "group": "development-use",
       "groupLabel": "Development Use Agents",

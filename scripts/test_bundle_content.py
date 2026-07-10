@@ -529,6 +529,15 @@ class BundleContentTests(unittest.TestCase):
                     role.yaml,
                 )
                 self.assertEqual(role.yaml, role_payload["roles"][role.name]["yaml"])
+                self.assertIsInstance(role_payload["roles"][role.name]["examples"], list)
+                for example in role_payload["roles"][role.name]["examples"]:
+                    self.assertEqual(
+                        set(example),
+                        {"purpose", "invocation", "plausibleResponse"},
+                    )
+                    for value in example.values():
+                        self.assertIsInstance(value, str)
+                        self.assertTrue(value.strip())
                 codex_agent_path = (
                     GENERATED_ADAPTERS_ROOT / "codex" / "agents" / f"{role.filename}.toml"
                 )
@@ -613,6 +622,9 @@ class BundleContentTests(unittest.TestCase):
             "role.yaml",
             "repoRoot",
             "Escape",
+            "Example scenarios",
+            "View canonical role YAML",
+            "Plausible response",
         ):
             with self.subTest(agent_browser_phrase=phrase):
                 self.assertIn(phrase, agent_browser_text)

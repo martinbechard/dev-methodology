@@ -159,9 +159,104 @@
       padding: 1.2rem;
     }
 
-    .agent-modal__yaml {
-      min-height: 100%;
+    .agent-modal__definition {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .agent-modal__description {
       margin: 0;
+      color: var(--color-ink, #18212f);
+      font-size: 1.02rem;
+    }
+
+    .agent-modal__section {
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .agent-modal__section h3,
+    .agent-modal__section h4,
+    .agent-modal__section p {
+      margin: 0;
+    }
+
+    .agent-modal__section h3 {
+      font-size: 0.78rem;
+      font-weight: 780;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .agent-modal__tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+    }
+
+    .agent-modal__tag {
+      display: inline-flex;
+      padding: 0.25rem 0.48rem;
+      border-radius: var(--radius-small, 0.35rem);
+      background: var(--color-soft-amber, #fff1d8);
+      color: #8a4609;
+      font-size: var(--font-xs, 0.78rem);
+      font-weight: 650;
+    }
+
+    .agent-modal__tag--output {
+      background: var(--color-soft-green, #e4f7f4);
+      color: #0f766e;
+    }
+
+    .agent-modal__scenario-grid {
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .agent-modal__scenario {
+      display: grid;
+      gap: 0.7rem;
+      padding: 0.9rem;
+      border: 1px solid var(--color-line, #d9e0ea);
+      border-left: 0.3rem solid var(--color-role, #5b4db7);
+      border-radius: var(--radius-small, 0.35rem);
+      background: #f9fbfe;
+    }
+
+    .agent-modal__scenario-label {
+      color: var(--color-role, #5b4db7);
+      font-size: var(--font-xs, 0.78rem);
+      font-weight: 780;
+      text-transform: uppercase;
+    }
+
+    .agent-modal__scenario-field {
+      display: grid;
+      gap: 0.2rem;
+    }
+
+    .agent-modal__scenario-field strong {
+      font-size: 0.82rem;
+    }
+
+    .agent-modal__scenario-field p {
+      color: var(--color-muted, #596579);
+    }
+
+    .agent-modal__yaml-details {
+      margin-top: 1.25rem;
+    }
+
+    .agent-modal__yaml-details summary {
+      cursor: pointer;
+      color: var(--color-role, #5b4db7);
+      font-size: var(--font-xs, 0.78rem);
+      font-weight: 780;
+    }
+
+    .agent-modal__yaml {
+      margin: 0.75rem 0 0;
       overflow: auto;
       padding: 1rem;
       border: 1px solid var(--color-line, #d9e0ea);
@@ -276,7 +371,29 @@
           </div>
         </header>
         <div class="agent-modal__body">
-          <pre class="agent-modal__yaml"><code></code></pre>
+          <div class="agent-modal__definition">
+            <p class="agent-modal__description"></p>
+            <section class="agent-modal__section">
+              <h3>How this role works</h3>
+              <p class="agent-modal__instructions"></p>
+            </section>
+            <section class="agent-modal__section">
+              <h3>Skills used when applicable</h3>
+              <div class="agent-modal__tag-row agent-modal__skills"></div>
+            </section>
+            <section class="agent-modal__section">
+              <h3>Expected handoff</h3>
+              <div class="agent-modal__tag-row agent-modal__outputs"></div>
+            </section>
+            <section class="agent-modal__section agent-modal__examples-section" hidden>
+              <h3>Example scenarios</h3>
+              <div class="agent-modal__scenario-grid"></div>
+            </section>
+          </div>
+          <details class="agent-modal__yaml-details">
+            <summary>View canonical role YAML</summary>
+            <pre class="agent-modal__yaml"><code></code></pre>
+          </details>
         </div>
       </section>
     `;
@@ -287,6 +404,12 @@
       title: modal.querySelector("#agent-modal-title"),
       category: modal.querySelector(".agent-modal__category"),
       source: modal.querySelector(".agent-modal__source"),
+      description: modal.querySelector(".agent-modal__description"),
+      instructions: modal.querySelector(".agent-modal__instructions"),
+      skills: modal.querySelector(".agent-modal__skills"),
+      outputs: modal.querySelector(".agent-modal__outputs"),
+      examplesSection: modal.querySelector(".agent-modal__examples-section"),
+      examples: modal.querySelector(".agent-modal__scenario-grid"),
       code: modal.querySelector(".agent-modal__yaml code"),
       edit: modal.querySelector(".agent-modal__button--primary"),
       close: modal.querySelector("button[data-agent-modal-close]"),
@@ -304,6 +427,46 @@
     return modalElements;
   }
 
+  function renderTags(container, values, modifier = "") {
+    container.replaceChildren();
+    values.forEach((value) => {
+      const tag = document.createElement("span");
+      tag.className = `agent-modal__tag${modifier}`;
+      tag.textContent = value;
+      container.appendChild(tag);
+    });
+  }
+
+  function renderExamples(container, examples) {
+    container.replaceChildren();
+    examples.forEach((example, index) => {
+      const card = document.createElement("article");
+      card.className = "agent-modal__scenario";
+
+      const label = document.createElement("p");
+      label.className = "agent-modal__scenario-label";
+      label.textContent = `Scenario ${index + 1}`;
+      card.appendChild(label);
+
+      [
+        ["Purpose", example.purpose],
+        ["How to invoke", example.invocation],
+        ["Plausible response", example.plausibleResponse],
+      ].forEach(([labelText, value]) => {
+        const field = document.createElement("div");
+        field.className = "agent-modal__scenario-field";
+        const heading = document.createElement("strong");
+        heading.textContent = labelText;
+        const text = document.createElement("p");
+        text.textContent = value;
+        field.append(heading, text);
+        card.appendChild(field);
+      });
+
+      container.appendChild(card);
+    });
+  }
+
   function openRoleDefinition(role, sourceElement) {
     const elements = ensureModal();
     const editUrl = editorUrlForRole(role);
@@ -311,6 +474,13 @@
     elements.title.textContent = role.displayName || role.name;
     elements.category.textContent = role.groupLabel || role.group;
     elements.source.textContent = role.sourcePath;
+    elements.description.textContent = role.description || "";
+    elements.instructions.textContent = role.instructions || "";
+    renderTags(elements.skills, role.skills || []);
+    renderTags(elements.outputs, role.outputs || [], " agent-modal__tag--output");
+    const examples = Array.isArray(role.examples) ? role.examples : [];
+    elements.examplesSection.hidden = examples.length === 0;
+    renderExamples(elements.examples, examples);
     elements.code.textContent = role.yaml || "";
     elements.edit.href = editUrl || "#";
     elements.edit.title = editUrl ? EDIT_BUTTON_LABEL : EDIT_UNAVAILABLE_LABEL;

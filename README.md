@@ -51,7 +51,7 @@ python3 scripts/build-skill-docs.py
 
 The script reads each bundled SKILL.md file, the adjacent Codex openai.yaml metadata, the ordered design/skill-categories.yaml catalog, agents/role-schema.yaml, and the canonical role files. It writes design/generated/skill-definitions.js, design/generated/role-definitions.js, and native agent definitions for the supported runtime adapters.
 
-Role cards, skill inventories, loadout tables, and runtime definitions are generated from canonical data rather than maintained independently in HTML. The generator rejects canonical roles that reference missing skill IDs.
+Role cards, scenario examples, skill inventories, loadout tables, and runtime definitions are generated from canonical data rather than maintained independently in HTML. Canonical role examples show a scenario purpose, invocation, and plausible response. The generator rejects canonical roles that reference missing skill IDs.
 
 Use maintain-methodology-documentation when changing skills, roles, categories, adapters, or design pages. That skill owns the canonical-source update, regeneration, stale-output check, validation, and diff-review workflow.
 

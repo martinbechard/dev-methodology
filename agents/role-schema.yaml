@@ -24,6 +24,7 @@ properties:
   isolation: string
   memory: string
   outputContract: string-list
+  examples: role-example-list
 fixedBehavior:
   target: local-development
   userInvocable: true
