@@ -250,7 +250,7 @@
   <main>
     <section class="hero" aria-labelledby="page-title">
       <h1 id="page-title">Development Methodology Documentation</h1>
-      <p class="lede">Choose one document by the question you need answered: how the model operates, how it makes specialization decisions, which generated roles and skills exist, what project configuration looks like, or how roles map to a runtime.</p>
+      <p class="lede">Each subject has one detailed home. Other pages link to that owner instead of restating its policy or catalog data.</p>
       <div class="summary" aria-label="Documentation areas">
         <span class="pill"><span class="dot blue"></span>Operating model</span>
         <span class="pill"><span class="dot green"></span>Specialization</span>
@@ -263,54 +263,54 @@
     <section aria-labelledby="documents-title">
       <h2 id="documents-title">HTML Documents</h2>
       <div class="doc-grid">
-        <a class="doc-card blue" href="design/agentic-development-operating-model.html">
+        <a class="doc-card blue" data-information-owner="execution" href="design/agentic-development-operating-model.html">
           <header>
             <span class="icon" aria-hidden="true">01</span>
             <h3>Agentic Development Operating Model</h3>
           </header>
-          <p>Explains how the operating layers, guidance precedence, development loop, and execution evidence fit together.</p>
+          <p>Owns guidance precedence, project classification, lifecycle handoffs, and execution evidence.</p>
           <span class="path">design/agentic-development-operating-model.html</span>
         </a>
 
-        <a class="doc-card green" href="design/agent-skill-specialization-strategy.html">
+        <a class="doc-card green" data-information-owner="selection" href="design/agent-skill-specialization-strategy.html">
           <header>
             <span class="icon" aria-hidden="true">02</span>
             <h3>Agent And Skill Specialization Strategy</h3>
           </header>
-          <p>Defines the rules for role boundaries, skill selection, one-time technology detection, and local guidance.</p>
+          <p>Owns role-versus-skill decisions, skill selection modes, technology detection, and specialized-role criteria.</p>
           <span class="path">design/agent-skill-specialization-strategy.html</span>
         </a>
 
-        <a class="doc-card amber" href="design/agent-role-skill-map.html">
+        <a class="doc-card amber" data-information-owner="catalog" href="design/agent-role-skill-map.html">
           <header>
             <span class="icon" aria-hidden="true">03</span>
             <h3>Agent Roles And Skill Loadouts</h3>
           </header>
-          <p>Browse the generated role and skill catalog, inspect a loadout, or use the interactive agent-to-skill map.</p>
+          <p>Owns the generated role and skill catalog. Its diagram deliberately repeats the same generated relationships as a second view.</p>
           <span class="path">design/agent-role-skill-map.html</span>
         </a>
 
-        <a class="doc-card purple" href="design/agent-skill-specialization-examples.html">
+        <a class="doc-card purple" data-information-owner="examples" href="design/agent-skill-specialization-examples.html">
           <header>
             <span class="icon" aria-hidden="true">04</span>
             <h3>Agent Skill Specialization Examples</h3>
           </header>
-          <p>Shows fictitious project configurations, derived AGENTS.md guidance, and customer-safe setup scenarios.</p>
+          <p>Owns concise fictitious examples of root-only, nested, and wiki-specific project configuration decisions.</p>
           <span class="path">design/agent-skill-specialization-examples.html</span>
         </a>
 
-        <a class="doc-card rose" href="design/agent-definition-runtime-formats.html">
+        <a class="doc-card rose" data-information-owner="runtime" href="design/agent-definition-runtime-formats.html">
           <header>
             <span class="icon" aria-hidden="true">05</span>
             <h3>Agent Definition Runtime Formats</h3>
           </header>
-          <p>Compares Codex, Claude Code, Gemini CLI, Junie CLI, and GitHub Copilot mappings from the common role source.</p>
+          <p>Owns canonical role fields, runtime adapter mappings, deployment boundaries, and vendor references.</p>
           <span class="path">design/agent-definition-runtime-formats.html</span>
         </a>
       </div>
     </section>
 
-    <p class="footer">The source skill bundle lives in this repository; project-specific files can aggregate, override, or dispatch the shared guidance without changing these common definitions.</p>
+    <p class="footer">Navigation summaries and generated diagram views are the only intentional repetition in this documentation set.</p>
   </main>
 </body>
 </html>
