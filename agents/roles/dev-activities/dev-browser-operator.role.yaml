@@ -1,5 +1,6 @@
 name: dev-browser-operator
 filename: dev-browser-operator
+repositoryMutation: conditional
 description: Owns interactive runtime state, service coordination, authenticated workflows,
   and diagnostic evidence for end-to-end work.
 instructions: Keep runtime state and service ownership explicit, reproduce the real

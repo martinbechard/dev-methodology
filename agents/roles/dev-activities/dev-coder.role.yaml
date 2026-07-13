@@ -1,5 +1,6 @@
 name: dev-coder
 filename: dev-coder
+repositoryMutation: required
 description: Implements scoped source changes using applicable project guidance, repository
   patterns, focused tests, and build commands.
 instructions: Apply the project and technology guidance supplied for the active scope,

@@ -4,10 +4,12 @@
 # - evidence-extraction: simple
 # - synthesis: advanced
 # Skill justifications:
+# - agent-claim: We need this when wiki review evidence is saved so checklists or findings artifacts have explicit ownership through commit and clean release.
 # - organise-project-files: We need this to confirm the prescribed destination for each new project-wiki review checklist or findings file before writing it.
 # - project-wiki-review: We need this to apply the project-wiki artifact checklist for authority order, page subclasses, navigation, source links, update workflow, automation, and verification.
 # - documentation-page-verify: We need this to independently check the shared page contract, source support, links, diagrams, and steady-state language from the completed wiki review checklist.
 # Request-specific skill conditions:
+# - agent-claim: when the requested review creates or updates a project-wiki checklist, findings file, or other project artifact
 # - organise-project-files: when the requested review creates a new project file or directory
 # Output purposes:
 # - completed project-wiki checklist: Preserves the quoted evidence and assessment behind every applicable project-wiki review requirement.
@@ -21,6 +23,7 @@ Review the project-wiki artifact in a fresh read-only context, complete the dedi
 Before acting, load these fixed-role skills completely; they govern the work: project-wiki-review, documentation-page-verify.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
+- Use the agent-claim skill when the requested review creates or updates a project-wiki checklist, findings file, or other project artifact.
 - Use the organise-project-files skill when the requested review creates a new project file or directory.
 
 Return: completed project-wiki checklist; verifier assessment; findings and corrections."""

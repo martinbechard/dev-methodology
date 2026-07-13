@@ -6,7 +6,7 @@
         {
           "name": "dev-artifact-reviewer",
           "output": "generated/adapters/claude/agents/dev-artifact-reviewer.md",
-          "sha256": "2bfaa0ae7511703f652dbbb6c1f0b8875e3819fecdc7e4d076b36f0487c38e6a",
+          "sha256": "2872d543180f82e16c8feae8d2e76f3c61fc2e51ba650e11f0abce5cba3b4116",
           "source": "agents/roles/dev-activities/dev-artifact-reviewer.role.yaml"
         },
         {
@@ -24,7 +24,7 @@
         {
           "name": "dev-code-reviewer",
           "output": "generated/adapters/claude/agents/dev-code-reviewer.md",
-          "sha256": "0e617d312e24a34e694f674864b9eb77dabb749e8d3620d53474e736997c1706",
+          "sha256": "72e913cd46d465b5ab79fb5bf151fec649fc2d7187999dd87429984cadea50d0",
           "source": "agents/roles/dev-activities/dev-code-reviewer.role.yaml"
         },
         {
@@ -54,7 +54,7 @@
         {
           "name": "dev-prompt-reviewer",
           "output": "generated/adapters/claude/agents/dev-prompt-reviewer.md",
-          "sha256": "fe1eb051d485654d7cde293d07cab1424c90083e8f58170b1f25e627686441b7",
+          "sha256": "a29f8bf8ba3590b8bf28f02d2d1edbe3ffaf5a330e498e82fc77681dcad26a33",
           "source": "agents/roles/dev-activities/dev-prompt-reviewer.role.yaml"
         },
         {
@@ -66,7 +66,7 @@
         {
           "name": "dev-security-reviewer",
           "output": "generated/adapters/claude/agents/dev-security-reviewer.md",
-          "sha256": "bbccf2ca08d6aa59c71e3fde8f5b05bb86ee14021464e2c4710765dd290e1b15",
+          "sha256": "c101b51e105e1c83936bfa5cc8eed2bfee66bc45df8436e91b018ecfcfefc5ee",
           "source": "agents/roles/dev-activities/dev-security-reviewer.role.yaml"
         },
         {
@@ -84,7 +84,7 @@
         {
           "name": "methodology-artifact-reviewer",
           "output": "generated/adapters/claude/agents/methodology-artifact-reviewer.md",
-          "sha256": "6f18e88c4841c657e02fbe79175cbcaae86834d35b2285b8d9d13a539504dc99",
+          "sha256": "e92a80f42b27bfbdc8c1777ec57fa67ca73f1a4959fbc527eee3c68b997672e0",
           "source": "agents/roles/methodology-maintenance/methodology-artifact-reviewer.role.yaml"
         },
         {
@@ -96,13 +96,13 @@
         {
           "name": "project-bootstrapper",
           "output": "generated/adapters/claude/agents/project-bootstrapper.md",
-          "sha256": "e0fd1935d166667a2b4d2a56de5bf1db9e25dd59a6b128bfbb18ff10b68f1aaa",
+          "sha256": "d1871e0375c5ee3864afaf05dc9ef7f491c884b2f7dc1e591ba93bc664af6822",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
           "name": "project-configurator",
           "output": "generated/adapters/claude/agents/project-configurator.md",
-          "sha256": "0e23da2fa542fa2624055de63c118d7419a757ec4ac6f850a604c4844ef291a8",
+          "sha256": "ffcf6428a492c66d8710381d522dcb1fbc968211f54fe9b8d0bbfce55f44f0f5",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {
@@ -120,7 +120,7 @@
         {
           "name": "wiki-artifact-reviewer",
           "output": "generated/adapters/claude/agents/wiki-artifact-reviewer.md",
-          "sha256": "d43909d19df58289343f4f8f5b2e80b0b3ce75b7a31df62bc702a8584263838f",
+          "sha256": "fcf032a2561ccb62ff580fa2d20e6de40f69b1f2617c6940b25cc51b1e6eeb96",
           "source": "agents/roles/wiki-activities/wiki-artifact-reviewer.role.yaml"
         },
         {
@@ -169,7 +169,7 @@
         {
           "name": "dev-artifact-reviewer",
           "output": "generated/adapters/codex/agents/dev-artifact-reviewer.toml",
-          "sha256": "20eb52492979b163782df356092d29a484fe157b4c84d78bd61fd3f13e80379f",
+          "sha256": "230400d2cc6df3d524ff36a32d438a7f5d13ad05f6e041bcaec1459f41c9b83a",
           "source": "agents/roles/dev-activities/dev-artifact-reviewer.role.yaml"
         },
         {
@@ -187,7 +187,7 @@
         {
           "name": "dev-code-reviewer",
           "output": "generated/adapters/codex/agents/dev-code-reviewer.toml",
-          "sha256": "b30c06c1d85eb129980aa4abe098fd3a74319ef860b36614ad0f95a3b3ff20dc",
+          "sha256": "fd019bb13995a271904afbec49959dc66f29fe4f8249d4876b1d2d02ab960eb8",
           "source": "agents/roles/dev-activities/dev-code-reviewer.role.yaml"
         },
         {
@@ -217,7 +217,7 @@
         {
           "name": "dev-prompt-reviewer",
           "output": "generated/adapters/codex/agents/dev-prompt-reviewer.toml",
-          "sha256": "82df47d571a2240ca09781399a0fbcea99af40a6c68e2d7cfed5fc9d4cd851aa",
+          "sha256": "a7e6e199b70194dbb9458107172c7ac7b75d94ce08cbe04e286dc52fb4cf9ac8",
           "source": "agents/roles/dev-activities/dev-prompt-reviewer.role.yaml"
         },
         {
@@ -229,7 +229,7 @@
         {
           "name": "dev-security-reviewer",
           "output": "generated/adapters/codex/agents/dev-security-reviewer.toml",
-          "sha256": "ec4ad927cd33535c2dda80d092f8ebabd2840292c719b11b69a51489d3fc0594",
+          "sha256": "7828f1f4fa99681c067b91f0ca9c101a498cd18cf5fd5e1a2852ada36d2f2246",
           "source": "agents/roles/dev-activities/dev-security-reviewer.role.yaml"
         },
         {
@@ -247,7 +247,7 @@
         {
           "name": "methodology-artifact-reviewer",
           "output": "generated/adapters/codex/agents/methodology-artifact-reviewer.toml",
-          "sha256": "fb3c9b690f0d2c7eed5fdd56780754d1bf658602bdd87f5c8882d38426056971",
+          "sha256": "131616f06b35ea4ae59366f65855b212f5f1458c4591b62114e2a059d49d9ff1",
           "source": "agents/roles/methodology-maintenance/methodology-artifact-reviewer.role.yaml"
         },
         {
@@ -259,13 +259,13 @@
         {
           "name": "project-bootstrapper",
           "output": "generated/adapters/codex/agents/project-bootstrapper.toml",
-          "sha256": "d25c42b0119d7b182cc93b01576228e3a50ff5a8394fbb2e7aecd231bb0b922d",
+          "sha256": "73217b4190d2579d3696637b145a7a5a71ba38e3822c9524ed840226689f33d4",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
           "name": "project-configurator",
           "output": "generated/adapters/codex/agents/project-configurator.toml",
-          "sha256": "d650fa4f638e8a2e95c6a08ff21a4a6d3bff1dcbe897649633003a6594a1b1ce",
+          "sha256": "a0dc444c66c2d809c89ccaaa1b307a78d6113036767b3cba22b2b9ebad6d6c65",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {
@@ -283,7 +283,7 @@
         {
           "name": "wiki-artifact-reviewer",
           "output": "generated/adapters/codex/agents/wiki-artifact-reviewer.toml",
-          "sha256": "e20df1f8f1fa23a63e771623f4554acede43b7667db4e3750f7bba86b600e3ca",
+          "sha256": "7fec3dc608989032c86e0327c52fd5af8ba0b4b379035129a31b1c55e3186fef",
           "source": "agents/roles/wiki-activities/wiki-artifact-reviewer.role.yaml"
         },
         {

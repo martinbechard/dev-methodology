@@ -1,5 +1,6 @@
 name: wiki-artifact-reviewer
 filename: wiki-artifact-reviewer
+repositoryMutation: conditional
 description: Reviews project-wiki methodology artifacts for source authority, structure, navigation, maintenance rules, automation, and verification completeness.
 instructions: Review the project-wiki artifact in a fresh read-only context, complete the dedicated checklist with quoted evidence, apply the shared page verifier, and lead with actionable findings.
 modelProfile: advanced
@@ -40,6 +41,9 @@ examples:
     Current Understanding has no linked automated test, and preserved that gap in the
     findings and corrections handoff.
 skills:
+- agent-claim:
+    justification: We need this when wiki review evidence is saved so checklists or findings artifacts have explicit ownership through commit and clean release.
+    condition: when the requested review creates or updates a project-wiki checklist, findings file, or other project artifact.
 - organise-project-files:
     justification: We need this to confirm the prescribed destination for each new project-wiki review checklist or findings file before writing it.
     condition: when the requested review creates a new project file or directory.

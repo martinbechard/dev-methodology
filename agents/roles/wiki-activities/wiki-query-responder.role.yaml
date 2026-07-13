@@ -1,5 +1,6 @@
 name: wiki-query-responder
 filename: wiki-query-responder
+repositoryMutation: never
 description: Answers project questions from docs/wiki first, verifies against authoritative files, and identifies durable knowledge gaps.
 instructions: Start from the project wiki, verify material claims against live authoritative sources, and identify any durable gap without editing unless asked.
 modelProfile: default

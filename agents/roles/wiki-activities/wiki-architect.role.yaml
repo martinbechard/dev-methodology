@@ -1,5 +1,6 @@
 name: wiki-architect
 filename: wiki-architect
+repositoryMutation: required
 description: Establishes or substantially restructures a project wiki, its ownership boundaries, source workflow, navigation, and verification contract.
 instructions: Inspect the repository, present the required setup recommendation pack, confirm wiki roots and federation boundaries, initialize the approved structure, and verify the resulting wiki contract.
 modelProfile: advanced

@@ -1,5 +1,6 @@
 name: wiki-writer
 filename: wiki-writer
+repositoryMutation: required
 description: Creates and maintains durable wiki topic pages, hubs, links, digests, and code-aware project knowledge outside raw-source ingest.
 instructions: Work within the assigned wiki scope, read authoritative evidence before editing, preserve granular topic boundaries, run leaf linking and wiki validation, and obtain independent topic verification.
 modelProfile: default

@@ -23,6 +23,8 @@ Do not create nested PROJECT.yaml files. When a subfolder has distinct technolog
 
 Create or update PROJECT.yaml before writing AGENTS.md guidance. PROJECT.yaml is the setup and validation artifact that explains what AGENTS.md should contain, why the roles and skills were chosen, and where project-specific evidence belongs. AGENTS.md is the operational reference that the harness supplies after the configuration has been validated. When the target uses Claude Code, create a thin CLAUDE.md beside each applicable AGENTS.md that imports the colocated guidance instead of duplicating it.
 
+Generic repository-mutation behavior belongs to canonical role definitions and the agent-claim skill. Do not reproduce that procedure in PROJECT.yaml or AGENTS.md. Record a coordination_overrides mapping only when the target repository has source-backed nondefault claim-registry, branch, worktree, exclusive-resource, or integration requirements; omit it when the bundle defaults apply.
+
 ## Workflow
 
 1. Inspect the target repository before writing. Inspect existing AGENTS.md artifacts, then read README files, package metadata, build configuration, source roots, tests, docs, wiki pages, task-relevant procedures, backlog files, and current worktree status.
@@ -32,14 +34,15 @@ Create or update PROJECT.yaml before writing AGENTS.md guidance. PROJECT.yaml is
 5. As Project Agent Setup, use detect-technology-skills and its generated registry once for representative folder scopes. Review source paths, owning manifests, configuration, and build evidence.
 6. Record deterministic technology_skill_loadouts and folder bindings, including source evidence, missing required skills, exclusive conflicts, and explicit no-variant results.
 7. Decide which subfolders need nested AGENTS.md guidance and record every decision in the root PROJECT.yaml.
-8. Record the repository-global agent coordination contract: atomic claim registry, optimistic clean-primary selection, isolated worktree policy, overlap blocking, recovery, release, and completion evidence.
-9. Copy the template once to the project root and replace every TODO with source-backed project content.
-10. Keep proprietary project validation notes inside the target project repository. Do not copy private project names, internal implementation details, customer data, secrets, or non-public workflows into distributable examples.
-11. Use fictitious names, synthetic paths, and generic behavior for customer-safe examples.
-12. After the configuration is validated, run scripts/render-agents-technology-skills.py with PROJECT.yaml and create or update root and nested AGENTS.md files with unconditional folder skill-loading instructions and the concise agent-claim trigger.
-13. When Claude Code is used, create thin CLAUDE.md bridge files that import the colocated AGENTS.md without copying its rules.
-14. Say Not yet identified for related sources, tests, commands, or roles that do not exist yet.
-15. Keep the artifact steady-state. Do not describe it as new, revised, or enhanced unless the document is explicitly a change plan.
+8. Verify that every selected canonical role declares repositoryMutation and that the installed or bundled runtime definition can load agent-claim whenever that policy is required or conditional. Treat a missing role definition, skill, or command as BLOCKED instead of compensating with copied project instructions.
+9. Record only source-backed project-specific coordination_overrides. Omit the mapping when the bundle defaults apply.
+10. Copy the template once to the project root and replace every TODO with source-backed project content.
+11. Keep proprietary project validation notes inside the target project repository. Do not copy private project names, internal implementation details, customer data, secrets, or non-public workflows into distributable examples.
+12. Use fictitious names, synthetic paths, and generic behavior for customer-safe examples.
+13. After the configuration is validated, run scripts/render-agents-technology-skills.py with PROJECT.yaml and create or update root and nested AGENTS.md files with unconditional folder skill-loading instructions.
+14. When Claude Code is used, create thin CLAUDE.md bridge files that import the colocated AGENTS.md without copying its rules.
+15. Say Not yet identified for related sources, tests, commands, or roles that do not exist yet.
+16. Keep the artifact steady-state. Do not describe it as new, revised, or enhanced unless the document is explicitly a change plan.
 
 ## Verification
 
@@ -50,7 +53,7 @@ Before finishing:
 3. Confirm every role, skill loadout, folder route, validation command, and file contract has source evidence or an open question.
 4. Run setup-time detection for representative folders in every declared tier. Confirm each result matches the planned loadout and every required skill is available.
 5. Confirm AGENTS.md contains unconditional folder skill-loading instructions, does not tell ordinary agents to rerun detection, and matches PROJECT.yaml.
-6. Confirm AGENTS.md tells every modifying agent to use agent-claim and that PROJECT.yaml records a repository-global registry plus primary, isolation, overlap, recovery, release, and completion rules.
+6. Confirm every selected role's repositoryMutation declaration agrees with its fixed, conditional, or absent agent-claim loadout. Confirm the required role definitions, skill, and atomic command are available to the target runtime, and confirm generic claim procedure text was not copied into PROJECT.yaml or AGENTS.md.
 7. Confirm the project contains exactly one PROJECT.yaml at its root and that it records every nested AGENTS.md placement decision.
 8. Confirm every planned AGENTS.md exists and matches the validated routing plan.
 9. When Claude Code is used, confirm every applicable AGENTS.md has a thin colocated CLAUDE.md import and that no guidance is duplicated between them.

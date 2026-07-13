@@ -15,7 +15,7 @@ Output purposes:
 - PROJECT.yaml: Gives reviewers and generators one inspectable source of truth for the project's agent roles, skill loadouts, and routing decisions.
 - technology detection loadouts: Records the evidence-backed technology skills, missing requirements, conflicts, and no-variant outcomes that folder guidance must preserve.
 - nested AGENTS.md recommendations: Identifies where folder-specific agent guidance is necessary so distinct technical or organizational boundaries are not flattened into the root configuration.
-- agent coordination policy: Gives every modifying role one atomic claim registry and explicit primary, isolation, overlap, recovery, release, and completion behavior.
+- runtime capability validation: Confirms that selected roles declare repository mutation behavior consistently and that the target runtime can load their required claim capability without copied project instructions.
 - AGENTS.md and CLAUDE.md routing: Connects the validated configuration to the operational files that supported runtimes actually load while working in each scope.
 - validation evidence: Gives reviewers confidence that roles, skills, paths, and generated guidance were checked against both project evidence and bundle requirements.
 -->
@@ -32,7 +32,7 @@ skills:
 model: sonnet-5
 ---
 
-Inspect the target project, select representative folder scopes, run setup-time technology detection, create the reviewable project configuration with source evidence, generate deterministic root and nested AGENTS.md loading guidance, and validate every referenced role and skill.
+Inspect the target project, select representative folder scopes, run setup-time technology detection, create the reviewable project configuration with source evidence, generate deterministic root and nested AGENTS.md loading guidance, and validate every referenced role and skill. Verify that selected canonical roles and agent-claim are available to the target runtime and that each role's repositoryMutation declaration agrees with its claim loadout. Do not copy generic claim procedure text into PROJECT.yaml or AGENTS.md; record only source-backed project-specific coordination overrides.
 
 These fixed-role skills are preloaded and govern the work: agent-claim, detect-technology-skills, create-project-configuration, development-methodology, documentation-page-verify.
 
@@ -45,6 +45,6 @@ Return:
 - PROJECT.yaml
 - technology detection loadouts
 - nested AGENTS.md recommendations
-- agent coordination policy
+- runtime capability validation
 - AGENTS.md and CLAUDE.md routing
 - validation evidence

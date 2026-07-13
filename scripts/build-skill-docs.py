@@ -63,6 +63,7 @@ ROLE_NAME_FIELD_NAME = "name"
 ROLE_FILENAME_FIELD_NAME = "filename"
 ROLE_DESCRIPTION_FIELD_NAME = "description"
 ROLE_INSTRUCTIONS_FIELD_NAME = "instructions"
+ROLE_REPOSITORY_MUTATION_FIELD_NAME = "repositoryMutation"
 ROLE_SKILLS_FIELD_NAME = "skills"
 ROLE_OUTPUT_CONTRACT_FIELD_NAME = "outputContract"
 ROLE_SKILL_JUSTIFICATION_FIELD_NAME = "justification"
@@ -90,6 +91,7 @@ ROLE_STRING_FIELDS = (
     ROLE_FILENAME_FIELD_NAME,
     ROLE_DESCRIPTION_FIELD_NAME,
     ROLE_INSTRUCTIONS_FIELD_NAME,
+    ROLE_REPOSITORY_MUTATION_FIELD_NAME,
     ROLE_MODEL_PROFILE_FIELD_NAME,
     "permissionMode",
     "isolation",
@@ -97,6 +99,7 @@ ROLE_STRING_FIELDS = (
 )
 ROLE_INTEGER_FIELDS = ("maxTurns", "timeout")
 ROLE_BOOLEAN_FIELDS = (ROLE_DYNAMIC_FOLDER_SKILLS_FIELD_NAME,)
+ROLE_REPOSITORY_MUTATION_VALUES = {"required", "conditional", "never"}
 ROLE_GROUP_LABELS = {
     "methodology-maintenance": "Methodology Maintenance",
     "project-setup": "Project Setup",
@@ -193,6 +196,7 @@ class RoleDefinition:
     display_name: str
     description: str
     instructions: str
+    repository_mutation: str
     skills: tuple[str, ...]
     skill_justifications: dict[str, str]
     skill_conditions: dict[str, str]
@@ -776,6 +780,20 @@ def load_role_definition(
     if unknown_skills:
         raise ValueError(f"Role references unknown skills {unknown_skills}: {source_path}")
 
+    repository_mutation = parsed[ROLE_REPOSITORY_MUTATION_FIELD_NAME]
+    if repository_mutation not in ROLE_REPOSITORY_MUTATION_VALUES:
+        raise ValueError(
+            f"Role {ROLE_REPOSITORY_MUTATION_FIELD_NAME} must be required, conditional, or never: {source_path}"
+        )
+    fixed_claim = "agent-claim" in role_skills and "agent-claim" not in skill_conditions
+    conditional_claim = "agent-claim" in skill_conditions
+    if repository_mutation == "required" and not fixed_claim:
+        raise ValueError(f"Role with required repository mutation must load agent-claim as a fixed skill: {source_path}")
+    if repository_mutation == "conditional" and not conditional_claim:
+        raise ValueError(f"Role with conditional repository mutation must conditionally load agent-claim: {source_path}")
+    if repository_mutation == "never" and "agent-claim" in role_skills:
+        raise ValueError(f"Read-only role must not load agent-claim: {source_path}")
+
     output_contract, output_purposes = validate_annotated_list(
         parsed[ROLE_OUTPUT_CONTRACT_FIELD_NAME],
         ROLE_OUTPUT_CONTRACT_FIELD_NAME,
@@ -801,6 +819,7 @@ def load_role_definition(
         display_name=role_display_name(role_name),
         description=description.strip(),
         instructions=instructions.strip(),
+        repository_mutation=repository_mutation,
         skills=role_skills,
         skill_justifications=skill_justifications,
         skill_conditions=skill_conditions,
@@ -890,6 +909,7 @@ def build_role_payload(roles: Sequence[RoleDefinition]) -> dict[str, object]:
                 "displayName": role.display_name,
                 "description": role.description,
                 "instructions": role.instructions,
+                ROLE_REPOSITORY_MUTATION_FIELD_NAME: role.repository_mutation,
                 "skills": list(role.skills),
                 "skillJustifications": role.skill_justifications,
                 "skillConditions": role.skill_conditions,

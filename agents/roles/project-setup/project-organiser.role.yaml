@@ -1,5 +1,6 @@
 name: project-organiser
 filename: project-organiser
+repositoryMutation: conditional
 description: Classifies project artifacts by purpose, chooses paths from the project
   taxonomy, applies path intent, and audits generated files.
 instructions: Ground placement decisions in the live repository and its nearest guidance.

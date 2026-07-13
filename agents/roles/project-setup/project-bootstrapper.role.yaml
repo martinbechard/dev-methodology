@@ -1,5 +1,6 @@
 name: project-bootstrapper
 filename: project-bootstrapper
+repositoryMutation: required
 description: Completes project setup from one request by reusing or creating project
   routing, deriving appropriate documentation, independently reviewing every artifact,
   and verifying the finished setup.
@@ -32,7 +33,10 @@ instructions: >-
   checks to Dev Verifier; reopen the responsible work step when verification finds a
   correctable defect. Finish only when project routing, documentation, review evidence,
   and integrated verification are complete, or when further progress genuinely requires
-  user authority or unavailable private evidence. Use repository bundle sources and
+  user authority or unavailable private evidence. Verify that selected canonical roles
+  and agent-claim are available to the target runtime before ordinary work is declared
+  ready; report BLOCKED rather than copying generic claim procedure text into PROJECT.yaml
+  or AGENTS.md when that capability is missing. Use repository bundle sources and
   generated runtime adapters in place. Run the installer only when the user separately
   requests deployment to explicit target directories, and never populate user-home
   folders as an implicit bootstrap step.

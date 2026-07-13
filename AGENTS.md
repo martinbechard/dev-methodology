@@ -30,15 +30,6 @@ Do not create separate skill files for repo-local maintenance procedures. Keep r
 - Preserve unrelated local changes and untracked files.
 - Keep changes scoped to the requested maintenance work.
 
-## Agent Claims And Worktrees
-
-- Before repository mutation, use the agent-claim skill and its atomic claim command.
-- The first independent writer may claim this primary worktree only when it is clean and no other writer claim exists.
-- A later non-overlapping independent writer must use the isolated branch and worktree returned by agent-claim.
-- Overlapping file or exclusive resource claims must wait or coordinate instead of creating competing work.
-- Dirty state without an active claim enters explicit recovery. One recovery owner claims the complete dirty scope and creates a checkpoint commit before stabilization.
-- Do not release a modifying claim or report the task complete until required verification passes, task changes are committed or explicitly no-change, and the worktree is clean.
-
 ## Technology Skills
 
 Technology detection is owned by Project Configurator. Do not rerun detection during ordinary work.
@@ -144,7 +135,6 @@ If a build script is introduced later, run the repository build after code, impo
 
 ## Commit Expectations
 
-- Every modifying task must commit its verified coherent work before completion.
-- If a safe commit cannot be created, the task remains incomplete and its claim remains active or is handed off explicitly.
+- Commit coherent verified repository-maintenance work before completion.
 - Do not include unrelated untracked files in the commit.
 - Include README.md, AGENTS.md, design HTML, tests, Codex metadata, and explicit deployment behavior in the same change when they are part of the same catalog or workflow update.

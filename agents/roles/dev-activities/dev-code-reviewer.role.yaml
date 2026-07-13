@@ -1,5 +1,6 @@
 name: dev-code-reviewer
 filename: dev-code-reviewer
+repositoryMutation: conditional
 description: Reviews diffs for regressions, missing tests, weak verification, unsafe
   abstractions, rule violations, and documentation drift.
 instructions: Extract checklist evidence in a fresh read-only context with the technology
@@ -38,6 +39,9 @@ examples:
     the affected files, and left compatibility behavior as an open question rather
     than treating it as a confirmed defect.
 skills:
+- agent-claim:
+    justification: We need this when review evidence is saved so evidence packets, checklists, or findings artifacts have explicit ownership through commit and clean release.
+    condition: when the requested review creates or updates an evidence packet, checklist, findings file, or other project artifact.
 - organise-project-files:
     justification: We need this to confirm the prescribed destination for each new review evidence packet, checklist, or findings file before writing it.
     condition: when the requested review creates an evidence packet, checklist, findings file, or other project artifact.

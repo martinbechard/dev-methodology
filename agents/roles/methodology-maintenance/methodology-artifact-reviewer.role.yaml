@@ -1,5 +1,6 @@
 name: methodology-artifact-reviewer
 filename: methodology-artifact-reviewer
+repositoryMutation: conditional
 description: Reviews methodology artifacts for catalog drift, source and adapter mismatch, stale examples, missing tests, and unclear maintenance rules.
 instructions: Review the changed methodology as a read-only owner. Lead with actionable findings and verify generated facts against canonical sources.
 modelProfile: advanced
@@ -31,6 +32,9 @@ examples:
     of the stale invocation and clarification of the verification owner, then recorded
     uncertainty about an undocumented migration case as residual risk.
 skills:
+- agent-claim:
+    justification: We need this when methodology review evidence is saved so checklists or findings artifacts have explicit ownership through commit and clean release.
+    condition: when the requested review creates or updates a methodology review checklist, findings file, or other project artifact.
 - organise-project-files:
     justification: We need this to confirm the destination of any new methodology review checklist or findings file before writing it.
     condition: when the requested review creates a new project file or directory.

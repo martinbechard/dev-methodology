@@ -1,5 +1,6 @@
 name: dev-orchestrator
 filename: dev-orchestrator
+repositoryMutation: required
 description: Coordinates multi-step development work across agents while preserving
   bounded context, explicit handoffs, and verification evidence.
 instructions: Acquire the root task claim, decompose work by independent responsibility,

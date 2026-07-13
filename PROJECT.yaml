@@ -117,23 +117,8 @@ root_agents_reference:
   file: AGENTS.md
   purpose: "Tell agents how to maintain canonical sources and generated outputs, which checks to run, and which Python technology skills must be loaded for each executable scope."
   required_content:
-    - "Repository-wide source boundaries, privacy constraints, generation ownership, agent claim and worktree coordination, validation commands, and commit expectations."
+    - "Repository-wide source boundaries, privacy constraints, generation ownership, validation commands, and commit expectations."
     - "Unconditional folder technology-skill loadouts generated from this plan and their required-load failure policy."
-
-agent_coordination:
-  claim_skill: agent-claim
-  registry: "Git common directory agent-claims.json."
-  acquisition: "Atomic. The first independent writer may claim a clean primary worktree."
-  active_claim_policy: "A later non-overlapping writer uses a dedicated codex branch and linked worktree."
-  overlap_policy: "Overlapping file or exclusive resource claims wait or coordinate instead of creating competing work."
-  dirty_unclaimed_policy: "Enter explicit recovery; do not add more anonymous changes."
-  recovery_policy: "One recovery owner claims the complete dirty scope, creates a checkpoint commit, then stabilizes and verifies it."
-  release_policy: "Release only after verification, commit or explicit no-change, clean worktree status, and runtime-resource cleanup or handoff."
-  completion_evidence:
-    - "Commit hash or explicit no-change result."
-    - "Verification commands and outcomes."
-    - "Final clean worktree status."
-    - "Released or explicitly handed-off claims and runtime resources."
 
 technology_skill_detection:
   owner: "Project Configurator"
