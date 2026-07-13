@@ -169,7 +169,7 @@ After that analysis and explicit user approval, --replace-customized may be comb
 
 ## Role Activity Boundaries
 
-Wiki work remains separate from general documentation, coding, review, backlog, and project setup. The generated [role and skill catalog](design/agent-role-skill-map.html) owns current role responsibilities, loadouts, output contracts, skill definitions, and role-skill relationships. The [operating model](design/agentic-development-operating-model.html) owns the bootstrap, execution, review, verification, integration, and claim-release sequence.
+Wiki work remains separate from general documentation, coding, review, backlog, and project setup. The generated [agent and skill definitions](design/agent-role-skill-map.html) page owns current agent and skill definitions, including responsibilities, assigned skills, output contracts, examples, model profiles, repository mutation policies, and agent-skill relationships. The [operating model](design/agentic-development-operating-model.html) owns the bootstrap, execution, review, verification, integration, and claim-release sequence.
 
 ## Bundled Skill Inventory
 

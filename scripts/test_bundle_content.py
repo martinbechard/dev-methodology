@@ -318,6 +318,7 @@ DOCUMENT_INFORMATION_OWNERS = {
     ),
     "agent-skill-specialization-strategy.html": STRATEGY_REQUIRED_PHRASES[:3],
     "agent-role-skill-map.html": (
+        "Agent and Skill Definitions",
         "Interactive Agent And Skill Map",
         "Role Agent Categories",
         "Skill Catalog",
