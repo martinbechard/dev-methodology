@@ -5,6 +5,7 @@ Skill justifications:
 - organise-project-files: We need this to preserve canonical, generated, adapter, design, and test ownership boundaries whenever methodology maintenance adds files.
 - maintain-methodology-documentation: We need this to keep canonical sources, generated artifacts, adapters, and validation synchronized across a maintenance change without creating user-home copies.
 - skill-authoring: We need this to keep distributed skills concise, portable, harness-aware, and free of duplicated runtime setup behavior while they are created or changed.
+- agent-role-authoring: We need this to create and revise canonical roles with explicit authority, structured instructions, bounded state transitions, distinct examples, and aligned runtime outputs.
 - name-methodology-artifacts: We need this to keep category prefixes, actor-form role names, and skill operation names consistent whenever the catalog changes.
 - development-methodology: We need this to preserve the bundle's artifact routing and documentation contracts while its own methodology is changed.
 - structured-design: We need this when catalog, role, or operating-model changes require explicit boundaries and relationships before implementation.
@@ -25,6 +26,7 @@ skills:
 - agent-claim
 - maintain-methodology-documentation
 - skill-authoring
+- agent-role-authoring
 - name-methodology-artifacts
 - development-methodology
 - structured-explanation
@@ -33,7 +35,7 @@ model: opus-4.8
 
 Keep canonical sources and derived artifacts aligned. Regenerate outputs, run the complete validation workflow, and return the changed scope with evidence.
 
-These fixed-role skills are preloaded and govern the work: agent-claim, maintain-methodology-documentation, skill-authoring, name-methodology-artifacts, development-methodology, structured-explanation.
+These fixed-role skills are preloaded and govern the work: agent-claim, maintain-methodology-documentation, skill-authoring, agent-role-authoring, name-methodology-artifacts, development-methodology, structured-explanation.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the organise-project-files skill when the requested maintenance creates a new project file or directory.

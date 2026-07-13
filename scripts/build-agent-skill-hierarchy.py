@@ -56,6 +56,22 @@ def _role_skill_entries(role: dict[str, object]) -> list[tuple[str, bool]]:
     return entries
 
 
+def _role_agent_dependencies(role: dict[str, object]) -> list[str]:
+    value = role.get("agentDependencies", [])
+    if not isinstance(value, list) or any(
+        not isinstance(item, str) or not item.strip() for item in value
+    ):
+        raise ValueError(
+            f"Role {role.get('name')} agentDependencies must be a list of role names."
+        )
+    dependencies = [item.strip() for item in value]
+    if len(dependencies) != len(set(dependencies)):
+        raise ValueError(
+            f"Role {role.get('name')} agentDependencies contains duplicates."
+        )
+    return dependencies
+
+
 def _skill_category(path: Path) -> tuple[str, str]:
     text = path.read_text(encoding="utf-8")
     parts = text.split("---", 2)
@@ -118,7 +134,7 @@ def _role_node(
         f'<g class="role-node" data-role="{_escape(role_name)}" '
         f'data-display-name="{_escape(display_name)}" role="button" tabindex="0" '
         f'aria-pressed="false" aria-label="Select {_escape(display_name)}">'
-        f'<title>Select {_escape(display_name)} to isolate its skill loadout</title>'
+        f'<title>Select {_escape(display_name)} to isolate its skills and dependencies</title>'
         f'<rect x="{ROLE_X}" y="{y}" width="{ROLE_WIDTH}" height="24" rx="5" '
         f'class="node role"/>'
         f'<text x="{ROLE_X + 12}" y="{y + 16}">{_escape(role_name)}</text>'
@@ -156,6 +172,19 @@ def build_svg() -> str:
         role = _load_yaml(path)
         role["group"] = path.parent.name
         roles.append(role)
+
+    role_names = {str(role["name"]) for role in roles}
+    agent_dependencies: list[tuple[str, str]] = []
+    for role in roles:
+        source_role = str(role["name"])
+        for target_role in _role_agent_dependencies(role):
+            if target_role not in role_names:
+                raise ValueError(
+                    f"Role {source_role} references unknown agent dependency {target_role}."
+                )
+            if target_role == source_role:
+                raise ValueError(f"Role {source_role} cannot depend on itself.")
+            agent_dependencies.append((source_role, target_role))
 
     role_group_order = _load_yaml(ROLE_SCHEMA_PATH).get("roleGroups")
     if not isinstance(role_group_order, list) or not all(
@@ -205,7 +234,8 @@ def build_svg() -> str:
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{SVG_WIDTH}" height="{height}" '
         f'viewBox="0 0 {SVG_WIDTH} {height}" role="group" aria-labelledby="title desc">',
         '<title id="title">Interactive canonical agent and skill hierarchy</title>',
-        '<desc id="desc">Select an agent to highlight its skills, or select a skill to highlight every canonical agent using it. Setup-time stack and domain skills are intentionally omitted because canonical roles do not link to them.</desc>',
+        '<desc id="desc">Select an agent to highlight its skills, or select a skill to highlight every canonical agent using it. Turn on agent dependencies to reveal arrows from using agents to used agents. Setup-time stack and domain skills are intentionally omitted because canonical roles do not link to them.</desc>',
+        '<defs><marker id="dependency-arrow" viewBox="0 0 7 8" refX="6" refY="4" markerWidth="7" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M 1 1.25 L 6 4 L 1 6.75" class="dependency-arrowhead"/></marker></defs>',
         """<style><![CDATA[
 text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
 .heading{font-size:18px;font-weight:700}.group{font-size:13px;font-weight:700;fill:#334155}
@@ -216,6 +246,8 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
 .node.skill.conditional{fill:#eeeafd;stroke:#7c3aed}
 .edge{fill:none;stroke:#94a3b8;stroke-width:1;opacity:.07;transition:opacity 150ms ease,stroke 150ms ease,stroke-width 150ms ease}
 .edge.conditional-edge{stroke:#7c3aed}.edge.active{stroke:#0f766e;stroke-width:2.4;opacity:.96}.edge.dimmed{opacity:.012}
+.dependency-edge{fill:none;stroke:#2563eb;stroke-width:1.8;opacity:0;pointer-events:none;transition:opacity 150ms ease,stroke-width 150ms ease}.dependency-arrowhead{fill:none;stroke:#2563eb;stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round}
+.show-agent-dependencies .dependency-edge{opacity:.72}.show-agent-dependencies .dependency-edge.active{stroke-width:3;opacity:1}.show-agent-dependencies .dependency-edge.dimmed{opacity:.08}
 .role-node,.skill-node{cursor:pointer;outline:none;transition:opacity 150ms ease}
 .role-node:hover .node,.role-node:focus .node,.skill-node:hover .node,.skill-node:focus .node{stroke:#0f766e;stroke-width:2.2}
 .role-node:focus .node,.skill-node:focus .node{stroke-dasharray:4 2}
@@ -225,18 +257,34 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
 .selection-marker{fill:none;stroke:#0f766e;stroke-width:4;opacity:0}.skill-node.active .selection-marker,.skill-node.selected .selection-marker{opacity:1}
 .reset-control,.view-control{cursor:pointer;outline:none}.reset-control rect{fill:#fff;stroke:#0f766e}.reset-control text{font-size:11px;font-weight:700;fill:#0f766e}
 .view-control rect{fill:#0f766e;stroke:#0f766e}.view-control text{font-size:11px;font-weight:700;fill:#fff}
+.dependency-toggle{cursor:pointer;outline:none}.dependency-toggle .toggle-surface{fill:#fff;stroke:#2563eb}.dependency-toggle .toggle-box{fill:#fff;stroke:#2563eb;stroke-width:1.5}.dependency-toggle text{font-size:11px;font-weight:700;fill:#1d4ed8}.dependency-toggle .checkmark{fill:none;stroke:#fff;stroke-width:2;opacity:0}.dependency-toggle.checked .toggle-box{fill:#2563eb}.dependency-toggle.checked .checkmark{opacity:1}
+.dependency-toggle:hover .toggle-surface,.dependency-toggle:focus .toggle-surface{stroke-width:2}.dependency-toggle:focus .toggle-surface{stroke-dasharray:4 2}
 .reset-control:hover rect,.reset-control:focus rect,.view-control:hover rect,.view-control:focus rect{stroke-width:2}.reset-control:focus rect,.view-control:focus rect{stroke-dasharray:4 2}
 .reset-control.disabled,.view-control.disabled{cursor:default;opacity:.35}.reset-control.disabled:hover rect,.view-control.disabled:hover rect{stroke-width:1}
-@media (prefers-reduced-motion:reduce){.node,.edge,.role-node,.skill-node{transition:none}}
+@media (prefers-reduced-motion:reduce){.node,.edge,.dependency-edge,.role-node,.skill-node{transition:none}}
 ]]></style>""",
         '<text x="30" y="38" class="heading">Choose an agent or skill. Trace its relationships.</text>',
         '<text x="30" y="64" class="instruction">Click to select. Double-click to view its definition. Enter or Space selects; Clear selection or Escape resets.</text>',
         '<text x="30" y="88" id="selection-status" class="status" role="status" aria-live="polite">All agents and skills shown. Connections are intentionally faint until selection.</text>',
+        f'<g class="dependency-toggle" role="checkbox" tabindex="0" aria-checked="false" aria-label="Show agent dependencies"><rect x="{SVG_WIDTH - 585}" y="24" width="220" height="30" rx="15" class="toggle-surface"/><rect x="{SVG_WIDTH - 573}" y="32" width="14" height="14" rx="3" class="toggle-box"/><path d="M {SVG_WIDTH - 570} 39 L {SVG_WIDTH - 566} 43 L {SVG_WIDTH - 560} 35" class="checkmark"/><text x="{SVG_WIDTH - 550}" y="43">Show agent dependencies</text></g>',
         f'<g class="view-control disabled" role="button" tabindex="-1" aria-disabled="true" aria-label="Select an agent or skill to view its definition"><rect x="{SVG_WIDTH - 330}" y="24" width="160" height="30" rx="15"/><text x="{SVG_WIDTH - 250}" y="43" text-anchor="middle">View definition</text></g>',
         f'<g class="reset-control disabled" role="button" tabindex="-1" aria-disabled="true" aria-label="Clear map selection"><rect x="{SVG_WIDTH - 150}" y="24" width="120" height="30" rx="15"/><text x="{SVG_WIDTH - 90}" y="43" text-anchor="middle">Clear selection</text></g>',
         f'<text x="{ROLE_X}" y="126" class="heading">Canonical agents</text>',
         f'<text x="{SKILL_X}" y="126" class="heading">Bundled skills</text>',
     ]
+
+    for index, (source_role, target_role) in enumerate(agent_dependencies):
+        source_y = role_y[source_role] + 12
+        target_y = role_y[target_role] + 12
+        endpoint_x = ROLE_X + ROLE_WIDTH
+        lane_x = endpoint_x + 62 + (index * 12)
+        parts.append(
+            f'<path d="M {endpoint_x} {source_y} C {lane_x} {source_y}, '
+            f'{lane_x} {target_y}, {endpoint_x + 1} {target_y}" '
+            f'class="dependency-edge" data-source-role="{_escape(source_role)}" '
+            f'data-target-role="{_escape(target_role)}" '
+            f'marker-end="url(#dependency-arrow)"/>'
+        )
 
     for role in roles:
         y = role_y[str(role["name"])]
@@ -266,6 +314,9 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
             secondary = f"{len(entries)} skills"
             if conditional_count:
                 secondary += f" · {conditional_count} conditional"
+            dependency_count = len(_role_agent_dependencies(role))
+            if dependency_count:
+                secondary += f" · {dependency_count} dependencies"
             parts.append(
                 _role_node(
                     current_y,
@@ -315,12 +366,15 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
   const roleNodes = Array.from(document.querySelectorAll(".role-node"));
   const skillNodes = Array.from(document.querySelectorAll(".skill-node"));
   const edges = Array.from(document.querySelectorAll(".edge"));
+  const dependencyEdges = Array.from(document.querySelectorAll(".dependency-edge"));
+  const dependencyToggle = document.querySelector(".dependency-toggle");
   const viewControl = document.querySelector(".view-control");
   const resetControl = document.querySelector(".reset-control");
   const status = document.getElementById("selection-status");
   const viewDefinitionMessage = "dev-methodology:view-definition";
   let selectedRole = "";
   let selectedSkill = "";
+  let showAgentDependencies = false;
 
   function renderSelection() {
     const hasSelection = Boolean(selectedRole || selectedSkill);
@@ -342,6 +396,15 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
           ? [selectedRole]
           : []
     );
+    const activeDependencyEdges = dependencyEdges.filter(
+      (edge) => showAgentDependencies
+        && selectedRole
+        && (edge.dataset.sourceRole === selectedRole || edge.dataset.targetRole === selectedRole)
+    );
+    activeDependencyEdges.forEach((edge) => {
+      activeRoles.add(edge.dataset.sourceRole);
+      activeRoles.add(edge.dataset.targetRole);
+    });
 
     roleNodes.forEach((node) => {
       const isSelected = node.dataset.role === selectedRole;
@@ -358,6 +421,11 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
       edge.classList.toggle("active", isActive);
       edge.classList.toggle("dimmed", hasSelection && !isActive);
     });
+    dependencyEdges.forEach((edge) => {
+      const isActive = activeDependencyEdges.includes(edge);
+      edge.classList.toggle("active", isActive);
+      edge.classList.toggle("dimmed", showAgentDependencies && hasSelection && !isActive);
+    });
     skillNodes.forEach((node) => {
       const isSelected = node.dataset.skill === selectedSkill;
       const isActive = activeSkills.has(node.dataset.skill);
@@ -371,13 +439,28 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
       (node) => node.dataset.role === selectedRole
     );
     if (activeRoleNode) {
-      status.textContent = `${activeRoleNode.dataset.displayName}: ${activeSkills.size} linked skills highlighted.`;
+      const dependencyStatus = showAgentDependencies
+        ? ` ${activeDependencyEdges.length} agent dependency arrows highlighted.`
+        : "";
+      status.textContent = `${activeRoleNode.dataset.displayName}: ${activeSkills.size} linked skills highlighted.${dependencyStatus}`;
     } else if (selectedSkill) {
       const agentLabel = activeRoles.size === 1 ? "canonical agent uses" : "canonical agents use";
       status.textContent = `${selectedSkill}: ${activeRoles.size} ${agentLabel} this skill.`;
     } else {
-      status.textContent = "All agents and skills shown. Connections are intentionally faint until selection.";
+      status.textContent = showAgentDependencies
+        ? "All agents and skills shown. Agent dependency arrows are visible."
+        : "All agents and skills shown. Connections are intentionally faint until selection.";
     }
+    document.documentElement.classList.toggle(
+      "show-agent-dependencies",
+      showAgentDependencies
+    );
+    dependencyToggle.classList.toggle("checked", showAgentDependencies);
+    dependencyToggle.setAttribute("aria-checked", String(showAgentDependencies));
+    dependencyToggle.setAttribute(
+      "aria-label",
+      showAgentDependencies ? "Hide agent dependencies" : "Show agent dependencies"
+    );
     const selectedKind = selectedRole ? "agent" : selectedSkill ? "skill" : "";
     const selectedName = selectedRole || selectedSkill;
     const selectedLabel = activeRoleNode
@@ -416,6 +499,11 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
   function clearSelection() {
     selectedRole = "";
     selectedSkill = "";
+    renderSelection();
+  }
+
+  function toggleAgentDependencies() {
+    showAgentDependencies = !showAgentDependencies;
     renderSelection();
   }
 
@@ -471,6 +559,13 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
         selectSkill(node.dataset.skill);
       }
     });
+  });
+  dependencyToggle.addEventListener("click", toggleAgentDependencies);
+  dependencyToggle.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      toggleAgentDependencies();
+    }
   });
   viewControl.addEventListener("click", () => {
     if (selectedRole || selectedSkill) viewSelectedDefinition();

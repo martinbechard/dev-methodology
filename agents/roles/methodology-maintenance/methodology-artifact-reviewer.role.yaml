@@ -42,6 +42,10 @@ skills:
     justification: We need this to present actionable defects before general observations so artifact owners can prioritize remediation.
 - skill-authoring:
     justification: We need this to review distributed skills against the same harness boundary, portability, dependency, and concision rules used during authoring.
+- agent-role-authoring:
+    justification: We need this to review canonical roles for instruction structure, role-skill
+      boundaries, dependency resolution, bounded failure behavior, example distinctness,
+      and output-contract alignment.
 - name-methodology-artifacts:
     justification: We need this to verify category prefixes, actor-form role names, and skill operation names against the catalog naming contract.
 - documentation-page-verify:

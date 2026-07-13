@@ -43,6 +43,10 @@ skills:
     justification: We need this to keep canonical sources, generated artifacts, adapters, and validation synchronized across a maintenance change without creating user-home copies.
 - skill-authoring:
     justification: We need this to keep distributed skills concise, portable, harness-aware, and free of duplicated runtime setup behavior while they are created or changed.
+- agent-role-authoring:
+    justification: We need this to create and revise canonical roles with explicit authority,
+      structured instructions, bounded state transitions, distinct examples, and aligned
+      runtime outputs.
 - name-methodology-artifacts:
     justification: We need this to keep category prefixes, actor-form role names, and skill operation names consistent whenever the catalog changes.
 - development-methodology:

@@ -1,5 +1,5 @@
 schema: dev-methodology-role
-version: 3
+version: 4
 required:
   - name
   - filename
@@ -13,9 +13,10 @@ properties:
   name: slug
   filename: slug
   description: string
-  instructions: string
+  instructions: instruction-content
   repositoryMutation: mutation-policy
   skills: conditional-skill-entry-list
+  agentDependencies: string-list
   dynamicFolderSkills: boolean
   skillAvailability: skill-availability-list
   tools: string-list

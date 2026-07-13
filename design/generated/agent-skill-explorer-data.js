@@ -493,6 +493,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "kind": "fixed",
       "role": "methodology-artifact-reviewer",
+      "skill": "agent-role-authoring"
+    },
+    {
+      "kind": "fixed",
+      "role": "methodology-artifact-reviewer",
       "skill": "development-methodology"
     },
     {
@@ -531,6 +536,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "fixed",
       "role": "methodology-maintainer",
       "skill": "agent-claim"
+    },
+    {
+      "kind": "fixed",
+      "role": "methodology-maintainer",
+      "skill": "agent-role-authoring"
     },
     {
       "kind": "fixed",
@@ -1086,6 +1096,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "fixedSkills": [
         "review-structured-artifact",
         "skill-authoring",
+        "agent-role-authoring",
         "name-methodology-artifacts",
         "documentation-page-verify",
         "development-methodology"
@@ -1107,6 +1118,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "agent-claim",
         "maintain-methodology-documentation",
         "skill-authoring",
+        "agent-role-authoring",
         "name-methodology-artifacts",
         "development-methodology",
         "structured-explanation"
@@ -1121,7 +1133,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "organise-project-files": "when the requested bootstrap creates a new project file or directory whose path is not already fixed by the bootstrap contract."
       },
       "declaredCases": [],
-      "description": "Completes project setup from one request by reusing or creating project routing, deriving appropriate documentation, independently reviewing every artifact, and verifying the finished setup.",
+      "description": "Completes project setup from one request by reusing or creating project routing, deriving appropriate documentation, independently reviewing every documentation artifact, and verifying the finished setup.",
       "dynamicFolderSkills": false,
       "fixedSkills": [
         "agent-claim",
@@ -1403,6 +1415,13 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "skill": "agent-harness"
       },
       "id": "agent-harness",
+      "verifiedCases": []
+    },
+    {
+      "category": "documentation-methodology",
+      "declaredCases": [],
+      "detection": null,
+      "id": "agent-role-authoring",
       "verifiedCases": []
     },
     {

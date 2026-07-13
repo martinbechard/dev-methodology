@@ -63,8 +63,10 @@ ROLE_NAME_FIELD_NAME = "name"
 ROLE_FILENAME_FIELD_NAME = "filename"
 ROLE_DESCRIPTION_FIELD_NAME = "description"
 ROLE_INSTRUCTIONS_FIELD_NAME = "instructions"
+ROLE_INSTRUCTION_SECTIONS_PAYLOAD_FIELD_NAME = "instructionSections"
 ROLE_REPOSITORY_MUTATION_FIELD_NAME = "repositoryMutation"
 ROLE_SKILLS_FIELD_NAME = "skills"
+ROLE_AGENT_DEPENDENCIES_FIELD_NAME = "agentDependencies"
 ROLE_OUTPUT_CONTRACT_FIELD_NAME = "outputContract"
 ROLE_SKILL_JUSTIFICATION_FIELD_NAME = "justification"
 ROLE_SKILL_CONDITION_FIELD_NAME = "condition"
@@ -82,6 +84,7 @@ ROLE_EXAMPLE_REQUIRED_FIELDS = (
 )
 ROLE_EXAMPLE_RUNTIME_IDS = ("codex", "claude-code")
 ROLE_LIST_FIELDS = (
+    ROLE_AGENT_DEPENDENCIES_FIELD_NAME,
     "tools",
     "disallowedTools",
     "mcpServers",
@@ -90,13 +93,23 @@ ROLE_STRING_FIELDS = (
     ROLE_NAME_FIELD_NAME,
     ROLE_FILENAME_FIELD_NAME,
     ROLE_DESCRIPTION_FIELD_NAME,
-    ROLE_INSTRUCTIONS_FIELD_NAME,
     ROLE_REPOSITORY_MUTATION_FIELD_NAME,
     ROLE_MODEL_PROFILE_FIELD_NAME,
     "permissionMode",
     "isolation",
     "memory",
 )
+ROLE_INSTRUCTION_SECTION_SPECS = (
+    ("objective", "Objective", "string"),
+    ("boundaries", "Boundaries", "list"),
+    ("decisions", "Decisions", "list"),
+    ("workflow", "Workflow", "ordered-list"),
+    ("delegation", "Delegation", "list"),
+    ("review", "Review", "list"),
+    ("failureHandling", "Failure Handling", "list"),
+    ("completion", "Completion", "list"),
+)
+ROLE_REQUIRED_INSTRUCTION_SECTIONS = {"objective", "workflow", "completion"}
 ROLE_INTEGER_FIELDS = ("maxTurns", "timeout")
 ROLE_BOOLEAN_FIELDS = (ROLE_DYNAMIC_FOLDER_SKILLS_FIELD_NAME,)
 ROLE_REPOSITORY_MUTATION_VALUES = {"required", "conditional", "never"}
@@ -196,8 +209,10 @@ class RoleDefinition:
     display_name: str
     description: str
     instructions: str
+    instruction_sections: dict[str, object]
     repository_mutation: str
     skills: tuple[str, ...]
+    agent_dependencies: tuple[str, ...]
     skill_justifications: dict[str, str]
     skill_conditions: dict[str, str]
     output_contract: tuple[str, ...]
@@ -557,6 +572,57 @@ def validate_role_examples(value: object, source_path: Path) -> tuple[dict[str, 
     return tuple(examples)
 
 
+def validate_role_instructions(
+    value: object,
+    source_path: Path,
+) -> tuple[str, dict[str, object]]:
+    if isinstance(value, str):
+        if not value.strip():
+            raise ValueError(f"Role instructions must be a non-empty string: {source_path}")
+        return value.strip(), {}
+
+    if not isinstance(value, dict) or not value:
+        raise ValueError(
+            f"Role instructions must be a non-empty string or structured mapping: {source_path}"
+        )
+
+    known_sections = {name for name, _, _ in ROLE_INSTRUCTION_SECTION_SPECS}
+    unknown_sections = sorted(set(value) - known_sections)
+    missing_sections = sorted(ROLE_REQUIRED_INSTRUCTION_SECTIONS - set(value))
+    if unknown_sections or missing_sections:
+        raise ValueError(
+            "Role structured instructions have "
+            f"unknown sections {unknown_sections} or missing sections {missing_sections}: {source_path}"
+        )
+
+    normalized: dict[str, object] = {}
+    rendered_sections: list[str] = []
+    for section_name, section_label, section_type in ROLE_INSTRUCTION_SECTION_SPECS:
+        if section_name not in value:
+            continue
+        section_value = value[section_name]
+        if section_type == "string":
+            if not isinstance(section_value, str) or not section_value.strip():
+                raise ValueError(
+                    f"Role instructions {section_name} must be a non-empty string: {source_path}"
+                )
+            normalized_value: object = section_value.strip()
+            section_body = normalized_value
+        else:
+            items = validate_string_list(section_value, f"instructions.{section_name}", source_path)
+            normalized_value = list(items)
+            if section_type == "ordered-list":
+                section_body = "\n".join(
+                    f"{index}. {item}"
+                    for index, item in enumerate(items, start=MINIMUM_POSITIVE_INTEGER)
+                )
+            else:
+                section_body = "\n".join(f"- {item}" for item in items)
+        normalized[section_name] = normalized_value
+        rendered_sections.append(f"## {section_label}\n\n{section_body}")
+    return "\n\n".join(rendered_sections), normalized
+
+
 def validate_annotated_list(
     value: object,
     field_name: str,
@@ -801,26 +867,36 @@ def load_role_definition(
         source_path,
     )
 
+    agent_dependencies = list_values.get(ROLE_AGENT_DEPENDENCIES_FIELD_NAME, ())
     optional_fields = {
         field_name: parsed[field_name]
-        for field_name in sorted(set(parsed) - required_fields - {ROLE_EXAMPLES_FIELD_NAME})
+        for field_name in sorted(
+            set(parsed)
+            - required_fields
+            - {ROLE_EXAMPLES_FIELD_NAME, ROLE_AGENT_DEPENDENCIES_FIELD_NAME}
+        )
     }
     for field_name, values in list_values.items():
         if field_name in optional_fields:
             optional_fields[field_name] = list(values)
 
     description = parsed[ROLE_DESCRIPTION_FIELD_NAME]
-    instructions = parsed[ROLE_INSTRUCTIONS_FIELD_NAME]
-    if not isinstance(description, str) or not isinstance(instructions, str):
-        raise ValueError(f"Role description and instructions must be strings: {source_path}")
+    if not isinstance(description, str):
+        raise ValueError(f"Role description must be a string: {source_path}")
+    instructions, instruction_sections = validate_role_instructions(
+        parsed[ROLE_INSTRUCTIONS_FIELD_NAME],
+        source_path,
+    )
     return RoleDefinition(
         name=role_name,
         filename=filename,
         display_name=role_display_name(role_name),
         description=description.strip(),
         instructions=instructions.strip(),
+        instruction_sections=instruction_sections,
         repository_mutation=repository_mutation,
         skills=role_skills,
+        agent_dependencies=agent_dependencies,
         skill_justifications=skill_justifications,
         skill_conditions=skill_conditions,
         output_contract=output_contract,
@@ -856,6 +932,15 @@ def load_role_definitions(skill_names: set[str]) -> list[RoleDefinition]:
         raise ValueError("Canonical role names must be unique.")
     if len(filenames) != len(set(filenames)):
         raise ValueError("Canonical role filenames must be unique.")
+    known_role_names = set(role_names)
+    for role in roles:
+        unknown_dependencies = sorted(set(role.agent_dependencies) - known_role_names)
+        if unknown_dependencies:
+            raise ValueError(
+                f"Role {role.name} references unknown agent dependencies {unknown_dependencies}."
+            )
+        if role.name in role.agent_dependencies:
+            raise ValueError(f"Role {role.name} cannot depend on itself.")
     return roles
 
 
@@ -909,8 +994,10 @@ def build_role_payload(roles: Sequence[RoleDefinition]) -> dict[str, object]:
                 "displayName": role.display_name,
                 "description": role.description,
                 "instructions": role.instructions,
+                ROLE_INSTRUCTION_SECTIONS_PAYLOAD_FIELD_NAME: role.instruction_sections,
                 ROLE_REPOSITORY_MUTATION_FIELD_NAME: role.repository_mutation,
                 "skills": list(role.skills),
+                ROLE_AGENT_DEPENDENCIES_FIELD_NAME: list(role.agent_dependencies),
                 "skillJustifications": role.skill_justifications,
                 "skillConditions": role.skill_conditions,
                 "outputs": list(role.output_contract),

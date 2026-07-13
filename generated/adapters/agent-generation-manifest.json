@@ -84,19 +84,19 @@
         {
           "name": "methodology-artifact-reviewer",
           "output": "generated/adapters/claude/agents/methodology-artifact-reviewer.md",
-          "sha256": "e92a80f42b27bfbdc8c1777ec57fa67ca73f1a4959fbc527eee3c68b997672e0",
+          "sha256": "7e15068e161cd242780a2634af8c59cb2fb2bec448f515c7aa3b8c0ea2726049",
           "source": "agents/roles/methodology-maintenance/methodology-artifact-reviewer.role.yaml"
         },
         {
           "name": "methodology-maintainer",
           "output": "generated/adapters/claude/agents/methodology-maintainer.md",
-          "sha256": "3834972cc247de239627903c1c69b0739dd1c43058eca4991e8d10c4c3a87009",
+          "sha256": "ac49d2b8a69f1a7599645bf11a32b1b1ee490f81e5dff12b8f2530aad2187d1b",
           "source": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml"
         },
         {
           "name": "project-bootstrapper",
           "output": "generated/adapters/claude/agents/project-bootstrapper.md",
-          "sha256": "d1871e0375c5ee3864afaf05dc9ef7f491c884b2f7dc1e591ba93bc664af6822",
+          "sha256": "470180474bb150ed21f1655443dbd9df1f1e0527db06573c8b34a935cd0ca1dc",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
@@ -247,19 +247,19 @@
         {
           "name": "methodology-artifact-reviewer",
           "output": "generated/adapters/codex/agents/methodology-artifact-reviewer.toml",
-          "sha256": "131616f06b35ea4ae59366f65855b212f5f1458c4591b62114e2a059d49d9ff1",
+          "sha256": "c744758e06da922cb0c617bb8d9a938f6565896224a10947bc740cf5dd3f2f00",
           "source": "agents/roles/methodology-maintenance/methodology-artifact-reviewer.role.yaml"
         },
         {
           "name": "methodology-maintainer",
           "output": "generated/adapters/codex/agents/methodology-maintainer.toml",
-          "sha256": "c74bf4b51fd2f57bf9012abc5e3517c7d9b5c0dce3cbbd0f8eddc4f279f80ad0",
+          "sha256": "35d017135a8aaff751b363c7ea0860988cd58449303e76feea79b172212399e1",
           "source": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml"
         },
         {
           "name": "project-bootstrapper",
           "output": "generated/adapters/codex/agents/project-bootstrapper.toml",
-          "sha256": "73217b4190d2579d3696637b145a7a5a71ba38e3822c9524ed840226689f33d4",
+          "sha256": "a16db122fe21b8c2c9bb39d596fab8fe6498cddf122d397d4e0a30e6df0c3751",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {

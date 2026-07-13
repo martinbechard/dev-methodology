@@ -14,7 +14,7 @@ This page is generated from the canonical roles, bundled skill frontmatter, setu
 ## Summary
 
 - [x] 26 canonical agents are defined and generate through the supported native role adapters.
-- [x] 76 bundled skills pass catalog and Agent Skill validation.
+- [x] 77 bundled skills pass catalog and Agent Skill validation.
 - [x] 2 agents and 12 skills are named in current evaluation cases.
 - [ ] 0 agents and 0 skills have independently verified behavior evidence under the current proof contract.
 - TypeScript implementation, Java and Spring Boot implementation, SQL behavior, and TypeScript code review have useful manual observations that must be rerun with truthful receipts.
@@ -106,6 +106,7 @@ This page is generated from the canonical roles, bundled skill frontmatter, setu
 
 ### Documentation methodology skills
 
+- [x] agent-role-authoring — structural; declared: none; verified behavior: [ ] none
 - [x] create-project-configuration — structural; declared: none; verified behavior: [ ] none
 - [x] development-methodology — structural; declared: none; verified behavior: [ ] none
 - [x] documentation-bootstrap — structural; declared: none; verified behavior: [ ] none

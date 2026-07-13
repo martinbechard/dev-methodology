@@ -78,11 +78,11 @@ The generated [agent, skill, technology, and test coverage checklist](design/age
 python3 scripts/build-support-checklist.py
 ```
 
-Role cards, the skill catalog, and the agent-and-skill diagram are generated from canonical data rather than maintained independently in HTML. Canonical role examples show a scenario purpose, invocation, and plausible response. Each skill entry in canonical role YAML nests a justification that explains why the role needs the skill, and each output contract entry nests a purpose that explains why the output exists. The generated role modal displays those explanations with the enlarged pills, and native adapters render them as comments. The generator rejects canonical roles that reference missing skill IDs.
+Role cards, the skill catalog, and the agent-and-skill diagram are generated from canonical data rather than maintained independently in HTML. Canonical role examples show a scenario purpose, invocation, and plausible response. Each skill entry in canonical role YAML nests a justification that explains why the role needs the skill, each output contract entry nests a purpose that explains why the output exists, and agentDependencies names any fixed direct agent-to-agent use shown by the diagram. The generated role modal displays the skill and output explanations with the enlarged pills, and native adapters render them as comments. The generator rejects canonical roles that reference missing skill IDs or agent dependencies.
 
-Within the linked HTML design set, the documentation index assigns one owner to each substantive topic. Sibling HTML pages use navigation summaries and links instead of maintaining parallel explanations. The generated diagram and generated cards are the intentional duplicate views of canonical role-to-skill relationships.
+Within the linked HTML design set, the documentation index assigns one owner to each substantive topic. Sibling HTML pages use navigation summaries and links instead of maintaining parallel explanations. The generated diagram and generated cards are the intentional duplicate views of canonical role-to-skill relationships. The diagram can also reveal canonical agent-to-agent dependencies without treating dynamic task-time routing as a fixed dependency.
 
-Use maintain-methodology-documentation when changing skills, roles, categories, adapters, or design pages. That skill owns the canonical-source update, regeneration, stale-output check, validation, and diff-review workflow. Skill authoring and review share skill-authoring so harness boundaries, portability, dependencies, and concision are defined once.
+Use maintain-methodology-documentation when changing skills, roles, categories, adapters, or design pages. That skill owns the canonical-source update, regeneration, stale-output check, validation, and diff-review workflow. Skill authoring and review share skill-authoring, while canonical role creation and review share agent-role-authoring so instruction structure, authority, state transitions, examples, agent dependencies, and outputs are defined once.
 
 Each skill frontmatter metadata block names its category id. The category file owns category order and display labels.
 
@@ -194,6 +194,7 @@ The documentation methodology skills are:
 - documentation-page-verify
 - create-project-configuration
 - maintain-methodology-documentation
+- agent-role-authoring
 - skill-authoring
 - name-methodology-artifacts
 

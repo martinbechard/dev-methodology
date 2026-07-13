@@ -1094,7 +1094,11 @@ class BundleContentTests(unittest.TestCase):
 
         self.assertTrue(ROLE_SCHEMA_PATH.is_file())
         role_schema = load_yaml_object(ROLE_SCHEMA_PATH)
-        self.assertEqual(3, role_schema["version"])
+        self.assertEqual(4, role_schema["version"])
+        self.assertEqual(
+            "instruction-content",
+            role_schema["properties"]["instructions"],
+        )
         self.assertEqual(
             "conditional-skill-entry-list",
             role_schema["properties"]["skills"],
@@ -1102,6 +1106,10 @@ class BundleContentTests(unittest.TestCase):
         self.assertEqual(
             "mutation-policy",
             role_schema["properties"]["repositoryMutation"],
+        )
+        self.assertEqual(
+            "string-list",
+            role_schema["properties"]["agentDependencies"],
         )
         self.assertEqual(
             expected_outputs[ROLE_DEFINITIONS_PATH],
@@ -1154,6 +1162,18 @@ class BundleContentTests(unittest.TestCase):
                     [next(iter(entry)) for entry in role_source["skills"]],
                 )
                 self.assertEqual(
+                    role_source.get("agentDependencies", []),
+                    list(role.agent_dependencies),
+                )
+                self.assertEqual(
+                    role_source.get("agentDependencies", []),
+                    role_payload["roles"][role.name]["agentDependencies"],
+                )
+                self.assertEqual(
+                    role.instruction_sections,
+                    role_payload["roles"][role.name]["instructionSections"],
+                )
+                self.assertEqual(
                     list(role.output_contract),
                     [next(iter(entry)) for entry in role_source["outputContract"]],
                 )
@@ -1178,6 +1198,7 @@ class BundleContentTests(unittest.TestCase):
                     set(role.skills),
                     set(role_payload["roles"][role.name]["skillJustifications"]),
                 )
+
                 expected_conditions = {
                     skill: metadata["condition"].rstrip(".")
                     for entry in role_source["skills"]
@@ -1267,6 +1288,39 @@ class BundleContentTests(unittest.TestCase):
         setup_role = next(role for role in roles if role.name == "project-configurator")
         self.assertIn("detect-technology-skills", setup_role.skills)
 
+    def test_role_instructions_support_concise_and_structured_forms(self) -> None:
+        build_skill_docs = load_build_skill_docs_module()
+
+        rendered, sections = build_skill_docs.validate_role_instructions(
+            "Perform one bounded responsibility.",
+            ROLE_SCHEMA_PATH,
+        )
+        self.assertEqual("Perform one bounded responsibility.", rendered)
+        self.assertEqual({}, sections)
+
+        rendered, sections = build_skill_docs.validate_role_instructions(
+            {
+                "objective": "Complete the bounded responsibility.",
+                "workflow": ["Inspect evidence.", "Produce the result."],
+                "failureHandling": ["Return BLOCKED when authority is missing."],
+                "completion": ["Return READY with verification evidence."],
+            },
+            ROLE_SCHEMA_PATH,
+        )
+        self.assertIn("## Objective", rendered)
+        self.assertIn("1. Inspect evidence.", rendered)
+        self.assertIn("## Failure Handling", rendered)
+        self.assertEqual(
+            ["Inspect evidence.", "Produce the result."],
+            sections["workflow"],
+        )
+
+        with self.assertRaisesRegex(ValueError, "missing sections"):
+            build_skill_docs.validate_role_instructions(
+                {"objective": "Incomplete role."},
+                ROLE_SCHEMA_PATH,
+            )
+
     def test_modifying_roles_use_claims_and_coordination_roles_require_clean_commits(self) -> None:
         build_skill_docs = load_build_skill_docs_module()
         skill_payload = build_skill_docs.build_payload()
@@ -1304,37 +1358,65 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("documentation-reverse-engineer", build_skill_docs.fixed_role_skills(role))
         self.assertNotIn("documentation-reverse-engineer", role.skill_conditions)
         self.assertLess(
-            role.instructions.index("Project Configurator"),
-            role.instructions.index("Dev Documentation Writer"),
+            role.instructions.index("project-configurator"),
+            role.instructions.index("dev-documentation-writer"),
         )
-        self.assertIn("Check for project-root PROJECT.yaml before configuration", role.instructions)
+        self.assertEqual(
+            {
+                "objective",
+                "boundaries",
+                "decisions",
+                "workflow",
+                "delegation",
+                "review",
+                "failureHandling",
+                "completion",
+            },
+            set(role.instruction_sections),
+        )
+        self.assertIn("## Objective", role.instructions)
+        self.assertIn("## Failure Handling", role.instructions)
+        self.assertIn("When project-root PROJECT.yaml is absent", role.instructions)
         self.assertIn(
-            "do not invoke Project Configurator or rerun technology detection",
+            "without invoking project-configurator or rerunning technology detection",
             role.instructions,
         )
-        self.assertIn("When PROJECT.yaml is absent", role.instructions)
+        self.assertIn("When PROJECT.yaml exists but fails validation", role.instructions)
         self.assertIn(
             "only when the user explicitly requests reconfiguration",
             role.instructions,
         )
         for delegated_role in (
-            "Project Configurator",
-            "Dev Documentation Writer",
-            "Dev Artifact Reviewer",
-            "Wiki Architect",
-            "Wiki Writer",
-            "Wiki Artifact Reviewer",
-            "Wiki Topic Verifier",
-            "Dev Verifier",
+            "project-configurator",
+            "dev-documentation-writer",
+            "dev-artifact-reviewer",
+            "wiki-architect",
+            "wiki-writer",
+            "wiki-artifact-reviewer",
+            "wiki-topic-verifier",
+            "dev-verifier",
         ):
             with self.subTest(delegated_role=delegated_role):
                 self.assertIn(delegated_role, role.instructions)
-        self.assertIn("repeat the write-review cycle until", role.instructions)
-        self.assertIn("so repeated bootstrap requests are safe", role.instructions)
-        self.assertIn("when the same correction fails twice", role.instructions)
-        self.assertIn("rather than returning a plan or a chain of handoffs", role.instructions)
         self.assertEqual(
             (
+                "project-configurator",
+                "dev-documentation-writer",
+                "wiki-architect",
+                "wiki-writer",
+                "dev-artifact-reviewer",
+                "wiki-artifact-reviewer",
+                "wiki-topic-verifier",
+                "dev-verifier",
+            ),
+            role.agent_dependencies,
+        )
+        self.assertIn("Stop after two unsuccessful correction attempts", role.instructions)
+        self.assertIn("Report READY only when", role.instructions)
+        self.assertIn("Report BLOCKED only when", role.instructions)
+        self.assertEqual(
+            (
+                "overall status",
                 "configured project routing",
                 "accepted documentation set",
                 "integrated verification",
@@ -1342,6 +1424,13 @@ class BundleContentTests(unittest.TestCase):
             ),
             role.output_contract,
         )
+        self.assertEqual(3, len(role.examples))
+        self.assertTrue(role.examples[0]["plausibleResponse"].startswith("STATUS: READY"))
+        self.assertTrue(role.examples[1]["plausibleResponse"].startswith("STATUS: READY"))
+        self.assertIn("STATUS: BLOCKED", role.examples[2]["plausibleResponse"])
+        self.assertIn("valid existing routing", role.examples[0]["purpose"])
+        self.assertIn("no project routing", role.examples[1]["purpose"])
+        self.assertIn("invalid", role.examples[2]["purpose"])
         for example in role.examples:
             self.assertTrue(example["runtimeInvocations"]["codex"].startswith("$project-bootstrapper "))
             self.assertTrue(
@@ -1732,6 +1821,9 @@ class BundleContentTests(unittest.TestCase):
             "agent-modal__pill--conditional",
             "runtimeInvocations",
             "agent-modal__runtime-select",
+            "instructionSections",
+            "renderRoleInstructions",
+            "agent-modal__instruction-sections",
         ):
             with self.subTest(agent_browser_phrase=phrase):
                 self.assertIn(phrase, agent_browser_text)

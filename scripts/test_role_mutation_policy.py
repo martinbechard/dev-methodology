@@ -113,7 +113,7 @@ class RoleMutationPolicyTests(unittest.TestCase):
         """Expose repository mutation as a required canonical role capability declaration."""
         schema = yaml.safe_load(ROLE_SCHEMA.read_text(encoding="utf-8"))
 
-        self.assertEqual(3, schema["version"])
+        self.assertEqual(4, schema["version"])
         self.assertIn("repositoryMutation", schema["required"])
         self.assertEqual("mutation-policy", schema["properties"]["repositoryMutation"])
 

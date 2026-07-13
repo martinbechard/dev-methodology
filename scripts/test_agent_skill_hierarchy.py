@@ -119,6 +119,49 @@ class AgentSkillHierarchyTests(unittest.TestCase):
         self.assertIn("edge.dataset.skill === selectedSkill", self.rendered)
         self.assertIn("canonical agents use", self.rendered)
 
+    def test_agent_dependencies_are_directional_and_user_controllable(self) -> None:
+        """Fixed direct agent use should render as optional directional arrows."""
+        source_role = self.module._load_yaml(
+            ROLES_ROOT / "project-setup" / "project-bootstrapper.role.yaml"
+        )
+        expected_targets = set(source_role["agentDependencies"])
+        dependency_edges = self.root.findall(
+            f".//{{{SVG_NAMESPACE}}}path[@class='dependency-edge']"
+        )
+        bootstrapper_edges = [
+            edge
+            for edge in dependency_edges
+            if edge.attrib.get("data-source-role") == "project-bootstrapper"
+        ]
+
+        self.assertEqual(
+            expected_targets,
+            {edge.attrib.get("data-target-role") for edge in bootstrapper_edges},
+        )
+        self.assertTrue(
+            all(
+                edge.attrib.get("marker-end") == "url(#dependency-arrow)"
+                for edge in dependency_edges
+            )
+        )
+        dependency_marker = self.root.find(
+            f".//{{{SVG_NAMESPACE}}}marker[@id='dependency-arrow']"
+        )
+        self.assertIsNotNone(dependency_marker)
+        self.assertEqual("userSpaceOnUse", dependency_marker.attrib.get("markerUnits"))
+        self.assertEqual("7", dependency_marker.attrib.get("markerWidth"))
+        self.assertIn(".dependency-arrowhead{fill:none", self.rendered)
+        dependency_toggle = self.root.find(
+            f".//{{{SVG_NAMESPACE}}}g[@class='dependency-toggle']"
+        )
+        self.assertIsNotNone(dependency_toggle)
+        self.assertEqual("checkbox", dependency_toggle.attrib.get("role"))
+        self.assertEqual("false", dependency_toggle.attrib.get("aria-checked"))
+        self.assertEqual("0", dependency_toggle.attrib.get("tabindex"))
+        self.assertIn("Show agent dependencies", " ".join(self.root.itertext()))
+        self.assertIn("let showAgentDependencies = false", self.rendered)
+        self.assertIn("toggleAgentDependencies", self.rendered)
+
     def test_agent_groups_follow_the_canonical_schema_order(self) -> None:
         """The visual reading order should match the maintained role-group contract."""
         group_nodes = self.root.findall(

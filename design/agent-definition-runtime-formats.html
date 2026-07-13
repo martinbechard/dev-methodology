@@ -430,12 +430,17 @@
           <tr>
             <td><span class="name">Instructions</span></td>
             <td><code>instructions</code></td>
-            <td>Defines behavior, boundaries, workflow, deliverables, and handoff expectations. Use this for portable role behavior when a runtime has no native field for a concern.</td>
+            <td>Defines behavior, boundaries, workflow, deliverables, and handoff expectations. Concise single-phase roles may use a string. Roles with branches, delegation, review loops, failure handling, or several terminal criteria use the validated structured mapping; generators render its sections into one portable runtime instruction string.</td>
           </tr>
           <tr>
             <td><span class="name">Skills</span></td>
             <td><code>skills</code></td>
             <td>Stores ordered skill entries with a skill identifier, justification, and optional condition. The <a href="agent-skill-specialization-strategy.html">specialization strategy</a> owns when each entry applies.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Agent dependencies</span></td>
+            <td><code>agentDependencies</code></td>
+            <td>Names fixed direct agent-to-agent use declared by this role. The generated diagram renders an arrow from the using agent to each used agent; dynamic task-time routing remains outside this list.</td>
           </tr>
           <tr>
             <td><span class="name">Skill condition</span></td>

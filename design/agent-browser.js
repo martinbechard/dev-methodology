@@ -11,6 +11,16 @@
     codex: "Codex",
     "claude-code": "Claude Code",
   };
+  const INSTRUCTION_SECTION_PRESENTATION = [
+    ["objective", "Objective", "paragraph"],
+    ["boundaries", "Boundaries", "list"],
+    ["decisions", "Decisions", "list"],
+    ["workflow", "Workflow", "ordered-list"],
+    ["delegation", "Delegation", "list"],
+    ["review", "Review", "list"],
+    ["failureHandling", "Failure Handling", "list"],
+    ["completion", "Completion", "list"],
+  ];
   const DEFINITION_SELECTOR = "[data-agent-definition]";
   const EDITOR_QUERY_PARAMETER = "editor";
   const REPOSITORY_ROOT_QUERY_PARAMETER = "repoRoot";
@@ -254,6 +264,23 @@
       text-transform: uppercase;
     }
 
+    .agent-modal__instruction-sections {
+      display: grid;
+      gap: 0.8rem;
+    }
+
+    .agent-modal__instruction-section h4,
+    .agent-modal__instruction-section p,
+    .agent-modal__instruction-section ul,
+    .agent-modal__instruction-section ol {
+      margin: 0;
+    }
+
+    .agent-modal__instruction-section h4 {
+      margin-bottom: 0.25rem;
+      font-size: 0.9rem;
+    }
+
     .agent-modal__scenario-field {
       display: grid;
       gap: 0.2rem;
@@ -433,7 +460,7 @@
             <p class="agent-modal__description"></p>
             <section class="agent-modal__section">
               <h3>How this role works</h3>
-              <p class="agent-modal__instructions"></p>
+              <div class="agent-modal__instructions"></div>
             </section>
             <section class="agent-modal__section">
               <h3>Skills used when applicable</h3>
@@ -575,6 +602,44 @@
     });
   }
 
+  function renderRoleInstructions(container, role) {
+    container.replaceChildren();
+    const sections = role.instructionSections || {};
+    if (!Object.keys(sections).length) {
+      const paragraph = document.createElement("p");
+      paragraph.textContent = role.instructions || "";
+      container.appendChild(paragraph);
+      return;
+    }
+
+    const sectionContainer = document.createElement("div");
+    sectionContainer.className = "agent-modal__instruction-sections";
+    INSTRUCTION_SECTION_PRESENTATION.forEach(([name, label, presentation]) => {
+      if (!(name in sections)) return;
+      const section = document.createElement("section");
+      section.className = "agent-modal__instruction-section";
+      const heading = document.createElement("h4");
+      heading.textContent = label;
+      section.appendChild(heading);
+
+      if (presentation === "paragraph") {
+        const paragraph = document.createElement("p");
+        paragraph.textContent = sections[name];
+        section.appendChild(paragraph);
+      } else {
+        const list = document.createElement(presentation === "ordered-list" ? "ol" : "ul");
+        sections[name].forEach((item) => {
+          const listItem = document.createElement("li");
+          listItem.textContent = item;
+          list.appendChild(listItem);
+        });
+        section.appendChild(list);
+      }
+      sectionContainer.appendChild(section);
+    });
+    container.appendChild(sectionContainer);
+  }
+
   function openRoleDefinition(role, sourceElement) {
     const elements = ensureModal();
     const editUrl = editorUrlForRole(role);
@@ -587,7 +652,7 @@
     elements.category.textContent = role.groupLabel || role.group;
     elements.source.textContent = role.sourcePath;
     elements.description.textContent = role.description || "";
-    elements.instructions.textContent = role.instructions || "";
+    renderRoleInstructions(elements.instructions, role);
     renderPills(
       elements.skills,
       role.skills || [],
