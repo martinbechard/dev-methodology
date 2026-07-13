@@ -11,7 +11,7 @@ Treat comments as part of the code contract. Keep them concise, structured, and 
 
 ## Scope
 
-- Apply this skill to human-maintained source code, test code, executable scripts, and executable schema or migration code.
+- Apply this skill to source code, test code, executable scripts, and executable schema or migration code.
 - Do not require code headers in configuration, documentation, data, lock, manifest, or other non-code files, even when their format permits comments.
 - For generated code, update the generator or template rather than hand-editing generated output. Follow the repository's generated-file policy.
 - Preserve required interpreter directives, encoding declarations, and other syntax that must precede a comment header.
@@ -22,20 +22,19 @@ Before writing or materially revising a non-trivial header or public-construct c
 
 - Use its discipline to identify the question being answered, concrete facts, unresolved uncertainty, and the direct answer.
 - Translate that reasoning into concise language-native comment prose.
-- Do not copy QUERY, FACT, UNKNOWN, or ANSWER labels into code unless the repository explicitly requires them.
 - Leave out background that does not help a maintainer use, change, or review the code.
 
 ## Mandatory Code Artifact Header
 
-Every human-maintained code artifact created or materially changed must have a language-appropriate header near the beginning of the file. Include:
+Every code artifact created or materially changed must have a language-appropriate header near the beginning of the file. Include:
 
-- The exact copyright statement defined by the applicable root, nearest, or global AGENTS.md. Do not invent a holder, address, or year when the instruction is absent or ambiguous.
+- The exact copyright statement supplied by the applicable project instructions. Do not invent a holder, address, or year when the instruction is absent or ambiguous.
 - An accurate AI attribution. Use the repository's wording when defined. Otherwise use AI attribution: Generated with AI assistance. for a new AI-authored file and AI attribution: Modified with AI assistance. for an existing human-origin file changed by AI. Preserve an existing generated-with-AI attribution on later changes.
 - A one-sentence summary of the file's responsibility.
 - A durable path to the governing design document when one exists and applies.
 - A durable path to the governing test plan when one exists and applies.
 
-Do not add a witty remark. Do not fabricate design or test-plan references. Update the summary and references when the file's responsibility or authority changes.
+Do not fabricate design or test-plan references. Update the summary and references when the file's responsibility or authority changes.
 
 ## Public Construct Documentation
 
@@ -52,7 +51,9 @@ For a public function or method, document:
 
 For other public constructs, document why the construct exists, its intended usage, its invariants or valid states, and any lifecycle or ownership constraints. Do not merely restate the declaration or duplicate type information that is already explicit.
 
-## Local Rationale Comments
+For classes, include examples of critical use cases including instanciation, typical inputs, typical outputs.
+
+## Rationale Comments
 
 - Explain why: rationale, business rules, invariants, constraints, compatibility requirements, and non-obvious workarounds.
 - Prefer names, types, and direct control flow that make routine behavior understandable without commentary.
@@ -65,12 +66,11 @@ For other public constructs, document why the construct exists, its intended usa
 
 ## Change Workflow
 
-1. Read the root and nearest AGENTS.md, the applicable language or framework skills, and any governing design or test plan.
-2. Decide whether each changed file is a code artifact and determine its language-native header and documentation syntax.
-3. Load structured-explanation before writing non-trivial header or public-construct comment blocks.
-4. Add or update the header, public documentation, and local rationale together with the behavior change.
-5. Verify parameter handling, side effects, errors, callers, tests, and implementation behavior against the documented intent.
-6. Remove or correct comments made false, redundant, or obsolete by the current change without rewriting unrelated commentary.
+Add or update the header, public documentation, and local rationale together with any behavior or domain change.
+
+During code review, verify parameter handling, side effects, errors, callers, tests, and implementation behavior against the documented intent.
+
+Remove or correct comments made false, redundant, or obsolete by the current change without rewriting unrelated commentary.
 
 When implementation and comments conflict, identify the authoritative intent from project guidance, design, tests, and callers. Do not silently rewrite the comment to excuse incorrect code or change code merely to preserve an obsolete comment.
 

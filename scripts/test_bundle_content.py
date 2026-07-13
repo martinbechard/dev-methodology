@@ -4,7 +4,10 @@
 
 from __future__ import annotations
 
+import hashlib
 import importlib.util
+import json
+import re
 import sys
 import tempfile
 import tomllib
@@ -20,6 +23,7 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 README_PATH = REPOSITORY_ROOT / "README.md"
 AGENTS_PATH = REPOSITORY_ROOT / "AGENTS.md"
 SKILLS_ROOT = REPOSITORY_ROOT / "skills"
+ROLES_ROOT = REPOSITORY_ROOT / "agents" / "roles"
 SKILL_CATEGORIES_PATH = REPOSITORY_ROOT / "design" / "skill-categories.yaml"
 SKILL_DEFINITIONS_PATH = REPOSITORY_ROOT / "design" / "generated" / "skill-definitions.js"
 ROLE_SCHEMA_PATH = REPOSITORY_ROOT / "agents" / "role-schema.yaml"
@@ -32,6 +36,7 @@ ROLE_DEFINITIONS_PATH = REPOSITORY_ROOT / "design" / "generated" / "role-definit
 SUPPORT_CHECKLIST_PATH = REPOSITORY_ROOT / "design" / "agent-skill-test-coverage-checklist.md"
 AGENT_BROWSER_PATH = REPOSITORY_ROOT / "design" / "agent-browser.js"
 GENERATED_ADAPTERS_ROOT = REPOSITORY_ROOT / "generated" / "adapters"
+AGENT_GENERATION_MANIFEST_PATH = GENERATED_ADAPTERS_ROOT / "agent-generation-manifest.json"
 BUILD_SKILL_DOCS_PATH = REPOSITORY_ROOT / "scripts" / "build-skill-docs.py"
 BUILD_SKILL_DOCS_MODULE_NAME = "build_skill_docs"
 REMOVED_ROOT_FILES = (
@@ -44,11 +49,13 @@ REMOVED_DEVELOPMENT_REFERENCES = (
 )
 NEW_WORKFLOW_SKILLS = (
     "documentation-bootstrap",
-    "documentation-reverse-engineering",
+    "documentation-reverse-engineer",
     "code-project-wiki",
-    "documentation-page-verifier",
-    "create-agents-plan",
+    "documentation-page-verify",
+    "create-project-configuration",
     "maintain-methodology-documentation",
+    "skill-authoring",
+    "name-methodology-artifacts",
 )
 NEW_DEVELOPMENT_SKILLS = (
     "detect-technology-skills",
@@ -64,23 +71,24 @@ NEW_DEVELOPMENT_SKILLS = (
     "code-execution-tracing",
     "root-cause-analysis",
     "runtime-evidence-collection",
+    "organise-project-files",
     "create-unit-test-plan",
     "review-unit-test-plan",
-    "typescript-coding",
-    "python-coding",
+    "typescript",
+    "python",
     "fastapi",
-    "java-coding",
+    "java",
     "spring-boot",
-    "sql-coding",
+    "sql",
 )
-AGENTS_PLAN_SKILL = "create-agents-plan"
-AGENTS_PLAN_TEMPLATE = "agents-plan-template.yaml"
-AGENTS_PLAN_ARTIFACT = "AGENTS-PLAN.yaml"
+PROJECT_CONFIGURATION_SKILL = "create-project-configuration"
+PROJECT_TEMPLATE = "project-template.yaml"
+PROJECT_ARTIFACT = "PROJECT.yaml"
 ARTIFACT_CREATION_SKILLS = (
     (
-        "create-project-wiki",
+        "project-wiki-create",
         "project-wiki-template.md",
-        "review-project-wiki",
+        "project-wiki-review",
     ),
     (
         "create-functional-spec",
@@ -112,24 +120,24 @@ WIKI_ROLE_SKILLS = {
     "project-wiki",
     "project-wiki-query",
     "project-wiki-research",
-    "project-wiki-topic-writer",
-    "project-wiki-topic-verifier",
+    "project-wiki-topic-write",
+    "project-wiki-topic-verify",
     "code-project-wiki",
-    "create-project-wiki",
-    "review-project-wiki",
+    "project-wiki-create",
+    "project-wiki-review",
 }
 WIKI_ACTIVITY_ROLES = {
-    "public-source-collector",
+    "wiki-source-collector",
     "wiki-artifact-reviewer",
-    "wiki-ingest-agent",
-    "wiki-query-agent",
-    "wiki-research-agent",
-    "wiki-setup-agent",
+    "wiki-ingester",
+    "wiki-query-responder",
+    "wiki-researcher",
+    "wiki-architect",
     "wiki-topic-verifier",
-    "wiki-writer-agent",
+    "wiki-writer",
 }
 ARTIFACT_REVIEW_SKILLS = (
-    ("review-project-wiki", "project-wiki"),
+    ("project-wiki-review", "project-wiki"),
     ("review-functional-spec", "functional-spec"),
     ("review-architecture", "architecture"),
     ("review-high-level-design", "high-level-design"),
@@ -137,52 +145,52 @@ ARTIFACT_REVIEW_SKILLS = (
     ("review-unit-test-plan", "unit-test-plan"),
 )
 ALL_REVIEW_SKILLS = ARTIFACT_REVIEW_SKILLS + (
-    ("review-structured", "structured"),
+    ("review-structured-artifact", "structured"),
 )
 EXAMPLE_PROJECT_SKILL_PACKS = (
     "api-routes",
     "clerk-auth",
     "electron-main",
     "electron-preload",
-    "harness-implementation",
-    "java-coding",
+    "agent-harness",
+    "java",
     "jest",
     "langgraph",
     "local-model-integration",
     "nextjs-app-router",
     "node-cli",
-    "plan-engine-implementation",
+    "plan-engine",
     "playwright",
     "postgres-drizzle",
     "react-server-components",
     "react-vite-renderer",
     "tailwind-design-system",
-    "tool-runtime-implementation",
+    "tool-runtime",
     "spring-boot",
-    "sql-coding",
-    "typescript-coding",
+    "sql",
+    "typescript",
     "typescript-esm",
     "typescript-strict",
     "vitest",
 )
 README_REQUIRED_PHRASES = (
-    "Use the installed skills as the operating surface.",
+    "Use the repository skill sources and generated adapters as the operating surface.",
     "documentation-bootstrap",
-    "documentation-reverse-engineering",
+    "documentation-reverse-engineer",
     "code-project-wiki",
-    "documentation-page-verifier",
-    "create-agents-plan",
-    "AGENTS-PLAN.yaml",
+    "documentation-page-verify",
+    "create-project-configuration",
+    "PROJECT.yaml",
     "detection.yaml",
     "python3 scripts/build-technology-detection.py",
     "detect-technology-skills",
     "Agent role, task wording, prompt keywords, read confirmation, and optional local commands are not detection inputs",
-    "create-project-wiki",
+    "project-wiki-create",
     "create-functional-spec",
     "create-architecture",
     "create-high-level-design",
     "create-module-design",
-    "review-project-wiki",
+    "project-wiki-review",
     "review-functional-spec",
     "review-architecture",
     "review-high-level-design",
@@ -191,9 +199,10 @@ README_REQUIRED_PHRASES = (
     "--adapter junie",
     "skills/development-methodology/assets/templates",
     "python3 scripts/validate-agent-skills.py skills",
-    "python3 scripts/refresh-shared-skills.py",
     "ownership manifest",
-    "prune mode removes obsolete skills",
+    "every destination must be supplied by the caller",
+    "--remove-owned",
+    "Unowned skills and agents are never removed.",
     "Keep Codex openai.yaml metadata beside each source SKILL.md",
     "Before renaming or deleting a source skill",
     "role definitions",
@@ -208,26 +217,27 @@ README_REQUIRED_PHRASES = (
     "design/skill-categories.yaml",
     "agents/role-schema.yaml",
     "generated/adapters",
+    "agent-generation-manifest.json",
     "--install-agents",
     "--replace-customized",
     "maintain-methodology-documentation",
+    "skill-authoring",
     "three-way discrepancy analysis",
     "A skill entry with a condition is request-specific",
     "repoRoot query parameter",
-    "Code Comments is a fixed skill for Coding Agent and Code Review Agent.",
+    "Code Comments is a fixed skill for Dev Coder and Dev Code Reviewer.",
 )
 DEVELOPMENT_METHODOLOGY_REQUIRED_PHRASES = (
-    "When a skill or role was renamed or deleted",
-    "Do not remove unowned local skills or agents manually.",
-    "generated agent installs",
+    "Do not copy this bundle's skills or generated agents into user-home runtime folders",
+    "Run the installer only for an explicitly requested deployment with caller-supplied target directories.",
     "sweep the source repository for the old skill id",
     "Codex metadata",
     "aggregate workflow examples",
     "Load only the skills needed for the current job.",
     "Artifact Creation Routes",
-    "create-agents-plan",
-    "agents-plan-template.yaml",
-    "AGENTS-PLAN.yaml",
+    "create-project-configuration",
+    "project-template.yaml",
+    "PROJECT.yaml",
     "When the user, target file type, runtime schema, existing document, or surrounding documentation indicates a specific structure or format, preserve that structure.",
     "Use the shared page contract only when the selected artifact type requires it.",
 )
@@ -237,9 +247,10 @@ STRATEGY_REQUIRED_PHRASES = (
 )
 AGENT_ROLE_MAP_REQUIRED_PHRASES = (
     "Role Agent Categories",
-    "Methodology Maintenance Agents",
-    "Project Setup And Update Agents",
-    "Development Use Agents",
+    "Methodology Maintenance",
+    "Project Setup",
+    "Wiki Activities",
+    "Dev Activities",
     "DEV_METHODOLOGY_ROLE_DEFINITIONS",
     "loadout-details",
     "generated/skill-definitions.js",
@@ -265,6 +276,7 @@ AGENT_ROLE_MAP_REQUIRED_PHRASES = (
     "dev-methodology:view-definition",
     "event.source !== hierarchyMap.contentWindow",
     "openDefinitionFromHierarchy",
+    "definitionReturnTarget",
 )
 AGENT_DEFINITION_FORMATS_REQUIRED_PHRASES = (
     "Agent Definition Runtime Formats",
@@ -274,6 +286,7 @@ AGENT_DEFINITION_FORMATS_REQUIRED_PHRASES = (
     "Junie CLI Custom Subagents",
     "GitHub Copilot Agent Mode",
     "GitHub Copilot Custom Agents",
+    "agent-generation-manifest.json",
     "GitHub Copilot Agent Skills",
     "Properties We Use",
     "Properties We Ignore",
@@ -296,17 +309,17 @@ AGENT_DEFINITION_FORMATS_REQUIRED_PHRASES = (
     "design/generated/role-definitions.js",
 )
 DEVELOPMENT_USE_LOADOUTS = (
-    "Development Orchestrator",
-    "Coding Agent",
-    "Code Review Agent",
-    "QA And Verification Agent",
-    "Documentation Writer",
-    "Artifact Review Agent",
-    "E2E Browser Agent",
-    "UX Designer Or Reviewer",
-    "Security Reviewer",
-    "Runtime Diagnostician",
-    "Prompt Contract Reviewer",
+    "Dev Orchestrator",
+    "Dev Coder",
+    "Dev Code Reviewer",
+    "Dev Verifier",
+    "Dev Documentation Writer",
+    "Dev Artifact Reviewer",
+    "Dev Browser Operator",
+    "Dev UX Specialist",
+    "Dev Security Reviewer",
+    "Dev Runtime Diagnostician",
+    "Dev Prompt Reviewer",
 )
 AGENT_ROLE_MAP_FORBIDDEN_PHRASES = (
     "const ROLE_LOADOUTS",
@@ -354,7 +367,6 @@ AGENTS_REQUIRED_PHRASES = (
     "Keep Codex openai.yaml metadata beside each source SKILL.md",
     "Run scripts/openai_metadata.py skills after skill name or description changes so derived Codex interface fields stay aligned while policy and dependencies remain hand-authored.",
     "python3 scripts/validate-agent-skills.py skills",
-    "python3 scripts/refresh-shared-skills.py",
 )
 
 
@@ -446,6 +458,25 @@ class BundleContentTests(unittest.TestCase):
     def test_root_templates_are_not_a_second_distribution_surface(self) -> None:
         self.assertFalse((REPOSITORY_ROOT / "templates").exists())
 
+    def test_user_home_shared_install_workflow_is_removed(self) -> None:
+        for path in (
+            REPOSITORY_ROOT / "scripts" / "refresh-shared-skills.py",
+            REPOSITORY_ROOT / "scripts" / "test_refresh_shared_skills.py",
+        ):
+            with self.subTest(path=path):
+                self.assertFalse(path.exists())
+        for path in (
+            README_PATH,
+            AGENTS_PATH,
+            SKILLS_ROOT / "development-methodology" / "SKILL.md",
+            SKILLS_ROOT / "maintain-methodology-documentation" / "SKILL.md",
+        ):
+            with self.subTest(path=path):
+                self.assertNotIn(
+                    "scripts/refresh-shared-skills.py",
+                    path.read_text(encoding="utf-8"),
+                )
+
     def test_development_methodology_does_not_copy_monolithic_references(self) -> None:
         references_root = SKILLS_ROOT / "development-methodology" / "references"
 
@@ -458,6 +489,138 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(skill_name=skill_name):
                 self.assertTrue((SKILLS_ROOT / skill_name / "SKILL.md").is_file())
                 self.assertTrue(openai_metadata_path(skill_name).is_file())
+
+    def test_skill_authoring_contract_is_shared_by_maintainer_and_reviewer(self) -> None:
+        skill_text = (SKILLS_ROOT / "skill-authoring" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        for phrase in (
+            "Treat applicable root and nested project instructions supplied by the harness as already loaded.",
+            "Do not tell ordinary task agents to locate, open, read, reread, or follow AGENTS.md",
+            "Inspect an instruction file explicitly only when the task creates, updates, validates, renders, or reviews that file as an artifact",
+            "Search the complete skill package for instruction-loading language before accepting it.",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, skill_text)
+
+        for role_name in ("methodology-maintainer", "methodology-artifact-reviewer"):
+            role_path = ROLES_ROOT / "methodology-maintenance" / f"{role_name}.role.yaml"
+            role = load_yaml_object(role_path)
+            role_skills = {
+                next(iter(entry))
+                for entry in role["skills"]
+                if isinstance(entry, dict) and len(entry) == 1
+            }
+            with self.subTest(role=role_name):
+                self.assertIn("skill-authoring", role_skills)
+
+    def test_skills_and_roles_do_not_reissue_harness_instruction_loading(self) -> None:
+        instruction_target = r"(?:AGENTS\.md|CLAUDE\.md|project instructions|repository coordination instructions)"
+        manual_target = rf"(?:{instruction_target}|agent instructions)"
+        manual_action = r"(?:read(?:s|ing)?|re[- ]?read(?:s|ing)?|open(?:s|ed|ing)?|locat(?:e|es|ed|ing)|follow(?:s|ed|ing)?|inspect(?:s|ed|ing)?|discover(?:s|ed|ing)?|scan(?:s|ned|ning)?)"
+        load_action = r"load(?:s|ed|ing)?"
+        manual_loading = re.compile(
+            rf"(?:\b{manual_action}\b[^.;!?]{{0,100}}\b{manual_target}\b|\b{load_action}\b\s+(?:the\s+)?(?:(?:root|nearest|applicable|nested)\s+)?\b{instruction_target}\b|\b{instruction_target}\b[^.;!?]{{0,120}}\b(?:agents?|reviewers?|writers?|coders?|orchestrators?)\b[^.;!?]{{0,60}}\b(?:{manual_action}|{load_action})\b|\b{instruction_target}\b[^.;!?]{{0,50}}\b(?:is|are|was|were|gets?|got)\s*(?:{manual_action}|{load_action})\b)",
+            re.IGNORECASE,
+        )
+        prohibition = re.compile(
+            r"\b(?:do not|does not|must not|should not|never|prevent(?:s|ed|ing)?|reject(?:s|ed|ing)?|forbid(?:s|den|ding)?)\b",
+            re.IGNORECASE,
+        )
+        def is_redundant_loading(text: str) -> bool:
+            match = manual_loading.search(text)
+            if match is None:
+                return False
+
+            prefix = text[max(0, match.start() - 120):match.start()]
+            suffix = text[match.end():match.end() + 60]
+            governed_prohibition = (
+                prohibition.search(prefix) is not None
+                and re.search(r"\b(?:but|however)\b", prefix, re.IGNORECASE) is None
+            )
+            explicit_artifact_inspection = (
+                re.search(r"\binspect(?:s|ed|ing)?\b", match.group(), re.IGNORECASE)
+                is not None
+                and re.search(r"\bartifact(?:s)?\b", match.group() + suffix, re.IGNORECASE)
+                is not None
+            )
+            automatic_subject = re.search(
+                r"\b(?:harness|runtime)\b[^.;!?]{0,40}$",
+                prefix,
+                re.IGNORECASE,
+            )
+            automatic_passive = re.search(
+                r"^\s*(?:automatically\s+)?by\s+(?:the\s+)?(?:harness|runtime)\b",
+                suffix,
+                re.IGNORECASE,
+            )
+            automatic_load = (
+                re.search(r"\bload(?:s|ed|ing)?\b", match.group(), re.IGNORECASE)
+                is not None
+                and (automatic_subject is not None or automatic_passive is not None)
+            )
+            return not (governed_prohibition or explicit_artifact_inspection or automatic_load)
+
+        prohibited_examples = (
+            "Read the root AGENTS.md before acting.",
+            "Before acting, read the nearest AGENTS.md.",
+            "Ordinary agents must read AGENTS.md before changing files.",
+            "The reviewer re-reads CLAUDE.md for every task.",
+            "AGENTS.md is reread before acting.",
+            "Inspect the applicable project instructions before coding.",
+            "Discover and scan AGENTS.md during startup.",
+            "Before acting, read the root and nearest\nAGENTS.md files.",
+            "Before creating files, read AGENTS.md.",
+            "The coder reads AGENTS.md before writing source files.",
+            "The harness supplies tools, but the coder reads AGENTS.md before acting.",
+        )
+        allowed_examples = (
+            "Do not tell ordinary agents to read AGENTS.md.",
+            "Create or update AGENTS.md as the task artifact.",
+            "Review the existing AGENTS.md artifact.",
+            "Investigate whether the harness loads AGENTS.md.",
+            "The harness supplies applicable AGENTS.md instructions automatically.",
+        )
+        for example in prohibited_examples:
+            with self.subTest(prohibited_example=example):
+                self.assertTrue(is_redundant_loading(example))
+        for example in allowed_examples:
+            with self.subTest(allowed_example=example):
+                self.assertFalse(is_redundant_loading(example))
+
+        text_suffixes = {".md", ".yaml", ".yml", ".toml"}
+        paths = [README_PATH]
+        paths.extend(
+            path
+            for path in sorted(SKILLS_ROOT.rglob("*"))
+            if path.is_file() and path.suffix in text_suffixes
+        )
+        paths.extend(sorted(ROLES_ROOT.rglob("*.yaml")))
+        paths.extend(sorted((REPOSITORY_ROOT / "design").glob("*.html")))
+        paths.extend(sorted((REPOSITORY_ROOT / "design").glob("*.md")))
+        paths.extend(
+            path
+            for path in sorted(GENERATED_ADAPTERS_ROOT.rglob("*"))
+            if path.is_file() and path.suffix in {".md", ".toml"}
+        )
+
+        for path in paths:
+            normalized_text = re.sub(
+                r"\s+",
+                " ",
+                path.read_text(encoding="utf-8"),
+            )
+            snippets = re.split(
+                r"(?<=[.!?])\s+|</(?:li|p|td|th|strong|span|div)>",
+                normalized_text,
+            )
+            violations = [
+                snippet.strip()
+                for snippet in snippets
+                if is_redundant_loading(snippet)
+            ]
+            with self.subTest(path=path.relative_to(REPOSITORY_ROOT)):
+                self.assertEqual([], violations)
 
     def test_new_development_skills_and_codex_metadata_are_packaged(self) -> None:
         for skill_name in NEW_DEVELOPMENT_SKILLS:
@@ -476,7 +639,7 @@ class BundleContentTests(unittest.TestCase):
             "Mandatory Code Artifact Header",
             "Do not require code headers in configuration",
             "load structured-explanation",
-            "copyright statement defined by the applicable root, nearest, or global AGENTS.md",
+            "copyright statement supplied by the applicable project instructions",
             "accurate AI attribution",
             "AI attribution: Generated with AI assistance.",
             "public or exported construct",
@@ -488,7 +651,7 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(phrase, skill_text)
 
         for phrase in (
-            "applicable AGENTS.md exactly",
+            "applicable project instructions exactly",
             "generated with AI assistance",
             "public or exported construct",
             "respect the intent claimed by its comments",
@@ -496,12 +659,12 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(checklist_phrase=phrase):
                 self.assertIn(phrase, checklist_text)
 
-        for role_name in ("coding-agent", "code-review-agent"):
+        for role_name in ("dev-coder", "dev-code-reviewer"):
             role_path = (
                 REPOSITORY_ROOT
                 / "agents"
                 / "roles"
-                / "development-use"
+                / "dev-activities"
                 / f"{role_name}.role.yaml"
             )
             role_source = load_yaml_object(role_path)
@@ -540,24 +703,24 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(template_name, skill_text)
                 self.assertIn(review_skill_name, skill_text)
                 self.assertIn("Replace every TODO instruction", skill_text)
-                self.assertIn("documentation-page-verifier", skill_text)
+                self.assertIn("documentation-page-verify", skill_text)
                 self.assertIn(skill_name, development_methodology_text)
                 self.assertIn(template_name, development_methodology_text)
                 self.assertIn(review_skill_name, development_methodology_text)
 
-    def test_agents_plan_skill_routes_to_template_and_verifier(self) -> None:
+    def test_project_configuration_routes_to_template_and_verifier(self) -> None:
         development_methodology_text = (
             SKILLS_ROOT / "development-methodology" / "SKILL.md"
         ).read_text(encoding="utf-8")
-        skill_path = SKILLS_ROOT / AGENTS_PLAN_SKILL / "SKILL.md"
+        skill_path = SKILLS_ROOT / PROJECT_CONFIGURATION_SKILL / "SKILL.md"
         template_path = (
             SKILLS_ROOT
             / "development-methodology"
             / "assets"
             / "templates"
-            / AGENTS_PLAN_TEMPLATE
+            / PROJECT_TEMPLATE
         )
-        metadata_path = openai_metadata_path(AGENTS_PLAN_SKILL)
+        metadata_path = openai_metadata_path(PROJECT_CONFIGURATION_SKILL)
 
         self.assertTrue(skill_path.is_file())
         self.assertTrue(template_path.is_file())
@@ -565,20 +728,42 @@ class BundleContentTests(unittest.TestCase):
 
         skill_text = skill_path.read_text(encoding="utf-8")
         template_text = template_path.read_text(encoding="utf-8")
+        project_configuration_design_text = "\n".join(
+            (REPOSITORY_ROOT / "design" / filename).read_text(encoding="utf-8")
+            for filename in (
+                "agent-role-skill-map.html",
+                "agent-skill-specialization-examples.html",
+                "agent-skill-specialization-strategy.html",
+                "agentic-development-operating-model.html",
+            )
+        )
 
-        self.assertIn(AGENTS_PLAN_TEMPLATE, skill_text)
-        self.assertIn(AGENTS_PLAN_ARTIFACT, skill_text)
+        self.assertIn(PROJECT_TEMPLATE, skill_text)
+        self.assertIn(PROJECT_ARTIFACT, skill_text)
         self.assertIn("Replace every TODO instruction", skill_text)
-        self.assertIn("documentation-page-verifier", skill_text)
+        self.assertIn("documentation-page-verify", skill_text)
         self.assertIn("customer-safe examples", skill_text)
-        self.assertIn("schema: agents-plan", template_text)
+        self.assertIn("schema: project", template_text)
         self.assertIn("proprietary_validation_notes:", template_text)
-        self.assertIn("nested_agents_plan_files:", template_text)
+        self.assertIn("nested_agents_files:", template_text)
+        self.assertNotIn("nested_project_files:", template_text)
+        self.assertIn("Create exactly one PROJECT.yaml", skill_text)
+        self.assertIn("Do not create nested PROJECT.yaml files", skill_text)
+        self.assertIn("exactly one PROJECT.yaml", project_configuration_design_text)
+        self.assertNotIn("service/PROJECT.yaml", project_configuration_design_text)
+        self.assertNotIn("nested PROJECT.yaml recommendations", project_configuration_design_text)
+        self.assertNotIn("&lt;subtree&gt;/PROJECT.yaml", project_configuration_design_text)
         self.assertIn("claude_bridge_files:", template_text)
+        self.assertIn("agent_coordination:", template_text)
+        self.assertIn("claim_skill: agent-claim", template_text)
+        self.assertIn("dirty_unclaimed_policy:", template_text)
+        self.assertIn("release_policy:", template_text)
+        self.assertIn("repository-global agent coordination contract", skill_text)
+        self.assertIn("agent-claim", skill_text)
         self.assertIn("thin CLAUDE.md", skill_text)
-        self.assertIn(AGENTS_PLAN_SKILL, development_methodology_text)
-        self.assertIn(AGENTS_PLAN_TEMPLATE, development_methodology_text)
-        self.assertIn("documentation-page-verifier", development_methodology_text)
+        self.assertIn(PROJECT_CONFIGURATION_SKILL, development_methodology_text)
+        self.assertIn(PROJECT_TEMPLATE, development_methodology_text)
+        self.assertIn("documentation-page-verify", development_methodology_text)
 
     def test_artifact_review_skills_have_checklists_and_metadata(self) -> None:
         development_methodology_text = (
@@ -600,7 +785,7 @@ class BundleContentTests(unittest.TestCase):
                 checklist_text = checklist_path.read_text(encoding="utf-8")
 
                 self.assertIn(checklist_name, skill_text)
-                self.assertIn("documentation-page-verifier", skill_text)
+                self.assertIn("documentation-page-verify", skill_text)
                 self.assertIn("Review Checklist", checklist_text)
                 self.assertIn("Findings", checklist_text)
                 self.assertIn(skill_name, development_methodology_text)
@@ -630,7 +815,7 @@ class BundleContentTests(unittest.TestCase):
 
     def test_documentation_page_verifier_uses_completed_checklist_evidence(self) -> None:
         skill_text = (
-            SKILLS_ROOT / "documentation-page-verifier" / "SKILL.md"
+            SKILLS_ROOT / "documentation-page-verify" / "SKILL.md"
         ).read_text(encoding="utf-8")
 
         for phrase in DOCUMENTATION_PAGE_VERIFIER_REVIEW_PHRASES:
@@ -676,6 +861,63 @@ class BundleContentTests(unittest.TestCase):
                 category = metadata.get("category")
                 self.assertIn(category, category_ids)
 
+    def test_methodology_naming_skill_separates_category_from_pattern(self) -> None:
+        skill_text = (
+            SKILLS_ROOT / "name-methodology-artifacts" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+
+        required_guidance = (
+            "Determine category membership from the skill's subject area and responsibility.",
+            "Each skill category mostly follows one naming pattern, but this is not an absolute rule.",
+            "Use best judgment to choose the most appropriate category",
+            "Treat the naming pattern as a word-order convention, not as the definition of category membership.",
+            "For an object-centered naming pattern",
+            "For an action-centered naming pattern",
+        )
+        for guidance in required_guidance:
+            with self.subTest(guidance=guidance):
+                self.assertIn(guidance, skill_text)
+
+    def test_project_file_organisation_defines_taxonomy_contract(self) -> None:
+        skill_text = (
+            SKILLS_ROOT / "organise-project-files" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+
+        required_guidance = (
+            "The canonical taxonomy is docs/project-taxonomy.md relative to the repository root.",
+            "Read the complete taxonomy fresh before every placement decision.",
+            "Conventions: defines ID prefixes and formats, filename casing, and test-mirroring rules.",
+            "Top-Level Folder Principles:",
+            "Each entry defines Purpose, Signals, and Filename pattern.",
+            "Source categories may add Tests location; test categories may add Mirrors; entries may add Example.",
+            "Change log: records taxonomy extensions newest first",
+            "report that no taxonomy exists",
+            "do not invent it as a side effect of an ordinary placement decision.",
+        )
+        for guidance in required_guidance:
+            with self.subTest(guidance=guidance):
+                self.assertIn(guidance, skill_text)
+
+    def test_skill_names_follow_category_naming_rules(self) -> None:
+        build_skill_docs = load_build_skill_docs_module()
+        payload = build_skill_docs.build_payload()
+
+        for skill_name, skill in payload["skills"].items():
+            with self.subTest(skill_name=skill_name):
+                self.assertNotIn(
+                    skill_name.split("-")[-1],
+                    build_skill_docs.SKILL_ACTOR_SUFFIXES,
+                )
+                if skill["category"] == "artifact-creation":
+                    self.assertTrue(skill_name.startswith("create-"))
+                if skill["category"] == "artifact-review":
+                    self.assertTrue(skill_name.startswith("review-"))
+                if skill["category"] == "wiki-and-knowledge":
+                    self.assertTrue(
+                        skill_name.startswith("project-wiki")
+                        or skill_name == "code-project-wiki"
+                    )
+
     def test_generated_skill_definition_data_is_current(self) -> None:
         build_skill_docs = load_build_skill_docs_module()
         rendered = build_skill_docs.render_javascript(build_skill_docs.build_payload())
@@ -705,6 +947,35 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(output_path=output_path):
                 self.assertTrue(output_path.is_file())
                 self.assertEqual(expected_content, output_path.read_text(encoding="utf-8"))
+
+        canonical_role_names = {role.name for role in roles}
+        self.assertIn("project-bootstrapper", canonical_role_names)
+        self.assertNotIn("methodology-shared-install-verifier", canonical_role_names)
+        generation_manifest = json.loads(
+            AGENT_GENERATION_MANIFEST_PATH.read_text(encoding="utf-8")
+        )
+        self.assertEqual(len(roles), generation_manifest["canonicalRoleCount"])
+        for adapter_name, extension in (("codex", ".toml"), ("claude", ".md")):
+            with self.subTest(adapter=adapter_name):
+                adapter_manifest = generation_manifest["adapters"][adapter_name]
+                manifest_role_names = {
+                    agent["name"] for agent in adapter_manifest["agents"]
+                }
+                generated_role_names = {
+                    path.stem
+                    for path in (
+                        GENERATED_ADAPTERS_ROOT / adapter_name / "agents"
+                    ).glob(f"*{extension}")
+                }
+                self.assertEqual(len(roles), adapter_manifest["agentCount"])
+                self.assertEqual(canonical_role_names, manifest_role_names)
+                self.assertEqual(canonical_role_names, generated_role_names)
+                for agent in adapter_manifest["agents"]:
+                    generated_agent_path = REPOSITORY_ROOT / agent["output"]
+                    self.assertEqual(
+                        agent["sha256"],
+                        hashlib.sha256(generated_agent_path.read_bytes()).hexdigest(),
+                    )
 
         skill_names = set(skill_payload["skills"])
         role_payload = build_skill_docs.build_role_payload(roles)
@@ -770,14 +1041,18 @@ class BundleContentTests(unittest.TestCase):
                     for invocation in example["runtimeInvocations"].values():
                         self.assertIsInstance(invocation, str)
                         self.assertTrue(invocation.strip())
-                if role.name == "documentation-writer":
+                if role.name == "dev-documentation-writer":
                     self.assertEqual(
                         "when describing user-visible functionality, actor workflows, acceptance criteria, permissions, states, or error behavior",
                         role.skill_conditions["create-functional-spec"],
                     )
+                    self.assertEqual(
+                        "when creating or updating a README or custom non-wiki entry document whose established format must be preserved",
+                        role.skill_conditions["documentation-page-verify"],
+                    )
                     for example in role_payload["roles"][role.name]["examples"]:
                         self.assertTrue(
-                            example["runtimeInvocations"]["codex"].startswith("$documentation-writer ")
+                            example["runtimeInvocations"]["codex"].startswith("$dev-documentation-writer ")
                         )
                 codex_agent_path = (
                     GENERATED_ADAPTERS_ROOT / "codex" / "agents" / f"{role.filename}.toml"
@@ -822,11 +1097,152 @@ class BundleContentTests(unittest.TestCase):
 
         non_setup_roles = [
             role for role in roles
-            if role.name != "project-agent-setup-agent"
+            if role.name != "project-configurator"
         ]
         self.assertTrue(all("detect-technology-skills" not in role.skills for role in non_setup_roles))
-        setup_role = next(role for role in roles if role.name == "project-agent-setup-agent")
+        setup_role = next(role for role in roles if role.name == "project-configurator")
         self.assertIn("detect-technology-skills", setup_role.skills)
+
+    def test_modifying_roles_use_claims_and_coordination_roles_require_clean_commits(self) -> None:
+        build_skill_docs = load_build_skill_docs_module()
+        skill_payload = build_skill_docs.build_payload()
+        roles = build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
+        roles_by_name = {role.name: role for role in roles}
+        fixed_claim_roles = {
+            "dev-coder",
+            "dev-documentation-writer",
+            "dev-merge-coordinator",
+            "dev-orchestrator",
+            "methodology-maintainer",
+            "project-bootstrapper",
+            "project-configurator",
+            "wiki-architect",
+            "wiki-ingester",
+            "wiki-researcher",
+            "wiki-source-collector",
+            "wiki-writer",
+        }
+        conditional_claim_roles = {
+            "dev-browser-operator",
+            "dev-runtime-diagnostician",
+            "dev-ux-specialist",
+            "dev-verifier",
+            "project-organiser",
+        }
+
+        for role_name in fixed_claim_roles:
+            with self.subTest(role=role_name):
+                self.assertIn("agent-claim", build_skill_docs.fixed_role_skills(roles_by_name[role_name]))
+        for role_name in conditional_claim_roles:
+            with self.subTest(role=role_name):
+                self.assertIn("agent-claim", roles_by_name[role_name].skill_conditions)
+
+        orchestrator = roles_by_name["dev-orchestrator"]
+        merge_coordinator = roles_by_name["dev-merge-coordinator"]
+        self.assertIn("committed handoffs", orchestrator.instructions)
+        self.assertIn("verified, committed, clean, and released", orchestrator.instructions)
+        self.assertIn("committed clean contributions", merge_coordinator.instructions)
+        self.assertIn("release only from a clean worktree", merge_coordinator.instructions)
+        self.assertTrue((SKILLS_ROOT / "agent-claim" / "scripts" / "claim.py").is_file())
+        self.assertIn("Agent Claims And Worktrees", README_PATH.read_text(encoding="utf-8"))
+        self.assertIn("Agent Claims And Worktrees", AGENTS_PATH.read_text(encoding="utf-8"))
+
+    def test_project_bootstrapper_owns_complete_setup_and_review_loop(self) -> None:
+        build_skill_docs = load_build_skill_docs_module()
+        skill_payload = build_skill_docs.build_payload()
+        roles = build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
+        role = next(role for role in roles if role.name == "project-bootstrapper")
+
+        self.assertIn("documentation-reverse-engineer", build_skill_docs.fixed_role_skills(role))
+        self.assertNotIn("documentation-reverse-engineer", role.skill_conditions)
+        self.assertLess(
+            role.instructions.index("Project Configurator"),
+            role.instructions.index("Dev Documentation Writer"),
+        )
+        self.assertIn("Check for project-root PROJECT.yaml before configuration", role.instructions)
+        self.assertIn(
+            "do not invoke Project Configurator or rerun technology detection",
+            role.instructions,
+        )
+        self.assertIn("When PROJECT.yaml is absent", role.instructions)
+        self.assertIn(
+            "only when the user explicitly requests reconfiguration",
+            role.instructions,
+        )
+        for delegated_role in (
+            "Project Configurator",
+            "Dev Documentation Writer",
+            "Dev Artifact Reviewer",
+            "Wiki Architect",
+            "Wiki Writer",
+            "Wiki Artifact Reviewer",
+            "Wiki Topic Verifier",
+            "Dev Verifier",
+        ):
+            with self.subTest(delegated_role=delegated_role):
+                self.assertIn(delegated_role, role.instructions)
+        self.assertIn("repeat the write-review cycle until", role.instructions)
+        self.assertIn("so repeated bootstrap requests are safe", role.instructions)
+        self.assertIn("when the same correction fails twice", role.instructions)
+        self.assertIn("rather than returning a plan or a chain of handoffs", role.instructions)
+        self.assertEqual(
+            (
+                "configured project routing",
+                "accepted documentation set",
+                "integrated verification",
+                "unresolved decisions",
+            ),
+            role.output_contract,
+        )
+        for example in role.examples:
+            self.assertTrue(example["runtimeInvocations"]["codex"].startswith("$project-bootstrapper "))
+            self.assertTrue(
+                example["runtimeInvocations"]["claude-code"].startswith(
+                    "@agent-project-bootstrapper "
+                )
+            )
+
+    def test_dev_artifact_reviewer_combines_generic_and_specific_review_skills(self) -> None:
+        build_skill_docs = load_build_skill_docs_module()
+        skill_payload = build_skill_docs.build_payload()
+        roles = build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
+        role = next(role for role in roles if role.name == "dev-artifact-reviewer")
+
+        self.assertIn(
+            "review-structured-artifact",
+            build_skill_docs.fixed_role_skills(role),
+        )
+        self.assertEqual(
+            {
+                "organise-project-files",
+                "review-architecture",
+                "review-functional-spec",
+                "review-high-level-design",
+                "review-module-design",
+                "review-unit-test-plan",
+            },
+            set(role.skill_conditions),
+        )
+
+    def test_role_categories_and_names_follow_prefix_actor_rules(self) -> None:
+        build_skill_docs = load_build_skill_docs_module()
+        skill_payload = build_skill_docs.build_payload()
+        roles = build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
+        category_words = [
+            label.split()[0].lower()
+            for label in build_skill_docs.ROLE_GROUP_LABELS.values()
+        ]
+
+        self.assertEqual(len(category_words), len(set(category_words)))
+        for role in roles:
+            with self.subTest(role=role.name):
+                segments = role.name.split("-")
+                self.assertEqual(
+                    build_skill_docs.ROLE_GROUP_PREFIXES[role.group],
+                    segments[0],
+                )
+                self.assertNotIn("agent", segments)
+                self.assertIn(segments[-1], build_skill_docs.ROLE_ACTOR_SUFFIXES)
 
     def test_wiki_skills_are_owned_by_wiki_activity_roles(self) -> None:
         build_skill_docs = load_build_skill_docs_module()
@@ -849,11 +1265,11 @@ class BundleContentTests(unittest.TestCase):
         required, allowed, groups = build_skill_docs.load_role_schema()
         model_profiles = set(build_skill_docs.load_model_profiles())
         source_role = load_yaml_object(
-            REPOSITORY_ROOT / "agents" / "roles" / "development-use" / "coding-agent.role.yaml"
+            REPOSITORY_ROOT / "agents" / "roles" / "dev-activities" / "dev-coder.role.yaml"
         )
         source_role["tools"] = ["Read", "Grep"]
         with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / "development-use" / "coding-agent.role.yaml"
+            path = Path(directory) / "dev-activities" / "dev-coder.role.yaml"
             path.parent.mkdir()
             path.write_text(yaml.safe_dump(source_role, sort_keys=False), encoding="utf-8")
             with self.assertRaisesRegex(ValueError, "must include Skill"):
@@ -875,8 +1291,8 @@ class BundleContentTests(unittest.TestCase):
             REPOSITORY_ROOT
             / "agents"
             / "roles"
-            / "development-use"
-            / "documentation-writer.role.yaml"
+            / "dev-activities"
+            / "dev-documentation-writer.role.yaml"
         )
 
         wrong_annotation = load_yaml_object(source_path)
@@ -904,7 +1320,7 @@ class BundleContentTests(unittest.TestCase):
             (parallel_legacy_map, "unknown fields"),
         ):
             with self.subTest(expected_error=expected_error), tempfile.TemporaryDirectory() as directory:
-                path = Path(directory) / "development-use" / "documentation-writer.role.yaml"
+                path = Path(directory) / "dev-activities" / "dev-documentation-writer.role.yaml"
                 path.parent.mkdir()
                 path.write_text(yaml.safe_dump(role_source, sort_keys=False), encoding="utf-8")
                 with self.assertRaisesRegex(ValueError, expected_error):
@@ -923,10 +1339,10 @@ class BundleContentTests(unittest.TestCase):
         model_profiles = set(build_skill_docs.load_model_profiles())
         role = next(
             role for role in build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
-            if role.name == "coding-agent"
+            if role.name == "dev-coder"
         )
         availability = [
-            {"name": "python-coding", "enabled": False},
+            {"name": "python", "enabled": False},
             {"path": "/opt/skills/fastapi", "enabled": True},
         ]
         role = replace(role, optional_fields={**role.optional_fields, "skillAvailability": availability})
@@ -935,7 +1351,7 @@ class BundleContentTests(unittest.TestCase):
         parsed = tomllib.loads(rendered)
         self.assertEqual(
             [
-                {"name": "python-coding", "enabled": False},
+                {"name": "python", "enabled": False},
                 {"path": "/opt/skills/fastapi", "enabled": True},
             ],
             parsed["skills"]["config"],
@@ -1105,10 +1521,20 @@ class BundleContentTests(unittest.TestCase):
             4.5,
         )
         self.assertNotIn("Condition:", agent_browser_text)
+        self.assertIn(
+            'elements.close.textContent = returnTarget ? "Back to map" : "Close"',
+            agent_browser_text,
+        )
+        self.assertIn("lastFocusedElement.scrollIntoView", agent_browser_text)
 
         skill_browser_text = (REPOSITORY_ROOT / "design" / "skill-browser.js").read_text(encoding="utf-8")
         self.assertIn("enhance-skill-definitions", skill_browser_text)
         self.assertIn("[data-skill-definition]", skill_browser_text)
+        self.assertIn(
+            'elements.close.textContent = returnTarget ? "Back to map" : "Close"',
+            skill_browser_text,
+        )
+        self.assertIn("lastFocusedElement.scrollIntoView", skill_browser_text)
 
     def test_user_experience_review_requires_measured_color_contrast(self) -> None:
         skill_root = SKILLS_ROOT / "user-experience-review"
@@ -1141,7 +1567,7 @@ class BundleContentTests(unittest.TestCase):
 
     def test_reverse_engineering_uses_structural_code_discovery(self) -> None:
         skill_text = (
-            SKILLS_ROOT / "documentation-reverse-engineering" / "SKILL.md"
+            SKILLS_ROOT / "documentation-reverse-engineer" / "SKILL.md"
         ).read_text(encoding="utf-8")
 
         for phrase in REVERSE_ENGINEERING_DISCOVERY_PHRASES:

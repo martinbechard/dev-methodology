@@ -40,9 +40,12 @@ examples:
     Current Understanding has no linked automated test, and preserved that gap in the
     findings and corrections handoff.
 skills:
-- review-project-wiki:
+- organise-project-files:
+    justification: We need this to confirm the prescribed destination for each new project-wiki review checklist or findings file before writing it.
+    condition: when the requested review creates a new project file or directory.
+- project-wiki-review:
     justification: We need this to apply the project-wiki artifact checklist for authority order, page subclasses, navigation, source links, update workflow, automation, and verification.
-- documentation-page-verifier:
+- documentation-page-verify:
     justification: We need this to independently check the shared page contract, source support, links, diagrams, and steady-state language from the completed wiki review checklist.
 isolation: read-only
 outputContract:

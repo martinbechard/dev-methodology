@@ -11,8 +11,8 @@ Use this pack for the trusted desktop runtime that owns application startup, win
 
 ## Routing
 
-- Load with Coding Agent for main-process source, preload registration, IPC handlers, menus, background jobs, and app startup.
-- Load with Code Review Agent when a change affects trust boundaries, filesystem access, process execution, or user data locations.
+- Load with Dev Coder for main-process source, preload registration, IPC handlers, menus, background jobs, and app startup.
+- Load with Dev Code Reviewer when a change affects trust boundaries, filesystem access, process execution, or user data locations.
 - Combine with TypeScript ESM, Node CLI, local model integration, and project-specific runtime packs.
 
 ## Guidance

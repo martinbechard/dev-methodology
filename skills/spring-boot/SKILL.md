@@ -21,4 +21,4 @@ metadata:
 
 ## Review Evidence
 
-Read references/review-checklist-spring-boot.md during code review. Use Code Review Evidence to extract and synthesize the results. Combine with Java Coding and SQL Coding when applicable.
+Read references/review-checklist-spring-boot.md during code review. Use Code Review Evidence to extract and synthesize the results. Combine with Java and SQL when applicable.

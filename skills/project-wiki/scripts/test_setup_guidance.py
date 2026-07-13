@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+# AI attribution: Modified with AI assistance.
+# Summary: Verifies project-wiki setup, ingest, digest, linking, and verifier guidance.
+
 """Regression tests for project wiki setup guidance."""
 
 from __future__ import annotations
@@ -12,8 +16,8 @@ OPERATIONS_REFERENCE = SKILL_ROOT / "references" / "operations.md"
 PAGE_SCHEMA_REFERENCE = SKILL_ROOT / "references" / "page-schema.md"
 VERIFICATION_CHECKLIST = SKILL_ROOT / "references" / "topic-page-verification-checklist.md"
 CORE_IMPLEMENTATION = SKILL_ROOT / "scripts" / "project_wiki_ops" / "core.py"
-TOPIC_WRITER_SKILL = SKILL_ROOT.parent / "project-wiki-topic-writer" / "SKILL.md"
-TOPIC_VERIFIER_SKILL = SKILL_ROOT.parent / "project-wiki-topic-verifier" / "SKILL.md"
+TOPIC_WRITER_SKILL = SKILL_ROOT.parent / "project-wiki-topic-write" / "SKILL.md"
+TOPIC_VERIFIER_SKILL = SKILL_ROOT.parent / "project-wiki-topic-verify" / "SKILL.md"
 WIKI_OPS_COMMAND_PREFIX = "python3 project-wiki-skill-root/scripts/wiki_ops.py"
 
 DIGEST_REPAIR_PHRASES = [
@@ -25,7 +29,7 @@ DIGEST_REPAIR_PHRASES = [
 
 RAW_INGEST_AUTOMATION_PHRASES = [
     "Raw-source ingest automation prompts must repeat the digest granularity and ordering rules directly: one digest entry per independently changing item or closely coupled product family; never group digest entries by raw source artifact, collector run, sweep category, or ingestion batch; keep monthly digest Current Understanding entries in reverse chronological order by entry date.",
-    "When a digest page changes, the automation closeout must report that digest granularity and ordering were checked with the project-wiki-topic-verifier checklist, or that the full verifier returned GOOD.",
+    "When a digest page changes, the automation closeout must report that digest granularity and ordering were checked with the project-wiki-topic-verify checklist, or that the full verifier returned GOOD.",
     "High-volume raw sources may update many durable leaves without forcing every touched leaf into the digest; omit low-signal digest mentions rather than compress unrelated entities into a vague grouped bullet.",
 ]
 

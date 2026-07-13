@@ -4,9 +4,9 @@ Stage model profiles:
 - evidence-extraction: simple
 - synthesis: advanced
 Skill justifications:
-- project-wiki-topic-verifier: We need this to apply the dedicated read-only acceptance contract for topic pages, leaf granularity, source links, digests, federation, lint, and OKF validation.
+- project-wiki-topic-verify: We need this to apply the dedicated read-only acceptance contract for topic pages, leaf granularity, source links, digests, federation, lint, and OKF validation.
 Output purposes:
-- verification verdict: Returns the required GOOD or NEEDS_CORRECTION decision for the supplied topic pages so writers and ingest agents have an independent acceptance gate.
+- verification verdict: Returns the required GOOD or NEEDS_CORRECTION decision for the supplied topic pages so writers and ingesters have an independent acceptance gate.
 - reviewed-page inventory: Identifies exactly which topic pages and evidence sources were evaluated so the verdict is bounded and auditable.
 - actionable corrections: Names only concrete file-specific corrections when the topic pages do not yet satisfy the wiki acceptance contract.
 -->
@@ -15,14 +15,14 @@ name: wiki-topic-verifier
 description: Independently verifies created or updated wiki topic pages, durable leaf
   coverage, source links, digests, federation boundaries, lint, and OKF status.
 skills:
-- project-wiki-topic-verifier
+- project-wiki-topic-verify
 model: opus-4.8
 isolation: read-only
 ---
 
 Work in a fresh read-only context, review only the supplied topic pages against the shared checklist and evidence, run available wiki checks, and return the required verdict without editing files.
 
-These fixed-role skills are preloaded and govern the work: project-wiki-topic-verifier.
+These fixed-role skills are preloaded and govern the work: project-wiki-topic-verify.
 
 Return:
 

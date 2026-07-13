@@ -1,0 +1,17 @@
+# Codex app metadata for this skill.
+# Derived interface fields are refreshed from SKILL.md by scripts/openai_metadata.py.
+interface:
+  # User-facing name shown in Codex skill surfaces.
+  display_name: Skill Authoring
+  # User-facing summary shown in Codex skill surfaces.
+  short_description: Create or review concise, portable Agent Skills with clear scope, progressive disclosure...
+  # Prompt Codex can use when launching this skill directly.
+  default_prompt: Use $skill-authoring to create or review a portable Agent Skill without redundant harness setup instructions.
+
+# Optional invocation policy placeholder.
+# policy:
+#   allow_implicit_invocation: false
+
+# Optional tool dependency placeholder.
+# dependencies:
+#   tools: []

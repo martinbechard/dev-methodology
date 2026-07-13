@@ -13,7 +13,7 @@ metadata:
 2. Read references/review-checklist-unit-test-plan.md.
 3. Complete every applicable checklist question with status, quoted evidence, and assessment.
 4. Save the checklist next to the plan using artifact-name.review-checklist-unit-test-plan.md.
-5. Use documentation-page-verifier with the plan, source evidence, and completed review checklist.
+5. Use documentation-page-verify with the plan, source evidence, and completed review checklist.
 6. Return findings first, ordered by impact, and derive every finding or pass assessment from the completed checklist.
 
 Keep detailed language, framework, mocking, and persistence rules in the applicable coding skills and their code-review checklists.

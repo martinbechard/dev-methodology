@@ -13,4 +13,4 @@ activation:
       - contentPattern: {glob: pom.xml, contains: spring-boot}
       - contentPattern: {glob: build.gradle*, contains: org.springframework.boot}
 companions:
-- java-coding
+- java

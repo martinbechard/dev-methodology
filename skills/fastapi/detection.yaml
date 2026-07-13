@@ -14,4 +14,4 @@ activation:
       module: fastapi
       extensions: [.py]
 companions:
-- python-coding
+- python

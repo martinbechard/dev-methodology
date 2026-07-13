@@ -1,0 +1,10 @@
+schema: dev-methodology-technology-detection
+version: 2
+skill: sql
+kind: technology
+label: SQL
+capabilities:
+- query-language
+activation:
+  anyOf:
+  - fileExtension: .sql

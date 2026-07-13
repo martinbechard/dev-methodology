@@ -9,7 +9,7 @@
 
 The procedure contains a useful portable core: make narrow changes, keep contracts explicit, preserve type safety, test behavior, and seek design clarification before a material unapproved redesign. That core should remain concise and must not carry the procedure's former project topology or named registries into every consumer project.
 
-The bundle should continue to route project-specific standards through AGENTS.md and, when a setup decision needs a reviewable record, AGENTS-PLAN.yaml. A generic skill cannot truthfully require a particular header, design directory, definition registry, tracer, source tree, test tree, import alias, line count, or test runner.
+The bundle should continue to route project-specific standards through AGENTS.md and, when a setup decision needs a reviewable record, PROJECT.yaml. A generic skill cannot truthfully require a particular header, design directory, definition registry, tracer, source tree, test tree, import alias, line count, or test runner.
 
 ## Mapping
 
@@ -26,7 +26,7 @@ The bundle should continue to route project-specific standards through AGENTS.md
 | Explain why in comments, keep comments accurate, remove commented-out code | careful-coding | Missing, minor | Add a concise documentation hygiene rule: write comments for non-obvious rationale or constraints, update them with the code, and do not leave obsolete commented-out code. |
 | Replace unwieldy condition chains with an appropriate data-driven or polymorphic design | careful-coding | Partial | Add a preference, not a ban: when branching encodes stable variants and keeps growing, consider a discriminated union, dispatch map, or dedicated strategy after confirming that it simplifies the code. |
 | Standard headers, AI-credit text, copyright/license metadata, JSON underscore metadata | Target project AGENTS.md or local repository procedure | Not portable | Omit from distributed skills. Apply only where a project's legal, generated-file, or tooling contract requires it. |
-| Design comment links, design/modules location, definitions.md registry, canonical Design Code Path | Target project AGENTS.md, AGENTS-PLAN.yaml, project wiki/design documents | Not portable | Omit from distributed skills. Existing methodology artifacts support source links without prescribing this legacy schema. |
+| Design comment links, design/modules location, definitions.md registry, canonical Design Code Path | Target project AGENTS.md, PROJECT.yaml, project wiki/design documents | Not portable | Omit from distributed skills. Existing methodology artifacts support source links without prescribing this legacy schema. |
 | src/interfaces, src/types, src/constants, test mirroring, integration-test-plan location, index.ts-only barrels, fixed line limits | Target project AGENTS.md and architecture/module design | Not portable | Omit from distributed skills. These are repository topology decisions and vary by framework and codebase. |
 | Tracer API, formatting of trace messages, named error strategy document | Target project AGENTS.md plus runtime-specific skill when applicable | Not portable | Omit from distributed skills. Preserve only as local operational guidance. |
 | Require JSDoc on every export and remove every TODO attribution | Target project AGENTS.md | Not portable | Omit from distributed skills. These are team style choices with legitimate exceptions. |

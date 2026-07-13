@@ -40,7 +40,7 @@ excludedProperties:
   - nickname_candidates
   - metadata
 roleGroups:
-  - methodology-maintenance
-  - project-setup
+  - dev-activities
   - wiki-activities
-  - development-use
+  - project-setup
+  - methodology-maintenance

@@ -11,8 +11,8 @@ Use this pack for the narrow bridge between the untrusted renderer and privilege
 
 ## Routing
 
-- Load with Coding Agent for preload scripts, context bridge APIs, renderer-facing desktop capabilities, and IPC clients.
-- Load with Code Review Agent when a change broadens renderer authority or exposes new data.
+- Load with Dev Coder for preload scripts, context bridge APIs, renderer-facing desktop capabilities, and IPC clients.
+- Load with Dev Code Reviewer when a change broadens renderer authority or exposes new data.
 - Combine with Electron Main, React Vite Renderer, and TypeScript ESM.
 
 ## Guidance

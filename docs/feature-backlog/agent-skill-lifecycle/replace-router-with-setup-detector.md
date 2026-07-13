@@ -6,7 +6,7 @@ Type: Feature
 
 ## Summary
 
-Replace the per-task technology router with a focused setup-time detector that produces source-backed folder skill loadouts for AGENTS-PLAN.yaml and unconditional technology-loading guidance for AGENTS.md. Add Python and FastAPI skills and align fixed-role generation with Claude and Codex semantics.
+Replace the per-task technology router with a focused setup-time detector that produces source-backed folder skill loadouts for PROJECT.yaml and unconditional technology-loading guidance for AGENTS.md. Add Python and FastAPI skills and align fixed-role generation with Claude and Codex semantics.
 
 ## Context
 
@@ -27,10 +27,10 @@ See the series [index](index.md) and design/technology-skill-detection-spec.md.
 - Keep the canonical detector implementation under scripts and generate any runtime mirror needed by standalone installed skills.
 - Detect specialized technology and domain skills for setup-agent-selected folder scopes.
 - Preserve scope-safe monorepo detection, nearest owning manifests, companion skills, missing required skills, and exclusive conflict handling.
-- Generate AGENTS-PLAN.yaml loadouts with source evidence.
+- Generate PROJECT.yaml loadouts with source evidence.
 - Generate AGENTS.md instructions that tell every agent working under a matching folder to load the detected technology skills before acting without rerunning detection.
-- Add a generic python-coding skill.
-- Add a FastAPI-specific skill that composes with python-coding.
+- Add a generic python skill.
+- Add a FastAPI-specific skill that composes with python.
 - Add deterministic Python and FastAPI detection metadata and fixtures.
 - Remove obsolete route-technology-skills identifiers, routing terminology, generated files, role outputs, and documentation claims.
 

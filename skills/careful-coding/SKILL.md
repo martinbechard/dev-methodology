@@ -20,7 +20,7 @@ Before implementing:
 - If multiple interpretations exist, present them instead of picking silently.
 - If a simpler approach exists, say so. Push back when warranted.
 - If something is unclear, stop, name what is confusing, and ask.
-- Read the project intent, local guidance, callers, tests, and established patterns before deciding what the code should do.
+- Apply the local guidance already in context, then inspect project intent, callers, tests, and established patterns before deciding what the code should do.
 
 ## Simplicity First
 

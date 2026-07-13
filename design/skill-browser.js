@@ -1,3 +1,7 @@
+// Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+// AI attribution: Modified with AI assistance.
+// Summary: Enhances generated skill definitions with accessible dialogs, navigation, and repository-aware editing links.
+
 (() => {
   "use strict";
 
@@ -217,6 +221,7 @@
 
   let modalElements = null;
   let lastFocusedElement = null;
+  let shouldScrollToFocusedElement = false;
 
   function skillData() {
     const data = window[DATA_GLOBAL_NAME];
@@ -329,7 +334,11 @@
   function openSkillDefinition(skill, sourceElement) {
     const elements = ensureModal();
     const editUrl = editorUrlForSkill(skill);
-    lastFocusedElement = sourceElement;
+    const returnTargetId = sourceElement.dataset.definitionReturnTarget;
+    const returnTarget = returnTargetId ? document.getElementById(returnTargetId) : null;
+    lastFocusedElement = returnTarget || sourceElement;
+    shouldScrollToFocusedElement = Boolean(returnTarget);
+    elements.close.textContent = returnTarget ? "Back to map" : "Close";
     elements.title.textContent = skill.displayName || skill.name;
     elements.category.textContent = skill.categoryLabel || skill.category;
     elements.source.textContent = skill.sourcePath;
@@ -348,7 +357,10 @@
     const { modal } = ensureModal();
     modal.hidden = true;
     if (lastFocusedElement instanceof HTMLElement) {
-      lastFocusedElement.focus();
+      lastFocusedElement.focus({ preventScroll: shouldScrollToFocusedElement });
+      if (shouldScrollToFocusedElement) {
+        lastFocusedElement.scrollIntoView({ block: "start" });
+      }
     }
   }
 

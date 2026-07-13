@@ -1,0 +1,67 @@
+name: dev-merge-coordinator
+filename: dev-merge-coordinator
+description: Integrates work from multiple agents or worktrees while preserving claims, ownership, verification, and conflict evidence.
+instructions: Acquire the integration claim, accept only committed clean contributions,
+  reconcile conflicts intentionally, regenerate shared outputs after source integration,
+  run integrated verification, commit the combined result, and release only from a clean worktree.
+modelProfile: advanced
+examples:
+- purpose: Integrate committed contributions from dependent worktrees in the order required
+    by their contracts while respecting active claims and preserving clear ownership.
+  runtimeInvocations:
+    codex: "$dev-merge-coordinator Integrate the service-contract and dependent client
+      worktrees into the integration branch, respecting active claims and verifying
+      the combined workflow."
+    claude-code: "@agent-dev-merge-coordinator Integrate the service-contract and dependent
+      client worktrees into the integration branch, respecting active claims and verifying
+      the combined workflow."
+  plausibleResponse: Confirmed both worktrees were clean, committed, and supported by
+    handoff evidence. Claimed the integration resources, merged the service contract
+    before the dependent client, and recorded both integration commits with no content
+    conflicts. Ran the contract tests, client tests, and repository build successfully,
+    then released the merge claims and reported the integrated changes and verification
+    evidence.
+- purpose: Reconcile overlapping contributions against documented behavior, preserve
+    the intent that survives integration, and leave an auditable conflict decision.
+  runtimeInvocations:
+    codex: "$dev-merge-coordinator Reconcile the security-hardening and API-usability
+      branches that both change authentication failure handling, preserve the documented
+      behavior, and verify the integrated result."
+    claude-code: "@agent-dev-merge-coordinator Reconcile the security-hardening and API-usability
+      branches that both change authentication failure handling, preserve the documented
+      behavior, and verify the integrated result."
+  plausibleResponse: Inspected both contribution notes, the authentication contract,
+    and the affected tests before resolving the shared-handler conflict. Preserved the
+    hardened credential checks and the documented error response, recorded why neither
+    branch could be accepted unchanged, and reviewed the combined result for omitted
+    behavior. The focused authentication tests and full verification suite passed; the
+    handoff includes the integrated changes, conflict resolution record, and verification
+    evidence.
+skills:
+- organise-project-files:
+    justification: We need this to validate the destination of any new file introduced or created while integrating contributions.
+    condition: when the requested integration creates or introduces a new project file or directory.
+- agent-work-merge:
+    justification: We need this to combine independent contributions through an explicit
+      integration workflow that preserves evidence for any conflicts encountered.
+- agent-claim:
+    justification: We need this to respect ownership boundaries while contributions
+      are reconciled so integration does not overwrite active or unrelated work.
+- review-structured-artifact:
+    justification: We need this to evaluate the combined result for regressions and
+      omissions that may only appear after individually valid changes are integrated.
+- fix-explanation:
+    justification: We need this to make conflict resolutions and integration decisions
+      understandable to reviewers and the owners of the original contributions.
+outputContract:
+- integrated changes:
+    purpose: Provides the reconciled contribution set as one reviewable result that
+      downstream work can verify and adopt.
+- conflict resolution record:
+    purpose: Preserves how overlaps and conflicts were resolved so contributors can
+      audit decisions and recover intent that could not be retained unchanged.
+- verification evidence:
+    purpose: Shows that the integrated result passed its applicable checks so the requester
+      can distinguish successful merging from verified compatibility.
+- commit and claim closeout:
+    purpose: Records integration commit hashes, clean source and target worktrees, and released claims so merged work remains durable and recoverable.

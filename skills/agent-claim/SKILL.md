@@ -1,6 +1,6 @@
 ---
 name: agent-claim
-description: Use when multiple agents may edit the same repository, share runtime resources, touch overlapping files, run builds or tests concurrently, or need claim coordination before modifying files.
+description: Use before repository mutation when multiple agents may work concurrently, including optimistic primary-worktree acquisition, isolated worktree selection, overlap blocking, recovery, heartbeat, and clean release.
 metadata:
   category: development-practice
 ---
@@ -11,104 +11,133 @@ Use this skill before editing files or taking exclusive runtime resources in a r
 
 ## Goal
 
-Claims make shared work explicit. They prevent two agents from editing the same files, running incompatible verification, or mutating shared generated data at the same time.
+Claims make shared work explicit and keep completed work durable. The first independent writer may use a clean primary worktree. Later independent writers use isolated worktrees when their scopes do not overlap. Overlapping work waits. Dirty unclaimed state enters recovery rather than accepting another anonymous edit.
 
-## Claim File
+## Claim Registry
 
-Default location:
+Use the repository-global Git common directory returned by:
 
-```text
-.agents/agent-claims.json
+```bash
+git rev-parse --git-common-dir
 ```
 
-If a repository documents another path in AGENTS.md, README, a runtime-specific instruction file, or a local skill, use that path instead.
+The default registry filename is agent-claims.json inside that directory. Linked worktrees therefore see one registry. Use a configured repository-global path supplied by applicable project instructions when Git worktrees are not the coordination boundary.
 
-Expected shape:
+Each claim records:
 
-```json
-{
-  "claims": [
-    {
-      "agent": "agent-name-or-id",
-      "task": "Short task description",
-      "files": ["path/from/repo/root.ts"],
-      "resources": ["build:production"],
-      "claimed_at": "2026-06-10T20:30:00Z",
-      "heartbeat": "2026-06-10T20:35:00Z",
-      "worktree": "/absolute/path/to/worktree-or-repo"
-    }
-  ]
-}
-```
+- A stable claim id.
+- The agent, task, root task, and optional parent claim.
+- Primary, isolated, or recovery mode.
+- Files and exclusive runtime resources.
+- Worktree path, baseline commit, and baseline status.
+- Claim and heartbeat timestamps.
 
 ## When To Claim
 
 Claim before:
 
-- Editing, moving, deleting, formatting, staging, or generating files.
-- Running commands that monopolize shared state such as production builds, browser-test servers, dev server ports, browser profiles, database resets, seed data, generated output refreshes, or long-running test servers.
-- Inspecting is safe without a claim, unless the inspection command mutates caches, generated files, databases, browser state, or server state.
+- Editing, moving, deleting, formatting, staging, committing, or generating files.
+- Running commands that monopolize shared state such as production builds, browser-test servers, dev server ports, browser profiles, database resets, seed data, generated output refreshes, shared installations, or long-running test servers.
 
-Use the smallest useful claim. Claim exact files when known. If discovery is still in progress, claim the narrow directory or resource, then narrow it once the target files are known.
+Read-only inspection does not need a writer claim unless it mutates caches, generated files, databases, browser state, or server state.
 
-## Claim Protocol
+Use the smallest useful file and resource scope. A parent agent keeps the root task identity. Writing subagents use the same root task identity and their parent claim id, but still receive distinct ownership.
 
-1. Read the repository coordination instructions.
-2. Read the current claim file. If it is missing, create it with an empty claims array when the first claim is needed.
-3. Check for active claims that overlap your files, directories, or resources.
-4. If another active agent owns the target, do not edit it. Wait, switch tasks, or report blocked status.
-5. Add your claim before editing or starting the exclusive command.
-6. Keep the heartbeat current while working.
-7. Expand the claim before touching additional files or resources.
-8. Release your claim as soon as the edit, command, merge, or handoff is complete.
+## Atomic Claim Command
+
+Use the bundled command before mutation:
+
+```bash
+python3 skills/agent-claim/scripts/claim.py --repo . acquire \
+  --claim-id task-123 \
+  --agent agent-name \
+  --task "Short task description" \
+  --root-task-id task-123 \
+  --file src \
+  --resource build:production \
+  --branch codex/task-123 \
+  --worktree-path ../project-task-123
+```
+
+The command uses an exclusive registry lock and returns one outcome:
+
+- PRIMARY means no other writer claim exists and the clean primary worktree is now owned by this task.
+- ISOLATE means another non-overlapping writer exists and a branch plus linked worktree was created atomically for this task.
+- WAIT means a requested file or resource overlaps an active claim. Do not edit or create a competing worktree.
+- RECOVERY_REQUIRED means the primary worktree is dirty without an active claim. Do not add more work.
+- RECOVER means an explicitly authorized recovery owner claimed the dirty primary state with the allow-recovery option.
+
+Keep the heartbeat current during long work:
+
+```bash
+python3 skills/agent-claim/scripts/claim.py --repo . heartbeat --claim-id task-123
+```
 
 ## Runtime Resources
 
-Resource names should be stable and descriptive. Common patterns:
+Resource names should be stable and descriptive. Common patterns include:
 
 ```text
 port:3000
-port:5173
 build:production
-build:next
-test:unit
 test:e2e
 browser-test:primary
-browser-test:server
 database:seed
-database:e2e
-generated:reports
 generated:codegen
-browser:chrome-profile
+shared-install:skills
+git:commit
 ```
 
-Prefer repository-specific names when the project already defines them.
+Prefer repository-specific names when the project defines them.
+
+## Overlap And Isolation
+
+- Any active writer claim causes a later non-overlapping independent writer to use an isolated branch and worktree.
+- File ancestry overlaps. A claim for src overlaps src/api and a claim for the complete repository overlaps every path.
+- Identical exclusive resources overlap even when files differ.
+- Overlap returns WAIT. Worktree isolation does not make conflicting changes logically safe.
+- Never stage, commit, revert, or clean another claim owner’s files unless acting as the explicit integration owner.
+- If the task expands, stop before touching the new scope and acquire or hand off the additional ownership.
 
 ## Stale Claims
 
-A claim may be stale when its heartbeat is old and no matching status file or process is alive. Do not delete another agent's claim just because it is inconvenient.
+A claim may be stale when its heartbeat is old and no matching task, process, or worktree activity exists. Do not remove it merely because it is inconvenient.
 
 Before removing a stale claim:
 
-1. Check status files, logs, running processes, and recent git activity when available.
-2. Treat long-running builds or tests as active if the process still exists.
-3. Preserve evidence in your notes or status before cleanup.
-4. Remove only the stale entry, not unrelated active claims.
+1. Check task status, logs, running processes, worktrees, Git status, and recent commits.
+2. Treat a live process or dirty claimed worktree as active or interrupted work needing handoff.
+3. Preserve recovery evidence.
+4. Remove only the confirmed stale entry.
 
-If the evidence is unclear, leave the claim in place and report the exact blocker.
+If ownership is unclear, leave the claim and report the exact blocker.
 
-## File Edits
+## Recovery
 
-- Never edit a file or directory claimed by another active agent.
-- Never stage or commit another agent's claimed files unless you are explicitly performing the merge or integration role.
-- If you discover your task needs a claimed file, stop before editing and update your status.
-- If you accidentally touched an unclaimed or conflicting file, stop, explain the file, and either claim it if safe or revert only your own accidental change.
+Recovery is the one-time bridge from anonymous dirty state to normal coordination.
 
-## Completion
+1. Stop new mutation and obtain handoffs from active writers.
+2. Assign one recovery owner for the complete dirty scope.
+3. Acquire with allow-recovery.
+4. Create a checkpoint commit on a recovery branch before attempting cleanup or historical separation.
+5. Validate and stabilize the committed recovery state.
+6. Release only after the recovery worktree is clean and its commit differs from the recorded baseline.
 
-A clean finish includes:
+Do not require perfect historical commit reconstruction before preserving accumulated work. Preserve first, then stabilize.
 
-- Related verification has run or the blocker is documented.
-- Your claim entry is removed.
-- Any long-running resource is stopped or explicitly handed off.
-- The final response names active blockers if claims prevented completion.
+## Completion And Release
+
+A modifying task is not complete merely because implementation or tests are complete. A clean finish includes:
+
+- Required verification passed or the blocker is documented.
+- Task changes are committed, or the task explicitly produced no changes.
+- The claimed worktree is clean.
+- Long-running resources are stopped or explicitly handed off.
+- The claim is released with the bundled command.
+- The final response reports the commit hash, verification, and final status.
+
+```bash
+python3 skills/agent-claim/scripts/claim.py --repo . release --claim-id task-123
+```
+
+Release rejects dirty worktrees and claims with neither a new commit nor an explicit no-change result. If a safe commit cannot be created, the work remains incomplete and the claim remains active or is handed off explicitly.

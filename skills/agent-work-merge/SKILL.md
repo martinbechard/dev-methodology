@@ -17,12 +17,13 @@ Keep parallel work isolated during implementation, then merge only verified, com
 
 Before merging a worktree:
 
-- Read the repository coordination instructions.
 - Use the agent-claim skill for files and runtime resources touched during integration.
 - Confirm the source worktree has no uncommitted task changes unless the handoff explicitly says how to handle them.
 - Confirm the source branch has a meaningful commit for the completed unit.
 - Read the source agent status, final notes, verification results, and known risks.
 - Confirm the integration checkout is the intended target lane.
+- Confirm the source claim was released after a clean commit or explicitly handed to the integration owner.
+- Reject anonymous dirty state. Route it through the recovery workflow in agent-claim before integration.
 
 ## Merge Claim
 
@@ -51,8 +52,9 @@ Example claim:
 5. Resolve conflicts by preserving the intended steady-state behavior, not by blindly choosing either side.
 6. Run focused verification after each risky merge.
 7. Commit each coherent merged unit before starting the next source.
-8. Run final repository verification required by the project.
-9. Release claims only after verification and cleanup are complete.
+8. Regenerate shared outputs only after their canonical source branches are integrated.
+9. Run final repository verification required by the project.
+10. Release claims only after verification, a clean integration commit, and cleanup are complete.
 
 ## Commands
 
@@ -101,6 +103,7 @@ After a source is merged and verified:
 - Stop or hand off runtime resources.
 - Remove completed worktrees only when the repository policy allows it and the branch has been safely integrated.
 - Leave failed or blocked worktrees intact with a clear status note.
+- Never release the integration claim while newly created uncommitted work remains.
 
 ## Final Report
 

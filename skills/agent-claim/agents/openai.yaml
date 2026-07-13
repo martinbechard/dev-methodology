@@ -4,7 +4,7 @@ interface:
   # User-facing name shown in Codex skill surfaces.
   display_name: Agent Claim
   # User-facing summary shown in Codex skill surfaces.
-  short_description: Use when multiple agents may edit the same repository, share runtime resources, touch...
+  short_description: Use before repository mutation when multiple agents may work concurrently, including optimistic...
   # Prompt Codex can use when launching this skill directly.
   default_prompt: Use $agent-claim to coordinate file and runtime claims before this multi-agent repository task.
 

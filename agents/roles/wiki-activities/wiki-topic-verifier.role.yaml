@@ -43,12 +43,12 @@ examples:
     and the federation boundary does not duplicate upstream coverage. Lint and OKF
     validation passed."
 skills:
-- project-wiki-topic-verifier:
+- project-wiki-topic-verify:
     justification: We need this to apply the dedicated read-only acceptance contract for topic pages, leaf granularity, source links, digests, federation, lint, and OKF validation.
 isolation: read-only
 outputContract:
 - verification verdict:
-    purpose: Returns the required GOOD or NEEDS_CORRECTION decision for the supplied topic pages so writers and ingest agents have an independent acceptance gate.
+    purpose: Returns the required GOOD or NEEDS_CORRECTION decision for the supplied topic pages so writers and ingesters have an independent acceptance gate.
 - reviewed-page inventory:
     purpose: Identifies exactly which topic pages and evidence sources were evaluated so the verdict is bounded and auditable.
 - actionable corrections:

@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -29,7 +30,7 @@ def run_detection(
     extra: list[str] | None = None,
 ) -> dict[str, object]:
     """Run one detector implementation and return its parsed result at the expected exit boundary."""
-    arguments = ["python3", str(detector), "--project-root", str(project)]
+    arguments = [sys.executable, str(detector), "--project-root", str(project)]
     for scope in scopes:
         arguments.extend(["--scope", scope])
     arguments.extend(extra or [])
@@ -163,7 +164,7 @@ class TechnologyDetectionTests(unittest.TestCase):
 
     def test_generated_registry_and_installed_detector_are_current(self) -> None:
         completed = subprocess.run(
-            ["python3", str(BUILD_SCRIPT), "--check"],
+            [sys.executable, str(BUILD_SCRIPT), "--check"],
             cwd=ROOT,
             check=False,
             capture_output=True,
@@ -176,19 +177,19 @@ class TechnologyDetectionTests(unittest.TestCase):
         for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
             with self.subTest(detector=detector):
                 result = run_detection(ROOT / "evals" / "projects" / "typescript-order-pricing", "src", detector=detector)
-                self.assertEqual(["typescript-coding", "typescript-esm", "typescript-strict"], result["loadouts"][0]["skills"])
+                self.assertEqual(["typescript", "typescript-esm", "typescript-strict"], result["loadouts"][0]["skills"])
 
     def test_spring_boot_scope_has_exact_loadout(self) -> None:
         for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
             with self.subTest(detector=detector):
                 result = run_detection(ROOT / "evals" / "projects" / "spring-boot-order-cancellation", "src/main", detector=detector)
-                self.assertEqual(["java-coding", "spring-boot", "sql-coding"], result["loadouts"][0]["skills"])
+                self.assertEqual(["java", "spring-boot", "sql"], result["loadouts"][0]["skills"])
 
     def test_python_scope_has_exact_loadout(self) -> None:
         for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
             with self.subTest(detector=detector):
                 result = run_detection(ROOT / "evals" / "projects" / "python-inventory", "src", detector=detector)
-                self.assertEqual(["python-coding"], result["loadouts"][0]["skills"])
+                self.assertEqual(["python"], result["loadouts"][0]["skills"])
 
     def test_python_cli_filename_does_not_activate_node_cli(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -202,13 +203,13 @@ class TechnologyDetectionTests(unittest.TestCase):
             for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
                 with self.subTest(detector=detector):
                     result = run_detection(root, "src", detector=detector)
-                    self.assertEqual(["python-coding"], result["loadouts"][0]["skills"])
+                    self.assertEqual(["python"], result["loadouts"][0]["skills"])
 
     def test_node_cli_requires_a_javascript_or_typescript_cli_path(self) -> None:
         cases = (
             ("tool-cli.js", ["node-cli"]),
-            ("tool-cli.ts", ["node-cli", "typescript-coding"]),
-            ("client.ts", ["typescript-coding"]),
+            ("tool-cli.ts", ["node-cli", "typescript"]),
+            ("client.ts", ["typescript"]),
         )
         for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
             for file_name, expected in cases:
@@ -228,19 +229,19 @@ class TechnologyDetectionTests(unittest.TestCase):
         for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
             with self.subTest(detector=detector):
                 result = run_detection(ROOT / "evals" / "projects" / "fastapi-orders", "app", detector=detector)
-                self.assertEqual(["fastapi", "python-coding"], result["loadouts"][0]["skills"])
+                self.assertEqual(["fastapi", "python"], result["loadouts"][0]["skills"])
                 evidence = {row["skill"]: row["evidence"] for row in result["loadouts"][0]["sourceEvidence"]}
                 self.assertTrue(any("fastapi" in value.lower() for value in evidence["fastapi"]))
 
     def test_fastapi_import_text_in_detector_tests_does_not_activate_fastapi(self) -> None:
         result = run_detection(ROOT, "scripts")
-        self.assertEqual(["python-coding"], result["loadouts"][0]["skills"])
+        self.assertEqual(["python"], result["loadouts"][0]["skills"])
 
     def test_next_api_routes_require_code_and_the_owning_next_dependency(self) -> None:
         cases = (
-            ("route.py", {"next": "1"}, ["python-coding"]),
-            ("route.ts", {}, ["typescript-coding"]),
-            ("route.ts", {"next": "1"}, ["api-routes", "nextjs-app-router", "typescript-coding"]),
+            ("route.py", {"next": "1"}, ["python"]),
+            ("route.ts", {}, ["typescript"]),
+            ("route.ts", {"next": "1"}, ["api-routes", "nextjs-app-router", "typescript"]),
         )
         for file_name, dependencies, expected in cases:
             with self.subTest(file_name=file_name, dependencies=dependencies):
@@ -276,10 +277,10 @@ class TechnologyDetectionTests(unittest.TestCase):
 
     def test_domain_detectors_accept_matching_code_artifacts(self) -> None:
         cases = (
-            ("agent-harness.ts", "export const value = 1;\n", ["harness-implementation", "typescript-coding"]),
-            ("tool-runtime.py", "value = 1\n", ["python-coding", "tool-runtime-implementation"]),
-            ("plan-engine.go", "package plan\n", ["plan-engine-implementation"]),
-            ("local-model.ts", "export const localModel = true;\n", ["local-model-integration", "typescript-coding"]),
+            ("agent-harness.ts", "export const value = 1;\n", ["agent-harness", "typescript"]),
+            ("tool-runtime.py", "value = 1\n", ["python", "tool-runtime"]),
+            ("plan-engine.go", "package plan\n", ["plan-engine"]),
+            ("local-model.ts", "export const localModel = true;\n", ["local-model-integration", "typescript"]),
         )
         for file_name, content, expected in cases:
             with self.subTest(file_name=file_name):
@@ -302,8 +303,8 @@ class TechnologyDetectionTests(unittest.TestCase):
             for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
                 with self.subTest(detector=detector):
                     result = run_detection(root, "web/src", "api/app", detector=detector)
-                    self.assertEqual(["typescript-coding"], result["loadouts"][0]["skills"])
-                    self.assertEqual(["fastapi", "python-coding"], result["loadouts"][1]["skills"])
+                    self.assertEqual(["typescript"], result["loadouts"][0]["skills"])
+                    self.assertEqual(["fastapi", "python"], result["loadouts"][1]["skills"])
 
     def test_root_workspace_dependencies_do_not_contaminate_owned_child(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -313,7 +314,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             (root / "package.json").write_text('{"dependencies":{"next":"1","@clerk/nextjs":"1"}}\n', encoding="utf-8")
             (root / "packages" / "core" / "package.json").write_text('{"dependencies":{}}\n', encoding="utf-8")
             result = run_detection(root, "packages/core/src")
-            self.assertEqual(["typescript-coding"], result["loadouts"][0]["skills"])
+            self.assertEqual(["typescript"], result["loadouts"][0]["skills"])
 
     def test_sibling_spring_module_does_not_contaminate_python_scope(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -325,7 +326,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             (root / "java" / "src" / "Main.java").write_text("class Main {}\n", encoding="utf-8")
             (root / "java" / "pom.xml").write_text("<artifactId>spring-boot</artifactId>\n", encoding="utf-8")
             result = run_detection(root, "python/src")
-            self.assertEqual(["python-coding"], result["loadouts"][0]["skills"])
+            self.assertEqual(["python"], result["loadouts"][0]["skills"])
 
     def test_missing_detected_required_skill_blocks_setup(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -433,32 +434,45 @@ class TechnologyDetectionTests(unittest.TestCase):
 
     def test_detector_has_no_task_time_options(self) -> None:
         completed = subprocess.run(
-            ["python3", str(DETECT_SCRIPT), "--help"],
+            [sys.executable, str(DETECT_SCRIPT), "--help"],
             cwd=ROOT,
             check=True,
             capture_output=True,
             text=True,
         )
-        for obsolete in ("--role", "--confirm-read", "--require-confirmed", "--agents-plan"):
+        for obsolete in ("--role", "--confirm-read", "--require-confirmed"):
             self.assertNotIn(obsolete, completed.stdout)
 
     def test_agents_section_requires_unconditional_loading_without_redetection(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
-            plan = Path(directory) / "AGENTS-PLAN.yaml"
-            plan.write_text(yaml.safe_dump({"technology_skill_loadouts": [{
-                "pathPattern": "api/**",
-                "skills": ["fastapi", "python-coding"],
-                "sourceEvidence": [{"skill": "fastapi", "evidence": ["owning manifest dependency fastapi"]}],
-            }]}), encoding="utf-8")
+            plan = Path(directory) / "PROJECT.yaml"
+            plan.write_text(yaml.safe_dump({
+                "agent_coordination": {
+                    "registry": "Git common directory agent-claims.json.",
+                    "acquisition": "Atomic first-writer ownership of a clean primary worktree.",
+                    "active_claim_policy": "Later non-overlapping writers use isolated worktrees.",
+                    "overlap_policy": "Overlapping claims wait.",
+                    "dirty_unclaimed_policy": "Dirty unclaimed state enters recovery.",
+                    "release_policy": "Release after commit and clean status.",
+                },
+                "technology_skill_loadouts": [{
+                    "pathPattern": "api/**",
+                    "skills": ["fastapi", "python"],
+                    "sourceEvidence": [{"skill": "fastapi", "evidence": ["owning manifest dependency fastapi"]}],
+                }],
+            }), encoding="utf-8")
             completed = subprocess.run(
-                ["python3", str(RENDER_SCRIPT), "--agents-plan", str(plan)],
+                [sys.executable, str(RENDER_SCRIPT), "--project", str(plan)],
                 cwd=ROOT,
                 check=True,
                 capture_output=True,
                 text=True,
             )
-            self.assertIn("api/**: load fastapi, python-coding before acting", completed.stdout)
+            self.assertIn("api/**: load fastapi, python before acting", completed.stdout)
             self.assertIn("Do not rerun detection during ordinary work", completed.stdout)
+            self.assertIn("Agent Claims And Worktrees", completed.stdout)
+            self.assertIn("use the agent-claim skill", completed.stdout)
+            self.assertIn("Dirty unclaimed state enters recovery", completed.stdout)
 
     def test_registry_contains_only_specialized_skills(self) -> None:
         registry = yaml.safe_load(REGISTRY.read_text(encoding="utf-8"))

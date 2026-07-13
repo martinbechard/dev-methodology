@@ -16,6 +16,7 @@ import yaml
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 SCRIPT_PATH = REPOSITORY_ROOT / "scripts" / "build-agent-skill-hierarchy.py"
 OUTPUT_PATH = REPOSITORY_ROOT / "design" / "agent-skill-hierarchy.svg"
+ROLE_MAP_PATH = REPOSITORY_ROOT / "design" / "agent-role-skill-map.html"
 ROLES_ROOT = REPOSITORY_ROOT / "agents" / "roles"
 DETECTION_REGISTRY_PATH = (
     REPOSITORY_ROOT
@@ -130,12 +131,27 @@ class AgentSkillHierarchyTests(unittest.TestCase):
         ]
         self.assertEqual(
             [
-                "Methodology Maintenance",
-                "Project Setup",
+                "Dev Activities",
                 "Wiki Activities",
-                "Development Use",
+                "Project Setup",
+                "Methodology Maintenance",
             ],
             role_group_labels,
+        )
+
+    def test_role_cards_follow_the_canonical_schema_order(self) -> None:
+        """The reader-facing role cards should follow the maintained group order."""
+        role_map = ROLE_MAP_PATH.read_text(encoding="utf-8")
+        group_markers = [
+            f'data-role-group="{group}"'
+            for group in self.module._load_yaml(
+                self.module.ROLE_SCHEMA_PATH
+            )["roleGroups"]
+        ]
+
+        self.assertEqual(
+            sorted(role_map.index(marker) for marker in group_markers),
+            [role_map.index(marker) for marker in group_markers],
         )
 
     def test_selected_items_expose_the_definition_view_bridge(self) -> None:
@@ -151,6 +167,13 @@ class AgentSkillHierarchyTests(unittest.TestCase):
         self.assertIn('"dev-methodology:view-definition"', self.rendered)
         self.assertIn("window.parent.postMessage", self.rendered)
         self.assertIn('target.searchParams.set("definitionKind", kind)', self.rendered)
+
+    def test_double_clicking_a_node_opens_its_definition(self) -> None:
+        """Double-click should select a role or skill and use the definition bridge."""
+        self.assertIn('node.addEventListener("dblclick"', self.rendered)
+        self.assertIn("viewRoleDefinition(node.dataset.role)", self.rendered)
+        self.assertIn("viewSkillDefinition(node.dataset.skill)", self.rendered)
+        self.assertIn("Double-click to view its definition", self.rendered)
 
 
 if __name__ == "__main__":

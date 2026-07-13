@@ -20,7 +20,7 @@ Do not mark pass without quoted evidence.
 - Question: Does the review identify the system boundary, runtime assumptions, layers, components, and cross-cutting claims before assessment?
 - Question: Does the completed review checklist name this checklist as review-checklist-architecture.md?
 - Question: Does the completed review checklist save next to the artifact using artifact-name.review-checklist-architecture.md?
-- Question: Does the review use documentation-page-verifier with the artifact, source evidence, and completed review checklist?
+- Question: Does the review use documentation-page-verify with the artifact, source evidence, and completed review checklist?
 - Question: Does the final assessment derive findings or pass status from the completed review checklist rather than memory?
 - Question: Does the output lead with findings ordered by severity when problems exist?
 

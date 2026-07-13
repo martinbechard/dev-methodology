@@ -11,8 +11,8 @@ Use this pack for graph-based AI workflows and analysis pipelines.
 
 ## Routing
 
-- Load with Coding Agent for graph definitions, state schemas, nodes, edges, tool use, checkpoints, and streaming.
-- Load with Code Review Agent when workflow state, retry behavior, data safety, or external model calls change.
+- Load with Dev Coder for graph definitions, state schemas, nodes, edges, tool use, checkpoints, and streaming.
+- Load with Dev Code Reviewer when workflow state, retry behavior, data safety, or external model calls change.
 - Combine with TypeScript Strict, prompt skills, persistence packs, and test packs.
 
 ## Guidance

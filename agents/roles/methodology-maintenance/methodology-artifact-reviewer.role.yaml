@@ -31,9 +31,16 @@ examples:
     of the stale invocation and clarification of the verification owner, then recorded
     uncertainty about an undocumented migration case as residual risk.
 skills:
-- review-structured:
+- organise-project-files:
+    justification: We need this to confirm the destination of any new methodology review checklist or findings file before writing it.
+    condition: when the requested review creates a new project file or directory.
+- review-structured-artifact:
     justification: We need this to present actionable defects before general observations so artifact owners can prioritize remediation.
-- documentation-page-verifier:
+- skill-authoring:
+    justification: We need this to review distributed skills against the same harness boundary, portability, dependency, and concision rules used during authoring.
+- name-methodology-artifacts:
+    justification: We need this to verify category prefixes, actor-form role names, and skill operation names against the catalog naming contract.
+- documentation-page-verify:
     justification: We need this to judge methodology documentation against its authoritative sources and required page contracts instead of reviewing prose in isolation.
 - development-methodology:
     justification: We need this to evaluate artifacts against the bundle's canonical routes, templates, and maintenance rules rather than personal preference.

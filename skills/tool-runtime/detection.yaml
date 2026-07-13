@@ -1,0 +1,18 @@
+schema: dev-methodology-technology-detection
+version: 2
+skill: tool-runtime
+kind: domain
+label: Tool runtime
+capabilities:
+- tool-runtime
+activation:
+  anyOf:
+  - fileMatch:
+      glob: "**/*tool*registry*.*"
+      extensions: [.js, .jsx, .ts, .tsx, .mjs, .cjs, .mts, .cts, .py, .pyi, .java, .kt, .go, .rs, .cs]
+  - fileMatch:
+      glob: "**/*tool*runtime*.*"
+      extensions: [.js, .jsx, .ts, .tsx, .mjs, .cjs, .mts, .cts, .py, .pyi, .java, .kt, .go, .rs, .cs]
+  - fileMatch:
+      glob: "**/tools/**/*"
+      extensions: [.js, .jsx, .ts, .tsx, .mjs, .cjs, .mts, .cts, .py, .pyi, .java, .kt, .go, .rs, .cs]

@@ -21,7 +21,7 @@ Use this skill to review a functional specification artifact created from the me
 2. Read references/review-checklist-functional-spec.md.
 3. Complete every applicable checklist question with status, quoted evidence, and assessment.
 4. Save the completed review checklist next to the artifact using this form: artifact-name.review-checklist-functional-spec.md.
-5. Use documentation-page-verifier with the artifact, source evidence, and completed review checklist for shared page contract, source authority, link, diagram, and steady-state checks.
+5. Use documentation-page-verify with the artifact, source evidence, and completed review checklist for shared page contract, source authority, link, diagram, and steady-state checks.
 6. Verify functional sections against the checklist, especially actor goal, entry points, workflow steps, states, permissions, edge cases, acceptance behavior, and verification blocks.
 7. Return findings first, ordered by severity, with file paths and section names. Derive each finding or pass assessment from the completed review checklist.
 

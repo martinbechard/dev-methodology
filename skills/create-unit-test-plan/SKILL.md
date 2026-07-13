@@ -20,6 +20,6 @@ Copy the template when a local editable artifact is needed. Replace every TODO i
 5. Describe doubles by boundary contract and purpose without mandating a mocking library.
 6. Mark non-applicable failure cases honestly and explain material omissions.
 7. Map every important responsibility and risk to one or more scenarios.
-8. Use review-unit-test-plan and documentation-page-verifier before finishing.
+8. Use review-unit-test-plan and documentation-page-verify before finishing.
 
 The plan is optional for small changes. Create it when a durable coverage artifact will help implementation, review, handoff, or audit.

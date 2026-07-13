@@ -402,9 +402,7 @@
     </div>
     <h1 id="page-title">Agentic Development Operating Model</h1>
     <p class="lede">
-      The methodology uses named role agents for human and orchestrated work, short skills for load-on-demand procedures,
-      AGENTS.md files for operational project-family, application-tier, folder-skill, validation, and data-handling reference. Each layer has one job,
-      so long-running development can split into subagents without making every context carry every rule.
+      This page explains how the methodology operates: which layer owns a decision, how guidance resolves during work, how roles hand work off, and which records make the outcome inspectable. Use the role map for generated loadouts, the specialization strategy for selection rules, and runtime formats for adapter detail.
     </p>
   </section>
 
@@ -436,10 +434,11 @@
 
   <section class="section" aria-labelledby="roles-title">
     <h2 id="roles-title">Role Agent Set</h2>
+    <p class="note">These summaries explain each role's operating responsibility. The <a href="agent-role-skill-map.html">generated role map</a> is the authoritative place to inspect current loadouts, outputs, canonical YAML, and role or skill definition popups.</p>
     <p class="lede">Wiki setup, query, research, collection, writing, ingest, topic verification, and project-wiki artifact review form a dedicated activity category. General documentation, coding, review, backlog, and project-setup roles do not load wiki skills.</p>
     <div class="grid">
       <article class="card orchestrator">
-        <h3>Development Orchestrator</h3>
+        <h3>Dev Orchestrator</h3>
         <p>Coordinates multi-step work across subagents while preserving small contexts, explicit handoffs, and verification evidence.</p>
         <div class="tag-row">
           <span class="tag orchestrator">task decomposition</span>
@@ -447,6 +446,19 @@
           <span class="tag orchestrator">agent routing</span>
           <span class="tag orchestrator">retry policy</span>
           <span class="tag orchestrator">merge policy</span>
+        </div>
+      </article>
+
+      <article class="card orchestrator">
+        <h3>Project Bootstrapper</h3>
+        <p>Completes project setup from one request: reuse existing PROJECT.yaml routing or create it through Project Configurator when absent, then produce source-backed documentation, independently review and correct every artifact, and run integrated verification.</p>
+        <div class="tag-row">
+          <span class="tag orchestrator">reuse PROJECT.yaml</span>
+          <span class="tag orchestrator">configure when absent</span>
+          <span class="tag orchestrator">documentation routing</span>
+          <span class="tag orchestrator">writer-reviewer loop</span>
+          <span class="tag orchestrator">integrated verification</span>
+          <span class="tag orchestrator">completion ownership</span>
         </div>
       </article>
 
@@ -462,18 +474,18 @@
       </article>
 
       <article class="card agent">
-        <h3>Project Agent Setup Agent</h3>
-        <p>Creates AGENTS-PLAN.yaml so the project can validate role agents, skill loadouts, folder routing, nested plan placement, and AGENTS.md reference before normal development work.</p>
+        <h3>Project Configurator</h3>
+        <p>Creates one project-root PROJECT.yaml so the project can validate role agents, skill loadouts, folder routing, nested AGENTS.md placement, and operational guidance before normal development work.</p>
         <div class="tag-row">
-          <span class="tag agent">create-agents-plan</span>
+          <span class="tag agent">create-project-configuration</span>
           <span class="tag agent">development-methodology</span>
-          <span class="tag agent">documentation-page-verifier</span>
+          <span class="tag agent">documentation-page-verify</span>
           <span class="tag agent">setup evidence</span>
         </div>
       </article>
 
       <article class="card agent">
-        <h3>Coding Agent</h3>
+        <h3>Dev Coder</h3>
         <p>Implements scoped source changes using the applicable AGENTS.md instructions, repository patterns, tests, and build commands.</p>
         <div class="tag-row">
           <span class="tag agent">careful-coding</span>
@@ -485,11 +497,11 @@
       </article>
 
       <article class="card agent">
-        <h3>Code Review Agent</h3>
+        <h3>Dev Code Reviewer</h3>
         <p>Loads the coding and routed stack skills that govern the changed files, extracts checklist evidence, then synthesizes regressions, rule violations, missing tests, weak verification, unsafe abstractions, and documentation drift. Simple and advanced model stages are dispatch intent until the harness captures separate worker invocations.</p>
         <div class="tag-row">
           <span class="tag agent">code-review-evidence</span>
-          <span class="tag agent">review-structured</span>
+          <span class="tag agent">review-structured-artifact</span>
           <span class="tag agent">code-comments</span>
           <span class="tag agent">application tier policy</span>
           <span class="tag agent">source evidence</span>
@@ -498,7 +510,7 @@
       </article>
 
       <article class="card agent">
-        <h3>QA And Verification Agent</h3>
+        <h3>Dev Verifier</h3>
         <p>Runs acceptance checks, build commands, unit tests, E2E tests, lint gates, and spec coverage checks for completed work.</p>
         <div class="tag-row">
           <span class="tag agent">validation</span>
@@ -509,8 +521,8 @@
       </article>
 
       <article class="card agent">
-        <h3>Documentation Writer</h3>
-        <p>Selects one non-wiki document shape and creation skill, then writes a source-backed functional specification, architecture, high-level design, module design, or unit test plan.</p>
+        <h3>Dev Documentation Writer</h3>
+        <p>Selects one non-wiki methodology document shape and creation skill, or preserves the established format for README and custom entry-document integration, then writes a source-backed artifact.</p>
         <div class="tag-row">
           <span class="tag agent">development-methodology</span>
           <span class="tag agent">artifact creation skill</span>
@@ -521,9 +533,10 @@
       </article>
 
       <article class="card agent">
-        <h3>Artifact Review Agent</h3>
-        <p>Performs fresh-context review of finished non-wiki methodology artifacts using the artifact-specific verifier for the document type.</p>
+        <h3>Dev Artifact Reviewer</h3>
+        <p>Performs fresh-context review of finished non-wiki project documentation using the generic structured-artifact checklist, the artifact-specific reviewer when one applies, and the shared page verifier for README and custom formats.</p>
         <div class="tag-row">
+          <span class="tag agent">structured artifact review</span>
           <span class="tag agent">functional spec review</span>
           <span class="tag agent">architecture review</span>
           <span class="tag agent">module review</span>
@@ -532,7 +545,7 @@
       </article>
 
       <article class="card agent">
-        <h3>Wiki Setup Agent</h3>
+        <h3>Wiki Architect</h3>
         <p>Establishes wiki roots, ownership, federation, source workflow, navigation, automations, and setup verification from an approved recommendation pack.</p>
         <div class="tag-row">
           <span class="tag agent">project-wiki</span>
@@ -543,7 +556,7 @@
       </article>
 
       <article class="card agent">
-        <h3>Wiki Query Agent</h3>
+        <h3>Wiki Query Responder</h3>
         <p>Answers project questions from docs/wiki first, verifies against authoritative files, and hands missing or stale coverage to the research role.</p>
         <div class="tag-row">
           <span class="tag agent">project-wiki-query</span>
@@ -553,7 +566,7 @@
       </article>
 
       <article class="card agent">
-        <h3>Wiki Research Agent</h3>
+        <h3>Wiki Researcher</h3>
         <p>Checks maintained and federated coverage, researches only the bounded gap, and saves one sourced raw report for later ingest.</p>
         <div class="tag-row">
           <span class="tag agent">project-wiki-query</span>
@@ -563,7 +576,7 @@
       </article>
 
       <article class="card agent">
-        <h3>Wiki Writer Agent</h3>
+        <h3>Wiki Writer</h3>
         <p>Creates and maintains durable topic pages, hubs, links, digests, and code-aware project knowledge outside raw-source ingest.</p>
         <div class="tag-row">
           <span class="tag agent">topic writer</span>
@@ -574,7 +587,7 @@
       </article>
 
       <article class="card agent">
-        <h3>Wiki Ingest Agent</h3>
+        <h3>Wiki Ingester</h3>
         <p>Processes raw inputs into durable wiki leaves, digest entries, processed-source links, linted pages, and verifier evidence.</p>
         <div class="tag-row">
           <span class="tag agent">topic writer</span>
@@ -585,7 +598,7 @@
       </article>
 
       <article class="card agent">
-        <h3>Public Source Collector</h3>
+        <h3>Wiki Source Collector</h3>
         <p>Collects public raw source artifacts for approved topics, records exclusions, and leaves durable synthesis to wiki ingest.</p>
         <div class="tag-row">
           <span class="tag agent">raw-only boundary</span>
@@ -608,14 +621,14 @@
         <h3>Wiki Artifact Reviewer</h3>
         <p>Reviews project-wiki methodology artifacts with the dedicated checklist and shared documentation verifier.</p>
         <div class="tag-row">
-          <span class="tag agent">review-project-wiki</span>
+          <span class="tag agent">project-wiki-review</span>
           <span class="tag agent">completed checklist</span>
           <span class="tag agent">page verifier</span>
         </div>
       </article>
 
       <article class="card agent">
-        <h3>Backlog Steward</h3>
+        <h3>Dev Backlog Steward</h3>
         <p>Creates, claims, resumes, blocks, completes, and archives typed backlog work with recoverable status evidence.</p>
         <div class="tag-row">
           <span class="tag agent">create-backlog</span>
@@ -625,7 +638,7 @@
       </article>
 
       <article class="card agent">
-        <h3>Merge Coordinator</h3>
+        <h3>Dev Merge Coordinator</h3>
         <p>Integrates work from multiple agents or worktrees while preserving claims, ownership, verification, and conflict evidence.</p>
         <div class="tag-row">
           <span class="tag agent">agent-work-merge</span>
@@ -653,7 +666,7 @@
 
       <article class="panel">
         <h3>Skill groups</h3>
-        <p>Project Agent Setup detects specialized guidance once from explicit skill-owned any-of and all-of activation clauses evaluated against representative folder evidence. AGENTS.md then tells ordinary agents which folder skills to load before acting.</p>
+        <p>Project Configurator detects specialized guidance once from explicit skill-owned any-of and all-of activation clauses evaluated against representative folder evidence. The harness then supplies ordinary agents with the routed folder skills before they act.</p>
         <ul>
           <li>Methodology skills for docs, wiki, artifact creation, structured design, review, backlog, and merge work.</li>
           <li>Specialized skills for languages, frameworks, persistence, identity, runtimes, interface systems, tests, and optional tools.</li>
@@ -681,49 +694,49 @@
         <tbody>
           <tr>
             <td><span class="name">Web application</span></td>
-            <td>Orchestrator, Project Organiser, Coding Agent, Code Review Agent, QA And Verification Agent, UX Reviewer, Documentation Writer.</td>
+            <td>Dev Orchestrator, Project Organiser, Dev Coder, Dev Code Reviewer, Dev Verifier, Dev UX Specialist, Dev Documentation Writer.</td>
             <td>Front-end, API, static pages, and DB tiers with Next.js, React Server Components, API routes, auth, Postgres, Drizzle, Jest, and Playwright guidance.</td>
             <td>Build, lint, unit tests, integration tests, E2E tests, visual checks, accessibility checks, and data access checks.</td>
           </tr>
           <tr>
             <td><span class="name">API service</span></td>
-            <td>Orchestrator, Coding Agent, Code Review Agent, QA And Verification Agent, Documentation Writer.</td>
+            <td>Dev Orchestrator, Dev Coder, Dev Code Reviewer, Dev Verifier, Dev Documentation Writer.</td>
             <td>api-routes, typescript-strict, clerk-auth, postgres-drizzle, jest.</td>
             <td>Build, unit tests, integration tests, contract tests, OpenAPI or route checks.</td>
           </tr>
           <tr>
             <td><span class="name">CLI or local tooling</span></td>
-            <td>Coding Agent, Code Review Agent, Documentation Writer, QA And Verification Agent.</td>
+            <td>Dev Coder, Dev Code Reviewer, Dev Documentation Writer, Dev Verifier.</td>
             <td>node-cli, typescript-esm, vitest.</td>
             <td>Unit tests, command snapshots, packaging checks, docs examples.</td>
           </tr>
           <tr>
             <td><span class="name">Data or analytics pipeline</span></td>
-            <td>Orchestrator, Coding Agent, Code Review Agent, QA And Verification Agent.</td>
+            <td>Dev Orchestrator, Dev Coder, Dev Code Reviewer, Dev Verifier.</td>
             <td>Ingestion, schema validation, transformations, warehouse, reporting.</td>
             <td>Schema tests, fixture runs, data quality checks, lineage checks.</td>
           </tr>
           <tr>
             <td><span class="name">Agentic development harness</span></td>
-            <td>Orchestrator, Project Organiser, Coding Agent, Code Review Agent, Artifact Review Agent.</td>
-            <td>harness-implementation, tool-runtime-implementation, plan-engine-implementation, local-model-integration, vitest.</td>
+            <td>Dev Orchestrator, Project Organiser, Dev Coder, Dev Code Reviewer, Dev Artifact Reviewer.</td>
+            <td>agent-harness, tool-runtime, plan-engine, local-model-integration, vitest.</td>
             <td>Harness tests, prompt tests, replay traces, output schema checks.</td>
           </tr>
           <tr>
             <td><span class="name">Documentation or wiki repository</span></td>
-            <td>Wiki Setup Agent, Wiki Query Agent, Wiki Research Agent, Public Source Collector, Wiki Writer Agent, Wiki Ingest Agent, Wiki Topic Verifier, and Wiki Artifact Reviewer.</td>
+            <td>Wiki Architect, Wiki Query Responder, Wiki Researcher, Wiki Source Collector, Wiki Writer, Wiki Ingester, Wiki Topic Verifier, and Wiki Artifact Reviewer.</td>
             <td>Project wiki, source collection, durable synthesis, link validation.</td>
             <td>Wiki status, lint, topic verification, source reconciliation.</td>
           </tr>
           <tr>
             <td><span class="name">Library, SDK, or package</span></td>
-            <td>Coding Agent, Code Review Agent, Documentation Writer, QA And Verification Agent.</td>
+            <td>Dev Coder, Dev Code Reviewer, Dev Documentation Writer, Dev Verifier.</td>
             <td>Public API design, compatibility policy, examples, release packaging.</td>
             <td>Unit tests, public API checks, docs examples, package build.</td>
           </tr>
           <tr>
             <td><span class="name">Enterprise workflow integration</span></td>
-            <td>Orchestrator, Coding Agent, Code Review Agent, Documentation Writer, QA And Verification Agent.</td>
+            <td>Dev Orchestrator, Dev Coder, Dev Code Reviewer, Dev Documentation Writer, Dev Verifier.</td>
             <td>APIs, events, queues, auth, audit, data contracts.</td>
             <td>Contract tests, integration tests, audit checks, security review.</td>
           </tr>
@@ -804,10 +817,10 @@ Supporting stacks:
 
 Default role agents:
   - project-organiser
-  - coding-agent
-  - code-review-agent
-  - qa-and-verification-agent
-  - documentation-writer
+  - dev-coder
+  - dev-code-reviewer
+  - dev-verifier
+  - dev-documentation-writer
 
 Validation:
   Build: pnpm run build
@@ -870,10 +883,22 @@ Nested AGENTS.md examples:
         </thead>
         <tbody>
           <tr>
+            <td><span class="name">First-time bootstrap</span></td>
+            <td>Project Bootstrapper</td>
+            <td>Receives one desired steady-state request and the live repository, then owns the complete setup sequence instead of returning a plan or handoff chain.</td>
+            <td>Configured routing, accepted documentation and review evidence, integrated verification, and genuinely unresolved decisions.</td>
+          </tr>
+          <tr>
             <td><span class="name">Intake</span></td>
-            <td>Development Orchestrator</td>
-            <td>Reads the user request, applicable AGENTS.md files, backlog, and repo status.</td>
+            <td>Dev Orchestrator</td>
+            <td>Applies the project instructions supplied by the harness, then inspects the user request, backlog, and repo status.</td>
             <td>Task breakdown, agent assignments, context pack list, validation plan.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Claim acquisition</span></td>
+            <td>Every modifying role</td>
+            <td>Atomically checks the repository-global registry, requested files and resources, and primary worktree status before mutation.</td>
+            <td>Primary ownership, isolated branch and worktree, overlap wait, or explicit recovery ownership.</td>
           </tr>
           <tr>
             <td><span class="name">Placement</span></td>
@@ -883,33 +908,39 @@ Nested AGENTS.md examples:
           </tr>
           <tr>
             <td><span class="name">Agent setup</span></td>
-            <td>Project Agent Setup Agent</td>
-            <td>Reads AGENTS.md files, source roots, tests, docs, procedures, package metadata, and project taxonomy.</td>
-            <td>Root AGENTS-PLAN.yaml, nested AGENTS-PLAN.yaml recommendations, role map, skill loadouts, and validation evidence.</td>
+            <td>Project Configurator</td>
+            <td>Inspects existing AGENTS.md artifacts, source roots, tests, docs, procedures, package metadata, and project taxonomy.</td>
+            <td>Project-root PROJECT.yaml, nested AGENTS.md recommendations, role map, skill loadouts, and validation evidence.</td>
           </tr>
           <tr>
             <td><span class="name">Execution</span></td>
-            <td>Coding Agent, Documentation Writer, Wiki Writer Agent, or Wiki Ingest Agent</td>
+            <td>Dev Coder, Dev Documentation Writer, Wiki Writer, or Wiki Ingester</td>
             <td>Receives only the files, skills, AGENTS.md excerpts, and acceptance criteria needed for the assigned job.</td>
             <td>Patch, artifact, test evidence, build evidence, implementation notes.</td>
           </tr>
           <tr>
             <td><span class="name">Review</span></td>
-            <td>Code Review Agent, Artifact Review Agent, Wiki Topic Verifier, or Wiki Artifact Reviewer</td>
+            <td>Dev Code Reviewer, Dev Artifact Reviewer, Wiki Topic Verifier, or Wiki Artifact Reviewer</td>
             <td>Receives the diff, source evidence, role contract, and AGENTS.md rules without the executor's full scratch context.</td>
             <td>PASS WARN FAIL verdict with file and rule references.</td>
           </tr>
           <tr>
             <td><span class="name">Verification</span></td>
-            <td>QA And Verification Agent</td>
+            <td>Dev Verifier</td>
             <td>Receives the acceptance criteria, validation commands, changed files, and relevant runtime notes.</td>
             <td>Command results, coverage notes, unresolved risks.</td>
           </tr>
           <tr>
             <td><span class="name">Integration</span></td>
-            <td>Merge Coordinator</td>
+            <td>Dev Merge Coordinator</td>
             <td>Receives branch state, claims, conflicts, and verification records for parallel work.</td>
-            <td>Merged work, conflict ownership, remaining follow-up items.</td>
+            <td>Merged work, conflict ownership, integration commit, clean status, and released claims.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Completion</span></td>
+            <td>Claim owner</td>
+            <td>Confirms required verification, commit or explicit no-change, clean worktree status, and runtime-resource cleanup or handoff.</td>
+            <td>Commit hash, verification evidence, final clean status, and released or handed-off claims.</td>
           </tr>
         </tbody>
       </table>
@@ -927,10 +958,10 @@ Nested AGENTS.md examples:
         <h3>Shared role source</h3>
         <p>These files define reusable role behavior before it is rendered into Codex, Claude Code, or another host.</p>
         <ul>
-          <li><code>agents/roles/development-use/development-orchestrator.role.yaml</code> defines the coordinator role that breaks work into bounded tasks, selects agents, and preserves handoff and verification expectations.</li>
+          <li><code>agents/roles/dev-activities/dev-orchestrator.role.yaml</code> defines the coordinator role that breaks work into bounded tasks, selects agents, and preserves handoff and verification expectations.</li>
           <li><code>agents/roles/project-setup/project-organiser.role.yaml</code> defines the placement role that applies taxonomy, path intent, and file-organization rules before artifacts or code are created.</li>
-          <li><code>agents/roles/development-use/coding-agent.role.yaml</code> defines the implementation role used for ordinary code changes after fixed and folder skills are loaded.</li>
-          <li><code>agents/roles/development-use/code-review-agent.role.yaml</code> defines the review role, including finding-first output, severity expectations, evidence requirements, and verification checks.</li>
+          <li><code>agents/roles/dev-activities/dev-coder.role.yaml</code> defines the implementation role used for ordinary code changes after fixed and folder skills are loaded.</li>
+          <li><code>agents/roles/dev-activities/dev-code-reviewer.role.yaml</code> defines the review role, including finding-first output, severity expectations, evidence requirements, and verification checks.</li>
           <li><code>agents/roles/wiki-activities/*.role.yaml</code> defines the separate wiki setup, query, research, collection, writing, ingest, verification, and project-wiki artifact review responsibilities.</li>
         </ul>
       </article>
@@ -940,32 +971,26 @@ Nested AGENTS.md examples:
         <p>These files provide project-specific facts and unconditional folder skill loadouts.</p>
         <ul>
           <li><code>AGENTS.md</code> is the root project contract. It declares the project family, application tiers, validation commands, data rules, and default guidance for this repository.</li>
-          <li><code>AGENTS-PLAN.yaml</code> is the setup and validation artifact that explains why project role agents, folder technology loadouts, nested plans, and AGENTS.md references exist.</li>
+          <li><code>PROJECT.yaml</code> is the single project-root setup and validation artifact that explains why project role agents, folder technology loadouts, and root or nested AGENTS.md references exist.</li>
           <li><code>&lt;subtree&gt;/AGENTS.md</code> narrows the root contract for a folder that has different tier, stack, validation, or data-handling needs. The nearest file applies to work in that subtree.</li>
           <li><code>CLAUDE.md</code> is a thin Claude Code bridge that imports the colocated <code>AGENTS.md</code>; create the same bridge beside nested guidance when Claude needs that subtree.</li>
-          <li><code>&lt;subtree&gt;/AGENTS-PLAN.yaml</code> is used only when the subtree has distinct technology, runtime, data, or verification evidence that would make the root plan too noisy.</li>
-          <li><code>docs/project-taxonomy.md</code> defines the project families, artifact types, and placement concepts used by Project Agent Setup and Project Organiser.</li>
+          <li><code>docs/project-taxonomy.md</code> defines the project families, artifact types, and placement concepts used by Project Configurator and Project Organiser.</li>
         </ul>
       </article>
 
       <article class="panel">
         <h3>Runtime adapters</h3>
-        <p>These files translate shared roles and skills into the format a specific agent runtime actually consumes.</p>
-        <ul>
-          <li><code>generated/adapters/codex/agents/*.toml</code> contains generated Codex custom-agent definitions ready for installation under <code>.codex/agents/</code> or <code>~/.codex/agents/</code>.</li>
-          <li><code>generated/adapters/claude/agents/*.md</code> contains generated Claude Code definitions ready for installation under <code>.claude/agents/</code> or <code>~/.claude/agents/</code>.</li>
-          <li><code>skills/*/agents/openai.yaml</code> stores optional Codex metadata beside the source skill so deployment matches the Codex skill layout while sync tooling keeps derived interface fields aligned.</li>
-        </ul>
+        <p>Generated adapter files translate shared roles and skills into runtime-specific definitions. See <a href="agent-definition-runtime-formats.html">Agent Definition Runtime Formats</a> for native file shapes, field mappings, source scope, explicit deployment, and adapter constraints.</p>
       </article>
 
       <article class="panel">
         <h3>Generated documentation</h3>
-        <p>The HTML pages are views over canonical skill and role catalogs. The maintain-methodology-documentation skill updates sources, regenerates browser data and runtime adapters, then runs stale-output and consistency checks.</p>
+        <p>The HTML catalog views are generated from canonical role and skill sources. Use the <a href="agent-role-skill-map.html">role map</a> to inspect the current generated roles, skills, loadouts, outputs, and definition popups.</p>
       </article>
 
       <article class="panel">
-        <h3>Customer installation and maintenance</h3>
-        <p>Deterministic installers copy generic skills and native agents with ownership manifests. Customer edits keep stable names, are never silently overwritten, and are reconciled through three-way discrepancy analysis during an update.</p>
+        <h3>Customer deployment and maintenance</h3>
+        <p>Maintenance uses repository sources and generated adapters without user-home installation. A separately requested deployment requires explicit target directories and preserves customer ownership and stable names. The runtime-format page owns the detailed adapter and update behavior; this model retains only the operating boundary.</p>
       </article>
 
       <article class="panel">

@@ -1,3 +1,7 @@
+// Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+// AI attribution: Modified with AI assistance.
+// Summary: Enhances generated role cards with definition dialogs and repository-aware editing links.
+
 (() => {
   "use strict";
 
@@ -351,6 +355,7 @@
 
   let modalElements = null;
   let lastFocusedElement = null;
+  let shouldScrollToFocusedElement = false;
 
   function roleData() {
     const data = window[DATA_GLOBAL_NAME];
@@ -573,7 +578,11 @@
   function openRoleDefinition(role, sourceElement) {
     const elements = ensureModal();
     const editUrl = editorUrlForRole(role);
-    lastFocusedElement = sourceElement;
+    const returnTargetId = sourceElement.dataset.definitionReturnTarget;
+    const returnTarget = returnTargetId ? document.getElementById(returnTargetId) : null;
+    lastFocusedElement = returnTarget || sourceElement;
+    shouldScrollToFocusedElement = Boolean(returnTarget);
+    elements.close.textContent = returnTarget ? "Back to map" : "Close";
     elements.title.textContent = role.displayName || role.name;
     elements.category.textContent = role.groupLabel || role.group;
     elements.source.textContent = role.sourcePath;
@@ -611,7 +620,10 @@
     const { modal } = ensureModal();
     modal.hidden = true;
     if (lastFocusedElement instanceof HTMLElement) {
-      lastFocusedElement.focus();
+      lastFocusedElement.focus({ preventScroll: shouldScrollToFocusedElement });
+      if (shouldScrollToFocusedElement) {
+        lastFocusedElement.scrollIntoView({ block: "start" });
+      }
     }
   }
 

@@ -1,0 +1,64 @@
+name: dev-prompt-reviewer
+filename: dev-prompt-reviewer
+description: Reviews prompt protocol, tool-call safety, schema promises, evaluation
+  coverage, and model-facing data boundaries.
+instructions: Trace prompt and tool contracts through the runtime with the technology
+  guidance supplied for the active scope, identify schema and safety gaps, and distinguish
+  verified behavior from assumptions.
+modelProfile: advanced
+examples:
+- purpose: Find contradictions across prompt instructions, model-facing state, tool
+    authority, retry handling, and protected-data boundaries before an assistant can
+    create duplicate or unsafe side effects.
+  runtimeInvocations:
+    codex: "$dev-prompt-reviewer Review the support-ticket assistant's prompt,
+      state schema, create-ticket tool, retry path, and redaction rules for contract
+      and safety defects."
+    claude-code: "@agent-dev-prompt-reviewer Review the support-ticket assistant's
+      prompt, state schema, create-ticket tool, retry path, and redaction rules for
+      contract and safety defects."
+  plausibleResponse: Returned a read-only structured review tracing each instruction
+    promise to the schemas and runtime. Reported that timeout retries can duplicate
+    tickets because no idempotency key is carried, the prompt permits raw customer
+    notes where the tool contract allows summaries only, and the success response
+    promises a ticket identifier that the result schema does not require. Distinguished
+    verified defects from the unresolved assumption about provider timeout semantics
+    and proposed boundary-specific corrections.
+- purpose: Measure whether an evaluation suite covers the output schema, tool-call
+    failures, recovery, cancellation, and fallback behavior promised by a model-facing
+    planning protocol.
+  runtimeInvocations:
+    codex: "$dev-prompt-reviewer Review the deployment-plan agent's release
+      readiness by mapping its prompt, output schema, tool-failure handling, and fallback
+      promises to the existing evaluations."
+    claude-code: "@agent-dev-prompt-reviewer Review the deployment-plan agent's
+      release readiness by mapping its prompt, output schema, tool-failure handling,
+      and fallback promises to the existing evaluations."
+  plausibleResponse: Mapped each protocol promise to executable coverage and found
+    that the suite exercises only the successful path. Reported missing cases for
+    malformed tool arguments, denied authority, partial JSON, cancellation after a
+    side effect, and fallback exhaustion. Returned prioritized evaluation gaps and
+    concrete cases while identifying recovery behavior that still lacked runtime
+    evidence.
+skills:
+- organise-project-files:
+    justification: We need this to confirm the destination of any new prompt review checklist, findings file, or evaluation artifact before writing it.
+    condition: when the requested review creates a new project file or directory.
+- prompt-contracts:
+    justification: We need this to assess the full model-facing contract rather than
+      reviewing prompt wording in isolation from state, tools, authority, and outputs.
+- review-structured-artifact:
+    justification: We need this to make contract defects comparable by evidence and
+      severity so maintainers can prioritize actionable corrections.
+isolation: read-only
+outputContract:
+- prompt contract findings:
+    purpose: Gives maintainers evidence-backed defects and corrections they can use
+      to make the model-facing protocol reliable.
+- schema and tool-call risks:
+    purpose: Makes boundary-specific failure modes visible so schema and tool owners
+      can address them separately from general prompt concerns.
+- evaluation gaps:
+    purpose: Identifies missing coverage so the corrected contract can be tested
+      against the behaviors and failures that matter.
+dynamicFolderSkills: true

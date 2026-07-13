@@ -11,8 +11,8 @@ Use this pack for explicit HTTP boundaries. In Next.js projects, challenge new A
 
 ## Routing
 
-- Load with Coding Agent for route handlers, request parsing, response shaping, status codes, and integration endpoints.
-- Load with Code Review Agent when a change affects external clients, auth, data validation, or error contracts.
+- Load with Dev Coder for route handlers, request parsing, response shaping, status codes, and integration endpoints.
+- Load with Dev Code Reviewer when a change affects external clients, auth, data validation, or error contracts.
 - Combine with Next.js App Router, Clerk Auth, TypeScript Strict, Postgres Drizzle, Jest, and Playwright.
 
 ## Guidance

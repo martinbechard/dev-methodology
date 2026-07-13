@@ -1,15 +1,17 @@
+# Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+# AI attribution: Modified with AI assistance.
+# Summary: Verifies explicit bundle deployment, ownership protection, pruning, and cleanup behavior.
+
 from __future__ import annotations
 
 import importlib.util
 import io
 import json
-import os
 import tempfile
 import unittest
 from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 from types import ModuleType
-from unittest.mock import patch
 
 
 INSTALLER_PATH = Path(__file__).with_name("install-skills.py")
@@ -184,28 +186,13 @@ class InstallSkillsTests(unittest.TestCase):
                 (destination / "alpha" / "SKILL.md").read_text(encoding="utf-8"),
             )
 
-    def test_adapter_default_destinations_use_agent_claude_and_junie_homes(self) -> None:
+    def test_destination_is_required_instead_of_defaulting_to_user_home(self) -> None:
         installer = load_installer()
 
-        with tempfile.TemporaryDirectory() as temp_dir:
-            root = Path(temp_dir)
-            agents_home = root / "agent-home"
-            claude_home = root / "claude-home"
-            user_home = root / "user-home"
-            environment = {
-                "AGENTS_HOME": str(agents_home),
-                "CLAUDE_HOME": str(claude_home),
-                "HOME": str(user_home),
-            }
+        with self.assertRaises(SystemExit), redirect_stderr(io.StringIO()):
+            installer.parse_args(["--adapter", "codex"])
 
-            with patch.dict(os.environ, environment, clear=True):
-                self.assertEqual(agents_home / "skills", installer.default_destination("generic"))
-                self.assertEqual(agents_home / "skills", installer.default_destination("codex"))
-                self.assertEqual(agents_home / "skills", installer.default_destination("gemini"))
-                self.assertEqual(claude_home / "skills", installer.default_destination("claude"))
-                self.assertEqual(user_home / ".junie" / "skills", installer.default_destination("junie"))
-
-    def test_dest_overrides_adapter_default(self) -> None:
+    def test_explicit_destination_is_used(self) -> None:
         installer = load_installer()
 
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -349,6 +336,116 @@ class InstallSkillsTests(unittest.TestCase):
             )
             self.assertEqual(["reviewer"], self.read_manifest_agent_names(agents_destination))
             self.assertIn(f"agents destination {agents_destination}", output.getvalue())
+
+    def test_agent_install_requires_explicit_destination_before_copying_skills(self) -> None:
+        installer = load_installer()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            source = root / "source"
+            destination = root / "skills-dest"
+            self.create_skill(source, "alpha")
+
+            error_output = io.StringIO()
+            with redirect_stdout(io.StringIO()), redirect_stderr(error_output):
+                exit_code = installer.main(
+                    [
+                        "--adapter",
+                        "codex",
+                        "--source",
+                        str(source),
+                        "--dest",
+                        str(destination),
+                        "--install-agents",
+                    ]
+                )
+
+            self.assertEqual(installer.ERROR_EXIT_CODE, exit_code)
+            self.assertFalse(destination.exists())
+            self.assertIn("requires an explicit --agents-dest", error_output.getvalue())
+
+    def test_remove_owned_cleans_skills_and_agents_but_preserves_unowned_content(self) -> None:
+        installer = load_installer()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            source = root / "source"
+            destination = root / "skills-dest"
+            agents_source = root / "agents-source"
+            agents_destination = root / "agents-dest"
+            self.create_skill(source, "alpha")
+            agents_source.mkdir()
+            (agents_source / "reviewer.toml").write_text(AGENT_FILE_CONTENT, encoding="utf-8")
+
+            with redirect_stdout(io.StringIO()):
+                install_exit_code = installer.main(
+                    [
+                        "--adapter",
+                        "codex",
+                        "--source",
+                        str(source),
+                        "--dest",
+                        str(destination),
+                        "--install-agents",
+                        "--agents-source",
+                        str(agents_source),
+                        "--agents-dest",
+                        str(agents_destination),
+                    ]
+                )
+            self.create_skill(destination, "local-only", SECOND_SKILL_FILE_CONTENT)
+            (agents_destination / "local-only.toml").write_text(AGENT_FILE_CONTENT, encoding="utf-8")
+
+            output = io.StringIO()
+            with redirect_stdout(output):
+                remove_exit_code = installer.main(
+                    [
+                        "--adapter",
+                        "codex",
+                        "--dest",
+                        str(destination),
+                        "--agents-dest",
+                        str(agents_destination),
+                        "--remove-owned",
+                    ]
+                )
+
+            self.assertEqual(installer.SUCCESS_EXIT_CODE, install_exit_code)
+            self.assertEqual(installer.SUCCESS_EXIT_CODE, remove_exit_code)
+            self.assertFalse((destination / "alpha").exists())
+            self.assertFalse((agents_destination / "reviewer.toml").exists())
+            self.assertFalse((destination / installer.INSTALL_MANIFEST_FILE_NAME).exists())
+            self.assertFalse((agents_destination / installer.INSTALL_MANIFEST_FILE_NAME).exists())
+            self.assertTrue((destination / "local-only" / "SKILL.md").is_file())
+            self.assertTrue((agents_destination / "local-only.toml").is_file())
+            self.assertIn("removed owned skill alpha", output.getvalue())
+            self.assertIn("removed owned agent reviewer", output.getvalue())
+
+    def test_remove_owned_refuses_to_delete_customized_content(self) -> None:
+        installer = load_installer()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            source = root / "source"
+            destination = root / "dest"
+            self.create_skill(source, "alpha")
+            with redirect_stdout(io.StringIO()):
+                install_exit_code = installer.main(
+                    ["--source", str(source), "--dest", str(destination)]
+                )
+            customized = "---\nname: alpha\ndescription: Customized.\n---\n"
+            (destination / "alpha" / "SKILL.md").write_text(customized, encoding="utf-8")
+
+            error_output = io.StringIO()
+            with redirect_stdout(io.StringIO()), redirect_stderr(error_output):
+                remove_exit_code = installer.main(
+                    ["--dest", str(destination), "--remove-owned"]
+                )
+
+            self.assertEqual(installer.SUCCESS_EXIT_CODE, install_exit_code)
+            self.assertEqual(installer.ERROR_EXIT_CODE, remove_exit_code)
+            self.assertTrue((destination / "alpha" / "SKILL.md").is_file())
+            self.assertIn("customized owned skills require discrepancy analysis", error_output.getvalue())
 
     def test_prune_owned_removes_deleted_skill_but_preserves_unowned_skill(self) -> None:
         installer = load_installer()

@@ -15,4 +15,4 @@ activation:
       - fileExtension: .cts
     - contentPattern: {glob: tsconfig*.json, contains: '"strict": true'}
 companions:
-- typescript-coding
+- typescript

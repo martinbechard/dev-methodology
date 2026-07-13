@@ -11,8 +11,8 @@ Use this application-domain pack for product code that manages local model files
 
 ## Routing
 
-- Load with Coding Agent for model registry, download, cache, server lifecycle, local runtime configuration, and model selection changes.
-- Load Runtime Diagnostician only for long-running setup failures, logs, resource exhaustion, or exclusive local runtime resources.
+- Load with Dev Coder for model registry, download, cache, server lifecycle, local runtime configuration, and model selection changes.
+- Load Dev Runtime Diagnostician only for long-running setup failures, logs, resource exhaustion, or exclusive local runtime resources.
 - Combine with Electron Main or Node CLI when local runtime control happens from desktop or command line code.
 
 ## Guidance

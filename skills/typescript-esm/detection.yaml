@@ -17,4 +17,4 @@ activation:
       - contentPattern: {glob: package.json, contains: '"type": "module"'}
       - contentPattern: {glob: tsconfig*.json, contains: NodeNext}
 companions:
-- typescript-coding
+- typescript

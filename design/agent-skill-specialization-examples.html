@@ -434,36 +434,37 @@
     <div class="legend" aria-label="Legend">
       <span class="pill"><span class="dot agent"></span> Role agent</span>
       <span class="pill"><span class="dot skill"></span> Routed skill</span>
-      <span class="pill"><span class="dot config"></span> AGENTS-PLAN.yaml</span>
+      <span class="pill"><span class="dot config"></span> PROJECT.yaml</span>
       <span class="pill"><span class="dot reference"></span> AGENTS.md reference</span>
       <span class="pill"><span class="dot case"></span> Fictitious project</span>
     </div>
     <h1 id="page-title">Agent Skill Specialization Examples</h1>
     <p class="lede">
-      These customer-safe examples use fictitious projects to show how AGENTS-PLAN.yaml organizes role agents,
-      skill loadouts, nested routing, setup evidence, and verification checks. AGENTS-PLAN.yaml is the checked-in YAML planning
-      artifact; the samples below show the file content directly.
-      The generic strategy lives in
-      <a href="agent-skill-specialization-strategy.html">Agent And Skill Specialization Strategy</a>.
+      These customer-safe examples show the concrete artifacts produced by the specialization strategy: PROJECT.yaml, concise root and nested AGENTS.md guidance, setup evidence, and validation checks. The <a href="agent-skill-specialization-strategy.html">strategy</a> owns the selection rules; this page shows their outcome in fictitious projects.
     </p>
   </section>
 
   <section class="section" aria-labelledby="usage-title">
-    <h2 id="usage-title">Standalone Planning Artifact</h2>
+    <h2 id="usage-title">One-Command Project Bootstrap</h2>
     <div class="grid">
+      <article class="card agent">
+        <h3>Project Bootstrapper</h3>
+        <p>This is the user-facing setup entry point. One request reuses an existing PROJECT.yaml or triggers Project Configurator only when that file is absent, selects the source-backed documentation set, delegates each artifact to its writer and independent reviewer, drives corrections to acceptance, and finishes with integrated verification.</p>
+      </article>
+
       <article class="card config">
-        <h3>AGENTS-PLAN.yaml</h3>
-        <p>AGENTS-PLAN.yaml is the project-owned setup document for planning agent roles and source-backed folder technology loadouts before durable guidance is copied into AGENTS.md. It can live at the repository root and, when needed, inside subfolders with distinct runtime or verification boundaries.</p>
+        <h3>PROJECT.yaml</h3>
+        <p>PROJECT.yaml is the project-owned setup document for agent roles and source-backed folder technology loadouts before durable guidance is copied into AGENTS.md. Each project has exactly one PROJECT.yaml at its root; that file covers every subfolder scope.</p>
       </article>
 
       <article class="card agent">
-        <h3>Project Agent Setup Agent</h3>
-        <p>This setup role uses development-methodology, create-agents-plan, and detect-technology-skills to inspect the project, classify tiers, detect variants for representative folder scopes, record source evidence, and create the root and nested AGENTS-PLAN.yaml files.</p>
+        <h3>Project Configurator</h3>
+        <p>This setup role runs under Project Bootstrapper only when project-root PROJECT.yaml is absent or the user explicitly requests reconfiguration. It uses development-methodology, create-project-configuration, and detect-technology-skills to inspect the project, classify tiers, detect variants for representative folder scopes, record source evidence, and create the single project-root PROJECT.yaml before documentation work begins.</p>
       </article>
 
       <article class="card case">
         <h3>Project-Owned Setup</h3>
-        <p>Create AGENTS-PLAN.yaml inside the project folder it describes. Public samples, internal projects, and customer deployments follow the same setup flow; only the source evidence and local rules change.</p>
+        <p>Create one PROJECT.yaml at the root of the project it describes. Public samples, internal projects, and customer deployments follow the same setup flow; only the source evidence and local rules change.</p>
       </article>
 
       <article class="card skill">
@@ -474,7 +475,7 @@
   </section>
 
   <section class="section" aria-labelledby="template-title">
-    <h2 id="template-title">AGENTS-PLAN.yaml Template Sections</h2>
+    <h2 id="template-title">PROJECT.yaml Template Sections</h2>
     <div class="matrix">
       <table>
         <thead>
@@ -492,13 +493,13 @@
           </tr>
           <tr>
             <td><span class="name">Authoritative Sources</span></td>
-            <td>Lists README files, AGENTS.md files, procedures, packages, tests, docs, and source roots inspected.</td>
+            <td>Lists README files, existing AGENTS.md artifacts, procedures, packages, tests, docs, and source roots inspected.</td>
             <td>Makes the setup reviewable because every role and skill decision can be traced to evidence.</td>
           </tr>
           <tr>
             <td><span class="name">Project Taxonomy</span></td>
             <td>Classifies project family, application tiers, technology stacks, runtime boundaries, and documentation surfaces.</td>
-            <td>Gives Project Agent Setup stable terms such as web application, front-end tier, API tier, static pages tier, DB tier, documentation tier, or CLI tier.</td>
+            <td>Gives Project Configurator stable terms such as web application, front-end tier, API tier, static pages tier, DB tier, documentation tier, or CLI tier.</td>
           </tr>
           <tr>
             <td><span class="name">Root AGENTS.md Routing Reference</span></td>
@@ -521,14 +522,14 @@
             <td>Lets every agent load the established folder skills without rerunning setup-time detection.</td>
           </tr>
           <tr>
-            <td><span class="name">Nested AGENTS.md And AGENTS-PLAN.yaml Files</span></td>
-            <td>Lists subfolders that need nested operational AGENTS.md references, and notes when a subtree also needs its own local AGENTS-PLAN.yaml because it has distinct evidence.</td>
-            <td>Keeps root guidance compact while making local loadouts and setup evidence explicit.</td>
+            <td><span class="name">Nested AGENTS.md Files</span></td>
+            <td>Lists subfolders that need nested operational AGENTS.md references. Their source evidence and placement decisions remain in the single root PROJECT.yaml.</td>
+            <td>Keeps operational guidance compact while preserving one project-wide configuration.</td>
           </tr>
           <tr>
             <td><span class="name">Validation Plan</span></td>
             <td>Defines commands and checks used to confirm the role and skill setup is usable.</td>
-            <td>Makes the setup plan verifiable without making validation the reason the plan exists.</td>
+            <td>Makes the project configuration verifiable without making validation the reason the configuration exists.</td>
           </tr>
         </tbody>
       </table>
@@ -536,46 +537,26 @@
   </section>
 
   <section class="section" aria-labelledby="customer-title">
-    <h2 id="customer-title">Fictitious Customer Examples</h2>
+    <h2 id="customer-title">Example Chooser</h2>
     <div class="grid">
       <article class="card agent">
         <h3>Northwind Tools</h3>
-        <ul>
-          <li>Family: local developer tooling.</li>
-          <li>Application tiers: CLI, file processing, generated artifacts, tests, documentation.</li>
-          <li>Primary skills: node-cli, typescript-esm, typescript-strict, vitest, careful-coding, code-comments, fix-explanation.</li>
-          <li>Plan shape: one root AGENTS-PLAN.yaml because folder rules are simple and shared.</li>
-        </ul>
+        <p>A local developer-tooling project with one runtime, one root configuration, and no nested AGENTS.md boundary.</p>
       </article>
 
       <article class="card case">
         <h3>Acme Ledger</h3>
-        <ul>
-          <li>Family: web application.</li>
-          <li>Application tiers: front-end, API, static pages, DB, documentation.</li>
-          <li>Primary skills: nextjs-app-router, react-server-components, api-routes, postgres-drizzle, typescript-strict, jest, playwright.</li>
-          <li>Plan shape: root AGENTS-PLAN.yaml plus nested AGENTS.md references for API and database folders.</li>
-        </ul>
+        <p>A web application that uses nested operational guidance where API and database work need different local rules.</p>
       </article>
 
       <article class="card case">
         <h3>Contoso Orders</h3>
-        <ul>
-          <li>Family: Spring Boot service.</li>
-          <li>Application tiers: HTTP controllers, services, persistence, SQL migrations, tests, and operations.</li>
-          <li>Primary skills: java-coding, spring-boot, sql-coding, test-driven-development, root-cause-analysis, and code-review-evidence.</li>
-          <li>Review flow: extract evidence from Java, Spring Boot, SQL, and test checklists, then synthesize findings. Simple and advanced stages remain dispatch intent until the harness captures separate invocations.</li>
-        </ul>
+        <p>A Spring Boot service that illustrates a non-web-stack role and skill loadout without introducing a separate role taxonomy.</p>
       </article>
 
       <article class="card skill">
         <h3>Beacon Knowledge Base</h3>
-        <ul>
-          <li>Family: documentation and project wiki repository.</li>
-          <li>Application tiers: source collection, wiki synthesis, verification, publication.</li>
-          <li>Primary skills: project-wiki, project-wiki-research, project-wiki-topic-writer, project-wiki-topic-verifier, code-project-wiki.</li>
-          <li>Plan shape: one root AGENTS-PLAN.yaml because the repository owns one wiki workflow; nested wiki AGENTS.md is only needed when multiple wiki roots have different rules.</li>
-        </ul>
+        <p>A documentation and project-wiki repository whose collection, synthesis, verification, and publication work remains distinct.</p>
       </article>
     </div>
   </section>
@@ -584,23 +565,24 @@
     <h2 id="tools-title">Example: Northwind Tools</h2>
     <div class="grid">
       <article class="card case">
-        <h3>Root plan</h3>
+        <h3>Root configuration</h3>
         <ul>
-          <li>AGENTS-PLAN.yaml records the CLI entry points, generated artifact rules, fixture locations, and test commands.</li>
+          <li>PROJECT.yaml records the CLI entry points, generated artifact rules, fixture locations, and test commands.</li>
           <li>No nested AGENTS.md reference or local plan is needed while the source tree uses one TypeScript runtime and one verification workflow.</li>
-          <li>Root AGENTS.md can stay short because the plan carries the setup evidence.</li>
+          <li>Root AGENTS.md can stay short because PROJECT.yaml carries the setup evidence.</li>
         </ul>
       </article>
 
       <article class="card agent">
         <h3>Role agents</h3>
         <div class="tag-row">
-          <span class="tag agent">Project Agent Setup Agent</span>
-          <span class="tag agent">Development Orchestrator</span>
-          <span class="tag agent">Coding Agent</span>
-          <span class="tag agent">Code Review Agent</span>
-          <span class="tag agent">QA And Verification Agent</span>
-          <span class="tag agent">Documentation Writer</span>
+          <span class="tag agent">Project Bootstrapper</span>
+          <span class="tag agent">Project Configurator</span>
+          <span class="tag agent">Dev Orchestrator</span>
+          <span class="tag agent">Dev Coder</span>
+          <span class="tag agent">Dev Code Reviewer</span>
+          <span class="tag agent">Dev Verifier</span>
+          <span class="tag agent">Dev Documentation Writer</span>
         </div>
       </article>
 
@@ -634,21 +616,21 @@
           <tr>
             <td><span class="name">src/commands/**</span></td>
             <td>CLI tier.</td>
-            <td>Coding Agent loads node-cli, typescript-esm, typescript-strict, and vitest.</td>
+            <td>Dev Coder loads node-cli, typescript-esm, typescript-strict, and vitest.</td>
             <td>Run focused command tests, argument parsing tests, and build.</td>
             <td>Root AGENTS.md reference is enough because command rules share one runtime.</td>
           </tr>
           <tr>
             <td><span class="name">src/readers/** and src/writers/**</span></td>
             <td>File processing tier.</td>
-            <td>Coding Agent loads node-cli, careful-coding, code-comments, typescript-strict, and vitest.</td>
+            <td>Dev Coder loads node-cli, careful-coding, code-comments, typescript-strict, and vitest.</td>
             <td>Run fixture tests, generated artifact snapshots, and build.</td>
             <td>Root AGENTS.md names fixture and artifact rules.</td>
           </tr>
           <tr>
             <td><span class="name">tests/**</span></td>
             <td>Verification tier.</td>
-            <td>QA And Verification Agent loads vitest and project-specific fixture rules.</td>
+            <td>Dev Verifier loads vitest and project-specific fixture rules.</td>
             <td>Run targeted tests before the full test command.</td>
             <td>Root AGENTS.md names the standard test workflow.</td>
           </tr>
@@ -658,11 +640,11 @@
 
     <div class="snippet" data-expanded="false">
       <div class="snippet-head">
-        <h3>Northwind AGENTS-PLAN.yaml</h3>
+        <h3>Northwind PROJECT.yaml</h3>
         <button class="snippet-toggle" type="button" aria-expanded="false" aria-controls="northwind-plan-sample">Expand</button>
       </div>
       <p class="snippet-note">This is the root YAML plan for a simple tooling repository.</p>
-      <pre id="northwind-plan-sample" class="config-block clamp-block"><code>schema: agents-plan
+      <pre id="northwind-plan-sample" class="config-block clamp-block"><code>schema: project
 schema_version: 1
 project:
   name: Northwind Tools
@@ -724,42 +706,42 @@ Validation:
           <tr>
             <td><span class="name">app/(authenticated)/**</span></td>
             <td>Front-end tier.</td>
-            <td>Coding Agent loads nextjs-app-router, react-server-components, typescript-strict, tailwind-design-system, jest, and playwright.</td>
+            <td>Dev Coder loads nextjs-app-router, react-server-components, typescript-strict, tailwind-design-system, jest, and playwright.</td>
             <td>Run focused unit tests, route smoke checks, accessibility checks, and build.</td>
             <td>Root AGENTS.md is enough unless a product area has its own workflow rules.</td>
           </tr>
           <tr>
             <td><span class="name">app/api/**/route.ts</span></td>
             <td>API tier.</td>
-            <td>Coding Agent loads api-routes, clerk-auth, nextjs-app-router, postgres-drizzle, typescript-strict, and jest.</td>
+            <td>Dev Coder loads api-routes, clerk-auth, nextjs-app-router, postgres-drizzle, typescript-strict, and jest.</td>
             <td>Run API unit tests, auth boundary checks, persistence tests, and build.</td>
             <td>Nested app/api/AGENTS.md when many routes share API-specific contracts.</td>
           </tr>
           <tr>
             <td><span class="name">app/(marketing)/**</span></td>
             <td>Static pages tier.</td>
-            <td>Coding Agent loads nextjs-app-router, react-server-components, tailwind-design-system, and playwright.</td>
+            <td>Dev Coder loads nextjs-app-router, react-server-components, tailwind-design-system, and playwright.</td>
             <td>Run build, link checks, responsive screenshots, and smoke checks for forms or calls to action.</td>
             <td>Root AGENTS.md unless the static site is maintained by a separate content workflow.</td>
           </tr>
           <tr>
             <td><span class="name">db/** and drizzle/**</span></td>
             <td>DB tier.</td>
-            <td>Coding Agent loads postgres-drizzle, typescript-strict, and jest. Code Review Agent checks schema boundaries and migration assumptions.</td>
+            <td>Dev Coder loads postgres-drizzle, typescript-strict, and jest. Dev Code Reviewer checks schema boundaries and migration assumptions.</td>
             <td>Run schema checks, persistence tests, seed checks, and build.</td>
             <td>Nested db/AGENTS.md when data ownership, migrations, or privacy rules require local evidence.</td>
           </tr>
           <tr>
             <td><span class="name">docs/wiki/**</span></td>
             <td>Documentation tier.</td>
-            <td>Wiki Writer Agent loads project-wiki and project-wiki-topic-writer, adding code-project-wiki only when the wiki change depends on code or test evidence.</td>
+            <td>Wiki Writer loads project-wiki and project-wiki-topic-write, adding code-project-wiki only when the wiki change depends on code or test evidence.</td>
             <td>Run wiki status, lint, link checks, and OKF validation when topic pages change.</td>
             <td>Root AGENTS.md plus docs/wiki/AGENTS.md only when wiki workflow rules are extensive.</td>
           </tr>
           <tr>
             <td><span class="name">tests/e2e/**</span></td>
             <td>Verification tier.</td>
-            <td>QA And Verification Agent or E2E Browser Agent loads playwright, nextjs-app-router, and project-specific test data rules.</td>
+            <td>Dev Verifier or Dev Browser Operator loads playwright, nextjs-app-router, and project-specific test data rules.</td>
             <td>Run targeted browser flows with console and network inspection before broader suite runs.</td>
             <td>Nested tests/e2e/AGENTS.md when the browser runtime has special setup or shared-state constraints.</td>
           </tr>
@@ -769,11 +751,11 @@ Validation:
 
     <div class="snippet" data-expanded="false">
       <div class="snippet-head">
-        <h3>Acme AGENTS-PLAN.yaml</h3>
+        <h3>Acme PROJECT.yaml</h3>
         <button class="snippet-toggle" type="button" aria-expanded="false" aria-controls="acme-plan-sample">Expand</button>
       </div>
-      <p class="snippet-note">This root plan points to nested operational AGENTS.md references for API and database local rules.</p>
-      <pre id="acme-plan-sample" class="config-block clamp-block"><code>schema: agents-plan
+      <p class="snippet-note">This root configuration points to nested operational AGENTS.md references for API and database local rules.</p>
+      <pre id="acme-plan-sample" class="config-block clamp-block"><code>schema: project
 schema_version: 1
 project:
   name: Acme Ledger
@@ -798,9 +780,9 @@ application_tiers:
     nested_agents_reference: db/AGENTS.md
 
 dispatch:
-  project-agent-setup-agent:
-    skills: [development-methodology, create-agents-plan, documentation-page-verifier]
-  coding-agent:
+  project-configurator:
+    skills: [development-methodology, create-project-configuration, documentation-page-verify]
+  dev-coder:
     rules:
       - match: app/api/**/route.ts
         add_skills: [api-routes, clerk-auth, postgres-drizzle, jest]
@@ -813,7 +795,7 @@ dispatch:
         <h3>Acme Root And Nested AGENTS.md References</h3>
         <button class="snippet-toggle" type="button" aria-expanded="false" aria-controls="acme-agents-sample">Expand</button>
       </div>
-      <p class="snippet-note">The operational AGENTS.md files are derived from the validated plan and carry the concise runtime routing rules.</p>
+      <p class="snippet-note">The operational AGENTS.md files are derived from the validated configuration and carry the concise runtime routing rules.</p>
       <pre id="acme-agents-sample" class="config-block clamp-block"><code>AGENTS.md
 Project family: web application.
 Application tiers:
@@ -822,7 +804,7 @@ Application tiers:
   Static pages: app/(marketing)/**
   DB: db/** and drizzle/**
 Technology skills:
-  Read nested AGENTS.md before changing app/api/** or db/**.
+  Apply the nested project instructions and folder skills supplied for app/api/** or db/**.
 Validation:
   pnpm test
   pnpm run build
@@ -856,21 +838,21 @@ Local checks: schema checks, migration review, seed data tests.</code></pre>
           <tr>
             <td><span class="name">raw/inbox/** and raw/fragments/**</span></td>
             <td>Source collection tier.</td>
-            <td>Wiki Research Agent handles bounded on-demand gaps; Public Source Collector handles approved public source windows. Both keep collection raw-only.</td>
+            <td>Wiki Researcher handles bounded on-demand gaps; Wiki Source Collector handles approved public source windows. Both keep collection raw-only.</td>
             <td>Confirm source metadata, date boundaries, and queue placement before synthesis.</td>
             <td>Root AGENTS.md because this wiki-only project has one source and wiki workflow.</td>
           </tr>
           <tr>
             <td><span class="name">docs/wiki/**</span></td>
             <td>Wiki synthesis tier.</td>
-            <td>Wiki Writer Agent owns ordinary durable maintenance; Wiki Ingest Agent owns raw-to-processed synthesis. Either adds code-project-wiki only when claims depend on code or tests.</td>
+            <td>Wiki Writer owns ordinary durable maintenance; Wiki Ingester owns raw-to-processed synthesis. Either adds code-project-wiki only when claims depend on code or tests.</td>
             <td>Run wiki status, lint, and OKF validation.</td>
             <td>Root AGENTS.md; use a nested wiki AGENTS.md only when another wiki root in the same project has different rules.</td>
           </tr>
           <tr>
             <td><span class="name">docs/wiki/digests/**</span></td>
             <td>Publication tier.</td>
-            <td>Wiki Writer Agent maintains item-level digest entries, and Wiki Topic Verifier independently checks digest ordering, links, source coverage, and page quality.</td>
+            <td>Wiki Writer maintains item-level digest entries, and Wiki Topic Verifier independently checks digest ordering, links, source coverage, and page quality.</td>
             <td>Run link checks, topic verifier checks, and digest coverage checks.</td>
             <td>Root AGENTS.md names publication conventions.</td>
           </tr>
@@ -880,11 +862,11 @@ Local checks: schema checks, migration review, seed data tests.</code></pre>
 
     <div class="snippet" data-expanded="false">
       <div class="snippet-head">
-        <h3>Beacon AGENTS-PLAN.yaml</h3>
+        <h3>Beacon PROJECT.yaml</h3>
         <button class="snippet-toggle" type="button" aria-expanded="false" aria-controls="beacon-plan-sample">Expand</button>
       </div>
-      <p class="snippet-note">The plan records why root guidance is enough for Beacon's single wiki workflow and which checks prove that workflow is usable.</p>
-      <pre id="beacon-plan-sample" class="config-block clamp-block"><code>schema: agents-plan
+      <p class="snippet-note">PROJECT.yaml records why root guidance is enough for Beacon's single wiki workflow and which checks prove that workflow is usable.</p>
+      <pre id="beacon-plan-sample" class="config-block clamp-block"><code>schema: project
 schema_version: 1
 project:
   name: Beacon Knowledge Base
@@ -899,22 +881,22 @@ application_tiers:
     skills: [project-wiki-research]
   wiki_synthesis:
     paths: [docs/wiki/**]
-    skills: [project-wiki, project-wiki-topic-writer, project-wiki-topic-verifier]
+    skills: [project-wiki, project-wiki-topic-write, project-wiki-topic-verify]
   publication:
     paths: [docs/wiki/digests/**]
-    skills: [project-wiki-topic-verifier, structured-explanation]
+    skills: [project-wiki-topic-verify, structured-explanation]
 dispatch:
-  wiki-setup-agent:
+  wiki-architect:
     work: initial structure, ownership, federation, and workflow setup
-  wiki-query-agent:
+  wiki-query-responder:
     work: wiki-backed answers and durable gap detection
-  wiki-research-agent:
+  wiki-researcher:
     work: bounded raw-only research when maintained coverage is insufficient
-  public-source-collector:
+  wiki-source-collector:
     work: approved public source windows and exclusions
-  wiki-writer-agent:
+  wiki-writer:
     work: ordinary durable topic, hub, link, and digest maintenance
-  wiki-ingest-agent:
+  wiki-ingester:
     work: raw-to-processed synthesis
   wiki-topic-verifier:
     work: independent topic-page acceptance
@@ -929,7 +911,7 @@ validation:
         <h3>Beacon AGENTS.md Reference</h3>
         <button class="snippet-toggle" type="button" aria-expanded="false" aria-controls="beacon-agents-sample">Expand</button>
       </div>
-      <p class="snippet-note">Beacon uses the validated plan to derive root AGENTS.md guidance for both raw source collection and wiki synthesis.</p>
+      <p class="snippet-note">Beacon uses the validated configuration to derive root AGENTS.md guidance for both raw source collection and wiki synthesis.</p>
       <pre id="beacon-agents-sample" class="config-block clamp-block"><code>AGENTS.md
 Project family: documentation and project wiki repository.
 Application tiers:
@@ -950,7 +932,7 @@ Validation:
   <section class="section" aria-labelledby="setup-flow-title">
     <h2 id="setup-flow-title">Project Setup Flow</h2>
     <div class="panel">
-      <p>Run this flow on the customer machine before writing or refreshing project guidance. The setup agent installs the selected runtime adapter, creates AGENTS-PLAN.yaml, chooses where nested guidance belongs, emits AGENTS.md and thin CLAUDE.md bridges where needed, and records evidence.</p>
+      <p>Run this flow before writing or refreshing project guidance. The setup agent uses the selected generated runtime adapter in place, creates PROJECT.yaml, chooses where nested guidance belongs, emits AGENTS.md and thin CLAUDE.md bridges where needed, and records evidence without populating user-home runtime folders.</p>
     </div>
     <div class="matrix section">
       <table>
@@ -964,22 +946,22 @@ Validation:
         </thead>
         <tbody>
           <tr>
-            <td><span class="name">Install</span></td>
-            <td>Detected runtime, generated native agent package, generic skills, support scripts, and destination scope.</td>
-            <td>Owned user-scope skills and native agent definitions.</td>
-            <td>The runtime discovers the installed skills and agents, and generic assets contain no customer material.</td>
+            <td><span class="name">Select bundle</span></td>
+            <td>Detected runtime, repository skill sources, generated native agent package, and support scripts.</td>
+            <td>Repository source and adapter references recorded for setup.</td>
+            <td>No duplicate user-home skills or agents are created, and generic assets contain no customer material.</td>
           </tr>
           <tr>
             <td><span class="name">Inventory</span></td>
             <td>README files, AGENTS.md files, package metadata, source roots, tests, docs, wiki pages, and procedures.</td>
             <td>Current Understanding and Authoritative Sources sections.</td>
-            <td>The plan describes the actual project rather than a remembered project shape.</td>
+            <td>PROJECT.yaml describes the actual project rather than a remembered project shape.</td>
           </tr>
           <tr>
             <td><span class="name">Classify</span></td>
             <td>Runtime folders, application tiers, persistent data, generated artifacts, and documentation surfaces.</td>
             <td>Project Taxonomy and Folder Routing sections.</td>
-            <td>Project Agent Setup can identify separate front-end, API, static pages, DB, docs, test, or CLI folder scopes.</td>
+            <td>Project Configurator can identify separate front-end, API, static pages, DB, docs, test, or CLI folder scopes.</td>
           </tr>
           <tr>
             <td><span class="name">Assign</span></td>
@@ -990,14 +972,14 @@ Validation:
           <tr>
             <td><span class="name">Place</span></td>
             <td>Subfolders with different technology, runtime setup, data handling, or verification commands.</td>
-            <td>Nested AGENTS.md references, thin colocated CLAUDE.md imports, and local AGENTS-PLAN.yaml files where local detail is valuable.</td>
-            <td>Nested guidance reduces cognitive load without hiding repository-wide rules or duplicating Claude guidance.</td>
+            <td>Nested AGENTS.md references and thin colocated CLAUDE.md imports, with every placement decision recorded in the root PROJECT.yaml.</td>
+            <td>Nested guidance reduces cognitive load while one project-wide configuration preserves all routing evidence.</td>
           </tr>
           <tr>
             <td><span class="name">Verify</span></td>
             <td>Build commands, test commands, docs checks, wiki checks, and page verifier results.</td>
             <td>Validation Plan, Open Questions, and Maintenance Notes sections.</td>
-            <td>Another agent can use the plan to update AGENTS.md and load the right skills.</td>
+            <td>Another agent can use PROJECT.yaml to update AGENTS.md and load the right skills.</td>
           </tr>
         </tbody>
       </table>

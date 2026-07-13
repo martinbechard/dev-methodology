@@ -23,7 +23,7 @@ See the series [index](index.md).
 - Explain Codex skills.config as enable or disable selection by name or absolute path, not preloading.
 - Explain Codex app-server skill input items as caller-controlled full instruction injection.
 - Distinguish availability, preload, dynamic invocation, content read, behavioral application, and verified evidence.
-- Explain the setup-time detector, AGENTS-PLAN.yaml, generated AGENTS.md, and Claude bridge responsibilities.
+- Explain the setup-time detector, PROJECT.yaml, generated AGENTS.md, and Claude bridge responsibilities.
 - Document adapter generation rules and portability constraints.
 - Link claims to primary runtime documentation and local test evidence.
 - Remove stale task-time routing and model-stage execution claims.

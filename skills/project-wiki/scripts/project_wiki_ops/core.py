@@ -1,3 +1,7 @@
+# Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+# AI attribution: Modified with AI assistance.
+# Summary: Implements deterministic project-wiki inspection, setup guidance, linking, lint, and scaffold operations.
+
 """Deterministic project wiki inspection and scaffold operations."""
 
 from __future__ import annotations
@@ -126,7 +130,7 @@ Topic pages should include:
 - Create monthly development digests under docs/wiki/digests. Digest entries may keep the date when information was added or modified, but each entry should summarize the content that changed instead of listing page or file changes. Use one digest entry per independently changing item or closely coupled product family; do not bundle unrelated items into one dated paragraph. Keep monthly digest Current Understanding entries in reverse chronological order by entry date, newest first. Keep each entry to at most three lines and link to the entity leaf that holds the details.
 - When repairing an existing digest, inspect the current month page for bundled dated paragraphs and rewrite the requested date range into item-level synopsis entries instead of only appending new entries. Reorder the affected Current Understanding entries into reverse chronological order by entry date before finishing. Use durable leaf pages as the content anchor for digest prose; keep source files in Authoritative Sources as provenance rather than repeating source-log wording. Do not create separate digest entries for duplicate raw captures or repeated source-window sightings unless they add distinct content; fold them into the existing item or closely coupled product-family entry.
 - Raw-source ingest automation prompts must repeat the digest granularity and ordering rules directly: one digest entry per independently changing item or closely coupled product family; never group digest entries by raw source artifact, collector run, sweep category, or ingestion batch; keep monthly digest Current Understanding entries in reverse chronological order by entry date.
-- When a digest page changes, the automation closeout must report that digest granularity and ordering were checked with the project-wiki-topic-verifier checklist, or that the full verifier returned GOOD.
+- When a digest page changes, the automation closeout must report that digest granularity and ordering were checked with the project-wiki-topic-verify checklist, or that the full verifier returned GOOD.
 - High-volume raw sources may update many durable leaves without forcing every touched leaf into the digest; omit low-signal digest mentions rather than compress unrelated entities into a vague grouped bullet.
 - Keep dated research, news, meeting notes, raw-source synthesis, and migration history as leaf pages under durable topic folders.
 - After raw files are fully processed into entity leaves and the monthly digest, move them under raw/processed and update wiki source links to the processed path using relative links from the wiki page, not absolute filesystem paths.

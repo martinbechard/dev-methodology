@@ -1,0 +1,18 @@
+schema: dev-methodology-technology-detection
+version: 2
+skill: agent-harness
+kind: domain
+label: Agent harness
+capabilities:
+- agent-harness-runtime
+activation:
+  anyOf:
+  - fileMatch:
+      glob: "**/*harness*.*"
+      extensions: [.js, .jsx, .ts, .tsx, .mjs, .cjs, .mts, .cts, .py, .pyi, .java, .kt, .go, .rs, .cs]
+  - fileMatch:
+      glob: "**/*agent-runtime*.*"
+      extensions: [.js, .jsx, .ts, .tsx, .mjs, .cjs, .mts, .cts, .py, .pyi, .java, .kt, .go, .rs, .cs]
+  - fileMatch:
+      glob: "**/runtime/agents/**/*"
+      extensions: [.js, .jsx, .ts, .tsx, .mjs, .cjs, .mts, .cts, .py, .pyi, .java, .kt, .go, .rs, .cs]

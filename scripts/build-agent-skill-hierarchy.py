@@ -230,7 +230,7 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
 @media (prefers-reduced-motion:reduce){.node,.edge,.role-node,.skill-node{transition:none}}
 ]]></style>""",
         '<text x="30" y="38" class="heading">Choose an agent or skill. Trace its relationships.</text>',
-        '<text x="30" y="64" class="instruction">Click an agent or skill, or use Enter or Space. Use View definition for details; Clear selection or Escape resets.</text>',
+        '<text x="30" y="64" class="instruction">Click to select. Double-click to view its definition. Enter or Space selects; Clear selection or Escape resets.</text>',
         '<text x="30" y="88" id="selection-status" class="status" role="status" aria-live="polite">All agents and skills shown. Connections are intentionally faint until selection.</text>',
         f'<g class="view-control disabled" role="button" tabindex="-1" aria-disabled="true" aria-label="Select an agent or skill to view its definition"><rect x="{SVG_WIDTH - 330}" y="24" width="160" height="30" rx="15"/><text x="{SVG_WIDTH - 250}" y="43" text-anchor="middle">View definition</text></g>',
         f'<g class="reset-control disabled" role="button" tabindex="-1" aria-disabled="true" aria-label="Clear map selection"><rect x="{SVG_WIDTH - 150}" y="24" width="120" height="30" rx="15"/><text x="{SVG_WIDTH - 90}" y="43" text-anchor="middle">Clear selection</text></g>',
@@ -419,6 +419,20 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
     renderSelection();
   }
 
+  function viewRoleDefinition(roleName) {
+    selectedRole = roleName;
+    selectedSkill = "";
+    renderSelection();
+    viewSelectedDefinition();
+  }
+
+  function viewSkillDefinition(skillName) {
+    selectedRole = "";
+    selectedSkill = skillName;
+    renderSelection();
+    viewSelectedDefinition();
+  }
+
   function viewSelectedDefinition() {
     const kind = viewControl.dataset.definitionKind;
     const name = viewControl.dataset.definitionName;
@@ -435,7 +449,10 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
   }
 
   roleNodes.forEach((node) => {
-    node.addEventListener("click", () => selectRole(node.dataset.role));
+    node.addEventListener("click", (event) => {
+      if (event.detail < 2) selectRole(node.dataset.role);
+    });
+    node.addEventListener("dblclick", () => viewRoleDefinition(node.dataset.role));
     node.addEventListener("keydown", (event) => {
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
@@ -444,7 +461,10 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
     });
   });
   skillNodes.forEach((node) => {
-    node.addEventListener("click", () => selectSkill(node.dataset.skill));
+    node.addEventListener("click", (event) => {
+      if (event.detail < 2) selectSkill(node.dataset.skill);
+    });
+    node.addEventListener("dblclick", () => viewSkillDefinition(node.dataset.skill));
     node.addEventListener("keydown", (event) => {
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();

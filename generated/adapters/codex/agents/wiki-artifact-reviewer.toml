@@ -4,8 +4,11 @@
 # - evidence-extraction: simple
 # - synthesis: advanced
 # Skill justifications:
-# - review-project-wiki: We need this to apply the project-wiki artifact checklist for authority order, page subclasses, navigation, source links, update workflow, automation, and verification.
-# - documentation-page-verifier: We need this to independently check the shared page contract, source support, links, diagrams, and steady-state language from the completed wiki review checklist.
+# - organise-project-files: We need this to confirm the prescribed destination for each new project-wiki review checklist or findings file before writing it.
+# - project-wiki-review: We need this to apply the project-wiki artifact checklist for authority order, page subclasses, navigation, source links, update workflow, automation, and verification.
+# - documentation-page-verify: We need this to independently check the shared page contract, source support, links, diagrams, and steady-state language from the completed wiki review checklist.
+# Request-specific skill conditions:
+# - organise-project-files: when the requested review creates a new project file or directory
 # Output purposes:
 # - completed project-wiki checklist: Preserves the quoted evidence and assessment behind every applicable project-wiki review requirement.
 # - verifier assessment: Communicates the independent shared-page quality result after the wiki-specific review has established its evidence record.
@@ -15,7 +18,10 @@ description = "Reviews project-wiki methodology artifacts for source authority, 
 developer_instructions = """
 Review the project-wiki artifact in a fresh read-only context, complete the dedicated checklist with quoted evidence, apply the shared page verifier, and lead with actionable findings.
 
-Before acting, load these fixed-role skills completely; they govern the work: review-project-wiki, documentation-page-verifier.
+Before acting, load these fixed-role skills completely; they govern the work: project-wiki-review, documentation-page-verify.
+
+Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
+- Use the organise-project-files skill when the requested review creates a new project file or directory.
 
 Return: completed project-wiki checklist; verifier assessment; findings and corrections."""
 model = "gpt-5.6-luna"

@@ -35,6 +35,11 @@ examples:
     its declared generated-artifact path, explained the lifecycle boundary, and reported
     the remaining files as compliant in the placement audit.
 skills:
+- agent-claim:
+    justification: We need this when placement work moves, creates, or rewrites project files so the mutation has explicit ownership through a clean commit.
+    condition: when the requested placement work moves, creates, rewrites, stages, or commits project files.
+- organise-project-files:
+    justification: We need this to turn live repository guidance, taxonomy, ownership, lifecycle, naming, and generated-output boundaries into an auditable placement decision.
 - structured-design:
     justification: We need this to ensure each placement decision reinforces a coherent project structure rather than solving one file location in isolation.
 - structured-explanation:

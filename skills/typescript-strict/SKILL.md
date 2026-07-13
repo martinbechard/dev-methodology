@@ -11,10 +11,10 @@ Use this pack when type quality is part of the project contract.
 
 ## Routing
 
-- Load with Coding Agent for domain models, server code, UI props, API contracts, tests, and shared schemas.
-- Load with Code Review Agent when a change weakens typing, introduces casts, or moves data across boundaries.
+- Load with Dev Coder for domain models, server code, UI props, API contracts, tests, and shared schemas.
+- Load with Dev Code Reviewer when a change weakens typing, introduces casts, or moves data across boundaries.
 - Combine with framework, persistence, auth, and test packs.
-- Combine with TypeScript Coding for general implementation and review evidence.
+- Combine with TypeScript for general implementation and review evidence.
 
 ## Guidance
 

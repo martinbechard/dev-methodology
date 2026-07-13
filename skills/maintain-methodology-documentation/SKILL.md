@@ -11,7 +11,7 @@ Keep canonical sources, generated outputs, documentation, installers, and tests 
 
 ## Workflow
 
-1. Read AGENTS.md, README.md, the affected source skills and detection metadata, canonical role files, canonical model profiles, adapter model mappings, and relevant design pages.
+1. Apply the project instructions already in context, then read README.md, the affected source skills and detection metadata, canonical role files, canonical model profiles, adapter model mappings, and relevant design pages.
 2. Update canonical sources under skills, technology detection metadata, agents/roles, and design/skill-categories.yaml before changing derived artifacts.
 3. Run the metadata synchronizer after skill name or description changes.
 4. Run the technology detection generator after specialized activation metadata changes.
@@ -19,7 +19,7 @@ Keep canonical sources, generated outputs, documentation, installers, and tests 
 6. Inspect generated Codex and Claude agent definitions and confirm that canonical roles distinguish generic fixed skills from request-specific skills with human-readable conditions, every canonical skill ID resolves to a bundled skill, and every canonical model profile resolves through each supported adapter.
 7. Update hand-authored policy in README.md and the design HTML pages when the operating model changes.
 8. Run stale-output checks, repository regression tests, Agent Skill validation, and git diff checks.
-9. Refresh shared skill installs only after source validation passes.
+9. Keep maintenance repository-local. Do not populate user-home skill or agent folders to validate or use the bundle.
 
 ## Commands
 
@@ -34,7 +34,6 @@ python3 scripts/build-support-checklist.py --check
 python3 scripts/validate-agent-skills.py skills
 python3 -m unittest discover scripts
 PYTHONPATH=skills/project-wiki/scripts python3 -m unittest discover skills/project-wiki/scripts
-python3 scripts/refresh-shared-skills.py
 git diff --check
 ```
 
@@ -42,10 +41,11 @@ git diff --check
 
 - Treat skills, canonical role files, and the category catalog as sources.
 - Treat detection.yaml beside each specialized technology or domain skill as the setup-time activation source and the generated registry as derived output.
-- Keep canonical role loadouts generic. Skill entries without conditions are fixed role skills. Skill entries with conditions are request-specific and generate judgment-based loading instructions. Project Agent Setup detects technology and domain variants once and records unconditional folder loadouts in AGENTS-PLAN.yaml and AGENTS.md.
+- Keep canonical role loadouts generic. Skill entries without conditions are fixed role skills. Skill entries with conditions are request-specific and generate judgment-based loading instructions. Project Agent Setup detects technology and domain variants once and records unconditional folder loadouts in PROJECT.yaml and AGENTS.md.
 - Treat agents/model-profiles.yaml as the semantic model source and adapters/[runtime]/model-profiles.yaml as runtime-owned model mappings. Keep provider model identifiers out of canonical roles.
 - Treat design/generated and generated/adapters as derived outputs; regenerate them instead of editing them manually.
 - Keep every canonical role skill entry to a real bundled skill ID.
 - Keep customer-independent source and generated adapters free of customer material.
 - Preserve stable skill and role names unless the requested change explicitly includes a rename and reference sweep.
+- Require explicit caller-supplied destinations for any separately requested deployment. Do not use deployment as a maintenance verification step.
 - Do not silently replace customized customer installations. Use discrepancy analysis between the old generic, installed customer, and new generic definitions before updating them.

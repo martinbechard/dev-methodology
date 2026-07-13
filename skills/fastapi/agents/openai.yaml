@@ -6,7 +6,7 @@ interface:
   # User-facing summary shown in Codex skill surfaces.
   short_description: Implement, review, test, or diagnose FastAPI applications, routers, dependencies, validation...
   # Prompt Codex can use when launching this skill directly.
-  default_prompt: Use $fastapi with $python-coding to implement or review a FastAPI application boundary.
+  default_prompt: Use $fastapi with $python to implement or review a FastAPI application boundary.
 
 # Optional invocation policy placeholder.
 # policy:

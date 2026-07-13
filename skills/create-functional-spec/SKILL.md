@@ -30,13 +30,13 @@ Create one functional specification that defines:
 - Edge cases.
 - Verification blocks.
 
-Use project-wiki-topic-writer instead when the task is a durable wiki topic page that summarizes existing functional knowledge without owning the functional specification.
+Use project-wiki-topic-write instead when the task is a durable wiki topic page that summarizes existing functional knowledge without owning the functional specification.
 
-Use documentation-reverse-engineering when the user asks to derive a set of functional specifications from an existing codebase.
+Use documentation-reverse-engineer when the user asks to derive a set of functional specifications from an existing codebase.
 
 ## Workflow
 
-1. Inspect the target repository before writing. Read product requirements, README files, agent instructions, procedures, routes, UI surfaces, commands, integrations, services, tests, backlog files, existing docs, wiki pages, and current worktree status.
+1. Inspect the target repository before writing. Read product requirements, README files, task-relevant procedures, routes, UI surfaces, commands, integrations, services, tests, backlog files, existing docs, wiki pages, and current worktree status.
 2. Identify the actor goal, entry points, states, permissions, visible outcomes, and verification evidence.
 3. Copy the functional specification template into the target documentation location when a new artifact is needed.
 4. Replace each TODO with behavior grounded in authoritative source material.
@@ -53,7 +53,7 @@ Use documentation-reverse-engineering when the user asks to derive a set of func
 Before finishing:
 
 1. Use review-functional-spec on the completed artifact.
-2. Use documentation-page-verifier with the artifact, source evidence, and completed review checklist when the review skill calls for it.
+2. Use documentation-page-verify with the artifact, source evidence, and completed review checklist when the review skill calls for it.
 3. Run project wiki status and lint when docs/wiki exists and the artifact lives in or links from docs/wiki.
 4. Search the artifact for unresolved TODO markers that are not intentional.
 5. Confirm every workflow, state group, edge case, and acceptance claim has source evidence or a clearly recorded open question.

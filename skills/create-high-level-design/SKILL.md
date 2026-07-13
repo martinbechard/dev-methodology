@@ -35,7 +35,7 @@ Create one high-level design that defines:
 
 Use create-architecture when the work defines a whole system, project-wide boundary, technology choice, layer model, or cross-cutting concern. Use create-module-design when the work is one module, service, component, task, utility, or tightly scoped implementation unit.
 
-Use documentation-reverse-engineering when the user asks to derive subsystem designs from an existing codebase.
+Use documentation-reverse-engineer when the user asks to derive subsystem designs from an existing codebase.
 
 ## Workflow
 
@@ -54,7 +54,7 @@ Use documentation-reverse-engineering when the user asks to derive subsystem des
 Before finishing:
 
 1. Use review-high-level-design on the completed artifact.
-2. Use documentation-page-verifier with the artifact, source evidence, and completed review checklist when the review skill calls for it.
+2. Use documentation-page-verify with the artifact, source evidence, and completed review checklist when the review skill calls for it.
 3. Run project wiki status and lint when docs/wiki exists and the artifact lives in or links from docs/wiki.
 4. Search the artifact for unresolved TODO markers that are not intentional.
 5. Confirm every component, interaction, data contract, implementation step, and verification claim has source evidence or an open question.

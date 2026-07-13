@@ -1,0 +1,12 @@
+schema: dev-methodology-technology-detection
+version: 2
+skill: plan-engine
+kind: domain
+label: Plan engine
+capabilities:
+- planning-runtime
+activation:
+  anyOf:
+  - fileMatch:
+      glob: "**/*plan*engine*.*"
+      extensions: [.js, .jsx, .ts, .tsx, .mjs, .cjs, .mts, .cts, .py, .pyi, .java, .kt, .go, .rs, .cs]

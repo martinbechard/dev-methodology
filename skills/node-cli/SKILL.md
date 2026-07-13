@@ -11,9 +11,9 @@ Use this pack for local command line entrypoints and scripts that need predictab
 
 ## Routing
 
-- Load with Coding Agent for CLI entrypoints, command arguments, filesystem reads and writes, environment variables, and process exits.
-- Load with Code Review Agent when scripts can modify files, spawn processes, or affect developer workflow.
-- Combine with TypeScript ESM, project organizer, and test framework packs.
+- Load with Dev Coder for CLI entrypoints, command arguments, filesystem reads and writes, environment variables, and process exits.
+- Load with Dev Code Reviewer when scripts can modify files, spawn processes, or affect developer workflow.
+- Combine with TypeScript ESM, Project Organiser, and test framework packs.
 
 ## Guidance
 

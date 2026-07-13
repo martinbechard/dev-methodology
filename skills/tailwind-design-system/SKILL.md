@@ -11,8 +11,8 @@ Use this pack for Tailwind-based UI styling that should remain consistent across
 
 ## Routing
 
-- Load with Coding Agent for component styling, layout, responsive states, tokens, themes, and visual variants.
-- Load with UX Reviewer when the work needs independent usability or visual review.
+- Load with Dev Coder for component styling, layout, responsive states, tokens, themes, and visual variants.
+- Load with Dev UX Specialist when the work needs independent usability or visual review.
 - Combine with React Server Components, React Vite Renderer, Next.js App Router, Jest, and Playwright.
 
 ## Guidance

@@ -11,9 +11,9 @@ Use this pack for typed PostgreSQL persistence through Drizzle.
 
 ## Routing
 
-- Load with Coding Agent for schema, migration, query, transaction, repository, and persistence-layer changes.
-- Load with Code Review Agent when a change affects data integrity, tenant boundaries, performance, or migration safety.
-- Combine with TypeScript Coding, TypeScript Strict, SQL Coding, Next.js App Router, API Routes, Clerk Auth, and Jest.
+- Load with Dev Coder for schema, migration, query, transaction, repository, and persistence-layer changes.
+- Load with Dev Code Reviewer when a change affects data integrity, tenant boundaries, performance, or migration safety.
+- Combine with TypeScript, TypeScript Strict, SQL, Next.js App Router, API Routes, Clerk Auth, and Jest.
 
 ## Guidance
 

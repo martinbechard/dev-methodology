@@ -13,7 +13,6 @@ Use this skill for one-off research requests that should feed a repository wiki 
 
 ## Read First
 
-- Follow the repository AGENTS.md and any local procedure files.
 - Read the shared project-wiki skill before changing wiki-related files.
 - Read docs/wiki/federation.md when the repository has an upstream or sibling wiki relationship.
 - Read project-wiki-query when the request is mainly a lightweight answer from existing wiki coverage.

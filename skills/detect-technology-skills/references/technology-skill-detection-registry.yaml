@@ -6,6 +6,71 @@ selectionPolicy:
   exclusiveConflict: blocked
   noVariant: explicit-empty-loadout
 skills:
+- skill: agent-harness
+  kind: domain
+  label: Agent harness
+  capabilities:
+  - agent-harness-runtime
+  activation:
+    anyOf:
+    - fileMatch:
+        glob: '**/*harness*.*'
+        extensions:
+        - .js
+        - .jsx
+        - .ts
+        - .tsx
+        - .mjs
+        - .cjs
+        - .mts
+        - .cts
+        - .py
+        - .pyi
+        - .java
+        - .kt
+        - .go
+        - .rs
+        - .cs
+    - fileMatch:
+        glob: '**/*agent-runtime*.*'
+        extensions:
+        - .js
+        - .jsx
+        - .ts
+        - .tsx
+        - .mjs
+        - .cjs
+        - .mts
+        - .cts
+        - .py
+        - .pyi
+        - .java
+        - .kt
+        - .go
+        - .rs
+        - .cs
+    - fileMatch:
+        glob: '**/runtime/agents/**/*'
+        extensions:
+        - .js
+        - .jsx
+        - .ts
+        - .tsx
+        - .mjs
+        - .cjs
+        - .mts
+        - .cts
+        - .py
+        - .pyi
+        - .java
+        - .kt
+        - .go
+        - .rs
+        - .cs
+  companions: []
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
 - skill: api-routes
   kind: technology
   label: Application route handlers
@@ -111,76 +176,11 @@ skills:
         extensions:
         - .py
   companions:
-  - python-coding
+  - python
   selection: additive
   priority: 100
   requiredWhenDetected: true
-- skill: harness-implementation
-  kind: domain
-  label: Agent harness implementation
-  capabilities:
-  - agent-harness-runtime
-  activation:
-    anyOf:
-    - fileMatch:
-        glob: '**/*harness*.*'
-        extensions:
-        - .js
-        - .jsx
-        - .ts
-        - .tsx
-        - .mjs
-        - .cjs
-        - .mts
-        - .cts
-        - .py
-        - .pyi
-        - .java
-        - .kt
-        - .go
-        - .rs
-        - .cs
-    - fileMatch:
-        glob: '**/*agent-runtime*.*'
-        extensions:
-        - .js
-        - .jsx
-        - .ts
-        - .tsx
-        - .mjs
-        - .cjs
-        - .mts
-        - .cts
-        - .py
-        - .pyi
-        - .java
-        - .kt
-        - .go
-        - .rs
-        - .cs
-    - fileMatch:
-        glob: '**/runtime/agents/**/*'
-        extensions:
-        - .js
-        - .jsx
-        - .ts
-        - .tsx
-        - .mjs
-        - .cjs
-        - .mts
-        - .cts
-        - .py
-        - .pyi
-        - .java
-        - .kt
-        - .go
-        - .rs
-        - .cs
-  companions: []
-  selection: additive
-  priority: 100
-  requiredWhenDetected: true
-- skill: java-coding
+- skill: java
   kind: technology
   label: Java
   capabilities:
@@ -341,9 +341,9 @@ skills:
   selection: additive
   priority: 100
   requiredWhenDetected: true
-- skill: plan-engine-implementation
+- skill: plan-engine
   kind: domain
-  label: Plan engine implementation
+  label: Plan engine
   capabilities:
   - planning-runtime
   activation:
@@ -414,11 +414,11 @@ skills:
         - owningDependency: drizzle-orm
         - owningDependency: drizzle-kit
   companions:
-  - sql-coding
+  - sql
   selection: additive
   priority: 100
   requiredWhenDetected: true
-- skill: python-coding
+- skill: python
   kind: technology
   label: Python
   capabilities:
@@ -483,11 +483,11 @@ skills:
             glob: build.gradle*
             contains: org.springframework.boot
   companions:
-  - java-coding
+  - java
   selection: additive
   priority: 100
   requiredWhenDetected: true
-- skill: sql-coding
+- skill: sql
   kind: technology
   label: SQL
   capabilities:
@@ -520,9 +520,9 @@ skills:
   selection: additive
   priority: 100
   requiredWhenDetected: true
-- skill: tool-runtime-implementation
+- skill: tool-runtime
   kind: domain
-  label: Tool runtime implementation
+  label: Tool runtime
   capabilities:
   - tool-runtime
   activation:
@@ -585,7 +585,7 @@ skills:
   selection: additive
   priority: 100
   requiredWhenDetected: true
-- skill: typescript-coding
+- skill: typescript
   kind: technology
   label: TypeScript
   capabilities:
@@ -621,7 +621,7 @@ skills:
             glob: tsconfig*.json
             contains: NodeNext
   companions:
-  - typescript-coding
+  - typescript
   selection: additive
   priority: 100
   requiredWhenDetected: true
@@ -642,7 +642,7 @@ skills:
           glob: tsconfig*.json
           contains: '"strict": true'
   companions:
-  - typescript-coding
+  - typescript
   selection: additive
   priority: 100
   requiredWhenDetected: true

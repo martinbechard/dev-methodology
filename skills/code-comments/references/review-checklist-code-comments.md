@@ -1,7 +1,7 @@
 # Code Comments Review Checklist
 
 - Question: Does every changed human-maintained code artifact have the required language-appropriate header without applying the rule to configuration or other non-code files?
-- Question: Does each header use the copyright statement from the applicable AGENTS.md exactly?
+- Question: Does each header use the copyright statement supplied by the applicable project instructions exactly?
 - Question: Does each header accurately distinguish code generated with AI assistance from human-origin code modified with AI assistance?
 - Question: Does each header provide an accurate one-sentence responsibility summary and applicable design or test-plan references without fabricated links?
 - Question: Does every changed public or exported construct have a language-native documentation block explaining why it exists and how callers should use it?

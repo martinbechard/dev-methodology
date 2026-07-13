@@ -11,10 +11,10 @@ Use this pack when TypeScript module format can affect runtime behavior, test ex
 
 ## Routing
 
-- Load with Coding Agent for TypeScript source, scripts, tests, package metadata, and tsconfig changes.
-- Load with Code Review Agent when a change affects module boundaries, generated output, path aliases, or runtime startup.
+- Load with Dev Coder for TypeScript source, scripts, tests, package metadata, and tsconfig changes.
+- Load with Dev Code Reviewer when a change affects module boundaries, generated output, path aliases, or runtime startup.
 - Combine with framework packs such as Electron, React Vite, Next.js, Node CLI, Jest, or Vitest.
-- Combine with TypeScript Coding for general implementation and review evidence.
+- Combine with TypeScript for general implementation and review evidence.
 
 ## Guidance
 

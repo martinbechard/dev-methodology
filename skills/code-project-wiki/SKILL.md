@@ -12,8 +12,8 @@ Use this skill for code-aware project wiki maintenance. The project-wiki skill r
 ## Required Companion Skills
 
 - Use project-wiki for setup, status, lint, page schema, and wiki operations.
-- Use project-wiki-topic-writer when editing durable topic pages.
-- Use project-wiki-topic-verifier before finishing topic page changes.
+- Use project-wiki-topic-write when editing durable topic pages.
+- Use project-wiki-topic-verify before finishing topic page changes.
 - Use project-wiki-query for wiki-backed project questions.
 - Use project-wiki-research when new external or raw research must be captured before synthesis.
 
@@ -77,7 +77,7 @@ Before finishing:
 1. Run project wiki status.
 2. Run leaf-linking after creating or updating durable leaf pages.
 3. Run project wiki lint.
-4. Run project-wiki-topic-verifier on changed durable topic pages.
+4. Run project-wiki-topic-verify on changed durable topic pages.
 5. Run OKF validation when the project uses OKF-compatible pages.
 6. Recheck raw queues when the maintenance task included raw fragments or processed moves.
 7. Report changed pages, skipped commits or file groups, verification commands, and unresolved questions.

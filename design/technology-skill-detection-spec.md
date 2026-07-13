@@ -2,9 +2,9 @@
 
 ## Purpose
 
-Technology detection is a project-setup operation. It converts repository evidence for known folders or tiers into durable technology-skill bindings in AGENTS-PLAN.yaml and AGENTS.md.
+Technology detection is a project-setup operation. It converts repository evidence for known folders or tiers into durable technology-skill bindings in PROJECT.yaml and AGENTS.md.
 
-Normal coding, review, verification, diagnosis, security, interface, prompt, and documentation agents do not rerun detection. They load their canonical fixed-role skills and the technology skills declared by the nearest AGENTS.md.
+Normal coding, review, verification, diagnosis, security, interface, prompt, and documentation agents do not rerun detection. The harness supplies their canonical fixed-role skills and the technology skills routed for the active folder.
 
 ## Inputs
 
@@ -56,7 +56,7 @@ activation:
         extensions:
           - .py
 companions:
-  - python-coding
+  - python
 ```
 
 Generic fixed-role skills and optional environment tools are not detection definitions.
@@ -72,7 +72,7 @@ The detector returns one proposed loadout per analyzed scope:
 - Exclusive conflicts.
 - Explicit no-variant result when nothing bundled matches.
 
-Project Agent Setup records accepted loadouts in AGENTS-PLAN.yaml with their source evidence. It then generates AGENTS.md instructions that require every agent working under the matching path to load those technology skills before acting.
+Project Agent Setup records accepted loadouts in PROJECT.yaml with their source evidence. It then generates AGENTS.md routing so the harness supplies those technology skills to every agent working under the matching path.
 
 ## Fixed-Role Skills
 
@@ -94,7 +94,7 @@ The detector skill contains a generated runtime mirror only so a standalone inst
 2. It chooses representative folder scopes.
 3. It runs detection once for those scopes.
 4. It reviews conflicts, missing skills, and unsupported technologies.
-5. It writes source-backed loadouts into AGENTS-PLAN.yaml.
+5. It writes source-backed loadouts into PROJECT.yaml.
 6. It generates root or nested AGENTS.md technology-loading instructions.
 7. It verifies that every named skill is installed.
 8. It reruns detection only when project setup or technology boundaries change.
@@ -125,4 +125,4 @@ The detector skill contains a generated runtime mirror only so a standalone inst
 - A child package does not inherit unrelated root workspace dependencies.
 - Equal-priority exclusive matches block setup.
 - A detected but unavailable required skill blocks setup.
-- Generated AGENTS.md tells every agent in a matching folder to load the detected technology skills without rerunning detection.
+- Generated AGENTS.md gives the harness the detected technology skills for every matching folder without rerunning detection.

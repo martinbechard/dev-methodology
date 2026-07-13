@@ -21,7 +21,7 @@ Use this skill to review an architecture artifact created from the methodology t
 2. Read references/review-checklist-architecture.md.
 3. Complete every applicable checklist question with status, quoted evidence, and assessment.
 4. Save the completed review checklist next to the artifact using this form: artifact-name.review-checklist-architecture.md.
-5. Use documentation-page-verifier with the artifact, source evidence, and completed review checklist for shared page contract, source authority, link, diagram, and steady-state checks.
+5. Use documentation-page-verify with the artifact, source evidence, and completed review checklist for shared page contract, source authority, link, diagram, and steady-state checks.
 6. Verify architecture sections against the checklist, especially scope, stack, file organization, dependency direction, ownership, data movement, lifecycle, cross-cutting concerns, invariants, risks, and verification.
 7. Return findings first, ordered by severity, with file paths and section names. Derive each finding or pass assessment from the completed review checklist.
 

@@ -11,8 +11,8 @@ Use this pack when React component placement across server and client boundaries
 
 ## Routing
 
-- Load with Coding Agent for server components, client components, server actions, form flows, and serialized props.
-- Load with Code Review Agent when moving logic across the server-client boundary.
+- Load with Dev Coder for server components, client components, server actions, form flows, and serialized props.
+- Load with Dev Code Reviewer when moving logic across the server-client boundary.
 - Combine with Next.js App Router, Clerk Auth, Postgres Drizzle, and Tailwind Design System.
 
 ## Guidance

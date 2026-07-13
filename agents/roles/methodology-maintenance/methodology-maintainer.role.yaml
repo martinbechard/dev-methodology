@@ -15,25 +15,35 @@ examples:
       and verify the bundle."
   plausibleResponse: Added the portable accessibility-review skill with aligned metadata
     and conditional role routing, updated the catalog documentation and regression expectations,
-    regenerated the role documentation and native adapters, and refreshed the shared installs.
-    Reported the changed canonical and derived files together with passing validation evidence.
+    and regenerated the role documentation and native adapters. Reported the changed
+    canonical and derived files together with passing validation evidence without copying
+    the bundle into user-home runtime folders.
 - purpose: Keep canonical role policy and runtime outputs synchronized when a role's skill
     boundary and execution profile change.
   runtimeInvocations:
-    codex: "$methodology-maintainer Update the documentation-writer role so unit-test
+    codex: "$methodology-maintainer Update the dev-documentation-writer role so unit-test
       planning is request-specific and uses staged evidence extraction before synthesis.
       Regenerate the supported runtime definitions and verify the result."
-    claude-code: "@agent-methodology-maintainer Update the documentation-writer role
+    claude-code: "@agent-methodology-maintainer Update the dev-documentation-writer role
       so unit-test planning is request-specific and uses staged evidence extraction before
       synthesis. Regenerate the supported runtime definitions and verify the result."
-  plausibleResponse: Updated the canonical documentation-writer loadout and semantic model
+  plausibleResponse: Updated the canonical dev-documentation-writer loadout and semantic model
     stages while preserving customer-independent role data. Regenerated the documentation
     data and Codex and Claude definitions, confirmed that every skill and model profile resolves,
     and reported successful stale-output, regression-test, and diff checks with the scoped
     file inventory.
 skills:
+- agent-claim:
+    justification: We need this before catalog mutation so canonical, generated, test, and installation work has one visible owner and ends in a verified clean commit.
+- organise-project-files:
+    justification: We need this to preserve canonical, generated, adapter, design, and test ownership boundaries whenever methodology maintenance adds files.
+    condition: when the requested maintenance creates a new project file or directory.
 - maintain-methodology-documentation:
-    justification: We need this to keep canonical sources, generated artifacts, adapters, validation, and shared installs synchronized across a maintenance change.
+    justification: We need this to keep canonical sources, generated artifacts, adapters, and validation synchronized across a maintenance change without creating user-home copies.
+- skill-authoring:
+    justification: We need this to keep distributed skills concise, portable, harness-aware, and free of duplicated runtime setup behavior while they are created or changed.
+- name-methodology-artifacts:
+    justification: We need this to keep category prefixes, actor-form role names, and skill operation names consistent whenever the catalog changes.
 - development-methodology:
     justification: We need this to preserve the bundle's artifact routing and documentation contracts while its own methodology is changed.
 - structured-design:
@@ -48,4 +58,4 @@ outputContract:
 - regenerated adapter and documentation data:
     purpose: Makes runtime adapters and published documentation reflect the canonical changes so downstream users do not receive stale behavior or guidance.
 - verification evidence:
-    purpose: Gives maintainers confidence that the coordinated change passes the required generation, validation, and installation checks.
+    purpose: Gives maintainers confidence that the coordinated change passes the required generation and validation checks.

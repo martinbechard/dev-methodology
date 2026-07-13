@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+# AI attribution: Modified with AI assistance.
+# Summary: Renders repository claim coordination and unconditional folder technology guidance from PROJECT.yaml.
+
 from __future__ import annotations
 
 import argparse
@@ -8,6 +12,7 @@ import yaml
 
 
 def load_yaml(path: Path) -> dict[str, object]:
+    """Load one PROJECT.yaml mapping from path."""
     value = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(value, dict):
         raise ValueError(f"Expected a YAML mapping: {path}")
@@ -15,21 +20,39 @@ def load_yaml(path: Path) -> dict[str, object]:
 
 
 def loadouts(value: dict[str, object]) -> list[dict[str, object]]:
+    """Return normalized technology loadout mappings from a project configuration."""
     rows = value.get("technology_skill_loadouts", value.get("loadouts", []))
     return [row for row in rows if isinstance(row, dict)] if isinstance(rows, list) else []
 
 
 def render(value: dict[str, object]) -> str:
-    lines = [
+    """Render root AGENTS.md coordination and technology sections."""
+    lines: list[str] = []
+    coordination = value.get("agent_coordination")
+    if isinstance(coordination, dict):
+        lines.extend([
+            "## Agent Claims And Worktrees",
+            "",
+            "Before repository mutation, use the agent-claim skill and its atomic claim command.",
+            "",
+            f"- Claim registry: {coordination.get('registry', 'repository-global registry')}",
+            f"- Primary worktree: {coordination.get('acquisition', 'The first writer may claim a clean primary worktree.')}",
+            f"- Concurrent work: {coordination.get('active_claim_policy', 'Later non-overlapping writers use isolated worktrees.')}",
+            f"- Overlap: {coordination.get('overlap_policy', 'Overlapping claims wait or coordinate.')}",
+            f"- Recovery: {coordination.get('dirty_unclaimed_policy', 'Dirty unclaimed state enters explicit recovery.')}",
+            f"- Release: {coordination.get('release_policy', 'Release only after commit or no-change and clean status.')}",
+            "",
+        ])
+    lines.extend([
         "## Technology Skills",
         "",
-        "Technology detection is owned by Project Agent Setup. Do not rerun detection during ordinary work.",
+        "Technology detection is owned by Project Configurator. Do not rerun detection during ordinary work.",
         "",
         "Before acting on files under a matching folder, every agent must read each listed skill completely. These folder skills govern technology-specific implementation, review, diagnosis, verification, security, interface, prompt, and technical documentation work together with the agent's fixed-role skills.",
         "",
         "Folder loadouts:",
         "",
-    ]
+    ])
     rendered = 0
     for item in loadouts(value):
         pattern = item.get("pathPattern", item.get("pattern"))
@@ -53,11 +76,12 @@ def render(value: dict[str, object]) -> str:
 
 
 def main() -> int:
+    """Render configured AGENTS.md sections to stdout or an explicit output file."""
     parser = argparse.ArgumentParser(description="Render unconditional AGENTS.md technology skill guidance.")
-    parser.add_argument("--agents-plan", type=Path, required=True)
+    parser.add_argument("--project", type=Path, required=True)
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
-    content = render(load_yaml(args.agents_plan))
+    content = render(load_yaml(args.project))
     if args.output:
         args.output.write_text(content, encoding="utf-8")
     else:

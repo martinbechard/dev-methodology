@@ -20,7 +20,7 @@ Do not mark pass without quoted evidence.
 - Question: Does the review identify the actor, workflow, surfaces, states, and verification claims before assessment?
 - Question: Does the completed review checklist name this checklist as review-checklist-functional-spec.md?
 - Question: Does the completed review checklist save next to the artifact using artifact-name.review-checklist-functional-spec.md?
-- Question: Does the review use documentation-page-verifier with the artifact, source evidence, and completed review checklist?
+- Question: Does the review use documentation-page-verify with the artifact, source evidence, and completed review checklist?
 - Question: Does the final assessment derive findings or pass status from the completed review checklist rather than memory?
 - Question: Does the output lead with findings ordered by severity when problems exist?
 

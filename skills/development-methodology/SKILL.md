@@ -12,27 +12,27 @@ Use this skill as the router for software project documentation work from this b
 ## Required Companion Skills
 
 - Use documentation-bootstrap for first-time setup in a target repository.
-- Use documentation-reverse-engineering when deriving documentation from an existing codebase.
+- Use documentation-reverse-engineer when deriving documentation from an existing codebase.
 - Use code-project-wiki for code-aware docs/wiki maintenance, commit-range sync, Related Code upkeep, or Related Tests upkeep.
-- Use create-agents-plan when creating or substantially rewriting an AGENTS-PLAN.yaml project agent and skill setup plan.
+- Use create-project-configuration when creating or substantially rewriting a PROJECT.yaml project agent and skill configuration.
 - Use maintain-methodology-documentation when changing this bundle's skills, canonical roles, generated adapters, generated documentation data, or design pages.
-- Use create-project-wiki when creating or substantially rewriting a project wiki methodology artifact from the project wiki template.
+- Use project-wiki-create when creating or substantially rewriting a project wiki methodology artifact from the project wiki template.
 - Use create-functional-spec when creating or substantially rewriting a functional specification artifact from the functional specification template.
 - Use create-architecture when creating or substantially rewriting an architecture artifact from the architecture template.
 - Use create-high-level-design when creating or substantially rewriting a high-level design artifact from the high-level design template.
 - Use create-module-design when creating or substantially rewriting a module design artifact from the module design template.
 - Use create-unit-test-plan when creating or substantially rewriting a durable unit test plan from the unit test plan template.
-- Use review-project-wiki before finishing project wiki pages or project-wiki-template artifacts.
+- Use project-wiki-review before finishing project wiki pages or project-wiki-template artifacts.
 - Use review-functional-spec before finishing functional specification artifacts.
 - Use review-architecture before finishing architecture artifacts.
 - Use review-high-level-design before finishing high-level design artifacts.
 - Use review-module-design before finishing module design artifacts.
 - Use review-unit-test-plan before finishing unit test plan artifacts.
-- Use documentation-page-verifier for shared checks on mixed, unknown, or custom documentation artifacts.
+- Use documentation-page-verify for shared checks on mixed, unknown, or custom documentation artifacts.
 - Use project-wiki before creating, maintaining, or validating docs/wiki content.
 - Use project-wiki-query for wiki-backed project questions.
 - Use project-wiki-research for sourced raw reports that should feed a wiki later.
-- Use project-wiki-topic-writer and project-wiki-topic-verifier when editing or validating topic pages.
+- Use project-wiki-topic-write and project-wiki-topic-verify when editing or validating topic pages.
 
 ## Loading Discipline
 
@@ -40,7 +40,7 @@ Load only the skills needed for the current job. Use this skill to choose the ar
 
 Treat generated role conditions as judgment guidance, not deterministic prompt keywords. Interpret the requested outcome, existing artifact, and source evidence together when wording is ambiguous. Ask for clarification only when different plausible routes would materially change the result and the intended route cannot be inferred.
 
-For a normal creation job, load this skill and exactly one artifact creation skill, plus source-domain skills that the repository evidence requires. Load the matching review skill only when the artifact is ready to review. Use documentation-page-verifier for mixed, unknown, or custom artifacts, or when an artifact review skill calls for it.
+For a normal creation job, load this skill and exactly one artifact creation skill, plus source-domain skills that the repository evidence requires. Load the matching review skill only when the artifact is ready to review. Use documentation-page-verify for mixed, unknown, or custom artifacts, or when an artifact review skill calls for it.
 
 ## Shared Page Contract
 
@@ -66,7 +66,7 @@ Functional specifications, architecture documents, high-level designs, and modul
 Use the smallest document type that fully explains the work:
 
 - Project wiki page: durable synthesis, navigation, code ownership, known defects, open decisions, glossary, or recurring topic knowledge.
-- AGENTS-PLAN.yaml: project agent and skill setup, root AGENTS.md routing reference, nested plan placement, role loadouts, folder routing, validation evidence, proprietary validation notes, or customer-safe fictitious examples.
+- PROJECT.yaml: project-wide agent and skill setup, root and nested AGENTS.md routing references, role loadouts, folder routing, validation evidence, proprietary validation notes, or customer-safe fictitious examples.
 - Functional specification: user-visible behavior, actor workflow, route behavior, acceptance criteria, permissions, status display, operational affordance, or error state.
 - Architecture: project-wide boundary, technology choice, shared rule, cross-cutting concern, layer relationship, persistence, security, privacy, observability, or UI composition.
 - High-level design: coherent subsystem, feature family, system slice, integration path, or multi-module implementation plan.
@@ -77,22 +77,22 @@ Use the smallest document type that fully explains the work:
 
 Use this route table when the task is to create or substantially rewrite a methodology artifact:
 
-- Project wiki methodology artifact: use create-project-wiki, template project-wiki-template.md, and review-project-wiki.
-- Agent and skill setup plan: use create-agents-plan, template agents-plan-template.yaml, and documentation-page-verifier.
+- Project wiki methodology artifact: use project-wiki-create, template project-wiki-template.md, and project-wiki-review.
+- Agent and skill configuration: use create-project-configuration, template project-template.yaml, and documentation-page-verify.
 - Functional specification artifact: use create-functional-spec, template functional-spec-template.md, and review-functional-spec.
 - Architecture artifact: use create-architecture, template architecture-template.md, and review-architecture.
 - High-level design artifact: use create-high-level-design, template high-level-design-template.md, and review-high-level-design.
 - Module design artifact: use create-module-design, template module-design-template.md, and review-module-design.
 - Unit test plan artifact: use create-unit-test-plan, template unit-test-plan-template.md, and review-unit-test-plan.
 
-Use project-wiki-topic-writer for ordinary docs/wiki topic pages that summarize or link source material without becoming one of the specialized methodology artifacts. Use documentation-reverse-engineering when the user asks for a source-derived documentation set rather than one artifact.
+Use project-wiki-topic-write for ordinary docs/wiki topic pages that summarize or link source material without becoming one of the specialized methodology artifacts. Use documentation-reverse-engineer when the user asks for a source-derived documentation set rather than one artifact.
 
 ## Template Assets
 
 Template assets live under skills/development-methodology/assets/templates.
 
 - project-wiki-template.md defines project wiki setup and code-aware maintenance rules.
-- agents-plan-template.yaml defines project agent roles, folder technology loadouts, AGENTS.md operational guidance, nested plan placement, proprietary validation notes, and customer-safe example boundaries.
+- project-template.yaml defines project agent roles, folder technology loadouts, root and nested AGENTS.md operational guidance, proprietary validation notes, and customer-safe example boundaries in one project-root configuration.
 - functional-spec-template.md defines user-visible workflow and acceptance documentation.
 - architecture-template.md defines project-wide and cross-cutting architecture documentation.
 - high-level-design-template.md defines subsystem and feature-family documentation.
@@ -119,14 +119,14 @@ When a target project needs a local editable document, copy only the matching te
 Before finishing documentation or wiki work:
 
 1. Use the artifact-specific review skill when the artifact type is project wiki, functional specification, architecture, high-level design, module design, or unit test plan.
-2. Use documentation-page-verifier for mixed, unknown, or custom documentation artifacts.
+2. Use documentation-page-verify for mixed, unknown, or custom documentation artifacts.
 3. Confirm the document follows the selected structure or format. Use the shared page contract only when the selected artifact type requires it.
 4. Run project wiki status and lint when docs/wiki exists.
 5. Run OKF validation when topic pages changed.
 6. Run the repository agent-skill validator when skill files changed.
 7. When a bundled skill is renamed or deleted, sweep the source repository for the old skill id and update or remove references in skills, companion-skill lists, Codex metadata, role definitions, dispatch profiles, aggregate workflow examples, design documents, scripts, and tests.
 8. Run scripts/openai_metadata.py skills after bundled skill name or description changes so Codex interface metadata stays aligned with SKILL.md while policy and dependencies remain hand-authored.
-9. Refresh shared skill and generated agent installs from this source repository when distributed content changed. When a skill or role was renamed or deleted, confirm the refresh reports the obsolete owned artifact as pruned or reports that prune was skipped because no ownership manifest existed. Do not remove unowned local skills or agents manually.
+9. Do not copy this bundle's skills or generated agents into user-home runtime folders as part of maintenance or ordinary use. Use the repository sources and generated adapters in place. Run the installer only for an explicitly requested deployment with caller-supplied target directories.
 10. Run the target project build when code, imports, generated artifacts, or project metadata changed.
 11. Search generated documents for unresolved TODO markers that are not intentional.
 12. Confirm every created document names related source, tests, or Not yet identified inside the selected format.

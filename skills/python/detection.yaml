@@ -1,0 +1,11 @@
+schema: dev-methodology-technology-detection
+version: 2
+skill: python
+kind: technology
+label: Python
+capabilities:
+  - language-coding
+activation:
+  anyOf:
+  - fileExtension: .py
+  - fileExtension: .pyi

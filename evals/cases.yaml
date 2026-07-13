@@ -7,12 +7,13 @@ cases:
     install: npm install
     verify: npm test
     requiredAgents:
-      - coding-agent
+      - dev-coder
     requiredSkills:
+      - agent-claim
       - careful-coding
       - code-comments
       - test-driven-development
-      - typescript-coding
+      - typescript
       - typescript-strict
       - typescript-esm
       - code-review-evidence
@@ -28,14 +29,15 @@ cases:
     install: mvn -q -DskipTests package
     verify: mvn -q test
     requiredAgents:
-      - coding-agent
+      - dev-coder
     requiredSkills:
+      - agent-claim
       - careful-coding
       - code-comments
       - test-driven-development
-      - java-coding
+      - java
       - spring-boot
-      - sql-coding
+      - sql
       - code-review-evidence
     requiredEvidence:
       - JAVA-CONTRACT
@@ -52,13 +54,13 @@ cases:
     expectVerifyFailure: true
     readOnly: true
     requiredAgents:
-      - code-review-agent
+      - dev-code-reviewer
     requiredSkills:
       - code-review-evidence
-      - review-structured
+      - review-structured-artifact
       - careful-coding
       - code-comments
-      - typescript-coding
+      - typescript
       - typescript-strict
       - typescript-esm
     requiredEvidence:

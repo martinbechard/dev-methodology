@@ -11,8 +11,8 @@ Use this pack for browser-level workflows and E2E verification.
 
 ## Routing
 
-- Load with E2E Browser Agent when browser state, dev servers, authenticated sessions, traces, or exclusive runtime resources are involved.
-- Load with Coding Agent for small test edits that do not require browser ownership.
+- Load with Dev Browser Operator when browser state, dev servers, authenticated sessions, traces, or exclusive runtime resources are involved.
+- Load with Dev Coder for small test edits that do not require browser ownership.
 - Combine with Next.js App Router, Clerk Auth, Tailwind Design System, and Jest.
 
 ## Guidance

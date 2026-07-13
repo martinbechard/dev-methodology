@@ -1,3 +1,7 @@
+# Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+# AI attribution: Modified with AI assistance.
+# Summary: Verifies receipt-backed agent and skill evaluation evidence contracts.
+
 from __future__ import annotations
 
 import hashlib
@@ -45,7 +49,7 @@ class AgentSkillEvidenceTests(unittest.TestCase):
                 "reference": "attestation.json#capture",
             },
             "agent": {
-                "id": "coding-agent",
+                "id": "dev-coder",
                 "harness": "codex",
                 "model": "test-model",
                 "invocationEvidence": "events.jsonl#invocation",
@@ -100,7 +104,7 @@ class AgentSkillEvidenceTests(unittest.TestCase):
 
     def test_declared_agent_is_not_enough_without_matching_identity(self) -> None:
         receipt = self.receipt()
-        receipt["agent"]["id"] = "code-review-agent"
+        receipt["agent"]["id"] = "dev-code-reviewer"
         self.assertIn("evidence agent id does not match a required agent", self.validate(receipt))
 
     def test_skill_claim_is_not_enough_without_tool_call_evidence(self) -> None:
@@ -147,7 +151,7 @@ class AgentSkillEvidenceTests(unittest.TestCase):
         case = self.module.load_cases()["typescript-code-review"]
         receipt = self.receipt()
         receipt["case"] = case["id"]
-        receipt["agent"]["id"] = "code-review-agent"
+        receipt["agent"]["id"] = "dev-code-reviewer"
         receipt["skills"] = [
             {
                 "id": skill,

@@ -18,7 +18,7 @@ Keep review knowledge with the skills that create the code. This skill owns the 
 
 ## Workflow
 
-1. Inventory the changed files and read the root and nearest AGENTS.md.
+1. Inventory the changed files and apply the project instructions already in context.
 2. Load every fixed-role skill and folder technology skill declared for the review scope, then load references/review-checklist-code-evidence.md plus each selected skill's review checklist. Do not rerun technology detection during review.
 3. Extract evidence before writing findings. A lower-cost model may perform this stage only when the harness dispatches and records a separate evidence worker.
 4. Record each checklist item as supported, contradicted, unknown, or not applicable. Cite the smallest useful file, symbol, location, command, or test result.

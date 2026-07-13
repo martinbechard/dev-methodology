@@ -6,7 +6,7 @@ Make fixed-role skill loading, project technology detection, generated project g
 
 ## Purpose
 
-Canonical roles know their generic fixed-role skills. Project setup detects stable technology guidance for analyzed folders and records it in AGENTS-PLAN.yaml and AGENTS.md. Runtime adapters express fixed-role skills according to their native semantics. Evaluation proves actual activation before the support checklist marks behavior verified. The mind map exposes these relationships and their evidence.
+Canonical roles know their generic fixed-role skills. Project setup detects stable technology guidance for analyzed folders and records it in PROJECT.yaml and AGENTS.md. Runtime adapters express fixed-role skills according to their native semantics. Evaluation proves actual activation before the support checklist marks behavior verified. The mind map exposes these relationships and their evidence.
 
 ## Design Anchors
 
@@ -15,7 +15,7 @@ Canonical roles know their generic fixed-role skills. Project setup detects stab
 - Codex developer instructions require enabled skills to be discovered and loaded; skills.config is optional availability configuration, not preloading.
 - Restrictive Claude tool allowlists must include Skill when dynamic folder skills are required.
 - Technology detection runs during project setup, not on every coding or review task.
-- AGENTS-PLAN.yaml is the reviewable setup artifact.
+- PROJECT.yaml is the reviewable setup artifact.
 - AGENTS.md is the operational folder guidance loaded during normal work.
 - Behavior verification requires captured harness evidence rather than agent claims.
 

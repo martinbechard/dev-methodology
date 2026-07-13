@@ -7,7 +7,7 @@ metadata:
 
 # Test Strategy
 
-Choose tests from behavior and risk, then use specialized test guidance declared by the nearest AGENTS.md when available.
+Choose tests from behavior and risk, then use the specialized test guidance already routed for the affected scope.
 
 ## Workflow
 

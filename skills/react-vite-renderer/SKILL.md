@@ -11,8 +11,8 @@ Use this pack for React user interfaces built through Vite, including Electron r
 
 ## Routing
 
-- Load with Coding Agent for components, hooks, renderer state, routing, assets, styles, and browser APIs.
-- Load with Code Review Agent when a change affects user workflows, preload usage, state ownership, or client persistence.
+- Load with Dev Coder for components, hooks, renderer state, routing, assets, styles, and browser APIs.
+- Load with Dev Code Reviewer when a change affects user workflows, preload usage, state ownership, or client persistence.
 - Combine with Electron Preload when the UI calls desktop APIs.
 
 ## Guidance

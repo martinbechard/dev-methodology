@@ -1,6 +1,6 @@
 ---
 name: detect-technology-skills
-description: Detect specialized technology and domain skills from source-backed folder scopes during Project Agent Setup. Use when creating or updating AGENTS-PLAN.yaml and unconditional AGENTS.md folder skill loadouts, or when technology boundaries change.
+description: Detect specialized technology and domain skills from source-backed folder scopes during Project Agent Setup. Use when creating or updating PROJECT.yaml and unconditional AGENTS.md folder skill loadouts, or when technology boundaries change.
 metadata:
   category: development-practice
 ---
@@ -15,7 +15,7 @@ Run technology detection during project setup, not during ordinary coding, revie
 2. Choose representative folders that do not combine unrelated sibling technologies.
 3. Run scripts/detect.py once for those scopes.
 4. Review source evidence, missing required skills, exclusive conflicts, and explicit no-variant results.
-5. Record accepted loadouts and source evidence in AGENTS-PLAN.yaml.
+5. Record accepted loadouts and source evidence in PROJECT.yaml.
 6. Generate root or nested AGENTS.md sections with unconditional folder skill-loading instructions.
 7. Verify every listed skill is installed.
 8. Rerun only when project setup or technology boundaries change.

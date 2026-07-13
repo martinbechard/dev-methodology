@@ -37,7 +37,7 @@ Create one module design that defines:
 
 Use create-high-level-design when the work spans several modules, components, tasks, services, or UI surfaces. Use create-architecture when the work defines project-wide boundaries, layers, technology choices, or cross-cutting rules.
 
-Use documentation-reverse-engineering when the user asks to derive many module designs from an existing codebase.
+Use documentation-reverse-engineer when the user asks to derive many module designs from an existing codebase.
 
 ## Workflow
 
@@ -56,7 +56,7 @@ Use documentation-reverse-engineering when the user asks to derive many module d
 Before finishing:
 
 1. Use review-module-design on the completed artifact.
-2. Use documentation-page-verifier with the artifact, source evidence, and completed review checklist when the review skill calls for it.
+2. Use documentation-page-verify with the artifact, source evidence, and completed review checklist when the review skill calls for it.
 3. Run project wiki status and lint when docs/wiki exists and the artifact lives in or links from docs/wiki.
 4. Search the artifact for unresolved TODO markers that are not intentional.
 5. Confirm every responsibility, dependency, public contract, processing rule, invariant, and verification claim has source evidence or an open question.

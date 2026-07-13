@@ -389,6 +389,134 @@
       margin-bottom: var(--space-2);
     }
 
+    .directory-model {
+      display: grid;
+      grid-template-columns: minmax(0, 1.65fr) minmax(260px, 0.75fr);
+      gap: var(--space-4);
+      margin-top: var(--space-5);
+      padding: var(--space-5);
+      overflow: hidden;
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      background:
+        linear-gradient(135deg, rgba(232, 240, 255, 0.68), rgba(255, 255, 255, 0) 52%),
+        var(--color-panel);
+      box-shadow: var(--shadow-panel);
+    }
+
+    .directory-tree {
+      display: grid;
+      gap: var(--space-3);
+      padding: var(--space-4);
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius-small);
+      background: rgba(255, 255, 255, 0.86);
+    }
+
+    .directory-root {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-weight: 800;
+    }
+
+    .directory-root::before {
+      content: "/";
+      display: grid;
+      width: 1.8rem;
+      height: 1.8rem;
+      place-items: center;
+      border-radius: var(--radius-small);
+      background: var(--color-ink);
+      color: white;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    .directory-branches {
+      display: grid;
+      gap: var(--space-2);
+      margin-left: 0.85rem;
+      padding-left: 1.35rem;
+      border-left: 2px solid var(--color-line);
+    }
+
+    .directory-node {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(150px, 0.72fr) minmax(0, 1.28fr);
+      gap: var(--space-3);
+      align-items: baseline;
+      padding: 0.62rem 0.75rem;
+      border-left: 0.28rem solid var(--color-line);
+      border-radius: var(--radius-small);
+      background: var(--color-soft-gray);
+    }
+
+    .directory-node::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: 100%;
+      width: 1.35rem;
+      border-top: 2px solid var(--color-line);
+    }
+
+    .directory-node code {
+      width: max-content;
+      padding: 0;
+      background: transparent;
+      color: var(--color-ink);
+      font-weight: 780;
+    }
+
+    .directory-node span {
+      color: var(--color-muted);
+      font-size: var(--font-xs);
+    }
+
+    .directory-node.configuration {
+      border-left-color: var(--color-role);
+      background: var(--color-soft-blue);
+    }
+
+    .directory-node.guidance {
+      border-left-color: var(--color-router);
+      background: var(--color-soft-green);
+    }
+
+    .directory-node.skill-file {
+      border-left-color: var(--color-skill);
+      background: var(--color-soft-amber);
+    }
+
+    .directory-node.agent-file {
+      border-left-color: var(--color-conditional-skill);
+      background: var(--color-soft-violet);
+    }
+
+    .directory-explainer {
+      display: grid;
+      align-content: start;
+      gap: var(--space-4);
+      padding: var(--space-4);
+    }
+
+    .directory-explainer h3 {
+      font-size: 1.2rem;
+    }
+
+    .directory-explainer ol {
+      display: grid;
+      gap: var(--space-3);
+      margin: 0;
+      padding-left: var(--space-5);
+      color: var(--color-muted);
+    }
+
+    .directory-explainer strong {
+      color: var(--color-ink);
+    }
+
     .note {
       margin-top: var(--space-4);
       padding: var(--space-4);
@@ -421,6 +549,27 @@
       .agent-grid {
         grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       }
+
+      .directory-model {
+        grid-template-columns: 1fr;
+        padding: var(--space-4);
+      }
+
+      .directory-node {
+        grid-template-columns: 1fr;
+        gap: 0.2rem;
+      }
+
+      .directory-node code {
+        width: auto;
+        overflow-wrap: anywhere;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .flow {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -437,43 +586,19 @@
     </div>
     <h1 id="page-title">Agent Roles and Skill Loadouts</h1>
     <p class="lede">
-      This reference defines the portable agent roles and skill loadouts in the development methodology bundle.
-      It is customer-ready: roles are generic, project-specific setup is documented in AGENTS-PLAN.yaml, operational routing comes from AGENTS.md files, and skills stay small enough to load only when the current job needs them.
+      Browse the generated catalog of portable roles, skills, loadouts, and output contracts. Select a role or skill to inspect its current canonical definition; read the operating model and specialization strategy for the rules behind this data.
     </p>
   </section>
 
   <section class="section" aria-labelledby="model-title">
     <h2 id="model-title">Reference Model</h2>
-    <div class="flow">
-      <div class="flow-step">
-        <strong>1. Role</strong>
-        <p>A role is an invokable job boundary with stable authority, inputs, outputs, and handoff expectations.</p>
-      </div>
-      <div class="flow-step">
-        <strong>2. Router Reference</strong>
-        <p>Root and nested AGENTS.md files describe project family, application tiers, paths, checks, data rules, and local terminology.</p>
-      </div>
-      <div class="flow-step">
-        <strong>3. Skill Selection</strong>
-        <p>The role loads only the methodology, stack, quality, wiki, or domain skills needed for the current request.</p>
-      </div>
-      <div class="flow-step">
-        <strong>4. Runtime Adapter</strong>
-        <p>Codex, Claude Code, Gemini CLI, Junie, or another host receives a runtime-specific role file or skill metadata.</p>
-      </div>
-      <div class="flow-step">
-        <strong>5. Evidence</strong>
-        <p>Review checklists, verification notes, handoffs, and run records make the work inspectable after completion.</p>
-      </div>
-    </div>
-    <p class="note">
-      AGENTS.md is the project-local operational reference. It should bind technology skills to the right folders and name validation and data rules without copying shared skill bodies or redefining role authority.
-    </p>
+    <p class="note">The catalog is generated from canonical role files and SKILL.md sources. PROJECT.yaml, AGENTS.md, runtime adapters, and execution evidence have distinct responsibilities; the <a href="agentic-development-operating-model.html">operating model</a> explains their relationship.</p>
+    <p class="note">Use the <a href="agent-skill-specialization-strategy.html">specialization strategy</a> when deciding whether work needs a new role, a request-specific skill, or a setup-time folder loadout.</p>
   </section>
 
   <section class="section" aria-labelledby="hierarchy-title">
     <h2 id="hierarchy-title">Interactive Agent And Skill Map</h2>
-    <p class="note">Select an agent to isolate its fixed and request-specific skills, or select a skill to see every canonical agent that uses it. Use View definition to open the same generated detail shown by the cards below. Setup-time stack and domain skills remain in the catalog below and are intentionally omitted from this map.</p>
+    <p class="note">Select an agent to isolate its fixed and request-specific skills, or select a skill to see every canonical agent that uses it. Double-click an item or use View definition to open the same generated detail shown by the cards below. Definitions opened from the map return to the map when closed. Setup-time stack and domain skills remain in the catalog below and are intentionally omitted from this map.</p>
     <p><a href="agent-skill-hierarchy.svg">Open the interactive SVG diagram</a></p>
     <object id="agent-skill-hierarchy" class="hierarchy-embed" data="agent-skill-hierarchy.svg" type="image/svg+xml" tabindex="-1" aria-label="Interactive hierarchy connecting canonical agents to bundled skills">
       <a href="agent-skill-hierarchy.svg">Open the interactive agent and skill map</a>
@@ -483,31 +608,31 @@
   <section class="section" aria-labelledby="roles-title">
     <h2 id="roles-title">Role Agent Categories</h2>
     <p class="note">
-      The role model has four operating categories: agents that maintain this methodology bundle, agents that set up or update a downstream project, agents that own wiki activities, and agents used during normal development in that downstream project.
+      The role model has four operating categories: agents used during normal development, agents that own wiki activities, agents that set up or update a downstream project, and agents that maintain this methodology bundle.
     </p>
     <p class="note">
-      Amber skills are fixed role skills. Violet skills are request-specific and are loaded only when their condition applies. Blue skills in the catalog are setup-time technology skills; Project Agent Setup binds them to folders through AGENTS.md rather than assigning them to one canonical role.
+      Amber skills are fixed role skills. Violet skills are request-specific and are loaded only when their condition applies. Blue skills in the catalog are setup-time technology skills; Project Configurator binds them to folders through AGENTS.md rather than assigning them to one canonical role.
     </p>
   </section>
 
-  <section class="section" aria-labelledby="methodology-maintenance-title">
-    <h2 id="methodology-maintenance-title">Methodology Maintenance Agents</h2>
-    <div class="grid agent-grid" data-role-group="methodology-maintenance"></div>
-  </section>
-
-  <section class="section" aria-labelledby="project-setup-title">
-    <h2 id="project-setup-title">Project Setup And Update Agents</h2>
-    <div class="grid agent-grid" data-role-group="project-setup"></div>
+  <section class="section" aria-labelledby="dev-activities-title">
+    <h2 id="dev-activities-title">Dev Activities</h2>
+    <div class="grid agent-grid" data-role-group="dev-activities"></div>
   </section>
 
   <section class="section" aria-labelledby="wiki-activities-title">
-    <h2 id="wiki-activities-title">Wiki Activity Agents</h2>
+    <h2 id="wiki-activities-title">Wiki Activities</h2>
     <div class="grid agent-grid" data-role-group="wiki-activities"></div>
   </section>
 
-  <section class="section" aria-labelledby="development-use-title">
-    <h2 id="development-use-title">Development Use Agents</h2>
-    <div class="grid agent-grid" data-role-group="development-use"></div>
+  <section class="section" aria-labelledby="project-setup-title">
+    <h2 id="project-setup-title">Project Setup</h2>
+    <div class="grid agent-grid" data-role-group="project-setup"></div>
+  </section>
+
+  <section class="section" aria-labelledby="methodology-maintenance-title">
+    <h2 id="methodology-maintenance-title">Methodology Maintenance</h2>
+    <div class="grid agent-grid" data-role-group="methodology-maintenance"></div>
   </section>
 
   <section class="section" aria-labelledby="skills-title">
@@ -530,102 +655,77 @@
         <tbody>
           <tr>
             <td><span class="name">User changes this methodology bundle</span></td>
-            <td>Use a Methodology Maintenance Agent so source skills, metadata, README, design HTML, tests, and shared-install behavior stay aligned.</td>
-            <td>development-methodology, review-structured, documentation-page-verifier, validation scripts, and metadata scripts as needed.</td>
+            <td>Use Methodology Maintainer so source skills, metadata, README, design HTML, tests, generated adapters, and explicit deployment behavior stay aligned.</td>
+            <td>development-methodology, review-structured-artifact, documentation-page-verify, validation scripts, and metadata scripts as needed.</td>
           </tr>
           <tr>
             <td><span class="name">User sets up or updates a downstream project</span></td>
-            <td>Use a Project Setup And Update Agent to create or refresh AGENTS-PLAN.yaml, local AGENTS.md routing, documentation routes, and project-specific validation evidence.</td>
-            <td>development-methodology, create-agents-plan, documentation-bootstrap, and documentation-page-verifier.</td>
+            <td>Use Project Configurator to create or refresh PROJECT.yaml, local AGENTS.md routing, documentation routes, and project-specific validation evidence.</td>
+            <td>development-methodology, create-project-configuration, documentation-bootstrap, and documentation-page-verify.</td>
           </tr>
           <tr>
             <td><span class="name">User asks for code change</span></td>
-            <td>Use Coding Agent unless the task is primarily review, verification, documentation, or merge coordination.</td>
-            <td>careful-coding, code-comments, code-discovery, plus every folder technology skill declared by the nearest AGENTS.md.</td>
+            <td>Use Dev Coder unless the task is primarily review, verification, documentation, or merge coordination.</td>
+            <td>careful-coding, code-comments, code-discovery, plus the folder technology skills supplied by the harness for the active scope.</td>
           </tr>
           <tr>
             <td><span class="name">User asks for review</span></td>
-            <td>Use Code Review Agent with fresh context and finding-first output. Extract evidence from the applicable coding-skill checklists before synthesis.</td>
-            <td>code-review-evidence, review-structured, code-comments, and every folder technology skill declared by the nearest AGENTS.md.</td>
+            <td>Use Dev Code Reviewer with fresh context and finding-first output. Extract evidence from the applicable coding-skill checklists before synthesis.</td>
+            <td>code-review-evidence, review-structured-artifact, code-comments, and the folder technology skills supplied by the harness for the active scope.</td>
           </tr>
           <tr>
             <td><span class="name">User asks for documentation artifact</span></td>
-            <td>Use Documentation Writer and development-methodology to select exactly one non-wiki creation route and write the source-backed artifact.</td>
+            <td>Use Dev Documentation Writer and development-methodology to select exactly one non-wiki creation route and write the source-backed artifact.</td>
             <td>development-methodology plus create-functional-spec, create-architecture, create-high-level-design, create-module-design, or create-unit-test-plan.</td>
           </tr>
           <tr>
             <td><span class="name">User asks to set up project agents or skills</span></td>
-            <td>Use Project Agent Setup Agent to create AGENTS-PLAN.yaml and decide whether nested plans are needed.</td>
-            <td>detect-technology-skills, development-methodology, create-agents-plan, documentation-page-verifier, and documentation-bootstrap for first-time setup.</td>
+            <td>Use Project Configurator to create the project-root PROJECT.yaml and decide where nested AGENTS.md guidance is needed.</td>
+            <td>detect-technology-skills, development-methodology, create-project-configuration, documentation-page-verify, and documentation-bootstrap for first-time setup.</td>
           </tr>
           <tr>
             <td><span class="name">User asks for artifact review</span></td>
-            <td>Use Artifact Review Agent with the matching non-wiki artifact review skill and completed checklist evidence.</td>
-            <td>review-architecture, review-functional-spec, review-high-level-design, review-module-design, or review-unit-test-plan.</td>
+            <td>Use Dev Artifact Reviewer with the matching non-wiki artifact review skill and completed checklist evidence.</td>
+            <td>review-structured-artifact plus review-architecture, review-functional-spec, review-high-level-design, review-module-design, or review-unit-test-plan.</td>
           </tr>
           <tr>
             <td><span class="name">User asks for wiki setup or restructuring</span></td>
-            <td>Use Wiki Setup Agent to establish roots, ownership, federation, source workflow, navigation, and setup verification.</td>
-            <td>project-wiki, with create-project-wiki or documentation-bootstrap only when their request-specific conditions apply.</td>
+            <td>Use Wiki Architect to establish roots, ownership, federation, source workflow, navigation, and setup verification.</td>
+            <td>project-wiki, with project-wiki-create or documentation-bootstrap only when their request-specific conditions apply.</td>
           </tr>
           <tr>
             <td><span class="name">User asks for wiki content or ingest</span></td>
-            <td>Use Wiki Writer Agent for ordinary durable maintenance or Wiki Ingest Agent for raw-to-processed synthesis.</td>
-            <td>project-wiki, project-wiki-topic-writer, project-wiki-topic-verifier, and code-project-wiki only for code-aware maintenance.</td>
+            <td>Use Wiki Writer for ordinary durable maintenance or Wiki Ingester for raw-to-processed synthesis.</td>
+            <td>project-wiki, project-wiki-topic-write, project-wiki-topic-verify, and code-project-wiki only for code-aware maintenance.</td>
           </tr>
           <tr>
             <td><span class="name">User asks a wiki-backed question or requests research</span></td>
-            <td>Use Wiki Query Agent for maintained knowledge and Wiki Research Agent or Public Source Collector when missing coverage requires a raw-only source artifact.</td>
+            <td>Use Wiki Query Responder for maintained knowledge and Wiki Researcher or Wiki Source Collector when missing coverage requires a raw-only source artifact.</td>
             <td>project-wiki-query and project-wiki-research, with collection kept separate from durable synthesis.</td>
           </tr>
           <tr>
             <td><span class="name">User asks for wiki verification or review</span></td>
             <td>Use Wiki Topic Verifier for changed topic pages or Wiki Artifact Reviewer for a project-wiki methodology artifact.</td>
-            <td>project-wiki-topic-verifier, or review-project-wiki plus documentation-page-verifier.</td>
+            <td>project-wiki-topic-verify, or project-wiki-review plus documentation-page-verify.</td>
           </tr>
           <tr>
             <td><span class="name">Target files are in a specialized subtree</span></td>
-            <td>Read the nearest nested AGENTS.md and load every technology skill declared for the subtree before acting. Do not rerun detection.</td>
-            <td>Project Agent Setup owns source-backed detection and blocks missing required skills or exclusive conflicts before publishing the guidance.</td>
+            <td>Use the nested project instructions and folder technology skills supplied by the harness for the subtree. Do not rerun detection.</td>
+            <td>Project Configurator owns source-backed detection and blocks missing required skills or exclusive conflicts before publishing the guidance.</td>
           </tr>
           <tr>
             <td><span class="name">Work spans multiple phases or agents</span></td>
-            <td>Use Development Orchestrator to split the work and preserve handoff, claim, and verification records.</td>
-            <td>structured-design, manage-backlog, agent-claim, agent-work-merge, review-structured.</td>
+            <td>Use Dev Orchestrator to split the work and preserve handoff, claim, and verification records.</td>
+            <td>structured-design, manage-backlog, agent-claim, agent-work-merge, review-structured-artifact.</td>
           </tr>
         </tbody>
       </table>
     </div>
   </section>
 
-  <section class="section" aria-labelledby="contracts-title">
-    <h2 id="contracts-title">Customer Deployment Contracts</h2>
-    <div class="grid">
-      <article class="card router">
-        <h3>AGENTS.md Is Local Reference</h3>
-        <p>Root and nested AGENTS.md files select project family, tiers, paths, validation commands, and data boundaries. They do not duplicate shared skills.</p>
-      </article>
-      <article class="card skill">
-        <h3>Skills Stay Reusable</h3>
-        <p>Skills contain portable procedures. They are loaded by role and task, not copied into project instructions or role prompts.</p>
-      </article>
-      <article class="card role">
-        <h3>Roles Keep Authority Stable</h3>
-        <p>New roles are added only when authority, output contract, lifecycle phase, context isolation, or runtime resource ownership changes.</p>
-      </article>
-      <article class="card evidence">
-        <h3>Evidence Is Required</h3>
-        <p>Reviews, verification, handoffs, and wiki updates should leave enough evidence for another agent or human to inspect the decision later.</p>
-      </article>
-      <article class="card skill">
-        <h3>Customer Names Stay Stable</h3>
-        <p>Customer maintainers may edit installed skills and native agent definitions directly. Keep the original names so loadouts and cross-references remain valid.</p>
-      </article>
-      <article class="card evidence">
-        <h3>Updates Are Reconciled</h3>
-        <p>A later update compares the old generic, installed customer, and new generic definitions. The user chooses what to keep, merge, replace, or remove.</p>
-      </article>
-    </div>
+  <section class="section" aria-labelledby="catalog-boundary-title">
+    <h2 id="catalog-boundary-title">Catalog Boundary</h2>
+    <p class="note">This page presents generated definitions. The <a href="agent-skill-specialization-strategy.html">strategy</a> owns role, skill, and local-guidance policy; <a href="agent-definition-runtime-formats.html">runtime formats</a> owns adapter and explicit-deployment detail.</p>
   </section>
 </main>
   <script src="generated/skill-definitions.js"></script>
@@ -763,9 +863,10 @@
         .find((element) => element.dataset[dataKey] === name);
       if (!(trigger instanceof HTMLElement)) return false;
       if (hierarchyMap) {
-        trigger.addEventListener("focus", () => hierarchyMap.focus(), { once: true });
+        trigger.dataset.definitionReturnTarget = hierarchyMap.id;
       }
       trigger.click();
+      delete trigger.dataset.definitionReturnTarget;
       return true;
     }
 

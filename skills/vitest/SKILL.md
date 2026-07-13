@@ -11,8 +11,8 @@ Use this pack for Vitest test design, focused test execution, mocks, fixtures, a
 
 ## Routing
 
-- Load with Coding Agent when adding or updating tests for behavior changes.
-- Load with QA And Verification Agent when choosing focused test commands and interpreting failures.
+- Load with Dev Coder when adding or updating tests for behavior changes.
+- Load with Dev Verifier when choosing focused test commands and interpreting failures.
 - Combine with React Vite Renderer, TypeScript ESM, Electron Main, or Node CLI based on the code under test.
 
 ## Guidance

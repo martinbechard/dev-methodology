@@ -1,0 +1,17 @@
+# Codex app metadata for this skill.
+# Derived interface fields are refreshed from SKILL.md by scripts/openai_metadata.py.
+interface:
+  # User-facing name shown in Codex skill surfaces.
+  display_name: Sql
+  # User-facing summary shown in Codex skill surfaces.
+  short_description: Use when writing, changing, testing, or reviewing SQL queries, schemas, migrations...
+  # Prompt Codex can use when launching this skill directly.
+  default_prompt: Use $sql to implement or review this SQL change and its evidence.
+
+# Optional invocation policy placeholder.
+# policy:
+#   allow_implicit_invocation: false
+
+# Optional tool dependency placeholder.
+# dependencies:
+#   tools: []

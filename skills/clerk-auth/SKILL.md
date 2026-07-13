@@ -11,8 +11,8 @@ Use this pack for Clerk-backed identity and access control in application code.
 
 ## Routing
 
-- Load with Coding Agent for protected routes, server actions, route handlers, middleware, user lookup, and organization context.
-- Load with Code Review Agent when auth decisions, session data, or tenant boundaries change.
+- Load with Dev Coder for protected routes, server actions, route handlers, middleware, user lookup, and organization context.
+- Load with Dev Code Reviewer when auth decisions, session data, or tenant boundaries change.
 - Combine with Next.js App Router, React Server Components, API Routes, and Playwright.
 
 ## Guidance

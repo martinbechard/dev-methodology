@@ -32,7 +32,7 @@ Proceed directly when the user already specified these choices or the repository
 
 ## Bootstrap Workflow
 
-1. Inspect the target repository before creating files. Read AGENTS.md, README files, procedures, package metadata, build scripts, existing docs, existing wiki pages, backlog folders, and current git status when present.
+1. Inspect the target repository before creating files. Apply the project instructions already in context, then read README files, task-relevant procedures, package metadata, build scripts, existing docs, existing wiki pages, backlog folders, and current git status when present.
 2. Choose documentation roots that fit existing conventions. Prefer a single documentation root with functional, architecture, high-level, and modules subfolders when the project has no convention.
 3. Confirm docs/wiki as the wiki root unless the project has a stronger established location.
 4. Use development-methodology to select template assets for initial documents.

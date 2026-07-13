@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
+# Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+# AI attribution: Modified with AI assistance.
+# Summary: Installs or removes bundle-owned skills and agents only at explicit deployment destinations.
+
 from __future__ import annotations
 
 import argparse
 import hashlib
 import json
-import os
 import shutil
 import sys
 from collections.abc import Sequence
@@ -23,11 +26,6 @@ CODEX_ADAPTER_NAME = "codex"
 GEMINI_ADAPTER_NAME = "gemini"
 CLAUDE_ADAPTER_NAME = "claude"
 JUNIE_ADAPTER_NAME = "junie"
-AGENTS_HOME_ENVIRONMENT_VARIABLE = "AGENTS_HOME"
-CLAUDE_HOME_ENVIRONMENT_VARIABLE = "CLAUDE_HOME"
-AGENTS_HOME_FOLDER_NAME = ".agents"
-CLAUDE_HOME_FOLDER_NAME = ".claude"
-JUNIE_HOME_FOLDER_NAME = ".junie"
 SKILL_MANIFEST_FILE_NAME = "SKILL.md"
 GENERATED_CACHE_FOLDER_NAME = "__pycache__"
 PYTHON_BYTECODE_PATTERN = "*.pyc"
@@ -48,8 +46,6 @@ MANIFEST_SKILL_ARTIFACT_TYPE = "skill"
 MANIFEST_AGENT_ARTIFACT_TYPE = "agent"
 DEFAULT_AGENTS_FOLDER_NAME = "agents"
 GENERATED_ADAPTERS_RELATIVE_PATH = Path("generated") / "adapters"
-CODEX_HOME_ENVIRONMENT_VARIABLE = "CODEX_HOME"
-CODEX_HOME_FOLDER_NAME = ".codex"
 AGENT_FILE_EXTENSIONS = {
     CODEX_ADAPTER_NAME: ".toml",
     CLAUDE_ADAPTER_NAME: ".md",
@@ -59,8 +55,6 @@ PRUNE_SKIPPED_NO_MANIFEST_MESSAGE = "prune skipped; no ownership manifest"
 
 class Adapter(NamedTuple):
     name: str
-    home_environment_variable: Optional[str]
-    default_home_folder_name: str
 
 
 class SkillInstallResult(NamedTuple):
@@ -70,49 +64,19 @@ class SkillInstallResult(NamedTuple):
 
 
 ADAPTERS = {
-    GENERIC_ADAPTER_NAME: Adapter(
-        name=GENERIC_ADAPTER_NAME,
-        home_environment_variable=AGENTS_HOME_ENVIRONMENT_VARIABLE,
-        default_home_folder_name=AGENTS_HOME_FOLDER_NAME,
-    ),
-    CODEX_ADAPTER_NAME: Adapter(
-        name=CODEX_ADAPTER_NAME,
-        home_environment_variable=AGENTS_HOME_ENVIRONMENT_VARIABLE,
-        default_home_folder_name=AGENTS_HOME_FOLDER_NAME,
-    ),
-    GEMINI_ADAPTER_NAME: Adapter(
-        name=GEMINI_ADAPTER_NAME,
-        home_environment_variable=AGENTS_HOME_ENVIRONMENT_VARIABLE,
-        default_home_folder_name=AGENTS_HOME_FOLDER_NAME,
-    ),
-    CLAUDE_ADAPTER_NAME: Adapter(
-        name=CLAUDE_ADAPTER_NAME,
-        home_environment_variable=CLAUDE_HOME_ENVIRONMENT_VARIABLE,
-        default_home_folder_name=CLAUDE_HOME_FOLDER_NAME,
-    ),
-    JUNIE_ADAPTER_NAME: Adapter(
-        name=JUNIE_ADAPTER_NAME,
-        home_environment_variable=None,
-        default_home_folder_name=JUNIE_HOME_FOLDER_NAME,
-    ),
+    adapter_name: Adapter(name=adapter_name)
+    for adapter_name in (
+        GENERIC_ADAPTER_NAME,
+        CODEX_ADAPTER_NAME,
+        GEMINI_ADAPTER_NAME,
+        CLAUDE_ADAPTER_NAME,
+        JUNIE_ADAPTER_NAME,
+    )
 }
 
 
 def default_source() -> Path:
     return Path(__file__).resolve().parents[1] / DEFAULT_SKILLS_FOLDER_NAME
-
-
-def default_destination(adapter_name: str = DEFAULT_ADAPTER_NAME) -> Path:
-    adapter = ADAPTERS[adapter_name]
-    configured_home = (
-        os.environ.get(adapter.home_environment_variable)
-        if adapter.home_environment_variable is not None
-        else None
-    )
-    if configured_home:
-        return Path(configured_home).expanduser() / DEFAULT_SKILLS_FOLDER_NAME
-
-    return Path.home() / adapter.default_home_folder_name / DEFAULT_SKILLS_FOLDER_NAME
 
 
 def parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
@@ -132,8 +96,8 @@ def parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
     parser.add_argument(
         "--dest",
         type=Path,
-        default=None,
-        help="Destination skills directory. Defaults to the selected adapter's skills folder.",
+        required=True,
+        help="Explicit deployment or cleanup destination for skills.",
     )
     parser.add_argument(
         "--replace",
@@ -170,7 +134,12 @@ def parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
         "--agents-dest",
         type=Path,
         default=None,
-        help="Native agent destination. Defaults to the selected runtime's user agents folder.",
+        help="Explicit deployment or cleanup destination for native agents.",
+    )
+    parser.add_argument(
+        "--remove-owned",
+        action="store_true",
+        help="Remove only artifacts recorded by this bundle's ownership manifest.",
     )
     return parser.parse_args(argv)
 
@@ -182,18 +151,6 @@ def default_agents_source(adapter_name: str) -> Path:
         / adapter_name
         / DEFAULT_AGENTS_FOLDER_NAME
     )
-
-
-def default_agents_destination(adapter_name: str) -> Path:
-    if adapter_name == CODEX_ADAPTER_NAME:
-        configured_home = os.environ.get(CODEX_HOME_ENVIRONMENT_VARIABLE)
-        home = Path(configured_home).expanduser() if configured_home else Path.home() / CODEX_HOME_FOLDER_NAME
-        return home / DEFAULT_AGENTS_FOLDER_NAME
-    if adapter_name == CLAUDE_ADAPTER_NAME:
-        configured_home = os.environ.get(CLAUDE_HOME_ENVIRONMENT_VARIABLE)
-        home = Path(configured_home).expanduser() if configured_home else Path.home() / CLAUDE_HOME_FOLDER_NAME
-        return home / DEFAULT_AGENTS_FOLDER_NAME
-    raise ValueError(f"Adapter does not have generated native agents: {adapter_name}")
 
 
 def is_skill_directory(path: Path) -> bool:
@@ -342,6 +299,56 @@ def customized_owned_artifacts(
         if artifact_digest(installed_path) != previous_digest:
             customized.append(artifact_name)
     return sorted(customized)
+
+
+def remove_owned_artifacts(
+    destination: Path,
+    artifact_type: str,
+    artifact_paths: dict[str, str],
+    dry_run: bool,
+) -> list[str]:
+    """Remove manifest-owned artifacts while preserving customized and unowned content.
+
+    The destination is an explicit skill or agent folder. Artifact paths must come from
+    that destination's validated dev-methodology ownership manifest. Dry runs report the
+    removal plan without changing files. Customized owned artifacts raise ValueError so
+    callers cannot silently discard local work.
+    """
+    destination = destination.expanduser()
+    previous_manifest = load_install_manifest(destination)
+    if previous_manifest is None:
+        return [f"no {artifact_type} ownership manifest at {destination}"]
+
+    customized = customized_owned_artifacts(
+        destination,
+        previous_manifest,
+        artifact_type,
+        artifact_paths,
+    )
+    if customized:
+        raise ValueError(
+            f"customized owned {artifact_type}s require discrepancy analysis: "
+            + ", ".join(customized)
+        )
+
+    results: list[str] = []
+    for artifact_name, artifact_path in sorted(artifact_paths.items()):
+        installed_path = destination / artifact_path
+        if dry_run:
+            results.append(f"would remove owned {artifact_type} {artifact_name}")
+            continue
+        if installed_path.exists() or installed_path.is_symlink():
+            remove_existing_destination(installed_path)
+            results.append(f"removed owned {artifact_type} {artifact_name}")
+        else:
+            results.append(f"owned {artifact_type} already absent {artifact_name}")
+
+    if dry_run:
+        results.append(f"would remove {artifact_type} ownership manifest")
+    else:
+        manifest_path(destination).unlink()
+        results.append(f"removed {artifact_type} ownership manifest")
+    return results
 
 
 def manifest_agent_paths(manifest: Optional[dict[str, object]]) -> dict[str, str]:
@@ -656,28 +663,46 @@ def install_agents(
 def main(argv: Sequence[str] | None = None) -> int:
     args = parse_args(argv)
     adapter = ADAPTERS[args.adapter]
-    destination = args.dest if args.dest is not None else default_destination(args.adapter)
+    destination = args.dest
+    agents_destination: Optional[Path] = args.agents_dest
     try:
-        results = install_skills(
-            args.source,
-            destination,
-            args.replace,
-            args.dry_run,
-            adapter,
-            args.prune_owned,
-            args.replace_customized,
-        )
-        agents_destination: Optional[Path] = None
+        if args.install_agents and agents_destination is None:
+            raise ValueError("--install-agents requires an explicit --agents-dest")
+        if args.remove_owned and args.install_agents:
+            raise ValueError("--remove-owned cannot be combined with --install-agents")
+        if args.remove_owned:
+            skill_manifest = load_install_manifest(destination.expanduser())
+            results = remove_owned_artifacts(
+                destination,
+                MANIFEST_SKILL_ARTIFACT_TYPE,
+                manifest_skill_paths(skill_manifest),
+                args.dry_run,
+            )
+            if agents_destination is not None:
+                agent_manifest = load_install_manifest(agents_destination.expanduser())
+                results.extend(
+                    remove_owned_artifacts(
+                        agents_destination,
+                        MANIFEST_AGENT_ARTIFACT_TYPE,
+                        manifest_agent_paths(agent_manifest),
+                        args.dry_run,
+                    )
+                )
+        else:
+            results = install_skills(
+                args.source,
+                destination,
+                args.replace,
+                args.dry_run,
+                adapter,
+                args.prune_owned,
+                args.replace_customized,
+            )
         if args.install_agents:
             agents_source = (
                 args.agents_source
                 if args.agents_source is not None
                 else default_agents_source(args.adapter)
-            )
-            agents_destination = (
-                args.agents_dest
-                if args.agents_dest is not None
-                else default_agents_destination(args.adapter)
             )
             results.extend(
                 install_agents(

@@ -7,7 +7,7 @@ metadata:
 
 # FastAPI
 
-Load python-coding with this skill.
+Load Python with this skill.
 
 ## Application Boundaries
 
