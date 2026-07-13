@@ -447,14 +447,6 @@ class TechnologyDetectionTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             plan = Path(directory) / "PROJECT.yaml"
             plan.write_text(yaml.safe_dump({
-                "agent_coordination": {
-                    "registry": "Git common directory agent-claims.json.",
-                    "acquisition": "Atomic first-writer ownership of a clean primary worktree.",
-                    "active_claim_policy": "Later non-overlapping writers use isolated worktrees.",
-                    "overlap_policy": "Overlapping claims wait.",
-                    "dirty_unclaimed_policy": "Dirty unclaimed state enters recovery.",
-                    "release_policy": "Release after commit and clean status.",
-                },
                 "technology_skill_loadouts": [{
                     "pathPattern": "api/**",
                     "skills": ["fastapi", "python"],
@@ -470,9 +462,8 @@ class TechnologyDetectionTests(unittest.TestCase):
             )
             self.assertIn("api/**: load fastapi, python before acting", completed.stdout)
             self.assertIn("Do not rerun detection during ordinary work", completed.stdout)
-            self.assertIn("Agent Claims And Worktrees", completed.stdout)
-            self.assertIn("use the agent-claim skill", completed.stdout)
-            self.assertIn("Dirty unclaimed state enters recovery", completed.stdout)
+            self.assertNotIn("Agent Claims And Worktrees", completed.stdout)
+            self.assertNotIn("agent-claim", completed.stdout)
 
     def test_registry_contains_only_specialized_skills(self) -> None:
         registry = yaml.safe_load(REGISTRY.read_text(encoding="utf-8"))

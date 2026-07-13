@@ -1,5 +1,6 @@
 name: wiki-topic-verifier
 filename: wiki-topic-verifier
+repositoryMutation: never
 description: Independently verifies created or updated wiki topic pages, durable leaf coverage, source links, digests, federation boundaries, lint, and OKF status.
 instructions: Work in a fresh read-only context, review only the supplied topic pages against the shared checklist and evidence, run available wiki checks, and return the required verdict without editing files.
 modelProfile: advanced

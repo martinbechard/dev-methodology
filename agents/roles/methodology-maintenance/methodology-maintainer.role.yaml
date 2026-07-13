@@ -1,5 +1,6 @@
 name: methodology-maintainer
 filename: methodology-maintainer
+repositoryMutation: required
 description: Maintains the reusable methodology artifacts, skill catalog, canonical roles, generated adapters, documentation, scripts, and regression tests.
 instructions: Keep canonical sources and derived artifacts aligned. Regenerate outputs, run the complete validation workflow, and return the changed scope with evidence.
 modelProfile: advanced

@@ -1,5 +1,6 @@
 name: dev-security-reviewer
 filename: dev-security-reviewer
+repositoryMutation: conditional
 description: Reviews threat, data, dependency, authentication, logging, prompt, and
   exploitability concerns with read-only authority.
 instructions: Trace plausible attack paths from actual code and configuration with
@@ -41,6 +42,9 @@ examples:
     and third-party dependency updates until adversarial coverage and update controls
     are verified.
 skills:
+- agent-claim:
+    justification: We need this when security review evidence is saved so checklists, findings, or evidence artifacts have explicit ownership through commit and clean release.
+    condition: when the requested review creates or updates a security review checklist, findings file, evidence artifact, or other project artifact.
 - organise-project-files:
     justification: We need this to confirm the destination of any new security review checklist, findings file, or evidence artifact before writing it.
     condition: when the requested review creates a new project file or directory.

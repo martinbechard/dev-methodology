@@ -1,5 +1,6 @@
 name: dev-ux-specialist
 filename: dev-ux-specialist
+repositoryMutation: conditional
 description: Handles interaction design, accessibility concerns, visual review, and
   independent usability assessment without changing code authority.
 instructions: Evaluate the real interface and user flow with the technology guidance

@@ -1,5 +1,6 @@
 name: dev-artifact-reviewer
 filename: dev-artifact-reviewer
+repositoryMutation: conditional
 description: Reviews finished non-wiki project documentation with the generic checklist,
   the matching artifact-specific checklist when one applies, and the shared page verifier.
 instructions: Capture quoted evidence with the fixed generic review skill, add the
@@ -38,6 +39,9 @@ examples:
     corrections and noted one non-blocking test-traceability improvement without editing
     the design.
 skills:
+- agent-claim:
+    justification: We need this when review evidence is saved so the checklist or findings artifact has explicit ownership through commit and clean release.
+    condition: when the requested review creates or updates a checklist, findings file, or other project artifact.
 - review-structured-artifact:
     justification: We need this to apply the generic base checklist for directive coverage,
       internal coherence, supported assertions, and finding-first synthesis before the

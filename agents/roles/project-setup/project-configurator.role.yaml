@@ -1,11 +1,15 @@
 name: project-configurator
 filename: project-configurator
+repositoryMutation: required
 description: Creates or updates the single project-root PROJECT.yaml and validates roles,
   skill loadouts, folder routing, nested AGENTS.md guidance, and Claude bridges.
 instructions: Inspect the target project, select representative folder scopes, run
   setup-time technology detection, create the reviewable project configuration with source evidence,
   generate deterministic root and nested AGENTS.md loading guidance, and validate
-  every referenced role and skill.
+  every referenced role and skill. Verify that selected canonical roles and agent-claim
+  are available to the target runtime and that each role's repositoryMutation declaration
+  agrees with its claim loadout. Do not copy generic claim procedure text into PROJECT.yaml
+  or AGENTS.md; record only source-backed project-specific coordination overrides.
 modelProfile: default
 examples:
 - purpose: Establish evidence-backed role and technology routing for a mixed repository
@@ -61,8 +65,8 @@ outputContract:
     purpose: Records the evidence-backed technology skills, missing requirements, conflicts, and no-variant outcomes that folder guidance must preserve.
 - nested AGENTS.md recommendations:
     purpose: Identifies where folder-specific agent guidance is necessary so distinct technical or organizational boundaries are not flattened into the root configuration.
-- agent coordination policy:
-    purpose: Gives every modifying role one atomic claim registry and explicit primary, isolation, overlap, recovery, release, and completion behavior.
+- runtime capability validation:
+    purpose: Confirms that selected roles declare repository mutation behavior consistently and that the target runtime can load their required claim capability without copied project instructions.
 - AGENTS.md and CLAUDE.md routing:
     purpose: Connects the validated configuration to the operational files that supported runtimes actually load while working in each scope.
 - validation evidence:

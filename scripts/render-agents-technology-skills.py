@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Modified with AI assistance.
-# Summary: Renders repository claim coordination and unconditional folder technology guidance from PROJECT.yaml.
+# Summary: Renders unconditional folder technology guidance from PROJECT.yaml.
 
 from __future__ import annotations
 
@@ -26,24 +26,8 @@ def loadouts(value: dict[str, object]) -> list[dict[str, object]]:
 
 
 def render(value: dict[str, object]) -> str:
-    """Render root AGENTS.md coordination and technology sections."""
-    lines: list[str] = []
-    coordination = value.get("agent_coordination")
-    if isinstance(coordination, dict):
-        lines.extend([
-            "## Agent Claims And Worktrees",
-            "",
-            "Before repository mutation, use the agent-claim skill and its atomic claim command.",
-            "",
-            f"- Claim registry: {coordination.get('registry', 'repository-global registry')}",
-            f"- Primary worktree: {coordination.get('acquisition', 'The first writer may claim a clean primary worktree.')}",
-            f"- Concurrent work: {coordination.get('active_claim_policy', 'Later non-overlapping writers use isolated worktrees.')}",
-            f"- Overlap: {coordination.get('overlap_policy', 'Overlapping claims wait or coordinate.')}",
-            f"- Recovery: {coordination.get('dirty_unclaimed_policy', 'Dirty unclaimed state enters explicit recovery.')}",
-            f"- Release: {coordination.get('release_policy', 'Release only after commit or no-change and clean status.')}",
-            "",
-        ])
-    lines.extend([
+    """Render root AGENTS.md technology sections."""
+    lines: list[str] = [
         "## Technology Skills",
         "",
         "Technology detection is owned by Project Configurator. Do not rerun detection during ordinary work.",
@@ -52,7 +36,7 @@ def render(value: dict[str, object]) -> str:
         "",
         "Folder loadouts:",
         "",
-    ])
+    ]
     rendered = 0
     for item in loadouts(value):
         pattern = item.get("pathPattern", item.get("pattern"))

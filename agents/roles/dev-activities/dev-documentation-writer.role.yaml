@@ -1,5 +1,6 @@
 name: dev-documentation-writer
 filename: dev-documentation-writer
+repositoryMutation: required
 description: Writes source-backed non-wiki project documentation by selecting one
   methodology artifact route or the README and custom-document integration route for
   the requested outcome.

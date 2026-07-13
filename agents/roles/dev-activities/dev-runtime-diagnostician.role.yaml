@@ -1,5 +1,6 @@
 name: dev-runtime-diagnostician
 filename: dev-runtime-diagnostician
+repositoryMutation: conditional
 description: Investigates long-running local runtime failures with logs, processes,
   exclusive resources, and a tight reproduction loop.
 instructions: Reproduce the failure with the technology guidance supplied for the

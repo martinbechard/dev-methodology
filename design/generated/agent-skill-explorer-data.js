@@ -5,6 +5,12 @@
 window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
   "edges": [
     {
+      "condition": "when the requested review creates or updates a checklist, findings file, or other project artifact.",
+      "kind": "conditional",
+      "role": "dev-artifact-reviewer",
+      "skill": "agent-claim"
+    },
+    {
       "condition": "when the requested review creates a checklist, findings file, or other project artifact.",
       "kind": "conditional",
       "role": "dev-artifact-reviewer",
@@ -99,6 +105,12 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "fixed",
       "role": "dev-browser-operator",
       "skill": "structured-explanation"
+    },
+    {
+      "condition": "when the requested review creates or updates an evidence packet, checklist, findings file, or other project artifact.",
+      "kind": "conditional",
+      "role": "dev-code-reviewer",
+      "skill": "agent-claim"
     },
     {
       "condition": "when the requested review creates an evidence packet, checklist, findings file, or other project artifact.",
@@ -291,6 +303,12 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "structured-explanation"
     },
     {
+      "condition": "when the requested review creates or updates a prompt review checklist, findings file, evaluation artifact, or other project artifact.",
+      "kind": "conditional",
+      "role": "dev-prompt-reviewer",
+      "skill": "agent-claim"
+    },
+    {
       "condition": "when the requested review creates a new project file or directory.",
       "kind": "conditional",
       "role": "dev-prompt-reviewer",
@@ -354,6 +372,12 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "fixed",
       "role": "dev-runtime-diagnostician",
       "skill": "test-strategy"
+    },
+    {
+      "condition": "when the requested review creates or updates a security review checklist, findings file, evidence artifact, or other project artifact.",
+      "kind": "conditional",
+      "role": "dev-security-reviewer",
+      "skill": "agent-claim"
     },
     {
       "condition": "when the requested review creates a new project file or directory.",
@@ -453,6 +477,12 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "fixed",
       "role": "dev-verifier",
       "skill": "test-strategy"
+    },
+    {
+      "condition": "when the requested review creates or updates a methodology review checklist, findings file, or other project artifact.",
+      "kind": "conditional",
+      "role": "methodology-artifact-reviewer",
+      "skill": "agent-claim"
     },
     {
       "condition": "when the requested review creates a new project file or directory.",
@@ -645,6 +675,12 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "project-wiki"
     },
     {
+      "condition": "when the requested review creates or updates a project-wiki checklist, findings file, or other project artifact.",
+      "kind": "conditional",
+      "role": "wiki-artifact-reviewer",
+      "skill": "agent-claim"
+    },
+    {
       "condition": "when the requested review creates a new project file or directory.",
       "kind": "conditional",
       "role": "wiki-artifact-reviewer",
@@ -781,6 +817,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
   "roles": [
     {
       "conditionalSkills": {
+        "agent-claim": "when the requested review creates or updates a checklist, findings file, or other project artifact.",
         "organise-project-files": "when the requested review creates a checklist, findings file, or other project artifact.",
         "review-architecture": "when reviewing system-wide boundaries, runtime assumptions, architectural decisions, or their supporting evidence.",
         "review-functional-spec": "when reviewing a functional specification for its actors, workflows, states, acceptance criteria, or verification obligations.",
@@ -837,6 +874,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     },
     {
       "conditionalSkills": {
+        "agent-claim": "when the requested review creates or updates an evidence packet, checklist, findings file, or other project artifact.",
         "organise-project-files": "when the requested review creates an evidence packet, checklist, findings file, or other project artifact."
       },
       "declaredCases": [
@@ -942,6 +980,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     },
     {
       "conditionalSkills": {
+        "agent-claim": "when the requested review creates or updates a prompt review checklist, findings file, evaluation artifact, or other project artifact.",
         "organise-project-files": "when the requested review creates a new project file or directory."
       },
       "declaredCases": [],
@@ -980,6 +1019,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     },
     {
       "conditionalSkills": {
+        "agent-claim": "when the requested review creates or updates a security review checklist, findings file, evidence artifact, or other project artifact.",
         "organise-project-files": "when the requested review creates a new project file or directory."
       },
       "declaredCases": [],
@@ -1037,6 +1077,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     },
     {
       "conditionalSkills": {
+        "agent-claim": "when the requested review creates or updates a methodology review checklist, findings file, or other project artifact.",
         "organise-project-files": "when the requested review creates a new project file or directory."
       },
       "declaredCases": [],
@@ -1151,6 +1192,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     },
     {
       "conditionalSkills": {
+        "agent-claim": "when the requested review creates or updates a project-wiki checklist, findings file, or other project artifact.",
         "organise-project-files": "when the requested review creates a new project file or directory."
       },
       "declaredCases": [],

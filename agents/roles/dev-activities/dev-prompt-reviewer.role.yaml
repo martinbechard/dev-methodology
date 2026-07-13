@@ -1,5 +1,6 @@
 name: dev-prompt-reviewer
 filename: dev-prompt-reviewer
+repositoryMutation: conditional
 description: Reviews prompt protocol, tool-call safety, schema promises, evaluation
   coverage, and model-facing data boundaries.
 instructions: Trace prompt and tool contracts through the runtime with the technology
@@ -41,6 +42,9 @@ examples:
     concrete cases while identifying recovery behavior that still lacked runtime
     evidence.
 skills:
+- agent-claim:
+    justification: We need this when prompt review evidence is saved so checklists, findings, or evaluation artifacts have explicit ownership through commit and clean release.
+    condition: when the requested review creates or updates a prompt review checklist, findings file, evaluation artifact, or other project artifact.
 - organise-project-files:
     justification: We need this to confirm the destination of any new prompt review checklist, findings file, or evaluation artifact before writing it.
     condition: when the requested review creates a new project file or directory.

@@ -1,5 +1,6 @@
 name: dev-verifier
 filename: dev-verifier
+repositoryMutation: conditional
 description: Runs acceptance checks, builds, unit tests, integration tests, E2E tests,
   lint gates, and artifact-specific verification.
 instructions: Select checks from actual behavior and risk with the technology guidance

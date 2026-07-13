@@ -1,5 +1,6 @@
 name: dev-merge-coordinator
 filename: dev-merge-coordinator
+repositoryMutation: required
 description: Integrates work from multiple agents or worktrees while preserving claims, ownership, verification, and conflict evidence.
 instructions: Acquire the integration claim, accept only committed clean contributions,
   reconcile conflicts intentionally, regenerate shared outputs after source integration,
