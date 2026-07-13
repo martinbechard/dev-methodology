@@ -402,473 +402,141 @@
     </div>
     <h1 id="page-title">Agentic Development Operating Model</h1>
     <p class="lede">
-      This page explains how the methodology operates: which layer owns a decision, how guidance resolves during work, how roles hand work off, and which records make the outcome inspectable. Use the role map for generated loadouts, the specialization strategy for selection rules, and runtime formats for adapter detail.
+      This page owns project classification, guidance precedence, lifecycle handoffs, and execution evidence.
+      Use the <a href="agent-role-skill-map.html">generated catalog</a> for current role and skill definitions,
+      the <a href="agent-skill-specialization-strategy.html">specialization strategy</a> for selection policy, and
+      <a href="agent-definition-runtime-formats.html">runtime formats</a> for adapter details.
     </p>
   </section>
 
-  <section class="section" aria-labelledby="layers-title">
-    <h2 id="layers-title">Operating Layers</h2>
-    <div class="flow">
-      <div class="flow-step">
-        <strong>1. AGENTS.md Reference</strong>
-        <p>Declares the project family, application tiers, unconditional folder technology loadouts, validation commands, data rules, and local reference information.</p>
-      </div>
-      <div class="flow-step">
-        <strong>2. Role Agent</strong>
-        <p>Defines an invokable job role with a purpose, triggers, allowed tools, expected inputs, skill loadout, outputs, and handoff rules.</p>
-      </div>
-      <div class="flow-step">
-        <strong>3. Skill</strong>
-        <p>Provides a short procedural instruction unit that a role loads only when the job requires that expertise.</p>
-      </div>
-      <div class="flow-step">
-        <strong>4. Orchestrator</strong>
-        <p>Breaks work into bounded subagent jobs, prepares context packs, routes outputs, and runs review or retry loops.</p>
-      </div>
-      <div class="flow-step">
-        <strong>5. Runtime Adapter</strong>
-        <p>Materializes shared role definitions into host-specific agent files for Codex, Claude Code, Gemini CLI, Junie, or another runtime.</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="roles-title">
-    <h2 id="roles-title">Role Agent Set</h2>
-    <p class="note">These summaries explain each role's operating responsibility. The <a href="agent-role-skill-map.html">generated role map</a> is the authoritative place to inspect current loadouts, outputs, canonical YAML, and role or skill definition popups.</p>
-    <p class="lede">Wiki setup, query, research, collection, writing, ingest, topic verification, and project-wiki artifact review form a dedicated activity category. General documentation, coding, review, backlog, and project-setup roles do not load wiki skills.</p>
-    <div class="grid">
-      <article class="card orchestrator">
-        <h3>Dev Orchestrator</h3>
-        <p>Coordinates multi-step work across subagents while preserving small contexts, explicit handoffs, and verification evidence.</p>
-        <div class="tag-row">
-          <span class="tag orchestrator">task decomposition</span>
-          <span class="tag orchestrator">context packs</span>
-          <span class="tag orchestrator">agent routing</span>
-          <span class="tag orchestrator">retry policy</span>
-          <span class="tag orchestrator">merge policy</span>
-        </div>
-      </article>
-
-      <article class="card orchestrator">
-        <h3>Project Bootstrapper</h3>
-        <p>Completes project setup from one request: reuse existing PROJECT.yaml routing or create it through Project Configurator when absent, then produce source-backed documentation, independently review and correct every artifact, and run integrated verification.</p>
-        <div class="tag-row">
-          <span class="tag orchestrator">reuse PROJECT.yaml</span>
-          <span class="tag orchestrator">configure when absent</span>
-          <span class="tag orchestrator">documentation routing</span>
-          <span class="tag orchestrator">writer-reviewer loop</span>
-          <span class="tag orchestrator">integrated verification</span>
-          <span class="tag orchestrator">completion ownership</span>
-        </div>
-      </article>
-
-      <article class="card folder">
-        <h3>Project Organiser</h3>
-        <p>Classifies artifacts by purpose, chooses paths from the project taxonomy, applies path intent, and audits generated files after runs.</p>
-        <div class="tag-row">
-          <span class="tag folder">project taxonomy</span>
-          <span class="tag folder">path intent</span>
-          <span class="tag folder">nested AGENTS.md</span>
-          <span class="tag folder">file placement audit</span>
-        </div>
-      </article>
-
-      <article class="card agent">
-        <h3>Project Configurator</h3>
-        <p>Creates one project-root PROJECT.yaml so the project can validate role agents, skill loadouts, folder routing, nested AGENTS.md placement, and operational guidance before normal development work.</p>
-        <div class="tag-row">
-          <span class="tag agent">create-project-configuration</span>
-          <span class="tag agent">development-methodology</span>
-          <span class="tag agent">documentation-page-verify</span>
-          <span class="tag agent">setup evidence</span>
-        </div>
-      </article>
-
-      <article class="card agent">
-        <h3>Dev Coder</h3>
-        <p>Implements scoped source changes using the applicable AGENTS.md instructions, repository patterns, tests, and build commands.</p>
-        <div class="tag-row">
-          <span class="tag agent">careful-coding</span>
-          <span class="tag agent">code-comments</span>
-          <span class="tag agent">code-discovery</span>
-          <span class="tag agent">routed stack skills</span>
-          <span class="tag agent">focused tests</span>
-        </div>
-      </article>
-
-      <article class="card agent">
-        <h3>Dev Code Reviewer</h3>
-        <p>Loads the coding and routed stack skills that govern the changed files, extracts checklist evidence, then synthesizes regressions, rule violations, missing tests, weak verification, unsafe abstractions, and documentation drift. Simple and advanced model stages are dispatch intent until the harness captures separate worker invocations.</p>
-        <div class="tag-row">
-          <span class="tag agent">code-review-evidence</span>
-          <span class="tag agent">review-structured-artifact</span>
-          <span class="tag agent">code-comments</span>
-          <span class="tag agent">application tier policy</span>
-          <span class="tag agent">source evidence</span>
-          <span class="tag agent">finding report</span>
-        </div>
-      </article>
-
-      <article class="card agent">
-        <h3>Dev Verifier</h3>
-        <p>Runs acceptance checks, build commands, unit tests, E2E tests, lint gates, and spec coverage checks for completed work.</p>
-        <div class="tag-row">
-          <span class="tag agent">validation</span>
-          <span class="tag agent">test execution</span>
-          <span class="tag agent">coverage matrix</span>
-          <span class="tag agent">PASS WARN FAIL</span>
-        </div>
-      </article>
-
-      <article class="card agent">
-        <h3>Dev Documentation Writer</h3>
-        <p>Selects one non-wiki methodology document shape and creation skill, or preserves the established format for README and custom entry-document integration, then writes a source-backed artifact.</p>
-        <div class="tag-row">
-          <span class="tag agent">development-methodology</span>
-          <span class="tag agent">artifact creation skill</span>
-          <span class="tag agent">documentation-bootstrap</span>
-          <span class="tag agent">reverse engineering</span>
-          <span class="tag agent">page verifier</span>
-        </div>
-      </article>
-
-      <article class="card agent">
-        <h3>Dev Artifact Reviewer</h3>
-        <p>Performs fresh-context review of finished non-wiki project documentation using the generic structured-artifact checklist, the artifact-specific reviewer when one applies, and the shared page verifier for README and custom formats.</p>
-        <div class="tag-row">
-          <span class="tag agent">structured artifact review</span>
-          <span class="tag agent">functional spec review</span>
-          <span class="tag agent">architecture review</span>
-          <span class="tag agent">module review</span>
-          <span class="tag agent">unit test plan review</span>
-        </div>
-      </article>
-
-      <article class="card agent">
-        <h3>Wiki Architect</h3>
-        <p>Establishes wiki roots, ownership, federation, source workflow, navigation, automations, and setup verification from an approved recommendation pack.</p>
-        <div class="tag-row">
-          <span class="tag agent">project-wiki</span>
-          <span class="tag agent">setup recommendations</span>
-          <span class="tag agent">federation</span>
-          <span class="tag agent">source boundaries</span>
-        </div>
-      </article>
-
-      <article class="card agent">
-        <h3>Wiki Query Responder</h3>
-        <p>Answers project questions from docs/wiki first, verifies against authoritative files, and hands missing or stale coverage to the research role.</p>
-        <div class="tag-row">
-          <span class="tag agent">project-wiki-query</span>
-          <span class="tag agent">source verification</span>
-          <span class="tag agent">research handoff</span>
-        </div>
-      </article>
-
-      <article class="card agent">
-        <h3>Wiki Researcher</h3>
-        <p>Checks maintained and federated coverage, researches only the bounded gap, and saves one sourced raw report for later ingest.</p>
-        <div class="tag-row">
-          <span class="tag agent">project-wiki-query</span>
-          <span class="tag agent">project-wiki-research</span>
-          <span class="tag agent">raw-only report</span>
-        </div>
-      </article>
-
-      <article class="card agent">
-        <h3>Wiki Writer</h3>
-        <p>Creates and maintains durable topic pages, hubs, links, digests, and code-aware project knowledge outside raw-source ingest.</p>
-        <div class="tag-row">
-          <span class="tag agent">topic writer</span>
-          <span class="tag agent">code-aware sync</span>
-          <span class="tag agent">leaf linking</span>
-          <span class="tag agent">wiki validation</span>
-        </div>
-      </article>
-
-      <article class="card agent">
-        <h3>Wiki Ingester</h3>
-        <p>Processes raw inputs into durable wiki leaves, digest entries, processed-source links, linted pages, and verifier evidence.</p>
-        <div class="tag-row">
-          <span class="tag agent">topic writer</span>
-          <span class="tag agent">topic verifier</span>
-          <span class="tag agent">raw to durable</span>
-          <span class="tag agent">link leaves</span>
-        </div>
-      </article>
-
-      <article class="card agent">
-        <h3>Wiki Source Collector</h3>
-        <p>Collects public raw source artifacts for approved topics, records exclusions, and leaves durable synthesis to wiki ingest.</p>
-        <div class="tag-row">
-          <span class="tag agent">raw-only boundary</span>
-          <span class="tag agent">public evidence</span>
-          <span class="tag agent">source windows</span>
-        </div>
-      </article>
-
-      <article class="card agent">
-        <h3>Wiki Topic Verifier</h3>
-        <p>Independently checks changed topic pages, durable leaf coverage, source links, digests, federation boundaries, lint, and OKF status without editing.</p>
-        <div class="tag-row">
-          <span class="tag agent">fresh context</span>
-          <span class="tag agent">read-only verdict</span>
-          <span class="tag agent">GOOD or NEEDS_CORRECTION</span>
-        </div>
-      </article>
-
-      <article class="card agent">
-        <h3>Wiki Artifact Reviewer</h3>
-        <p>Reviews project-wiki methodology artifacts with the dedicated checklist and shared documentation verifier.</p>
-        <div class="tag-row">
-          <span class="tag agent">project-wiki-review</span>
-          <span class="tag agent">completed checklist</span>
-          <span class="tag agent">page verifier</span>
-        </div>
-      </article>
-
-      <article class="card agent">
-        <h3>Dev Backlog Steward</h3>
-        <p>Creates, claims, resumes, blocks, completes, and archives typed backlog work with recoverable status evidence.</p>
-        <div class="tag-row">
-          <span class="tag agent">create-backlog</span>
-          <span class="tag agent">manage-backlog</span>
-          <span class="tag agent">agent-claim</span>
-        </div>
-      </article>
-
-      <article class="card agent">
-        <h3>Dev Merge Coordinator</h3>
-        <p>Integrates work from multiple agents or worktrees while preserving claims, ownership, verification, and conflict evidence.</p>
-        <div class="tag-row">
-          <span class="tag agent">agent-work-merge</span>
-          <span class="tag agent">conflict routing</span>
-          <span class="tag agent">branch evidence</span>
-        </div>
-      </article>
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="skill-title">
-    <h2 id="skill-title">Skill Load Model</h2>
-    <div class="wide-grid">
-      <article class="panel">
-        <h3>Skill contract</h3>
-        <p>Skills normalize reusable information into short definitions. A skill contains the narrow procedure, trigger, constraints, and assets for one expertise area.</p>
-        <ul>
-          <li>A skill is not an agent persona.</li>
-          <li>A role agent loads the skill only when the task needs it.</li>
-          <li>A skill stays portable across projects and runtimes.</li>
-          <li>Project-specific selection lives in AGENTS.md files.</li>
-          <li>Detailed code-generation rules and review-evidence questions live together in language, framework, tier, persistence, and test skills.</li>
-        </ul>
-      </article>
-
-      <article class="panel">
-        <h3>Skill groups</h3>
-        <p>Project Configurator detects specialized guidance once from explicit skill-owned any-of and all-of activation clauses evaluated against representative folder evidence. The harness then supplies ordinary agents with the routed folder skills before they act.</p>
-        <ul>
-          <li>Methodology skills for docs, wiki, artifact creation, structured design, review, backlog, and merge work.</li>
-          <li>Specialized skills for languages, frameworks, persistence, identity, runtimes, interface systems, tests, and optional tools.</li>
-          <li>Quality skills for tests, security, privacy, performance, observability, and release checks.</li>
-          <li>Repository skills for local procedures, taxonomy, scripts, templates, generated artifact conventions, and deterministic path bindings.</li>
-          <li>Detection results record setup evidence and availability; runtime harness evidence separately proves whether a skill file was read.</li>
-          <li>One complete activation branch selects its named skill; partial all-of evidence does not activate it.</li>
-        </ul>
-      </article>
-    </div>
-  </section>
-
   <section class="section" aria-labelledby="taxonomy-title">
-    <h2 id="taxonomy-title">Project Taxonomy</h2>
+    <h2 id="taxonomy-title">Project Classification</h2>
+    <p class="lede">PROJECT.yaml records the project classifications that affect routing. These values describe the target project; they do not duplicate the generated role or skill catalogs.</p>
     <div class="matrix">
       <table>
         <thead>
           <tr>
-            <th>Project family</th>
-            <th>Default roles</th>
-            <th>Tier and stack guidance</th>
-            <th>Primary validation</th>
+            <th>Dimension</th>
+            <th>Question it answers</th>
+            <th>Routing effect</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><span class="name">Web application</span></td>
-            <td>Dev Orchestrator, Project Organiser, Dev Coder, Dev Code Reviewer, Dev Verifier, Dev UX Specialist, Dev Documentation Writer.</td>
-            <td>Front-end, API, static pages, and DB tiers with Next.js, React Server Components, API routes, auth, Postgres, Drizzle, Jest, and Playwright guidance.</td>
-            <td>Build, lint, unit tests, integration tests, E2E tests, visual checks, accessibility checks, and data access checks.</td>
+            <td><span class="name">Project family</span></td>
+            <td>What product or repository boundary is being maintained?</td>
+            <td>Establishes the relevant tiers, documentation surfaces, and default validation concerns.</td>
           </tr>
           <tr>
-            <td><span class="name">API service</span></td>
-            <td>Dev Orchestrator, Dev Coder, Dev Code Reviewer, Dev Verifier, Dev Documentation Writer.</td>
-            <td>api-routes, typescript-strict, clerk-auth, postgres-drizzle, jest.</td>
-            <td>Build, unit tests, integration tests, contract tests, OpenAPI or route checks.</td>
+            <td><span class="name">Application tier</span></td>
+            <td>Which local responsibility and stack boundary owns the affected files?</td>
+            <td>Maps folder scopes to technology skills, local guidance, and checks.</td>
           </tr>
           <tr>
-            <td><span class="name">CLI or local tooling</span></td>
-            <td>Dev Coder, Dev Code Reviewer, Dev Documentation Writer, Dev Verifier.</td>
-            <td>node-cli, typescript-esm, vitest.</td>
-            <td>Unit tests, command snapshots, packaging checks, docs examples.</td>
+            <td><span class="name">Artifact type</span></td>
+            <td>What durable output is requested?</td>
+            <td>Selects the creation, review, and placement route without creating a framework-specific role.</td>
           </tr>
           <tr>
-            <td><span class="name">Data or analytics pipeline</span></td>
-            <td>Dev Orchestrator, Dev Coder, Dev Code Reviewer, Dev Verifier.</td>
-            <td>Ingestion, schema validation, transformations, warehouse, reporting.</td>
-            <td>Schema tests, fixture runs, data quality checks, lineage checks.</td>
+            <td><span class="name">Data boundary</span></td>
+            <td>Which private, proprietary, generated, or regulated information is in scope?</td>
+            <td>Adds handling constraints, approvals, and local evidence requirements.</td>
           </tr>
           <tr>
-            <td><span class="name">Agentic development harness</span></td>
-            <td>Dev Orchestrator, Project Organiser, Dev Coder, Dev Code Reviewer, Dev Artifact Reviewer.</td>
-            <td>agent-harness, tool-runtime, plan-engine, local-model-integration, vitest.</td>
-            <td>Harness tests, prompt tests, replay traces, output schema checks.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Documentation or wiki repository</span></td>
-            <td>Wiki Architect, Wiki Query Responder, Wiki Researcher, Wiki Source Collector, Wiki Writer, Wiki Ingester, Wiki Topic Verifier, and Wiki Artifact Reviewer.</td>
-            <td>Project wiki, source collection, durable synthesis, link validation.</td>
-            <td>Wiki status, lint, topic verification, source reconciliation.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Library, SDK, or package</span></td>
-            <td>Dev Coder, Dev Code Reviewer, Dev Documentation Writer, Dev Verifier.</td>
-            <td>Public API design, compatibility policy, examples, release packaging.</td>
-            <td>Unit tests, public API checks, docs examples, package build.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Enterprise workflow integration</span></td>
-            <td>Dev Orchestrator, Dev Coder, Dev Code Reviewer, Dev Documentation Writer, Dev Verifier.</td>
-            <td>APIs, events, queues, auth, audit, data contracts.</td>
-            <td>Contract tests, integration tests, audit checks, security review.</td>
+            <td><span class="name">Validation surface</span></td>
+            <td>What evidence proves the work is usable?</td>
+            <td>Names the relevant build, test, documentation, runtime, or review checks.</td>
           </tr>
         </tbody>
       </table>
     </div>
-  </section>
 
-  <section class="section" aria-labelledby="tiers-title">
-    <h2 id="tiers-title">Application Tiers</h2>
-    <div class="grid">
-      <article class="panel">
-        <h3>Front-end tier</h3>
-        <p>User-facing application screens, interactive components, client/server rendering boundaries, styling, accessibility, and browser workflow guidance.</p>
-      </article>
-      <article class="panel">
-        <h3>API tier</h3>
-        <p>Route handlers, server actions, controllers, services, authentication boundaries, request validation, contracts, and integration test guidance.</p>
-      </article>
-      <article class="panel">
-        <h3>Static pages tier</h3>
-        <p>Marketing, documentation, legal, and static content routes with content structure, SEO, accessibility, static rendering, and visual verification guidance.</p>
-      </article>
-      <article class="panel">
-        <h3>DB tier</h3>
-        <p>Schema, migrations, queries, persistence modules, seed data, data sensitivity rules, repository patterns, and database integration test guidance.</p>
-      </article>
+    <h3 class="section">Common Web Application Tiers</h3>
+    <div class="matrix">
+      <table>
+        <thead>
+          <tr>
+            <th>Tier</th>
+            <th>Responsibility boundary</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="name">Front-end</span></td>
+            <td>Interactive screens, components, client and server rendering boundaries, styling, accessibility, and browser behavior.</td>
+          </tr>
+          <tr>
+            <td><span class="name">API</span></td>
+            <td>Routes, controllers, services, authentication, request validation, contracts, and integration behavior.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Static pages</span></td>
+            <td>Marketing, documentation, legal, and other content routes with static rendering, accessibility, SEO, and visual checks.</td>
+          </tr>
+          <tr>
+            <td><span class="name">DB</span></td>
+            <td>Schema, migrations, queries, persistence, seed data, and database integration behavior.</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-    <p class="note">
-      A web application declares these tiers by default. Other project families declare only the tiers they actually contain, then map each tier to the relevant stack packs, nested AGENTS.md guidance, and validation commands.
-    </p>
+    <p class="note">Other project families declare only the tiers they actually contain. Concrete root-only, nested, and wiki configurations appear on the <a href="agent-skill-specialization-examples.html">examples page</a>.</p>
   </section>
-
-  <section class="section" aria-labelledby="agents-reference-title">
-    <h2 id="agents-reference-title">AGENTS.md Operational Reference</h2>
-    <div class="wide-grid">
-      <article class="panel">
-        <h3>Root AGENTS.md</h3>
-        <p>The root AGENTS.md is the normal source for project family, application tiers, folder technology loadouts, validation commands, and data handling rules.</p>
-        <ul>
-          <li>Canonical path: <code>AGENTS.md</code></li>
-          <li>It tells every agent which folder technology skills to load before acting.</li>
-          <li>It selects skills and policies; it does not duplicate full skill bodies or role prompts.</li>
-        </ul>
-      </article>
-
-      <article class="panel">
-        <h3>Nested AGENTS.md</h3>
-        <p>Nested AGENTS.md files narrow or add guidance for subtrees with a different application tier, stack, test policy, artifact type, or data sensitivity.</p>
-        <ul>
-          <li>Canonical path: <code>AGENTS.md</code> inside the governed subtree.</li>
-          <li>The nearest nested AGENTS.md supplies local router reference for files inside that subtree.</li>
-          <li>Nested files contain only the fields and rules that differ from the root AGENTS.md.</li>
-        </ul>
-      </article>
-    </div>
-
-<pre class="config-block"><code>AGENTS.md
-
-Project family: web-application
-
-Application tiers:
-  Front-end tier:
-    Paths: src/app/(app), src/components
-    Skills router loads: nextjs-app-router, react-server-components, tailwind-design-system, playwright
-  API tier:
-    Paths: src/app/api, src/lib/server
-    Skills router loads: api-routes, typescript-strict, clerk-auth, jest
-  Static pages tier:
-    Paths: src/app/(marketing), docs
-    Skills router loads: nextjs-app-router, react-server-components, tailwind-design-system, playwright
-  DB tier:
-    Paths: src/db, drizzle, migrations
-    Skills router loads: postgres-drizzle, typescript-strict, jest
-
-Supporting stacks:
-  - langgraph
-
-Default role agents:
-  - project-organiser
-  - dev-coder
-  - dev-code-reviewer
-  - dev-verifier
-  - dev-documentation-writer
-
-Validation:
-  Build: pnpm run build
-  Unit tests: pnpm test
-  E2E: pnpm exec playwright test
-
-Data rules:
-  PII to LLM: forbidden
-  Company internal information to external LLM: forbidden
-
-Nested AGENTS.md examples:
-  src/app/api/AGENTS.md:
-    Tier: API
-    Additional router guidance: load api-routes, clerk-auth, and contract-test guidance.
-  src/db/AGENTS.md:
-    Tier: DB
-    Additional router guidance: load postgres-drizzle and migration-safety guidance.</code></pre>
-  </section>
-
   <section class="section" aria-labelledby="resolution-title">
-    <h2 id="resolution-title">Guidance Resolution</h2>
-    <div class="flow">
-      <div class="flow-step">
-        <strong>Host rules</strong>
-        <p>Runtime safety rules, tool permissions, and privacy constraints are always active.</p>
-      </div>
-      <div class="flow-step">
-        <strong>Role contract</strong>
-        <p>The selected agent role supplies purpose, input requirements, allowed tools, output shape, and handoff behavior.</p>
-      </div>
-      <div class="flow-step">
-        <strong>Root AGENTS.md</strong>
-        <p>The root AGENTS.md names the project family, application tiers, folder technology loadouts, and validation commands.</p>
-      </div>
-      <div class="flow-step">
-        <strong>Nested AGENTS.md</strong>
-        <p>The nearest nested AGENTS.md supplies local stack, tier, validation, or policy reference for the touched files.</p>
-      </div>
-      <div class="flow-step">
-        <strong>Task evidence</strong>
-        <p>The role always loads its fixed skills. The agent interprets the requested outcome and evidence to apply request-specific skill conditions, including ambiguous wording, while the folder determines which pre-established AGENTS.md technology loadout applies.</p>
-      </div>
+    <h2 id="resolution-title">Project Guidance And Precedence</h2>
+    <p class="lede">PROJECT.yaml is the project-root setup and validation record. It explains role selection, folder loadouts, nested-guidance placement, and supporting evidence; ordinary work consumes the resulting guidance rather than treating the configuration as another instruction layer.</p>
+    <div class="matrix">
+      <table>
+        <thead>
+          <tr>
+            <th>Order</th>
+            <th>Source</th>
+            <th>Responsibility</th>
+            <th>Boundary</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="name">1</span></td>
+            <td>Host rules</td>
+            <td>Runtime safety, tool permissions, privacy constraints, and sandbox behavior.</td>
+            <td>Lower layers cannot disable them.</td>
+          </tr>
+          <tr>
+            <td><span class="name">2</span></td>
+            <td>Selected role contract</td>
+            <td>Purpose, authority, expected inputs, output contract, and handoff behavior.</td>
+            <td>Project guidance cannot change role authority or verdict shape.</td>
+          </tr>
+          <tr>
+            <td><span class="name">3</span></td>
+            <td>Root AGENTS.md</td>
+            <td>Repository-wide rules, folder loadouts, validation commands, data boundaries, and local reference paths.</td>
+            <td>It selects shared guidance without copying complete role or skill definitions.</td>
+          </tr>
+          <tr>
+            <td><span class="name">4</span></td>
+            <td>Nearest nested AGENTS.md</td>
+            <td>Only the stack, validation, generated-file, data, or workflow differences for its subtree.</td>
+            <td>It narrows routing but cannot bypass safety, review evidence, or project-wide constraints.</td>
+          </tr>
+          <tr>
+            <td><span class="name">5</span></td>
+            <td>Selected skills</td>
+            <td>Fixed, request-specific, and setup-established folder expertise selected by the specialization policy.</td>
+            <td>The <a href="agent-skill-specialization-strategy.html">specialization strategy</a> is the sole owner of those selection rules.</td>
+          </tr>
+          <tr>
+            <td><span class="name">6</span></td>
+            <td>Task request and evidence</td>
+            <td>The requested outcome, target files, constraints, and acceptance evidence.</td>
+            <td>The task can narrow work but cannot override higher-priority constraints.</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-    <p class="note">
-      Hard safety, privacy, and data handling rules remain constraints at every layer. Task prompts can narrow work, but they do not disable higher-priority constraints.
-    </p>
+    <p class="note">For Claude Code, a thin CLAUDE.md may import the colocated AGENTS.md. It does not duplicate the project guidance.</p>
   </section>
-
   <section class="section" aria-labelledby="orchestration-title">
     <h2 id="orchestration-title">Orchestrated Development Loop</h2>
     <div class="matrix">
@@ -877,136 +545,97 @@ Nested AGENTS.md examples:
           <tr>
             <th>Step</th>
             <th>Owner</th>
-            <th>Context boundary</th>
-            <th>Output</th>
+            <th>Transition or gate</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><span class="name">First-time bootstrap</span></td>
+            <td><span class="name">Bootstrap, when requested</span></td>
             <td>Project Bootstrapper</td>
-            <td>Receives one desired steady-state request and the live repository, then owns the complete setup sequence instead of returning a plan or handoff chain.</td>
-            <td>Configured routing, accepted documentation and review evidence, integrated verification, and genuinely unresolved decisions.</td>
+            <td>Reuse a valid project-root PROJECT.yaml. When it is absent, or when the user explicitly requests reconfiguration, Project Configurator must create and validate it before documentation work begins.</td>
           </tr>
           <tr>
             <td><span class="name">Intake</span></td>
             <td>Dev Orchestrator</td>
-            <td>Applies the project instructions supplied by the harness, then inspects the user request, backlog, and repo status.</td>
-            <td>Task breakdown, agent assignments, context pack list, validation plan.</td>
+            <td>Establish the task boundary, assignments, and validation route before handing work to the selected roles.</td>
           </tr>
           <tr>
-            <td><span class="name">Claim acquisition</span></td>
-            <td>Every modifying role</td>
-            <td>Atomically checks the repository-global registry, requested files and resources, and primary worktree status before mutation.</td>
-            <td>Primary ownership, isolated branch and worktree, overlap wait, or explicit recovery ownership.</td>
+            <td><span class="name">Claim gate</span></td>
+            <td>Every modifying claim owner</td>
+            <td>Mutation begins only after <a href="../skills/agent-claim/SKILL.md">agent-claim</a> establishes ownership of the affected files and exclusive resources.</td>
           </tr>
           <tr>
-            <td><span class="name">Placement</span></td>
+            <td><span class="name">Placement, when needed</span></td>
             <td>Project Organiser</td>
-            <td>Reads taxonomy, requested artifact descriptions, and path intents.</td>
-            <td>Approved paths, taxonomy updates when needed, placement rationale.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Agent setup</span></td>
-            <td>Project Configurator</td>
-            <td>Inspects existing AGENTS.md artifacts, source roots, tests, docs, procedures, package metadata, and project taxonomy.</td>
-            <td>Project-root PROJECT.yaml, nested AGENTS.md recommendations, role map, skill loadouts, and validation evidence.</td>
+            <td>A new artifact proceeds only after its repository path is approved.</td>
           </tr>
           <tr>
             <td><span class="name">Execution</span></td>
-            <td>Dev Coder, Dev Documentation Writer, Wiki Writer, or Wiki Ingester</td>
-            <td>Receives only the files, skills, AGENTS.md excerpts, and acceptance criteria needed for the assigned job.</td>
-            <td>Patch, artifact, test evidence, build evidence, implementation notes.</td>
+            <td>Selected implementation or writing role</td>
+            <td>The assigned output passes to an independent reviewer; the <a href="agent-role-skill-map.html">generated catalog</a> owns each role's detailed inputs, skills, and output contract.</td>
           </tr>
           <tr>
             <td><span class="name">Review</span></td>
-            <td>Dev Code Reviewer, Dev Artifact Reviewer, Wiki Topic Verifier, or Wiki Artifact Reviewer</td>
-            <td>Receives the diff, source evidence, role contract, and AGENTS.md rules without the executor's full scratch context.</td>
-            <td>PASS WARN FAIL verdict with file and rule references.</td>
+            <td>Selected independent review role</td>
+            <td>Correctable findings return to the owning executor; accepted work advances to integrated verification.</td>
           </tr>
           <tr>
             <td><span class="name">Verification</span></td>
             <td>Dev Verifier</td>
-            <td>Receives the acceptance criteria, validation commands, changed files, and relevant runtime notes.</td>
-            <td>Command results, coverage notes, unresolved risks.</td>
+            <td>The configured acceptance checks must pass, or an unresolved risk must be recorded, before integration.</td>
           </tr>
           <tr>
             <td><span class="name">Integration</span></td>
             <td>Dev Merge Coordinator</td>
-            <td>Receives branch state, claims, conflicts, and verification records for parallel work.</td>
-            <td>Merged work, conflict ownership, integration commit, clean status, and released claims.</td>
+            <td>Only committed, clean contributions with verification evidence enter the integration lane.</td>
           </tr>
           <tr>
             <td><span class="name">Completion</span></td>
             <td>Claim owner</td>
-            <td>Confirms required verification, commit or explicit no-change, clean worktree status, and runtime-resource cleanup or handoff.</td>
-            <td>Commit hash, verification evidence, final clean status, and released or handed-off claims.</td>
+            <td>Release ownership only after verification, commit or explicit no-change, clean status, and resource cleanup or handoff.</td>
           </tr>
         </tbody>
       </table>
     </div>
   </section>
 
-  <section class="section" aria-labelledby="files-title">
-    <h2 id="files-title">File Contracts</h2>
-    <p class="lede">
-      File contracts make the operating model concrete. They tell agents where durable role definitions live, where project-local operational guidance lives,
-      which files adapt shared definitions to a runtime, and where completed runs leave evidence. A small project can start with AGENTS.md and add the other contracts as orchestration becomes useful.
-    </p>
-    <div class="grid">
-      <article class="panel">
-        <h3>Shared role source</h3>
-        <p>These files define reusable role behavior before it is rendered into Codex, Claude Code, or another host.</p>
-        <ul>
-          <li><code>agents/roles/dev-activities/dev-orchestrator.role.yaml</code> defines the coordinator role that breaks work into bounded tasks, selects agents, and preserves handoff and verification expectations.</li>
-          <li><code>agents/roles/project-setup/project-organiser.role.yaml</code> defines the placement role that applies taxonomy, path intent, and file-organization rules before artifacts or code are created.</li>
-          <li><code>agents/roles/dev-activities/dev-coder.role.yaml</code> defines the implementation role used for ordinary code changes after fixed and folder skills are loaded.</li>
-          <li><code>agents/roles/dev-activities/dev-code-reviewer.role.yaml</code> defines the review role, including finding-first output, severity expectations, evidence requirements, and verification checks.</li>
-          <li><code>agents/roles/wiki-activities/*.role.yaml</code> defines the separate wiki setup, query, research, collection, writing, ingest, verification, and project-wiki artifact review responsibilities.</li>
-        </ul>
-      </article>
-
-      <article class="panel">
-        <h3>Operational reference</h3>
-        <p>These files provide project-specific facts and unconditional folder skill loadouts.</p>
-        <ul>
-          <li><code>AGENTS.md</code> is the root project contract. It declares the project family, application tiers, validation commands, data rules, and default guidance for this repository.</li>
-          <li><code>PROJECT.yaml</code> is the single project-root setup and validation artifact that explains why project role agents, folder technology loadouts, and root or nested AGENTS.md references exist.</li>
-          <li><code>&lt;subtree&gt;/AGENTS.md</code> narrows the root contract for a folder that has different tier, stack, validation, or data-handling needs. The nearest file applies to work in that subtree.</li>
-          <li><code>CLAUDE.md</code> is a thin Claude Code bridge that imports the colocated <code>AGENTS.md</code>; create the same bridge beside nested guidance when Claude needs that subtree.</li>
-          <li><code>docs/project-taxonomy.md</code> defines the project families, artifact types, and placement concepts used by Project Configurator and Project Organiser.</li>
-        </ul>
-      </article>
-
-      <article class="panel">
-        <h3>Runtime adapters</h3>
-        <p>Generated adapter files translate shared roles and skills into runtime-specific definitions. See <a href="agent-definition-runtime-formats.html">Agent Definition Runtime Formats</a> for native file shapes, field mappings, source scope, explicit deployment, and adapter constraints.</p>
-      </article>
-
-      <article class="panel">
-        <h3>Generated documentation</h3>
-        <p>The HTML catalog views are generated from canonical role and skill sources. Use the <a href="agent-role-skill-map.html">role map</a> to inspect the current generated roles, skills, loadouts, outputs, and definition popups.</p>
-      </article>
-
-      <article class="panel">
-        <h3>Customer deployment and maintenance</h3>
-        <p>Maintenance uses repository sources and generated adapters without user-home installation. A separately requested deployment requires explicit target directories and preserves customer ownership and stable names. The runtime-format page owns the detailed adapter and update behavior; this model retains only the operating boundary.</p>
-      </article>
-
-      <article class="panel">
-        <h3>Execution evidence</h3>
-        <p>These files make an orchestrated run inspectable after the fact, so another agent or human can see what context was used and what was verified.</p>
-        <ul>
-          <li><code>.agents/runs/&lt;run-id&gt;/context-pack.json</code> captures the files, AGENTS.md excerpts, task constraints, and selected skills given to the assigned agent.</li>
-          <li><code>.agents/runs/&lt;run-id&gt;/agent-results.jsonl</code> records agent outputs and status events in order, which supports replay, audit, and merge coordination.</li>
-          <li><code>.agents/runs/&lt;run-id&gt;/verification.md</code> records the checks that were run, their results, unresolved risks, and any reason a normal check was skipped.</li>
-          <li><code>.agents/runs/&lt;run-id&gt;/handoff.md</code> summarizes what changed, what remains, who owns follow-up work, and what context the next agent needs.</li>
-        </ul>
-      </article>
+  <section class="section" aria-labelledby="evidence-title">
+    <h2 id="evidence-title">Execution Evidence</h2>
+    <p class="lede">An orchestrated run leaves four complementary records. Each fact has one record owner so later readers do not have to reconcile competing summaries.</p>
+    <div class="matrix">
+      <table>
+        <thead>
+          <tr>
+            <th>Record</th>
+            <th>Owns</th>
+            <th>Does not own</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>.agents/runs/&lt;run-id&gt;/context-pack.json</code></td>
+            <td>Inputs supplied to the assigned role: files, applicable guidance, constraints, and selected skills.</td>
+            <td>Results or verification claims.</td>
+          </tr>
+          <tr>
+            <td><code>.agents/runs/&lt;run-id&gt;/agent-results.jsonl</code></td>
+            <td>Ordered role outputs and status events for replay, audit, and merge coordination.</td>
+            <td>A synthesized verification verdict.</td>
+          </tr>
+          <tr>
+            <td><code>.agents/runs/&lt;run-id&gt;/verification.md</code></td>
+            <td>Checks run, outcomes, unresolved risks, and justified omissions.</td>
+            <td>Task history or next-owner context.</td>
+          </tr>
+          <tr>
+            <td><code>.agents/runs/&lt;run-id&gt;/handoff.md</code></td>
+            <td>Completed work, remaining work, follow-up ownership, and the context needed to continue.</td>
+            <td>Raw event history or duplicated command transcripts.</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </section>
 </main>
-<script src="generated/skill-definitions.js"></script>
-<script src="skill-browser.js"></script>
 </body>
 </html>

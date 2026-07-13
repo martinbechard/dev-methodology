@@ -440,580 +440,132 @@
     </div>
     <h1 id="page-title">Agent Skill Specialization Examples</h1>
     <p class="lede">
-      These customer-safe examples show the concrete artifacts produced by the specialization strategy: PROJECT.yaml, concise root and nested AGENTS.md guidance, setup evidence, and validation checks. The <a href="agent-skill-specialization-strategy.html">strategy</a> owns the selection rules; this page shows their outcome in fictitious projects.
+      This page owns three customer-safe configuration examples: a root-only tool, a multi-tier application with nested guidance, and a wiki repository with separate source and synthesis workflows.
+      The <a href="agent-skill-specialization-strategy.html">strategy</a> owns selection policy, while the
+      <a href="agentic-development-operating-model.html">operating model</a> owns setup sequence and file responsibilities.
     </p>
   </section>
 
-  <section class="section" aria-labelledby="usage-title">
-    <h2 id="usage-title">One-Command Project Bootstrap</h2>
+  <section class="section" aria-labelledby="examples-title">
+    <h2 id="examples-title">Configuration Examples</h2>
+    <p class="note">Each example contains one focused PROJECT.yaml excerpt and only the decision that distinguishes it. The <a href="../skills/development-methodology/assets/templates/project-template.yaml">canonical template</a> owns the complete schema.</p>
     <div class="grid">
-      <article class="card agent">
-        <h3>Project Bootstrapper</h3>
-        <p>This is the user-facing setup entry point. One request reuses an existing PROJECT.yaml or triggers Project Configurator only when that file is absent, selects the source-backed documentation set, delegates each artifact to its writer and independent reviewer, drives corrections to acceptance, and finishes with integrated verification.</p>
-      </article>
-
-      <article class="card config">
-        <h3>PROJECT.yaml</h3>
-        <p>PROJECT.yaml is the project-owned setup document for agent roles and source-backed folder technology loadouts before durable guidance is copied into AGENTS.md. Each project has exactly one PROJECT.yaml at its root; that file covers every subfolder scope.</p>
-      </article>
-
-      <article class="card agent">
-        <h3>Project Configurator</h3>
-        <p>This setup role runs under Project Bootstrapper only when project-root PROJECT.yaml is absent or the user explicitly requests reconfiguration. It uses development-methodology, create-project-configuration, and detect-technology-skills to inspect the project, classify tiers, detect variants for representative folder scopes, record source evidence, and create the single project-root PROJECT.yaml before documentation work begins.</p>
-      </article>
-
       <article class="card case">
-        <h3>Project-Owned Setup</h3>
-        <p>Create one PROJECT.yaml at the root of the project it describes. Public samples, internal projects, and customer deployments follow the same setup flow; only the source evidence and local rules change.</p>
+        <h3><a href="#northwind-title">Northwind Tools</a></h3>
+        <p>One runtime and one validation workflow need only root guidance.</p>
       </article>
-
-      <article class="card skill">
-        <h3>Customer Examples</h3>
-        <p>Customer-facing examples use fictitious product names, synthetic paths, and generic behavior. They show the routing pattern without depending on real project details.</p>
+      <article class="card case">
+        <h3><a href="#acme-title">Acme Ledger</a></h3>
+        <p>API and database subtrees need narrower operational guidance.</p>
+      </article>
+      <article class="card case">
+        <h3><a href="#beacon-title">Beacon Knowledge Base</a></h3>
+        <p>Raw source handling and durable wiki synthesis remain separate workflows.</p>
       </article>
     </div>
   </section>
 
-  <section class="section" aria-labelledby="template-title">
-    <h2 id="template-title">PROJECT.yaml Template Sections</h2>
-    <div class="matrix">
-      <table>
-        <thead>
-          <tr>
-            <th>Section</th>
-            <th>Purpose</th>
-            <th>What it establishes</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><span class="name">Current Understanding</span></td>
-            <td>Summarizes the project purpose, stage, and reason agent routing is needed.</td>
-            <td>Prevents a role map from being created without a source-backed project boundary.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Authoritative Sources</span></td>
-            <td>Lists README files, existing AGENTS.md artifacts, procedures, packages, tests, docs, and source roots inspected.</td>
-            <td>Makes the setup reviewable because every role and skill decision can be traced to evidence.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Project Taxonomy</span></td>
-            <td>Classifies project family, application tiers, technology stacks, runtime boundaries, and documentation surfaces.</td>
-            <td>Gives Project Configurator stable terms such as web application, front-end tier, API tier, static pages tier, DB tier, documentation tier, or CLI tier.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Root AGENTS.md Routing Reference</span></td>
-            <td>Explains what the operational AGENTS.md file should tell agents when they enter the repository.</td>
-            <td>Separates planning evidence from the concise routing instructions agents load during normal work.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Role Agent Set</span></td>
-            <td>Defines each project role, the work it owns, handoff boundaries, loaded skills, and completion checks.</td>
-            <td>Shows when a reusable role is enough and when a specialist reviewer or verification agent is justified.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Technology Skill Loadouts</span></td>
-            <td>Maps each folder scope to reusable technology skills with source evidence, required-load policy, and missing or conflicting results.</td>
-            <td>Keeps skill specialization factual and avoids turning every project behavior into a one-off agent.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Folder Routing</span></td>
-            <td>Maps folders and path patterns to roles, tiers, skills, source evidence, and verification commands.</td>
-            <td>Lets every agent load the established folder skills without rerunning setup-time detection.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Nested AGENTS.md Files</span></td>
-            <td>Lists subfolders that need nested operational AGENTS.md references. Their source evidence and placement decisions remain in the single root PROJECT.yaml.</td>
-            <td>Keeps operational guidance compact while preserving one project-wide configuration.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Validation Plan</span></td>
-            <td>Defines commands and checks used to confirm the role and skill setup is usable.</td>
-            <td>Makes the project configuration verifiable without making validation the reason the configuration exists.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="customer-title">
-    <h2 id="customer-title">Example Chooser</h2>
-    <div class="grid">
-      <article class="card agent">
-        <h3>Northwind Tools</h3>
-        <p>A local developer-tooling project with one runtime, one root configuration, and no nested AGENTS.md boundary.</p>
-      </article>
-
-      <article class="card case">
-        <h3>Acme Ledger</h3>
-        <p>A web application that uses nested operational guidance where API and database work need different local rules.</p>
-      </article>
-
-      <article class="card case">
-        <h3>Contoso Orders</h3>
-        <p>A Spring Boot service that illustrates a non-web-stack role and skill loadout without introducing a separate role taxonomy.</p>
-      </article>
-
-      <article class="card skill">
-        <h3>Beacon Knowledge Base</h3>
-        <p>A documentation and project-wiki repository whose collection, synthesis, verification, and publication work remains distinct.</p>
-      </article>
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="tools-title">
-    <h2 id="tools-title">Example: Northwind Tools</h2>
-    <div class="grid">
-      <article class="card case">
-        <h3>Root configuration</h3>
-        <ul>
-          <li>PROJECT.yaml records the CLI entry points, generated artifact rules, fixture locations, and test commands.</li>
-          <li>No nested AGENTS.md reference or local plan is needed while the source tree uses one TypeScript runtime and one verification workflow.</li>
-          <li>Root AGENTS.md can stay short because PROJECT.yaml carries the setup evidence.</li>
-        </ul>
-      </article>
-
-      <article class="card agent">
-        <h3>Role agents</h3>
-        <div class="tag-row">
-          <span class="tag agent">Project Bootstrapper</span>
-          <span class="tag agent">Project Configurator</span>
-          <span class="tag agent">Dev Orchestrator</span>
-          <span class="tag agent">Dev Coder</span>
-          <span class="tag agent">Dev Code Reviewer</span>
-          <span class="tag agent">Dev Verifier</span>
-          <span class="tag agent">Dev Documentation Writer</span>
-        </div>
-      </article>
-
-      <article class="card skill">
-        <h3>Skill loadout</h3>
-        <div class="tag-row">
-          <span class="tag skill">node-cli</span>
-          <span class="tag skill">typescript-esm</span>
-          <span class="tag skill">typescript-strict</span>
-          <span class="tag skill">vitest</span>
-          <span class="tag skill">careful-coding</span>
-          <span class="tag skill">code-comments</span>
-          <span class="tag skill">fix-explanation</span>
-          <span class="tag skill">structured-explanation</span>
-        </div>
-      </article>
-    </div>
-
-    <div class="matrix section">
-      <table>
-        <thead>
-          <tr>
-            <th>Work target</th>
-            <th>Application tier</th>
-            <th>Role and skills</th>
-            <th>Validation</th>
-            <th>Reference placement</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><span class="name">src/commands/**</span></td>
-            <td>CLI tier.</td>
-            <td>Dev Coder loads node-cli, typescript-esm, typescript-strict, and vitest.</td>
-            <td>Run focused command tests, argument parsing tests, and build.</td>
-            <td>Root AGENTS.md reference is enough because command rules share one runtime.</td>
-          </tr>
-          <tr>
-            <td><span class="name">src/readers/** and src/writers/**</span></td>
-            <td>File processing tier.</td>
-            <td>Dev Coder loads node-cli, careful-coding, code-comments, typescript-strict, and vitest.</td>
-            <td>Run fixture tests, generated artifact snapshots, and build.</td>
-            <td>Root AGENTS.md names fixture and artifact rules.</td>
-          </tr>
-          <tr>
-            <td><span class="name">tests/**</span></td>
-            <td>Verification tier.</td>
-            <td>Dev Verifier loads vitest and project-specific fixture rules.</td>
-            <td>Run targeted tests before the full test command.</td>
-            <td>Root AGENTS.md names the standard test workflow.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="snippet" data-expanded="false">
-      <div class="snippet-head">
-        <h3>Northwind PROJECT.yaml</h3>
-        <button class="snippet-toggle" type="button" aria-expanded="false" aria-controls="northwind-plan-sample">Expand</button>
-      </div>
-      <p class="snippet-note">This is the root YAML plan for a simple tooling repository.</p>
-      <pre id="northwind-plan-sample" class="config-block clamp-block"><code>schema: project
+  <section class="section" aria-labelledby="northwind-title">
+    <h2 id="northwind-title">Northwind Tools: Root-Only Guidance</h2>
+    <p class="note">A single TypeScript runtime and common test workflow do not justify nested AGENTS.md files.</p>
+    <pre class="config-block"><code>schema: project
 schema_version: 1
-project:
-  name: Northwind Tools
+project_taxonomy:
   family: local-developer-tooling
-  application_tiers: [cli, file-processing, generated-artifacts, tests, documentation]
+  primary_runtime: Node.js
+  application_tiers:
+    - name: CLI and file processing
+      paths: [src/**]
+      stacks: [TypeScript]
 root_agents_reference:
   file: AGENTS.md
-  purpose: short router contract for CLI, generated artifacts, and tests
-nested_agents_reference:
-  required: false
-  reason: one TypeScript runtime and one verification workflow
+nested_agents_files: []
 technology_skill_loadouts:
-  - scope: CLI source
-    pathPattern: src/**
+  - scope: source and tests
+    pathPattern: "{src,test,tests}/**"
     skills: [node-cli, typescript-esm, typescript-strict, vitest]
-    sourceEvidence:
-      - skill: node-cli
-        evidence: [scope path **/commands/**: src/commands/build.ts]
-validation:
-  commands: [pnpm test, pnpm run build]</code></pre>
-    </div>
-
-    <div class="snippet" data-expanded="false">
-      <div class="snippet-head">
-        <h3>Northwind AGENTS.md Reference</h3>
-        <button class="snippet-toggle" type="button" aria-expanded="false" aria-controls="northwind-agents-sample">Expand</button>
-      </div>
-      <p class="snippet-note">The operational AGENTS.md stays concise because Northwind has one runtime and no folder-specific policy split.</p>
-      <pre id="northwind-agents-sample" class="config-block clamp-block"><code>AGENTS.md
-Project family: local developer tooling.
-Application tiers:
-  CLI commands: src/commands/**
-  File processing: src/readers/** and src/writers/**
-  Generated artifacts: dist/** and samples/output/**
-Technology skills:
-  Before acting on source changes, load node-cli, typescript-esm, typescript-strict, and vitest.
-  Do not rerun technology detection during ordinary work.
-  Artifact changes verify the generator path before changing checked-in examples.
-Validation:
-  pnpm test
-  pnpm run build</code></pre>
-    </div>
+validation_plan:
+  commands:
+    - command: pnpm test
+      proves: command and fixture behavior
+    - command: pnpm run build
+      proves: package compilation</code></pre>
   </section>
 
-  <section class="section" aria-labelledby="web-title">
-    <h2 id="web-title">Example: Acme Ledger Web Application</h2>
-    <div class="matrix">
-      <table>
-        <thead>
-          <tr>
-            <th>Work target</th>
-            <th>Application tier</th>
-            <th>Role and skills</th>
-            <th>Validation</th>
-            <th>Reference placement</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><span class="name">app/(authenticated)/**</span></td>
-            <td>Front-end tier.</td>
-            <td>Dev Coder loads nextjs-app-router, react-server-components, typescript-strict, tailwind-design-system, jest, and playwright.</td>
-            <td>Run focused unit tests, route smoke checks, accessibility checks, and build.</td>
-            <td>Root AGENTS.md is enough unless a product area has its own workflow rules.</td>
-          </tr>
-          <tr>
-            <td><span class="name">app/api/**/route.ts</span></td>
-            <td>API tier.</td>
-            <td>Dev Coder loads api-routes, clerk-auth, nextjs-app-router, postgres-drizzle, typescript-strict, and jest.</td>
-            <td>Run API unit tests, auth boundary checks, persistence tests, and build.</td>
-            <td>Nested app/api/AGENTS.md when many routes share API-specific contracts.</td>
-          </tr>
-          <tr>
-            <td><span class="name">app/(marketing)/**</span></td>
-            <td>Static pages tier.</td>
-            <td>Dev Coder loads nextjs-app-router, react-server-components, tailwind-design-system, and playwright.</td>
-            <td>Run build, link checks, responsive screenshots, and smoke checks for forms or calls to action.</td>
-            <td>Root AGENTS.md unless the static site is maintained by a separate content workflow.</td>
-          </tr>
-          <tr>
-            <td><span class="name">db/** and drizzle/**</span></td>
-            <td>DB tier.</td>
-            <td>Dev Coder loads postgres-drizzle, typescript-strict, and jest. Dev Code Reviewer checks schema boundaries and migration assumptions.</td>
-            <td>Run schema checks, persistence tests, seed checks, and build.</td>
-            <td>Nested db/AGENTS.md when data ownership, migrations, or privacy rules require local evidence.</td>
-          </tr>
-          <tr>
-            <td><span class="name">docs/wiki/**</span></td>
-            <td>Documentation tier.</td>
-            <td>Wiki Writer loads project-wiki and project-wiki-topic-write, adding code-project-wiki only when the wiki change depends on code or test evidence.</td>
-            <td>Run wiki status, lint, link checks, and OKF validation when topic pages change.</td>
-            <td>Root AGENTS.md plus docs/wiki/AGENTS.md only when wiki workflow rules are extensive.</td>
-          </tr>
-          <tr>
-            <td><span class="name">tests/e2e/**</span></td>
-            <td>Verification tier.</td>
-            <td>Dev Verifier or Dev Browser Operator loads playwright, nextjs-app-router, and project-specific test data rules.</td>
-            <td>Run targeted browser flows with console and network inspection before broader suite runs.</td>
-            <td>Nested tests/e2e/AGENTS.md when the browser runtime has special setup or shared-state constraints.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="snippet" data-expanded="false">
-      <div class="snippet-head">
-        <h3>Acme PROJECT.yaml</h3>
-        <button class="snippet-toggle" type="button" aria-expanded="false" aria-controls="acme-plan-sample">Expand</button>
-      </div>
-      <p class="snippet-note">This root configuration points to nested operational AGENTS.md references for API and database local rules.</p>
-      <pre id="acme-plan-sample" class="config-block clamp-block"><code>schema: project
+  <section class="section" aria-labelledby="acme-title">
+    <h2 id="acme-title">Acme Ledger: Nested Tier Guidance</h2>
+    <p class="note">Repository-wide rules stay at the root; only API contracts and database migration rules require nested guidance.</p>
+    <pre class="config-block"><code>schema: project
 schema_version: 1
-project:
-  name: Acme Ledger
+project_taxonomy:
   family: web-application
-operational_references:
-  root: AGENTS.md
-  nested: [app/api/AGENTS.md, db/AGENTS.md]
-application_tiers:
-  front_end:
-    paths: [app/(authenticated)/**, components/**]
-    skills: [nextjs-app-router, react-server-components, tailwind-design-system]
-  api:
-    paths: [app/api/**/route.ts]
+  application_tiers:
+    - name: Front-end
+      paths: [app/(authenticated)/**, components/**]
+      stacks: [Next.js, React]
+    - name: API
+      paths: [app/api/**]
+      stacks: [Next.js routes]
+    - name: DB
+      paths: [db/**, drizzle/**]
+      stacks: [Postgres, Drizzle]
+root_agents_reference:
+  file: AGENTS.md
+nested_agents_files:
+  - path: app/api/AGENTS.md
+    needed: true
+    reason: shared authentication and request-contract checks
+  - path: db/AGENTS.md
+    needed: true
+    reason: migration, rollback, and sensitive-data rules
+technology_skill_loadouts:
+  - scope: API
+    pathPattern: app/api/**
     skills: [api-routes, clerk-auth, postgres-drizzle]
-    nested_agents_reference: app/api/AGENTS.md
-  static_pages:
-    paths: [app/(marketing)/**]
-    skills: [nextjs-app-router, react-server-components, playwright]
-  db:
-    paths: [db/**, drizzle/**]
-    skills: [postgres-drizzle, typescript-strict, jest]
-    nested_agents_reference: db/AGENTS.md
-
-dispatch:
-  project-configurator:
-    skills: [development-methodology, create-project-configuration, documentation-page-verify]
-  dev-coder:
-    rules:
-      - match: app/api/**/route.ts
-        add_skills: [api-routes, clerk-auth, postgres-drizzle, jest]
-      - match: db/**
-        add_skills: [postgres-drizzle, typescript-strict, jest]</code></pre>
-    </div>
-
-    <div class="snippet" data-expanded="false">
-      <div class="snippet-head">
-        <h3>Acme Root And Nested AGENTS.md References</h3>
-        <button class="snippet-toggle" type="button" aria-expanded="false" aria-controls="acme-agents-sample">Expand</button>
-      </div>
-      <p class="snippet-note">The operational AGENTS.md files are derived from the validated configuration and carry the concise runtime routing rules.</p>
-      <pre id="acme-agents-sample" class="config-block clamp-block"><code>AGENTS.md
-Project family: web application.
-Application tiers:
-  Front-end: app/(authenticated)/** and components/**
-  API: app/api/**/route.ts
-  Static pages: app/(marketing)/**
-  DB: db/** and drizzle/**
-Technology skills:
-  Apply the nested project instructions and folder skills supplied for app/api/** or db/**.
-Validation:
-  pnpm test
-  pnpm run build
-
-app/api/AGENTS.md
-Local tier: API routes.
-Load skills: api-routes, clerk-auth, postgres-drizzle, typescript-strict, jest.
-Local checks: auth boundary tests, request validation tests, persistence tests.
-
-db/AGENTS.md
-Local tier: database schema and persistence.
-Load skills: postgres-drizzle, typescript-strict, jest.
-Local checks: schema checks, migration review, seed data tests.</code></pre>
-    </div>
+  - scope: DB
+    pathPattern: db/**
+    skills: [postgres-drizzle, typescript-strict, jest]</code></pre>
   </section>
 
-  <section class="section" aria-labelledby="wiki-title">
-    <h2 id="wiki-title">Example: Beacon Knowledge Base</h2>
-    <div class="matrix">
-      <table>
-        <thead>
-          <tr>
-            <th>Work target</th>
-            <th>Application tier</th>
-            <th>Role and skills</th>
-            <th>Validation</th>
-            <th>Reference placement</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><span class="name">raw/inbox/** and raw/fragments/**</span></td>
-            <td>Source collection tier.</td>
-            <td>Wiki Researcher handles bounded on-demand gaps; Wiki Source Collector handles approved public source windows. Both keep collection raw-only.</td>
-            <td>Confirm source metadata, date boundaries, and queue placement before synthesis.</td>
-            <td>Root AGENTS.md because this wiki-only project has one source and wiki workflow.</td>
-          </tr>
-          <tr>
-            <td><span class="name">docs/wiki/**</span></td>
-            <td>Wiki synthesis tier.</td>
-            <td>Wiki Writer owns ordinary durable maintenance; Wiki Ingester owns raw-to-processed synthesis. Either adds code-project-wiki only when claims depend on code or tests.</td>
-            <td>Run wiki status, lint, and OKF validation.</td>
-            <td>Root AGENTS.md; use a nested wiki AGENTS.md only when another wiki root in the same project has different rules.</td>
-          </tr>
-          <tr>
-            <td><span class="name">docs/wiki/digests/**</span></td>
-            <td>Publication tier.</td>
-            <td>Wiki Writer maintains item-level digest entries, and Wiki Topic Verifier independently checks digest ordering, links, source coverage, and page quality.</td>
-            <td>Run link checks, topic verifier checks, and digest coverage checks.</td>
-            <td>Root AGENTS.md names publication conventions.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="snippet" data-expanded="false">
-      <div class="snippet-head">
-        <h3>Beacon PROJECT.yaml</h3>
-        <button class="snippet-toggle" type="button" aria-expanded="false" aria-controls="beacon-plan-sample">Expand</button>
-      </div>
-      <p class="snippet-note">PROJECT.yaml records why root guidance is enough for Beacon's single wiki workflow and which checks prove that workflow is usable.</p>
-      <pre id="beacon-plan-sample" class="config-block clamp-block"><code>schema: project
+  <section class="section" aria-labelledby="beacon-title">
+    <h2 id="beacon-title">Beacon Knowledge Base: Workflow Separation</h2>
+    <p class="note">One root guidance file is sufficient, but its routing keeps raw collection separate from durable wiki maintenance and ingest.</p>
+    <pre class="config-block"><code>schema: project
 schema_version: 1
-project:
-  name: Beacon Knowledge Base
+project_taxonomy:
   family: documentation-and-project-wiki
-operational_references:
-  root: AGENTS.md
-  nested: []
-  nested_reference_rule: use a nested &lt;wiki-root&gt;/AGENTS.md only when the same project has multiple wiki roots with different rules
-application_tiers:
-  source_collection:
-    paths: [raw/inbox/**, raw/fragments/**]
-    skills: [project-wiki-research]
-  wiki_synthesis:
-    paths: [docs/wiki/**]
-    skills: [project-wiki, project-wiki-topic-write, project-wiki-topic-verify]
-  publication:
-    paths: [docs/wiki/digests/**]
-    skills: [project-wiki-topic-verify, structured-explanation]
-dispatch:
-  wiki-architect:
-    work: initial structure, ownership, federation, and workflow setup
-  wiki-query-responder:
-    work: wiki-backed answers and durable gap detection
-  wiki-researcher:
-    work: bounded raw-only research when maintained coverage is insufficient
-  wiki-source-collector:
-    work: approved public source windows and exclusions
-  wiki-writer:
-    work: ordinary durable topic, hub, link, and digest maintenance
-  wiki-ingester:
-    work: raw-to-processed synthesis
-  wiki-topic-verifier:
-    work: independent topic-page acceptance
-  wiki-artifact-reviewer:
-    work: project-wiki methodology artifact review
-validation:
-  commands: [wiki_ops.py status, wiki_ops.py lint, wiki_ops.py okf-validate]</code></pre>
-    </div>
-
-    <div class="snippet" data-expanded="false">
-      <div class="snippet-head">
-        <h3>Beacon AGENTS.md Reference</h3>
-        <button class="snippet-toggle" type="button" aria-expanded="false" aria-controls="beacon-agents-sample">Expand</button>
-      </div>
-      <p class="snippet-note">Beacon uses the validated configuration to derive root AGENTS.md guidance for both raw source collection and wiki synthesis.</p>
-      <pre id="beacon-agents-sample" class="config-block clamp-block"><code>AGENTS.md
-Project family: documentation and project wiki repository.
-Application tiers:
-  Source collection: raw/inbox/** and raw/fragments/**
-  Wiki synthesis: docs/wiki/**
-  Verification: skills/project-wiki/scripts/**
-Operational rules:
-  Collection runs are raw-only.
-  Ingest runs read raw sources before editing docs/wiki.
-  Use a nested &lt;wiki-root&gt;/AGENTS.md only when this project hosts multiple wiki roots with different rules.
-Validation:
-  wiki_ops.py status
-  wiki_ops.py lint
-  wiki_ops.py okf-validate</code></pre>
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="setup-flow-title">
-    <h2 id="setup-flow-title">Project Setup Flow</h2>
-    <div class="panel">
-      <p>Run this flow before writing or refreshing project guidance. The setup agent uses the selected generated runtime adapter in place, creates PROJECT.yaml, chooses where nested guidance belongs, emits AGENTS.md and thin CLAUDE.md bridges where needed, and records evidence without populating user-home runtime folders.</p>
-    </div>
-    <div class="matrix section">
-      <table>
-        <thead>
-          <tr>
-            <th>Step</th>
-            <th>What the setup agent inspects</th>
-            <th>Setup output</th>
-            <th>Completion check</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><span class="name">Select bundle</span></td>
-            <td>Detected runtime, repository skill sources, generated native agent package, and support scripts.</td>
-            <td>Repository source and adapter references recorded for setup.</td>
-            <td>No duplicate user-home skills or agents are created, and generic assets contain no customer material.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Inventory</span></td>
-            <td>README files, AGENTS.md files, package metadata, source roots, tests, docs, wiki pages, and procedures.</td>
-            <td>Current Understanding and Authoritative Sources sections.</td>
-            <td>PROJECT.yaml describes the actual project rather than a remembered project shape.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Classify</span></td>
-            <td>Runtime folders, application tiers, persistent data, generated artifacts, and documentation surfaces.</td>
-            <td>Project Taxonomy and Folder Routing sections.</td>
-            <td>Project Configurator can identify separate front-end, API, static pages, DB, docs, test, or CLI folder scopes.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Assign</span></td>
-            <td>Reusable roles, project-specific verification needs, privacy constraints, and handoff points.</td>
-            <td>Role Agent Set and Skill Loadouts sections.</td>
-            <td>Specialist roles are justified by distinct output contracts rather than by folder names alone.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Place</span></td>
-            <td>Subfolders with different technology, runtime setup, data handling, or verification commands.</td>
-            <td>Nested AGENTS.md references and thin colocated CLAUDE.md imports, with every placement decision recorded in the root PROJECT.yaml.</td>
-            <td>Nested guidance reduces cognitive load while one project-wide configuration preserves all routing evidence.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Verify</span></td>
-            <td>Build commands, test commands, docs checks, wiki checks, and page verifier results.</td>
-            <td>Validation Plan, Open Questions, and Maintenance Notes sections.</td>
-            <td>Another agent can use PROJECT.yaml to update AGENTS.md and load the right skills.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="customer-edit-example-title">
-    <h2 id="customer-edit-example-title">Example: Direct Customer Customization</h2>
-    <div class="panel">
-      <p>A customer edits an installed code-review skill to add audit evidence rules while keeping the skill name stable. Existing agents and AGENTS.md references continue to resolve it.</p>
-      <p>During a later update, an agent compares the old generic skill, the installed customer skill, and the new generic skill. The customer chooses which differences to retain, merge, replace, or remove before any file is updated.</p>
-    </div>
+  application_tiers:
+    - name: Source collection
+      paths: [raw/inbox/**]
+      stacks: [Public web sources]
+    - name: Ingest queue
+      paths: [raw/Clippings/**]
+      stacks: [Queued Markdown sources]
+    - name: Wiki synthesis
+      paths: [docs/wiki/**]
+      stacks: [Markdown project wiki]
+root_agents_reference:
+  file: AGENTS.md
+nested_agents_files: []
+folder_routing:
+  - pattern: raw/inbox/**
+    tier_or_workflow: raw-only source collection
+    primary_role: Wiki Source Collector
+    required_skills: [project-wiki-research]
+    verification_commands: [wiki_ops.py status]
+  - pattern: raw/Clippings/**
+    tier_or_workflow: raw-to-durable ingest
+    primary_role: Wiki Ingester
+    required_skills: [project-wiki]
+    verification_commands: [wiki_ops.py status]
+  - pattern: docs/wiki/**
+    tier_or_workflow: ordinary durable wiki maintenance
+    primary_role: Wiki Writer
+    required_skills: [project-wiki, project-wiki-topic-write]
+    verification_commands:
+      - wiki_ops.py lint
+      - wiki_ops.py okf-validate</code></pre>
   </section>
 </main>
-<script>
-  const EXPANDED_BUTTON_LABEL = "Collapse";
-  const COLLAPSED_BUTTON_LABEL = "Expand";
-
-  document.querySelectorAll(".snippet").forEach((snippet) => {
-    const toggle = snippet.querySelector(".snippet-toggle");
-
-    if (!(toggle instanceof HTMLButtonElement)) {
-      return;
-    }
-
-    toggle.addEventListener("click", () => {
-      const nextExpanded = snippet.dataset.expanded !== "true";
-      snippet.dataset.expanded = String(nextExpanded);
-      toggle.setAttribute("aria-expanded", String(nextExpanded));
-      toggle.textContent = nextExpanded ? EXPANDED_BUTTON_LABEL : COLLAPSED_BUTTON_LABEL;
-    });
-  });
-</script>
-<script src="generated/skill-definitions.js"></script>
-<script src="skill-browser.js"></script>
 </body>
 </html>

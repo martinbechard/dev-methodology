@@ -586,14 +586,10 @@
     </div>
     <h1 id="page-title">Agent Roles and Skill Loadouts</h1>
     <p class="lede">
-      Browse the generated catalog of portable roles, skills, loadouts, and output contracts. Select a role or skill to inspect its current canonical definition; read the operating model and specialization strategy for the rules behind this data.
+      This page owns generated role responsibilities, loadouts, output contracts, skill definitions, and role-skill relationships. The interactive diagram and the cards deliberately present the same canonical relationships in two generated views; no hand-authored routing policy lives here.
+      Read the <a href="agent-skill-specialization-strategy.html">specialization strategy</a> for selection rules and the
+      <a href="agentic-development-operating-model.html">operating model</a> for lifecycle handoffs.
     </p>
-  </section>
-
-  <section class="section" aria-labelledby="model-title">
-    <h2 id="model-title">Reference Model</h2>
-    <p class="note">The catalog is generated from canonical role files and SKILL.md sources. PROJECT.yaml, AGENTS.md, runtime adapters, and execution evidence have distinct responsibilities; the <a href="agentic-development-operating-model.html">operating model</a> explains their relationship.</p>
-    <p class="note">Use the <a href="agent-skill-specialization-strategy.html">specialization strategy</a> when deciding whether work needs a new role, a request-specific skill, or a setup-time folder loadout.</p>
   </section>
 
   <section class="section" aria-labelledby="hierarchy-title">
@@ -611,7 +607,7 @@
       The role model has four operating categories: agents used during normal development, agents that own wiki activities, agents that set up or update a downstream project, and agents that maintain this methodology bundle.
     </p>
     <p class="note">
-      Amber skills are fixed role skills. Violet skills are request-specific and are loaded only when their condition applies. Blue skills in the catalog are setup-time technology skills; Project Configurator binds them to folders through AGENTS.md rather than assigning them to one canonical role.
+      Amber marks a fixed role-skill edge, violet marks a conditional role-skill edge, and blue identifies a setup-time technology skill in the catalog. The <a href="agent-skill-specialization-strategy.html">specialization strategy</a> owns when and how those skills are selected.
     </p>
   </section>
 
@@ -637,96 +633,9 @@
 
   <section class="section" aria-labelledby="skills-title">
     <h2 id="skills-title">Skill Catalog</h2>
-    <p class="note">Technology skills are blue because they are selected once from repository evidence and injected through folder AGENTS.md guidance. Other catalog skills remain amber until a role marks them violet with a request-time condition.</p>
     <div class="wide-grid" id="skill-catalog"></div>
   </section>
 
-  <section class="section" aria-labelledby="routing-title">
-    <h2 id="routing-title">Routing Rules</h2>
-    <div class="matrix">
-      <table>
-        <thead>
-          <tr>
-            <th>Signal</th>
-            <th>Router action</th>
-            <th>Example loadout</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><span class="name">User changes this methodology bundle</span></td>
-            <td>Use Methodology Maintainer so source skills, metadata, README, design HTML, tests, generated adapters, and explicit deployment behavior stay aligned.</td>
-            <td>development-methodology, review-structured-artifact, documentation-page-verify, validation scripts, and metadata scripts as needed.</td>
-          </tr>
-          <tr>
-            <td><span class="name">User sets up or updates a downstream project</span></td>
-            <td>Use Project Configurator to create or refresh PROJECT.yaml, local AGENTS.md routing, documentation routes, and project-specific validation evidence.</td>
-            <td>development-methodology, create-project-configuration, documentation-bootstrap, and documentation-page-verify.</td>
-          </tr>
-          <tr>
-            <td><span class="name">User asks for code change</span></td>
-            <td>Use Dev Coder unless the task is primarily review, verification, documentation, or merge coordination.</td>
-            <td>careful-coding, code-comments, code-discovery, plus the folder technology skills supplied by the harness for the active scope.</td>
-          </tr>
-          <tr>
-            <td><span class="name">User asks for review</span></td>
-            <td>Use Dev Code Reviewer with fresh context and finding-first output. Extract evidence from the applicable coding-skill checklists before synthesis.</td>
-            <td>code-review-evidence, review-structured-artifact, code-comments, and the folder technology skills supplied by the harness for the active scope.</td>
-          </tr>
-          <tr>
-            <td><span class="name">User asks for documentation artifact</span></td>
-            <td>Use Dev Documentation Writer and development-methodology to select exactly one non-wiki creation route and write the source-backed artifact.</td>
-            <td>development-methodology plus create-functional-spec, create-architecture, create-high-level-design, create-module-design, or create-unit-test-plan.</td>
-          </tr>
-          <tr>
-            <td><span class="name">User asks to set up project agents or skills</span></td>
-            <td>Use Project Configurator to create the project-root PROJECT.yaml and decide where nested AGENTS.md guidance is needed.</td>
-            <td>detect-technology-skills, development-methodology, create-project-configuration, documentation-page-verify, and documentation-bootstrap for first-time setup.</td>
-          </tr>
-          <tr>
-            <td><span class="name">User asks for artifact review</span></td>
-            <td>Use Dev Artifact Reviewer with the matching non-wiki artifact review skill and completed checklist evidence.</td>
-            <td>review-structured-artifact plus review-architecture, review-functional-spec, review-high-level-design, review-module-design, or review-unit-test-plan.</td>
-          </tr>
-          <tr>
-            <td><span class="name">User asks for wiki setup or restructuring</span></td>
-            <td>Use Wiki Architect to establish roots, ownership, federation, source workflow, navigation, and setup verification.</td>
-            <td>project-wiki, with project-wiki-create or documentation-bootstrap only when their request-specific conditions apply.</td>
-          </tr>
-          <tr>
-            <td><span class="name">User asks for wiki content or ingest</span></td>
-            <td>Use Wiki Writer for ordinary durable maintenance or Wiki Ingester for raw-to-processed synthesis.</td>
-            <td>project-wiki, project-wiki-topic-write, project-wiki-topic-verify, and code-project-wiki only for code-aware maintenance.</td>
-          </tr>
-          <tr>
-            <td><span class="name">User asks a wiki-backed question or requests research</span></td>
-            <td>Use Wiki Query Responder for maintained knowledge and Wiki Researcher or Wiki Source Collector when missing coverage requires a raw-only source artifact.</td>
-            <td>project-wiki-query and project-wiki-research, with collection kept separate from durable synthesis.</td>
-          </tr>
-          <tr>
-            <td><span class="name">User asks for wiki verification or review</span></td>
-            <td>Use Wiki Topic Verifier for changed topic pages or Wiki Artifact Reviewer for a project-wiki methodology artifact.</td>
-            <td>project-wiki-topic-verify, or project-wiki-review plus documentation-page-verify.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Target files are in a specialized subtree</span></td>
-            <td>Use the nested project instructions and folder technology skills supplied by the harness for the subtree. Do not rerun detection.</td>
-            <td>Project Configurator owns source-backed detection and blocks missing required skills or exclusive conflicts before publishing the guidance.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Work spans multiple phases or agents</span></td>
-            <td>Use Dev Orchestrator to split the work and preserve handoff, claim, and verification records.</td>
-            <td>structured-design, manage-backlog, agent-claim, agent-work-merge, review-structured-artifact.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="catalog-boundary-title">
-    <h2 id="catalog-boundary-title">Catalog Boundary</h2>
-    <p class="note">This page presents generated definitions. The <a href="agent-skill-specialization-strategy.html">strategy</a> owns role, skill, and local-guidance policy; <a href="agent-definition-runtime-formats.html">runtime formats</a> owns adapter and explicit-deployment detail.</p>
-  </section>
 </main>
   <script src="generated/skill-definitions.js"></script>
   <script src="generated/role-definitions.js"></script>

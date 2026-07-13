@@ -291,7 +291,10 @@
     <section class="hero" aria-labelledby="page-title">
       <h1 id="page-title">Agent Definition Runtime Formats</h1>
       <p class="lede">
-        This page compares how the common role source maps to native runtime files. It owns runtime-specific fields, installation surfaces, and adapter constraints; the role map owns generated catalog views and the specialization strategy owns detection and selection policy.
+        This page owns the canonical role schema, native packaging, selected cross-runtime field mappings, and vendor references.
+        The <a href="agent-role-skill-map.html">role map</a> owns generated catalog views, and the
+        <a href="agent-skill-specialization-strategy.html">specialization strategy</a> owns detection and selection policy.
+        The <a href="../README.md#explicit-target-deployment">README</a> owns deployment commands, destination ownership, updates, and pruning.
       </p>
       <div class="pill-row" aria-label="Document facets">
         <span class="pill"><span class="dot"></span>Role source</span>
@@ -301,87 +304,105 @@
       </div>
     </section>
 
-    <section class="section" aria-labelledby="understanding-title">
-      <h2 id="understanding-title">Current Understanding</h2>
-      <div class="grid">
-        <article class="card">
-          <h3>Single Source Of Truth</h3>
-          <p>Bundled skills remain sourced from <code>skills/*/SKILL.md</code>. Role definitions should live in real role files and list only skill IDs that exist in the generated skill catalog.</p>
-        </article>
-        <article class="card source">
-          <h3>Generated Role Data</h3>
-          <p><code>agent-role-skill-map.html</code> should not hardcode role loadouts. It should read generated role data that was produced from role source files and validated against generated skill definitions.</p>
-        </article>
-        <article class="card skill">
-          <h3>Runtime Differences</h3>
-          <p>Codex uses one standalone TOML configuration file per custom agent type. Claude Code, Gemini CLI, Junie CLI, and GitHub Copilot use Markdown files with YAML metadata or frontmatter. Field names and skill-loading semantics differ enough that one native file cannot serve every runtime.</p>
-        </article>
+    <section class="section" aria-labelledby="generation-title">
+      <h2 id="generation-title">Canonical Role Model And Generation</h2>
+      <div class="matrix">
+        <table>
+          <thead>
+            <tr>
+              <th>Concern</th>
+              <th>Authoritative source</th>
+              <th>Derived output or rule</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="name">Skills</span></td>
+              <td><code>skills/*/SKILL.md</code> and adjacent Codex metadata</td>
+              <td><code>design/generated/skill-definitions.js</code>; every canonical role skill ID must resolve here.</td>
+            </tr>
+            <tr>
+              <td><span class="name">Roles</span></td>
+              <td><code>agents/role-schema.yaml</code> and <code>agents/roles/**/*.role.yaml</code></td>
+              <td>Validated role definitions generate <code>design/generated/role-definitions.js</code> and the native adapter files.</td>
+            </tr>
+            <tr>
+              <td><span class="name">Model profiles</span></td>
+              <td><code>agents/model-profiles.yaml</code> plus each adapter model mapping</td>
+              <td>Semantic profiles and optional stage assignments generate adapter-specific model fields and trace comments.</td>
+            </tr>
+            <tr>
+              <td><span class="name">Generation</span></td>
+              <td><code>scripts/build-skill-docs.py</code></td>
+              <td>Generates browser data, Codex TOML, Claude Markdown, and <code>generated/adapters/agent-generation-manifest.json</code> without hand-maintained role data in HTML.</td>
+            </tr>
+            <tr>
+              <td><span class="name">Generated catalog</span></td>
+              <td>Canonical role and skill data</td>
+              <td>The <a href="agent-role-skill-map.html">role and skill map</a> renders the current definitions and the intentionally duplicated diagram view.</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
+      <p class="note">The <a href="agent-skill-specialization-strategy.html">specialization strategy</a> owns fixed, request-specific, and setup-time folder selection. This page maps the resulting canonical fields; it does not redefine selection policy.</p>
     </section>
 
     <section class="section" aria-labelledby="sources-title">
-      <h2 id="sources-title">Authoritative Sources</h2>
-      <div class="panel">
-        <ul>
-          <li><a href="https://learn.chatgpt.com/docs/agent-configuration/subagents?surface=app">OpenAI Codex Subagents</a> documents custom agents under project <code>.codex/agents/</code> and user <code>~/.codex/agents/</code> folders, one standalone TOML file per custom agent, required <code>name</code>, <code>description</code>, and <code>developer_instructions</code> fields, and supported Codex config keys such as <code>model</code>, <code>model_reasoning_effort</code>, <code>sandbox_mode</code>, <code>mcp_servers</code>, and <code>skills.config</code>.</li>
-          <li><a href="https://learn.chatgpt.com/docs/config-file/config-basic">OpenAI Codex Config Basics</a> documents user config at <code>~/.codex/config.toml</code>, project overrides through trusted <code>.codex/config.toml</code> files, precedence across CLI overrides, project config, profiles, user config, system config, and built-in defaults, plus common model, approval, sandbox, permission, and MCP settings.</li>
-          <li><a href="https://learn.chatgpt.com/docs/config-file/config-advanced">OpenAI Codex Advanced Config</a> documents named profile files such as <code>~/.codex/deep-review.config.toml</code>, one-off <code>--config</code> overrides, trusted project config loading, project-local key restrictions, and hooks loaded from config-adjacent locations.</li>
-          <li><a href="https://learn.chatgpt.com/docs/agent-configuration/rules">OpenAI Codex Rules</a> documents <code>.rules</code> files under <code>rules/</code> folders next to active config layers, <code>prefix_rule</code> entries, and decisions such as <code>allow</code>, <code>prompt</code>, and <code>forbidden</code> for commands outside the sandbox.</li>
-          <li><a href="https://developers.openai.com/codex/skills">OpenAI Codex Skills</a> documents the shared Agent Skills structure, required <code>SKILL.md</code> fields, and optional <code>agents/openai.yaml</code> metadata.</li>
-          <li><a href="https://code.claude.com/docs/en/sub-agents">Claude Code Subagents</a> documents Markdown files with YAML frontmatter under <code>.claude/agents/</code> or <code>~/.claude/agents/</code>, required <code>name</code> and <code>description</code>, optional <code>tools</code>, <code>model</code>, <code>skills</code>, and other fields, and a Markdown body used as the subagent prompt.</li>
-          <li><a href="https://github.com/google-gemini/gemini-cli/blob/main/docs/core/subagents.md">Gemini CLI Subagents</a> documents Markdown files under <code>.gemini/agents/</code> or <code>~/.gemini/agents/</code>, YAML frontmatter, required <code>name</code> and <code>description</code>, optional tool, model, temperature, turn, timeout, and MCP fields.</li>
-          <li><a href="https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/using-agent-skills.md">Gemini CLI Agent Skills</a> documents skill discovery from built-in, extension, user, and workspace skill locations, including <code>.gemini/skills/</code> and <code>.agents/skills/</code>.</li>
-          <li><a href="https://junie.jetbrains.com/docs/junie-cli-subagents.html">Junie CLI Custom Subagents</a> documents Markdown files with YAML metadata under <code>.junie/agents/</code>, <code>.agents/</code>, and user equivalents, with optional <code>skills</code>, <code>tools</code>, model, MCP, reasoning, and turn fields.</li>
-          <li><a href="https://junie.jetbrains.com/docs/agent-skills.html">Junie Agent Skills</a> documents portable Agent Skills and Junie skill discovery under project and user <code>.junie/skills/</code> paths.</li>
-          <li><a href="https://junie.jetbrains.com/docs/guidelines-and-memory.html">Junie Guidelines And Memory</a> documents <code>AGENTS.md</code> and <code>.junie/AGENTS.md</code> as persistent project guidance sources.</li>
-          <li><a href="https://code.visualstudio.com/docs/agent-customization/custom-agents">VS Code Custom Agents</a> documents GitHub Copilot custom agents as <code>.agent.md</code> Markdown files under workspace <code>.github/agents</code>, Claude-format <code>.claude/agents</code>, or user <code>~/.copilot/agents</code> locations, with YAML frontmatter for description, name, tools, subagents, model, and visibility.</li>
-          <li><a href="https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/create-custom-agents">GitHub Copilot Custom Agents</a> documents cloud-agent profiles as Markdown files with YAML frontmatter for name, description, tools, MCP server configuration, model, target, and a Markdown prompt body.</li>
-          <li><a href="https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/add-skills">GitHub Copilot Agent Skills</a> documents <code>SKILL.md</code> folders for project and personal skills, including <code>.github/skills</code>, <code>.claude/skills</code>, <code>.agents/skills</code>, <code>~/.copilot/skills</code>, and <code>~/.agents/skills</code>.</li>
-          <li><a href="https://docs.github.com/en/copilot/reference/custom-instructions-support">GitHub Copilot Custom Instructions Support</a> documents which Copilot surfaces support <code>.github/copilot-instructions.md</code>, path-specific instruction files, and agent instructions such as <code>AGENTS.md</code>.</li>
-        </ul>
+      <h2 id="sources-title">Authoritative Runtime Sources</h2>
+      <div class="matrix">
+        <table>
+          <thead>
+            <tr>
+              <th>Runtime</th>
+              <th>Vendor documentation used by this mapping</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="name">Codex</span></td>
+              <td>
+                <a href="https://learn.chatgpt.com/docs/agent-configuration/subagents?surface=app">OpenAI Codex Subagents</a>,
+                <a href="https://learn.chatgpt.com/docs/config-file/config-basic">OpenAI Codex Config Basics</a>,
+                <a href="https://learn.chatgpt.com/docs/config-file/config-advanced">OpenAI Codex Advanced Config</a>,
+                <a href="https://learn.chatgpt.com/docs/agent-configuration/rules">OpenAI Codex Rules</a>, and
+                <a href="https://developers.openai.com/codex/skills">OpenAI Codex Skills</a>.
+              </td>
+            </tr>
+            <tr>
+              <td><span class="name">Claude Code</span></td>
+              <td><a href="https://code.claude.com/docs/en/sub-agents">Claude Code Subagents</a>.</td>
+            </tr>
+            <tr>
+              <td><span class="name">Gemini CLI</span></td>
+              <td>
+                <a href="https://github.com/google-gemini/gemini-cli/blob/main/docs/core/subagents.md">Gemini CLI Subagents</a> and
+                <a href="https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/using-agent-skills.md">Gemini CLI Agent Skills</a>.
+              </td>
+            </tr>
+            <tr>
+              <td><span class="name">Junie CLI</span></td>
+              <td>
+                <a href="https://junie.jetbrains.com/docs/junie-cli-subagents.html">Junie CLI Custom Subagents</a>,
+                <a href="https://junie.jetbrains.com/docs/agent-skills.html">Junie Agent Skills</a>, and
+                <a href="https://junie.jetbrains.com/docs/guidelines-and-memory.html">Junie Guidelines And Memory</a>.
+              </td>
+            </tr>
+            <tr>
+              <td><span class="name">GitHub Copilot</span></td>
+              <td>
+                <a href="https://code.visualstudio.com/docs/agent-customization/custom-agents">VS Code Custom Agents</a>,
+                <a href="https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/create-custom-agents">GitHub Copilot Custom Agents</a>,
+                <a href="https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/add-skills">GitHub Copilot Agent Skills</a>, and
+                <a href="https://docs.github.com/en/copilot/reference/custom-instructions-support">GitHub Copilot Custom Instructions Support</a>.
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </section>
-
-    <section class="section" aria-labelledby="related-code-title">
-      <h2 id="related-code-title">Related Code</h2>
-      <div class="panel">
-        <ul>
-          <li><code>design/agent-role-skill-map.html</code> renders role cards and loadouts from <code>design/generated/role-definitions.js</code>.</li>
-          <li><code>scripts/build-skill-docs.py</code> scans the skill and role sources, emits both supported runtime adapter sets, and writes <code>generated/adapters/agent-generation-manifest.json</code>.</li>
-          <li><code>design/generated/skill-definitions.js</code> is the intermediate skill catalog that role generation should validate against.</li>
-          <li><code>generated/adapters/agent-generation-manifest.json</code> records the exact canonical role count, per-runtime agent inventory, source-to-output mapping, and expected content digest without introducing timestamp churn.</li>
-          <li><code>scripts/test_bundle_content.py</code> enforces that every canonical role appears exactly once in both the Codex and Claude generated inventories.</li>
-        </ul>
-      </div>
-    </section>
-
-    <section class="section" aria-labelledby="related-tests-title">
-      <h2 id="related-tests-title">Related Tests</h2>
-      <div class="panel">
-        <ul>
-          <li><code>scripts/test_bundle_content.py</code> covers maintained documentation phrases and generated skill browser consistency.</li>
-          <li>Future generator tests should prove that every role skill ID resolves to <code>design/generated/skill-definitions.js</code> and that non-skills cannot render under a Skills label.</li>
-        </ul>
-      </div>
-    </section>
-
-    <section class="section" aria-labelledby="related-backlog-title">
-      <h2 id="related-backlog-title">Related Backlog Items</h2>
-      <div class="panel">
-        <p>Not yet identified.</p>
-      </div>
-    </section>
-
-    <section class="section" aria-labelledby="related-wiki-title">
-      <h2 id="related-wiki-title">Related Wiki Pages</h2>
-      <div class="panel">
-        <p>Not yet identified.</p>
-      </div>
-    </section>
-
     <section class="section" aria-labelledby="information-model-title">
       <h2 id="information-model-title">Properties We Use</h2>
-      <p class="lede">The canonical role source uses portable role properties. Semantic model profiles remain provider-neutral; runtime adapters resolve them to native model and reasoning fields.</p>
+      <p class="lede">This table inventories every field declared under <code>properties</code> in <code>agents/role-schema.yaml</code>. Semantic model profiles remain provider-neutral; runtime adapters resolve them to native model and reasoning fields.</p>
       <table>
         <thead>
           <tr>
@@ -414,12 +435,17 @@
           <tr>
             <td><span class="name">Skills</span></td>
             <td><code>skills</code></td>
-            <td>Names the role's generic skill set. An entry without <code>condition</code> is fixed and always loads. An entry with <code>condition</code> is request-specific and is loaded only when the agent judges that condition applicable. Optional <code>skillAvailability</code> entries remain name-based or path-based Codex availability overrides, not routing conditions.</td>
+            <td>Stores ordered skill entries with a skill identifier, justification, and optional condition. The <a href="agent-skill-specialization-strategy.html">specialization strategy</a> owns when each entry applies.</td>
           </tr>
           <tr>
             <td><span class="name">Skill condition</span></td>
             <td><code>skills[].condition</code></td>
-            <td>Provides a human-readable <code>when ...</code> condition beneath one skill entry. The generator writes <code>Use the skill-name skill when condition</code> into runtime instructions and tells the agent to inspect the requested outcome and evidence when request wording is ambiguous.</td>
+            <td>Stores the optional human-readable condition beneath one skill entry; generators serialize it into runtime instructions.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Skill availability</span></td>
+            <td><code>skillAvailability</code></td>
+            <td>Stores explicit name-based or path-based availability overrides for adapters that expose them.</td>
           </tr>
           <tr>
             <td><span class="name">Tools</span></td>
@@ -449,7 +475,7 @@
           <tr>
             <td><span class="name">Dynamic folder skills</span></td>
             <td><code>dynamicFolderSkills</code></td>
-            <td>Marks the role as using the project instructions and folder technology skills supplied by the harness without rerunning detection.</td>
+            <td>Records that the role consumes folder skills supplied through project guidance; selection remains outside the role source.</td>
           </tr>
           <tr>
             <td><span class="name">Max turns</span></td>
@@ -459,7 +485,7 @@
           <tr>
             <td><span class="name">Timeout</span></td>
             <td><code>timeout</code></td>
-            <td>Caps elapsed execution time or startup wait time. Keep this separate from max turns because timeouts are wall-clock constraints.</td>
+            <td>Caps role-level elapsed execution time. An adapter must not substitute an unrelated MCP startup timeout.</td>
           </tr>
           <tr>
             <td><span class="name">Permission mode</span></td>
@@ -480,6 +506,11 @@
             <td><span class="name">Output contract</span></td>
             <td><code>outputContract</code></td>
             <td>Describes what the agent returns, what evidence it includes, and how another agent or human should continue from its result.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Examples</span></td>
+            <td><code>examples</code></td>
+            <td>Stores customer-safe runtime invocations and plausible responses for generated catalog views and regression checks.</td>
           </tr>
         </tbody>
       </table>
@@ -503,133 +534,57 @@
       <table>
         <thead><tr><th>Behavior</th><th>Methodology Default</th><th>Adapter Rule</th></tr></thead>
         <tbody>
-          <tr><td>Human invocation</td><td>Every generated role remains eligible for user invocation.</td><td>Emit the runtime's normal invocation metadata where supported.</td></tr>
-          <tr><td>Automatic invocation</td><td>Every generated role remains eligible for automatic delegation.</td><td>Use descriptions and runtime invocation fields to preserve automatic selection.</td></tr>
-          <tr><td>Execution target</td><td>Repository-local generation and explicit deployment.</td><td>Do not populate user-home agent folders during maintenance or ordinary use. Require caller-supplied target directories for a separately requested deployment.</td></tr>
+          <tr><td><code>fixedBehavior.target</code></td><td>Every canonical role targets local development.</td><td>Do not emit a remote or cloud execution target unless a future schema version adds one.</td></tr>
+          <tr><td><code>fixedBehavior.userInvocable</code></td><td>Every generated role remains eligible for user invocation.</td><td>Emit the runtime's normal invocation metadata where supported.</td></tr>
+          <tr><td><code>fixedBehavior.automaticDelegation</code></td><td>Every generated role remains eligible for automatic delegation.</td><td>Use descriptions and runtime invocation fields to preserve automatic selection.</td></tr>
         </tbody>
       </table>
     </section>
 
-    <section class="section" aria-labelledby="codex-title">
-      <h2 id="codex-title">Codex</h2>
-      <div class="grid">
-        <article class="card">
-          <h3>Native Definition</h3>
-          <p>Codex custom agents are standalone TOML files. Codex supports project and user discovery locations, but this methodology generates the files in <code>generated/adapters/codex/agents/</code> and does not copy them into user-home folders.</p>
-        </article>
-        <article class="card source">
-          <h3>Identity And Prompt</h3>
-          <p>The documented required fields are <code>name</code>, <code>description</code>, and <code>developer_instructions</code>. Codex identifies the agent from the <code>name</code> field rather than the filename.</p>
-        </article>
-        <article class="card skill">
-          <h3>Skills, Tools, And MCP</h3>
-          <p>Codex subagents use the tools available to the parent task. Fixed-role skills are written as unconditional loading requirements in <code>developer_instructions</code>. Request-specific skills are written as conditional Use the skill instructions, including ambiguity guidance, and are not emitted as <code>[[skills.config]]</code>. Use <code>[mcp_servers.name]</code> for agent-specific MCP servers and emit <code>[[skills.config]]</code> only when the canonical role explicitly requests a name-based or path-based availability override; availability configuration is not preloading or read proof.</p>
-        </article>
-        <article class="card risk">
-          <h3>Runtime Controls</h3>
-          <p>Because custom agents are config layers, the common source can map <code>model</code>, <code>model_reasoning_effort</code>, <code>sandbox_mode</code>, <code>mcp_servers</code>, and explicitly requested <code>skills.config</code> availability overrides into native TOML. Fixed-role skills alone do not create redundant config entries. Global controls such as <code>agents.max_threads</code>, <code>agents.max_depth</code>, and <code>agents.job_max_runtime_seconds</code> remain under <code>[agents]</code> in normal Codex config.</p>
-        </article>
-        <article class="card source">
-          <h3>Config Files</h3>
-          <p>Codex also reads user config from <code>~/.codex/config.toml</code>, project overrides from trusted <code>.codex/config.toml</code> files, profile files such as <code>~/.codex/deep-review.config.toml</code>, and one-off <code>--config</code> overrides. These layers are Codex implementation surfaces for shared concepts such as model, reasoning, permission mode, sandbox, MCP servers, hooks, and trust scope.</p>
-        </article>
-        <article class="card risk">
-          <h3>Rules Files</h3>
-          <p>Codex rules files live under <code>rules/</code> folders next to active config layers, such as <code>~/.codex/rules/default.rules</code> or project-local <code>.codex/rules/*.rules</code>. Rules use <code>prefix_rule</code> entries to allow, prompt, or forbid matching commands outside the sandbox, so they map to the common permission-mode concept rather than becoming a separate role field.</p>
-        </article>
+    <section class="section" aria-labelledby="packaging-title">
+      <h2 id="packaging-title">Native Runtime Packaging</h2>
+      <div class="matrix">
+        <table>
+          <thead>
+            <tr>
+              <th>Runtime</th>
+              <th>Native definition</th>
+              <th>Discovery and repository output</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="name">Codex</span></td>
+              <td>One standalone TOML file per custom agent.</td>
+              <td>Codex discovers project <code>.codex/agents/</code> and user <code>~/.codex/agents/</code>. This bundle generates <code>generated/adapters/codex/agents/*.toml</code>.</td>
+            </tr>
+            <tr>
+              <td><span class="name">Claude Code</span></td>
+              <td>Markdown with YAML frontmatter and a Markdown instruction body.</td>
+              <td>Claude discovers project <code>.claude/agents/</code> and user <code>~/.claude/agents/</code>. This bundle generates <code>generated/adapters/claude/agents/*.md</code>.</td>
+            </tr>
+            <tr>
+              <td><span class="name">Gemini CLI</span></td>
+              <td>Markdown with YAML frontmatter and a Markdown instruction body.</td>
+              <td>Workspace <code>.gemini/agents/</code> and user <code>~/.gemini/agents/</code>. Native generation is not part of the current adapter milestone.</td>
+            </tr>
+            <tr>
+              <td><span class="name">Junie CLI</span></td>
+              <td>Markdown with YAML metadata and a Markdown instruction body.</td>
+              <td>Project <code>.junie/agents/</code> or <code>.agents/</code> and corresponding user locations. Native generation is not part of the current adapter milestone.</td>
+            </tr>
+            <tr>
+              <td><span class="name">GitHub Copilot Agent Mode</span></td>
+              <td>Markdown with YAML frontmatter and a <code>.agent.md</code> extension.</td>
+              <td>Workspace <code>.github/agents/</code>, supported Claude-format locations, and user <code>~/.copilot/agents/</code>. Native generation is not part of the current adapter milestone.</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </section>
-
-    <section class="section" aria-labelledby="claude-title">
-      <h2 id="claude-title">Claude Code</h2>
-      <div class="grid">
-        <article class="card">
-          <h3>Native Definition</h3>
-          <p>Claude Code subagents are Markdown files with YAML frontmatter. Claude supports project and user discovery locations, but this methodology generates the files in <code>generated/adapters/claude/agents/</code> and does not copy them into user-home folders.</p>
-        </article>
-        <article class="card source">
-          <h3>Identity And Prompt</h3>
-          <p>Only <code>name</code> and <code>description</code> are required. The Markdown body becomes the subagent system prompt.</p>
-        </article>
-        <article class="card skill">
-          <h3>Skills, Tools, And MCP</h3>
-          <p>Claude Code documents a <code>skills</code> frontmatter field that preloads listed skills into the subagent context at startup. The generator maps only fixed role skills into that field. Request-specific skills stay out of frontmatter and appear as conditional loading instructions in the Markdown body.</p>
-        </article>
-        <article class="card risk">
-          <h3>Runtime Controls</h3>
-          <p>Claude Code frontmatter can carry tool allowlists, model choice, permission or isolation behavior, MCP server configuration, hook behavior, memory handling, and turn limits. Unsupported common fields should remain in the body as explicit role constraints.</p>
-        </article>
-      </div>
-    </section>
-
-    <section class="section" aria-labelledby="gemini-title">
-      <h2 id="gemini-title">Gemini CLI</h2>
-      <div class="grid">
-        <article class="card">
-          <h3>Native Definition</h3>
-          <p>Gemini CLI custom agents are Markdown files with YAML frontmatter under <code>.gemini/agents/</code> or <code>~/.gemini/agents/</code>. The Markdown body becomes the agent system prompt.</p>
-        </article>
-        <article class="card source">
-          <h3>Identity And Prompt</h3>
-          <p>The documented configuration schema requires <code>name</code> and <code>description</code>, with optional <code>kind</code>, <code>tools</code>, <code>mcpServers</code>, <code>model</code>, <code>temperature</code>, <code>max_turns</code>, and <code>timeout_mins</code>.</p>
-        </article>
-        <article class="card skill">
-          <h3>Skills, Tools, And MCP</h3>
-          <p>Gemini CLI documents Agent Skills and shared skill discovery tiers, but the current subagent schema does not document a <code>skills</code> frontmatter field. Fixed-role and folder skill-loading requirements should be emitted into the prompt body and resolved through the selected repository or explicitly deployed skill source.</p>
-        </article>
-        <article class="card risk">
-          <h3>Runtime Controls</h3>
-          <p>Gemini CLI maps the common source cleanly for tools, MCP servers, model, maximum turns, and timeout minutes. Adapter-specific controls such as temperature should be generated only when the Gemini adapter needs them. Permission, sandbox, memory, hook, and output rules that do not have native fields should stay in the body and in project guidelines.</p>
-        </article>
-      </div>
-    </section>
-
-    <section class="section" aria-labelledby="junie-title">
-      <h2 id="junie-title">Junie CLI</h2>
-      <div class="grid">
-        <article class="card">
-          <h3>Native Definition</h3>
-          <p>Junie CLI custom subagents are Markdown files with YAML metadata under project <code>.junie/agents/</code>, project <code>.agents/</code>, and matching user-scope locations.</p>
-        </article>
-        <article class="card source">
-          <h3>Identity And Prompt</h3>
-          <p><code>description</code> is required. <code>name</code> is optional because Junie can infer it from the filename, but shared generation should emit explicit names for stability.</p>
-        </article>
-        <article class="card skill">
-          <h3>Skills, Tools, And MCP</h3>
-          <p>Junie documents a <code>skills</code> field containing agent skill IDs or names for the subagent worker, when the environment supports it. The common role source can map role skill IDs directly to this field.</p>
-        </article>
-        <article class="card risk">
-          <h3>Runtime Controls</h3>
-          <p>Junie metadata can carry tool and disallowed-tool fields, MCP server selection, model and reasoning preferences, maximum turns, and prompt-argument handling. Generation should keep the Markdown body as the authority for role behavior and output expectations.</p>
-        </article>
-      </div>
-    </section>
-
-    <section class="section" aria-labelledby="copilot-title">
-      <h2 id="copilot-title">GitHub Copilot Agent Mode</h2>
-      <div class="grid">
-        <article class="card">
-          <h3>Native Definition</h3>
-          <p>GitHub Copilot custom agents use Markdown files with a <code>.agent.md</code> extension. VS Code discovers workspace agents under <code>.github/agents</code>, supports Claude-format <code>.claude/agents</code>, and uses <code>~/.copilot/agents</code> for user profile agents. Copilot cloud agent creation also starts from <code>.github/agents/*.agent.md</code> for repository agents.</p>
-        </article>
-        <article class="card source">
-          <h3>Identity And Prompt</h3>
-          <p>Copilot custom agent profiles use YAML frontmatter plus a Markdown prompt body. Documented fields include <code>name</code>, <code>description</code>, <code>tools</code>, <code>agents</code>, <code>model</code>, <code>mcp-servers</code>, <code>target</code>, and visibility or invocation controls. The profile body defines the agent behavior, expertise, and instructions.</p>
-        </article>
-        <article class="card skill">
-          <h3>Skills, Tools, And MCP</h3>
-          <p>GitHub Copilot supports Agent Skills as <code>SKILL.md</code> folders and documents that those skills work with Copilot cloud agent, code review, CLI, the Copilot app, and agent mode in VS Code. The custom agent profile schema does not document a role-level <code>skills</code> frontmatter field, so role skill IDs should be emitted into the prompt body and backed by generated or installed Copilot skill folders.</p>
-        </article>
-        <article class="card risk">
-          <h3>Runtime Controls</h3>
-          <p>Copilot profiles can carry tools, subagent references, MCP server configuration, model selection, target surface, invocation controls, and visibility metadata. Turn limits and output contracts should stay in the prompt body unless the target Copilot surface documents a native field.</p>
-        </article>
-      </div>
-    </section>
-
     <section class="section" aria-labelledby="mapping-title">
       <h2 id="mapping-title">Common Source Mapping</h2>
+      <p class="lede">This matrix covers fields with runtime-specific behavior. The Properties table above is the exhaustive canonical schema inventory; fields carried only in generated instructions, comments, catalog data, or filenames do not need a separate native mapping row.</p>
       <table>
         <thead>
           <tr>
@@ -668,11 +623,19 @@
           </tr>
           <tr>
             <td><span class="name">skills</span></td>
-            <td>Require fixed skills before acting and emit request-specific conditions in <code>developer_instructions</code>. Emit <code>[[skills.config]]</code> only for explicit availability overrides.</td>
+            <td>Emit loading instructions in <code>developer_instructions</code>.</td>
             <td><code>skills</code> preloads fixed skill content; request-specific conditions go in the body.</td>
             <td>Emit fixed and request-specific loading instructions into the body and rely on the selected repository or explicit deployment skill source.</td>
             <td>Map fixed skills to <code>skills</code> and keep request-specific conditions in instructions.</td>
             <td>Emit fixed and request-specific loading instructions into the body and rely on Copilot-compatible skill folders.</td>
+          </tr>
+          <tr>
+            <td><span class="name">skillAvailability</span></td>
+            <td><code>[[skills.config]]</code></td>
+            <td>No documented equivalent.</td>
+            <td>No documented equivalent.</td>
+            <td>No documented equivalent.</td>
+            <td>No documented equivalent.</td>
           </tr>
           <tr>
             <td><span class="name">tools</span></td>
@@ -732,7 +695,7 @@
           </tr>
           <tr>
             <td><span class="name">timeout</span></td>
-            <td><code>startup_timeout_sec</code> inside an agent-specific <code>[mcp_servers.name]</code> section, or global agent job runtime settings under <code>[agents]</code>.</td>
+            <td>No documented role-level field.</td>
             <td>No documented field.</td>
             <td><code>timeout_mins</code></td>
             <td>No documented field.</td>
@@ -747,7 +710,7 @@
             <td>No documented field.</td>
           </tr>
           <tr>
-            <td><span class="name">sandbox</span></td>
+            <td><span class="name">isolation</span></td>
             <td><code>sandbox_mode</code></td>
             <td><code>isolation</code> for workspace isolation; permission behavior uses <code>permissionMode</code></td>
             <td>No documented field.</td>
@@ -763,23 +726,7 @@
             <td>Custom instructions and prompt body.</td>
           </tr>
           <tr>
-            <td><span class="name">hooks</span></td>
-            <td>Config-adjacent hook files and hook settings.</td>
-            <td><code>hooks</code></td>
-            <td>No documented field.</td>
-            <td>No documented field.</td>
-            <td>No documented field.</td>
-          </tr>
-          <tr>
-            <td><span class="name">target</span></td>
-            <td>No documented field.</td>
-            <td>No documented field.</td>
-            <td><code>kind</code> identifies local or remote subagent behavior.</td>
-            <td>No documented field.</td>
-            <td><code>target</code></td>
-          </tr>
-          <tr>
-            <td><span class="name">user-invocable</span></td>
+            <td><span class="name">fixedBehavior.userInvocable</span></td>
             <td>No native field; generate the custom agent and expose it only through the caller-selected runtime source or explicit deployment scope.</td>
             <td>No native field; match by selected source scope and prompt/body guidance for manual use.</td>
             <td>No native field; match by selected source scope and prompt/body guidance for manual use.</td>
@@ -787,78 +734,18 @@
             <td><code>user-invocable</code></td>
           </tr>
           <tr>
-            <td><span class="name">autoInvocation</span></td>
+            <td><span class="name">fixedBehavior.automaticDelegation</span></td>
             <td>No native field; match through the custom agent description, parent delegation instructions, or by not generating the agent for automatic routing.</td>
             <td>No native field; match through description and parent delegation instructions.</td>
             <td>No native field; match through description and parent delegation instructions.</td>
             <td>No native field; match through description and parent delegation instructions.</td>
             <td><code>disable-model-invocation</code> when automatic model selection should be disabled.</td>
           </tr>
-          <tr>
-            <td><span class="name">metadata</span></td>
-            <td><code>nickname_candidates</code> for display nicknames; generator metadata should live outside the native file.</td>
-            <td><code>color</code> plus generator comments when useful.</td>
-            <td>Generator comments when useful.</td>
-            <td>Generator comments when useful.</td>
-            <td><code>metadata</code></td>
-          </tr>
         </tbody>
       </table>
     </section>
 
-    <section class="section" aria-labelledby="decision-title">
-      <h2 id="decision-title">Decision</h2>
-      <div class="flow">
-        <div class="flow-row">
-          <h3>Use A Common Role Source</h3>
-          <p>Canonical files under <code>agents/roles/</code> own name, filename, description, instructions, generic fixed-role skills, request-specific skill conditions, dynamic folder-skill policy, optional skill availability overrides, tools, disallowed tools, MCP servers, modelProfile, modelStages, max turns, timeout, permission mode, isolation, memory, and output contract. The generator validates them against <code>agents/role-schema.yaml</code>.</p>
-        </div>
-        <div class="flow-row">
-          <h3>Generate Runtime Adapters</h3>
-          <p><code>scripts/build-skill-docs.py</code> resolves <code>agents/model-profiles.yaml</code> through each adapter model mapping, then emits Codex TOML, Claude Code Markdown, and <code>design/generated/role-definitions.js</code>. Gemini CLI, Junie CLI, and GitHub Copilot adapters follow the same source model in later adapter milestones.</p>
-        </div>
-        <div class="flow-row">
-          <h3>Validate Against Skills</h3>
-          <p>The generators build the skill catalog and setup-time technology detection registry before roles. Every canonical <code>skills</code> entry must resolve to a bundled generic skill; specialized variants are recorded in PROJECT.yaml and AGENTS.md instead of canonical roles.</p>
-        </div>
-        <div class="flow-row">
-          <h3>Keep HTML Pure</h3>
-          <p><code>agent-role-skill-map.html</code> renders role cards, loadouts, outputs, and the skill inventory from generated data rather than defining a second catalog inline.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" aria-labelledby="role-skills-title">
-      <h2 id="role-skills-title">Fixed Roles And Setup-Time Technology Detection</h2>
-      <div class="panel">
-        <p>Canonical roles own fixed skills and request-specific skill conditions; setup-time technology detection belongs to the <a href="agent-skill-specialization-strategy.html">specialization strategy</a>. For adapter purposes, fixed skills use native preload fields where available, while request conditions remain generated instructions and runtime traces remain necessary to prove reads.</p>
-      </div>
-    </section>
-
-    <section class="section" aria-labelledby="open-questions-title">
-      <h2 id="open-questions-title">Next Adapter Work</h2>
-      <div class="panel">
-        <ul>
-          <li>Add Gemini CLI generation from the canonical schema and verify its model, turn, timeout, and MCP mappings.</li>
-          <li>Add Junie CLI generation and verify caller-supplied explicit deployment paths.</li>
-          <li>Add GitHub Copilot generation with explicit user invocation and automatic delegation fields.</li>
-          <li>Build the interactive mind-map view over design/generated/agent-skill-explorer-data.js, which already joins roles, fixed and routed skill edges, capabilities, activation metadata, and declared or verified evidence.</li>
-        </ul>
-      </div>
-    </section>
-
-    <section class="section" aria-labelledby="maintenance-title">
-      <h2 id="maintenance-title">Maintenance Notes</h2>
-      <div class="panel">
-        <ol>
-          <li>Keep <code>skills/*/SKILL.md</code> as the skill source of truth.</li>
-          <li>Keep common role source files as the role source of truth.</li>
-          <li>Generate skill browser data and role browser data before publishing design pages.</li>
-          <li>Fail tests when a role loadout names a non-skill under a Skills label.</li>
-          <li>Update runtime adapters and HTML pages in the same change when the role model changes.</li>
-        </ol>
-      </div>
-    </section>
+    <p class="note">For explicit target deployment, ownership manifests, customer updates, pruning, and removal, follow the operational commands and policy in the <a href="../README.md#explicit-target-deployment">README</a>.</p>
   </main>
 </body>
 </html>

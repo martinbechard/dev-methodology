@@ -13,6 +13,7 @@ import tempfile
 import tomllib
 import unittest
 from dataclasses import replace
+from html.parser import HTMLParser
 from pathlib import Path
 from types import ModuleType
 
@@ -184,7 +185,7 @@ README_REQUIRED_PHRASES = (
     "detection.yaml",
     "python3 scripts/build-technology-detection.py",
     "detect-technology-skills",
-    "Agent role, task wording, prompt keywords, read confirmation, and optional local commands are not detection inputs",
+    "The [specialization strategy](design/agent-skill-specialization-strategy.html) owns detector inputs",
     "project-wiki-create",
     "create-functional-spec",
     "create-architecture",
@@ -223,9 +224,9 @@ README_REQUIRED_PHRASES = (
     "maintain-methodology-documentation",
     "skill-authoring",
     "three-way discrepancy analysis",
-    "A skill entry with a condition is request-specific",
     "repoRoot query parameter",
-    "Code Comments is a fixed skill for Dev Coder and Dev Code Reviewer.",
+    "Within the linked HTML design set, the documentation index assigns one owner to each substantive topic.",
+    "The generated diagram and generated cards are the intentional duplicate views",
 )
 DEVELOPMENT_METHODOLOGY_REQUIRED_PHRASES = (
     "Do not copy this bundle's skills or generated agents into user-home runtime folders",
@@ -242,8 +243,12 @@ DEVELOPMENT_METHODOLOGY_REQUIRED_PHRASES = (
     "Use the shared page contract only when the selected artifact type requires it.",
 )
 STRATEGY_REQUIRED_PHRASES = (
-    "Before a rename or deletion",
-    "update role definitions, Codex metadata, skills, dispatch profiles",
+    "Selection Model",
+    "Deterministic Setup-Time Technology Detection",
+    "When To Create A Specialized Agent",
+    "Fixed role skill",
+    "Request-specific skill",
+    "Folder technology skill",
 )
 AGENT_ROLE_MAP_REQUIRED_PHRASES = (
     "Role Agent Categories",
@@ -280,6 +285,8 @@ AGENT_ROLE_MAP_REQUIRED_PHRASES = (
 )
 AGENT_DEFINITION_FORMATS_REQUIRED_PHRASES = (
     "Agent Definition Runtime Formats",
+    "Canonical Role Model And Generation",
+    "Authoritative Runtime Sources",
     "OpenAI Codex Subagents",
     "Claude Code Subagents",
     "Gemini CLI Subagents",
@@ -291,23 +298,106 @@ AGENT_DEFINITION_FORMATS_REQUIRED_PHRASES = (
     "Properties We Use",
     "Properties We Ignore",
     "Behavior We Default",
-    "Skills, Tools, And MCP",
-    "Runtime Controls",
+    "Native Runtime Packaging",
     "[mcp_servers.name]",
     "[[skills.config]]",
-    "~/.codex/config.toml",
-    ".codex/config.toml",
     "prefix_rule",
     "Common Source Mapping",
-    "Use A Common Role Source",
-    "Generate Runtime Adapters",
-    "Validate Against Skills",
-    "Keep HTML Pure",
-    "Fixed Roles And Setup-Time Technology Detection",
     "skills[].condition",
-    "request-specific skill conditions",
+    "skillAvailability",
+    "fixedBehavior.userInvocable",
+    "fixedBehavior.automaticDelegation",
     "design/generated/role-definitions.js",
 )
+DOCUMENT_INFORMATION_OWNERS = {
+    "agentic-development-operating-model.html": (
+        "Project Classification",
+        "Project Guidance And Precedence",
+        "Orchestrated Development Loop",
+        "Execution Evidence",
+    ),
+    "agent-skill-specialization-strategy.html": STRATEGY_REQUIRED_PHRASES[:3],
+    "agent-role-skill-map.html": (
+        "Interactive Agent And Skill Map",
+        "Role Agent Categories",
+        "Skill Catalog",
+    ),
+    "agent-skill-specialization-examples.html": (
+        "Configuration Examples",
+        "Northwind Tools: Root-Only Guidance",
+        "Acme Ledger: Nested Tier Guidance",
+        "Beacon Knowledge Base: Workflow Separation",
+    ),
+    "agent-definition-runtime-formats.html": (
+        "Canonical Role Model And Generation",
+        "Native Runtime Packaging",
+        "Common Source Mapping",
+    ),
+}
+DOCUMENT_FORBIDDEN_HEADINGS = {
+    "agentic-development-operating-model.html": (
+        "Role Agent Set",
+        "Skill Load Model",
+        "File Contracts",
+    ),
+    "agent-skill-specialization-strategy.html": (
+        "Semantic Model Profiles",
+        "Role Agent Dispatch Loop",
+        "Root AGENTS.md Policy Pattern",
+        "Nested AGENTS.md Shape",
+        "Agent Set Normalization",
+    ),
+    "agent-role-skill-map.html": (
+        "Reference Model",
+        "Routing Rules",
+        "Catalog Boundary",
+    ),
+    "agent-skill-specialization-examples.html": (
+        "One-Command Project Bootstrap",
+        "PROJECT.yaml Template Sections",
+        "Project Setup Flow",
+        "Example: Direct Customer Customization",
+    ),
+    "agent-definition-runtime-formats.html": (
+        "Current Understanding",
+        "Related Code",
+        "Related Tests",
+        "Related Backlog Items",
+        "Related Wiki Pages",
+        "Decision",
+        "Fixed Roles And Setup-Time Technology Detection",
+        "Deployment And Update Policy",
+        "Next Adapter Work",
+        "Maintenance Notes",
+    ),
+}
+DOCUMENT_REQUIRED_LINKS = {
+    "agentic-development-operating-model.html": (
+        "agent-role-skill-map.html",
+        "agent-skill-specialization-strategy.html",
+        "agent-skill-specialization-examples.html",
+        "agent-definition-runtime-formats.html",
+    ),
+    "agent-skill-specialization-strategy.html": (
+        "agent-role-skill-map.html",
+        "agentic-development-operating-model.html",
+        "agent-definition-runtime-formats.html",
+    ),
+    "agent-role-skill-map.html": (
+        "agent-skill-specialization-strategy.html",
+        "agentic-development-operating-model.html",
+    ),
+    "agent-skill-specialization-examples.html": (
+        "agent-skill-specialization-strategy.html",
+        "agentic-development-operating-model.html",
+        "../skills/development-methodology/assets/templates/project-template.yaml",
+    ),
+    "agent-definition-runtime-formats.html": (
+        "agent-role-skill-map.html",
+        "agent-skill-specialization-strategy.html",
+        "../README.md#explicit-target-deployment",
+    ),
+}
 DEVELOPMENT_USE_LOADOUTS = (
     "Dev Orchestrator",
     "Dev Coder",
@@ -380,6 +470,55 @@ def completed_review_checklist_suffix(review_target: str) -> str:
 
 def openai_metadata_path(skill_name: str) -> Path:
     return SKILLS_ROOT / skill_name / "agents" / "openai.yaml"
+
+
+class VisibleProseParser(HTMLParser):
+    """Collect visible prose blocks from hand-authored HTML."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._skip_depth = 0
+        self._capture_tag: str | None = None
+        self._buffer: list[str] = []
+        self.blocks: list[str] = []
+
+    def handle_starttag(
+        self,
+        tag: str,
+        attrs: list[tuple[str, str | None]],
+    ) -> None:
+        del attrs
+        if tag in {"script", "style"}:
+            self._skip_depth += 1
+            return
+        if (
+            self._skip_depth == 0
+            and self._capture_tag is None
+            and tag in {"p", "li", "td"}
+        ):
+            self._capture_tag = tag
+            self._buffer = []
+
+    def handle_data(self, data: str) -> None:
+        if self._skip_depth == 0 and self._capture_tag is not None:
+            self._buffer.append(data)
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag in {"script", "style"} and self._skip_depth:
+            self._skip_depth -= 1
+            return
+        if self._skip_depth == 0 and tag == self._capture_tag:
+            block = re.sub(r"\s+", " ", "".join(self._buffer)).strip()
+            if block:
+                self.blocks.append(block)
+            self._capture_tag = None
+            self._buffer = []
+
+
+def visible_prose_blocks(path: Path) -> list[str]:
+    parser = VisibleProseParser()
+    parser.feed(path.read_text(encoding="utf-8"))
+    return parser.blocks
 
 
 def load_build_skill_docs_module() -> ModuleType:
@@ -728,15 +867,12 @@ class BundleContentTests(unittest.TestCase):
 
         skill_text = skill_path.read_text(encoding="utf-8")
         template_text = template_path.read_text(encoding="utf-8")
-        project_configuration_design_text = "\n".join(
-            (REPOSITORY_ROOT / "design" / filename).read_text(encoding="utf-8")
-            for filename in (
-                "agent-role-skill-map.html",
-                "agent-skill-specialization-examples.html",
-                "agent-skill-specialization-strategy.html",
-                "agentic-development-operating-model.html",
-            )
-        )
+        operating_model_text = (
+            REPOSITORY_ROOT / "design" / "agentic-development-operating-model.html"
+        ).read_text(encoding="utf-8")
+        examples_text = (
+            REPOSITORY_ROOT / "design" / "agent-skill-specialization-examples.html"
+        ).read_text(encoding="utf-8")
 
         self.assertIn(PROJECT_TEMPLATE, skill_text)
         self.assertIn(PROJECT_ARTIFACT, skill_text)
@@ -749,10 +885,14 @@ class BundleContentTests(unittest.TestCase):
         self.assertNotIn("nested_project_files:", template_text)
         self.assertIn("Create exactly one PROJECT.yaml", skill_text)
         self.assertIn("Do not create nested PROJECT.yaml files", skill_text)
-        self.assertIn("exactly one PROJECT.yaml", project_configuration_design_text)
-        self.assertNotIn("service/PROJECT.yaml", project_configuration_design_text)
-        self.assertNotIn("nested PROJECT.yaml recommendations", project_configuration_design_text)
-        self.assertNotIn("&lt;subtree&gt;/PROJECT.yaml", project_configuration_design_text)
+        self.assertIn(
+            "PROJECT.yaml is the project-root setup and validation record",
+            operating_model_text,
+        )
+        self.assertIn("canonical template", examples_text)
+        self.assertNotIn("service/PROJECT.yaml", examples_text)
+        self.assertNotIn("nested PROJECT.yaml recommendations", operating_model_text)
+        self.assertNotIn("&lt;subtree&gt;/PROJECT.yaml", operating_model_text)
         self.assertIn("claude_bridge_files:", template_text)
         self.assertIn("agent_coordination:", template_text)
         self.assertIn("claim_skill: agent-claim", template_text)
@@ -1447,14 +1587,100 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, skill_text)
 
-    def test_strategy_guides_reference_sweep_for_skill_renames(self) -> None:
-        strategy_text = (
-            REPOSITORY_ROOT / "design" / "agent-skill-specialization-strategy.html"
-        ).read_text(encoding="utf-8")
+    def test_html_documentation_assigns_single_topic_owners(self) -> None:
+        design_root = REPOSITORY_ROOT / "design"
+        page_text = {
+            filename: (design_root / filename).read_text(encoding="utf-8")
+            for filename in DOCUMENT_INFORMATION_OWNERS
+        }
 
+        strategy_text = page_text["agent-skill-specialization-strategy.html"]
         for phrase in STRATEGY_REQUIRED_PHRASES:
-            with self.subTest(phrase=phrase):
+            with self.subTest(strategy_phrase=phrase):
                 self.assertIn(phrase, strategy_text)
+
+        for owner, headings in DOCUMENT_INFORMATION_OWNERS.items():
+            for heading in headings:
+                with self.subTest(owner=owner, heading=heading):
+                    heading_pattern = rf"<h[123][^>]*>{re.escape(heading)}</h[123]>"
+                    matches = [
+                        filename
+                        for filename, text in page_text.items()
+                        if re.search(heading_pattern, text)
+                    ]
+                    self.assertEqual([owner], matches)
+
+        for former_owner, forbidden_headings in DOCUMENT_FORBIDDEN_HEADINGS.items():
+            for heading in forbidden_headings:
+                with self.subTest(
+                    former_owner=former_owner,
+                    forbidden_heading=heading,
+                ):
+                    heading_pattern = rf"<h[123][^>]*>{re.escape(heading)}</h[123]>"
+                    matches = [
+                        filename
+                        for filename, text in page_text.items()
+                        if re.search(heading_pattern, text)
+                    ]
+                    self.assertEqual(
+                        [],
+                        matches,
+                        f"Retired heading {heading!r} must not move to another page",
+                    )
+
+        for filename, required_links in DOCUMENT_REQUIRED_LINKS.items():
+            for link in required_links:
+                with self.subTest(filename=filename, required_link=link):
+                    self.assertIn(f'href="{link}', page_text[filename])
+
+        for filename, text in page_text.items():
+            if "skill-browser.js" not in text:
+                continue
+            with self.subTest(skill_browser_consumer=filename):
+                self.assertIn(
+                    "data-skill-definition",
+                    text,
+                    "Pages must not load the skill browser without a definition trigger",
+                )
+
+        index_text = (REPOSITORY_ROOT / "index.html").read_text(encoding="utf-8")
+        for filename in DOCUMENT_INFORMATION_OWNERS:
+            with self.subTest(index_link=filename):
+                self.assertIn(f'href="design/{filename}"', index_text)
+        for owner in ("execution", "selection", "catalog", "examples", "runtime"):
+            with self.subTest(index_owner=owner):
+                self.assertEqual(
+                    1,
+                    index_text.count(f'data-information-owner="{owner}"'),
+                )
+
+        self.assertIn(
+            "deliberately present the same canonical relationships in two generated views",
+            page_text["agent-role-skill-map.html"],
+        )
+
+    def test_html_documentation_has_no_repeated_long_prose_blocks(self) -> None:
+        occurrences: dict[str, set[str]] = {}
+        html_paths = {
+            "index.html": REPOSITORY_ROOT / "index.html",
+            **{
+                filename: REPOSITORY_ROOT / "design" / filename
+                for filename in DOCUMENT_INFORMATION_OWNERS
+            },
+        }
+        for filename, path in html_paths.items():
+            for block in visible_prose_blocks(path):
+                if len(block.split()) < 12:
+                    continue
+                normalized = block.casefold()
+                occurrences.setdefault(normalized, set()).add(filename)
+
+        duplicates = {
+            block: sorted(filenames)
+            for block, filenames in occurrences.items()
+            if len(filenames) > 1
+        }
+        self.assertEqual({}, duplicates)
 
     def test_agent_role_map_separates_lifecycle_categories(self) -> None:
         role_map_text = (
@@ -1558,12 +1784,31 @@ class BundleContentTests(unittest.TestCase):
         format_text = (
             REPOSITORY_ROOT / "design" / "agent-definition-runtime-formats.html"
         ).read_text(encoding="utf-8")
+        role_schema = yaml.safe_load(
+            (REPOSITORY_ROOT / "agents" / "role-schema.yaml").read_text(
+                encoding="utf-8"
+            )
+        )
 
         self.assertIn("design/agent-definition-runtime-formats.html", index_text)
 
         for phrase in AGENT_DEFINITION_FORMATS_REQUIRED_PHRASES:
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, format_text)
+
+        property_section = format_text.split(
+            '<h2 id="information-model-title">', maxsplit=1
+        )[1].split('<h2 id="ignored-properties-title">', maxsplit=1)[0]
+        for property_name in role_schema["properties"]:
+            with self.subTest(canonical_property=property_name):
+                self.assertIn(f"<code>{property_name}</code>", property_section)
+
+        for behavior_name in role_schema["fixedBehavior"]:
+            with self.subTest(fixed_behavior=behavior_name):
+                self.assertIn(
+                    f"<code>fixedBehavior.{behavior_name}</code>",
+                    format_text,
+                )
 
     def test_reverse_engineering_uses_structural_code_discovery(self) -> None:
         skill_text = (
