@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Agentic Development Operating Model</title>
+  <title>Orchestrated Development Lifecycle</title>
   <style>
     :root {
       --color-ink: #172033;
@@ -397,146 +397,114 @@
       <span class="pill"><span class="dot orchestrator"></span> Orchestration</span>
       <span class="pill"><span class="dot agent"></span> Role agents</span>
       <span class="pill"><span class="dot skill"></span> Skills</span>
-      <span class="pill"><span class="dot reference"></span> AGENTS.md reference</span>
-      <span class="pill"><span class="dot folder"></span> Nested AGENTS.md</span>
+      <span class="pill"><span class="dot reference"></span> Evidence</span>
     </div>
-    <h1 id="page-title">Agentic Development Operating Model</h1>
+    <h1 id="page-title">Orchestrated Development Lifecycle</h1>
     <p class="lede">
-      This page owns project classification and guidance precedence.
-      Use the <a href="agent-role-skill-map.html">generated catalog</a> for current role and skill definitions,
-      the <a href="agent-skill-specialization-strategy.html">specialization strategy</a> for selection policy, and
-      <a href="agent-definition-runtime-formats.html">runtime formats</a> for adapter details, and the
-      <a href="orchestrated-development-lifecycle.html">orchestrated development lifecycle</a> for execution gates and evidence.
+      This page owns the orchestrated execution, review, verification, integration, completion, and evidence sequence.
+      Use the <a href="agentic-development-operating-model.html">operating model</a> for project classification and guidance precedence, and the
+      <a href="agent-role-skill-map.html">generated catalog</a> for each role's detailed contract.
     </p>
   </section>
 
-  <section class="section" aria-labelledby="taxonomy-title">
-    <h2 id="taxonomy-title">Project Classification</h2>
-    <p class="lede">PROJECT.yaml records the project classifications that affect routing. These values describe the target project; they do not duplicate the generated role or skill catalogs.</p>
+  <section class="section" aria-labelledby="orchestration-title">
+    <h2 id="orchestration-title">Orchestrated Development Loop</h2>
     <div class="matrix">
       <table>
         <thead>
           <tr>
-            <th>Dimension</th>
-            <th>Question it answers</th>
-            <th>Routing effect</th>
+            <th>Step</th>
+            <th>Owner</th>
+            <th>Transition or gate</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><span class="name">Project family</span></td>
-            <td>What product or repository boundary is being maintained?</td>
-            <td>Establishes the relevant tiers, documentation surfaces, and default validation concerns.</td>
+            <td><span class="name">Bootstrap, when requested</span></td>
+            <td>Project Bootstrapper</td>
+            <td>Reuse a valid project-root PROJECT.yaml. When it is absent, or when the user explicitly requests reconfiguration, Project Configurator must create and validate it before documentation work begins.</td>
           </tr>
           <tr>
-            <td><span class="name">Application tier</span></td>
-            <td>Which local responsibility and stack boundary owns the affected files?</td>
-            <td>Maps folder scopes to technology skills, local guidance, and checks.</td>
+            <td><span class="name">Intake</span></td>
+            <td>Dev Orchestrator</td>
+            <td>Establish the task boundary, assignments, and validation route before handing work to the selected roles.</td>
           </tr>
           <tr>
-            <td><span class="name">Artifact type</span></td>
-            <td>What durable output is requested?</td>
-            <td>Selects the creation, review, and placement route without creating a framework-specific role.</td>
+            <td><span class="name">Claim gate</span></td>
+            <td>Every modifying claim owner</td>
+            <td>Mutation begins only after <a href="../skills/agent-claim/SKILL.md">agent-claim</a> establishes ownership of the affected files and exclusive resources.</td>
           </tr>
           <tr>
-            <td><span class="name">Data boundary</span></td>
-            <td>Which private, proprietary, generated, or regulated information is in scope?</td>
-            <td>Adds handling constraints, approvals, and local evidence requirements.</td>
+            <td><span class="name">Placement, when needed</span></td>
+            <td>Project Organiser</td>
+            <td>A new artifact proceeds only after its repository path is approved.</td>
           </tr>
           <tr>
-            <td><span class="name">Validation surface</span></td>
-            <td>What evidence proves the work is usable?</td>
-            <td>Names the relevant build, test, documentation, runtime, or review checks.</td>
+            <td><span class="name">Execution</span></td>
+            <td>Selected implementation or writing role</td>
+            <td>The assigned output passes to an independent reviewer; the <a href="agent-role-skill-map.html">generated catalog</a> owns each role's detailed inputs, skills, and output contract.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Review</span></td>
+            <td>Selected independent review role</td>
+            <td>Correctable findings return to the owning executor; accepted work advances to integrated verification.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Verification</span></td>
+            <td>Dev Verifier</td>
+            <td>The configured acceptance checks must pass, or an unresolved risk must be recorded, before integration.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Integration</span></td>
+            <td>Dev Merge Coordinator</td>
+            <td>Only committed, clean contributions with verification evidence enter the integration lane.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Completion</span></td>
+            <td>Claim owner</td>
+            <td>Release ownership only after verification, commit or explicit no-change, clean status, and resource cleanup or handoff.</td>
           </tr>
         </tbody>
       </table>
     </div>
-
-    <h3 class="section">Common Web Application Tiers</h3>
-    <div class="matrix">
-      <table>
-        <thead>
-          <tr>
-            <th>Tier</th>
-            <th>Responsibility boundary</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><span class="name">Front-end</span></td>
-            <td>Interactive screens, components, client and server rendering boundaries, styling, accessibility, and browser behavior.</td>
-          </tr>
-          <tr>
-            <td><span class="name">API</span></td>
-            <td>Routes, controllers, services, authentication, request validation, contracts, and integration behavior.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Static pages</span></td>
-            <td>Marketing, documentation, legal, and other content routes with static rendering, accessibility, SEO, and visual checks.</td>
-          </tr>
-          <tr>
-            <td><span class="name">DB</span></td>
-            <td>Schema, migrations, queries, persistence, seed data, and database integration behavior.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <p class="note">Other project families declare only the tiers they actually contain. Concrete root-only, nested, and wiki configurations appear on the <a href="agent-skill-specialization-examples.html">examples page</a>.</p>
   </section>
-  <section class="section" aria-labelledby="resolution-title">
-    <h2 id="resolution-title">Project Guidance And Precedence</h2>
-    <p class="lede">PROJECT.yaml is the project-root setup and validation record. It explains role selection, folder loadouts, nested-guidance placement, and supporting evidence; ordinary work consumes the resulting guidance rather than treating the configuration as another instruction layer.</p>
+
+  <section class="section" aria-labelledby="evidence-title">
+    <h2 id="evidence-title">Execution Evidence</h2>
+    <p class="lede">An orchestrated run leaves four complementary records. Each fact has one record owner so later readers do not have to reconcile competing summaries.</p>
     <div class="matrix">
       <table>
         <thead>
           <tr>
-            <th>Order</th>
-            <th>Source</th>
-            <th>Responsibility</th>
-            <th>Boundary</th>
+            <th>Record</th>
+            <th>Owns</th>
+            <th>Does not own</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><span class="name">1</span></td>
-            <td>Host rules</td>
-            <td>Runtime safety, tool permissions, privacy constraints, and sandbox behavior.</td>
-            <td>Lower layers cannot disable them.</td>
+            <td><code>.agents/runs/&lt;run-id&gt;/context-pack.json</code></td>
+            <td>Inputs supplied to the assigned role: files, applicable guidance, constraints, and selected skills.</td>
+            <td>Results or verification claims.</td>
           </tr>
           <tr>
-            <td><span class="name">2</span></td>
-            <td>Selected role contract</td>
-            <td>Purpose, authority, expected inputs, output contract, and handoff behavior.</td>
-            <td>Project guidance cannot change role authority or verdict shape.</td>
+            <td><code>.agents/runs/&lt;run-id&gt;/agent-results.jsonl</code></td>
+            <td>Ordered role outputs and status events for replay, audit, and merge coordination.</td>
+            <td>A synthesized verification verdict.</td>
           </tr>
           <tr>
-            <td><span class="name">3</span></td>
-            <td>Root AGENTS.md</td>
-            <td>Repository-wide rules, folder loadouts, validation commands, data boundaries, and local reference paths.</td>
-            <td>It selects shared guidance without copying complete role or skill definitions.</td>
+            <td><code>.agents/runs/&lt;run-id&gt;/verification.md</code></td>
+            <td>Checks run, outcomes, unresolved risks, and justified omissions.</td>
+            <td>Task history or next-owner context.</td>
           </tr>
           <tr>
-            <td><span class="name">4</span></td>
-            <td>Nearest nested AGENTS.md</td>
-            <td>Only the stack, validation, generated-file, data, or workflow differences for its subtree.</td>
-            <td>It narrows routing but cannot bypass safety, review evidence, or project-wide constraints.</td>
-          </tr>
-          <tr>
-            <td><span class="name">5</span></td>
-            <td>Selected skills</td>
-            <td>Fixed, request-specific, and setup-established folder expertise selected by the specialization policy.</td>
-            <td>The <a href="agent-skill-specialization-strategy.html">specialization strategy</a> is the sole owner of those selection rules.</td>
-          </tr>
-          <tr>
-            <td><span class="name">6</span></td>
-            <td>Task request and evidence</td>
-            <td>The requested outcome, target files, constraints, and acceptance evidence.</td>
-            <td>The task can narrow work but cannot override higher-priority constraints.</td>
+            <td><code>.agents/runs/&lt;run-id&gt;/handoff.md</code></td>
+            <td>Completed work, remaining work, follow-up ownership, and the context needed to continue.</td>
+            <td>Raw event history or duplicated command transcripts.</td>
           </tr>
         </tbody>
       </table>
     </div>
-    <p class="note">For Claude Code, a thin CLAUDE.md may import the colocated AGENTS.md. It does not duplicate the project guidance.</p>
   </section>
 </main>
 </body>

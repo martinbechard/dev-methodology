@@ -169,7 +169,7 @@ After that analysis and explicit user approval, --replace-customized may be comb
 
 ## Role Activity Boundaries
 
-Wiki work remains separate from general documentation, coding, review, backlog, and project setup. The generated [agent and skill definitions](design/agent-role-skill-map.html) page owns current agent and skill definitions, including responsibilities, assigned skills, output contracts, examples, model profiles, repository mutation policies, and agent-skill relationships. The [operating model](design/agentic-development-operating-model.html) owns the bootstrap, execution, review, verification, integration, and claim-release sequence.
+Wiki work remains separate from general documentation, coding, review, backlog, and project setup. The generated [agent and skill definitions](design/agent-role-skill-map.html) page owns current agent and skill definitions, including responsibilities, assigned skills, output contracts, examples, model profiles, repository mutation policies, and agent-skill relationships. The [operating model](design/agentic-development-operating-model.html) owns project classification and guidance precedence. The [orchestrated development lifecycle](design/orchestrated-development-lifecycle.html) owns the bootstrap, execution, review, verification, integration, claim-release, and execution-evidence sequence.
 
 ## Bundled Skill Inventory
 
@@ -289,7 +289,7 @@ Invoke Project Bootstrapper once and describe the desired steady state:
 1. Use the repository bundle sources and matching generated runtime adapter.
 2. Review the resulting PROJECT.yaml, root or nested AGENTS.md guidance, and verification commands. The [specialization strategy](design/agent-skill-specialization-strategy.html) owns setup-time detection and folder loadouts.
 3. Use documentation-bootstrap and documentation-reverse-engineer when the project needs a source-backed documentation baseline.
-4. Follow the [operating model](design/agentic-development-operating-model.html) for the owning execution, independent review, integrated verification, commit, and claim-release gates.
+4. Follow the [orchestrated development lifecycle](design/orchestrated-development-lifecycle.html) for the owning execution, independent review, integrated verification, commit, and claim-release gates.
 
 Separately requested deployment still requires caller-supplied destinations under Explicit Target Deployment.
 

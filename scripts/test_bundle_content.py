@@ -313,6 +313,8 @@ DOCUMENT_INFORMATION_OWNERS = {
     "agentic-development-operating-model.html": (
         "Project Classification",
         "Project Guidance And Precedence",
+    ),
+    "orchestrated-development-lifecycle.html": (
         "Orchestrated Development Loop",
         "Execution Evidence",
     ),
@@ -378,19 +380,26 @@ DOCUMENT_REQUIRED_LINKS = {
         "agent-skill-specialization-strategy.html",
         "agent-skill-specialization-examples.html",
         "agent-definition-runtime-formats.html",
+        "orchestrated-development-lifecycle.html",
+    ),
+    "orchestrated-development-lifecycle.html": (
+        "agentic-development-operating-model.html",
+        "agent-role-skill-map.html",
     ),
     "agent-skill-specialization-strategy.html": (
         "agent-role-skill-map.html",
         "agentic-development-operating-model.html",
+        "orchestrated-development-lifecycle.html",
         "agent-definition-runtime-formats.html",
     ),
     "agent-role-skill-map.html": (
         "agent-skill-specialization-strategy.html",
-        "agentic-development-operating-model.html",
+        "orchestrated-development-lifecycle.html",
     ),
     "agent-skill-specialization-examples.html": (
         "agent-skill-specialization-strategy.html",
         "agentic-development-operating-model.html",
+        "orchestrated-development-lifecycle.html",
         "../skills/development-methodology/assets/templates/project-template.yaml",
     ),
     "agent-definition-runtime-formats.html": (
@@ -1647,7 +1656,7 @@ class BundleContentTests(unittest.TestCase):
         for filename in DOCUMENT_INFORMATION_OWNERS:
             with self.subTest(index_link=filename):
                 self.assertIn(f'href="design/{filename}"', index_text)
-        for owner in ("execution", "selection", "catalog", "examples", "runtime"):
+        for owner in ("operating", "execution", "selection", "catalog", "examples", "runtime"):
             with self.subTest(index_owner=owner):
                 self.assertEqual(
                     1,
