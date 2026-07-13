@@ -894,11 +894,21 @@ class BundleContentTests(unittest.TestCase):
         self.assertNotIn("nested PROJECT.yaml recommendations", operating_model_text)
         self.assertNotIn("&lt;subtree&gt;/PROJECT.yaml", operating_model_text)
         self.assertIn("claude_bridge_files:", template_text)
-        self.assertIn("agent_coordination:", template_text)
-        self.assertIn("claim_skill: agent-claim", template_text)
-        self.assertIn("dirty_unclaimed_policy:", template_text)
-        self.assertIn("release_policy:", template_text)
-        self.assertIn("repository-global agent coordination contract", skill_text)
+        self.assertNotIn("agent_coordination:", template_text)
+        self.assertNotIn("coordination_overrides:", template_text)
+        self.assertIn(
+            "Generic repository-mutation behavior belongs to canonical role definitions",
+            skill_text,
+        )
+        self.assertIn(
+            "Do not reproduce that procedure in PROJECT.yaml or AGENTS.md",
+            skill_text,
+        )
+        self.assertIn("Record a coordination_overrides mapping only when", skill_text)
+        self.assertIn(
+            "Treat a missing role definition, skill, or command as BLOCKED",
+            skill_text,
+        )
         self.assertIn("agent-claim", skill_text)
         self.assertIn("thin CLAUDE.md", skill_text)
         self.assertIn(PROJECT_CONFIGURATION_SKILL, development_methodology_text)
@@ -1074,10 +1084,14 @@ class BundleContentTests(unittest.TestCase):
 
         self.assertTrue(ROLE_SCHEMA_PATH.is_file())
         role_schema = load_yaml_object(ROLE_SCHEMA_PATH)
-        self.assertEqual(2, role_schema["version"])
+        self.assertEqual(3, role_schema["version"])
         self.assertEqual(
             "conditional-skill-entry-list",
             role_schema["properties"]["skills"],
+        )
+        self.assertEqual(
+            "mutation-policy",
+            role_schema["properties"]["repositoryMutation"],
         )
         self.assertEqual(
             expected_outputs[ROLE_DEFINITIONS_PATH],
@@ -1248,34 +1262,18 @@ class BundleContentTests(unittest.TestCase):
         skill_payload = build_skill_docs.build_payload()
         roles = build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
         roles_by_name = {role.name: role for role in roles}
-        fixed_claim_roles = {
-            "dev-coder",
-            "dev-documentation-writer",
-            "dev-merge-coordinator",
-            "dev-orchestrator",
-            "methodology-maintainer",
-            "project-bootstrapper",
-            "project-configurator",
-            "wiki-architect",
-            "wiki-ingester",
-            "wiki-researcher",
-            "wiki-source-collector",
-            "wiki-writer",
-        }
-        conditional_claim_roles = {
-            "dev-browser-operator",
-            "dev-runtime-diagnostician",
-            "dev-ux-specialist",
-            "dev-verifier",
-            "project-organiser",
-        }
-
-        for role_name in fixed_claim_roles:
-            with self.subTest(role=role_name):
-                self.assertIn("agent-claim", build_skill_docs.fixed_role_skills(roles_by_name[role_name]))
-        for role_name in conditional_claim_roles:
-            with self.subTest(role=role_name):
-                self.assertIn("agent-claim", roles_by_name[role_name].skill_conditions)
+        for role in roles:
+            with self.subTest(role=role.name, mutation_policy=role.repository_mutation):
+                if role.repository_mutation == "required":
+                    self.assertIn("agent-claim", build_skill_docs.fixed_role_skills(role))
+                elif role.repository_mutation == "conditional":
+                    self.assertIn("agent-claim", role.skill_conditions)
+                else:
+                    self.assertNotIn(
+                        "agent-claim",
+                        build_skill_docs.fixed_role_skills(role),
+                    )
+                    self.assertNotIn("agent-claim", role.skill_conditions)
 
         orchestrator = roles_by_name["dev-orchestrator"]
         merge_coordinator = roles_by_name["dev-merge-coordinator"]
@@ -1285,7 +1283,7 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("release only from a clean worktree", merge_coordinator.instructions)
         self.assertTrue((SKILLS_ROOT / "agent-claim" / "scripts" / "claim.py").is_file())
         self.assertIn("Agent Claims And Worktrees", README_PATH.read_text(encoding="utf-8"))
-        self.assertIn("Agent Claims And Worktrees", AGENTS_PATH.read_text(encoding="utf-8"))
+        self.assertNotIn("Agent Claims And Worktrees", AGENTS_PATH.read_text(encoding="utf-8"))
 
     def test_project_bootstrapper_owns_complete_setup_and_review_loop(self) -> None:
         build_skill_docs = load_build_skill_docs_module()
@@ -1354,6 +1352,7 @@ class BundleContentTests(unittest.TestCase):
         )
         self.assertEqual(
             {
+                "agent-claim",
                 "organise-project-files",
                 "review-architecture",
                 "review-functional-spec",

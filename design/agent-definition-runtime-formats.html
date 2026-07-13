@@ -478,6 +478,11 @@
             <td>Records that the role consumes folder skills supplied through project guidance; selection remains outside the role source.</td>
           </tr>
           <tr>
+            <td><span class="name">Repository mutation</span></td>
+            <td><code>repositoryMutation</code></td>
+            <td>Declares whether repository mutation is required, conditional, or never allowed for the role. Generation validates that <code>agent-claim</code> is fixed, conditional, or absent to match, so runtimes provide the shared claim capability instead of relying on copied project instructions.</td>
+          </tr>
+          <tr>
             <td><span class="name">Max turns</span></td>
             <td><code>maxTurns</code></td>
             <td>Caps the number of agentic turns or steps before the agent must return.</td>
