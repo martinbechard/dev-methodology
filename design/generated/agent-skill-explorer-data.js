@@ -1110,7 +1110,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "organise-project-files": "when the requested bootstrap creates a new project file or directory whose path is not already fixed by the bootstrap contract."
       },
       "declaredCases": [],
-      "description": "Sets up a project for later development work. It creates or reuses the project configuration, produces the required documentation, sends each setup and documentation artifact for independent review, integrates committed contributions, and runs the project checks.",
+      "description": "Sets up a project for later development work. It creates or reuses the project configuration, produces the required documentation, sends each setup and documentation artifact for independent review, keeps exactly one accepted committed contribution as the final direct commit or integrates multiple accepted committed contributions, and verifies the completed project state.",
       "dynamicFolderSkills": false,
       "fixedSkills": [
         "agent-claim",
