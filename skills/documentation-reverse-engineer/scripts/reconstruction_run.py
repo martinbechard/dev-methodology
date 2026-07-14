@@ -49,6 +49,13 @@ _SKIPPED_CONFIGURATION_DIRECTORIES = frozenset(
 )
 _MARKDOWN_LINK_PATTERN = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
 _RUN_ID_PATTERN = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{0,127}\Z")
+_WORKSTATION_HOME_PATH_PATTERNS = (
+    re.compile(r"(?<![A-Za-z0-9._-])/(?:Users|home)/[^/\s'\"<>]+(?:/|\Z)"),
+    re.compile(
+        r"(?<![A-Za-z0-9._-])[A-Za-z]:[\\/]+Users[\\/]+[^\\/\s'\"<>]+",
+        re.IGNORECASE,
+    ),
+)
 _ARCHIVE_MANIFEST_NAME = "archive-manifest.json"
 _SEED_METADATA_DIRECTORY = ".reconstruction"
 _REQUIRED_ARCHIVE_FILES = (
@@ -330,6 +337,11 @@ def _scan_for_absolute_source_path(
             "Seed corpus contains an absolute source path: "
             f"{_relative_path(path, source_project)}"
         )
+    if any(pattern.search(text) for pattern in _WORKSTATION_HOME_PATH_PATTERNS):
+        raise ReconstructionRunError(
+            "Seed corpus contains a workstation-specific path: "
+            f"{_relative_path(path, source_project)}"
+        )
 
 
 def _copy_files(files: Sequence[Path], source_project: Path, build_root: Path) -> None:
@@ -549,6 +561,11 @@ def initialize_run(
                 {
                     "findingCount": 0,
                     "name": "absolute-source-paths",
+                    "status": "PASS",
+                },
+                {
+                    "findingCount": 0,
+                    "name": "workstation-home-paths",
                     "status": "PASS",
                 },
             ],

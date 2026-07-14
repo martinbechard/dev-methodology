@@ -2884,6 +2884,12 @@ class BundleContentTests(unittest.TestCase):
             "machine-readable delta ledger",
             "operating-system sandbox or container",
             "machine-readable contamination ledger",
+            "workstation-specific user-home paths",
+            "actual content open and byte read",
+            "permission predicate",
+            "caller-supplied READY labels are never evidence",
+            "full pre/post Git metadata inventory",
+            "write their attestation outside the attested set",
             "archive-manifest.json",
             "Delete the documentation folder from the source-under-test before the run starts",
             "copy the completed wiki into that folder first",
@@ -2927,6 +2933,9 @@ class BundleContentTests(unittest.TestCase):
             "immutable original baseline oracle",
             "separate fresh verifier environment",
             "review-reconstruction-readiness",
+            "actual content opens through two readers",
+            "static OWNED_SMOKE",
+            "detached post-run attestations",
             "Validate the new archive before pruning",
         ):
             with self.subTest(bootstrapper_phrase=phrase):
@@ -2986,6 +2995,10 @@ class BundleContentTests(unittest.TestCase):
             "original baseline oracle",
             "operating-system sandbox or container",
             "contamination ledger",
+            "verifier-derived evidence",
+            "actual content open and byte read",
+            "full pre/post Git metadata inventory",
+            "detached attestations",
             "newest three complete run archives",
         ):
             with self.subTest(readiness_checklist_phrase=phrase):
@@ -3022,6 +3035,8 @@ class BundleContentTests(unittest.TestCase):
             "complete fixed and conditional skill metadata",
             "Use only real repository-relative paths or valid globs",
             "most-specific-pattern-wins rule",
+            "Never embed an absolute checkout, user-home, worktree, cache, or temporary-directory path",
+            "Search for POSIX and Windows user-home paths",
         ):
             with self.subTest(configuration_phrase=phrase):
                 self.assertIn(phrase, configuration_text)

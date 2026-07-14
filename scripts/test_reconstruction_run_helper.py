@@ -153,6 +153,15 @@ class ReconstructionRunHelperTests(unittest.TestCase):
         self.assertTrue(all(len(entry["sha256"]) == 64 for entry in manifest["files"]))
         self.assertEqual("SEED_VALIDATED", run_metadata["status"])
         self.assertEqual("PASS", contamination["status"])
+        self.assertEqual(
+            {
+                "absolute-source-paths",
+                "hard-links",
+                "symbolic-links",
+                "workstation-home-paths",
+            },
+            {check["name"] for check in contamination["checks"]},
+        )
         self.assertNotIn(str(self.source), manifest_path.read_text(encoding="utf-8"))
         self.assertEqual(
             "PASS",
@@ -265,6 +274,46 @@ class ReconstructionRunHelperTests(unittest.TestCase):
             "absolute source path",
         ):
             self._initialize()
+
+    def test_initialize_rejects_unrelated_posix_workstation_paths(self) -> None:
+        """Portable configuration cannot retain another checkout's user-home path."""
+        self._write(
+            self.source / "PROJECT.yaml",
+            "project: fixture\nevidence: /Users/example/dev/other-repo/pom.xml\n",
+        )
+
+        with self.assertRaisesRegex(
+            self.helper.ReconstructionRunError,
+            "workstation-specific path",
+        ):
+            self._initialize()
+
+    def test_initialize_rejects_windows_workstation_paths(self) -> None:
+        """Windows user-home paths are as non-portable as POSIX user-home paths."""
+        self._write(
+            self.source / "PROJECT.yaml",
+            "project: fixture\nevidence: C:\\Users\\example\\dev\\repo\\pom.xml\n",
+        )
+
+        with self.assertRaisesRegex(
+            self.helper.ReconstructionRunError,
+            "workstation-specific path",
+        ):
+            self._initialize()
+
+    def test_initialize_allows_declared_runtime_absolute_paths(self) -> None:
+        """Runtime routes and portable container paths are not workstation leakage."""
+        self._write(
+            self.source / "PROJECT.yaml",
+            (
+                "project: fixture\n"
+                "api_route: /management/health\n"
+                "container_root: /workspace\n"
+                "portable_home: ${HOME}/.cache\n"
+            ),
+        )
+
+        self.assertEqual("PASS", self._initialize()["validationStatus"])
 
     def test_invalid_new_archive_never_triggers_retention_pruning(self) -> None:
         """An incomplete new archive leaves every existing run untouched."""
