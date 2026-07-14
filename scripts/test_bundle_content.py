@@ -509,35 +509,12 @@ DOCUMENT_FORBIDDEN_HEADINGS = {
         "Maintenance Notes",
     ),
 }
-DOCUMENT_REQUIRED_LINKS = {
-    "skills-modularization.html": (
-        "agent-and-skill-definitions.html",
-        "agent-skill-specialization-examples.html",
-        "agentic-configuration.html",
-        "generic-agent-definitions-source.html",
-        "orchestrated-development-lifecycle.html",
-    ),
-    "orchestrated-development-lifecycle.html": (
-        "skills-modularization.html",
-        "agent-and-skill-definitions.html",
-    ),
-    "agent-and-skill-definitions.html": (
-        "skills-modularization.html",
-        "orchestrated-development-lifecycle.html",
-    ),
+DOCUMENT_REQUIRED_CONTENT_LINKS = {
     "agent-skill-specialization-examples.html": (
-        "skills-modularization.html",
-        "orchestrated-development-lifecycle.html",
         "../skills/development-methodology/assets/templates/project-template.yaml",
     ),
     "generic-agent-definitions-source.html": (
-        "agent-and-skill-definitions.html",
-        "skills-modularization.html",
-        "agentic-configuration.html",
         "../README.md#explicit-target-deployment",
-    ),
-    "agentic-configuration.html": (
-        "generic-agent-definitions-source.html",
     ),
 }
 DEVELOPMENT_USE_LOADOUTS = (
@@ -2681,7 +2658,7 @@ class BundleContentTests(unittest.TestCase):
                         f"Retired heading {heading!r} must not move to another page",
                     )
 
-        for filename, required_links in DOCUMENT_REQUIRED_LINKS.items():
+        for filename, required_links in DOCUMENT_REQUIRED_CONTENT_LINKS.items():
             for link in required_links:
                 with self.subTest(filename=filename, required_link=link):
                     self.assertIn(f'href="{link}', page_text[filename])
@@ -2715,6 +2692,49 @@ class BundleContentTests(unittest.TestCase):
             )
         )
         self.assertEqual(expected_index_owners, index_owners)
+        index_pages = tuple(
+            re.findall(
+                r'<a class="doc-card [^"]+" data-information-owner="[^"]+" '
+                r'href="design/([^"]+)">',
+                index_text,
+            )
+        )
+        self.assertEqual(tuple(DOCUMENT_INFORMATION_OWNERS), index_pages)
+        for position, filename in enumerate(index_pages):
+            text = page_text[filename]
+            with self.subTest(document_navigation=filename):
+                self.assertEqual(
+                    1,
+                    text.count(
+                        '<nav class="document-nav" '
+                        'aria-label="Documentation navigation">'
+                    ),
+                )
+                self.assertIn(
+                    '<a href="../index.html">Documentation Index</a>',
+                    text,
+                )
+
+                if position == 0:
+                    self.assertNotIn('rel="prev"', text)
+                else:
+                    self.assertIn(
+                        f'<a href="{index_pages[position - 1]}" rel="prev">',
+                        text,
+                    )
+
+                if position == len(index_pages) - 1:
+                    self.assertNotIn('rel="next"', text)
+                else:
+                    self.assertIn(
+                        f'<a href="{index_pages[position + 1]}" rel="next">',
+                        text,
+                    )
+
+                hero = text.split('<section class="hero"', maxsplit=1)[1].split(
+                    "</section>", maxsplit=1
+                )[0]
+                self.assertNotIn("<a ", hero)
         for owner in expected_index_owners:
             with self.subTest(index_owner=owner):
                 self.assertEqual(
