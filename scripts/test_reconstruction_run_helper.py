@@ -301,6 +301,19 @@ class ReconstructionRunHelperTests(unittest.TestCase):
         ):
             self._initialize()
 
+    def test_initialize_rejects_linux_workstation_paths(self) -> None:
+        """Common Linux checkout roots cannot leak from an unrelated workstation."""
+        self._write(
+            self.source / "PROJECT.yaml",
+            "project: fixture\nevidence: /home/example/dev/other-repo/pom.xml\n",
+        )
+
+        with self.assertRaisesRegex(
+            self.helper.ReconstructionRunError,
+            "workstation-specific path",
+        ):
+            self._initialize()
+
     def test_initialize_allows_declared_runtime_absolute_paths(self) -> None:
         """Runtime routes and portable container paths are not workstation leakage."""
         self._write(
@@ -309,6 +322,7 @@ class ReconstructionRunHelperTests(unittest.TestCase):
                 "project: fixture\n"
                 "api_route: /management/health\n"
                 "container_root: /workspace\n"
+                "generator_root: /home/jhipster/app\n"
                 "portable_home: ${HOME}/.cache\n"
             ),
         )
