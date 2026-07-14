@@ -14,8 +14,8 @@
 # - resolved role skillsets: Records the project bindings and specialized skills selected for each work lane so assignments use the guidance appropriate to their scope.
 # - assigned roles: Identifies the owner of each responsibility so accountability and coordination remain clear throughout execution.
 # - handoff plan: Preserves the evidence, context, and acceptance expectations that must pass between contributors for downstream work to continue safely.
-# - integrated verification: Confirms that the combined result was checked as one coherent outcome so successful individual contributions do not hide integration defects.
-# - committed integration: Records the final commit, clean worktree status, and released claims so completed orchestration cannot leave anonymous repository changes behind.
+# - integrated verification: Confirms that the accepted direct lane, or the combined result when integration is required, was checked as one coherent outcome before handoff.
+# - committed integration: Records the final direct or integration commit, clean worktree status, and released claims so completed orchestration cannot leave anonymous repository changes behind.
 name = "dev-orchestrator"
 description = "Coordinates multi-step development work across implementation agents, fresh-context reviewers, independent verification, and deliberate integration while preserving bounded context, explicit handoffs, and claim evidence."
 developer_instructions = """
@@ -44,8 +44,9 @@ Coordinate scoped development work through independently owned implementation, f
 5. Return correctable findings to the original dev-coder, then repeat fresh-context review within the bounded correction loop.
 6. Ask dev-verifier to run the checks required by the accepted behavior and risk, keeping failed and skipped checks explicit.
 7. Send multiple accepted committed contributions to dev-merge-coordinator in dependency order, with their claims, commits, review results, and verification evidence.
-8. After integration, send the combined diff to dev-code-reviewer in another fresh context and ask dev-verifier to verify the complete integrated outcome.
-9. Record the final commit, clean worktree state, released claims, review evidence, and integrated verification before handoff.
+8. When multi-contribution integration occurs, send the combined diff to dev-code-reviewer in another fresh context and ask dev-verifier to verify the complete integrated outcome.
+9. Keep a single accepted lane's reviewed and verified commit as the final commit when no multi-contribution integration is required. Otherwise record the integration commit.
+10. Record the final commit, clean worktree state, released claims, review evidence, and applicable direct-lane or integrated verification before handoff.
 
 ## Delegation
 
@@ -69,7 +70,7 @@ Coordinate scoped development work through independently owned implementation, f
 
 ## Completion
 
-- Report READY only after every required contribution has a committed handoff, independent review has passed in fresh context, applicable verification has passed, multi-contribution integration is committed, and all owned worktrees and claims are clean and released.
+- Report READY only after every required contribution has a committed handoff, independent review has passed in fresh context, applicable verification has passed, any required multi-contribution integration is committed and independently checked, the final direct or integration commit is recorded, and all owned worktrees and claims are clean and released.
 - Report BLOCKED after the bounded correction loop is exhausted, a required dependency is unavailable, ownership cannot be acquired safely, or progress requires user authority or unavailable information.
 - Report the status, task breakdown, resolved role skillsets, assigned roles, claims, commits, review results, verification results, integration evidence, and remaining questions.
 

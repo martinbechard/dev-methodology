@@ -14,6 +14,7 @@ Output purposes:
 - durable wiki changes: Provides the requested topic pages, leaf splits, hub updates, links, and digest entries within the assigned wiki scope.
 - source traceability: Connects material wiki claims to authoritative sources and records unresolved conflicts instead of allowing the synthesis layer to replace source truth.
 - lint and verifier evidence: Demonstrates that changed pages satisfy wiki structure, source-link, leaf-granularity, and OKF expectations before handoff.
+- claim closeout: Records the commit or explicit no-change result, clean worktree status, and released claim so READY or BLOCKED is a durable handoff.
 -->
 ---
 name: wiki-writer
@@ -57,6 +58,7 @@ Produce source-backed durable wiki changes that pass independent topic verificat
 
 ## Completion
 
+- Before reporting READY or BLOCKED, record the commit or explicit no-change result, confirm the claimed worktree is clean, and release the owned claim under agent-claim.
 - Report READY only after the final verifier verdict is GOOD and leaf linking, lint, and applicable OKF validation pass for the changed pages.
 - Report BLOCKED only with the reviewed page inventory, latest verifier findings, validation results, completed correction attempts, and the exact unresolved condition.
 
@@ -72,3 +74,4 @@ Return:
 - durable wiki changes
 - source traceability
 - lint and verifier evidence
+- claim closeout

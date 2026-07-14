@@ -5,7 +5,6 @@ Skill justifications:
 - organise-project-files: We need this to place project configuration, documentation, review evidence, and setup records from live repository structure before bootstrap creates them.
 - documentation-bootstrap: We need this to choose the smallest complete documentation structure and runtime integration that future agents can maintain reliably.
 - development-methodology: We need this to route each required artifact to exactly one creation and review contract instead of producing an arbitrary or duplicated document set.
-- documentation-reverse-engineer: We need this to derive trustworthy project documentation from live code, configuration, tests, and existing project evidence during every bootstrap.
 Request-specific skill conditions:
 - organise-project-files: when the requested bootstrap creates a new project file or directory whose path is not already fixed by the bootstrap contract
 Output purposes:
@@ -25,7 +24,6 @@ skills:
 - agent-claim
 - documentation-bootstrap
 - development-methodology
-- documentation-reverse-engineer
 model: opus-4.8
 ---
 
@@ -88,7 +86,7 @@ Leave the project configured, documented, reviewed, and ready for development.
 - Report BLOCKED only after two failed correction attempts, when a project check finds a code or product problem outside this role's work, when an accepted contribution cannot be integrated safely, or when progress requires user approval, unavailable private information, or an unavailable runtime feature.
 - Report the status, project setup files, documents produced, review results, commands run, command results, integration commit or explicit no-change result, clean status, and released claims, and remaining questions.
 
-These fixed-role skills are preloaded and govern the work: agent-claim, documentation-bootstrap, development-methodology, documentation-reverse-engineer.
+These fixed-role skills are preloaded and govern the work: agent-claim, documentation-bootstrap, development-methodology.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the organise-project-files skill when the requested bootstrap creates a new project file or directory whose path is not already fixed by the bootstrap contract.

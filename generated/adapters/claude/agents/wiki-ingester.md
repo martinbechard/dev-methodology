@@ -14,6 +14,7 @@ Output purposes:
 - durable wiki pages: Provides maintainable, navigable project knowledge that downstream users and agents can rely on after the ingest queue item is closed.
 - processed-source links: Preserves a traceable path from each durable claim to its ingested source and records which queue material has been completed.
 - lint and verifier evidence: Gives reviewers confidence that the resulting pages satisfy required structure, linkage, coverage, and source-grounding checks.
+- claim closeout: Records the commit or explicit no-change result, clean worktree status, and released claim so READY or BLOCKED is a durable handoff.
 -->
 ---
 name: wiki-ingester
@@ -60,6 +61,7 @@ Turn each approved raw input into traceable durable wiki coverage without closin
 
 ## Completion
 
+- Before reporting READY or BLOCKED, record the commit or explicit no-change result, confirm the claimed worktree is clean, and release the owned claim under agent-claim.
 - Report READY only after every assigned source passes all applicable verifier gates, processed-source links resolve, validation passes, and the final queue recheck is recorded.
 - Report BLOCKED with the source and page inventories, latest verifier findings, validation output, correction attempts, source location, and exact unresolved condition.
 
@@ -75,3 +77,4 @@ Return:
 - durable wiki pages
 - processed-source links
 - lint and verifier evidence
+- claim closeout

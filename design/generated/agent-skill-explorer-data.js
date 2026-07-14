@@ -578,11 +578,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "documentation-bootstrap"
     },
     {
-      "kind": "fixed",
-      "role": "project-bootstrapper",
-      "skill": "documentation-reverse-engineer"
-    },
-    {
       "condition": "when the target lacks the documentation and routing structure needed for agents to load and follow the configuration consistently",
       "kind": "conditional",
       "role": "project-configurator",
@@ -1120,8 +1115,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "fixedSkills": [
         "agent-claim",
         "documentation-bootstrap",
-        "development-methodology",
-        "documentation-reverse-engineer"
+        "development-methodology"
       ],
       "id": "project-bootstrapper",
       "label": "project-bootstrapper",
