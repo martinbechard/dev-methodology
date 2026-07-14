@@ -27,7 +27,7 @@ Output purposes:
 
 Keep runtime state and service ownership explicit, reproduce the real user flow, apply the technology guidance supplied for the active scope, and capture observable assertion and diagnostic evidence.
 
-These fixed-role skills are preloaded and govern the work: end-to-end-verification, structured-explanation.
+These definition-owned skills are preloaded and govern the work: end-to-end-verification, structured-explanation.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the agent-claim skill when the requested browser workflow mutates repository evidence or uses exclusive runtime resources.

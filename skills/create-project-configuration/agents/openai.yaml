@@ -6,7 +6,7 @@ interface:
   # User-facing summary shown in Codex skill surfaces.
   short_description: Use when creating or substantially rewriting the single root PROJECT.yaml project configuration...
   # Prompt Codex can use when launching this skill directly.
-  default_prompt: Use $create-project-configuration to create a source-backed PROJECT.yaml for project agent roles, skillsets, and routing.
+  default_prompt: Use $create-project-configuration to create a source-backed PROJECT.yaml for conceptual agent definitions, skillsets, and routing.
 
 # Optional invocation policy placeholder.
 # policy:

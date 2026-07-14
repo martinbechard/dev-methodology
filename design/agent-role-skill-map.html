@@ -579,14 +579,14 @@
 
   <section class="hero" aria-labelledby="page-title">
     <div class="legend" aria-label="Legend">
-      <span class="pill"><span class="dot role"></span> Core role</span>
+      <span class="pill"><span class="dot role"></span> Conceptual agent definition</span>
       <span class="pill"><span class="dot router"></span> Router input</span>
       <span class="pill"><span class="dot skill"></span> Skill</span>
       <span class="pill"><span class="dot output"></span> Output</span>
     </div>
     <h1 id="page-title">Agent and Skill Definitions</h1>
     <p class="lede">
-      This page owns generated agent and skill definitions, including responsibilities, assigned skills, output contracts, examples, model profiles, repository mutation policies, and agent-skill relationships. The interactive diagram and the cards deliberately present the same role-to-skill relationships in two generated views; no hand-authored routing policy lives here.
+      This page owns conceptual agent definitions and skill definitions, including responsibilities, assigned skills, output contracts, examples, model profiles, repository mutation policies, and agent-skill relationships. The interactive diagram and the cards deliberately present the same definition-to-skill relationships in two generated views; no hand-authored routing policy lives here.
       Read the <a href="agent-skill-specialization-strategy.html">specialization strategy</a> for selection rules and the
       <a href="orchestrated-development-lifecycle.html">orchestrated development lifecycle</a> for lifecycle handoffs.
     </p>
@@ -595,7 +595,7 @@
   <section class="section" aria-labelledby="hierarchy-title">
     <h2 id="hierarchy-title">Interactive Agent And Skill Map</h2>
     <p class="note">
-      Amber marks a fixed role-skill edge, violet marks a conditional role-skill edge, and blue arrows mark direct agent dependencies. In the skill catalog, blue identifies a setup-time technology skill. The <a href="agent-skill-specialization-strategy.html">specialization strategy</a> owns when and how those skills are selected.
+      Amber marks a definition-owned skill edge, violet marks a request-specific skill edge, and blue arrows mark direct agent dependencies. In the skill catalog, blue identifies a setup-time technology skill. The <a href="agent-skill-specialization-strategy.html">specialization strategy</a> owns when and how those skills are selected.
     </p>
     <p><a href="agent-skill-hierarchy.svg">Open the interactive SVG diagram</a></p>
     <object id="agent-skill-hierarchy" class="hierarchy-embed" data="agent-skill-hierarchy.svg" type="image/svg+xml" tabindex="-1" aria-label="Interactive hierarchy connecting agents to bundled skills and direct agent dependencies">

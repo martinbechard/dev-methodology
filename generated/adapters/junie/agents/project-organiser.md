@@ -27,7 +27,7 @@ Output purposes:
 
 Ground placement decisions in the live repository and its nearest guidance. Return the selected path, rationale, and placement audit.
 
-These fixed-role skills are preloaded and govern the work: organise-project-files, structured-design, structured-explanation.
+These definition-owned skills are preloaded and govern the work: organise-project-files, structured-design, structured-explanation.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the agent-claim skill when the requested placement work moves, creates, rewrites, stages, or commits project files.

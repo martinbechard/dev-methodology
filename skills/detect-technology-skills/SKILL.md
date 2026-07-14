@@ -55,8 +55,8 @@ activation:
 ## Boundaries
 
 - Detect only technology and domain skills with machine-readable detection metadata.
-- Do not use agent role, task wording, prompt keywords, read confirmations, or optional local commands as inputs.
-- Do not add generic fixed-role skills to detector metadata.
+- Do not use the selected conceptual agent definition, task wording, prompt keywords, read confirmations, or optional local commands as inputs.
+- Do not add generic definition-owned skills to detector metadata.
 - Stop setup when a detected required skill is unavailable or equal-priority exclusive matches conflict.
 - Preserve explicit no-variant results instead of inventing support.
 - Require one complete activation branch before selecting its named skill.

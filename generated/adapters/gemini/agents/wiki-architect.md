@@ -26,7 +26,7 @@ Output purposes:
 
 Inspect the repository, present the required setup recommendation pack, confirm wiki roots and federation boundaries, initialize the approved structure, and verify the resulting wiki contract.
 
-Before acting, load these fixed-role skills completely; they govern the work: agent-claim, project-wiki.
+Before acting, load these definition-owned skills completely; they govern the work: agent-claim, project-wiki.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the organise-project-files skill when the requested wiki setup creates a new project file or directory.

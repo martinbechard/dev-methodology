@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Modified with AI assistance.
-# Summary: Builds the agent-skill support checklist and generated explorer coverage data.
+# Summary: Builds the conceptual-agent-definition and skill support checklist plus generated explorer coverage data.
 
 from __future__ import annotations
 
@@ -23,11 +23,11 @@ EVIDENCE_ROOT = ROOT / "evals" / "evidence"
 EVAL_RUNNER_PATH = ROOT / "scripts" / "run-agent-skill-evals.py"
 
 HARNESS_ROWS = [
-    ("Generic Agent Skills", True, False, False, "Installer behavior is unit-tested; no native role format or captured behavior evidence."),
+    ("Generic Agent Skills", True, False, False, "Installer behavior is unit-tested; no native agent definition format or captured behavior evidence."),
     ("Codex", True, True, False, "Native generation and manual runs exist; current evidence lacks machine-verifiable load and invocation receipts."),
-    ("Claude Code", True, False, False, "Skill installation and native role generation are tested; no captured behavior evidence."),
-    ("Gemini CLI", True, False, False, "Skill installation and native role generation are tested; no captured behavior evidence."),
-    ("JetBrains Junie CLI", True, False, False, "Skill installation and native role generation are tested; no captured behavior evidence."),
+    ("Claude Code", True, False, False, "Skill installation and native agent definition generation are tested; no captured behavior evidence."),
+    ("Gemini CLI", True, False, False, "Skill installation and native agent definition generation are tested; no captured behavior evidence."),
+    ("JetBrains Junie CLI", True, False, False, "Skill installation and native agent definition generation are tested; no captured behavior evidence."),
 ]
 
 
@@ -41,7 +41,7 @@ def load_yaml(path: Path) -> dict[str, object]:
 def role_skill_entries(role: dict[str, object]) -> list[tuple[str, str | None]]:
     value = role.get("skills")
     if not isinstance(value, list):
-        raise ValueError(f"Role {role.get('name')} skills must be a list.")
+        raise ValueError(f"Conceptual agent definition {role.get('name')} skills must be a list.")
     entries: list[tuple[str, str | None]] = []
     for item in value:
         if isinstance(item, str):
@@ -51,7 +51,7 @@ def role_skill_entries(role: dict[str, object]) -> list[tuple[str, str | None]]:
             condition = metadata.get("condition") if isinstance(metadata, dict) else None
             entries.append((str(name), str(condition) if condition is not None else None))
         else:
-            raise ValueError(f"Role {role.get('name')} has an invalid skill entry: {item}")
+            raise ValueError(f"Conceptual agent definition {role.get('name')} has an invalid skill entry: {item}")
     return entries
 
 
@@ -141,7 +141,7 @@ def render() -> str:
     lines = [
         "# Agent, Skill, Technology, And Test Coverage Checklist",
         "",
-        "This page is generated from the role definitions, bundled skill frontmatter, setup-time technology detection registry, declared evaluation cases, and verified evidence receipts. Regenerate it with scripts/build-support-checklist.py.",
+        "This page is generated from the conceptual agent definitions, bundled skill frontmatter, setup-time technology detection registry, declared evaluation cases, and verified evidence receipts. Regenerate it with scripts/build-support-checklist.py.",
         "",
         "## Status Meaning",
         "",
@@ -154,7 +154,7 @@ def render() -> str:
         "",
         "## Summary",
         "",
-        f"- [x] {len(roles)} agents are defined and generate through the supported native role adapters.",
+        f"- [x] {len(roles)} conceptual agent definitions generate through the supported native agent definition adapters.",
         f"- [x] {len(skills)} bundled skills pass catalog and Agent Skill validation.",
         f"- [x] {len(declared_agents)} agents and {len(declared_skills)} skills are named in current evaluation cases.",
         f"- [ ] {len(verified_agents)} agents and {len(verified_skills)} skills have independently verified behavior evidence under the current proof contract.",
@@ -218,8 +218,8 @@ def render() -> str:
         "## Repository Verification Layers",
         "",
         "- [x] Agent Skill format validation for every bundled skill.",
-        "- [x] Role schema, skill reference, model profile, and adapter completeness tests.",
-        "- [x] Codex TOML plus Claude Code, Gemini CLI, and Junie CLI Markdown native role generation checks.",
+        "- [x] Conceptual agent definition schema, skill reference, model profile, and adapter completeness tests.",
+        "- [x] Codex TOML plus Claude Code, Gemini CLI, and Junie CLI Markdown native agent definition generation checks.",
         "- [x] Generic, Codex, Gemini CLI, Claude Code, and Junie CLI installer behavior tests.",
         "- [x] Generated documentation and agent-skill hierarchy freshness checks.",
         "- [x] Explicit destination installation is covered for generic skills and all four native agent adapters.",
@@ -286,7 +286,7 @@ def render_explorer_data() -> str:
     return (
         "// Copyright (c) 2026 Martin.Bechard@DevConsult.ca\n"
         "// AI attribution: Generated with AI assistance.\n"
-        "// Summary: Provides deterministic generated agent-skill coverage data to static design pages.\n"
+        "// Summary: Provides deterministic conceptual-agent-definition-to-skill coverage data to static design pages.\n"
         "// Generated by scripts/build-support-checklist.py. Do not edit by hand.\n"
         "window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = "
         + json.dumps(payload, indent=2, sort_keys=True)

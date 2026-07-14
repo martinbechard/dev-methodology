@@ -28,7 +28,7 @@ instructions:
     repository root, page inventory, source evidence path, and current validation output.
   review:
   - Require GOOD at every applicable verification gate. Route NEEDS_CORRECTION findings
-    back to this role, apply only in-scope ingest corrections, rerun validation, and use a
+    back to this agent, apply only in-scope ingest corrections, rerun validation, and use a
     fresh verifier context.
   failureHandling:
   - After the initial verdict at each pre-move or post-move gate, allow at most two

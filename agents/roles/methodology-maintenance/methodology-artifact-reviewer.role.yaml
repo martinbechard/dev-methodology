@@ -43,11 +43,11 @@ skills:
 - skill-authoring:
     justification: We need this to review distributed skills against the same harness boundary, portability, dependency, and concision rules used during authoring.
 - agent-role-authoring:
-    justification: We need this to review roles for instruction structure, role-skill
+    justification: We need this to review conceptual agent definitions for instruction structure, definition-to-skill
       boundaries, dependency resolution, bounded failure behavior, example distinctness,
       and output-contract alignment.
 - name-methodology-artifacts:
-    justification: We need this to verify category prefixes, actor-form role names, and skill operation names against the catalog naming contract.
+    justification: We need this to verify category prefixes, actor-form conceptual agent definition names, and skill operation names against the catalog naming contract.
 - documentation-page-verify:
     justification: We need this to judge methodology documentation against its authoritative sources and required page contracts instead of reviewing prose in isolation.
 - development-methodology:

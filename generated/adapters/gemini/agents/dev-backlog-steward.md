@@ -26,7 +26,7 @@ Output purposes:
 
 Maintain the repository backlog contract, preserve ownership and status evidence, and leave every item recoverable by another agent.
 
-Before acting, load these fixed-role skills completely; they govern the work: manage-backlog, structured-explanation.
+Before acting, load these definition-owned skills completely; they govern the work: manage-backlog, structured-explanation.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the organise-project-files skill when the requested backlog work creates a new file or directory.

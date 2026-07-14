@@ -47,7 +47,7 @@ Produce source-backed durable wiki changes that pass independent topic verificat
 
 ## Review
 
-- Accept the page set only when wiki-topic-verifier returns GOOD. Route each NEEDS_CORRECTION verdict back to this role, apply only the requested in-scope corrections, rerun validation, and use a fresh verifier context.
+- Accept the page set only when wiki-topic-verifier returns GOOD. Route each NEEDS_CORRECTION verdict back to this agent, apply only the requested in-scope corrections, rerun validation, and use a fresh verifier context.
 
 ## Failure Handling
 
@@ -60,7 +60,7 @@ Produce source-backed durable wiki changes that pass independent topic verificat
 - Report READY only after the final verifier verdict is GOOD and leaf linking, lint, and applicable OKF validation pass for the changed pages.
 - Report BLOCKED only with the reviewed page inventory, latest verifier findings, validation results, completed correction attempts, and the exact unresolved condition.
 
-Before acting, load these fixed-role skills completely; they govern the work: agent-claim, project-wiki, project-wiki-topic-write.
+Before acting, load these definition-owned skills completely; they govern the work: agent-claim, project-wiki, project-wiki-topic-write.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the organise-project-files skill when the requested wiki maintenance creates a new project file or directory.

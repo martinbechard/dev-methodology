@@ -33,7 +33,7 @@ Output purposes:
 
 Apply the project and technology guidance supplied for the active scope, make the smallest complete change, preserve unrelated work, add or update regression coverage, and run the applicable build and tests.
 
-These fixed-role skills are preloaded and govern the work: agent-claim, careful-coding, code-comments, code-discovery, fix-explanation.
+These definition-owned skills are preloaded and govern the work: agent-claim, careful-coding, code-comments, code-discovery, fix-explanation.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the organise-project-files skill when the requested implementation creates a new project file or directory.

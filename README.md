@@ -15,7 +15,7 @@ This repository distributes portable Agent Skills for software project documenta
 
 Use the repository skill sources and generated adapters as the operating surface. Working on this bundle does not require copying its skills or agents into user-home runtime folders.
 
-Project agent and skill setup starts with one PROJECT.yaml at the project root as the reviewable configuration artifact. The create-project-configuration skill records every role, skillset, folder route, and root or nested AGENTS.md placement in that one project-wide configuration. Claude Code projects also receive a thin CLAUDE.md beside each applicable AGENTS.md so Claude imports the same project guidance without duplicating it.
+Project agent and skill setup starts with one PROJECT.yaml at the project root as the reviewable configuration artifact. The create-project-configuration skill records every selected conceptual agent definition, skillset, folder route, and root or nested AGENTS.md placement in that one project-wide configuration. Claude Code projects also receive a thin CLAUDE.md beside each applicable AGENTS.md so Claude imports the same project guidance without duplicating it.
 
 The core methodology keeps one shared wiki-compatible page contract and six document shapes. Each document shape has a focused creation skill, a reusable template asset, and an artifact review skill:
 
@@ -36,11 +36,11 @@ The shared page contract starts every durable page with Current Understanding, A
 - skills/development-methodology/assets/templates contains the reusable TODO-driven template assets.
 - Keep Codex openai.yaml metadata beside each source SKILL.md when a skill needs Codex app metadata, invocation policy, or tool dependencies.
 - scripts/install-skills.py installs the bundled skills through adapter profiles for generic Agent Skills, Codex, Gemini CLI, Claude Code, and JetBrains Junie CLI.
-- agents/role-schema.yaml defines the customer-independent role schema.
+- agents/role-schema.yaml defines the customer-independent conceptual agent definition schema.
 - agents/model-profiles.yaml defines semantic simple, default, advanced, and advanced-long model profiles without provider identifiers.
 - adapters/[runtime]/model-profiles.yaml maps semantic profiles to concrete models, reasoning effort, and context settings for each harness.
-- agents/roles contains source role files grouped by Dev Activities, Wiki Activities, Project Setup, and Methodology Maintenance.
-- generated/adapters contains ready-to-copy native agent definitions and agent-generation-manifest.json. Codex, Claude Code, Gemini CLI, and Junie CLI definitions are generated from the same source roles.
+- agents/roles contains conceptual agent definition sources grouped by Dev Activities, Wiki Activities, Project Setup, and Methodology Maintenance.
+- generated/adapters contains ready-to-copy native agent definitions and agent-generation-manifest.json. Codex, Claude Code, Gemini CLI, and Junie CLI definitions are generated from the same conceptual sources.
 - design/generated/technology-skill-detection-registry.js exposes the same detection registry for documentation and the future interactive agent-skill explorer.
 - scripts/openai_metadata.py refreshes derived Codex interface fields from SKILL.md while preserving hand-authored policy and dependencies.
 - scripts contains regression tests for installer behavior and bundle content.
@@ -54,11 +54,11 @@ Reusable templates live inside the development-methodology skill assets so there
 python3 scripts/build-skill-docs.py
 ```
 
-The script reads each bundled SKILL.md file, adjacent Codex openai.yaml metadata, the ordered design/skill-categories.yaml catalog, agents/role-schema.yaml, agents/model-profiles.yaml, adapter model mappings, and source role files. It writes design/generated/skill-definitions.js, design/generated/role-definitions.js, native definitions under generated/adapters, and agent-generation-manifest.json. The [Generic Agent Definitions Source page](design/generic-agent-definitions-source.html) owns portable skill sources, logical agent properties, native packaging, and adapter mappings. The [Agentic Configuration page](design/agentic-configuration.html) explains how the resulting runtime files provide relevant context while an agentic coding tool generates code.
+The script reads each bundled SKILL.md file, adjacent Codex openai.yaml metadata, the ordered design/skill-categories.yaml catalog, agents/role-schema.yaml, agents/model-profiles.yaml, adapter model mappings, and conceptual agent definition sources. It writes design/generated/skill-definitions.js, design/generated/role-definitions.js, native definitions under generated/adapters, and agent-generation-manifest.json. The [Generic Agent Definitions Source page](design/generic-agent-definitions-source.html) owns portable skill sources, conceptual agent definition properties, native packaging, and adapter mappings. The [Agentic Configuration page](design/agentic-configuration.html) explains how the resulting runtime files provide relevant context while an agentic coding tool generates code.
 
-The generation manifest is the deterministic build inventory: it records each source role, every generated Codex, Claude Code, Gemini CLI, and Junie CLI path, expected digest, and aggregate counts without timestamps.
+The generation manifest is the deterministic build inventory: it records each conceptual agent definition source, every generated Codex, Claude Code, Gemini CLI, and Junie CLI path, expected digest, and aggregate counts without timestamps.
 
-Build the portable technology detection registry and installed detector mirror before generating role and documentation views:
+Build the portable technology detection registry and installed detector mirror before generating conceptual agent definition and documentation views:
 
 ```bash
 python3 scripts/build-technology-detection.py
@@ -66,7 +66,7 @@ python3 scripts/build-technology-detection.py
 
 The detection build validates the specialized metadata and refreshes the portable registry plus installed detector mirror. The [specialization strategy](design/agent-skill-specialization-strategy.html) owns detector inputs, activation semantics, proof boundaries, and setup-time selection.
 
-The generated [interactive agent and skill hierarchy](design/agent-role-skill-map.html#hierarchy-title) is published with the role catalog, which owns its interaction instructions and scope. Regenerate the SVG with:
+The generated [interactive agent and skill hierarchy](design/agent-role-skill-map.html#hierarchy-title) is published with the conceptual agent definition catalog, which owns its interaction instructions and scope. Regenerate the SVG with:
 
 ```bash
 python3 scripts/build-agent-skill-hierarchy.py
@@ -78,11 +78,11 @@ The generated [agent, skill, technology, and test coverage checklist](design/age
 python3 scripts/build-support-checklist.py
 ```
 
-Role cards, the skill catalog, and the agent-and-skill diagram are generated from role and skill source data rather than maintained independently in HTML. Role examples show a scenario purpose, invocation, and plausible response. Each skill entry in role YAML nests a justification that explains why the role needs the skill, each output contract entry nests a purpose that explains why the output exists, and agentDependencies names any fixed direct agent-to-agent use shown by the diagram. The generated role modal displays the skill and output explanations with the enlarged pills, and native adapters render them as comments. The generator rejects roles that reference missing skill IDs or agent dependencies.
+Conceptual agent definition cards, the skill catalog, and the agent-and-skill diagram are generated from conceptual definition and skill source data rather than maintained independently in HTML. Agent examples show a scenario purpose, invocation, and plausible response. Each skill entry in a conceptual definition YAML source nests a justification that explains why the agent needs the skill, each output contract entry nests a purpose that explains why the output exists, and agentDependencies names any fixed direct agent-to-agent use shown by the diagram. The generated definition modal displays the skill and output explanations with the enlarged pills, and native adapters render them as comments. The generator rejects conceptual definitions that reference missing skill IDs or agent dependencies.
 
-Within the linked HTML design set, the documentation index assigns one owner to each substantive topic. Sibling HTML pages use navigation summaries and links instead of maintaining parallel explanations. The generated diagram and generated cards are the intentional duplicate views of role-to-skill relationships. The diagram can also reveal agent-to-agent dependencies without treating dynamic task-time routing as a fixed dependency.
+Within the linked HTML design set, the documentation index assigns one owner to each substantive topic. Sibling HTML pages use navigation summaries and links instead of maintaining parallel explanations. The generated diagram and generated cards are the intentional duplicate views of conceptual-definition-to-skill relationships. The diagram can also reveal agent-to-agent dependencies without treating dynamic task-time routing as a fixed dependency.
 
-Use maintain-methodology-documentation when changing skills, roles, categories, adapters, or design pages. That skill owns source updates, regeneration, stale-output checks, validation, and diff review. Skill authoring and review share skill-authoring, while role creation and review share agent-role-authoring so instruction structure, authority, state transitions, examples, agent dependencies, and outputs are defined once.
+Use maintain-methodology-documentation when changing skills, conceptual agent definitions, categories, adapters, or design pages. That skill owns source updates, regeneration, stale-output checks, validation, and diff review. Skill authoring and review share skill-authoring, while conceptual agent definition creation and review share agent-role-authoring so instruction structure, authority, state transitions, examples, agent dependencies, and outputs are defined once.
 
 Each skill frontmatter metadata block names its category id. The category file owns category order and display labels.
 
@@ -183,7 +183,7 @@ python3 scripts/install-skills.py \
   --remove-owned
 ```
 
-Before renaming or deleting a source skill, sweep this repository for the old skill id. Update or remove references in skill files, companion-skill lists, Codex metadata, role definitions, dispatch profiles, aggregate workflow examples, design documents, README content, scripts, and tests before regenerating the derived outputs.
+Before renaming or deleting a source skill, sweep this repository for the old skill id. Update or remove references in skill files, companion-skill lists, Codex metadata, conceptual agent definitions, dispatch profiles, aggregate workflow examples, design documents, README content, scripts, and tests before regenerating the derived outputs.
 
 After changing skill names or descriptions, run the metadata sync before validation:
 
@@ -193,15 +193,15 @@ python3 scripts/openai_metadata.py skills
 
 ## Customer Deployment And Customization
 
-Customer maintainers may edit an installed skill or agent definition directly. Keep the original skill and agent names stable so role skillsets, companion-skill references, and project guidance continue to resolve. Optional provenance should remain minimal: record the original name and whether the installed definition replaces the generic one.
+Customer maintainers may edit an installed skill or native agent definition directly. Keep the original skill and agent names stable so definition-owned skillsets, companion-skill references, and project guidance continue to resolve. Optional provenance should remain minimal: record the original name and whether the installed definition replaces the generic one.
 
 For a requested customized-copy update, use an agent-assisted three-way discrepancy analysis between the old generic definition, the installed customer definition, and the new generic definition. The user decides which differences to keep, merge, replace, or remove.
 
 After that analysis and explicit user approval, --replace-customized may be combined with --replace to apply the approved replacement.
 
-## Role Activity Boundaries
+## Agent Responsibility Boundaries
 
-Wiki work remains separate from general documentation, coding, review, backlog, and project setup. The generated [agent and skill definitions](design/agent-role-skill-map.html) page owns current agent and skill definitions, including responsibilities, assigned skills, output contracts, examples, model profiles, repository mutation policies, and agent-skill relationships. The [operating model](design/agentic-development-operating-model.html) owns project classification and guidance precedence. The [orchestrated development lifecycle](design/orchestrated-development-lifecycle.html) owns the bootstrap, execution, review, verification, integration, claim-release, and execution-evidence sequence.
+Wiki work remains separate from general documentation, coding, review, backlog, and project setup. The generated [agent and skill definitions](design/agent-role-skill-map.html) page owns catalog views of current conceptual agent definitions and skill definitions, including responsibilities, assigned skills, output contracts, examples, model profiles, repository mutation policies, and agent-skill relationships. The [operating model](design/agentic-development-operating-model.html) owns project classification and guidance precedence. The [orchestrated development lifecycle](design/orchestrated-development-lifecycle.html) owns the bootstrap, execution, review, verification, integration, claim-release, and execution-evidence sequence.
 
 ## Bundled Skill Inventory
 

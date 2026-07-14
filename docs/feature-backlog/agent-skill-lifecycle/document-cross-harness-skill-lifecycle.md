@@ -10,13 +10,13 @@ Create one authoritative explanation of skill discovery, availability, preloadin
 
 ## Context
 
-The repository currently spreads skill semantics across README.md, agent-definition runtime documentation, specialization strategy pages, role maps, generated definitions, and evaluation documentation. Several earlier explanations conflated Claude preloading, Codex availability filtering, dynamic discovery, and actual skill activation.
+The repository currently spreads skill semantics across README.md, agent-definition runtime documentation, specialization strategy pages, conceptual agent definition maps, generated definitions, and evaluation documentation. Several earlier explanations conflated Claude preloading, Codex availability filtering, dynamic discovery, and actual skill activation.
 
 See the series [index](index.md).
 
 ## Requirements
 
-- Define fixed-role generic skills, detected-folder specialized skills, optional tool skills, and unsupported technology fallback.
+- Define generic definition-owned skills, detected-folder specialized skills, optional tool skills, and unsupported technology fallback.
 - Explain Claude skills properties as full-content preloading.
 - Explain Claude dynamic invocation through the Skill tool and the effect of restrictive tools allowlists.
 - Explain Codex catalog discovery and developer-instruction-driven loading.
@@ -35,7 +35,7 @@ See the series [index](index.md).
 - Tool allowlist risks are explicit.
 - The documented detector workflow matches generated project guidance.
 - Codex claims distinguish schema support from behavior proven by the installed CLI suite.
-- Claude claims distinguish preloaded fixed skills from dynamic folder skills.
+- Claude claims distinguish preloaded definition-owned skills from dynamic folder skills.
 - No design page describes normal agents as rerunning technology detection.
 - Documentation freshness and repository content tests cover the core distinctions.
 

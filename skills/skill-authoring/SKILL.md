@@ -20,7 +20,7 @@ Keep each skill focused on task-specific knowledge that the agent runtime does n
 ## Authoring Workflow
 
 1. Define the concrete task, trigger conditions, required inputs, outputs, and success evidence.
-2. Separate task-specific expertise from harness behavior, project instructions, role behavior, and general model knowledge.
+2. Separate task-specific expertise from harness behavior, project instructions, conceptual agent definition behavior, and general model knowledge.
 3. Remove setup steps that repeat automatically supplied context, permissions, tool descriptions, or runtime routing.
 4. Keep the main workflow concise and move optional detail into directly referenced resources only when progressive disclosure reduces routine context.
 5. Name every explicit dependency that the agent must load or execute because the harness does not provide it automatically.
@@ -32,7 +32,7 @@ Keep each skill focused on task-specific knowledge that the agent runtime does n
 Flag a skill when it:
 
 - Directs an ordinary agent to rediscover or reread harness-loaded instruction files.
-- Duplicates project policy, role behavior, tool instructions, or another skill instead of referencing the owning contract.
+- Duplicates project policy, conceptual agent definition behavior, tool instructions, or another skill instead of referencing the owning contract.
 - Uses a blanket repository or instruction scan where task-specific evidence would suffice.
 - Omits an explicit dependency that is not supplied automatically.
 - Claims an instruction-file exception without actually creating, updating, validating, rendering, reviewing, or investigating that artifact.

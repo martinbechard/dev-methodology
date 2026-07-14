@@ -1,18 +1,18 @@
 name: project-configurator
 filename: project-configurator
 repositoryMutation: required
-description: Creates or updates the single project-root PROJECT.yaml and validates roles,
+description: Creates or updates the single project-root PROJECT.yaml and validates conceptual agent definitions,
   skillsets, folder routing, nested AGENTS.md guidance, and Claude bridges.
 instructions: Inspect the target project, select representative folder scopes, run
   setup-time technology detection, create the reviewable project configuration with source evidence,
   generate deterministic root and nested AGENTS.md loading guidance, and validate
-  every referenced role and skill. Verify that selected roles and agent-claim
-  are available to the target runtime and that each role's repositoryMutation declaration
+  every referenced conceptual agent definition and skill. Verify that selected definitions and agent-claim
+  are available to the target runtime and that each definition's repositoryMutation declaration
   agrees with its claim skillset. Do not copy generic claim procedure text into PROJECT.yaml
   or AGENTS.md; record only source-backed project-specific coordination overrides.
 modelProfile: default
 examples:
-- purpose: Establish evidence-backed role and technology routing for a mixed repository
+- purpose: Establish evidence-backed agent and technology routing for a mixed repository
     whose application, service, and infrastructure folders need distinct agent guidance.
   runtimeInvocations:
     codex: "$project-configurator Inspect this repository, create PROJECT.yaml,
@@ -22,52 +22,52 @@ examples:
       PROJECT.yaml, and generate root and nested agent guidance for its application,
       service, and infrastructure scopes."
   plausibleResponse: Inspected representative folder scopes, recorded the technology-detection
-    evidence and applicable role skillsets in PROJECT.yaml, and identified
+    evidence and applicable definition-owned skillsets in PROJECT.yaml, and identified
     separate nested AGENTS.md files for the service and infrastructure boundaries. Generated
     deterministic AGENTS.md guidance and matching CLAUDE.md bridges, then validated
-    every referenced role, skill, and path and reported the completed checks.
+    every referenced conceptual agent definition, skill, and path and reported the completed checks.
 - purpose: Reconcile an existing project configuration after project boundaries change so stale
     skillsets and routing do not remain in operational guidance.
   runtimeInvocations:
     codex: "$project-configurator Update the existing project configuration after the background
-      worker moved into its own package, and verify all role, skill, nested-guidance, and
+      worker moved into its own package, and verify all conceptual agent definition, skill, nested-guidance, and
       runtime-routing references."
     claude-code: "@agent-project-configurator Update the existing project configuration after
-      the background worker moved into its own package, and verify all role, skill,
+      the background worker moved into its own package, and verify all conceptual agent definition, skill,
       nested-guidance, and runtime-routing references."
   plausibleResponse: Re-inspected the affected scopes, reran setup-time detection for
     the worker package, and replaced the stale folder skillset with a source-backed nested
     AGENTS.md recommendation in PROJECT.yaml. Updated the applicable AGENTS.md guidance,
     and its CLAUDE.md bridge without changing product source, then reported resolved
-    role and skill references, explicit no-variant results, and validation evidence.
+    conceptual agent definition and skill references, explicit no-variant results, and validation evidence.
 skills:
 - agent-claim:
-    justification: We need this before configuration mutation so PROJECT.yaml and generated agent guidance are written in an owned worktree and committed before release.
+    justification: We need this before configuration mutation so PROJECT.yaml and generated project guidance are written in an owned worktree and committed before release.
 - organise-project-files:
     justification: We need this to validate the location of new root and nested planning or routing files against the target project's live folder boundaries.
     condition: when the requested configuration creates a new project file or directory whose path is not fixed by the configuration contract.
 - detect-technology-skills:
     justification: We need this to base each folder's technology skillset on repository evidence and to expose missing requirements, conflicts, or explicit no-variant results.
 - create-project-configuration:
-    justification: We need this to produce the reviewable PROJECT.yaml that governs project roles, skillsets, and folder routing.
+    justification: We need this to produce the reviewable PROJECT.yaml that governs project conceptual agent definitions, skillsets, and folder routing.
 - development-methodology:
-    justification: We need this to select methodology roles and artifact routes that fit the target project's actual work and documentation needs.
+    justification: We need this to select methodology conceptual agent definitions and artifact routes that fit the target project's actual work and documentation needs.
 - documentation-bootstrap:
     justification: We need this when the target lacks the documentation and routing structure required for agents to load and follow the configuration consistently.
     condition: when the target lacks the documentation and routing structure needed
       for agents to load and follow the configuration consistently
 - documentation-page-verify:
-    justification: We need this to confirm that generated guidance and every referenced role or skill remain grounded in project evidence and bundle contracts.
+    justification: We need this to confirm that generated guidance and every referenced conceptual agent definition or skill remain grounded in project evidence and bundle contracts.
 outputContract:
 - PROJECT.yaml:
-    purpose: Gives reviewers and generators one inspectable source of truth for the project's agent roles, skillsets, and routing decisions.
+    purpose: Gives reviewers and generators one inspectable source of truth for the project's conceptual agent definitions, skillsets, and routing decisions.
 - technology detection skillsets:
     purpose: Records the evidence-backed technology skills, missing requirements, conflicts, and no-variant outcomes that folder guidance must preserve.
 - nested AGENTS.md recommendations:
     purpose: Identifies where folder-specific agent guidance is necessary so distinct technical or organizational boundaries are not flattened into the root configuration.
 - runtime capability validation:
-    purpose: Confirms that selected roles declare repository mutation behavior consistently and that the target runtime can load their required claim capability without copied project instructions.
+    purpose: Confirms that selected conceptual agent definitions declare repository mutation behavior consistently and that the target runtime can load their required claim capability without copied project instructions.
 - AGENTS.md and CLAUDE.md routing:
     purpose: Connects the validated configuration to the operational files that supported runtimes actually load while working in each scope.
 - validation evidence:
-    purpose: Gives reviewers confidence that roles, skills, paths, and generated guidance were checked against both project evidence and bundle requirements.
+    purpose: Gives reviewers confidence that conceptual agent definitions, skills, paths, and generated guidance were checked against both project evidence and bundle requirements.

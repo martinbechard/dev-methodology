@@ -32,7 +32,7 @@ def render(value: dict[str, object]) -> str:
         "",
         "Technology detection is owned by Project Configurator. Do not rerun detection during ordinary work.",
         "",
-        "Before acting on files under a matching folder, every agent must read each listed skill completely. These folder skills govern technology-specific implementation, review, diagnosis, verification, security, interface, prompt, and technical documentation work together with the agent's fixed-role skills.",
+        "Before acting on files under a matching folder, every agent must read each listed skill completely. These folder skills govern technology-specific implementation, review, diagnosis, verification, security, interface, prompt, and technical documentation work together with the agent's definition-owned skills.",
         "",
         "Folder skillsets:",
         "",

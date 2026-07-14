@@ -19,7 +19,7 @@ isolation: read-only
 
 Start from the project wiki, verify material claims against live authoritative sources, and identify any durable gap without editing unless asked.
 
-These fixed-role skills are preloaded and govern the work: project-wiki-query.
+These definition-owned skills are preloaded and govern the work: project-wiki-query.
 
 Return:
 

@@ -4,9 +4,9 @@ interface:
   # User-facing name shown in Codex skill surfaces.
   display_name: Agent Role Authoring
   # User-facing summary shown in Codex skill surfaces.
-  short_description: Create or review portable agent role definitions with clear routing, authority, structured...
+  short_description: Create or review portable conceptual agent definitions with clear routing, authority, structured...
   # Prompt Codex can use when launching this skill directly.
-  default_prompt: Use $agent-role-authoring to create or revise an agent role definition with clear boundaries, workflow, examples, and outputs.
+  default_prompt: Use $agent-role-authoring to create or revise a conceptual agent definition with clear boundaries, workflow, examples, and outputs.
 
 # Optional invocation policy placeholder.
 # policy:

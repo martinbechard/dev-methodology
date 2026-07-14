@@ -35,10 +35,10 @@ When docs/project-taxonomy.md is absent and project guidance names no alternativ
 8. If no category fits, update the project taxonomy before creating the file when project guidance permits autonomous taxonomy maintenance. If taxonomy changes require approval, return the proposed category and placement as a blocker instead of bypassing the taxonomy.
 9. Audit the final choice against ownership, lifecycle, naming, source-versus-generated boundaries, and the nearest project guidance.
 
-## Role Coordination
+## Agent Coordination
 
 - When acting as Project Organiser, perform the classification directly and return the placement decision without creating the target file.
-- When another role can delegate to Project Organiser, provide the proposed content or purpose and use its approved path before writing.
+- When another agent can delegate to Project Organiser, provide the proposed content or purpose and use its approved path before writing.
 - When delegation is unavailable, apply this skill directly, then continue the larger task at the approved path.
 - When the destination is already bound by explicit project guidance or a deterministic generator, confirm that binding and continue without a redundant placement consultation.
 

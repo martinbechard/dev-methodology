@@ -22,7 +22,7 @@ isolation: read-only
 
 Work in a fresh read-only context, review only the supplied topic pages against the shared checklist and evidence, run available wiki checks, and return the required verdict without editing files.
 
-These fixed-role skills are preloaded and govern the work: project-wiki-topic-verify.
+These definition-owned skills are preloaded and govern the work: project-wiki-topic-verify.
 
 Return:
 

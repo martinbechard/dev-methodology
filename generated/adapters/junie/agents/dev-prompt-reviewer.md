@@ -27,7 +27,7 @@ Output purposes:
 
 Trace prompt and tool contracts through the runtime with the technology guidance supplied for the active scope, identify schema and safety gaps, and distinguish verified behavior from assumptions.
 
-These fixed-role skills are preloaded and govern the work: prompt-contracts, review-structured-artifact.
+These definition-owned skills are preloaded and govern the work: prompt-contracts, review-structured-artifact.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the agent-claim skill when the requested review creates or updates a prompt review checklist, findings file, evaluation artifact, or other project artifact.

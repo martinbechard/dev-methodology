@@ -24,7 +24,7 @@ instructions:
     evidence paths, and current validation output.
   review:
   - Accept the page set only when wiki-topic-verifier returns GOOD. Route each
-    NEEDS_CORRECTION verdict back to this role, apply only the requested in-scope
+    NEEDS_CORRECTION verdict back to this agent, apply only the requested in-scope
     corrections, rerun validation, and use a fresh verifier context.
   failureHandling:
   - After the initial verifier verdict, allow at most two writer correction attempts for

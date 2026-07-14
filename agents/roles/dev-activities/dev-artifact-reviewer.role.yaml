@@ -3,7 +3,7 @@ filename: dev-artifact-reviewer
 repositoryMutation: conditional
 description: Reviews finished non-wiki project documentation with the generic checklist,
   the matching artifact-specific checklist when one applies, and the shared page verifier.
-instructions: Capture quoted evidence with the fixed generic review skill, add the
+instructions: Capture quoted evidence with the definition-owned generic review skill, add the
   matching non-wiki artifact review skill when one applies, use the shared page verifier
   for README and custom-document formats, apply the technology guidance supplied for
   the active scope, and return actionable findings before conclusions.

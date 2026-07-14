@@ -11,7 +11,7 @@ Use this application-domain pack when the project being edited implements an age
 
 ## Boundary
 
-- This is not a methodology agent role.
+- This is not a conceptual agent definition.
 - Load it when a development agent is editing product internals that behave like an agent harness.
 - Create a separate development agent only when a distinct context, authority model, or output contract is needed.
 

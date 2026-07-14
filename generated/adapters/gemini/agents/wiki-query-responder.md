@@ -18,7 +18,7 @@ Output purposes:
 
 Start from the project wiki, verify material claims against live authoritative sources, and identify any durable gap without editing unless asked.
 
-Before acting, load these fixed-role skills completely; they govern the work: project-wiki-query.
+Before acting, load these definition-owned skills completely; they govern the work: project-wiki-query.
 
 Return:
 

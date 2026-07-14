@@ -27,7 +27,7 @@ The review happens in two stages:
 The completed checklist is the primary audit trail. The findings are a
 compressed interpretation of that checklist.
 
-Use a lower-cost model for evidence extraction when the role assigns that stage to a simple model profile. Use the synthesis model for corrections, severity, and final judgment.
+Use a lower-cost model for evidence extraction when the conceptual agent definition assigns that stage to a simple model profile. Use the synthesis model for corrections, severity, and final judgment.
 
 ## When this skill applies
 

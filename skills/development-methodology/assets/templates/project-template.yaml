@@ -4,7 +4,7 @@ schema_version: 1
 current_understanding:
   summary: "TODO: Summarize the project purpose, current development stage, and why explicit agent and skill setup is needed."
   development_stage: "TODO: Name the current project stage or say Not yet identified."
-  setup_need: "TODO: Explain why this project needs explicit role and skill setup."
+  setup_need: "TODO: Explain why this project needs explicit conceptual agent definition and skill setup."
 
 authoritative_sources:
   readme_files:
@@ -58,7 +58,7 @@ root_agents_reference:
 technology_skill_detection:
   owner: "Project Agent Setup."
   registry: "Installed detect-technology-skills registry."
-  selection_policy: "Setup-agent-selected folder scopes and deterministic repository evidence. Agent role, prompt wording, read confirmation, and optional local commands are not detector inputs."
+  selection_policy: "Setup-agent-selected folder scopes and deterministic repository evidence. The selected conceptual agent definition, prompt wording, read confirmation, and optional local commands are not detector inputs."
   required_load_failure: "BLOCKED"
   missing_variant_policy: "Record an explicit no-variant skillset."
   runtime_policy: "The harness supplies ordinary agents with the technology skills routed for the active folder; ordinary agents do not rerun detection."
@@ -73,14 +73,14 @@ claude_bridge_files:
   rule: "Keep each CLAUDE.md thin and import the colocated AGENTS.md without duplicating project guidance."
 
 role_agent_set:
-  - role: "TODO: Role name."
-    purpose: "TODO: Explain why this role is needed."
+  - role: "TODO: Conceptual agent definition name."
+    purpose: "TODO: Explain why this conceptual agent definition is needed."
     owns:
-      - "TODO: Work this role owns."
+      - "TODO: Work this agent owns."
     hands_off:
-      - "TODO: Work this role must hand off."
+      - "TODO: Work this agent must hand off."
     skills:
-      - "TODO: Skill normally loaded by this role."
+      - "TODO: Definition-owned skill normally loaded by this agent."
     completion_checks:
       - "TODO: Command, review, or evidence required before completion."
 
@@ -103,7 +103,7 @@ technology_skill_loadouts:
 folder_routing:
   - pattern: "TODO: Folder or path pattern."
     tier_or_workflow: "TODO: Tier or workflow name."
-    primary_role: "TODO: Role agent name."
+    primary_role: "TODO: Conceptual agent definition name."
     required_skills:
       - "TODO: Skill id."
     source_evidence:
@@ -124,7 +124,7 @@ documentation_and_file_contracts:
   - path: AGENTS.md
     purpose: "Operational routing artifact supplied by the harness."
   - path: PROJECT.yaml
-    purpose: "Single project-wide setup and validation artifact for role agents, skillsets, folder routing, nested AGENTS.md placement, and evidence."
+    purpose: "Single project-wide setup and validation artifact for conceptual agent definitions, skillsets, folder routing, nested AGENTS.md placement, and evidence."
   - path: "TODO: CLAUDE.md or Not applicable."
     purpose: "Thin Claude Code bridge that imports the colocated AGENTS.md without duplicating guidance."
   - path: "TODO: README.md, design document, docs/wiki page, procedure, backlog file, test plan, generated artifact, or Not yet identified."
@@ -161,8 +161,8 @@ proprietary_validation_notes:
     - "TODO: Keep project-specific validation observations here when PROJECT.yaml lives inside a private project repository."
 
 open_questions:
-  - question: "TODO: Unknown that affects routing, role boundaries, privacy handling, or verification."
-    owner: "TODO: Person, role, or Not yet identified."
+  - question: "TODO: Unknown that affects routing, agent boundaries, privacy handling, or verification."
+    owner: "TODO: Person, agent, or Not yet identified."
     impact: "TODO: Explain what cannot be finalized until this is answered."
 
 maintenance_notes:

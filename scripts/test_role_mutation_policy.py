@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Verifies role mutation policy and keeps generic claim procedure out of project configuration.
+# Summary: Verifies conceptual agent definition mutation policy and keeps generic claim procedure out of project configuration.
 
 from __future__ import annotations
 
@@ -22,7 +22,7 @@ PROJECT_CONFIGURATION_SKILL = ROOT / "skills" / "create-project-configuration" /
 
 
 def _load_build_skill_docs():
-    """Load the documentation generator so tests exercise its role validation."""
+    """Load the documentation generator so tests exercise conceptual definition validation."""
     specification = importlib.util.spec_from_file_location("build_skill_docs_mutation_policy", BUILD_SCRIPT)
     if specification is None or specification.loader is None:
         raise RuntimeError(f"Unable to load {BUILD_SCRIPT}")
@@ -33,10 +33,10 @@ def _load_build_skill_docs():
 
 
 class RoleMutationPolicyTests(unittest.TestCase):
-    """Protect the role-owned repository mutation contract and project-file boundary."""
+    """Protect the conceptual definition mutation contract and project-file boundary."""
 
     def test_every_role_declares_consistent_repository_mutation_policy(self) -> None:
-        """Require fixed, conditional, or absent claim loading according to each role declaration."""
+        """Require definition-owned, conditional, or absent claim loading for each definition."""
         build_skill_docs = _load_build_skill_docs()
         skill_payload = build_skill_docs.build_payload()
         roles = build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
@@ -61,7 +61,7 @@ class RoleMutationPolicyTests(unittest.TestCase):
                     self.assertFalse(conditional_claim)
 
     def test_evidence_writing_reviewers_claim_conditionally(self) -> None:
-        """Ensure reviewer roles acquire ownership only when their evidence becomes a repository artifact."""
+        """Ensure reviewer agents acquire ownership only when their evidence becomes a repository artifact."""
         build_skill_docs = _load_build_skill_docs()
         skill_payload = build_skill_docs.build_payload()
         roles = {
@@ -99,18 +99,18 @@ class RoleMutationPolicyTests(unittest.TestCase):
         self.assertNotIn("agent-claim", roles["wiki-topic-verifier"].skills)
 
     def test_project_configuration_omits_generic_claim_procedure(self) -> None:
-        """Keep universal claim policy in shared roles and skills rather than copied project artifacts."""
+        """Keep universal claim policy in shared conceptual definitions and skills rather than copied project artifacts."""
         template_text = PROJECT_TEMPLATE.read_text(encoding="utf-8")
         skill_text = PROJECT_CONFIGURATION_SKILL.read_text(encoding="utf-8")
 
         self.assertNotIn("agent_coordination:", template_text)
         self.assertNotIn("claim_skill:", template_text)
         self.assertNotIn("dirty_unclaimed_policy:", template_text)
-        self.assertIn("Generic repository-mutation behavior belongs to role definitions", skill_text)
+        self.assertIn("Generic repository-mutation behavior belongs to conceptual agent definitions", skill_text)
         self.assertIn("Do not reproduce that procedure in PROJECT.yaml or AGENTS.md", skill_text)
 
     def test_role_schema_requires_repository_mutation(self) -> None:
-        """Expose repository mutation as a required role capability declaration."""
+        """Expose repository mutation as a required conceptual definition capability declaration."""
         schema = yaml.safe_load(ROLE_SCHEMA.read_text(encoding="utf-8"))
 
         self.assertEqual(4, schema["version"])
@@ -118,7 +118,7 @@ class RoleMutationPolicyTests(unittest.TestCase):
         self.assertEqual("mutation-policy", schema["properties"]["repositoryMutation"])
 
     def test_generator_rejects_claim_policy_mismatch(self) -> None:
-        """Fail generation when a role declaration contradicts its agent-claim skillset."""
+        """Fail generation when a conceptual definition contradicts its agent-claim skillset."""
         build_skill_docs = _load_build_skill_docs()
         required, allowed, groups = build_skill_docs.load_role_schema()
         skill_names = set(build_skill_docs.build_payload()["skills"])
@@ -131,7 +131,10 @@ class RoleMutationPolicyTests(unittest.TestCase):
             target = Path(directory) / "dev-activities" / "dev-coder.role.yaml"
             target.parent.mkdir()
             target.write_text(yaml.safe_dump(role, sort_keys=False), encoding="utf-8")
-            with self.assertRaisesRegex(ValueError, "Read-only role must not load agent-claim"):
+            with self.assertRaisesRegex(
+                ValueError,
+                "Read-only conceptual agent definition must not load agent-claim",
+            ):
                 build_skill_docs.load_role_definition(
                     target,
                     required,

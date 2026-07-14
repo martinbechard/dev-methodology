@@ -1,6 +1,6 @@
 # Agent, Skill, Technology, And Test Coverage Checklist
 
-This page is generated from the role definitions, bundled skill frontmatter, setup-time technology detection registry, declared evaluation cases, and verified evidence receipts. Regenerate it with scripts/build-support-checklist.py.
+This page is generated from the conceptual agent definitions, bundled skill frontmatter, setup-time technology detection registry, declared evaluation cases, and verified evidence receipts. Regenerate it with scripts/build-support-checklist.py.
 
 ## Status Meaning
 
@@ -13,7 +13,7 @@ This page is generated from the role definitions, bundled skill frontmatter, set
 
 ## Summary
 
-- [x] 26 agents are defined and generate through the supported native role adapters.
+- [x] 26 conceptual agent definitions generate through the supported native agent definition adapters.
 - [x] 77 bundled skills pass catalog and Agent Skill validation.
 - [x] 2 agents and 12 skills are named in current evaluation cases.
 - [ ] 0 agents and 0 skills have independently verified behavior evidence under the current proof contract.
@@ -23,11 +23,11 @@ This page is generated from the role definitions, bundled skill frontmatter, set
 
 | Harness | Structural | Manual run | Verified behavior | Coverage |
 | --- | --- | --- | --- | --- |
-| Generic Agent Skills | [x] | [ ] | [ ] | Installer behavior is unit-tested; no native role format or captured behavior evidence. |
+| Generic Agent Skills | [x] | [ ] | [ ] | Installer behavior is unit-tested; no native agent definition format or captured behavior evidence. |
 | Codex | [x] | [x] | [ ] | Native generation and manual runs exist; current evidence lacks machine-verifiable load and invocation receipts. |
-| Claude Code | [x] | [ ] | [ ] | Skill installation and native role generation are tested; no captured behavior evidence. |
-| Gemini CLI | [x] | [ ] | [ ] | Skill installation and native role generation are tested; no captured behavior evidence. |
-| JetBrains Junie CLI | [x] | [ ] | [ ] | Skill installation and native role generation are tested; no captured behavior evidence. |
+| Claude Code | [x] | [ ] | [ ] | Skill installation and native agent definition generation are tested; no captured behavior evidence. |
+| Gemini CLI | [x] | [ ] | [ ] | Skill installation and native agent definition generation are tested; no captured behavior evidence. |
+| JetBrains Junie CLI | [x] | [ ] | [ ] | Skill installation and native agent definition generation are tested; no captured behavior evidence. |
 
 ## Technology Detection Registry
 
@@ -198,8 +198,8 @@ This page is generated from the role definitions, bundled skill frontmatter, set
 ## Repository Verification Layers
 
 - [x] Agent Skill format validation for every bundled skill.
-- [x] Role schema, skill reference, model profile, and adapter completeness tests.
-- [x] Codex TOML plus Claude Code, Gemini CLI, and Junie CLI Markdown native role generation checks.
+- [x] Conceptual agent definition schema, skill reference, model profile, and adapter completeness tests.
+- [x] Codex TOML plus Claude Code, Gemini CLI, and Junie CLI Markdown native agent definition generation checks.
 - [x] Generic, Codex, Gemini CLI, Claude Code, and Junie CLI installer behavior tests.
 - [x] Generated documentation and agent-skill hierarchy freshness checks.
 - [x] Explicit destination installation is covered for generic skills and all four native agent adapters.

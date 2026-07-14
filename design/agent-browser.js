@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 // AI attribution: Modified with AI assistance.
-// Summary: Enhances generated role cards with definition dialogs and repository-aware editing links.
+// Summary: Enhances generated conceptual agent definition cards with dialogs and repository-aware editing links.
 
 (() => {
   "use strict";
@@ -459,7 +459,7 @@
           <div class="agent-modal__definition">
             <p class="agent-modal__description"></p>
             <section class="agent-modal__section">
-              <h3>How this role works</h3>
+              <h3>Agent behavior</h3>
               <div class="agent-modal__instructions"></div>
             </section>
             <section class="agent-modal__section">
@@ -476,7 +476,7 @@
             </section>
           </div>
           <details class="agent-modal__yaml-details">
-            <summary>View source role YAML</summary>
+            <summary>View conceptual agent definition YAML</summary>
             <pre class="agent-modal__yaml"><code></code></pre>
           </details>
         </div>

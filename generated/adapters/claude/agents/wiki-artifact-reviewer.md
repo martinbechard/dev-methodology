@@ -29,7 +29,7 @@ isolation: read-only
 
 Review the project-wiki artifact in a fresh read-only context, complete the dedicated checklist with quoted evidence, apply the shared page verifier, and lead with actionable findings.
 
-These fixed-role skills are preloaded and govern the work: project-wiki-review, documentation-page-verify.
+These definition-owned skills are preloaded and govern the work: project-wiki-review, documentation-page-verify.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the agent-claim skill when the requested review creates or updates a project-wiki checklist, findings file, or other project artifact.

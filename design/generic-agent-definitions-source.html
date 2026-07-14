@@ -301,15 +301,15 @@
       <h1 id="page-title">Generic Agent Definitions Source</h1>
       <p class="lede">
         Skills and agents have different portability models. A source skill remains the same portable skill package when it is deployed,
-        while a source agent role must be converted into the file format and properties understood by each agent harness.
-        This page explains that difference, the logical role model, native agent packaging, cross-runtime property mappings, and vendor references.
-        The <a href="agent-role-skill-map.html">role map</a> owns generated catalog views, and the
+        while a conceptual agent definition source must be converted into the file format and properties understood by each agent harness.
+        This page explains that difference, the conceptual agent definition model, native agent packaging, cross-runtime property mappings, and vendor references.
+        The <a href="agent-role-skill-map.html">agent definition map</a> owns generated catalog views, and the
         <a href="agent-skill-specialization-strategy.html">specialization strategy</a> owns detection and selection policy.
         The <a href="agentic-configuration.html">Agentic Configuration page</a> explains how the generated files are used at runtime to steer code generation.
         The <a href="../README.md#explicit-target-deployment">README</a> owns deployment commands, destination ownership, updates, and pruning.
       </p>
       <div class="pill-row" aria-label="Document facets">
-        <span class="pill"><span class="dot"></span>Role source</span>
+        <span class="pill"><span class="dot"></span>Conceptual definition source</span>
         <span class="pill"><span class="dot source"></span>Runtime adapters</span>
         <span class="pill"><span class="dot skill"></span>Skill validation</span>
         <span class="pill"><span class="dot risk"></span>Drift control</span>
@@ -318,7 +318,7 @@
 
     <section class="section" aria-labelledby="portability-title">
       <h2 id="portability-title">The Portability Problem</h2>
-      <p class="lede">A repository that supports several agent harnesses must distinguish portable skill packages from harness-specific agent definitions. Treating both as though they had the same source and runtime format creates duplicate agent files, ambiguous ownership, and drift.</p>
+      <p class="lede">A repository that supports several agent harnesses must distinguish portable skill packages from harness-specific native agent definitions. Treating both as though they had the same source and runtime format creates duplicate agent files, ambiguous ownership, and drift.</p>
       <div class="grid">
         <article class="card skill">
           <h3>Skills Have A Portable File Standard</h3>
@@ -331,7 +331,7 @@
         </article>
         <article class="card risk">
           <h3>Agents Do Not Have One Portable Runtime File</h3>
-          <p>Agent harnesses discover different files, use different serialization formats, and expose different property names and capabilities. The same logical agent might otherwise need separate hand-maintained TOML, Markdown, YAML frontmatter, and harness-specific configuration.</p>
+          <p>Agent harnesses discover different files, use different serialization formats, and expose different property names and capabilities. The same conceptual agent definition might otherwise need separate hand-maintained TOML, Markdown, YAML frontmatter, and harness-specific configuration.</p>
           <ul>
             <li>Discovery directories and filename extensions differ by harness.</li>
             <li>Equivalent behavior may be a native property in one harness and instruction text in another.</li>
@@ -342,30 +342,30 @@
     </section>
 
     <section class="section" aria-labelledby="generation-title">
-      <h2 id="generation-title">From Logical Roles To Native Agents</h2>
-      <p class="lede"><code>agents/roles/&lt;role-category&gt;/&lt;role-name&gt;.role.yaml</code> is a logical source definition, not a file that an agent harness loads directly. It describes the agent once with the repository's shared vocabulary. The generator validates that vocabulary, resolves adapter-specific values, and emits one native agent definition per supported harness.</p>
-      <div class="flow" aria-label="Agent role generation flow">
+      <h2 id="generation-title">From Conceptual Agent Definitions To Native Agent Definitions</h2>
+      <p class="lede"><code>agents/roles/&lt;role-category&gt;/&lt;role-name&gt;.role.yaml</code> is a conceptual agent definition source, not a file that an agent harness loads directly. It describes the agent once with the repository's shared vocabulary. The generator validates that vocabulary, resolves adapter-specific values, and emits one native agent definition per supported harness.</p>
+      <div class="flow" aria-label="Conceptual agent definition generation flow">
         <div class="flow-row">
-          <div><span class="name">1. Author The Logical Role</span></div>
-          <p>Define intent with logical properties such as <code>instructions</code>, <code>skills</code>, <code>modelProfile</code>, <code>tools</code>, and <code>outputContract</code>. These properties describe the role without making a harness file authoritative.</p>
+          <div><span class="name">1. Author The Conceptual Agent Definition</span></div>
+          <p>Define intent with conceptual properties such as <code>instructions</code>, <code>skills</code>, <code>modelProfile</code>, <code>tools</code>, and <code>outputContract</code>. These properties describe the agent without making a harness file authoritative.</p>
         </div>
         <div class="flow-row">
           <div><span class="name">2. Validate And Resolve</span></div>
-          <p><code>agents/role-schema.yaml</code> defines the allowed logical properties. Skill IDs resolve against portable skill sources, semantic model profiles resolve through adapter model mappings, and unsupported or defaulted behavior follows the documented adapter rules.</p>
+          <p><code>agents/role-schema.yaml</code> defines the allowed conceptual agent definition properties. Skill IDs resolve against portable skill sources, semantic model profiles resolve through adapter model mappings, and unsupported or defaulted behavior follows the documented adapter rules.</p>
         </div>
         <div class="flow-row">
           <div><span class="name">3. Render Each Harness Format</span></div>
-          <p><code>scripts/build-skill-docs.py</code> converts the logical values into native property names and file structures. For example, logical <code>instructions</code> becomes Codex <code>developer_instructions</code> or the Markdown body of a Claude Code, Gemini CLI, or Junie CLI agent.</p>
+          <p><code>scripts/build-skill-docs.py</code> converts the conceptual values into native property names and file structures. For example, conceptual <code>instructions</code> becomes Codex <code>developer_instructions</code> or the Markdown body of a Claude Code, Gemini CLI, or Junie CLI agent.</p>
         </div>
         <div class="flow-row">
-          <div><span class="name">4. Use Generated Agent Files</span></div>
-          <p>The generated Codex TOML and Claude Code, Gemini CLI, and Junie CLI Markdown files are deployable runtime artifacts. They are regenerated from the role source and must not become independent sources of truth.</p>
+          <div><span class="name">4. Use Generated Native Agent Definition Files</span></div>
+          <p>The generated Codex TOML and Claude Code, Gemini CLI, and Junie CLI Markdown files are deployable runtime artifacts. They are regenerated from the conceptual agent definition source and must not become independent sources of truth.</p>
         </div>
       </div>
       <div class="panel">
         <h3>Property conversion is not just a filename change</h3>
         <ul>
-          <li><span class="name">Rename or relocate:</span> a logical property may become a differently named native property or move into an instruction body.</li>
+          <li><span class="name">Rename or relocate:</span> a conceptual property may become a differently named native property or move into an instruction body.</li>
           <li><span class="name">Resolve:</span> a provider-neutral value such as <code>modelProfile: advanced</code> becomes the concrete model and reasoning settings selected by an adapter.</li>
           <li><span class="name">Expand:</span> skill conditions, output contracts, and rationale can become native fields, generated instructions, or trace comments.</li>
           <li><span class="name">Default or omit:</span> behavior without a native equivalent follows an explicit fallback rule instead of inventing an unsupported harness property.</li>
@@ -387,48 +387,48 @@
               <td>Copied as the same portable skill definition. It is not converted into an agent file.</td>
             </tr>
             <tr>
-              <td><span class="name">Logical role vocabulary</span></td>
+              <td><span class="name">Conceptual agent definition vocabulary</span></td>
               <td><code>agents/role-schema.yaml</code></td>
-              <td>Defines which logical properties a source role may contain. Harnesses do not load this schema.</td>
+              <td>Defines which conceptual properties a conceptual agent definition source may contain. Harnesses do not load this schema.</td>
             </tr>
             <tr>
-              <td><span class="name">Logical agent source</span></td>
+              <td><span class="name">Conceptual agent definition source</span></td>
               <td><code>agents/roles/&lt;role-category&gt;/&lt;role-name&gt;.role.yaml</code></td>
-              <td>Defines one agent role independently of native harness syntax. It is input to generation, not a deployable agent definition.</td>
+              <td>Defines one agent independently of native harness syntax. It is input to generation, not a deployable native agent definition.</td>
             </tr>
             <tr>
               <td><span class="name">Model resolution</span></td>
               <td><code>agents/model-profiles.yaml</code> and <code>adapters/&lt;harness-name&gt;/model-profiles.yaml</code></td>
-              <td>Maps logical capability profiles to the concrete model properties used by each harness.</td>
+              <td>Maps conceptual capability profiles to the concrete model properties used by each harness.</td>
             </tr>
             <tr>
-              <td><span class="name">Native agent outputs</span></td>
+              <td><span class="name">Native agent definition outputs</span></td>
               <td><code>generated/adapters/&lt;harness-name&gt;/agents/&lt;role-name&gt;.&lt;harness-extension&gt;</code></td>
               <td>Contains the harness-specific agent files produced by generation. Current outputs are Codex TOML plus Claude Code, Gemini CLI, and Junie CLI Markdown.</td>
             </tr>
             <tr>
               <td><span class="name">Generation inventory</span></td>
               <td><code>generated/adapters/agent-generation-manifest.json</code></td>
-              <td>Records each logical role source, generated harness file, and expected digest so generated files can be checked for drift.</td>
+              <td>Records each conceptual agent definition source, generated harness file, and expected digest so generated files can be checked for drift.</td>
             </tr>
             <tr>
               <td><span class="name">Generated documentation data</span></td>
               <td><code>design/generated/skill-definitions.js</code> and <code>design/generated/role-definitions.js</code></td>
-              <td>Feeds the <a href="agent-role-skill-map.html">role and skill map</a>. These catalog files describe the sources for documentation; harnesses do not load them.</td>
+              <td>Feeds the <a href="agent-role-skill-map.html">agent definition and skill map</a>. These catalog files describe the sources for documentation; harnesses do not load them.</td>
             </tr>
           </tbody>
         </table>
       </div>
-      <p class="note">The <a href="agent-skill-specialization-strategy.html">specialization strategy</a> owns fixed, request-specific, and setup-time folder selection. This page maps the resulting role fields; it does not redefine selection policy.</p>
+      <p class="note">The <a href="agent-skill-specialization-strategy.html">specialization strategy</a> owns definition-owned, request-specific, and setup-time folder skill selection. This page maps the resulting conceptual agent definition fields; it does not redefine selection policy.</p>
     </section>
     <section class="section" aria-labelledby="information-model-title">
-      <h2 id="information-model-title">Logical Role Properties</h2>
-      <p class="lede">These are source-model properties, not a claim that every harness has a native field with the same name. The logical set captures the intent needed to define a reusable agent once. The later mapping table shows how each property becomes native metadata, instruction text, comments, a resolved value, or an explicit omission.</p>
+      <h2 id="information-model-title">Conceptual Agent Definition Properties</h2>
+      <p class="lede">These are conceptual source-model properties, not a claim that every harness has a native field with the same name. The conceptual set captures the intent needed to define a reusable agent once. The later mapping table shows how each property becomes native metadata, instruction text, comments, a resolved value, or an explicit omission.</p>
       <table>
         <thead>
           <tr>
             <th>Element</th>
-            <th>Logical Role Property</th>
+            <th>Conceptual Definition Property</th>
             <th>Meaning In The Source Definition</th>
           </tr>
         </thead>
@@ -451,7 +451,7 @@
           <tr>
             <td><span class="name">Instructions</span></td>
             <td><code>instructions</code></td>
-            <td>Defines behavior, boundaries, workflow, deliverables, and handoff expectations. Concise single-phase roles may use a string. Roles with branches, delegation, review loops, failure handling, or several terminal criteria use the validated structured mapping; generators render its sections into one portable runtime instruction string.</td>
+            <td>Defines behavior, boundaries, workflow, deliverables, and handoff expectations. Concise single-phase conceptual agent definitions may use a string. Definitions with branches, delegation, review loops, failure handling, or several terminal criteria use the validated structured mapping; generators render its sections into one portable runtime instruction string.</td>
           </tr>
           <tr>
             <td><span class="name">Skills</span></td>
@@ -461,7 +461,7 @@
           <tr>
             <td><span class="name">Agent dependencies</span></td>
             <td><code>agentDependencies</code></td>
-            <td>Names fixed direct agent-to-agent use declared by this role. The generated diagram renders an arrow from the using agent to each used agent; dynamic task-time routing remains outside this list.</td>
+            <td>Names fixed direct agent-to-agent use declared by this conceptual definition. The generated diagram renders an arrow from the using agent to each used agent; dynamic task-time routing remains outside this list.</td>
           </tr>
           <tr>
             <td><span class="name">Skill condition</span></td>
@@ -501,12 +501,12 @@
           <tr>
             <td><span class="name">Dynamic folder skills</span></td>
             <td><code>dynamicFolderSkills</code></td>
-            <td>Records that the role consumes folder skills supplied through project guidance; selection remains outside the role source.</td>
+            <td>Records that the agent consumes folder skills supplied through project guidance; selection remains outside the conceptual definition source.</td>
           </tr>
           <tr>
             <td><span class="name">Repository mutation</span></td>
             <td><code>repositoryMutation</code></td>
-            <td>Declares whether repository mutation is required, conditional, or never allowed for the role. Generation validates that <code>agent-claim</code> is fixed, conditional, or absent to match, so runtimes provide the shared claim capability instead of relying on copied project instructions.</td>
+            <td>Declares whether repository mutation is required, conditional, or never allowed for the agent. Generation validates that <code>agent-claim</code> is definition-owned, conditional, or absent to match, so runtimes provide the shared claim capability instead of relying on copied project instructions.</td>
           </tr>
           <tr>
             <td><span class="name">Max turns</span></td>
@@ -516,7 +516,7 @@
           <tr>
             <td><span class="name">Timeout</span></td>
             <td><code>timeout</code></td>
-            <td>Caps role-level elapsed execution time. An adapter must not substitute an unrelated MCP startup timeout.</td>
+            <td>Caps agent-level elapsed execution time. An adapter must not substitute an unrelated MCP startup timeout.</td>
           </tr>
           <tr>
             <td><span class="name">Permission mode</span></td>
@@ -552,7 +552,7 @@
       <table>
         <thead><tr><th>Property</th><th>Reason</th></tr></thead>
         <tbody>
-          <tr><td><code>hooks</code></td><td>Hooks remain vendor configuration rather than portable role behavior.</td></tr>
+          <tr><td><code>hooks</code></td><td>Hooks remain vendor configuration rather than portable agent behavior.</td></tr>
           <tr><td><code>target</code> and Gemini <code>kind</code></td><td>The methodology assumes local development and does not model local-versus-remote or editor-versus-cloud targets.</td></tr>
           <tr><td>Display metadata, colors, and nicknames</td><td>Presentation-only values do not change authority, routing, skills, or outputs.</td></tr>
           <tr><td>Other vendor-only presentation fields</td><td>Adapters omit decoration that is not necessary for correct runtime behavior.</td></tr>
@@ -565,9 +565,9 @@
       <table>
         <thead><tr><th>Behavior</th><th>Methodology Default</th><th>Adapter Rule</th></tr></thead>
         <tbody>
-          <tr><td><code>fixedBehavior.target</code></td><td>Every role targets local development.</td><td>Do not emit a remote or cloud execution target unless a future schema version adds one.</td></tr>
-          <tr><td><code>fixedBehavior.userInvocable</code></td><td>Every generated role remains eligible for user invocation.</td><td>Emit the runtime's normal invocation metadata where supported.</td></tr>
-          <tr><td><code>fixedBehavior.automaticDelegation</code></td><td>Every generated role remains eligible for automatic delegation.</td><td>Use descriptions and runtime invocation fields to preserve automatic selection.</td></tr>
+          <tr><td><code>fixedBehavior.target</code></td><td>Every conceptual agent definition targets local development.</td><td>Do not emit a remote or cloud execution target unless a future schema version adds one.</td></tr>
+          <tr><td><code>fixedBehavior.userInvocable</code></td><td>Every generated native agent definition remains eligible for user invocation.</td><td>Emit the runtime's normal invocation metadata where supported.</td></tr>
+          <tr><td><code>fixedBehavior.automaticDelegation</code></td><td>Every generated native agent definition remains eligible for automatic delegation.</td><td>Use descriptions and runtime invocation fields to preserve automatic selection.</td></tr>
         </tbody>
       </table>
     </section>
@@ -614,12 +614,12 @@
       </div>
     </section>
     <section class="section" aria-labelledby="mapping-title">
-      <h2 id="mapping-title">Logical-To-Native Property Mapping</h2>
-      <p class="lede">This matrix shows how logical role properties are converted to the actual properties or instruction surfaces understood by each harness. The logical property table above is the exhaustive source schema inventory; fields carried only in generated instructions, comments, catalog data, or filenames do not need a separate native mapping row.</p>
+      <h2 id="mapping-title">Conceptual-To-Native Property Mapping</h2>
+      <p class="lede">This matrix shows how conceptual agent definition properties are converted to the actual properties or instruction surfaces understood by each harness. The conceptual property table above is the exhaustive source schema inventory; fields carried only in generated instructions, comments, catalog data, or filenames do not need a separate native mapping row.</p>
       <table>
         <thead>
           <tr>
-            <th>Logical Role Property</th>
+            <th>Conceptual Definition Property</th>
             <th>Codex</th>
             <th>Claude Code</th>
             <th>Gemini CLI</th>
@@ -655,10 +655,10 @@
           <tr>
             <td><span class="name">skills</span></td>
             <td>Emit loading instructions in <code>developer_instructions</code>.</td>
-            <td><code>skills</code> preloads fixed skill content; request-specific conditions go in the body.</td>
-            <td>Emit fixed and request-specific loading instructions into the body and rely on the selected repository or explicit deployment skill source.</td>
-            <td>Map fixed skills to <code>skills</code> and keep request-specific conditions in instructions.</td>
-            <td>Emit fixed and request-specific loading instructions into the body and rely on Copilot-compatible skill folders.</td>
+            <td><code>skills</code> preloads definition-owned skill content; request-specific conditions go in the body.</td>
+            <td>Emit definition-owned and request-specific loading instructions into the body and rely on the selected repository or explicit deployment skill source.</td>
+            <td>Map definition-owned skills to <code>skills</code> and keep request-specific conditions in instructions.</td>
+            <td>Emit definition-owned and request-specific loading instructions into the body and rely on Copilot-compatible skill folders.</td>
           </tr>
           <tr>
             <td><span class="name">skillAvailability</span></td>
@@ -678,7 +678,7 @@
           </tr>
           <tr>
             <td><span class="name">disallowedTools</span></td>
-            <td>No generic role-level field; use <code>developer_instructions</code>, <code>sandbox_mode</code>, and scoped MCP server definitions to constrain tool use.</td>
+            <td>No generic agent-level field; use <code>developer_instructions</code>, <code>sandbox_mode</code>, and scoped MCP server definitions to constrain tool use.</td>
             <td><code>disallowedTools</code></td>
             <td>No documented field.</td>
             <td><code>disallowedTools</code></td>
@@ -688,7 +688,7 @@
             <td><span class="name">mcpServers</span></td>
             <td><code>[mcp_servers.name]</code> sections in the custom agent TOML file.</td>
             <td><code>mcpServers</code></td>
-            <td>Gemini inline <code>mcpServers</code> requires full server configuration objects, so the logical server-name list remains deployment configuration rather than being expanded with invented connection details.</td>
+            <td>Gemini inline <code>mcpServers</code> requires full server configuration objects, so the conceptual server-name list remains deployment configuration rather than being expanded with invented connection details.</td>
             <td><code>mcpServers</code></td>
             <td><code>mcp-servers</code></td>
           </tr>
@@ -726,7 +726,7 @@
           </tr>
           <tr>
             <td><span class="name">timeout</span></td>
-            <td>No documented role-level field.</td>
+            <td>No documented agent-level field.</td>
             <td>No documented field.</td>
             <td><code>timeout_mins</code></td>
             <td>No documented field.</td>
@@ -778,7 +778,7 @@
 
     <section class="section" aria-labelledby="sources-title">
       <h2 id="sources-title">Authoritative Runtime Sources</h2>
-      <p class="lede">The native formats and property mappings above are based on each harness vendor's documentation. These sources define what the generated runtime files may contain; they do not replace the logical role sources maintained in this repository.</p>
+      <p class="lede">The native formats and property mappings above are based on each harness vendor's documentation. These sources define what the generated runtime files may contain; they do not replace the conceptual agent definition sources maintained in this repository.</p>
       <div class="matrix">
         <table>
           <thead>

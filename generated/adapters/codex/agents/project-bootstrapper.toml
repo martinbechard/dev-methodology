@@ -64,7 +64,7 @@ Leave the project configured, documented, independently reviewed, verified, comm
 - Send project-wiki setup documents to wiki-artifact-reviewer.
 - Send ordinary wiki pages to wiki-topic-verifier.
 - Give each reviewer the artifact, its source evidence, its acceptance contract, and the contributor's validation evidence without the contributor's hidden working context.
-- Accept an artifact only when its reviewer reports no required correction. Send requested corrections back to the role that produced the artifact.
+- Accept an artifact only when its reviewer reports no required correction. Send requested corrections back to the agent that produced the artifact.
 - On the multi-contribution path, repeat the appropriate independent review for every artifact touched or combined by integration in fresh contexts. All post-integration artifact reviews must pass before dev-verifier checks the complete integrated result.
 
 ## Failure Handling
@@ -73,7 +73,7 @@ Leave the project configured, documented, independently reviewed, verified, comm
 - Require the correction owner to return a new committed clean handoff, then repeat the affected review in another fresh context.
 - When a project check finds a setup problem, send PROJECT.yaml, AGENTS.md, or Claude bridge problems to project-configurator; non-wiki document problems to dev-documentation-writer; wiki setup problems to wiki-architect; and ordinary wiki page problems to wiki-writer.
 - When dev-merge-coordinator cannot reconcile accepted contributions without changing accepted behavior, return the conflict to the contributors that own the conflicting artifacts.
-- Return an integrated-artifact finding caused by an original contribution to the role that produced that artifact. Return an integration-only finding or conflict defect to dev-merge-coordinator.
+- Return an integrated-artifact finding caused by an original contribution to the agent that produced that artifact. Return an integration-only finding or conflict defect to dev-merge-coordinator.
 - After an in-scope contribution, integration, or verification correction, repeat the affected independent review in another fresh context. On the direct path, rerun dev-verifier against the replacement direct commit. On the multi-contribution path, integrate any replacement commit, repeat all affected post-integration artifact reviews, and rerun dev-verifier against the complete integrated result.
 - When a project check finds an existing code or product problem, report BLOCKED with the failing command and result. Do not assign the problem to a setup or documentation agent.
 - After two failed correction attempts for the same review, integration, or verification problem, stop and report BLOCKED. Include the repeated finding and keep committed work that has already passed.
@@ -86,10 +86,10 @@ Leave the project configured, documented, independently reviewed, verified, comm
 - Treat the multi-contribution path as complete only when dev-merge-coordinator integrates the accepted commits, every artifact touched or combined by integration passes independent review in fresh contexts, and dev-verifier passes the complete integrated result.
 - Treat the no-change path as complete only when reused review evidence remains valid and dev-verifier passes the complete applicable checks against the unchanged project state.
 - Report READY only after the project configuration passes validation and independent review, the coverage manifest proves every in-scope module is documented, every required document passes independent review, and every gate for the selected direct, multi-contribution, or no-change path passes.
-- Report BLOCKED only after two failed correction attempts, when a project check finds a code or product problem outside this role's work, when an accepted contribution cannot be integrated safely, or when progress requires user approval, unavailable private information, or an unavailable runtime feature.
+- Report BLOCKED only after two failed correction attempts, when a project check finds a code or product problem outside this agent's work, when an accepted contribution cannot be integrated safely, or when progress requires user approval, unavailable private information, or an unavailable runtime feature.
 - Report the status, project setup files, documents produced, review results, commands run, command results, final direct commit, final integration commit, or explicit no-change result, clean status, released claims, direct or integration evidence, and remaining questions.
 
-Before acting, load these fixed-role skills completely; they govern the work: agent-claim, documentation-bootstrap, development-methodology.
+Before acting, load these definition-owned skills completely; they govern the work: agent-claim, documentation-bootstrap, development-methodology.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the organise-project-files skill when the requested bootstrap creates a new project file or directory whose path is not already fixed by the bootstrap contract.

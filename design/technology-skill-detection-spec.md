@@ -4,7 +4,7 @@
 
 Technology detection is a project-setup operation. It converts repository evidence for known folders or tiers into durable technology-skill bindings in PROJECT.yaml and AGENTS.md.
 
-Normal coding, review, verification, diagnosis, security, interface, prompt, and documentation agents do not rerun detection. The harness supplies their fixed-role skills and the technology skills routed for the active folder.
+Normal coding, review, verification, diagnosis, security, interface, prompt, and documentation agents do not rerun detection. The harness supplies their definition-owned skills and the technology skills routed for the active folder.
 
 ## Inputs
 
@@ -13,7 +13,7 @@ Normal coding, review, verification, diagnosis, security, interface, prompt, and
 - Generated technology detection registry.
 - Installed bundled skills used to validate availability.
 
-Prompt wording and agent role are not detection inputs.
+Prompt wording and the selected conceptual agent definition are not detection inputs.
 
 ## Detection Metadata
 
@@ -59,7 +59,7 @@ companions:
   - python
 ```
 
-Generic fixed-role skills and optional environment tools are not detection definitions.
+Generic definition-owned skills and optional environment tools are not detection definitions.
 
 ## Output
 
@@ -74,13 +74,13 @@ The detector returns one proposed skillset per analyzed scope:
 
 Project Agent Setup records accepted skillsets in PROJECT.yaml with their source evidence. It then generates AGENTS.md routing so the harness supplies those technology skills to every agent working under the matching path.
 
-## Fixed-Role Skills
+## Definition-Owned Skills
 
-Role definitions remain technology-neutral and declare their fixed generic skills.
+Conceptual agent definitions remain technology-neutral and declare their definition-owned generic skills.
 
 - Adapters with a native skills property generate that property.
 - Adapters without a native skills property generate unconditional skill-loading instructions.
-- Fixed-role loading does not depend on detector output.
+- Definition-owned skill loading does not depend on detector output.
 
 ## Script Ownership
 
@@ -102,11 +102,11 @@ The detector skill contains a generated runtime mirror only so a standalone inst
 ## Non-Goals
 
 - Per-task skill selection.
-- Agent-role filtering.
+- Conceptual-agent-definition filtering.
 - Skill-read receipts for ordinary work.
 - Prompt-keyword routing.
 - Detecting optional command-line tools from the current machine.
-- Replacing generic fixed-role skills.
+- Replacing generic definition-owned skills.
 - Claiming support for technologies without a bundled skill.
 
 ## Acceptance Cases

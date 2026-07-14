@@ -15,7 +15,7 @@ Use this skill as the router for software project documentation work from this b
 - Use documentation-reverse-engineer when deriving documentation from an existing codebase.
 - Use code-project-wiki for code-aware docs/wiki maintenance, commit-range sync, Related Code upkeep, or Related Tests upkeep.
 - Use create-project-configuration when creating or substantially rewriting a PROJECT.yaml project agent and skill configuration.
-- Use maintain-methodology-documentation when changing this bundle's skills, roles, generated adapters, generated documentation data, or design pages.
+- Use maintain-methodology-documentation when changing this bundle's skills, conceptual agent definitions, generated adapters, generated documentation data, or design pages.
 - Use project-wiki-create when creating or substantially rewriting a project wiki methodology artifact from the project wiki template.
 - Use create-functional-spec when creating or substantially rewriting a functional specification artifact from the functional specification template.
 - Use create-architecture when creating or substantially rewriting an architecture artifact from the architecture template.
@@ -38,7 +38,7 @@ Use this skill as the router for software project documentation work from this b
 
 Load only the skills needed for the current job. Use this skill to choose the artifact type and route, then load the matching creation skill or review skill for that artifact. Do not load every creation or review skill just because the catalog contains them.
 
-Treat generated role conditions as judgment guidance, not deterministic prompt keywords. Interpret the requested outcome, existing artifact, and source evidence together when wording is ambiguous. Ask for clarification only when different plausible routes would materially change the result and the intended route cannot be inferred.
+Treat generated conceptual agent definition conditions as judgment guidance, not deterministic prompt keywords. Interpret the requested outcome, existing artifact, and source evidence together when wording is ambiguous. Ask for clarification only when different plausible routes would materially change the result and the intended route cannot be inferred.
 
 For a normal creation job, load this skill and exactly one artifact creation skill, plus source-domain skills that the repository evidence requires. Load the matching review skill only when the artifact is ready to review. Use documentation-page-verify for mixed, unknown, or custom artifacts, or when an artifact review skill calls for it.
 
@@ -46,7 +46,7 @@ For a normal creation job, load this skill and exactly one artifact creation ski
 
 The shared page contract applies to docs/wiki topic pages and methodology artifacts created from this bundle's templates.
 
-When the user, target file type, runtime schema, existing document, or surrounding documentation indicates a specific structure or format, preserve that structure. Verify source support, links, steady-state prose, and completeness inside the indicated format instead of adding shared page sections. Do not impose the shared page contract on design HTML pages, README files, runtime adapter profiles, generated data files, or agent definition files unless the user asks to convert them into a methodology artifact or wiki-compatible page.
+When the user, target file type, runtime schema, existing document, or surrounding documentation indicates a specific structure or format, preserve that structure. Verify source support, links, steady-state prose, and completeness inside the indicated format instead of adding shared page sections. Do not impose the shared page contract on design HTML pages, README files, runtime adapter profiles, generated data files, or native agent definition files unless the user asks to convert them into a methodology artifact or wiki-compatible page.
 
 Pages that use the shared page contract start with these sections:
 
@@ -66,7 +66,7 @@ Functional specifications, architecture documents, high-level designs, and modul
 Use the smallest document type that fully explains the work:
 
 - Project wiki page: durable synthesis, navigation, code ownership, known defects, open decisions, glossary, or recurring topic knowledge.
-- PROJECT.yaml: project-wide agent and skill setup, root and nested AGENTS.md routing references, role skillsets, folder routing, validation evidence, proprietary validation notes, or customer-safe fictitious examples.
+- PROJECT.yaml: project-wide agent and skill setup, root and nested AGENTS.md routing references, definition-owned skillsets, folder routing, validation evidence, proprietary validation notes, or customer-safe fictitious examples.
 - Functional specification: user-visible behavior, actor workflow, route behavior, acceptance criteria, permissions, status display, operational affordance, or error state.
 - Architecture: project-wide boundary, technology choice, shared rule, cross-cutting concern, layer relationship, persistence, security, privacy, observability, or UI composition.
 - High-level design: coherent subsystem, feature family, system slice, integration path, or multi-module implementation plan.
@@ -92,7 +92,7 @@ Use project-wiki-topic-write for ordinary docs/wiki topic pages that summarize o
 Template assets live under skills/development-methodology/assets/templates.
 
 - project-wiki-template.md defines project wiki setup and code-aware maintenance rules.
-- project-template.yaml defines project agent roles, folder technology skillsets, root and nested AGENTS.md operational guidance, proprietary validation notes, and customer-safe example boundaries in one project-root configuration.
+- project-template.yaml defines project conceptual agent definitions, folder technology skillsets, root and nested AGENTS.md operational guidance, proprietary validation notes, and customer-safe example boundaries in one project-root configuration.
 - functional-spec-template.md defines user-visible workflow and acceptance documentation.
 - architecture-template.md defines project-wide and cross-cutting architecture documentation.
 - high-level-design-template.md defines subsystem and feature-family documentation.
@@ -124,9 +124,9 @@ Before finishing documentation or wiki work:
 4. Run project wiki status and lint when docs/wiki exists.
 5. Run OKF validation when topic pages changed.
 6. Run the repository agent-skill validator when skill files changed.
-7. When a bundled skill is renamed or deleted, sweep the source repository for the old skill id and update or remove references in skills, companion-skill lists, Codex metadata, role definitions, dispatch profiles, aggregate workflow examples, design documents, scripts, and tests.
+7. When a bundled skill is renamed or deleted, sweep the source repository for the old skill id and update or remove references in skills, companion-skill lists, Codex metadata, conceptual agent definitions, dispatch profiles, aggregate workflow examples, design documents, scripts, and tests.
 8. Run scripts/openai_metadata.py skills after bundled skill name or description changes so Codex interface metadata stays aligned with SKILL.md while policy and dependencies remain hand-authored.
-9. Do not copy this bundle's skills or generated agents into user-home runtime folders as part of maintenance or ordinary use. Use the repository sources and generated adapters in place. Run the installer only for an explicitly requested deployment with caller-supplied target directories.
+9. Do not copy this bundle's skills or generated native agent definitions into user-home runtime folders as part of maintenance or ordinary use. Use the repository sources and generated adapters in place. Run the installer only for an explicitly requested deployment with caller-supplied target directories.
 10. Run the target project build when code, imports, generated artifacts, or project metadata changed.
 11. Search generated documents for unresolved TODO markers that are not intentional.
 12. Confirm every created document names related source, tests, or Not yet identified inside the selected format.

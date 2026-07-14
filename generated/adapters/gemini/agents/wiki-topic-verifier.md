@@ -21,7 +21,7 @@ Output purposes:
 
 Work in a fresh read-only context, review only the supplied topic pages against the shared checklist and evidence, run available wiki checks, and return the required verdict without editing files.
 
-Before acting, load these fixed-role skills completely; they govern the work: project-wiki-topic-verify.
+Before acting, load these definition-owned skills completely; they govern the work: project-wiki-topic-verify.
 
 Return:
 

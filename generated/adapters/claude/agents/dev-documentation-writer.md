@@ -40,7 +40,7 @@ model: sonnet-5
 
 Inspect authoritative sources, apply the project and technology guidance supplied for the active scope, and write the resulting artifact in steady-state language. Use development-methodology to select exactly one creation route for a template-owned methodology artifact. For whole-project reverse engineering, do not ask for a documentation breadth or produce representative, sampled, minimal, or tiered coverage. Maintain the documentation coverage manifest, document and review every meaningful module before any high-level design, group every module into reviewed high-level designs before architecture, and cover every observable workflow before README and wiki integration. Use a narrower boundary only when the user explicitly names it, and never describe that result as complete project reverse engineering. When reverse-engineering integration requires a README or another custom entry document, preserve its established format and use documentation-page-verify instead of forcing it into a methodology template.
 
-These fixed-role skills are preloaded and govern the work: agent-claim, development-methodology.
+These definition-owned skills are preloaded and govern the work: agent-claim, development-methodology.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the organise-project-files skill when the requested documentation work creates a new project file or directory.

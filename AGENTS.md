@@ -13,10 +13,10 @@ Keep these instructions simple. If a maintenance rule needs a long explanation, 
 - README.md is the human-facing entry point for the bundle.
 - AGENTS.md is the agent-facing maintenance contract for this repository.
 - skills contains portable Agent Skills distributed to other projects and machines.
-- agents contains the customer-independent role schema and source role definitions.
+- agents contains the customer-independent conceptual agent definition schema and source definitions.
 - detection.yaml beside a specialized technology or domain skill is the source for setup-time detection metadata and activation evidence.
 - adapters contains runtime-specific metadata for those distributed skills.
-- generated/adapters contains generated native agent definitions and must be regenerated from source roles rather than edited manually.
+- generated/adapters contains generated native agent definitions and must be regenerated from conceptual agent definition sources rather than edited manually.
 - design contains the HTML explanations of the skill and agent model.
 - scripts contains installer, refresh, validation, and regression-test support.
 
@@ -34,7 +34,7 @@ Do not create separate skill files for repo-local maintenance procedures. Keep r
 
 Technology detection is owned by Project Configurator. Do not rerun detection during ordinary work.
 
-Before acting on files under a matching folder, every agent must read each listed skill completely. These folder skills govern technology-specific implementation, review, diagnosis, verification, security, interface, prompt, and technical documentation work together with the agent's fixed-role skills.
+Before acting on files under a matching folder, every agent must read each listed skill completely. These folder skills govern technology-specific implementation, review, diagnosis, verification, security, interface, prompt, and technical documentation work together with the agent's definition-owned skills.
 
 Folder skillsets:
 
@@ -60,18 +60,18 @@ When adding, renaming, deleting, or materially changing a distributed skill:
 - Run scripts/openai_metadata.py skills after skill name or description changes so derived Codex interface fields stay aligned while policy and dependencies remain hand-authored.
 - Run scripts/build-technology-detection.py after detection metadata or specialized activation criteria change.
 - Update README.md when the public skill inventory, setup flow, verification flow, or bundle purpose changes.
-- Update the design HTML files that describe skills, agents, role maps, specialization strategy, operating model, or examples whenever the catalog, role model, adapter model, or examples change.
+- Update the design HTML files that describe skills, conceptual agent definitions, agent maps, specialization strategy, operating model, or examples whenever the catalog, conceptual definition model, adapter model, or examples change.
 - Update scripts/test_bundle_content.py so the bundle regression tests describe the current catalog.
 - Sweep the repository for old skill ids before and after renames or deletions.
 - Keep review skill checklists named review-checklist-[review-target].md, and keep completed checklist guidance aligned with artifact-name.review-checklist-[review-target].md.
 
-When adding, renaming, deleting, or materially changing a role:
+When adding, renaming, deleting, or materially changing a conceptual agent definition:
 
-- Update the source role under agents/roles.
-- Keep its filename field aligned with the role source filename.
+- Update the conceptual source under agents/roles.
+- Keep its filename field aligned with the conceptual definition source filename.
 - Use only bundled skill IDs in the skills list.
-- Run scripts/build-skill-docs.py so role documentation data and native adapters are regenerated together.
-- Update README.md and the relevant design HTML when role policy, runtime support, installation, or customization behavior changes.
+- Run scripts/build-skill-docs.py so conceptual agent definition documentation data and native adapters are regenerated together.
+- Update README.md and the relevant design HTML when conceptual definition policy, runtime support, installation, or customization behavior changes.
 - Never edit design/generated or generated/adapters by hand.
 
 ## README And Design HTML
@@ -92,7 +92,7 @@ The design HTML files must stay aligned with the current skills and agent model:
 - design/agent-skill-specialization-strategy.html
 - design/agentic-development-operating-model.html
 
-If a change affects the skill catalog, adapter shape, role naming, dispatch profile examples, or agent specialization story, update the relevant HTML files in the same change.
+If a change affects the skill catalog, adapter shape, conceptual agent definition naming, dispatch profile examples, or agent specialization story, update the relevant HTML files in the same change.
 
 ## Markdown Rules
 

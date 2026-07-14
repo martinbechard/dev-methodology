@@ -2,7 +2,7 @@ schema: project
 schema_version: 1
 
 current_understanding:
-  summary: "This repository maintains and distributes portable development-methodology skills, agent roles, generated runtime adapters, design documentation, validation scripts, and evaluation fixtures."
+  summary: "This repository maintains and distributes portable development-methodology skills, conceptual agent definitions, generated runtime adapters, design documentation, validation scripts, and evaluation fixtures."
   development_stage: "Active bundle maintenance with generated documentation, native agent adapters, regression tests, and explicit target deployment support."
   setup_need: "Python maintenance code exists in several ownership scopes, including a FastAPI fixture, so ordinary agents need deterministic folder technology skillsets without rerunning detection."
 
@@ -42,8 +42,8 @@ authoritative_sources:
 
 project_scope_and_boundaries:
   repository_boundary: "The dev-methodology Git repository and its source-controlled bundle, generated artifacts, tests, evaluation fixtures, and setup documentation."
-  product_or_service_boundary: "A portable Agent Skills and role bundle rather than one deployed application service."
-  private_data_boundary: "Do not send PII or company-internal information to an LLM unless explicitly instructed. Keep customer-specific material out of distributable skills, roles, examples, and generated adapters."
+  product_or_service_boundary: "A portable Agent Skills and conceptual agent definition bundle rather than one deployed application service."
+  private_data_boundary: "Do not send PII or company-internal information to an LLM unless explicitly instructed. Keep customer-specific material out of distributable skills, conceptual agent definitions, examples, and generated adapters."
   sibling_repositories:
     - name: "Not yet identified"
       relationship: "No sibling repository is required to determine the Python folder skillsets in this plan."
@@ -52,7 +52,7 @@ project_taxonomy:
   family: "Portable development-methodology skill and agent bundle"
   primary_runtime: "Python 3 for maintenance and test tooling, with Markdown, YAML, HTML, JavaScript data, and native agent definitions as maintained artifacts."
   application_tiers:
-    - name: "Bundle source and role definitions"
+    - name: "Bundle source and conceptual agent definitions"
       paths:
         - skills/**
         - agents/**
@@ -123,7 +123,7 @@ root_agents_reference:
 technology_skill_detection:
   owner: "Project Configurator"
   registry: skills/detect-technology-skills/references/technology-skill-detection-registry.yaml
-  selection_policy: "Setup-agent-selected folder scopes and deterministic repository evidence. Agent role, prompt wording, read confirmation, and optional local commands are not detector inputs."
+  selection_policy: "Setup-agent-selected folder scopes and deterministic repository evidence. The selected conceptual agent definition, prompt wording, read confirmation, and optional local commands are not detector inputs."
   required_load_failure: BLOCKED
   missing_variant_policy: "Record an explicit no-variant skillset."
   runtime_policy: "Ordinary agents load the technology skills declared by the nearest AGENTS.md before acting and do not rerun detection."
@@ -137,7 +137,7 @@ claude_bridge_files:
 
 role_agent_set:
   - role: methodology-maintainer
-    purpose: "Keep source skills, roles, metadata, generated outputs, documentation, tests, and explicit deployment behavior aligned."
+    purpose: "Keep source skills, conceptual agent definitions, metadata, generated outputs, documentation, tests, and explicit deployment behavior aligned."
     owns:
       - "Distributed methodology bundle maintenance."
     hands_off:
@@ -152,7 +152,7 @@ role_agent_set:
   - role: project-configurator
     purpose: "Own PROJECT.yaml, setup-time technology detection, and deterministic AGENTS.md folder routing."
     owns:
-      - "Role and technology skill setup."
+      - "Conceptual agent definition and technology skill setup."
     hands_off:
       - "Ordinary implementation to dev-coder after routing is established."
     skills:
@@ -356,15 +356,15 @@ documentation_and_file_contracts:
   - path: AGENTS.md
     purpose: "Operational routing reference loaded by agents."
   - path: PROJECT.yaml
-    purpose: "Single project-wide setup and validation artifact for role agents, skillsets, folder routing, nested AGENTS.md placement, and evidence."
+    purpose: "Single project-wide setup and validation artifact for conceptual agent definitions, skillsets, folder routing, nested AGENTS.md placement, and evidence."
   - path: "Not applicable"
     purpose: "No project-local CLAUDE.md bridge is currently required."
   - path: README.md
     purpose: "Human-facing bundle, setup, installation, and verification reference."
   - path: design/generated
-    purpose: "Generated documentation data derived from source skills and roles."
+    purpose: "Generated documentation data derived from source skills and conceptual agent definitions."
   - path: generated/adapters
-    purpose: "Generated native runtime agent definitions derived from source roles."
+    purpose: "Generated native runtime agent definitions derived from conceptual agent definition sources."
 
 validation_plan:
   commands:
@@ -373,9 +373,9 @@ validation_plan:
     - command: "python3 scripts/build-technology-detection.py --check"
       proves: "Detection metadata, registry, and installed detector mirror are current."
     - command: "python3 scripts/build-skill-docs.py --check"
-      proves: "Generated skill, role, and native adapter outputs match their sources."
+      proves: "Generated skill documentation, conceptual agent definition catalog data, and native adapter outputs match their sources."
     - command: "python3 scripts/build-agent-skill-hierarchy.py --check"
-      proves: "The generated role and skill hierarchy is current."
+      proves: "The generated conceptual agent definition and skill hierarchy is current."
     - command: "python3 scripts/build-support-checklist.py --check"
       proves: "The generated support and evaluation coverage inventory is current."
     - command: "python3 -m unittest discover scripts"
@@ -394,7 +394,7 @@ validation_plan:
     - "Confirm python and fastapi are installed and every accepted skillset retains source evidence."
     - "Confirm AGENTS.md requires matching folder skills before acting and does not tell ordinary agents to rerun detection."
   privacy_checks:
-    - "Confirm distributable skills, roles, generated adapters, and examples contain no PII, customer data, secrets, or company-internal material unless explicitly authorized."
+    - "Confirm distributable skills, conceptual agent definitions, generated adapters, and examples contain no PII, customer data, secrets, or company-internal material unless explicitly authorized."
   customer_safe_example_checks:
     - "Confirm customer-shareable examples use fictitious names, synthetic paths, and generic product behavior."
 

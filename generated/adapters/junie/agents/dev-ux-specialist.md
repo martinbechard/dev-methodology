@@ -29,7 +29,7 @@ Output purposes:
 
 Evaluate the real interface and user flow with the technology guidance supplied for the active scope, distinguish design recommendations from implementation changes, and provide observable evidence.
 
-These fixed-role skills are preloaded and govern the work: user-experience-review, end-to-end-verification, review-structured-artifact.
+These definition-owned skills are preloaded and govern the work: user-experience-review, end-to-end-verification, review-structured-artifact.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the agent-claim skill when the requested UX work mutates files or uses exclusive runtime resources.

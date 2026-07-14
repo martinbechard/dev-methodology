@@ -395,7 +395,7 @@
   <section class="hero" aria-labelledby="page-title">
     <div class="legend" aria-label="Legend">
       <span class="pill"><span class="dot orchestrator"></span> Orchestration</span>
-      <span class="pill"><span class="dot agent"></span> Role agents</span>
+      <span class="pill"><span class="dot agent"></span> Conceptual agent definitions</span>
       <span class="pill"><span class="dot skill"></span> Skills</span>
       <span class="pill"><span class="dot reference"></span> Evidence</span>
     </div>
@@ -403,7 +403,7 @@
     <p class="lede">
       This page owns the orchestrated execution, review, verification, integration, completion, and evidence sequence.
       Use the <a href="agentic-development-operating-model.html">operating model</a> for project classification and guidance precedence, and the
-      <a href="agent-role-skill-map.html">generated catalog</a> for each role's detailed contract.
+      <a href="agent-role-skill-map.html">generated catalog</a> for each conceptual agent definition's detailed contract.
     </p>
   </section>
 
@@ -427,7 +427,7 @@
           <tr>
             <td><span class="name">Intake</span></td>
             <td>Dev Orchestrator</td>
-            <td>Establish the task boundary, assignments, and validation route before handing work to the selected roles.</td>
+            <td>Establish the task boundary, assignments, and validation route before handing work to the selected agents.</td>
           </tr>
           <tr>
             <td><span class="name">Claim gate</span></td>
@@ -441,8 +441,8 @@
           </tr>
           <tr>
             <td><span class="name">Execution</span></td>
-            <td>Selected implementation or writing role</td>
-            <td>Each assigned lane stays within its narrow claim and returns a committed, clean handoff before independent review; the <a href="agent-role-skill-map.html">generated catalog</a> owns each role's detailed inputs, skills, and output contract.</td>
+            <td>Selected implementation or writing agent</td>
+            <td>Each assigned lane stays within its narrow claim and returns a committed, clean handoff before independent review; the <a href="agent-role-skill-map.html">generated catalog</a> owns each conceptual agent definition's detailed inputs, skills, and output contract.</td>
           </tr>
           <tr>
             <td><span class="name">Independent contribution review</span></td>
@@ -499,12 +499,12 @@
         <tbody>
           <tr>
             <td><code>.agents/runs/&lt;run-id&gt;/context-pack.json</code></td>
-            <td>Inputs supplied to the assigned role: files, applicable guidance, constraints, and selected skills.</td>
+            <td>Inputs supplied to the assigned agent: files, applicable guidance, constraints, and selected skills.</td>
             <td>Results or verification claims.</td>
           </tr>
           <tr>
             <td><code>.agents/runs/&lt;run-id&gt;/agent-results.jsonl</code></td>
-            <td>Ordered role outputs and status events for replay, audit, and merge coordination.</td>
+            <td>Ordered agent outputs and status events for replay, audit, and merge coordination.</td>
             <td>A synthesized verification verdict.</td>
           </tr>
           <tr>

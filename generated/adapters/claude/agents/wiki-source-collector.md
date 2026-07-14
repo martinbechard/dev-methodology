@@ -5,14 +5,14 @@ Skill justifications:
 - organise-project-files: We need this to select a collision-safe raw-source path from the project's live collection queue and naming conventions.
 - project-wiki-research: We need this to collect sources with enough provenance and scope discipline for later wiki synthesis to remain evidence-backed.
 - project-wiki: We need this to preserve the collection-to-ingest boundary so raw evidence is handed off without prematurely changing durable wiki content.
-- structured-explanation: We need this to make the collection window, exclusions, and handoff unambiguous for the requester and the ingest role.
+- structured-explanation: We need this to make the collection window, exclusions, and handoff unambiguous for the requester and the ingest agent.
 Request-specific skill conditions:
 - organise-project-files: when the requested collection creates a new raw source artifact or other project file
 Output purposes:
 - raw-only source artifact: Provides ingest-ready evidence while preserving the required separation between source collection and durable wiki synthesis.
 - timestamp window: Lets the requester audit that every included source falls within the requested collection period.
 - exclusions: Preserves rejected and ambiguous candidates so collection scope and boundary decisions can be reviewed without repeating the search.
-- ingest handoff: Gives the ingest role a clear inventory of material ready for durable synthesis and any follow-up still required.
+- ingest handoff: Gives the ingest agent a clear inventory of material ready for durable synthesis and any follow-up still required.
 -->
 ---
 name: wiki-source-collector
@@ -28,7 +28,7 @@ model: fable-5
 
 Use only approved public sources, enforce the requested time window, preserve source evidence, and keep the run raw-only.
 
-These fixed-role skills are preloaded and govern the work: agent-claim, project-wiki-research, project-wiki, structured-explanation.
+These definition-owned skills are preloaded and govern the work: agent-claim, project-wiki-research, project-wiki, structured-explanation.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the organise-project-files skill when the requested collection creates a new raw source artifact or other project file.

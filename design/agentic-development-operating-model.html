@@ -395,7 +395,7 @@
   <section class="hero" aria-labelledby="page-title">
     <div class="legend" aria-label="Legend">
       <span class="pill"><span class="dot orchestrator"></span> Orchestration</span>
-      <span class="pill"><span class="dot agent"></span> Role agents</span>
+      <span class="pill"><span class="dot agent"></span> Conceptual agent definitions</span>
       <span class="pill"><span class="dot skill"></span> Skills</span>
       <span class="pill"><span class="dot reference"></span> AGENTS.md reference</span>
       <span class="pill"><span class="dot folder"></span> Nested AGENTS.md</span>
@@ -403,7 +403,7 @@
     <h1 id="page-title">Agentic Development Operating Model</h1>
     <p class="lede">
       This page owns project classification and guidance precedence.
-      Use the <a href="agent-role-skill-map.html">generated catalog</a> for current role and skill definitions,
+      Use the <a href="agent-role-skill-map.html">generated catalog</a> for current conceptual agent definitions and skill definitions,
       the <a href="agent-skill-specialization-strategy.html">specialization strategy</a> for selection policy, and
       the <a href="agentic-configuration.html">Agentic Configuration page</a> for runtime instruction files,
       the <a href="generic-agent-definitions-source.html">generic agent definitions source</a> for source and vendor adapter details, and the
@@ -413,7 +413,7 @@
 
   <section class="section" aria-labelledby="taxonomy-title">
     <h2 id="taxonomy-title">Project Classification</h2>
-    <p class="lede">PROJECT.yaml records the project classifications that affect routing. These values describe the target project; they do not duplicate the generated role or skill catalogs.</p>
+    <p class="lede">PROJECT.yaml records the project classifications that affect routing. These values describe the target project; they do not duplicate the generated conceptual agent definition or skill catalogs.</p>
     <div class="matrix">
       <table>
         <thead>
@@ -437,7 +437,7 @@
           <tr>
             <td><span class="name">Artifact type</span></td>
             <td>What durable output is requested?</td>
-            <td>Selects the creation, review, and placement route without creating a framework-specific role.</td>
+            <td>Selects the creation, review, and placement route without creating a framework-specific conceptual agent definition.</td>
           </tr>
           <tr>
             <td><span class="name">Data boundary</span></td>
@@ -486,7 +486,7 @@
   </section>
   <section class="section" aria-labelledby="resolution-title">
     <h2 id="resolution-title">Project Guidance And Precedence</h2>
-    <p class="lede">PROJECT.yaml is the project-root setup and validation record. It explains role selection, folder skillsets, nested-guidance placement, and supporting evidence; ordinary work consumes the resulting guidance rather than treating the configuration as another instruction layer.</p>
+    <p class="lede">PROJECT.yaml is the project-root setup and validation record. It explains conceptual agent definition selection, folder skillsets, nested-guidance placement, and supporting evidence; ordinary work consumes the resulting guidance rather than treating the configuration as another instruction layer.</p>
     <div class="matrix">
       <table>
         <thead>
@@ -506,15 +506,15 @@
           </tr>
           <tr>
             <td><span class="name">2</span></td>
-            <td>Selected role contract</td>
+            <td>Selected conceptual agent definition</td>
             <td>Purpose, authority, expected inputs, output contract, and handoff behavior.</td>
-            <td>Project guidance cannot change role authority or verdict shape.</td>
+            <td>Project guidance cannot change the agent's authority or verdict shape.</td>
           </tr>
           <tr>
             <td><span class="name">3</span></td>
             <td>Root AGENTS.md</td>
             <td>Repository-wide rules, folder skillsets, validation commands, data boundaries, and local reference paths.</td>
-            <td>It selects shared guidance without copying complete role or skill definitions.</td>
+            <td>It selects shared guidance without copying complete conceptual agent or skill definitions.</td>
           </tr>
           <tr>
             <td><span class="name">4</span></td>
@@ -525,7 +525,7 @@
           <tr>
             <td><span class="name">5</span></td>
             <td>Selected skills</td>
-            <td>Fixed, request-specific, and setup-established folder expertise selected by the specialization policy.</td>
+            <td>Definition-owned, request-specific, and setup-established folder expertise selected by the specialization policy.</td>
             <td>The <a href="agent-skill-specialization-strategy.html">specialization strategy</a> is the sole owner of those selection rules.</td>
           </tr>
           <tr>

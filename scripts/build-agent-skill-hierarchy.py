@@ -43,7 +43,7 @@ def _load_yaml(path: Path) -> dict[str, object]:
 def _role_skill_entries(role: dict[str, object]) -> list[tuple[str, bool]]:
     value = role.get("skills")
     if not isinstance(value, list):
-        raise ValueError(f"Role {role.get('name')} skills must be a list.")
+        raise ValueError(f"Conceptual agent definition {role.get('name')} skills must be a list.")
     entries: list[tuple[str, bool]] = []
     for item in value:
         if isinstance(item, str):
@@ -55,7 +55,7 @@ def _role_skill_entries(role: dict[str, object]) -> list[tuple[str, bool]]:
             )
         else:
             raise ValueError(
-                f"Role {role.get('name')} has an invalid skill entry: {item}"
+                f"Conceptual agent definition {role.get('name')} has an invalid skill entry: {item}"
             )
     return entries
 
@@ -66,12 +66,12 @@ def _role_agent_dependencies(role: dict[str, object]) -> list[str]:
         not isinstance(item, str) or not item.strip() for item in value
     ):
         raise ValueError(
-            f"Role {role.get('name')} agentDependencies must be a list of role names."
+            f"Conceptual agent definition {role.get('name')} agentDependencies must be a list of conceptual definition names."
         )
     dependencies = [item.strip() for item in value]
     if len(dependencies) != len(set(dependencies)):
         raise ValueError(
-            f"Role {role.get('name')} agentDependencies contains duplicates."
+            f"Conceptual agent definition {role.get('name')} agentDependencies contains duplicates."
         )
     return dependencies
 
@@ -180,7 +180,7 @@ def _skill_node(
 
 
 def build_svg() -> str:
-    """Render the interactive role-to-skill map from repository source data."""
+    """Render the interactive conceptual-definition-to-skill map from repository sources."""
     roles: list[dict[str, object]] = []
     for path in sorted(ROLES_ROOT.glob("*/*.role.yaml")):
         role = _load_yaml(path)
@@ -194,17 +194,17 @@ def build_svg() -> str:
         for target_role in _role_agent_dependencies(role):
             if target_role not in role_names:
                 raise ValueError(
-                    f"Role {source_role} references unknown agent dependency {target_role}."
+                    f"Conceptual agent definition {source_role} references unknown agent dependency {target_role}."
                 )
             if target_role == source_role:
-                raise ValueError(f"Role {source_role} cannot depend on itself.")
+                raise ValueError(f"Conceptual agent definition {source_role} cannot depend on itself.")
             agent_dependencies.append((source_role, target_role))
 
     role_group_order = _load_yaml(ROLE_SCHEMA_PATH).get("roleGroups")
     if not isinstance(role_group_order, list) or not all(
         isinstance(group, str) for group in role_group_order
     ):
-        raise ValueError("Role groups must be a list of identifiers.")
+        raise ValueError("Conceptual agent definition groups must be a list of identifiers.")
 
     skills_by_category: dict[str, list[str]] = {}
     for path in sorted(SKILLS_ROOT.glob("*/SKILL.md")):
@@ -221,7 +221,7 @@ def build_svg() -> str:
     unknown_role_groups = set(roles_by_group) - set(role_group_order)
     if unknown_role_groups:
         raise ValueError(
-            "Roles reference unknown groups: " + ", ".join(sorted(unknown_role_groups))
+            "Conceptual agent definitions reference unknown groups: " + ", ".join(sorted(unknown_role_groups))
         )
     for group in role_group_order:
         group_roles = roles_by_group.get(group)
@@ -248,7 +248,7 @@ def build_svg() -> str:
         f'<svg xmlns="http://www.w3.org/2000/svg" class="show-agent-dependencies" width="{SVG_WIDTH}" height="{height}" '
         f'viewBox="0 0 {SVG_WIDTH} {height}" role="group" aria-labelledby="title desc">',
         '<title id="title">Interactive agent and skill hierarchy</title>',
-        '<desc id="desc">Select an agent to highlight its skills, or select a skill to highlight every agent using it. Turn on agent dependencies to reveal arrows from using agents to used agents. Setup-time stack and domain skills are intentionally omitted because roles do not link to them.</desc>',
+        '<desc id="desc">Select an agent to highlight its skills, or select a skill to highlight every agent using it. Turn on agent dependencies to reveal arrows from using agents to used agents. Setup-time stack and domain skills are intentionally omitted because conceptual agent definitions do not link to them.</desc>',
         '<defs><marker id="dependency-arrow" viewBox="0 0 7 8" refX="6" refY="4" markerWidth="7" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M 1 1.25 L 6 4 L 1 6.75" class="dependency-arrowhead"/></marker></defs>',
         """<style><![CDATA[
 text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
@@ -345,7 +345,7 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
     for role in roles:
         for skill_name, conditional in _role_skill_entries(role):
             skill_assignment_kinds.setdefault(skill_name, set()).add(
-                "request-specific" if conditional else "fixed"
+                "request-specific" if conditional else "definition-owned"
             )
 
     skill_current_y = TOP

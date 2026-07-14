@@ -394,15 +394,15 @@
 
   <section class="hero" aria-labelledby="page-title">
     <div class="legend" aria-label="Legend">
-      <span class="pill"><span class="dot agent"></span> Role agent</span>
-      <span class="pill"><span class="dot skill"></span> Fixed or folder skill</span>
+      <span class="pill"><span class="dot agent"></span> Conceptual agent definition</span>
+      <span class="pill"><span class="dot skill"></span> Definition-owned or folder skill</span>
       <span class="pill"><span class="dot config"></span> AGENTS.md reference</span>
       <span class="pill"><span class="dot rule"></span> Loading rule</span>
       <span class="pill"><span class="dot case"></span> Repo application</span>
     </div>
     <h1 id="page-title">Agent And Skill Specialization Strategy</h1>
     <p class="lede">
-      This page owns the rules for deciding when work needs a role, a fixed or request-specific skill, or a setup-time folder skill.
+      This page owns the rules for deciding when work needs a distinct conceptual agent definition, a definition-owned or request-specific skill, or a setup-time folder skill.
       The <a href="agent-role-skill-map.html">generated catalog</a> owns the current inventory, the
       <a href="agentic-development-operating-model.html">operating model</a> owns project contracts,
       the <a href="orchestrated-development-lifecycle.html">orchestrated development lifecycle</a> owns execution order, and
@@ -425,28 +425,28 @@
         </thead>
         <tbody>
           <tr>
-            <td><span class="name">Role agent</span></td>
-            <td>Role source</td>
+            <td><span class="name">Conceptual agent definition</span></td>
+            <td>Conceptual definition source</td>
             <td>The work needs a stable responsibility, authority boundary, context boundary, or output contract.</td>
-            <td>Current roles, skillsets, and outputs appear only in the generated catalog.</td>
+            <td>Current conceptual definitions, skillsets, and outputs appear only in the generated catalog.</td>
           </tr>
           <tr>
-            <td><span class="name">Fixed role skill</span></td>
-            <td>Role skill entry without a condition</td>
-            <td>Every invocation of the role needs the expertise.</td>
-            <td>The role always loads it.</td>
+            <td><span class="name">Definition-owned skill</span></td>
+            <td>Conceptual definition skill entry without a condition</td>
+            <td>Every invocation of the agent needs the expertise.</td>
+            <td>The agent always loads it.</td>
           </tr>
           <tr>
             <td><span class="name">Request-specific skill</span></td>
-            <td>Role skill entry with a human-readable condition</td>
+            <td>Conceptual definition skill entry with a human-readable condition</td>
             <td>The requested outcome and available evidence satisfy the condition.</td>
-            <td>The role applies the condition with judgment; wording alone is not the decision boundary.</td>
+            <td>The agent applies the condition with judgment; wording alone is not the decision boundary.</td>
           </tr>
           <tr>
             <td><span class="name">Folder technology skill</span></td>
             <td>Skill-owned detection metadata and project configuration</td>
             <td>Setup-time repository evidence selects the skill for a folder scope.</td>
-            <td>The harness supplies the established skillset; ordinary roles do not rerun detection.</td>
+            <td>The harness supplies the established skillset; ordinary agents do not rerun detection.</td>
           </tr>
         </tbody>
       </table>
@@ -457,16 +457,16 @@
     <h2 id="technology-routing-title">Deterministic Setup-Time Technology Detection</h2>
     <div class="wide-grid">
       <article class="card rule">
-        <h3>Generic role skillsets</h3>
-        <p>Roles contain stable responsibility skills only. Test frameworks, interface frameworks, identity providers, persistence libraries, orchestration runtimes, and optional analysis tools are not fixed into generic agents.</p>
+        <h3>Definition-owned skillsets</h3>
+        <p>Conceptual agent definitions contain skills required by their stable responsibilities only. Test frameworks, interface frameworks, identity providers, persistence libraries, orchestration runtimes, and optional analysis tools are not declared as definition-owned skills by conceptual agent definitions.</p>
       </article>
       <article class="card skill">
         <h3>Skill-owned activation</h3>
-        <p>Each specialized technology or domain skill owns detection.yaml with an explicit skill identifier and any-of activation branches. A branch may require all of several file, same-file path and extension, owning manifest, dependency, content, or parsed source-import predicates. Generic fixed-role skills and optional local tools are absent from detection metadata.</p>
+        <p>Each specialized technology or domain skill owns detection.yaml with an explicit skill identifier and any-of activation branches. A branch may require all of several file, same-file path and extension, owning manifest, dependency, content, or parsed source-import predicates. Generic definition-owned skills and optional local tools are absent from detection metadata.</p>
       </article>
       <article class="card config">
         <h3>Generated registry</h3>
-        <p>scripts/build-technology-detection.py validates every specialized variant, rejects task-time fields and specialized fixed role skills, generates the portable registry, and verifies the installed detector mirror against the repository source script.</p>
+        <p>scripts/build-technology-detection.py validates every specialized variant, rejects task-time fields and specialized definition-owned skills, generates the portable registry, and verifies the installed detector mirror against the repository source script.</p>
       </article>
       <article class="card agent">
         <h3>Detector ownership</h3>
@@ -478,7 +478,7 @@
       </article>
       <article class="card rule">
         <h3>Stable inputs</h3>
-        <p>Agent role, task wording, prompt keywords, skill-read confirmation, and optional local commands are not detector inputs. Setup-selected folder scopes and repository evidence are the correctness boundary.</p>
+        <p>The selected conceptual agent definition, task wording, prompt keywords, skill-read confirmation, and optional local commands are not detector inputs. Setup-selected folder scopes and repository evidence are the correctness boundary.</p>
       </article>
     </div>
   </section>
@@ -498,14 +498,14 @@
         <tbody>
           <tr>
             <td><span class="name">Authority</span></td>
-            <td>The role has different write permissions, read-only behavior, approval rights, or escalation authority.</td>
+            <td>The agent needs different write permissions, read-only behavior, approval rights, or escalation authority.</td>
             <td>The same executor can safely use a different framework or language rule.</td>
             <td>Dev Code Reviewer is separate. React coding is a Dev Coder skill pack.</td>
           </tr>
           <tr>
             <td><span class="name">Output contract</span></td>
-            <td>The role returns a different artifact shape, such as a review verdict, QA report, design spec, or path decision.</td>
-            <td>The role still returns the same patch, explanation, or verification shape.</td>
+            <td>The agent returns a different artifact shape, such as a review verdict, QA report, design spec, or path decision.</td>
+            <td>The same agent still returns the same patch, explanation, or verification shape.</td>
             <td>Dev Verifier is separate. Jest versus Vitest is a test skill choice.</td>
           </tr>
           <tr>
@@ -516,13 +516,13 @@
           </tr>
           <tr>
             <td><span class="name">Runtime resource</span></td>
-            <td>The role owns exclusive resources such as browser sessions, E2E servers, shared databases, or merge lanes.</td>
+            <td>The agent owns exclusive resources such as browser sessions, E2E servers, shared databases, or merge lanes.</td>
             <td>The task only changes which test command or runtime library applies.</td>
             <td>Dev Browser Operator can be separate. Playwright knowledge is also a skill.</td>
           </tr>
           <tr>
             <td><span class="name">Lifecycle phase</span></td>
-            <td>The role belongs to a different phase: orchestrate, plan, implement, review, verify, merge, or document.</td>
+            <td>The agent belongs to a different phase: orchestrate, plan, implement, review, verify, merge, or document.</td>
             <td>The same phase changes language, stack, folder, or artifact subtype.</td>
             <td>Dev Orchestrator is separate. TypeScript and Java coding are skills.</td>
           </tr>

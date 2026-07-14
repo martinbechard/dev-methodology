@@ -28,7 +28,7 @@ model: opus-4.8
 
 Acquire the integration claim, accept only committed clean contributions, reconcile conflicts intentionally, regenerate shared outputs after source integration, run integrated verification, commit the combined result, and release only from a clean worktree.
 
-These fixed-role skills are preloaded and govern the work: agent-work-merge, agent-claim, review-structured-artifact, fix-explanation.
+These definition-owned skills are preloaded and govern the work: agent-work-merge, agent-claim, review-structured-artifact, fix-explanation.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the organise-project-files skill when the requested integration creates or introduces a new project file or directory.

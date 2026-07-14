@@ -6,11 +6,11 @@ Type: Feature
 
 ## Summary
 
-Build and run a Codex CLI evaluation suite that proves fixed-role and detected-folder skills were actually activated and used by generated agents.
+Build and run a Codex CLI evaluation suite that proves definition-owned and detected-folder skills were actually activated and used by agents launched from generated native agent definitions.
 
 ## Context
 
-Current tests prove definitions, installation, detector behavior, fixtures, and manual outcomes. They do not yet provide complete captured evidence that Codex invoked an agent, loaded each required skill, and applied its observable requirements. The suite must run after the detector and generated agent contract stabilizes.
+Current tests prove definitions, installation, detector behavior, fixtures, and manual outcomes. They do not yet provide complete captured evidence that Codex invoked an agent, loaded each required skill, and applied its observable requirements. The suite must run after the detector and generated native agent definition contract stabilizes.
 
 See the series [index](index.md).
 
@@ -19,7 +19,7 @@ See the series [index](index.md).
 - Run the installed Codex CLI version and record its version with every evaluation.
 - Invoke generated Codex agents rather than reproducing their prompts manually.
 - Capture agent identity, concrete model, invocation, detected AGENTS.md guidance, skill catalog visibility, skill-load events, commands, outputs, and timestamps.
-- Prove fixed-role skill activation for representative coding, review, setup, QA, security, documentation, and coordination agents.
+- Prove definition-owned skill activation for representative coding, review, setup, QA, security, documentation, and coordination agents.
 - Prove detected-folder activation for TypeScript, Java and Spring Boot, Python, and FastAPI scopes.
 - Include a read-only review case with before and after project hashes.
 - Test Codex skills.config by name only as an explicit enable or disable feature, not as preloading.
@@ -31,7 +31,7 @@ See the series [index](index.md).
 
 ## Acceptance Criteria
 
-- At least one fixed-role Coding Agent run proves each required generic skill was loaded.
+- At least one Coding Agent run proves each required definition-owned generic skill was loaded.
 - At least one folder-guided run proves the relevant technology skills were loaded from AGENTS.md instructions.
 - A negative control fails when a required skill is disabled or unavailable.
 - A restrictive or misleading prompt cannot make the evaluator count an unobserved skill as loaded.

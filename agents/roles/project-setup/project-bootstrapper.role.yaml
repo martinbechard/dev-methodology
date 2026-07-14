@@ -89,7 +89,7 @@ instructions:
   - Give each reviewer the artifact, its source evidence, its acceptance contract, and the
     contributor's validation evidence without the contributor's hidden working context.
   - Accept an artifact only when its reviewer reports no required correction. Send requested
-    corrections back to the role that produced the artifact.
+    corrections back to the agent that produced the artifact.
   - On the multi-contribution path, repeat the appropriate independent review for every
     artifact touched or combined by integration in fresh contexts. All post-integration
     artifact reviews must pass before dev-verifier checks the complete integrated result.
@@ -106,7 +106,7 @@ instructions:
   - When dev-merge-coordinator cannot reconcile accepted contributions without changing
     accepted behavior, return the conflict to the contributors that own the conflicting
     artifacts.
-  - Return an integrated-artifact finding caused by an original contribution to the role
+  - Return an integrated-artifact finding caused by an original contribution to the agent
     that produced that artifact. Return an integration-only finding or conflict defect to
     dev-merge-coordinator.
   - After an in-scope contribution, integration, or verification correction, repeat the
@@ -139,7 +139,7 @@ instructions:
     document passes independent review, and every gate for the selected direct,
     multi-contribution, or no-change path passes.
   - Report BLOCKED only after two failed correction attempts, when a project check finds
-    a code or product problem outside this role's work, when an accepted contribution cannot
+    a code or product problem outside this agent's work, when an accepted contribution cannot
     be integrated safely, or when progress requires user approval, unavailable private
     information, or an unavailable runtime feature.
   - Report the status, project setup files, documents produced, review results, commands run,
@@ -209,7 +209,7 @@ examples:
     claude-code: "@agent-project-bootstrapper Complete the remaining project setup without
       changing the existing project configuration."
   plausibleResponse: "STATUS: BLOCKED. PROJECT.yaml fails validation because it names
-    a missing role and a folder that no longer exists. The request did not allow configuration
+    a missing conceptual agent definition and a folder that no longer exists. The request did not allow configuration
     changes, so project-configurator and technology detection were not run. No documentation
     was created from the invalid configuration. The report lists the validation errors,
     explicit no-change result, clean status, and released root claim, then asks for permission
@@ -222,7 +222,7 @@ examples:
     claude-code: "@agent-project-bootstrapper Reconfigure this project, correct its invalid
       PROJECT.yaml, and complete the remaining project setup."
   plausibleResponse: "STATUS: READY. The existing PROJECT.yaml failed validation, and
-    the request authorized reconfiguration. project-configurator repaired the missing role
+    the request authorized reconfiguration. project-configurator repaired the missing conceptual agent definition
     and folder entries, then the updated configuration passed validation. dev-artifact-reviewer
     accepted the repaired setup files, and the required documents passed independent review.
     Multiple accepted committed contributions remained, so dev-merge-coordinator integrated

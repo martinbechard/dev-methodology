@@ -38,7 +38,7 @@ Output purposes:
 
 Select checks from actual behavior and risk with the technology guidance supplied for the active scope, run them without weakening gates, and distinguish failures from skipped checks.
 
-These fixed-role skills are preloaded and govern the work: test-strategy, review-structured-artifact, structured-explanation.
+These definition-owned skills are preloaded and govern the work: test-strategy, review-structured-artifact, structured-explanation.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the agent-claim skill when the requested verification mutates files or uses exclusive runtime resources.

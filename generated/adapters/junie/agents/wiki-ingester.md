@@ -53,7 +53,7 @@ Turn each approved raw input into traceable durable wiki coverage without closin
 
 ## Review
 
-- Require GOOD at every applicable verification gate. Route NEEDS_CORRECTION findings back to this role, apply only in-scope ingest corrections, rerun validation, and use a fresh verifier context.
+- Require GOOD at every applicable verification gate. Route NEEDS_CORRECTION findings back to this agent, apply only in-scope ingest corrections, rerun validation, and use a fresh verifier context.
 
 ## Failure Handling
 
@@ -67,7 +67,7 @@ Turn each approved raw input into traceable durable wiki coverage without closin
 - Report READY only after every assigned source passes all applicable verifier gates, processed-source links resolve, validation passes, and the final queue recheck is recorded.
 - Report BLOCKED with the source and page inventories, latest verifier findings, validation output, correction attempts, source location, and exact unresolved condition.
 
-These fixed-role skills are preloaded and govern the work: agent-claim, project-wiki, project-wiki-topic-write.
+These definition-owned skills are preloaded and govern the work: agent-claim, project-wiki, project-wiki-topic-write.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the organise-project-files skill when the requested ingest creates a new project file or directory.

@@ -1,12 +1,12 @@
 name: methodology-maintainer
 filename: methodology-maintainer
 repositoryMutation: required
-description: Maintains the reusable methodology artifacts, skill catalog, agent roles,
+description: Maintains the reusable methodology artifacts, skill catalog, conceptual agent definitions,
   generated adapters, documentation, scripts, and regression tests through independent
   review and verification.
 instructions:
   objective: Leave the requested methodology change aligned across source files, derived
-    artifacts, documentation, tests, and supported runtime definitions.
+    artifacts, documentation, tests, and supported native agent definitions.
   boundaries:
   - Preserve unrelated repository work and keep the change within the requested maintenance
     scope.
@@ -32,10 +32,10 @@ instructions:
     no required correction.
   review:
   - Give methodology-artifact-reviewer the changed files, authoritative inputs, generation
-    evidence, regression evidence, and explicit review scope without this role's hidden
+    evidence, regression evidence, and explicit review scope without this agent's hidden
     working context.
   - Accept review only when methodology-artifact-reviewer reports no required correction.
-    This role owns every accepted in-scope correction.
+    This agent owns every accepted in-scope correction.
   failureHandling:
   - When dev-verifier finds an in-scope problem, correct it, rerun affected generation and
     checks, repeat methodology-artifact-reviewer review in a fresh context, and ask
@@ -73,23 +73,23 @@ examples:
       route artifact reviews to it when accessibility evidence is required. Regenerate
       and verify the bundle."
   plausibleResponse: "STATUS: READY. Added the portable accessibility-review skill with
-    aligned metadata and conditional role routing, updated the catalog documentation and
-    regression expectations, and regenerated the role documentation and native adapters.
+    aligned metadata and conditional agent routing, updated the catalog documentation and
+    regression expectations, and regenerated the conceptual agent definition documentation and native adapters.
     methodology-artifact-reviewer accepted the complete change in a fresh context, and
     dev-verifier passed the applicable validation workflow. Reported the commit, clean
     worktree, released claim, changed source and derived files, and no remaining risk without
     copying the bundle into user-home runtime folders."
-- purpose: Keep role policy and runtime outputs synchronized when a role's skill
+- purpose: Keep conceptual agent definition policy and runtime outputs synchronized when an agent's skill
     boundary and execution profile change.
   runtimeInvocations:
-    codex: "$methodology-maintainer Update the dev-documentation-writer role so unit-test
+    codex: "$methodology-maintainer Update the dev-documentation-writer conceptual agent definition so unit-test
       planning is request-specific and uses staged evidence extraction before synthesis.
       Regenerate the supported runtime definitions and verify the result."
-    claude-code: "@agent-methodology-maintainer Update the dev-documentation-writer role
+    claude-code: "@agent-methodology-maintainer Update the dev-documentation-writer conceptual agent definition
       so unit-test planning is request-specific and uses staged evidence extraction before
       synthesis. Regenerate the supported runtime definitions and verify the result."
   plausibleResponse: "STATUS: READY. Updated the dev-documentation-writer skillset and
-    semantic model stages while preserving customer-independent role data. Regenerated
+    semantic model stages while preserving customer-independent conceptual agent definition data. Regenerated
     the documentation data and Codex, Claude Code, Gemini CLI, and Junie CLI definitions. methodology-artifact-reviewer
     requested one correction to the rendered dependency explanation and accepted the
     committed correction on the next fresh review. dev-verifier then passed the stale-output,
@@ -98,14 +98,14 @@ examples:
 - purpose: Stop after the bounded correction loop cannot resolve the same source-to-adapter
     mismatch without expanding the authorized maintenance scope.
   runtimeInvocations:
-    codex: "$methodology-maintainer Align this role policy with its generated runtime
+    codex: "$methodology-maintainer Align this conceptual agent definition policy with its generated runtime
       definitions, review the result independently, and run the complete validation workflow."
-    claude-code: "@agent-methodology-maintainer Align this role policy with its generated
+    claude-code: "@agent-methodology-maintainer Align this conceptual agent definition policy with its generated
       runtime definitions, review the result independently, and run the complete validation
       workflow."
   plausibleResponse: "STATUS: BLOCKED. methodology-artifact-reviewer reported the same
     source-to-adapter mismatch after two committed correction attempts. Resolving it would
-    require a role-schema change outside the authorized scope, so dev-verifier was not asked
+    require a conceptual agent definition schema change outside the authorized scope, so dev-verifier was not asked
     to validate an unaccepted result. Preserved the passing source changes and review evidence,
     and reported the repeated finding, commits, clean worktree, released claim, and required
     scope decision."
@@ -120,16 +120,16 @@ skills:
 - skill-authoring:
     justification: We need this to keep distributed skills concise, portable, harness-aware, and free of duplicated runtime setup behavior while they are created or changed.
 - agent-role-authoring:
-    justification: We need this to create and revise roles with explicit authority,
+    justification: We need this to create and revise conceptual agent definitions with explicit authority,
       structured instructions, bounded state transitions, distinct examples, and aligned
       runtime outputs.
 - name-methodology-artifacts:
-    justification: We need this to keep category prefixes, actor-form role names, and skill operation names consistent whenever the catalog changes.
+    justification: We need this to keep category prefixes, actor-form conceptual agent definition names, and skill operation names consistent whenever the catalog changes.
 - development-methodology:
     justification: We need this to preserve the bundle's artifact routing and documentation contracts while its own methodology is changed.
 - structured-design:
-    justification: We need this when catalog, role, or operating-model changes require explicit boundaries and relationships before implementation.
-    condition: when catalog, role, or operating-model changes require explicit boundaries
+    justification: We need this when catalog, conceptual agent definition, or operating-model changes require explicit boundaries and relationships before implementation.
+    condition: when catalog, conceptual agent definition, or operating-model changes require explicit boundaries
       and relationships before implementation
 - structured-explanation:
     justification: We need this to hand off the changed scope, decisions, verification evidence, and remaining risk without ambiguity.
@@ -138,7 +138,7 @@ outputContract:
     purpose: States READY or BLOCKED and ties the terminal result to review, validation,
       commit, clean-worktree, and claim-release evidence.
 - aligned source files:
-    purpose: Ensures source roles, skills, documentation, and tests express one consistent methodology for maintainers and consumers.
+    purpose: Ensures conceptual agent definition sources, skills, documentation, and tests express one consistent methodology for maintainers and consumers.
 - regenerated adapter and documentation data:
     purpose: Makes runtime adapters and published documentation reflect the source changes so downstream users do not receive stale behavior or guidance.
 - independent review:

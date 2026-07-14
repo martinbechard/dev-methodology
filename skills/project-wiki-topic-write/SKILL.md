@@ -20,7 +20,7 @@ The caller must provide:
 - Pages to review or correct.
 - Any verifier findings already known.
 - Any source paths that are authoritative evidence for the assigned pages.
-- A non-negative correction-attempt cap when the caller or owning role defines one.
+- A non-negative correction-attempt cap when the caller or owning agent defines one.
 
 If the write scope is missing or overlaps with another active writer, stop and request a clearer assignment.
 When no correction-attempt cap is supplied, use a default of two corrected resubmissions
@@ -56,7 +56,7 @@ Non-reserved Markdown concept documents should have YAML frontmatter with a non-
 ## Verifier Loop
 
 The writer must run the verifier loop on every created or updated topic page before finishing.
-An explicit caller or owning-role correction-attempt cap governs the loop. When no cap
+An explicit caller or owning-agent correction-attempt cap governs the loop. When no cap
 is supplied, allow at most two corrected resubmissions after the initial verdict. The
 initial verdict does not count as a correction attempt.
 

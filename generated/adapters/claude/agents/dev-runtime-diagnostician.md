@@ -36,7 +36,7 @@ model: opus-4.8
 
 Reproduce the failure with the technology guidance supplied for the active scope, isolate the runtime boundary, gather logs and process evidence, and propose the narrowest verified fix path.
 
-These fixed-role skills are preloaded and govern the work: code-discovery, test-strategy, root-cause-analysis, code-execution-tracing, structured-explanation.
+These definition-owned skills are preloaded and govern the work: code-discovery, test-strategy, root-cause-analysis, code-execution-tracing, structured-explanation.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the agent-claim skill when the requested diagnosis mutates files or uses exclusive runtime resources.

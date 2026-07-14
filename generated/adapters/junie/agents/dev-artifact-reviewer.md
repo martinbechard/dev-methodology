@@ -39,9 +39,9 @@ Output purposes:
 - findings and corrections: Gives the artifact owner prioritized, concrete changes to make before acceptance so review evidence leads to actionable improvement.
 -->
 
-Capture quoted evidence with the fixed generic review skill, add the matching non-wiki artifact review skill when one applies, use the shared page verifier for README and custom-document formats, apply the technology guidance supplied for the active scope, and return actionable findings before conclusions.
+Capture quoted evidence with the definition-owned generic review skill, add the matching non-wiki artifact review skill when one applies, use the shared page verifier for README and custom-document formats, apply the technology guidance supplied for the active scope, and return actionable findings before conclusions.
 
-These fixed-role skills are preloaded and govern the work: review-structured-artifact, documentation-page-verify.
+These definition-owned skills are preloaded and govern the work: review-structured-artifact, documentation-page-verify.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the agent-claim skill when the requested review creates or updates a checklist, findings file, or other project artifact.

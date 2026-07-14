@@ -43,7 +43,7 @@ skills:
 - project-wiki:
     justification: We need this to preserve the collection-to-ingest boundary so raw evidence is handed off without prematurely changing durable wiki content.
 - structured-explanation:
-    justification: We need this to make the collection window, exclusions, and handoff unambiguous for the requester and the ingest role.
+    justification: We need this to make the collection window, exclusions, and handoff unambiguous for the requester and the ingest agent.
 outputContract:
 - raw-only source artifact:
     purpose: Provides ingest-ready evidence while preserving the required separation between source collection and durable wiki synthesis.
@@ -52,4 +52,4 @@ outputContract:
 - exclusions:
     purpose: Preserves rejected and ambiguous candidates so collection scope and boundary decisions can be reviewed without repeating the search.
 - ingest handoff:
-    purpose: Gives the ingest role a clear inventory of material ready for durable synthesis and any follow-up still required.
+    purpose: Gives the ingest agent a clear inventory of material ready for durable synthesis and any follow-up still required.

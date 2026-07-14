@@ -213,7 +213,7 @@ README_REQUIRED_PHRASES = (
     "Unowned skills and agents are never removed.",
     "Keep Codex openai.yaml metadata beside each source SKILL.md",
     "Before renaming or deleting a source skill",
-    "role definitions",
+    "conceptual agent definitions",
     "dispatch profiles",
     "Review Skill Checklist Convention",
     "review-checklist-[review-target].md",
@@ -236,7 +236,7 @@ README_REQUIRED_PHRASES = (
     "The generated diagram and generated cards are the intentional duplicate views",
 )
 DEVELOPMENT_METHODOLOGY_REQUIRED_PHRASES = (
-    "Do not copy this bundle's skills or generated agents into user-home runtime folders",
+    "Do not copy this bundle's skills or generated native agent definitions into user-home runtime folders",
     "Run the installer only for an explicitly requested deployment with caller-supplied target directories.",
     "sweep the source repository for the old skill id",
     "Codex metadata",
@@ -253,7 +253,7 @@ STRATEGY_REQUIRED_PHRASES = (
     "Selection Model",
     "Deterministic Setup-Time Technology Detection",
     "When To Create A Specialized Agent",
-    "Fixed role skill",
+    "Definition-owned skill",
     "Request-specific skill",
     "Folder technology skill",
 )
@@ -293,8 +293,8 @@ GENERIC_AGENT_DEFINITIONS_REQUIRED_PHRASES = (
     "Skills Have A Portable File Standard",
     "Agents Do Not Have One Portable Runtime File",
     "The source skill definition is also the runtime skill definition.",
-    "From Logical Roles To Native Agents",
-    "logical source definition, not a file that an agent harness loads directly",
+    "From Conceptual Agent Definitions To Native Agent Definitions",
+    "conceptual agent definition source, not a file that an agent harness loads directly",
     "Property conversion is not just a filename change",
     "Authoritative Runtime Sources",
     "OpenAI Codex Subagents",
@@ -307,14 +307,14 @@ GENERIC_AGENT_DEFINITIONS_REQUIRED_PHRASES = (
     "GitHub Copilot Custom Agents",
     "agent-generation-manifest.json",
     "GitHub Copilot Agent Skills",
-    "Logical Role Properties",
+    "Conceptual Agent Definition Properties",
     "Properties We Ignore",
     "Behavior We Default",
     "Native Runtime Packaging",
     "[mcp_servers.name]",
     "[[skills.config]]",
     "prefix_rule",
-    "Logical-To-Native Property Mapping",
+    "Conceptual-To-Native Property Mapping",
     "skills[].condition",
     "skillAvailability",
     "fixedBehavior.userInvocable",
@@ -328,10 +328,10 @@ AGENTIC_CONFIGURATION_REQUIRED_PHRASES = (
     "Context Layers",
     "Shared Definitions",
     "Skill Definition Files",
-    "Agent Definition Files",
+    "Native Agent Definition Files",
     "Project-Specific Definitions",
     "Project Skill Definition Files",
-    "Project Agent Definition Files",
+    "Project Native Agent Definition Files",
     "Root Project Instruction Files",
     "Nested Project Instruction Files",
     "Runtime Configuration File Locations",
@@ -340,12 +340,12 @@ AGENTIC_CONFIGURATION_REQUIRED_PHRASES = (
     "The solution is to split up the information into many files and have the agentic coding tool load just the skills it needs.",
     "The Agent Skills format uses a text file named <code>SKILL.md</code> to describe how to perform actions.",
     "It is adopted by all vendors and is the most granular unit of description.",
-    "Agent definition files describe the purpose of a specific agent, the skills and other agents it should use, and its other directives.",
+    "Native agent definition files describe the purpose of a specific agent, the skills and other agents it should use, and its other directives.",
     "Each agent operates with its own context and history, which allows us to partition the amount of information being worked on at a given time by creating a hierarchy of agents.",
     "Definitions installed for a harness are available to all projects that use that harness.",
     "Definitions and instructions stored within a project apply only to that project and can tailor shared behavior to its content.",
     "Project skill definition files describe actions that are specific to the project or customize a shared skill for the project.",
-    "Project agent definition files define project-specific agents or customize shared agent definitions for the project.",
+    "Project native agent definition files define project-specific agents or customize shared native agent definitions for the project.",
     "Root project instruction files use the harness-native project guidance format",
     "This project guidance should usually act as a router to load skills appropriate for the project content.",
     "More of these instruction files can be nested to provide specialized guidance for content within a project folder.",
@@ -400,10 +400,10 @@ DOCUMENT_INFORMATION_OWNERS = {
     ),
     "generic-agent-definitions-source.html": (
         "The Portability Problem",
-        "From Logical Roles To Native Agents",
-        "Logical Role Properties",
+        "From Conceptual Agent Definitions To Native Agent Definitions",
+        "Conceptual Agent Definition Properties",
         "Native Runtime Packaging",
-        "Logical-To-Native Property Mapping",
+        "Conceptual-To-Native Property Mapping",
     ),
 }
 DOCUMENT_FORBIDDEN_HEADINGS = {
@@ -538,7 +538,7 @@ AGENTS_REQUIRED_PHRASES = (
     "repo-local operating contract",
     "Do not create separate skill files for repo-local maintenance procedures.",
     "Update README.md when the public skill inventory",
-    "Update the design HTML files that describe skills, agents",
+    "Update the design HTML files that describe skills, conceptual agent definitions",
     "Keep Codex openai.yaml metadata beside each source SKILL.md",
     "Run scripts/openai_metadata.py skills after skill name or description changes so derived Codex interface fields stay aligned while policy and dependencies remain hand-authored.",
     "python3 scripts/validate-agent-skills.py skills",
@@ -982,7 +982,7 @@ class BundleContentTests(unittest.TestCase):
         self.assertNotIn("agent_coordination:", template_text)
         self.assertNotIn("coordination_overrides:", template_text)
         self.assertIn(
-            "Generic repository-mutation behavior belongs to role definitions",
+            "Generic repository-mutation behavior belongs to conceptual agent definitions",
             skill_text,
         )
         self.assertIn(
@@ -991,7 +991,7 @@ class BundleContentTests(unittest.TestCase):
         )
         self.assertIn("Record a coordination_overrides mapping only when", skill_text)
         self.assertIn(
-            "Treat a missing role definition, skill, or command as BLOCKED",
+            "Treat a missing conceptual agent definition, skill, or command as BLOCKED",
             skill_text,
         )
         self.assertIn("agent-claim", skill_text)
@@ -1171,7 +1171,7 @@ class BundleContentTests(unittest.TestCase):
             SKILLS_ROOT / "maintain-methodology-documentation" / "SKILL.md"
         ).read_text(encoding="utf-8")
         self.assertIn(
-            "generated Codex, Claude Code, Gemini CLI, and Junie CLI agent definitions",
+            "generated Codex, Claude Code, Gemini CLI, and Junie CLI native agent definitions",
             maintenance_skill,
         )
         self.assertNotIn("generated Codex and Claude agent definitions", maintenance_skill)
@@ -1346,7 +1346,7 @@ class BundleContentTests(unittest.TestCase):
                     tomllib.loads(codex_agent_text)["developer_instructions"],
                 )
                 self.assertIn(
-                    "Before acting, load these fixed-role skills completely; they govern the work:",
+                    "Before acting, load these definition-owned skills completely; they govern the work:",
                     codex_agent_text,
                 )
                 if "skillAvailability" not in role.optional_fields:
@@ -1364,7 +1364,7 @@ class BundleContentTests(unittest.TestCase):
                     list(build_skill_docs.fixed_role_skills(role)),
                     claude_frontmatter["skills"],
                 )
-                self.assertIn("These fixed-role skills are preloaded and govern the work", claude_agent_text)
+                self.assertIn("These definition-owned skills are preloaded and govern the work", claude_agent_text)
                 for skill, condition in role.skill_conditions.items():
                     self.assertNotIn(skill, claude_frontmatter["skills"])
                     self.assertIn(f"Use the {skill} skill {condition}.", claude_agent_text)
@@ -1380,7 +1380,7 @@ class BundleContentTests(unittest.TestCase):
                 self.assertEqual(role.description, gemini_frontmatter["description"])
                 self.assertEqual("local", gemini_frontmatter["kind"])
                 self.assertNotIn("skills", gemini_frontmatter)
-                self.assertIn("Before acting, load these fixed-role skills completely", gemini_agent_text)
+                self.assertIn("Before acting, load these definition-owned skills completely", gemini_agent_text)
                 for skill, condition in role.skill_conditions.items():
                     self.assertIn(f"Use the {skill} skill {condition}.", gemini_agent_text)
 
@@ -1398,7 +1398,7 @@ class BundleContentTests(unittest.TestCase):
                     junie_frontmatter["skills"],
                 )
                 self.assertIn("reasoningLevel", junie_frontmatter)
-                self.assertIn("These fixed-role skills are preloaded and govern the work", junie_agent_text)
+                self.assertIn("These definition-owned skills are preloaded and govern the work", junie_agent_text)
                 for skill, condition in role.skill_conditions.items():
                     self.assertNotIn(skill, junie_frontmatter["skills"])
                     self.assertIn(f"Use the {skill} skill {condition}.", junie_agent_text)
@@ -1440,7 +1440,7 @@ class BundleContentTests(unittest.TestCase):
 
         with self.assertRaisesRegex(ValueError, "missing sections"):
             build_skill_docs.validate_role_instructions(
-                {"objective": "Incomplete role."},
+                {"objective": "Incomplete conceptual agent definition."},
                 ROLE_SCHEMA_PATH,
             )
 
@@ -1542,7 +1542,7 @@ class BundleContentTests(unittest.TestCase):
                 )
                 self.assertRegex(
                     f"{routing_text} {failure_text}",
-                    r"(?i)(?:route|return|this role owns|apply only)",
+                    r"(?i)(?:route|return|this agent owns|apply only)",
                 )
                 self.assertTrue(
                     any("STATUS: READY" in response for response in example_responses)
@@ -1649,7 +1649,7 @@ class BundleContentTests(unittest.TestCase):
         self.assertRegex(
             correction_text,
             r"(?i)(?:route|return|send).{0,120}(?:finding|correction).{0,160}"
-            r"original (?:producer|producing role|executor)",
+            r"original (?:producer|producing agent|executor)",
         )
 
         integration_indexes = [
@@ -1777,7 +1777,7 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(path=path.relative_to(REPOSITORY_ROOT)):
                 self.assertRegex(
                     normalized_text,
-                    r"(?i)explicit caller or owning-role correction-attempt cap",
+                    r"(?i)explicit caller or owning-agent correction-attempt cap",
                 )
                 self.assertRegex(
                     normalized_text,
@@ -2507,7 +2507,7 @@ class BundleContentTests(unittest.TestCase):
                 )
 
         self.assertIn(
-            "deliberately present the same role-to-skill relationships in two generated views",
+            "deliberately present the same definition-to-skill relationships in two generated views",
             page_text["agent-role-skill-map.html"],
         )
 
@@ -2564,7 +2564,7 @@ class BundleContentTests(unittest.TestCase):
             "repoRoot",
             "Escape",
             "Example scenarios",
-            "View source role YAML",
+            "View conceptual agent definition YAML",
             "Plausible response",
             "enhance-skill-definitions",
             ".skill-modal:not([hidden])",
@@ -2681,7 +2681,7 @@ class BundleContentTests(unittest.TestCase):
 
         self.assertIn("design/agentic-configuration.html", index_text)
         self.assertIn(
-            "selected skills, agent definitions, and project instructions",
+            "selected skills, native agent definitions, and project instructions",
             index_text,
         )
         for phrase in AGENTIC_CONFIGURATION_REQUIRED_PHRASES:
@@ -2699,10 +2699,10 @@ class BundleContentTests(unittest.TestCase):
         layer_headings = (
             ("h3", "Shared Definitions"),
             ("h4", "Skill Definition Files"),
-            ("h4", "Agent Definition Files"),
+            ("h4", "Native Agent Definition Files"),
             ("h3", "Project-Specific Definitions"),
             ("h4", "Project Skill Definition Files"),
-            ("h4", "Project Agent Definition Files"),
+            ("h4", "Project Native Agent Definition Files"),
             ("h4", "Root Project Instruction Files"),
             ("h4", "Nested Project Instruction Files"),
         )
@@ -2721,8 +2721,8 @@ class BundleContentTests(unittest.TestCase):
                 self.assertNotIn(redundant_heading, configuration_text)
         for source_heading in (
             "The Portability Problem",
-            "From Logical Roles To Native Agents",
-            "Logical-To-Native Property Mapping",
+            "From Conceptual Agent Definitions To Native Agent Definitions",
+            "Conceptual-To-Native Property Mapping",
         ):
             with self.subTest(source_heading=source_heading):
                 self.assertNotIn(source_heading, configuration_text)
@@ -2732,7 +2732,7 @@ class BundleContentTests(unittest.TestCase):
         )[1].split("</section>", maxsplit=1)[0]
         purpose_headings = (
             "Skill Definition Files",
-            "Agent Definition Files",
+            "Native Agent Definition Files",
             "Root Project Instruction Files",
             "Nested Project Instruction Files",
         )

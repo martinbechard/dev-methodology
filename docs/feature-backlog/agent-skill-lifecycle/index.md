@@ -2,16 +2,16 @@
 
 ## Goal
 
-Make fixed-role skill loading, project technology detection, generated project guidance, harness-specific activation, behavioral verification, and interactive exploration coherent and truthful across supported runtimes.
+Make definition-owned skill loading, project technology detection, generated project guidance, harness-specific activation, behavioral verification, and interactive exploration coherent and truthful across supported runtimes.
 
 ## Purpose
 
-Roles know their generic fixed-role skills. Project setup detects stable technology guidance for analyzed folders and records it in PROJECT.yaml and AGENTS.md. Runtime adapters express fixed-role skills according to their native semantics. Evaluation proves actual activation before the support checklist marks behavior verified. The mind map exposes these relationships and their evidence.
+Conceptual agent definitions declare their generic definition-owned skills. Project setup detects stable technology guidance for analyzed folders and records it in PROJECT.yaml and AGENTS.md. Runtime adapters express definition-owned skills according to their native semantics. Evaluation proves actual activation before the support checklist marks behavior verified. The mind map exposes these relationships and their evidence.
 
 ## Design Anchors
 
-- Source role files under agents/roles own fixed-role generic skills.
-- Claude skills properties preload fixed-role skill content.
+- Conceptual agent definition sources under agents/roles own generic definition-owned skills.
+- Claude skills properties preload definition-owned skill content.
 - Codex developer instructions require enabled skills to be discovered and loaded; skills.config is optional availability configuration, not preloading.
 - Restrictive Claude tool allowlists must include Skill when dynamic folder skills are required.
 - Technology detection runs during project setup, not on every coding or review task.
@@ -37,7 +37,7 @@ The detector is the foundation. Codex verification must run against the stable g
 
 ## Definition Of Good
 
-- Fixed-role and detected-folder skills have distinct, explicit lifecycle semantics.
+- Definition-owned and detected-folder skills have distinct, explicit lifecycle semantics.
 - Project setup creates durable, source-backed technology bindings.
 - Codex behavior claims are backed by captured activation evidence.
 - Claude preload and Skill tool requirements are represented accurately.

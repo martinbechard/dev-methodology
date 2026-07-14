@@ -54,7 +54,7 @@ class AgentSkillHierarchyTests(unittest.TestCase):
         self.assertEqual(self.rendered, OUTPUT_PATH.read_text(encoding="utf-8"))
 
     def test_hierarchy_omits_model_profiles_and_setup_time_skills(self) -> None:
-        """The visual map should contain role relationships without setup-time clutter."""
+        """The visual map should contain agent relationships without setup-time clutter."""
         visible_text = " ".join(text.strip() for text in self.root.itertext() if text.strip())
         self.assertNotIn("Model profiles", visible_text)
         self.assertNotIn("model-edge", self.rendered)
@@ -86,7 +86,7 @@ class AgentSkillHierarchyTests(unittest.TestCase):
         self.assertTrue(visible_skills.isdisjoint(detected_skills))
 
     def test_agents_and_skills_expose_selection_and_keyboard_hooks(self) -> None:
-        """Every role and skill should be an accessible selector with mapped edges."""
+        """Every conceptual definition and skill should be an accessible selector with mapped edges."""
         role_nodes = self.root.findall(
             f".//{{{SVG_NAMESPACE}}}g[@class='role-node']"
         )
@@ -198,7 +198,7 @@ class AgentSkillHierarchyTests(unittest.TestCase):
         self.assertIn("toggleAgentDependencies", self.rendered)
 
     def test_agent_groups_follow_the_role_schema_order(self) -> None:
-        """The visual reading order should match the maintained role-group contract."""
+        """The visual reading order should match the maintained definition-group contract."""
         group_nodes = self.root.findall(
             f".//{{{SVG_NAMESPACE}}}text[@class='group']"
         )
@@ -240,7 +240,7 @@ class AgentSkillHierarchyTests(unittest.TestCase):
         )
 
     def test_role_cards_follow_the_role_schema_order(self) -> None:
-        """The reader-facing role cards should follow the maintained group order."""
+        """The reader-facing conceptual agent definition cards follow group order."""
         role_map = ROLE_MAP_PATH.read_text(encoding="utf-8")
         group_markers = [
             f'data-role-group="{group}"'
@@ -261,13 +261,13 @@ class AgentSkillHierarchyTests(unittest.TestCase):
             '<section class="section" aria-labelledby="hierarchy-title">', 1
         )[1].split("</section>", 1)[0]
 
-        self.assertIn("Amber marks a fixed role-skill edge", hierarchy_section)
+        self.assertIn("Amber marks a definition-owned skill edge", hierarchy_section)
         self.assertIn("blue arrows mark direct agent dependencies", hierarchy_section)
         self.assertNotIn("Role Agent Categories", role_map)
         self.assertNotIn("The role model has four operating categories", role_map)
 
     def test_selected_items_expose_the_definition_view_bridge(self) -> None:
-        """A selected role or skill should enable a reusable definition control."""
+        """A selected conceptual agent definition or skill enables a reusable definition control."""
         view_control = self.root.find(
             f".//{{{SVG_NAMESPACE}}}g[@class='view-control disabled']"
         )
@@ -281,7 +281,7 @@ class AgentSkillHierarchyTests(unittest.TestCase):
         self.assertIn('target.searchParams.set("definitionKind", kind)', self.rendered)
 
     def test_double_clicking_a_node_opens_its_definition(self) -> None:
-        """Double-click should select a role or skill and use the definition bridge."""
+        """Double-click should select an agent or skill and use the definition bridge."""
         self.assertIn('node.addEventListener("dblclick"', self.rendered)
         self.assertIn("viewRoleDefinition(node.dataset.role)", self.rendered)
         self.assertIn("viewSkillDefinition(node.dataset.skill)", self.rendered)

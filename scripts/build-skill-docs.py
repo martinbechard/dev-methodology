@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Modified with AI assistance.
-# Summary: Generates skill documentation, role views, runtime agent adapters, and their deterministic inventory.
+# Summary: Generates skill documentation, conceptual agent definition views, runtime agent adapters, and their deterministic inventory.
 
 from __future__ import annotations
 
@@ -175,7 +175,7 @@ GENERATED_JAVASCRIPT_HEADER = "\n".join((
     "// AI attribution: Generated with AI assistance.",
     "// Summary: Provides deterministic generated methodology data to the static design pages.",
 ))
-ROLE_SKILL_INSTRUCTION_PREFIX = "Before acting, load these fixed-role skills completely; they govern the work:"
+ROLE_SKILL_INSTRUCTION_PREFIX = "Before acting, load these definition-owned skills completely; they govern the work:"
 ROLE_OUTPUT_INSTRUCTION_PREFIX = "Return:"
 ROLE_DISPLAY_ACRONYMS = {"e2e": "E2E", "qa": "QA", "ux": "UX"}
 MINIMUM_POSITIVE_INTEGER = 1
@@ -527,28 +527,28 @@ def role_display_name(role_name: str) -> str:
 
 def validate_string_list(value: object, field_name: str, source_path: Path) -> tuple[str, ...]:
     if not isinstance(value, list) or not value:
-        raise ValueError(f"Role {field_name} must be a non-empty list: {source_path}")
+        raise ValueError(f"Conceptual agent definition {field_name} must be a non-empty list: {source_path}")
     if any(not isinstance(item, str) or not item.strip() for item in value):
-        raise ValueError(f"Role {field_name} must contain non-empty strings: {source_path}")
+        raise ValueError(f"Conceptual agent definition {field_name} must contain non-empty strings: {source_path}")
     normalized = tuple(item.strip() for item in value)
     if len(normalized) != len(set(normalized)):
-        raise ValueError(f"Role {field_name} contains duplicates: {source_path}")
+        raise ValueError(f"Conceptual agent definition {field_name} contains duplicates: {source_path}")
     return normalized
 
 
 def validate_role_examples(value: object, source_path: Path) -> tuple[dict[str, object], ...]:
     if not isinstance(value, list) or not value:
-        raise ValueError(f"Role {ROLE_EXAMPLES_FIELD_NAME} must be a non-empty list: {source_path}")
+        raise ValueError(f"Conceptual agent definition {ROLE_EXAMPLES_FIELD_NAME} must be a non-empty list: {source_path}")
 
     examples: list[dict[str, object]] = []
     for index, example in enumerate(value, start=MINIMUM_POSITIVE_INTEGER):
         if not isinstance(example, dict):
-            raise ValueError(f"Role example {index} must be an object: {source_path}")
+            raise ValueError(f"Conceptual agent definition example {index} must be an object: {source_path}")
         unknown_fields = sorted(set(example) - set(ROLE_EXAMPLE_REQUIRED_FIELDS))
         missing_fields = sorted(set(ROLE_EXAMPLE_REQUIRED_FIELDS) - set(example))
         if unknown_fields or missing_fields:
             raise ValueError(
-                f"Role example {index} must contain only {ROLE_EXAMPLE_REQUIRED_FIELDS}: {source_path}"
+                f"Conceptual agent definition example {index} must contain only {ROLE_EXAMPLE_REQUIRED_FIELDS}: {source_path}"
             )
         normalized: dict[str, object] = {}
         for field_name in ROLE_EXAMPLE_REQUIRED_FIELDS:
@@ -556,21 +556,21 @@ def validate_role_examples(value: object, source_path: Path) -> tuple[dict[str, 
             if field_name == ROLE_EXAMPLE_RUNTIME_INVOCATIONS_FIELD_NAME:
                 if not isinstance(field_value, dict) or set(field_value) != set(ROLE_EXAMPLE_RUNTIME_IDS):
                     raise ValueError(
-                        f"Role example {index} {field_name} keys must match {ROLE_EXAMPLE_RUNTIME_IDS}: {source_path}"
+                        f"Conceptual agent definition example {index} {field_name} keys must match {ROLE_EXAMPLE_RUNTIME_IDS}: {source_path}"
                     )
                 invocations: dict[str, str] = {}
                 for runtime_id in ROLE_EXAMPLE_RUNTIME_IDS:
                     invocation = field_value[runtime_id]
                     if not isinstance(invocation, str) or not invocation.strip():
                         raise ValueError(
-                            f"Role example {index} {field_name} {runtime_id} must be a non-empty string: {source_path}"
+                            f"Conceptual agent definition example {index} {field_name} {runtime_id} must be a non-empty string: {source_path}"
                         )
                     invocations[runtime_id] = invocation.strip()
                 normalized[field_name] = invocations
                 continue
             if not isinstance(field_value, str) or not field_value.strip():
                 raise ValueError(
-                    f"Role example {index} {field_name} must be a non-empty string: {source_path}"
+                    f"Conceptual agent definition example {index} {field_name} must be a non-empty string: {source_path}"
                 )
             normalized[field_name] = field_value.strip()
         examples.append(normalized)
@@ -584,12 +584,12 @@ def validate_role_instructions(
 ) -> tuple[str, dict[str, object]]:
     if isinstance(value, str):
         if not value.strip():
-            raise ValueError(f"Role instructions must be a non-empty string: {source_path}")
+            raise ValueError(f"Conceptual agent definition instructions must be a non-empty string: {source_path}")
         return value.strip(), {}
 
     if not isinstance(value, dict) or not value:
         raise ValueError(
-            f"Role instructions must be a non-empty string or structured mapping: {source_path}"
+            f"Conceptual agent definition instructions must be a non-empty string or structured mapping: {source_path}"
         )
 
     known_sections = {name for name, _, _ in ROLE_INSTRUCTION_SECTION_SPECS}
@@ -597,7 +597,7 @@ def validate_role_instructions(
     missing_sections = sorted(ROLE_REQUIRED_INSTRUCTION_SECTIONS - set(value))
     if unknown_sections or missing_sections:
         raise ValueError(
-            "Role structured instructions have "
+            "Conceptual agent definition structured instructions have "
             f"unknown sections {unknown_sections} or missing sections {missing_sections}: {source_path}"
         )
 
@@ -610,7 +610,7 @@ def validate_role_instructions(
         if section_type == "string":
             if not isinstance(section_value, str) or not section_value.strip():
                 raise ValueError(
-                    f"Role instructions {section_name} must be a non-empty string: {source_path}"
+                    f"Conceptual agent definition instructions {section_name} must be a non-empty string: {source_path}"
                 )
             normalized_value: object = section_value.strip()
             section_body = normalized_value
@@ -636,29 +636,29 @@ def validate_annotated_list(
     source_path: Path,
 ) -> tuple[tuple[str, ...], dict[str, str]]:
     if not isinstance(value, list) or not value:
-        raise ValueError(f"Role {field_name} must be a non-empty list: {source_path}")
+        raise ValueError(f"Conceptual agent definition {field_name} must be a non-empty list: {source_path}")
 
     names: list[str] = []
     annotations: dict[str, str] = {}
     for item in value:
         if not isinstance(item, dict) or len(item) != 1:
             raise ValueError(
-                f"Role {field_name} entries must contain exactly one named mapping: {source_path}"
+                f"Conceptual agent definition {field_name} entries must contain exactly one named mapping: {source_path}"
             )
         name, metadata = next(iter(item.items()))
         if not isinstance(name, str) or not name.strip():
-            raise ValueError(f"Role {field_name} entry names must be non-empty strings: {source_path}")
+            raise ValueError(f"Conceptual agent definition {field_name} entry names must be non-empty strings: {source_path}")
         normalized_name = name.strip()
         if normalized_name in annotations:
-            raise ValueError(f"Role {field_name} contains duplicate {normalized_name}: {source_path}")
+            raise ValueError(f"Conceptual agent definition {field_name} contains duplicate {normalized_name}: {source_path}")
         if not isinstance(metadata, dict) or set(metadata) != {annotation_field_name}:
             raise ValueError(
-                f"Role {field_name} {normalized_name} must contain only {annotation_field_name}: {source_path}"
+                f"Conceptual agent definition {field_name} {normalized_name} must contain only {annotation_field_name}: {source_path}"
             )
         annotation = metadata[annotation_field_name]
         if not isinstance(annotation, str) or not annotation.strip():
             raise ValueError(
-                f"Role {field_name} {normalized_name} {annotation_field_name} must be a non-empty string: {source_path}"
+                f"Conceptual agent definition {field_name} {normalized_name} {annotation_field_name} must be a non-empty string: {source_path}"
             )
         names.append(normalized_name)
         annotations[normalized_name] = annotation.strip()
@@ -670,7 +670,7 @@ def validate_role_skills(
     source_path: Path,
 ) -> tuple[tuple[str, ...], dict[str, str], dict[str, str]]:
     if not isinstance(value, list) or not value:
-        raise ValueError(f"Role {ROLE_SKILLS_FIELD_NAME} must be a non-empty list: {source_path}")
+        raise ValueError(f"Conceptual agent definition {ROLE_SKILLS_FIELD_NAME} must be a non-empty list: {source_path}")
 
     names: list[str] = []
     justifications: dict[str, str] = {}
@@ -678,32 +678,32 @@ def validate_role_skills(
     for item in value:
         if not isinstance(item, dict) or len(item) != 1:
             raise ValueError(
-                f"Role {ROLE_SKILLS_FIELD_NAME} entries must contain exactly one named mapping: {source_path}"
+                f"Conceptual agent definition {ROLE_SKILLS_FIELD_NAME} entries must contain exactly one named mapping: {source_path}"
             )
         name, metadata = next(iter(item.items()))
         if not isinstance(name, str) or not name.strip():
-            raise ValueError(f"Role {ROLE_SKILLS_FIELD_NAME} entry names must be non-empty strings: {source_path}")
+            raise ValueError(f"Conceptual agent definition {ROLE_SKILLS_FIELD_NAME} entry names must be non-empty strings: {source_path}")
         normalized_name = name.strip()
         if normalized_name in justifications:
-            raise ValueError(f"Role {ROLE_SKILLS_FIELD_NAME} contains duplicate {normalized_name}: {source_path}")
+            raise ValueError(f"Conceptual agent definition {ROLE_SKILLS_FIELD_NAME} contains duplicate {normalized_name}: {source_path}")
         if not isinstance(metadata, dict) or set(metadata) not in (
             {ROLE_SKILL_JUSTIFICATION_FIELD_NAME},
             {ROLE_SKILL_JUSTIFICATION_FIELD_NAME, ROLE_SKILL_CONDITION_FIELD_NAME},
         ):
             raise ValueError(
-                f"Role {ROLE_SKILLS_FIELD_NAME} {normalized_name} must contain justification and optional condition only: {source_path}"
+                f"Conceptual agent definition {ROLE_SKILLS_FIELD_NAME} {normalized_name} must contain justification and optional condition only: {source_path}"
             )
         justification = metadata[ROLE_SKILL_JUSTIFICATION_FIELD_NAME]
         if not isinstance(justification, str) or not justification.strip():
             raise ValueError(
-                f"Role {ROLE_SKILLS_FIELD_NAME} {normalized_name} justification must be a non-empty string: {source_path}"
+                f"Conceptual agent definition {ROLE_SKILLS_FIELD_NAME} {normalized_name} justification must be a non-empty string: {source_path}"
             )
         justifications[normalized_name] = justification.strip()
         condition = metadata.get(ROLE_SKILL_CONDITION_FIELD_NAME)
         if condition is not None:
             if not isinstance(condition, str) or not condition.strip().startswith("when "):
                 raise ValueError(
-                    f"Role {ROLE_SKILLS_FIELD_NAME} {normalized_name} condition must be a non-empty fragment beginning with when: {source_path}"
+                    f"Conceptual agent definition {ROLE_SKILLS_FIELD_NAME} {normalized_name} condition must be a non-empty fragment beginning with when: {source_path}"
                 )
             conditions[normalized_name] = condition.strip().rstrip(".")
         names.append(normalized_name)
@@ -726,13 +726,15 @@ def load_role_schema() -> tuple[set[str], set[str], set[str]]:
         ROLE_SCHEMA_PATH,
     )
     if set(groups) != set(ROLE_GROUP_LABELS) or set(groups) != set(ROLE_GROUP_PREFIXES):
-        raise ValueError("role-schema.yaml role groups must match the generated documentation groups.")
+        raise ValueError(
+            "role-schema.yaml conceptual definition groups must match the generated documentation groups."
+        )
     category_words = [label.split()[0].lower() for label in ROLE_GROUP_LABELS.values()]
     if len(category_words) != len(set(category_words)):
-        raise ValueError("Role category labels must start with unique words.")
+        raise ValueError("Conceptual agent definition category labels must start with unique words.")
     for group, label in ROLE_GROUP_LABELS.items():
         if label.split()[0].lower() != ROLE_GROUP_PREFIXES[group]:
-            raise ValueError(f"Role category {group} must start with its role prefix.")
+            raise ValueError(f"Conceptual agent definition category {group} must start with its definition prefix.")
     return set(required), set(properties), set(groups)
 
 
@@ -751,88 +753,88 @@ def load_role_definition(
     parsed = read_yaml_object(source_path)
     missing_fields = sorted(required_fields - set(parsed))
     if missing_fields:
-        raise ValueError(f"Role is missing required fields {missing_fields}: {source_path}")
+        raise ValueError(f"Conceptual agent definition is missing required fields {missing_fields}: {source_path}")
     unknown_fields = sorted(set(parsed) - allowed_fields)
     if unknown_fields:
-        raise ValueError(f"Role has unknown fields {unknown_fields}: {source_path}")
+        raise ValueError(f"Conceptual agent definition has unknown fields {unknown_fields}: {source_path}")
 
     for field_name in ROLE_STRING_FIELDS:
         value = parsed.get(field_name)
         if value is not None and (not isinstance(value, str) or not value.strip()):
-            raise ValueError(f"Role {field_name} must be a non-empty string: {source_path}")
+            raise ValueError(f"Conceptual agent definition {field_name} must be a non-empty string: {source_path}")
     for field_name in ROLE_INTEGER_FIELDS:
         value = parsed.get(field_name)
         if value is not None and (
             not isinstance(value, int) or isinstance(value, bool) or value < MINIMUM_POSITIVE_INTEGER
         ):
-            raise ValueError(f"Role {field_name} must be a positive integer: {source_path}")
+            raise ValueError(f"Conceptual agent definition {field_name} must be a positive integer: {source_path}")
     for field_name in ROLE_BOOLEAN_FIELDS:
         value = parsed.get(field_name)
         if value is not None and not isinstance(value, bool):
-            raise ValueError(f"Role {field_name} must be a boolean: {source_path}")
+            raise ValueError(f"Conceptual agent definition {field_name} must be a boolean: {source_path}")
 
     skill_availability = parsed.get(ROLE_SKILL_AVAILABILITY_FIELD_NAME)
     if skill_availability is not None:
         if not isinstance(skill_availability, list):
-            raise ValueError(f"Role skillAvailability must be a list: {source_path}")
+            raise ValueError(f"Conceptual agent definition skillAvailability must be a list: {source_path}")
         selectors: set[tuple[str, str]] = set()
         for item in skill_availability:
             if not isinstance(item, dict) or set(item) not in ({"name", "enabled"}, {"path", "enabled"}):
                 raise ValueError(
-                    f"Role skillAvailability entries need enabled and exactly one of name or path: {source_path}"
+                    f"Conceptual agent definition skillAvailability entries need enabled and exactly one of name or path: {source_path}"
                 )
             selector = "name" if "name" in item else "path"
             if not isinstance(item[selector], str) or not item[selector].strip() or not isinstance(item["enabled"], bool):
-                raise ValueError(f"Role skillAvailability entry is invalid: {source_path}")
+                raise ValueError(f"Conceptual agent definition skillAvailability entry is invalid: {source_path}")
             key = (selector, item[selector])
             if key in selectors:
-                raise ValueError(f"Role skillAvailability repeats {selector} {item[selector]}: {source_path}")
+                raise ValueError(f"Conceptual agent definition skillAvailability repeats {selector} {item[selector]}: {source_path}")
             selectors.add(key)
 
     dynamic_folder_skills = parsed.get(ROLE_DYNAMIC_FOLDER_SKILLS_FIELD_NAME, False)
     tools = parsed.get("tools")
     if dynamic_folder_skills and tools is not None and "Skill" not in tools:
         raise ValueError(
-            f"Role with dynamic folder skills and a restrictive Claude tools allowlist must include Skill: {source_path}"
+            f"Conceptual agent definition with dynamic folder skills and a restrictive Claude tools allowlist must include Skill: {source_path}"
         )
 
     model_profile = parsed.get(ROLE_MODEL_PROFILE_FIELD_NAME)
     if model_profile not in model_profile_ids:
-        raise ValueError(f"Role has unknown model profile {model_profile}: {source_path}")
+        raise ValueError(f"Conceptual agent definition has unknown model profile {model_profile}: {source_path}")
     model_stages = parsed.get(ROLE_MODEL_STAGES_FIELD_NAME)
     if model_stages is not None:
         if not isinstance(model_stages, dict) or not model_stages:
-            raise ValueError(f"Role modelStages must be a non-empty mapping: {source_path}")
+            raise ValueError(f"Conceptual agent definition modelStages must be a non-empty mapping: {source_path}")
         for stage_name, stage_profile in model_stages.items():
             if not isinstance(stage_name, str) or not CATEGORY_PATTERN.fullmatch(stage_name):
-                raise ValueError(f"Role modelStages has invalid stage {stage_name}: {source_path}")
+                raise ValueError(f"Conceptual agent definition modelStages has invalid stage {stage_name}: {source_path}")
             if stage_profile not in model_profile_ids:
                 raise ValueError(
-                    f"Role modelStages {stage_name} has unknown profile {stage_profile}: {source_path}"
+                    f"Conceptual agent definition modelStages {stage_name} has unknown profile {stage_profile}: {source_path}"
                 )
 
     role_name = parsed[ROLE_NAME_FIELD_NAME]
     filename = parsed[ROLE_FILENAME_FIELD_NAME]
     if not isinstance(role_name, str) or not CATEGORY_PATTERN.fullmatch(role_name):
-        raise ValueError(f"Invalid role name: {source_path}")
+        raise ValueError(f"Invalid conceptual agent definition name: {source_path}")
     if not isinstance(filename, str) or not CATEGORY_PATTERN.fullmatch(filename):
-        raise ValueError(f"Invalid role filename: {source_path}")
+        raise ValueError(f"Invalid conceptual agent definition filename: {source_path}")
     expected_filename = source_path.name.removesuffix(ROLE_FILE_SUFFIX)
     if filename != expected_filename:
-        raise ValueError(f"Role filename must match its source file: {source_path}")
+        raise ValueError(f"Conceptual agent definition filename must match its source file: {source_path}")
     if role_name != filename:
-        raise ValueError(f"Role name must match its filename: {source_path}")
+        raise ValueError(f"Conceptual agent definition name must match its filename: {source_path}")
 
     group = source_path.parent.name
     if group not in allowed_groups:
-        raise ValueError(f"Unknown role group {group}: {source_path}")
+        raise ValueError(f"Unknown conceptual agent definition group {group}: {source_path}")
     role_segments = role_name.split("-")
     if "agent" in role_segments:
-        raise ValueError(f"Role name must not contain the word agent: {source_path}")
+        raise ValueError(f"Conceptual agent definition name must not contain the word agent: {source_path}")
     if role_segments[0] != ROLE_GROUP_PREFIXES[group]:
-        raise ValueError(f"Role name must start with the {ROLE_GROUP_PREFIXES[group]} prefix: {source_path}")
+        raise ValueError(f"Conceptual agent definition name must start with the {ROLE_GROUP_PREFIXES[group]} prefix: {source_path}")
     if role_segments[-1] not in ROLE_ACTOR_SUFFIXES:
-        raise ValueError(f"Role name must end with an actor noun: {source_path}")
+        raise ValueError(f"Conceptual agent definition name must end with an actor noun: {source_path}")
 
     list_values: dict[str, tuple[str, ...]] = {}
     for field_name in ROLE_LIST_FIELDS:
@@ -850,21 +852,21 @@ def load_role_definition(
     )
     unknown_skills = sorted(set(role_skills) - skill_names)
     if unknown_skills:
-        raise ValueError(f"Role references unknown skills {unknown_skills}: {source_path}")
+        raise ValueError(f"Conceptual agent definition references unknown skills {unknown_skills}: {source_path}")
 
     repository_mutation = parsed[ROLE_REPOSITORY_MUTATION_FIELD_NAME]
     if repository_mutation not in ROLE_REPOSITORY_MUTATION_VALUES:
         raise ValueError(
-            f"Role {ROLE_REPOSITORY_MUTATION_FIELD_NAME} must be required, conditional, or never: {source_path}"
+            f"Conceptual agent definition {ROLE_REPOSITORY_MUTATION_FIELD_NAME} must be required, conditional, or never: {source_path}"
         )
     fixed_claim = "agent-claim" in role_skills and "agent-claim" not in skill_conditions
     conditional_claim = "agent-claim" in skill_conditions
     if repository_mutation == "required" and not fixed_claim:
-        raise ValueError(f"Role with required repository mutation must load agent-claim as a fixed skill: {source_path}")
+        raise ValueError(f"Conceptual agent definition with required repository mutation must load agent-claim as a definition-owned skill: {source_path}")
     if repository_mutation == "conditional" and not conditional_claim:
-        raise ValueError(f"Role with conditional repository mutation must conditionally load agent-claim: {source_path}")
+        raise ValueError(f"Conceptual agent definition with conditional repository mutation must conditionally load agent-claim: {source_path}")
     if repository_mutation == "never" and "agent-claim" in role_skills:
-        raise ValueError(f"Read-only role must not load agent-claim: {source_path}")
+        raise ValueError(f"Read-only conceptual agent definition must not load agent-claim: {source_path}")
 
     output_contract, output_purposes = validate_annotated_list(
         parsed[ROLE_OUTPUT_CONTRACT_FIELD_NAME],
@@ -888,7 +890,7 @@ def load_role_definition(
 
     description = parsed[ROLE_DESCRIPTION_FIELD_NAME]
     if not isinstance(description, str):
-        raise ValueError(f"Role description must be a string: {source_path}")
+        raise ValueError(f"Conceptual agent definition description must be a string: {source_path}")
     instructions, instruction_sections = validate_role_instructions(
         parsed[ROLE_INSTRUCTIONS_FIELD_NAME],
         source_path,
@@ -935,18 +937,18 @@ def load_role_definitions(skill_names: set[str]) -> list[RoleDefinition]:
     role_names = [role.name for role in roles]
     filenames = [role.filename for role in roles]
     if len(role_names) != len(set(role_names)):
-        raise ValueError("Role names must be unique.")
+        raise ValueError("Conceptual agent definition names must be unique.")
     if len(filenames) != len(set(filenames)):
-        raise ValueError("Role filenames must be unique.")
+        raise ValueError("Conceptual agent definition filenames must be unique.")
     known_role_names = set(role_names)
     for role in roles:
         unknown_dependencies = sorted(set(role.agent_dependencies) - known_role_names)
         if unknown_dependencies:
             raise ValueError(
-                f"Role {role.name} references unknown agent dependencies {unknown_dependencies}."
+                f"Conceptual agent definition {role.name} references unknown agent dependencies {unknown_dependencies}."
             )
         if role.name in role.agent_dependencies:
-            raise ValueError(f"Role {role.name} cannot depend on itself.")
+            raise ValueError(f"Conceptual agent definition {role.name} cannot depend on itself.")
     return roles
 
 
@@ -1048,7 +1050,7 @@ def role_loading_instruction_text(
     conditional_skills = conditional_role_skills(role)
     if fixed_skills:
         fixed_prefix = (
-            "These fixed-role skills are preloaded and govern the work:"
+            "These definition-owned skills are preloaded and govern the work:"
             if fixed_skills_preloaded
             else ROLE_SKILL_INSTRUCTION_PREFIX
         )
@@ -1244,7 +1246,7 @@ def render_agent_generation_manifest(
     roles: Sequence[RoleDefinition],
     outputs: dict[Path, str],
 ) -> str:
-    """Return a deterministic role-to-adapter inventory with expected content digests."""
+    """Return a deterministic conceptual-definition-to-adapter inventory with expected digests."""
     adapter_specs = {
         CODEX_ADAPTER_NAME: (CODEX_AGENT_OUTPUT_ROOT, CODEX_AGENT_EXTENSION, "toml"),
         CLAUDE_ADAPTER_NAME: (CLAUDE_AGENT_OUTPUT_ROOT, CLAUDE_AGENT_EXTENSION, "markdown"),
@@ -1351,7 +1353,9 @@ def write_output(check: bool) -> bool:
 
 
 def main(arguments: Sequence[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Generate skill, role, adapter, and HTML documentation data.")
+    parser = argparse.ArgumentParser(
+        description="Generate skill, conceptual agent definition, adapter, and HTML documentation data."
+    )
     parser.add_argument("--check", action="store_true", help="Fail when generated methodology data is stale.")
     args = parser.parse_args(arguments)
 

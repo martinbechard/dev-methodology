@@ -40,10 +40,10 @@ def load_yaml(path: Path) -> dict[str, object]:
 
 
 def role_skill_names(role: dict[str, object]) -> list[str]:
-    """Return source skill identifiers from string and justified role entries."""
+    """Return source skill identifiers from conceptual definition entries."""
     value = role.get("skills")
     if not isinstance(value, list):
-        raise ValueError(f"Role {role.get('name')} skills must be a list.")
+        raise ValueError(f"Conceptual agent definition {role.get('name')} skills must be a list.")
     names: list[str] = []
     for item in value:
         if isinstance(item, str):
@@ -51,7 +51,7 @@ def role_skill_names(role: dict[str, object]) -> list[str]:
         elif isinstance(item, dict) and len(item) == 1:
             names.append(str(next(iter(item))))
         else:
-            raise ValueError(f"Role {role.get('name')} has an invalid skill entry: {item}")
+            raise ValueError(f"Conceptual agent definition {role.get('name')} has an invalid skill entry: {item}")
     return names
 
 
@@ -196,7 +196,7 @@ def validate_complete_coverage(entries: list[dict[str, object]]) -> None:
 
 
 def validate_fixed_role_loadouts(entries: list[dict[str, object]]) -> None:
-    """Reject specialized detected skills from technology-neutral fixed role skillsets."""
+    """Reject specialized detected skills from technology-neutral definition-owned skillsets."""
     specialized = {str(entry["skill"]) for entry in entries}
     violations: list[str] = []
     for path in sorted((ROOT / "agents" / "roles").glob("*/*.role.yaml")):
@@ -206,7 +206,10 @@ def validate_fixed_role_loadouts(entries: list[dict[str, object]]) -> None:
         if fixed:
             violations.append(f"{role['name']}: {', '.join(fixed)}")
     if violations:
-        raise ValueError("Roles contain detected technology skills: " + "; ".join(violations))
+        raise ValueError(
+            "Conceptual agent definitions contain detected technology skills: "
+            + "; ".join(violations)
+        )
 
 
 def registry(entries: list[dict[str, object]]) -> dict[str, object]:

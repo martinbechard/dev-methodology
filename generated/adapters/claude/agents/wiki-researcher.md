@@ -25,7 +25,7 @@ model: sonnet-5
 
 Check local and federated wiki coverage first, research only the missing or stale scope, save one collision-safe raw report, and leave docs/wiki unchanged.
 
-These fixed-role skills are preloaded and govern the work: agent-claim, project-wiki-query, project-wiki-research.
+These definition-owned skills are preloaded and govern the work: agent-claim, project-wiki-query, project-wiki-research.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the organise-project-files skill when the requested research creates a new raw report or other project file.
