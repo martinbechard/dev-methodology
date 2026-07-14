@@ -1534,6 +1534,180 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn("GOOD post-move verdict", response)
                 self.assertIn("released the ingest claim", response)
 
+    def test_dev_orchestrator_routes_artifact_aware_independent_review(self) -> None:
+        """Orchestration should review every changed surface through its owning review lane."""
+        build_skill_docs = load_build_skill_docs_module()
+        skill_payload = build_skill_docs.build_payload()
+        roles = build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
+        role = next(role for role in roles if role.name == "dev-orchestrator")
+
+        self.assertEqual(
+            (
+                "dev-coder",
+                "dev-code-reviewer",
+                "dev-verifier",
+                "dev-merge-coordinator",
+            ),
+            role.agent_dependencies,
+        )
+
+        workflow_steps = list(role.instruction_sections["workflow"])
+        contribution_review_indexes = [
+            index
+            for index, step in enumerate(workflow_steps)
+            if "source" in step.lower()
+            and "dev-code-reviewer" in step
+            and "every changed" not in step.lower()
+            and "fresh" in step.lower()
+            and "context" in step.lower()
+        ]
+        self.assertTrue(contribution_review_indexes)
+
+        non_source_review_indexes = [
+            index
+            for index, step in enumerate(workflow_steps)
+            if "non-source" in step.lower()
+            and "every changed" not in step.lower()
+            and "task-selected" in step.lower()
+            and "independent" in step.lower()
+            and "reviewer" in step.lower()
+            and "fresh" in step.lower()
+            and "context" in step.lower()
+        ]
+        self.assertTrue(non_source_review_indexes)
+
+        contribution_verification_indexes = [
+            index
+            for index, step in enumerate(workflow_steps)
+            if "dev-verifier" in step
+            and "accepted" in step.lower()
+            and "integrat" not in step.lower()
+        ]
+        self.assertTrue(contribution_verification_indexes)
+        first_contribution_verification = min(contribution_verification_indexes)
+        self.assertLess(max(contribution_review_indexes), first_contribution_verification)
+        self.assertLess(max(non_source_review_indexes), first_contribution_verification)
+
+        correction_text = " ".join(
+            role.instruction_sections["workflow"]
+            + role.instruction_sections["review"]
+            + role.instruction_sections["failureHandling"]
+        )
+        self.assertRegex(
+            correction_text,
+            r"(?i)(?:route|return|send).{0,120}(?:finding|correction).{0,160}"
+            r"original (?:producer|producing role|executor)",
+        )
+
+        integration_indexes = [
+            index
+            for index, step in enumerate(workflow_steps)
+            if "multiple accepted committed contributions" in step.lower()
+            and "dev-merge-coordinator" in step
+        ]
+        self.assertEqual(1, len(integration_indexes))
+        integration_index = integration_indexes[0]
+
+        post_integration_review_indexes = [
+            index
+            for index, step in enumerate(workflow_steps)
+            if index > integration_index
+            and "every changed" in step.lower()
+            and "source" in step.lower()
+            and "non-source" in step.lower()
+            and "dev-code-reviewer" in step
+            and "task-selected" in step.lower()
+            and "reviewer" in step.lower()
+            and "fresh" in step.lower()
+            and "context" in step.lower()
+        ]
+        self.assertEqual(1, len(post_integration_review_indexes))
+        post_integration_review_index = post_integration_review_indexes[0]
+
+        integrated_verification_indexes = [
+            index
+            for index, step in enumerate(workflow_steps)
+            if index >= post_integration_review_index
+            and "dev-verifier" in step
+            and "complete integrated" in step.lower()
+        ]
+        self.assertEqual(1, len(integrated_verification_indexes))
+        integrated_verification_index = integrated_verification_indexes[0]
+        self.assertLessEqual(
+            post_integration_review_index,
+            integrated_verification_index,
+        )
+        verification_step = workflow_steps[integrated_verification_index]
+        self.assertRegex(
+            verification_step,
+            r"(?i)all.{0,120}review gates.{0,120}pass.{0,120}before.{0,80}"
+            r"dev-verifier",
+        )
+
+        missing_reviewer_blockers = [
+            step
+            for step in role.instruction_sections["failureHandling"]
+            if "task-selected" in step.lower()
+            and "reviewer" in step.lower()
+            and "unavailable" in step.lower()
+            and "BLOCKED" in step
+        ]
+        self.assertTrue(missing_reviewer_blockers)
+
+        correction_steps = [
+            step
+            for step in role.instruction_sections["failureHandling"]
+            if "replacement committed clean handoff" in step.lower()
+            and "dev-merge-coordinator" in step
+            and "review" in step.lower()
+            and "dev-verifier" in step
+            and "complete integrated" in step.lower()
+        ]
+        self.assertEqual(1, len(correction_steps))
+        correction_step = correction_steps[0].lower()
+        for phrase in (
+            "replacement committed clean handoff",
+            "fresh appropriate review",
+            "every affected changed surface",
+            "complete integrated outcome",
+            "same bounded correction loop",
+        ):
+            with self.subTest(correction_phrase=phrase):
+                self.assertIn(phrase, correction_step)
+        replacement_index = correction_step.index("replacement committed clean handoff")
+        merge_index = correction_step.index("dev-merge-coordinator", replacement_index)
+        review_index = correction_step.index("review", merge_index)
+        verifier_index = correction_step.index("dev-verifier", review_index)
+        self.assertLess(replacement_index, merge_index)
+        self.assertLess(merge_index, review_index)
+        self.assertLess(review_index, verifier_index)
+
+        failure_text = " ".join(role.instruction_sections["failureHandling"])
+        self.assertRegex(
+            failure_text,
+            r"(?i)after two failed correction attempts",
+        )
+
+        artifact_aware_examples = [
+            example
+            for example in role.examples
+            if re.search(
+                r"(?i)(?:non-source|mixed|documentation|runbook|wiki)",
+                f"{example['purpose']} {example['plausibleResponse']}",
+            )
+            and "reviewer" in example["plausibleResponse"].lower()
+            and "fresh" in example["plausibleResponse"].lower()
+            and "context" in example["plausibleResponse"].lower()
+        ]
+        self.assertTrue(artifact_aware_examples)
+        example_response = artifact_aware_examples[0]["plausibleResponse"]
+        self.assertIn("dev-code-reviewer", example_response)
+        self.assertRegex(
+            example_response,
+            r"(?i)(?:task-selected|artifact|domain).{0,100}reviewer",
+        )
+        self.assertIn("dev-verifier", example_response)
+
     def test_project_wiki_companions_bound_topic_verifier_corrections(self) -> None:
         """Mandatory ingest companions should share one finite verifier retry contract."""
         companion_paths = (
@@ -1612,15 +1786,19 @@ class BundleContentTests(unittest.TestCase):
             return step_index, " ".join(prose_blocks[step_index:step_index + 3])
 
         _, review_row = table_row("Independent contribution review")
-        self.assertRegex(review_row, r"fresh read-only review(?:er| context)")
+        self.assertIn("fresh read-only context", review_row)
         self.assertIn("original executor", review_row)
+        self.assertIn("Dev Code Reviewer for source changes", review_row)
+        self.assertIn("task-selected independent artifact or domain reviewers", review_row)
+        self.assertIn("non-source", review_row)
+        self.assertIn("Every changed surface", review_row)
 
         _, verification_row = table_row("Contribution verification")
         self.assertIn("Dev Verifier", verification_row)
 
         _, path_row = table_row("Path decision")
         for phrase in (
-            "One accepted implementation lane",
+            "One accepted contribution lane",
             "independently reviewed and verified commit",
             "final direct commit",
             "without Dev Merge Coordinator",
@@ -1637,15 +1815,23 @@ class BundleContentTests(unittest.TestCase):
             "Integrated-artifact review and verification"
         )
         for phrase in (
-            "another fresh read-only context",
+            "every changed surface",
+            "fresh read-only context",
             "Dev Code Reviewer",
+            "source changes",
+            "non-source",
+            "task-selected independent artifact or domain reviewers",
             "Dev Verifier",
-            "combined diff",
             "complete integrated outcome",
             "final integration commit",
         ):
             with self.subTest(integrated_verification_phrase=phrase):
                 self.assertIn(phrase, integrated_verification_row)
+        self.assertRegex(
+            integrated_verification_row,
+            r"All applicable post-integration review gates must pass before "
+            r"Dev Verifier checks the complete integrated outcome",
+        )
         self.assertLess(integration_index, integrated_verification_index)
 
         _, completion_row = table_row("Completion")
