@@ -446,7 +446,7 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
     const name = viewControl.dataset.definitionName;
     if (!kind || !name) return;
     if (window.parent === window) {
-      const target = new URL("agent-role-skill-map.html", window.location.href);
+      const target = new URL("agent-and-skill-definitions.html", window.location.href);
       target.searchParams.set("definitionKind", kind);
       target.searchParams.set("definitionName", name);
       target.hash = "hierarchy-title";

@@ -17,7 +17,7 @@ import yaml
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 SCRIPT_PATH = REPOSITORY_ROOT / "scripts" / "build-agent-skill-hierarchy.py"
 OUTPUT_PATH = REPOSITORY_ROOT / "design" / "agent-skill-hierarchy.svg"
-ROLE_MAP_PATH = REPOSITORY_ROOT / "design" / "agent-role-skill-map.html"
+ROLE_MAP_PATH = REPOSITORY_ROOT / "design" / "agent-and-skill-definitions.html"
 ROLES_ROOT = REPOSITORY_ROOT / "agents" / "roles"
 DETECTION_REGISTRY_PATH = (
     REPOSITORY_ROOT
@@ -261,7 +261,7 @@ class AgentSkillHierarchyTests(unittest.TestCase):
             '<section class="section" aria-labelledby="hierarchy-title">', 1
         )[1].split("</section>", 1)[0]
 
-        self.assertIn("Amber marks a definition-owned skill edge", hierarchy_section)
+        self.assertIn("Amber marks an always-used skill edge", hierarchy_section)
         self.assertIn("blue arrows mark direct agent dependencies", hierarchy_section)
         self.assertNotIn("Role Agent Categories", role_map)
         self.assertNotIn("The role model has four operating categories", role_map)

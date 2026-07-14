@@ -381,8 +381,8 @@
               </li>
               <li class="nested-layer">
                 <div class="nested-copy">
-                  <h4>Native Agent Definition Files</h4>
-                  <p>Native agent definition files describe the purpose of a specific agent, the skills and other agents it should use, and its other directives. Each agent operates with its own context and history, which allows us to partition the amount of information being worked on at a given time by creating a hierarchy of agents.</p>
+                  <h4>Agent Definition Files</h4>
+                  <p>Harness-specific agent definition files describe the purpose of a specific agent, the skills and other agents it should use, and its other directives. Each agent operates with its own context and history, which allows us to partition the amount of information being worked on at a given time by creating a hierarchy of agents.</p>
                 </div>
               </li>
             </ol>
@@ -401,20 +401,20 @@
               </li>
               <li class="nested-layer">
                 <div class="nested-copy">
-                  <h4>Project Native Agent Definition Files</h4>
-                  <p>Project native agent definition files define project-specific agents or customize shared native agent definitions for the project.</p>
+                  <h4>Project Agent Definition Files</h4>
+                  <p>Project agent definition files define project-specific agents or customize shared harness-specific agent definitions for the project.</p>
                 </div>
               </li>
               <li class="nested-layer">
                 <div class="nested-copy">
                   <h4>Root Project Instruction Files</h4>
-                  <p>Root project instruction files use the harness-native project guidance format, such as <code>AGENTS.md</code>, <code>CLAUDE.md</code>, <code>GEMINI.md</code>, or repository instruction files. This project guidance should usually act as a router to load skills appropriate for the project content.</p>
+                  <p>Project setup creates a portable <code>AGENTS.md</code> at the project root. This guidance should usually act as a router to load skills appropriate for the project content. For Claude Code, a thin colocated <code>CLAUDE.md</code> imports that root guidance without duplicating it.</p>
                 </div>
               </li>
               <li class="nested-layer">
                 <div class="nested-copy">
                   <h4>Nested Project Instruction Files</h4>
-                  <p>More of these instruction files can be nested to provide specialized guidance for content within a project folder.</p>
+                  <p>Project setup can place another portable <code>AGENTS.md</code> in a folder that needs specialized guidance. For Claude Code, a thin <code>CLAUDE.md</code> sits beside every applicable nested <code>AGENTS.md</code> and imports the colocated guidance.</p>
                 </div>
               </li>
             </ol>
@@ -486,13 +486,13 @@
         </tbody>
         <tbody class="purpose-group">
           <tr class="purpose-heading">
-            <th colspan="4" scope="rowgroup">Native Agent Definition Files<span class="purpose-summary">Define a specialized worker's purpose, isolated context, tools, model, and delegation behavior.</span></th>
+            <th colspan="4" scope="rowgroup">Agent Definition Files<span class="purpose-summary">Define a specialized worker's purpose, isolated context, tools, model, and delegation behavior.</span></th>
           </tr>
           <tr data-harness-row data-harness="codex">
             <td><a href="https://learn.chatgpt.com/docs/agent-configuration/subagents?surface=app">Codex</a></td>
             <td><code>~/.codex/agents/&lt;agent-name&gt;.toml</code></td>
             <td><code>&lt;project-root&gt;/.codex/agents/&lt;agent-name&gt;.toml</code></td>
-            <td>One standalone TOML file per agent. Native fields include the name, description, developer instructions, model, reasoning, sandbox, and optional MCP configuration.</td>
+            <td>One standalone TOML file per agent. Harness-specific fields include the name, description, developer instructions, model, reasoning, sandbox, and optional MCP configuration.</td>
           </tr>
           <tr data-harness-row data-harness="claude">
             <td><a href="https://code.claude.com/docs/en/sub-agents">Claude Code</a></td>
@@ -532,8 +532,8 @@
           <tr data-harness-row data-harness="claude">
             <td><a href="https://code.claude.com/docs/en/memory">Claude Code</a></td>
             <td><code>~/.claude/CLAUDE.md</code></td>
-            <td><code>&lt;project-root&gt;/CLAUDE.md</code> or <code>&lt;project-root&gt;/.claude/CLAUDE.md</code></td>
-            <td>Markdown. Claude concatenates user and project instructions. A thin <code>CLAUDE.md</code> can import <code>AGENTS.md</code> with <code>@AGENTS.md</code>.</td>
+            <td><code>&lt;project-root&gt;/AGENTS.md</code> with colocated <code>&lt;project-root&gt;/CLAUDE.md</code></td>
+            <td>The thin <code>CLAUDE.md</code> imports the colocated <code>AGENTS.md</code> with <code>@AGENTS.md</code> so Claude uses the same portable root guidance as other harnesses.</td>
           </tr>
           <tr data-harness-row data-harness="gemini">
             <td><a href="https://github.com/google-gemini/gemini-cli/blob/main/docs/reference/configuration.md#context-files-hierarchical-instructional-context">Gemini CLI</a></td>
@@ -566,9 +566,9 @@
           </tr>
           <tr data-harness-row data-harness="claude">
             <td><a href="https://code.claude.com/docs/en/memory">Claude Code</a></td>
-            <td>Inherited from <code>~/.claude/CLAUDE.md</code> and <code>~/.claude/rules</code></td>
-            <td><code>&lt;folder-path&gt;/CLAUDE.md</code> or <code>&lt;project-root&gt;/.claude/rules/&lt;rule-name&gt;.md</code></td>
-            <td>Nested <code>CLAUDE.md</code> loads when Claude accesses that subtree. Rules can use path-scoping frontmatter instead of directory placement.</td>
+            <td>Inherited through the applicable <code>CLAUDE.md</code> bridge</td>
+            <td><code>&lt;folder-path&gt;/AGENTS.md</code> with a colocated <code>&lt;folder-path&gt;/CLAUDE.md</code></td>
+            <td>The thin <code>CLAUDE.md</code> imports the colocated <code>AGENTS.md</code> so Claude uses the same portable folder guidance as other harnesses.</td>
           </tr>
           <tr data-harness-row data-harness="gemini">
             <td><a href="https://github.com/google-gemini/gemini-cli/blob/main/docs/reference/configuration.md#context-files-hierarchical-instructional-context">Gemini CLI</a></td>
@@ -590,7 +590,7 @@
           </tr>
         </tbody>
       </table>
-      <p class="table-note">The <a href="generic-agent-definitions-source.html">Generic Agent Definitions Source</a> page owns conceptual-to-native conversion details. This table covers only what each runtime file contributes, where the harness discovers it, and which incompatible native rule or format applies.</p>
+      <p class="table-note">The <a href="generic-agent-definitions-source.html">Generic Agent Definitions Source</a> page owns conceptual-to-harness-specific conversion details. This table covers only what each runtime file contributes, where the harness discovers it, and which incompatible harness-specific rule or format applies.</p>
     </section>
   </main>
   <script>

@@ -60,7 +60,7 @@ When adding, renaming, deleting, or materially changing a distributed skill:
 - Run scripts/openai_metadata.py skills after skill name or description changes so derived Codex interface fields stay aligned while policy and dependencies remain hand-authored.
 - Run scripts/build-technology-detection.py after detection metadata or specialized activation criteria change.
 - Update README.md when the public skill inventory, setup flow, verification flow, or bundle purpose changes.
-- Update the design HTML files that describe skills, conceptual agent definitions, agent maps, specialization strategy, operating model, or examples whenever the catalog, conceptual definition model, adapter model, or examples change.
+- Update the design HTML files that describe skills, conceptual agent definitions, agent maps, skills modularization, agentic configuration, or examples whenever the catalog, conceptual definition model, adapter model, or examples change.
 - Update scripts/test_bundle_content.py so the bundle regression tests describe the current catalog.
 - Sweep the repository for old skill ids before and after renames or deletions.
 - Keep review skill checklists named review-checklist-[review-target].md, and keep completed checklist guidance aligned with artifact-name.review-checklist-[review-target].md.
@@ -87,10 +87,12 @@ README.md must stay aligned with the distributable bundle:
 
 The design HTML files must stay aligned with the current skills and agent model:
 
-- design/agent-role-skill-map.html
+- design/agent-and-skill-definitions.html
+- design/agentic-configuration.html
+- design/skills-modularization.html
+- design/generic-agent-definitions-source.html
 - design/agent-skill-specialization-examples.html
-- design/agent-skill-specialization-strategy.html
-- design/agentic-development-operating-model.html
+- design/orchestrated-development-lifecycle.html
 
 If a change affects the skill catalog, adapter shape, conceptual agent definition naming, dispatch profile examples, or agent specialization story, update the relevant HTML files in the same change.
 

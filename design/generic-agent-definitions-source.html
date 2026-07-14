@@ -303,8 +303,8 @@
         Skills and agents have different portability models. A source skill remains the same portable skill package when it is deployed,
         while a conceptual agent definition source must be converted into the file format and properties understood by each agent harness.
         This page explains that difference, the conceptual agent definition model, native agent packaging, cross-runtime property mappings, and vendor references.
-        The <a href="agent-role-skill-map.html">agent definition map</a> owns generated catalog views, and the
-        <a href="agent-skill-specialization-strategy.html">specialization strategy</a> owns detection and selection policy.
+        The <a href="agent-and-skill-definitions.html">agent definition map</a> owns generated catalog views, and the
+        <a href="skills-modularization.html">skills modularization page</a> explains agent skill selection and setup-bound technology extensions.
         The <a href="agentic-configuration.html">Agentic Configuration page</a> explains how the generated files are used at runtime to steer code generation.
         The <a href="../README.md#explicit-target-deployment">README</a> owns deployment commands, destination ownership, updates, and pruning.
       </p>
@@ -414,12 +414,12 @@
             <tr>
               <td><span class="name">Generated documentation data</span></td>
               <td><code>design/generated/skill-definitions.js</code> and <code>design/generated/role-definitions.js</code></td>
-              <td>Feeds the <a href="agent-role-skill-map.html">agent definition and skill map</a>. These catalog files describe the sources for documentation; harnesses do not load them.</td>
+              <td>Feeds the <a href="agent-and-skill-definitions.html">agent definition and skill map</a>. These catalog files describe the sources for documentation; harnesses do not load them.</td>
             </tr>
           </tbody>
         </table>
       </div>
-      <p class="note">The <a href="agent-skill-specialization-strategy.html">specialization strategy</a> owns definition-owned, request-specific, and setup-time folder skill selection. This page maps the resulting conceptual agent definition fields; it does not redefine selection policy.</p>
+      <p class="note">The <a href="skills-modularization.html">skills modularization page</a> explains always-used, rule-selected, and setup-bound folder skills. This page maps the resulting conceptual agent definition fields; it does not redefine selection policy.</p>
     </section>
     <section class="section" aria-labelledby="information-model-title">
       <h2 id="information-model-title">Conceptual Agent Definition Properties</h2>
@@ -456,7 +456,7 @@
           <tr>
             <td><span class="name">Skills</span></td>
             <td><code>skills</code></td>
-            <td>Stores ordered skill entries with a skill identifier, justification, and optional condition. The <a href="agent-skill-specialization-strategy.html">specialization strategy</a> owns when each entry applies.</td>
+            <td>Stores ordered skill entries with a skill identifier, justification, and optional condition. The <a href="skills-modularization.html">skills modularization page</a> explains when each entry applies.</td>
           </tr>
           <tr>
             <td><span class="name">Agent dependencies</span></td>

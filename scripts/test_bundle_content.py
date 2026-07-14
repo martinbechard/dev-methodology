@@ -188,7 +188,7 @@ README_REQUIRED_PHRASES = (
     "detection.yaml",
     "python3 scripts/build-technology-detection.py",
     "detect-technology-skills",
-    "The [specialization strategy](design/agent-skill-specialization-strategy.html) owns detector inputs",
+    "[Skills Modularization](design/skills-modularization.html) explains always-used and rule-selected agent skills",
     "project-wiki-create",
     "create-functional-spec",
     "create-architecture",
@@ -249,19 +249,21 @@ DEVELOPMENT_METHODOLOGY_REQUIRED_PHRASES = (
     "When the user, target file type, runtime schema, existing document, or surrounding documentation indicates a specific structure or format, preserve that structure.",
     "Use the shared page contract only when the selected artifact type requires it.",
 )
-STRATEGY_REQUIRED_PHRASES = (
-    "Selection Model",
-    "Deterministic Setup-Time Technology Detection",
-    "When To Create A Specialized Agent",
-    "Definition-owned skill",
-    "Request-specific skill",
-    "Folder technology skill",
+MODULARIZATION_REQUIRED_PHRASES = (
+    "Agent Skills Are Technology Agnostic",
+    "Real Agent Skill Splits",
+    "Technology Extensions Are Bound During Setup",
+    "Always-used agent skill",
+    "Rule-selected agent skill",
+    "Setup-bound technology skill",
+    "Technology Extensions Included In The Kit",
+    "Setup-Time Detection Guardrails",
 )
 AGENT_ROLE_MAP_REQUIRED_PHRASES = (
-    "Methodology Maintenance",
-    "Project Setup",
-    "Wiki Activities",
-    "Dev Activities",
+    "Agents for Methodology Maintenance",
+    "Agents for Project Setup",
+    "Agents for Wiki Activities",
+    "Agents for Dev Activities",
     "DEV_METHODOLOGY_ROLE_DEFINITIONS",
     "loadout-details",
     "generated/skill-definitions.js",
@@ -328,10 +330,10 @@ AGENTIC_CONFIGURATION_REQUIRED_PHRASES = (
     "Context Layers",
     "Shared Definitions",
     "Skill Definition Files",
-    "Native Agent Definition Files",
+    "Agent Definition Files",
     "Project-Specific Definitions",
     "Project Skill Definition Files",
-    "Project Native Agent Definition Files",
+    "Project Agent Definition Files",
     "Root Project Instruction Files",
     "Nested Project Instruction Files",
     "Runtime Configuration File Locations",
@@ -340,15 +342,15 @@ AGENTIC_CONFIGURATION_REQUIRED_PHRASES = (
     "The solution is to split up the information into many files and have the agentic coding tool load just the skills it needs.",
     "The Agent Skills format uses a text file named <code>SKILL.md</code> to describe how to perform actions.",
     "It is adopted by all vendors and is the most granular unit of description.",
-    "Native agent definition files describe the purpose of a specific agent, the skills and other agents it should use, and its other directives.",
+    "Harness-specific agent definition files describe the purpose of a specific agent, the skills and other agents it should use, and its other directives.",
     "Each agent operates with its own context and history, which allows us to partition the amount of information being worked on at a given time by creating a hierarchy of agents.",
     "Definitions installed for a harness are available to all projects that use that harness.",
     "Definitions and instructions stored within a project apply only to that project and can tailor shared behavior to its content.",
     "Project skill definition files describe actions that are specific to the project or customize a shared skill for the project.",
-    "Project native agent definition files define project-specific agents or customize shared native agent definitions for the project.",
-    "Root project instruction files use the harness-native project guidance format",
-    "This project guidance should usually act as a router to load skills appropriate for the project content.",
-    "More of these instruction files can be nested to provide specialized guidance for content within a project folder.",
+    "Project agent definition files define project-specific agents or customize shared harness-specific agent definitions for the project.",
+    "Project setup creates a portable <code>AGENTS.md</code> at the project root.",
+    "This guidance should usually act as a router to load skills appropriate for the project content.",
+    "Project setup can place another portable <code>AGENTS.md</code> in a folder that needs specialized guidance.",
     "Every harness uses the same portable Agent Skills package",
     "Skill locations and precedence vary; the <code>SKILL.md</code> format does not.",
     '<label for="harness-filter">Show harness</label>',
@@ -371,32 +373,25 @@ AGENTIC_CONFIGURATION_REQUIRED_PHRASES = (
     "&lt;project-root&gt;/.github/agents/&lt;agent-name&gt;.agent.md",
     "&lt;project-root&gt;/.github/copilot-instructions.md",
     "&lt;project-root&gt;/.github/instructions/&lt;rule-name&gt;.instructions.md",
+    "&lt;project-root&gt;/AGENTS.md</code> with colocated <code>&lt;project-root&gt;/CLAUDE.md",
+    "Inherited through the applicable <code>CLAUDE.md</code> bridge",
+    "&lt;folder-path&gt;/AGENTS.md</code> with a colocated <code>&lt;folder-path&gt;/CLAUDE.md",
+    "same portable folder guidance as other harnesses",
 )
 DOCUMENT_INFORMATION_OWNERS = {
-    "agentic-development-operating-model.html": (
-        "Project Classification",
-        "Project Guidance And Precedence",
-    ),
-    "orchestrated-development-lifecycle.html": (
-        "Orchestrated Development Loop",
-        "Execution Evidence",
-    ),
-    "agent-skill-specialization-strategy.html": STRATEGY_REQUIRED_PHRASES[:3],
-    "agent-role-skill-map.html": (
-        "Agent and Skill Definitions",
+    "agent-and-skill-definitions.html": (
+        "Agent And Skill Definitions",
         "Interactive Agent And Skill Map",
         "Skill Catalog",
-    ),
-    "agent-skill-specialization-examples.html": (
-        "Configuration Examples",
-        "Northwind Tools: Root-Only Guidance",
-        "Acme Ledger: Nested Tier Guidance",
-        "Beacon Knowledge Base: Workflow Separation",
     ),
     "agentic-configuration.html": (
         "Knowledge Structure",
         "Context Layers",
         "Runtime Configuration File Locations",
+    ),
+    "skills-modularization.html": MODULARIZATION_REQUIRED_PHRASES[:3] + (
+        "Technology Extensions Included In The Kit",
+        "Setup-Time Detection Guardrails",
     ),
     "generic-agent-definitions-source.html": (
         "The Portability Problem",
@@ -405,21 +400,35 @@ DOCUMENT_INFORMATION_OWNERS = {
         "Native Runtime Packaging",
         "Conceptual-To-Native Property Mapping",
     ),
+    "agent-skill-specialization-examples.html": (
+        "Examples",
+        "Configuration Examples",
+        "Northwind Tools: Root-Only Guidance",
+        "Acme Ledger: Nested Tier Guidance",
+        "Beacon Knowledge Base: Workflow Separation",
+    ),
+    "orchestrated-development-lifecycle.html": (
+        "Orchestrated Development Loop",
+        "Execution Evidence",
+    ),
 }
 DOCUMENT_FORBIDDEN_HEADINGS = {
-    "agentic-development-operating-model.html": (
+    "skills-modularization.html": (
         "Role Agent Set",
         "Skill Load Model",
         "File Contracts",
-    ),
-    "agent-skill-specialization-strategy.html": (
         "Semantic Model Profiles",
         "Role Agent Dispatch Loop",
         "Root AGENTS.md Policy Pattern",
         "Nested AGENTS.md Shape",
         "Agent Set Normalization",
+        "Project Classification",
+        "Project Guidance And Precedence",
+        "Selection Model",
+        "Deterministic Setup-Time Technology Detection",
+        "When To Create A Specialized Agent",
     ),
-    "agent-role-skill-map.html": (
+    "agent-and-skill-definitions.html": (
         "Reference Model",
         "Routing Rules",
         "Catalog Boundary",
@@ -444,38 +453,29 @@ DOCUMENT_FORBIDDEN_HEADINGS = {
     ),
 }
 DOCUMENT_REQUIRED_LINKS = {
-    "agentic-development-operating-model.html": (
-        "agent-role-skill-map.html",
-        "agent-skill-specialization-strategy.html",
+    "skills-modularization.html": (
+        "agent-and-skill-definitions.html",
         "agent-skill-specialization-examples.html",
         "agentic-configuration.html",
         "generic-agent-definitions-source.html",
         "orchestrated-development-lifecycle.html",
     ),
     "orchestrated-development-lifecycle.html": (
-        "agentic-development-operating-model.html",
-        "agent-role-skill-map.html",
+        "skills-modularization.html",
+        "agent-and-skill-definitions.html",
     ),
-    "agent-skill-specialization-strategy.html": (
-        "agent-role-skill-map.html",
-        "agentic-development-operating-model.html",
-        "orchestrated-development-lifecycle.html",
-        "agentic-configuration.html",
-        "generic-agent-definitions-source.html",
-    ),
-    "agent-role-skill-map.html": (
-        "agent-skill-specialization-strategy.html",
+    "agent-and-skill-definitions.html": (
+        "skills-modularization.html",
         "orchestrated-development-lifecycle.html",
     ),
     "agent-skill-specialization-examples.html": (
-        "agent-skill-specialization-strategy.html",
-        "agentic-development-operating-model.html",
+        "skills-modularization.html",
         "orchestrated-development-lifecycle.html",
         "../skills/development-methodology/assets/templates/project-template.yaml",
     ),
     "generic-agent-definitions-source.html": (
-        "agent-role-skill-map.html",
-        "agent-skill-specialization-strategy.html",
+        "agent-and-skill-definitions.html",
+        "skills-modularization.html",
         "agentic-configuration.html",
         "../README.md#explicit-target-deployment",
     ),
@@ -952,8 +952,8 @@ class BundleContentTests(unittest.TestCase):
 
         skill_text = skill_path.read_text(encoding="utf-8")
         template_text = template_path.read_text(encoding="utf-8")
-        operating_model_text = (
-            REPOSITORY_ROOT / "design" / "agentic-development-operating-model.html"
+        modularization_text = (
+            REPOSITORY_ROOT / "design" / "skills-modularization.html"
         ).read_text(encoding="utf-8")
         examples_text = (
             REPOSITORY_ROOT / "design" / "agent-skill-specialization-examples.html"
@@ -971,13 +971,13 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("Create exactly one PROJECT.yaml", skill_text)
         self.assertIn("Do not create nested PROJECT.yaml files", skill_text)
         self.assertIn(
-            "PROJECT.yaml is the project-root setup and validation record",
-            operating_model_text,
+            "Accepted skillsets, evidence, missing requirements, conflicts, and explicit no-variant results are written to the root PROJECT.yaml.",
+            modularization_text,
         )
         self.assertIn("linked template", examples_text)
         self.assertNotIn("service/PROJECT.yaml", examples_text)
-        self.assertNotIn("nested PROJECT.yaml recommendations", operating_model_text)
-        self.assertNotIn("&lt;subtree&gt;/PROJECT.yaml", operating_model_text)
+        self.assertNotIn("nested PROJECT.yaml recommendations", modularization_text)
+        self.assertNotIn("&lt;subtree&gt;/PROJECT.yaml", modularization_text)
         self.assertIn("claude_bridge_files:", template_text)
         self.assertNotIn("agent_coordination:", template_text)
         self.assertNotIn("coordination_overrides:", template_text)
@@ -2438,10 +2438,10 @@ class BundleContentTests(unittest.TestCase):
             for filename in DOCUMENT_INFORMATION_OWNERS
         }
 
-        strategy_text = page_text["agent-skill-specialization-strategy.html"]
-        for phrase in STRATEGY_REQUIRED_PHRASES:
-            with self.subTest(strategy_phrase=phrase):
-                self.assertIn(phrase, strategy_text)
+        modularization_text = page_text["skills-modularization.html"]
+        for phrase in MODULARIZATION_REQUIRED_PHRASES:
+            with self.subTest(modularization_phrase=phrase):
+                self.assertIn(phrase, modularization_text)
 
         for owner, headings in DOCUMENT_INFORMATION_OWNERS.items():
             for heading in headings:
@@ -2491,24 +2491,44 @@ class BundleContentTests(unittest.TestCase):
         for filename in DOCUMENT_INFORMATION_OWNERS:
             with self.subTest(index_link=filename):
                 self.assertIn(f'href="design/{filename}"', index_text)
-        for owner in (
-            "operating",
-            "execution",
-            "selection",
+        expected_index_owners = (
             "catalog",
-            "examples",
             "configuration",
+            "modularization",
             "agent-definitions",
-        ):
+            "examples",
+            "execution",
+        )
+        index_owners = tuple(
+            re.findall(
+                r'<a class="doc-card [^"]+" data-information-owner="([^"]+)"',
+                index_text,
+            )
+        )
+        self.assertEqual(expected_index_owners, index_owners)
+        for owner in expected_index_owners:
             with self.subTest(index_owner=owner):
                 self.assertEqual(
                     1,
                     index_text.count(f'data-information-owner="{owner}"'),
                 )
 
+        self.assertIn("<title>AI Coding Kit Documentation</title>", index_text)
+        self.assertIn('<h1 id="page-title">AI Coding Kit Documentation</h1>', index_text)
+        self.assertNotIn('class="summary"', index_text)
+        self.assertNotIn('class="pill"', index_text)
+        self.assertNotIn('aria-hidden="true">07</span>', index_text)
+        for retired_page in (
+            "agent-role-skill-map.html",
+            "agentic-development-operating-model.html",
+            "agent-skill-specialization-strategy.html",
+        ):
+            with self.subTest(retired_page=retired_page):
+                self.assertFalse((design_root / retired_page).exists())
+
         self.assertIn(
             "deliberately present the same definition-to-skill relationships in two generated views",
-            page_text["agent-role-skill-map.html"],
+            page_text["agent-and-skill-definitions.html"],
         )
 
     def test_html_documentation_has_no_repeated_long_prose_blocks(self) -> None:
@@ -2536,7 +2556,7 @@ class BundleContentTests(unittest.TestCase):
 
     def test_agent_role_map_separates_lifecycle_categories(self) -> None:
         role_map_text = (
-            REPOSITORY_ROOT / "design" / "agent-role-skill-map.html"
+            REPOSITORY_ROOT / "design" / "agent-and-skill-definitions.html"
         ).read_text(encoding="utf-8")
 
         for phrase in AGENT_ROLE_MAP_REQUIRED_PHRASES:
@@ -2681,7 +2701,7 @@ class BundleContentTests(unittest.TestCase):
 
         self.assertIn("design/agentic-configuration.html", index_text)
         self.assertIn(
-            "selected skills, native agent definitions, and project instructions",
+            "skills, agent definitions, and project instructions",
             index_text,
         )
         for phrase in AGENTIC_CONFIGURATION_REQUIRED_PHRASES:
@@ -2699,10 +2719,10 @@ class BundleContentTests(unittest.TestCase):
         layer_headings = (
             ("h3", "Shared Definitions"),
             ("h4", "Skill Definition Files"),
-            ("h4", "Native Agent Definition Files"),
+            ("h4", "Agent Definition Files"),
             ("h3", "Project-Specific Definitions"),
             ("h4", "Project Skill Definition Files"),
-            ("h4", "Project Native Agent Definition Files"),
+            ("h4", "Project Agent Definition Files"),
             ("h4", "Root Project Instruction Files"),
             ("h4", "Nested Project Instruction Files"),
         )
@@ -2732,7 +2752,7 @@ class BundleContentTests(unittest.TestCase):
         )[1].split("</section>", maxsplit=1)[0]
         purpose_headings = (
             "Skill Definition Files",
-            "Native Agent Definition Files",
+            "Agent Definition Files",
             "Root Project Instruction Files",
             "Nested Project Instruction Files",
         )
@@ -2763,6 +2783,9 @@ class BundleContentTests(unittest.TestCase):
         )
         self.assertNotIn("Markdown agent definition", locations_section)
         self.assertNotIn("TOML agent definition", locations_section)
+        self.assertIsNone(re.search(r"\bnative\b", configuration_text, re.IGNORECASE))
+        self.assertNotIn(".claude/rules", configuration_text)
+        self.assertNotIn("&lt;project-root&gt;/.claude/CLAUDE.md", configuration_text)
 
     def test_reverse_engineering_uses_structural_code_discovery(self) -> None:
         skill_text = (

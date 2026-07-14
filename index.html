@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Development Methodology Documentation</title>
+  <title>AI Coding Kit Documentation</title>
   <style>
     :root {
       --color-ink: #172033;
@@ -95,52 +95,6 @@
     .lede {
       max-width: 840px;
       font-size: 1.08rem;
-    }
-
-    .summary {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--space-3);
-    }
-
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: var(--space-2);
-      padding: 0.35rem 0.6rem;
-      border: 1px solid var(--color-line);
-      border-radius: 999px;
-      background: var(--color-panel);
-      color: var(--color-muted);
-      font-size: var(--font-xs);
-      font-weight: 700;
-      text-transform: uppercase;
-    }
-
-    .dot {
-      width: 0.65rem;
-      height: 0.65rem;
-      border-radius: 50%;
-    }
-
-    .dot.blue {
-      background: var(--color-blue);
-    }
-
-    .dot.green {
-      background: var(--color-green);
-    }
-
-    .dot.amber {
-      background: var(--color-amber);
-    }
-
-    .dot.purple {
-      background: var(--color-purple);
-    }
-
-    .dot.rose {
-      background: var(--color-rose);
     }
 
     .doc-grid {
@@ -249,83 +203,65 @@
 <body>
   <main>
     <section class="hero" aria-labelledby="page-title">
-      <h1 id="page-title">Development Methodology Documentation</h1>
-      <p class="lede">Each subject has one detailed home. Other pages link to that owner instead of restating its policy or catalog data.</p>
-      <div class="summary" aria-label="Documentation areas">
-        <span class="pill"><span class="dot blue"></span>Operating model</span>
-        <span class="pill"><span class="dot blue"></span>Execution lifecycle</span>
-        <span class="pill"><span class="dot green"></span>Specialization</span>
-        <span class="pill"><span class="dot amber"></span>Conceptual agent definitions</span>
-        <span class="pill"><span class="dot green"></span>Configuration</span>
-        <span class="pill"><span class="dot rose"></span>Definition source</span>
-        <span class="pill"><span class="dot purple"></span>Examples</span>
-      </div>
+      <h1 id="page-title">AI Coding Kit Documentation</h1>
+      <p class="lede">The kit provides an organized starting set of skills and agent configurations for software development. It also separates portable concepts from vendor-specific formats so the same working model can be used across different agentic coding tools.</p>
     </section>
 
     <section aria-labelledby="documents-title">
       <h2 id="documents-title">HTML Documents</h2>
       <div class="doc-grid">
-        <a class="doc-card blue" data-information-owner="operating" href="design/agentic-development-operating-model.html">
+        <a class="doc-card amber" data-information-owner="catalog" href="design/agent-and-skill-definitions.html">
           <header>
             <span class="icon" aria-hidden="true">01</span>
-            <h3>Agentic Development Operating Model</h3>
+            <h3>Agent And Skill Definitions</h3>
           </header>
-          <p>Owns project classification and guidance precedence.</p>
-          <span class="path">design/agentic-development-operating-model.html</span>
+          <p>Catalogs the shared agent responsibilities, assigned skills, output contracts, examples, and relationships supplied by the kit.</p>
+          <span class="path">design/agent-and-skill-definitions.html</span>
         </a>
 
-        <a class="doc-card blue" data-information-owner="execution" href="design/orchestrated-development-lifecycle.html">
+        <a class="doc-card green" data-information-owner="configuration" href="design/agentic-configuration.html">
           <header>
             <span class="icon" aria-hidden="true">02</span>
-            <h3>Orchestrated Development Lifecycle</h3>
+            <h3>Agentic Configuration</h3>
           </header>
-          <p>Owns orchestrated execution gates, lifecycle handoffs, and execution evidence.</p>
-          <span class="path">design/orchestrated-development-lifecycle.html</span>
+          <p>Explains how skills, agent definitions, and project instructions provide relevant context to different coding tools.</p>
+          <span class="path">design/agentic-configuration.html</span>
         </a>
 
-        <a class="doc-card green" data-information-owner="selection" href="design/agent-skill-specialization-strategy.html">
+        <a class="doc-card green" data-information-owner="modularization" href="design/skills-modularization.html">
           <header>
             <span class="icon" aria-hidden="true">03</span>
-            <h3>Agent And Skill Specialization Strategy</h3>
+            <h3>Skills Modularization</h3>
           </header>
-          <p>Owns conceptual-agent-definition-versus-skill decisions, skill selection modes, technology detection, and specialized-agent criteria.</p>
-          <span class="path">design/agent-skill-specialization-strategy.html</span>
+          <p>Explains always-used and rule-selected agent skills, plus the setup-time technology extensions bound to project folders.</p>
+          <span class="path">design/skills-modularization.html</span>
         </a>
 
-        <a class="doc-card amber" data-information-owner="catalog" href="design/agent-role-skill-map.html">
+        <a class="doc-card rose" data-information-owner="agent-definitions" href="design/generic-agent-definitions-source.html">
           <header>
             <span class="icon" aria-hidden="true">04</span>
-            <h3>Conceptual Agent Definitions And Skillsets</h3>
+            <h3>Generic Agent Definitions Source</h3>
           </header>
-          <p>Owns generated catalog views of conceptual agent definition contracts, skill definitions, and definition-to-skill relationships. Its diagram deliberately repeats the same generated relationships as a second view.</p>
-          <span class="path">design/agent-role-skill-map.html</span>
+          <p>Explains the portable source model and its conversion into vendor-specific native agent definitions.</p>
+          <span class="path">design/generic-agent-definitions-source.html</span>
         </a>
 
         <a class="doc-card purple" data-information-owner="examples" href="design/agent-skill-specialization-examples.html">
           <header>
             <span class="icon" aria-hidden="true">05</span>
-            <h3>Agent Skill Specialization Examples</h3>
+            <h3>Examples</h3>
           </header>
           <p>Owns concise fictitious examples of root-only, nested, and wiki-specific project configuration decisions.</p>
           <span class="path">design/agent-skill-specialization-examples.html</span>
         </a>
 
-        <a class="doc-card green" data-information-owner="configuration" href="design/agentic-configuration.html">
+        <a class="doc-card blue" data-information-owner="execution" href="design/orchestrated-development-lifecycle.html">
           <header>
             <span class="icon" aria-hidden="true">06</span>
-            <h3>Agentic Configuration</h3>
+            <h3>Orchestrated Development Lifecycle</h3>
           </header>
-          <p>Explains how selected skills, native agent definitions, and project instructions provide relevant context for code generation.</p>
-          <span class="path">design/agentic-configuration.html</span>
-        </a>
-
-        <a class="doc-card rose" data-information-owner="agent-definitions" href="design/generic-agent-definitions-source.html">
-          <header>
-            <span class="icon" aria-hidden="true">07</span>
-            <h3>Generic Agent Definitions Source</h3>
-          </header>
-          <p>Owns the portable skill source, conceptual agent definition model, and conversion into vendor-specific native agent definitions.</p>
-          <span class="path">design/generic-agent-definitions-source.html</span>
+          <p>Describes the execution gates, handoffs, independent review, integration, and verification evidence used to complete work.</p>
+          <span class="path">design/orchestrated-development-lifecycle.html</span>
         </a>
       </div>
     </section>
