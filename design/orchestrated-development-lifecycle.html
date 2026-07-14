@@ -446,8 +446,8 @@
           </tr>
           <tr>
             <td><span class="name">Independent contribution review</span></td>
-            <td>Dev Code Reviewer for source changes, or the selected independent review role for another artifact</td>
-            <td>A fresh read-only reviewer accepts the contribution or returns correctable findings to the original executor. A correction re-enters fresh review within the bounded correction loop; accepted source work advances to Dev Verifier.</td>
+            <td>Dev Code Reviewer for source changes; task-selected independent artifact or domain reviewers for setup, documentation, and wiki changes</td>
+            <td>Every changed surface goes to its appropriate reviewer in a fresh read-only context. Source changes go to Dev Code Reviewer; non-source setup, documentation, and wiki artifacts go to their task-selected independent artifact or domain reviewers. A reviewer accepts the contribution or returns correctable findings to the original executor. A correction re-enters fresh review within the bounded correction loop; after all applicable contribution-review gates pass, the accepted lane advances to Dev Verifier.</td>
           </tr>
           <tr>
             <td><span class="name">Contribution verification</span></td>
@@ -457,7 +457,7 @@
           <tr>
             <td><span class="name">Path decision</span></td>
             <td>Dev Orchestrator</td>
-            <td>One accepted implementation lane keeps its independently reviewed and verified commit as the final direct commit, without Dev Merge Coordinator. Multiple accepted committed contributions enter the multi-lane integration path.</td>
+            <td>One accepted contribution lane keeps its independently reviewed and verified commit as the final direct commit, without Dev Merge Coordinator. Multiple accepted committed contributions enter the multi-lane integration path.</td>
           </tr>
           <tr>
             <td><span class="name">Multi-lane integration, when required</span></td>
@@ -466,8 +466,8 @@
           </tr>
           <tr>
             <td><span class="name">Integrated-artifact review and verification, multiple lanes only</span></td>
-            <td>Dev Code Reviewer and Dev Verifier in fresh contexts</td>
-            <td>After combination, Dev Code Reviewer reviews the combined diff in another fresh read-only context and Dev Verifier checks the complete integrated outcome. Both gates must pass before the result becomes the final integration commit.</td>
+            <td>Appropriate task-selected independent reviewers, then Dev Verifier, each in fresh contexts</td>
+            <td>After combination, every changed surface is reviewed in a fresh read-only context by its appropriate reviewer or reviewers: source changes by Dev Code Reviewer, and non-source setup, documentation, and wiki artifacts by their task-selected independent artifact or domain reviewers. All applicable post-integration review gates must pass before Dev Verifier checks the complete integrated outcome in another fresh context. Both stages must pass before the result becomes the final integration commit.</td>
           </tr>
           <tr>
             <td><span class="name">Correction or blocker</span></td>
