@@ -173,8 +173,6 @@ skills:
     justification: We need this to choose the smallest complete documentation structure and runtime integration that future agents can maintain reliably.
 - development-methodology:
     justification: We need this to route each required artifact to exactly one creation and review contract instead of producing an arbitrary or duplicated document set.
-- documentation-reverse-engineer:
-    justification: We need this to derive trustworthy project documentation from live code, configuration, tests, and existing project evidence during every bootstrap.
 outputContract:
 - status:
     purpose: States READY or BLOCKED and gives the reason.
