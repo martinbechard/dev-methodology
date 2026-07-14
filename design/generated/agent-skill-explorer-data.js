@@ -952,7 +952,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "organise-project-files": "when the requested orchestration creates a new project file or directory."
       },
       "declaredCases": [],
-      "description": "Coordinates multi-step development work across implementation agents, fresh-context reviewers, independent verification, and deliberate integration while preserving bounded context, explicit handoffs, and claim evidence.",
+      "description": "Coordinates multi-step development work across implementation and writing agents, fresh-context source and artifact reviewers, independent verification, and deliberate integration while preserving bounded context, explicit handoffs, and claim evidence.",
       "dynamicFolderSkills": false,
       "fixedSkills": [
         "structured-design",
