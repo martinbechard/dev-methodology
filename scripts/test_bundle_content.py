@@ -323,12 +323,16 @@ GENERIC_AGENT_DEFINITIONS_REQUIRED_PHRASES = (
 AGENTIC_CONFIGURATION_REQUIRED_PHRASES = (
     "Agentic Configuration",
     "This page describes runtime use.",
+    "which skills, roles, and project instructions apply",
     "Provide The Relevant Context",
-    "Skills And Agent Definitions",
-    "Shared, Project, And Nested Configuration",
+    "Context Layers",
+    "Agent Definition Files",
+    "Shared And Project Definitions",
+    "Root Project Instructions",
+    "Nested Project Instructions",
     "Runtime Configuration File Locations",
-    "The Agent Skills format uses a text file named <code>SKILL.md</code>",
-    "Each agent operates with its own context and history.",
+    "The Agent Skills format is a text file format centered on <code>SKILL.md</code>",
+    "Each agent operates with its own context and history",
     "&lt;project-root&gt;/.&lt;harness-name&gt;/agents/&lt;agent-name&gt;.md",
     "&lt;project-root&gt;/&lt;folder-path&gt;/AGENTS.md",
 )
@@ -355,8 +359,7 @@ DOCUMENT_INFORMATION_OWNERS = {
     ),
     "agentic-configuration.html": (
         "Provide The Relevant Context",
-        "Skills And Agent Definitions",
-        "Shared, Project, And Nested Configuration",
+        "Context Layers",
         "Runtime Configuration File Locations",
     ),
     "generic-agent-definitions-source.html": (
@@ -2641,6 +2644,10 @@ class BundleContentTests(unittest.TestCase):
         ).read_text(encoding="utf-8")
 
         self.assertIn("design/agentic-configuration.html", index_text)
+        self.assertIn(
+            "selected skills, agent definitions, and project instructions",
+            index_text,
+        )
         for phrase in AGENTIC_CONFIGURATION_REQUIRED_PHRASES:
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, configuration_text)
@@ -2648,6 +2655,24 @@ class BundleContentTests(unittest.TestCase):
         self.assertNotIn("PROJECT.md", configuration_text)
         self.assertNotIn("agents/*.toml", configuration_text)
         self.assertNotIn("agents/*.md", configuration_text)
+        self.assertNotIn("Generated Code", configuration_text)
+
+        layer_section = configuration_text.split(
+            '<ol class="context-layers">', maxsplit=1
+        )[1].split("</ol>", maxsplit=1)[0]
+        layer_headings = (
+            "Skills",
+            "Agent Definition Files",
+            "Agent Configuration",
+            "Shared And Project Definitions",
+            "Root Project Instructions",
+            "Nested Project Instructions",
+        )
+        layer_positions = [
+            layer_section.index(f"<h3>{heading}</h3>")
+            for heading in layer_headings
+        ]
+        self.assertEqual(sorted(layer_positions), layer_positions)
         for source_heading in (
             "The Portability Problem",
             "From Logical Roles To Native Agents",

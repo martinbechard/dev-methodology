@@ -122,41 +122,6 @@
       color: var(--color-ink);
     }
 
-    .pill-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--space-3);
-    }
-
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: var(--space-2);
-      padding: 0.35rem 0.6rem;
-      border: 1px solid var(--color-line);
-      border-radius: 999px;
-      background: var(--color-panel);
-      color: var(--color-muted);
-      font-size: var(--font-xs);
-      font-weight: 700;
-      text-transform: uppercase;
-    }
-
-    .dot {
-      width: 0.65rem;
-      height: 0.65rem;
-      border-radius: 50%;
-      background: var(--color-agent);
-    }
-
-    .dot.skill {
-      background: var(--color-skill);
-    }
-
-    .dot.project {
-      background: var(--color-project);
-    }
-
     .section {
       margin-top: var(--space-8);
     }
@@ -165,58 +130,62 @@
       margin-bottom: var(--space-4);
     }
 
-    .runtime-flow {
+    .context-layers {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: var(--space-3);
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      counter-reset: context-layer;
     }
 
-    .runtime-step {
-      min-height: 100%;
-      padding: var(--space-5);
-      border: 1px solid var(--color-line);
-      border-top: 0.35rem solid var(--step-color);
-      border-radius: var(--radius);
-      background: var(--color-panel);
-      box-shadow: var(--shadow-panel);
-    }
-
-    .runtime-step h3 {
-      margin-bottom: var(--space-3);
-    }
-
-    .runtime-step.project {
-      --step-color: var(--color-project);
-    }
-
-    .runtime-step.agent {
-      --step-color: var(--color-agent);
-    }
-
-    .runtime-step.skill {
-      --step-color: var(--color-skill);
-    }
-
-    .runtime-step.code {
-      --step-color: var(--color-ink);
-    }
-
-    .grid {
+    .context-layer {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: 3rem minmax(0, 1fr);
       gap: var(--space-4);
-    }
-
-    .card {
+      align-items: start;
       padding: var(--space-5);
       border: 1px solid var(--color-line);
+      border-left: 0.35rem solid var(--layer-color);
       border-radius: var(--radius);
       background: var(--color-panel);
       box-shadow: var(--shadow-panel);
     }
 
-    .card h3 {
-      margin-bottom: var(--space-3);
+    .context-layer::before {
+      counter-increment: context-layer;
+      content: counter(context-layer, decimal-leading-zero);
+      display: grid;
+      width: 2.5rem;
+      height: 2.5rem;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--layer-soft-color);
+      color: var(--layer-color);
+      font-size: var(--font-xs);
+      font-weight: 800;
+    }
+
+    .context-layer:nth-child(1) {
+      --layer-color: var(--color-skill);
+      --layer-soft-color: var(--color-soft-amber);
+    }
+
+    .context-layer:nth-child(2),
+    .context-layer:nth-child(3) {
+      --layer-color: var(--color-agent);
+      --layer-soft-color: var(--color-soft-blue);
+    }
+
+    .context-layer:nth-child(4),
+    .context-layer:nth-child(5),
+    .context-layer:nth-child(6) {
+      --layer-color: var(--color-project);
+      --layer-soft-color: var(--color-soft-green);
+    }
+
+    .layer-copy h3 {
+      margin-bottom: var(--space-2);
     }
 
     table {
@@ -258,18 +227,12 @@
       font-size: var(--font-sm);
     }
 
-    @media (max-width: 860px) {
-      .runtime-flow {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
     @media (max-width: 620px) {
       main {
         padding: var(--space-8) var(--space-4);
       }
 
-      .runtime-flow {
+      .context-layer {
         grid-template-columns: 1fr;
       }
 
@@ -286,69 +249,55 @@
 
     <section class="hero" aria-labelledby="page-title">
       <h1 id="page-title">Agentic Configuration</h1>
-      <p class="lede">Agentic configuration is the set of runtime files an agentic coding tool loads to decide which instructions, roles, and skills apply while it generates code.</p>
+      <p class="lede">Agentic configuration is the set of runtime files an agentic coding tool loads to decide which skills, roles, and project instructions apply while it generates code.</p>
       <p class="boundary">This page describes runtime use. It does not describe the source model that creates agent files. The <a href="generic-agent-definitions-source.html">Generic Agent Definitions Source</a> page owns that source model and its conversion into harness-specific files.</p>
-      <div class="pill-row" aria-label="Document facets">
-        <span class="pill"><span class="dot project"></span>Project instructions</span>
-        <span class="pill"><span class="dot"></span>Agent roles</span>
-        <span class="pill"><span class="dot skill"></span>Selected skills</span>
-      </div>
     </section>
 
     <section class="section" aria-labelledby="context-title">
       <h2 id="context-title">Provide The Relevant Context</h2>
       <p class="lede">To generate usable code, the agent needs the relevant context that will steer it toward a result acceptable to the project. The main problem is selecting that context from many possible units of information. Agentic configuration solves this by splitting the information into focused files and having the coding tool load only the skills and instructions needed for the current work.</p>
-      <div class="runtime-flow" aria-label="Runtime configuration flow">
-        <article class="runtime-step project">
-          <h3>Project Instructions</h3>
-          <p>Identify the guidance and skills that apply to the project or folder.</p>
-        </article>
-        <article class="runtime-step agent">
-          <h3>Agent Definition</h3>
-          <p>Establish the role, its directives, its skills, and the agents it can use.</p>
-        </article>
-        <article class="runtime-step skill">
-          <h3>Relevant Skills</h3>
-          <p>Supply the detailed instructions needed to perform the selected actions.</p>
-        </article>
-        <article class="runtime-step code">
-          <h3>Generated Code</h3>
-          <p>Reflects the project expectations contained in the loaded runtime context.</p>
-        </article>
-      </div>
     </section>
 
-    <section class="section" aria-labelledby="definitions-title">
-      <h2 id="definitions-title">Skills And Agent Definitions</h2>
-      <div class="grid">
-        <article class="card">
-          <h3>Skills Describe Actions</h3>
-          <p>The Agent Skills format uses a text file named <code>SKILL.md</code> to describe how to perform actions. Agentic coding vendors have adopted this format as the most granular unit of reusable instruction. Keeping skills focused allows the tool to load the relevant action guidance without loading unrelated material.</p>
-        </article>
-        <article class="card">
-          <h3>Agent Definitions Describe Roles</h3>
-          <p>An agent definition specifies a role for the AI to perform. The configuration is primarily a description of the agent's purpose, the skills it should use, other directives it must follow, and the other agents it may use to complete the work.</p>
-        </article>
-        <article class="card">
-          <h3>Agent Hierarchies Partition Context</h3>
-          <p>Each agent operates with its own context and history. A parent agent can delegate focused work to other agents, creating a hierarchy that limits how much information and history any one agent works with at a time.</p>
-        </article>
-      </div>
-    </section>
-
-    <section class="section" aria-labelledby="scope-title">
-      <h2 id="scope-title">Shared, Project, And Nested Configuration</h2>
-      <p class="lede">Agent and skill definitions are usually shared among projects, but they can also be stored inside a project when the role or action is project-specific.</p>
-      <div class="grid">
-        <article class="card">
-          <h3>Root Project Instructions</h3>
-          <p><code>AGENTS.md</code> and <code>CLAUDE.md</code> at the project root provide project-specific instructions. They should usually act as routers that direct the coding tool to the skills appropriate for the project's content.</p>
-        </article>
-        <article class="card">
-          <h3>Nested Project Instructions</h3>
-          <p>Additional <code>AGENTS.md</code> and <code>CLAUDE.md</code> files can be placed in nested folders. These files provide more specialized instructions or skill routing for the content below that folder.</p>
-        </article>
-      </div>
+    <section class="section" aria-labelledby="layers-title">
+      <h2 id="layers-title">Context Layers</h2>
+      <ol class="context-layers">
+        <li class="context-layer">
+          <div class="layer-copy">
+            <h3>Skills</h3>
+            <p>The Agent Skills format is a text file format centered on <code>SKILL.md</code>. It describes how to perform actions, is adopted by agentic coding vendors, and is the most granular unit of description.</p>
+          </div>
+        </li>
+        <li class="context-layer">
+          <div class="layer-copy">
+            <h3>Agent Definition Files</h3>
+            <p>Agent definition files define a specific role to be performed by the AI using skills and other directives. Each agent operates with its own context and history, allowing the amount of information being worked on at one time to be partitioned through a hierarchy of agents.</p>
+          </div>
+        </li>
+        <li class="context-layer">
+          <div class="layer-copy">
+            <h3>Agent Configuration</h3>
+            <p>Agent configuration is mostly a description of the agent's purpose, the skills it should use, and the other agents that should be used to do the work.</p>
+          </div>
+        </li>
+        <li class="context-layer">
+          <div class="layer-copy">
+            <h3>Shared And Project Definitions</h3>
+            <p>Agent and skill definitions are usually shared among projects, but they can also be placed within a project.</p>
+          </div>
+        </li>
+        <li class="context-layer">
+          <div class="layer-copy">
+            <h3>Root Project Instructions</h3>
+            <p>Project-specific instructions can be defined in <code>AGENTS.md</code> and <code>CLAUDE.md</code> at the project root. These files should usually act as routers that load the skills appropriate for the project's content.</p>
+          </div>
+        </li>
+        <li class="context-layer">
+          <div class="layer-copy">
+            <h3>Nested Project Instructions</h3>
+            <p>More <code>AGENTS.md</code> and <code>CLAUDE.md</code> files can be nested within the project to provide more specialized instructions.</p>
+          </div>
+        </li>
+      </ol>
     </section>
 
     <section class="section" aria-labelledby="locations-title">
