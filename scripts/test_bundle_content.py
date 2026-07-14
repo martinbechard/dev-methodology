@@ -1534,6 +1534,130 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn("GOOD post-move verdict", response)
                 self.assertIn("released the ingest claim", response)
 
+    def test_project_wiki_companions_bound_topic_verifier_corrections(self) -> None:
+        """Mandatory ingest companions should share one finite verifier retry contract."""
+        companion_paths = (
+            SKILLS_ROOT / "project-wiki" / "SKILL.md",
+            SKILLS_ROOT / "project-wiki" / "references" / "operations.md",
+        )
+
+        for path in companion_paths:
+            normalized_text = re.sub(
+                r"\s+",
+                " ",
+                path.read_text(encoding="utf-8"),
+            )
+            with self.subTest(path=path.relative_to(REPOSITORY_ROOT)):
+                self.assertRegex(
+                    normalized_text,
+                    r"(?i)explicit caller or owning-role correction-attempt cap",
+                )
+                self.assertRegex(
+                    normalized_text,
+                    r"(?i)at most two corrected resubmissions after the initial "
+                    r"verifier verdict",
+                )
+                self.assertRegex(
+                    normalized_text,
+                    r"(?i)(?:exhausted.{0,180}report BLOCKED|"
+                    r"report BLOCKED.{0,180}exhausted)",
+                )
+                self.assertRegex(
+                    normalized_text,
+                    r"(?i)correction-attempt cap (?:governs each verification "
+                    r"gate|to the pre-move verification gate)",
+                )
+                self.assertRegex(
+                    normalized_text,
+                    r"(?i)(?:correction-attempt|governing) cap.{0,120}"
+                    r"post-move verification gate",
+                )
+                self.assertRegex(
+                    normalized_text,
+                    r"(?i)(?:bounded default.{0,120}post-move verification gate|"
+                    r"post-move verification gate.{0,320}at most two corrected "
+                    r"resubmissions after the initial post-move verdict)",
+                )
+                self.assertRegex(
+                    normalized_text,
+                    r"(?i)(?:BLOCKED stop rule.{0,120}post-move verification gate|"
+                    r"post-move verification gate.{0,760}exhausted.{0,180}"
+                    r"report BLOCKED)",
+                )
+                self.assertNotRegex(
+                    normalized_text,
+                    r"(?i)repeat(?: lint plus verification)? until "
+                    r"(?:the verifier|it) returns GOOD",
+                )
+
+    def test_lifecycle_routes_direct_and_integrated_completion_paths(self) -> None:
+        """The lifecycle should route one accepted lane differently from integrated work."""
+        lifecycle_path = (
+            REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
+        )
+        prose_blocks = visible_prose_blocks(lifecycle_path)
+
+        def table_row(step_prefix: str) -> tuple[int, str]:
+            matching_steps = [
+                (index, block)
+                for index, block in enumerate(prose_blocks)
+                if block.startswith(step_prefix)
+            ]
+            self.assertEqual(
+                1,
+                len(matching_steps),
+                f"Expected one lifecycle step starting with {step_prefix!r}",
+            )
+            step_index, _ = matching_steps[0]
+            return step_index, " ".join(prose_blocks[step_index:step_index + 3])
+
+        _, review_row = table_row("Independent contribution review")
+        self.assertRegex(review_row, r"fresh read-only review(?:er| context)")
+        self.assertIn("original executor", review_row)
+
+        _, verification_row = table_row("Contribution verification")
+        self.assertIn("Dev Verifier", verification_row)
+
+        _, path_row = table_row("Path decision")
+        for phrase in (
+            "One accepted implementation lane",
+            "independently reviewed and verified commit",
+            "final direct commit",
+            "without Dev Merge Coordinator",
+            "Multiple accepted committed contributions",
+        ):
+            with self.subTest(path_phrase=phrase):
+                self.assertIn(phrase, path_row)
+
+        integration_index, integration_row = table_row("Multi-lane integration")
+        self.assertIn("Dev Merge Coordinator", integration_row)
+        self.assertIn("Do not create a merge lane for one accepted contribution", integration_row)
+
+        integrated_verification_index, integrated_verification_row = table_row(
+            "Integrated-artifact review and verification"
+        )
+        for phrase in (
+            "another fresh read-only context",
+            "Dev Code Reviewer",
+            "Dev Verifier",
+            "combined diff",
+            "complete integrated outcome",
+            "final integration commit",
+        ):
+            with self.subTest(integrated_verification_phrase=phrase):
+                self.assertIn(phrase, integrated_verification_row)
+        self.assertLess(integration_index, integrated_verification_index)
+
+        _, completion_row = table_row("Completion")
+        for phrase in (
+            "final direct commit",
+            "final integration commit",
+            "clean status",
+            "Release ownership",
+        ):
+            with self.subTest(completion_phrase=phrase):
+                self.assertIn(phrase, completion_row)
+
     def test_project_bootstrapper_owns_complete_setup_and_review_loop(self) -> None:
         build_skill_docs = load_build_skill_docs_module()
         skill_payload = build_skill_docs.build_payload()
