@@ -3,7 +3,7 @@
 ## Source
 
 - Procedure: [procedure-create-usage-scenarios.md](../procedure-create-usage-scenarios.md)
-- Scope reviewed: the complete legacy procedure against the live distributed skills, templates, and canonical development-use roles.
+- Scope reviewed: the complete legacy procedure against the live distributed skills, templates, and development-use roles.
 
 ## Durable Guidance
 
@@ -45,7 +45,7 @@ Amend review-functional-spec with two checklist checks:
 1. For scenario-driven specifications, does an authoritative coverage inventory account for material responsibilities, rules, actor paths, state changes, and important negative behavior?
 2. Do workflow prose, diagrams, source links, and verification assertions agree, with no unsupported behavior introduced by a scenario example?
 
-No new canonical agent is needed. Documentation Architect should select the functional-spec route, and Artifact Review Agent should apply the strengthened functional-spec checklist. QA And Verification Agent may use the resulting verification blocks, but does not own scenario authoring.
+No new agent is needed. Documentation Architect should select the functional-spec route, and Artifact Review Agent should apply the strengthened functional-spec checklist. QA And Verification Agent may use the resulting verification blocks, but does not own scenario authoring.
 
 ## Omit List
 

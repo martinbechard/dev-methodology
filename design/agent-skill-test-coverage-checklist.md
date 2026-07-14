@@ -1,10 +1,10 @@
 # Agent, Skill, Technology, And Test Coverage Checklist
 
-This page is generated from the canonical roles, bundled skill frontmatter, setup-time technology detection registry, declared evaluation cases, and verified evidence receipts. Regenerate it with scripts/build-support-checklist.py.
+This page is generated from the role definitions, bundled skill frontmatter, setup-time technology detection registry, declared evaluation cases, and verified evidence receipts. Regenerate it with scripts/build-support-checklist.py.
 
 ## Status Meaning
 
-- [x] Structural means the item exists in the canonical catalog and is covered by repository validation or generation checks.
+- [x] Structural means the item exists in the catalog and is covered by repository validation or generation checks.
 - Declared means an evaluation case names the item. Declaration does not prove invocation or behavior.
 - Manual means a human-observed run exists without a complete machine-verifiable invocation and skill-read receipt.
 - [x] Verified behavior requires captured agent identity, concrete model, skill content digests, skill-read tool evidence, deterministic assertions, and an independent verdict.
@@ -13,7 +13,7 @@ This page is generated from the canonical roles, bundled skill frontmatter, setu
 
 ## Summary
 
-- [x] 26 canonical agents are defined and generate through the supported native role adapters.
+- [x] 26 agents are defined and generate through the supported native role adapters.
 - [x] 77 bundled skills pass catalog and Agent Skill validation.
 - [x] 2 agents and 12 skills are named in current evaluation cases.
 - [ ] 0 agents and 0 skills have independently verified behavior evidence under the current proof contract.
@@ -60,7 +60,7 @@ This page is generated from the canonical roles, bundled skill frontmatter, setu
 | typescript-strict | technology | Strict TypeScript | strict-type-system | typescript-order-pricing, typescript-code-review | [ ] None |
 | vitest | technology | Vitest | test-framework | None | [ ] None |
 
-## Canonical Agent Checklist
+## Agent Checklist
 
 | Agent | Profile | Structural | Declared cases | Verified behavior | Verified evidence |
 | --- | --- | --- | --- | --- | --- |
@@ -198,7 +198,7 @@ This page is generated from the canonical roles, bundled skill frontmatter, setu
 ## Repository Verification Layers
 
 - [x] Agent Skill format validation for every bundled skill.
-- [x] Canonical role schema, skill reference, model profile, and adapter completeness tests.
+- [x] Role schema, skill reference, model profile, and adapter completeness tests.
 - [x] Codex TOML and Claude Code Markdown native role generation checks.
 - [x] Generic, Codex, Gemini CLI, Claude Code, and Junie CLI installer behavior tests.
 - [x] Generated documentation and agent-skill hierarchy freshness checks.

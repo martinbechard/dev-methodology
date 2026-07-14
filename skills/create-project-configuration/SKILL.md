@@ -23,7 +23,7 @@ Do not create nested PROJECT.yaml files. When a subfolder has distinct technolog
 
 Create or update PROJECT.yaml before writing AGENTS.md guidance. PROJECT.yaml is the setup and validation artifact that explains what AGENTS.md should contain, why the roles and skills were chosen, and where project-specific evidence belongs. AGENTS.md is the operational reference that the harness supplies after the configuration has been validated. When the target uses Claude Code, create a thin CLAUDE.md beside each applicable AGENTS.md that imports the colocated guidance instead of duplicating it.
 
-Generic repository-mutation behavior belongs to canonical role definitions and the agent-claim skill. Do not reproduce that procedure in PROJECT.yaml or AGENTS.md. Record a coordination_overrides mapping only when the target repository has source-backed nondefault claim-registry, branch, worktree, exclusive-resource, or integration requirements; omit it when the bundle defaults apply.
+Generic repository-mutation behavior belongs to role definitions and the agent-claim skill. Do not reproduce that procedure in PROJECT.yaml or AGENTS.md. Record a coordination_overrides mapping only when the target repository has source-backed nondefault claim-registry, branch, worktree, exclusive-resource, or integration requirements; omit it when the bundle defaults apply.
 
 ## Workflow
 
@@ -34,7 +34,7 @@ Generic repository-mutation behavior belongs to canonical role definitions and t
 5. As Project Agent Setup, use detect-technology-skills and its generated registry once for representative folder scopes. Review source paths, owning manifests, configuration, and build evidence.
 6. Record deterministic technology_skill_loadouts and folder bindings, including source evidence, missing required skills, exclusive conflicts, and explicit no-variant results.
 7. Decide which subfolders need nested AGENTS.md guidance and record every decision in the root PROJECT.yaml.
-8. Verify that every selected canonical role declares repositoryMutation and that the installed or bundled runtime definition can load agent-claim whenever that policy is required or conditional. Treat a missing role definition, skill, or command as BLOCKED instead of compensating with copied project instructions.
+8. Verify that every selected role declares repositoryMutation and that the installed or bundled runtime definition can load agent-claim whenever that policy is required or conditional. Treat a missing role definition, skill, or command as BLOCKED instead of compensating with copied project instructions.
 9. Record only source-backed project-specific coordination_overrides. Omit the mapping when the bundle defaults apply.
 10. Copy the template once to the project root and replace every TODO with source-backed project content.
 11. Keep proprietary project validation notes inside the target project repository. Do not copy private project names, internal implementation details, customer data, secrets, or non-public workflows into distributable examples.

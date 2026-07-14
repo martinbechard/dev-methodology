@@ -4,7 +4,7 @@
 
 Technology detection is a project-setup operation. It converts repository evidence for known folders or tiers into durable technology-skill bindings in PROJECT.yaml and AGENTS.md.
 
-Normal coding, review, verification, diagnosis, security, interface, prompt, and documentation agents do not rerun detection. The harness supplies their canonical fixed-role skills and the technology skills routed for the active folder.
+Normal coding, review, verification, diagnosis, security, interface, prompt, and documentation agents do not rerun detection. The harness supplies their fixed-role skills and the technology skills routed for the active folder.
 
 ## Inputs
 
@@ -76,7 +76,7 @@ Project Agent Setup records accepted loadouts in PROJECT.yaml with their source 
 
 ## Fixed-Role Skills
 
-Canonical role definitions remain technology-neutral and declare their fixed generic skills.
+Role definitions remain technology-neutral and declare their fixed generic skills.
 
 - Adapters with a native skills property generate that property.
 - Adapters without a native skills property generate unconditional skill-loading instructions.
@@ -84,9 +84,9 @@ Canonical role definitions remain technology-neutral and declare their fixed gen
 
 ## Script Ownership
 
-The canonical detector implementation lives at scripts/detect-technology-skills.py with the other repository build and validation scripts.
+The detector source lives at scripts/detect-technology-skills.py with the other repository build and validation scripts.
 
-The detector skill contains a generated runtime mirror only so a standalone installed skill can execute the same implementation. The build verifies that the mirror matches the canonical script. Detector logic is never maintained independently inside the skill.
+The detector skill contains a generated runtime mirror only so a standalone installed skill can execute the same implementation. The build verifies that the mirror matches the repository source script. Detector logic is never maintained independently inside the skill.
 
 ## Workflow
 

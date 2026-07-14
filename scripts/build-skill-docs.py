@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Modified with AI assistance.
-# Summary: Generates skill documentation, canonical role views, runtime agent adapters, and their deterministic inventory.
+# Summary: Generates skill documentation, role views, runtime agent adapters, and their deterministic inventory.
 
 from __future__ import annotations
 
@@ -276,7 +276,7 @@ def load_model_profiles() -> dict[str, str]:
 
 def load_adapter_model_profiles(
     adapter_name: str,
-    canonical_profile_ids: set[str],
+    source_profile_ids: set[str],
 ) -> dict[str, AdapterModelProfile]:
     path = ADAPTERS_ROOT / adapter_name / "model-profiles.yaml"
     parsed = read_yaml_object(path)
@@ -285,9 +285,9 @@ def load_adapter_model_profiles(
     profiles = parsed.get("profiles")
     if not isinstance(profiles, dict):
         raise ValueError(f"Adapter model profiles must be a mapping: {path}")
-    if set(profiles) != canonical_profile_ids:
+    if set(profiles) != source_profile_ids:
         raise ValueError(
-            f"Adapter {adapter_name} model profiles must match canonical profiles: {path}"
+            f"Adapter {adapter_name} model profiles must match source profiles: {path}"
         )
     normalized: dict[str, AdapterModelProfile] = {}
     for profile_id, profile in profiles.items():
@@ -929,9 +929,9 @@ def load_role_definitions(skill_names: set[str]) -> list[RoleDefinition]:
     role_names = [role.name for role in roles]
     filenames = [role.filename for role in roles]
     if len(role_names) != len(set(role_names)):
-        raise ValueError("Canonical role names must be unique.")
+        raise ValueError("Role names must be unique.")
     if len(filenames) != len(set(filenames)):
-        raise ValueError("Canonical role filenames must be unique.")
+        raise ValueError("Role filenames must be unique.")
     known_role_names = set(role_names)
     for role in roles:
         unknown_dependencies = sorted(set(role.agent_dependencies) - known_role_names)
@@ -1212,9 +1212,9 @@ def render_agent_generation_manifest(
 
 
 def expected_role_outputs(roles: Sequence[RoleDefinition]) -> dict[Path, str]:
-    canonical_profile_ids = set(load_model_profiles())
-    codex_profiles = load_adapter_model_profiles(CODEX_ADAPTER_NAME, canonical_profile_ids)
-    claude_profiles = load_adapter_model_profiles(CLAUDE_ADAPTER_NAME, canonical_profile_ids)
+    source_profile_ids = set(load_model_profiles())
+    codex_profiles = load_adapter_model_profiles(CODEX_ADAPTER_NAME, source_profile_ids)
+    claude_profiles = load_adapter_model_profiles(CLAUDE_ADAPTER_NAME, source_profile_ids)
     outputs = {ROLE_OUTPUT_PATH: render_role_javascript(roles)}
     for role in roles:
         outputs[CODEX_AGENT_OUTPUT_ROOT / f"{role.filename}{CODEX_AGENT_EXTENSION}"] = render_codex_agent(

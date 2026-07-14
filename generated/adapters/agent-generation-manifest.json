@@ -84,13 +84,13 @@
         {
           "name": "methodology-artifact-reviewer",
           "output": "generated/adapters/claude/agents/methodology-artifact-reviewer.md",
-          "sha256": "7e15068e161cd242780a2634af8c59cb2fb2bec448f515c7aa3b8c0ea2726049",
+          "sha256": "47c6680cba5ad721dc9c36b61041adf9a0bfaafe8625784a9329bd7c5ec7da4a",
           "source": "agents/roles/methodology-maintenance/methodology-artifact-reviewer.role.yaml"
         },
         {
           "name": "methodology-maintainer",
           "output": "generated/adapters/claude/agents/methodology-maintainer.md",
-          "sha256": "ac49d2b8a69f1a7599645bf11a32b1b1ee490f81e5dff12b8f2530aad2187d1b",
+          "sha256": "8772b5c04f8bdfa0ddfa08ba815ed8470c0cc31832273ba335b0864b66051569",
           "source": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml"
         },
         {
@@ -102,7 +102,7 @@
         {
           "name": "project-configurator",
           "output": "generated/adapters/claude/agents/project-configurator.md",
-          "sha256": "ffcf6428a492c66d8710381d522dcb1fbc968211f54fe9b8d0bbfce55f44f0f5",
+          "sha256": "7d7fedccc99d496d4d582a88d6304710fd6531951de0a0a9eed9bf17da512849",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {
@@ -247,13 +247,13 @@
         {
           "name": "methodology-artifact-reviewer",
           "output": "generated/adapters/codex/agents/methodology-artifact-reviewer.toml",
-          "sha256": "c744758e06da922cb0c617bb8d9a938f6565896224a10947bc740cf5dd3f2f00",
+          "sha256": "1eeef41441b55623d99142aa8961216e98405e8acc04b4732009f5730fee6c25",
           "source": "agents/roles/methodology-maintenance/methodology-artifact-reviewer.role.yaml"
         },
         {
           "name": "methodology-maintainer",
           "output": "generated/adapters/codex/agents/methodology-maintainer.toml",
-          "sha256": "35d017135a8aaff751b363c7ea0860988cd58449303e76feea79b172212399e1",
+          "sha256": "d4a931c5c430938930e1667039e244923e8cdead5973b63e22868ad7caba68fc",
           "source": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml"
         },
         {
@@ -265,7 +265,7 @@
         {
           "name": "project-configurator",
           "output": "generated/adapters/codex/agents/project-configurator.toml",
-          "sha256": "a0dc444c66c2d809c89ccaaa1b307a78d6113036767b3cba22b2b9ebad6d6c65",
+          "sha256": "4d72471b54ffed07aef57322cc222651a09fd16563e6f71ad9531548fa9be4eb",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {

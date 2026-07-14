@@ -60,4 +60,4 @@ activation:
 - Stop setup when a detected required skill is unavailable or equal-priority exclusive matches conflict.
 - Preserve explicit no-variant results instead of inventing support.
 - Require one complete activation branch before selecting its named skill.
-- Treat the bundled detector script as a generated mirror of the canonical repository script.
+- Treat the bundled detector script as a generated mirror of the repository source script.

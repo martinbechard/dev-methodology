@@ -16,7 +16,7 @@ The live catalog has deliberately split that scope by artifact type. The
 primary destinations are review-architecture, review-high-level-design, and
 review-module-design, with review-structured as the common review discipline
 and documentation-page-verifier as the shared source and format check. The
-canonical artifact-review-agent already composes the artifact-specific review
+artifact-review-agent already composes the artifact-specific review
 skills and verifier. This split is preferable to a new generic "design review"
 skill because it keeps component, subsystem, and architecture criteria at the
 right level of abstraction.
@@ -99,7 +99,7 @@ Add these conditional questions:
 
 ## Conclusion
 
-Do not create a replacement generic design-review skill or a new canonical
+Do not create a replacement generic design-review skill or a new
 agent. Retire the legacy worksheet in favor of the existing review stack and
 artifact-review-agent. The only durable catalog improvements are a small
 finding-type/impact convention in review-structured and conditional review

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Verifies canonical role mutation policy and keeps generic claim procedure out of project configuration.
+# Summary: Verifies role mutation policy and keeps generic claim procedure out of project configuration.
 
 from __future__ import annotations
 
@@ -22,7 +22,7 @@ PROJECT_CONFIGURATION_SKILL = ROOT / "skills" / "create-project-configuration" /
 
 
 def _load_build_skill_docs():
-    """Load the documentation generator so tests exercise its canonical role validation."""
+    """Load the documentation generator so tests exercise its role validation."""
     specification = importlib.util.spec_from_file_location("build_skill_docs_mutation_policy", BUILD_SCRIPT)
     if specification is None or specification.loader is None:
         raise RuntimeError(f"Unable to load {BUILD_SCRIPT}")
@@ -106,11 +106,11 @@ class RoleMutationPolicyTests(unittest.TestCase):
         self.assertNotIn("agent_coordination:", template_text)
         self.assertNotIn("claim_skill:", template_text)
         self.assertNotIn("dirty_unclaimed_policy:", template_text)
-        self.assertIn("Generic repository-mutation behavior belongs to canonical role definitions", skill_text)
+        self.assertIn("Generic repository-mutation behavior belongs to role definitions", skill_text)
         self.assertIn("Do not reproduce that procedure in PROJECT.yaml or AGENTS.md", skill_text)
 
     def test_role_schema_requires_repository_mutation(self) -> None:
-        """Expose repository mutation as a required canonical role capability declaration."""
+        """Expose repository mutation as a required role capability declaration."""
         schema = yaml.safe_load(ROLE_SCHEMA.read_text(encoding="utf-8"))
 
         self.assertEqual(4, schema["version"])

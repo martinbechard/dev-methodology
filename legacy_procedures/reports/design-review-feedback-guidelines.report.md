@@ -4,7 +4,7 @@
 
 - Source: [design-review-feedback-guidelines.md](../design-review-feedback-guidelines.md)
 - Scope: How to assess an existing design-review artifact and express feedback as inline TODO comments, then decide whether that review is acceptable or needs rework.
-- Current model: artifact-specific review skills and review-structured produce an evidence-backed completed checklist followed by severity-ordered findings. The canonical artifact-review-agent performs that read-only review and returns findings and corrections.
+- Current model: artifact-specific review skills and review-structured produce an evidence-backed completed checklist followed by severity-ordered findings. The artifact-review-agent performs that read-only review and returns findings and corrections.
 
 ## Worth Keeping
 
@@ -42,7 +42,7 @@ The durable value is not the TODO syntax. Keep the underlying feedback disciplin
 
 ## Precise Suggested Additions
 
-No new skill or canonical agent is warranted. Make the following small additions to the existing generic review path:
+No new skill or agent is warranted. Make the following small additions to the existing generic review path:
 
 1. In review-structured, after Required inputs, add a conditional subsection titled Reviewing an Existing Review Artifact:
 
@@ -68,4 +68,4 @@ No new skill or canonical agent is warranted. Make the following small additions
 
 ## Conclusion
 
-Migrate the evidence-first feedback principles into review-structured and its base checklist. Retire inline TODO conversations, legacy filename conventions, and project status-file mechanics. The existing artifact-review-agent remains the correct canonical role; development-orchestrator can own any project-specific disposition or tracked follow-up. The highest-value gap is a required, explicit correction and authority for each finding, with severity tied to real impact.
+Migrate the evidence-first feedback principles into review-structured and its base checklist. Retire inline TODO conversations, legacy filename conventions, and project status-file mechanics. The existing artifact-review-agent remains the correct role; development-orchestrator can own any project-specific disposition or tracked follow-up. The highest-value gap is a required, explicit correction and authority for each finding, with severity tied to real impact.

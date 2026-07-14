@@ -291,7 +291,7 @@
     <section class="hero" aria-labelledby="page-title">
       <h1 id="page-title">Agent Definition Runtime Formats</h1>
       <p class="lede">
-        This page owns the canonical role schema, native packaging, selected cross-runtime field mappings, and vendor references.
+        This page owns the role schema, native packaging, selected cross-runtime field mappings, and vendor references.
         The <a href="agent-role-skill-map.html">role map</a> owns generated catalog views, and the
         <a href="agent-skill-specialization-strategy.html">specialization strategy</a> owns detection and selection policy.
         The <a href="../README.md#explicit-target-deployment">README</a> owns deployment commands, destination ownership, updates, and pruning.
@@ -305,7 +305,7 @@
     </section>
 
     <section class="section" aria-labelledby="generation-title">
-      <h2 id="generation-title">Canonical Role Model And Generation</h2>
+      <h2 id="generation-title">Role Model And Generation</h2>
       <div class="matrix">
         <table>
           <thead>
@@ -319,7 +319,7 @@
             <tr>
               <td><span class="name">Skills</span></td>
               <td><code>skills/*/SKILL.md</code> and adjacent Codex metadata</td>
-              <td><code>design/generated/skill-definitions.js</code>; every canonical role skill ID must resolve here.</td>
+              <td><code>design/generated/skill-definitions.js</code>; every role skill ID must resolve here.</td>
             </tr>
             <tr>
               <td><span class="name">Roles</span></td>
@@ -338,13 +338,13 @@
             </tr>
             <tr>
               <td><span class="name">Generated catalog</span></td>
-              <td>Canonical role and skill data</td>
+              <td>Role and skill source data</td>
               <td>The <a href="agent-role-skill-map.html">role and skill map</a> renders the current definitions and the intentionally duplicated diagram view.</td>
             </tr>
           </tbody>
         </table>
       </div>
-      <p class="note">The <a href="agent-skill-specialization-strategy.html">specialization strategy</a> owns fixed, request-specific, and setup-time folder selection. This page maps the resulting canonical fields; it does not redefine selection policy.</p>
+      <p class="note">The <a href="agent-skill-specialization-strategy.html">specialization strategy</a> owns fixed, request-specific, and setup-time folder selection. This page maps the resulting role fields; it does not redefine selection policy.</p>
     </section>
 
     <section class="section" aria-labelledby="sources-title">
@@ -407,7 +407,7 @@
         <thead>
           <tr>
             <th>Element</th>
-            <th>Canonical Property</th>
+            <th>Role Property</th>
             <th>Role In A Reusable Agent Definition</th>
           </tr>
         </thead>
@@ -544,7 +544,7 @@
       <table>
         <thead><tr><th>Behavior</th><th>Methodology Default</th><th>Adapter Rule</th></tr></thead>
         <tbody>
-          <tr><td><code>fixedBehavior.target</code></td><td>Every canonical role targets local development.</td><td>Do not emit a remote or cloud execution target unless a future schema version adds one.</td></tr>
+          <tr><td><code>fixedBehavior.target</code></td><td>Every role targets local development.</td><td>Do not emit a remote or cloud execution target unless a future schema version adds one.</td></tr>
           <tr><td><code>fixedBehavior.userInvocable</code></td><td>Every generated role remains eligible for user invocation.</td><td>Emit the runtime's normal invocation metadata where supported.</td></tr>
           <tr><td><code>fixedBehavior.automaticDelegation</code></td><td>Every generated role remains eligible for automatic delegation.</td><td>Use descriptions and runtime invocation fields to preserve automatic selection.</td></tr>
         </tbody>
@@ -594,7 +594,7 @@
     </section>
     <section class="section" aria-labelledby="mapping-title">
       <h2 id="mapping-title">Common Source Mapping</h2>
-      <p class="lede">This matrix covers fields with runtime-specific behavior. The Properties table above is the exhaustive canonical schema inventory; fields carried only in generated instructions, comments, catalog data, or filenames do not need a separate native mapping row.</p>
+      <p class="lede">This matrix covers fields with runtime-specific behavior. The Properties table above is the exhaustive role schema inventory; fields carried only in generated instructions, comments, catalog data, or filenames do not need a separate native mapping row.</p>
       <table>
         <thead>
           <tr>

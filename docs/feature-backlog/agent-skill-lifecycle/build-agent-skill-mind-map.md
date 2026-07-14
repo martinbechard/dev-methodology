@@ -6,7 +6,7 @@ Type: Feature
 
 ## Summary
 
-Build an interactive mind map for exploring canonical agents, fixed-role skills, detected technology skills, loading mechanisms, model profiles, harness adapters, activation evidence, and verification status.
+Build an interactive mind map for exploring agents, fixed-role skills, detected technology skills, loading mechanisms, model profiles, harness adapters, activation evidence, and verification status.
 
 ## Context
 
@@ -16,11 +16,11 @@ See the series [index](index.md).
 
 ## Requirements
 
-- Generate one joined explorer data contract from canonical roles, skill catalog, technology detection registry, model profiles, adapters, evaluation cases, and verified receipts.
+- Generate one joined explorer data contract from role definitions, skill catalog, technology detection registry, model profiles, adapters, evaluation cases, and verified receipts.
 - Show fixed-role edges separately from detected-folder edges.
 - Show Claude preload, Claude dynamic Skill-tool loading, Codex instruction-driven loading, optional availability overrides, and any verified app-server injection evidence.
 - Provide filters for role, skill category, technology, capability, folder scope, harness, model profile, loading mode, declaration status, and verified behavior.
-- Link agent nodes to canonical role files and generated adapters.
+- Link agent nodes to source role files and generated adapters.
 - Link skill nodes to SKILL.md and detection metadata.
 - Link evidence status to evaluation cases and receipts.
 - Make missing, unsupported, blocked, manual, declared, and verified states visually distinct.
@@ -45,7 +45,7 @@ See the series [index](index.md).
 ## Verification
 
 - Run generated-data freshness tests.
-- Validate every displayed node and edge against canonical source data.
+- Validate every displayed node and edge against source data.
 - Test keyboard navigation and representative filters.
 - Inspect the page at desktop and narrow viewport widths.
 - Perform an independent comparison against the support checklist and hierarchy.

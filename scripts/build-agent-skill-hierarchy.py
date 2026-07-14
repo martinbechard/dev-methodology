@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Modified with AI assistance.
-# Summary: Generates the interactive canonical agent-to-skill hierarchy SVG.
+# Summary: Generates the interactive agent-to-skill hierarchy SVG.
 
 from __future__ import annotations
 
@@ -180,7 +180,7 @@ def _skill_node(
 
 
 def build_svg() -> str:
-    """Render the interactive role-to-skill map from canonical repository data."""
+    """Render the interactive role-to-skill map from repository source data."""
     roles: list[dict[str, object]] = []
     for path in sorted(ROLES_ROOT.glob("*/*.role.yaml")):
         role = _load_yaml(path)
@@ -204,7 +204,7 @@ def build_svg() -> str:
     if not isinstance(role_group_order, list) or not all(
         isinstance(group, str) for group in role_group_order
     ):
-        raise ValueError("Canonical role groups must be a list of identifiers.")
+        raise ValueError("Role groups must be a list of identifiers.")
 
     skills_by_category: dict[str, list[str]] = {}
     for path in sorted(SKILLS_ROOT.glob("*/SKILL.md")):
@@ -247,8 +247,8 @@ def build_svg() -> str:
     parts = [
         f'<svg xmlns="http://www.w3.org/2000/svg" class="show-agent-dependencies" width="{SVG_WIDTH}" height="{height}" '
         f'viewBox="0 0 {SVG_WIDTH} {height}" role="group" aria-labelledby="title desc">',
-        '<title id="title">Interactive canonical agent and skill hierarchy</title>',
-        '<desc id="desc">Select an agent to highlight its skills, or select a skill to highlight every canonical agent using it. Turn on agent dependencies to reveal arrows from using agents to used agents. Setup-time stack and domain skills are intentionally omitted because canonical roles do not link to them.</desc>',
+        '<title id="title">Interactive agent and skill hierarchy</title>',
+        '<desc id="desc">Select an agent to highlight its skills, or select a skill to highlight every agent using it. Turn on agent dependencies to reveal arrows from using agents to used agents. Setup-time stack and domain skills are intentionally omitted because roles do not link to them.</desc>',
         '<defs><marker id="dependency-arrow" viewBox="0 0 7 8" refX="6" refY="4" markerWidth="7" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M 1 1.25 L 6 4 L 1 6.75" class="dependency-arrowhead"/></marker></defs>',
         """<style><![CDATA[
 text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
@@ -282,7 +282,7 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
         f'<g class="dependency-toggle checked" role="checkbox" tabindex="0" aria-checked="true" aria-label="Show agent dependencies"><rect x="{SVG_WIDTH - 585}" y="24" width="220" height="30" rx="15" class="toggle-surface"/><rect x="{SVG_WIDTH - 573}" y="32" width="14" height="14" rx="3" class="toggle-box"/><path d="M {SVG_WIDTH - 570} 39 L {SVG_WIDTH - 566} 43 L {SVG_WIDTH - 560} 35" class="checkmark"/><text x="{SVG_WIDTH - 550}" y="43">Show agent dependencies</text></g>',
         f'<g class="view-control disabled" role="button" tabindex="-1" aria-disabled="true" aria-label="Select an agent or skill to view its definition"><rect x="{SVG_WIDTH - 330}" y="24" width="160" height="30" rx="15"/><text x="{SVG_WIDTH - 250}" y="43" text-anchor="middle">View definition</text></g>',
         f'<g class="reset-control disabled" role="button" tabindex="-1" aria-disabled="true" aria-label="Clear map selection"><rect x="{SVG_WIDTH - 150}" y="24" width="120" height="30" rx="15"/><text x="{SVG_WIDTH - 90}" y="43" text-anchor="middle">Clear selection</text></g>',
-        f'<text x="{ROLE_X}" y="126" class="heading">Canonical agents</text>',
+        f'<text x="{ROLE_X}" y="126" class="heading">Agents</text>',
         f'<text x="{SKILL_X}" y="126" class="heading">Bundled skills</text>',
     ]
 
@@ -457,7 +457,7 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
         : "";
       status.textContent = `${activeRoleNode.dataset.displayName}: ${activeSkills.size} linked skills highlighted.${dependencyStatus}`;
     } else if (selectedSkill) {
-      const agentLabel = activeRoles.size === 1 ? "canonical agent uses" : "canonical agents use";
+      const agentLabel = activeRoles.size === 1 ? "agent uses" : "agents use";
       status.textContent = `${selectedSkill}: ${activeRoles.size} ${agentLabel} this skill.`;
     } else {
       status.textContent = showAgentDependencies
@@ -607,7 +607,7 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
 def main() -> int:
     """Write the hierarchy SVG, or report whether the generated file is current."""
     parser = argparse.ArgumentParser(
-        description="Generate the interactive canonical agent and skill hierarchy SVG."
+        description="Generate the interactive agent and skill hierarchy SVG."
     )
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()

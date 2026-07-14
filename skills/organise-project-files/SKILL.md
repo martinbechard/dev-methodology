@@ -11,7 +11,7 @@ Choose the destination before creating a file. Treat placement as a repository d
 
 ## Project Taxonomy
 
-The canonical taxonomy is docs/project-taxonomy.md relative to the repository root. If the applicable project instructions name another taxonomy file, use that file instead. Read the complete taxonomy fresh before every placement decision.
+The project taxonomy is docs/project-taxonomy.md relative to the repository root. If the applicable project instructions name another taxonomy file, use that file instead. Read the complete taxonomy fresh before every placement decision.
 
 Keep this structure:
 
@@ -46,7 +46,7 @@ When docs/project-taxonomy.md is absent and project guidance names no alternativ
 
 - Read the taxonomy and nearby evidence fresh for each decision. Do not rely on remembered repository structure.
 - Do not invent a new top-level folder while a specific existing category fits.
-- Keep canonical sources, generated outputs, caches, fixtures, reports, and runtime evidence in their declared ownership areas.
+- Keep source files, generated outputs, caches, fixtures, reports, and runtime evidence in their declared ownership areas.
 - Mirror source paths for tests only when the project test convention requires it.
 - Do not move or rename existing files unless the request includes reclassification, relocation, or renaming.
 - Do not use an external runtime wrapper solely to obtain a placement decision.

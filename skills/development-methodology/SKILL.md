@@ -15,7 +15,7 @@ Use this skill as the router for software project documentation work from this b
 - Use documentation-reverse-engineer when deriving documentation from an existing codebase.
 - Use code-project-wiki for code-aware docs/wiki maintenance, commit-range sync, Related Code upkeep, or Related Tests upkeep.
 - Use create-project-configuration when creating or substantially rewriting a PROJECT.yaml project agent and skill configuration.
-- Use maintain-methodology-documentation when changing this bundle's skills, canonical roles, generated adapters, generated documentation data, or design pages.
+- Use maintain-methodology-documentation when changing this bundle's skills, roles, generated adapters, generated documentation data, or design pages.
 - Use project-wiki-create when creating or substantially rewriting a project wiki methodology artifact from the project wiki template.
 - Use create-functional-spec when creating or substantially rewriting a functional specification artifact from the functional specification template.
 - Use create-architecture when creating or substantially rewriting an architecture artifact from the architecture template.

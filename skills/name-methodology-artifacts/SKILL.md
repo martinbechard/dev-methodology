@@ -1,6 +1,6 @@
 ---
 name: name-methodology-artifacts
-description: Name or rename methodology agent categories, canonical roles, and distributed skills with subject-based category membership, predictable prefixes, actor nouns, and object- or action-centered naming patterns. Use when creating, reviewing, grouping, or renaming agent categories, role definitions, skill categories, skill directories, or cross-references to those identifiers.
+description: Name or rename methodology agent categories, roles, and distributed skills with subject-based category membership, predictable prefixes, actor nouns, and object- or action-centered naming patterns. Use when creating, reviewing, grouping, or renaming agent categories, role definitions, skill categories, skill directories, or cross-references to those identifiers.
 metadata:
   category: documentation-methodology
 ---
@@ -21,7 +21,7 @@ Examples of aligned category prefixes include Methodology, Project, Wiki, and De
 
 ## Name Roles
 
-- Start every canonical role name with its category prefix.
+- Start every role name with its category prefix.
 - Describe an actor: a person or persona that performs the responsibility.
 - Use a singular role noun such as maintainer, organiser, researcher, writer, reviewer, verifier, collector, coder, diagnostician, steward, coordinator, or orchestrator.
 - Do not use agent anywhere in the role name.
@@ -47,9 +47,9 @@ Choose category membership and naming pattern separately.
 
 ## Apply A Rename
 
-1. Inventory category titles and prefixes, canonical role names and filenames, skill directories and frontmatter names, role loadouts, companion-skill references, metadata, generated outputs, documentation, examples, tests, and explicit deployment manifests.
+1. Inventory category titles and prefixes, role names and filenames, skill directories and frontmatter names, role loadouts, companion-skill references, metadata, generated outputs, documentation, examples, tests, and explicit deployment manifests.
 2. Choose the complete old-to-new map before moving files.
-3. Rename canonical sources first. Keep each role name, filename field, source filename, skill directory, and skill frontmatter name aligned.
+3. Rename source files first. Keep each role name, filename field, source filename, skill directory, and skill frontmatter name aligned.
 4. Update every source reference to the new identifiers and sweep for stale names.
 5. Regenerate derived documentation and runtime adapters.
 6. Run catalog validation, regression tests, and stale-output checks.

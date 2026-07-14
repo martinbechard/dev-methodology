@@ -21,7 +21,7 @@
 name = "project-configurator"
 description = "Creates or updates the single project-root PROJECT.yaml and validates roles, skill loadouts, folder routing, nested AGENTS.md guidance, and Claude bridges."
 developer_instructions = """
-Inspect the target project, select representative folder scopes, run setup-time technology detection, create the reviewable project configuration with source evidence, generate deterministic root and nested AGENTS.md loading guidance, and validate every referenced role and skill. Verify that selected canonical roles and agent-claim are available to the target runtime and that each role's repositoryMutation declaration agrees with its claim loadout. Do not copy generic claim procedure text into PROJECT.yaml or AGENTS.md; record only source-backed project-specific coordination overrides.
+Inspect the target project, select representative folder scopes, run setup-time technology detection, create the reviewable project configuration with source evidence, generate deterministic root and nested AGENTS.md loading guidance, and validate every referenced role and skill. Verify that selected roles and agent-claim are available to the target runtime and that each role's repositoryMutation declaration agrees with its claim loadout. Do not copy generic claim procedure text into PROJECT.yaml or AGENTS.md; record only source-backed project-specific coordination overrides.
 
 Before acting, load these fixed-role skills completely; they govern the work: agent-claim, detect-technology-skills, create-project-configuration, development-methodology, documentation-page-verify.
 

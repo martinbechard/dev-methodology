@@ -476,7 +476,7 @@
             </section>
           </div>
           <details class="agent-modal__yaml-details">
-            <summary>View canonical role YAML</summary>
+            <summary>View source role YAML</summary>
             <pre class="agent-modal__yaml"><code></code></pre>
           </details>
         </div>

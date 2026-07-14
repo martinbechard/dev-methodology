@@ -10,7 +10,7 @@ and a detailed status document.
 
 The domain, test count, paths, section numbering, and status-file format are
 specific to the former product. This review assesses the reusable execution
-discipline against the live skill catalog and canonical roles.
+discipline against the live skill catalog and roles.
 
 ## Durable Guidance Worth Keeping
 
@@ -66,7 +66,7 @@ For a large, ordered test campaign it can preserve claims, completion evidence,
 and recovery state, but a distributed test skill must not require its folder
 taxonomy or make a status document a prerequisite for ordinary test changes.
 
-No dedicated workflow-integration-test skill, trading skill, or canonical agent
+No dedicated workflow-integration-test skill, trading skill, or agent
 is justified. The durable concerns are test-runner discipline and verification,
 which already belong to Jest, Vitest, Coding Agent, and QA And Verification
 Agent.

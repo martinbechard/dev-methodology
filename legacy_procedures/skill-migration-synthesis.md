@@ -4,7 +4,7 @@
 
 This page consolidates one independent migration report for each of the 27
 legacy procedures. Each report compared its procedure with the live portable
-skill catalog and canonical roles, then separated reusable guidance from
+skill catalog and roles, then separated reusable guidance from
 former-project conventions. The legacy procedures remain source material; this
 page makes recommendations only and does not change the distributed skills.
 
@@ -24,7 +24,7 @@ home:
 | Medium | Create Runtime Trace Instrumentation for opt-in, safe, bounded runtime evidence collection. Keep it distinct from execution tracing. | Runtime Diagnostician, Coding Agent, and QA And Verification Agent | [report](reports/procedure-tracer.report.md) |
 | Medium | Create Unit Test Plan, with a small template, for durable design- or code-derived test-plan artifacts. | Development Methodology route; Coding, QA, and Code Review roles | [design-derived report](reports/procedure-unit-test-plan-from-design.report.md), [code-derived report](reports/procedure-unit-test-plan-from-code.report.md) |
 
-No new canonical agent is recommended. The existing role model already has
+No new agent is recommended. The existing role model already has
 appropriate owners; new skills should be routed to those roles rather than
 creating narrowly named agents.
 

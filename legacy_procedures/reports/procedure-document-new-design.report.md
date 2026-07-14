@@ -36,7 +36,7 @@
 
 ## Gaps And Precise Improvements
 
-The catalog has no need for a separate new-design skill or a new canonical agent. Creation is owned by the artifact-specific design skills and review by Artifact Review Agent through the matching review skill.
+The catalog has no need for a separate new-design skill or a new agent. Creation is owned by the artifact-specific design skills and review by Artifact Review Agent through the matching review skill.
 
 Two small improvements would retain the procedure's useful specificity without restoring its rigid format:
 

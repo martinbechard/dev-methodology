@@ -36,11 +36,11 @@ The shared page contract starts every durable page with Current Understanding, A
 - skills/development-methodology/assets/templates contains the reusable TODO-driven template assets.
 - Keep Codex openai.yaml metadata beside each source SKILL.md when a skill needs Codex app metadata, invocation policy, or tool dependencies.
 - scripts/install-skills.py installs the bundled skills through adapter profiles for generic Agent Skills, Codex, Gemini CLI, Claude Code, and JetBrains Junie CLI.
-- agents/role-schema.yaml defines the canonical customer-independent role schema.
+- agents/role-schema.yaml defines the customer-independent role schema.
 - agents/model-profiles.yaml defines semantic simple, default, advanced, and advanced-long model profiles without provider identifiers.
 - adapters/[runtime]/model-profiles.yaml maps semantic profiles to concrete models, reasoning effort, and context settings for each harness.
-- agents/roles contains canonical role files grouped by Dev Activities, Wiki Activities, Project Setup, and Methodology Maintenance.
-- generated/adapters contains ready-to-copy native agent definitions and agent-generation-manifest.json. The current milestone generates Codex and Claude definitions from the same canonical roles.
+- agents/roles contains source role files grouped by Dev Activities, Wiki Activities, Project Setup, and Methodology Maintenance.
+- generated/adapters contains ready-to-copy native agent definitions and agent-generation-manifest.json. The current milestone generates Codex and Claude definitions from the same source roles.
 - design/generated/technology-skill-detection-registry.js exposes the same detection registry for documentation and the future interactive agent-skill explorer.
 - scripts/openai_metadata.py refreshes derived Codex interface fields from SKILL.md while preserving hand-authored policy and dependencies.
 - scripts contains regression tests for installer behavior and bundle content.
@@ -54,9 +54,9 @@ Reusable templates live inside the development-methodology skill assets so there
 python3 scripts/build-skill-docs.py
 ```
 
-The script reads each bundled SKILL.md file, adjacent Codex openai.yaml metadata, the ordered design/skill-categories.yaml catalog, agents/role-schema.yaml, agents/model-profiles.yaml, adapter model mappings, and canonical role files. It writes design/generated/skill-definitions.js, design/generated/role-definitions.js, native definitions under generated/adapters, and agent-generation-manifest.json. The [runtime formats page](design/agent-definition-runtime-formats.html) owns the exact source fields, native packaging, and adapter mappings.
+The script reads each bundled SKILL.md file, adjacent Codex openai.yaml metadata, the ordered design/skill-categories.yaml catalog, agents/role-schema.yaml, agents/model-profiles.yaml, adapter model mappings, and source role files. It writes design/generated/skill-definitions.js, design/generated/role-definitions.js, native definitions under generated/adapters, and agent-generation-manifest.json. The [runtime formats page](design/agent-definition-runtime-formats.html) owns the exact source fields, native packaging, and adapter mappings.
 
-The generation manifest is the deterministic build inventory: it records each canonical role source, generated Codex and Claude path, expected digest, and aggregate counts without timestamps.
+The generation manifest is the deterministic build inventory: it records each source role, generated Codex and Claude path, expected digest, and aggregate counts without timestamps.
 
 Build the portable technology detection registry and installed detector mirror before generating role and documentation views:
 
@@ -72,17 +72,17 @@ The generated [interactive agent and skill hierarchy](design/agent-role-skill-ma
 python3 scripts/build-agent-skill-hierarchy.py
 ```
 
-The generated [agent, skill, technology, and test coverage checklist](design/agent-skill-test-coverage-checklist.md) inventories every canonical agent and bundled skill, shows specialized activation coverage, and distinguishes declarations and manual observations from independently verified behavior. Regenerate it with:
+The generated [agent, skill, technology, and test coverage checklist](design/agent-skill-test-coverage-checklist.md) inventories every agent and bundled skill, shows specialized activation coverage, and distinguishes declarations and manual observations from independently verified behavior. Regenerate it with:
 
 ```bash
 python3 scripts/build-support-checklist.py
 ```
 
-Role cards, the skill catalog, and the agent-and-skill diagram are generated from canonical data rather than maintained independently in HTML. Canonical role examples show a scenario purpose, invocation, and plausible response. Each skill entry in canonical role YAML nests a justification that explains why the role needs the skill, each output contract entry nests a purpose that explains why the output exists, and agentDependencies names any fixed direct agent-to-agent use shown by the diagram. The generated role modal displays the skill and output explanations with the enlarged pills, and native adapters render them as comments. The generator rejects canonical roles that reference missing skill IDs or agent dependencies.
+Role cards, the skill catalog, and the agent-and-skill diagram are generated from role and skill source data rather than maintained independently in HTML. Role examples show a scenario purpose, invocation, and plausible response. Each skill entry in role YAML nests a justification that explains why the role needs the skill, each output contract entry nests a purpose that explains why the output exists, and agentDependencies names any fixed direct agent-to-agent use shown by the diagram. The generated role modal displays the skill and output explanations with the enlarged pills, and native adapters render them as comments. The generator rejects roles that reference missing skill IDs or agent dependencies.
 
-Within the linked HTML design set, the documentation index assigns one owner to each substantive topic. Sibling HTML pages use navigation summaries and links instead of maintaining parallel explanations. The generated diagram and generated cards are the intentional duplicate views of canonical role-to-skill relationships. The diagram can also reveal canonical agent-to-agent dependencies without treating dynamic task-time routing as a fixed dependency.
+Within the linked HTML design set, the documentation index assigns one owner to each substantive topic. Sibling HTML pages use navigation summaries and links instead of maintaining parallel explanations. The generated diagram and generated cards are the intentional duplicate views of role-to-skill relationships. The diagram can also reveal agent-to-agent dependencies without treating dynamic task-time routing as a fixed dependency.
 
-Use maintain-methodology-documentation when changing skills, roles, categories, adapters, or design pages. That skill owns the canonical-source update, regeneration, stale-output check, validation, and diff-review workflow. Skill authoring and review share skill-authoring, while canonical role creation and review share agent-role-authoring so instruction structure, authority, state transitions, examples, agent dependencies, and outputs are defined once.
+Use maintain-methodology-documentation when changing skills, roles, categories, adapters, or design pages. That skill owns source updates, regeneration, stale-output checks, validation, and diff review. Skill authoring and review share skill-authoring, while role creation and review share agent-role-authoring so instruction structure, authority, state transitions, examples, agent dependencies, and outputs are defined once.
 
 Each skill frontmatter metadata block names its category id. The category file owns category order and display labels.
 

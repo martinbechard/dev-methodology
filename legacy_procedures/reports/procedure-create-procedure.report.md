@@ -2,7 +2,7 @@
 
 ## Source
 
-[Legacy procedure](../procedure-create-procedure.md) defines how to create project procedure-rule documents. This review compares it with the live skill catalog, canonical roles, and repository maintenance contract.
+[Legacy procedure](../procedure-create-procedure.md) defines how to create project procedure-rule documents. This review compares it with the live skill catalog, roles, and repository maintenance contract.
 
 ## Durable Guidance
 
@@ -40,4 +40,4 @@ Do not create a procedure-authoring skill or agent. A repository procedure is no
 
 ## Conclusion
 
-Keep the legacy procedure as historical input only. Retain its evidence, atomicity, and rationale principles through the existing skills; make the two small Structured Design additions above. No new skill or canonical agent is recommended.
+Keep the legacy procedure as historical input only. Retain its evidence, atomicity, and rationale principles through the existing skills; make the two small Structured Design additions above. No new skill or agent is recommended.

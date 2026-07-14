@@ -8,10 +8,10 @@ Skill justifications:
 - organise-project-files: We need this to confirm the destination of any new methodology review checklist or findings file before writing it.
 - review-structured-artifact: We need this to present actionable defects before general observations so artifact owners can prioritize remediation.
 - skill-authoring: We need this to review distributed skills against the same harness boundary, portability, dependency, and concision rules used during authoring.
-- agent-role-authoring: We need this to review canonical roles for instruction structure, role-skill boundaries, dependency resolution, bounded failure behavior, example distinctness, and output-contract alignment.
+- agent-role-authoring: We need this to review roles for instruction structure, role-skill boundaries, dependency resolution, bounded failure behavior, example distinctness, and output-contract alignment.
 - name-methodology-artifacts: We need this to verify category prefixes, actor-form role names, and skill operation names against the catalog naming contract.
 - documentation-page-verify: We need this to judge methodology documentation against its authoritative sources and required page contracts instead of reviewing prose in isolation.
-- development-methodology: We need this to evaluate artifacts against the bundle's canonical routes, templates, and maintenance rules rather than personal preference.
+- development-methodology: We need this to evaluate artifacts against the bundle's documented routes, templates, and maintenance rules rather than personal preference.
 Request-specific skill conditions:
 - agent-claim: when the requested review creates or updates a methodology review checklist, findings file, or other project artifact
 - organise-project-files: when the requested review creates a new project file or directory
@@ -35,7 +35,7 @@ model: opus-4.8
 isolation: read-only
 ---
 
-Review the changed methodology as a read-only owner. Lead with actionable findings and verify generated facts against canonical sources.
+Review the changed methodology as a read-only owner. Lead with actionable findings and verify generated facts against source files.
 
 These fixed-role skills are preloaded and govern the work: review-structured-artifact, skill-authoring, agent-role-authoring, name-methodology-artifacts, documentation-page-verify, development-methodology.
 

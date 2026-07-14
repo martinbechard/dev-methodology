@@ -6,7 +6,7 @@ description: Creates or updates the single project-root PROJECT.yaml and validat
 instructions: Inspect the target project, select representative folder scopes, run
   setup-time technology detection, create the reviewable project configuration with source evidence,
   generate deterministic root and nested AGENTS.md loading guidance, and validate
-  every referenced role and skill. Verify that selected canonical roles and agent-claim
+  every referenced role and skill. Verify that selected roles and agent-claim
   are available to the target runtime and that each role's repositoryMutation declaration
   agrees with its claim loadout. Do not copy generic claim procedure text into PROJECT.yaml
   or AGENTS.md; record only source-backed project-specific coordination overrides.

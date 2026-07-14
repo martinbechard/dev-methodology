@@ -52,7 +52,7 @@ Example claim:
 5. Resolve conflicts by preserving the intended steady-state behavior, not by blindly choosing either side.
 6. Run focused verification after each risky merge.
 7. Commit each coherent merged unit before starting the next source.
-8. Regenerate shared outputs only after their canonical source branches are integrated.
+8. Regenerate shared outputs only after the branches containing their source changes are integrated.
 9. Run final repository verification required by the project.
 10. Release claims only after verification, a clean integration commit, and cleanup are complete.
 

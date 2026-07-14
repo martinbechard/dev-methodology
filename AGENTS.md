@@ -13,10 +13,10 @@ Keep these instructions simple. If a maintenance rule needs a long explanation, 
 - README.md is the human-facing entry point for the bundle.
 - AGENTS.md is the agent-facing maintenance contract for this repository.
 - skills contains portable Agent Skills distributed to other projects and machines.
-- agents contains the canonical customer-independent role schema and role definitions.
+- agents contains the customer-independent role schema and source role definitions.
 - detection.yaml beside a specialized technology or domain skill is the source for setup-time detection metadata and activation evidence.
 - adapters contains runtime-specific metadata for those distributed skills.
-- generated/adapters contains generated native agent definitions and must be regenerated from canonical roles rather than edited manually.
+- generated/adapters contains generated native agent definitions and must be regenerated from source roles rather than edited manually.
 - design contains the HTML explanations of the skill and agent model.
 - scripts contains installer, refresh, validation, and regression-test support.
 
@@ -65,7 +65,7 @@ When adding, renaming, deleting, or materially changing a distributed skill:
 - Sweep the repository for old skill ids before and after renames or deletions.
 - Keep review skill checklists named review-checklist-[review-target].md, and keep completed checklist guidance aligned with artifact-name.review-checklist-[review-target].md.
 
-When adding, renaming, deleting, or materially changing a canonical role:
+When adding, renaming, deleting, or materially changing a role:
 
 - Update the source role under agents/roles.
 - Keep its filename field aligned with the role source filename.

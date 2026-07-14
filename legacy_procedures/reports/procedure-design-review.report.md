@@ -15,7 +15,7 @@ review skills. Review-architecture, review-high-level-design,
 review-module-design, review-functional-spec, and review-project-wiki each
 select the relevant checklist, require source evidence, save a completed
 checklist beside the target, and derive findings from it. Review-structured is
-the generic path for other structured artifacts. The canonical
+the generic path for other structured artifacts. The
 artifact-review-agent already composes this review family.
 
 ## Worthwhile Durable Guidance
@@ -60,7 +60,7 @@ material ways:
 The legacy document itself contains little review substance. Its only
 independent gap is governance of the review catalog: no currently identified
 review skill says explicitly that a change to the review process must be
-propagated across the related review skills, checklist references, canonical
+propagated across the related review skills, checklist references,
 review-agent composition, interface metadata, regression tests, README, and
 design explanations. That is repository-maintenance guidance, not a
 reviewer-facing runtime rule.
@@ -113,7 +113,7 @@ severity-ordered findings format.
 
 ## Skill And Agent Recommendation
 
-No new skill and no new canonical agent are warranted. The procedure is an
+No new skill and no new agent are warranted. The procedure is an
 obsolete index over a workflow that is now deliberately split across the
 existing review skills and artifact-review-agent. Retain only the catalog
 maintenance trigger in maintain-methodology-documentation and the narrowly

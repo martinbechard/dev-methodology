@@ -9,7 +9,7 @@ an already approved refactoring plan. It combines generally useful delivery
 discipline with assumptions about a TypeScript codebase, a definitions index,
 a status file, a Tracer utility, local design-file naming, and linked legacy
 procedures. This assessment identifies guidance that should be retained in the
-portable skill and canonical-agent model; it does not preserve the procedure as
+portable skill and agent model; it does not preserve the procedure as
 a portable workflow.
 
 ## Worthwhile durable guidance
@@ -35,7 +35,7 @@ a portable workflow.
   preventative rule or test. The proposal must be reviewed rather than
   automatically incorporated into global guidance.
 
-## Mapping to live skills and canonical agents
+## Mapping to live skills and agents
 
 | Procedure point | Live destination | Coverage | Recommendation |
 | --- | --- | --- | --- |
@@ -102,7 +102,7 @@ Add a Refactoring And Failure Diagnosis section:
 Add these instructions:
 
 - Before introducing a public type, schema, interface, data model, or contract,
-  search the project for its existing canonical representation and reuse or
+  search the project for its existing representation and reuse or
   extend it when appropriate.
 - When requirements, design, tests, and running behavior conflict, identify the
   project-defined authority. If it is not clear, report the conflict and ask
@@ -142,7 +142,7 @@ Do not create a new Apply Refactoring Plan skill or a dedicated refactoring
 agent from this procedure. Its portable value is distributed across the
 existing Coding Agent, Runtime Diagnostician, QA And Verification Agent,
 Backlog Steward, and design-review roles. The highest-value gaps are a shared
-failure-triage and escalation rule, explicit canonical-contract discovery,
+failure-triage and escalation rule, explicit existing-contract discovery,
 portable mock-boundary guidance, and a controlled path for turning recurring
 failures into methodology improvements. All legacy file conventions, penalties,
 and forced deletion behavior should remain omitted.

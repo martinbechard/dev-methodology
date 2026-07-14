@@ -2,7 +2,7 @@
 
 ## Source
 
-[Legacy procedure](../procedure-create-requirements.md) defines a building-block specification: prepare from source material, use a template, describe responsibility and observable interfaces, retain only material constraints, and review the result. This review compares it with the live skill catalog, templates, canonical roles, and repository maintenance contract.
+[Legacy procedure](../procedure-create-requirements.md) defines a building-block specification: prepare from source material, use a template, describe responsibility and observable interfaces, retain only material constraints, and review the result. This review compares it with the live skill catalog, templates, roles, and repository maintenance contract.
 
 ## Durable Guidance
 
@@ -28,7 +28,7 @@
 
 ## Recommendations
 
-No new skill or canonical agent is recommended. The legacy procedure combines three existing artifact levels, and splitting that combination into functional specifications, high-level designs, and module designs is the current catalog's deliberate improvement.
+No new skill or agent is recommended. The legacy procedure combines three existing artifact levels, and splitting that combination into functional specifications, high-level designs, and module designs is the current catalog's deliberate improvement.
 
 No live-skill change is required. The only reusable principle that might look missing—avoid implementation detail in requirements—is already explicit in the functional-specification review path and document-type router. Adding a generic building-block-specification template would reintroduce an overlapping sixth document shape.
 

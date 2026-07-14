@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" class="show-agent-dependencies" width="1150" height="1980" viewBox="0 0 1150 1980" role="group" aria-labelledby="title desc">
-<title id="title">Interactive canonical agent and skill hierarchy</title>
-<desc id="desc">Select an agent to highlight its skills, or select a skill to highlight every canonical agent using it. Turn on agent dependencies to reveal arrows from using agents to used agents. Setup-time stack and domain skills are intentionally omitted because canonical roles do not link to them.</desc>
+<title id="title">Interactive agent and skill hierarchy</title>
+<desc id="desc">Select an agent to highlight its skills, or select a skill to highlight every agent using it. Turn on agent dependencies to reveal arrows from using agents to used agents. Setup-time stack and domain skills are intentionally omitted because roles do not link to them.</desc>
 <defs><marker id="dependency-arrow" viewBox="0 0 7 8" refX="6" refY="4" markerWidth="7" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M 1 1.25 L 6 4 L 1 6.75" class="dependency-arrowhead"/></marker></defs>
 <style><![CDATA[
 text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
@@ -34,7 +34,7 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
 <g class="dependency-toggle checked" role="checkbox" tabindex="0" aria-checked="true" aria-label="Show agent dependencies"><rect x="565" y="24" width="220" height="30" rx="15" class="toggle-surface"/><rect x="577" y="32" width="14" height="14" rx="3" class="toggle-box"/><path d="M 580 39 L 584 43 L 590 35" class="checkmark"/><text x="600" y="43">Show agent dependencies</text></g>
 <g class="view-control disabled" role="button" tabindex="-1" aria-disabled="true" aria-label="Select an agent or skill to view its definition"><rect x="820" y="24" width="160" height="30" rx="15"/><text x="900" y="43" text-anchor="middle">View definition</text></g>
 <g class="reset-control disabled" role="button" tabindex="-1" aria-disabled="true" aria-label="Clear map selection"><rect x="1000" y="24" width="120" height="30" rx="15"/><text x="1060" y="43" text-anchor="middle">Clear selection</text></g>
-<text x="30" y="126" class="heading">Canonical agents</text>
+<text x="30" y="126" class="heading">Agents</text>
 <text x="760" y="126" class="heading">Bundled skills</text>
 <path d="M 350 906 C 412 906, 412 936, 351 936" class="dependency-edge" data-source-role="project-bootstrapper" data-target-role="project-configurator" marker-end="url(#dependency-arrow)"/>
 <path d="M 350 906 C 424 906, 424 342, 351 342" class="dependency-edge" data-source-role="project-bootstrapper" data-target-role="dev-documentation-writer" marker-end="url(#dependency-arrow)"/>
@@ -362,7 +362,7 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
         : "";
       status.textContent = `${activeRoleNode.dataset.displayName}: ${activeSkills.size} linked skills highlighted.${dependencyStatus}`;
     } else if (selectedSkill) {
-      const agentLabel = activeRoles.size === 1 ? "canonical agent uses" : "canonical agents use";
+      const agentLabel = activeRoles.size === 1 ? "agent uses" : "agents use";
       status.textContent = `${selectedSkill}: ${activeRoles.size} ${agentLabel} this skill.`;
     } else {
       status.textContent = showAgentDependencies

@@ -2,21 +2,21 @@ name: methodology-artifact-reviewer
 filename: methodology-artifact-reviewer
 repositoryMutation: conditional
 description: Reviews methodology artifacts for catalog drift, source and adapter mismatch, stale examples, missing tests, and unclear maintenance rules.
-instructions: Review the changed methodology as a read-only owner. Lead with actionable findings and verify generated facts against canonical sources.
+instructions: Review the changed methodology as a read-only owner. Lead with actionable findings and verify generated facts against source files.
 modelProfile: advanced
 modelStages:
   evidence-extraction: simple
   synthesis: advanced
 examples:
-- purpose: Verify that a methodology catalog change remains aligned across its canonical
+- purpose: Verify that a methodology catalog change remains aligned across its source
     source, generated runtime adapters, and regression coverage before release.
   runtimeInvocations:
     codex: "$methodology-artifact-reviewer Review this skill catalog change against
-      the canonical sources, generated adapters, and regression tests."
+      the source files, generated adapters, and regression tests."
     claude-code: "@agent-methodology-artifact-reviewer Review this skill catalog change
-      against the canonical sources, generated adapters, and regression tests."
+      against the source files, generated adapters, and regression tests."
   plausibleResponse: Reported one high-priority adapter mismatch and one missing regression
-    assertion, with canonical source references for both findings. Listed regeneration
+    assertion, with source references for both findings. Listed regeneration
     and test corrections as required, separated an optional wording improvement, and
     identified the unverified customer-install path as residual risk.
 - purpose: Assess methodology maintenance guidance for stale examples, ambiguous ownership
@@ -28,7 +28,7 @@ examples:
       and its examples against the repository's authoritative workflow and artifact
       contracts."
   plausibleResponse: Led with two actionable findings where an example used a retired
-    route and the ownership rule did not identify its canonical source. Required replacement
+    route and the ownership rule did not identify its authoritative source. Required replacement
     of the stale invocation and clarification of the verification owner, then recorded
     uncertainty about an undocumented migration case as residual risk.
 skills:
@@ -43,7 +43,7 @@ skills:
 - skill-authoring:
     justification: We need this to review distributed skills against the same harness boundary, portability, dependency, and concision rules used during authoring.
 - agent-role-authoring:
-    justification: We need this to review canonical roles for instruction structure, role-skill
+    justification: We need this to review roles for instruction structure, role-skill
       boundaries, dependency resolution, bounded failure behavior, example distinctness,
       and output-contract alignment.
 - name-methodology-artifacts:
@@ -51,7 +51,7 @@ skills:
 - documentation-page-verify:
     justification: We need this to judge methodology documentation against its authoritative sources and required page contracts instead of reviewing prose in isolation.
 - development-methodology:
-    justification: We need this to evaluate artifacts against the bundle's canonical routes, templates, and maintenance rules rather than personal preference.
+    justification: We need this to evaluate artifacts against the bundle's documented routes, templates, and maintenance rules rather than personal preference.
 isolation: read-only
 outputContract:
 - finding-first review:

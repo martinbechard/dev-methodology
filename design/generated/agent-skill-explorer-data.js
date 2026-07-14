@@ -1107,7 +1107,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "structured-design": "when catalog, role, or operating-model changes require explicit boundaries and relationships before implementation"
       },
       "declaredCases": [],
-      "description": "Maintains the reusable methodology artifacts, skill catalog, canonical roles, generated adapters, documentation, scripts, and regression tests.",
+      "description": "Maintains the reusable methodology artifacts, skill catalog, agent roles, generated adapters, documentation, scripts, and regression tests.",
       "dynamicFolderSkills": false,
       "fixedSkills": [
         "agent-claim",

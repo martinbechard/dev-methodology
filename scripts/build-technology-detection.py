@@ -19,7 +19,7 @@ SKILLS_ROOT = ROOT / "skills"
 DETECTOR_SKILL = SKILLS_ROOT / "detect-technology-skills"
 REGISTRY_YAML = DETECTOR_SKILL / "references" / "technology-skill-detection-registry.yaml"
 REGISTRY_JS = ROOT / "design" / "generated" / "technology-skill-detection-registry.js"
-CANONICAL_DETECTOR = ROOT / "scripts" / "detect-technology-skills.py"
+SOURCE_DETECTOR = ROOT / "scripts" / "detect-technology-skills.py"
 INSTALLED_DETECTOR = DETECTOR_SKILL / "scripts" / "detect.py"
 DETECTION_FILE = "detection.yaml"
 ALLOWED_KINDS = {"technology", "domain"}
@@ -40,7 +40,7 @@ def load_yaml(path: Path) -> dict[str, object]:
 
 
 def role_skill_names(role: dict[str, object]) -> list[str]:
-    """Return canonical skill identifiers from string and justified role entries."""
+    """Return source skill identifiers from string and justified role entries."""
     value = role.get("skills")
     if not isinstance(value, list):
         raise ValueError(f"Role {role.get('name')} skills must be a list.")
@@ -206,7 +206,7 @@ def validate_fixed_role_loadouts(entries: list[dict[str, object]]) -> None:
         if fixed:
             violations.append(f"{role['name']}: {', '.join(fixed)}")
     if violations:
-        raise ValueError("Canonical roles contain detected technology skills: " + "; ".join(violations))
+        raise ValueError("Roles contain detected technology skills: " + "; ".join(violations))
 
 
 def registry(entries: list[dict[str, object]]) -> dict[str, object]:
@@ -242,12 +242,12 @@ def expected_outputs(entries: list[dict[str, object]]) -> dict[Path, str]:
     return {
         REGISTRY_YAML: yaml.safe_dump(value, sort_keys=False, allow_unicode=False),
         REGISTRY_JS: render_js(value),
-        INSTALLED_DETECTOR: CANONICAL_DETECTOR.read_text(encoding="utf-8"),
+        INSTALLED_DETECTOR: SOURCE_DETECTOR.read_text(encoding="utf-8"),
     }
 
 
 def main() -> int:
-    """Validate canonical definitions and write or check all generated detection artifacts."""
+    """Validate source definitions and write or check all generated detection artifacts."""
     parser = argparse.ArgumentParser(description="Build and validate setup-time technology detection artifacts.")
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()

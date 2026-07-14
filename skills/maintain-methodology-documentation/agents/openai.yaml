@@ -4,9 +4,9 @@ interface:
   # User-facing name shown in Codex skill surfaces.
   display_name: Maintain Methodology Documentation
   # User-facing summary shown in Codex skill surfaces.
-  short_description: Maintain the dev-methodology skill catalog, canonical agent roles, generated runtime adapters...
+  short_description: Maintain the dev-methodology skill catalog, agent roles, generated runtime adapters, generated...
   # Prompt Codex can use when launching this skill directly.
-  default_prompt: Use $maintain-methodology-documentation to update canonical methodology sources, regenerate derived artifacts, and validate the result.
+  default_prompt: Use $maintain-methodology-documentation to update methodology source files, regenerate derived artifacts, and validate the result.
 
 # Optional invocation policy placeholder.
 # policy:

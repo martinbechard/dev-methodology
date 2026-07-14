@@ -426,11 +426,11 @@ class TechnologyDetectionTests(unittest.TestCase):
                     self.assertEqual("BLOCKED", result["status"])
                     self.assertIn("analyze each owner separately", result["loadouts"][0]["scopeErrors"][0])
 
-    def test_installed_detector_matches_canonical_behavior(self) -> None:
+    def test_installed_detector_matches_source_behavior(self) -> None:
         project = ROOT / "evals" / "projects" / "fastapi-orders"
-        canonical = run_detection(project, "app")
+        source_result = run_detection(project, "app")
         installed = run_detection(project, "app", detector=INSTALLED_DETECT_SCRIPT)
-        self.assertEqual(canonical, installed)
+        self.assertEqual(source_result, installed)
 
     def test_detector_has_no_task_time_options(self) -> None:
         completed = subprocess.run(

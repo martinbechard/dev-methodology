@@ -272,7 +272,7 @@ AGENT_ROLE_MAP_REQUIRED_PHRASES = (
     ".tag.technology-skill",
     "technology-skill-detection-registry.js",
     "Interactive Agent And Skill Map",
-    "select a skill to see every canonical agent that uses it.",
+    "select a skill to see every agent that uses it.",
     "intentionally omitted from this map.",
     'class="hierarchy-embed"',
     "Open the interactive SVG diagram",
@@ -284,7 +284,7 @@ AGENT_ROLE_MAP_REQUIRED_PHRASES = (
 )
 AGENT_DEFINITION_FORMATS_REQUIRED_PHRASES = (
     "Agent Definition Runtime Formats",
-    "Canonical Role Model And Generation",
+    "Role Model And Generation",
     "Authoritative Runtime Sources",
     "OpenAI Codex Subagents",
     "Claude Code Subagents",
@@ -330,7 +330,7 @@ DOCUMENT_INFORMATION_OWNERS = {
         "Beacon Knowledge Base: Workflow Separation",
     ),
     "agent-definition-runtime-formats.html": (
-        "Canonical Role Model And Generation",
+        "Role Model And Generation",
         "Native Runtime Packaging",
         "Common Source Mapping",
     ),
@@ -897,7 +897,7 @@ class BundleContentTests(unittest.TestCase):
             "PROJECT.yaml is the project-root setup and validation record",
             operating_model_text,
         )
-        self.assertIn("canonical template", examples_text)
+        self.assertIn("linked template", examples_text)
         self.assertNotIn("service/PROJECT.yaml", examples_text)
         self.assertNotIn("nested PROJECT.yaml recommendations", operating_model_text)
         self.assertNotIn("&lt;subtree&gt;/PROJECT.yaml", operating_model_text)
@@ -905,7 +905,7 @@ class BundleContentTests(unittest.TestCase):
         self.assertNotIn("agent_coordination:", template_text)
         self.assertNotIn("coordination_overrides:", template_text)
         self.assertIn(
-            "Generic repository-mutation behavior belongs to canonical role definitions",
+            "Generic repository-mutation behavior belongs to role definitions",
             skill_text,
         )
         self.assertIn(
@@ -1042,7 +1042,7 @@ class BundleContentTests(unittest.TestCase):
         ).read_text(encoding="utf-8")
 
         required_guidance = (
-            "The canonical taxonomy is docs/project-taxonomy.md relative to the repository root.",
+            "The project taxonomy is docs/project-taxonomy.md relative to the repository root.",
             "Read the complete taxonomy fresh before every placement decision.",
             "Conventions: defines ID prefixes and formats, filename casing, and test-mirroring rules.",
             "Top-Level Folder Principles:",
@@ -1084,7 +1084,7 @@ class BundleContentTests(unittest.TestCase):
             SKILL_DEFINITIONS_PATH.read_text(encoding="utf-8"),
         )
 
-    def test_canonical_roles_generate_current_documentation_and_adapters(self) -> None:
+    def test_source_roles_generate_current_documentation_and_adapters(self) -> None:
         build_skill_docs = load_build_skill_docs_module()
         skill_payload = build_skill_docs.build_payload()
         roles = build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
@@ -1118,9 +1118,9 @@ class BundleContentTests(unittest.TestCase):
                 self.assertTrue(output_path.is_file())
                 self.assertEqual(expected_content, output_path.read_text(encoding="utf-8"))
 
-        canonical_role_names = {role.name for role in roles}
-        self.assertIn("project-bootstrapper", canonical_role_names)
-        self.assertNotIn("methodology-shared-install-verifier", canonical_role_names)
+        source_role_names = {role.name for role in roles}
+        self.assertIn("project-bootstrapper", source_role_names)
+        self.assertNotIn("methodology-shared-install-verifier", source_role_names)
         generation_manifest = json.loads(
             AGENT_GENERATION_MANIFEST_PATH.read_text(encoding="utf-8")
         )
@@ -1138,8 +1138,8 @@ class BundleContentTests(unittest.TestCase):
                     ).glob(f"*{extension}")
                 }
                 self.assertEqual(len(roles), adapter_manifest["agentCount"])
-                self.assertEqual(canonical_role_names, manifest_role_names)
-                self.assertEqual(canonical_role_names, generated_role_names)
+                self.assertEqual(source_role_names, manifest_role_names)
+                self.assertEqual(source_role_names, generated_role_names)
                 for agent in adapter_manifest["agents"]:
                     generated_agent_path = REPOSITORY_ROOT / agent["output"]
                     self.assertEqual(
@@ -1609,10 +1609,10 @@ class BundleContentTests(unittest.TestCase):
         )
 
     def test_model_profiles_are_semantic_and_adapter_complete(self) -> None:
-        canonical = load_yaml_object(MODEL_PROFILES_PATH)["profiles"]
+        source_profiles = load_yaml_object(MODEL_PROFILES_PATH)["profiles"]
         self.assertEqual(
             {"simple", "default", "advanced", "advanced-long"},
-            set(canonical),
+            set(source_profiles),
         )
 
         adapter_profiles = {
@@ -1621,7 +1621,7 @@ class BundleContentTests(unittest.TestCase):
         }
         for adapter, profiles in adapter_profiles.items():
             with self.subTest(adapter=adapter):
-                self.assertEqual(set(canonical), set(profiles))
+                self.assertEqual(set(source_profiles), set(profiles))
                 for profile in profiles.values():
                     self.assertIsInstance(profile.get("model"), str)
                     self.assertTrue(profile["model"].strip())
@@ -1632,11 +1632,11 @@ class BundleContentTests(unittest.TestCase):
         for role_path in sorted((REPOSITORY_ROOT / "agents" / "roles").glob("*/*.role.yaml")):
             with self.subTest(role_path=role_path):
                 role = load_yaml_object(role_path)
-                self.assertIn(role["modelProfile"], canonical)
+                self.assertIn(role["modelProfile"], source_profiles)
                 self.assertNotIn("model", role)
                 self.assertNotIn("effort", role)
                 for profile in role.get("modelStages", {}).values():
-                    self.assertIn(profile, canonical)
+                    self.assertIn(profile, source_profiles)
 
     def test_agent_skill_evals_cover_implementation_and_independent_review(self) -> None:
         evals = load_yaml_object(REPOSITORY_ROOT / "evals" / "cases.yaml")["cases"]
@@ -1766,7 +1766,7 @@ class BundleContentTests(unittest.TestCase):
                 )
 
         self.assertIn(
-            "deliberately present the same canonical relationships in two generated views",
+            "deliberately present the same role-to-skill relationships in two generated views",
             page_text["agent-role-skill-map.html"],
         )
 
@@ -1823,7 +1823,7 @@ class BundleContentTests(unittest.TestCase):
             "repoRoot",
             "Escape",
             "Example scenarios",
-            "View canonical role YAML",
+            "View source role YAML",
             "Plausible response",
             "enhance-skill-definitions",
             ".skill-modal:not([hidden])",
@@ -1914,7 +1914,7 @@ class BundleContentTests(unittest.TestCase):
             '<h2 id="information-model-title">', maxsplit=1
         )[1].split('<h2 id="ignored-properties-title">', maxsplit=1)[0]
         for property_name in role_schema["properties"]:
-            with self.subTest(canonical_property=property_name):
+            with self.subTest(source_property=property_name):
                 self.assertIn(f"<code>{property_name}</code>", property_section)
 
         for behavior_name in role_schema["fixedBehavior"]:

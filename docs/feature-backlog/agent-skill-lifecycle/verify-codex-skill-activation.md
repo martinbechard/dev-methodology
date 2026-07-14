@@ -6,18 +6,18 @@ Type: Feature
 
 ## Summary
 
-Build and run a Codex CLI evaluation suite that proves fixed-role and detected-folder skills were actually activated and used by generated canonical agents.
+Build and run a Codex CLI evaluation suite that proves fixed-role and detected-folder skills were actually activated and used by generated agents.
 
 ## Context
 
-Current tests prove definitions, installation, detector behavior, fixtures, and manual outcomes. They do not yet provide complete captured evidence that Codex invoked a canonical agent, loaded each required skill, and applied its observable requirements. The suite must run after the detector and generated agent contract stabilizes.
+Current tests prove definitions, installation, detector behavior, fixtures, and manual outcomes. They do not yet provide complete captured evidence that Codex invoked an agent, loaded each required skill, and applied its observable requirements. The suite must run after the detector and generated agent contract stabilizes.
 
 See the series [index](index.md).
 
 ## Requirements
 
 - Run the installed Codex CLI version and record its version with every evaluation.
-- Invoke generated canonical Codex agents rather than reproducing their prompts manually.
+- Invoke generated Codex agents rather than reproducing their prompts manually.
 - Capture agent identity, concrete model, invocation, detected AGENTS.md guidance, skill catalog visibility, skill-load events, commands, outputs, and timestamps.
 - Prove fixed-role skill activation for representative coding, review, setup, QA, security, documentation, and coordination agents.
 - Prove detected-folder activation for TypeScript, Java and Spring Boot, Python, and FastAPI scopes.

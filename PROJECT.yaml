@@ -2,7 +2,7 @@ schema: project
 schema_version: 1
 
 current_understanding:
-  summary: "This repository maintains and distributes portable development-methodology skills, canonical agent roles, generated runtime adapters, design documentation, validation scripts, and evaluation fixtures."
+  summary: "This repository maintains and distributes portable development-methodology skills, agent roles, generated runtime adapters, design documentation, validation scripts, and evaluation fixtures."
   development_stage: "Active bundle maintenance with generated documentation, native agent adapters, regression tests, and explicit target deployment support."
   setup_need: "Python maintenance code exists in several ownership scopes, including a FastAPI fixture, so ordinary agents need deterministic folder technology-skill loadouts without rerunning detection."
 
@@ -42,7 +42,7 @@ authoritative_sources:
 
 project_scope_and_boundaries:
   repository_boundary: "The dev-methodology Git repository and its source-controlled bundle, generated artifacts, tests, evaluation fixtures, and setup documentation."
-  product_or_service_boundary: "A portable Agent Skills and canonical role bundle rather than one deployed application service."
+  product_or_service_boundary: "A portable Agent Skills and role bundle rather than one deployed application service."
   private_data_boundary: "Do not send PII or company-internal information to an LLM unless explicitly instructed. Keep customer-specific material out of distributable skills, roles, examples, and generated adapters."
   sibling_repositories:
     - name: "Not yet identified"
@@ -61,7 +61,7 @@ project_taxonomy:
         - "Agent Skills"
         - YAML
         - Markdown
-      notes: "These are canonical product sources; Python loadouts apply only to executable Python subtrees within them."
+      notes: "These are product source files; Python loadouts apply only to executable Python subtrees within them."
     - name: "Repository maintenance automation"
       paths:
         - scripts/**
@@ -115,7 +115,7 @@ project_taxonomy:
 
 root_agents_reference:
   file: AGENTS.md
-  purpose: "Tell agents how to maintain canonical sources and generated outputs, which checks to run, and which Python technology skills must be loaded for each executable scope."
+  purpose: "Tell agents how to maintain source files and generated outputs, which checks to run, and which Python technology skills must be loaded for each executable scope."
   required_content:
     - "Repository-wide source boundaries, privacy constraints, generation ownership, validation commands, and commit expectations."
     - "Unconditional folder technology-skill loadouts generated from this plan and their required-load failure policy."
@@ -245,7 +245,7 @@ technology_skill_loadouts:
     status: READY
     required_load_failure: BLOCKED
     local_rules_source: AGENTS.md
-    notes: "This source is a generated portable mirror and must stay aligned with the canonical detector builder."
+    notes: "This source is a generated portable mirror and must stay aligned with the repository detector builder."
   - scope: "Plain-Python evaluation fixture"
     pathPattern: evals/projects/python-inventory/**
     skills:
@@ -313,7 +313,7 @@ folder_routing:
       - python
     source_evidence:
       - path: skills/detect-technology-skills/scripts/detect.py
-        fact: "The detector mirror is Python source generated from the canonical setup detector."
+        fact: "The detector mirror is Python source generated from the repository setup detector."
     verification_commands:
       - "python3 scripts/build-technology-detection.py --check"
     nested_agents_file_needed: false
@@ -362,9 +362,9 @@ documentation_and_file_contracts:
   - path: README.md
     purpose: "Human-facing bundle, setup, installation, and verification reference."
   - path: design/generated
-    purpose: "Generated documentation data derived from canonical skills and roles."
+    purpose: "Generated documentation data derived from source skills and roles."
   - path: generated/adapters
-    purpose: "Generated native runtime agent definitions derived from canonical roles."
+    purpose: "Generated native runtime agent definitions derived from source roles."
 
 validation_plan:
   commands:
@@ -373,7 +373,7 @@ validation_plan:
     - command: "python3 scripts/build-technology-detection.py --check"
       proves: "Detection metadata, registry, and installed detector mirror are current."
     - command: "python3 scripts/build-skill-docs.py --check"
-      proves: "Generated skill, role, and native adapter outputs match canonical sources."
+      proves: "Generated skill, role, and native adapter outputs match their sources."
     - command: "python3 scripts/build-agent-skill-hierarchy.py --check"
       proves: "The generated role and skill hierarchy is current."
     - command: "python3 scripts/build-support-checklist.py --check"

@@ -3,7 +3,7 @@
 ## Source
 
 - Procedure: [procedure-coding-rules.md](../procedure-coding-rules.md)
-- Scope reviewed: sections 0 through 8, against the live distributed skills and canonical development-use roles.
+- Scope reviewed: sections 0 through 8, against the live distributed skills and development-use roles.
 
 ## Durable Guidance
 
@@ -41,7 +41,7 @@ Make the following small additions to careful-coding only; they preserve portabi
 4. Under Surgical Changes, add: Keep comments limited to non-obvious rationale, constraints, and workarounds. Update or remove comments and commented-out code that no longer describe the implementation.
 5. Under Simplicity First, add: If a growing conditional represents stable variants, consider a discriminated union, dispatch map, or dedicated strategy only when it reduces total complexity.
 
-No changes are recommended to typescript-strict, typescript-esm, Jest, Vitest, canonical roles, or generated adapters. The Coding Agent and Code Review Agent already compose careful-coding with focused verification and read-only evidence-based review.
+No changes are recommended to typescript-strict, typescript-esm, Jest, Vitest, roles, or generated adapters. The Coding Agent and Code Review Agent already compose careful-coding with focused verification and read-only evidence-based review.
 
 ## Omit List
 

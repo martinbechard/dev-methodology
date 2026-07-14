@@ -49,7 +49,7 @@ class AgentSkillHierarchyTests(unittest.TestCase):
         self.root = element_tree.fromstring(self.rendered)
 
     def test_generated_hierarchy_is_current(self) -> None:
-        """The committed SVG must exactly match the canonical generator output."""
+        """The committed SVG must exactly match the generator output."""
         self.assertEqual(self.rendered, OUTPUT_PATH.read_text(encoding="utf-8"))
 
     def test_hierarchy_omits_model_profiles_and_setup_time_skills(self) -> None:
@@ -117,7 +117,7 @@ class AgentSkillHierarchyTests(unittest.TestCase):
         self.assertIn('aria-live="polite"', self.rendered)
         self.assertIn("function selectSkill(skillName)", self.rendered)
         self.assertIn("edge.dataset.skill === selectedSkill", self.rendered)
-        self.assertIn("canonical agents use", self.rendered)
+        self.assertIn("agents use", self.rendered)
 
     def test_agent_dependencies_are_directional_and_user_controllable(self) -> None:
         """Fixed direct agent use should render as optional directional arrows."""
@@ -168,7 +168,7 @@ class AgentSkillHierarchyTests(unittest.TestCase):
         self.assertIn("let showAgentDependencies = true", self.rendered)
         self.assertIn("toggleAgentDependencies", self.rendered)
 
-    def test_agent_groups_follow_the_canonical_schema_order(self) -> None:
+    def test_agent_groups_follow_the_role_schema_order(self) -> None:
         """The visual reading order should match the maintained role-group contract."""
         group_nodes = self.root.findall(
             f".//{{{SVG_NAMESPACE}}}text[@class='group']"
@@ -210,7 +210,7 @@ class AgentSkillHierarchyTests(unittest.TestCase):
             skill_group_labels,
         )
 
-    def test_role_cards_follow_the_canonical_schema_order(self) -> None:
+    def test_role_cards_follow_the_role_schema_order(self) -> None:
         """The reader-facing role cards should follow the maintained group order."""
         role_map = ROLE_MAP_PATH.read_text(encoding="utf-8")
         group_markers = [

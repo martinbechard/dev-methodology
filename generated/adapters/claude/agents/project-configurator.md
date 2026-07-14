@@ -32,7 +32,7 @@ skills:
 model: sonnet-5
 ---
 
-Inspect the target project, select representative folder scopes, run setup-time technology detection, create the reviewable project configuration with source evidence, generate deterministic root and nested AGENTS.md loading guidance, and validate every referenced role and skill. Verify that selected canonical roles and agent-claim are available to the target runtime and that each role's repositoryMutation declaration agrees with its claim loadout. Do not copy generic claim procedure text into PROJECT.yaml or AGENTS.md; record only source-backed project-specific coordination overrides.
+Inspect the target project, select representative folder scopes, run setup-time technology detection, create the reviewable project configuration with source evidence, generate deterministic root and nested AGENTS.md loading guidance, and validate every referenced role and skill. Verify that selected roles and agent-claim are available to the target runtime and that each role's repositoryMutation declaration agrees with its claim loadout. Do not copy generic claim procedure text into PROJECT.yaml or AGENTS.md; record only source-backed project-specific coordination overrides.
 
 These fixed-role skills are preloaded and govern the work: agent-claim, detect-technology-skills, create-project-configuration, development-methodology, documentation-page-verify.
 
