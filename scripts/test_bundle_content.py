@@ -282,8 +282,8 @@ AGENT_ROLE_MAP_REQUIRED_PHRASES = (
     "openDefinitionFromHierarchy",
     "definitionReturnTarget",
 )
-AGENT_DEFINITION_FORMATS_REQUIRED_PHRASES = (
-    "Agent Definition Runtime Formats",
+GENERIC_AGENT_DEFINITIONS_REQUIRED_PHRASES = (
+    "Generic Agent Definitions Source",
     "The Portability Problem",
     "Skills Have A Portable File Standard",
     "Agents Do Not Have One Portable Runtime File",
@@ -1766,7 +1766,14 @@ class BundleContentTests(unittest.TestCase):
         for filename in DOCUMENT_INFORMATION_OWNERS:
             with self.subTest(index_link=filename):
                 self.assertIn(f'href="design/{filename}"', index_text)
-        for owner in ("operating", "execution", "selection", "catalog", "examples", "runtime"):
+        for owner in (
+            "operating",
+            "execution",
+            "selection",
+            "catalog",
+            "examples",
+            "agent-definitions",
+        ):
             with self.subTest(index_owner=owner):
                 self.assertEqual(
                     1,
@@ -1901,7 +1908,7 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, checklist_text)
 
-    def test_agent_definition_formats_document_runtime_adapters(self) -> None:
+    def test_generic_agent_definitions_document_source_and_adapters(self) -> None:
         index_text = (REPOSITORY_ROOT / "index.html").read_text(encoding="utf-8")
         format_text = (
             REPOSITORY_ROOT / "design" / "agent-definition-runtime-formats.html"
@@ -1914,7 +1921,7 @@ class BundleContentTests(unittest.TestCase):
 
         self.assertIn("design/agent-definition-runtime-formats.html", index_text)
 
-        for phrase in AGENT_DEFINITION_FORMATS_REQUIRED_PHRASES:
+        for phrase in GENERIC_AGENT_DEFINITIONS_REQUIRED_PHRASES:
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, format_text)
 
