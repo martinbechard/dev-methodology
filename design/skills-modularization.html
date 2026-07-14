@@ -441,7 +441,7 @@
 
   <section class="section" aria-labelledby="agent-skills-title">
     <h2 id="agent-skills-title">Core Agent Skills</h2>
-    <p class="lede">An agent definition may directly reference both required and optional core skills. A required skill has no condition and loads whenever that agent runs. An optional skill has a human-readable condition and loads only when the request and available evidence make it applicable. Both kinds of directly referenced skills must be technology-agnostic so the generic agent definition can be reused across programming languages, frameworks, project types, and agentic coding vendors.</p>
+    <p class="lede">An agent definition may directly reference both required and optional core skills. A required skill has no condition and loads whenever that agent runs. An optional skill has a human-readable condition and loads only when the request and available evidence make it applicable. Both kinds of directly referenced skills must be technology-agnostic so the generic agent definition can be reused across programming languages, frameworks, project types, and agentic coding vendors. View their complete definitions in the <a href="agent-and-skill-definitions.html#skills-title">Skill Catalog on the Agent And Skill Definitions page</a>.</p>
     <div class="matrix">
       <table>
         <thead>
@@ -471,7 +471,7 @@
   </section>
 
   <section class="section" aria-labelledby="technology-examples-title">
-    <h2 id="technology-examples-title">Technology Extensions Included In The Kit</h2>
+    <h2 id="technology-examples-title">Technology Extension Skills</h2>
     <div class="matrix">
       <table>
         <thead>
@@ -483,57 +483,77 @@
         </thead>
         <tbody>
           <tr>
-            <td><span class="name">python</span></td>
+            <td><span class="tag" data-skill-definition="python">python</span></td>
             <td>The folder contains Python source or interface files.</td>
             <td>Language implementation, review, and verification guidance for that folder.</td>
           </tr>
           <tr>
-            <td><span class="name">fastapi</span></td>
+            <td><span class="tag" data-skill-definition="fastapi">fastapi</span></td>
             <td>Python files plus a FastAPI dependency in the owning manifest, or a parsed import from fastapi.</td>
             <td>FastAPI guidance together with its python companion skill.</td>
           </tr>
           <tr>
-            <td><span class="name">java, java-design, spring-boot, and spring-boot-design</span></td>
+            <td>
+              <div class="tag-row">
+                <span class="tag" data-skill-definition="java">java</span>
+                <span class="tag" data-skill-definition="java-design">java-design</span>
+                <span class="tag" data-skill-definition="spring-boot">spring-boot</span>
+                <span class="tag" data-skill-definition="spring-boot-design">spring-boot-design</span>
+              </div>
+            </td>
             <td>Java source plus a Spring Boot marker in the owning Maven or Gradle build.</td>
             <td>Java and Spring Boot coding rules load separately from the language and application design principles used for structural decisions.</td>
           </tr>
           <tr>
-            <td><span class="name">spring-data-jpa</span></td>
+            <td><span class="tag" data-skill-definition="spring-data-jpa">spring-data-jpa</span></td>
             <td>Java source plus the Spring Data JPA starter in the owning Maven or Gradle build.</td>
             <td>Entity, relationship, repository, query, fetch-plan, locking, and persistence-context guidance together with Spring Boot and SQL.</td>
           </tr>
           <tr>
-            <td><span class="name">spring-boot-testing</span></td>
+            <td><span class="tag" data-skill-definition="spring-boot-testing">spring-boot-testing</span></td>
             <td>Java test source plus the Spring Boot test starter in the owning Maven or Gradle build.</td>
             <td>Version-aware Spring test selection, slices, application contexts, bean replacement, Testcontainers, and integration evidence.</td>
           </tr>
           <tr>
-            <td><span class="name">liquibase</span></td>
+            <td><span class="tag" data-skill-definition="liquibase">liquibase</span></td>
             <td>A Liquibase dependency or configuration plus changelogs under the selected folder scope.</td>
             <td>Changeset identity, include-chain, validation, update, rollback, and recovery guidance together with SQL.</td>
           </tr>
           <tr>
-            <td><span class="name">jhipster-project and focused JHipster skills</span></td>
+            <td>
+              <div class="tag-row">
+                <span class="tag" data-skill-definition="jhipster-project">jhipster-project</span>
+                <span class="tag" data-skill-definition="jhipster-domain-modeling">jhipster-domain-modeling</span>
+                <span class="tag" data-skill-definition="jhipster-persistence">jhipster-persistence</span>
+                <span class="tag" data-skill-definition="jhipster-testing">jhipster-testing</span>
+                <span class="tag" data-skill-definition="jhipster-security">jhipster-security</span>
+              </div>
+            </td>
             <td>A JHipster generator marker, Java and Spring Boot ownership, plus concern-specific JDL, database, test, or security files.</td>
             <td>JHipster project guidance and only the domain-modeling, persistence, testing, or security packs proved by the selected scope, together with their technology companions.</td>
           </tr>
           <tr>
-            <td><span class="name">nextjs-app-router</span></td>
+            <td><span class="tag" data-skill-definition="nextjs-app-router">nextjs-app-router</span></td>
             <td>JavaScript or TypeScript source under an app subtree plus a Next.js dependency in the owning manifest.</td>
             <td>Next.js App Router conventions only for the matching application scope.</td>
           </tr>
           <tr>
-            <td><span class="name">postgres-drizzle</span></td>
+            <td><span class="tag" data-skill-definition="postgres-drizzle">postgres-drizzle</span></td>
             <td>JavaScript or TypeScript source plus drizzle-orm or drizzle-kit in the owning manifest.</td>
             <td>Drizzle persistence guidance together with its sql companion skill.</td>
           </tr>
           <tr>
-            <td><span class="name">jest or vitest</span></td>
+            <td>
+              <div class="tag-row">
+                <span class="tag" data-skill-definition="jest">jest</span>
+                <span class="tag" data-skill-definition="vitest">vitest</span>
+              </div>
+            </td>
             <td>Test-capable JavaScript or TypeScript source plus the matching dependency or configuration file.</td>
             <td>The test framework actually owned by the folder, rather than a generic framework guess.</td>
           </tr>
           <tr>
-            <td><span class="name">electron-main</span></td>
+            <td><span class="tag" data-skill-definition="electron-main">electron-main</span></td>
             <td>An Electron main-process path plus an Electron dependency in the owning manifest.</td>
             <td>Main-process security, lifecycle, and IPC guidance without applying it to unrelated renderer code.</td>
           </tr>
@@ -716,5 +736,7 @@
     </div>
   </section>
 </main>
+<script src="generated/skill-definitions.js"></script>
+<script src="skill-browser.js"></script>
 </body>
 </html>

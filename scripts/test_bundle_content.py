@@ -297,9 +297,9 @@ MODULARIZATION_REQUIRED_PHRASES = (
     "reviewable intent log",
     "edit PROJECT.yaml to force a correction",
     "Operational result — after setup",
-    "Technology Extensions Included In The Kit",
+    "Technology Extension Skills",
     "Changeset identity, include-chain, validation, update, rollback, and recovery guidance together with SQL.",
-    "jhipster-project and focused JHipster skills",
+    "jhipster-domain-modeling",
     "How Setup-Time Technology Detection Works",
     "runs the detector once for each representative folder scope",
     "nearest supported owning project boundary",
@@ -309,6 +309,27 @@ MODULARIZATION_REQUIRED_PHRASES = (
     "For an exclusive group, the lowest numeric priority wins",
     "NO_VARIANT",
     "BLOCKED",
+)
+TECHNOLOGY_EXTENSION_SKILLS = (
+    "python",
+    "fastapi",
+    "java",
+    "java-design",
+    "spring-boot",
+    "spring-boot-design",
+    "spring-data-jpa",
+    "spring-boot-testing",
+    "liquibase",
+    "jhipster-project",
+    "jhipster-domain-modeling",
+    "jhipster-persistence",
+    "jhipster-testing",
+    "jhipster-security",
+    "nextjs-app-router",
+    "postgres-drizzle",
+    "jest",
+    "vitest",
+    "electron-main",
 )
 AGENT_ROLE_MAP_REQUIRED_PHRASES = (
     "Agents for Methodology Maintenance",
@@ -447,7 +468,7 @@ DOCUMENT_INFORMATION_OWNERS = {
         "Runtime Configuration File Locations",
     ),
     "skills-modularization.html": MODULARIZATION_REQUIRED_PHRASES[:3] + (
-        "Technology Extensions Included In The Kit",
+        "Technology Extension Skills",
         "How Setup-Time Technology Detection Works",
     ),
     "generic-agent-definitions-source.html": (
@@ -510,6 +531,9 @@ DOCUMENT_FORBIDDEN_HEADINGS = {
     ),
 }
 DOCUMENT_REQUIRED_CONTENT_LINKS = {
+    "skills-modularization.html": (
+        "agent-and-skill-definitions.html#skills-title",
+    ),
     "agent-skill-specialization-examples.html": (
         "../skills/development-methodology/assets/templates/project-template.yaml",
     ),
@@ -2631,7 +2655,7 @@ class BundleContentTests(unittest.TestCase):
 
         modularization_section_order = (
             "Core Agent Skills",
-            "Technology Extensions Included In The Kit",
+            "Technology Extension Skills",
             "Why Technology-Specific Skills Are Loaded Separately",
             "Technology Extensions Setup Process",
             "How Setup-Time Technology Detection Works",
@@ -2643,6 +2667,26 @@ class BundleContentTests(unittest.TestCase):
         self.assertEqual(
             tuple(sorted(modularization_section_positions)),
             modularization_section_positions,
+        )
+        technology_section = modularization_text.split(
+            '<section class="section" aria-labelledby="technology-examples-title">',
+            maxsplit=1,
+        )[1].split("</section>", maxsplit=1)[0]
+        for skill_name in TECHNOLOGY_EXTENSION_SKILLS:
+            with self.subTest(technology_extension_skill=skill_name):
+                self.assertEqual(
+                    1,
+                    technology_section.count(
+                        f'data-skill-definition="{skill_name}"'
+                    ),
+                )
+        self.assertIn(
+            '<script src="generated/skill-definitions.js"></script>',
+            modularization_text,
+        )
+        self.assertIn(
+            '<script src="skill-browser.js"></script>',
+            modularization_text,
         )
 
         for owner, headings in DOCUMENT_INFORMATION_OWNERS.items():
