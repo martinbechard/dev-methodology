@@ -1658,6 +1658,143 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(completion_phrase=phrase):
                 self.assertIn(phrase, completion_row)
 
+    def test_project_bootstrapper_routes_direct_and_integrated_handoffs(self) -> None:
+        """Project bootstrap should preserve distinct single- and multi-contribution gates."""
+        build_skill_docs = load_build_skill_docs_module()
+        skill_payload = build_skill_docs.build_payload()
+        roles = build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
+        role = next(role for role in roles if role.name == "project-bootstrapper")
+        workflow_steps = list(role.instruction_sections["workflow"])
+
+        single_steps = [
+            step
+            for step in workflow_steps
+            if re.search(
+                r"(?i)exactly one accepted committed contribution",
+                step,
+            )
+        ]
+        self.assertEqual(1, len(single_steps))
+        self.assertIn("final direct commit", single_steps[0].lower())
+        self.assertRegex(
+            single_steps[0],
+            r"(?i)(?:do not invoke|without invoking) dev-merge-coordinator",
+        )
+
+        multi_step_indexes = [
+            index
+            for index, step in enumerate(workflow_steps)
+            if "multiple accepted committed contributions" in step.lower()
+        ]
+        self.assertEqual(1, len(multi_step_indexes))
+        multi_step_index = multi_step_indexes[0]
+        self.assertIn(
+            "dev-merge-coordinator",
+            workflow_steps[multi_step_index],
+        )
+
+        post_integration_review_indexes = [
+            index
+            for index, step in enumerate(workflow_steps)
+            if index > multi_step_index
+            and "multi-contribution integration" in step.lower()
+            and "independent" in step.lower()
+            and "artifact reviewer" in step.lower()
+            and re.search(r"(?i)fresh(?:-| )contexts?", step)
+        ]
+        self.assertEqual(1, len(post_integration_review_indexes))
+        post_integration_review_index = post_integration_review_indexes[0]
+
+        integrated_verification_indexes = [
+            index
+            for index, step in enumerate(workflow_steps)
+            if index >= post_integration_review_index
+            and "dev-verifier" in step
+            and "complete integrated result" in step.lower()
+        ]
+        self.assertEqual(1, len(integrated_verification_indexes))
+        integrated_verification_index = integrated_verification_indexes[0]
+        self.assertLessEqual(
+            post_integration_review_index,
+            integrated_verification_index,
+        )
+        if post_integration_review_index == integrated_verification_index:
+            combined_gate = workflow_steps[post_integration_review_index].lower()
+            self.assertLess(
+                combined_gate.index("review"),
+                combined_gate.index("dev-verifier"),
+            )
+
+        review_text = " ".join(role.instruction_sections["review"])
+        for reviewer in (
+            "dev-artifact-reviewer",
+            "wiki-artifact-reviewer",
+            "wiki-topic-verifier",
+        ):
+            with self.subTest(integrated_reviewer=reviewer):
+                self.assertIn(reviewer, review_text)
+
+        completion_text = " ".join(role.instruction_sections["completion"]).lower()
+        for completion_term in (
+            "final direct commit",
+            "final integration commit",
+            "clean",
+            "release",
+        ):
+            with self.subTest(completion_term=completion_term):
+                self.assertIn(completion_term, completion_text)
+
+        direct_examples = [
+            example
+            for example in role.examples
+            if "final direct commit" in example["plausibleResponse"].lower()
+        ]
+        self.assertTrue(direct_examples)
+        direct_response = direct_examples[0]["plausibleResponse"]
+        self.assertRegex(
+            direct_response,
+            r"(?i)exactly one accepted committed contribution",
+        )
+        self.assertRegex(
+            direct_response,
+            r"(?i)dev-merge-coordinator was not invoked",
+        )
+        self.assertIn("clean status", direct_response.lower())
+        self.assertIn("released claims", direct_response.lower())
+
+        integrated_examples = [
+            example
+            for example in role.examples
+            if "final integration commit" in example["plausibleResponse"].lower()
+        ]
+        self.assertTrue(integrated_examples)
+        integrated_response = integrated_examples[0]["plausibleResponse"]
+        self.assertIn(
+            "multiple accepted committed contributions",
+            integrated_response.lower(),
+        )
+        self.assertIn("dev-merge-coordinator", integrated_response)
+        integration_tail = integrated_response.split(
+            "dev-merge-coordinator",
+            maxsplit=1,
+        )[1]
+        for reviewer in (
+            "dev-artifact-reviewer",
+            "wiki-artifact-reviewer",
+            "wiki-topic-verifier",
+        ):
+            with self.subTest(integrated_example_reviewer=reviewer):
+                self.assertIn(reviewer, integration_tail)
+        self.assertRegex(integration_tail, r"(?i)fresh(?:-| )contexts?")
+        self.assertIn("dev-verifier", integration_tail)
+        self.assertLess(
+            integration_tail.lower().index("review"),
+            integration_tail.index("dev-verifier"),
+        )
+        self.assertIn("complete integrated result", integration_tail.lower())
+        self.assertIn("clean status", integrated_response.lower())
+        self.assertIn("released claims", integrated_response.lower())
+
     def test_project_bootstrapper_owns_complete_setup_and_review_loop(self) -> None:
         build_skill_docs = load_build_skill_docs_module()
         skill_payload = build_skill_docs.build_payload()
