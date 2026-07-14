@@ -6,7 +6,7 @@ interface:
   # User-facing summary shown in Codex skill surfaces.
   short_description: Create, rewrite, split, and verify repository docs/wiki topic pages.
   # Prompt Codex can use when launching this skill directly.
-  default_prompt: Use $project-wiki-topic-write to rewrite docs/wiki topic pages and loop with the verifier until accepted.
+  default_prompt: Use $project-wiki-topic-write to rewrite docs/wiki topic pages, honor the caller retry cap or two-attempt default, and return BLOCKED when verification remains unresolved.
 
 # Optional invocation policy placeholder.
 # policy:

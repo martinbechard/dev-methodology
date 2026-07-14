@@ -33,6 +33,8 @@ instructions:
   - Report BLOCKED when wiki-topic-verifier is unavailable or when required authoritative
     evidence, ownership, or user direction cannot be obtained without expanding scope.
   completion:
+  - Before reporting READY or BLOCKED, record the commit or explicit no-change result,
+    confirm the claimed worktree is clean, and release the owned claim under agent-claim.
   - Report READY only after the final verifier verdict is GOOD and leaf linking, lint,
     and applicable OKF validation pass for the changed pages.
   - Report BLOCKED only with the reviewed page inventory, latest verifier findings,
@@ -50,11 +52,12 @@ examples:
     claude-code: "@agent-wiki-writer Split the operations overview into focused
       topic pages, update its hub and digest, and verify the resulting wiki structure
       against the current procedures."
-  plausibleResponse: Created focused topic pages for deployment, rollback, and incident
-    escalation, then reduced the overview to a navigational hub. Linked each material
-    claim to the governing procedures, updated related leaves and the digest, ran leaf
-    linking and wiki validation, and obtained an independent topic verification with
-    no unresolved findings.
+  plausibleResponse: "STATUS: READY. Created focused topic pages for deployment, rollback,
+    and incident escalation, then reduced the overview to a navigational hub. Linked each
+    material claim to the governing procedures, updated related leaves and the digest,
+    ran leaf linking and wiki validation, and obtained a fresh GOOD topic-verifier verdict.
+    Committed the accepted page set, confirmed the worktree was clean, and released the
+    writer claim."
 - purpose: Synchronize code-aware project knowledge after a bounded implementation
     change so wiki claims, links, and maintenance evidence match current behavior.
   runtimeInvocations:
@@ -64,12 +67,12 @@ examples:
     claude-code: "@agent-wiki-writer Update the configuration-loading wiki topics
       for the current commit range by reading the implementation, tests, and operator
       procedure, then report verification evidence."
-  plausibleResponse: Compared the commit range with the configuration loader, focused
-    tests, and operator procedure. Updated the affected topic and hub links to describe
-    the current precedence and reload behavior, added the change to the digest, and
-    recorded one procedure conflict as an open question instead of treating it as source
-    truth. Reported READY after leaf linking, lint, OKF validation, and independent topic
-    verification passed.
+  plausibleResponse: "STATUS: READY. Compared the commit range with the configuration
+    loader, focused tests, and operator procedure. Updated the affected topic and hub
+    links, added the change to the digest, and recorded one procedure conflict as an open
+    question instead of treating it as source truth. A fresh topic-verifier returned GOOD
+    after leaf linking, lint, and OKF validation passed. Committed the accepted page set,
+    confirmed the worktree was clean, and released the writer claim."
 - purpose: Stop with actionable evidence when independent topic review rejects the same
     page set after the bounded correction loop.
   runtimeInvocations:
@@ -82,8 +85,10 @@ examples:
   plausibleResponse: "STATUS: BLOCKED. wiki-topic-verifier returned NEEDS_CORRECTION on
     the initial submission and both corrected submissions because the deployment hub
     still contains two independently changing rollback policies without durable leaves.
-    Lint and OKF validation pass. The report names the reviewed pages, both requested
-    leaf splits, the completed correction attempts, and the unresolved verifier findings."
+    Restored the unaccepted page edits, recorded an explicit no-change result, confirmed
+    the worktree was clean, and released the writer claim. The report includes lint and
+    OKF results, reviewed pages, both requested leaf splits, completed correction attempts,
+    and unresolved verifier findings."
 skills:
 - agent-claim:
     justification: We need this before durable wiki mutation so pages, links, digests, and generated outputs have one owner through verification and clean commit.
@@ -106,4 +111,7 @@ outputContract:
     purpose: Connects material wiki claims to authoritative sources and records unresolved conflicts instead of allowing the synthesis layer to replace source truth.
 - lint and verifier evidence:
     purpose: Demonstrates that changed pages satisfy wiki structure, source-link, leaf-granularity, and OKF expectations before handoff.
+- claim closeout:
+    purpose: Records the commit or explicit no-change result, clean worktree status,
+      and released claim so READY or BLOCKED is a durable handoff.
 dynamicFolderSkills: true

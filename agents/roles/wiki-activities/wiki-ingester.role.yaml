@@ -40,6 +40,8 @@ instructions:
   - Report BLOCKED without moving the source when wiki-topic-verifier is unavailable at
     the pre-move gate or required authoritative evidence cannot be obtained.
   completion:
+  - Before reporting READY or BLOCKED, record the commit or explicit no-change result,
+    confirm the claimed worktree is clean, and release the owned claim under agent-claim.
   - Report READY only after every assigned source passes all applicable verifier gates,
     processed-source links resolve, validation passes, and the final queue recheck is
     recorded.
@@ -58,12 +60,13 @@ examples:
     claude-code: "@agent-wiki-ingester Ingest the queued research report about
       service retry policies into the project wiki, preserving provenance and the
       raw-to-processed boundary."
-  plausibleResponse: Checked the ingest queues, read the unprocessed report, and split
-    its independently changing concepts into durable retry-policy leaves with hub and
-    topic-index links. Added item-level entries to the current monthly digest, obtained
-    a GOOD verifier verdict, moved the completed source under raw/processed, rewrote
-    its wiki links to the processed relative path, and confirmed leaf linking, lint,
-    OKF validation, and an empty final queue recheck.
+  plausibleResponse: "STATUS: READY. Checked the ingest queues, read the unprocessed
+    report, and split its independently changing concepts into durable retry-policy leaves
+    with hub and topic-index links. Added item-level digest entries and obtained a GOOD
+    pre-move verdict, moved the source under raw/processed, rewrote its wiki links, reran
+    leaf linking, lint, and OKF validation, and obtained a fresh GOOD post-move verdict.
+    Confirmed an empty final queue, committed the durable pages and source move, verified
+    the worktree was clean, and released the ingest claim."
 - purpose: Reconcile code-dependent raw material with live implementation and tests
     while updating existing wiki coverage and preserving unresolved source conflicts.
   runtimeInvocations:
@@ -73,12 +76,13 @@ examples:
     claude-code: "@agent-wiki-ingester Process the queued commit-scan fragment
       for configuration reload behavior, verify its claims against the current code
       and tests, and update the existing wiki topic."
-  plausibleResponse: Loaded the code-aware wiki workflow, verified the fragment against
-    the implementation and tests, and updated the existing configuration-reload leaf,
-    Related Code, and Related Tests. Preserved a specification conflict as an Open
-    Question, obtained a GOOD verifier verdict, moved the source to raw/processed,
-    refreshed the relative source link, and reported passing leaf-link, lint, and OKF
-    checks plus the final queue state and a READY status.
+  plausibleResponse: "STATUS: READY. Loaded the code-aware wiki workflow, verified the
+    fragment against the implementation and tests, and updated the configuration-reload
+    leaf, Related Code, and Related Tests. Preserved a specification conflict as an Open
+    Question and obtained a GOOD pre-move verdict, moved the source to raw/processed,
+    refreshed the relative source link, reran leaf-link, lint, and OKF checks, and obtained
+    a fresh GOOD post-move verdict. Recorded the final queue state, committed the accepted
+    ingest, confirmed a clean worktree, and released the ingest claim."
 - purpose: Preserve the raw queue boundary when the independent pre-move review remains
     unresolved after the bounded correction loop.
   runtimeInvocations:
@@ -91,8 +95,10 @@ examples:
   plausibleResponse: "STATUS: BLOCKED. wiki-topic-verifier returned NEEDS_CORRECTION on
     the initial submission and both corrected submissions because provider ownership is
     still duplicated across the local leaf and the federated upstream page. The source
-    remains in raw, lint and OKF validation results are recorded, and the report lists the
-    reviewed pages, correction attempts, latest findings, and final queue state."
+    remains in raw. Restored the unaccepted page edits, recorded an explicit no-change
+    result, confirmed the worktree was clean, released the ingest claim, and reported the
+    reviewed pages, validation results, correction attempts, latest findings, and final
+    queue state."
 skills:
 - agent-claim:
     justification: We need this before ingest mutation so queue moves, durable pages, links, and generated wiki outputs remain owned until their clean commit.
@@ -115,3 +121,6 @@ outputContract:
     purpose: Preserves a traceable path from each durable claim to its ingested source and records which queue material has been completed.
 - lint and verifier evidence:
     purpose: Gives reviewers confidence that the resulting pages satisfy required structure, linkage, coverage, and source-grounding checks.
+- claim closeout:
+    purpose: Records the commit or explicit no-change result, clean worktree status,
+      and released claim so READY or BLOCKED is a durable handoff.

@@ -1,6 +1,6 @@
 ---
 name: project-wiki-topic-write
-description: Create, rewrite, split, and verify repository docs/wiki topic pages. Use when writing topics to correct verifier findings, split broad pages into durable leaf pages, update folder hubs and topic indexes, preserve source-backed wiki content, run project-wiki lint, invoke $project-wiki-topic-verify, and apply verifier corrections in a loop until the updated topic pages are accepted.
+description: Create, rewrite, split, and verify repository docs/wiki topic pages. Use when writing topics to correct verifier findings, split broad pages into durable leaf pages, update folder hubs and topic indexes, preserve source-backed wiki content, run project-wiki lint, invoke $project-wiki-topic-verify, and apply verifier corrections within an explicit caller retry cap or a bounded default.
 metadata:
   category: wiki-and-knowledge
 ---
@@ -20,8 +20,11 @@ The caller must provide:
 - Pages to review or correct.
 - Any verifier findings already known.
 - Any source paths that are authoritative evidence for the assigned pages.
+- A non-negative correction-attempt cap when the caller or owning role defines one.
 
 If the write scope is missing or overlaps with another active writer, stop and request a clearer assignment.
+When no correction-attempt cap is supplied, use a default of two corrected resubmissions
+after the initial verifier verdict.
 
 ## Read Before Editing
 
@@ -53,6 +56,9 @@ Non-reserved Markdown concept documents should have YAML frontmatter with a non-
 ## Verifier Loop
 
 The writer must run the verifier loop on every created or updated topic page before finishing.
+An explicit caller or owning-role correction-attempt cap governs the loop. When no cap
+is supplied, allow at most two corrected resubmissions after the initial verdict. The
+initial verdict does not count as a correction attempt.
 
 1. Run project-wiki lint from the repository root.
 2. Run python3 project-wiki-skill-root/scripts/wiki_ops.py okf-migrate when frontmatter may be missing or stale.
@@ -60,9 +66,13 @@ The writer must run the verifier loop on every created or updated topic page bef
 4. Run python3 project-wiki-skill-root/scripts/wiki_ops.py link-leaves when any durable leaf was created or updated.
 5. Spawn a fresh subagent without forking context and ask it to use $project-wiki-topic-verify.
 6. Pass the repository root, the complete list of created or updated topic pages, evidence source paths if any, and lint plus OKF validation output.
-7. If the verifier returns NEEDS_CORRECTION, apply the corrections in the writer context.
-8. Rerun lint and OKF validation, then invoke a fresh verifier again.
-9. Repeat until the verifier returns GOOD for the created or updated topic pages.
+7. If the verifier returns GOOD, finish the verifier loop.
+8. If the verifier returns NEEDS_CORRECTION and correction attempts remain, apply the
+   corrections in the writer context, count one correction attempt, rerun lint and OKF
+   validation, and invoke a fresh verifier again.
+9. If the verifier still returns NEEDS_CORRECTION after the governing cap is exhausted,
+   stop and return BLOCKED with the latest findings, completed attempt count, and governing
+   cap. Do not continue the loop.
 
 The verifier must not edit files. The writer owns all corrections.
 
@@ -73,5 +83,6 @@ Return:
 - Pages created, updated, or deleted.
 - Leaf concepts split out or intentionally deferred.
 - Verifier verdicts.
+- GOOD or BLOCKED status with the correction-attempt count and governing cap.
 - Lint and OKF validation result.
 - Any remaining blockers.
