@@ -48,7 +48,7 @@
         {
           "name": "dev-orchestrator",
           "output": "generated/adapters/claude/agents/dev-orchestrator.md",
-          "sha256": "117ef16bdf3bda45191177eb08286f793158e3707178e72ab3ff5940dc3139d3",
+          "sha256": "b7cda153d58854c314e73a57dde175b24364bd76b03480c4239086e23c0d860b",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -90,13 +90,13 @@
         {
           "name": "methodology-maintainer",
           "output": "generated/adapters/claude/agents/methodology-maintainer.md",
-          "sha256": "8772b5c04f8bdfa0ddfa08ba815ed8470c0cc31832273ba335b0864b66051569",
+          "sha256": "df1c96d22d32fd629da8143512e1875ed7d09c41af1e77aa113d8267e7cd40a3",
           "source": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml"
         },
         {
           "name": "project-bootstrapper",
           "output": "generated/adapters/claude/agents/project-bootstrapper.md",
-          "sha256": "c9aa6a88b081ec3fc7f1a5b817c385079c6c8300e946217c9b8db8147bbec63d",
+          "sha256": "5a204bae9fb8df81423508120fd004882ca335520d600fb16de3d9d21d2ee652",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
@@ -126,7 +126,7 @@
         {
           "name": "wiki-ingester",
           "output": "generated/adapters/claude/agents/wiki-ingester.md",
-          "sha256": "6037f03b0ea8199711dd8228c7a68016a062f868ba30c163844daec9e3b75c3d",
+          "sha256": "35ec221923b6954bc54384969b366fb6b87439981575a295e6d418e979a5ad3a",
           "source": "agents/roles/wiki-activities/wiki-ingester.role.yaml"
         },
         {
@@ -156,7 +156,7 @@
         {
           "name": "wiki-writer",
           "output": "generated/adapters/claude/agents/wiki-writer.md",
-          "sha256": "68bd64597b95cc5b5a13c104df97f0250fcee88a33f096a8943bc84e046f45dd",
+          "sha256": "a163fe54877041751fae175dbeccf905e23d8565c6dfca731c5882dd875beccf",
           "source": "agents/roles/wiki-activities/wiki-writer.role.yaml"
         }
       ],
@@ -211,7 +211,7 @@
         {
           "name": "dev-orchestrator",
           "output": "generated/adapters/codex/agents/dev-orchestrator.toml",
-          "sha256": "b7c234ec76b1df3be1dd09de54321d1cf6fbed165c793b6893a9526b229c9fea",
+          "sha256": "955c9a93c2f4bfe3b40478346f7ab34c675d7f7f8bee2a20eab9fca0fc8a0a97",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -253,13 +253,13 @@
         {
           "name": "methodology-maintainer",
           "output": "generated/adapters/codex/agents/methodology-maintainer.toml",
-          "sha256": "d4a931c5c430938930e1667039e244923e8cdead5973b63e22868ad7caba68fc",
+          "sha256": "681984dfc184e1a5bc464a28ce759f8bf47bcc2128f21dd23ee8db5f00b6e395",
           "source": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml"
         },
         {
           "name": "project-bootstrapper",
           "output": "generated/adapters/codex/agents/project-bootstrapper.toml",
-          "sha256": "9fccb073add59b021162f1f0d270359d5fe57e2af50a31e73e3a9c7e6114230b",
+          "sha256": "58fda75a019b8948fa7334f76be298ec6f8b25c2d37396e7aaa3d15b534d6bdc",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
@@ -289,7 +289,7 @@
         {
           "name": "wiki-ingester",
           "output": "generated/adapters/codex/agents/wiki-ingester.toml",
-          "sha256": "d24cefbada061196c09efb98616c2121549b0fe1da59491970dd81aeed5a6120",
+          "sha256": "71a44b26450d1e9ba196edeca1e5771a7df1c21b5da585bb2475da1b9074ead5",
           "source": "agents/roles/wiki-activities/wiki-ingester.role.yaml"
         },
         {
@@ -319,7 +319,7 @@
         {
           "name": "wiki-writer",
           "output": "generated/adapters/codex/agents/wiki-writer.toml",
-          "sha256": "de171057de04b25d1d6664050569b882427930eeb346331bd1ac64dae9087f40",
+          "sha256": "47446c21f64cbc12888d88adb345ef6709c5caf18261974d8470065660c6aae4",
           "source": "agents/roles/wiki-activities/wiki-writer.role.yaml"
         }
       ],

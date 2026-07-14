@@ -1355,6 +1355,65 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("Agent Claims And Worktrees", README_PATH.read_text(encoding="utf-8"))
         self.assertNotIn("Agent Claims And Worktrees", AGENTS_PATH.read_text(encoding="utf-8"))
 
+    def test_direct_agent_dependencies_have_complete_routing_contracts(self) -> None:
+        """Every maintained direct dependency should have an explicit orchestration contract."""
+        build_skill_docs = load_build_skill_docs_module()
+        skill_payload = build_skill_docs.build_payload()
+        roles = build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
+        roles_by_name = {role.name: role for role in roles}
+        expected_dependencies = {
+            "dev-orchestrator": (
+                "dev-coder",
+                "dev-code-reviewer",
+                "dev-verifier",
+                "dev-merge-coordinator",
+            ),
+            "methodology-maintainer": (
+                "methodology-artifact-reviewer",
+                "dev-verifier",
+            ),
+            "project-bootstrapper": (
+                "project-configurator",
+                "dev-documentation-writer",
+                "wiki-architect",
+                "wiki-writer",
+                "dev-artifact-reviewer",
+                "wiki-artifact-reviewer",
+                "wiki-topic-verifier",
+                "dev-merge-coordinator",
+                "dev-verifier",
+            ),
+            "wiki-ingester": ("wiki-topic-verifier",),
+            "wiki-writer": ("wiki-topic-verifier",),
+        }
+        actual_dependencies = {
+            role.name: role.agent_dependencies
+            for role in roles
+            if role.agent_dependencies
+        }
+
+        self.assertEqual(expected_dependencies, actual_dependencies)
+        for role_name, dependencies in expected_dependencies.items():
+            role = roles_by_name[role_name]
+            with self.subTest(role=role_name):
+                self.assertTrue(
+                    {"delegation", "review", "failureHandling", "completion"}
+                    .issubset(role.instruction_sections)
+                )
+                self.assertIn("status", role.output_contract)
+                self.assertRegex(role.instructions, r"fresh(?:-| )context")
+                routing_text = " ".join(
+                    item
+                    for section_name in ("delegation", "review")
+                    for item in role.instruction_sections[section_name]
+                )
+                for dependency in dependencies:
+                    self.assertIn(dependency, routing_text)
+
+        orchestrator = roles_by_name["dev-orchestrator"]
+        self.assertNotIn("agent-work-merge", orchestrator.skills)
+        self.assertNotIn("review-structured-artifact", orchestrator.skills)
+
     def test_project_bootstrapper_owns_complete_setup_and_review_loop(self) -> None:
         build_skill_docs = load_build_skill_docs_module()
         skill_payload = build_skill_docs.build_payload()
@@ -1408,6 +1467,7 @@ class BundleContentTests(unittest.TestCase):
             "wiki-writer",
             "wiki-artifact-reviewer",
             "wiki-topic-verifier",
+            "dev-merge-coordinator",
             "dev-verifier",
         ):
             with self.subTest(delegated_role=delegated_role):
@@ -1421,6 +1481,7 @@ class BundleContentTests(unittest.TestCase):
                 "dev-artifact-reviewer",
                 "wiki-artifact-reviewer",
                 "wiki-topic-verifier",
+                "dev-merge-coordinator",
                 "dev-verifier",
             ),
             role.agent_dependencies,
@@ -1429,7 +1490,7 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("Report READY only after", role.instructions)
         self.assertIn("Report BLOCKED only after two failed correction attempts", role.instructions)
         self.assertIn("existing code or product problem", role.instructions)
-        self.assertIn("PROJECT.yaml or AGENTS.md problems", role.instructions)
+        self.assertIn("PROJECT.yaml, AGENTS.md, or Claude bridge problems", role.instructions)
         self.assertIn("non-wiki document problems", role.instructions)
         self.assertIn("wiki setup problems", role.instructions)
         self.assertIn("ordinary wiki page problems", role.instructions)

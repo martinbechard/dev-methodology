@@ -121,22 +121,24 @@ class AgentSkillHierarchyTests(unittest.TestCase):
 
     def test_agent_dependencies_are_directional_and_user_controllable(self) -> None:
         """Fixed direct agent use should render as optional directional arrows."""
-        source_role = self.module._load_yaml(
-            ROLES_ROOT / "project-setup" / "project-bootstrapper.role.yaml"
-        )
-        expected_targets = set(source_role["agentDependencies"])
+        expected_edges = {
+            (role["name"], target_role)
+            for path in ROLES_ROOT.glob("*/*.role.yaml")
+            for role in (self.module._load_yaml(path),)
+            for target_role in role.get("agentDependencies", [])
+        }
         dependency_edges = self.root.findall(
             f".//{{{SVG_NAMESPACE}}}path[@class='dependency-edge']"
         )
-        bootstrapper_edges = [
-            edge
-            for edge in dependency_edges
-            if edge.attrib.get("data-source-role") == "project-bootstrapper"
-        ]
-
         self.assertEqual(
-            expected_targets,
-            {edge.attrib.get("data-target-role") for edge in bootstrapper_edges},
+            expected_edges,
+            {
+                (
+                    edge.attrib.get("data-source-role"),
+                    edge.attrib.get("data-target-role"),
+                )
+                for edge in dependency_edges
+            },
         )
         self.assertTrue(
             all(

@@ -266,12 +266,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "review-structured-artifact"
     },
     {
-      "condition": "when parallel contributions must be reconciled into one integrated result.",
-      "kind": "conditional",
-      "role": "dev-orchestrator",
-      "skill": "agent-work-merge"
-    },
-    {
       "condition": "when the requested orchestration creates a new project file or directory.",
       "kind": "conditional",
       "role": "dev-orchestrator",
@@ -286,11 +280,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "fixed",
       "role": "dev-orchestrator",
       "skill": "manage-backlog"
-    },
-    {
-      "kind": "fixed",
-      "role": "dev-orchestrator",
-      "skill": "review-structured-artifact"
     },
     {
       "kind": "fixed",
@@ -965,18 +954,16 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     },
     {
       "conditionalSkills": {
-        "agent-work-merge": "when parallel contributions must be reconciled into one integrated result.",
         "organise-project-files": "when the requested orchestration creates a new project file or directory."
       },
       "declaredCases": [],
-      "description": "Coordinates multi-step development work across agents while preserving bounded context, explicit handoffs, and verification evidence.",
+      "description": "Coordinates multi-step development work across implementation agents, fresh-context reviewers, independent verification, and deliberate integration while preserving bounded context, explicit handoffs, and claim evidence.",
       "dynamicFolderSkills": false,
       "fixedSkills": [
         "structured-design",
         "structured-explanation",
         "manage-backlog",
-        "agent-claim",
-        "review-structured-artifact"
+        "agent-claim"
       ],
       "id": "dev-orchestrator",
       "label": "dev-orchestrator",
@@ -1107,7 +1094,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "structured-design": "when catalog, role, or operating-model changes require explicit boundaries and relationships before implementation"
       },
       "declaredCases": [],
-      "description": "Maintains the reusable methodology artifacts, skill catalog, agent roles, generated adapters, documentation, scripts, and regression tests.",
+      "description": "Maintains the reusable methodology artifacts, skill catalog, agent roles, generated adapters, documentation, scripts, and regression tests through independent review and verification.",
       "dynamicFolderSkills": false,
       "fixedSkills": [
         "agent-claim",
@@ -1128,7 +1115,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "organise-project-files": "when the requested bootstrap creates a new project file or directory whose path is not already fixed by the bootstrap contract."
       },
       "declaredCases": [],
-      "description": "Sets up a project for later development work. It creates or reuses the project configuration, produces the required documentation, sends each document for independent review, and runs the project checks.",
+      "description": "Sets up a project for later development work. It creates or reuses the project configuration, produces the required documentation, sends each setup and documentation artifact for independent review, integrates committed contributions, and runs the project checks.",
       "dynamicFolderSkills": false,
       "fixedSkills": [
         "agent-claim",
