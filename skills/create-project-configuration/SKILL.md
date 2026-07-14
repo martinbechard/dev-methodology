@@ -23,26 +23,29 @@ Do not create nested PROJECT.yaml files. When a subfolder has distinct technolog
 
 Create or update PROJECT.yaml before writing AGENTS.md guidance. PROJECT.yaml is the setup and validation artifact that explains what AGENTS.md should contain, why the conceptual agent definitions and skills were chosen, and where project-specific evidence belongs. AGENTS.md is the operational reference that the harness supplies after the configuration has been validated. When the target uses Claude Code, create a thin CLAUDE.md beside each applicable AGENTS.md that imports the colocated guidance instead of duplicating it.
 
+Treat PROJECT.yaml as an intermediate, reviewable intent log between repository inspection and generated operational guidance. A maintainer may edit it to correct a selected conceptual agent definition, folder skillset, route, or guidance placement. On the next setup run, Project Configurator must treat those edits as requested configuration intent, reconcile them with current repository evidence and bundle constraints, preserve valid corrections, and report a blocking conflict or open question instead of silently replacing an unsupported edit.
+
 Generic repository-mutation behavior belongs to conceptual agent definitions and the agent-claim skill. Do not reproduce that procedure in PROJECT.yaml or AGENTS.md. Record a coordination_overrides mapping only when the target repository has source-backed nondefault claim-registry, branch, worktree, exclusive-resource, or integration requirements; omit it when the bundle defaults apply.
 
 ## Workflow
 
 1. Inspect the target repository before writing. Inspect existing AGENTS.md artifacts, then read README files, package metadata, build configuration, source roots, tests, docs, wiki pages, task-relevant procedures, backlog files, and current worktree status.
 2. Classify the project family, application tiers, technology stacks, documentation surfaces, runtime boundaries, data boundaries, and verification commands.
-3. Identify the conceptual agent definitions needed for the project. Prefer shared reusable definitions such as Development Orchestrator, Project Agent Setup Agent, Coding Agent, Code Review Agent, QA And Verification Agent, Documentation Writer, Wiki Query Agent, and specialist reviewers only when the project evidence requires them.
+3. Identify the conceptual agent definitions needed for the project. Prefer shared reusable definitions such as Development Orchestrator, Project Configurator, Coding Agent, Code Review Agent, QA And Verification Agent, Documentation Writer, Wiki Query Agent, and specialist reviewers only when the project evidence requires them.
 4. Map each tier, technology, folder, or workflow to the reusable skills it needs.
-5. As Project Agent Setup, use detect-technology-skills and its generated registry once for representative folder scopes. Review source paths, owning manifests, configuration, and build evidence.
+5. As Project Configurator, use detect-technology-skills and its generated registry once for representative folder scopes. Review source paths, owning manifests, configuration, and build evidence.
 6. Record deterministic technology_skill_loadouts and folder bindings, including source evidence, missing required skills, exclusive conflicts, and explicit no-variant results.
 7. Decide which subfolders need nested AGENTS.md guidance and record every decision in the root PROJECT.yaml.
 8. Verify that every selected conceptual agent definition declares repositoryMutation and that the installed or bundled native definition can load agent-claim whenever that policy is required or conditional. Treat a missing conceptual agent definition, skill, or command as BLOCKED instead of compensating with copied project instructions.
 9. Record only source-backed project-specific coordination_overrides. Omit the mapping when the bundle defaults apply.
 10. Copy the template once to the project root and replace every TODO with source-backed project content.
-11. Keep proprietary project validation notes inside the target project repository. Do not copy private project names, internal implementation details, customer data, secrets, or non-public workflows into distributable examples.
-12. Use fictitious names, synthetic paths, and generic behavior for customer-safe examples.
-13. After the configuration is validated, run scripts/render-agents-technology-skills.py with PROJECT.yaml and create or update root and nested AGENTS.md files with unconditional folder skill-loading instructions.
-14. When Claude Code is used, create thin CLAUDE.md bridge files that import the colocated AGENTS.md without copying its rules.
-15. Say Not yet identified for related sources, tests, commands, or conceptual agent definitions that do not exist yet.
-16. Keep the artifact steady-state. Do not describe it as new, revised, or enhanced unless the document is explicitly a change plan.
+11. When an existing PROJECT.yaml contains maintainer edits, treat them as requested configuration intent. Reconcile each edit with current source evidence and bundle constraints, preserve valid corrections, and record a blocking conflict or open question instead of silently replacing an unsupported edit.
+12. Keep proprietary project validation notes inside the target project repository. Do not copy private project names, internal implementation details, customer data, secrets, or non-public workflows into distributable examples.
+13. Use fictitious names, synthetic paths, and generic behavior for customer-safe examples.
+14. After the configuration is validated, run scripts/render-agents-technology-skills.py with PROJECT.yaml and create or update root and nested AGENTS.md files with unconditional folder skill-loading instructions.
+15. When Claude Code is used, create thin CLAUDE.md bridge files that import the colocated AGENTS.md without copying its rules.
+16. Say Not yet identified for related sources, tests, commands, or conceptual agent definitions that do not exist yet.
+17. Keep the artifact steady-state. Do not describe it as new, revised, or enhanced unless the document is explicitly a change plan.
 
 ## Verification
 
@@ -57,8 +60,9 @@ Before finishing:
 7. Confirm the project contains exactly one PROJECT.yaml at its root and that it records every nested AGENTS.md placement decision.
 8. Confirm every planned AGENTS.md exists and matches the validated routing plan.
 9. When Claude Code is used, confirm every applicable AGENTS.md has a thin colocated CLAUDE.md import and that no guidance is duplicated between them.
-10. Confirm customer-shareable examples are fictitious and proprietary examples remain only inside their target repositories.
-11. Run project wiki status and lint when docs/wiki exists and the plan references wiki pages.
-12. Run the target project build when code, imports, generated artifacts, or project metadata changed.
+10. Confirm maintainer edits to PROJECT.yaml were preserved when valid or reported with the evidence and constraint that blocks them.
+11. Confirm customer-shareable examples are fictitious and proprietary examples remain only inside their target repositories.
+12. Run project wiki status and lint when docs/wiki exists and the plan references wiki pages.
+13. Run the target project build when code, imports, generated artifacts, or project metadata changed.
 
 Do not send private, proprietary, sensitive, PII, or company-internal material to an external service unless the user explicitly authorizes it.

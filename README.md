@@ -15,7 +15,7 @@ This repository distributes portable Agent Skills for software project documenta
 
 Use the repository skill sources and generated adapters as the operating surface. Working on this bundle does not require copying its skills or agents into user-home runtime folders.
 
-Project agent and skill setup starts with one PROJECT.yaml at the project root as the reviewable configuration artifact. The create-project-configuration skill records every selected conceptual agent definition, skillset, folder route, and root or nested AGENTS.md placement in that one project-wide configuration. Claude Code projects also receive a thin CLAUDE.md beside each applicable AGENTS.md so Claude imports the same project guidance without duplicating it.
+Project agent and skill setup starts with one PROJECT.yaml at the project root as an intermediate, reviewable intent log. Project Configurator records every selected conceptual agent definition, skillset, folder route, and root or nested AGENTS.md placement in that one project-wide configuration before rendering operational guidance. A maintainer may edit PROJECT.yaml to request a correction; Project Configurator reconciles the edit with repository evidence and bundle constraints before regenerating the guidance. Claude Code projects also receive a thin CLAUDE.md beside each applicable AGENTS.md so Claude imports the same project guidance without duplicating it.
 
 The core methodology keeps one shared wiki-compatible page contract and six document shapes. Each document shape has a focused creation skill, a reusable template asset, and an artifact review skill:
 

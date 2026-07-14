@@ -185,6 +185,7 @@ README_REQUIRED_PHRASES = (
     "documentation-page-verify",
     "create-project-configuration",
     "PROJECT.yaml",
+    "intermediate, reviewable intent log",
     "detection.yaml",
     "python3 scripts/build-technology-detection.py",
     "detect-technology-skills",
@@ -252,7 +253,7 @@ DEVELOPMENT_METHODOLOGY_REQUIRED_PHRASES = (
 MODULARIZATION_REQUIRED_PHRASES = (
     "Core Agent Skills",
     "Why Core Agent Skills Split Into Two Loading Modes",
-    "Technology Extensions Are Bound During Setup",
+    "Technology Extensions Setup Process",
     "minimum operating contract",
     "This is a loading decision within each agent definition",
     "If every core skill were always loaded",
@@ -264,6 +265,11 @@ MODULARIZATION_REQUIRED_PHRASES = (
     "Always-loaded core skill",
     "On-demand core skill",
     "Technology-specific extension",
+    "Development precursor — outside setup",
+    "Actor: Project Configurator",
+    "reviewable intent log",
+    "edit PROJECT.yaml to force a correction",
+    "Operational result — after setup",
     "Technology Extensions Included In The Kit",
     "Setup-Time Detection Guardrails",
 )
@@ -978,10 +984,10 @@ class BundleContentTests(unittest.TestCase):
         self.assertNotIn("nested_project_files:", template_text)
         self.assertIn("Create exactly one PROJECT.yaml", skill_text)
         self.assertIn("Do not create nested PROJECT.yaml files", skill_text)
-        self.assertIn(
-            "Accepted skillsets, evidence, missing requirements, conflicts, and explicit no-variant results are written to the root PROJECT.yaml.",
-            modularization_text,
-        )
+        self.assertIn("intermediate, reviewable intent log", skill_text)
+        self.assertIn("treat them as requested configuration intent", skill_text)
+        self.assertIn("Project Configurator owns the setup process", modularization_text)
+        self.assertIn("edit PROJECT.yaml to force a correction", modularization_text)
         self.assertIn("linked template", examples_text)
         self.assertNotIn("service/PROJECT.yaml", examples_text)
         self.assertNotIn("nested PROJECT.yaml recommendations", modularization_text)

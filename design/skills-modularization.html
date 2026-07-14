@@ -307,6 +307,10 @@
       margin-bottom: var(--space-2);
     }
 
+    .flow-step .tag-row {
+      margin-bottom: var(--space-3);
+    }
+
     .matrix {
       overflow-x: auto;
       border: 1px solid var(--color-line);
@@ -370,6 +374,9 @@
     }
 
     .note {
+      display: grid;
+      gap: var(--space-2);
+      margin: var(--space-4) 0;
       padding: var(--space-4);
       border-left: 0.3rem solid var(--color-reference);
       border-radius: var(--radius-small);
@@ -485,16 +492,24 @@
   </section>
 
   <section class="section" aria-labelledby="setup-title">
-    <h2 id="setup-title">Technology Extensions Are Bound During Setup</h2>
-    <p class="lede">Technology skills are created and shared in the same portable skill collection as the agent skills. Each specialized skill carries setup-time detection metadata. Project Configurator combines project classification with source-backed folder inspection to find the extensions that apply to each part of the project.</p>
+    <h2 id="setup-title">Technology Extensions Setup Process</h2>
+    <p class="lede">Project Configurator owns the setup process. It inspects the target repository, selects technology extensions from source evidence, records the intended configuration in PROJECT.yaml, renders the operational folder guidance, and verifies that the result matches the recorded intent.</p>
+    <aside class="note">
+      <div class="tag-row"><span class="tag skill">Development precursor — outside setup</span></div>
+      <p><strong>Actor: Methodology maintainer.</strong> Technology skills and their detection metadata are authored, validated, and shared before setup begins. Project Configurator consumes that existing collection; it does not create technology skills while configuring a target project.</p>
+    </aside>
     <div class="flow">
-      <article class="flow-step"><strong>1. Create and share the skill</strong><p>The skill packages focused stack guidance in SKILL.md. A technology or domain extension also provides detection.yaml beside it.</p></article>
-      <article class="flow-step"><strong>2. Inspect representative folders</strong><p>Project Configurator inventories the project type, application tiers, manifests, source roots, and tests without flattening unrelated sibling technologies into one scope.</p></article>
-      <article class="flow-step"><strong>3. Match complete evidence rules</strong><p>The detector selects a skill only when one full activation branch succeeds from files, the nearest owning manifest, dependencies, configuration, or parsed source imports.</p></article>
-      <article class="flow-step"><strong>4. Record the bindings</strong><p>Accepted skillsets, evidence, missing requirements, conflicts, and explicit no-variant results are written to the root PROJECT.yaml.</p></article>
-      <article class="flow-step"><strong>5. Render folder guidance</strong><p>Root or nested AGENTS.md files receive unconditional folder skillsets. A thin CLAUDE.md may import the same guidance for Claude Code.</p></article>
-      <article class="flow-step"><strong>6. Use the established skills</strong><p>Ordinary coding, review, diagnosis, and verification agents load the skills for their active folder. They do not rerun setup-time detection.</p></article>
+      <article class="flow-step"><div class="tag-row"><span class="tag orchestrator">Actor: Project Configurator</span></div><strong>1. Inspect project scopes</strong><p>Inventory the project family, application tiers, manifests, source roots, tests, and folder boundaries without combining unrelated sibling technologies.</p></article>
+      <article class="flow-step"><div class="tag-row"><span class="tag orchestrator">Actor: Project Configurator</span></div><strong>2. Match technology evidence</strong><p>Run setup-time detection for representative folders. Accept a technology skill only when one complete evidence rule matches, and retain missing requirements, conflicts, and explicit no-variant results.</p></article>
+      <article class="flow-step"><div class="tag-row"><span class="tag orchestrator">Actor: Project Configurator</span></div><strong>3. Write the intermediate configuration</strong><p>Create or update the root PROJECT.yaml before generating operational guidance. This reviewable intent log records the selected agent definitions, folder skillsets, source evidence, routing decisions, and planned AGENTS.md locations.</p></article>
+      <article class="flow-step"><div class="tag-row"><span class="tag reference">Actors: Maintainer and Project Configurator</span></div><strong>4. Review or correct the intent</strong><p>The maintainer can edit PROJECT.yaml to force a correction to the intended configuration. Project Configurator then reconciles that edit with repository evidence and bundle constraints before continuing.</p></article>
+      <article class="flow-step"><div class="tag-row"><span class="tag orchestrator">Actor: Project Configurator</span></div><strong>5. Render folder guidance</strong><p>Generate root or nested AGENTS.md files with unconditional folder skillsets. For Claude Code, create a thin colocated CLAUDE.md bridge beside each applicable AGENTS.md.</p></article>
+      <article class="flow-step"><div class="tag-row"><span class="tag orchestrator">Actor: Project Configurator</span></div><strong>6. Verify the setup</strong><p>Confirm that PROJECT.yaml, folder guidance, bridges, referenced agent definitions, skills, paths, and validation commands agree and that every required runtime capability is available.</p></article>
     </div>
+    <aside class="note">
+      <div class="tag-row"><span class="tag agent">Operational result — after setup</span></div>
+      <p><strong>Actors: Coding, review, diagnosis, and verification agents.</strong> Ordinary work loads the established skillset for the active folder. These agents use the configuration output and do not rerun setup-time detection.</p>
+    </aside>
   </section>
 
   <section class="section" aria-labelledby="technology-examples-title">
