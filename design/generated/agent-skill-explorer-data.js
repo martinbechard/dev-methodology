@@ -435,6 +435,12 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "code-execution-tracing"
     },
     {
+      "condition": "when verifying whole-project reverse engineering, reconstruction parity, or a reconstruction run archive.",
+      "kind": "conditional",
+      "role": "dev-verifier",
+      "skill": "documentation-reverse-engineer"
+    },
+    {
       "condition": "when confidence depends on proving a complete user or system workflow across its real boundaries.",
       "kind": "conditional",
       "role": "dev-verifier",
@@ -445,6 +451,12 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "conditional",
       "role": "dev-verifier",
       "skill": "organise-project-files"
+    },
+    {
+      "condition": "when verification depends on a sealed evaluator, model-facing checklist contract, provenance importer, or generated report contract.",
+      "kind": "conditional",
+      "role": "dev-verifier",
+      "skill": "prompt-contracts"
     },
     {
       "condition": "when a verification check fails and its cause must be distinguished from test, environment, or evidence problems.",
@@ -1051,8 +1063,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "conditionalSkills": {
         "agent-claim": "when the requested verification mutates files or uses exclusive runtime resources.",
         "code-execution-tracing": "when an observed outcome must be connected to source-level control flow or unconfirmed branches must be identified.",
+        "documentation-reverse-engineer": "when verifying whole-project reverse engineering, reconstruction parity, or a reconstruction run archive.",
         "end-to-end-verification": "when confidence depends on proving a complete user or system workflow across its real boundaries.",
         "organise-project-files": "when the requested verification creates a new project file or directory.",
+        "prompt-contracts": "when verification depends on a sealed evaluator, model-facing checklist contract, provenance importer, or generated report contract.",
         "root-cause-analysis": "when a verification check fails and its cause must be distinguished from test, environment, or evidence problems.",
         "runtime-evidence-collection": "when static checks alone cannot establish the behavior needed for a verification conclusion."
       },

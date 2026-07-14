@@ -1,0 +1,13 @@
+{
+  "archiveSchema": 2,
+  "documentationHierarchy": [
+    "documentation/docs/architecture",
+    "documentation/docs/functional",
+    "documentation/docs/high-level",
+    "documentation/docs/modules",
+    "documentation/docs/wiki"
+  ],
+  "evidenceRule": "Required machine evidence must be a non-empty semantic record rather than an empty object or list.",
+  "integrityRule": "Manifest paths are unique and a detached attestation binds the final manifest after evidence bytes are frozen.",
+  "sourceBaseline": "synthetic-reconstruction-baseline-v1"
+}

@@ -1,0 +1,27 @@
+{
+  "archiveManifest": {
+    "files": [
+      {
+        "path": "oracle/original-baseline.json",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "size": 3
+      },
+      {
+        "path": "oracle/original-baseline.json",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "size": 3
+      }
+    ],
+    "schemaVersion": 1,
+    "status": "VALID"
+  },
+  "detachedAttestation": null,
+  "documentationDirectories": [
+    "documentation/docs/wiki"
+  ],
+  "evidenceFiles": {
+    "oracle/original-baseline.json": {},
+    "parity/reconciliation.json": []
+  },
+  "runId": "synthetic-run-001"
+}

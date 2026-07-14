@@ -78,7 +78,7 @@
         {
           "name": "dev-verifier",
           "output": "generated/adapters/claude/agents/dev-verifier.md",
-          "sha256": "f84cfa0c06a077636fd456e88712785f77ed324dcdeec934b957f340d1c99f3e",
+          "sha256": "4b9b788fd5957954d99961b149fe65cdef1acd13bd52f1ff1dc1df26c14e6cb2",
           "source": "agents/roles/dev-activities/dev-verifier.role.yaml"
         },
         {
@@ -242,7 +242,7 @@
         {
           "name": "dev-verifier",
           "output": "generated/adapters/codex/agents/dev-verifier.toml",
-          "sha256": "7bf3cedbb1906b0a9a1c30ac301e159c15b4c50da4a2190875d46ddbece03ea6",
+          "sha256": "c93a0197e7d25b9a30fbad50f2270c5405b3ea00b070571ec00ad6cde47a4e5e",
           "source": "agents/roles/dev-activities/dev-verifier.role.yaml"
         },
         {
@@ -412,7 +412,7 @@
         {
           "name": "dev-verifier",
           "output": "generated/adapters/gemini/agents/dev-verifier.md",
-          "sha256": "f303a20ede3ca4c083eb8908b40c5a19939c2fec2ad77693ffc12ace972c72c2",
+          "sha256": "ad9a1c112005d62fa76e492adf3ca93a29425cb10a7d362f45d0693fac6a2660",
           "source": "agents/roles/dev-activities/dev-verifier.role.yaml"
         },
         {
@@ -576,7 +576,7 @@
         {
           "name": "dev-verifier",
           "output": "generated/adapters/junie/agents/dev-verifier.md",
-          "sha256": "bef0eb7555b31dd59ced409d3005362fa16be3f2be9ab28c8248130a4b86fae9",
+          "sha256": "e4f29f5bb9eb2bf33b7c88b9ba2bcb0b2123bd5988c4ca7745f9dfe8b670eedd",
           "source": "agents/roles/dev-activities/dev-verifier.role.yaml"
         },
         {

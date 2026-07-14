@@ -1,0 +1,21 @@
+{
+  "questions": [
+    {
+      "id": "Q-EVIDENCE",
+      "text": "Does every required machine-readable evidence file contain a substantive record?"
+    },
+    {
+      "id": "Q-MANIFEST",
+      "text": "Does the manifest contain one unique entry for every archived path?"
+    },
+    {
+      "id": "Q-HIERARCHY",
+      "text": "Does the archive contain the complete accepted documentation hierarchy?"
+    },
+    {
+      "id": "Q-ATTESTATION",
+      "text": "Does a detached attestation bind the final manifest?"
+    }
+  ],
+  "version": "archive-review-v1"
+}

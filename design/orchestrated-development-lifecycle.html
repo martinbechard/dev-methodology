@@ -503,11 +503,15 @@
       </article>
       <article class="card agent">
         <h3>Independent verifier</h3>
-        <p>A distinct fresh Dev Verifier receives the reconstruction, immutable oracle, parity cases, and generator contracts without original source or builder-private context. One digest seals the evaluator, contract, inventories, and oracle. Verifier-derived artifact, process, command, root, and run provenance binds every result. The evaluator rejects unknown, unattempted, weak, partial, synthetic, skipped, or unmatched-failure evidence and recomputes exact case-ID and generated-file reconciliation across build, tests, routes, workflows, data, security, integrations, configuration, operations, and deployment.</p>
+        <p>A distinct fresh Dev Verifier receives the reconstruction, immutable oracle, parity cases, and generator contracts without original source or builder-private context. For this route it loads the reconstruction and prompt-contract skills in addition to its normal verification skills. One digest seals the evaluator, contract, inventories, and oracle. Verifier-derived artifact, process, command, root, and run provenance binds every result. The evaluator rejects unknown, unattempted, weak, partial, synthetic, skipped, or unmatched-failure evidence and recomputes exact case-ID and generated-file reconciliation across build, tests, routes, workflows, data, security, integrations, configuration, operations, and deployment.</p>
       </article>
       <article class="card reference">
         <h3>Review and archive</h3>
-        <p>Dev Artifact Reviewer re-runs deterministic checks with the reconstruction-readiness checklist. Every successful, failed, or blocked attempt is archived with exact file hashes, full pre/post Git metadata reconciliation, and detached post-run attestations computed after immutable inputs are frozen. The newly sealed archive validates before retention pruning, after which the newest three runs remain unless the user selected another count.</p>
+        <p>Dev Artifact Reviewer re-runs deterministic checks with the reconstruction-readiness checklist. New archives use schema version 2 and fail on hollow machine evidence, duplicate manifest paths, incomplete documentation hierarchy, seed/configuration drift, stale native proof, missing raw browser-report provenance, missing full pre/post Git metadata reconciliation, or insufficient builder and verifier isolation. A detached sibling attestation binds the frozen manifest and content aggregate. Existing schema-version-1 archives remain readable but cannot be newly sealed. The new archive and sidecar validate before retention pruning, after which the newest three runs remain unless the user selected another count.</p>
+      </article>
+      <article class="card reference">
+        <h3>Checklist model evaluation</h3>
+        <p>The reconstruction-review corpus seals one synthetic artifact, its source contract, checklist version, and adjudicated defect set under one corpus ID. Candidate and reference reviewers run separately at least three times. The offline runner derives recall, false positives, checklist and citation completeness, elapsed time, tokens, and available cost without invoking a model or changing routing. Promotion requires no quality regression and at least twenty percent lower median time or tokens without increasing the other measure.</p>
       </article>
     </div>
   </section>

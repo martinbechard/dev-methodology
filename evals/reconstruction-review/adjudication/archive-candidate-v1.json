@@ -1,0 +1,25 @@
+{
+  "defects": [
+    {
+      "blocking": true,
+      "id": "D-HOLLOW-EVIDENCE",
+      "summary": "Oracle and reconciliation evidence are empty placeholders."
+    },
+    {
+      "blocking": true,
+      "id": "D-DUPLICATE-MANIFEST-PATH",
+      "summary": "The manifest repeats oracle/original-baseline.json."
+    },
+    {
+      "blocking": true,
+      "id": "D-MISSING-DOCUMENTATION-HIERARCHY",
+      "summary": "Architecture, high-level, module, and functional documents are absent."
+    },
+    {
+      "blocking": true,
+      "id": "D-MISSING-DETACHED-ATTESTATION",
+      "summary": "No detached attestation binds the final manifest."
+    }
+  ],
+  "status": "ADJUDICATED"
+}

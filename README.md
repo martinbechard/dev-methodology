@@ -35,6 +35,7 @@ The shared page contract starts every durable page with Current Understanding, A
 - skills/detect-technology-skills contains the setup workflow, generated detector mirror, and generated portable technology registry.
 - skills/development-methodology/assets/templates contains the reusable TODO-driven template assets.
 - skills/documentation-reverse-engineer/scripts/reconstruction_run.py creates validated wiki-first reconstruction seeds and seals exact run archives before safe retention pruning.
+- evals/reconstruction-review contains a sealed synthetic checklist corpus and an offline candidate-versus-reference scoring runner. It records no model result and changes no routing automatically.
 - Keep Codex openai.yaml metadata beside each source SKILL.md when a skill needs Codex app metadata, invocation policy, or tool dependencies.
 - scripts/install-skills.py installs the bundled skills through adapter profiles for generic Agent Skills, Codex, Gemini CLI, Claude Code, and JetBrains Junie CLI.
 - agents/role-schema.yaml defines the customer-independent conceptual agent definition schema.
@@ -226,14 +227,23 @@ python3 skills/documentation-reverse-engineer/scripts/reconstruction_run.py vali
 
 A distinct builder works in an operating-system sandbox or container with only the validated seed and declared toolchain. The exact production profile first proves real content-read denial and agent-claim acquire/release in a disposable repository; permission predicates such as `test -r` are not access evidence. A distinct fresh verifier works in a separate enforced environment with the reconstruction, immutable original baseline oracle, parity cases, and generator contracts. Neither receives an original-source mount. One digest seals the evaluator, governing contract, case and probe inventories, and oracle. The verifier derives artifact, process, command, root, and run provenance; rejects unknown, unattempted, partial, weak, synthetic, skipped, or unmatched-failure evidence; executes native and runtime gates at their real boundaries; and recomputes every case and final verdict. Prompts, caller-supplied READY labels, working-directory conventions, builder self-verification, and sampled checks do not prove isolation or parity.
 
-Every successful, failed, or blocked attempt is archived with the reset baseline, routing, accepted documentation and reviews, seed manifest, original oracle, reconstructed output, parity reconciliation, generator delta ledger, contamination ledger, command results, usage metrics, full pre/post Git metadata reconciliation, and exact file-hash manifest. Immutable input manifests stay separate from detached post-run attestations computed after the recorded bytes are frozen. A stage that never started uses a non-empty machine-readable NOT_RUN record with its unmet gate and failure evidence. Seal and validate the new archive before pruning. Retain the newest three run archives unless the user explicitly chooses another count.
+Every successful, failed, or blocked attempt is archived with the reset baseline, routing, accepted documentation and reviews, seed manifest, original oracle, reconstructed output, parity reconciliation, generator delta ledger, contamination ledger, command results, usage metrics, full pre/post Git metadata reconciliation, and exact file-hash manifest. New seals use archive schema version 2. The helper rejects empty placeholder evidence, duplicate manifest paths, documentation or nested guidance that differs from the validated seed, native evidence from another run, missing raw browser-report provenance, stale evaluator or parity counts, unresolved Git or claim-registry changes, and incomplete builder or verifier source-denial evidence.
+
+The schema-version-2 manifest binds the final archived bytes and uses detached post-run attestations as sibling files written after each manifest is frozen. Each attestation binds the manifest digest, content aggregate, run ID, and semantic contract without entering the attested file set. Archive validation requires the sidecar, and an independently stored copy can be compared after transfer. Existing schema-version-1 archives remain readable; the helper does not permit them to be newly sealed. A stage that never started uses a non-empty machine-readable NOT_RUN record with its unmet gate and failure evidence. Seal and validate the new archive before pruning. Retain the newest three run archives and their matching attestations unless the user explicitly chooses another count.
 
 ```bash
 python3 skills/documentation-reverse-engineer/scripts/reconstruction_run.py seal-archive \
   --new-archive /archives/run-001 \
   --archive-root /archives \
   --retain 3
+python3 skills/documentation-reverse-engineer/scripts/reconstruction_run.py validate-archive \
+  --archive /archives/run-001
+python3 skills/documentation-reverse-engineer/scripts/reconstruction_run.py compare-archive \
+  --archive /archives/run-001 \
+  --expected-attestation /independent/run-001.attestation.json
 ```
+
+Checklist-only model comparisons use the sealed corpus under evals/reconstruction-review. Candidate and reference reviewers run separately at least three times against identical artifact, source-evidence, checklist, and adjudication digests. The offline runner derives blocking-defect recall, false positives, checklist and citation completeness, elapsed time, tokens, and available cost. It recommends promotion only when quality does not regress and median time or tokens improves by at least twenty percent without increasing the other measure. The corpus contains no benchmark result; a recommendation requires separately captured invocation evidence.
 
 ## Bundled Skill Inventory
 

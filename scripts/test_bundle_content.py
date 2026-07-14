@@ -2282,6 +2282,28 @@ class BundleContentTests(unittest.TestCase):
                 )
             )
 
+    def test_dev_verifier_loads_reconstruction_and_prompt_contracts_conditionally(self) -> None:
+        build_skill_docs = load_build_skill_docs_module()
+        skill_payload = build_skill_docs.build_payload()
+        roles = build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
+        role = next(role for role in roles if role.name == "dev-verifier")
+
+        self.assertNotIn(
+            "documentation-reverse-engineer",
+            build_skill_docs.fixed_role_skills(role),
+        )
+        self.assertNotIn(
+            "prompt-contracts",
+            build_skill_docs.fixed_role_skills(role),
+        )
+        self.assertIn("documentation-reverse-engineer", role.skill_conditions)
+        self.assertIn("prompt-contracts", role.skill_conditions)
+        self.assertIn("whole-project reverse engineering", role.skill_conditions["documentation-reverse-engineer"])
+        self.assertIn("sealed evaluator", role.skill_conditions["prompt-contracts"])
+        self.assertIn("derive required case and proof sets", role.instructions)
+        self.assertEqual(3, len(role.examples))
+        self.assertIn("schema-v2 archive", role.examples[2]["purpose"])
+
     def test_dev_artifact_reviewer_combines_generic_and_specific_review_skills(self) -> None:
         build_skill_docs = load_build_skill_docs_module()
         skill_payload = build_skill_docs.build_payload()
@@ -3114,6 +3136,58 @@ class BundleContentTests(unittest.TestCase):
         ):
             with self.subTest(lifecycle_reconstruction_phrase=phrase):
                 self.assertIn(phrase, lifecycle_text)
+
+    def test_reconstruction_archive_schema_and_checklist_eval_are_executable(self) -> None:
+        helper_text = (
+            SKILLS_ROOT
+            / "documentation-reverse-engineer"
+            / "scripts"
+            / "reconstruction_run.py"
+        ).read_text(encoding="utf-8")
+        reverse_skill_text = (
+            SKILLS_ROOT / "documentation-reverse-engineer" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        lifecycle_text = (
+            REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
+        ).read_text(encoding="utf-8")
+        evaluation_root = REPOSITORY_ROOT / "evals" / "reconstruction-review"
+
+        for phrase in (
+            "compare_archive_attestation",
+            "_validate_git_reconciliation",
+            "_validate_isolation_ledger",
+            "_validate_execution_provenance",
+            "Archive manifest contains a duplicate path",
+            "New archives must use schemaVersion 2",
+        ):
+            with self.subTest(helper_enforcement_phrase=phrase):
+                self.assertIn(phrase, helper_text)
+        for phrase in (
+            "Schema version 2 is required for newly sealed archives",
+            "execution/provenance.json",
+            "Browser or report cases without raw report provenance fail",
+            "compare-archive",
+        ):
+            with self.subTest(reverse_skill_schema_phrase=phrase):
+                self.assertIn(phrase, reverse_skill_text)
+        for phrase in (
+            "schema version 2",
+            "Checklist model evaluation",
+            "loads the reconstruction and prompt-contract skills",
+        ):
+            with self.subTest(lifecycle_schema_phrase=phrase):
+                self.assertIn(phrase, lifecycle_text)
+        for relative_path in (
+            "README.md",
+            "corpus.json",
+            "run_checklist_eval.py",
+            "adjudication/archive-candidate-v1.json",
+            "checklists/archive-review-v1.json",
+            "fixtures/archive-candidate.json",
+            "fixtures/archive-contract.json",
+        ):
+            with self.subTest(evaluation_file=relative_path):
+                self.assertTrue((evaluation_root / relative_path).is_file())
 
     def test_project_configuration_distinguishes_no_variant_from_missing_required_skill(self) -> None:
         detector_text = (SKILLS_ROOT / "detect-technology-skills" / "SKILL.md").read_text(
