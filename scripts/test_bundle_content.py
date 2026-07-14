@@ -340,18 +340,37 @@ AGENTIC_CONFIGURATION_REQUIRED_PHRASES = (
     "The solution is to split up the information into many files and have the agentic coding tool load just the skills it needs.",
     "The Agent Skills format uses a text file named <code>SKILL.md</code> to describe how to perform actions.",
     "It is adopted by all vendors and is the most granular unit of description.",
-    "Describes how to perform actions.",
     "Agent definition files describe the purpose of a specific agent, the skills and other agents it should use, and its other directives.",
     "Each agent operates with its own context and history, which allows us to partition the amount of information being worked on at a given time by creating a hierarchy of agents.",
     "Definitions installed for a harness are available to all projects that use that harness.",
     "Definitions and instructions stored within a project apply only to that project and can tailor shared behavior to its content.",
     "Project skill definition files describe actions that are specific to the project or customize a shared skill for the project.",
     "Project agent definition files define project-specific agents or customize shared agent definitions for the project.",
-    "Project-specific instructions can be defined using <code>AGENTS.md</code> and <code>CLAUDE.md</code> placed at the root of the project.",
+    "Root project instruction files use the harness-native project guidance format",
     "This project guidance should usually act as a router to load skills appropriate for the project content.",
     "More of these instruction files can be nested to provide specialized guidance for content within a project folder.",
-    "&lt;project-root&gt;/.&lt;harness-name&gt;/agents/&lt;agent-name&gt;.md",
-    "&lt;project-root&gt;/&lt;folder-path&gt;/AGENTS.md",
+    "Every harness uses the same portable Agent Skills package",
+    "Skill locations and precedence vary; the <code>SKILL.md</code> format does not.",
+    '<label for="harness-filter">Show harness</label>',
+    '<option value="all">All harnesses</option>',
+    "Shared Or User Location",
+    "Harness Rule Or File Format",
+    "Package reusable action guidance that loads on demand when a task matches the skill.",
+    "Define a specialized worker's purpose, isolated context, tools, model, and delegation behavior.",
+    "Provide project-wide context and routing instructions that the harness loads for every applicable task.",
+    "Add or override instructions for a folder, path pattern, or narrower working scope.",
+    "~/.agents/skills/&lt;skill-name&gt;/SKILL.md",
+    "~/.claude/skills/&lt;skill-name&gt;/SKILL.md",
+    "~/.gemini/skills/&lt;skill-name&gt;/SKILL.md",
+    "~/.junie/skills/&lt;skill-name&gt;/SKILL.md",
+    "~/.copilot/skills/&lt;skill-name&gt;/SKILL.md",
+    "&lt;project-root&gt;/.codex/agents/&lt;agent-name&gt;.toml",
+    "&lt;project-root&gt;/.claude/agents/&lt;agent-name&gt;.md",
+    "&lt;project-root&gt;/.gemini/agents/&lt;agent-name&gt;.md",
+    "&lt;project-root&gt;/.junie/agents/&lt;agent-name&gt;.md",
+    "&lt;project-root&gt;/.github/agents/&lt;agent-name&gt;.agent.md",
+    "&lt;project-root&gt;/.github/copilot-instructions.md",
+    "&lt;project-root&gt;/.github/instructions/&lt;rule-name&gt;.instructions.md",
 )
 DOCUMENT_INFORMATION_OWNERS = {
     "agentic-development-operating-model.html": (
@@ -2707,6 +2726,43 @@ class BundleContentTests(unittest.TestCase):
         ):
             with self.subTest(source_heading=source_heading):
                 self.assertNotIn(source_heading, configuration_text)
+
+        locations_section = configuration_text.split(
+            '<section class="section" aria-labelledby="locations-title">', maxsplit=1
+        )[1].split("</section>", maxsplit=1)[0]
+        purpose_headings = (
+            "Skill Definition Files",
+            "Agent Definition Files",
+            "Root Project Instruction Files",
+            "Nested Project Instruction Files",
+        )
+        purpose_positions = [
+            locations_section.index(f'<th colspan="4" scope="rowgroup">{heading}')
+            for heading in purpose_headings
+        ]
+        self.assertEqual(sorted(purpose_positions), purpose_positions)
+
+        harnesses = ("codex", "claude", "gemini", "junie", "copilot")
+        harness_rows = re.findall(
+            r'<tr data-harness-row data-harness="([^"]+)">',
+            locations_section,
+        )
+        self.assertEqual(20, len(harness_rows))
+        for harness in harnesses:
+            with self.subTest(harness=harness):
+                self.assertEqual(4, harness_rows.count(harness))
+                self.assertIn(f'<option value="{harness}">', locations_section)
+
+        self.assertIn(
+            'row.hidden = selectedHarness !== "all" && row.dataset.harness !== selectedHarness;',
+            configuration_text,
+        )
+        self.assertIn(
+            'harnessFilter.addEventListener("change", applyHarnessFilter);',
+            configuration_text,
+        )
+        self.assertNotIn("Markdown agent definition", locations_section)
+        self.assertNotIn("TOML agent definition", locations_section)
 
     def test_reverse_engineering_uses_structural_code_discovery(self) -> None:
         skill_text = (

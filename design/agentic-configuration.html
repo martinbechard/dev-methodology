@@ -221,6 +221,51 @@
       margin-bottom: var(--space-2);
     }
 
+    .table-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3) var(--space-5);
+      align-items: end;
+      justify-content: space-between;
+      margin-bottom: var(--space-4);
+      padding: var(--space-4);
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      background: var(--color-panel);
+      box-shadow: var(--shadow-panel);
+    }
+
+    .filter-field {
+      display: grid;
+      gap: var(--space-2);
+    }
+
+    .filter-field label {
+      color: var(--color-ink);
+      font-size: var(--font-sm);
+      font-weight: 800;
+    }
+
+    .filter-field select {
+      width: min(18rem, 100%);
+      min-height: 2.75rem;
+      padding: 0.55rem 2.25rem 0.55rem 0.7rem;
+      border: 1px solid var(--color-muted);
+      border-radius: var(--radius);
+      background: var(--color-panel);
+      color: var(--color-ink);
+      font: inherit;
+    }
+
+    .filter-field select:focus-visible {
+      outline: 3px solid var(--color-agent);
+      outline-offset: 2px;
+    }
+
+    .filter-status {
+      font-size: var(--font-sm);
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
@@ -244,6 +289,28 @@
       color: var(--color-ink);
       font-size: var(--font-xs);
       text-transform: uppercase;
+    }
+
+    .purpose-heading th {
+      background: var(--color-soft-green);
+      font-size: 1rem;
+      text-transform: none;
+    }
+
+    .purpose-group + .purpose-group .purpose-heading th {
+      border-top: 0.25rem solid var(--color-project);
+    }
+
+    .purpose-summary {
+      display: block;
+      margin-top: var(--space-2);
+      color: var(--color-muted);
+      font-size: var(--font-sm);
+      font-weight: 400;
+    }
+
+    tr[hidden] {
+      display: none;
     }
 
     tr:last-child td {
@@ -341,7 +408,7 @@
               <li class="nested-layer">
                 <div class="nested-copy">
                   <h4>Root Project Instruction Files</h4>
-                  <p>Project-specific instructions can be defined using <code>AGENTS.md</code> and <code>CLAUDE.md</code> placed at the root of the project. This project guidance should usually act as a router to load skills appropriate for the project content.</p>
+                  <p>Root project instruction files use the harness-native project guidance format, such as <code>AGENTS.md</code>, <code>CLAUDE.md</code>, <code>GEMINI.md</code>, or repository instruction files. This project guidance should usually act as a router to load skills appropriate for the project content.</p>
                 </div>
               </li>
               <li class="nested-layer">
@@ -358,63 +425,196 @@
 
     <section class="section" aria-labelledby="locations-title">
       <h2 id="locations-title">Runtime Configuration File Locations</h2>
-      <p class="lede">The placeholders identify the harness, project, folder, skill, and agent names directly. These paths do not use filename globs.</p>
+      <p class="lede">Each group starts with the context purpose, then shows the runtime locations and rules for each harness. Every harness uses the same portable Agent Skills package: a skill directory containing <code>SKILL.md</code> with YAML frontmatter and Markdown instructions. Skill locations and precedence vary; the <code>SKILL.md</code> format does not.</p>
+      <div class="table-controls">
+        <div class="filter-field">
+          <label for="harness-filter">Show harness</label>
+          <select id="harness-filter">
+            <option value="all">All harnesses</option>
+            <option value="codex">Codex</option>
+            <option value="claude">Claude Code</option>
+            <option value="gemini">Gemini CLI</option>
+            <option value="junie">Junie CLI</option>
+            <option value="copilot">GitHub Copilot</option>
+          </select>
+        </div>
+        <p id="harness-filter-status" class="filter-status" aria-live="polite">Showing 20 rows across 5 harnesses.</p>
+      </div>
       <table>
         <thead>
           <tr>
-            <th>File</th>
-            <th>Shared Location</th>
-            <th>Project Location</th>
-            <th>Runtime Purpose</th>
+            <th scope="col">Harness</th>
+            <th scope="col">Shared Or User Location</th>
+            <th scope="col">Project Location</th>
+            <th scope="col">Harness Rule Or File Format</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td><span class="name">Skill definition</span></td>
-            <td><code>~/.&lt;harness-name&gt;/skills/&lt;skill-name&gt;/SKILL.md</code></td>
-            <td><code>&lt;project-root&gt;/.&lt;harness-name&gt;/skills/&lt;skill-name&gt;/SKILL.md</code></td>
-            <td>Describes how to perform actions.</td>
+        <tbody class="purpose-group">
+          <tr class="purpose-heading">
+            <th colspan="4" scope="rowgroup">Skill Definition Files<span class="purpose-summary">Package reusable action guidance that loads on demand when a task matches the skill. All rows use the same portable <code>SKILL.md</code> format.</span></th>
           </tr>
-          <tr>
-            <td><span class="name">Markdown agent definition</span></td>
-            <td><code>~/.&lt;harness-name&gt;/agents/&lt;agent-name&gt;.md</code></td>
-            <td><code>&lt;project-root&gt;/.&lt;harness-name&gt;/agents/&lt;agent-name&gt;.md</code></td>
-            <td>Defines a specific role to be performed by the AI using skills and other directives.</td>
+          <tr data-harness-row data-harness="codex">
+            <td><a href="https://developers.openai.com/codex/skills">Codex</a></td>
+            <td><code>~/.agents/skills/&lt;skill-name&gt;/SKILL.md</code></td>
+            <td><code>&lt;project-root&gt;/.agents/skills/&lt;skill-name&gt;/SKILL.md</code></td>
+            <td>Codex scans <code>.agents/skills</code> from the working directory to the repository root. Skills with the same name remain separate rather than merging.</td>
           </tr>
-          <tr>
-            <td><span class="name">TOML agent definition</span></td>
-            <td><code>~/.&lt;harness-name&gt;/agents/&lt;agent-name&gt;.toml</code></td>
-            <td><code>&lt;project-root&gt;/.&lt;harness-name&gt;/agents/&lt;agent-name&gt;.toml</code></td>
-            <td>Defines a specific role to be performed by the AI using skills and other directives.</td>
+          <tr data-harness-row data-harness="claude">
+            <td><a href="https://code.claude.com/docs/en/slash-commands">Claude Code</a></td>
+            <td><code>~/.claude/skills/&lt;skill-name&gt;/SKILL.md</code></td>
+            <td><code>&lt;project-root&gt;/.claude/skills/&lt;skill-name&gt;/SKILL.md</code></td>
+            <td>Claude Code discovers project and user skills, then loads the full portable skill only when it is invoked or selected.</td>
           </tr>
-          <tr>
-            <td><span class="name">Root agent instructions</span></td>
-            <td>Not shared</td>
+          <tr data-harness-row data-harness="gemini">
+            <td><a href="https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/using-agent-skills.md">Gemini CLI</a></td>
+            <td><code>~/.gemini/skills/&lt;skill-name&gt;/SKILL.md</code></td>
+            <td><code>&lt;project-root&gt;/.gemini/skills/&lt;skill-name&gt;/SKILL.md</code></td>
+            <td><code>~/.agents/skills</code> and project <code>.agents/skills</code> are aliases. A matching project skill takes precedence over a user skill.</td>
+          </tr>
+          <tr data-harness-row data-harness="junie">
+            <td><a href="https://junie.jetbrains.com/docs/agent-skills.html">Junie CLI</a></td>
+            <td><code>~/.junie/skills/&lt;skill-name&gt;/SKILL.md</code></td>
+            <td><code>&lt;project-root&gt;/.junie/skills/&lt;skill-name&gt;/SKILL.md</code></td>
+            <td>A matching project skill takes precedence over a user skill. Junie uses the same portable <code>SKILL.md</code> package as the other harnesses.</td>
+          </tr>
+          <tr data-harness-row data-harness="copilot">
+            <td><a href="https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-skills">GitHub Copilot</a></td>
+            <td><code>~/.copilot/skills/&lt;skill-name&gt;/SKILL.md</code></td>
+            <td><code>&lt;project-root&gt;/.github/skills/&lt;skill-name&gt;/SKILL.md</code></td>
+            <td>Copilot also discovers user <code>~/.agents/skills</code> and project <code>.agents/skills</code> or <code>.claude/skills</code> aliases.</td>
+          </tr>
+        </tbody>
+        <tbody class="purpose-group">
+          <tr class="purpose-heading">
+            <th colspan="4" scope="rowgroup">Agent Definition Files<span class="purpose-summary">Define a specialized worker's purpose, isolated context, tools, model, and delegation behavior.</span></th>
+          </tr>
+          <tr data-harness-row data-harness="codex">
+            <td><a href="https://learn.chatgpt.com/docs/agent-configuration/subagents?surface=app">Codex</a></td>
+            <td><code>~/.codex/agents/&lt;agent-name&gt;.toml</code></td>
+            <td><code>&lt;project-root&gt;/.codex/agents/&lt;agent-name&gt;.toml</code></td>
+            <td>One standalone TOML file per agent. Native fields include the name, description, developer instructions, model, reasoning, sandbox, and optional MCP configuration.</td>
+          </tr>
+          <tr data-harness-row data-harness="claude">
+            <td><a href="https://code.claude.com/docs/en/sub-agents">Claude Code</a></td>
+            <td><code>~/.claude/agents/&lt;agent-name&gt;.md</code></td>
+            <td><code>&lt;project-root&gt;/.claude/agents/&lt;agent-name&gt;.md</code></td>
+            <td>Markdown with YAML frontmatter and a Markdown system-prompt body. The nearest matching project definition has priority.</td>
+          </tr>
+          <tr data-harness-row data-harness="gemini">
+            <td><a href="https://github.com/google-gemini/gemini-cli/blob/main/docs/core/subagents.md">Gemini CLI</a></td>
+            <td><code>~/.gemini/agents/&lt;agent-name&gt;.md</code></td>
+            <td><code>&lt;project-root&gt;/.gemini/agents/&lt;agent-name&gt;.md</code></td>
+            <td>Markdown with YAML frontmatter and a Markdown instruction body. Project definitions are team-shared; user definitions apply across projects.</td>
+          </tr>
+          <tr data-harness-row data-harness="junie">
+            <td><a href="https://junie.jetbrains.com/docs/junie-cli-subagents.html">Junie CLI</a></td>
+            <td><code>~/.junie/agents/&lt;agent-name&gt;.md</code></td>
+            <td><code>&lt;project-root&gt;/.junie/agents/&lt;agent-name&gt;.md</code></td>
+            <td>Markdown with YAML metadata and a Markdown system-prompt body. User <code>~/.agents</code> and project <code>.agents</code> are supported alternatives.</td>
+          </tr>
+          <tr data-harness-row data-harness="copilot">
+            <td><a href="https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference#custom-agents-reference">GitHub Copilot</a></td>
+            <td><code>~/.copilot/agents/&lt;agent-name&gt;.agent.md</code></td>
+            <td><code>&lt;project-root&gt;/.github/agents/&lt;agent-name&gt;.agent.md</code></td>
+            <td>Markdown with YAML frontmatter; <code>.agent.md</code> and <code>.md</code> are accepted. Project <code>.github/agents</code> takes precedence over <code>.claude/agents</code> at the same level.</td>
+          </tr>
+        </tbody>
+        <tbody class="purpose-group">
+          <tr class="purpose-heading">
+            <th colspan="4" scope="rowgroup">Root Project Instruction Files<span class="purpose-summary">Provide project-wide context and routing instructions that the harness loads for every applicable task.</span></th>
+          </tr>
+          <tr data-harness-row data-harness="codex">
+            <td><a href="https://developers.openai.com/codex/guides/agents-md">Codex</a></td>
+            <td><code>~/.codex/AGENTS.md</code></td>
             <td><code>&lt;project-root&gt;/AGENTS.md</code></td>
-            <td>Defines project-specific instructions and acts as a router to load skills appropriate for the project content.</td>
+            <td>Markdown. Codex loads global guidance, then one instruction file per directory from the project root toward the working directory. <code>AGENTS.override.md</code> wins within a directory.</td>
           </tr>
-          <tr>
-            <td><span class="name">Root Claude instructions</span></td>
-            <td>Not shared</td>
-            <td><code>&lt;project-root&gt;/CLAUDE.md</code></td>
-            <td>Defines project-specific instructions and acts as a router to load skills appropriate for the project content.</td>
+          <tr data-harness-row data-harness="claude">
+            <td><a href="https://code.claude.com/docs/en/memory">Claude Code</a></td>
+            <td><code>~/.claude/CLAUDE.md</code></td>
+            <td><code>&lt;project-root&gt;/CLAUDE.md</code> or <code>&lt;project-root&gt;/.claude/CLAUDE.md</code></td>
+            <td>Markdown. Claude concatenates user and project instructions. A thin <code>CLAUDE.md</code> can import <code>AGENTS.md</code> with <code>@AGENTS.md</code>.</td>
           </tr>
-          <tr>
-            <td><span class="name">Nested agent instructions</span></td>
-            <td>Not shared</td>
-            <td><code>&lt;project-root&gt;/&lt;folder-path&gt;/AGENTS.md</code></td>
-            <td>Provides even more specialized instructions for nested project content.</td>
+          <tr data-harness-row data-harness="gemini">
+            <td><a href="https://github.com/google-gemini/gemini-cli/blob/main/docs/reference/configuration.md#context-files-hierarchical-instructional-context">Gemini CLI</a></td>
+            <td><code>~/.gemini/GEMINI.md</code></td>
+            <td><code>&lt;project-root&gt;/GEMINI.md</code></td>
+            <td>Markdown hierarchical context. The filename can be changed with <code>context.fileName</code>; loaded files are concatenated from broad to specific.</td>
           </tr>
-          <tr>
-            <td><span class="name">Nested Claude instructions</span></td>
-            <td>Not shared</td>
-            <td><code>&lt;project-root&gt;/&lt;folder-path&gt;/CLAUDE.md</code></td>
-            <td>Provides even more specialized instructions for nested project content.</td>
+          <tr data-harness-row data-harness="junie">
+            <td><a href="https://junie.jetbrains.com/docs/guidelines-and-memory.html">Junie CLI</a></td>
+            <td><code>~/.junie/AGENTS.md</code></td>
+            <td><code>&lt;project-root&gt;/.junie/AGENTS.md</code> or <code>&lt;project-root&gt;/AGENTS.md</code></td>
+            <td>Markdown. Junie checks project <code>.junie/AGENTS.md</code> before root <code>AGENTS.md</code>; project guidance takes precedence over global guidance.</td>
+          </tr>
+          <tr data-harness-row data-harness="copilot">
+            <td><a href="https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-custom-instructions">GitHub Copilot</a></td>
+            <td><code>~/.copilot/copilot-instructions.md</code></td>
+            <td><code>&lt;project-root&gt;/.github/copilot-instructions.md</code> and/or <code>&lt;project-root&gt;/AGENTS.md</code></td>
+            <td>Markdown. Copilot CLI uses repository-wide instructions and treats root <code>AGENTS.md</code> as primary agent instructions when present.</td>
+          </tr>
+        </tbody>
+        <tbody class="purpose-group">
+          <tr class="purpose-heading">
+            <th colspan="4" scope="rowgroup">Nested Project Instruction Files<span class="purpose-summary">Add or override instructions for a folder, path pattern, or narrower working scope.</span></th>
+          </tr>
+          <tr data-harness-row data-harness="codex">
+            <td><a href="https://developers.openai.com/codex/guides/agents-md">Codex</a></td>
+            <td>Inherited from <code>~/.codex/AGENTS.md</code></td>
+            <td><code>&lt;folder-path&gt;/AGENTS.md</code> or <code>&lt;folder-path&gt;/AGENTS.override.md</code></td>
+            <td>Codex walks only from the project root to the current working directory; guidance closer to that directory appears later and overrides broader guidance.</td>
+          </tr>
+          <tr data-harness-row data-harness="claude">
+            <td><a href="https://code.claude.com/docs/en/memory">Claude Code</a></td>
+            <td>Inherited from <code>~/.claude/CLAUDE.md</code> and <code>~/.claude/rules</code></td>
+            <td><code>&lt;folder-path&gt;/CLAUDE.md</code> or <code>&lt;project-root&gt;/.claude/rules/&lt;rule-name&gt;.md</code></td>
+            <td>Nested <code>CLAUDE.md</code> loads when Claude accesses that subtree. Rules can use path-scoping frontmatter instead of directory placement.</td>
+          </tr>
+          <tr data-harness-row data-harness="gemini">
+            <td><a href="https://github.com/google-gemini/gemini-cli/blob/main/docs/reference/configuration.md#context-files-hierarchical-instructional-context">Gemini CLI</a></td>
+            <td>Inherited from <code>~/.gemini/GEMINI.md</code></td>
+            <td><code>&lt;folder-path&gt;/GEMINI.md</code></td>
+            <td>Gemini scans ancestor and subdirectory context files, then concatenates all discovered instructions with their source paths.</td>
+          </tr>
+          <tr data-harness-row data-harness="junie">
+            <td><a href="https://junie.jetbrains.com/docs/guidelines-and-memory.html">Junie CLI</a></td>
+            <td>Inherited from <code>~/.junie/AGENTS.md</code></td>
+            <td>Not a documented nested guideline location</td>
+            <td>Junie documents root project guidelines rather than nested discovery. Use project skills for task-specific or folder-specific procedures.</td>
+          </tr>
+          <tr data-harness-row data-harness="copilot">
+            <td><a href="https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-custom-instructions">GitHub Copilot</a></td>
+            <td>Inherited from <code>~/.copilot/copilot-instructions.md</code></td>
+            <td><code>&lt;project-root&gt;/.github/instructions/&lt;rule-name&gt;.instructions.md</code> or <code>&lt;folder-path&gt;/AGENTS.md</code></td>
+            <td>Path-specific instruction files require YAML <code>applyTo</code> frontmatter. Non-root <code>AGENTS.md</code> files are additional rather than primary instructions.</td>
           </tr>
         </tbody>
       </table>
-      <p class="table-note">Actual harness directory names vary. Shared locations make agent and skill definitions available among projects; project locations place those definitions within a project.</p>
+      <p class="table-note">The <a href="generic-agent-definitions-source.html">Generic Agent Definitions Source</a> page owns conceptual-to-native conversion details. This table covers only what each runtime file contributes, where the harness discovers it, and which incompatible native rule or format applies.</p>
     </section>
   </main>
+  <script>
+    const harnessFilter = document.querySelector("#harness-filter");
+    const harnessRows = Array.from(document.querySelectorAll("[data-harness-row]"));
+    const harnessFilterStatus = document.querySelector("#harness-filter-status");
+
+    function applyHarnessFilter() {
+      const selectedHarness = harnessFilter.value;
+      for (const row of harnessRows) {
+        row.hidden = selectedHarness !== "all" && row.dataset.harness !== selectedHarness;
+      }
+
+      if (selectedHarness === "all") {
+        harnessFilterStatus.textContent = "Showing 20 rows across 5 harnesses.";
+        return;
+      }
+
+      const harnessName = harnessFilter.selectedOptions[0].textContent;
+      harnessFilterStatus.textContent = `Showing 4 rows for ${harnessName}.`;
+    }
+
+    harnessFilter.addEventListener("change", applyHarnessFilter);
+    applyHarnessFilter();
+  </script>
 </body>
 </html>
