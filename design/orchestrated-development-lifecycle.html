@@ -442,27 +442,42 @@
           <tr>
             <td><span class="name">Execution</span></td>
             <td>Selected implementation or writing role</td>
-            <td>The assigned output passes to an independent reviewer; the <a href="agent-role-skill-map.html">generated catalog</a> owns each role's detailed inputs, skills, and output contract.</td>
+            <td>Each assigned lane stays within its narrow claim and returns a committed, clean handoff before independent review; the <a href="agent-role-skill-map.html">generated catalog</a> owns each role's detailed inputs, skills, and output contract.</td>
           </tr>
           <tr>
-            <td><span class="name">Review</span></td>
-            <td>Selected independent review role</td>
-            <td>Correctable findings return to the owning executor; accepted work advances to integrated verification.</td>
+            <td><span class="name">Independent contribution review</span></td>
+            <td>Dev Code Reviewer for source changes, or the selected independent review role for another artifact</td>
+            <td>A fresh read-only reviewer accepts the contribution or returns correctable findings to the original executor. A correction re-enters fresh review within the bounded correction loop; accepted source work advances to Dev Verifier.</td>
           </tr>
           <tr>
-            <td><span class="name">Verification</span></td>
+            <td><span class="name">Contribution verification</span></td>
             <td>Dev Verifier</td>
-            <td>The configured acceptance checks must pass, or an unresolved risk must be recorded, before integration.</td>
+            <td>The acceptance checks required by the behavior and risk must pass without weakened gates. A failed behavior check returns to the original executor; an accepted lane advances to the path decision.</td>
           </tr>
           <tr>
-            <td><span class="name">Integration</span></td>
+            <td><span class="name">Path decision</span></td>
+            <td>Dev Orchestrator</td>
+            <td>One accepted implementation lane keeps its independently reviewed and verified commit as the final direct commit, without Dev Merge Coordinator. Multiple accepted committed contributions enter the multi-lane integration path.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Multi-lane integration, when required</span></td>
             <td>Dev Merge Coordinator</td>
-            <td>Only committed, clean contributions with verification evidence enter the integration lane.</td>
+            <td>Combine multiple accepted commits in dependency order, with their claim, review, and verification evidence. Do not create a merge lane for one accepted contribution.</td>
           </tr>
           <tr>
-            <td><span class="name">Completion</span></td>
-            <td>Claim owner</td>
-            <td>Release ownership only after verification, commit or explicit no-change, clean status, and resource cleanup or handoff.</td>
+            <td><span class="name">Integrated-artifact review and verification, multiple lanes only</span></td>
+            <td>Dev Code Reviewer and Dev Verifier in fresh contexts</td>
+            <td>After combination, Dev Code Reviewer reviews the combined diff in another fresh read-only context and Dev Verifier checks the complete integrated outcome. Both gates must pass before the result becomes the final integration commit.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Correction or blocker</span></td>
+            <td>Original executor, Dev Merge Coordinator, and Dev Orchestrator</td>
+            <td>Implementation findings and failed behavior checks return to the original executor; integration-only findings and conflict defects return to Dev Merge Coordinator. A corrected contribution or combined artifact re-enters the applicable fresh review and verification gates. After two failed correction attempts for the same finding or acceptance criterion, or when a required fixed dependency is unavailable, Dev Orchestrator reports BLOCKED with preserved commits and evidence rather than substituting self-review.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Completion and claim release</span></td>
+            <td>Dev Orchestrator and every claim owner</td>
+            <td>Record the final direct commit for the single-lane path, or the final integration commit after integrated review and verification for the multi-lane path. Release ownership only after clean status and resource cleanup or handoff.</td>
           </tr>
         </tbody>
       </table>
