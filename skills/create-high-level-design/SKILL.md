@@ -39,7 +39,7 @@ Use documentation-reverse-engineer when the user asks to derive subsystem design
 
 ## Workflow
 
-1. Inspect the target repository before writing. Read parent architecture, functional specifications, module designs, source roots, relevant code, tests, procedures, configuration, backlog files, wiki pages, and current worktree status.
+1. Inspect the target repository before writing. Read parent architecture when it exists, functional specifications, module designs, source roots, relevant code, tests, procedures, configuration, backlog files, wiki pages, and current worktree status.
 2. Identify subsystem boundaries, components, data anchors, contracts, lifecycle, configuration ownership, implementation order, invariants, and verification evidence.
 3. Copy the high-level design template into the target documentation location when a new artifact is needed.
 4. Replace each TODO with source-backed subsystem content.
@@ -48,6 +48,7 @@ Use documentation-reverse-engineer when the user asks to derive subsystem design
 7. Use diagrams only where component collaboration, lifecycle, contracts, configuration, implementation order, or verification coverage are easier to inspect visually.
 8. Say Not yet identified for related code, tests, backlog items, or wiki pages that do not exist yet.
 9. Keep the artifact steady-state. Do not describe it as new, revised, or enhanced unless the document is explicitly a change plan.
+10. In an explicitly bottom-up reverse-engineering workflow where the parent architecture is created after high-level designs, name the expected architecture path as inline code, state the module- and configuration-derived constraints currently governing the subsystem, and record the required Pass 3 backfill. Do not create a broken link or present the provisional target as accepted architecture.
 
 ## Verification
 

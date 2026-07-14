@@ -62,6 +62,8 @@ TODO: Include the last meaningful source review when known.
 
 TODO: Link the architecture document that governs this subsystem.
 
+TODO: During ordered bottom-up reverse engineering only, when the parent architecture is created in the next pass, record its expected project-relative path as inline code instead of a broken link. State that the target is provisional, name the module- and configuration-derived constraints that currently govern the subsystem, and record the required parent-link backfill and independent re-review after architecture acceptance.
+
 TODO: State which architectural constraints apply most directly to this subsystem.
 
 TODO: Add an Architecture Constraint Map in this section when one subsystem inherits several parent architecture constraints.

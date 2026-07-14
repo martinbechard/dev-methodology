@@ -28,13 +28,13 @@ Do not mark pass without quoted evidence.
 
 - Question: Does the artifact start with Current Understanding, Authoritative Sources, Related Code, Related Tests, Related Backlog Items, Related Wiki Pages, Open Questions, and Maintenance Notes?
 - Question: Does Current Understanding describe the subsystem or feature family as it exists or is intended now?
-- Question: Do Authoritative Sources include parent architecture, source files, tests, functional specifications, procedures, and related module designs?
+- Question: Do Authoritative Sources include the accepted parent architecture, or an explicit Pass 3 parent target during ordered bottom-up reverse engineering, plus source files, tests, functional specifications, procedures, and related module designs?
 - Question: Do Related Code and Related Tests identify evidence or say Not yet identified after a real search?
 - Question: Do Open Questions capture unresolved subsystem ownership, boundaries, contracts, or verification issues?
 
 ## Artifact-Specific Questions
 
-- Question: Does Subsystem Purpose And Parent Architecture explain why the subsystem exists and how it fits the parent architecture?
+- Question: Does Subsystem Purpose And Parent Architecture explain why the subsystem exists and how it fits the accepted parent architecture, or explicitly record the provisional target, inherited constraints, and backfill obligation during ordered bottom-up reverse engineering?
 - Question: Do Scope And Non-Goals distinguish included components, excluded components, and deferred work?
 - Question: Do Current Data Anchors name authoritative data sources, state owners, records, events, messages, or external systems?
 - Question: Do Constituent Components identify each component and responsibility without collapsing into implementation detail for every module?
@@ -49,4 +49,4 @@ Do not mark pass without quoted evidence.
 
 ## Findings
 
-Report findings first. Treat missing parent architecture, vague component responsibilities, unclear data contracts, unsupported interaction claims, missing invariants, and missing verification as review findings.
+Report findings first. Treat a missing parent architecture without the explicit ordered reverse-engineering provisional state, vague component responsibilities, unclear data contracts, unsupported interaction claims, missing invariants, and missing verification as review findings. After Pass 3 creates the parent architecture, treat any remaining provisional target or missing resolving parent link as a finding.

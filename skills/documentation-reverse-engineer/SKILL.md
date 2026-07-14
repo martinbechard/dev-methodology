@@ -129,6 +129,7 @@ Completion gate:
 5. Link every constituent component document from the subsystem document.
 6. Link functional specifications when a subsystem directly serves user-visible workflows.
 7. Record overlapping ownership and missing subsystem boundaries as open questions.
+8. When the parent architecture is intentionally created in Pass 3, record its expected project-relative path as a provisional target, state the currently inherited constraints from accepted modules and project configuration, and do not create a broken Markdown link. This ordered-workflow exception is not permission to omit the parent permanently.
 
 Subsystems should be based on runtime collaboration and ownership, not only folder layout.
 
@@ -136,6 +137,7 @@ Completion gate:
 
 - Every accepted module document is linked from at least one high-level design.
 - Every high-level design links all of its constituent module documents and has an accepted high-level-design review.
+- Every high-level design either links an accepted existing parent architecture or records the Pass 3 parent target and inherited constraints explicitly.
 - The full module set is grouped by runtime collaboration without orphaned modules.
 - Pass 3 must not start until this gate passes.
 
@@ -147,6 +149,7 @@ Completion gate:
 4. Document system purpose, scope, context, technology stack, file organization, architectural layers, key components, data movement, lifecycle, cross-cutting concerns, design principles, invariants, risks, trade-offs, and verification.
 5. Link all high-level design documents from the architecture document.
 6. Record architecture-level contradictions as open questions.
+7. Replace each provisional high-level-design parent target with a resolving link to the accepted architecture, reconcile inherited constraints against the architecture, and independently re-review every changed high-level design before closing Pass 3.
 
 Architecture must describe the system that exists. It may call out drift and risk, but it must not silently rewrite behavior.
 
@@ -154,6 +157,7 @@ Completion gate:
 
 - The architecture links every accepted high-level design and explains all cross-subsystem dependencies and cross-cutting responsibilities.
 - The architecture has an accepted architecture review.
+- Every accepted high-level design links back to the accepted parent architecture; no provisional Pass 2 parent target remains.
 - Pass 4 must not start until this gate passes.
 
 ## Pass 4: Functional Specifications
