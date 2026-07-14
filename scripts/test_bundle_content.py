@@ -324,7 +324,7 @@ GENERIC_AGENT_DEFINITIONS_REQUIRED_PHRASES = (
 AGENTIC_CONFIGURATION_REQUIRED_PHRASES = (
     "Agentic Configuration",
     "This page describes runtime use.",
-    "Provide The Relevant Context",
+    "Knowledge Structure",
     "Context Layers",
     "Shared Definitions",
     "Skill Definition Files",
@@ -375,7 +375,7 @@ DOCUMENT_INFORMATION_OWNERS = {
         "Beacon Knowledge Base: Workflow Separation",
     ),
     "agentic-configuration.html": (
-        "Provide The Relevant Context",
+        "Knowledge Structure",
         "Context Layers",
         "Runtime Configuration File Locations",
     ),
@@ -2633,7 +2633,7 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(phrase, definition_text)
 
         for runtime_heading in (
-            "Provide The Relevant Context",
+            "Knowledge Structure",
             "Skills And Agent Definitions",
             "Runtime Configuration File Locations",
         ):
