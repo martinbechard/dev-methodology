@@ -394,6 +394,12 @@
       font-size: 1.12rem;
     }
 
+    .section-subheading {
+      margin-top: var(--space-6);
+      margin-bottom: var(--space-3);
+      font-size: 1.12rem;
+    }
+
     @media (max-width: 820px) {
       main {
         padding: var(--space-8) var(--space-4);
@@ -423,7 +429,7 @@
 
   <section class="section" aria-labelledby="agent-skills-title">
     <h2 id="agent-skills-title">Core Agent Skills</h2>
-    <p class="lede">Each agent definition directly references a small set of core skills. A core skill without a condition is always loaded for that agent. A core skill with a human-readable condition is loaded on demand when the request and available evidence satisfy the rule. These direct references are limited to technology-agnostic skills so the same generic agent can work across programming languages, frameworks, project types, and agentic coding vendors. Technology-dependent skills are therefore not referenced directly by generic agents; a secondary setup-time mechanism detects repository evidence and binds the matching shared skills to folders through PROJECT.yaml and AGENTS.md.</p>
+    <p class="lede">An agent definition may directly reference both required and optional core skills. A required skill has no condition and loads whenever that agent runs. An optional skill has a human-readable condition and loads only when the request and available evidence make it applicable. Both kinds of directly referenced skills must be technology-agnostic so the generic agent definition can be reused across programming languages, frameworks, project types, and agentic coding vendors.</p>
     <div class="matrix">
       <table>
         <thead>
@@ -436,45 +442,60 @@
         </thead>
         <tbody>
           <tr>
-            <td><span class="name">Always-loaded core skill</span></td>
+            <td><span class="name">Required core skill</span></td>
             <td>A skill entry in the agent definition without a condition.</td>
             <td>Every invocation of that agent needs the capability.</td>
             <td>Dev Coder always uses careful-coding, code-comments, code-discovery, and fix-explanation.</td>
           </tr>
           <tr>
-            <td><span class="name">On-demand core skill</span></td>
+            <td><span class="name">Optional core skill</span></td>
             <td>A skill entry in the agent definition with a human-readable condition.</td>
             <td>The request and available evidence satisfy the rule; the agent applies judgment rather than matching prompt words.</td>
             <td>Dev Coder uses test-driven-development when behavior can be expressed through executable tests.</td>
-          </tr>
-          <tr>
-            <td><span class="name">Technology-specific extension</span></td>
-            <td>Detection metadata beside the shared skill plus a folder binding in project configuration.</td>
-            <td>Project setup proves that the technology applies to a folder, then ordinary work receives it as an unconditional folder skill.</td>
-            <td>A Python FastAPI folder receives python and fastapi without adding either skill to the generic Dev Coder definition.</td>
           </tr>
         </tbody>
       </table>
     </div>
   </section>
 
-  <section class="section" aria-labelledby="skill-split-title">
-    <h2 id="skill-split-title">Why Core Agent Skills Split Into Two Loading Modes</h2>
-    <p class="lede">The split is based on whether a capability is part of the agent's minimum operating contract or is a situational method. Always-loaded skills protect the responsibilities the agent must fulfill on every invocation. On-demand skills are valid extensions of that role, but load only when an explicit condition makes them relevant. This is a loading decision within each agent definition, not a way of categorizing agents.</p>
-    <div class="wide-grid">
-      <article class="card agent"><h3>Always loaded: protect the role</h3><p>These skills provide safeguards and responsibilities that cannot be omitted without weakening the agent's basic contract. Making them conditional would allow the agent to skip work it must always perform.</p></article>
-      <article class="card skill"><h3>On demand: adapt the method</h3><p>These skills add a method needed only for a particular request or evidence state. Their conditions keep the method available without imposing it on work where it does not apply.</p></article>
-      <article class="card reference"><h3>The split keeps instructions relevant</h3><p>If every core skill were always loaded, irrelevant procedures would compete for attention and could introduce work the request does not need. If foundational skills were on demand, required safeguards could disappear from an invocation.</p></article>
+  <section class="section" aria-labelledby="technology-boundary-title">
+    <h2 id="technology-boundary-title">Why Technology-Specific Skills Are Loaded Separately</h2>
+    <p class="lede">Required versus optional is not the architectural split: both are valid forms of technology-agnostic skill references inside an agent definition. The actual boundary is technology dependence. No finite agent definition can list every language, framework, library, runtime, database, and tool that may exist now or be added later. Listing technology skills in generic agents would also require every relevant agent definition to be changed whenever the technology catalog grows.</p>
+    <p>The kit therefore uses two independent loading mechanisms. Agent definitions provide their own required and optional technology-agnostic skills. Project setup separately considers only technology and domain skills that actually exist in the available skill collection, detects which ones match each project or folder scope, and binds those skills through PROJECT.yaml and AGENTS.md. New technology skills can be added without editing every generic agent definition.</p>
+    <div class="matrix">
+      <table>
+        <thead>
+          <tr>
+            <th>Loading mechanism</th>
+            <th>What it can load</th>
+            <th>How selection works</th>
+            <th>Why it belongs here</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="name">Agent-definition loading</span></td>
+            <td>Required and optional technology-agnostic skills declared directly in the conceptual agent definition.</td>
+            <td>A required entry loads every time. An optional entry loads when its human-readable condition applies to the request and available evidence.</td>
+            <td>These skills describe stable responsibilities and methods that remain useful regardless of the project's technology stack.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Folder technology loading</span></td>
+            <td>Available technology and domain skills with detection metadata, such as python, fastapi, spring-boot, or the focused JHipster skills.</td>
+            <td>Project Configurator detects matching repository evidence for each scope, records the intended loadout in PROJECT.yaml, and renders it as unconditional folder guidance in AGENTS.md.</td>
+            <td>The project and folder determine the applicable technologies, and the available technology catalog can grow independently of the generic agents.</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-    <p>The existing agent definitions below show how the same boundary is applied in practice.</p>
+    <h3 class="section-subheading">Required and optional skills in current agent definitions</h3>
     <div class="matrix">
       <table>
         <thead>
           <tr>
             <th>Agent definition</th>
-            <th>Always-loaded contract</th>
-            <th>On-demand variation</th>
-            <th>Why these loading choices matter</th>
+            <th>Required technology-agnostic skills</th>
+            <th>Optional technology-agnostic skills and conditions</th>
           </tr>
         </thead>
         <tbody>
@@ -482,19 +503,16 @@
             <td><span class="name">Dev Coder</span></td>
             <td>agent-claim, careful-coding, code-comments, code-discovery, fix-explanation</td>
             <td>organise-project-files when creating a file or directory; test-driven-development when tests can guide the behavior</td>
-            <td>Ownership, discovery, disciplined editing, comment contracts, and handoff are required for every implementation. File placement is irrelevant when no path is created, and test-first work applies only when behavior can be expressed through executable tests.</td>
           </tr>
           <tr>
             <td><span class="name">Dev Artifact Reviewer</span></td>
             <td>review-structured-artifact, documentation-page-verify</td>
             <td>The matching review skill for a functional specification, architecture, high-level design, module design, or unit test plan; agent-claim and organise-project-files only when the review writes an artifact</td>
-            <td>Every review needs the generic evidence checklist and independent page verification. Loading every artifact-specific review skill would mix unrelated checklists, while loading claim and placement procedures for a read-only review would add a mutation workflow the task does not need.</td>
           </tr>
           <tr>
             <td><span class="name">Project Configurator</span></td>
             <td>agent-claim, detect-technology-skills, create-project-configuration, development-methodology, documentation-page-verify</td>
             <td>organise-project-files when adding a path not fixed by the configuration contract; documentation-bootstrap when the project lacks the required documentation structure</td>
-            <td>Every configuration run must own its changes, detect technologies, maintain PROJECT.yaml, route methodology, and verify the result. Placement is unnecessary for contract-fixed paths, and bootstrap work would create needless structure in a project that already has it.</td>
           </tr>
         </tbody>
       </table>
