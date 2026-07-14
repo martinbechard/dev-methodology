@@ -41,12 +41,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "review-module-design"
     },
     {
-      "condition": "when reviewing reconstruction readiness, a reconstructed application parity result, or a controlled reverse-engineering evaluation archive.",
-      "kind": "conditional",
-      "role": "dev-artifact-reviewer",
-      "skill": "review-reconstruction-readiness"
-    },
-    {
       "condition": "when reviewing planned unit-test scenarios, boundaries, traceability, or coverage evidence.",
       "kind": "conditional",
       "role": "dev-artifact-reviewer",
@@ -435,12 +429,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "code-execution-tracing"
     },
     {
-      "condition": "when verifying whole-project reverse engineering, reconstruction parity, or a reconstruction run archive.",
-      "kind": "conditional",
-      "role": "dev-verifier",
-      "skill": "documentation-reverse-engineer"
-    },
-    {
       "condition": "when confidence depends on proving a complete user or system workflow across its real boundaries.",
       "kind": "conditional",
       "role": "dev-verifier",
@@ -453,7 +441,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "organise-project-files"
     },
     {
-      "condition": "when verification depends on a sealed evaluator, model-facing checklist contract, provenance importer, or generated report contract.",
+      "condition": "when verification depends on a model-facing evaluator, checklist contract, provenance importer, or generated report contract.",
       "kind": "conditional",
       "role": "dev-verifier",
       "skill": "prompt-contracts"
@@ -830,11 +818,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "review-functional-spec": "when reviewing a functional specification for its actors, workflows, states, acceptance criteria, or verification obligations.",
         "review-high-level-design": "when reviewing subsystem responsibilities, component collaboration, or a high-level design that coordinates downstream work.",
         "review-module-design": "when reviewing module responsibilities, interfaces, runtime paths, test obligations, or another focused implementation contract.",
-        "review-reconstruction-readiness": "when reviewing reconstruction readiness, a reconstructed application parity result, or a controlled reverse-engineering evaluation archive.",
         "review-unit-test-plan": "when reviewing planned unit-test scenarios, boundaries, traceability, or coverage evidence."
       },
       "declaredCases": [],
-      "description": "Reviews finished non-wiki project documentation and reconstruction-readiness packages with the generic checklist, the matching artifact-specific checklist when one applies, and the shared page verifier.",
+      "description": "Reviews finished non-wiki project documentation with the generic checklist, the matching artifact-specific checklist when one applies, and the shared page verifier.",
       "dynamicFolderSkills": true,
       "fixedSkills": [
         "review-structured-artifact",
@@ -1063,10 +1050,9 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "conditionalSkills": {
         "agent-claim": "when the requested verification mutates files or uses exclusive runtime resources.",
         "code-execution-tracing": "when an observed outcome must be connected to source-level control flow or unconfirmed branches must be identified.",
-        "documentation-reverse-engineer": "when verifying whole-project reverse engineering, reconstruction parity, or a reconstruction run archive.",
         "end-to-end-verification": "when confidence depends on proving a complete user or system workflow across its real boundaries.",
         "organise-project-files": "when the requested verification creates a new project file or directory.",
-        "prompt-contracts": "when verification depends on a sealed evaluator, model-facing checklist contract, provenance importer, or generated report contract.",
+        "prompt-contracts": "when verification depends on a model-facing evaluator, checklist contract, provenance importer, or generated report contract.",
         "root-cause-analysis": "when a verification check fails and its cause must be distinguished from test, environment, or evidence problems.",
         "runtime-evidence-collection": "when static checks alone cannot establish the behavior needed for a verification conclusion."
       },
@@ -1131,7 +1117,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "organise-project-files": "when the requested bootstrap creates a new project file or directory whose path is not already fixed by the bootstrap contract."
       },
       "declaredCases": [],
-      "description": "Sets up a project for later development work. It creates or reuses the project configuration, produces the required documentation, sends each setup and documentation artifact for independent review, keeps exactly one accepted committed contribution as the final direct commit or integrates multiple accepted committed contributions, executes reconstruction-readiness evaluation for complete reverse engineering, and verifies the completed project state.",
+      "description": "Sets up a project for later development work. It creates or reuses the project configuration, produces the required documentation, sends each setup and documentation artifact for independent review, keeps exactly one accepted committed contribution as the final direct commit or integrates multiple accepted committed contributions, and verifies the completed project state.",
       "dynamicFolderSkills": false,
       "fixedSkills": [
         "agent-claim",
@@ -3051,13 +3037,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "declaredCases": [],
       "detection": null,
       "id": "review-module-design",
-      "verifiedCases": []
-    },
-    {
-      "category": "artifact-review",
-      "declaredCases": [],
-      "detection": null,
-      "id": "review-reconstruction-readiness",
       "verifiedCases": []
     },
     {

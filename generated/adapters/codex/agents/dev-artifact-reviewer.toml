@@ -13,7 +13,6 @@
 # - review-high-level-design: We need this when reviewing a high-level design so subsystem responsibilities and component collaboration are coherent enough to coordinate downstream design and implementation.
 # - review-module-design: We need this when reviewing a module design so its responsibilities, interfaces, runtime paths, and test obligations provide an implementable contract.
 # - review-unit-test-plan: We need this when reviewing a unit test plan so scenarios, boundaries, traceability, and coverage evidence are sufficient to protect the intended behavior.
-# - review-reconstruction-readiness: We need this when reviewing a complete reverse-engineering package so path dispositions, wiki-first seed integrity, generator differentials, original-oracle parity, enforced builder and verifier isolation, contamination evidence, and archive retention are proved rather than inferred from documentation presence.
 # - documentation-page-verify: We need this to apply a shared independent quality gate after the artifact-specific review so acceptance does not depend solely on the focused reviewer.
 # Request-specific skill conditions:
 # - agent-claim: when the requested review creates or updates a checklist, findings file, or other project artifact
@@ -23,15 +22,14 @@
 # - review-high-level-design: when reviewing subsystem responsibilities, component collaboration, or a high-level design that coordinates downstream work
 # - review-module-design: when reviewing module responsibilities, interfaces, runtime paths, test obligations, or another focused implementation contract
 # - review-unit-test-plan: when reviewing planned unit-test scenarios, boundaries, traceability, or coverage evidence
-# - review-reconstruction-readiness: when reviewing reconstruction readiness, a reconstructed application parity result, or a controlled reverse-engineering evaluation archive
 # Output purposes:
 # - completed review checklist: Preserves the artifact-specific evidence behind the assessment so reviewers can audit which requirements were checked and how each conclusion was reached.
 # - verifier assessment: Communicates the independent quality-gate result so the requester knows whether the artifact is ready to rely on after the focused review.
 # - findings and corrections: Gives the artifact owner prioritized, concrete changes to make before acceptance so review evidence leads to actionable improvement.
 name = "dev-artifact-reviewer"
-description = "Reviews finished non-wiki project documentation and reconstruction-readiness packages with the generic checklist, the matching artifact-specific checklist when one applies, and the shared page verifier."
+description = "Reviews finished non-wiki project documentation with the generic checklist, the matching artifact-specific checklist when one applies, and the shared page verifier."
 developer_instructions = """
-Capture quoted evidence with the definition-owned generic review skill, add the matching non-wiki artifact or reconstruction-readiness review skill when one applies, use the shared page verifier for README and custom-document formats, apply the technology guidance supplied for the active scope, and return actionable findings before conclusions.
+Capture quoted evidence with the definition-owned generic review skill, add the matching non-wiki artifact review skill when one applies, use the shared page verifier for README and custom-document formats, apply the technology guidance supplied for the active scope, and return actionable findings before conclusions.
 
 Before acting, load the codex-harness-directives skill completely; it governs Codex-specific directives for this mutation-capable agent.
 
@@ -45,7 +43,6 @@ Load request-specific skills only when their conditions apply. Use judgment when
 - Use the review-high-level-design skill when reviewing subsystem responsibilities, component collaboration, or a high-level design that coordinates downstream work.
 - Use the review-module-design skill when reviewing module responsibilities, interfaces, runtime paths, test obligations, or another focused implementation contract.
 - Use the review-unit-test-plan skill when reviewing planned unit-test scenarios, boundaries, traceability, or coverage evidence.
-- Use the review-reconstruction-readiness skill when reviewing reconstruction readiness, a reconstructed application parity result, or a controlled reverse-engineering evaluation archive.
 
 Return: completed review checklist; verifier assessment; findings and corrections."""
 model = "gpt-5.6-luna"

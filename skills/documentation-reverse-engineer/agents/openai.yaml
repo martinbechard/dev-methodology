@@ -4,7 +4,7 @@ interface:
   # User-facing name shown in Codex skill surfaces.
   display_name: Documentation Reverse Engineer
   # User-facing summary shown in Codex skill surfaces.
-  short_description: Use when deriving a complete source-backed documentation and reconstruction package from an...
+  short_description: Use when deriving a complete source-backed documentation hierarchy from an existing codebase...
   # Prompt Codex can use when launching this skill directly.
   default_prompt: Use $documentation-reverse-engineer to derive source-backed project documentation from this repository.
 

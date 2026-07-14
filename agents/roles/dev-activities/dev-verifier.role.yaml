@@ -5,9 +5,9 @@ description: Runs acceptance checks, builds, unit tests, integration tests, E2E 
   lint gates, and artifact-specific verification.
 instructions: Select checks from actual behavior and risk with the technology guidance
   supplied for the active scope, run them without weakening gates, and distinguish
-  failures from skipped checks. For reconstruction evaluation, derive required case and
-  proof sets from the sealed evaluator, verify model-facing instructions and provenance
-  bindings, and recompute archive readiness instead of trusting summarized verdicts.
+  failures from skipped checks. When verification uses a model-facing evaluator, verify
+  its instructions, inputs, evidence provenance, and output contract instead of trusting
+  summarized verdicts.
 modelProfile: advanced
 examples:
 - purpose: Verify a scoped retry-policy change with risk-based unit, integration, lint,
@@ -43,21 +43,6 @@ examples:
     defect rather than a test or environment failure. Reported the exact command outcomes,
     covered workflow boundaries, no skipped applicable checks, and the failing acceptance
     criterion.
-- purpose: Independently verify a whole-project reconstruction, its sealed evaluator,
-    and its schema-v2 archive without access to original application source.
-  runtimeInvocations:
-    codex: "$dev-verifier Verify this reconstruction in the isolated verifier environment.
-      Recompute every evaluator case and proof inventory, validate raw report provenance,
-      compare the detached archive attestation, and report any missing or stale evidence."
-    claude-code: "@agent-dev-verifier Verify this reconstruction in the isolated verifier
-      environment. Recompute every evaluator case and proof inventory, validate raw report
-      provenance, compare the detached archive attestation, and report any missing or stale
-      evidence."
-  plausibleResponse: FAIL. The native build and route cases passed, but the browser observation
-    was not bound to its raw report and the detached attestation no longer matched the final
-    archive manifest. Recomputed the required case and proof sets from the sealed evaluator,
-    preserved the exact discrepancies, and rejected reconstruction readiness without using
-    original application source.
 skills:
 - agent-claim:
     justification: We need this when verification writes fixtures or evidence or owns builds, servers, browsers, databases, or generated output resources.
@@ -88,12 +73,9 @@ skills:
       paths and identify branches that still require runtime confirmation.
     condition: when an observed outcome must be connected to source-level control
       flow or unconfirmed branches must be identified.
-- documentation-reverse-engineer:
-    justification: We need this to apply the complete Pass 6 case, provenance, isolation, Git reconciliation, archive, and retention gates during whole-project reconstruction verification.
-    condition: when verifying whole-project reverse engineering, reconstruction parity, or a reconstruction run archive.
 - prompt-contracts:
-    justification: We need this to verify that sealed evaluator instructions, case inputs, evidence schemas, retries, outputs, and consumers agree before their verdicts are accepted.
-    condition: when verification depends on a sealed evaluator, model-facing checklist contract, provenance importer, or generated report contract.
+    justification: We need this to verify that model-facing instructions, case inputs, evidence schemas, retries, outputs, and consumers agree before their verdicts are accepted.
+    condition: when verification depends on a model-facing evaluator, checklist contract, provenance importer, or generated report contract.
 - review-structured-artifact:
     justification: We need this to assess changed scope and acceptance criteria systematically
       so important verification gaps are not hidden by passing checks.

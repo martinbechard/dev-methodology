@@ -34,8 +34,6 @@ The shared page contract starts every durable page with Current Understanding, A
 - Specialized technology and domain skills own setup-time activation metadata in detection.yaml beside SKILL.md.
 - skills/detect-technology-skills contains the setup workflow, generated detector mirror, and generated portable technology registry.
 - skills/development-methodology/assets/templates contains the reusable TODO-driven template assets.
-- skills/documentation-reverse-engineer/scripts/reconstruction_run.py creates validated wiki-first reconstruction seeds and seals exact run archives before safe retention pruning.
-- evals/reconstruction-review contains a sealed synthetic checklist corpus and an offline candidate-versus-reference scoring runner. It records no model result and changes no routing automatically.
 - Keep Codex openai.yaml metadata beside each source SKILL.md when a skill needs Codex app metadata, invocation policy, or tool dependencies.
 - scripts/install-skills.py installs the bundled skills through adapter profiles for generic Agent Skills, Codex, Gemini CLI, Claude Code, and JetBrains Junie CLI.
 - agents/role-schema.yaml defines the customer-independent conceptual agent definition schema.
@@ -206,44 +204,9 @@ After that analysis and explicit user approval, --replace-customized may be comb
 
 ## Agent Responsibility Boundaries
 
-Wiki work remains separate from general documentation, coding, review, backlog, and project setup. The generated [agent and skill definitions](design/agent-and-skill-definitions.html) page owns catalog views of current conceptual agent definitions and skill definitions, including responsibilities, assigned skills, output contracts, examples, model profiles, repository mutation policies, and agent-skill relationships. [Skills Modularization](design/skills-modularization.html) explains technology-agnostic agent skills and setup-bound technology extensions. The [orchestrated development lifecycle](design/orchestrated-development-lifecycle.html) owns the bootstrap, reconstruction-readiness, execution, review, verification, integration, claim-release, and execution-evidence sequence.
+Wiki work remains separate from general documentation, coding, review, backlog, and project setup. The generated [agent and skill definitions](design/agent-and-skill-definitions.html) page owns catalog views of current conceptual agent definitions and skill definitions, including responsibilities, assigned skills, output contracts, examples, model profiles, repository mutation policies, and agent-skill relationships. [Skills Modularization](design/skills-modularization.html) explains technology-agnostic agent skills and setup-bound technology extensions. The [orchestrated development lifecycle](design/orchestrated-development-lifecycle.html) owns bootstrap, complete source-backed documentation, execution, review, verification, integration, claim release, and execution evidence.
 
-## Reconstruction Readiness And Evaluation
-
-Whole-project reverse engineering has a mandatory executable Pass 6 after the module, high-level, architecture, functional, README, and wiki gates. Every exact baseline path receives one reconstruction disposition: MUST_DOCUMENT, PUBLIC_GENERATOR, or PARITY_TEST_ONLY. Generated status alone is not a reconstruction exemption.
-
-The reconstruction root must be a brand-new destination outside the source project. The portable helper copies docs/wiki first by value, then the complete docs tree, linked root documentation, routing configuration, declared public-generator inputs, and parity contracts. It hashes every input and validates the copied seed inside the destination. Relative links to application source are recorded as project-relative evidence references and reconciled with the path ledger; they never cause application source to be copied. Symbolic links, hard links, absolute original-source paths, workstation user-home or checkout paths, source-root escapes, and undeclared seed files fail validation. Genuine container roots remain portable declared runtime paths.
-
-```bash
-python3 skills/documentation-reverse-engineer/scripts/reconstruction_run.py initialize \
-  --source-project /source/project \
-  --build-root /new/reconstruction-root \
-  --run-id run-001 \
-  --source-baseline BASELINE
-python3 skills/documentation-reverse-engineer/scripts/reconstruction_run.py validate-seed \
-  --build-root /new/reconstruction-root \
-  --exact
-```
-
-A distinct builder works in an operating-system sandbox or container with only the validated seed and declared toolchain. The exact production profile first proves real content-read denial and agent-claim acquire/release in a disposable repository; permission predicates such as `test -r` are not access evidence. A distinct fresh verifier works in a separate enforced environment with the reconstruction, immutable original baseline oracle, parity cases, and generator contracts. Neither receives an original-source mount. One digest seals the evaluator, governing contract, case and probe inventories, and oracle. The verifier derives artifact, process, command, root, and run provenance; rejects unknown, unattempted, partial, weak, synthetic, skipped, or unmatched-failure evidence; executes native and runtime gates at their real boundaries; and recomputes every case and final verdict. Prompts, caller-supplied READY labels, working-directory conventions, builder self-verification, and sampled checks do not prove isolation or parity.
-
-Every successful, failed, or blocked attempt is archived with the reset baseline, routing, accepted documentation and reviews, seed manifest, original oracle, reconstructed output, parity reconciliation, generator delta ledger, contamination ledger, command results, usage metrics, full pre/post Git metadata reconciliation, and exact file-hash manifest. New seals use archive schema version 2. The helper rejects empty placeholder evidence, duplicate manifest paths, documentation or nested guidance that differs from the validated seed, native evidence from another run, missing raw browser-report provenance, stale evaluator or parity counts, unresolved Git or claim-registry changes, and incomplete builder or verifier source-denial evidence.
-
-The schema-version-2 manifest binds the final archived bytes and uses detached post-run attestations as sibling files written after each manifest is frozen. Each attestation binds the manifest digest, content aggregate, run ID, and semantic contract without entering the attested file set. Archive validation requires the sidecar, and an independently stored copy can be compared after transfer. Existing schema-version-1 archives remain readable; the helper does not permit them to be newly sealed. A stage that never started uses a non-empty machine-readable NOT_RUN record with its unmet gate and failure evidence. Seal and validate the new archive before pruning. Retain the newest three run archives and their matching attestations unless the user explicitly chooses another count.
-
-```bash
-python3 skills/documentation-reverse-engineer/scripts/reconstruction_run.py seal-archive \
-  --new-archive /archives/run-001 \
-  --archive-root /archives \
-  --retain 3
-python3 skills/documentation-reverse-engineer/scripts/reconstruction_run.py validate-archive \
-  --archive /archives/run-001
-python3 skills/documentation-reverse-engineer/scripts/reconstruction_run.py compare-archive \
-  --archive /archives/run-001 \
-  --expected-attestation /independent/run-001.attestation.json
-```
-
-Checklist-only model comparisons use the sealed corpus under evals/reconstruction-review. Candidate and reference reviewers run separately at least three times against identical artifact, source-evidence, checklist, and adjudication digests. The offline runner derives blocking-defect recall, false positives, checklist and citation completeness, elapsed time, tokens, and available cost. It recommends promotion only when quality does not regress and median time or tokens improves by at least twenty percent without increasing the other measure. The corpus contains no benchmark result; a recommendation requires separately captured invocation evidence.
+Whole-project reverse engineering finishes after project configuration and exact path coverage, one reviewed module design per meaningful responsibility, complete reviewed HLD grouping, reviewed architecture, reviewed functional workflow coverage, and verified README/wiki navigation. Sampling may be useful for later project-owned experiments, but it never reduces the shared documentation coverage contract.
 
 ## Bundled Skill Inventory
 
@@ -287,7 +250,6 @@ The artifact review skills are:
 - review-high-level-design
 - review-module-design
 - review-unit-test-plan
-- review-reconstruction-readiness
 
 The development practice skills are:
 
@@ -378,7 +340,7 @@ Invoke Project Bootstrapper once and describe the desired steady state:
 
 1. Use the repository bundle sources and matching generated runtime adapter.
 2. Review the resulting PROJECT.yaml, root or nested AGENTS.md guidance, and verification commands. [Skills Modularization](design/skills-modularization.html) explains setup-time detection and folder skillsets.
-3. Use documentation-bootstrap and documentation-reverse-engineer when the project needs a source-backed documentation baseline. Whole-project reverse engineering covers every meaningful module by default: inventory and review module designs first, group the complete set into high-level designs, derive architecture from those groups, cover all observable workflows, expose the complete hierarchy through README and wiki hubs, then execute Pass 6 reconstruction readiness against the original baseline oracle. Narrower coverage is valid only when the user explicitly names the boundary.
+3. Use documentation-bootstrap and documentation-reverse-engineer when the project needs a source-backed documentation baseline. Whole-project reverse engineering covers every meaningful module by default: inventory and review module designs first, group the complete set into high-level designs, derive architecture from those groups, cover all observable workflows, and expose the complete hierarchy through README and wiki hubs. Narrower coverage is valid only when the user explicitly names the boundary.
 4. Follow the [orchestrated development lifecycle](design/orchestrated-development-lifecycle.html) for the owning execution, independent review, integrated verification, commit, and claim-release gates.
 
 Separately requested deployment still requires caller-supplied destinations under Explicit Target Deployment.

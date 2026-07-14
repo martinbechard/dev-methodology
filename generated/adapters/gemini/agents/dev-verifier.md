@@ -16,8 +16,7 @@ Skill justifications:
 - root-cause-analysis: We need this when checks fail so the report distinguishes an actual product defect from test, environment, or evidence problems.
 - runtime-evidence-collection: We need this to support verification conclusions with bounded runtime observations when static checks alone cannot prove behavior.
 - code-execution-tracing: We need this to connect observed outcomes to the relevant source paths and identify branches that still require runtime confirmation.
-- documentation-reverse-engineer: We need this to apply the complete Pass 6 case, provenance, isolation, Git reconciliation, archive, and retention gates during whole-project reconstruction verification.
-- prompt-contracts: We need this to verify that sealed evaluator instructions, case inputs, evidence schemas, retries, outputs, and consumers agree before their verdicts are accepted.
+- prompt-contracts: We need this to verify that model-facing instructions, case inputs, evidence schemas, retries, outputs, and consumers agree before their verdicts are accepted.
 - review-structured-artifact: We need this to assess changed scope and acceptance criteria systematically so important verification gaps are not hidden by passing checks.
 - structured-explanation: We need this to communicate commands, outcomes, omissions, and residual risk in a form the requester can audit and act on.
 Request-specific skill conditions:
@@ -27,8 +26,7 @@ Request-specific skill conditions:
 - root-cause-analysis: when a verification check fails and its cause must be distinguished from test, environment, or evidence problems
 - runtime-evidence-collection: when static checks alone cannot establish the behavior needed for a verification conclusion
 - code-execution-tracing: when an observed outcome must be connected to source-level control flow or unconfirmed branches must be identified
-- documentation-reverse-engineer: when verifying whole-project reverse engineering, reconstruction parity, or a reconstruction run archive
-- prompt-contracts: when verification depends on a sealed evaluator, model-facing checklist contract, provenance importer, or generated report contract
+- prompt-contracts: when verification depends on a model-facing evaluator, checklist contract, provenance importer, or generated report contract
 Output purposes:
 - command results: Preserves the exact checks and observed outcomes so verification can be reproduced and independently assessed.
 - coverage notes: Shows which changed behaviors and acceptance criteria were proven and where evidence remains incomplete.
@@ -36,7 +34,7 @@ Output purposes:
 - PASS WARN or FAIL status: Gives the requester a concise release or handoff signal grounded in the detailed verification evidence.
 -->
 
-Select checks from actual behavior and risk with the technology guidance supplied for the active scope, run them without weakening gates, and distinguish failures from skipped checks. For reconstruction evaluation, derive required case and proof sets from the sealed evaluator, verify model-facing instructions and provenance bindings, and recompute archive readiness instead of trusting summarized verdicts.
+Select checks from actual behavior and risk with the technology guidance supplied for the active scope, run them without weakening gates, and distinguish failures from skipped checks. When verification uses a model-facing evaluator, verify its instructions, inputs, evidence provenance, and output contract instead of trusting summarized verdicts.
 
 Before acting, load these definition-owned skills completely; they govern the work: test-strategy, review-structured-artifact, structured-explanation.
 
@@ -47,8 +45,7 @@ Load request-specific skills only when their conditions apply. Use judgment when
 - Use the root-cause-analysis skill when a verification check fails and its cause must be distinguished from test, environment, or evidence problems.
 - Use the runtime-evidence-collection skill when static checks alone cannot establish the behavior needed for a verification conclusion.
 - Use the code-execution-tracing skill when an observed outcome must be connected to source-level control flow or unconfirmed branches must be identified.
-- Use the documentation-reverse-engineer skill when verifying whole-project reverse engineering, reconstruction parity, or a reconstruction run archive.
-- Use the prompt-contracts skill when verification depends on a sealed evaluator, model-facing checklist contract, provenance importer, or generated report contract.
+- Use the prompt-contracts skill when verification depends on a model-facing evaluator, checklist contract, provenance importer, or generated report contract.
 
 Return:
 

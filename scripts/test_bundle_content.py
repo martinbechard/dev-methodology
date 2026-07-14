@@ -1679,7 +1679,6 @@ class BundleContentTests(unittest.TestCase):
             "project-bootstrapper": (
                 "project-configurator",
                 "dev-documentation-writer",
-                "dev-coder",
                 "wiki-architect",
                 "wiki-writer",
                 "dev-artifact-reviewer",
@@ -2271,7 +2270,6 @@ class BundleContentTests(unittest.TestCase):
         for delegated_role in (
             "project-configurator",
             "dev-documentation-writer",
-            "dev-coder",
             "dev-artifact-reviewer",
             "wiki-architect",
             "wiki-writer",
@@ -2286,7 +2284,6 @@ class BundleContentTests(unittest.TestCase):
             (
                 "project-configurator",
                 "dev-documentation-writer",
-                "dev-coder",
                 "wiki-architect",
                 "wiki-writer",
                 "dev-artifact-reviewer",
@@ -2311,22 +2308,19 @@ class BundleContentTests(unittest.TestCase):
                 "project setup files",
                 "documentation",
                 "checks",
-                "reconstruction evaluation",
                 "remaining questions",
             ),
             role.output_contract,
         )
-        self.assertEqual(5, len(role.examples))
+        self.assertEqual(4, len(role.examples))
         self.assertTrue(role.examples[0]["plausibleResponse"].startswith("STATUS: READY"))
         self.assertTrue(role.examples[1]["plausibleResponse"].startswith("STATUS: READY"))
         self.assertIn("STATUS: BLOCKED", role.examples[2]["plausibleResponse"])
         self.assertTrue(role.examples[3]["plausibleResponse"].startswith("STATUS: READY"))
-        self.assertTrue(role.examples[4]["plausibleResponse"].startswith("STATUS: READY"))
         self.assertIn("valid existing routing", role.examples[0]["purpose"])
         self.assertIn("no project routing", role.examples[1]["purpose"])
         self.assertIn("invalid", role.examples[2]["purpose"])
         self.assertIn("authorized", role.examples[3]["purpose"])
-        self.assertIn("reconstruction evaluation", role.examples[4]["purpose"])
         for example in role.examples:
             self.assertTrue(example["runtimeInvocations"]["codex"].startswith("$project-bootstrapper "))
             self.assertTrue(
@@ -2335,7 +2329,7 @@ class BundleContentTests(unittest.TestCase):
                 )
             )
 
-    def test_dev_verifier_loads_reconstruction_and_prompt_contracts_conditionally(self) -> None:
+    def test_dev_verifier_loads_prompt_contracts_conditionally(self) -> None:
         build_skill_docs = load_build_skill_docs_module()
         skill_payload = build_skill_docs.build_payload()
         roles = build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
@@ -2349,13 +2343,11 @@ class BundleContentTests(unittest.TestCase):
             "prompt-contracts",
             build_skill_docs.fixed_role_skills(role),
         )
-        self.assertIn("documentation-reverse-engineer", role.skill_conditions)
+        self.assertNotIn("documentation-reverse-engineer", role.skill_conditions)
         self.assertIn("prompt-contracts", role.skill_conditions)
-        self.assertIn("whole-project reverse engineering", role.skill_conditions["documentation-reverse-engineer"])
-        self.assertIn("sealed evaluator", role.skill_conditions["prompt-contracts"])
-        self.assertIn("derive required case and proof sets", role.instructions)
-        self.assertEqual(3, len(role.examples))
-        self.assertIn("schema-v2 archive", role.examples[2]["purpose"])
+        self.assertIn("model-facing evaluator", role.skill_conditions["prompt-contracts"])
+        self.assertIn("model-facing evaluator", role.instructions)
+        self.assertEqual(2, len(role.examples))
 
     def test_dev_artifact_reviewer_combines_generic_and_specific_review_skills(self) -> None:
         build_skill_docs = load_build_skill_docs_module()
@@ -2375,7 +2367,6 @@ class BundleContentTests(unittest.TestCase):
                 "review-functional-spec",
                 "review-high-level-design",
                 "review-module-design",
-                "review-reconstruction-readiness",
                 "review-unit-test-plan",
             },
             set(role.skill_conditions),
@@ -3023,47 +3014,20 @@ class BundleContentTests(unittest.TestCase):
         ).read_text(encoding="utf-8")
 
         required_reverse_phrases = (
-            "the entire codebase is in scope",
-            "Do not ask the user to choose a documentation breadth",
+            "Whole-repository reverse engineering is exhaustive",
+            "Inventory every tracked path",
+            "path ledger and coverage manifest must reconcile mechanically in both directions",
+            "Higher-level synthesis never substitutes for missing lower-level coverage",
             "Pass -1: Project Configuration",
-            "technology skills actually exposed by the target runtime",
-            "record `NO_VARIANT` and use general model training",
-            "Pass 0 must not start until this gate passes",
-            "documentation coverage manifest",
-            "machine-checkable path coverage ledger",
-            "set difference in both directions must be empty",
-            "zero `UNCLASSIFIED`",
-            "An unlisted or deferred source area is a coverage failure",
-            "Every in-scope manifest row has a module document",
-            "Pass 2 must not start until this gate passes",
-            "Every accepted module document is linked from at least one high-level design",
-            "Pass 3 must not start until this gate passes",
-            "preserve enough evidence to recreate the application's observable behavior",
-            "Every path gets exactly one of these dispositions",
-            "A generated classification is not sufficient",
-            "Pass 6: Reconstruction Readiness And Parity Evaluation",
-            "complete docs/wiki tree first by value",
-            "non-seed evidence references",
-            "original baseline oracle",
-            "machine-readable parity case catalog",
-            "machine-readable delta ledger",
-            "operating-system sandbox or container",
-            "machine-readable contamination ledger",
-            "workstation-specific user-home paths",
-            "actual content open and byte read",
-            "permission predicate",
-            "caller-supplied READY labels are never evidence",
-            "full pre/post Git metadata inventory",
-            "write their attestation outside the attested set",
-            "archive-manifest.json",
-            "Delete the documentation folder from the source-under-test before the run starts",
-            "copy the completed wiki into that folder first",
-            "Do not allow either step to inspect or copy the original application source",
-            "instruction-only or honor-system boundary is not valid evidence",
-            "Keep the newest three evaluation runs",
-            "defect recall, false positives, checklist completeness",
-            "at least three times with identical artifacts",
-            "reduces median elapsed time or token cost by at least 20 percent",
+            "Pass 0: Repository Orientation",
+            "Pass 1: Module Designs",
+            "Pass 2: High-Level Designs",
+            "Pass 3: Architecture",
+            "Pass 4: Functional Specifications",
+            "Pass 5: README And Wiki Integration",
+            "Every accepted module appears in an accepted HLD",
+            "Pass 5 completes whole-repository reverse engineering",
+            "separate project-owned evaluation",
         )
         for phrase in required_reverse_phrases:
             with self.subTest(reverse_skill_phrase=phrase):
@@ -3090,18 +3054,7 @@ class BundleContentTests(unittest.TestCase):
             "machine-checkable path coverage ledger",
             "Stop between documentation levels",
             "Do not accept higher-level summaries as substitutes",
-            "available technology-skill catalog",
-            "retain the newest three evaluation runs",
-            "enforced source-isolated environment",
-            "Require executable Pass 6",
-            "MUST_DOCUMENT, PUBLIC_GENERATOR, or PARITY_TEST_ONLY",
-            "immutable original baseline oracle",
-            "separate fresh verifier environment",
-            "review-reconstruction-readiness",
-            "actual content opens through two readers",
-            "static OWNED_SMOKE",
-            "detached post-run attestations",
-            "Validate the new archive before pruning",
+            "available-skill catalog",
         ):
             with self.subTest(bootstrapper_phrase=phrase):
                 self.assertIn(phrase, bootstrapper.instructions)
@@ -3115,165 +3068,45 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(writer_phrase=phrase):
                 self.assertIn(phrase, writer.instructions)
 
-        for text in (
-            reverse_skill_text,
-            bootstrap_skill_text,
-            bootstrapper.instructions,
-            writer.instructions,
-        ):
-            self.assertNotIn("balanced set", text.lower())
-
-        readiness_skill = SKILLS_ROOT / "review-reconstruction-readiness"
-        readiness_skill_text = (readiness_skill / "SKILL.md").read_text(
-            encoding="utf-8"
-        )
-        readiness_checklist_text = (
-            readiness_skill
-            / "references"
-            / "review-checklist-reconstruction-readiness.md"
-        ).read_text(encoding="utf-8")
-        reconstruction_helper = (
-            SKILLS_ROOT
-            / "documentation-reverse-engineer"
-            / "scripts"
-            / "reconstruction_run.py"
-        )
         development_methodology_text = (
             SKILLS_ROOT / "development-methodology" / "SKILL.md"
         ).read_text(encoding="utf-8")
-
-        self.assertTrue(reconstruction_helper.is_file())
-        self.assertIn(
-            "review-reconstruction-readiness",
+        readme_text = README_PATH.read_text(encoding="utf-8")
+        lifecycle_text = (
+            REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
+        ).read_text(encoding="utf-8")
+        source_texts = (
+            reverse_skill_text,
             development_methodology_text,
+            bootstrapper.instructions,
+            writer.instructions,
+            readme_text,
+            lifecycle_text,
         )
         for phrase in (
-            "independently reviewing whether a reverse-engineered documentation package",
-            "An instruction-only promise is a failure",
-            "newly archived run validates before retention pruning",
+            "review-reconstruction-readiness",
+            "Pass 6",
+            "MUST_DOCUMENT",
+            "PUBLIC_GENERATOR",
+            "PARITY_TEST_ONLY",
+            "reconstruction_run.py",
+            "evals/reconstruction-review",
+            "reconstruction-readiness",
         ):
-            with self.subTest(readiness_skill_phrase=phrase):
-                self.assertIn(phrase, readiness_skill_text)
-        for phrase in (
-            "MUST_DOCUMENT, PUBLIC_GENERATOR, or PARITY_TEST_ONLY",
-            "docs/wiki was copied first",
-            "original baseline oracle",
-            "operating-system sandbox or container",
-            "contamination ledger",
-            "verifier-derived evidence",
-            "actual content open and byte read",
-            "full pre/post Git metadata inventory",
-            "detached attestations",
-            "newest three complete run archives",
-        ):
-            with self.subTest(readiness_checklist_phrase=phrase):
-                self.assertIn(phrase, readiness_checklist_text)
+            for source_text in source_texts:
+                with self.subTest(removed_shared_phrase=phrase):
+                    self.assertNotIn(phrase, source_text)
 
-        lifecycle_text = (
-            REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
-        ).read_text(encoding="utf-8")
-        for phrase in (
-            "workstation user-home or checkout paths",
-            "real content-read denial and agent-claim acquire/release",
-            "caller-supplied READY labels",
-            "full pre/post Git metadata reconciliation",
-            "detached post-run attestations",
-        ):
-            with self.subTest(readme_reconstruction_phrase=phrase):
-                self.assertIn(phrase, README_PATH.read_text(encoding="utf-8"))
-        for phrase in (
-            "workstation-path-free documentation and configuration seed",
-            "actual byte-read denial through independent readers",
-            "Verifier-derived artifact, process, command, root, and run provenance",
-            "full pre/post Git metadata reconciliation",
-        ):
-            with self.subTest(lifecycle_reconstruction_phrase=phrase):
-                self.assertIn(phrase, lifecycle_text)
-
-    def test_reconstruction_archive_schema_and_checklist_eval_are_executable(self) -> None:
-        helper_text = (
-            SKILLS_ROOT
-            / "documentation-reverse-engineer"
-            / "scripts"
-            / "reconstruction_run.py"
-        ).read_text(encoding="utf-8")
-        reverse_skill_text = (
-            SKILLS_ROOT / "documentation-reverse-engineer" / "SKILL.md"
-        ).read_text(encoding="utf-8")
-        lifecycle_text = (
-            REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
-        ).read_text(encoding="utf-8")
-        evaluation_root = REPOSITORY_ROOT / "evals" / "reconstruction-review"
-
-        for phrase in (
-            "compare_archive_attestation",
-            "_validate_git_reconciliation",
-            "_validate_isolation_ledger",
-            "_validate_execution_provenance",
-            "Archive manifest contains a duplicate path",
-            "New archives must use schemaVersion 2",
-        ):
-            with self.subTest(helper_enforcement_phrase=phrase):
-                self.assertIn(phrase, helper_text)
-        for phrase in (
-            "Schema version 2 is required for newly sealed archives",
-            "execution/provenance.json",
-            "Browser or report cases without raw report provenance fail",
-            "compare-archive",
-        ):
-            with self.subTest(reverse_skill_schema_phrase=phrase):
-                self.assertIn(phrase, reverse_skill_text)
-        for phrase in (
-            "schema version 2",
-            "Checklist model evaluation",
-            "loads the reconstruction and prompt-contract skills",
-        ):
-            with self.subTest(lifecycle_schema_phrase=phrase):
-                self.assertIn(phrase, lifecycle_text)
-        for relative_path in (
-            "README.md",
-            "corpus.json",
-            "run_checklist_eval.py",
-            "adjudication/archive-candidate-v1.json",
-            "checklists/archive-review-v1.json",
-            "fixtures/archive-candidate.json",
-            "fixtures/archive-contract.json",
-        ):
-            with self.subTest(evaluation_file=relative_path):
-                self.assertTrue((evaluation_root / relative_path).is_file())
-
-    def test_reconstruction_review_evaluation_has_project_python_routing(self) -> None:
-        project = yaml.safe_load(
-            (REPOSITORY_ROOT / PROJECT_ARTIFACT).read_text(encoding="utf-8")
+        self.assertFalse((SKILLS_ROOT / "review-reconstruction-readiness").exists())
+        self.assertFalse(
+            (
+                SKILLS_ROOT
+                / "documentation-reverse-engineer"
+                / "scripts"
+                / "reconstruction_run.py"
+            ).exists()
         )
-        path_pattern = "evals/reconstruction-review/**"
-        loadout = next(
-            row
-            for row in project["technology_skill_loadouts"]
-            if row["pathPattern"] == path_pattern
-        )
-        route = next(
-            row
-            for row in project["folder_routing"]
-            if row["pattern"] == path_pattern
-        )
-        agents_text = AGENTS_PATH.read_text(encoding="utf-8")
-
-        self.assertEqual(["python"], loadout["skills"])
-        self.assertEqual("READY", loadout["status"])
-        self.assertIn(
-            "Python source evidence: evals/reconstruction-review/run_checklist_eval.py",
-            loadout["sourceEvidence"][0]["evidence"],
-        )
-        self.assertEqual(["python"], route["required_skills"])
-        self.assertIn(
-            "python3 -m unittest scripts.test_reconstruction_review_eval",
-            route["verification_commands"],
-        )
-        self.assertIn(
-            "- evals/reconstruction-review/**: load python before acting.",
-            agents_text,
-        )
+        self.assertFalse((REPOSITORY_ROOT / "evals" / "reconstruction-review").exists())
 
     def test_project_configuration_distinguishes_no_variant_from_missing_required_skill(self) -> None:
         detector_text = (SKILLS_ROOT / "detect-technology-skills" / "SKILL.md").read_text(

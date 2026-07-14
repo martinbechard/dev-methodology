@@ -42,7 +42,7 @@ examples:
     failure modes, observability, and related tests. Flagged one gap where the documented
     authorization rule is not covered by an automated test.
 - purpose: Reverse engineer a whole application into a complete documentation hierarchy
-    that can guide an independent reconstruction.
+    that can guide future maintenance and implementation.
   runtimeInvocations:
     codex: "$dev-documentation-writer Reverse engineer this entire application from its
       code, configuration, migrations, UI, and tests."

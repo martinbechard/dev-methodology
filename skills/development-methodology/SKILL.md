@@ -28,7 +28,6 @@ Use this skill as the router for software project documentation work from this b
 - Use review-high-level-design before finishing high-level design artifacts.
 - Use review-module-design before finishing module design artifacts.
 - Use review-unit-test-plan before finishing unit test plan artifacts.
-- Use review-reconstruction-readiness before accepting a whole-project reverse-engineering package or reconstruction parity result.
 - Use documentation-page-verify for shared checks on mixed, unknown, or custom documentation artifacts.
 - Use project-wiki before creating, maintaining, or validating docs/wiki content.
 - Use project-wiki-query for wiki-backed project questions.
@@ -73,7 +72,6 @@ Use the smallest document type that fully explains the work:
 - High-level design: coherent subsystem, feature family, system slice, integration path, or multi-module implementation plan.
 - Module design: one module, service, class, task, utility, UI component, or tightly scoped feature unit.
 - Unit test plan: durable scenario, boundary-double, failure, and coverage planning for one unit before or alongside test implementation.
-- Reconstruction readiness package: whole-project path dispositions, copied documentation seed, public-generator differential, original baseline oracle, parity reconciliation, enforced builder and verifier isolation, contamination evidence, reconstructed output, and exact run archive.
 
 ## Artifact Creation Routes
 
@@ -86,8 +84,6 @@ Use this route table when the task is to create or substantially rewrite a metho
 - High-level design artifact: use create-high-level-design, template high-level-design-template.md, and review-high-level-design.
 - Module design artifact: use create-module-design, template module-design-template.md, and review-module-design.
 - Unit test plan artifact: use create-unit-test-plan, template unit-test-plan-template.md, and review-unit-test-plan.
-- Reconstruction readiness package: use documentation-reverse-engineer for the complete gated package and review-reconstruction-readiness for independent acceptance. This evidence package has no single-page template because its machine-readable ledgers, sandbox evidence, reconstructed output, and archive manifest are required parts of the contract.
-
 Use project-wiki-topic-write for ordinary docs/wiki topic pages that summarize or link source material without becoming one of the specialized methodology artifacts. Use documentation-reverse-engineer when the user asks for a source-derived documentation set rather than one artifact.
 
 ## Template Assets
@@ -121,7 +117,7 @@ When a target project needs a local editable document, copy only the matching te
 
 Before finishing documentation or wiki work:
 
-1. Use the artifact-specific review skill when the artifact type is project wiki, functional specification, architecture, high-level design, module design, unit test plan, or reconstruction readiness package.
+1. Use the artifact-specific review skill when the artifact type is project wiki, functional specification, architecture, high-level design, module design, or unit test plan.
 2. Use documentation-page-verify for mixed, unknown, or custom documentation artifacts.
 3. Confirm the document follows the selected structure or format. Use the shared page contract only when the selected artifact type requires it.
 4. Run project wiki status and lint when docs/wiki exists.
