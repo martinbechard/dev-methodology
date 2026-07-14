@@ -92,10 +92,18 @@
       font-size: 0.9em;
     }
 
-    .home-link {
+    .document-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+      margin-bottom: var(--space-6);
+    }
+
+    .document-nav a {
       display: inline-flex;
       width: max-content;
-      margin-bottom: var(--space-6);
+      align-items: center;
+      gap: var(--space-2);
       padding: 0.45rem 0.75rem;
       border: 1px solid var(--color-line);
       border-radius: var(--radius);
@@ -104,6 +112,15 @@
       font-size: var(--font-sm);
       text-decoration: none;
       box-shadow: var(--shadow-panel);
+      transition: border-color 160ms ease, color 160ms ease, transform 160ms ease;
+    }
+
+    .document-nav a:hover,
+    .document-nav a:focus-visible {
+      transform: translateY(-1px);
+      border-color: var(--color-agent);
+      color: var(--color-ink);
+      outline: none;
     }
 
     .hero {
@@ -353,11 +370,15 @@
 </head>
 <body>
   <main>
-    <a class="home-link" href="../index.html">Back to documentation index</a>
+    <nav class="document-nav" aria-label="Documentation navigation">
+      <a href="agent-and-skill-definitions.html" rel="prev"><span aria-hidden="true">&larr;</span> Previous: Agent And Skill Definitions</a>
+      <a href="../index.html">Documentation Index</a>
+      <a href="skills-modularization.html" rel="next">Next: Skills Modularization <span aria-hidden="true">&rarr;</span></a>
+    </nav>
 
     <section class="hero" aria-labelledby="page-title">
       <h1 id="page-title">Agentic Configuration</h1>
-      <p class="boundary">This page describes runtime use. It does not describe the source model that creates agent files. The <a href="generic-agent-definitions-source.html">Generic Agent Definitions Source</a> page owns that source model and its conversion into harness-specific files.</p>
+      <p class="boundary">This page describes runtime use.</p>
     </section>
 
     <section class="section" aria-labelledby="context-title">

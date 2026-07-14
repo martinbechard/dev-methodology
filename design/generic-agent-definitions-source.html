@@ -93,12 +93,18 @@
       font-size: 0.9em;
     }
 
-    .home-link {
+    .document-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+      margin-bottom: var(--space-6);
+    }
+
+    .document-nav a {
       display: inline-flex;
       width: max-content;
       align-items: center;
       gap: var(--space-2);
-      margin-bottom: var(--space-6);
       padding: 0.45rem 0.75rem;
       border: 1px solid var(--color-line);
       border-radius: var(--radius);
@@ -108,6 +114,15 @@
       font-weight: 700;
       text-decoration: none;
       box-shadow: var(--shadow-panel);
+      transition: border-color 160ms ease, color 160ms ease, transform 160ms ease;
+    }
+
+    .document-nav a:hover,
+    .document-nav a:focus-visible {
+      transform: translateY(-1px);
+      border-color: var(--color-role);
+      color: var(--color-ink);
+      outline: none;
     }
 
     .hero {
@@ -295,7 +310,11 @@
 </head>
 <body>
   <main>
-    <a class="home-link" href="../index.html">Back to documentation index</a>
+    <nav class="document-nav" aria-label="Documentation navigation">
+      <a href="skills-modularization.html" rel="prev"><span aria-hidden="true">&larr;</span> Previous: Skills Modularization</a>
+      <a href="../index.html">Documentation Index</a>
+      <a href="agent-skill-specialization-examples.html" rel="next">Next: Examples <span aria-hidden="true">&rarr;</span></a>
+    </nav>
 
     <section class="hero" aria-labelledby="page-title">
       <h1 id="page-title">Generic Agent Definitions Source</h1>
@@ -303,10 +322,6 @@
         Skills and agents have different portability models. A source skill remains the same portable skill package when it is deployed,
         while a conceptual agent definition source must be converted into the file format and properties understood by each agent harness.
         This page explains that difference, the conceptual agent definition model, native agent packaging, cross-runtime property mappings, and vendor references.
-        The <a href="agent-and-skill-definitions.html">agent definition map</a> owns generated catalog views, and the
-        <a href="skills-modularization.html">skills modularization page</a> explains agent skill selection and setup-bound technology extensions.
-        The <a href="agentic-configuration.html">Agentic Configuration page</a> explains how the generated files are used at runtime to steer code generation.
-        The <a href="../README.md#explicit-target-deployment">README</a> owns deployment commands, destination ownership, updates, and pruning.
       </p>
       <div class="pill-row" aria-label="Document facets">
         <span class="pill"><span class="dot"></span>Conceptual definition source</span>

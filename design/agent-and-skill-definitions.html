@@ -93,12 +93,18 @@
       font-size: 0.9em;
     }
 
-    .home-link {
+    .document-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+      margin-bottom: var(--space-6);
+    }
+
+    .document-nav a {
       display: inline-flex;
       width: max-content;
       align-items: center;
       gap: var(--space-2);
-      margin-bottom: var(--space-6);
       padding: 0.45rem 0.75rem;
       border: 1px solid var(--color-line);
       border-radius: var(--radius);
@@ -111,8 +117,8 @@
       transition: border-color 160ms ease, color 160ms ease, transform 160ms ease;
     }
 
-    .home-link:hover,
-    .home-link:focus-visible {
+    .document-nav a:hover,
+    .document-nav a:focus-visible {
       transform: translateY(-1px);
       border-color: var(--color-role);
       color: var(--color-ink);
@@ -575,7 +581,10 @@
 </head>
 <body>
 <main>
-  <a class="home-link" href="../index.html"><span aria-hidden="true">&larr;</span> Documentation Index</a>
+  <nav class="document-nav" aria-label="Documentation navigation">
+    <a href="../index.html">Documentation Index</a>
+    <a href="agentic-configuration.html" rel="next">Next: Agentic Configuration <span aria-hidden="true">&rarr;</span></a>
+  </nav>
 
   <section class="hero" aria-labelledby="page-title">
     <div class="legend" aria-label="Legend">
@@ -587,8 +596,6 @@
     <h1 id="page-title">Agent And Skill Definitions</h1>
     <p class="lede">
       This page owns conceptual agent definitions and skill definitions, including responsibilities, assigned skills, output contracts, examples, model profiles, repository mutation policies, and agent-skill relationships. The interactive diagram and the cards deliberately present the same definition-to-skill relationships in two generated views; no hand-authored routing policy lives here.
-      Read <a href="skills-modularization.html">Skills Modularization</a> for skill selection and setup-bound technology extensions and the
-      <a href="orchestrated-development-lifecycle.html">orchestrated development lifecycle</a> for lifecycle handoffs.
     </p>
   </section>
 
