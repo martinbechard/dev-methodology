@@ -2751,6 +2751,12 @@ class BundleContentTests(unittest.TestCase):
                     "</section>", maxsplit=1
                 )[0]
                 self.assertNotIn("<a ", hero)
+                for badge_marker in (
+                    'class="legend"',
+                    'class="pill-row"',
+                    'class="pill"',
+                ):
+                    self.assertNotIn(badge_marker, hero)
         for owner in expected_index_owners:
             with self.subTest(index_owner=owner):
                 self.assertEqual(

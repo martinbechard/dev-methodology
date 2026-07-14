@@ -182,45 +182,6 @@
       border-top-color: var(--color-risk);
     }
 
-    .pill-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--space-3);
-    }
-
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: var(--space-2);
-      padding: 0.35rem 0.6rem;
-      border: 1px solid var(--color-line);
-      border-radius: 999px;
-      background: var(--color-panel);
-      color: var(--color-muted);
-      font-size: var(--font-xs);
-      font-weight: 700;
-      text-transform: uppercase;
-    }
-
-    .dot {
-      width: 0.65rem;
-      height: 0.65rem;
-      border-radius: 50%;
-      background: var(--color-role);
-    }
-
-    .dot.source {
-      background: var(--color-source);
-    }
-
-    .dot.skill {
-      background: var(--color-skill);
-    }
-
-    .dot.risk {
-      background: var(--color-risk);
-    }
-
     ul,
     ol {
       margin: var(--space-3) 0 0;
@@ -330,12 +291,6 @@
         while a conceptual agent definition source must be converted into the file format and properties understood by each agent harness.
         This page explains that difference, the conceptual agent definition model, native agent packaging, cross-runtime property mappings, and vendor references.
       </p>
-      <div class="pill-row" aria-label="Document facets">
-        <span class="pill"><span class="dot"></span>Conceptual definition source</span>
-        <span class="pill"><span class="dot source"></span>Runtime adapters</span>
-        <span class="pill"><span class="dot skill"></span>Skill validation</span>
-        <span class="pill"><span class="dot risk"></span>Drift control</span>
-      </div>
     </section>
 
     <section class="section" aria-labelledby="portability-title">
