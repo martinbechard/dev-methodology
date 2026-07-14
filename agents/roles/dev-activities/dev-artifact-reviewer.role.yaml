@@ -1,12 +1,13 @@
 name: dev-artifact-reviewer
 filename: dev-artifact-reviewer
 repositoryMutation: conditional
-description: Reviews finished non-wiki project documentation with the generic checklist,
-  the matching artifact-specific checklist when one applies, and the shared page verifier.
+description: Reviews finished non-wiki project documentation and reconstruction-readiness
+  packages with the generic checklist, the matching artifact-specific checklist when one
+  applies, and the shared page verifier.
 instructions: Capture quoted evidence with the definition-owned generic review skill, add the
-  matching non-wiki artifact review skill when one applies, use the shared page verifier
-  for README and custom-document formats, apply the technology guidance supplied for
-  the active scope, and return actionable findings before conclusions.
+  matching non-wiki artifact or reconstruction-readiness review skill when one applies,
+  use the shared page verifier for README and custom-document formats, apply the technology
+  guidance supplied for the active scope, and return actionable findings before conclusions.
 modelProfile: advanced
 modelStages:
   evidence-extraction: simple
@@ -38,6 +39,21 @@ examples:
     the artifact's source authority, links, and steady-state language. Reported no blocking
     corrections and noted one non-blocking test-traceability improvement without editing
     the design.
+- purpose: Determine whether a reverse-engineered documentation package actually reconstructed
+    the application under enforced isolation and reconciled every generator output and parity
+    case against the original baseline.
+  runtimeInvocations:
+    codex: "$dev-artifact-reviewer Review this completed reconstruction-readiness package,
+      including path dispositions, seed manifest, sandbox evidence, oracle, parity results,
+      generator delta ledger, contamination ledger, and run archive."
+    claude-code: "@agent-dev-artifact-reviewer Review this completed reconstruction-readiness
+      package, including path dispositions, seed manifest, sandbox evidence, oracle, parity
+      results, generator delta ledger, contamination ledger, and run archive."
+  plausibleResponse: Completed the exact reconstruction-readiness checklist and mechanically
+    reconciled baseline paths, copied seed files, generator outputs, parity case IDs, and archive
+    contents. Re-ran seed and archive validation and inspected denied-access probes from the
+    separate builder and verifier containers. Rejected the package because one PARITY_TEST_ONLY
+    path had no case ID and the verifier inherited an undeclared source-derived cache mount.
 skills:
 - agent-claim:
     justification: We need this when review evidence is saved so the checklist or findings artifact has explicit ownership through commit and clean release.
@@ -77,6 +93,13 @@ skills:
       traceability, and coverage evidence are sufficient to protect the intended behavior.
     condition: when reviewing planned unit-test scenarios, boundaries, traceability,
       or coverage evidence.
+- review-reconstruction-readiness:
+    justification: We need this when reviewing a complete reverse-engineering package so path
+      dispositions, wiki-first seed integrity, generator differentials, original-oracle parity,
+      enforced builder and verifier isolation, contamination evidence, and archive retention
+      are proved rather than inferred from documentation presence.
+    condition: when reviewing reconstruction readiness, a reconstructed application parity
+      result, or a controlled reverse-engineering evaluation archive.
 - documentation-page-verify:
     justification: We need this to apply a shared independent quality gate after the
       artifact-specific review so acceptance does not depend solely on the focused reviewer.

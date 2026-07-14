@@ -14,7 +14,7 @@ This page is generated from the conceptual agent definitions, bundled skill fron
 ## Summary
 
 - [x] 26 conceptual agent definitions generate through the supported native agent definition adapters.
-- [x] 82 bundled skills pass catalog and Agent Skill validation.
+- [x] 83 bundled skills pass catalog and Agent Skill validation.
 - [x] 2 agents and 12 skills are named in current evaluation cases.
 - [ ] 0 agents and 0 skills have independently verified behavior evidence under the current proof contract.
 - TypeScript implementation, Java and Spring Boot implementation, SQL behavior, and TypeScript code review have useful manual observations that must be rerun with truthful receipts.
@@ -135,6 +135,7 @@ This page is generated from the conceptual agent definitions, bundled skill fron
 - [x] review-functional-spec — structural; declared: none; verified behavior: [ ] none
 - [x] review-high-level-design — structural; declared: none; verified behavior: [ ] none
 - [x] review-module-design — structural; declared: none; verified behavior: [ ] none
+- [x] review-reconstruction-readiness — structural; declared: none; verified behavior: [ ] none
 - [x] review-structured-artifact — structural; declared: typescript-code-review; verified behavior: [ ] none
 - [x] review-unit-test-plan — structural; declared: none; verified behavior: [ ] none
 

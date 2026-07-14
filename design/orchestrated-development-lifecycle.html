@@ -401,7 +401,7 @@
     </div>
     <h1 id="page-title">Orchestrated Development Lifecycle</h1>
     <p class="lede">
-      This page owns the orchestrated execution, review, verification, integration, completion, and evidence sequence.
+      This page owns the orchestrated bootstrap, reconstruction-readiness, execution, review, verification, integration, completion, and evidence sequence.
       Use <a href="skills-modularization.html">Skills Modularization</a> for always-used, rule-selected, and setup-bound technology skills, and the
       <a href="agent-and-skill-definitions.html">generated catalog</a> for each conceptual agent definition's detailed contract.
     </p>
@@ -422,7 +422,12 @@
           <tr>
             <td><span class="name">Bootstrap, when requested</span></td>
             <td>Project Bootstrapper</td>
-            <td>Reuse a valid project-root PROJECT.yaml. When it is absent, or when the user explicitly requests reconfiguration, Project Configurator must create and validate it before documentation work begins. Whole-project reverse engineering inventories and reviews every meaningful module before grouping the complete set into high-level designs, architecture, functional specifications, and wiki navigation; each level is a stop gate for the next.</td>
+            <td>Reuse a valid project-root PROJECT.yaml. When it is absent, or when the user explicitly requests reconfiguration, Project Configurator must create and validate it before documentation work begins. Whole-project reverse engineering inventories and reviews every meaningful module before grouping the complete set into high-level designs, architecture, functional specifications, and wiki navigation; each level is a stop gate for the next, followed by mandatory executable reconstruction readiness.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Reconstruction readiness, for whole-project reverse engineering</span></td>
+            <td>Project Bootstrapper, Dev Coder, Dev Verifier, and Dev Artifact Reviewer</td>
+            <td>Every baseline path receives one reconstruction disposition. A new build root receives the wiki first and then the complete hashed documentation and configuration seed. Dev Coder builds without an original-source mount, a distinct Dev Verifier compares every parity case and generator output with the immutable original oracle in a separate enforced environment, and Dev Artifact Reviewer applies the exact reconstruction-readiness checklist. An honor-system boundary, missing case, unresolved delta, contamination finding, or invalid archive blocks completion.</td>
           </tr>
           <tr>
             <td><span class="name">Intake</span></td>
@@ -481,6 +486,29 @@
           </tr>
         </tbody>
       </table>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="reconstruction-title">
+    <h2 id="reconstruction-title">Reconstruction Evaluation Boundary</h2>
+    <p class="lede">Pass 6 proves that the documentation package is an executable construction contract, not only a navigable explanation of the source.</p>
+    <div class="wide-grid">
+      <article class="card reference">
+        <h3>Original baseline and seed</h3>
+        <p>The reset source inventory is reconciled path by path to MUST_DOCUMENT, PUBLIC_GENERATOR, or PARITY_TEST_ONLY. The original oracle is captured before builder isolation. A brand-new destination receives docs/wiki first, then the complete documentation, routing, public-generator, and parity corpus. Relative source links remain recorded evidence references and never copy application source.</p>
+      </article>
+      <article class="card agent">
+        <h3>Enforced builder</h3>
+        <p>Dev Coder receives only the validated seed and declared external toolchain through an operating-system sandbox or container. Mount, environment, cache, temporary-path, network, credential, dependency-provenance, and denied-access evidence is recorded in the contamination ledger.</p>
+      </article>
+      <article class="card agent">
+        <h3>Independent verifier</h3>
+        <p>A distinct fresh Dev Verifier receives the reconstruction, immutable oracle, parity cases, and generator contracts without original source or builder-private context. Exact case-ID and generated-file reconciliation must pass across build, tests, routes, workflows, data, security, integrations, configuration, operations, and deployment.</p>
+      </article>
+      <article class="card reference">
+        <h3>Review and archive</h3>
+        <p>Dev Artifact Reviewer re-runs deterministic checks with the reconstruction-readiness checklist. Every successful, failed, or blocked attempt is archived with exact file hashes. The newly sealed archive validates before retention pruning, after which the newest three runs remain unless the user selected another count.</p>
+      </article>
     </div>
   </section>
 

@@ -2174,15 +2174,17 @@ class BundleContentTests(unittest.TestCase):
             ),
             role.output_contract,
         )
-        self.assertEqual(4, len(role.examples))
+        self.assertEqual(5, len(role.examples))
         self.assertTrue(role.examples[0]["plausibleResponse"].startswith("STATUS: READY"))
         self.assertTrue(role.examples[1]["plausibleResponse"].startswith("STATUS: READY"))
         self.assertIn("STATUS: BLOCKED", role.examples[2]["plausibleResponse"])
         self.assertTrue(role.examples[3]["plausibleResponse"].startswith("STATUS: READY"))
+        self.assertTrue(role.examples[4]["plausibleResponse"].startswith("STATUS: READY"))
         self.assertIn("valid existing routing", role.examples[0]["purpose"])
         self.assertIn("no project routing", role.examples[1]["purpose"])
         self.assertIn("invalid", role.examples[2]["purpose"])
         self.assertIn("authorized", role.examples[3]["purpose"])
+        self.assertIn("reconstruction evaluation", role.examples[4]["purpose"])
         for example in role.examples:
             self.assertTrue(example["runtimeInvocations"]["codex"].startswith("$project-bootstrapper "))
             self.assertTrue(
@@ -2209,6 +2211,7 @@ class BundleContentTests(unittest.TestCase):
                 "review-functional-spec",
                 "review-high-level-design",
                 "review-module-design",
+                "review-reconstruction-readiness",
                 "review-unit-test-plan",
             },
             set(role.skill_conditions),
@@ -2871,9 +2874,20 @@ class BundleContentTests(unittest.TestCase):
             "Every accepted module document is linked from at least one high-level design",
             "Pass 3 must not start until this gate passes",
             "preserve enough evidence to recreate the application's observable behavior",
+            "Every path gets exactly one of these dispositions",
+            "A generated classification is not sufficient",
+            "Pass 6: Reconstruction Readiness And Parity Evaluation",
+            "complete docs/wiki tree first by value",
+            "non-seed evidence references",
+            "original baseline oracle",
+            "machine-readable parity case catalog",
+            "machine-readable delta ledger",
+            "operating-system sandbox or container",
+            "machine-readable contamination ledger",
+            "archive-manifest.json",
             "Delete the documentation folder from the source-under-test before the run starts",
-            "copy the completed wiki and its linked documentation into that folder before any reconstruction code is written",
-            "Do not allow it to inspect or copy the original application source",
+            "copy the completed wiki into that folder first",
+            "Do not allow either step to inspect or copy the original application source",
             "instruction-only or honor-system boundary is not valid evidence",
             "Keep the newest three evaluation runs",
             "defect recall, false positives, checklist completeness",
@@ -2908,6 +2922,12 @@ class BundleContentTests(unittest.TestCase):
             "available technology-skill catalog",
             "retain the newest three evaluation runs",
             "enforced source-isolated environment",
+            "Require executable Pass 6",
+            "MUST_DOCUMENT, PUBLIC_GENERATOR, or PARITY_TEST_ONLY",
+            "immutable original baseline oracle",
+            "separate fresh verifier environment",
+            "review-reconstruction-readiness",
+            "Validate the new archive before pruning",
         ):
             with self.subTest(bootstrapper_phrase=phrase):
                 self.assertIn(phrase, bootstrapper.instructions)
@@ -2928,6 +2948,48 @@ class BundleContentTests(unittest.TestCase):
             writer.instructions,
         ):
             self.assertNotIn("balanced set", text.lower())
+
+        readiness_skill = SKILLS_ROOT / "review-reconstruction-readiness"
+        readiness_skill_text = (readiness_skill / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        readiness_checklist_text = (
+            readiness_skill
+            / "references"
+            / "review-checklist-reconstruction-readiness.md"
+        ).read_text(encoding="utf-8")
+        reconstruction_helper = (
+            SKILLS_ROOT
+            / "documentation-reverse-engineer"
+            / "scripts"
+            / "reconstruction_run.py"
+        )
+        development_methodology_text = (
+            SKILLS_ROOT / "development-methodology" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+
+        self.assertTrue(reconstruction_helper.is_file())
+        self.assertIn(
+            "review-reconstruction-readiness",
+            development_methodology_text,
+        )
+        for phrase in (
+            "independently reviewing whether a reverse-engineered documentation package",
+            "An instruction-only promise is a failure",
+            "newly archived run validates before retention pruning",
+        ):
+            with self.subTest(readiness_skill_phrase=phrase):
+                self.assertIn(phrase, readiness_skill_text)
+        for phrase in (
+            "MUST_DOCUMENT, PUBLIC_GENERATOR, or PARITY_TEST_ONLY",
+            "docs/wiki was copied first",
+            "original baseline oracle",
+            "operating-system sandbox or container",
+            "contamination ledger",
+            "newest three complete run archives",
+        ):
+            with self.subTest(readiness_checklist_phrase=phrase):
+                self.assertIn(phrase, readiness_checklist_text)
 
     def test_project_configuration_distinguishes_no_variant_from_missing_required_skill(self) -> None:
         detector_text = (SKILLS_ROOT / "detect-technology-skills" / "SKILL.md").read_text(

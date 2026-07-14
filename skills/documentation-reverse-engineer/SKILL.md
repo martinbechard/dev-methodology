@@ -1,13 +1,13 @@
 ---
 name: documentation-reverse-engineer
-description: Use when deriving functional, architecture, high-level design, module design, README, or wiki documentation from an existing codebase.
+description: Use when deriving a complete source-backed documentation and reconstruction package from an existing codebase and proving reconstruction readiness against the original baseline.
 metadata:
   category: documentation-methodology
 ---
 
 # Documentation Reverse Engineer
 
-Use this skill to derive a source-backed documentation set from an existing codebase. Work from the smallest implementation units outward: modules, subsystems, architecture, functional behavior, then README and wiki integration.
+Use this skill to derive and evaluate a source-backed reconstruction package from an existing codebase. Work from the smallest implementation units outward: modules, subsystems, architecture, functional behavior, README and wiki integration, then independent reconstruction and parity evaluation.
 
 ## Coverage Contract
 
@@ -16,6 +16,8 @@ When the request names a repository, application, or project without a narrower 
 Full coverage means documenting every meaningful runtime responsibility, not creating one page per class or file. A meaningful module includes an independently understandable backend responsibility, public contract, persistent aggregate, UI route or feature area, integration, security boundary, background or operational process, or build and deployment capability. Tightly coupled files may share one module document only when their responsibility and lifecycle cannot be understood independently.
 
 The documentation set must preserve enough evidence to recreate the application's observable behavior in another folder. Cover public interfaces, data models and migrations, initial or sample data, configuration behavior, authentication and authorization, user workflows and UI states, validation and error behavior, integrations, operational commands, build and deployment behavior, and the tests that define expected results. Record unsupported or unknowable behavior as a specific open question rather than silently omitting it.
+
+Every exact baseline path also needs one reconstruction disposition. MUST_DOCUMENT means the package contains the construction facts, contracts, data, configuration, and behavior needed to recreate the responsibility. PUBLIC_GENERATOR means a generator obtainable without original-source access can recreate the path from locked public inputs and an explicit invocation. PARITY_TEST_ONLY means the path does not need construction detail but its observable responsibility is covered by one or more executable parity cases. Every path gets exactly one of these dispositions. A generated classification is not sufficient and does not exempt the path from disposition, generator-differential, or parity evidence.
 
 ## Pass -1: Project Configuration
 
@@ -42,7 +44,7 @@ Create a documentation coverage manifest under the documentation root before aut
 
 Map every in-scope source area to one or more rows. List generated, vendored, fixture-only, and explicitly user-excluded areas separately with their generator, owner, or exclusion reason. An unlisted or deferred source area is a coverage failure.
 
-Create a machine-checkable path coverage ledger beside the manifest. Capture the exact source-baseline commit and inventory every tracked path plus every meaningful untracked source or configuration path present at that baseline. For each path record its classification, owning module or responsibility, manifest row, and one of `IN_SCOPE`, `GENERATED`, `VENDORED`, `FIXTURE_ONLY`, `SETUP_ARTIFACT`, or `USER_EXCLUDED`. Any non-`IN_SCOPE` classification requires a concrete generator, owner, fixture use, setup contract, or explicit user boundary; directory-level labels without path entries are insufficient.
+Create a machine-checkable path coverage ledger beside the manifest. Capture the exact source-baseline commit and inventory every tracked path plus every meaningful untracked source or configuration path present at that baseline. For each path record its classification, owning module or responsibility, manifest row, one of IN_SCOPE, GENERATED, VENDORED, FIXTURE_ONLY, SETUP_ARTIFACT, or USER_EXCLUDED, and exactly one reconstruction disposition: MUST_DOCUMENT, PUBLIC_GENERATOR, or PARITY_TEST_ONLY. Any non-IN_SCOPE classification requires a concrete generator, owner, fixture use, setup contract, or explicit user boundary; directory-level labels without path entries are insufficient. A generated classification is not sufficient reconstruction evidence.
 
 Compare the ledger mechanically with the baseline inventory. The set difference in both directions must be empty, duplicate path entries are invalid, and the ledger must contain zero `UNCLASSIFIED`, blank-owner, or implicitly deferred paths. Hidden files, root manifests, build scripts, migrations, assets, test support, CI, and operational configuration are part of the inventory; do not limit the ledger to conventional source extensions.
 
@@ -68,6 +70,7 @@ Do not invent behavior to fill gaps. Record an open question when the repository
 5. Record documentation gaps and conflicts for later passes.
 6. Create the documentation coverage manifest and populate its module inventory from the full source, test, configuration, migration, UI, integration, and operational surface.
 7. Create the path coverage ledger from the exact source baseline and mechanically prove that every inventoried path maps to a manifest row or a justified non-source classification.
+8. Assign every path exactly one reconstruction disposition and link each disposition to its document evidence, public-generator contract, or parity case IDs.
 
 Completion gate:
 
@@ -76,7 +79,7 @@ Completion gate:
 - Existing documentation is inventoried.
 - Verification commands are known or recorded as not yet identified.
 - Every in-scope source area appears in the coverage manifest as a module responsibility or an evidence-backed generated, vendored, or fixture-only exclusion.
-- The path coverage ledger matches the baseline inventory exactly, has no duplicate or unclassified path, and maps every `IN_SCOPE` path to a manifest row.
+- The path coverage ledger matches the baseline inventory exactly, has no duplicate or unclassified path, maps every IN_SCOPE path to a manifest row, and assigns every path exactly one allowed reconstruction disposition.
 
 ## Code Discovery Tools
 
@@ -196,7 +199,39 @@ Completion gate:
 
 - README and wiki hubs expose the complete architecture, high-level design, module design, and functional specification hierarchy.
 - The coverage manifest contains no missing, pending, sampled, or implicitly deferred in-scope module.
-- Wiki and documentation verification passes before the run is reported complete.
+- Wiki and documentation verification passes.
+- Pass 6 must not start until this gate passes, and the run must not be reported as complete reverse engineering before Pass 6 passes.
+
+## Pass 6: Reconstruction Readiness And Parity Evaluation
+
+Pass 6 is mandatory for every whole-project run reported as complete reverse engineering. A run that stops after Pass 5 may report that its documentation gates passed, but it must not claim reconstruction readiness or complete reverse engineering.
+
+1. Reconcile the exact baseline inventory against the reconstruction-disposition ledger mechanically in both directions. Reject missing, duplicate, blank, extra, or unknown dispositions.
+2. For each MUST_DOCUMENT path, verify that accepted documents contain the construction facts needed by an independent builder. Original-source links remain traceability evidence; they are not a substitute for self-contained construction instructions.
+3. For each PUBLIC_GENERATOR path, package the generator identity, locked version or digest, public inputs, invocation, output contract, comparison policy, and dependency provenance. The generator must be obtainable without access to the original repository.
+4. For each PARITY_TEST_ONLY path, link at least one executable parity case that observes the responsibility. No path may use this disposition only to avoid documentation work.
+5. Create the reconstruction root as a brand-new empty destination outside the source project. Copy the complete docs/wiki tree first by value, then copy the remainder of the complete docs tree, linked root documentation, PROJECT.yaml, every applicable AGENTS.md and CLAUDE.md, declared public-generator inputs, and declared parity contracts. Do not write reconstruction code before the copied seed validates inside that destination.
+6. Preserve project-relative links from documentation to application source as non-seed evidence references in the seed manifest and reconcile them against the path ledger. Do not copy the referenced application source. Every documentation or configuration dependency must resolve inside the seed; source-evidence references may remain unresolved inside the destination only when they are explicitly recorded and no construction claim depends on reading them.
+7. Use the portable reconstruction-run helper under this skill's scripts directory to hash every copied input, record wiki-first copy phases and run metadata, validate exact file and hash equality inside the destination, and reject symbolic links, hard links, absolute original-source paths, source-root escapes, and undeclared seed files.
+8. Capture the original baseline oracle before the builder receives access to its environment. Record the exact commands, inputs, fixtures, environment, exit statuses, observable outputs, normalized results, and digests for build, test, route, workflow, data, security, integration, configuration, operational, and deployment behavior that exists in the project. The oracle may expose only the behavior needed for comparison; it must not contain original application source, source excerpts, absolute original-source paths, source-derived caches, or undeclared artifacts that could serve as reconstruction inputs.
+9. Create a machine-readable parity case catalog. Each case needs a unique stable ID, owning behavior or disposition, preconditions, inputs, original command, reconstruction command, comparison policy, and required evidence.
+10. Run every PUBLIC_GENERATOR against the original baseline and the reconstructed project. Reconcile the expected and actual generated file sets exactly in a machine-readable delta ledger. Each row records generator ID, path, original result or digest, reconstructed result or digest, comparison policy, status, evidence, and resolution. Explicitly normalize source-backed nondeterministic fields; do not ignore them informally.
+11. Give a distinct builder only the validated seed and declared external toolchain. Enforce the boundary with an operating-system sandbox or container whose readable mounts exclude the original repository, its parent workspace, source-derived caches, and undeclared temporary paths. An instruction-only boundary, working-directory convention, or honor-system promise is not valid.
+12. Give a distinct verifier in a fresh operating-system sandbox or container only the reconstructed application, immutable oracle package, parity and generator contracts, and declared external toolchain. The verifier must not receive the original source, builder-private workspace, or builder working context.
+13. From inside both environments, run and record denied-access probes against the original repository's canonical path, alternate path, parent traversal, symlink, hardlink, cache, temporary-file, and environment-variable channels. Record mounts, environment, working directory, caches, credentials, network access, dependency provenance, commands, outcomes, and evidence digests in a machine-readable contamination ledger.
+14. Build the full project in the reconstruction root. The independent verifier then runs every parity case and generator differential against the immutable original baseline oracle. Reconcile case IDs and result sets exactly in both directions; no missing, unexpected, duplicate, skipped, silently unrun, UNRUNNABLE, or failed required case may pass.
+15. Send the complete package to review-reconstruction-readiness. Correct blocking findings and repeat the independent review in a fresh context. Do not let the builder review or verify its own reconstruction.
+16. Archive every attempted run, including failed and blocked runs, with exact content hashes and status evidence. Seal and validate the new archive before pruning; then retain the newest three valid run archives unless the user explicitly selects another count.
+
+Completion gate:
+
+- Every baseline path has exactly one accepted reconstruction disposition and its required evidence.
+- The copied seed is self-contained for construction, was validated inside a new destination, records all source-evidence references, and contains no original application source or unresolved contamination.
+- Every PUBLIC_GENERATOR output reconciles with zero missing, unexpected, failed, or unresolved delta.
+- Every parity case has one immutable original oracle result and one independently verified reconstructed result, and all required cases pass.
+- Builder and verifier isolation is enforced by the operating system or container runtime and confirmed by denied-access probes; prompt compliance is never sufficient.
+- The reconstructed application passes the documented build, test, route, workflow, data, security, integration, configuration, operational, and deployment parity contract.
+- The reconstruction-readiness review passes and the exact run archive validates before newest-three retention is applied.
 
 ## Verification
 
@@ -207,14 +242,15 @@ After the passes:
 3. Use review-architecture on created or changed architecture documents.
 4. Use review-functional-spec on created or changed functional specifications.
 5. Use project-wiki-review on created or changed project wiki methodology pages.
-6. Use documentation-page-verify for mixed, unknown, or custom documentation artifacts.
-7. Run the project's build command when documentation work changed code, generated artifacts, or project metadata that can affect the build.
-8. Run documentation or wiki lint when available.
-9. Search new documentation for unresolved TODO markers that are not intentional.
-10. Search new steady-state documentation for stale comparative language such as enhanced, revised, old, and new.
-11. Confirm every created document has related source, related test, or Not yet identified entries.
-12. Confirm every diagram represents a real sequence, association, aggregation, containment, ownership, dependency, lifecycle, coverage, or data movement relationship.
-13. Confirm every open question is specific enough for a human or future agent to answer.
+6. Use review-reconstruction-readiness on the complete Pass 6 package.
+7. Use documentation-page-verify for mixed, unknown, or custom documentation artifacts.
+8. Run the project's build command when documentation work changed code, generated artifacts, or project metadata that can affect the build.
+9. Run documentation or wiki lint when available.
+10. Search new documentation for unresolved TODO markers that are not intentional.
+11. Search new steady-state documentation for stale comparative language such as enhanced, revised, old, and new.
+12. Confirm every created document has related source, related test, or Not yet identified entries.
+13. Confirm every diagram represents a real sequence, association, aggregation, containment, ownership, dependency, lifecycle, coverage, or data movement relationship.
+14. Confirm every open question is specific enough for a human or future agent to answer.
 
 Stop and ask for human input when source conflicts cannot be resolved, business ownership would be guessed, private systems are needed, verification cannot run for environmental reasons, or the work would send private material to an external service without explicit authorization.
 
@@ -223,12 +259,39 @@ Stop and ask for human input when source conflicts cannot be resolved, business 
 Use this protocol only for a controlled reverse-engineering evaluation, not for routine documentation maintenance.
 
 1. Archive the current documentation and project-routing snapshot before destructive reset work.
-2. Delete the documentation folder from the source-under-test before the run starts. When the evaluation includes project-routing reconstruction, also delete `PROJECT.yaml` and the applicable generated `AGENTS.md` files. Commit or otherwise record the exact reset baseline.
-3. Run Pass -1 through Pass 5 from the reset baseline. A failed pass stops the run; do not create higher-level artifacts after a failed lower-level gate.
-4. After every documentation gate passes, create a new empty reconstruction folder and copy the completed wiki and its linked documentation into that folder before any reconstruction code is written.
-5. Give a distinct reconstruction owner only the completed documentation set and declared external toolchain. Run it in an isolated environment whose readable project roots contain the reconstruction folder but not the original repository. Do not allow it to inspect or copy the original application source. If the runtime cannot enforce that filesystem boundary, mark the evaluation `BLOCKED`; an instruction-only or honor-system boundary is not valid evidence.
-6. Recreate the application in the reconstruction folder, then run the documented build, tests, routes, workflows, data behavior, security behavior, and operational checks needed to compare observable functionality.
-7. Archive the reset baseline, configuration, documentation, completed checklists, reconstruction output, commands, results, timing, and token or cost evidence. Keep the newest three evaluation runs unless the user specifies another retention count.
+2. Delete the documentation folder from the source-under-test before the run starts. When the evaluation includes project-routing reconstruction, also delete PROJECT.yaml and the applicable generated AGENTS.md files. Commit or otherwise record the exact reset baseline.
+3. Run Pass -1 through Pass 5 from the reset baseline. A failed pass stops the run; do not create higher-level artifacts after a failed lower-level gate. Archive that failed attempt before another run begins.
+4. Run executable Pass 6. Create a new empty reconstruction folder and copy the completed wiki into that folder first, then the complete documentation and configuration seed, before any reconstruction code is written.
+5. Give a distinct builder only the validated seed and declared external toolchain, then give a distinct verifier only the reconstructed application and immutable oracle package. Enforce both boundaries with operating-system sandbox or container policy. Do not allow either step to inspect or copy the original application source. If the runtime cannot enforce and prove those filesystem boundaries, mark the evaluation BLOCKED; an instruction-only or honor-system boundary is not valid evidence.
+6. Recreate the application in the reconstruction folder, then reconcile all generator outputs and parity cases against the original baseline oracle.
+7. Archive the exact content set below for every successful, failed, or blocked attempt:
+
+- RUN.json with status, source baseline, documentation baseline, owners, commands, timestamps, and environment identity.
+- reset/source-baseline.json with the reset commit or digest and exact path inventory.
+- configuration/PROJECT.yaml and configuration/AGENTS.md, plus nested routing files in the same configuration tree.
+- documentation/docs/wiki and the full accepted documentation corpus.
+- reviews/reconstruction-readiness.review-checklist-reconstruction-readiness.md and every lower-level completed review checklist.
+- seed/seed-manifest.json and copied-seed validation results.
+- oracle/original-baseline.json and its immutable hash manifest.
+- reconstruction with the reconstructed source, configuration, migrations, assets, tests, and scripts, excluding fetched dependency caches.
+- parity/cases.json and parity/reconciliation.json.
+- generators/delta-ledger.json and generator command results.
+- contamination/ledger.json with sandbox definitions, mount inventories, denied-access probes, and resolutions.
+- execution/commands.jsonl and execution/results.json.
+- metrics/usage.json with elapsed time and available token or cost evidence by activity; unavailable measurements are recorded as unavailable rather than estimated.
+- archive-manifest.json with the exact archive file set, sizes, and SHA-256 digests.
+
+Every required archive entry must exist for failed and blocked attempts too. When a stage never started, store a non-empty machine-readable NOT_RUN record naming the unmet gate and failure evidence instead of omitting the entry or fabricating a result.
+
+8. Validate the newly sealed archive by reproducing its exact file set and every digest. Only after that validation may retention delete older runs. Keep the newest three evaluation runs unless the user specifies another retention count.
+
+Initialize a run and seal its archive with the portable helper:
+
+```bash
+python3 skills/documentation-reverse-engineer/scripts/reconstruction_run.py initialize --source-project /source/project --build-root /new/reconstruction-root --run-id run-001 --source-baseline BASELINE
+python3 skills/documentation-reverse-engineer/scripts/reconstruction_run.py validate-seed --build-root /new/reconstruction-root --exact
+python3 skills/documentation-reverse-engineer/scripts/reconstruction_run.py seal-archive --new-archive /archives/run-001 --archive-root /archives --retain 3
+```
 
 For checklist-only model evaluation, assign a corpus ID derived from the source baseline, artifact digest, checklist version, and adjudicated defect set. Run the lower-cost candidate and reference reviewer separately in fresh contexts at least three times with identical artifacts, source evidence, and checklist questions, and capture every invocation, verdict, citation, elapsed time, token count, and cost. Compare defect recall, false positives, checklist completeness, quoted source evidence, elapsed time, and token cost.
 

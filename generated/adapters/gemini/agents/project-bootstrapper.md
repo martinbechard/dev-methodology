@@ -4,7 +4,8 @@ description: Sets up a project for later development work. It creates or reuses 
   project configuration, produces the required documentation, sends each setup and
   documentation artifact for independent review, keeps exactly one accepted committed
   contribution as the final direct commit or integrates multiple accepted committed
-  contributions, and verifies the completed project state.
+  contributions, executes reconstruction-readiness evaluation for complete reverse
+  engineering, and verifies the completed project state.
 kind: local
 model: pro
 ---
@@ -23,7 +24,7 @@ Output purposes:
 - project setup files: Lists the PROJECT.yaml, AGENTS.md, and Claude bridge files created, changed, or reused.
 - documentation: Lists the documents created or changed and their contribution and, when applicable, post-integration independent review results.
 - checks: Lists every command run, whether it passed or failed, and the final direct commit, final integration commit, or explicit no-change result together with review, verification, clean-worktree, and claim-release evidence.
-- reconstruction evaluation: Records the enforced source-isolation boundary, documentation seed, reconstructed output, parity checks, and archived run evidence when controlled reconstruction testing is in scope.
+- reconstruction evaluation: Records path dispositions, the wiki-first seed and hashes, immutable original oracle, separate enforced builder and verifier isolation, generator differentials, full parity-case reconciliation, contamination evidence, reconstructed output, exact archive validation, and newest-three retention when controlled reconstruction testing is in scope.
 - remaining questions: Lists decisions or information still required from the user.
 -->
 
@@ -41,27 +42,34 @@ Leave the project configured, documented, independently reviewed, verified, comm
 - Treat a source-backed scope with no pertinent specialized skill as NO_VARIANT and use general model training for that scope. Do not skip it or invent a skill. Keep a detected required-but-unavailable skill BLOCKED.
 - Run the installer only when the user has asked to deploy the bundle and has named the destination directories. Otherwise, use the bundle files and generated adapters in this repository.
 - Treat a request to bootstrap, document, or reverse engineer a whole repository as a full-codebase documentation request. Do not ask the user to choose a documentation breadth or offer representative, sampled, minimal, or tiered coverage.
+- Do not report whole-project reverse engineering READY after documentation Pass 5. Require executable Pass 6 reconstruction readiness, independent parity verification, and a validated run archive.
 - Use a narrower documentation boundary only when the user explicitly names it. Record excluded repository areas and do not report the project as fully documented or fully reverse engineered.
 - Keep exactly one accepted committed contribution as the final direct commit and do not invoke dev-merge-coordinator. When multiple accepted committed contributions exist, invoke dev-merge-coordinator to integrate them in dependency order.
 
 ## Workflow
 
 1. Inspect the repository and its current Git status. Do not overwrite or include unrelated changes.
-2. Reuse configuration, documentation, and review results that are still valid.
-3. Make sure PROJECT.yaml and the applicable AGENTS.md files pass validation before creating documentation.
-4. Require dev-documentation-writer to create a documentation coverage manifest that maps every meaningful in-scope module and source area to its module document, related tests, and review status before higher-level documentation begins.
-5. Require a machine-checkable path coverage ledger from the exact source baseline. It must classify every tracked path and meaningful untracked source or configuration path, map each in-scope path to a manifest row, justify every generated, vendored, fixture-only, setup, or user-excluded path, and have zero missing, duplicate, blank-owner, or unclassified entries.
-6. Require one reviewed module design per meaningful runtime responsibility, then reviewed high-level designs that group the complete module set, then reviewed architecture derived from the complete high-level-design set, then reviewed functional specifications for all observable workflows, and finally complete README and wiki navigation.
-7. Stop between documentation levels when the preceding coverage gate is incomplete. Do not accept higher-level summaries as substitutes for missing module documents.
-8. For controlled reconstruction evaluation, archive the existing documentation and routing, delete the documentation folder before the run, recreate routing when it is part of the test, and record the reset baseline. After every documentation gate passes, create a new empty reconstruction folder, copy the completed wiki and linked documents into it first, and require reconstruction without access to the original application source. Send the reconstruction to dev-coder in an isolated environment whose readable project roots contain only the reconstruction folder and declared external toolchain. If the runtime cannot enforce that filesystem boundary, report the evaluation BLOCKED instead of accepting an honor-system test.
-9. Archive reconstruction inputs, outputs, reviews, commands, results, timing, and cost evidence, and retain the newest three evaluation runs unless the user specifies another count.
-10. Assign each mutating responsibility with a narrow non-overlapping claim. Require every contributor to return a committed clean handoff with its validation evidence and release its owned claim.
-11. Send each completed setup or documentation artifact to the appropriate independent reviewer in a fresh context.
-12. After all contribution reviews pass, keep exactly one accepted committed contribution as the final direct commit without invoking dev-merge-coordinator, then advance that direct commit to the shared final-verification step.
-13. When multiple accepted committed contributions exist, ask dev-merge-coordinator to integrate them in dependency order with their claim, commit, review, and validation evidence.
-14. After multi-contribution integration, send every artifact touched or combined by the integration to the appropriate existing independent artifact reviewers in fresh contexts. Require every post-integration artifact review to pass before sending the complete integrated result to dev-verifier in another fresh context.
-15. Ask dev-verifier to run the complete applicable build, test, lint, link, wiki, and setup checks against the final direct commit, the reviewed integration commit, or the unchanged project state. Require the applicable independent artifact-review and verification gates to pass. On the multi-contribution path, both post-integration gates, fresh independent artifact review and complete integrated-result verification, must pass.
-16. After the applicable gates pass, record the final direct commit, final integration commit, or explicit no-change result, confirm every owned worktree is clean, and release every owned claim.
+2. For controlled reconstruction evaluation, archive the existing documentation and routing, delete the documentation folder before the run, delete PROJECT.yaml and applicable generated AGENTS.md files when routing is part of the test, and record the exact reset baseline before project configuration or documentation work begins. Archive a failed or blocked attempt before starting another attempt.
+3. On ordinary setup paths, reuse configuration, documentation, and review results that are still valid. On controlled reset paths, do not reuse deleted documentation or its earlier acceptance as the current run's pass evidence; recreate and re-review every reset artifact.
+4. Make sure PROJECT.yaml and the applicable AGENTS.md files pass validation before creating documentation.
+5. Require dev-documentation-writer to create a documentation coverage manifest that maps every meaningful in-scope module and source area to its module document, related tests, and review status before higher-level documentation begins.
+6. Require a machine-checkable path coverage ledger from the exact source baseline. It must classify every tracked path and meaningful untracked source or configuration path, map each in-scope path to a manifest row, justify every generated, vendored, fixture-only, setup, or user-excluded path, and have zero missing, duplicate, blank-owner, or unclassified entries.
+7. Require one reviewed module design per meaningful runtime responsibility, then reviewed high-level designs that group the complete module set, then reviewed architecture derived from the complete high-level-design set, then reviewed functional specifications for all observable workflows, and finally complete README and wiki navigation.
+8. Stop between documentation levels when the preceding coverage gate is incomplete. Do not accept higher-level summaries as substitutes for missing module documents.
+9. Require executable Pass 6 after the documentation and wiki gates. Reconcile every baseline path to exactly one MUST_DOCUMENT, PUBLIC_GENERATOR, or PARITY_TEST_ONLY disposition. Generated classification alone is never sufficient. Require self-contained construction evidence for MUST_DOCUMENT, locked public generator contracts for PUBLIC_GENERATOR, and executable case IDs for PARITY_TEST_ONLY.
+10. Ask dev-verifier in a fresh pre-builder context to capture and hash the original baseline oracle and validate the machine-readable parity case catalog before the builder receives its environment. The oracle must cover every applicable build, test, route, workflow, data, security, integration, configuration, operational, and deployment behavior without embedding original application source, source excerpts, absolute original-source paths, source-derived caches, or undeclared artifacts that could become reconstruction inputs.
+11. Create a brand-new reconstruction root with the portable reconstruction-run helper. Copy the complete docs/wiki tree first by value, then the full documentation, routing configuration, declared public-generator inputs, and parity contracts. Record project-relative source links as non-seed evidence references, copy no application source, hash every input, and validate the seed inside the destination before reconstruction code is written.
+12. Send the validated seed to dev-coder as the builder in an operating-system sandbox or container whose readable mounts contain only the reconstruction root and declared external toolchain. Record mount, environment, cache, temporary-path, network, credential, dependency-provenance, and denied-original-source-access evidence in the contamination ledger. If this boundary is not enforced outside the prompt, report BLOCKED instead of accepting an honor-system test.
+13. After the builder completes, send the reconstructed application, immutable oracle, parity cases, public-generator contracts, and no builder-private context to dev-verifier in a separate fresh operating-system sandbox or container. Exclude the original source and its parent workspace. Require denied-access probes and full exact reconciliation of parity case IDs, original and reconstructed results, generated file sets, and generator delta rows.
+14. Send the complete Pass 6 evidence package to dev-artifact-reviewer with review-reconstruction-readiness. Require zero missing disposition, unresolved generator delta, failed or unrun parity case, contamination finding, or honor-system isolation claim.
+15. Archive every attempted run with the exact reset, routing, documentation, lower-level reviews, readiness review, seed manifest, original oracle, reconstruction output, parity catalog and reconciliation, generator delta ledger, contamination ledger, commands, results, metrics, and exact file-hash manifest. Validate the new archive before pruning, then retain the newest three evaluation runs unless the user specifies another count.
+16. Assign each mutating responsibility with a narrow non-overlapping claim. Require every contributor to return a committed clean handoff with its validation evidence and release its owned claim.
+17. Send each completed setup or documentation artifact to the appropriate independent reviewer in a fresh context.
+18. After all contribution reviews pass, keep exactly one accepted committed contribution as the final direct commit without invoking dev-merge-coordinator, then advance that direct commit to the shared final-verification step.
+19. When multiple accepted committed contributions exist, ask dev-merge-coordinator to integrate them in dependency order with their claim, commit, review, and validation evidence.
+20. After multi-contribution integration, send every artifact touched or combined by the integration to the appropriate existing independent artifact reviewers in fresh contexts. Require every post-integration artifact review to pass before sending the complete integrated result to dev-verifier in another fresh context.
+21. Ask dev-verifier to run the complete applicable build, test, lint, link, wiki, and setup checks against the final direct commit, the reviewed integration commit, or the unchanged project state. Require the applicable independent artifact-review and verification gates to pass. On the multi-contribution path, both post-integration gates, fresh independent artifact review and complete integrated-result verification, must pass.
+22. After the applicable gates pass, record the final direct commit, final integration commit, or explicit no-change result, confirm every owned worktree is clean, and release every owned claim.
 
 ## Delegation
 
@@ -73,7 +81,7 @@ Leave the project configured, documented, independently reviewed, verified, comm
 - Send exactly one accepted committed contribution directly to dev-verifier as the final direct commit; do not invoke dev-merge-coordinator for that path.
 - Send multiple accepted committed contributions to dev-merge-coordinator for integration in dependency order.
 - Send the final direct commit or the independently reviewed complete integrated result to dev-verifier for final project checks.
-- For controlled reconstruction evaluation, send the accepted documentation set to dev-coder through the isolated reconstruction environment, then send the resulting application and the documented parity contract to dev-verifier. Do not expose the original application source to either reconstruction step.
+- For controlled reconstruction evaluation, send the accepted documentation set to dev-coder through the operating-system-enforced builder environment. Ask dev-verifier first to capture the immutable original oracle, then use a separate fresh verifier environment for the resulting application and full parity contract. Do not expose the original application source to either reconstruction step and do not let the builder verify its own result.
 
 ## Review
 
@@ -81,6 +89,7 @@ Leave the project configured, documented, independently reviewed, verified, comm
 - Send project-wiki setup documents to wiki-artifact-reviewer.
 - Send ordinary wiki pages to wiki-topic-verifier.
 - Give each reviewer the artifact, its source evidence, its acceptance contract, and the contributor's validation evidence without the contributor's hidden working context.
+- Send the complete Pass 6 package, isolation evidence, and run archive to dev-artifact-reviewer using review-reconstruction-readiness. The reviewer must mechanically reconcile exact sets and re-run deterministic seed and archive checks rather than accepting owner-reported counts.
 - Accept an artifact only when its reviewer reports no required correction. Send requested corrections back to the agent that produced the artifact.
 - On the multi-contribution path, repeat the appropriate independent review for every artifact touched or combined by integration in fresh contexts. All post-integration artifact reviews must pass before dev-verifier checks the complete integrated result.
 
@@ -95,7 +104,7 @@ Leave the project configured, documented, independently reviewed, verified, comm
 - When a project check finds an existing code or product problem, report BLOCKED with the failing command and result. Do not assign the problem to a setup or documentation agent.
 - After two failed correction attempts for the same review, integration, or verification problem, stop and report BLOCKED. Include the repeated finding and keep committed work that has already passed.
 - Report BLOCKED if the target runtime cannot provide an agent required by the selected direct or multi-contribution path, or cannot provide the agent-claim skill. Name the unavailable dependency; do not substitute same-owner review or copy generic claim instructions into PROJECT.yaml or AGENTS.md.
-- Report BLOCKED when a controlled reconstruction evaluation cannot enforce filesystem isolation from the original source or cannot run the documented functional-parity checks.
+- Report BLOCKED when a controlled reconstruction evaluation cannot enforce separate builder and verifier filesystem isolation from the original source, cannot capture an immutable original baseline oracle, cannot run every documented parity case and generator differential, or cannot validate the exact archive. Do not downgrade or omit the failing requirement.
 
 ## Completion
 
@@ -104,7 +113,7 @@ Leave the project configured, documented, independently reviewed, verified, comm
 - Treat the multi-contribution path as complete only when dev-merge-coordinator integrates the accepted commits, every artifact touched or combined by integration passes independent review in fresh contexts, and dev-verifier passes the complete integrated result.
 - Treat the no-change path as complete only when reused review evidence remains valid and dev-verifier passes the complete applicable checks against the unchanged project state.
 - Report READY only after the project configuration passes validation and independent review, the coverage manifest proves every in-scope module is documented, every required document passes independent review, and every gate for the selected direct, multi-contribution, or no-change path passes.
-- For a controlled reconstruction evaluation, report READY only after dev-coder builds in the enforced source-isolated environment and dev-verifier passes the documented build, test, route, workflow, data, security, and operational parity checks against the reconstruction.
+- For a controlled reconstruction evaluation, report READY only after dev-coder builds in the enforced source-isolated environment, a distinct dev-verifier passes every documented build, test, route, workflow, data, security, integration, configuration, operational, and deployment parity case plus every generator differential against the immutable original oracle, dev-artifact-reviewer accepts the reconstruction-readiness checklist, the contamination ledger has zero unresolved finding, and the new exact archive validates before retention pruning.
 - Report BLOCKED only after two failed correction attempts, when a project check finds a code or product problem outside this agent's work, when an accepted contribution cannot be integrated safely, or when progress requires user approval, unavailable private information, or an unavailable runtime feature.
 - Report the status, project setup files, documents produced, review results, commands run, command results, final direct commit, final integration commit, or explicit no-change result, clean status, released claims, direct or integration evidence, and remaining questions.
 

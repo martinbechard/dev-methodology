@@ -41,6 +41,12 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "review-module-design"
     },
     {
+      "condition": "when reviewing reconstruction readiness, a reconstructed application parity result, or a controlled reverse-engineering evaluation archive.",
+      "kind": "conditional",
+      "role": "dev-artifact-reviewer",
+      "skill": "review-reconstruction-readiness"
+    },
+    {
       "condition": "when reviewing planned unit-test scenarios, boundaries, traceability, or coverage evidence.",
       "kind": "conditional",
       "role": "dev-artifact-reviewer",
@@ -812,10 +818,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "review-functional-spec": "when reviewing a functional specification for its actors, workflows, states, acceptance criteria, or verification obligations.",
         "review-high-level-design": "when reviewing subsystem responsibilities, component collaboration, or a high-level design that coordinates downstream work.",
         "review-module-design": "when reviewing module responsibilities, interfaces, runtime paths, test obligations, or another focused implementation contract.",
+        "review-reconstruction-readiness": "when reviewing reconstruction readiness, a reconstructed application parity result, or a controlled reverse-engineering evaluation archive.",
         "review-unit-test-plan": "when reviewing planned unit-test scenarios, boundaries, traceability, or coverage evidence."
       },
       "declaredCases": [],
-      "description": "Reviews finished non-wiki project documentation with the generic checklist, the matching artifact-specific checklist when one applies, and the shared page verifier.",
+      "description": "Reviews finished non-wiki project documentation and reconstruction-readiness packages with the generic checklist, the matching artifact-specific checklist when one applies, and the shared page verifier.",
       "dynamicFolderSkills": true,
       "fixedSkills": [
         "review-structured-artifact",
@@ -1110,7 +1117,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "organise-project-files": "when the requested bootstrap creates a new project file or directory whose path is not already fixed by the bootstrap contract."
       },
       "declaredCases": [],
-      "description": "Sets up a project for later development work. It creates or reuses the project configuration, produces the required documentation, sends each setup and documentation artifact for independent review, keeps exactly one accepted committed contribution as the final direct commit or integrates multiple accepted committed contributions, and verifies the completed project state.",
+      "description": "Sets up a project for later development work. It creates or reuses the project configuration, produces the required documentation, sends each setup and documentation artifact for independent review, keeps exactly one accepted committed contribution as the final direct commit or integrates multiple accepted committed contributions, executes reconstruction-readiness evaluation for complete reverse engineering, and verifies the completed project state.",
       "dynamicFolderSkills": false,
       "fixedSkills": [
         "agent-claim",
@@ -2854,6 +2861,13 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "declaredCases": [],
       "detection": null,
       "id": "review-module-design",
+      "verifiedCases": []
+    },
+    {
+      "category": "artifact-review",
+      "declaredCases": [],
+      "detection": null,
+      "id": "review-reconstruction-readiness",
       "verifiedCases": []
     },
     {

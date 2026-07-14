@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" class="show-agent-dependencies" width="1150" height="1980" viewBox="0 0 1150 1980" role="group" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" class="show-agent-dependencies" width="1150" height="2010" viewBox="0 0 1150 2010" role="group" aria-labelledby="title desc">
 <title id="title">Interactive agent and skill hierarchy</title>
 <desc id="desc">Select an agent to highlight its skills, or select a skill to highlight every agent using it. Turn on agent dependencies to reveal arrows from using agents to used agents. Setup-time stack and domain skills are intentionally omitted because conceptual agent definitions do not link to them.</desc>
 <defs><marker id="dependency-arrow" viewBox="0 0 7 8" refX="6" refY="4" markerWidth="7" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M 1 1.25 L 6 4 L 1 6.75" class="dependency-arrowhead"/></marker></defs>
@@ -55,13 +55,14 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
 <path d="M 350 684 C 604 684, 604 804, 351 804" class="dependency-edge" data-source-role="wiki-ingester" data-target-role="wiki-topic-verifier" marker-end="url(#dependency-arrow)"/>
 <path d="M 350 834 C 616 834, 616 804, 351 804" class="dependency-edge" data-source-role="wiki-writer" data-target-role="wiki-topic-verifier" marker-end="url(#dependency-arrow)"/>
 <path d="M 350 192 C 500 192, 620 192, 760 192" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="agent-claim"/>
-<path d="M 350 192 C 500 192, 620 1830, 760 1830" class="edge" data-role="dev-artifact-reviewer" data-skill="review-structured-artifact"/>
+<path d="M 350 192 C 500 192, 620 1860, 760 1860" class="edge" data-role="dev-artifact-reviewer" data-skill="review-structured-artifact"/>
 <path d="M 350 192 C 500 192, 620 612, 760 612" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="organise-project-files"/>
 <path d="M 350 192 C 500 192, 620 1740, 760 1740" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="review-functional-spec"/>
 <path d="M 350 192 C 500 192, 620 1710, 760 1710" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="review-architecture"/>
 <path d="M 350 192 C 500 192, 620 1770, 760 1770" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="review-high-level-design"/>
 <path d="M 350 192 C 500 192, 620 1800, 760 1800" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="review-module-design"/>
-<path d="M 350 192 C 500 192, 620 1860, 760 1860" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="review-unit-test-plan"/>
+<path d="M 350 192 C 500 192, 620 1890, 760 1890" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="review-unit-test-plan"/>
+<path d="M 350 192 C 500 192, 620 1830, 760 1830" class="edge conditional-edge" data-role="dev-artifact-reviewer" data-skill="review-reconstruction-readiness"/>
 <path d="M 350 192 C 500 192, 620 1326, 760 1326" class="edge" data-role="dev-artifact-reviewer" data-skill="documentation-page-verify"/>
 <path d="M 350 222 C 500 222, 620 612, 760 612" class="edge conditional-edge" data-role="dev-backlog-steward" data-skill="organise-project-files"/>
 <path d="M 350 222 C 500 222, 620 462, 760 462" class="edge conditional-edge" data-role="dev-backlog-steward" data-skill="create-backlog"/>
@@ -75,7 +76,7 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
 <path d="M 350 282 C 500 282, 620 192, 760 192" class="edge conditional-edge" data-role="dev-code-reviewer" data-skill="agent-claim"/>
 <path d="M 350 282 C 500 282, 620 612, 760 612" class="edge conditional-edge" data-role="dev-code-reviewer" data-skill="organise-project-files"/>
 <path d="M 350 282 C 500 282, 620 432, 760 432" class="edge" data-role="dev-code-reviewer" data-skill="code-review-evidence"/>
-<path d="M 350 282 C 500 282, 620 1830, 760 1830" class="edge" data-role="dev-code-reviewer" data-skill="review-structured-artifact"/>
+<path d="M 350 282 C 500 282, 620 1860, 760 1860" class="edge" data-role="dev-code-reviewer" data-skill="review-structured-artifact"/>
 <path d="M 350 282 C 500 282, 620 312, 760 312" class="edge" data-role="dev-code-reviewer" data-skill="careful-coding"/>
 <path d="M 350 282 C 500 282, 620 342, 760 342" class="edge" data-role="dev-code-reviewer" data-skill="code-comments"/>
 <path d="M 350 312 C 500 312, 620 192, 760 192" class="edge" data-role="dev-coder" data-skill="agent-claim"/>
@@ -99,7 +100,7 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
 <path d="M 350 372 C 500 372, 620 612, 760 612" class="edge conditional-edge" data-role="dev-merge-coordinator" data-skill="organise-project-files"/>
 <path d="M 350 372 C 500 372, 620 222, 760 222" class="edge" data-role="dev-merge-coordinator" data-skill="agent-work-merge"/>
 <path d="M 350 372 C 500 372, 620 192, 760 192" class="edge" data-role="dev-merge-coordinator" data-skill="agent-claim"/>
-<path d="M 350 372 C 500 372, 620 1830, 760 1830" class="edge" data-role="dev-merge-coordinator" data-skill="review-structured-artifact"/>
+<path d="M 350 372 C 500 372, 620 1860, 760 1860" class="edge" data-role="dev-merge-coordinator" data-skill="review-structured-artifact"/>
 <path d="M 350 372 C 500 372, 620 552, 760 552" class="edge" data-role="dev-merge-coordinator" data-skill="fix-explanation"/>
 <path d="M 350 402 C 500 402, 620 612, 760 612" class="edge conditional-edge" data-role="dev-orchestrator" data-skill="organise-project-files"/>
 <path d="M 350 402 C 500 402, 620 732, 760 732" class="edge" data-role="dev-orchestrator" data-skill="structured-design"/>
@@ -109,7 +110,7 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
 <path d="M 350 432 C 500 432, 620 192, 760 192" class="edge conditional-edge" data-role="dev-prompt-reviewer" data-skill="agent-claim"/>
 <path d="M 350 432 C 500 432, 620 612, 760 612" class="edge conditional-edge" data-role="dev-prompt-reviewer" data-skill="organise-project-files"/>
 <path d="M 350 432 C 500 432, 620 642, 760 642" class="edge" data-role="dev-prompt-reviewer" data-skill="prompt-contracts"/>
-<path d="M 350 432 C 500 432, 620 1830, 760 1830" class="edge" data-role="dev-prompt-reviewer" data-skill="review-structured-artifact"/>
+<path d="M 350 432 C 500 432, 620 1860, 760 1860" class="edge" data-role="dev-prompt-reviewer" data-skill="review-structured-artifact"/>
 <path d="M 350 462 C 500 462, 620 192, 760 192" class="edge conditional-edge" data-role="dev-runtime-diagnostician" data-skill="agent-claim"/>
 <path d="M 350 462 C 500 462, 620 612, 760 612" class="edge conditional-edge" data-role="dev-runtime-diagnostician" data-skill="organise-project-files"/>
 <path d="M 350 462 C 500 462, 620 372, 760 372" class="edge" data-role="dev-runtime-diagnostician" data-skill="code-discovery"/>
@@ -122,13 +123,13 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
 <path d="M 350 492 C 500 492, 620 192, 760 192" class="edge conditional-edge" data-role="dev-security-reviewer" data-skill="agent-claim"/>
 <path d="M 350 492 C 500 492, 620 612, 760 612" class="edge conditional-edge" data-role="dev-security-reviewer" data-skill="organise-project-files"/>
 <path d="M 350 492 C 500 492, 620 252, 760 252" class="edge" data-role="dev-security-reviewer" data-skill="application-security"/>
-<path d="M 350 492 C 500 492, 620 1830, 760 1830" class="edge" data-role="dev-security-reviewer" data-skill="review-structured-artifact"/>
+<path d="M 350 492 C 500 492, 620 1860, 760 1860" class="edge" data-role="dev-security-reviewer" data-skill="review-structured-artifact"/>
 <path d="M 350 492 C 500 492, 620 762, 760 762" class="edge" data-role="dev-security-reviewer" data-skill="structured-explanation"/>
 <path d="M 350 522 C 500 522, 620 192, 760 192" class="edge conditional-edge" data-role="dev-ux-specialist" data-skill="agent-claim"/>
 <path d="M 350 522 C 500 522, 620 612, 760 612" class="edge conditional-edge" data-role="dev-ux-specialist" data-skill="organise-project-files"/>
 <path d="M 350 522 C 500 522, 620 852, 760 852" class="edge" data-role="dev-ux-specialist" data-skill="user-experience-review"/>
 <path d="M 350 522 C 500 522, 620 522, 760 522" class="edge" data-role="dev-ux-specialist" data-skill="end-to-end-verification"/>
-<path d="M 350 522 C 500 522, 620 1830, 760 1830" class="edge" data-role="dev-ux-specialist" data-skill="review-structured-artifact"/>
+<path d="M 350 522 C 500 522, 620 1860, 760 1860" class="edge" data-role="dev-ux-specialist" data-skill="review-structured-artifact"/>
 <path d="M 350 552 C 500 552, 620 192, 760 192" class="edge conditional-edge" data-role="dev-verifier" data-skill="agent-claim"/>
 <path d="M 350 552 C 500 552, 620 612, 760 612" class="edge conditional-edge" data-role="dev-verifier" data-skill="organise-project-files"/>
 <path d="M 350 552 C 500 552, 620 822, 760 822" class="edge" data-role="dev-verifier" data-skill="test-strategy"/>
@@ -136,11 +137,11 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
 <path d="M 350 552 C 500 552, 620 672, 760 672" class="edge conditional-edge" data-role="dev-verifier" data-skill="root-cause-analysis"/>
 <path d="M 350 552 C 500 552, 620 702, 760 702" class="edge conditional-edge" data-role="dev-verifier" data-skill="runtime-evidence-collection"/>
 <path d="M 350 552 C 500 552, 620 402, 760 402" class="edge conditional-edge" data-role="dev-verifier" data-skill="code-execution-tracing"/>
-<path d="M 350 552 C 500 552, 620 1830, 760 1830" class="edge" data-role="dev-verifier" data-skill="review-structured-artifact"/>
+<path d="M 350 552 C 500 552, 620 1860, 760 1860" class="edge" data-role="dev-verifier" data-skill="review-structured-artifact"/>
 <path d="M 350 552 C 500 552, 620 762, 760 762" class="edge" data-role="dev-verifier" data-skill="structured-explanation"/>
 <path d="M 350 1038 C 500 1038, 620 192, 760 192" class="edge conditional-edge" data-role="methodology-artifact-reviewer" data-skill="agent-claim"/>
 <path d="M 350 1038 C 500 1038, 620 612, 760 612" class="edge conditional-edge" data-role="methodology-artifact-reviewer" data-skill="organise-project-files"/>
-<path d="M 350 1038 C 500 1038, 620 1830, 760 1830" class="edge" data-role="methodology-artifact-reviewer" data-skill="review-structured-artifact"/>
+<path d="M 350 1038 C 500 1038, 620 1860, 760 1860" class="edge" data-role="methodology-artifact-reviewer" data-skill="review-structured-artifact"/>
 <path d="M 350 1038 C 500 1038, 620 1446, 760 1446" class="edge" data-role="methodology-artifact-reviewer" data-skill="skill-authoring"/>
 <path d="M 350 1038 C 500 1038, 620 1206, 760 1206" class="edge" data-role="methodology-artifact-reviewer" data-skill="agent-role-authoring"/>
 <path d="M 350 1038 C 500 1038, 620 1416, 760 1416" class="edge" data-role="methodology-artifact-reviewer" data-skill="name-methodology-artifacts"/>
@@ -201,7 +202,7 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
 <path d="M 350 834 C 500 834, 620 1134, 760 1134" class="edge" data-role="wiki-writer" data-skill="project-wiki-topic-write"/>
 <path d="M 350 834 C 500 834, 620 924, 760 924" class="edge conditional-edge" data-role="wiki-writer" data-skill="code-project-wiki"/>
 <text x="30" y="168" class="group">Dev Activities</text>
-<g class="role-node" data-role="dev-artifact-reviewer" data-display-name="Dev Artifact Reviewer" role="button" tabindex="0" aria-pressed="false" aria-label="Select Dev Artifact Reviewer"><title>Select Dev Artifact Reviewer to isolate its skills and dependencies</title><rect x="30" y="180" width="320" height="24" rx="5" class="node role"/><text x="42" y="196">dev-artifact-reviewer</text><text x="338" y="196" text-anchor="end" class="secondary">9 skills · 7 conditional</text></g>
+<g class="role-node" data-role="dev-artifact-reviewer" data-display-name="Dev Artifact Reviewer" role="button" tabindex="0" aria-pressed="false" aria-label="Select Dev Artifact Reviewer"><title>Select Dev Artifact Reviewer to isolate its skills and dependencies</title><rect x="30" y="180" width="320" height="24" rx="5" class="node role"/><text x="42" y="196">dev-artifact-reviewer</text><text x="338" y="196" text-anchor="end" class="secondary">10 skills · 8 conditional</text></g>
 <g class="role-node" data-role="dev-backlog-steward" data-display-name="Dev Backlog Steward" role="button" tabindex="0" aria-pressed="false" aria-label="Select Dev Backlog Steward"><title>Select Dev Backlog Steward to isolate its skills and dependencies</title><rect x="30" y="210" width="320" height="24" rx="5" class="node role"/><text x="42" y="226">dev-backlog-steward</text><text x="338" y="226" text-anchor="end" class="secondary">5 skills · 3 conditional</text></g>
 <g class="role-node" data-role="dev-browser-operator" data-display-name="Dev Browser Operator" role="button" tabindex="0" aria-pressed="false" aria-label="Select Dev Browser Operator"><title>Select Dev Browser Operator to isolate its skills and dependencies</title><rect x="30" y="240" width="320" height="24" rx="5" class="node role"/><text x="42" y="256">dev-browser-operator</text><text x="338" y="256" text-anchor="end" class="secondary">4 skills · 2 conditional</text></g>
 <g class="role-node" data-role="dev-code-reviewer" data-display-name="Dev Code Reviewer" role="button" tabindex="0" aria-pressed="false" aria-label="Select Dev Code Reviewer"><title>Select Dev Code Reviewer to isolate its skills and dependencies</title><rect x="30" y="270" width="320" height="24" rx="5" class="node role"/><text x="42" y="286">dev-code-reviewer</text><text x="338" y="286" text-anchor="end" class="secondary">6 skills · 2 conditional</text></g>
@@ -284,8 +285,9 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
 <g class="skill-node" data-skill="review-functional-spec" role="button" tabindex="0" aria-pressed="false" aria-label="Select skill review-functional-spec"><title>Select review-functional-spec to isolate the agents using it</title><rect x="760" y="1728" width="360" height="24" rx="5" class="node skill conditional"/><path d="M 761 1733 V 1747" class="selection-marker"/><text x="772" y="1744">review-functional-spec</text><text x="1108" y="1744" text-anchor="end" class="secondary">request-specific</text></g>
 <g class="skill-node" data-skill="review-high-level-design" role="button" tabindex="0" aria-pressed="false" aria-label="Select skill review-high-level-design"><title>Select review-high-level-design to isolate the agents using it</title><rect x="760" y="1758" width="360" height="24" rx="5" class="node skill conditional"/><path d="M 761 1763 V 1777" class="selection-marker"/><text x="772" y="1774">review-high-level-design</text><text x="1108" y="1774" text-anchor="end" class="secondary">request-specific</text></g>
 <g class="skill-node" data-skill="review-module-design" role="button" tabindex="0" aria-pressed="false" aria-label="Select skill review-module-design"><title>Select review-module-design to isolate the agents using it</title><rect x="760" y="1788" width="360" height="24" rx="5" class="node skill conditional"/><path d="M 761 1793 V 1807" class="selection-marker"/><text x="772" y="1804">review-module-design</text><text x="1108" y="1804" text-anchor="end" class="secondary">request-specific</text></g>
-<g class="skill-node" data-skill="review-structured-artifact" role="button" tabindex="0" aria-pressed="false" aria-label="Select skill review-structured-artifact"><title>Select review-structured-artifact to isolate the agents using it</title><rect x="760" y="1818" width="360" height="24" rx="5" class="node skill"/><path d="M 761 1823 V 1837" class="selection-marker"/><text x="772" y="1834">review-structured-artifact</text><text x="1108" y="1834" text-anchor="end" class="secondary">definition-owned</text></g>
-<g class="skill-node" data-skill="review-unit-test-plan" role="button" tabindex="0" aria-pressed="false" aria-label="Select skill review-unit-test-plan"><title>Select review-unit-test-plan to isolate the agents using it</title><rect x="760" y="1848" width="360" height="24" rx="5" class="node skill conditional"/><path d="M 761 1853 V 1867" class="selection-marker"/><text x="772" y="1864">review-unit-test-plan</text><text x="1108" y="1864" text-anchor="end" class="secondary">request-specific</text></g>
+<g class="skill-node" data-skill="review-reconstruction-readiness" role="button" tabindex="0" aria-pressed="false" aria-label="Select skill review-reconstruction-readiness"><title>Select review-reconstruction-readiness to isolate the agents using it</title><rect x="760" y="1818" width="360" height="24" rx="5" class="node skill conditional"/><path d="M 761 1823 V 1837" class="selection-marker"/><text x="772" y="1834">review-reconstruction-readiness</text><text x="1108" y="1834" text-anchor="end" class="secondary">request-specific</text></g>
+<g class="skill-node" data-skill="review-structured-artifact" role="button" tabindex="0" aria-pressed="false" aria-label="Select skill review-structured-artifact"><title>Select review-structured-artifact to isolate the agents using it</title><rect x="760" y="1848" width="360" height="24" rx="5" class="node skill"/><path d="M 761 1853 V 1867" class="selection-marker"/><text x="772" y="1864">review-structured-artifact</text><text x="1108" y="1864" text-anchor="end" class="secondary">definition-owned</text></g>
+<g class="skill-node" data-skill="review-unit-test-plan" role="button" tabindex="0" aria-pressed="false" aria-label="Select skill review-unit-test-plan"><title>Select review-unit-test-plan to isolate the agents using it</title><rect x="760" y="1878" width="360" height="24" rx="5" class="node skill conditional"/><path d="M 761 1883 V 1897" class="selection-marker"/><text x="772" y="1894">review-unit-test-plan</text><text x="1108" y="1894" text-anchor="end" class="secondary">request-specific</text></g>
 <script><![CDATA[
 (function () {
   const roleNodes = Array.from(document.querySelectorAll(".role-node"));
