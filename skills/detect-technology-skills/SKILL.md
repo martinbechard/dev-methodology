@@ -14,11 +14,12 @@ Run technology detection during project setup, not during ordinary coding, revie
 1. Inventory project tiers, ownership boundaries, manifests, source roots, and tests.
 2. Choose representative folders that do not combine unrelated sibling technologies.
 3. Run scripts/detect.py once for those scopes.
-4. Review source evidence, missing required skills, exclusive conflicts, and explicit no-variant results.
+4. Review source evidence, missing required skills, exclusive conflicts, and explicit no-variant results. Reject a candidate when its evidence proves only that a dependency exists in an owning manifest but not that the analyzed folder owns the behavior or verification workflow covered by that skill.
 5. Record accepted skillsets and source evidence in PROJECT.yaml.
-6. Generate root or nested AGENTS.md sections with unconditional folder skill-loading instructions.
-7. Verify every listed skill is installed.
-8. Rerun only when project setup or technology boundaries change.
+6. Compare every detected candidate with the technology skills actually exposed by the target runtime, not only with skills present in the methodology source tree.
+7. Generate root or nested AGENTS.md sections with unconditional folder skill-loading instructions.
+8. Verify every listed skill is installed and exposed to the agents that will work in that folder.
+9. Rerun only when project setup, technology boundaries, or the runtime's available-skill catalog changes.
 
 ## Command
 
@@ -36,6 +37,7 @@ Repeat the scope option for separately analyzed folders. Keep each returned skil
 - OwningDependency and manifestFile read only the nearest owning project boundary.
 - SourceImport parses supported source code so comments and string examples do not count as imports.
 - The detector records the concrete matches from every satisfied branch as source evidence.
+- An owning-manifest match is candidate evidence, not automatic proof that every nested folder uses the matched technology. Confirm pertinence from that folder's source, configuration, test runner, or runtime responsibility before accepting the skill.
 
 Example:
 
@@ -55,9 +57,11 @@ activation:
 ## Boundaries
 
 - Detect only technology and domain skills with machine-readable detection metadata.
+- Do not route a skill merely because it is installed, exposed, or detected. It must be pertinent to the folder's source-backed responsibility.
 - Do not use the selected conceptual agent definition, task wording, prompt keywords, read confirmations, or optional local commands as inputs.
 - Do not add generic definition-owned skills to detector metadata.
 - Stop setup when a detected required skill is unavailable or equal-priority exclusive matches conflict.
-- Preserve explicit no-variant results instead of inventing support.
+- Preserve explicit no-variant results instead of inventing support. When no pertinent specialized skill exists for a source-backed scope, record `NO_VARIANT` and route that scope to general model training; do not skip the scope and do not report it as blocked.
+- Distinguish `NO_VARIANT` from a detected required-but-unavailable skill. The former uses general model training; the latter remains `BLOCKED` until the required skill is available.
 - Require one complete activation branch before selecting its named skill.
 - Treat the bundled detector script as a generated mirror of the repository source script.

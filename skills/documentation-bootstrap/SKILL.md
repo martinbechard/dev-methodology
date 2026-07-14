@@ -13,6 +13,8 @@ Use this skill for the first meaningful setup of the development methodology in 
 
 When bootstrap includes reverse engineering for a repository, application, or project, treat the entire codebase as in scope. Do not ask the user to select a documentation breadth or offer a representative, sampled, minimal, or tiered documentation set. Use documentation-reverse-engineer to inventory every meaningful module, create and review the module documents, group the complete module set into high-level designs, derive architecture from the complete high-level-design set, document all observable workflows, and integrate the result into README and wiki hubs.
 
+The project configuration pass from documentation-reverse-engineer precedes documentation work. It creates or reconciles `PROJECT.yaml`, inventories the target runtime's available technology skills, and owns matching root and nested `AGENTS.md` routing. A scope with no pertinent specialized skill uses the recorded general-model-training fallback and remains in coverage.
+
 Only use a narrower boundary when the user explicitly names it. Record what remains outside that boundary and do not report the project as fully documented or fully reverse engineered.
 
 ## Inputs
@@ -46,7 +48,7 @@ Proceed directly when the user already specified these choices or the repository
 6. Use project-wiki setup guidance for docs/wiki initialization, schema, topic index, glossary, open decisions, known defects, and maintenance log.
 7. Add or update AGENTS.md guidance so future agents check docs/wiki first, save unsynthesized wiki knowledge under raw/wiki-fragments, use project-wiki skills for wiki work, and commit wiki changes with the source or documentation changes that made them necessary.
 8. Keep runtime-specific commands in project guidance only when the project actually depends on that runtime.
-9. When reverse engineering is in scope, require the documentation coverage manifest and every pass completion gate from documentation-reverse-engineer before bootstrap can advance or report completion.
+9. When reverse engineering is in scope, require the project configuration gate, documentation coverage manifest, and every pass completion gate from documentation-reverse-engineer before bootstrap can advance or report completion.
 10. Record unresolved ownership, source authority, verification, or automation questions in Open Questions instead of guessing.
 
 ## Local Template Policy

@@ -60,7 +60,8 @@ technology_skill_detection:
   registry: "Installed detect-technology-skills registry."
   selection_policy: "Setup-agent-selected folder scopes and deterministic repository evidence. The selected conceptual agent definition, prompt wording, read confirmation, and optional local commands are not detector inputs."
   required_load_failure: "BLOCKED"
-  missing_variant_policy: "Record an explicit no-variant skillset."
+  missing_variant_policy: "Record an explicit no-variant skillset and use general model training for that scope; do not skip it or invent a skill."
+  required_but_unavailable_policy: "BLOCKED"
   runtime_policy: "The harness supplies ordinary agents with the technology skills routed for the active folder; ordinary agents do not rerun detection."
 
 claude_bridge_files:
@@ -95,8 +96,10 @@ technology_skill_loadouts:
           - "TODO: Source path, owning manifest, configuration, or other deterministic evidence."
     missingRequiredSkills: []
     exclusiveConflicts: []
+    rejectedCandidates: []
     status: "TODO: READY, BLOCKED, or NO_VARIANT."
     required_load_failure: "BLOCKED"
+    fallback: "TODO: General model training when status is NO_VARIANT, or Not applicable."
     local_rules_source: "TODO: AGENTS.md, nested AGENTS.md, procedure, or Not yet identified."
     notes: "TODO: Keep skills reusable and portable. Keep project-specific rules in AGENTS.md or PROJECT.yaml until they are promoted into a reusable skill."
 
@@ -137,7 +140,7 @@ validation_plan:
   technology_detection_checks:
     - "TODO: Run setup-time detection for representative folders in every tier and compare the results with technology_skill_loadouts."
     - "TODO: Confirm every required skill is available and every skillset keeps its source evidence."
-    - "TODO: Confirm missing variants, missing required skills, and exclusive conflicts remain explicit."
+    - "TODO: Confirm selected skills are exposed by the target runtime, NO_VARIANT scopes use general model training, and missing required skills and exclusive conflicts remain explicit."
     - "TODO: Confirm AGENTS.md requires matching folder skills before acting and does not tell ordinary agents to rerun detection."
   privacy_checks:
     - "TODO: Explain how to verify that private or proprietary examples remain inside the target repository."

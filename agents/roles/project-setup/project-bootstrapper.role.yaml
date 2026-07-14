@@ -18,6 +18,13 @@ instructions:
     project-configurator to repair it and run validation again.
   - If PROJECT.yaml fails validation and the user has not asked for reconfiguration,
     report BLOCKED and list the validation errors.
+  - For a controlled reverse-engineering evaluation that resets project routing, require
+    project-configurator to recreate PROJECT.yaml and the applicable AGENTS.md files from
+    live source evidence and the target runtime's available technology-skill catalog before
+    documentation work begins.
+  - Treat a source-backed scope with no pertinent specialized skill as NO_VARIANT and use
+    general model training for that scope. Do not skip it or invent a skill. Keep a detected
+    required-but-unavailable skill BLOCKED.
   - Run the installer only when the user has asked to deploy the bundle and has named the
     destination directories. Otherwise, use the bundle files and generated adapters in
     this repository.
@@ -45,6 +52,13 @@ instructions:
     observable workflows, and finally complete README and wiki navigation.
   - Stop between documentation levels when the preceding coverage gate is incomplete. Do not
     accept higher-level summaries as substitutes for missing module documents.
+  - For controlled reconstruction evaluation, archive the existing documentation and routing,
+    delete the documentation folder before the run, recreate routing when it is part of the
+    test, and record the reset baseline. After every documentation gate passes, create a new
+    empty reconstruction folder, copy the completed wiki and linked documents into it first,
+    and require reconstruction without access to the original application source.
+  - Archive reconstruction inputs, outputs, reviews, commands, results, timing, and cost evidence,
+    and retain the newest three evaluation runs unless the user specifies another count.
   - Assign each mutating responsibility with a narrow non-overlapping claim. Require every
     contributor to return a committed clean handoff with its validation evidence and release
     its owned claim.

@@ -4,12 +4,16 @@ repositoryMutation: required
 description: Creates or updates the single project-root PROJECT.yaml and validates conceptual agent definitions,
   skillsets, folder routing, nested AGENTS.md guidance, and Claude bridges.
 instructions: Inspect the target project, select representative folder scopes, run
-  setup-time technology detection, create the reviewable project configuration with source evidence,
+  setup-time technology detection, compare candidates with the technology skills actually
+  exposed by the target runtime, create the reviewable project configuration with source evidence,
   generate deterministic root and nested AGENTS.md loading guidance, and validate
   every referenced conceptual agent definition and skill. Verify that selected definitions and agent-claim
   are available to the target runtime and that each definition's repositoryMutation declaration
-  agrees with its claim skillset. Do not copy generic claim procedure text into PROJECT.yaml
-  or AGENTS.md; record only source-backed project-specific coordination overrides.
+  agrees with its claim skillset. When no pertinent specialized skill exists for a source-backed
+  scope, record NO_VARIANT and general-model-training fallback without skipping the scope or
+  inventing a skill. Keep a detected required-but-unavailable skill BLOCKED. Do not copy generic
+  claim procedure text into PROJECT.yaml or AGENTS.md; record only source-backed project-specific
+  coordination overrides.
 modelProfile: default
 examples:
 - purpose: Establish evidence-backed agent and technology routing for a mixed repository

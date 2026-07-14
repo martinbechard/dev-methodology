@@ -2852,6 +2852,10 @@ class BundleContentTests(unittest.TestCase):
         required_reverse_phrases = (
             "the entire codebase is in scope",
             "Do not ask the user to choose a documentation breadth",
+            "Pass -1: Project Configuration",
+            "technology skills actually exposed by the target runtime",
+            "record `NO_VARIANT` and use general model training",
+            "Pass 0 must not start until this gate passes",
             "documentation coverage manifest",
             "An unlisted or deferred source area is a coverage failure",
             "Every in-scope manifest row has a module document",
@@ -2859,6 +2863,11 @@ class BundleContentTests(unittest.TestCase):
             "Every accepted module document is linked from at least one high-level design",
             "Pass 3 must not start until this gate passes",
             "preserve enough evidence to recreate the application's observable behavior",
+            "Delete the documentation folder from the source-under-test before the run starts",
+            "copy the completed wiki and its linked documentation into that folder before any reconstruction code is written",
+            "Do not allow it to inspect or copy the original application source",
+            "Keep the newest three evaluation runs",
+            "defect recall, false positives, checklist completeness",
         )
         for phrase in required_reverse_phrases:
             with self.subTest(reverse_skill_phrase=phrase):
@@ -2867,7 +2876,8 @@ class BundleContentTests(unittest.TestCase):
         for phrase in (
             "treat the entire codebase as in scope",
             "Do not ask the user to select a documentation breadth",
-            "require the documentation coverage manifest and every pass completion gate",
+            "require the project configuration gate, documentation coverage manifest, and every pass completion gate",
+            "general-model-training fallback",
         ):
             with self.subTest(bootstrap_skill_phrase=phrase):
                 self.assertIn(phrase, bootstrap_skill_text)
@@ -2883,6 +2893,8 @@ class BundleContentTests(unittest.TestCase):
             "coverage manifest",
             "Stop between documentation levels",
             "Do not accept higher-level summaries as substitutes",
+            "available technology-skill catalog",
+            "retain the newest three evaluation runs",
         ):
             with self.subTest(bootstrapper_phrase=phrase):
                 self.assertIn(phrase, bootstrapper.instructions)
@@ -2903,6 +2915,41 @@ class BundleContentTests(unittest.TestCase):
             writer.instructions,
         ):
             self.assertNotIn("balanced set", text.lower())
+
+    def test_project_configuration_distinguishes_no_variant_from_missing_required_skill(self) -> None:
+        detector_text = (SKILLS_ROOT / "detect-technology-skills" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        configuration_text = (
+            SKILLS_ROOT / "create-project-configuration" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        template_text = (
+            SKILLS_ROOT / "development-methodology" / "assets" / "templates" / "project-template.yaml"
+        ).read_text(encoding="utf-8")
+
+        for phrase in (
+            "technology skills actually exposed by the target runtime",
+            "route that scope to general model training",
+            "detected required-but-unavailable skill",
+            "candidate evidence, not automatic proof",
+            "It must be pertinent to the folder's source-backed responsibility",
+        ):
+            with self.subTest(detector_phrase=phrase):
+                self.assertIn(phrase, detector_text)
+
+        for phrase in (
+            "inspect the technology skills actually exposed by the target runtime",
+            "general-model-training fallback",
+            "required-but-unavailable skill `BLOCKED`",
+            "Reject owning-manifest overreach",
+        ):
+            with self.subTest(configuration_phrase=phrase):
+                self.assertIn(phrase, configuration_text)
+
+        self.assertIn("required_but_unavailable_policy", template_text)
+        self.assertIn("fallback:", template_text)
+        self.assertIn("rejectedCandidates:", template_text)
+        self.assertIn("NO_VARIANT scopes use general model training", template_text)
 
 
 if __name__ == "__main__":

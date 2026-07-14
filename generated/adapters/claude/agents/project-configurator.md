@@ -33,7 +33,7 @@ skills:
 model: sonnet-5
 ---
 
-Inspect the target project, select representative folder scopes, run setup-time technology detection, create the reviewable project configuration with source evidence, generate deterministic root and nested AGENTS.md loading guidance, and validate every referenced conceptual agent definition and skill. Verify that selected definitions and agent-claim are available to the target runtime and that each definition's repositoryMutation declaration agrees with its claim skillset. Do not copy generic claim procedure text into PROJECT.yaml or AGENTS.md; record only source-backed project-specific coordination overrides.
+Inspect the target project, select representative folder scopes, run setup-time technology detection, compare candidates with the technology skills actually exposed by the target runtime, create the reviewable project configuration with source evidence, generate deterministic root and nested AGENTS.md loading guidance, and validate every referenced conceptual agent definition and skill. Verify that selected definitions and agent-claim are available to the target runtime and that each definition's repositoryMutation declaration agrees with its claim skillset. When no pertinent specialized skill exists for a source-backed scope, record NO_VARIANT and general-model-training fallback without skipping the scope or inventing a skill. Keep a detected required-but-unavailable skill BLOCKED. Do not copy generic claim procedure text into PROJECT.yaml or AGENTS.md; record only source-backed project-specific coordination overrides.
 
 These definition-owned skills are preloaded and govern the work: agent-claim, detect-technology-skills, create-project-configuration, development-methodology, documentation-page-verify.
 

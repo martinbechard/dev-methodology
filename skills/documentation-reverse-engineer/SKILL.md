@@ -17,6 +17,24 @@ Full coverage means documenting every meaningful runtime responsibility, not cre
 
 The documentation set must preserve enough evidence to recreate the application's observable behavior in another folder. Cover public interfaces, data models and migrations, initial or sample data, configuration behavior, authentication and authorization, user workflows and UI states, validation and error behavior, integrations, operational commands, build and deployment behavior, and the tests that define expected results. Record unsupported or unknowable behavior as a specific open question rather than silently omitting it.
 
+## Pass -1: Project Configuration
+
+Reverse engineering begins with project setup, before documentation inventory or writing.
+
+1. Inspect the repository's manifests, source roots, test roots, runtime boundaries, and verification commands.
+2. Inspect the technology skills actually exposed by the target runtime and run setup-time technology detection for representative source scopes.
+3. Create or reconcile the single root `PROJECT.yaml` from repository evidence. Record every folder loadout, selected skill, source match, runtime-availability result, missing requirement, conflict, and explicit no-variant result.
+4. When no pertinent specialized skill is available for a scope, record `NO_VARIANT` and use general model training for that scope. Do not invent a skill, skip the scope, or call the whole run blocked. A detected required-but-unavailable skill remains `BLOCKED`.
+5. Generate or update root and nested `AGENTS.md` files from the accepted configuration. The resulting guidance gives every source area an operational route.
+6. Send `PROJECT.yaml` and every generated agent-guidance file for independent review and correction.
+
+Completion gate:
+
+- `PROJECT.yaml` is source-backed, contains no unresolved template instructions, and is independently accepted.
+- Every selected technology skill is exposed by the target runtime, and every `NO_VARIANT` scope records its general-model-training fallback.
+- Root and nested `AGENTS.md` routing matches the accepted configuration.
+- Pass 0 must not start until this gate passes.
+
 Create a documentation coverage manifest under the documentation root before authoring design documents. Use these columns:
 
 | Module or responsibility | Source paths | Entry points and contracts | Related tests | Module document | Review status |
@@ -180,3 +198,17 @@ After the passes:
 13. Confirm every open question is specific enough for a human or future agent to answer.
 
 Stop and ask for human input when source conflicts cannot be resolved, business ownership would be guessed, private systems are needed, verification cannot run for environmental reasons, or the work would send private material to an external service without explicit authorization.
+
+## Reconstruction Evaluation Runs
+
+Use this protocol only for a controlled reverse-engineering evaluation, not for routine documentation maintenance.
+
+1. Archive the current documentation and project-routing snapshot before destructive reset work.
+2. Delete the documentation folder from the source-under-test before the run starts. When the evaluation includes project-routing reconstruction, also delete `PROJECT.yaml` and the applicable generated `AGENTS.md` files. Commit or otherwise record the exact reset baseline.
+3. Run Pass -1 through Pass 5 from the reset baseline. A failed pass stops the run; do not create higher-level artifacts after a failed lower-level gate.
+4. After every documentation gate passes, create a new empty reconstruction folder and copy the completed wiki and its linked documentation into that folder before any reconstruction code is written.
+5. Give the reconstruction builder only the completed documentation set and declared external toolchain. Do not allow it to inspect or copy the original application source.
+6. Recreate the application in the reconstruction folder, then run the documented build, tests, routes, workflows, data behavior, security behavior, and operational checks needed to compare observable functionality.
+7. Archive the reset baseline, configuration, documentation, completed checklists, reconstruction output, commands, results, timing, and token or cost evidence. Keep the newest three evaluation runs unless the user specifies another retention count.
+
+For checklist-only model evaluation, reuse the same fixed artifact corpus and compare a lower-cost candidate reviewer with the reference reviewer on defect recall, false positives, checklist completeness, quoted source evidence, elapsed time, and token cost. A candidate model may replace the reference for checklist completion only after the benchmark preserves the acceptance quality gate; model cost never justifies sampled coverage or skipped questions.
