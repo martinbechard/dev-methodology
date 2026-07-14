@@ -268,6 +268,15 @@
       border-top: 1px solid var(--color-line);
     }
 
+    .section > .lede {
+      margin-bottom: var(--space-4);
+    }
+
+    .flow + .panel,
+    .panel + .matrix {
+      margin-top: var(--space-4);
+    }
+
     @media (max-width: 720px) {
       main {
         padding: var(--space-8) var(--space-4);
@@ -291,7 +300,9 @@
     <section class="hero" aria-labelledby="page-title">
       <h1 id="page-title">Agent Definition Runtime Formats</h1>
       <p class="lede">
-        This page owns the role schema, native packaging, selected cross-runtime field mappings, and vendor references.
+        Skills and agents have different portability models. A source skill remains the same portable skill package when it is deployed,
+        while a source agent role must be converted into the file format and properties understood by each agent harness.
+        This page explains that difference, the logical role model, native agent packaging, cross-runtime property mappings, and vendor references.
         The <a href="agent-role-skill-map.html">role map</a> owns generated catalog views, and the
         <a href="agent-skill-specialization-strategy.html">specialization strategy</a> owns detection and selection policy.
         The <a href="../README.md#explicit-target-deployment">README</a> owns deployment commands, destination ownership, updates, and pruning.
@@ -304,111 +315,120 @@
       </div>
     </section>
 
+    <section class="section" aria-labelledby="portability-title">
+      <h2 id="portability-title">The Portability Problem</h2>
+      <p class="lede">A repository that supports several agent harnesses must distinguish portable skill packages from harness-specific agent definitions. Treating both as though they had the same source and runtime format creates duplicate agent files, ambiguous ownership, and drift.</p>
+      <div class="grid">
+        <article class="card skill">
+          <h3>Skills Have A Portable File Standard</h3>
+          <p>The source skill definition is also the runtime skill definition. <code>skills/&lt;skill-name&gt;/SKILL.md</code> is copied into the selected skill directory without translating its frontmatter or instruction body into another format.</p>
+          <ul>
+            <li>The portable <code>SKILL.md</code> remains authoritative before and after deployment.</li>
+            <li>Supporting files in the skill directory remain part of the same portable package.</li>
+            <li>Adjacent harness metadata, such as Codex <code>agents/openai.yaml</code>, supplements the package for that harness; it does not replace or rewrite <code>SKILL.md</code>.</li>
+          </ul>
+        </article>
+        <article class="card risk">
+          <h3>Agents Do Not Have One Portable Runtime File</h3>
+          <p>Agent harnesses discover different files, use different serialization formats, and expose different property names and capabilities. The same logical agent might otherwise need separate hand-maintained TOML, Markdown, YAML frontmatter, and harness-specific configuration.</p>
+          <ul>
+            <li>Discovery directories and filename extensions differ by harness.</li>
+            <li>Equivalent behavior may be a native property in one harness and instruction text in another.</li>
+            <li>Model, tool, permission, isolation, memory, and skill fields are not uniformly named or supported.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
     <section class="section" aria-labelledby="generation-title">
-      <h2 id="generation-title">Role Model And Generation</h2>
+      <h2 id="generation-title">From Logical Roles To Native Agents</h2>
+      <p class="lede"><code>agents/roles/&lt;role-category&gt;/&lt;role-name&gt;.role.yaml</code> is a logical source definition, not a file that an agent harness loads directly. It describes the agent once with the repository's shared vocabulary. The generator validates that vocabulary, resolves adapter-specific values, and emits one native agent definition per supported harness.</p>
+      <div class="flow" aria-label="Agent role generation flow">
+        <div class="flow-row">
+          <div><span class="name">1. Author The Logical Role</span></div>
+          <p>Define intent with logical properties such as <code>instructions</code>, <code>skills</code>, <code>modelProfile</code>, <code>tools</code>, and <code>outputContract</code>. These properties describe the role without making a harness file authoritative.</p>
+        </div>
+        <div class="flow-row">
+          <div><span class="name">2. Validate And Resolve</span></div>
+          <p><code>agents/role-schema.yaml</code> defines the allowed logical properties. Skill IDs resolve against portable skill sources, semantic model profiles resolve through adapter model mappings, and unsupported or defaulted behavior follows the documented adapter rules.</p>
+        </div>
+        <div class="flow-row">
+          <div><span class="name">3. Render Each Harness Format</span></div>
+          <p><code>scripts/build-skill-docs.py</code> converts the logical values into native property names and file structures. For example, logical <code>instructions</code> becomes Codex <code>developer_instructions</code> or the Markdown body of a Claude agent.</p>
+        </div>
+        <div class="flow-row">
+          <div><span class="name">4. Use Generated Agent Files</span></div>
+          <p>The generated Codex TOML and Claude Markdown files are deployable runtime artifacts. They are regenerated from the role source and must not become independent sources of truth.</p>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Property conversion is not just a filename change</h3>
+        <ul>
+          <li><span class="name">Rename or relocate:</span> a logical property may become a differently named native property or move into an instruction body.</li>
+          <li><span class="name">Resolve:</span> a provider-neutral value such as <code>modelProfile: advanced</code> becomes the concrete model and reasoning settings selected by an adapter.</li>
+          <li><span class="name">Expand:</span> skill conditions, output contracts, and rationale can become native fields, generated instructions, or trace comments.</li>
+          <li><span class="name">Default or omit:</span> behavior without a native equivalent follows an explicit fallback rule instead of inventing an unsupported harness property.</li>
+        </ul>
+      </div>
       <div class="matrix">
         <table>
           <thead>
             <tr>
-              <th>Concern</th>
-              <th>Authoritative source</th>
-              <th>Derived output or rule</th>
+              <th>Artifact</th>
+              <th>Repository file</th>
+              <th>Relationship To The Harness</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td><span class="name">Skills</span></td>
-              <td><code>skills/&lt;skill-name&gt;/SKILL.md</code> and adjacent Codex metadata</td>
-              <td><code>design/generated/skill-definitions.js</code>; every role skill ID must resolve here.</td>
+              <td><span class="name">Portable skill source</span></td>
+              <td><code>skills/&lt;skill-name&gt;/SKILL.md</code></td>
+              <td>Copied as the same portable skill definition. It is not converted into an agent file.</td>
             </tr>
             <tr>
-              <td><span class="name">Roles</span></td>
-              <td><code>agents/role-schema.yaml</code> and <code>agents/roles/&lt;role-category&gt;/&lt;role-name&gt;.role.yaml</code></td>
-              <td>Validated role definitions generate <code>design/generated/role-definitions.js</code> and the native adapter files.</td>
+              <td><span class="name">Logical role vocabulary</span></td>
+              <td><code>agents/role-schema.yaml</code></td>
+              <td>Defines which logical properties a source role may contain. Harnesses do not load this schema.</td>
             </tr>
             <tr>
-              <td><span class="name">Model profiles</span></td>
-              <td><code>agents/model-profiles.yaml</code> plus each adapter model mapping</td>
-              <td>Semantic profiles and optional stage assignments generate adapter-specific model fields and trace comments.</td>
+              <td><span class="name">Logical agent source</span></td>
+              <td><code>agents/roles/&lt;role-category&gt;/&lt;role-name&gt;.role.yaml</code></td>
+              <td>Defines one agent role independently of native harness syntax. It is input to generation, not a deployable agent definition.</td>
             </tr>
             <tr>
-              <td><span class="name">Generation</span></td>
-              <td><code>scripts/build-skill-docs.py</code></td>
-              <td>Generates browser data, Codex TOML, Claude Markdown, and <code>generated/adapters/agent-generation-manifest.json</code> without hand-maintained role data in HTML.</td>
+              <td><span class="name">Model resolution</span></td>
+              <td><code>agents/model-profiles.yaml</code> and <code>adapters/&lt;harness-name&gt;/model-profiles.yaml</code></td>
+              <td>Maps logical capability profiles to the concrete model properties used by each harness.</td>
             </tr>
             <tr>
-              <td><span class="name">Generated catalog</span></td>
-              <td>Role and skill source data</td>
-              <td>The <a href="agent-role-skill-map.html">role and skill map</a> renders the current definitions and the intentionally duplicated diagram view.</td>
+              <td><span class="name">Native agent outputs</span></td>
+              <td><code>generated/adapters/&lt;harness-name&gt;/agents/&lt;role-name&gt;.&lt;harness-extension&gt;</code></td>
+              <td>Contains the harness-specific agent files produced by generation. Current outputs are Codex TOML and Claude Markdown.</td>
+            </tr>
+            <tr>
+              <td><span class="name">Generation inventory</span></td>
+              <td><code>generated/adapters/agent-generation-manifest.json</code></td>
+              <td>Records each logical role source, generated harness file, and expected digest so generated files can be checked for drift.</td>
+            </tr>
+            <tr>
+              <td><span class="name">Generated documentation data</span></td>
+              <td><code>design/generated/skill-definitions.js</code> and <code>design/generated/role-definitions.js</code></td>
+              <td>Feeds the <a href="agent-role-skill-map.html">role and skill map</a>. These catalog files describe the sources for documentation; harnesses do not load them.</td>
             </tr>
           </tbody>
         </table>
       </div>
       <p class="note">The <a href="agent-skill-specialization-strategy.html">specialization strategy</a> owns fixed, request-specific, and setup-time folder selection. This page maps the resulting role fields; it does not redefine selection policy.</p>
     </section>
-
-    <section class="section" aria-labelledby="sources-title">
-      <h2 id="sources-title">Authoritative Runtime Sources</h2>
-      <div class="matrix">
-        <table>
-          <thead>
-            <tr>
-              <th>Runtime</th>
-              <th>Vendor documentation used by this mapping</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><span class="name">Codex</span></td>
-              <td>
-                <a href="https://learn.chatgpt.com/docs/agent-configuration/subagents?surface=app">OpenAI Codex Subagents</a>,
-                <a href="https://learn.chatgpt.com/docs/config-file/config-basic">OpenAI Codex Config Basics</a>,
-                <a href="https://learn.chatgpt.com/docs/config-file/config-advanced">OpenAI Codex Advanced Config</a>,
-                <a href="https://learn.chatgpt.com/docs/agent-configuration/rules">OpenAI Codex Rules</a>, and
-                <a href="https://developers.openai.com/codex/skills">OpenAI Codex Skills</a>.
-              </td>
-            </tr>
-            <tr>
-              <td><span class="name">Claude Code</span></td>
-              <td><a href="https://code.claude.com/docs/en/sub-agents">Claude Code Subagents</a>.</td>
-            </tr>
-            <tr>
-              <td><span class="name">Gemini CLI</span></td>
-              <td>
-                <a href="https://github.com/google-gemini/gemini-cli/blob/main/docs/core/subagents.md">Gemini CLI Subagents</a> and
-                <a href="https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/using-agent-skills.md">Gemini CLI Agent Skills</a>.
-              </td>
-            </tr>
-            <tr>
-              <td><span class="name">Junie CLI</span></td>
-              <td>
-                <a href="https://junie.jetbrains.com/docs/junie-cli-subagents.html">Junie CLI Custom Subagents</a>,
-                <a href="https://junie.jetbrains.com/docs/agent-skills.html">Junie Agent Skills</a>, and
-                <a href="https://junie.jetbrains.com/docs/guidelines-and-memory.html">Junie Guidelines And Memory</a>.
-              </td>
-            </tr>
-            <tr>
-              <td><span class="name">GitHub Copilot</span></td>
-              <td>
-                <a href="https://code.visualstudio.com/docs/agent-customization/custom-agents">VS Code Custom Agents</a>,
-                <a href="https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/create-custom-agents">GitHub Copilot Custom Agents</a>,
-                <a href="https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/add-skills">GitHub Copilot Agent Skills</a>, and
-                <a href="https://docs.github.com/en/copilot/reference/custom-instructions-support">GitHub Copilot Custom Instructions Support</a>.
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
     <section class="section" aria-labelledby="information-model-title">
-      <h2 id="information-model-title">Properties We Use</h2>
-      <p class="lede">This table inventories every field declared under <code>properties</code> in <code>agents/role-schema.yaml</code>. Semantic model profiles remain provider-neutral; runtime adapters resolve them to native model and reasoning fields.</p>
+      <h2 id="information-model-title">Logical Role Properties</h2>
+      <p class="lede">These are source-model properties, not a claim that every harness has a native field with the same name. The logical set captures the intent needed to define a reusable agent once. The later mapping table shows how each property becomes native metadata, instruction text, comments, a resolved value, or an explicit omission.</p>
       <table>
         <thead>
           <tr>
             <th>Element</th>
-            <th>Role Property</th>
-            <th>Role In A Reusable Agent Definition</th>
+            <th>Logical Role Property</th>
+            <th>Meaning In The Source Definition</th>
           </tr>
         </thead>
         <tbody>
@@ -593,12 +613,12 @@
       </div>
     </section>
     <section class="section" aria-labelledby="mapping-title">
-      <h2 id="mapping-title">Common Source Mapping</h2>
-      <p class="lede">This matrix covers fields with runtime-specific behavior. The Properties table above is the exhaustive role schema inventory; fields carried only in generated instructions, comments, catalog data, or filenames do not need a separate native mapping row.</p>
+      <h2 id="mapping-title">Logical-To-Native Property Mapping</h2>
+      <p class="lede">This matrix shows how logical role properties are converted to the actual properties or instruction surfaces understood by each harness. The logical property table above is the exhaustive source schema inventory; fields carried only in generated instructions, comments, catalog data, or filenames do not need a separate native mapping row.</p>
       <table>
         <thead>
           <tr>
-            <th>Common Source Element</th>
+            <th>Logical Role Property</th>
             <th>Codex</th>
             <th>Claude Code</th>
             <th>Gemini CLI</th>
@@ -753,6 +773,61 @@
           </tr>
         </tbody>
       </table>
+    </section>
+
+    <section class="section" aria-labelledby="sources-title">
+      <h2 id="sources-title">Authoritative Runtime Sources</h2>
+      <p class="lede">The native formats and property mappings above are based on each harness vendor's documentation. These sources define what the generated runtime files may contain; they do not replace the logical role sources maintained in this repository.</p>
+      <div class="matrix">
+        <table>
+          <thead>
+            <tr>
+              <th>Runtime</th>
+              <th>Vendor documentation used by this mapping</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="name">Codex</span></td>
+              <td>
+                <a href="https://learn.chatgpt.com/docs/agent-configuration/subagents?surface=app">OpenAI Codex Subagents</a>,
+                <a href="https://learn.chatgpt.com/docs/config-file/config-basic">OpenAI Codex Config Basics</a>,
+                <a href="https://learn.chatgpt.com/docs/config-file/config-advanced">OpenAI Codex Advanced Config</a>,
+                <a href="https://learn.chatgpt.com/docs/agent-configuration/rules">OpenAI Codex Rules</a>, and
+                <a href="https://developers.openai.com/codex/skills">OpenAI Codex Skills</a>.
+              </td>
+            </tr>
+            <tr>
+              <td><span class="name">Claude Code</span></td>
+              <td><a href="https://code.claude.com/docs/en/sub-agents">Claude Code Subagents</a>.</td>
+            </tr>
+            <tr>
+              <td><span class="name">Gemini CLI</span></td>
+              <td>
+                <a href="https://github.com/google-gemini/gemini-cli/blob/main/docs/core/subagents.md">Gemini CLI Subagents</a> and
+                <a href="https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/using-agent-skills.md">Gemini CLI Agent Skills</a>.
+              </td>
+            </tr>
+            <tr>
+              <td><span class="name">Junie CLI</span></td>
+              <td>
+                <a href="https://junie.jetbrains.com/docs/junie-cli-subagents.html">Junie CLI Custom Subagents</a>,
+                <a href="https://junie.jetbrains.com/docs/agent-skills.html">Junie Agent Skills</a>, and
+                <a href="https://junie.jetbrains.com/docs/guidelines-and-memory.html">Junie Guidelines And Memory</a>.
+              </td>
+            </tr>
+            <tr>
+              <td><span class="name">GitHub Copilot</span></td>
+              <td>
+                <a href="https://code.visualstudio.com/docs/agent-customization/custom-agents">VS Code Custom Agents</a>,
+                <a href="https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/create-custom-agents">GitHub Copilot Custom Agents</a>,
+                <a href="https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-cloud-agent/add-skills">GitHub Copilot Agent Skills</a>, and
+                <a href="https://docs.github.com/en/copilot/reference/custom-instructions-support">GitHub Copilot Custom Instructions Support</a>.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </section>
 
     <p class="note">For explicit target deployment, ownership manifests, customer updates, pruning, and removal, follow the operational commands and policy in the <a href="../README.md#explicit-target-deployment">README</a>.</p>
