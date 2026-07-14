@@ -42,6 +42,10 @@ Create a documentation coverage manifest under the documentation root before aut
 
 Map every in-scope source area to one or more rows. List generated, vendored, fixture-only, and explicitly user-excluded areas separately with their generator, owner, or exclusion reason. An unlisted or deferred source area is a coverage failure.
 
+Create a machine-checkable path coverage ledger beside the manifest. Capture the exact source-baseline commit and inventory every tracked path plus every meaningful untracked source or configuration path present at that baseline. For each path record its classification, owning module or responsibility, manifest row, and one of `IN_SCOPE`, `GENERATED`, `VENDORED`, `FIXTURE_ONLY`, `SETUP_ARTIFACT`, or `USER_EXCLUDED`. Any non-`IN_SCOPE` classification requires a concrete generator, owner, fixture use, setup contract, or explicit user boundary; directory-level labels without path entries are insufficient.
+
+Compare the ledger mechanically with the baseline inventory. The set difference in both directions must be empty, duplicate path entries are invalid, and the ledger must contain zero `UNCLASSIFIED`, blank-owner, or implicitly deferred paths. Hidden files, root manifests, build scripts, migrations, assets, test support, CI, and operational configuration are part of the inventory; do not limit the ledger to conventional source extensions.
+
 ## Source Authority
 
 Use this authority order when sources disagree:
@@ -63,6 +67,7 @@ Do not invent behavior to fill gaps. Record an open question when the repository
 4. Identify current worktree status when the project is a Git repository.
 5. Record documentation gaps and conflicts for later passes.
 6. Create the documentation coverage manifest and populate its module inventory from the full source, test, configuration, migration, UI, integration, and operational surface.
+7. Create the path coverage ledger from the exact source baseline and mechanically prove that every inventoried path maps to a manifest row or a justified non-source classification.
 
 Completion gate:
 
@@ -71,6 +76,7 @@ Completion gate:
 - Existing documentation is inventoried.
 - Verification commands are known or recorded as not yet identified.
 - Every in-scope source area appears in the coverage manifest as a module responsibility or an evidence-backed generated, vendored, or fixture-only exclusion.
+- The path coverage ledger matches the baseline inventory exactly, has no duplicate or unclassified path, and maps every `IN_SCOPE` path to a manifest row.
 
 ## Code Discovery Tools
 

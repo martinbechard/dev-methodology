@@ -48,6 +48,10 @@ instructions:
   - Require dev-documentation-writer to create a documentation coverage manifest that maps
     every meaningful in-scope module and source area to its module document, related tests,
     and review status before higher-level documentation begins.
+  - Require a machine-checkable path coverage ledger from the exact source baseline. It must
+    classify every tracked path and meaningful untracked source or configuration path, map each
+    in-scope path to a manifest row, justify every generated, vendored, fixture-only, setup, or
+    user-excluded path, and have zero missing, duplicate, blank-owner, or unclassified entries.
   - Require one reviewed module design per meaningful runtime responsibility, then reviewed
     high-level designs that group the complete module set, then reviewed architecture derived
     from the complete high-level-design set, then reviewed functional specifications for all

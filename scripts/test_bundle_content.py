@@ -2862,6 +2862,9 @@ class BundleContentTests(unittest.TestCase):
             "record `NO_VARIANT` and use general model training",
             "Pass 0 must not start until this gate passes",
             "documentation coverage manifest",
+            "machine-checkable path coverage ledger",
+            "set difference in both directions must be empty",
+            "zero `UNCLASSIFIED`",
             "An unlisted or deferred source area is a coverage failure",
             "Every in-scope manifest row has a module document",
             "Pass 2 must not start until this gate passes",
@@ -2899,6 +2902,7 @@ class BundleContentTests(unittest.TestCase):
         for phrase in (
             "full-codebase documentation request",
             "coverage manifest",
+            "machine-checkable path coverage ledger",
             "Stop between documentation levels",
             "Do not accept higher-level summaries as substitutes",
             "available technology-skill catalog",

@@ -96,7 +96,7 @@
         {
           "name": "project-bootstrapper",
           "output": "generated/adapters/claude/agents/project-bootstrapper.md",
-          "sha256": "b20c3f3c3a81211720563772d38fc05be507d57612a67099f8a0c7eca3efb7be",
+          "sha256": "005ccbcbb88a6cd79246f0cfca16102df499f94e50031e79239e1b45b75f133d",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
@@ -259,7 +259,7 @@
         {
           "name": "project-bootstrapper",
           "output": "generated/adapters/codex/agents/project-bootstrapper.toml",
-          "sha256": "00c156378717df2f75677c5ac5c1cc449060e455eedae3bcc1050a45b37afe4b",
+          "sha256": "209fa0dfc2458edb68b042ea57a2f61d2b00de19e513808b01be179c956e61a2",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
@@ -422,7 +422,7 @@
         {
           "name": "project-bootstrapper",
           "output": "generated/adapters/gemini/agents/project-bootstrapper.md",
-          "sha256": "c263d72c612f84a6f2fcc2ff77ef59e06c621f8a08766fdb919c4e88dad41061",
+          "sha256": "ee93f2501e72b44db8e467897521fa273dfd6caaa90cb39508a158931088a07d",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
@@ -585,7 +585,7 @@
         {
           "name": "project-bootstrapper",
           "output": "generated/adapters/junie/agents/project-bootstrapper.md",
-          "sha256": "84b51863f981cd811caf0ae3c3f19800576caa48c4095f33b39786854758ff18",
+          "sha256": "7401a1975495c81dec854538333a2f2fd4cb2c89a53cc81065721e097f8896f2",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
