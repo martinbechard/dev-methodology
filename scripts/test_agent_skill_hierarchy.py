@@ -188,6 +188,28 @@ class AgentSkillHierarchyTests(unittest.TestCase):
             role_group_labels,
         )
 
+    def test_skill_groups_start_with_development_then_wiki(self) -> None:
+        """The skill reading order should mirror the first two agent categories."""
+        group_nodes = self.root.findall(
+            f".//{{{SVG_NAMESPACE}}}text[@class='group']"
+        )
+        skill_group_labels = [
+            node.text
+            for node in group_nodes
+            if int(node.attrib["x"]) == self.module.SKILL_X
+        ]
+
+        self.assertEqual(
+            [
+                "Development Practice",
+                "Wiki And Knowledge",
+                "Documentation Methodology",
+                "Artifact Creation",
+                "Artifact Review",
+            ],
+            skill_group_labels,
+        )
+
     def test_role_cards_follow_the_canonical_schema_order(self) -> None:
         """The reader-facing role cards should follow the maintained group order."""
         role_map = ROLE_MAP_PATH.read_text(encoding="utf-8")
@@ -202,6 +224,18 @@ class AgentSkillHierarchyTests(unittest.TestCase):
             sorted(role_map.index(marker) for marker in group_markers),
             [role_map.index(marker) for marker in group_markers],
         )
+
+    def test_map_legend_stays_with_the_map_without_a_category_summary(self) -> None:
+        """The edge legend belongs to the diagram instead of a standalone section."""
+        role_map = ROLE_MAP_PATH.read_text(encoding="utf-8")
+        hierarchy_section = role_map.split(
+            '<section class="section" aria-labelledby="hierarchy-title">', 1
+        )[1].split("</section>", 1)[0]
+
+        self.assertIn("Amber marks a fixed role-skill edge", hierarchy_section)
+        self.assertIn("blue arrows mark direct agent dependencies", hierarchy_section)
+        self.assertNotIn("Role Agent Categories", role_map)
+        self.assertNotIn("The role model has four operating categories", role_map)
 
     def test_selected_items_expose_the_definition_view_bridge(self) -> None:
         """A selected role or skill should enable a reusable definition control."""

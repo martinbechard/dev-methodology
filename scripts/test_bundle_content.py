@@ -251,7 +251,6 @@ STRATEGY_REQUIRED_PHRASES = (
     "Folder technology skill",
 )
 AGENT_ROLE_MAP_REQUIRED_PHRASES = (
-    "Role Agent Categories",
     "Methodology Maintenance",
     "Project Setup",
     "Wiki Activities",
@@ -322,7 +321,6 @@ DOCUMENT_INFORMATION_OWNERS = {
     "agent-role-skill-map.html": (
         "Agent and Skill Definitions",
         "Interactive Agent And Skill Map",
-        "Role Agent Categories",
         "Skill Catalog",
     ),
     "agent-skill-specialization-examples.html": (
