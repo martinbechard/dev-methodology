@@ -90,7 +90,7 @@ examples:
       synthesis. Regenerate the supported runtime definitions and verify the result."
   plausibleResponse: "STATUS: READY. Updated the dev-documentation-writer skillset and
     semantic model stages while preserving customer-independent role data. Regenerated
-    the documentation data and Codex and Claude definitions. methodology-artifact-reviewer
+    the documentation data and Codex, Claude Code, Gemini CLI, and Junie CLI definitions. methodology-artifact-reviewer
     requested one correction to the rendered dependency explanation and accepted the
     committed correction on the next fresh review. dev-verifier then passed the stale-output,
     regression-test, and diff checks. Reported the scoped file inventory, commit, clean

@@ -1114,6 +1114,15 @@ class BundleContentTests(unittest.TestCase):
         roles = build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
         expected_outputs = build_skill_docs.expected_role_outputs(roles)
 
+        maintenance_skill = (
+            SKILLS_ROOT / "maintain-methodology-documentation" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn(
+            "generated Codex, Claude Code, Gemini CLI, and Junie CLI agent definitions",
+            maintenance_skill,
+        )
+        self.assertNotIn("generated Codex and Claude agent definitions", maintenance_skill)
+
         self.assertTrue(ROLE_SCHEMA_PATH.is_file())
         role_schema = load_yaml_object(ROLE_SCHEMA_PATH)
         self.assertEqual(4, role_schema["version"])

@@ -16,7 +16,7 @@ Keep source files, generated outputs, documentation, installers, and tests align
 3. Run the metadata synchronizer after skill name or description changes.
 4. Run the technology detection generator after specialized activation metadata changes.
 5. Run the documentation generator after any skill, category, or role change.
-6. Inspect generated Codex and Claude agent definitions and confirm that roles distinguish generic fixed skills from request-specific skills with human-readable conditions, every skill ID resolves to a bundled skill, and every model profile resolves through each supported adapter.
+6. Inspect generated Codex, Claude Code, Gemini CLI, and Junie CLI agent definitions and confirm that roles distinguish generic fixed skills from request-specific skills with human-readable conditions, every skill ID resolves to a bundled skill, and every model profile resolves through each supported adapter.
 7. Update hand-authored policy in README.md and the design HTML pages when the operating model changes.
 8. Run stale-output checks, repository regression tests, Agent Skill validation, and git diff checks.
 9. Keep maintenance repository-local. Do not populate user-home skill or agent folders to validate or use the bundle.
