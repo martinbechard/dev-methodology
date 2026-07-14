@@ -2,11 +2,11 @@
 # Derived interface fields are refreshed from SKILL.md by scripts/openai_metadata.py.
 interface:
   # User-facing name shown in Codex skill surfaces.
-  display_name: JHipster Persistence
+  display_name: Liquibase
   # User-facing summary shown in Codex skill surfaces.
-  short_description: Use when implementing, reviewing, testing, or diagnosing JHipster SQL database profiles, JPA...
+  short_description: Use when implementing, reviewing, testing, or diagnosing Liquibase changelogs, changesets...
   # Prompt Codex can use when launching this skill directly.
-  default_prompt: Use $jhipster-persistence to change a JHipster database profile or generated persistence behavior safely.
+  default_prompt: Use $liquibase to implement or review this Liquibase migration and its rollback or recovery evidence.
 
 # Optional invocation policy placeholder.
 # policy:

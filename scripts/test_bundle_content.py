@@ -86,6 +86,7 @@ NEW_DEVELOPMENT_SKILLS = (
     "fastapi",
     "java",
     "spring-boot",
+    "liquibase",
     "jhipster-project",
     "jhipster-domain-modeling",
     "jhipster-persistence",
@@ -198,6 +199,7 @@ README_REQUIRED_PHRASES = (
     "detection.yaml",
     "python3 scripts/build-technology-detection.py",
     "detect-technology-skills",
+    "- liquibase",
     "jhipster-domain-modeling",
     "[Skills Modularization](design/skills-modularization.html) explains always-used and rule-selected agent skills",
     "project-wiki-create",
@@ -284,6 +286,7 @@ MODULARIZATION_REQUIRED_PHRASES = (
     "edit PROJECT.yaml to force a correction",
     "Operational result — after setup",
     "Technology Extensions Included In The Kit",
+    "Changeset identity, include-chain, validation, update, rollback, and recovery guidance together with SQL.",
     "jhipster-project and focused JHipster skills",
     "How Setup-Time Technology Detection Works",
     "runs the detector once for each representative folder scope",
@@ -898,7 +901,7 @@ class BundleContentTests(unittest.TestCase):
         expected_phrases = {
             "jhipster-project": "generated-code boundaries",
             "jhipster-domain-modeling": "relationship direction",
-            "jhipster-persistence": "Do not rewrite a changelog",
+            "jhipster-persistence": "development fake data",
             "jhipster-testing": "Testcontainers profile",
             "jhipster-security": "two distinct identities",
         }
@@ -910,6 +913,19 @@ class BundleContentTests(unittest.TestCase):
                 self.assertLessEqual(len(skill_text.splitlines()), 40)
                 self.assertIn(phrase, skill_text)
                 self.assertTrue((skill_root / "detection.yaml").is_file())
+
+    def test_liquibase_guidance_is_portable_and_detection_backed(self) -> None:
+        skill_root = SKILLS_ROOT / "liquibase"
+        skill_text = (skill_root / "SKILL.md").read_text(encoding="utf-8")
+
+        for phrase in (
+            "DATABASECHANGELOG state",
+            "Treat id, author, and file path as changeset identity",
+            "Run Liquibase validation",
+            "forward-recovery procedure",
+        ):
+            self.assertIn(phrase, skill_text)
+        self.assertTrue((skill_root / "detection.yaml").is_file())
 
     def test_code_comments_is_a_core_coding_and_review_contract(self) -> None:
         skill_root = SKILLS_ROOT / "code-comments"

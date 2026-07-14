@@ -14,7 +14,7 @@ This page is generated from the conceptual agent definitions, bundled skill fron
 ## Summary
 
 - [x] 26 conceptual agent definitions generate through the supported native agent definition adapters.
-- [x] 83 bundled skills pass catalog and Agent Skill validation.
+- [x] 84 bundled skills pass catalog and Agent Skill validation.
 - [x] 2 agents and 12 skills are named in current evaluation cases.
 - [ ] 0 agents and 0 skills have independently verified behavior evidence under the current proof contract.
 - TypeScript implementation, Java and Spring Boot implementation, SQL behavior, and TypeScript code review have useful manual observations that must be rerun with truthful receipts.
@@ -47,6 +47,7 @@ This page is generated from the conceptual agent definitions, bundled skill fron
 | jhipster-security | domain | JHipster Security | application-security | None | [ ] None |
 | jhipster-testing | domain | JHipster Testing | application-testing | None | [ ] None |
 | langgraph | technology | LangGraph | workflow-runtime | None | [ ] None |
+| liquibase | technology | Liquibase | database-migrations | None | [ ] None |
 | local-model-integration | domain | Local model integration | local-model-runtime | None | [ ] None |
 | nextjs-app-router | technology | Next.js App Router | web-application-framework | None | [ ] None |
 | node-cli | technology | Node command line application | command-line-runtime | None | [ ] None |
@@ -181,6 +182,7 @@ This page is generated from the conceptual agent definitions, bundled skill fron
 - [x] jhipster-security — structural; declared: none; verified behavior: [ ] none
 - [x] jhipster-testing — structural; declared: none; verified behavior: [ ] none
 - [x] langgraph — structural; declared: none; verified behavior: [ ] none
+- [x] liquibase — structural; declared: none; verified behavior: [ ] none
 - [x] local-model-integration — structural; declared: none; verified behavior: [ ] none
 - [x] nextjs-app-router — structural; declared: none; verified behavior: [ ] none
 - [x] node-cli — structural; declared: none; verified behavior: [ ] none

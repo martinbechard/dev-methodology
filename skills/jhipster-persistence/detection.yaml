@@ -15,4 +15,4 @@ activation:
     - fileGlob: "**/config/liquibase/master.xml"
 companions:
 - jhipster-project
-- sql
+- liquibase

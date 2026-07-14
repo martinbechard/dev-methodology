@@ -185,6 +185,41 @@ class TechnologyDetectionTests(unittest.TestCase):
                 result = run_detection(ROOT / "evals" / "projects" / "spring-boot-order-cancellation", "src/main", detector=detector)
                 self.assertEqual(["java", "spring-boot", "sql"], result["loadouts"][0]["skills"])
 
+    def test_liquibase_scope_composes_with_sql_without_jhipster(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            changelog = root / "src" / "main" / "resources" / "db" / "changelog"
+            changelog.mkdir(parents=True)
+            (root / "pom.xml").write_text(
+                "<dependency><artifactId>liquibase-core</artifactId></dependency>\n",
+                encoding="utf-8",
+            )
+            (changelog / "db.changelog-master.xml").write_text(
+                "<databaseChangeLog/>\n",
+                encoding="utf-8",
+            )
+
+            for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+                with self.subTest(detector=detector):
+                    result = run_detection(root, changelog.relative_to(root).as_posix(), detector=detector)
+                    self.assertEqual(["liquibase", "sql"], result["loadouts"][0]["skills"])
+
+    def test_liquibase_documentation_folder_does_not_activate_skill(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            notes = root / "docs" / "liquibase"
+            notes.mkdir(parents=True)
+            (root / "pom.xml").write_text(
+                "<dependency><artifactId>liquibase-core</artifactId></dependency>\n",
+                encoding="utf-8",
+            )
+            (notes / "example.xml").write_text("<databaseChangeLog/>\n", encoding="utf-8")
+
+            for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+                with self.subTest(detector=detector):
+                    result = run_detection(root, notes.relative_to(root).as_posix(), detector=detector)
+                    self.assertNotIn("liquibase", result["loadouts"][0]["skills"])
+
     def test_jhipster_scope_composes_focused_skills_with_java_and_spring_boot(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -222,6 +257,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 "jhipster-project",
                 "jhipster-security",
                 "jhipster-testing",
+                "liquibase",
                 "spring-boot",
                 "sql",
             ]

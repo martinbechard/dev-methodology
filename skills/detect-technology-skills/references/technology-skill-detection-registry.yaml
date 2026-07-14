@@ -271,7 +271,7 @@ skills:
       - fileGlob: '**/config/liquibase/master.xml'
   companions:
   - jhipster-project
-  - sql
+  - liquibase
   selection: additive
   priority: 100
   requiredWhenDetected: true
@@ -379,6 +379,85 @@ skills:
         - owningDependency: '@langchain/langgraph'
         - owningDependency: langgraph
   companions: []
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
+- skill: liquibase
+  kind: technology
+  label: Liquibase
+  capabilities:
+  - database-migrations
+  activation:
+    anyOf:
+    - allOf:
+      - contentPattern:
+          glob: pom.xml
+          contains: liquibase-
+      - anyOf:
+        - fileMatch:
+            glob: '**/db/changelog/**'
+            extensions:
+            - .xml
+            - .yaml
+            - .yml
+            - .json
+            - .sql
+        - fileMatch:
+            glob: '**/config/liquibase/**'
+            extensions:
+            - .xml
+            - .yaml
+            - .yml
+            - .json
+            - .sql
+        - fileMatch:
+            glob: '**/liquibase/changelog/**'
+            extensions:
+            - .xml
+            - .yaml
+            - .yml
+            - .json
+            - .sql
+    - allOf:
+      - contentPattern:
+          glob: build.gradle*
+          contains: org.liquibase
+      - anyOf:
+        - fileMatch:
+            glob: '**/db/changelog/**'
+            extensions:
+            - .xml
+            - .yaml
+            - .yml
+            - .json
+            - .sql
+        - fileMatch:
+            glob: '**/config/liquibase/**'
+            extensions:
+            - .xml
+            - .yaml
+            - .yml
+            - .json
+            - .sql
+        - fileMatch:
+            glob: '**/liquibase/changelog/**'
+            extensions:
+            - .xml
+            - .yaml
+            - .yml
+            - .json
+            - .sql
+    - allOf:
+      - fileGlob: '**/liquibase.properties'
+      - anyOf:
+        - contentPattern:
+            glob: liquibase.properties
+            contains: changelogFile
+        - contentPattern:
+            glob: liquibase.properties
+            contains: changeLogFile
+  companions:
+  - sql
   selection: additive
   priority: 100
   requiredWhenDetected: true

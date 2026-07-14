@@ -490,7 +490,7 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
       ],
       "companions": [
         "jhipster-project",
-        "sql"
+        "liquibase"
       ],
       "kind": "domain",
       "label": "JHipster Persistence",
@@ -718,6 +718,147 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
       "requiredWhenDetected": true,
       "selection": "additive",
       "skill": "langgraph"
+    },
+    {
+      "activation": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "contentPattern": {
+                  "contains": "liquibase-",
+                  "glob": "pom.xml"
+                }
+              },
+              {
+                "anyOf": [
+                  {
+                    "fileMatch": {
+                      "extensions": [
+                        ".xml",
+                        ".yaml",
+                        ".yml",
+                        ".json",
+                        ".sql"
+                      ],
+                      "glob": "**/db/changelog/**"
+                    }
+                  },
+                  {
+                    "fileMatch": {
+                      "extensions": [
+                        ".xml",
+                        ".yaml",
+                        ".yml",
+                        ".json",
+                        ".sql"
+                      ],
+                      "glob": "**/config/liquibase/**"
+                    }
+                  },
+                  {
+                    "fileMatch": {
+                      "extensions": [
+                        ".xml",
+                        ".yaml",
+                        ".yml",
+                        ".json",
+                        ".sql"
+                      ],
+                      "glob": "**/liquibase/changelog/**"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "contentPattern": {
+                  "contains": "org.liquibase",
+                  "glob": "build.gradle*"
+                }
+              },
+              {
+                "anyOf": [
+                  {
+                    "fileMatch": {
+                      "extensions": [
+                        ".xml",
+                        ".yaml",
+                        ".yml",
+                        ".json",
+                        ".sql"
+                      ],
+                      "glob": "**/db/changelog/**"
+                    }
+                  },
+                  {
+                    "fileMatch": {
+                      "extensions": [
+                        ".xml",
+                        ".yaml",
+                        ".yml",
+                        ".json",
+                        ".sql"
+                      ],
+                      "glob": "**/config/liquibase/**"
+                    }
+                  },
+                  {
+                    "fileMatch": {
+                      "extensions": [
+                        ".xml",
+                        ".yaml",
+                        ".yml",
+                        ".json",
+                        ".sql"
+                      ],
+                      "glob": "**/liquibase/changelog/**"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "fileGlob": "**/liquibase.properties"
+              },
+              {
+                "anyOf": [
+                  {
+                    "contentPattern": {
+                      "contains": "changelogFile",
+                      "glob": "liquibase.properties"
+                    }
+                  },
+                  {
+                    "contentPattern": {
+                      "contains": "changeLogFile",
+                      "glob": "liquibase.properties"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "capabilities": [
+        "database-migrations"
+      ],
+      "companions": [
+        "sql"
+      ],
+      "kind": "technology",
+      "label": "Liquibase",
+      "priority": 100,
+      "requiredWhenDetected": true,
+      "selection": "additive",
+      "skill": "liquibase"
     },
     {
       "activation": {

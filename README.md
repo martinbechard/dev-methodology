@@ -314,6 +314,7 @@ The stack and project-domain skill packs are:
 - fastapi
 - java
 - spring-boot
+- liquibase
 - jhipster-project
 - jhipster-domain-modeling
 - jhipster-persistence
