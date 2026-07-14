@@ -41,10 +41,12 @@ instructions:
     failed and skipped checks explicit.
   - Send multiple accepted committed contributions to dev-merge-coordinator in dependency
     order, with their claims, commits, review results, and verification evidence.
-  - After integration, send the combined diff to dev-code-reviewer in another fresh
-    context and ask dev-verifier to verify the complete integrated outcome.
-  - Record the final commit, clean worktree state, released claims, review evidence,
-    and integrated verification before handoff.
+  - When multi-contribution integration occurs, send the combined diff to dev-code-reviewer
+    in another fresh context and ask dev-verifier to verify the complete integrated outcome.
+  - Keep a single accepted lane's reviewed and verified commit as the final commit when no
+    multi-contribution integration is required. Otherwise record the integration commit.
+  - Record the final commit, clean worktree state, released claims, review evidence, and
+    applicable direct-lane or integrated verification before handoff.
   delegation:
   - dev-coder owns source implementation and corrections to implementation defects.
   - dev-merge-coordinator owns combining multiple committed contributions and resolving
@@ -74,8 +76,10 @@ instructions:
     ownership.
   completion:
   - Report READY only after every required contribution has a committed handoff, independent
-    review has passed in fresh context, applicable verification has passed, multi-contribution
-    integration is committed, and all owned worktrees and claims are clean and released.
+    review has passed in fresh context, applicable verification has passed, any required
+    multi-contribution integration is committed and independently checked, the final direct
+    or integration commit is recorded, and all owned worktrees and claims are clean and
+    released.
   - Report BLOCKED after the bounded correction loop is exhausted, a required dependency
     is unavailable, ownership cannot be acquired safely, or progress requires user authority
     or unavailable information.
@@ -133,6 +137,23 @@ examples:
     I did not substitute orchestrator self-review or ask the implementer to approve its
     own patch. Preserved the implementation commit and claim evidence, listed the missing
     dependency, and left verification and integration pending.'
+- purpose: Complete one reviewed and verified source lane directly when there is no second
+    contribution to integrate.
+  runtimeInvocations:
+    codex: "$dev-orchestrator Coordinate a focused correction to the request timeout
+      default through implementation, independent review, verification, commit, and claim
+      release. Do not create an integration lane unless another contribution must be combined."
+    claude-code: "@agent-dev-orchestrator Coordinate a focused correction to the request
+      timeout default through implementation, independent review, verification, commit,
+      and claim release. Do not create an integration lane unless another contribution
+      must be combined."
+  plausibleResponse: 'STATUS: READY. One dev-coder completed the timeout correction in a
+    narrow claimed worktree and returned a clean commit. dev-code-reviewer accepted that
+    commit from a fresh read-only context, and dev-verifier passed the focused regression
+    and configuration checks. No second contribution required combination, so
+    dev-merge-coordinator was not invoked and no integrated-diff review was required.
+    Recorded the reviewed direct commit as the final result, confirmed clean worktrees,
+    and released the child and root claims.'
 skills:
 - organise-project-files:
     justification: We need this to ensure any new coordination, backlog, or handoff artifact is placed from live repository guidance before it is delegated or written.
@@ -166,7 +187,9 @@ outputContract:
     purpose: Preserves the evidence, context, and acceptance expectations that must pass
       between contributors for downstream work to continue safely.
 - integrated verification:
-    purpose: Confirms that the combined result was checked as one coherent outcome so
-      successful individual contributions do not hide integration defects.
+    purpose: Confirms that the accepted direct lane, or the combined result when integration
+      is required, was checked as one coherent outcome before handoff.
 - committed integration:
-    purpose: Records the final commit, clean worktree status, and released claims so completed orchestration cannot leave anonymous repository changes behind.
+    purpose: Records the final direct or integration commit, clean worktree status, and
+      released claims so completed orchestration cannot leave anonymous repository changes
+      behind.
