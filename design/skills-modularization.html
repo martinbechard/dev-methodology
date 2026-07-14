@@ -470,6 +470,78 @@
     </div>
   </section>
 
+  <section class="section" aria-labelledby="technology-examples-title">
+    <h2 id="technology-examples-title">Technology Extensions Included In The Kit</h2>
+    <div class="matrix">
+      <table>
+        <thead>
+          <tr>
+            <th>Shared skill</th>
+            <th>Representative setup evidence</th>
+            <th>What gets bound</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="name">python</span></td>
+            <td>The folder contains Python source or interface files.</td>
+            <td>Language implementation, review, and verification guidance for that folder.</td>
+          </tr>
+          <tr>
+            <td><span class="name">fastapi</span></td>
+            <td>Python files plus a FastAPI dependency in the owning manifest, or a parsed import from fastapi.</td>
+            <td>FastAPI guidance together with its python companion skill.</td>
+          </tr>
+          <tr>
+            <td><span class="name">java, java-design, spring-boot, and spring-boot-design</span></td>
+            <td>Java source plus a Spring Boot marker in the owning Maven or Gradle build.</td>
+            <td>Java and Spring Boot coding rules load separately from the language and application design principles used for structural decisions.</td>
+          </tr>
+          <tr>
+            <td><span class="name">spring-data-jpa</span></td>
+            <td>Java source plus the Spring Data JPA starter in the owning Maven or Gradle build.</td>
+            <td>Entity, relationship, repository, query, fetch-plan, locking, and persistence-context guidance together with Spring Boot and SQL.</td>
+          </tr>
+          <tr>
+            <td><span class="name">spring-boot-testing</span></td>
+            <td>Java test source plus the Spring Boot test starter in the owning Maven or Gradle build.</td>
+            <td>Version-aware Spring test selection, slices, application contexts, bean replacement, Testcontainers, and integration evidence.</td>
+          </tr>
+          <tr>
+            <td><span class="name">liquibase</span></td>
+            <td>A Liquibase dependency or configuration plus changelogs under the selected folder scope.</td>
+            <td>Changeset identity, include-chain, validation, update, rollback, and recovery guidance together with SQL.</td>
+          </tr>
+          <tr>
+            <td><span class="name">jhipster-project and focused JHipster skills</span></td>
+            <td>A JHipster generator marker, Java and Spring Boot ownership, plus concern-specific JDL, database, test, or security files.</td>
+            <td>JHipster project guidance and only the domain-modeling, persistence, testing, or security packs proved by the selected scope, together with their technology companions.</td>
+          </tr>
+          <tr>
+            <td><span class="name">nextjs-app-router</span></td>
+            <td>JavaScript or TypeScript source under an app subtree plus a Next.js dependency in the owning manifest.</td>
+            <td>Next.js App Router conventions only for the matching application scope.</td>
+          </tr>
+          <tr>
+            <td><span class="name">postgres-drizzle</span></td>
+            <td>JavaScript or TypeScript source plus drizzle-orm or drizzle-kit in the owning manifest.</td>
+            <td>Drizzle persistence guidance together with its sql companion skill.</td>
+          </tr>
+          <tr>
+            <td><span class="name">jest or vitest</span></td>
+            <td>Test-capable JavaScript or TypeScript source plus the matching dependency or configuration file.</td>
+            <td>The test framework actually owned by the folder, rather than a generic framework guess.</td>
+          </tr>
+          <tr>
+            <td><span class="name">electron-main</span></td>
+            <td>An Electron main-process path plus an Electron dependency in the owning manifest.</td>
+            <td>Main-process security, lifecycle, and IPC guidance without applying it to unrelated renderer code.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
   <section class="section" aria-labelledby="technology-boundary-title">
     <h2 id="technology-boundary-title">Why Technology-Specific Skills Are Loaded Separately</h2>
     <p class="lede">Required versus optional is not the architectural split: both are valid forms of technology-agnostic skill references inside an agent definition. The actual boundary is technology dependence. No finite agent definition can list every language, framework, library, runtime, database, and tool that may exist now or be added later. Listing technology skills in generic agents would also require every relevant agent definition to be changed whenever the technology catalog grows.</p>
@@ -550,78 +622,6 @@
       <div class="tag-row"><span class="tag agent">Operational result — after setup</span></div>
       <p><strong>Actors: Coding, review, diagnosis, and verification agents.</strong> Ordinary work loads the established skillset for the active folder. These agents use the configuration output and do not rerun setup-time detection.</p>
     </aside>
-  </section>
-
-  <section class="section" aria-labelledby="technology-examples-title">
-    <h2 id="technology-examples-title">Technology Extensions Included In The Kit</h2>
-    <div class="matrix">
-      <table>
-        <thead>
-          <tr>
-            <th>Shared skill</th>
-            <th>Representative setup evidence</th>
-            <th>What gets bound</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><span class="name">python</span></td>
-            <td>The folder contains Python source or interface files.</td>
-            <td>Language implementation, review, and verification guidance for that folder.</td>
-          </tr>
-          <tr>
-            <td><span class="name">fastapi</span></td>
-            <td>Python files plus a FastAPI dependency in the owning manifest, or a parsed import from fastapi.</td>
-            <td>FastAPI guidance together with its python companion skill.</td>
-          </tr>
-          <tr>
-            <td><span class="name">java, java-design, spring-boot, and spring-boot-design</span></td>
-            <td>Java source plus a Spring Boot marker in the owning Maven or Gradle build.</td>
-            <td>Java and Spring Boot coding rules load separately from the language and application design principles used for structural decisions.</td>
-          </tr>
-          <tr>
-            <td><span class="name">spring-data-jpa</span></td>
-            <td>Java source plus the Spring Data JPA starter in the owning Maven or Gradle build.</td>
-            <td>Entity, relationship, repository, query, fetch-plan, locking, and persistence-context guidance together with Spring Boot and SQL.</td>
-          </tr>
-          <tr>
-            <td><span class="name">spring-boot-testing</span></td>
-            <td>Java test source plus the Spring Boot test starter in the owning Maven or Gradle build.</td>
-            <td>Version-aware Spring test selection, slices, application contexts, bean replacement, Testcontainers, and integration evidence.</td>
-          </tr>
-          <tr>
-            <td><span class="name">liquibase</span></td>
-            <td>A Liquibase dependency or configuration plus changelogs under the selected folder scope.</td>
-            <td>Changeset identity, include-chain, validation, update, rollback, and recovery guidance together with SQL.</td>
-          </tr>
-          <tr>
-            <td><span class="name">jhipster-project and focused JHipster skills</span></td>
-            <td>A JHipster generator marker, Java and Spring Boot ownership, plus concern-specific JDL, database, test, or security files.</td>
-            <td>JHipster project guidance and only the domain-modeling, persistence, testing, or security packs proved by the selected scope, together with their technology companions.</td>
-          </tr>
-          <tr>
-            <td><span class="name">nextjs-app-router</span></td>
-            <td>JavaScript or TypeScript source under an app subtree plus a Next.js dependency in the owning manifest.</td>
-            <td>Next.js App Router conventions only for the matching application scope.</td>
-          </tr>
-          <tr>
-            <td><span class="name">postgres-drizzle</span></td>
-            <td>JavaScript or TypeScript source plus drizzle-orm or drizzle-kit in the owning manifest.</td>
-            <td>Drizzle persistence guidance together with its sql companion skill.</td>
-          </tr>
-          <tr>
-            <td><span class="name">jest or vitest</span></td>
-            <td>Test-capable JavaScript or TypeScript source plus the matching dependency or configuration file.</td>
-            <td>The test framework actually owned by the folder, rather than a generic framework guess.</td>
-          </tr>
-          <tr>
-            <td><span class="name">electron-main</span></td>
-            <td>An Electron main-process path plus an Electron dependency in the owning manifest.</td>
-            <td>Main-process security, lifecycle, and IPC guidance without applying it to unrelated renderer code.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
   </section>
 
   <section class="section" aria-labelledby="detection-title">

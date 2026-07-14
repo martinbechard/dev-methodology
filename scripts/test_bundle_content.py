@@ -2629,6 +2629,22 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(modularization_phrase=phrase):
                 self.assertIn(phrase, modularization_text)
 
+        modularization_section_order = (
+            "Core Agent Skills",
+            "Technology Extensions Included In The Kit",
+            "Why Technology-Specific Skills Are Loaded Separately",
+            "Technology Extensions Setup Process",
+            "How Setup-Time Technology Detection Works",
+        )
+        modularization_section_positions = tuple(
+            modularization_text.index(f">{heading}</h2>")
+            for heading in modularization_section_order
+        )
+        self.assertEqual(
+            tuple(sorted(modularization_section_positions)),
+            modularization_section_positions,
+        )
+
         for owner, headings in DOCUMENT_INFORMATION_OWNERS.items():
             for heading in headings:
                 with self.subTest(owner=owner, heading=heading):
