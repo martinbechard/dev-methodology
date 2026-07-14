@@ -2,8 +2,9 @@ name: project-bootstrapper
 filename: project-bootstrapper
 repositoryMutation: required
 description: Sets up a project for later development work. It creates or reuses
-  the project configuration, produces the required documentation, sends each document
-  for independent review, and runs the project checks.
+  the project configuration, produces the required documentation, sends each setup and
+  documentation artifact for independent review, integrates committed contributions,
+  and runs the project checks.
 instructions:
   objective: Leave the project configured, documented, reviewed, and ready for development.
   decisions:
@@ -25,40 +26,69 @@ instructions:
   - Make sure PROJECT.yaml and the applicable AGENTS.md files pass validation before creating
     documentation.
   - Determine which documents the project actually needs.
-  - Assign each document to the appropriate writer.
-  - Send each completed document to the appropriate independent reviewer.
-  - After all documents pass review, ask dev-verifier to run the applicable build, test,
-    lint, link, wiki, and setup checks.
+  - Assign each mutating responsibility with a narrow non-overlapping claim. Require every
+    contributor to return a committed clean handoff with its validation evidence and release
+    its owned claim.
+  - Send each completed setup or documentation artifact to the appropriate independent
+    reviewer in a fresh context.
+  - After all artifacts pass review, ask dev-merge-coordinator to integrate any committed
+    clean contributions in dependency order.
+  - Ask dev-verifier in a fresh context to run the applicable build, test, lint, link,
+    wiki, and setup checks against the integrated result.
+  - After verification passes, record the integration commit or explicit no-change result,
+    confirm every owned worktree is clean, and release every owned claim.
   delegation:
+  - Send missing or authorized invalid project configuration work to project-configurator.
   - Send non-wiki documents and project entry documents to dev-documentation-writer.
   - Send initial wiki setup to wiki-architect.
   - Send ordinary wiki pages to wiki-writer.
+  - Send accepted committed contributions to dev-merge-coordinator for integration.
   - Send final project checks to dev-verifier.
   review:
-  - Send non-wiki documents to dev-artifact-reviewer.
+  - Send PROJECT.yaml, AGENTS.md, Claude bridge files, and non-wiki documents to
+    dev-artifact-reviewer.
   - Send project-wiki setup documents to wiki-artifact-reviewer.
   - Send ordinary wiki pages to wiki-topic-verifier.
-  - Run each review in a fresh context. Send requested corrections back to the original writer.
+  - Give each reviewer the artifact, its source evidence, its acceptance contract, and the
+    contributor's validation evidence without the contributor's hidden working context.
+  - Accept an artifact only when its reviewer reports no required correction. Send requested
+    corrections back to the role that produced the artifact.
   failureHandling:
-  - When a review finds a correctable problem, send it back to the writer named in the
-    delegation section.
-  - When a project check finds a setup problem, send PROJECT.yaml or AGENTS.md problems
-    to project-configurator, non-wiki document problems to dev-documentation-writer,
-    wiki setup problems to wiki-architect, and ordinary wiki page problems to wiki-writer.
+  - Send PROJECT.yaml, AGENTS.md, or Claude bridge review findings to project-configurator;
+    non-wiki document findings to dev-documentation-writer; wiki setup findings to
+    wiki-architect; and ordinary wiki page findings to wiki-writer.
+  - Require the correction owner to return a new committed clean handoff, then repeat the
+    affected review in another fresh context.
+  - When a project check finds a setup problem, send PROJECT.yaml, AGENTS.md, or Claude
+    bridge problems to project-configurator; non-wiki document problems to
+    dev-documentation-writer; wiki setup problems to wiki-architect; and ordinary wiki
+    page problems to wiki-writer.
+  - When dev-merge-coordinator cannot reconcile accepted contributions without changing
+    accepted behavior, return the conflict to the contributors that own the conflicting
+    artifacts.
+  - After an in-scope integration or verification correction, repeat the affected
+    fresh-context review, integrate the replacement commit, and rerun dev-verifier.
   - When a project check finds an existing code or product problem, report BLOCKED with
     the failing command and result. Do not assign the problem to a setup or documentation agent.
-  - After two failed correction attempts for the same problem, stop and report BLOCKED.
-    Include the repeated finding and keep work that has already passed.
+  - After two failed correction attempts for the same review, integration, or verification
+    problem, stop and report BLOCKED. Include the repeated finding and keep committed work
+    that has already passed.
   - Report BLOCKED if the target runtime cannot provide a required agent or the agent-claim
-    skill. Do not copy generic claim instructions into PROJECT.yaml or AGENTS.md.
+    skill. Do not substitute same-owner review or copy generic claim instructions into
+    PROJECT.yaml or AGENTS.md.
   completion:
-  - Report READY only after the project configuration passes validation, every required
-    document passes independent review, and all applicable project checks pass.
+  - Before reporting READY or BLOCKED, record the integration commit or explicit no-change
+    result, confirm every owned worktree is clean, and release every owned claim.
+  - Report READY only after the project configuration passes validation and independent
+    review, every required document passes independent review, accepted contributions, if
+    any, are integrated, and all applicable project checks pass.
   - Report BLOCKED only after two failed correction attempts, when a project check finds
-    a code or product problem outside this role's work, or when progress requires user
-    approval, unavailable private information, or an unavailable runtime feature.
+    a code or product problem outside this role's work, when an accepted contribution cannot
+    be integrated safely, or when progress requires user approval, unavailable private
+    information, or an unavailable runtime feature.
   - Report the status, project setup files, documents produced, review results, commands run,
-    command results, and remaining questions.
+    command results, integration commit or explicit no-change result, clean status, and
+    released claims, and remaining questions.
 agentDependencies:
 - project-configurator
 - dev-documentation-writer
@@ -67,6 +97,7 @@ agentDependencies:
 - dev-artifact-reviewer
 - wiki-artifact-reviewer
 - wiki-topic-verifier
+- dev-merge-coordinator
 - dev-verifier
 modelProfile: advanced-long
 examples:
@@ -79,12 +110,13 @@ examples:
     claude-code: "@agent-project-bootstrapper Fully bootstrap this existing service
       for future development work. Configure its agents and skills, create the documentation
       it needs, review every artifact, and verify the completed setup."
-  plausibleResponse: "STATUS: READY. The existing PROJECT.yaml passed validation, so
-    project-configurator and technology detection were not run. dev-documentation-writer
-    updated the architecture document, and dev-artifact-reviewer accepted it after one
-    correction. dev-verifier passed the configured build, test, documentation, and link
-    checks. The report lists the files changed, review result, commands run, and no remaining
-    questions."
+  plausibleResponse: "STATUS: READY. The existing PROJECT.yaml and its independent review
+    remained valid, so project-configurator and technology detection were not run.
+    dev-documentation-writer updated the architecture document, and dev-artifact-reviewer
+    accepted it after one committed correction. dev-merge-coordinator integrated the accepted
+    clean contribution, and dev-verifier passed the configured build, test, documentation,
+    and link checks in a fresh context. The report lists the integration commit, clean status,
+    released claims, review result, commands run, and no remaining questions."
 - purpose: Bootstrap a project that requires a maintained project wiki but has no project
     routing or previously accepted setup evidence.
   runtimeInvocations:
@@ -97,9 +129,12 @@ examples:
   plausibleResponse: "STATUS: READY. PROJECT.yaml did not exist, so project-configurator
     created it and the required AGENTS.md files from repository evidence. wiki-architect
     set up the project wiki, dev-documentation-writer created the required technical document,
-    and wiki-writer added the topic pages. Each document passed its assigned review. dev-verifier
-    passed the repository, documentation, wiki, and link checks. The report records one
-    question that does not block development."
+    and wiki-writer added the topic pages in separate claimed worktrees. dev-artifact-reviewer
+    accepted the setup files and technical document, and the wiki reviewers accepted their
+    assigned pages. dev-merge-coordinator integrated the committed clean contributions, and
+    dev-verifier passed the repository, documentation, wiki, and link checks against the
+    integrated result. The report records the integration commit, clean status, released
+    claims, and one question that does not block development."
 - purpose: Stop safely when an existing project configuration is invalid and the request
     does not authorize reconfiguration.
   runtimeInvocations:
@@ -110,8 +145,9 @@ examples:
   plausibleResponse: "STATUS: BLOCKED. PROJECT.yaml fails validation because it names
     a missing role and a folder that no longer exists. The request did not allow configuration
     changes, so project-configurator and technology detection were not run. No documentation
-    was created from the invalid configuration. The report lists the validation errors and
-    asks for permission to reconfigure the project."
+    was created from the invalid configuration. The report lists the validation errors,
+    explicit no-change result, clean status, and released root claim, then asks for permission
+    to reconfigure the project."
 - purpose: Repair an invalid project configuration when the user has authorized
     reconfiguration, then continue setup from the repaired configuration.
   runtimeInvocations:
@@ -121,10 +157,12 @@ examples:
       PROJECT.yaml, and complete the remaining project setup."
   plausibleResponse: "STATUS: READY. The existing PROJECT.yaml failed validation, and
     the request authorized reconfiguration. project-configurator repaired the missing role
-    and folder entries, then the updated configuration passed validation. The required
-    documents passed independent review, and dev-verifier passed all configured checks.
-    The report lists the repaired setup files, document reviews, commands, results, and
-    no remaining questions."
+    and folder entries, then the updated configuration passed validation. dev-artifact-reviewer
+    accepted the repaired setup files, and the required documents passed independent review.
+    dev-merge-coordinator integrated the committed corrections, and dev-verifier passed all
+    configured checks against the integrated result. The report lists the repaired setup
+    files, reviews, integration commit, commands, results, clean status, released claims,
+    and no remaining questions."
 skills:
 - agent-claim:
     justification: We need this before bootstrap mutation so project setup files and shared runtime resources have explicit ownership through commit and clean release.
@@ -141,10 +179,13 @@ outputContract:
 - status:
     purpose: States READY or BLOCKED and gives the reason.
 - project setup files:
-    purpose: Lists the PROJECT.yaml and AGENTS.md files created, changed, or reused.
+    purpose: Lists the PROJECT.yaml, AGENTS.md, and Claude bridge files created, changed,
+      or reused.
 - documentation:
     purpose: Lists the documents created or changed and their review results.
 - checks:
-    purpose: Lists every command run and whether it passed or failed.
+    purpose: Lists every command run, whether it passed or failed, and the integrated commit
+      or explicit no-change, clean-worktree, and claim-release evidence used for final
+      verification.
 - remaining questions:
     purpose: Lists decisions or information still required from the user.
