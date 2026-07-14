@@ -12,8 +12,10 @@ instructions:
   decisions:
   - If PROJECT.yaml does not exist, ask project-configurator to inspect the repository,
     detect its technologies, create PROJECT.yaml, and create the required AGENTS.md files.
-  - If PROJECT.yaml exists and passes validation, use it. Do not run technology detection
-    or project-configurator again.
+  - If PROJECT.yaml exists and passes validation, use it for ordinary setup work where reverse
+    engineering is not in scope. Do not run technology detection or project-configurator again
+    on that ordinary path. For reverse engineering, require the project configuration pass to
+    reconcile the file with current source and the target runtime's available-skill catalog.
   - If PROJECT.yaml fails validation and the user has asked for reconfiguration, ask
     project-configurator to repair it and run validation again.
   - If PROJECT.yaml fails validation and the user has not asked for reconfiguration,
@@ -56,7 +58,10 @@ instructions:
     delete the documentation folder before the run, recreate routing when it is part of the
     test, and record the reset baseline. After every documentation gate passes, create a new
     empty reconstruction folder, copy the completed wiki and linked documents into it first,
-    and require reconstruction without access to the original application source.
+    and require reconstruction without access to the original application source. Send the
+    reconstruction to dev-coder in an isolated environment whose readable project roots contain
+    only the reconstruction folder and declared external toolchain. If the runtime cannot enforce
+    that filesystem boundary, report the evaluation BLOCKED instead of accepting an honor-system test.
   - Archive reconstruction inputs, outputs, reviews, commands, results, timing, and cost evidence,
     and retain the newest three evaluation runs unless the user specifies another count.
   - Assign each mutating responsibility with a narrow non-overlapping claim. Require every
@@ -95,6 +100,10 @@ instructions:
     in dependency order.
   - Send the final direct commit or the independently reviewed complete integrated result
     to dev-verifier for final project checks.
+  - For controlled reconstruction evaluation, send the accepted documentation set to dev-coder
+    through the isolated reconstruction environment, then send the resulting application and
+    the documented parity contract to dev-verifier. Do not expose the original application source
+    to either reconstruction step.
   review:
   - Send PROJECT.yaml, AGENTS.md, Claude bridge files, and non-wiki documents to
     dev-artifact-reviewer.
@@ -137,6 +146,8 @@ instructions:
     direct or multi-contribution path, or cannot provide the agent-claim skill. Name the
     unavailable dependency; do not substitute same-owner review or copy generic claim
     instructions into PROJECT.yaml or AGENTS.md.
+  - Report BLOCKED when a controlled reconstruction evaluation cannot enforce filesystem isolation
+    from the original source or cannot run the documented functional-parity checks.
   completion:
   - Before reporting READY or BLOCKED, record the final direct commit, final integration
     commit, or explicit no-change result, confirm every owned worktree is clean, and release
@@ -152,6 +163,9 @@ instructions:
     review, the coverage manifest proves every in-scope module is documented, every required
     document passes independent review, and every gate for the selected direct,
     multi-contribution, or no-change path passes.
+  - For a controlled reconstruction evaluation, report READY only after dev-coder builds in the
+    enforced source-isolated environment and dev-verifier passes the documented build, test,
+    route, workflow, data, security, and operational parity checks against the reconstruction.
   - Report BLOCKED only after two failed correction attempts, when a project check finds
     a code or product problem outside this agent's work, when an accepted contribution cannot
     be integrated safely, or when progress requires user approval, unavailable private
@@ -163,6 +177,7 @@ instructions:
 agentDependencies:
 - project-configurator
 - dev-documentation-writer
+- dev-coder
 - wiki-architect
 - wiki-writer
 - dev-artifact-reviewer
@@ -268,5 +283,7 @@ outputContract:
     purpose: Lists every command run, whether it passed or failed, and the final direct commit,
       final integration commit, or explicit no-change result together with review, verification,
       clean-worktree, and claim-release evidence.
+- reconstruction evaluation:
+    purpose: Records the enforced source-isolation boundary, documentation seed, reconstructed output, parity checks, and archived run evidence when controlled reconstruction testing is in scope.
 - remaining questions:
     purpose: Lists decisions or information still required from the user.

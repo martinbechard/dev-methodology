@@ -298,6 +298,7 @@ def detect_scope(
     scope: Path,
     registry: dict[str, object],
     skills_root: Path,
+    available_skills: set[str] | None = None,
 ) -> dict[str, object]:
     """Detect and validate one requested project scope, returning a durable folder skillset."""
     target = (scope if scope.is_absolute() else root / scope).resolve()
@@ -393,10 +394,16 @@ def detect_scope(
     skills: list[str] = []
     for skill, value in sorted(selected.items(), key=lambda item: (int(item[1]["entry"]["priority"]), item[0])):
         skill_file = skills_root / skill / "SKILL.md"
-        if value["required"] and not skill_file.is_file():
+        is_available = skill in available_skills if available_skills is not None else skill_file.is_file()
+        if value["required"] and not is_available:
             missing.append({"skill": skill, "reason": "detected required skill is unavailable"})
         skills.append(skill)
-        evidence_rows.append({"skill": skill, "source": value["source"], "evidence": value["evidence"]})
+        evidence_rows.append({
+            "skill": skill,
+            "source": value["source"],
+            "evidence": value["evidence"],
+            "runtimeAvailability": "AVAILABLE" if is_available else "UNAVAILABLE",
+        })
     status = "BLOCKED" if missing or conflicts else "NO_VARIANT" if not skills else "READY"
     pattern = scope_value if any(char in scope_value for char in "*?[") else scope_value.rstrip("/") + ("/**" if target.is_dir() else "")
     return {
@@ -415,12 +422,21 @@ def detect(args: argparse.Namespace) -> tuple[dict[str, object], int]:
     """Run detection for all requested scopes and return the aggregate process exit status."""
     root = args.project_root.resolve()
     registry = load_yaml(args.registry)
-    loadouts = [detect_scope(root, Path(value), registry, args.skills_root) for value in args.scope]
+    available_skills = set(args.available_skill) if args.available_skill is not None else None
+    loadouts = [
+        detect_scope(root, Path(value), registry, args.skills_root, available_skills)
+        for value in args.scope
+    ]
     blocked = any(item["status"] == "BLOCKED" for item in loadouts)
     result = {
         "schema": "dev-methodology-technology-skill-detection-result",
         "version": 1,
         "projectRoot": str(root),
+        "runtimeSkillCatalog": {
+            "source": "explicit --available-skill values" if available_skills is not None else "skills root",
+            "skillsRoot": str(args.skills_root.resolve()),
+            "availableSkills": sorted(available_skills) if available_skills is not None else None,
+        },
         "loadouts": loadouts,
         "status": "BLOCKED" if blocked else "READY",
     }
@@ -434,6 +450,11 @@ def main() -> int:
     parser.add_argument("--scope", action="append", required=True)
     parser.add_argument("--registry", type=Path, default=DEFAULT_REGISTRY)
     parser.add_argument("--skills-root", type=Path, default=DEFAULT_SKILLS_ROOT)
+    parser.add_argument(
+        "--available-skill",
+        action="append",
+        help="Skill id exposed by the target runtime; repeat to provide the complete runtime catalog.",
+    )
     parser.add_argument("--format", choices=("json", "yaml"), default="json")
     args = parser.parse_args()
     try:

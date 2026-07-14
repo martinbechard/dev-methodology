@@ -1537,6 +1537,7 @@ class BundleContentTests(unittest.TestCase):
             "project-bootstrapper": (
                 "project-configurator",
                 "dev-documentation-writer",
+                "dev-coder",
                 "wiki-architect",
                 "wiki-writer",
                 "dev-artifact-reviewer",
@@ -2111,6 +2112,7 @@ class BundleContentTests(unittest.TestCase):
             "Do not run technology detection or project-configurator again",
             role.instructions,
         )
+        self.assertIn("For reverse engineering, require the project configuration pass", role.instructions)
         self.assertIn(
             "If PROJECT.yaml fails validation and the user has asked for reconfiguration",
             role.instructions,
@@ -2127,6 +2129,7 @@ class BundleContentTests(unittest.TestCase):
         for delegated_role in (
             "project-configurator",
             "dev-documentation-writer",
+            "dev-coder",
             "dev-artifact-reviewer",
             "wiki-architect",
             "wiki-writer",
@@ -2141,6 +2144,7 @@ class BundleContentTests(unittest.TestCase):
             (
                 "project-configurator",
                 "dev-documentation-writer",
+                "dev-coder",
                 "wiki-architect",
                 "wiki-writer",
                 "dev-artifact-reviewer",
@@ -2165,6 +2169,7 @@ class BundleContentTests(unittest.TestCase):
                 "project setup files",
                 "documentation",
                 "checks",
+                "reconstruction evaluation",
                 "remaining questions",
             ),
             role.output_contract,
@@ -2866,8 +2871,11 @@ class BundleContentTests(unittest.TestCase):
             "Delete the documentation folder from the source-under-test before the run starts",
             "copy the completed wiki and its linked documentation into that folder before any reconstruction code is written",
             "Do not allow it to inspect or copy the original application source",
+            "instruction-only or honor-system boundary is not valid evidence",
             "Keep the newest three evaluation runs",
             "defect recall, false positives, checklist completeness",
+            "at least three times with identical artifacts",
+            "reduces median elapsed time or token cost by at least 20 percent",
         )
         for phrase in required_reverse_phrases:
             with self.subTest(reverse_skill_phrase=phrase):
@@ -2895,6 +2903,7 @@ class BundleContentTests(unittest.TestCase):
             "Do not accept higher-level summaries as substitutes",
             "available technology-skill catalog",
             "retain the newest three evaluation runs",
+            "enforced source-isolated environment",
         ):
             with self.subTest(bootstrapper_phrase=phrase):
                 self.assertIn(phrase, bootstrapper.instructions)
@@ -2929,6 +2938,7 @@ class BundleContentTests(unittest.TestCase):
 
         for phrase in (
             "technology skills actually exposed by the target runtime",
+            "--available-skill",
             "route that scope to general model training",
             "detected required-but-unavailable skill",
             "candidate evidence, not automatic proof",
@@ -2939,6 +2949,7 @@ class BundleContentTests(unittest.TestCase):
 
         for phrase in (
             "inspect the technology skills actually exposed by the target runtime",
+            "pass the complete catalog to detect-technology-skills",
             "general-model-training fallback",
             "required-but-unavailable skill `BLOCKED`",
             "Reject owning-manifest overreach",
@@ -2947,6 +2958,8 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(phrase, configuration_text)
 
         self.assertIn("required_but_unavailable_policy", template_text)
+        self.assertIn("runtime_catalog_source:", template_text)
+        self.assertIn("runtimeAvailability:", template_text)
         self.assertIn("fallback:", template_text)
         self.assertIn("rejectedCandidates:", template_text)
         self.assertIn("NO_VARIANT scopes use general model training", template_text)

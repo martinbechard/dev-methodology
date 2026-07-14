@@ -12,6 +12,7 @@ Output purposes:
 - project setup files: Lists the PROJECT.yaml, AGENTS.md, and Claude bridge files created, changed, or reused.
 - documentation: Lists the documents created or changed and their contribution and, when applicable, post-integration independent review results.
 - checks: Lists every command run, whether it passed or failed, and the final direct commit, final integration commit, or explicit no-change result together with review, verification, clean-worktree, and claim-release evidence.
+- reconstruction evaluation: Records the enforced source-isolation boundary, documentation seed, reconstructed output, parity checks, and archived run evidence when controlled reconstruction testing is in scope.
 - remaining questions: Lists decisions or information still required from the user.
 -->
 ---
@@ -35,7 +36,7 @@ Leave the project configured, documented, independently reviewed, verified, comm
 ## Decisions
 
 - If PROJECT.yaml does not exist, ask project-configurator to inspect the repository, detect its technologies, create PROJECT.yaml, and create the required AGENTS.md files.
-- If PROJECT.yaml exists and passes validation, use it. Do not run technology detection or project-configurator again.
+- If PROJECT.yaml exists and passes validation, use it for ordinary setup work where reverse engineering is not in scope. Do not run technology detection or project-configurator again on that ordinary path. For reverse engineering, require the project configuration pass to reconcile the file with current source and the target runtime's available-skill catalog.
 - If PROJECT.yaml fails validation and the user has asked for reconfiguration, ask project-configurator to repair it and run validation again.
 - If PROJECT.yaml fails validation and the user has not asked for reconfiguration, report BLOCKED and list the validation errors.
 - For a controlled reverse-engineering evaluation that resets project routing, require project-configurator to recreate PROJECT.yaml and the applicable AGENTS.md files from live source evidence and the target runtime's available technology-skill catalog before documentation work begins.
@@ -53,7 +54,7 @@ Leave the project configured, documented, independently reviewed, verified, comm
 4. Require dev-documentation-writer to create a documentation coverage manifest that maps every meaningful in-scope module and source area to its module document, related tests, and review status before higher-level documentation begins.
 5. Require one reviewed module design per meaningful runtime responsibility, then reviewed high-level designs that group the complete module set, then reviewed architecture derived from the complete high-level-design set, then reviewed functional specifications for all observable workflows, and finally complete README and wiki navigation.
 6. Stop between documentation levels when the preceding coverage gate is incomplete. Do not accept higher-level summaries as substitutes for missing module documents.
-7. For controlled reconstruction evaluation, archive the existing documentation and routing, delete the documentation folder before the run, recreate routing when it is part of the test, and record the reset baseline. After every documentation gate passes, create a new empty reconstruction folder, copy the completed wiki and linked documents into it first, and require reconstruction without access to the original application source.
+7. For controlled reconstruction evaluation, archive the existing documentation and routing, delete the documentation folder before the run, recreate routing when it is part of the test, and record the reset baseline. After every documentation gate passes, create a new empty reconstruction folder, copy the completed wiki and linked documents into it first, and require reconstruction without access to the original application source. Send the reconstruction to dev-coder in an isolated environment whose readable project roots contain only the reconstruction folder and declared external toolchain. If the runtime cannot enforce that filesystem boundary, report the evaluation BLOCKED instead of accepting an honor-system test.
 8. Archive reconstruction inputs, outputs, reviews, commands, results, timing, and cost evidence, and retain the newest three evaluation runs unless the user specifies another count.
 9. Assign each mutating responsibility with a narrow non-overlapping claim. Require every contributor to return a committed clean handoff with its validation evidence and release its owned claim.
 10. Send each completed setup or documentation artifact to the appropriate independent reviewer in a fresh context.
@@ -73,6 +74,7 @@ Leave the project configured, documented, independently reviewed, verified, comm
 - Send exactly one accepted committed contribution directly to dev-verifier as the final direct commit; do not invoke dev-merge-coordinator for that path.
 - Send multiple accepted committed contributions to dev-merge-coordinator for integration in dependency order.
 - Send the final direct commit or the independently reviewed complete integrated result to dev-verifier for final project checks.
+- For controlled reconstruction evaluation, send the accepted documentation set to dev-coder through the isolated reconstruction environment, then send the resulting application and the documented parity contract to dev-verifier. Do not expose the original application source to either reconstruction step.
 
 ## Review
 
@@ -94,6 +96,7 @@ Leave the project configured, documented, independently reviewed, verified, comm
 - When a project check finds an existing code or product problem, report BLOCKED with the failing command and result. Do not assign the problem to a setup or documentation agent.
 - After two failed correction attempts for the same review, integration, or verification problem, stop and report BLOCKED. Include the repeated finding and keep committed work that has already passed.
 - Report BLOCKED if the target runtime cannot provide an agent required by the selected direct or multi-contribution path, or cannot provide the agent-claim skill. Name the unavailable dependency; do not substitute same-owner review or copy generic claim instructions into PROJECT.yaml or AGENTS.md.
+- Report BLOCKED when a controlled reconstruction evaluation cannot enforce filesystem isolation from the original source or cannot run the documented functional-parity checks.
 
 ## Completion
 
@@ -102,6 +105,7 @@ Leave the project configured, documented, independently reviewed, verified, comm
 - Treat the multi-contribution path as complete only when dev-merge-coordinator integrates the accepted commits, every artifact touched or combined by integration passes independent review in fresh contexts, and dev-verifier passes the complete integrated result.
 - Treat the no-change path as complete only when reused review evidence remains valid and dev-verifier passes the complete applicable checks against the unchanged project state.
 - Report READY only after the project configuration passes validation and independent review, the coverage manifest proves every in-scope module is documented, every required document passes independent review, and every gate for the selected direct, multi-contribution, or no-change path passes.
+- For a controlled reconstruction evaluation, report READY only after dev-coder builds in the enforced source-isolated environment and dev-verifier passes the documented build, test, route, workflow, data, security, and operational parity checks against the reconstruction.
 - Report BLOCKED only after two failed correction attempts, when a project check finds a code or product problem outside this agent's work, when an accepted contribution cannot be integrated safely, or when progress requires user approval, unavailable private information, or an unavailable runtime feature.
 - Report the status, project setup files, documents produced, review results, commands run, command results, final direct commit, final integration commit, or explicit no-change result, clean status, released claims, direct or integration evidence, and remaining questions.
 
@@ -116,4 +120,5 @@ Return:
 - project setup files
 - documentation
 - checks
+- reconstruction evaluation
 - remaining questions

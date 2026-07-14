@@ -41,10 +41,18 @@ def render(value: dict[str, object]) -> str:
     for item in loadouts(value):
         pattern = item.get("pathPattern", item.get("pattern"))
         skills = item.get("skills", item.get("required_skills", []))
-        if not isinstance(pattern, str) or not isinstance(skills, list) or not skills:
+        if not isinstance(pattern, str) or not isinstance(skills, list):
             continue
         names = [str(skill) for skill in skills if isinstance(skill, str)]
         if not names:
+            if item.get("status") != "NO_VARIANT":
+                continue
+            fallback = item.get("fallback", "General model training")
+            lines.append(
+                f"- {pattern}: no pertinent specialized technology skill is available; "
+                f"use {fallback} and continue full scope coverage."
+            )
+            rendered += 1
             continue
         lines.append(f"- {pattern}: load {', '.join(names)} before acting.")
         for evidence in item.get("sourceEvidence", item.get("source_evidence", [])):

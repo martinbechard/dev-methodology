@@ -24,10 +24,13 @@ Run technology detection during project setup, not during ordinary coding, revie
 ## Command
 
 ```bash
-python3 [detector-skill]/scripts/detect.py --project-root [root] --scope [folder]
+python3 [detector-skill]/scripts/detect.py \
+  --project-root [root] \
+  --scope [folder] \
+  --available-skill [runtime-exposed-skill-id]
 ```
 
-Repeat the scope option for separately analyzed folders. Keep each returned skillset separate.
+Repeat the scope option for separately analyzed folders and repeat `--available-skill` for the complete technology-skill catalog exposed by the target runtime. Keep each returned skillset separate. Use `--skills-root` only when that directory is the target runtime's actual installed-skill catalog; do not rely on the methodology source-tree default as proof of runtime availability.
 
 ## Evidence Model
 

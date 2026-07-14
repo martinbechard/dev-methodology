@@ -404,6 +404,66 @@ class TechnologyDetectionTests(unittest.TestCase):
                     self.assertEqual("BLOCKED", result["loadouts"][0]["status"])
                     self.assertEqual("missing-python", result["loadouts"][0]["missingRequiredSkills"][0]["skill"])
 
+    def test_explicit_runtime_catalog_overrides_methodology_source_skills(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            project = root / "project"
+            skills = root / "skills"
+            project.mkdir()
+            skill_root = skills / "example-python"
+            skill_root.mkdir(parents=True)
+            (skill_root / "SKILL.md").write_text(
+                "---\nname: example-python\ndescription: Test runtime catalog.\n---\n",
+                encoding="utf-8",
+            )
+            (project / "main.py").write_text("value = 1\n", encoding="utf-8")
+            registry = root / "registry.yaml"
+            registry.write_text(yaml.safe_dump({"skills": [{
+                "skill": "example-python",
+                "kind": "technology",
+                "capabilities": ["language-coding"],
+                "activation": {"anyOf": [{"fileExtension": ".py"}]},
+                "companions": [],
+                "selection": "additive",
+                "priority": 100,
+                "requiredWhenDetected": True,
+            }]}), encoding="utf-8")
+
+            blocked = run_detection(
+                project,
+                "main.py",
+                expected_code=2,
+                extra=[
+                    "--registry", str(registry),
+                    "--skills-root", str(skills),
+                    "--available-skill", "another-skill",
+                ],
+            )
+            self.assertEqual("BLOCKED", blocked["loadouts"][0]["status"])
+            self.assertEqual(
+                "UNAVAILABLE",
+                blocked["loadouts"][0]["sourceEvidence"][0]["runtimeAvailability"],
+            )
+            self.assertEqual(
+                ["another-skill"],
+                blocked["runtimeSkillCatalog"]["availableSkills"],
+            )
+
+            ready = run_detection(
+                project,
+                "main.py",
+                extra=[
+                    "--registry", str(registry),
+                    "--skills-root", str(skills),
+                    "--available-skill", "example-python",
+                ],
+            )
+            self.assertEqual("READY", ready["loadouts"][0]["status"])
+            self.assertEqual(
+                "AVAILABLE",
+                ready["loadouts"][0]["sourceEvidence"][0]["runtimeAvailability"],
+            )
+
     def test_equal_priority_exclusive_matches_block_setup(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -509,6 +569,37 @@ class TechnologyDetectionTests(unittest.TestCase):
             self.assertIn("Do not rerun detection during ordinary work", completed.stdout)
             self.assertNotIn("Agent Claims And Worktrees", completed.stdout)
             self.assertNotIn("agent-claim", completed.stdout)
+
+    def test_agents_section_preserves_no_variant_general_training_fallback(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            plan = Path(directory) / "PROJECT.yaml"
+            plan.write_text(yaml.safe_dump({
+                "technology_skill_loadouts": [
+                    {
+                        "pathPattern": "src/main/**",
+                        "skills": ["python"],
+                        "status": "READY",
+                    },
+                    {
+                        "pathPattern": "config/**",
+                        "skills": [],
+                        "status": "NO_VARIANT",
+                        "fallback": "general model training",
+                    },
+                ],
+            }), encoding="utf-8")
+            completed = subprocess.run(
+                [sys.executable, str(RENDER_SCRIPT), "--project", str(plan)],
+                cwd=ROOT,
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+            self.assertIn("src/main/**: load python before acting", completed.stdout)
+            self.assertIn(
+                "config/**: no pertinent specialized technology skill is available; use general model training and continue full scope coverage",
+                completed.stdout,
+            )
 
     def test_registry_contains_only_specialized_skills(self) -> None:
         registry = yaml.safe_load(REGISTRY.read_text(encoding="utf-8"))

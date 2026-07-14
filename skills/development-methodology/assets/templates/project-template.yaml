@@ -58,6 +58,7 @@ root_agents_reference:
 technology_skill_detection:
   owner: "Project Agent Setup."
   registry: "Installed detect-technology-skills registry."
+  runtime_catalog_source: "TODO: Name the target runtime available-skill list or installed skills root used for this configuration."
   selection_policy: "Setup-agent-selected folder scopes and deterministic repository evidence. The selected conceptual agent definition, prompt wording, read confirmation, and optional local commands are not detector inputs."
   required_load_failure: "BLOCKED"
   missing_variant_policy: "Record an explicit no-variant skillset and use general model training for that scope; do not skip it or invent a skill."
@@ -92,6 +93,7 @@ technology_skill_loadouts:
       - "TODO: Reusable skill id."
     sourceEvidence:
       - skill: "TODO: Skill id."
+        runtimeAvailability: "TODO: AVAILABLE or UNAVAILABLE in the target runtime catalog."
         evidence:
           - "TODO: Source path, owning manifest, configuration, or other deterministic evidence."
     missingRequiredSkills: []
