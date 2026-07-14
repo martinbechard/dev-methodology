@@ -1,3 +1,7 @@
+# Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+# AI attribution: Modified with AI assistance.
+# Summary: Verifies deterministic Codex skill metadata derivation and preservation of manual fields.
+
 from __future__ import annotations
 
 import importlib.util
@@ -72,6 +76,12 @@ class OpenAiMetadataTests(unittest.TestCase):
             exit_code = script.main([str(skill), "--check"])
             self.assertEqual(original, metadata.read_text(encoding="utf-8"))
         self.assertEqual(script.ERROR_EXIT_CODE, exit_code)
+
+    def test_display_name_preserves_jhipster_brand_capitalization(self) -> None:
+        """Keep generated JHipster skill labels aligned with the product's canonical spelling."""
+        script = load_script()
+
+        self.assertEqual("JHipster Domain Modeling", script.display_name_from_skill_name("jhipster-domain-modeling"))
 
 
 if __name__ == "__main__":

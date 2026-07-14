@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+# AI attribution: Modified with AI assistance.
+# Summary: Synchronizes derived Codex skill interface metadata while preserving hand-authored policy and dependencies.
+
 from __future__ import annotations
 
 import argparse
@@ -44,7 +48,9 @@ def load_skill_frontmatter(skill_directory: Path) -> dict[str, object]:
 
 
 def display_name_from_skill_name(skill_name: str) -> str:
-    return WORD_SEPARATOR_PATTERN.sub(" ", skill_name).title()
+    """Convert a skill identifier to a UI label while preserving the JHipster brand spelling."""
+    words = WORD_SEPARATOR_PATTERN.split(skill_name)
+    return " ".join("JHipster" if word.lower() == "jhipster" else word.title() for word in words)
 
 
 def short_description_from_skill_description(description: str) -> str:

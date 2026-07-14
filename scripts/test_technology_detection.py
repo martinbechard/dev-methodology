@@ -185,6 +185,51 @@ class TechnologyDetectionTests(unittest.TestCase):
                 result = run_detection(ROOT / "evals" / "projects" / "spring-boot-order-cancellation", "src/main", detector=detector)
                 self.assertEqual(["java", "spring-boot", "sql"], result["loadouts"][0]["skills"])
 
+    def test_jhipster_scope_composes_focused_skills_with_java_and_spring_boot(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / ".jhipster").mkdir()
+            (root / "src" / "main" / "java" / "example" / "config").mkdir(parents=True)
+            (root / "src" / "main" / "resources" / "config" / "liquibase").mkdir(parents=True)
+            (root / "src" / "test" / "java" / "example").mkdir(parents=True)
+            (root / ".yo-rc.json").write_text('{"generator-jhipster":{"baseName":"sample"}}\n', encoding="utf-8")
+            (root / "pom.xml").write_text(
+                "<artifactId>spring-boot</artifactId>\n<artifactId>archunit-junit5</artifactId>\n",
+                encoding="utf-8",
+            )
+            (root / ".jhipster" / "Order.json").write_text("{}\n", encoding="utf-8")
+            (root / "src" / "main" / "java" / "example" / "Application.java").write_text(
+                "class Application {}\n",
+                encoding="utf-8",
+            )
+            (root / "src" / "main" / "java" / "example" / "config" / "SecurityConfiguration.java").write_text(
+                "class SecurityConfiguration {}\n",
+                encoding="utf-8",
+            )
+            (root / "src" / "main" / "resources" / "config" / "liquibase" / "master.xml").write_text(
+                "<databaseChangeLog/>\n",
+                encoding="utf-8",
+            )
+            (root / "src" / "test" / "java" / "example" / "TechnicalStructureTest.java").write_text(
+                "class TechnicalStructureTest {}\n",
+                encoding="utf-8",
+            )
+
+            expected = [
+                "java",
+                "jhipster-domain-modeling",
+                "jhipster-persistence",
+                "jhipster-project",
+                "jhipster-security",
+                "jhipster-testing",
+                "spring-boot",
+                "sql",
+            ]
+            for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+                with self.subTest(detector=detector):
+                    result = run_detection(root, ".", detector=detector)
+                    self.assertEqual(expected, result["loadouts"][0]["skills"])
+
     def test_python_scope_has_exact_loadout(self) -> None:
         for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
             with self.subTest(detector=detector):

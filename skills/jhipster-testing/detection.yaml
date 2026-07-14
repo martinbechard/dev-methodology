@@ -1,0 +1,19 @@
+schema: dev-methodology-technology-detection
+version: 2
+skill: jhipster-testing
+kind: domain
+label: JHipster Testing
+capabilities:
+- application-testing
+activation:
+  anyOf:
+  - allOf:
+    - contentPattern: {glob: .yo-rc.json, contains: '"generator-jhipster"'}
+    - anyOf:
+      - contentPattern: {glob: pom.xml, contains: spring-boot}
+      - contentPattern: {glob: "build.gradle*", contains: org.springframework.boot}
+    - anyOf:
+      - fileMatch: {glob: "**/src/test/**/*.java", extensions: [.java]}
+      - fileGlob: "**/src/test/javascript/**"
+companions:
+- jhipster-project

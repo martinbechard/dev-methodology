@@ -1,0 +1,17 @@
+# Codex app metadata for this skill.
+# Derived interface fields are refreshed from SKILL.md by scripts/openai_metadata.py.
+interface:
+  # User-facing name shown in Codex skill surfaces.
+  display_name: JHipster Domain Modeling
+  # User-facing summary shown in Codex skill surfaces.
+  short_description: Use when creating, changing, reviewing, or regenerating JHipster JDL, entities, fields...
+  # Prompt Codex can use when launching this skill directly.
+  default_prompt: Use $jhipster-domain-modeling to change JDL, entities, relationships, DTOs, or service-layer options safely.
+
+# Optional invocation policy placeholder.
+# policy:
+#   allow_implicit_invocation: false
+
+# Optional tool dependency placeholder.
+# dependencies:
+#   tools: []

@@ -281,6 +281,11 @@ The stack and project-domain skill packs are:
 - fastapi
 - java
 - spring-boot
+- jhipster-project
+- jhipster-domain-modeling
+- jhipster-persistence
+- jhipster-testing
+- jhipster-security
 - sql
 - electron-main
 - electron-preload

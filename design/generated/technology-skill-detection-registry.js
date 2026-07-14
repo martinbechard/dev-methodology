@@ -390,6 +390,292 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
           {
             "allOf": [
               {
+                "contentPattern": {
+                  "contains": "\"generator-jhipster\"",
+                  "glob": ".yo-rc.json"
+                }
+              },
+              {
+                "anyOf": [
+                  {
+                    "contentPattern": {
+                      "contains": "spring-boot",
+                      "glob": "pom.xml"
+                    }
+                  },
+                  {
+                    "contentPattern": {
+                      "contains": "org.springframework.boot",
+                      "glob": "build.gradle*"
+                    }
+                  }
+                ]
+              },
+              {
+                "anyOf": [
+                  {
+                    "fileMatch": {
+                      "extensions": [
+                        ".jdl"
+                      ],
+                      "glob": "**/*.jdl"
+                    }
+                  },
+                  {
+                    "fileMatch": {
+                      "extensions": [
+                        ".jh"
+                      ],
+                      "glob": "**/*.jh"
+                    }
+                  },
+                  {
+                    "fileGlob": "**/.jhipster/*.json"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "capabilities": [
+        "domain-modeling"
+      ],
+      "companions": [
+        "jhipster-project"
+      ],
+      "kind": "domain",
+      "label": "JHipster Domain Modeling",
+      "priority": 100,
+      "requiredWhenDetected": true,
+      "selection": "additive",
+      "skill": "jhipster-domain-modeling"
+    },
+    {
+      "activation": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "contentPattern": {
+                  "contains": "\"generator-jhipster\"",
+                  "glob": ".yo-rc.json"
+                }
+              },
+              {
+                "anyOf": [
+                  {
+                    "contentPattern": {
+                      "contains": "spring-boot",
+                      "glob": "pom.xml"
+                    }
+                  },
+                  {
+                    "contentPattern": {
+                      "contains": "org.springframework.boot",
+                      "glob": "build.gradle*"
+                    }
+                  }
+                ]
+              },
+              {
+                "fileGlob": "**/config/liquibase/master.xml"
+              }
+            ]
+          }
+        ]
+      },
+      "capabilities": [
+        "database-migrations"
+      ],
+      "companions": [
+        "jhipster-project",
+        "sql"
+      ],
+      "kind": "domain",
+      "label": "JHipster Persistence",
+      "priority": 100,
+      "requiredWhenDetected": true,
+      "selection": "additive",
+      "skill": "jhipster-persistence"
+    },
+    {
+      "activation": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "fileExtension": ".java"
+              },
+              {
+                "contentPattern": {
+                  "contains": "\"generator-jhipster\"",
+                  "glob": ".yo-rc.json"
+                }
+              },
+              {
+                "anyOf": [
+                  {
+                    "contentPattern": {
+                      "contains": "spring-boot",
+                      "glob": "pom.xml"
+                    }
+                  },
+                  {
+                    "contentPattern": {
+                      "contains": "org.springframework.boot",
+                      "glob": "build.gradle*"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "capabilities": [
+        "application-scaffolding"
+      ],
+      "companions": [
+        "java",
+        "spring-boot"
+      ],
+      "kind": "technology",
+      "label": "JHipster Project",
+      "priority": 100,
+      "requiredWhenDetected": true,
+      "selection": "additive",
+      "skill": "jhipster-project"
+    },
+    {
+      "activation": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "contentPattern": {
+                  "contains": "\"generator-jhipster\"",
+                  "glob": ".yo-rc.json"
+                }
+              },
+              {
+                "anyOf": [
+                  {
+                    "contentPattern": {
+                      "contains": "spring-boot",
+                      "glob": "pom.xml"
+                    }
+                  },
+                  {
+                    "contentPattern": {
+                      "contains": "org.springframework.boot",
+                      "glob": "build.gradle*"
+                    }
+                  }
+                ]
+              },
+              {
+                "anyOf": [
+                  {
+                    "fileMatch": {
+                      "extensions": [
+                        ".java"
+                      ],
+                      "glob": "**/SecurityConfiguration.java"
+                    }
+                  },
+                  {
+                    "fileMatch": {
+                      "extensions": [
+                        ".java"
+                      ],
+                      "glob": "**/security/**/*.java"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "capabilities": [
+        "application-security"
+      ],
+      "companions": [
+        "jhipster-project"
+      ],
+      "kind": "domain",
+      "label": "JHipster Security",
+      "priority": 100,
+      "requiredWhenDetected": true,
+      "selection": "additive",
+      "skill": "jhipster-security"
+    },
+    {
+      "activation": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "contentPattern": {
+                  "contains": "\"generator-jhipster\"",
+                  "glob": ".yo-rc.json"
+                }
+              },
+              {
+                "anyOf": [
+                  {
+                    "contentPattern": {
+                      "contains": "spring-boot",
+                      "glob": "pom.xml"
+                    }
+                  },
+                  {
+                    "contentPattern": {
+                      "contains": "org.springframework.boot",
+                      "glob": "build.gradle*"
+                    }
+                  }
+                ]
+              },
+              {
+                "anyOf": [
+                  {
+                    "fileMatch": {
+                      "extensions": [
+                        ".java"
+                      ],
+                      "glob": "**/src/test/**/*.java"
+                    }
+                  },
+                  {
+                    "fileGlob": "**/src/test/javascript/**"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "capabilities": [
+        "application-testing"
+      ],
+      "companions": [
+        "jhipster-project"
+      ],
+      "kind": "domain",
+      "label": "JHipster Testing",
+      "priority": 100,
+      "requiredWhenDetected": true,
+      "selection": "additive",
+      "skill": "jhipster-testing"
+    },
+    {
+      "activation": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
                 "anyOf": [
                   {
                     "fileExtension": ".ts"

@@ -82,6 +82,11 @@ NEW_DEVELOPMENT_SKILLS = (
     "fastapi",
     "java",
     "spring-boot",
+    "jhipster-project",
+    "jhipster-domain-modeling",
+    "jhipster-persistence",
+    "jhipster-testing",
+    "jhipster-security",
     "sql",
 )
 PROJECT_CONFIGURATION_SKILL = "create-project-configuration"
@@ -189,6 +194,7 @@ README_REQUIRED_PHRASES = (
     "detection.yaml",
     "python3 scripts/build-technology-detection.py",
     "detect-technology-skills",
+    "jhipster-domain-modeling",
     "[Skills Modularization](design/skills-modularization.html) explains always-used and rule-selected agent skills",
     "project-wiki-create",
     "create-functional-spec",
@@ -271,6 +277,7 @@ MODULARIZATION_REQUIRED_PHRASES = (
     "edit PROJECT.yaml to force a correction",
     "Operational result — after setup",
     "Technology Extensions Included In The Kit",
+    "jhipster-project and focused JHipster skills",
     "How Setup-Time Technology Detection Works",
     "runs the detector once for each representative folder scope",
     "nearest supported owning project boundary",
@@ -873,6 +880,23 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(skill_name=skill_name):
                 self.assertTrue((SKILLS_ROOT / skill_name / "SKILL.md").is_file())
                 self.assertTrue(openai_metadata_path(skill_name).is_file())
+
+    def test_jhipster_guidance_is_split_into_focused_skill_packages(self) -> None:
+        expected_phrases = {
+            "jhipster-project": "generated-code boundaries",
+            "jhipster-domain-modeling": "relationship direction",
+            "jhipster-persistence": "Do not rewrite a changelog",
+            "jhipster-testing": "Testcontainers profile",
+            "jhipster-security": "two distinct identities",
+        }
+
+        for skill_name, phrase in expected_phrases.items():
+            with self.subTest(skill_name=skill_name):
+                skill_root = SKILLS_ROOT / skill_name
+                skill_text = (skill_root / "SKILL.md").read_text(encoding="utf-8")
+                self.assertLessEqual(len(skill_text.splitlines()), 40)
+                self.assertIn(phrase, skill_text)
+                self.assertTrue((skill_root / "detection.yaml").is_file())
 
     def test_code_comments_is_a_core_coding_and_review_contract(self) -> None:
         skill_root = SKILLS_ROOT / "code-comments"

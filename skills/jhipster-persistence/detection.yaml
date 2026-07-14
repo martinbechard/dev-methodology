@@ -1,0 +1,18 @@
+schema: dev-methodology-technology-detection
+version: 2
+skill: jhipster-persistence
+kind: domain
+label: JHipster Persistence
+capabilities:
+- database-migrations
+activation:
+  anyOf:
+  - allOf:
+    - contentPattern: {glob: .yo-rc.json, contains: '"generator-jhipster"'}
+    - anyOf:
+      - contentPattern: {glob: pom.xml, contains: spring-boot}
+      - contentPattern: {glob: "build.gradle*", contains: org.springframework.boot}
+    - fileGlob: "**/config/liquibase/master.xml"
+companions:
+- jhipster-project
+- sql

@@ -217,6 +217,150 @@ skills:
   selection: additive
   priority: 100
   requiredWhenDetected: true
+- skill: jhipster-domain-modeling
+  kind: domain
+  label: JHipster Domain Modeling
+  capabilities:
+  - domain-modeling
+  activation:
+    anyOf:
+    - allOf:
+      - contentPattern:
+          glob: .yo-rc.json
+          contains: '"generator-jhipster"'
+      - anyOf:
+        - contentPattern:
+            glob: pom.xml
+            contains: spring-boot
+        - contentPattern:
+            glob: build.gradle*
+            contains: org.springframework.boot
+      - anyOf:
+        - fileMatch:
+            glob: '**/*.jdl'
+            extensions:
+            - .jdl
+        - fileMatch:
+            glob: '**/*.jh'
+            extensions:
+            - .jh
+        - fileGlob: '**/.jhipster/*.json'
+  companions:
+  - jhipster-project
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
+- skill: jhipster-persistence
+  kind: domain
+  label: JHipster Persistence
+  capabilities:
+  - database-migrations
+  activation:
+    anyOf:
+    - allOf:
+      - contentPattern:
+          glob: .yo-rc.json
+          contains: '"generator-jhipster"'
+      - anyOf:
+        - contentPattern:
+            glob: pom.xml
+            contains: spring-boot
+        - contentPattern:
+            glob: build.gradle*
+            contains: org.springframework.boot
+      - fileGlob: '**/config/liquibase/master.xml'
+  companions:
+  - jhipster-project
+  - sql
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
+- skill: jhipster-project
+  kind: technology
+  label: JHipster Project
+  capabilities:
+  - application-scaffolding
+  activation:
+    anyOf:
+    - allOf:
+      - fileExtension: .java
+      - contentPattern:
+          glob: .yo-rc.json
+          contains: '"generator-jhipster"'
+      - anyOf:
+        - contentPattern:
+            glob: pom.xml
+            contains: spring-boot
+        - contentPattern:
+            glob: build.gradle*
+            contains: org.springframework.boot
+  companions:
+  - java
+  - spring-boot
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
+- skill: jhipster-security
+  kind: domain
+  label: JHipster Security
+  capabilities:
+  - application-security
+  activation:
+    anyOf:
+    - allOf:
+      - contentPattern:
+          glob: .yo-rc.json
+          contains: '"generator-jhipster"'
+      - anyOf:
+        - contentPattern:
+            glob: pom.xml
+            contains: spring-boot
+        - contentPattern:
+            glob: build.gradle*
+            contains: org.springframework.boot
+      - anyOf:
+        - fileMatch:
+            glob: '**/SecurityConfiguration.java'
+            extensions:
+            - .java
+        - fileMatch:
+            glob: '**/security/**/*.java'
+            extensions:
+            - .java
+  companions:
+  - jhipster-project
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
+- skill: jhipster-testing
+  kind: domain
+  label: JHipster Testing
+  capabilities:
+  - application-testing
+  activation:
+    anyOf:
+    - allOf:
+      - contentPattern:
+          glob: .yo-rc.json
+          contains: '"generator-jhipster"'
+      - anyOf:
+        - contentPattern:
+            glob: pom.xml
+            contains: spring-boot
+        - contentPattern:
+            glob: build.gradle*
+            contains: org.springframework.boot
+      - anyOf:
+        - fileMatch:
+            glob: '**/src/test/**/*.java'
+            extensions:
+            - .java
+        - fileGlob: '**/src/test/javascript/**'
+  companions:
+  - jhipster-project
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
 - skill: langgraph
   kind: technology
   label: LangGraph

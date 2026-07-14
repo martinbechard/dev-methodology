@@ -14,7 +14,7 @@ This page is generated from the conceptual agent definitions, bundled skill fron
 ## Summary
 
 - [x] 26 conceptual agent definitions generate through the supported native agent definition adapters.
-- [x] 77 bundled skills pass catalog and Agent Skill validation.
+- [x] 82 bundled skills pass catalog and Agent Skill validation.
 - [x] 2 agents and 12 skills are named in current evaluation cases.
 - [ ] 0 agents and 0 skills have independently verified behavior evidence under the current proof contract.
 - TypeScript implementation, Java and Spring Boot implementation, SQL behavior, and TypeScript code review have useful manual observations that must be rerun with truthful receipts.
@@ -41,6 +41,11 @@ This page is generated from the conceptual agent definitions, bundled skill fron
 | fastapi | technology | FastAPI | web-application-framework | None | [ ] None |
 | java | technology | Java | language-coding | spring-boot-order-cancellation | [ ] None |
 | jest | technology | Jest | test-framework | None | [ ] None |
+| jhipster-domain-modeling | domain | JHipster Domain Modeling | domain-modeling | None | [ ] None |
+| jhipster-persistence | domain | JHipster Persistence | database-migrations | None | [ ] None |
+| jhipster-project | technology | JHipster Project | application-scaffolding | None | [ ] None |
+| jhipster-security | domain | JHipster Security | application-security | None | [ ] None |
+| jhipster-testing | domain | JHipster Testing | application-testing | None | [ ] None |
 | langgraph | technology | LangGraph | workflow-runtime | None | [ ] None |
 | local-model-integration | domain | Local model integration | local-model-runtime | None | [ ] None |
 | nextjs-app-router | technology | Next.js App Router | web-application-framework | None | [ ] None |
@@ -169,6 +174,11 @@ This page is generated from the conceptual agent definitions, bundled skill fron
 - [x] fastapi — structural; declared: none; verified behavior: [ ] none
 - [x] java — structural; declared: spring-boot-order-cancellation; verified behavior: [ ] none
 - [x] jest — structural; declared: none; verified behavior: [ ] none
+- [x] jhipster-domain-modeling — structural; declared: none; verified behavior: [ ] none
+- [x] jhipster-persistence — structural; declared: none; verified behavior: [ ] none
+- [x] jhipster-project — structural; declared: none; verified behavior: [ ] none
+- [x] jhipster-security — structural; declared: none; verified behavior: [ ] none
+- [x] jhipster-testing — structural; declared: none; verified behavior: [ ] none
 - [x] langgraph — structural; declared: none; verified behavior: [ ] none
 - [x] local-model-integration — structural; declared: none; verified behavior: [ ] none
 - [x] nextjs-app-router — structural; declared: none; verified behavior: [ ] none
