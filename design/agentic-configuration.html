@@ -249,13 +249,12 @@
 
     <section class="hero" aria-labelledby="page-title">
       <h1 id="page-title">Agentic Configuration</h1>
-      <p class="lede">Agentic configuration is the set of runtime files an agentic coding tool loads to decide which skills, roles, and project instructions apply while it generates code.</p>
       <p class="boundary">This page describes runtime use. It does not describe the source model that creates agent files. The <a href="generic-agent-definitions-source.html">Generic Agent Definitions Source</a> page owns that source model and its conversion into harness-specific files.</p>
     </section>
 
     <section class="section" aria-labelledby="context-title">
       <h2 id="context-title">Provide The Relevant Context</h2>
-      <p class="lede">To generate usable code, the agent needs the relevant context that will steer it toward a result acceptable to the project. The main problem is selecting that context from many possible units of information. Agentic configuration solves this by splitting the information into focused files and having the coding tool load only the skills and instructions needed for the current work.</p>
+      <p class="lede">In order to generate usable code, we need to provide all of the relevant context that will steer the agent to generating it in a way that is acceptable to us. The main problem is choosing the relevant context from many possible units of information. The solution is to split up the information into many files and have the agentic coding tool load just the skills it needs.</p>
     </section>
 
     <section class="section" aria-labelledby="layers-title">
@@ -264,19 +263,19 @@
         <li class="context-layer">
           <div class="layer-copy">
             <h3>Skills Describe How To Perform Actions</h3>
-            <p>The Agent Skills format is a text file format centered on <code>SKILL.md</code> for describing how to perform actions. It is adopted by all agentic coding vendors and is the most granular unit of description.</p>
+            <p>The Agent Skills format uses a text file named <code>SKILL.md</code> to describe how to perform actions. It is adopted by all vendors and is the most granular unit of description.</p>
           </div>
         </li>
         <li class="context-layer">
           <div class="layer-copy">
             <h3>Agent Definition Files</h3>
-            <p>Agent definition files define a specific role to be performed by the AI using skills and other directives. Each agent operates with its own context and history, allowing the amount of information being worked on at one time to be partitioned through a hierarchy of agents.</p>
+            <p>Agent definition files define a specific role to be performed by the AI using skills and other directives. Each agent operates with its own context and history, which allows us to partition the amount of information being worked on at a given time by creating a hierarchy of agents.</p>
           </div>
         </li>
         <li class="context-layer">
           <div class="layer-copy">
             <h3>Agent Configuration</h3>
-            <p>Agent configuration is mostly a description of the agent's purpose, the skills it should use, and the other agents that should be used to do the work.</p>
+            <p>Agent configuration is mostly a description of the purpose of the agent and which skills and other agents should be used to do the work.</p>
           </div>
         </li>
         <li class="context-layer">
@@ -288,13 +287,13 @@
         <li class="context-layer">
           <div class="layer-copy">
             <h3>Root Project Instructions</h3>
-            <p>Project-specific instructions can be defined in <code>AGENTS.md</code> and <code>CLAUDE.md</code> at the project root. These files should usually act as routers that load the skills appropriate for the project's content.</p>
+            <p>Project-specific instructions can also be defined using <code>AGENTS.md</code> and <code>CLAUDE.md</code> placed at the root of the project. This project guidance should usually act as a router to load skills appropriate for the project content.</p>
           </div>
         </li>
         <li class="context-layer">
           <div class="layer-copy">
             <h3>Nested Project Instructions</h3>
-            <p>More <code>AGENTS.md</code> and <code>CLAUDE.md</code> files can be nested within the project to provide more specialized instructions.</p>
+            <p>More of these files can be nested to provide even more specialized instructions.</p>
           </div>
         </li>
       </ol>
@@ -323,41 +322,41 @@
             <td><span class="name">Markdown agent definition</span></td>
             <td><code>~/.&lt;harness-name&gt;/agents/&lt;agent-name&gt;.md</code></td>
             <td><code>&lt;project-root&gt;/.&lt;harness-name&gt;/agents/&lt;agent-name&gt;.md</code></td>
-            <td>Defines a role for a harness that loads Markdown agent files.</td>
+            <td>Defines a specific role to be performed by the AI using skills and other directives.</td>
           </tr>
           <tr>
             <td><span class="name">TOML agent definition</span></td>
             <td><code>~/.&lt;harness-name&gt;/agents/&lt;agent-name&gt;.toml</code></td>
             <td><code>&lt;project-root&gt;/.&lt;harness-name&gt;/agents/&lt;agent-name&gt;.toml</code></td>
-            <td>Defines a role for a harness that loads TOML agent files.</td>
+            <td>Defines a specific role to be performed by the AI using skills and other directives.</td>
           </tr>
           <tr>
             <td><span class="name">Root agent instructions</span></td>
             <td>Not shared</td>
             <td><code>&lt;project-root&gt;/AGENTS.md</code></td>
-            <td>Provides project-wide instructions and routes work to relevant skills.</td>
+            <td>Defines project-specific instructions and acts as a router to load skills appropriate for the project content.</td>
           </tr>
           <tr>
             <td><span class="name">Root Claude instructions</span></td>
             <td>Not shared</td>
             <td><code>&lt;project-root&gt;/CLAUDE.md</code></td>
-            <td>Provides the Claude-specific entry point for project-wide instructions.</td>
+            <td>Defines project-specific instructions and acts as a router to load skills appropriate for the project content.</td>
           </tr>
           <tr>
             <td><span class="name">Nested agent instructions</span></td>
             <td>Not shared</td>
             <td><code>&lt;project-root&gt;/&lt;folder-path&gt;/AGENTS.md</code></td>
-            <td>Provides specialized instructions and skill routing for one folder subtree.</td>
+            <td>Provides even more specialized instructions for nested project content.</td>
           </tr>
           <tr>
             <td><span class="name">Nested Claude instructions</span></td>
             <td>Not shared</td>
             <td><code>&lt;project-root&gt;/&lt;folder-path&gt;/CLAUDE.md</code></td>
-            <td>Provides the Claude-specific entry point for the nested folder instructions.</td>
+            <td>Provides even more specialized instructions for nested project content.</td>
           </tr>
         </tbody>
       </table>
-      <p class="table-note">Actual harness directory names vary. Shared locations make a definition available across projects; project locations travel with one repository.</p>
+      <p class="table-note">Actual harness directory names vary. Shared locations make agent and skill definitions available among projects; project locations place those definitions within a project.</p>
     </section>
   </main>
 </body>
