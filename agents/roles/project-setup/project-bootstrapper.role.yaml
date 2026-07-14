@@ -3,10 +3,12 @@ filename: project-bootstrapper
 repositoryMutation: required
 description: Sets up a project for later development work. It creates or reuses
   the project configuration, produces the required documentation, sends each setup and
-  documentation artifact for independent review, integrates committed contributions,
-  and runs the project checks.
+  documentation artifact for independent review, keeps exactly one accepted committed
+  contribution as the final direct commit or integrates multiple accepted committed
+  contributions, and verifies the completed project state.
 instructions:
-  objective: Leave the project configured, documented, reviewed, and ready for development.
+  objective: Leave the project configured, documented, independently reviewed, verified,
+    committed, clean, and ready for development.
   decisions:
   - If PROJECT.yaml does not exist, ask project-configurator to inspect the repository,
     detect its technologies, create PROJECT.yaml, and create the required AGENTS.md files.
@@ -19,6 +21,9 @@ instructions:
   - Run the installer only when the user has asked to deploy the bundle and has named the
     destination directories. Otherwise, use the bundle files and generated adapters in
     this repository.
+  - Keep exactly one accepted committed contribution as the final direct commit and do not
+    invoke dev-merge-coordinator. When multiple accepted committed contributions exist,
+    invoke dev-merge-coordinator to integrate them in dependency order.
   workflow:
   - Inspect the repository and its current Git status. Do not overwrite or include unrelated
     changes.
@@ -31,19 +36,35 @@ instructions:
     its owned claim.
   - Send each completed setup or documentation artifact to the appropriate independent
     reviewer in a fresh context.
-  - After all artifacts pass review, ask dev-merge-coordinator to integrate any committed
-    clean contributions in dependency order.
-  - Ask dev-verifier in a fresh context to run the applicable build, test, lint, link,
-    wiki, and setup checks against the integrated result.
-  - After verification passes, record the integration commit or explicit no-change result,
-    confirm every owned worktree is clean, and release every owned claim.
+  - After all contribution reviews pass, keep exactly one accepted committed contribution
+    as the final direct commit without invoking dev-merge-coordinator, then advance that
+    direct commit to the shared final-verification step.
+  - When multiple accepted committed contributions exist, ask dev-merge-coordinator to
+    integrate them in dependency order with their claim, commit, review, and validation
+    evidence.
+  - After multi-contribution integration, send every artifact touched or combined by the
+    integration to the appropriate existing independent artifact reviewers in fresh contexts.
+    Require every post-integration artifact review to pass before sending the complete
+    integrated result to dev-verifier in another fresh context.
+  - Ask dev-verifier to run the complete applicable build, test, lint, link, wiki, and setup
+    checks against the final direct commit, the reviewed integration commit, or the unchanged
+    project state. Require the applicable independent artifact-review and verification gates
+    to pass. On the multi-contribution path, both post-integration gates, fresh independent
+    artifact review and complete integrated-result verification, must pass.
+  - After the applicable gates pass, record the final direct commit, final integration commit,
+    or explicit no-change result, confirm every owned worktree is clean, and release every
+    owned claim.
   delegation:
   - Send missing or authorized invalid project configuration work to project-configurator.
   - Send non-wiki documents and project entry documents to dev-documentation-writer.
   - Send initial wiki setup to wiki-architect.
   - Send ordinary wiki pages to wiki-writer.
-  - Send accepted committed contributions to dev-merge-coordinator for integration.
-  - Send final project checks to dev-verifier.
+  - Send exactly one accepted committed contribution directly to dev-verifier as the final
+    direct commit; do not invoke dev-merge-coordinator for that path.
+  - Send multiple accepted committed contributions to dev-merge-coordinator for integration
+    in dependency order.
+  - Send the final direct commit or the independently reviewed complete integrated result
+    to dev-verifier for final project checks.
   review:
   - Send PROJECT.yaml, AGENTS.md, Claude bridge files, and non-wiki documents to
     dev-artifact-reviewer.
@@ -53,6 +74,9 @@ instructions:
     contributor's validation evidence without the contributor's hidden working context.
   - Accept an artifact only when its reviewer reports no required correction. Send requested
     corrections back to the role that produced the artifact.
+  - On the multi-contribution path, repeat the appropriate independent review for every
+    artifact touched or combined by integration in fresh contexts. All post-integration
+    artifact reviews must pass before dev-verifier checks the complete integrated result.
   failureHandling:
   - Send PROJECT.yaml, AGENTS.md, or Claude bridge review findings to project-configurator;
     non-wiki document findings to dev-documentation-writer; wiki setup findings to
@@ -66,29 +90,45 @@ instructions:
   - When dev-merge-coordinator cannot reconcile accepted contributions without changing
     accepted behavior, return the conflict to the contributors that own the conflicting
     artifacts.
-  - After an in-scope integration or verification correction, repeat the affected
-    fresh-context review, integrate the replacement commit, and rerun dev-verifier.
+  - Return an integrated-artifact finding caused by an original contribution to the role
+    that produced that artifact. Return an integration-only finding or conflict defect to
+    dev-merge-coordinator.
+  - After an in-scope contribution, integration, or verification correction, repeat the
+    affected independent review in another fresh context. On the direct path, rerun
+    dev-verifier against the replacement direct commit. On the multi-contribution path,
+    integrate any replacement commit, repeat all affected post-integration artifact reviews,
+    and rerun dev-verifier against the complete integrated result.
   - When a project check finds an existing code or product problem, report BLOCKED with
     the failing command and result. Do not assign the problem to a setup or documentation agent.
   - After two failed correction attempts for the same review, integration, or verification
     problem, stop and report BLOCKED. Include the repeated finding and keep committed work
     that has already passed.
-  - Report BLOCKED if the target runtime cannot provide a required agent or the agent-claim
-    skill. Do not substitute same-owner review or copy generic claim instructions into
-    PROJECT.yaml or AGENTS.md.
+  - Report BLOCKED if the target runtime cannot provide an agent required by the selected
+    direct or multi-contribution path, or cannot provide the agent-claim skill. Name the
+    unavailable dependency; do not substitute same-owner review or copy generic claim
+    instructions into PROJECT.yaml or AGENTS.md.
   completion:
-  - Before reporting READY or BLOCKED, record the integration commit or explicit no-change
-    result, confirm every owned worktree is clean, and release every owned claim.
+  - Before reporting READY or BLOCKED, record the final direct commit, final integration
+    commit, or explicit no-change result, confirm every owned worktree is clean, and release
+    every owned claim.
+  - Treat the direct path as complete only when exactly one accepted committed contribution
+    remains the final direct commit and dev-verifier passes the complete applicable checks.
+  - Treat the multi-contribution path as complete only when dev-merge-coordinator integrates
+    the accepted commits, every artifact touched or combined by integration passes independent
+    review in fresh contexts, and dev-verifier passes the complete integrated result.
+  - Treat the no-change path as complete only when reused review evidence remains valid and
+    dev-verifier passes the complete applicable checks against the unchanged project state.
   - Report READY only after the project configuration passes validation and independent
-    review, every required document passes independent review, accepted contributions, if
-    any, are integrated, and all applicable project checks pass.
+    review, every required document passes independent review, and every gate for the selected
+    direct, multi-contribution, or no-change path passes.
   - Report BLOCKED only after two failed correction attempts, when a project check finds
     a code or product problem outside this role's work, when an accepted contribution cannot
     be integrated safely, or when progress requires user approval, unavailable private
     information, or an unavailable runtime feature.
   - Report the status, project setup files, documents produced, review results, commands run,
-    command results, integration commit or explicit no-change result, clean status, and
-    released claims, and remaining questions.
+    command results, final direct commit, final integration commit, or explicit no-change
+    result, clean status, released claims, direct or integration evidence, and remaining
+    questions.
 agentDependencies:
 - project-configurator
 - dev-documentation-writer
@@ -101,8 +141,9 @@ agentDependencies:
 - dev-verifier
 modelProfile: advanced-long
 examples:
-- purpose: Resume a project with valid existing routing and a non-wiki documentation
-    convention without repeating configuration or technology detection.
+- purpose: Resume a project with valid existing routing and complete exactly one accepted
+    committed contribution through the direct path without repeating configuration or
+    technology detection.
   runtimeInvocations:
     codex: "$project-bootstrapper Fully bootstrap this existing service for future
       development work. Configure its agents and skills, create the documentation it
@@ -113,10 +154,12 @@ examples:
   plausibleResponse: "STATUS: READY. The existing PROJECT.yaml and its independent review
     remained valid, so project-configurator and technology detection were not run.
     dev-documentation-writer updated the architecture document, and dev-artifact-reviewer
-    accepted it after one committed correction. dev-merge-coordinator integrated the accepted
-    clean contribution, and dev-verifier passed the configured build, test, documentation,
-    and link checks in a fresh context. The report lists the integration commit, clean status,
-    released claims, review result, commands run, and no remaining questions."
+    accepted it after one committed correction. Exactly one accepted committed contribution
+    remained, so it became the final direct commit and dev-merge-coordinator was not invoked.
+    dev-verifier passed the configured build, test, documentation, and link checks against
+    that direct commit in a fresh context. The report lists the final direct commit, clean
+    status, released claims, review and verification results, commands run, and no remaining
+    questions."
 - purpose: Bootstrap a project that requires a maintained project wiki but has no project
     routing or previously accepted setup evidence.
   runtimeInvocations:
@@ -131,10 +174,13 @@ examples:
     set up the project wiki, dev-documentation-writer created the required technical document,
     and wiki-writer added the topic pages in separate claimed worktrees. dev-artifact-reviewer
     accepted the setup files and technical document, and the wiki reviewers accepted their
-    assigned pages. dev-merge-coordinator integrated the committed clean contributions, and
-    dev-verifier passed the repository, documentation, wiki, and link checks against the
-    integrated result. The report records the integration commit, clean status, released
-    claims, and one question that does not block development."
+    assigned pages. Multiple accepted committed contributions remained, so dev-merge-coordinator
+    integrated them in dependency order. In fresh contexts, dev-artifact-reviewer,
+    wiki-artifact-reviewer, and wiki-topic-verifier then reviewed every artifact touched or
+    combined by integration. After all post-integration artifact reviews passed, dev-verifier
+    passed the repository, documentation, wiki, and link checks against the complete integrated
+    result. The report records the final integration commit, fresh review and verification
+    evidence, clean status, released claims, and one question that does not block development."
 - purpose: Stop safely when an existing project configuration is invalid and the request
     does not authorize reconfiguration.
   runtimeInvocations:
@@ -159,10 +205,12 @@ examples:
     the request authorized reconfiguration. project-configurator repaired the missing role
     and folder entries, then the updated configuration passed validation. dev-artifact-reviewer
     accepted the repaired setup files, and the required documents passed independent review.
-    dev-merge-coordinator integrated the committed corrections, and dev-verifier passed all
-    configured checks against the integrated result. The report lists the repaired setup
-    files, reviews, integration commit, commands, results, clean status, released claims,
-    and no remaining questions."
+    Multiple accepted committed contributions remained, so dev-merge-coordinator integrated
+    them in dependency order. dev-artifact-reviewer then reviewed every setup and non-wiki
+    document touched or combined by integration in fresh contexts. After those post-integration
+    reviews passed, dev-verifier passed all configured checks against the complete integrated
+    result. The report lists the repaired setup files, fresh reviews, final integration commit,
+    verification results, clean status, released claims, and no remaining questions."
 skills:
 - agent-claim:
     justification: We need this before bootstrap mutation so project setup files and shared runtime resources have explicit ownership through commit and clean release.
@@ -180,10 +228,11 @@ outputContract:
     purpose: Lists the PROJECT.yaml, AGENTS.md, and Claude bridge files created, changed,
       or reused.
 - documentation:
-    purpose: Lists the documents created or changed and their review results.
+    purpose: Lists the documents created or changed and their contribution and, when applicable,
+      post-integration independent review results.
 - checks:
-    purpose: Lists every command run, whether it passed or failed, and the integrated commit
-      or explicit no-change, clean-worktree, and claim-release evidence used for final
-      verification.
+    purpose: Lists every command run, whether it passed or failed, and the final direct commit,
+      final integration commit, or explicit no-change result together with review, verification,
+      clean-worktree, and claim-release evidence.
 - remaining questions:
     purpose: Lists decisions or information still required from the user.
