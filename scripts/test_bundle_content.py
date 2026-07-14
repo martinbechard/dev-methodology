@@ -283,7 +283,12 @@ AGENT_ROLE_MAP_REQUIRED_PHRASES = (
     "definitionReturnTarget",
 )
 GENERIC_AGENT_DEFINITIONS_REQUIRED_PHRASES = (
-    "Generic Agent Definitions Source",
+    "Agentic Configuration",
+    "Choose The Context That Shapes The Code",
+    "Configuration Has Three Layers",
+    "Configuration File Locations",
+    "&lt;project-root&gt;/.&lt;harness-name&gt;/agents/&lt;agent-name&gt;.md",
+    "&lt;project-root&gt;/&lt;folder-path&gt;/AGENTS.md",
     "The Portability Problem",
     "Skills Have A Portable File Standard",
     "Agents Do Not Have One Portable Runtime File",
@@ -336,6 +341,9 @@ DOCUMENT_INFORMATION_OWNERS = {
         "Beacon Knowledge Base: Workflow Separation",
     ),
     "generic-agent-definitions-source.html": (
+        "Choose The Context That Shapes The Code",
+        "Configuration Has Three Layers",
+        "Configuration File Locations",
         "The Portability Problem",
         "From Logical Roles To Native Agents",
         "Logical Role Properties",
@@ -1985,6 +1993,10 @@ class BundleContentTests(unittest.TestCase):
         for phrase in GENERIC_AGENT_DEFINITIONS_REQUIRED_PHRASES:
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, definition_text)
+
+        self.assertNotIn("PROJECT.md", definition_text)
+        self.assertNotIn("agents/*.toml", definition_text)
+        self.assertNotIn("agents/*.md", definition_text)
 
         property_section = definition_text.split(
             '<h2 id="information-model-title">', maxsplit=1
