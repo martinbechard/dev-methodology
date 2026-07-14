@@ -326,11 +326,14 @@ AGENTIC_CONFIGURATION_REQUIRED_PHRASES = (
     "This page describes runtime use.",
     "Provide The Relevant Context",
     "Context Layers",
-    "Skills Describe How To Perform Actions",
+    "Shared Definitions",
+    "Skill Definition Files",
     "Agent Definition Files",
-    "Shared And Project Definitions",
-    "Root Project Instructions",
-    "Nested Project Instructions",
+    "Project-Specific Definitions",
+    "Project Skill Definition Files",
+    "Project Agent Definition Files",
+    "Root Project Instruction Files",
+    "Nested Project Instruction Files",
     "Runtime Configuration File Locations",
     "In order to generate usable code, we need to provide all of the relevant context that will steer the agent to generating it in a way that is acceptable to us.",
     "The main problem is choosing the relevant context from many possible units of information.",
@@ -338,13 +341,15 @@ AGENTIC_CONFIGURATION_REQUIRED_PHRASES = (
     "The Agent Skills format uses a text file named <code>SKILL.md</code> to describe how to perform actions.",
     "It is adopted by all vendors and is the most granular unit of description.",
     "Describes how to perform actions.",
-    "Agent definition files define a specific role to be performed by the AI using skills and other directives.",
+    "Agent definition files describe the purpose of a specific agent, the skills and other agents it should use, and its other directives.",
     "Each agent operates with its own context and history, which allows us to partition the amount of information being worked on at a given time by creating a hierarchy of agents.",
-    "Agent configuration is mostly a description of the purpose of the agent and which skills and other agents should be used to do the work.",
-    "Agent and skill definitions are usually shared among projects, but they can also be placed within a project.",
-    "Project-specific instructions can also be defined using <code>AGENTS.md</code> and <code>CLAUDE.md</code> placed at the root of the project.",
+    "Definitions installed for a harness are available to all projects that use that harness.",
+    "Definitions and instructions stored within a project apply only to that project and can tailor shared behavior to its content.",
+    "Project skill definition files describe actions that are specific to the project or customize a shared skill for the project.",
+    "Project agent definition files define project-specific agents or customize shared agent definitions for the project.",
+    "Project-specific instructions can be defined using <code>AGENTS.md</code> and <code>CLAUDE.md</code> placed at the root of the project.",
     "This project guidance should usually act as a router to load skills appropriate for the project content.",
-    "More of these files can be nested to provide even more specialized instructions.",
+    "More of these instruction files can be nested to provide specialized guidance for content within a project folder.",
     "&lt;project-root&gt;/.&lt;harness-name&gt;/agents/&lt;agent-name&gt;.md",
     "&lt;project-root&gt;/&lt;folder-path&gt;/AGENTS.md",
 )
@@ -2671,20 +2676,30 @@ class BundleContentTests(unittest.TestCase):
 
         layer_section = configuration_text.split(
             '<ol class="context-layers">', maxsplit=1
-        )[1].split("</ol>", maxsplit=1)[0]
+        )[1].split("</section>", maxsplit=1)[0]
         layer_headings = (
-            "Skills Describe How To Perform Actions",
-            "Agent Definition Files",
-            "Agent Configuration",
-            "Shared And Project Definitions",
-            "Root Project Instructions",
-            "Nested Project Instructions",
+            ("h3", "Shared Definitions"),
+            ("h4", "Skill Definition Files"),
+            ("h4", "Agent Definition Files"),
+            ("h3", "Project-Specific Definitions"),
+            ("h4", "Project Skill Definition Files"),
+            ("h4", "Project Agent Definition Files"),
+            ("h4", "Root Project Instruction Files"),
+            ("h4", "Nested Project Instruction Files"),
         )
         layer_positions = [
-            layer_section.index(f"<h3>{heading}</h3>")
-            for heading in layer_headings
+            layer_section.index(f"<{tag}>{heading}</{tag}>")
+            for tag, heading in layer_headings
         ]
         self.assertEqual(sorted(layer_positions), layer_positions)
+        self.assertEqual(2, layer_section.count('<ol class="nested-layers">'))
+        for redundant_heading in (
+            "Skills Describe How To Perform Actions",
+            "Agent Configuration",
+            "Shared And Project Definitions",
+        ):
+            with self.subTest(redundant_heading=redundant_heading):
+                self.assertNotIn(redundant_heading, configuration_text)
         for source_heading in (
             "The Portability Problem",
             "From Logical Roles To Native Agents",

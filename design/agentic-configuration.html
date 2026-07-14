@@ -12,10 +12,8 @@
       --color-panel: #ffffff;
       --color-line: #d9e0ea;
       --color-agent: #2563eb;
-      --color-skill: #b45309;
       --color-project: #0f766e;
       --color-soft-blue: #e8f0ff;
-      --color-soft-amber: #fff1d8;
       --color-soft-green: #e4f7f4;
       --shadow-panel: 0 12px 30px rgba(31, 41, 55, 0.08);
       --space-2: 0.5rem;
@@ -53,7 +51,8 @@
 
     h1,
     h2,
-    h3 {
+    h3,
+    h4 {
       margin: 0;
       line-height: 1.15;
     }
@@ -69,6 +68,10 @@
     }
 
     h3 {
+      font-size: 1.08rem;
+    }
+
+    h4 {
       font-size: 1rem;
     }
 
@@ -167,24 +170,54 @@
     }
 
     .context-layer:nth-child(1) {
-      --layer-color: var(--color-skill);
-      --layer-soft-color: var(--color-soft-amber);
-    }
-
-    .context-layer:nth-child(2),
-    .context-layer:nth-child(3) {
       --layer-color: var(--color-agent);
       --layer-soft-color: var(--color-soft-blue);
     }
 
-    .context-layer:nth-child(4),
-    .context-layer:nth-child(5),
-    .context-layer:nth-child(6) {
+    .context-layer:nth-child(2) {
       --layer-color: var(--color-project);
       --layer-soft-color: var(--color-soft-green);
     }
 
     .layer-copy h3 {
+      margin-bottom: var(--space-2);
+    }
+
+    .nested-layers {
+      display: grid;
+      gap: var(--space-3);
+      margin: var(--space-4) 0 0 var(--space-3);
+      padding: 0 0 0 var(--space-5);
+      border-left: 2px solid var(--layer-color);
+      list-style: none;
+      counter-reset: nested-layer;
+    }
+
+    .nested-layer {
+      display: grid;
+      grid-template-columns: 3rem minmax(0, 1fr);
+      gap: var(--space-3);
+      padding: var(--space-4);
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      background: var(--color-page);
+    }
+
+    .nested-layer::before {
+      counter-increment: nested-layer;
+      content: counter(context-layer) "." counter(nested-layer);
+      display: grid;
+      width: 2.5rem;
+      height: 2.5rem;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--layer-soft-color);
+      color: var(--layer-color);
+      font-size: var(--font-xs);
+      font-weight: 800;
+    }
+
+    .nested-copy h4 {
       margin-bottom: var(--space-2);
     }
 
@@ -236,6 +269,14 @@
         grid-template-columns: 1fr;
       }
 
+      .nested-layers {
+        margin-left: 0;
+      }
+
+      .nested-layer {
+        grid-template-columns: 1fr;
+      }
+
       table {
         display: block;
         overflow-x: auto;
@@ -262,38 +303,54 @@
       <ol class="context-layers">
         <li class="context-layer">
           <div class="layer-copy">
-            <h3>Skills Describe How To Perform Actions</h3>
-            <p>The Agent Skills format uses a text file named <code>SKILL.md</code> to describe how to perform actions. It is adopted by all vendors and is the most granular unit of description.</p>
+            <h3>Shared Definitions</h3>
+            <p>Definitions installed for a harness are available to all projects that use that harness.</p>
+            <ol class="nested-layers">
+              <li class="nested-layer">
+                <div class="nested-copy">
+                  <h4>Skill Definition Files</h4>
+                  <p>The Agent Skills format uses a text file named <code>SKILL.md</code> to describe how to perform actions. It is adopted by all vendors and is the most granular unit of description.</p>
+                </div>
+              </li>
+              <li class="nested-layer">
+                <div class="nested-copy">
+                  <h4>Agent Definition Files</h4>
+                  <p>Agent definition files describe the purpose of a specific agent, the skills and other agents it should use, and its other directives. Each agent operates with its own context and history, which allows us to partition the amount of information being worked on at a given time by creating a hierarchy of agents.</p>
+                </div>
+              </li>
+            </ol>
           </div>
         </li>
         <li class="context-layer">
           <div class="layer-copy">
-            <h3>Agent Definition Files</h3>
-            <p>Agent definition files define a specific role to be performed by the AI using skills and other directives. Each agent operates with its own context and history, which allows us to partition the amount of information being worked on at a given time by creating a hierarchy of agents.</p>
-          </div>
-        </li>
-        <li class="context-layer">
-          <div class="layer-copy">
-            <h3>Agent Configuration</h3>
-            <p>Agent configuration is mostly a description of the purpose of the agent and which skills and other agents should be used to do the work.</p>
-          </div>
-        </li>
-        <li class="context-layer">
-          <div class="layer-copy">
-            <h3>Shared And Project Definitions</h3>
-            <p>Agent and skill definitions are usually shared among projects, but they can also be placed within a project.</p>
-          </div>
-        </li>
-        <li class="context-layer">
-          <div class="layer-copy">
-            <h3>Root Project Instructions</h3>
-            <p>Project-specific instructions can also be defined using <code>AGENTS.md</code> and <code>CLAUDE.md</code> placed at the root of the project. This project guidance should usually act as a router to load skills appropriate for the project content.</p>
-          </div>
-        </li>
-        <li class="context-layer">
-          <div class="layer-copy">
-            <h3>Nested Project Instructions</h3>
-            <p>More of these files can be nested to provide even more specialized instructions.</p>
+            <h3>Project-Specific Definitions</h3>
+            <p>Definitions and instructions stored within a project apply only to that project and can tailor shared behavior to its content.</p>
+            <ol class="nested-layers">
+              <li class="nested-layer">
+                <div class="nested-copy">
+                  <h4>Project Skill Definition Files</h4>
+                  <p>Project skill definition files describe actions that are specific to the project or customize a shared skill for the project.</p>
+                </div>
+              </li>
+              <li class="nested-layer">
+                <div class="nested-copy">
+                  <h4>Project Agent Definition Files</h4>
+                  <p>Project agent definition files define project-specific agents or customize shared agent definitions for the project.</p>
+                </div>
+              </li>
+              <li class="nested-layer">
+                <div class="nested-copy">
+                  <h4>Root Project Instruction Files</h4>
+                  <p>Project-specific instructions can be defined using <code>AGENTS.md</code> and <code>CLAUDE.md</code> placed at the root of the project. This project guidance should usually act as a router to load skills appropriate for the project content.</p>
+                </div>
+              </li>
+              <li class="nested-layer">
+                <div class="nested-copy">
+                  <h4>Nested Project Instruction Files</h4>
+                  <p>More of these instruction files can be nested to provide specialized guidance for content within a project folder.</p>
+                </div>
+              </li>
+            </ol>
           </div>
         </li>
       </ol>
