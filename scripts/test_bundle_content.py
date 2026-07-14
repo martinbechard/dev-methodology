@@ -335,7 +335,7 @@ DOCUMENT_INFORMATION_OWNERS = {
         "Acme Ledger: Nested Tier Guidance",
         "Beacon Knowledge Base: Workflow Separation",
     ),
-    "agent-definition-runtime-formats.html": (
+    "generic-agent-definitions-source.html": (
         "The Portability Problem",
         "From Logical Roles To Native Agents",
         "Logical Role Properties",
@@ -367,7 +367,7 @@ DOCUMENT_FORBIDDEN_HEADINGS = {
         "Project Setup Flow",
         "Example: Direct Customer Customization",
     ),
-    "agent-definition-runtime-formats.html": (
+    "generic-agent-definitions-source.html": (
         "Current Understanding",
         "Related Code",
         "Related Tests",
@@ -385,7 +385,7 @@ DOCUMENT_REQUIRED_LINKS = {
         "agent-role-skill-map.html",
         "agent-skill-specialization-strategy.html",
         "agent-skill-specialization-examples.html",
-        "agent-definition-runtime-formats.html",
+        "generic-agent-definitions-source.html",
         "orchestrated-development-lifecycle.html",
     ),
     "orchestrated-development-lifecycle.html": (
@@ -396,7 +396,7 @@ DOCUMENT_REQUIRED_LINKS = {
         "agent-role-skill-map.html",
         "agentic-development-operating-model.html",
         "orchestrated-development-lifecycle.html",
-        "agent-definition-runtime-formats.html",
+        "generic-agent-definitions-source.html",
     ),
     "agent-role-skill-map.html": (
         "agent-skill-specialization-strategy.html",
@@ -408,7 +408,7 @@ DOCUMENT_REQUIRED_LINKS = {
         "orchestrated-development-lifecycle.html",
         "../skills/development-methodology/assets/templates/project-template.yaml",
     ),
-    "agent-definition-runtime-formats.html": (
+    "generic-agent-definitions-source.html": (
         "agent-role-skill-map.html",
         "agent-skill-specialization-strategy.html",
         "../README.md#explicit-target-deployment",
@@ -1971,8 +1971,8 @@ class BundleContentTests(unittest.TestCase):
 
     def test_generic_agent_definitions_document_source_and_adapters(self) -> None:
         index_text = (REPOSITORY_ROOT / "index.html").read_text(encoding="utf-8")
-        format_text = (
-            REPOSITORY_ROOT / "design" / "agent-definition-runtime-formats.html"
+        definition_text = (
+            REPOSITORY_ROOT / "design" / "generic-agent-definitions-source.html"
         ).read_text(encoding="utf-8")
         role_schema = yaml.safe_load(
             (REPOSITORY_ROOT / "agents" / "role-schema.yaml").read_text(
@@ -1980,13 +1980,13 @@ class BundleContentTests(unittest.TestCase):
             )
         )
 
-        self.assertIn("design/agent-definition-runtime-formats.html", index_text)
+        self.assertIn("design/generic-agent-definitions-source.html", index_text)
 
         for phrase in GENERIC_AGENT_DEFINITIONS_REQUIRED_PHRASES:
             with self.subTest(phrase=phrase):
-                self.assertIn(phrase, format_text)
+                self.assertIn(phrase, definition_text)
 
-        property_section = format_text.split(
+        property_section = definition_text.split(
             '<h2 id="information-model-title">', maxsplit=1
         )[1].split('<h2 id="ignored-properties-title">', maxsplit=1)[0]
         for property_name in role_schema["properties"]:
@@ -1997,7 +1997,7 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(fixed_behavior=behavior_name):
                 self.assertIn(
                     f"<code>fixedBehavior.{behavior_name}</code>",
-                    format_text,
+                    definition_text,
                 )
 
     def test_reverse_engineering_uses_structural_code_discovery(self) -> None:
