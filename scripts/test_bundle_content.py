@@ -278,8 +278,6 @@ AGENT_ROLE_MAP_REQUIRED_PHRASES = (
     ".tag.technology-skill",
     "technology-skill-detection-registry.js",
     "Interactive Agent And Skill Map",
-    "select a skill to see every agent that uses it.",
-    "intentionally omitted from this map.",
     'class="hierarchy-embed"',
     "Open the interactive SVG diagram",
     'id="agent-skill-hierarchy"',
