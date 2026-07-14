@@ -104,12 +104,14 @@ For raw source ingest:
 12. Audit the created or updated topic pages for bundled leaf concepts. Split reusable practice patterns, workflows, operating agreements, governance rules, decisions, team structures, source snapshots, and evaluation questions when they can change independently.
 13. Track the complete list of docs/wiki topic pages created or updated for that raw source file.
 14. Run lint, then invoke a fresh no-fork subagent using $project-wiki-topic-verify. Pass only the repository root, the created or updated topic-page list, the current raw source path as evidence, and lint output.
-15. If the verifier returns NEEDS_CORRECTION, apply the corrections in the main ingest context, rerun lint when files changed, and invoke a fresh verifier again. Repeat until the verifier returns GOOD.
-16. Move fully processed raw files under raw/processed, preserving useful date or source subfolders.
-17. Update wiki source links to the processed raw paths and add those topic pages to the verification list for that source.
-18. Run lint again, then invoke a fresh no-fork verifier with the updated topic-page list and processed source path as evidence when any docs/wiki link changed.
-19. If the final verifier returns NEEDS_CORRECTION, apply corrections in the main ingest context and repeat lint plus verification until it returns GOOD.
-20. Leave incomplete raw files in place.
+15. Apply the explicit caller or owning-role correction-attempt cap to the pre-move verification gate. When no cap is supplied, allow at most two corrected resubmissions after the initial verifier verdict; the initial verdict does not count as a correction attempt.
+16. If the verifier returns NEEDS_CORRECTION and correction attempts remain, apply the in-scope corrections in the main ingest context, rerun lint when files changed, and invoke a fresh verifier again.
+17. If the verifier still returns NEEDS_CORRECTION after the governing cap is exhausted, stop and report BLOCKED with the unresolved findings, completed correction-attempt count, and governing cap.
+18. Move fully processed raw files under raw/processed only after the pre-move verifier returns GOOD, preserving useful date or source subfolders.
+19. Update wiki source links to the processed raw paths and add those topic pages to the verification list for that source.
+20. Run lint again, then invoke a fresh no-fork verifier with the updated topic-page list and processed source path as evidence when any docs/wiki link changed.
+21. Apply the same explicit caller or owning-role correction-attempt cap to the post-move verification gate. When no cap is supplied, allow at most two corrected resubmissions after the initial post-move verdict; the initial verdict does not count as a correction attempt. If the post-move verifier returns NEEDS_CORRECTION and correction attempts remain, apply the in-scope corrections in the main ingest context, rerun lint, and invoke a fresh verifier. If the verdict remains NEEDS_CORRECTION after the governing cap is exhausted, stop and report BLOCKED with the unresolved findings, completed correction-attempt count, and governing cap.
+22. Leave incomplete raw files in place.
 
 During ingest, use judgement when sources contain synonyms, aliases, overlapping concepts, or conflicting ideas. Normalize synonyms into the best durable entity page when they refer to the same thing. Use the agent's judgement to factor common ideas into the hub or leaf that owns the shared concept. Keep source-specific ideas clearly attributed to their source in the relevant leaf, scan page, digest note, or Maintenance Notes. Record unresolved conflicting ideas as Open Questions instead of flattening them into a false consensus.
 
