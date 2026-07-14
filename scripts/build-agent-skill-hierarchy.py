@@ -231,7 +231,7 @@ def build_svg() -> str:
 
     height = max(current_y, skill_current_y) + 90
     parts = [
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="{SVG_WIDTH}" height="{height}" '
+        f'<svg xmlns="http://www.w3.org/2000/svg" class="show-agent-dependencies" width="{SVG_WIDTH}" height="{height}" '
         f'viewBox="0 0 {SVG_WIDTH} {height}" role="group" aria-labelledby="title desc">',
         '<title id="title">Interactive canonical agent and skill hierarchy</title>',
         '<desc id="desc">Select an agent to highlight its skills, or select a skill to highlight every canonical agent using it. Turn on agent dependencies to reveal arrows from using agents to used agents. Setup-time stack and domain skills are intentionally omitted because canonical roles do not link to them.</desc>',
@@ -264,9 +264,8 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
 @media (prefers-reduced-motion:reduce){.node,.edge,.dependency-edge,.role-node,.skill-node{transition:none}}
 ]]></style>""",
         '<text x="30" y="38" class="heading">Choose an agent or skill. Trace its relationships.</text>',
-        '<text x="30" y="64" class="instruction">Click to select. Double-click to view its definition. Enter or Space selects; Clear selection or Escape resets.</text>',
-        '<text x="30" y="88" id="selection-status" class="status" role="status" aria-live="polite">All agents and skills shown. Connections are intentionally faint until selection.</text>',
-        f'<g class="dependency-toggle" role="checkbox" tabindex="0" aria-checked="false" aria-label="Show agent dependencies"><rect x="{SVG_WIDTH - 585}" y="24" width="220" height="30" rx="15" class="toggle-surface"/><rect x="{SVG_WIDTH - 573}" y="32" width="14" height="14" rx="3" class="toggle-box"/><path d="M {SVG_WIDTH - 570} 39 L {SVG_WIDTH - 566} 43 L {SVG_WIDTH - 560} 35" class="checkmark"/><text x="{SVG_WIDTH - 550}" y="43">Show agent dependencies</text></g>',
+        '<text x="30" y="64" id="selection-status" class="status" role="status" aria-live="polite">All agents and skills shown. Agent dependency arrows are visible.</text>',
+        f'<g class="dependency-toggle checked" role="checkbox" tabindex="0" aria-checked="true" aria-label="Show agent dependencies"><rect x="{SVG_WIDTH - 585}" y="24" width="220" height="30" rx="15" class="toggle-surface"/><rect x="{SVG_WIDTH - 573}" y="32" width="14" height="14" rx="3" class="toggle-box"/><path d="M {SVG_WIDTH - 570} 39 L {SVG_WIDTH - 566} 43 L {SVG_WIDTH - 560} 35" class="checkmark"/><text x="{SVG_WIDTH - 550}" y="43">Show agent dependencies</text></g>',
         f'<g class="view-control disabled" role="button" tabindex="-1" aria-disabled="true" aria-label="Select an agent or skill to view its definition"><rect x="{SVG_WIDTH - 330}" y="24" width="160" height="30" rx="15"/><text x="{SVG_WIDTH - 250}" y="43" text-anchor="middle">View definition</text></g>',
         f'<g class="reset-control disabled" role="button" tabindex="-1" aria-disabled="true" aria-label="Clear map selection"><rect x="{SVG_WIDTH - 150}" y="24" width="120" height="30" rx="15"/><text x="{SVG_WIDTH - 90}" y="43" text-anchor="middle">Clear selection</text></g>',
         f'<text x="{ROLE_X}" y="126" class="heading">Canonical agents</text>',
@@ -374,7 +373,7 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
   const viewDefinitionMessage = "dev-methodology:view-definition";
   let selectedRole = "";
   let selectedSkill = "";
-  let showAgentDependencies = false;
+  let showAgentDependencies = true;
 
   function renderSelection() {
     const hasSelection = Boolean(selectedRole || selectedSkill);
@@ -449,7 +448,7 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
     } else {
       status.textContent = showAgentDependencies
         ? "All agents and skills shown. Agent dependency arrows are visible."
-        : "All agents and skills shown. Connections are intentionally faint until selection.";
+        : "All agents and skills shown. Agent dependency arrows are hidden.";
     }
     document.documentElement.classList.toggle(
       "show-agent-dependencies",
@@ -457,10 +456,6 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
     );
     dependencyToggle.classList.toggle("checked", showAgentDependencies);
     dependencyToggle.setAttribute("aria-checked", String(showAgentDependencies));
-    dependencyToggle.setAttribute(
-      "aria-label",
-      showAgentDependencies ? "Hide agent dependencies" : "Show agent dependencies"
-    );
     const selectedKind = selectedRole ? "agent" : selectedSkill ? "skill" : "";
     const selectedName = selectedRole || selectedSkill;
     const selectedLabel = activeRoleNode
@@ -588,6 +583,7 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && (selectedRole || selectedSkill)) clearSelection();
   });
+  renderSelection();
 })();
 ]]></script>""")
     parts.append("</svg>")

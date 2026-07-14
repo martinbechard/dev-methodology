@@ -152,14 +152,20 @@ class AgentSkillHierarchyTests(unittest.TestCase):
         self.assertEqual("7", dependency_marker.attrib.get("markerWidth"))
         self.assertIn(".dependency-arrowhead{fill:none", self.rendered)
         dependency_toggle = self.root.find(
-            f".//{{{SVG_NAMESPACE}}}g[@class='dependency-toggle']"
+            f".//{{{SVG_NAMESPACE}}}g[@role='checkbox']"
         )
         self.assertIsNotNone(dependency_toggle)
         self.assertEqual("checkbox", dependency_toggle.attrib.get("role"))
-        self.assertEqual("false", dependency_toggle.attrib.get("aria-checked"))
+        self.assertEqual("true", dependency_toggle.attrib.get("aria-checked"))
         self.assertEqual("0", dependency_toggle.attrib.get("tabindex"))
+        self.assertIn("checked", dependency_toggle.attrib.get("class", "").split())
+        self.assertIn(
+            "show-agent-dependencies",
+            self.root.attrib.get("class", "").split(),
+        )
         self.assertIn("Show agent dependencies", " ".join(self.root.itertext()))
-        self.assertIn("let showAgentDependencies = false", self.rendered)
+        self.assertNotIn("Click to select.", self.rendered)
+        self.assertIn("let showAgentDependencies = true", self.rendered)
         self.assertIn("toggleAgentDependencies", self.rendered)
 
     def test_agent_groups_follow_the_canonical_schema_order(self) -> None:
@@ -216,7 +222,7 @@ class AgentSkillHierarchyTests(unittest.TestCase):
         self.assertIn('node.addEventListener("dblclick"', self.rendered)
         self.assertIn("viewRoleDefinition(node.dataset.role)", self.rendered)
         self.assertIn("viewSkillDefinition(node.dataset.skill)", self.rendered)
-        self.assertIn("Double-click to view its definition", self.rendered)
+        self.assertNotIn("Click to select.", self.rendered)
 
 
 if __name__ == "__main__":
