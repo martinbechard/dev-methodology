@@ -28,7 +28,7 @@ examples:
     claude-code: "@agent-methodology-maintainer Update the dev-documentation-writer role
       so unit-test planning is request-specific and uses staged evidence extraction before
       synthesis. Regenerate the supported runtime definitions and verify the result."
-  plausibleResponse: Updated the dev-documentation-writer loadout and semantic model
+  plausibleResponse: Updated the dev-documentation-writer skillset and semantic model
     stages while preserving customer-independent role data. Regenerated the documentation
     data and Codex and Claude definitions, confirmed that every skill and model profile resolves,
     and reported successful stale-output, regression-test, and diff checks with the scoped

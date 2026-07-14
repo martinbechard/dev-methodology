@@ -118,7 +118,7 @@ class RoleMutationPolicyTests(unittest.TestCase):
         self.assertEqual("mutation-policy", schema["properties"]["repositoryMutation"])
 
     def test_generator_rejects_claim_policy_mismatch(self) -> None:
-        """Fail generation when a role declaration contradicts its agent-claim loadout."""
+        """Fail generation when a role declaration contradicts its agent-claim skillset."""
         build_skill_docs = _load_build_skill_docs()
         required, allowed, groups = build_skill_docs.load_role_schema()
         skill_names = set(build_skill_docs.build_payload()["skills"])

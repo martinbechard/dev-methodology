@@ -4,7 +4,7 @@ schema_version: 1
 current_understanding:
   summary: "This repository maintains and distributes portable development-methodology skills, agent roles, generated runtime adapters, design documentation, validation scripts, and evaluation fixtures."
   development_stage: "Active bundle maintenance with generated documentation, native agent adapters, regression tests, and explicit target deployment support."
-  setup_need: "Python maintenance code exists in several ownership scopes, including a FastAPI fixture, so ordinary agents need deterministic folder technology-skill loadouts without rerunning detection."
+  setup_need: "Python maintenance code exists in several ownership scopes, including a FastAPI fixture, so ordinary agents need deterministic folder technology skillsets without rerunning detection."
 
 authoritative_sources:
   readme_files:
@@ -46,7 +46,7 @@ project_scope_and_boundaries:
   private_data_boundary: "Do not send PII or company-internal information to an LLM unless explicitly instructed. Keep customer-specific material out of distributable skills, roles, examples, and generated adapters."
   sibling_repositories:
     - name: "Not yet identified"
-      relationship: "No sibling repository is required to determine the Python folder loadouts in this plan."
+      relationship: "No sibling repository is required to determine the Python folder skillsets in this plan."
 
 project_taxonomy:
   family: "Portable development-methodology skill and agent bundle"
@@ -61,7 +61,7 @@ project_taxonomy:
         - "Agent Skills"
         - YAML
         - Markdown
-      notes: "These are product source files; Python loadouts apply only to executable Python subtrees within them."
+      notes: "These are product source files; Python skillsets apply only to executable Python subtrees within them."
     - name: "Repository maintenance automation"
       paths:
         - scripts/**
@@ -102,7 +102,7 @@ project_taxonomy:
         - HTML
         - generated JavaScript data
         - native agent formats
-      notes: "Follow repository documentation and generated-file rules; do not apply Python loadouts merely because Python generators produce some artifacts."
+      notes: "Follow repository documentation and generated-file rules; do not apply Python skillsets merely because Python generators produce some artifacts."
   documentation_surfaces:
     - path: README.md
       purpose: "Human-facing bundle entry point, inventory, setup workflow, and verification guide."
@@ -118,14 +118,14 @@ root_agents_reference:
   purpose: "Tell agents how to maintain source files and generated outputs, which checks to run, and which Python technology skills must be loaded for each executable scope."
   required_content:
     - "Repository-wide source boundaries, privacy constraints, generation ownership, validation commands, and commit expectations."
-    - "Unconditional folder technology-skill loadouts generated from this plan and their required-load failure policy."
+    - "Unconditional folder technology skillsets generated from this plan and their required-load failure policy."
 
 technology_skill_detection:
   owner: "Project Configurator"
   registry: skills/detect-technology-skills/references/technology-skill-detection-registry.yaml
   selection_policy: "Setup-agent-selected folder scopes and deterministic repository evidence. Agent role, prompt wording, read confirmation, and optional local commands are not detector inputs."
   required_load_failure: BLOCKED
-  missing_variant_policy: "Record an explicit no-variant loadout."
+  missing_variant_policy: "Record an explicit no-variant skillset."
   runtime_policy: "Ordinary agents load the technology skills declared by the nearest AGENTS.md before acting and do not rerun detection."
 
 claude_bridge_files:
@@ -356,7 +356,7 @@ documentation_and_file_contracts:
   - path: AGENTS.md
     purpose: "Operational routing reference loaded by agents."
   - path: PROJECT.yaml
-    purpose: "Single project-wide setup and validation artifact for role agents, skill loadouts, folder routing, nested AGENTS.md placement, and evidence."
+    purpose: "Single project-wide setup and validation artifact for role agents, skillsets, folder routing, nested AGENTS.md placement, and evidence."
   - path: "Not applicable"
     purpose: "No project-local CLAUDE.md bridge is currently required."
   - path: README.md
@@ -391,7 +391,7 @@ validation_plan:
     - "Confirm leading globstar paths match root-level folders and fileMatch binds path and extension evidence to one code artifact."
     - "Reject fastapi for scripts because its evidence is detector-test content rather than an owning FastAPI runtime."
     - "Confirm skills/project-wiki/scripts produces only python because cli.py is Python rather than a Node-owned JavaScript or TypeScript CLI path."
-    - "Confirm python and fastapi are installed and every accepted loadout retains source evidence."
+    - "Confirm python and fastapi are installed and every accepted skillset retains source evidence."
     - "Confirm AGENTS.md requires matching folder skills before acting and does not tell ordinary agents to rerun detection."
   privacy_checks:
     - "Confirm distributable skills, roles, generated adapters, and examples contain no PII, customer data, secrets, or company-internal material unless explicitly authorized."
@@ -417,7 +417,7 @@ proprietary_validation_notes:
 open_questions:
   - question: "Will future Python subtrees add independently owned frameworks or verification commands?"
     owner: "Project Configurator"
-    impact: "Rerun setup-time detection and revise only the affected loadout when technology boundaries change."
+    impact: "Rerun setup-time detection and revise only the affected skillset when technology boundaries change."
 
 maintenance_notes:
   - "Keep PROJECT.yaml and the generated Technology Skills section in AGENTS.md aligned."

@@ -47,7 +47,7 @@ Choose category membership and naming pattern separately.
 
 ## Apply A Rename
 
-1. Inventory category titles and prefixes, role names and filenames, skill directories and frontmatter names, role loadouts, companion-skill references, metadata, generated outputs, documentation, examples, tests, and explicit deployment manifests.
+1. Inventory category titles and prefixes, role names and filenames, skill directories and frontmatter names, role skillsets, companion-skill references, metadata, generated outputs, documentation, examples, tests, and explicit deployment manifests.
 2. Choose the complete old-to-new map before moving files.
 3. Rename source files first. Keep each role name, filename field, source filename, skill directory, and skill frontmatter name aligned.
 4. Update every source reference to the new identifiers and sweep for stale names.

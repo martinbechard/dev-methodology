@@ -63,7 +63,7 @@ Generic fixed-role skills and optional environment tools are not detection defin
 
 ## Output
 
-The detector returns one proposed loadout per analyzed scope:
+The detector returns one proposed skillset per analyzed scope:
 
 - Scope and path pattern.
 - Detected specialized skills.
@@ -72,7 +72,7 @@ The detector returns one proposed loadout per analyzed scope:
 - Exclusive conflicts.
 - Explicit no-variant result when nothing bundled matches.
 
-Project Agent Setup records accepted loadouts in PROJECT.yaml with their source evidence. It then generates AGENTS.md routing so the harness supplies those technology skills to every agent working under the matching path.
+Project Agent Setup records accepted skillsets in PROJECT.yaml with their source evidence. It then generates AGENTS.md routing so the harness supplies those technology skills to every agent working under the matching path.
 
 ## Fixed-Role Skills
 
@@ -94,7 +94,7 @@ The detector skill contains a generated runtime mirror only so a standalone inst
 2. It chooses representative folder scopes.
 3. It runs detection once for those scopes.
 4. It reviews conflicts, missing skills, and unsupported technologies.
-5. It writes source-backed loadouts into PROJECT.yaml.
+5. It writes source-backed skillsets into PROJECT.yaml.
 6. It generates root or nested AGENTS.md technology-loading instructions.
 7. It verifies that every named skill is installed.
 8. It reruns detection only when project setup or technology boundaries change.
@@ -121,7 +121,7 @@ The detector skill contains a generated runtime mirror only so a standalone inst
 - A Next.js API route requires a JavaScript or TypeScript route file and the owning Next.js dependency.
 - Domain-oriented path names in documentation and configuration files do not activate product implementation skills.
 - Root-level paths satisfy leading globstar patterns.
-- A mixed repository produces separate loadouts for separate analyzed scopes.
+- A mixed repository produces separate skillsets for separate analyzed scopes.
 - A child package does not inherit unrelated root workspace dependencies.
 - Equal-priority exclusive matches block setup.
 - A detected but unavailable required skill blocks setup.

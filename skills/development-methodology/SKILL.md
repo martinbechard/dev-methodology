@@ -66,7 +66,7 @@ Functional specifications, architecture documents, high-level designs, and modul
 Use the smallest document type that fully explains the work:
 
 - Project wiki page: durable synthesis, navigation, code ownership, known defects, open decisions, glossary, or recurring topic knowledge.
-- PROJECT.yaml: project-wide agent and skill setup, root and nested AGENTS.md routing references, role loadouts, folder routing, validation evidence, proprietary validation notes, or customer-safe fictitious examples.
+- PROJECT.yaml: project-wide agent and skill setup, root and nested AGENTS.md routing references, role skillsets, folder routing, validation evidence, proprietary validation notes, or customer-safe fictitious examples.
 - Functional specification: user-visible behavior, actor workflow, route behavior, acceptance criteria, permissions, status display, operational affordance, or error state.
 - Architecture: project-wide boundary, technology choice, shared rule, cross-cutting concern, layer relationship, persistence, security, privacy, observability, or UI composition.
 - High-level design: coherent subsystem, feature family, system slice, integration path, or multi-module implementation plan.
@@ -92,7 +92,7 @@ Use project-wiki-topic-write for ordinary docs/wiki topic pages that summarize o
 Template assets live under skills/development-methodology/assets/templates.
 
 - project-wiki-template.md defines project wiki setup and code-aware maintenance rules.
-- project-template.yaml defines project agent roles, folder technology loadouts, root and nested AGENTS.md operational guidance, proprietary validation notes, and customer-safe example boundaries in one project-root configuration.
+- project-template.yaml defines project agent roles, folder technology skillsets, root and nested AGENTS.md operational guidance, proprietary validation notes, and customer-safe example boundaries in one project-root configuration.
 - functional-spec-template.md defines user-visible workflow and acceptance documentation.
 - architecture-template.md defines project-wide and cross-cutting architecture documentation.
 - high-level-design-template.md defines subsystem and feature-family documentation.

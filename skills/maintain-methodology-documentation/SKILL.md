@@ -41,7 +41,7 @@ git diff --check
 
 - Treat skills, role files, and the category catalog as sources.
 - Treat detection.yaml beside each specialized technology or domain skill as the setup-time activation source and the generated registry as derived output.
-- Keep role loadouts generic. Skill entries without conditions are fixed role skills. Skill entries with conditions are request-specific and generate judgment-based loading instructions. Project Agent Setup detects technology and domain variants once and records unconditional folder loadouts in PROJECT.yaml and AGENTS.md.
+- Keep role skillsets generic. Skill entries without conditions are fixed role skills. Skill entries with conditions are request-specific and generate judgment-based loading instructions. Project Agent Setup detects technology and domain variants once and records unconditional folder skillsets in PROJECT.yaml and AGENTS.md.
 - Keep concise single-phase role instructions as strings. Use the structured instruction mapping defined by the role schema when a role has state branches, delegation, review loops, failure handling, or several completion criteria.
 - Require every role to declare repositoryMutation as required, conditional, or never. The role generator validates that required roles load agent-claim as a fixed skill, conditional roles load it conditionally, and read-only roles do not load it.
 - Keep generic claim behavior in agent-claim and roles. PROJECT.yaml and AGENTS.md may contain source-backed project-specific coordination overrides, but must not reproduce the generic procedure.

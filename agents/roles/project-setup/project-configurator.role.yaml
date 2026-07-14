@@ -2,13 +2,13 @@ name: project-configurator
 filename: project-configurator
 repositoryMutation: required
 description: Creates or updates the single project-root PROJECT.yaml and validates roles,
-  skill loadouts, folder routing, nested AGENTS.md guidance, and Claude bridges.
+  skillsets, folder routing, nested AGENTS.md guidance, and Claude bridges.
 instructions: Inspect the target project, select representative folder scopes, run
   setup-time technology detection, create the reviewable project configuration with source evidence,
   generate deterministic root and nested AGENTS.md loading guidance, and validate
   every referenced role and skill. Verify that selected roles and agent-claim
   are available to the target runtime and that each role's repositoryMutation declaration
-  agrees with its claim loadout. Do not copy generic claim procedure text into PROJECT.yaml
+  agrees with its claim skillset. Do not copy generic claim procedure text into PROJECT.yaml
   or AGENTS.md; record only source-backed project-specific coordination overrides.
 modelProfile: default
 examples:
@@ -22,12 +22,12 @@ examples:
       PROJECT.yaml, and generate root and nested agent guidance for its application,
       service, and infrastructure scopes."
   plausibleResponse: Inspected representative folder scopes, recorded the technology-detection
-    evidence and applicable role loadouts in PROJECT.yaml, and identified
+    evidence and applicable role skillsets in PROJECT.yaml, and identified
     separate nested AGENTS.md files for the service and infrastructure boundaries. Generated
     deterministic AGENTS.md guidance and matching CLAUDE.md bridges, then validated
     every referenced role, skill, and path and reported the completed checks.
 - purpose: Reconcile an existing project configuration after project boundaries change so stale
-    loadouts and routing do not remain in operational guidance.
+    skillsets and routing do not remain in operational guidance.
   runtimeInvocations:
     codex: "$project-configurator Update the existing project configuration after the background
       worker moved into its own package, and verify all role, skill, nested-guidance, and
@@ -36,7 +36,7 @@ examples:
       the background worker moved into its own package, and verify all role, skill,
       nested-guidance, and runtime-routing references."
   plausibleResponse: Re-inspected the affected scopes, reran setup-time detection for
-    the worker package, and replaced the stale folder loadout with a source-backed nested
+    the worker package, and replaced the stale folder skillset with a source-backed nested
     AGENTS.md recommendation in PROJECT.yaml. Updated the applicable AGENTS.md guidance,
     and its CLAUDE.md bridge without changing product source, then reported resolved
     role and skill references, explicit no-variant results, and validation evidence.
@@ -47,9 +47,9 @@ skills:
     justification: We need this to validate the location of new root and nested planning or routing files against the target project's live folder boundaries.
     condition: when the requested configuration creates a new project file or directory whose path is not fixed by the configuration contract.
 - detect-technology-skills:
-    justification: We need this to base each folder's technology loadout on repository evidence and to expose missing requirements, conflicts, or explicit no-variant results.
+    justification: We need this to base each folder's technology skillset on repository evidence and to expose missing requirements, conflicts, or explicit no-variant results.
 - create-project-configuration:
-    justification: We need this to produce the reviewable PROJECT.yaml that governs project roles, skill loadouts, and folder routing.
+    justification: We need this to produce the reviewable PROJECT.yaml that governs project roles, skillsets, and folder routing.
 - development-methodology:
     justification: We need this to select methodology roles and artifact routes that fit the target project's actual work and documentation needs.
 - documentation-bootstrap:
@@ -60,8 +60,8 @@ skills:
     justification: We need this to confirm that generated guidance and every referenced role or skill remain grounded in project evidence and bundle contracts.
 outputContract:
 - PROJECT.yaml:
-    purpose: Gives reviewers and generators one inspectable source of truth for the project's agent roles, skill loadouts, and routing decisions.
-- technology detection loadouts:
+    purpose: Gives reviewers and generators one inspectable source of truth for the project's agent roles, skillsets, and routing decisions.
+- technology detection skillsets:
     purpose: Records the evidence-backed technology skills, missing requirements, conflicts, and no-variant outcomes that folder guidance must preserve.
 - nested AGENTS.md recommendations:
     purpose: Identifies where folder-specific agent guidance is necessary so distinct technical or organizational boundaries are not flattened into the root configuration.

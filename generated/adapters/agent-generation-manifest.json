@@ -48,7 +48,7 @@
         {
           "name": "dev-orchestrator",
           "output": "generated/adapters/claude/agents/dev-orchestrator.md",
-          "sha256": "16d26b7dbc252eccb9bac9e466ad40e439e43a35ae0b090331996ba030f1d6e7",
+          "sha256": "117ef16bdf3bda45191177eb08286f793158e3707178e72ab3ff5940dc3139d3",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -102,7 +102,7 @@
         {
           "name": "project-configurator",
           "output": "generated/adapters/claude/agents/project-configurator.md",
-          "sha256": "7d7fedccc99d496d4d582a88d6304710fd6531951de0a0a9eed9bf17da512849",
+          "sha256": "1f692c576e6bcdb33cbe1cf1a1e3f7ba4ee04ff7a5aad286a4cb1981a32942d0",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {
@@ -211,7 +211,7 @@
         {
           "name": "dev-orchestrator",
           "output": "generated/adapters/codex/agents/dev-orchestrator.toml",
-          "sha256": "851aabd2a055422c2aa0ba47c9bd307ca472e52044ef602772ab239a7231a53b",
+          "sha256": "b7c234ec76b1df3be1dd09de54321d1cf6fbed165c793b6893a9526b229c9fea",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -265,7 +265,7 @@
         {
           "name": "project-configurator",
           "output": "generated/adapters/codex/agents/project-configurator.toml",
-          "sha256": "4d72471b54ffed07aef57322cc222651a09fd16563e6f71ad9531548fa9be4eb",
+          "sha256": "9954d032f304ec53184dfbe672b5d478df07fd1e67b219569d089428b96633c6",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {

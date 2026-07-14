@@ -299,7 +299,7 @@ def detect_scope(
     registry: dict[str, object],
     skills_root: Path,
 ) -> dict[str, object]:
-    """Detect and validate one requested project scope, returning a durable folder loadout."""
+    """Detect and validate one requested project scope, returning a durable folder skillset."""
     target = (scope if scope.is_absolute() else root / scope).resolve()
     try:
         scope_value = target.relative_to(root).as_posix()

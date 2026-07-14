@@ -6,7 +6,7 @@ Type: Feature
 
 ## Summary
 
-Replace the per-task technology router with a focused setup-time detector that produces source-backed folder skill loadouts for PROJECT.yaml and unconditional technology-loading guidance for AGENTS.md. Add Python and FastAPI skills and align fixed-role generation with Claude and Codex semantics.
+Replace the per-task technology router with a focused setup-time detector that produces source-backed folder skillsets for PROJECT.yaml and unconditional technology-loading guidance for AGENTS.md. Add Python and FastAPI skills and align fixed-role generation with Claude and Codex semantics.
 
 ## Context
 
@@ -27,7 +27,7 @@ See the series [index](index.md) and design/technology-skill-detection-spec.md.
 - Keep the detector source under scripts and generate any runtime mirror needed by standalone installed skills.
 - Detect specialized technology and domain skills for setup-agent-selected folder scopes.
 - Preserve scope-safe monorepo detection, nearest owning manifests, companion skills, missing required skills, and exclusive conflict handling.
-- Generate PROJECT.yaml loadouts with source evidence.
+- Generate PROJECT.yaml skillsets with source evidence.
 - Generate AGENTS.md instructions that tell every agent working under a matching folder to load the detected technology skills before acting without rerunning detection.
 - Add a generic python skill.
 - Add a FastAPI-specific skill that composes with python.
@@ -39,8 +39,8 @@ See the series [index](index.md) and design/technology-skill-detection-spec.md.
 - Non-setup roles no longer include or invoke a technology router.
 - Project Agent Setup is the owner of technology detection and generated folder bindings.
 - Generic skills are absent from the technology detection registry.
-- TypeScript, Spring Boot, Python, and FastAPI scopes produce exact expected loadouts.
-- Mixed repositories produce separate scope loadouts without sibling or root-workspace contamination.
+- TypeScript, Spring Boot, Python, and FastAPI scopes produce exact expected skillsets.
+- Mixed repositories produce separate scope skillsets without sibling or root-workspace contamination.
 - Generated AGENTS.md contains unconditional folder skill-loading instructions.
 - Generated Claude agents preload fixed-role skills.
 - Generated Codex agents contain deterministic fixed-role loading instructions and no redundant skills.config entries.
@@ -67,7 +67,7 @@ None.
 - Repository unit tests passed with 78 tests.
 - Project-wiki unit tests passed with 16 tests.
 - Shared Agents, Codex, and Claude installs were refreshed.
-- The installed detector produced the expected TypeScript, Spring Boot, Python, and FastAPI loadouts.
+- The installed detector produced the expected TypeScript, Spring Boot, Python, and FastAPI skillsets.
 - Git diff validation passed.
 
 ## Notes

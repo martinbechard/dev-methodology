@@ -1147,7 +1147,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "organise-project-files": "when the requested configuration creates a new project file or directory whose path is not fixed by the configuration contract."
       },
       "declaredCases": [],
-      "description": "Creates or updates the single project-root PROJECT.yaml and validates roles, skill loadouts, folder routing, nested AGENTS.md guidance, and Claude bridges.",
+      "description": "Creates or updates the single project-root PROJECT.yaml and validates roles, skillsets, folder routing, nested AGENTS.md guidance, and Claude bridges.",
       "dynamicFolderSkills": false,
       "fixedSkills": [
         "agent-claim",

@@ -36,7 +36,7 @@ Technology detection is owned by Project Configurator. Do not rerun detection du
 
 Before acting on files under a matching folder, every agent must read each listed skill completely. These folder skills govern technology-specific implementation, review, diagnosis, verification, security, interface, prompt, and technical documentation work together with the agent's fixed-role skills.
 
-Folder loadouts:
+Folder skillsets:
 
 - scripts/**: load python before acting.
   - python evidence: Python source evidence: scripts/build-agent-skill-hierarchy.py and sibling .py files

@@ -15,7 +15,7 @@ This repository distributes portable Agent Skills for software project documenta
 
 Use the repository skill sources and generated adapters as the operating surface. Working on this bundle does not require copying its skills or agents into user-home runtime folders.
 
-Project agent and skill setup starts with one PROJECT.yaml at the project root as the reviewable configuration artifact. The create-project-configuration skill records every role, skill loadout, folder route, and root or nested AGENTS.md placement in that one project-wide configuration. Claude Code projects also receive a thin CLAUDE.md beside each applicable AGENTS.md so Claude imports the same project guidance without duplicating it.
+Project agent and skill setup starts with one PROJECT.yaml at the project root as the reviewable configuration artifact. The create-project-configuration skill records every role, skillset, folder route, and root or nested AGENTS.md placement in that one project-wide configuration. Claude Code projects also receive a thin CLAUDE.md beside each applicable AGENTS.md so Claude imports the same project guidance without duplicating it.
 
 The core methodology keeps one shared wiki-compatible page contract and six document shapes. Each document shape has a focused creation skill, a reusable template asset, and an artifact review skill:
 
@@ -161,7 +161,7 @@ python3 scripts/openai_metadata.py skills
 
 ## Customer Deployment And Customization
 
-Customer maintainers may edit an installed skill or agent definition directly. Keep the original skill and agent names stable so role loadouts, companion-skill references, and project guidance continue to resolve. Optional provenance should remain minimal: record the original name and whether the installed definition replaces the generic one.
+Customer maintainers may edit an installed skill or agent definition directly. Keep the original skill and agent names stable so role skillsets, companion-skill references, and project guidance continue to resolve. Optional provenance should remain minimal: record the original name and whether the installed definition replaces the generic one.
 
 For a requested customized-copy update, use an agent-assisted three-way discrepancy analysis between the old generic definition, the installed customer definition, and the new generic definition. The user decides which differences to keep, merge, replace, or remove.
 
@@ -288,7 +288,7 @@ Artifact-specific review skills pass the artifact, source evidence, and complete
 Invoke Project Bootstrapper once and describe the desired steady state:
 
 1. Use the repository bundle sources and matching generated runtime adapter.
-2. Review the resulting PROJECT.yaml, root or nested AGENTS.md guidance, and verification commands. The [specialization strategy](design/agent-skill-specialization-strategy.html) owns setup-time detection and folder loadouts.
+2. Review the resulting PROJECT.yaml, root or nested AGENTS.md guidance, and verification commands. The [specialization strategy](design/agent-skill-specialization-strategy.html) owns setup-time detection and folder skillsets.
 3. Use documentation-bootstrap and documentation-reverse-engineer when the project needs a source-backed documentation baseline.
 4. Follow the [orchestrated development lifecycle](design/orchestrated-development-lifecycle.html) for the owning execution, independent review, integrated verification, commit, and claim-release gates.
 

@@ -4,7 +4,7 @@ repositoryMutation: required
 description: Coordinates multi-step development work across agents while preserving
   bounded context, explicit handoffs, and verification evidence.
 instructions: Acquire the root task claim, decompose work by independent responsibility,
-  select narrow role loadouts, assign child claims and isolated worktrees when needed,
+  select narrow role skillsets, assign child claims and isolated worktrees when needed,
   require committed handoffs, and finish only after the integrated outcome is verified,
   committed, clean, and released.
 modelProfile: advanced-long
@@ -20,7 +20,7 @@ examples:
       export across the API, background worker, and administration UI, including role
       assignments, ownership boundaries, handoffs, and integrated verification."
   plausibleResponse: Decomposed the audit-log export into API contract, background processing,
-    administration UI, and verification lanes. Resolved narrow role and folder skill loadouts,
+    administration UI, and verification lanes. Resolved narrow role and folder skillsets,
     assigned non-overlapping ownership claims, sequenced dependent work, and recorded the
     evidence required at each handoff. Integrated the completed contributions and verified
     the export workflow across the API, worker, and UI boundaries.
@@ -67,7 +67,7 @@ outputContract:
 - task breakdown:
     purpose: Makes bounded responsibilities, dependencies, and sequencing explicit so
       contributors can work independently toward the same outcome.
-- resolved role loadouts:
+- resolved role skillsets:
     purpose: Records the project bindings and specialized skills selected for each
       work lane so assignments use the guidance appropriate to their scope.
 - assigned roles:

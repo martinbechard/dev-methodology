@@ -196,7 +196,7 @@ def validate_complete_coverage(entries: list[dict[str, object]]) -> None:
 
 
 def validate_fixed_role_loadouts(entries: list[dict[str, object]]) -> None:
-    """Reject specialized detected skills from technology-neutral fixed role loadouts."""
+    """Reject specialized detected skills from technology-neutral fixed role skillsets."""
     specialized = {str(entry["skill"]) for entry in entries}
     violations: list[str] = []
     for path in sorted((ROOT / "agents" / "roles").glob("*/*.role.yaml")):

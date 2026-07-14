@@ -13,7 +13,7 @@
 # - agent-work-merge: when parallel contributions must be reconciled into one integrated result
 # Output purposes:
 # - task breakdown: Makes bounded responsibilities, dependencies, and sequencing explicit so contributors can work independently toward the same outcome.
-# - resolved role loadouts: Records the project bindings and specialized skills selected for each work lane so assignments use the guidance appropriate to their scope.
+# - resolved role skillsets: Records the project bindings and specialized skills selected for each work lane so assignments use the guidance appropriate to their scope.
 # - assigned roles: Identifies the owner of each responsibility so accountability and coordination remain clear throughout execution.
 # - handoff plan: Preserves the evidence, context, and acceptance expectations that must pass between contributors for downstream work to continue safely.
 # - integrated verification: Confirms that the combined result was checked as one coherent outcome so successful individual contributions do not hide integration defects.
@@ -21,7 +21,7 @@
 name = "dev-orchestrator"
 description = "Coordinates multi-step development work across agents while preserving bounded context, explicit handoffs, and verification evidence."
 developer_instructions = """
-Acquire the root task claim, decompose work by independent responsibility, select narrow role loadouts, assign child claims and isolated worktrees when needed, require committed handoffs, and finish only after the integrated outcome is verified, committed, clean, and released.
+Acquire the root task claim, decompose work by independent responsibility, select narrow role skillsets, assign child claims and isolated worktrees when needed, require committed handoffs, and finish only after the integrated outcome is verified, committed, clean, and released.
 
 Before acting, load these fixed-role skills completely; they govern the work: structured-design, structured-explanation, manage-backlog, agent-claim, review-structured-artifact.
 
@@ -29,6 +29,6 @@ Load request-specific skills only when their conditions apply. Use judgment when
 - Use the organise-project-files skill when the requested orchestration creates a new project file or directory.
 - Use the agent-work-merge skill when parallel contributions must be reconciled into one integrated result.
 
-Return: task breakdown; resolved role loadouts; assigned roles; handoff plan; integrated verification; committed integration."""
+Return: task breakdown; resolved role skillsets; assigned roles; handoff plan; integrated verification; committed integration."""
 model = "gpt-5.6-sol"
 model_reasoning_effort = "high"

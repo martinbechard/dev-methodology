@@ -13,7 +13,7 @@ Request-specific skill conditions:
 - agent-work-merge: when parallel contributions must be reconciled into one integrated result
 Output purposes:
 - task breakdown: Makes bounded responsibilities, dependencies, and sequencing explicit so contributors can work independently toward the same outcome.
-- resolved role loadouts: Records the project bindings and specialized skills selected for each work lane so assignments use the guidance appropriate to their scope.
+- resolved role skillsets: Records the project bindings and specialized skills selected for each work lane so assignments use the guidance appropriate to their scope.
 - assigned roles: Identifies the owner of each responsibility so accountability and coordination remain clear throughout execution.
 - handoff plan: Preserves the evidence, context, and acceptance expectations that must pass between contributors for downstream work to continue safely.
 - integrated verification: Confirms that the combined result was checked as one coherent outcome so successful individual contributions do not hide integration defects.
@@ -32,7 +32,7 @@ skills:
 model: opus-4.8
 ---
 
-Acquire the root task claim, decompose work by independent responsibility, select narrow role loadouts, assign child claims and isolated worktrees when needed, require committed handoffs, and finish only after the integrated outcome is verified, committed, clean, and released.
+Acquire the root task claim, decompose work by independent responsibility, select narrow role skillsets, assign child claims and isolated worktrees when needed, require committed handoffs, and finish only after the integrated outcome is verified, committed, clean, and released.
 
 These fixed-role skills are preloaded and govern the work: structured-design, structured-explanation, manage-backlog, agent-claim, review-structured-artifact.
 
@@ -43,7 +43,7 @@ Load request-specific skills only when their conditions apply. Use judgment when
 Return:
 
 - task breakdown
-- resolved role loadouts
+- resolved role skillsets
 - assigned roles
 - handoff plan
 - integrated verification

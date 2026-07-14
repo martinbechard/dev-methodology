@@ -20,7 +20,7 @@ def load_yaml(path: Path) -> dict[str, object]:
 
 
 def loadouts(value: dict[str, object]) -> list[dict[str, object]]:
-    """Return normalized technology loadout mappings from a project configuration."""
+    """Return normalized technology skillset mappings from a project configuration."""
     rows = value.get("technology_skill_loadouts", value.get("loadouts", []))
     return [row for row in rows if isinstance(row, dict)] if isinstance(rows, list) else []
 
@@ -34,7 +34,7 @@ def render(value: dict[str, object]) -> str:
         "",
         "Before acting on files under a matching folder, every agent must read each listed skill completely. These folder skills govern technology-specific implementation, review, diagnosis, verification, security, interface, prompt, and technical documentation work together with the agent's fixed-role skills.",
         "",
-        "Folder loadouts:",
+        "Folder skillsets:",
         "",
     ]
     rendered = 0
