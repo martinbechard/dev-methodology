@@ -271,7 +271,15 @@ MODULARIZATION_REQUIRED_PHRASES = (
     "edit PROJECT.yaml to force a correction",
     "Operational result — after setup",
     "Technology Extensions Included In The Kit",
-    "Setup-Time Detection Guardrails",
+    "How Setup-Time Technology Detection Works",
+    "runs the detector once for each representative folder scope",
+    "nearest supported owning project boundary",
+    "Every rule has a root anyOf list",
+    "Requires one file to satisfy both the path pattern and the allowed extension",
+    "Comments and string literals are ignored",
+    "For an exclusive group, the lowest numeric priority wins",
+    "NO_VARIANT",
+    "BLOCKED",
 )
 AGENT_ROLE_MAP_REQUIRED_PHRASES = (
     "Agents for Methodology Maintenance",
@@ -405,7 +413,7 @@ DOCUMENT_INFORMATION_OWNERS = {
     ),
     "skills-modularization.html": MODULARIZATION_REQUIRED_PHRASES[:3] + (
         "Technology Extensions Included In The Kit",
-        "Setup-Time Detection Guardrails",
+        "How Setup-Time Technology Detection Works",
     ),
     "generic-agent-definitions-source.html": (
         "The Portability Problem",
