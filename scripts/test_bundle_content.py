@@ -180,6 +180,7 @@ README_REQUIRED_PHRASES = (
     "Use the repository skill sources and generated adapters as the operating surface.",
     "documentation-bootstrap",
     "documentation-reverse-engineer",
+    "module-coverage.md",
     "code-project-wiki",
     "documentation-page-verify",
     "create-project-configuration",
@@ -2700,6 +2701,69 @@ class BundleContentTests(unittest.TestCase):
         for phrase in REVERSE_ENGINEERING_DISCOVERY_PHRASES:
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, skill_text)
+
+    def test_reverse_engineering_requires_full_gated_coverage(self) -> None:
+        reverse_skill_text = (
+            SKILLS_ROOT / "documentation-reverse-engineer" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        bootstrap_skill_text = (
+            SKILLS_ROOT / "documentation-bootstrap" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+
+        required_reverse_phrases = (
+            "the entire codebase is in scope",
+            "Do not ask the user to choose a documentation breadth",
+            "documentation coverage manifest",
+            "An unlisted or deferred source area is a coverage failure",
+            "Every in-scope manifest row has a module document",
+            "Pass 2 must not start until this gate passes",
+            "Every accepted module document is linked from at least one high-level design",
+            "Pass 3 must not start until this gate passes",
+            "preserve enough evidence to recreate the application's observable behavior",
+        )
+        for phrase in required_reverse_phrases:
+            with self.subTest(reverse_skill_phrase=phrase):
+                self.assertIn(phrase, reverse_skill_text)
+
+        for phrase in (
+            "treat the entire codebase as in scope",
+            "Do not ask the user to select a documentation breadth",
+            "require the documentation coverage manifest and every pass completion gate",
+        ):
+            with self.subTest(bootstrap_skill_phrase=phrase):
+                self.assertIn(phrase, bootstrap_skill_text)
+
+        build_skill_docs = load_build_skill_docs_module()
+        skill_payload = build_skill_docs.build_payload()
+        roles = build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
+        bootstrapper = next(role for role in roles if role.name == "project-bootstrapper")
+        writer = next(role for role in roles if role.name == "dev-documentation-writer")
+
+        for phrase in (
+            "full-codebase documentation request",
+            "coverage manifest",
+            "Stop between documentation levels",
+            "Do not accept higher-level summaries as substitutes",
+        ):
+            with self.subTest(bootstrapper_phrase=phrase):
+                self.assertIn(phrase, bootstrapper.instructions)
+
+        for phrase in (
+            "do not ask for a documentation breadth",
+            "document and review every meaningful module before any high-level design",
+            "group every module into reviewed high-level designs before architecture",
+            "never describe that result as complete project reverse engineering",
+        ):
+            with self.subTest(writer_phrase=phrase):
+                self.assertIn(phrase, writer.instructions)
+
+        for text in (
+            reverse_skill_text,
+            bootstrap_skill_text,
+            bootstrapper.instructions,
+            writer.instructions,
+        ):
+            self.assertNotIn("balanced set", text.lower())
 
 
 if __name__ == "__main__":

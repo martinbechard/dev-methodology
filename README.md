@@ -321,7 +321,7 @@ Invoke Project Bootstrapper once and describe the desired steady state:
 
 1. Use the repository bundle sources and matching generated runtime adapter.
 2. Review the resulting PROJECT.yaml, root or nested AGENTS.md guidance, and verification commands. The [specialization strategy](design/agent-skill-specialization-strategy.html) owns setup-time detection and folder skillsets.
-3. Use documentation-bootstrap and documentation-reverse-engineer when the project needs a source-backed documentation baseline.
+3. Use documentation-bootstrap and documentation-reverse-engineer when the project needs a source-backed documentation baseline. Whole-project reverse engineering covers every meaningful module by default: inventory and review module designs first, group the complete set into high-level designs, derive architecture from those groups, cover all observable workflows, then expose the complete hierarchy through README and wiki hubs. Narrower coverage is valid only when the user explicitly names the boundary.
 4. Follow the [orchestrated development lifecycle](design/orchestrated-development-lifecycle.html) for the owning execution, independent review, integrated verification, commit, and claim-release gates.
 
 Separately requested deployment still requires caller-supplied destinations under Explicit Target Deployment.
@@ -332,6 +332,7 @@ Separately requested deployment still requires caller-supplied destinations unde
 - [documentation-root]/architecture
 - [documentation-root]/high-level
 - [documentation-root]/modules
+- [documentation-root]/module-coverage.md
 - PROJECT.yaml
 - [technology-subfolder]/AGENTS.md when a subfolder needs distinct operational guidance
 - docs/wiki

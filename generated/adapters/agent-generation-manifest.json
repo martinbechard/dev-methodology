@@ -36,7 +36,7 @@
         {
           "name": "dev-documentation-writer",
           "output": "generated/adapters/claude/agents/dev-documentation-writer.md",
-          "sha256": "4af95e4ce23be88f0121d864adcc70711fab07625296464155e603b10e7ba606",
+          "sha256": "8e0f9dbcf42050d1b274f5bed20e356763d991d62d39a06c256f31247857890b",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -96,7 +96,7 @@
         {
           "name": "project-bootstrapper",
           "output": "generated/adapters/claude/agents/project-bootstrapper.md",
-          "sha256": "dfb4c075bcb22be0a6ea27a720e8d4aeb21fb99947123559471a040835c63268",
+          "sha256": "af7d0748bb281400d8871ab62bb30d92404f9a76dd8c5d6539605c7afa905f0d",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
@@ -199,7 +199,7 @@
         {
           "name": "dev-documentation-writer",
           "output": "generated/adapters/codex/agents/dev-documentation-writer.toml",
-          "sha256": "376477751bc31a3c43ef03bf155e0f06ee59bbbfa0d775497ed18d8a05928e41",
+          "sha256": "0e465b29e5d995da21daa06472101d47da9cff628054382aed1a6903c02ff16c",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -259,7 +259,7 @@
         {
           "name": "project-bootstrapper",
           "output": "generated/adapters/codex/agents/project-bootstrapper.toml",
-          "sha256": "ab5c4a12f5b27613414ff92d0281f02b1ef4aca2d8f693621780d69aa819df4d",
+          "sha256": "7a38a75cbe07a6dbccaf4b93eecc339c3048aec972f2916937134a5f39128821",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
@@ -362,7 +362,7 @@
         {
           "name": "dev-documentation-writer",
           "output": "generated/adapters/gemini/agents/dev-documentation-writer.md",
-          "sha256": "28c4aff554051216dceef774c34b6012ad6c9b3bf238bbb6b31bb0f3ad25d61e",
+          "sha256": "0dc585a6d376292a5264f6c0a46f0c1cbda4c0668d36d7b4173de6cc93670e21",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -422,7 +422,7 @@
         {
           "name": "project-bootstrapper",
           "output": "generated/adapters/gemini/agents/project-bootstrapper.md",
-          "sha256": "96ec474c2af6186cc2481eb36cc3ea2dc7c096b789b2d1cd8468bb124d7b4f5a",
+          "sha256": "2a703504cb4d9904eec61e9b1c87d5aba7b90b66e070f3fc955be8bca13900c9",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
@@ -525,7 +525,7 @@
         {
           "name": "dev-documentation-writer",
           "output": "generated/adapters/junie/agents/dev-documentation-writer.md",
-          "sha256": "143215713bd377160af8ae788463ab9c0ce4c5034cc43c72d20ab66a215dbeb5",
+          "sha256": "9ecd209c0e106e2bf63e67cbfde7a6f23e1d8bd0d9c746c3a6204834b18c0867",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -585,7 +585,7 @@
         {
           "name": "project-bootstrapper",
           "output": "generated/adapters/junie/agents/project-bootstrapper.md",
-          "sha256": "3e2fe03ac293b70c9b2b7e67b59250f713eec459e63190154ac0c9d68eb3a78e",
+          "sha256": "04875f02d7095e78a6dbc8e14e6d3783d12490f56ff40323fbfbae5eea1f824d",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {

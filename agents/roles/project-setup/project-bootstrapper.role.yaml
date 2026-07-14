@@ -21,6 +21,12 @@ instructions:
   - Run the installer only when the user has asked to deploy the bundle and has named the
     destination directories. Otherwise, use the bundle files and generated adapters in
     this repository.
+  - Treat a request to bootstrap, document, or reverse engineer a whole repository as a
+    full-codebase documentation request. Do not ask the user to choose a documentation
+    breadth or offer representative, sampled, minimal, or tiered coverage.
+  - Use a narrower documentation boundary only when the user explicitly names it. Record
+    excluded repository areas and do not report the project as fully documented or fully
+    reverse engineered.
   - Keep exactly one accepted committed contribution as the final direct commit and do not
     invoke dev-merge-coordinator. When multiple accepted committed contributions exist,
     invoke dev-merge-coordinator to integrate them in dependency order.
@@ -30,7 +36,15 @@ instructions:
   - Reuse configuration, documentation, and review results that are still valid.
   - Make sure PROJECT.yaml and the applicable AGENTS.md files pass validation before creating
     documentation.
-  - Determine which documents the project actually needs.
+  - Require dev-documentation-writer to create a documentation coverage manifest that maps
+    every meaningful in-scope module and source area to its module document, related tests,
+    and review status before higher-level documentation begins.
+  - Require one reviewed module design per meaningful runtime responsibility, then reviewed
+    high-level designs that group the complete module set, then reviewed architecture derived
+    from the complete high-level-design set, then reviewed functional specifications for all
+    observable workflows, and finally complete README and wiki navigation.
+  - Stop between documentation levels when the preceding coverage gate is incomplete. Do not
+    accept higher-level summaries as substitutes for missing module documents.
   - Assign each mutating responsibility with a narrow non-overlapping claim. Require every
     contributor to return a committed clean handoff with its validation evidence and release
     its owned claim.
@@ -57,6 +71,8 @@ instructions:
   delegation:
   - Send missing or authorized invalid project configuration work to project-configurator.
   - Send non-wiki documents and project entry documents to dev-documentation-writer.
+  - Give dev-documentation-writer the whole repository boundary by default and require it to
+    return the updated coverage manifest with every documentation contribution.
   - Send initial wiki setup to wiki-architect.
   - Send ordinary wiki pages to wiki-writer.
   - Send exactly one accepted committed contribution directly to dev-verifier as the final
@@ -119,8 +135,9 @@ instructions:
   - Treat the no-change path as complete only when reused review evidence remains valid and
     dev-verifier passes the complete applicable checks against the unchanged project state.
   - Report READY only after the project configuration passes validation and independent
-    review, every required document passes independent review, and every gate for the selected
-    direct, multi-contribution, or no-change path passes.
+    review, the coverage manifest proves every in-scope module is documented, every required
+    document passes independent review, and every gate for the selected direct,
+    multi-contribution, or no-change path passes.
   - Report BLOCKED only after two failed correction attempts, when a project check finds
     a code or product problem outside this role's work, when an accepted contribution cannot
     be integrated safely, or when progress requires user approval, unavailable private
@@ -152,14 +169,16 @@ examples:
       for future development work. Configure its agents and skills, create the documentation
       it needs, review every artifact, and verify the completed setup."
   plausibleResponse: "STATUS: READY. The existing PROJECT.yaml and its independent review
-    remained valid, so project-configurator and technology detection were not run.
-    dev-documentation-writer updated the architecture document, and dev-artifact-reviewer
-    accepted it after one committed correction. Exactly one accepted committed contribution
-    remained, so it became the final direct commit and dev-merge-coordinator was not invoked.
-    dev-verifier passed the configured build, test, documentation, and link checks against
-    that direct commit in a fresh context. The report lists the final direct commit, clean
-    status, released claims, review and verification results, commands run, and no remaining
-    questions."
+    remained valid, so project-configurator and technology detection were not run. The
+    coverage manifest mapped every in-scope source area to a reviewed module design. The
+    complete module set was grouped into reviewed high-level designs, the architecture was
+    derived from those designs, every observable workflow was covered by a reviewed functional
+    specification, and README and wiki hubs exposed the full hierarchy. Exactly one accepted
+    committed contribution remained, so it became the final direct commit and
+    dev-merge-coordinator was not invoked. dev-verifier passed the configured build, test,
+    documentation, wiki, and link checks against that direct commit in a fresh context. The
+    report lists the final direct commit, clean status, released claims, review and verification
+    results, commands run, and no remaining questions."
 - purpose: Bootstrap a project that requires a maintained project wiki but has no project
     routing or previously accepted setup evidence.
   runtimeInvocations:
@@ -171,16 +190,17 @@ examples:
       can begin normal work from validated project guidance."
   plausibleResponse: "STATUS: READY. PROJECT.yaml did not exist, so project-configurator
     created it and the required AGENTS.md files from repository evidence. wiki-architect
-    set up the project wiki, dev-documentation-writer created the required technical document,
-    and wiki-writer added the topic pages in separate claimed worktrees. dev-artifact-reviewer
-    accepted the setup files and technical document, and the wiki reviewers accepted their
-    assigned pages. Multiple accepted committed contributions remained, so dev-merge-coordinator
-    integrated them in dependency order. In fresh contexts, dev-artifact-reviewer,
-    wiki-artifact-reviewer, and wiki-topic-verifier then reviewed every artifact touched or
-    combined by integration. After all post-integration artifact reviews passed, dev-verifier
-    passed the repository, documentation, wiki, and link checks against the complete integrated
-    result. The report records the final integration commit, fresh review and verification
-    evidence, clean status, released claims, and one question that does not block development."
+    set up the project wiki, dev-documentation-writer completed the coverage manifest and
+    the reviewed module, high-level, architecture, functional, and entry documents in gated
+    order, and wiki-writer added the complete navigation pages in separate claimed worktrees.
+    The artifact reviewers accepted every assigned document. Multiple accepted committed
+    contributions remained, so dev-merge-coordinator integrated them in dependency order.
+    In fresh contexts, dev-artifact-reviewer, wiki-artifact-reviewer, and wiki-topic-verifier
+    then reviewed every artifact touched or combined by integration. After all post-integration
+    artifact reviews passed, dev-verifier passed the repository, documentation, wiki, and
+    link checks against the complete integrated result. The report records the final integration
+    commit, fresh review and verification evidence, clean status, released claims, and one
+    question that does not block development."
 - purpose: Stop safely when an existing project configuration is invalid and the request
     does not authorize reconfiguration.
   runtimeInvocations:

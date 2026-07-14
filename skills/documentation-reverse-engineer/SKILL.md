@@ -9,6 +9,21 @@ metadata:
 
 Use this skill to derive a source-backed documentation set from an existing codebase. Work from the smallest implementation units outward: modules, subsystems, architecture, functional behavior, then README and wiki integration.
 
+## Coverage Contract
+
+When the request names a repository, application, or project without a narrower boundary, the entire codebase is in scope. Do not ask the user to choose a documentation breadth and do not offer a representative, sampled, minimal, or tiered documentation set. A narrower run is valid only when the user explicitly names the included boundary. In that case, record the excluded repository areas and do not claim that the project was fully reverse engineered.
+
+Full coverage means documenting every meaningful runtime responsibility, not creating one page per class or file. A meaningful module includes an independently understandable backend responsibility, public contract, persistent aggregate, UI route or feature area, integration, security boundary, background or operational process, or build and deployment capability. Tightly coupled files may share one module document only when their responsibility and lifecycle cannot be understood independently.
+
+The documentation set must preserve enough evidence to recreate the application's observable behavior in another folder. Cover public interfaces, data models and migrations, initial or sample data, configuration behavior, authentication and authorization, user workflows and UI states, validation and error behavior, integrations, operational commands, build and deployment behavior, and the tests that define expected results. Record unsupported or unknowable behavior as a specific open question rather than silently omitting it.
+
+Create a documentation coverage manifest under the documentation root before authoring design documents. Use these columns:
+
+| Module or responsibility | Source paths | Entry points and contracts | Related tests | Module document | Review status |
+| --- | --- | --- | --- | --- | --- |
+
+Map every in-scope source area to one or more rows. List generated, vendored, fixture-only, and explicitly user-excluded areas separately with their generator, owner, or exclusion reason. An unlisted or deferred source area is a coverage failure.
+
 ## Source Authority
 
 Use this authority order when sources disagree:
@@ -29,6 +44,7 @@ Do not invent behavior to fill gaps. Record an open question when the repository
 3. Identify build, test, lint, and documentation commands from project metadata and procedures.
 4. Identify current worktree status when the project is a Git repository.
 5. Record documentation gaps and conflicts for later passes.
+6. Create the documentation coverage manifest and populate its module inventory from the full source, test, configuration, migration, UI, integration, and operational surface.
 
 Completion gate:
 
@@ -36,6 +52,7 @@ Completion gate:
 - Source and test roots are known.
 - Existing documentation is inventoried.
 - Verification commands are known or recorded as not yet identified.
+- Every in-scope source area appears in the coverage manifest as a module responsibility or an evidence-backed generated, vendored, or fixture-only exclusion.
 
 ## Code Discovery Tools
 
@@ -59,8 +76,16 @@ Use source inventory first, then use structure-aware search where it adds eviden
 7. Link related tests and source files from each module document.
 8. Record missing tests, ambiguous ownership, and undocumented side effects as open questions.
 9. When an important value crosses module, persistence, serialization, external-system, security, or UI boundaries, trace its source, transformations, validations, ownership, storage, and consumers. Document only lineage that affects correctness, privacy, security, or operability.
+10. Update the coverage manifest as each module document passes review.
 
 Prefer one module document for one coherent responsibility. Split only when separate responsibilities can change independently.
+
+Completion gate:
+
+- Every in-scope manifest row has a module document and an accepted module-design review.
+- Every module document identifies its source paths, contracts, dependencies, runtime behavior, state, error behavior, configuration, security implications, related tests, and open questions where applicable.
+- No in-scope source area is undocumented, implicitly deferred, or represented only by a higher-level document.
+- Pass 2 must not start until this gate passes.
 
 ## Pass 2: High-Level Designs
 
@@ -74,6 +99,13 @@ Prefer one module document for one coherent responsibility. Split only when sepa
 
 Subsystems should be based on runtime collaboration and ownership, not only folder layout.
 
+Completion gate:
+
+- Every accepted module document is linked from at least one high-level design.
+- Every high-level design links all of its constituent module documents and has an accepted high-level-design review.
+- The full module set is grouped by runtime collaboration without orphaned modules.
+- Pass 3 must not start until this gate passes.
+
 ## Pass 3: Architecture
 
 1. Review the full set of high-level design documents.
@@ -84,6 +116,12 @@ Subsystems should be based on runtime collaboration and ownership, not only fold
 6. Record architecture-level contradictions as open questions.
 
 Architecture must describe the system that exists. It may call out drift and risk, but it must not silently rewrite behavior.
+
+Completion gate:
+
+- The architecture links every accepted high-level design and explains all cross-subsystem dependencies and cross-cutting responsibilities.
+- The architecture has an accepted architecture review.
+- Pass 4 must not start until this gate passes.
 
 ## Pass 4: Functional Specifications
 
@@ -98,6 +136,12 @@ Architecture must describe the system that exists. It may call out drift and ris
 
 Functional specifications describe observable behavior. Technical implementation details belong in related technical documents unless users need that detail to understand behavior.
 
+Completion gate:
+
+- Every user, administrator, operator, and external-system entry point is covered by a functional specification or explicitly identified as having no user-visible workflow.
+- Every functional specification links its implementing technical documents and available behavioral tests and has an accepted functional-specification review.
+- Pass 5 must not start until this gate passes.
+
 ## Pass 5: README And Wiki Integration
 
 Create or update the project README after the documentation set exists. Keep it compact and route readers to deeper pages.
@@ -110,6 +154,12 @@ When the project uses docs/wiki:
 4. Link functional specs, architecture, high-level designs, module designs, source files, tests, procedures, known defects, and open decisions.
 5. Record unresolved contradictions in wiki Open Questions.
 6. Run wiki lint when available.
+
+Completion gate:
+
+- README and wiki hubs expose the complete architecture, high-level design, module design, and functional specification hierarchy.
+- The coverage manifest contains no missing, pending, sampled, or implicitly deferred in-scope module.
+- Wiki and documentation verification passes before the run is reported complete.
 
 ## Verification
 

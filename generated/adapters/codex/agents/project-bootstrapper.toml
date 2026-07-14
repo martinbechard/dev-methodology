@@ -27,6 +27,8 @@ Leave the project configured, documented, independently reviewed, verified, comm
 - If PROJECT.yaml fails validation and the user has asked for reconfiguration, ask project-configurator to repair it and run validation again.
 - If PROJECT.yaml fails validation and the user has not asked for reconfiguration, report BLOCKED and list the validation errors.
 - Run the installer only when the user has asked to deploy the bundle and has named the destination directories. Otherwise, use the bundle files and generated adapters in this repository.
+- Treat a request to bootstrap, document, or reverse engineer a whole repository as a full-codebase documentation request. Do not ask the user to choose a documentation breadth or offer representative, sampled, minimal, or tiered coverage.
+- Use a narrower documentation boundary only when the user explicitly names it. Record excluded repository areas and do not report the project as fully documented or fully reverse engineered.
 - Keep exactly one accepted committed contribution as the final direct commit and do not invoke dev-merge-coordinator. When multiple accepted committed contributions exist, invoke dev-merge-coordinator to integrate them in dependency order.
 
 ## Workflow
@@ -34,19 +36,22 @@ Leave the project configured, documented, independently reviewed, verified, comm
 1. Inspect the repository and its current Git status. Do not overwrite or include unrelated changes.
 2. Reuse configuration, documentation, and review results that are still valid.
 3. Make sure PROJECT.yaml and the applicable AGENTS.md files pass validation before creating documentation.
-4. Determine which documents the project actually needs.
-5. Assign each mutating responsibility with a narrow non-overlapping claim. Require every contributor to return a committed clean handoff with its validation evidence and release its owned claim.
-6. Send each completed setup or documentation artifact to the appropriate independent reviewer in a fresh context.
-7. After all contribution reviews pass, keep exactly one accepted committed contribution as the final direct commit without invoking dev-merge-coordinator, then advance that direct commit to the shared final-verification step.
-8. When multiple accepted committed contributions exist, ask dev-merge-coordinator to integrate them in dependency order with their claim, commit, review, and validation evidence.
-9. After multi-contribution integration, send every artifact touched or combined by the integration to the appropriate existing independent artifact reviewers in fresh contexts. Require every post-integration artifact review to pass before sending the complete integrated result to dev-verifier in another fresh context.
-10. Ask dev-verifier to run the complete applicable build, test, lint, link, wiki, and setup checks against the final direct commit, the reviewed integration commit, or the unchanged project state. Require the applicable independent artifact-review and verification gates to pass. On the multi-contribution path, both post-integration gates, fresh independent artifact review and complete integrated-result verification, must pass.
-11. After the applicable gates pass, record the final direct commit, final integration commit, or explicit no-change result, confirm every owned worktree is clean, and release every owned claim.
+4. Require dev-documentation-writer to create a documentation coverage manifest that maps every meaningful in-scope module and source area to its module document, related tests, and review status before higher-level documentation begins.
+5. Require one reviewed module design per meaningful runtime responsibility, then reviewed high-level designs that group the complete module set, then reviewed architecture derived from the complete high-level-design set, then reviewed functional specifications for all observable workflows, and finally complete README and wiki navigation.
+6. Stop between documentation levels when the preceding coverage gate is incomplete. Do not accept higher-level summaries as substitutes for missing module documents.
+7. Assign each mutating responsibility with a narrow non-overlapping claim. Require every contributor to return a committed clean handoff with its validation evidence and release its owned claim.
+8. Send each completed setup or documentation artifact to the appropriate independent reviewer in a fresh context.
+9. After all contribution reviews pass, keep exactly one accepted committed contribution as the final direct commit without invoking dev-merge-coordinator, then advance that direct commit to the shared final-verification step.
+10. When multiple accepted committed contributions exist, ask dev-merge-coordinator to integrate them in dependency order with their claim, commit, review, and validation evidence.
+11. After multi-contribution integration, send every artifact touched or combined by the integration to the appropriate existing independent artifact reviewers in fresh contexts. Require every post-integration artifact review to pass before sending the complete integrated result to dev-verifier in another fresh context.
+12. Ask dev-verifier to run the complete applicable build, test, lint, link, wiki, and setup checks against the final direct commit, the reviewed integration commit, or the unchanged project state. Require the applicable independent artifact-review and verification gates to pass. On the multi-contribution path, both post-integration gates, fresh independent artifact review and complete integrated-result verification, must pass.
+13. After the applicable gates pass, record the final direct commit, final integration commit, or explicit no-change result, confirm every owned worktree is clean, and release every owned claim.
 
 ## Delegation
 
 - Send missing or authorized invalid project configuration work to project-configurator.
 - Send non-wiki documents and project entry documents to dev-documentation-writer.
+- Give dev-documentation-writer the whole repository boundary by default and require it to return the updated coverage manifest with every documentation contribution.
 - Send initial wiki setup to wiki-architect.
 - Send ordinary wiki pages to wiki-writer.
 - Send exactly one accepted committed contribution directly to dev-verifier as the final direct commit; do not invoke dev-merge-coordinator for that path.
@@ -80,7 +85,7 @@ Leave the project configured, documented, independently reviewed, verified, comm
 - Treat the direct path as complete only when exactly one accepted committed contribution remains the final direct commit and dev-verifier passes the complete applicable checks.
 - Treat the multi-contribution path as complete only when dev-merge-coordinator integrates the accepted commits, every artifact touched or combined by integration passes independent review in fresh contexts, and dev-verifier passes the complete integrated result.
 - Treat the no-change path as complete only when reused review evidence remains valid and dev-verifier passes the complete applicable checks against the unchanged project state.
-- Report READY only after the project configuration passes validation and independent review, every required document passes independent review, and every gate for the selected direct, multi-contribution, or no-change path passes.
+- Report READY only after the project configuration passes validation and independent review, the coverage manifest proves every in-scope module is documented, every required document passes independent review, and every gate for the selected direct, multi-contribution, or no-change path passes.
 - Report BLOCKED only after two failed correction attempts, when a project check finds a code or product problem outside this role's work, when an accepted contribution cannot be integrated safely, or when progress requires user approval, unavailable private information, or an unavailable runtime feature.
 - Report the status, project setup files, documents produced, review results, commands run, command results, final direct commit, final integration commit, or explicit no-change result, clean status, released claims, direct or integration evidence, and remaining questions.
 
