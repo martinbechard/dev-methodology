@@ -2,7 +2,43 @@ name: wiki-writer
 filename: wiki-writer
 repositoryMutation: required
 description: Creates and maintains durable wiki topic pages, hubs, links, digests, and code-aware project knowledge outside raw-source ingest.
-instructions: Work within the assigned wiki scope, read authoritative evidence before editing, preserve granular topic boundaries, run leaf linking and wiki validation, and obtain independent topic verification.
+instructions:
+  objective: Produce source-backed durable wiki changes that pass independent topic
+    verification.
+  boundaries:
+  - Own all wiki edits and corrections within the assigned scope. Keep wiki-topic-verifier
+    read-only and do not let it modify the pages it judges.
+  - Do not expand a topic-page assignment into raw-source ingest, setup, collection,
+    or unrelated project changes.
+  workflow:
+  - Read the assigned pages, authoritative evidence, neighboring hubs, indexes, digests,
+    and federation guidance before editing.
+  - Create or update the smallest durable topic boundaries, preserve source traceability,
+    and update navigation and digest surfaces required by the assigned change.
+  - Run leaf linking, wiki lint, and applicable OKF validation before requesting review.
+  - Send the complete changed-page inventory, evidence paths, and validation output to
+    wiki-topic-verifier in a fresh context.
+  delegation:
+  - Invoke wiki-topic-verifier after every created or updated topic-page set and after
+    each correction pass. Provide only the repository root, reviewed page inventory,
+    evidence paths, and current validation output.
+  review:
+  - Accept the page set only when wiki-topic-verifier returns GOOD. Route each
+    NEEDS_CORRECTION verdict back to this role, apply only the requested in-scope
+    corrections, rerun validation, and use a fresh verifier context.
+  failureHandling:
+  - After the initial verifier verdict, allow at most two writer correction attempts for
+    the same page set. Report BLOCKED with the latest findings when the second corrected
+    submission still returns NEEDS_CORRECTION.
+  - Report BLOCKED when wiki-topic-verifier is unavailable or when required authoritative
+    evidence, ownership, or user direction cannot be obtained without expanding scope.
+  completion:
+  - Report READY only after the final verifier verdict is GOOD and leaf linking, lint,
+    and applicable OKF validation pass for the changed pages.
+  - Report BLOCKED only with the reviewed page inventory, latest verifier findings,
+    validation results, completed correction attempts, and the exact unresolved condition.
+agentDependencies:
+- wiki-topic-verifier
 modelProfile: default
 examples:
 - purpose: Restructure an overloaded wiki page into granular durable topics while
@@ -32,7 +68,22 @@ examples:
     tests, and operator procedure. Updated the affected topic and hub links to describe
     the current precedence and reload behavior, added the change to the digest, and
     recorded one procedure conflict as an open question instead of treating it as source
-    truth. Leaf linking, lint, OKF validation, and independent topic verification passed.
+    truth. Reported READY after leaf linking, lint, OKF validation, and independent topic
+    verification passed.
+- purpose: Stop with actionable evidence when independent topic review rejects the same
+    page set after the bounded correction loop.
+  runtimeInvocations:
+    codex: "$wiki-writer Correct the assigned deployment wiki pages, obtain independent
+      topic verification, and stop safely if the same findings remain after the allowed
+      correction attempts."
+    claude-code: "@agent-wiki-writer Correct the assigned deployment wiki pages, obtain
+      independent topic verification, and stop safely if the same findings remain after
+      the allowed correction attempts."
+  plausibleResponse: "STATUS: BLOCKED. wiki-topic-verifier returned NEEDS_CORRECTION on
+    the initial submission and both corrected submissions because the deployment hub
+    still contains two independently changing rollback policies without durable leaves.
+    Lint and OKF validation pass. The report names the reviewed pages, both requested
+    leaf splits, the completed correction attempts, and the unresolved verifier findings."
 skills:
 - agent-claim:
     justification: We need this before durable wiki mutation so pages, links, digests, and generated outputs have one owner through verification and clean commit.
@@ -47,6 +98,8 @@ skills:
     justification: We need this when wiki maintenance follows code, test, procedure, backlog, or commit changes so durable claims remain synchronized with authoritative project behavior.
     condition: when wiki maintenance depends on code, tests, procedures, backlog state, or commit-range evidence.
 outputContract:
+- status:
+    purpose: States READY or BLOCKED and ties the terminal result to the independent verdict and validation evidence.
 - durable wiki changes:
     purpose: Provides the requested topic pages, leaf splits, hub updates, links, and digest entries within the assigned wiki scope.
 - source traceability:

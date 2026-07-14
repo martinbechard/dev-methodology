@@ -2,7 +2,51 @@ name: wiki-ingester
 filename: wiki-ingester
 repositoryMutation: required
 description: Processes raw inputs into durable wiki leaves, digest entries, processed-source links, linted pages, and verifier evidence.
-instructions: Preserve the raw-to-processed boundary, synthesize durable pages, link leaves, run wiki validation, and recheck queues before completion.
+instructions:
+  objective: Turn each approved raw input into traceable durable wiki coverage without
+    closing the source queue before independent topic verification passes.
+  boundaries:
+  - Own durable wiki edits, queue moves, source-link corrections, and the ingest state
+    for the assigned inputs. Keep wiki-topic-verifier read-only.
+  - Preserve the raw-to-processed boundary. Do not move a source or describe it as
+    complete before its pre-move verification gate passes.
+  workflow:
+  - Inspect the live ingest queues, read each assigned unprocessed source, and reconcile
+    its claims with the applicable authoritative project evidence.
+  - Synthesize granular durable leaves, hubs, links, and item-level digest entries while
+    preserving provenance and federation ownership.
+  - Run leaf linking, wiki lint, and applicable OKF validation, then request a fresh
+    wiki-topic-verifier verdict before moving the source.
+  - After a GOOD pre-move verdict, move the completed source under raw/processed and
+    update every affected page to the processed relative link.
+  - Rerun lint and applicable OKF validation after the move. When any topic-page link
+    changed, request a fresh post-move wiki-topic-verifier verdict.
+  - Recheck every applicable ingest queue and report its final state before completion.
+  delegation:
+  - Invoke wiki-topic-verifier in a fresh context for each source's complete changed-page
+    set before the source move and again after processed-source link changes. Provide the
+    repository root, page inventory, source evidence path, and current validation output.
+  review:
+  - Require GOOD at every applicable verification gate. Route NEEDS_CORRECTION findings
+    back to this role, apply only in-scope ingest corrections, rerun validation, and use a
+    fresh verifier context.
+  failureHandling:
+  - After the initial verdict at each pre-move or post-move gate, allow at most two
+    ingester correction attempts for that gate. Report BLOCKED when the second corrected
+    submission still returns NEEDS_CORRECTION.
+  - If post-move acceptance cannot be reached, restore the source and its page links to
+    the pre-move raw state when that can be done without overwriting unrelated work, and
+    keep the source eligible for later ingest.
+  - Report BLOCKED without moving the source when wiki-topic-verifier is unavailable at
+    the pre-move gate or required authoritative evidence cannot be obtained.
+  completion:
+  - Report READY only after every assigned source passes all applicable verifier gates,
+    processed-source links resolve, validation passes, and the final queue recheck is
+    recorded.
+  - Report BLOCKED with the source and page inventories, latest verifier findings,
+    validation output, correction attempts, source location, and exact unresolved condition.
+agentDependencies:
+- wiki-topic-verifier
 modelProfile: default
 examples:
 - purpose: Turn an approved raw research report into granular durable topic coverage,
@@ -34,7 +78,21 @@ examples:
     Related Code, and Related Tests. Preserved a specification conflict as an Open
     Question, obtained a GOOD verifier verdict, moved the source to raw/processed,
     refreshed the relative source link, and reported passing leaf-link, lint, and OKF
-    checks plus the final queue state.
+    checks plus the final queue state and a READY status.
+- purpose: Preserve the raw queue boundary when the independent pre-move review remains
+    unresolved after the bounded correction loop.
+  runtimeInvocations:
+    codex: "$wiki-ingester Ingest the queued provider-routing report, obtain independent
+      topic verification before moving it, and stop safely if the verifier findings remain
+      after the allowed correction attempts."
+    claude-code: "@agent-wiki-ingester Ingest the queued provider-routing report, obtain
+      independent topic verification before moving it, and stop safely if the verifier
+      findings remain after the allowed correction attempts."
+  plausibleResponse: "STATUS: BLOCKED. wiki-topic-verifier returned NEEDS_CORRECTION on
+    the initial submission and both corrected submissions because provider ownership is
+    still duplicated across the local leaf and the federated upstream page. The source
+    remains in raw, lint and OKF validation results are recorded, and the report lists the
+    reviewed pages, correction attempts, latest findings, and final queue state."
 skills:
 - agent-claim:
     justification: We need this before ingest mutation so queue moves, durable pages, links, and generated wiki outputs remain owned until their clean commit.
@@ -49,6 +107,8 @@ skills:
     justification: We need this when claims depend on implementation behavior so durable wiki statements remain traceable to authoritative code and tests.
     condition: when durable wiki claims depend on implementation behavior that must remain traceable to authoritative code and tests.
 outputContract:
+- status:
+    purpose: States READY or BLOCKED and ties each assigned source to its verifier gates, source location, and queue state.
 - durable wiki pages:
     purpose: Provides maintainable, navigable project knowledge that downstream users and agents can rely on after the ingest queue item is closed.
 - processed-source links:
