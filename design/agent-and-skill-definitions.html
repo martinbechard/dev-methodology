@@ -94,10 +94,15 @@
     }
 
     .document-nav {
+      display: grid;
+      gap: var(--space-3);
+      margin-bottom: var(--space-6);
+    }
+
+    .document-sequence {
       display: flex;
       flex-wrap: wrap;
       gap: var(--space-3);
-      margin-bottom: var(--space-6);
     }
 
     .document-nav a {
@@ -582,8 +587,10 @@
 <body>
 <main>
   <nav class="document-nav" aria-label="Documentation navigation">
-    <a href="../index.html">Documentation Index</a>
-    <a href="agentic-configuration.html" rel="next">Next: Agentic Configuration <span aria-hidden="true">&rarr;</span></a>
+    <a href="../index.html">Back to Documentation Index</a>
+    <div class="document-sequence">
+      <a href="agentic-configuration.html" rel="next">Next: Agentic Configuration <span aria-hidden="true">&rarr;</span></a>
+    </div>
   </nav>
 
   <section class="hero" aria-labelledby="page-title">

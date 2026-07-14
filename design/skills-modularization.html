@@ -92,10 +92,15 @@
     }
 
     .document-nav {
+      display: grid;
+      gap: var(--space-3);
+      margin-bottom: var(--space-6);
+    }
+
+    .document-sequence {
       display: flex;
       flex-wrap: wrap;
       gap: var(--space-3);
-      margin-bottom: var(--space-6);
     }
 
     .document-nav a {
@@ -420,9 +425,11 @@
 <body>
 <main>
   <nav class="document-nav" aria-label="Documentation navigation">
-    <a href="agentic-configuration.html" rel="prev"><span aria-hidden="true">&larr;</span> Previous: Agentic Configuration</a>
-    <a href="../index.html">Documentation Index</a>
-    <a href="generic-agent-definitions-source.html" rel="next">Next: Generic Agent Definitions Source <span aria-hidden="true">&rarr;</span></a>
+    <a href="../index.html">Back to Documentation Index</a>
+    <div class="document-sequence">
+      <a href="agentic-configuration.html" rel="prev"><span aria-hidden="true">&larr;</span> Previous: Agentic Configuration</a>
+      <a href="generic-agent-definitions-source.html" rel="next">Next: Generic Agent Definitions Source <span aria-hidden="true">&rarr;</span></a>
+    </div>
   </nav>
 
   <section class="hero" aria-labelledby="page-title">

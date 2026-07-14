@@ -94,10 +94,15 @@
     }
 
     .document-nav {
+      display: grid;
+      gap: var(--space-3);
+      margin-bottom: var(--space-6);
+    }
+
+    .document-sequence {
       display: flex;
       flex-wrap: wrap;
       gap: var(--space-3);
-      margin-bottom: var(--space-6);
     }
 
     .document-nav a {
@@ -311,9 +316,11 @@
 <body>
   <main>
     <nav class="document-nav" aria-label="Documentation navigation">
-      <a href="skills-modularization.html" rel="prev"><span aria-hidden="true">&larr;</span> Previous: Skills Modularization</a>
-      <a href="../index.html">Documentation Index</a>
-      <a href="agent-skill-specialization-examples.html" rel="next">Next: Examples <span aria-hidden="true">&rarr;</span></a>
+      <a href="../index.html">Back to Documentation Index</a>
+      <div class="document-sequence">
+        <a href="skills-modularization.html" rel="prev"><span aria-hidden="true">&larr;</span> Previous: Skills Modularization</a>
+        <a href="agent-skill-specialization-examples.html" rel="next">Next: Examples <span aria-hidden="true">&rarr;</span></a>
+      </div>
     </nav>
 
     <section class="hero" aria-labelledby="page-title">

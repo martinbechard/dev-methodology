@@ -2711,24 +2711,40 @@ class BundleContentTests(unittest.TestCase):
                     ),
                 )
                 self.assertIn(
-                    '<a href="../index.html">Documentation Index</a>',
+                    '<a href="../index.html">Back to Documentation Index</a>',
                     text,
+                )
+                self.assertEqual(
+                    1,
+                    text.count('<div class="document-sequence">'),
+                )
+                nav = text.split(
+                    '<nav class="document-nav" '
+                    'aria-label="Documentation navigation">',
+                    maxsplit=1,
+                )[1].split("</nav>", maxsplit=1)[0]
+                sequence = nav.split(
+                    '<div class="document-sequence">', maxsplit=1
+                )[1].split("</div>", maxsplit=1)[0]
+                self.assertLess(
+                    nav.index("Back to Documentation Index"),
+                    nav.index('<div class="document-sequence">'),
                 )
 
                 if position == 0:
-                    self.assertNotIn('rel="prev"', text)
+                    self.assertNotIn('rel="prev"', sequence)
                 else:
                     self.assertIn(
                         f'<a href="{index_pages[position - 1]}" rel="prev">',
-                        text,
+                        sequence,
                     )
 
                 if position == len(index_pages) - 1:
-                    self.assertNotIn('rel="next"', text)
+                    self.assertNotIn('rel="next"', sequence)
                 else:
                     self.assertIn(
                         f'<a href="{index_pages[position + 1]}" rel="next">',
-                        text,
+                        sequence,
                     )
 
                 hero = text.split('<section class="hero"', maxsplit=1)[1].split(
