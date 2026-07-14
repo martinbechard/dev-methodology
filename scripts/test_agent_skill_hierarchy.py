@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import importlib.util
+import re
 import unittest
 import xml.etree.ElementTree as element_tree
 from pathlib import Path
@@ -121,25 +122,51 @@ class AgentSkillHierarchyTests(unittest.TestCase):
 
     def test_agent_dependencies_are_directional_and_user_controllable(self) -> None:
         """Fixed direct agent use should render as optional directional arrows."""
-        expected_edges = {
+        expected_edges = [
             (role["name"], target_role)
             for path in ROLES_ROOT.glob("*/*.role.yaml")
             for role in (self.module._load_yaml(path),)
             for target_role in role.get("agentDependencies", [])
-        }
+        ]
         dependency_edges = self.root.findall(
             f".//{{{SVG_NAMESPACE}}}path[@class='dependency-edge']"
         )
-        self.assertEqual(
-            expected_edges,
-            {
-                (
-                    edge.attrib.get("data-source-role"),
-                    edge.attrib.get("data-target-role"),
-                )
-                for edge in dependency_edges
-            },
-        )
+        actual_edges = [
+            (
+                edge.attrib.get("data-source-role"),
+                edge.attrib.get("data-target-role"),
+            )
+            for edge in dependency_edges
+        ]
+        self.assertEqual(len(expected_edges), len(dependency_edges))
+        self.assertEqual(len(actual_edges), len(set(actual_edges)))
+        self.assertCountEqual(expected_edges, actual_edges)
+
+        role_centers = {}
+        for node in self.root.findall(
+            f".//{{{SVG_NAMESPACE}}}g[@class='role-node']"
+        ):
+            rect = node.find(f"{{{SVG_NAMESPACE}}}rect")
+            self.assertIsNotNone(rect)
+            role_centers[node.attrib["data-role"]] = (
+                float(rect.attrib["x"]) + float(rect.attrib["width"]),
+                float(rect.attrib["y"]) + (float(rect.attrib["height"]) / 2),
+            )
+
+        for edge in dependency_edges:
+            with self.subTest(
+                source=edge.attrib.get("data-source-role"),
+                target=edge.attrib.get("data-target-role"),
+            ):
+                coordinates = [
+                    float(value)
+                    for value in re.findall(r"-?\d+(?:\.\d+)?", edge.attrib["d"])
+                ]
+                self.assertEqual(8, len(coordinates))
+                source_x, source_y = role_centers[edge.attrib["data-source-role"]]
+                target_x, target_y = role_centers[edge.attrib["data-target-role"]]
+                self.assertEqual((source_x, source_y), tuple(coordinates[:2]))
+                self.assertEqual((target_x + 1, target_y), tuple(coordinates[-2:]))
         self.assertTrue(
             all(
                 edge.attrib.get("marker-end") == "url(#dependency-arrow)"

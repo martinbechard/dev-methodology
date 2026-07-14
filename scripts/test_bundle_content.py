@@ -1415,12 +1415,68 @@ class BundleContentTests(unittest.TestCase):
                     for section_name in ("delegation", "review")
                     for item in role.instruction_sections[section_name]
                 )
+                failure_text = " ".join(role.instruction_sections["failureHandling"])
+                completion_text = " ".join(role.instruction_sections["completion"])
+                example_responses = [
+                    example["plausibleResponse"]
+                    for example in role.examples
+                ]
                 for dependency in dependencies:
                     self.assertIn(dependency, routing_text)
+                self.assertRegex(
+                    failure_text,
+                    r"(?i)(?:after|at most).*two.*correction attempts",
+                )
+                self.assertRegex(
+                    failure_text,
+                    r"(?i)(?:unavailable|cannot provide a required agent)",
+                )
+                self.assertRegex(
+                    f"{routing_text} {failure_text}",
+                    r"(?i)(?:route|return|this role owns|apply only)",
+                )
+                self.assertTrue(
+                    any("STATUS: READY" in response for response in example_responses)
+                )
+                self.assertTrue(
+                    any("STATUS: BLOCKED" in response for response in example_responses)
+                )
+                for closeout_term in ("commit", "clean", "release"):
+                    self.assertIn(closeout_term, completion_text.lower())
 
         orchestrator = roles_by_name["dev-orchestrator"]
         self.assertNotIn("agent-work-merge", orchestrator.skills)
         self.assertNotIn("review-structured-artifact", orchestrator.skills)
+
+        topic_write_skill = (
+            SKILLS_ROOT / "project-wiki-topic-write" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("at most two corrected resubmissions", topic_write_skill)
+        self.assertIn("governing cap is exhausted", topic_write_skill)
+        self.assertNotIn("Repeat until the verifier returns GOOD", topic_write_skill)
+
+        direct_lane_example = next(
+            example
+            for example in orchestrator.examples
+            if "one reviewed and verified source lane" in example["purpose"]
+        )
+        self.assertIn("STATUS: READY", direct_lane_example["plausibleResponse"])
+        self.assertIn(
+            "dev-merge-coordinator was not invoked",
+            direct_lane_example["plausibleResponse"],
+        )
+        self.assertIn(
+            "any required multi-contribution integration",
+            " ".join(orchestrator.instruction_sections["completion"]),
+        )
+
+        wiki_ingester = roles_by_name["wiki-ingester"]
+        for example in wiki_ingester.examples[:2]:
+            with self.subTest(wiki_ingester_example=example["purpose"]):
+                response = example["plausibleResponse"]
+                self.assertIn("GOOD pre-move verdict", response)
+                self.assertIn("GOOD post-move verdict", response)
+                self.assertIn("released the ingest claim", response)
 
     def test_project_bootstrapper_owns_complete_setup_and_review_loop(self) -> None:
         build_skill_docs = load_build_skill_docs_module()
@@ -1428,7 +1484,7 @@ class BundleContentTests(unittest.TestCase):
         roles = build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
         role = next(role for role in roles if role.name == "project-bootstrapper")
 
-        self.assertIn("documentation-reverse-engineer", build_skill_docs.fixed_role_skills(role))
+        self.assertNotIn("documentation-reverse-engineer", build_skill_docs.fixed_role_skills(role))
         self.assertNotIn("documentation-reverse-engineer", role.skill_conditions)
         self.assertLess(
             role.instructions.index("project-configurator"),
