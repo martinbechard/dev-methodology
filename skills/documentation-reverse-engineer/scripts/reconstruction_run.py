@@ -50,15 +50,15 @@ _SKIPPED_CONFIGURATION_DIRECTORIES = frozenset(
 _MARKDOWN_LINK_PATTERN = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
 _RUN_ID_PATTERN = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{0,127}\Z")
 _WORKSTATION_HOME_PATH_PATTERNS = (
-    re.compile(r"(?<![A-Za-z0-9._-])/Users/[^/\s'\"<>]+(?:/|\Z)"),
+    re.compile(r"(?<![A-Za-z0-9._-])/Users/[A-Za-z0-9._-]+(?:/|\Z)"),
     re.compile(
-        r"(?<![A-Za-z0-9._-])/home/[^/\s'\"<>]+/"
+        r"(?<![A-Za-z0-9._-])/home/[A-Za-z0-9._-]+/"
         r"(?:dev|src|repos?|projects?|work|workspaces?|worktrees?|checkouts?|"
         r"\.cache|\.local|tmp)(?:/|\Z)",
         re.IGNORECASE,
     ),
     re.compile(
-        r"(?<![A-Za-z0-9._-])[A-Za-z]:[\\/]+Users[\\/]+[^\\/\s'\"<>]+",
+        r"(?<![A-Za-z0-9._-])[A-Za-z]:[\\/]+Users[\\/]+[A-Za-z0-9._-]+",
         re.IGNORECASE,
     ),
 )

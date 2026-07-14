@@ -324,6 +324,7 @@ class ReconstructionRunHelperTests(unittest.TestCase):
                 "container_root: /workspace\n"
                 "generator_root: /home/jhipster/app\n"
                 "portable_home: ${HOME}/.cache\n"
+                "scanner_pattern: '/Users/|/home/|C:\\\\Users\\\\'\n"
             ),
         )
 
