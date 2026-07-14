@@ -3004,6 +3004,27 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(readiness_checklist_phrase=phrase):
                 self.assertIn(phrase, readiness_checklist_text)
 
+        lifecycle_text = (
+            REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
+        ).read_text(encoding="utf-8")
+        for phrase in (
+            "workstation user-home or checkout paths",
+            "real content-read denial and agent-claim acquire/release",
+            "caller-supplied READY labels",
+            "full pre/post Git metadata reconciliation",
+            "detached post-run attestations",
+        ):
+            with self.subTest(readme_reconstruction_phrase=phrase):
+                self.assertIn(phrase, README_PATH.read_text(encoding="utf-8"))
+        for phrase in (
+            "workstation-path-free documentation and configuration seed",
+            "actual byte-read denial through independent readers",
+            "Verifier-derived artifact, process, command, root, and run provenance",
+            "full pre/post Git metadata reconciliation",
+        ):
+            with self.subTest(lifecycle_reconstruction_phrase=phrase):
+                self.assertIn(phrase, lifecycle_text)
+
     def test_project_configuration_distinguishes_no_variant_from_missing_required_skill(self) -> None:
         detector_text = (SKILLS_ROOT / "detect-technology-skills" / "SKILL.md").read_text(
             encoding="utf-8"
