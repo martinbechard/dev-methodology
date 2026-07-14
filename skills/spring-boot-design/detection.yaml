@@ -1,10 +1,10 @@
 schema: dev-methodology-technology-detection
 version: 2
-skill: spring-boot
+skill: spring-boot-design
 kind: technology
-label: Spring Boot
+label: Spring Boot Design
 capabilities:
-- application-framework
+- application-design
 activation:
   anyOf:
   - allOf:
@@ -15,4 +15,4 @@ activation:
 companions:
 - java
 - java-design
-- spring-boot-design
+- spring-boot

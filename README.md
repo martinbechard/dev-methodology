@@ -323,7 +323,11 @@ The stack and project-domain skill packs are:
 - python
 - fastapi
 - java
+- java-design
 - spring-boot
+- spring-boot-design
+- spring-data-jpa
+- spring-boot-testing
 - liquibase
 - jhipster-project
 - jhipster-domain-modeling

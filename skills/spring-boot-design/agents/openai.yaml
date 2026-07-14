@@ -2,11 +2,11 @@
 # Derived interface fields are refreshed from SKILL.md by scripts/openai_metadata.py.
 interface:
   # User-facing name shown in Codex skill surfaces.
-  display_name: Spring Boot
+  display_name: Spring Boot Design
   # User-facing summary shown in Codex skill surfaces.
-  short_description: Implement, refactor, diagnose, or review Spring Boot code using version-aware framework rules...
+  short_description: Design or review Spring Boot application boundaries, package and module structure, transaction...
   # Prompt Codex can use when launching this skill directly.
-  default_prompt: Use $spring-boot to implement or review this Spring Boot service change and its evidence.
+  default_prompt: Use $spring-boot-design for work covered by this skill.
 
 # Optional invocation policy placeholder.
 # policy:

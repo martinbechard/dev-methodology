@@ -1,0 +1,17 @@
+schema: dev-methodology-technology-detection
+version: 2
+skill: spring-data-jpa
+kind: technology
+label: Spring Data JPA
+capabilities:
+- persistence-framework
+activation:
+  anyOf:
+  - allOf:
+    - fileExtension: .java
+    - anyOf:
+      - contentPattern: {glob: pom.xml, contains: spring-boot-starter-data-jpa}
+      - contentPattern: {glob: build.gradle*, contains: spring-boot-starter-data-jpa}
+companions:
+- spring-boot
+- sql

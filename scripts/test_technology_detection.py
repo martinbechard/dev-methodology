@@ -183,7 +183,59 @@ class TechnologyDetectionTests(unittest.TestCase):
         for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
             with self.subTest(detector=detector):
                 result = run_detection(ROOT / "evals" / "projects" / "spring-boot-order-cancellation", "src/main", detector=detector)
-                self.assertEqual(["java", "spring-boot", "sql"], result["loadouts"][0]["skills"])
+                self.assertEqual(
+                    ["java", "java-design", "spring-boot", "spring-boot-design", "sql"],
+                    result["loadouts"][0]["skills"],
+                )
+
+    def test_spring_data_jpa_composes_with_spring_design_and_sql(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "src" / "main" / "java" / "example"
+            source.mkdir(parents=True)
+            (source / "Order.java").write_text("class Order {}\n", encoding="utf-8")
+            (root / "pom.xml").write_text(
+                "<artifactId>spring-boot</artifactId>\n"
+                "<artifactId>spring-boot-starter-data-jpa</artifactId>\n",
+                encoding="utf-8",
+            )
+
+            expected = [
+                "java",
+                "java-design",
+                "spring-boot",
+                "spring-boot-design",
+                "spring-data-jpa",
+                "sql",
+            ]
+            for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+                with self.subTest(detector=detector):
+                    result = run_detection(root, "src/main", detector=detector)
+                    self.assertEqual(expected, result["loadouts"][0]["skills"])
+
+    def test_spring_boot_testing_requires_test_source_and_test_starter(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            tests = root / "src" / "test" / "java" / "example"
+            tests.mkdir(parents=True)
+            (tests / "OrderTest.java").write_text("class OrderTest {}\n", encoding="utf-8")
+            (root / "pom.xml").write_text(
+                "<artifactId>spring-boot</artifactId>\n"
+                "<artifactId>spring-boot-starter-test</artifactId>\n",
+                encoding="utf-8",
+            )
+
+            expected = [
+                "java",
+                "java-design",
+                "spring-boot",
+                "spring-boot-design",
+                "spring-boot-testing",
+            ]
+            for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+                with self.subTest(detector=detector):
+                    result = run_detection(root, "src/test", detector=detector)
+                    self.assertEqual(expected, result["loadouts"][0]["skills"])
 
     def test_liquibase_scope_composes_with_sql_without_jhipster(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -252,6 +304,7 @@ class TechnologyDetectionTests(unittest.TestCase):
 
             expected = [
                 "java",
+                "java-design",
                 "jhipster-domain-modeling",
                 "jhipster-persistence",
                 "jhipster-project",
@@ -259,6 +312,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 "jhipster-testing",
                 "liquibase",
                 "spring-boot",
+                "spring-boot-design",
                 "sql",
             ]
             for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):

@@ -4,7 +4,7 @@ interface:
   # User-facing name shown in Codex skill surfaces.
   display_name: Java
   # User-facing summary shown in Codex skill surfaces.
-  short_description: Use when implementing, refactoring, testing, or reviewing Java code, including type contracts...
+  short_description: Implement, refactor, test, or review Java code using version-aware language rules for nullness...
   # Prompt Codex can use when launching this skill directly.
   default_prompt: Use $java to implement or review this Java change and its evidence.
 

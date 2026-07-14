@@ -1,12 +1,12 @@
 schema: dev-methodology-technology-detection
 version: 2
-skill: java
+skill: java-design
 kind: technology
-label: Java
+label: Java Design
 capabilities:
-- language-coding
+- language-design
 activation:
   anyOf:
   - fileExtension: .java
 companions:
-- java-design
+- java

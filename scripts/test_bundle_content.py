@@ -85,7 +85,11 @@ NEW_DEVELOPMENT_SKILLS = (
     "python",
     "fastapi",
     "java",
+    "java-design",
     "spring-boot",
+    "spring-boot-design",
+    "spring-data-jpa",
+    "spring-boot-testing",
     "liquibase",
     "jhipster-project",
     "jhipster-domain-modeling",
@@ -167,6 +171,7 @@ EXAMPLE_PROJECT_SKILL_PACKS = (
     "electron-preload",
     "agent-harness",
     "java",
+    "java-design",
     "jest",
     "langgraph",
     "local-model-integration",
@@ -180,6 +185,9 @@ EXAMPLE_PROJECT_SKILL_PACKS = (
     "tailwind-design-system",
     "tool-runtime",
     "spring-boot",
+    "spring-boot-design",
+    "spring-data-jpa",
+    "spring-boot-testing",
     "sql",
     "typescript",
     "typescript-esm",
@@ -200,6 +208,10 @@ README_REQUIRED_PHRASES = (
     "python3 scripts/build-technology-detection.py",
     "detect-technology-skills",
     "- liquibase",
+    "- java-design",
+    "- spring-boot-design",
+    "- spring-data-jpa",
+    "- spring-boot-testing",
     "jhipster-domain-modeling",
     "[Skills Modularization](design/skills-modularization.html) explains always-used and rule-selected agent skills",
     "project-wiki-create",
@@ -913,6 +925,47 @@ class BundleContentTests(unittest.TestCase):
                 self.assertLessEqual(len(skill_text.splitlines()), 40)
                 self.assertIn(phrase, skill_text)
                 self.assertTrue((skill_root / "detection.yaml").is_file())
+
+    def test_java_and_spring_design_are_separate_from_coding_guidance(self) -> None:
+        expected = {
+            "java": (
+                "Coding Boundary",
+                "references/coding-guidelines-java.md",
+            ),
+            "java-design": (
+                "Design Boundary",
+                "references/design-principles-java.md",
+            ),
+            "spring-boot": (
+                "Framework Baseline",
+                "references/coding-guidelines-spring-boot.md",
+            ),
+            "spring-boot-design": (
+                "Design Boundary",
+                "references/design-principles-spring-boot.md",
+            ),
+            "spring-data-jpa": (
+                "Persistence Coding",
+                "references/persistence-guidelines-spring-data-jpa.md",
+            ),
+            "spring-boot-testing": (
+                "Test Selection",
+                "references/testing-guidelines-spring-boot.md",
+            ),
+        }
+
+        for skill_name, (boundary_phrase, reference_path) in expected.items():
+            with self.subTest(skill_name=skill_name):
+                skill_root = SKILLS_ROOT / skill_name
+                skill_text = (skill_root / "SKILL.md").read_text(encoding="utf-8")
+                self.assertIn(boundary_phrase, skill_text)
+                self.assertTrue((skill_root / reference_path).is_file())
+                self.assertTrue((skill_root / "detection.yaml").is_file())
+
+        java_design = (SKILLS_ROOT / "java-design" / "SKILL.md").read_text(encoding="utf-8")
+        spring_design = (SKILLS_ROOT / "spring-boot-design" / "SKILL.md").read_text(encoding="utf-8")
+        self.assertIn("Do not own formatting", java_design)
+        self.assertIn("not annotation syntax or routine framework coding", spring_design)
 
     def test_liquibase_guidance_is_portable_and_detection_backed(self) -> None:
         skill_root = SKILLS_ROOT / "liquibase"

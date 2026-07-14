@@ -188,7 +188,21 @@ skills:
   activation:
     anyOf:
     - fileExtension: .java
-  companions: []
+  companions:
+  - java-design
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
+- skill: java-design
+  kind: technology
+  label: Java Design
+  capabilities:
+  - language-design
+  activation:
+    anyOf:
+    - fileExtension: .java
+  companions:
+  - java
   selection: additive
   priority: 100
   requiredWhenDetected: true
@@ -707,6 +721,77 @@ skills:
             contains: org.springframework.boot
   companions:
   - java
+  - java-design
+  - spring-boot-design
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
+- skill: spring-boot-design
+  kind: technology
+  label: Spring Boot Design
+  capabilities:
+  - application-design
+  activation:
+    anyOf:
+    - allOf:
+      - fileExtension: .java
+      - anyOf:
+        - contentPattern:
+            glob: pom.xml
+            contains: spring-boot
+        - contentPattern:
+            glob: build.gradle*
+            contains: org.springframework.boot
+  companions:
+  - java
+  - java-design
+  - spring-boot
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
+- skill: spring-boot-testing
+  kind: technology
+  label: Spring Boot Testing
+  capabilities:
+  - application-testing
+  activation:
+    anyOf:
+    - allOf:
+      - fileMatch:
+          glob: '**/src/test/**/*.java'
+          extensions:
+          - .java
+      - anyOf:
+        - contentPattern:
+            glob: pom.xml
+            contains: spring-boot-starter-test
+        - contentPattern:
+            glob: build.gradle*
+            contains: spring-boot-starter-test
+  companions:
+  - spring-boot
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
+- skill: spring-data-jpa
+  kind: technology
+  label: Spring Data JPA
+  capabilities:
+  - persistence-framework
+  activation:
+    anyOf:
+    - allOf:
+      - fileExtension: .java
+      - anyOf:
+        - contentPattern:
+            glob: pom.xml
+            contains: spring-boot-starter-data-jpa
+        - contentPattern:
+            glob: build.gradle*
+            contains: spring-boot-starter-data-jpa
+  companions:
+  - spring-boot
+  - sql
   selection: additive
   priority: 100
   requiredWhenDetected: true

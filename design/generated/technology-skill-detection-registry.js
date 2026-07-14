@@ -315,13 +315,36 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
       "capabilities": [
         "language-coding"
       ],
-      "companions": [],
+      "companions": [
+        "java-design"
+      ],
       "kind": "technology",
       "label": "Java",
       "priority": 100,
       "requiredWhenDetected": true,
       "selection": "additive",
       "skill": "java"
+    },
+    {
+      "activation": {
+        "anyOf": [
+          {
+            "fileExtension": ".java"
+          }
+        ]
+      },
+      "capabilities": [
+        "language-design"
+      ],
+      "companions": [
+        "java"
+      ],
+      "kind": "technology",
+      "label": "Java Design",
+      "priority": 100,
+      "requiredWhenDetected": true,
+      "selection": "additive",
+      "skill": "java-design"
     },
     {
       "activation": {
@@ -1304,7 +1327,9 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
         "application-framework"
       ],
       "companions": [
-        "java"
+        "java",
+        "java-design",
+        "spring-boot-design"
       ],
       "kind": "technology",
       "label": "Spring Boot",
@@ -1312,6 +1337,137 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
       "requiredWhenDetected": true,
       "selection": "additive",
       "skill": "spring-boot"
+    },
+    {
+      "activation": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "fileExtension": ".java"
+              },
+              {
+                "anyOf": [
+                  {
+                    "contentPattern": {
+                      "contains": "spring-boot",
+                      "glob": "pom.xml"
+                    }
+                  },
+                  {
+                    "contentPattern": {
+                      "contains": "org.springframework.boot",
+                      "glob": "build.gradle*"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "capabilities": [
+        "application-design"
+      ],
+      "companions": [
+        "java",
+        "java-design",
+        "spring-boot"
+      ],
+      "kind": "technology",
+      "label": "Spring Boot Design",
+      "priority": 100,
+      "requiredWhenDetected": true,
+      "selection": "additive",
+      "skill": "spring-boot-design"
+    },
+    {
+      "activation": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "fileMatch": {
+                  "extensions": [
+                    ".java"
+                  ],
+                  "glob": "**/src/test/**/*.java"
+                }
+              },
+              {
+                "anyOf": [
+                  {
+                    "contentPattern": {
+                      "contains": "spring-boot-starter-test",
+                      "glob": "pom.xml"
+                    }
+                  },
+                  {
+                    "contentPattern": {
+                      "contains": "spring-boot-starter-test",
+                      "glob": "build.gradle*"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "capabilities": [
+        "application-testing"
+      ],
+      "companions": [
+        "spring-boot"
+      ],
+      "kind": "technology",
+      "label": "Spring Boot Testing",
+      "priority": 100,
+      "requiredWhenDetected": true,
+      "selection": "additive",
+      "skill": "spring-boot-testing"
+    },
+    {
+      "activation": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "fileExtension": ".java"
+              },
+              {
+                "anyOf": [
+                  {
+                    "contentPattern": {
+                      "contains": "spring-boot-starter-data-jpa",
+                      "glob": "pom.xml"
+                    }
+                  },
+                  {
+                    "contentPattern": {
+                      "contains": "spring-boot-starter-data-jpa",
+                      "glob": "build.gradle*"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "capabilities": [
+        "persistence-framework"
+      ],
+      "companions": [
+        "spring-boot",
+        "sql"
+      ],
+      "kind": "technology",
+      "label": "Spring Data JPA",
+      "priority": 100,
+      "requiredWhenDetected": true,
+      "selection": "additive",
+      "skill": "spring-data-jpa"
     },
     {
       "activation": {

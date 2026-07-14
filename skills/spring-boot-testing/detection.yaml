@@ -1,0 +1,16 @@
+schema: dev-methodology-technology-detection
+version: 2
+skill: spring-boot-testing
+kind: technology
+label: Spring Boot Testing
+capabilities:
+- application-testing
+activation:
+  anyOf:
+  - allOf:
+    - fileMatch: {glob: "**/src/test/**/*.java", extensions: [.java]}
+    - anyOf:
+      - contentPattern: {glob: pom.xml, contains: spring-boot-starter-test}
+      - contentPattern: {glob: build.gradle*, contains: spring-boot-starter-test}
+companions:
+- spring-boot

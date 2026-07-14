@@ -14,7 +14,7 @@ This page is generated from the conceptual agent definitions, bundled skill fron
 ## Summary
 
 - [x] 26 conceptual agent definitions generate through the supported native agent definition adapters.
-- [x] 84 bundled skills pass catalog and Agent Skill validation.
+- [x] 88 bundled skills pass catalog and Agent Skill validation.
 - [x] 2 agents and 12 skills are named in current evaluation cases.
 - [ ] 0 agents and 0 skills have independently verified behavior evidence under the current proof contract.
 - TypeScript implementation, Java and Spring Boot implementation, SQL behavior, and TypeScript code review have useful manual observations that must be rerun with truthful receipts.
@@ -40,6 +40,7 @@ This page is generated from the conceptual agent definitions, bundled skill fron
 | electron-preload | technology | Electron preload boundary | desktop-preload-boundary | None | [ ] None |
 | fastapi | technology | FastAPI | web-application-framework | None | [ ] None |
 | java | technology | Java | language-coding | spring-boot-order-cancellation | [ ] None |
+| java-design | technology | Java Design | language-design | None | [ ] None |
 | jest | technology | Jest | test-framework | None | [ ] None |
 | jhipster-domain-modeling | domain | JHipster Domain Modeling | domain-modeling | None | [ ] None |
 | jhipster-persistence | domain | JHipster Persistence | database-migrations | None | [ ] None |
@@ -58,6 +59,9 @@ This page is generated from the conceptual agent definitions, bundled skill fron
 | react-server-components | technology | React Server Components | server-user-interface | None | [ ] None |
 | react-vite-renderer | technology | React renderer with Vite | client-user-interface | None | [ ] None |
 | spring-boot | technology | Spring Boot | application-framework | spring-boot-order-cancellation | [ ] None |
+| spring-boot-design | technology | Spring Boot Design | application-design | None | [ ] None |
+| spring-boot-testing | technology | Spring Boot Testing | application-testing | None | [ ] None |
+| spring-data-jpa | technology | Spring Data JPA | persistence-framework | None | [ ] None |
 | sql | technology | SQL | query-language | spring-boot-order-cancellation | [ ] None |
 | tailwind-design-system | technology | Tailwind design system | styling-system | None | [ ] None |
 | tool-runtime | domain | Tool runtime | tool-runtime | None | [ ] None |
@@ -175,6 +179,7 @@ This page is generated from the conceptual agent definitions, bundled skill fron
 - [x] electron-preload — structural; declared: none; verified behavior: [ ] none
 - [x] fastapi — structural; declared: none; verified behavior: [ ] none
 - [x] java — structural; declared: spring-boot-order-cancellation; verified behavior: [ ] none
+- [x] java-design — structural; declared: none; verified behavior: [ ] none
 - [x] jest — structural; declared: none; verified behavior: [ ] none
 - [x] jhipster-domain-modeling — structural; declared: none; verified behavior: [ ] none
 - [x] jhipster-persistence — structural; declared: none; verified behavior: [ ] none
@@ -193,6 +198,9 @@ This page is generated from the conceptual agent definitions, bundled skill fron
 - [x] react-server-components — structural; declared: none; verified behavior: [ ] none
 - [x] react-vite-renderer — structural; declared: none; verified behavior: [ ] none
 - [x] spring-boot — structural; declared: spring-boot-order-cancellation; verified behavior: [ ] none
+- [x] spring-boot-design — structural; declared: none; verified behavior: [ ] none
+- [x] spring-boot-testing — structural; declared: none; verified behavior: [ ] none
+- [x] spring-data-jpa — structural; declared: none; verified behavior: [ ] none
 - [x] sql — structural; declared: spring-boot-order-cancellation; verified behavior: [ ] none
 - [x] tailwind-design-system — structural; declared: none; verified behavior: [ ] none
 - [x] tool-runtime — structural; declared: none; verified behavior: [ ] none

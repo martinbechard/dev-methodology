@@ -1,23 +1,31 @@
 ---
 name: java
-description: Use when implementing, refactoring, testing, or reviewing Java code, including type contracts, nullability, exceptions, resources, concurrency, collections, side effects, and review evidence.
+description: Implement, refactor, test, or review Java code using version-aware language rules for nullness, exceptions, resources, collections, concurrency, numeric behavior, time, and verification.
 metadata:
   category: stack-and-domain
 ---
 
 # Java
 
+Combine with Java Design when the task chooses or changes public APIs, domain types, package boundaries, module relationships, or object ownership.
+
+## Coding Boundary
+
+- Treat the configured Java release, build, formatter, static analysis, and test conventions as the executable contract.
+- Implement within the established design. Do not introduce a new architecture, pattern, package scheme, or public abstraction as a coding default.
+- Use language features only when the configured source level, runtime support, and project conventions allow them.
+
 ## Coding Guidance
 
-- Read the build files, configured Java version, module boundaries, formatter, and test conventions before editing.
-- Use domain types and interfaces that express ownership and valid states. Avoid raw types and unchecked casts.
-- Make nullability explicit through project conventions and validate external inputs at the boundary.
-- Use exceptions for exceptional conditions, preserve causes, and translate them only at a boundary that owns the public contract.
-- Close files, streams, database handles, and other resources deterministically.
-- Prefer immutable values and narrow mutation. Make thread ownership and shared-state synchronization explicit when concurrency exists.
-- Keep collections, equality, hashing, ordering, and numeric behavior aligned with domain semantics.
-- Use the project's existing logging facade. Use temporary language-native output only when no logging facility exists, and remove it before completion.
-- Add focused tests and run the project-native compile, test, static-analysis, and formatting checks that cover the change.
+- Keep generic types checked and eliminate raw types, unsafe casts, and unjustified warning suppressions.
+- Apply the project nullness convention consistently. Distinguish absent results, invalid input, and programmer errors instead of wrapping every nullable value in Optional.
+- Preserve exception causes and translate failures only where recovery or the public contract is owned.
+- Close resources deterministically and keep interruption, cancellation, and executor ownership observable when concurrency exists.
+- Preserve collection mutability, iteration, equality, hashing, ordering, numeric scale, rounding, time-zone, locale, and charset semantics.
+- Use the established logging facade without secrets, sensitive payloads, temporary output, or unbounded diagnostic data.
+- Add focused tests and run the project-native compile, test, formatting, and configured analysis checks that cover the changed behavior.
+
+Read [Java Coding Guidelines](references/coding-guidelines-java.md) when implementation or review needs the detailed language rules.
 
 ## Review Evidence
 
