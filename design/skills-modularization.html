@@ -405,8 +405,8 @@
   </section>
 
   <section class="section" aria-labelledby="agent-skills-title">
-    <h2 id="agent-skills-title">Agent Skills Are Technology Agnostic</h2>
-    <p class="lede">Agent definitions describe durable responsibilities such as coding, reviewing, configuring a project, or maintaining documentation. Their own skills must work across programming languages, frameworks, project types, and agentic coding vendors. Stack knowledge is added separately so the same agent can work in a Python service, a Next.js application, or an Electron desktop project without duplicating its core definition.</p>
+    <h2 id="agent-skills-title">Core Agent Skills</h2>
+    <p class="lede">Each agent definition directly references a small set of core skills. A core skill without a condition is always loaded for that agent. A core skill with a human-readable condition is loaded on demand when the request and available evidence satisfy the rule. These direct references are limited to technology-agnostic skills so the same generic agent can work across programming languages, frameworks, project types, and agentic coding vendors. Technology-dependent skills are therefore not referenced directly by generic agents; a secondary setup-time mechanism detects repository evidence and binds the matching shared skills to folders through PROJECT.yaml and AGENTS.md.</p>
     <div class="matrix">
       <table>
         <thead>
@@ -419,19 +419,19 @@
         </thead>
         <tbody>
           <tr>
-            <td><span class="name">Always-used agent skill</span></td>
+            <td><span class="name">Always-loaded core skill</span></td>
             <td>A skill entry in the agent definition without a condition.</td>
             <td>Every invocation of that agent needs the capability.</td>
             <td>Dev Coder always uses careful-coding, code-comments, code-discovery, and fix-explanation.</td>
           </tr>
           <tr>
-            <td><span class="name">Rule-selected agent skill</span></td>
+            <td><span class="name">On-demand core skill</span></td>
             <td>A skill entry in the agent definition with a human-readable condition.</td>
             <td>The request and available evidence satisfy the rule; the agent applies judgment rather than matching prompt words.</td>
             <td>Dev Coder uses test-driven-development when behavior can be expressed through executable tests.</td>
           </tr>
           <tr>
-            <td><span class="name">Setup-bound technology skill</span></td>
+            <td><span class="name">Technology-specific extension</span></td>
             <td>Detection metadata beside the shared skill plus a folder binding in project configuration.</td>
             <td>Project setup proves that the technology applies to a folder, then ordinary work receives it as an unconditional folder skill.</td>
             <td>A Python FastAPI folder receives python and fastapi without adding either skill to the generic Dev Coder definition.</td>
@@ -442,7 +442,7 @@
   </section>
 
   <section class="section" aria-labelledby="examples-title">
-    <h2 id="examples-title">Real Agent Skill Splits</h2>
+    <h2 id="examples-title">Core Skill Examples</h2>
     <div class="matrix">
       <table>
         <thead>

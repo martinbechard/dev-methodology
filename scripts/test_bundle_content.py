@@ -250,12 +250,16 @@ DEVELOPMENT_METHODOLOGY_REQUIRED_PHRASES = (
     "Use the shared page contract only when the selected artifact type requires it.",
 )
 MODULARIZATION_REQUIRED_PHRASES = (
-    "Agent Skills Are Technology Agnostic",
-    "Real Agent Skill Splits",
+    "Core Agent Skills",
+    "Core Skill Examples",
     "Technology Extensions Are Bound During Setup",
-    "Always-used agent skill",
-    "Rule-selected agent skill",
-    "Setup-bound technology skill",
+    "directly references a small set of core skills",
+    "loaded on demand",
+    "limited to technology-agnostic skills",
+    "secondary setup-time mechanism",
+    "Always-loaded core skill",
+    "On-demand core skill",
+    "Technology-specific extension",
     "Technology Extensions Included In The Kit",
     "Setup-Time Detection Guardrails",
 )
