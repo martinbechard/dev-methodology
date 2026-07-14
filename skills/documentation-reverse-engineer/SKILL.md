@@ -100,7 +100,12 @@ Use source inventory first, then use structure-aware search where it adds eviden
 7. Link related tests and source files from each module document.
 8. Record missing tests, ambiguous ownership, and undocumented side effects as open questions.
 9. When an important value crosses module, persistence, serialization, external-system, security, or UI boundaries, trace its source, transformations, validations, ownership, storage, and consumers. Document only lineage that affects correctness, privacy, security, or operability.
-10. Update the coverage manifest as each module document passes review.
+10. Treat the path ledger as an ownership contract, not an evidence boundary. Link the direct caller, dependency, schema, configuration, security, error-adapter, and test sources needed to support claims even when another manifest row owns those files.
+11. Close the evidence chain before review: every caller, dependency, public contract, processing rule, invariant, error behavior, and verification claim must link direct source evidence or be labeled as an inference, unverified behavior, or open question.
+12. Distinguish executable verification from test-shaped source. Confirm the method is discovered and runs: check framework annotations/registration, disabled or ignored state, dependency injection, fixtures, assertions, and the invoked branch. Do not report an unannotated helper, dormant fixture, prospective command, or requested test as executed coverage.
+13. Trace failure behavior through the actual branch, including wrapper fallback, swallowed subprocess errors, nested exception causes, validation differences by HTTP method, retry/recovery, logging, and transaction rollback. Describe the implementation as it is; record stronger desired behavior as a gap, not an invariant.
+14. For build and contributor modules, verify wrapper semantics, default versus opt-in lifecycle goals, source-mutating tasks, runtime selection, and README commands against the committed scripts and configuration.
+15. Update the coverage manifest as each module document passes review.
 
 Prefer one module document for one coherent responsibility. Split only when separate responsibilities can change independently.
 
@@ -108,6 +113,10 @@ Completion gate:
 
 - Every in-scope manifest row has a module document and an accepted module-design review.
 - Every module document identifies its source paths, contracts, dependencies, runtime behavior, state, error behavior, configuration, security implications, related tests, and open questions where applicable.
+- The module's explicit project-relative runtime path is present; execution prose is not a substitute for the path.
+- Every cross-module claim closes to direct evidence outside the owned path set when necessary; no page uses ownership as a reason to omit caller, schema, configuration, security, or test authority.
+- Verification claims distinguish executed tests from unannotated helpers, dormant fixtures, requested checks, and other prospective evidence.
+- Error and build-tool claims match implemented fallback, validation, nested-cause, retry, rollback, wrapper, and lifecycle behavior rather than a safer intended contract.
 - No in-scope source area is undocumented, implicitly deferred, or represented only by a higher-level document.
 - Pass 2 must not start until this gate passes.
 

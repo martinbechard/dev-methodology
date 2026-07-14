@@ -50,6 +50,10 @@ Use documentation-reverse-engineer when the user asks to derive many module desi
 7. Remove configuration, external interface, or UI behavior sections only when they genuinely do not apply.
 8. Say Not yet identified for related code, tests, backlog items, or wiki pages that do not exist yet.
 9. Keep the artifact steady-state. Do not describe it as new, revised, or enhanced unless the document is explicitly a change plan.
+10. Treat owned files as the responsibility boundary, not the evidence boundary. Add direct links to non-owned callers, dependencies, schemas, configuration, security rules, error adapters, tests, procedures, and parent documents whenever the page relies on them.
+11. Audit each behavioral sentence for evidence closure. Link the source that proves it, label it as an inference, or record it as unverified/open; do not let an adjacent section's generic file list stand in for direct evidence.
+12. Verify that claimed tests are executable and exercise the named branch. Check test discovery annotations or registration, disabled state, injected doubles, fixtures, assertions, and actual calls. Describe unannotated helpers, unused fixtures, manual commands, and desired tests as gaps rather than coverage.
+13. Follow failure paths through nested causes, wrapper fallbacks, validation differences, retries, logging, rollback, and user-visible outcomes. State actual behavior even when it exposes a defect; do not silently document the safer behavior the code should have.
 
 ## Verification
 
@@ -60,5 +64,9 @@ Before finishing:
 3. Run project wiki status and lint when docs/wiki exists and the artifact lives in or links from docs/wiki.
 4. Search the artifact for unresolved TODO markers that are not intentional.
 5. Confirm every responsibility, dependency, public contract, processing rule, invariant, and verification claim has source evidence or an open question.
+6. Confirm Runtime Path contains an explicit project-relative implementation path and folder entry point when applicable.
+7. Confirm Authoritative Sources includes the direct evidence used by Callers, Dependencies, Configuration, Error Handling, and Verification, including evidence owned by other modules.
+8. Confirm every claimed test is discovered and executes the asserted branch; do not count helper methods, dormant fixtures, or prospective commands as coverage.
+9. Confirm error, wrapper, build-lifecycle, and validation prose matches the implemented failure branches rather than intended behavior.
 
 Do not send private, proprietary, sensitive, PII, or company-internal material to an external service unless the user explicitly authorizes it.
