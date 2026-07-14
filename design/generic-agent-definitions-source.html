@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Agentic Configuration</title>
+  <title>Generic Agent Definitions Source</title>
   <style>
     :root {
       --color-ink: #18212f;
@@ -277,62 +277,6 @@
       margin-top: var(--space-4);
     }
 
-    .context-aperture {
-      display: grid;
-      gap: var(--space-3);
-      padding: var(--space-6);
-      border: 1px solid var(--color-line);
-      border-radius: var(--radius);
-      background:
-        linear-gradient(135deg, rgba(232, 240, 255, 0.72), rgba(228, 247, 244, 0.52)),
-        var(--color-panel);
-      box-shadow: var(--shadow-panel);
-    }
-
-    .context-layer {
-      display: grid;
-      grid-template-columns: minmax(145px, 0.45fr) minmax(0, 1.55fr);
-      gap: var(--space-4);
-      width: var(--layer-width);
-      margin-inline: auto;
-      padding: var(--space-4);
-      border: 1px solid rgba(37, 99, 235, 0.22);
-      border-radius: var(--radius-small);
-      background: rgba(255, 255, 255, 0.9);
-    }
-
-    .context-layer:nth-child(1) {
-      --layer-width: 100%;
-    }
-
-    .context-layer:nth-child(2) {
-      --layer-width: 90%;
-    }
-
-    .context-layer:nth-child(3) {
-      --layer-width: 80%;
-    }
-
-    .context-layer:nth-child(4) {
-      --layer-width: 70%;
-    }
-
-    .context-layer:nth-child(5) {
-      --layer-width: 60%;
-      border-color: rgba(15, 118, 110, 0.4);
-      background: var(--color-soft-green);
-    }
-
-    .layer-label {
-      color: var(--color-ink);
-      font-weight: 800;
-    }
-
-    .table-note {
-      margin-top: var(--space-3);
-      font-size: var(--font-sm);
-    }
-
     @media (max-width: 720px) {
       main {
         padding: var(--space-8) var(--space-4);
@@ -340,15 +284,6 @@
 
       .flow-row {
         grid-template-columns: 1fr;
-      }
-
-      .context-aperture {
-        padding: var(--space-4);
-      }
-
-      .context-layer {
-        grid-template-columns: 1fr;
-        width: 100%;
       }
 
       table {
@@ -363,134 +298,22 @@
     <a class="home-link" href="../index.html">Back to documentation index</a>
 
     <section class="hero" aria-labelledby="page-title">
-      <h1 id="page-title">Agentic Configuration</h1>
+      <h1 id="page-title">Generic Agent Definitions Source</h1>
       <p class="lede">
-        Usable code depends on usable context. Agentic configuration divides a large body of possible instructions into project guidance,
-        agent roles, and focused skills so the coding tool can load the smallest relevant set for the work at hand.
-        This page explains that context model, where its files live, and how portable definitions become harness-specific runtime configuration.
+        Skills and agents have different portability models. A source skill remains the same portable skill package when it is deployed,
+        while a source agent role must be converted into the file format and properties understood by each agent harness.
+        This page explains that difference, the logical role model, native agent packaging, cross-runtime property mappings, and vendor references.
         The <a href="agent-role-skill-map.html">role map</a> owns generated catalog views, and the
         <a href="agent-skill-specialization-strategy.html">specialization strategy</a> owns detection and selection policy.
+        The <a href="agentic-configuration.html">Agentic Configuration page</a> explains how the generated files are used at runtime to steer code generation.
         The <a href="../README.md#explicit-target-deployment">README</a> owns deployment commands, destination ownership, updates, and pruning.
       </p>
       <div class="pill-row" aria-label="Document facets">
-        <span class="pill"><span class="dot"></span>Agent roles</span>
-        <span class="pill"><span class="dot source"></span>Project routing</span>
-        <span class="pill"><span class="dot skill"></span>Portable skills</span>
-        <span class="pill"><span class="dot risk"></span>Context limits</span>
+        <span class="pill"><span class="dot"></span>Role source</span>
+        <span class="pill"><span class="dot source"></span>Runtime adapters</span>
+        <span class="pill"><span class="dot skill"></span>Skill validation</span>
+        <span class="pill"><span class="dot risk"></span>Drift control</span>
       </div>
-    </section>
-
-    <section class="section" aria-labelledby="context-title">
-      <h2 id="context-title">Choose The Context That Shapes The Code</h2>
-      <p class="lede">An agent can only produce code that fits the project's expectations when it receives the constraints, practices, architecture, and task knowledge that make the result acceptable. The hard part is not writing one enormous instruction file. It is choosing the relevant context from many possible units of information without crowding the working context with unrelated material.</p>
-      <div class="context-aperture" aria-label="Context narrows from organizational knowledge to usable code">
-        <div class="context-layer">
-          <span class="layer-label">Available knowledge</span>
-          <p>Engineering practices, architecture, domain rules, security constraints, workflows, examples, and tool instructions.</p>
-        </div>
-        <div class="context-layer">
-          <span class="layer-label">Project guidance</span>
-          <p>Root and nested instruction files route the agent toward the definitions that apply to this repository and folder.</p>
-        </div>
-        <div class="context-layer">
-          <span class="layer-label">Agent role</span>
-          <p>The role establishes the purpose, boundaries, collaborators, and skillset for one kind of work.</p>
-        </div>
-        <div class="context-layer">
-          <span class="layer-label">Selected skills</span>
-          <p>The harness loads only the action guidance needed for the current role, technology, folder, and task.</p>
-        </div>
-        <div class="context-layer">
-          <span class="layer-label">Usable code</span>
-          <p>The implementation is steered by a focused, sufficient context rather than an undifferentiated instruction library.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" aria-labelledby="configuration-layers-title">
-      <h2 id="configuration-layers-title">Configuration Has Three Layers</h2>
-      <div class="grid">
-        <article class="card skill">
-          <h3>Skills Describe How To Act</h3>
-          <p>The Agent Skills format uses a text file named <code>SKILL.md</code> and is adopted across agentic coding tool vendors to describe how to perform an action. A skill is the most granular reusable unit of agent guidance. Dividing guidance into focused skill packages lets an agentic coding tool load only the skills relevant to the current work.</p>
-        </article>
-        <article class="card">
-          <h3>Agents Describe Who Does The Work</h3>
-          <p>An agent definition describes a specific role performed by the AI. Its configuration is mostly the role's purpose, directives, skills, and the other agents it may use. Each agent works with its own context and history, so a hierarchy of agents partitions the information and decisions active at any one time.</p>
-        </article>
-        <article class="card source">
-          <h3>Project Files Route The Work</h3>
-          <p>Agent and skill definitions are usually shared across projects, but either can live inside one project. Root <code>AGENTS.md</code> and <code>CLAUDE.md</code> files add project-specific direction and should usually route the harness to the skills appropriate for the repository's content. More instruction files can be nested under specialized folders.</p>
-        </article>
-      </div>
-    </section>
-
-    <section class="section" aria-labelledby="locations-title">
-      <h2 id="locations-title">Configuration File Locations</h2>
-      <p class="lede">Harnesses use different home directories and native agent extensions. The placeholders below identify the variable part of each path explicitly; they are not filename patterns.</p>
-      <div class="matrix">
-        <table>
-          <thead>
-            <tr>
-              <th>File</th>
-              <th>Shared Location</th>
-              <th>Project Location</th>
-              <th>Purpose</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><span class="name">Portable skill definition</span></td>
-              <td><code>~/.agents/skills/&lt;skill-name&gt;/SKILL.md</code></td>
-              <td><code>&lt;project-root&gt;/.agents/skills/&lt;skill-name&gt;/SKILL.md</code></td>
-              <td>Stores the smallest reusable action contract in the vendor-neutral Agent Skills location.</td>
-            </tr>
-            <tr>
-              <td><span class="name">Harness skill definition</span></td>
-              <td><code>~/.&lt;harness-name&gt;/skills/&lt;skill-name&gt;/SKILL.md</code></td>
-              <td><code>&lt;project-root&gt;/.&lt;harness-name&gt;/skills/&lt;skill-name&gt;/SKILL.md</code></td>
-              <td>Places the same portable skill package in a harness-specific discovery location when required.</td>
-            </tr>
-            <tr>
-              <td><span class="name">Markdown agent definition</span></td>
-              <td><code>~/.&lt;harness-name&gt;/agents/&lt;agent-name&gt;.md</code></td>
-              <td><code>&lt;project-root&gt;/.&lt;harness-name&gt;/agents/&lt;agent-name&gt;.md</code></td>
-              <td>Defines one reusable or project-local role for a harness that discovers Markdown agent files.</td>
-            </tr>
-            <tr>
-              <td><span class="name">TOML agent definition</span></td>
-              <td><code>~/.&lt;harness-name&gt;/agents/&lt;agent-name&gt;.toml</code></td>
-              <td><code>&lt;project-root&gt;/.&lt;harness-name&gt;/agents/&lt;agent-name&gt;.toml</code></td>
-              <td>Defines one reusable or project-local role for a harness that discovers TOML agent files.</td>
-            </tr>
-            <tr>
-              <td><span class="name">Root project guidance</span></td>
-              <td>Not shared</td>
-              <td><code>&lt;project-root&gt;/AGENTS.md</code></td>
-              <td>Provides repository-wide instructions and routes work to the relevant project and shared skills.</td>
-            </tr>
-            <tr>
-              <td><span class="name">Root Claude guidance</span></td>
-              <td>Not shared</td>
-              <td><code>&lt;project-root&gt;/CLAUDE.md</code></td>
-              <td>Provides the Claude-compatible project entry point, commonly by importing or aligning with the root guidance.</td>
-            </tr>
-            <tr>
-              <td><span class="name">Nested project guidance</span></td>
-              <td>Not shared</td>
-              <td><code>&lt;project-root&gt;/&lt;folder-path&gt;/AGENTS.md</code></td>
-              <td>Adds more specialized routing or instructions for content under one project folder.</td>
-            </tr>
-            <tr>
-              <td><span class="name">Nested Claude guidance</span></td>
-              <td>Not shared</td>
-              <td><code>&lt;project-root&gt;/&lt;folder-path&gt;/CLAUDE.md</code></td>
-              <td>Provides the corresponding Claude entry point for the specialized folder scope.</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <p class="table-note">A shared definition is available to many projects. A project-local definition travels with one repository and can specialize or replace the shared behavior for that project. Nested guidance narrows the applicable context further as work moves into a folder.</p>
     </section>
 
     <section class="section" aria-labelledby="portability-title">
@@ -764,12 +587,12 @@
             <tr>
               <td><span class="name">Codex</span></td>
               <td>One standalone TOML file per custom agent.</td>
-              <td>Codex discovers project <code>.codex/agents/</code> and user <code>~/.codex/agents/</code>. This bundle generates <code>generated/adapters/codex/agents/&lt;agent-name&gt;.toml</code>.</td>
+              <td>Codex discovers project <code>.codex/agents/</code> and user <code>~/.codex/agents/</code>. This bundle generates <code>generated/adapters/codex/agents/*.toml</code>.</td>
             </tr>
             <tr>
               <td><span class="name">Claude Code</span></td>
               <td>Markdown with YAML frontmatter and a Markdown instruction body.</td>
-              <td>Claude discovers project <code>.claude/agents/</code> and user <code>~/.claude/agents/</code>. This bundle generates <code>generated/adapters/claude/agents/&lt;agent-name&gt;.md</code>.</td>
+              <td>Claude discovers project <code>.claude/agents/</code> and user <code>~/.claude/agents/</code>. This bundle generates <code>generated/adapters/claude/agents/*.md</code>.</td>
             </tr>
             <tr>
               <td><span class="name">Gemini CLI</span></td>

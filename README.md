@@ -54,7 +54,7 @@ Reusable templates live inside the development-methodology skill assets so there
 python3 scripts/build-skill-docs.py
 ```
 
-The script reads each bundled SKILL.md file, adjacent Codex openai.yaml metadata, the ordered design/skill-categories.yaml catalog, agents/role-schema.yaml, agents/model-profiles.yaml, adapter model mappings, and source role files. It writes design/generated/skill-definitions.js, design/generated/role-definitions.js, native definitions under generated/adapters, and agent-generation-manifest.json. The [Agentic Configuration page](design/generic-agent-definitions-source.html) owns the context model, configuration file locations, portable skill sources, logical agent properties, native packaging, and adapter mappings.
+The script reads each bundled SKILL.md file, adjacent Codex openai.yaml metadata, the ordered design/skill-categories.yaml catalog, agents/role-schema.yaml, agents/model-profiles.yaml, adapter model mappings, and source role files. It writes design/generated/skill-definitions.js, design/generated/role-definitions.js, native definitions under generated/adapters, and agent-generation-manifest.json. The [Generic Agent Definitions Source page](design/generic-agent-definitions-source.html) owns portable skill sources, logical agent properties, native packaging, and adapter mappings. The [Agentic Configuration page](design/agentic-configuration.html) explains how the resulting runtime files provide relevant context while an agentic coding tool generates code.
 
 The generation manifest is the deterministic build inventory: it records each source role, every generated Codex, Claude Code, Gemini CLI, and Junie CLI path, expected digest, and aggregate counts without timestamps.
 

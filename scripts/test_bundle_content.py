@@ -287,12 +287,7 @@ AGENT_ROLE_MAP_REQUIRED_PHRASES = (
     "definitionReturnTarget",
 )
 GENERIC_AGENT_DEFINITIONS_REQUIRED_PHRASES = (
-    "Agentic Configuration",
-    "Choose The Context That Shapes The Code",
-    "Configuration Has Three Layers",
-    "Configuration File Locations",
-    "&lt;project-root&gt;/.&lt;harness-name&gt;/agents/&lt;agent-name&gt;.md",
-    "&lt;project-root&gt;/&lt;folder-path&gt;/AGENTS.md",
+    "Generic Agent Definitions Source",
     "The Portability Problem",
     "Skills Have A Portable File Standard",
     "Agents Do Not Have One Portable Runtime File",
@@ -325,6 +320,18 @@ GENERIC_AGENT_DEFINITIONS_REQUIRED_PHRASES = (
     "fixedBehavior.automaticDelegation",
     "design/generated/role-definitions.js",
 )
+AGENTIC_CONFIGURATION_REQUIRED_PHRASES = (
+    "Agentic Configuration",
+    "This page describes runtime use.",
+    "Provide The Relevant Context",
+    "Skills And Agent Definitions",
+    "Shared, Project, And Nested Configuration",
+    "Runtime Configuration File Locations",
+    "The Agent Skills format uses a text file named <code>SKILL.md</code>",
+    "Each agent operates with its own context and history.",
+    "&lt;project-root&gt;/.&lt;harness-name&gt;/agents/&lt;agent-name&gt;.md",
+    "&lt;project-root&gt;/&lt;folder-path&gt;/AGENTS.md",
+)
 DOCUMENT_INFORMATION_OWNERS = {
     "agentic-development-operating-model.html": (
         "Project Classification",
@@ -346,10 +353,13 @@ DOCUMENT_INFORMATION_OWNERS = {
         "Acme Ledger: Nested Tier Guidance",
         "Beacon Knowledge Base: Workflow Separation",
     ),
+    "agentic-configuration.html": (
+        "Provide The Relevant Context",
+        "Skills And Agent Definitions",
+        "Shared, Project, And Nested Configuration",
+        "Runtime Configuration File Locations",
+    ),
     "generic-agent-definitions-source.html": (
-        "Choose The Context That Shapes The Code",
-        "Configuration Has Three Layers",
-        "Configuration File Locations",
         "The Portability Problem",
         "From Logical Roles To Native Agents",
         "Logical Role Properties",
@@ -399,6 +409,7 @@ DOCUMENT_REQUIRED_LINKS = {
         "agent-role-skill-map.html",
         "agent-skill-specialization-strategy.html",
         "agent-skill-specialization-examples.html",
+        "agentic-configuration.html",
         "generic-agent-definitions-source.html",
         "orchestrated-development-lifecycle.html",
     ),
@@ -410,6 +421,7 @@ DOCUMENT_REQUIRED_LINKS = {
         "agent-role-skill-map.html",
         "agentic-development-operating-model.html",
         "orchestrated-development-lifecycle.html",
+        "agentic-configuration.html",
         "generic-agent-definitions-source.html",
     ),
     "agent-role-skill-map.html": (
@@ -425,7 +437,11 @@ DOCUMENT_REQUIRED_LINKS = {
     "generic-agent-definitions-source.html": (
         "agent-role-skill-map.html",
         "agent-skill-specialization-strategy.html",
+        "agentic-configuration.html",
         "../README.md#explicit-target-deployment",
+    ),
+    "agentic-configuration.html": (
+        "generic-agent-definitions-source.html",
     ),
 }
 DEVELOPMENT_USE_LOADOUTS = (
@@ -2442,6 +2458,7 @@ class BundleContentTests(unittest.TestCase):
             "selection",
             "catalog",
             "examples",
+            "configuration",
             "agent-definitions",
         ):
             with self.subTest(index_owner=owner):
@@ -2595,9 +2612,13 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, definition_text)
 
-        self.assertNotIn("PROJECT.md", definition_text)
-        self.assertNotIn("agents/*.toml", definition_text)
-        self.assertNotIn("agents/*.md", definition_text)
+        for runtime_heading in (
+            "Provide The Relevant Context",
+            "Skills And Agent Definitions",
+            "Runtime Configuration File Locations",
+        ):
+            with self.subTest(runtime_heading=runtime_heading):
+                self.assertNotIn(runtime_heading, definition_text)
 
         property_section = definition_text.split(
             '<h2 id="information-model-title">', maxsplit=1
@@ -2612,6 +2633,28 @@ class BundleContentTests(unittest.TestCase):
                     f"<code>fixedBehavior.{behavior_name}</code>",
                     definition_text,
                 )
+
+    def test_agentic_configuration_document_describes_runtime_files(self) -> None:
+        index_text = (REPOSITORY_ROOT / "index.html").read_text(encoding="utf-8")
+        configuration_text = (
+            REPOSITORY_ROOT / "design" / "agentic-configuration.html"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn("design/agentic-configuration.html", index_text)
+        for phrase in AGENTIC_CONFIGURATION_REQUIRED_PHRASES:
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, configuration_text)
+
+        self.assertNotIn("PROJECT.md", configuration_text)
+        self.assertNotIn("agents/*.toml", configuration_text)
+        self.assertNotIn("agents/*.md", configuration_text)
+        for source_heading in (
+            "The Portability Problem",
+            "From Logical Roles To Native Agents",
+            "Logical-To-Native Property Mapping",
+        ):
+            with self.subTest(source_heading=source_heading):
+                self.assertNotIn(source_heading, configuration_text)
 
     def test_reverse_engineering_uses_structural_code_discovery(self) -> None:
         skill_text = (

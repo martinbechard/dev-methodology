@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agentic Configuration</title>
+  <style>
+    :root {
+      --color-ink: #18212f;
+      --color-muted: #596579;
+      --color-page: #f6f8fb;
+      --color-panel: #ffffff;
+      --color-line: #d9e0ea;
+      --color-agent: #2563eb;
+      --color-skill: #b45309;
+      --color-project: #0f766e;
+      --color-soft-blue: #e8f0ff;
+      --color-soft-amber: #fff1d8;
+      --color-soft-green: #e4f7f4;
+      --shadow-panel: 0 12px 30px rgba(31, 41, 55, 0.08);
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.25rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --space-10: 2.5rem;
+      --radius: 0.5rem;
+      --content-max: 1160px;
+      --font-sm: 0.92rem;
+      --font-xs: 0.78rem;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--color-ink);
+      background:
+        linear-gradient(180deg, rgba(228, 247, 244, 0.88), rgba(246, 248, 251, 0) 360px),
+        var(--color-page);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.52;
+    }
+
+    main {
+      max-width: var(--content-max);
+      margin: 0 auto;
+      padding: var(--space-10) var(--space-6);
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      line-height: 1.15;
+    }
+
+    h1 {
+      max-width: 900px;
+      font-size: clamp(2rem, 4vw, 3.55rem);
+    }
+
+    h2 {
+      margin-bottom: var(--space-4);
+      font-size: clamp(1.35rem, 2vw, 2rem);
+    }
+
+    h3 {
+      font-size: 1rem;
+    }
+
+    p {
+      margin: 0;
+      color: var(--color-muted);
+    }
+
+    a {
+      color: var(--color-agent);
+      font-weight: 700;
+    }
+
+    code {
+      padding: 0.1rem 0.24rem;
+      border-radius: 0.25rem;
+      background: #edf1f6;
+      font-size: 0.9em;
+    }
+
+    .home-link {
+      display: inline-flex;
+      width: max-content;
+      margin-bottom: var(--space-6);
+      padding: 0.45rem 0.75rem;
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      background: var(--color-panel);
+      color: var(--color-muted);
+      font-size: var(--font-sm);
+      text-decoration: none;
+      box-shadow: var(--shadow-panel);
+    }
+
+    .hero {
+      display: grid;
+      gap: var(--space-5);
+      margin-bottom: var(--space-8);
+    }
+
+    .lede {
+      max-width: 920px;
+      font-size: 1.08rem;
+    }
+
+    .boundary {
+      max-width: 920px;
+      padding: var(--space-4) var(--space-5);
+      border-left: 0.35rem solid var(--color-project);
+      background: var(--color-soft-green);
+      color: var(--color-ink);
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: 0.35rem 0.6rem;
+      border: 1px solid var(--color-line);
+      border-radius: 999px;
+      background: var(--color-panel);
+      color: var(--color-muted);
+      font-size: var(--font-xs);
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .dot {
+      width: 0.65rem;
+      height: 0.65rem;
+      border-radius: 50%;
+      background: var(--color-agent);
+    }
+
+    .dot.skill {
+      background: var(--color-skill);
+    }
+
+    .dot.project {
+      background: var(--color-project);
+    }
+
+    .section {
+      margin-top: var(--space-8);
+    }
+
+    .section > .lede {
+      margin-bottom: var(--space-4);
+    }
+
+    .runtime-flow {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: var(--space-3);
+    }
+
+    .runtime-step {
+      min-height: 100%;
+      padding: var(--space-5);
+      border: 1px solid var(--color-line);
+      border-top: 0.35rem solid var(--step-color);
+      border-radius: var(--radius);
+      background: var(--color-panel);
+      box-shadow: var(--shadow-panel);
+    }
+
+    .runtime-step h3 {
+      margin-bottom: var(--space-3);
+    }
+
+    .runtime-step.project {
+      --step-color: var(--color-project);
+    }
+
+    .runtime-step.agent {
+      --step-color: var(--color-agent);
+    }
+
+    .runtime-step.skill {
+      --step-color: var(--color-skill);
+    }
+
+    .runtime-step.code {
+      --step-color: var(--color-ink);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--space-4);
+    }
+
+    .card {
+      padding: var(--space-5);
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      background: var(--color-panel);
+      box-shadow: var(--shadow-panel);
+    }
+
+    .card h3 {
+      margin-bottom: var(--space-3);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      background: var(--color-panel);
+      box-shadow: var(--shadow-panel);
+    }
+
+    th,
+    td {
+      padding: 0.85rem;
+      border-bottom: 1px solid var(--color-line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--color-soft-blue);
+      color: var(--color-ink);
+      font-size: var(--font-xs);
+      text-transform: uppercase;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .name {
+      color: var(--color-ink);
+      font-weight: 800;
+    }
+
+    .table-note {
+      margin-top: var(--space-3);
+      font-size: var(--font-sm);
+    }
+
+    @media (max-width: 860px) {
+      .runtime-flow {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 620px) {
+      main {
+        padding: var(--space-8) var(--space-4);
+      }
+
+      .runtime-flow {
+        grid-template-columns: 1fr;
+      }
+
+      table {
+        display: block;
+        overflow-x: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <a class="home-link" href="../index.html">Back to documentation index</a>
+
+    <section class="hero" aria-labelledby="page-title">
+      <h1 id="page-title">Agentic Configuration</h1>
+      <p class="lede">Agentic configuration is the set of runtime files an agentic coding tool loads to decide which instructions, roles, and skills apply while it generates code.</p>
+      <p class="boundary">This page describes runtime use. It does not describe the source model that creates agent files. The <a href="generic-agent-definitions-source.html">Generic Agent Definitions Source</a> page owns that source model and its conversion into harness-specific files.</p>
+      <div class="pill-row" aria-label="Document facets">
+        <span class="pill"><span class="dot project"></span>Project instructions</span>
+        <span class="pill"><span class="dot"></span>Agent roles</span>
+        <span class="pill"><span class="dot skill"></span>Selected skills</span>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="context-title">
+      <h2 id="context-title">Provide The Relevant Context</h2>
+      <p class="lede">To generate usable code, the agent needs the relevant context that will steer it toward a result acceptable to the project. The main problem is selecting that context from many possible units of information. Agentic configuration solves this by splitting the information into focused files and having the coding tool load only the skills and instructions needed for the current work.</p>
+      <div class="runtime-flow" aria-label="Runtime configuration flow">
+        <article class="runtime-step project">
+          <h3>Project Instructions</h3>
+          <p>Identify the guidance and skills that apply to the project or folder.</p>
+        </article>
+        <article class="runtime-step agent">
+          <h3>Agent Definition</h3>
+          <p>Establish the role, its directives, its skills, and the agents it can use.</p>
+        </article>
+        <article class="runtime-step skill">
+          <h3>Relevant Skills</h3>
+          <p>Supply the detailed instructions needed to perform the selected actions.</p>
+        </article>
+        <article class="runtime-step code">
+          <h3>Generated Code</h3>
+          <p>Reflects the project expectations contained in the loaded runtime context.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="definitions-title">
+      <h2 id="definitions-title">Skills And Agent Definitions</h2>
+      <div class="grid">
+        <article class="card">
+          <h3>Skills Describe Actions</h3>
+          <p>The Agent Skills format uses a text file named <code>SKILL.md</code> to describe how to perform actions. Agentic coding vendors have adopted this format as the most granular unit of reusable instruction. Keeping skills focused allows the tool to load the relevant action guidance without loading unrelated material.</p>
+        </article>
+        <article class="card">
+          <h3>Agent Definitions Describe Roles</h3>
+          <p>An agent definition specifies a role for the AI to perform. The configuration is primarily a description of the agent's purpose, the skills it should use, other directives it must follow, and the other agents it may use to complete the work.</p>
+        </article>
+        <article class="card">
+          <h3>Agent Hierarchies Partition Context</h3>
+          <p>Each agent operates with its own context and history. A parent agent can delegate focused work to other agents, creating a hierarchy that limits how much information and history any one agent works with at a time.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="scope-title">
+      <h2 id="scope-title">Shared, Project, And Nested Configuration</h2>
+      <p class="lede">Agent and skill definitions are usually shared among projects, but they can also be stored inside a project when the role or action is project-specific.</p>
+      <div class="grid">
+        <article class="card">
+          <h3>Root Project Instructions</h3>
+          <p><code>AGENTS.md</code> and <code>CLAUDE.md</code> at the project root provide project-specific instructions. They should usually act as routers that direct the coding tool to the skills appropriate for the project's content.</p>
+        </article>
+        <article class="card">
+          <h3>Nested Project Instructions</h3>
+          <p>Additional <code>AGENTS.md</code> and <code>CLAUDE.md</code> files can be placed in nested folders. These files provide more specialized instructions or skill routing for the content below that folder.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="locations-title">
+      <h2 id="locations-title">Runtime Configuration File Locations</h2>
+      <p class="lede">The placeholders identify the harness, project, folder, skill, and agent names directly. These paths do not use filename globs.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>File</th>
+            <th>Shared Location</th>
+            <th>Project Location</th>
+            <th>Runtime Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="name">Skill definition</span></td>
+            <td><code>~/.&lt;harness-name&gt;/skills/&lt;skill-name&gt;/SKILL.md</code></td>
+            <td><code>&lt;project-root&gt;/.&lt;harness-name&gt;/skills/&lt;skill-name&gt;/SKILL.md</code></td>
+            <td>Provides focused instructions for performing one kind of action.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Markdown agent definition</span></td>
+            <td><code>~/.&lt;harness-name&gt;/agents/&lt;agent-name&gt;.md</code></td>
+            <td><code>&lt;project-root&gt;/.&lt;harness-name&gt;/agents/&lt;agent-name&gt;.md</code></td>
+            <td>Defines a role for a harness that loads Markdown agent files.</td>
+          </tr>
+          <tr>
+            <td><span class="name">TOML agent definition</span></td>
+            <td><code>~/.&lt;harness-name&gt;/agents/&lt;agent-name&gt;.toml</code></td>
+            <td><code>&lt;project-root&gt;/.&lt;harness-name&gt;/agents/&lt;agent-name&gt;.toml</code></td>
+            <td>Defines a role for a harness that loads TOML agent files.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Root agent instructions</span></td>
+            <td>Not shared</td>
+            <td><code>&lt;project-root&gt;/AGENTS.md</code></td>
+            <td>Provides project-wide instructions and routes work to relevant skills.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Root Claude instructions</span></td>
+            <td>Not shared</td>
+            <td><code>&lt;project-root&gt;/CLAUDE.md</code></td>
+            <td>Provides the Claude-specific entry point for project-wide instructions.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Nested agent instructions</span></td>
+            <td>Not shared</td>
+            <td><code>&lt;project-root&gt;/&lt;folder-path&gt;/AGENTS.md</code></td>
+            <td>Provides specialized instructions and skill routing for one folder subtree.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Nested Claude instructions</span></td>
+            <td>Not shared</td>
+            <td><code>&lt;project-root&gt;/&lt;folder-path&gt;/CLAUDE.md</code></td>
+            <td>Provides the Claude-specific entry point for the nested folder instructions.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="table-note">Actual harness directory names vary. Shared locations make a definition available across projects; project locations travel with one repository.</p>
+    </section>
+  </main>
+</body>
+</html>
