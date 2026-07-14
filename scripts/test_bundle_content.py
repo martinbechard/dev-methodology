@@ -3189,6 +3189,39 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(evaluation_file=relative_path):
                 self.assertTrue((evaluation_root / relative_path).is_file())
 
+    def test_reconstruction_review_evaluation_has_project_python_routing(self) -> None:
+        project = yaml.safe_load(
+            (REPOSITORY_ROOT / PROJECT_ARTIFACT).read_text(encoding="utf-8")
+        )
+        path_pattern = "evals/reconstruction-review/**"
+        loadout = next(
+            row
+            for row in project["technology_skill_loadouts"]
+            if row["pathPattern"] == path_pattern
+        )
+        route = next(
+            row
+            for row in project["folder_routing"]
+            if row["pattern"] == path_pattern
+        )
+        agents_text = AGENTS_PATH.read_text(encoding="utf-8")
+
+        self.assertEqual(["python"], loadout["skills"])
+        self.assertEqual("READY", loadout["status"])
+        self.assertIn(
+            "Python source evidence: evals/reconstruction-review/run_checklist_eval.py",
+            loadout["sourceEvidence"][0]["evidence"],
+        )
+        self.assertEqual(["python"], route["required_skills"])
+        self.assertIn(
+            "python3 -m unittest scripts.test_reconstruction_review_eval",
+            route["verification_commands"],
+        )
+        self.assertIn(
+            "- evals/reconstruction-review/**: load python before acting.",
+            agents_text,
+        )
+
     def test_project_configuration_distinguishes_no_variant_from_missing_required_skill(self) -> None:
         detector_text = (SKILLS_ROOT / "detect-technology-skills" / "SKILL.md").read_text(
             encoding="utf-8"

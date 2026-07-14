@@ -4,7 +4,7 @@ schema_version: 1
 current_understanding:
   summary: "This repository maintains and distributes portable development-methodology skills, conceptual agent definitions, generated runtime adapters, design documentation, validation scripts, and evaluation fixtures."
   development_stage: "Active bundle maintenance with generated documentation, native agent adapters, regression tests, and explicit target deployment support."
-  setup_need: "Python maintenance code exists in several ownership scopes, including a FastAPI fixture, so ordinary agents need deterministic folder technology skillsets without rerunning detection."
+  setup_need: "Python maintenance code exists in several ownership scopes, including a FastAPI fixture and the reconstruction checklist-evaluation runner, so ordinary agents need deterministic folder technology skillsets without rerunning detection."
 
 authoritative_sources:
   readme_files:
@@ -29,6 +29,8 @@ authoritative_sources:
       evidence: "Contains a plain-Python evaluation fixture."
     - path: evals/projects/fastapi-orders
       evidence: "Contains a FastAPI evaluation fixture with its own owning manifest."
+    - path: evals/reconstruction-review
+      evidence: "Contains the Python checklist-review comparison runner and its sealed synthetic reconstruction corpus."
   test_roots:
     - path: scripts
       evidence: "Contains the repository regression tests run by Python unittest discovery."
@@ -91,6 +93,13 @@ project_taxonomy:
         - Python
         - FastAPI
       notes: "The plain fixture uses python; the independently owned FastAPI fixture also uses fastapi."
+    - name: "Reconstruction review evaluation"
+      paths:
+        - evals/reconstruction-review/**
+      stacks:
+        - Python
+        - JSONL
+      notes: "The offline runner validates sealed corpus inputs and compares separately captured candidate and reference checklist results without invoking a model."
     - name: "Documentation and generated views"
       paths:
         - README.md
@@ -280,6 +289,20 @@ technology_skill_loadouts:
     required_load_failure: BLOCKED
     local_rules_source: AGENTS.md
     notes: "Load both skills because fastapi explicitly composes with python."
+  - scope: "Reconstruction review evaluation"
+    pathPattern: evals/reconstruction-review/**
+    skills:
+      - python
+    sourceEvidence:
+      - skill: python
+        evidence:
+          - "Python source evidence: evals/reconstruction-review/run_checklist_eval.py"
+    missingRequiredSkills: []
+    exclusiveConflicts: []
+    status: READY
+    required_load_failure: BLOCKED
+    local_rules_source: AGENTS.md
+    notes: "The detector selected python from the runner source. The corpus, checklist, adjudication, and fixture JSON remain data inputs rather than additional technology variants."
 
 folder_routing:
   - pattern: scripts/**
@@ -345,6 +368,18 @@ folder_routing:
       - "python3 -m compileall -q evals/projects/fastapi-orders/app"
     nested_agents_file_needed: false
     nested_agents_file_path: "Not applicable"
+  - pattern: evals/reconstruction-review/**
+    tier_or_workflow: "Reconstruction review evaluation"
+    primary_role: dev-coder
+    required_skills:
+      - python
+    source_evidence:
+      - path: evals/reconstruction-review/run_checklist_eval.py
+        fact: "The subtree contains a Python runner that validates and compares checklist invocation evidence."
+    verification_commands:
+      - "python3 -m unittest scripts.test_reconstruction_review_eval"
+    nested_agents_file_needed: false
+    nested_agents_file_path: "Not applicable"
 
 nested_agents_files:
   - path: "Not applicable"
@@ -385,12 +420,13 @@ validation_plan:
     - command: "git diff --check"
       proves: "Tracked changes contain no whitespace errors."
   technology_detection_checks:
-    - "Run setup-time detection for scripts, skills/project-wiki/scripts, skills/detect-technology-skills/scripts, evals/projects/python-inventory, and evals/projects/fastapi-orders."
+    - "Run setup-time detection for scripts, skills/project-wiki/scripts, skills/detect-technology-skills/scripts, evals/projects/python-inventory, evals/projects/fastapi-orders, and evals/reconstruction-review."
     - "Confirm every detection definition names its selected skill and uses a version 2 anyOf activation root."
     - "Confirm allOf clauses require every predicate and sourceImport ignores Python comments and string literals."
     - "Confirm leading globstar paths match root-level folders and fileMatch binds path and extension evidence to one code artifact."
     - "Reject fastapi for scripts because its evidence is detector-test content rather than an owning FastAPI runtime."
     - "Confirm skills/project-wiki/scripts produces only python because cli.py is Python rather than a Node-owned JavaScript or TypeScript CLI path."
+    - "Confirm evals/reconstruction-review produces only python because the executable runner is Python and the remaining corpus files are JSON and Markdown inputs."
     - "Confirm python and fastapi are installed and every accepted skillset retains source evidence."
     - "Confirm AGENTS.md requires matching folder skills before acting and does not tell ordinary agents to rerun detection."
   privacy_checks:

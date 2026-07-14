@@ -38,6 +38,8 @@ Before acting on files under a matching folder, every agent must read each liste
 
 Folder skillsets:
 
+When configured folder patterns overlap, the most-specific matching pattern wins.
+
 - scripts/**: load python before acting.
   - python evidence: Python source evidence: scripts/build-agent-skill-hierarchy.py and sibling .py files
 - skills/project-wiki/scripts/**: load python before acting.
@@ -49,6 +51,8 @@ Folder skillsets:
 - evals/projects/fastapi-orders/**: load fastapi, python before acting.
   - fastapi evidence: Owning manifest dependency: evals/projects/fastapi-orders/pyproject.toml declares fastapi; Framework source evidence: evals/projects/fastapi-orders/app/main.py imports FastAPI and declares an application route
   - python evidence: Python source evidence: evals/projects/fastapi-orders/app/main.py
+- evals/reconstruction-review/**: load python before acting.
+  - python evidence: Python source evidence: evals/reconstruction-review/run_checklist_eval.py
 
 ## Skill Catalog Maintenance
 
