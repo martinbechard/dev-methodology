@@ -96,7 +96,7 @@
         {
           "name": "project-bootstrapper",
           "output": "generated/adapters/claude/agents/project-bootstrapper.md",
-          "sha256": "470180474bb150ed21f1655443dbd9df1f1e0527db06573c8b34a935cd0ca1dc",
+          "sha256": "c9aa6a88b081ec3fc7f1a5b817c385079c6c8300e946217c9b8db8147bbec63d",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
@@ -259,7 +259,7 @@
         {
           "name": "project-bootstrapper",
           "output": "generated/adapters/codex/agents/project-bootstrapper.toml",
-          "sha256": "a16db122fe21b8c2c9bb39d596fab8fe6498cddf122d397d4e0a30e6df0c3751",
+          "sha256": "9fccb073add59b021162f1f0d270359d5fe57e2af50a31e73e3a9c7e6114230b",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {

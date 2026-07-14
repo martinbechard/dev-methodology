@@ -1364,7 +1364,6 @@ class BundleContentTests(unittest.TestCase):
         self.assertEqual(
             {
                 "objective",
-                "boundaries",
                 "decisions",
                 "workflow",
                 "delegation",
@@ -1376,16 +1375,25 @@ class BundleContentTests(unittest.TestCase):
         )
         self.assertIn("## Objective", role.instructions)
         self.assertIn("## Failure Handling", role.instructions)
-        self.assertIn("When project-root PROJECT.yaml is absent", role.instructions)
+        self.assertNotIn("## Boundaries", role.instructions)
+        self.assertIn("If PROJECT.yaml does not exist", role.instructions)
         self.assertIn(
-            "without invoking project-configurator or rerunning technology detection",
+            "Do not run technology detection or project-configurator again",
             role.instructions,
         )
-        self.assertIn("When PROJECT.yaml exists but fails validation", role.instructions)
         self.assertIn(
-            "only when the user explicitly requests reconfiguration",
+            "If PROJECT.yaml fails validation and the user has asked for reconfiguration",
             role.instructions,
         )
+        self.assertIn(
+            "ask project-configurator to repair it and run validation again",
+            role.instructions,
+        )
+        self.assertIn(
+            "If PROJECT.yaml fails validation and the user has not asked for reconfiguration",
+            role.instructions,
+        )
+        self.assertIn("Run the installer only when the user has asked", role.instructions)
         for delegated_role in (
             "project-configurator",
             "dev-documentation-writer",
@@ -1411,26 +1419,33 @@ class BundleContentTests(unittest.TestCase):
             ),
             role.agent_dependencies,
         )
-        self.assertIn("Stop after two unsuccessful correction attempts", role.instructions)
-        self.assertIn("Report READY only when", role.instructions)
-        self.assertIn("Report BLOCKED only when", role.instructions)
+        self.assertIn("After two failed correction attempts", role.instructions)
+        self.assertIn("Report READY only after", role.instructions)
+        self.assertIn("Report BLOCKED only after two failed correction attempts", role.instructions)
+        self.assertIn("existing code or product problem", role.instructions)
+        self.assertIn("PROJECT.yaml or AGENTS.md problems", role.instructions)
+        self.assertIn("non-wiki document problems", role.instructions)
+        self.assertIn("wiki setup problems", role.instructions)
+        self.assertIn("ordinary wiki page problems", role.instructions)
         self.assertEqual(
             (
-                "overall status",
-                "configured project routing",
-                "accepted documentation set",
-                "integrated verification",
-                "unresolved decisions",
+                "status",
+                "project setup files",
+                "documentation",
+                "checks",
+                "remaining questions",
             ),
             role.output_contract,
         )
-        self.assertEqual(3, len(role.examples))
+        self.assertEqual(4, len(role.examples))
         self.assertTrue(role.examples[0]["plausibleResponse"].startswith("STATUS: READY"))
         self.assertTrue(role.examples[1]["plausibleResponse"].startswith("STATUS: READY"))
         self.assertIn("STATUS: BLOCKED", role.examples[2]["plausibleResponse"])
+        self.assertTrue(role.examples[3]["plausibleResponse"].startswith("STATUS: READY"))
         self.assertIn("valid existing routing", role.examples[0]["purpose"])
         self.assertIn("no project routing", role.examples[1]["purpose"])
         self.assertIn("invalid", role.examples[2]["purpose"])
+        self.assertIn("authorized", role.examples[3]["purpose"])
         for example in role.examples:
             self.assertTrue(example["runtimeInvocations"]["codex"].startswith("$project-bootstrapper "))
             self.assertTrue(

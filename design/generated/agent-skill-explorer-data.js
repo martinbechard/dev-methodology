@@ -594,11 +594,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "documentation-reverse-engineer"
     },
     {
-      "kind": "fixed",
-      "role": "project-bootstrapper",
-      "skill": "structured-design"
-    },
-    {
       "condition": "when the target lacks the documentation and routing structure needed for agents to load and follow the configuration consistently",
       "kind": "conditional",
       "role": "project-configurator",
@@ -1133,14 +1128,13 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "organise-project-files": "when the requested bootstrap creates a new project file or directory whose path is not already fixed by the bootstrap contract."
       },
       "declaredCases": [],
-      "description": "Completes project setup from one request by reusing or creating project routing, deriving appropriate documentation, independently reviewing every documentation artifact, and verifying the finished setup.",
+      "description": "Sets up a project for later development work. It creates or reuses the project configuration, produces the required documentation, sends each document for independent review, and runs the project checks.",
       "dynamicFolderSkills": false,
       "fixedSkills": [
         "agent-claim",
         "documentation-bootstrap",
         "development-methodology",
-        "documentation-reverse-engineer",
-        "structured-design"
+        "documentation-reverse-engineer"
       ],
       "id": "project-bootstrapper",
       "label": "project-bootstrapper",

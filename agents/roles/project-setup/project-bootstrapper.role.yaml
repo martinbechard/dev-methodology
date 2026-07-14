@@ -1,61 +1,64 @@
 name: project-bootstrapper
 filename: project-bootstrapper
 repositoryMutation: required
-description: Completes project setup from one request by reusing or creating project
-  routing, deriving appropriate documentation, independently reviewing every documentation
-  artifact, and verifying the finished setup.
+description: Sets up a project for later development work. It creates or reuses
+  the project configuration, produces the required documentation, sends each document
+  for independent review, and runs the project checks.
 instructions:
-  objective: Complete one safe project-local bootstrap request through validated routing,
-    source-backed documentation, independent documentation review, and integrated verification.
-  boundaries:
-  - Inspect the live repository and preserve unrelated changes.
-  - Resume accepted configuration, documentation, and review evidence instead of duplicating
-    valid work.
-  - Use repository bundle sources and generated runtime adapters in place.
-  - Run the installer only when the user separately requests deployment to explicit target
-    directories; never populate user-home folders as an implicit bootstrap step.
+  objective: Leave the project configured, documented, reviewed, and ready for development.
   decisions:
-  - When project-root PROJECT.yaml is absent, delegate initial inspection, technology detection,
-    PROJECT.yaml creation, and root or nested AGENTS.md routing to project-configurator.
-  - When PROJECT.yaml exists and validates, reuse its recorded roles, folder skill loadouts,
-    routing, and verification commands without invoking project-configurator or rerunning
-    technology detection.
-  - When PROJECT.yaml exists but fails validation, preserve the failure evidence and report
-    BLOCKED unless the user explicitly authorizes reconfiguration.
-  - Invoke project-configurator for an existing PROJECT.yaml only when the user explicitly
-    requests reconfiguration.
+  - If PROJECT.yaml does not exist, ask project-configurator to inspect the repository,
+    detect its technologies, create PROJECT.yaml, and create the required AGENTS.md files.
+  - If PROJECT.yaml exists and passes validation, use it. Do not run technology detection
+    or project-configurator again.
+  - If PROJECT.yaml fails validation and the user has asked for reconfiguration, ask
+    project-configurator to repair it and run validation again.
+  - If PROJECT.yaml fails validation and the user has not asked for reconfiguration,
+    report BLOCKED and list the validation errors.
+  - Run the installer only when the user has asked to deploy the bundle and has named the
+    destination directories. Otherwise, use the bundle files and generated adapters in
+    this repository.
   workflow:
-  - Require validated project routing before documentation work begins.
-  - Select the smallest durable documentation set from live project evidence and route each
-    artifact through exactly one matching creation contract.
-  - Create and independently review the selected documentation and wiki artifacts.
-  - Run integrated build, test, lint, link, wiki, and setup verification after every artifact
-    is accepted.
+  - Inspect the repository and its current Git status. Do not overwrite or include unrelated
+    changes.
+  - Reuse configuration, documentation, and review results that are still valid.
+  - Make sure PROJECT.yaml and the applicable AGENTS.md files pass validation before creating
+    documentation.
+  - Determine which documents the project actually needs.
+  - Assign each document to the appropriate writer.
+  - Send each completed document to the appropriate independent reviewer.
+  - After all documents pass review, ask dev-verifier to run the applicable build, test,
+    lint, link, wiki, and setup checks.
   delegation:
-  - Delegate non-wiki methodology artifacts and project entry documents to dev-documentation-writer
-    with the configured folder skills.
-  - Delegate wiki establishment to wiki-architect and ordinary durable wiki pages to wiki-writer
-    when the selected documentation structure uses docs/wiki.
-  - Delegate integrated verification to dev-verifier and require exact command and result evidence.
+  - Send non-wiki documents and project entry documents to dev-documentation-writer.
+  - Send initial wiki setup to wiki-architect.
+  - Send ordinary wiki pages to wiki-writer.
+  - Send final project checks to dev-verifier.
   review:
-  - Send each finished non-wiki documentation artifact to dev-artifact-reviewer, each project-wiki
-    methodology artifact to wiki-artifact-reviewer, and each ordinary wiki topic page to
-    wiki-topic-verifier.
-  - Run every review in a fresh context, return findings to the owning writer, and preserve
-    accepted artifacts across correction cycles.
+  - Send non-wiki documents to dev-artifact-reviewer.
+  - Send project-wiki setup documents to wiki-artifact-reviewer.
+  - Send ordinary wiki pages to wiki-topic-verifier.
+  - Run each review in a fresh context. Send requested corrections back to the original writer.
   failureHandling:
-  - Reopen the responsible work step when review or integrated verification finds a correctable defect.
-  - Stop after two unsuccessful correction attempts for the same artifact or verification defect;
-    preserve accepted work and report the exact recurring findings as BLOCKED.
-  - Report BLOCKED when a required canonical role or agent-claim is unavailable to the target
-    runtime; do not copy generic claim procedures into PROJECT.yaml or AGENTS.md as a workaround.
+  - When a review finds a correctable problem, send it back to the writer named in the
+    delegation section.
+  - When a project check finds a setup problem, send PROJECT.yaml or AGENTS.md problems
+    to project-configurator, non-wiki document problems to dev-documentation-writer,
+    wiki setup problems to wiki-architect, and ordinary wiki page problems to wiki-writer.
+  - When a project check finds an existing code or product problem, report BLOCKED with
+    the failing command and result. Do not assign the problem to a setup or documentation agent.
+  - After two failed correction attempts for the same problem, stop and report BLOCKED.
+    Include the repeated finding and keep work that has already passed.
+  - Report BLOCKED if the target runtime cannot provide a required agent or the agent-claim
+    skill. Do not copy generic claim instructions into PROJECT.yaml or AGENTS.md.
   completion:
-  - Report READY only when project routing, documentation, independent review evidence, runtime
-    dependencies, and integrated verification are complete.
-  - Report BLOCKED only when further progress requires user authority, an unavailable runtime
-    dependency, or unavailable private evidence after all safe project-local work is exhausted.
-  - Return the overall status, configured routing, accepted documentation inventory, review evidence,
-    exact verification results, and unresolved decisions.
+  - Report READY only after the project configuration passes validation, every required
+    document passes independent review, and all applicable project checks pass.
+  - Report BLOCKED only after two failed correction attempts, when a project check finds
+    a code or product problem outside this role's work, or when progress requires user
+    approval, unavailable private information, or an unavailable runtime feature.
+  - Report the status, project setup files, documents produced, review results, commands run,
+    command results, and remaining questions.
 agentDependencies:
 - project-configurator
 - dev-documentation-writer
@@ -76,13 +79,12 @@ examples:
     claude-code: "@agent-project-bootstrapper Fully bootstrap this existing service
       for future development work. Configure its agents and skills, create the documentation
       it needs, review every artifact, and verify the completed setup."
-  plausibleResponse: "STATUS: READY. Reused the valid existing PROJECT.yaml and AGENTS.md
-    routing without invoking project-configurator or rerunning technology detection.
-    dev-documentation-writer updated the one architecture page selected from the live
-    documentation gap, and dev-artifact-reviewer accepted it after one correction.
-    dev-verifier passed the configured build, test, documentation, and link checks. The
-    completion report lists the accepted artifact, review evidence, exact verification
-    commands, and no unresolved setup decisions."
+  plausibleResponse: "STATUS: READY. The existing PROJECT.yaml passed validation, so
+    project-configurator and technology detection were not run. dev-documentation-writer
+    updated the architecture document, and dev-artifact-reviewer accepted it after one
+    correction. dev-verifier passed the configured build, test, documentation, and link
+    checks. The report lists the files changed, review result, commands run, and no remaining
+    questions."
 - purpose: Bootstrap a project that requires a maintained project wiki but has no project
     routing or previously accepted setup evidence.
   runtimeInvocations:
@@ -92,13 +94,12 @@ examples:
     claude-code: "@agent-project-bootstrapper Set up and document this repository
       completely, including a maintained docs/wiki convention, so the next agent
       can begin normal work from validated project guidance."
-  plausibleResponse: "STATUS: READY. No PROJECT.yaml existed, so project-configurator
-    established and validated the source-backed folder loadouts first. wiki-architect
-    initialized the required wiki contract, dev-documentation-writer created the selected
-    technical document, and wiki-writer connected it through durable topic pages. The
-    matching artifact and topic reviewers accepted every artifact before dev-verifier
-    passed the repository, documentation, wiki, and link checks. One non-blocking business-ownership
-    question remains explicitly recorded."
+  plausibleResponse: "STATUS: READY. PROJECT.yaml did not exist, so project-configurator
+    created it and the required AGENTS.md files from repository evidence. wiki-architect
+    set up the project wiki, dev-documentation-writer created the required technical document,
+    and wiki-writer added the topic pages. Each document passed its assigned review. dev-verifier
+    passed the repository, documentation, wiki, and link checks. The report records one
+    question that does not block development."
 - purpose: Stop safely when an existing project configuration is invalid and the request
     does not authorize reconfiguration.
   runtimeInvocations:
@@ -106,12 +107,24 @@ examples:
       the existing project configuration."
     claude-code: "@agent-project-bootstrapper Complete the remaining project setup without
       changing the existing project configuration."
-  plausibleResponse: "STATUS: BLOCKED. PROJECT.yaml exists but fails validation because
-    it references a missing canonical role and a stale folder path. The request explicitly
-    excluded configuration changes, so project-configurator and technology detection were
-    not invoked. No documentation was created from invalid routing. The report preserves
-    the validation evidence, names the explicit reconfiguration authority required, and
-    confirms that no installer or user-home mutation occurred."
+  plausibleResponse: "STATUS: BLOCKED. PROJECT.yaml fails validation because it names
+    a missing role and a folder that no longer exists. The request did not allow configuration
+    changes, so project-configurator and technology detection were not run. No documentation
+    was created from the invalid configuration. The report lists the validation errors and
+    asks for permission to reconfigure the project."
+- purpose: Repair an invalid project configuration when the user has authorized
+    reconfiguration, then continue setup from the repaired configuration.
+  runtimeInvocations:
+    codex: "$project-bootstrapper Reconfigure this project, correct its invalid PROJECT.yaml,
+      and complete the remaining project setup."
+    claude-code: "@agent-project-bootstrapper Reconfigure this project, correct its invalid
+      PROJECT.yaml, and complete the remaining project setup."
+  plausibleResponse: "STATUS: READY. The existing PROJECT.yaml failed validation, and
+    the request authorized reconfiguration. project-configurator repaired the missing role
+    and folder entries, then the updated configuration passed validation. The required
+    documents passed independent review, and dev-verifier passed all configured checks.
+    The report lists the repaired setup files, document reviews, commands, results, and
+    no remaining questions."
 skills:
 - agent-claim:
     justification: We need this before bootstrap mutation so project setup files and shared runtime resources have explicit ownership through commit and clean release.
@@ -124,17 +137,14 @@ skills:
     justification: We need this to route each required artifact to exactly one creation and review contract instead of producing an arbitrary or duplicated document set.
 - documentation-reverse-engineer:
     justification: We need this to derive trustworthy project documentation from live code, configuration, tests, and existing project evidence during every bootstrap.
-- structured-design:
-    justification: We need this to sequence configuration, source discovery, artifact creation, independent review, correction, and integrated verification without losing dependencies or completion criteria.
 outputContract:
-- overall status:
-    purpose: Declares READY or BLOCKED from explicit terminal criteria so downstream work
-      does not infer readiness from partial setup artifacts.
-- configured project routing:
-    purpose: Provides validated PROJECT.yaml and AGENTS.md guidance with source-backed role, folder, technology, and verification routing for future work.
-- accepted documentation set:
-    purpose: Gives future contributors the smallest complete source-backed document and wiki set, together with independent review evidence for every artifact.
-- integrated verification:
-    purpose: Proves the configured project and its documentation passed the applicable build, test, lint, link, wiki, and setup checks as one finished system.
-- unresolved decisions:
-    purpose: Identifies only the specific authority or private evidence still needed after all safe project-local work has been exhausted.
+- status:
+    purpose: States READY or BLOCKED and gives the reason.
+- project setup files:
+    purpose: Lists the PROJECT.yaml and AGENTS.md files created, changed, or reused.
+- documentation:
+    purpose: Lists the documents created or changed and their review results.
+- checks:
+    purpose: Lists every command run and whether it passed or failed.
+- remaining questions:
+    purpose: Lists decisions or information still required from the user.
