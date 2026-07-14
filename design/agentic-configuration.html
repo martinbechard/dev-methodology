@@ -376,7 +376,7 @@
               <li class="nested-layer">
                 <div class="nested-copy">
                   <h4>Skill Definition Files</h4>
-                  <p>The Agent Skills format uses a text file named <code>SKILL.md</code> to describe how to perform actions. It is adopted by all vendors and is the most granular unit of description.</p>
+                  <p>The Agent Skills format uses a text file named <code>SKILL.md</code> to describe how to perform actions. It is adopted by all vendors and is the most granular unit of description. Adapter-owned skill definitions use the same <code>SKILL.md</code> format but are installed only for their matching harness.</p>
                 </div>
               </li>
               <li class="nested-layer">
@@ -426,6 +426,7 @@
     <section class="section" aria-labelledby="locations-title">
       <h2 id="locations-title">Runtime Configuration File Locations</h2>
       <p class="lede">Each group starts with the context purpose, then shows the runtime locations and rules for each harness. Every harness uses the same portable Agent Skills package: a skill directory containing <code>SKILL.md</code> with YAML frontmatter and Markdown instructions. Skill locations and precedence vary; the <code>SKILL.md</code> format does not.</p>
+      <p class="table-note">A Codex deployment includes the adapter-owned <code>codex-harness-directives</code> skill in addition to shared skills. Codex-generated agents that may mutate the repository enable it and instruct the agent to load it before acting. Read-only Codex agents and non-Codex adapters do not receive it. The <a href="generic-agent-definitions-source.html">source-model page</a> owns the generation rule.</p>
       <div class="table-controls">
         <div class="filter-field">
           <label for="harness-filter">Show harness</label>
@@ -457,7 +458,7 @@
             <td><a href="https://developers.openai.com/codex/skills">Codex</a></td>
             <td><code>~/.agents/skills/&lt;skill-name&gt;/SKILL.md</code></td>
             <td><code>&lt;project-root&gt;/.agents/skills/&lt;skill-name&gt;/SKILL.md</code></td>
-            <td>Codex scans <code>.agents/skills</code> from the working directory to the repository root. Skills with the same name remain separate rather than merging.</td>
+            <td>Codex scans <code>.agents/skills</code> from the working directory to the repository root. Skills with the same name remain separate rather than merging. An explicit bundle deployment combines shared skills with Codex-owned adapter skills.</td>
           </tr>
           <tr data-harness-row data-harness="claude">
             <td><a href="https://code.claude.com/docs/en/slash-commands">Claude Code</a></td>
@@ -492,7 +493,7 @@
             <td><a href="https://learn.chatgpt.com/docs/agent-configuration/subagents?surface=app">Codex</a></td>
             <td><code>~/.codex/agents/&lt;agent-name&gt;.toml</code></td>
             <td><code>&lt;project-root&gt;/.codex/agents/&lt;agent-name&gt;.toml</code></td>
-            <td>One standalone TOML file per agent. Harness-specific fields include the name, description, developer instructions, model, reasoning, sandbox, and optional MCP configuration.</td>
+            <td>One standalone TOML file per agent. Harness-specific fields include the name, description, developer instructions, model, reasoning, sandbox, optional MCP configuration, and <code>[[skills.config]]</code> availability entries.</td>
           </tr>
           <tr data-harness-row data-harness="claude">
             <td><a href="https://code.claude.com/docs/en/sub-agents">Claude Code</a></td>

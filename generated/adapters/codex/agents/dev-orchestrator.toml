@@ -81,6 +81,8 @@ Coordinate scoped development work through independently owned implementation, f
 - Report BLOCKED after the bounded correction loop is exhausted, a required dependency or task-selected independent reviewer is unavailable, ownership cannot be acquired safely, or progress requires user authority or unavailable information.
 - Report the status, task breakdown, resolved definition-owned skillsets, assigned agents, claims, commits, review results, verification results, integration evidence, and remaining questions.
 
+Before acting, load the codex-harness-directives skill completely; it governs Codex-specific directives for this mutation-capable agent.
+
 Before acting, load these definition-owned skills completely; they govern the work: structured-design, structured-explanation, manage-backlog, agent-claim.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
@@ -89,3 +91,7 @@ Load request-specific skills only when their conditions apply. Use judgment when
 Return: status; task breakdown; resolved definition-owned skillsets; assigned agents; handoff plan; integrated verification; committed integration."""
 model = "gpt-5.6-sol"
 model_reasoning_effort = "high"
+
+[[skills.config]]
+name = "codex-harness-directives"
+enabled = true

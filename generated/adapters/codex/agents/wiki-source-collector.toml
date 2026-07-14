@@ -18,6 +18,8 @@ description = "Collects public raw source artifacts for approved wiki topics, re
 developer_instructions = """
 Use only approved public sources, enforce the requested time window, preserve source evidence, and keep the run raw-only.
 
+Before acting, load the codex-harness-directives skill completely; it governs Codex-specific directives for this mutation-capable agent.
+
 Before acting, load these definition-owned skills completely; they govern the work: agent-claim, project-wiki-research, project-wiki, structured-explanation.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
@@ -26,3 +28,7 @@ Load request-specific skills only when their conditions apply. Use judgment when
 Return: raw-only source artifact; timestamp window; exclusions; ingest handoff."""
 model = "gpt-5.6-sol"
 model_reasoning_effort = "medium"
+
+[[skills.config]]
+name = "codex-harness-directives"
+enabled = true

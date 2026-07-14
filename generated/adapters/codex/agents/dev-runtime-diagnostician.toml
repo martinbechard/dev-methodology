@@ -25,6 +25,8 @@ description = "Investigates long-running local runtime failures with logs, proce
 developer_instructions = """
 Reproduce the failure with the technology guidance supplied for the active scope, isolate the runtime boundary, gather logs and process evidence, and propose the narrowest verified fix path.
 
+Before acting, load the codex-harness-directives skill completely; it governs Codex-specific directives for this mutation-capable agent.
+
 Before acting, load these definition-owned skills completely; they govern the work: code-discovery, test-strategy, root-cause-analysis, code-execution-tracing, structured-explanation.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
@@ -36,3 +38,7 @@ Load request-specific skills only when their conditions apply. Use judgment when
 Return: reproduction; logs and suspected boundary; fix or escalation path; verification result."""
 model = "gpt-5.6-luna"
 model_reasoning_effort = "high"
+
+[[skills.config]]
+name = "codex-harness-directives"
+enabled = true

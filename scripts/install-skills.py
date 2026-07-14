@@ -46,6 +46,7 @@ MANIFEST_SKILL_ARTIFACT_TYPE = "skill"
 MANIFEST_AGENT_ARTIFACT_TYPE = "agent"
 DEFAULT_AGENTS_FOLDER_NAME = "agents"
 GENERATED_ADAPTERS_RELATIVE_PATH = Path("generated") / "adapters"
+ADAPTERS_RELATIVE_PATH = Path("adapters")
 AGENT_FILE_EXTENSIONS = {
     CODEX_ADAPTER_NAME: ".toml",
     GEMINI_ADAPTER_NAME: ".md",
@@ -94,6 +95,12 @@ def parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
         type=Path,
         default=default_source(),
         help="Skill bundle source directory. Defaults to this repository's skills folder.",
+    )
+    parser.add_argument(
+        "--adapter-skills-source",
+        type=Path,
+        default=None,
+        help="Optional harness-specific skill source. The repository default is adapters/<adapter>/skills.",
     )
     parser.add_argument(
         "--dest",
@@ -152,6 +159,15 @@ def default_agents_source(adapter_name: str) -> Path:
         / GENERATED_ADAPTERS_RELATIVE_PATH
         / adapter_name
         / DEFAULT_AGENTS_FOLDER_NAME
+    )
+
+
+def default_adapter_skills_source(adapter_name: str) -> Path:
+    return (
+        Path(__file__).resolve().parents[1]
+        / ADAPTERS_RELATIVE_PATH
+        / adapter_name
+        / DEFAULT_SKILLS_FOLDER_NAME
     )
 
 
@@ -467,6 +483,7 @@ def copy_skill(
 
 def install_skills(
     source: Path,
+    adapter_skills_source: Optional[Path],
     destination: Path,
     replace: bool,
     dry_run: bool,
@@ -475,7 +492,23 @@ def install_skills(
     replace_customized: bool,
 ) -> list[str]:
     resolved_source = source.expanduser().resolve()
-    source_skills = iter_skill_directories(resolved_source)
+    skill_sources = [resolved_source]
+    if adapter_skills_source is not None:
+        skill_sources.append(adapter_skills_source.expanduser().resolve())
+    source_skills = [
+        source_skill
+        for skill_source in skill_sources
+        for source_skill in iter_skill_directories(skill_source)
+    ]
+    source_skill_names = [source_skill.name for source_skill in source_skills]
+    duplicate_names = sorted(
+        name for name in set(source_skill_names) if source_skill_names.count(name) > 1
+    )
+    if duplicate_names:
+        raise ValueError(
+            "generic and adapter skill sources contain duplicate names: "
+            + ", ".join(duplicate_names)
+        )
     current_skill_names = {source_skill.name for source_skill in source_skills}
     destination = destination.expanduser()
     previous_manifest = load_install_manifest(destination)
@@ -691,8 +724,17 @@ def main(argv: Sequence[str] | None = None) -> int:
                     )
                 )
         else:
+            adapter_skills_source = args.adapter_skills_source
+            if (
+                adapter_skills_source is None
+                and args.source.expanduser().resolve() == default_source().resolve()
+            ):
+                default_adapter_source = default_adapter_skills_source(args.adapter)
+                if default_adapter_source.is_dir():
+                    adapter_skills_source = default_adapter_source
             results = install_skills(
                 args.source,
+                adapter_skills_source,
                 destination,
                 args.replace,
                 args.dry_run,

@@ -210,6 +210,101 @@ class InstallSkillsTests(unittest.TestCase):
             self.assertEqual(exit_code, installer.SUCCESS_EXIT_CODE)
             self.assertTrue((destination / "alpha" / "SKILL.md").is_file())
 
+    def test_codex_install_merges_only_its_harness_specific_skills(self) -> None:
+        installer = load_installer()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            source = root / "source"
+            adapter_source = root / "codex-skills"
+            destination = root / "dest"
+            self.create_skill(source, "alpha")
+            self.create_skill(
+                adapter_source,
+                "codex-harness-directives",
+                "---\nname: codex-harness-directives\ndescription: Codex directives.\n---\n",
+            )
+
+            exit_code = installer.main(
+                [
+                    "--adapter",
+                    "codex",
+                    "--source",
+                    str(source),
+                    "--adapter-skills-source",
+                    str(adapter_source),
+                    "--dest",
+                    str(destination),
+                ]
+            )
+
+            self.assertEqual(installer.SUCCESS_EXIT_CODE, exit_code)
+            self.assertEqual(
+                ["alpha", "codex-harness-directives"],
+                self.read_manifest_skill_names(destination),
+            )
+            self.assertTrue((destination / "codex-harness-directives" / "SKILL.md").is_file())
+
+    def test_default_codex_install_discovers_repository_adapter_skill(self) -> None:
+        installer = load_installer()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            destination = Path(temp_dir) / "dest"
+            output = io.StringIO()
+            with redirect_stdout(output):
+                exit_code = installer.main(
+                    ["--adapter", "codex", "--dest", str(destination), "--dry-run"]
+                )
+
+            self.assertEqual(installer.SUCCESS_EXIT_CODE, exit_code)
+            self.assertIn("would install codex-harness-directives", output.getvalue())
+            self.assertFalse(destination.exists())
+
+    def test_non_codex_default_installs_exclude_codex_harness_skill(self) -> None:
+        installer = load_installer()
+
+        for adapter_name in ("claude", "gemini", "junie"):
+            with self.subTest(adapter=adapter_name), tempfile.TemporaryDirectory() as temp_dir:
+                destination = Path(temp_dir) / "dest"
+                output = io.StringIO()
+                with redirect_stdout(output):
+                    exit_code = installer.main(
+                        ["--adapter", adapter_name, "--dest", str(destination), "--dry-run"]
+                    )
+
+                self.assertEqual(installer.SUCCESS_EXIT_CODE, exit_code)
+                self.assertNotIn("codex-harness-directives", output.getvalue())
+                self.assertFalse(destination.exists())
+
+    def test_duplicate_generic_and_adapter_skill_names_fail_closed(self) -> None:
+        installer = load_installer()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            source = root / "source"
+            adapter_source = root / "adapter-source"
+            destination = root / "dest"
+            self.create_skill(source, "alpha")
+            self.create_skill(adapter_source, "alpha")
+            errors = io.StringIO()
+            with redirect_stderr(errors):
+                exit_code = installer.main(
+                    [
+                        "--adapter",
+                        "codex",
+                        "--source",
+                        str(source),
+                        "--adapter-skills-source",
+                        str(adapter_source),
+                        "--dest",
+                        str(destination),
+                    ]
+                )
+
+            self.assertEqual(installer.ERROR_EXIT_CODE, exit_code)
+            self.assertIn("duplicate names: alpha", errors.getvalue())
+            self.assertFalse(destination.exists())
+
     def test_replace_existing_symlink_skill(self) -> None:
         installer = load_installer()
 

@@ -35,6 +35,10 @@ ADAPTER_MODEL_PROFILE_PATHS = {
     "gemini": REPOSITORY_ROOT / "adapters" / "gemini" / "model-profiles.yaml",
     "junie": REPOSITORY_ROOT / "adapters" / "junie" / "model-profiles.yaml",
 }
+CODEX_HARNESS_SKILL_NAME = "codex-harness-directives"
+CODEX_HARNESS_SKILL_ROOT = (
+    REPOSITORY_ROOT / "adapters" / "codex" / "skills" / CODEX_HARNESS_SKILL_NAME
+)
 ROLE_DEFINITIONS_PATH = REPOSITORY_ROOT / "design" / "generated" / "role-definitions.js"
 SUPPORT_CHECKLIST_PATH = REPOSITORY_ROOT / "design" / "agent-skill-test-coverage-checklist.md"
 AGENT_BROWSER_PATH = REPOSITORY_ROOT / "design" / "agent-browser.js"
@@ -214,6 +218,7 @@ README_REQUIRED_PHRASES = (
     "Use project-level skill and agent directories only when the project needs customized definitions",
     "skills/development-methodology/assets/templates",
     "python3 scripts/validate-agent-skills.py skills",
+    "python3 scripts/validate-agent-skills.py adapters/codex/skills",
     "ownership manifest",
     "every destination must be supplied by the caller",
     "--remove-owned",
@@ -241,6 +246,9 @@ README_REQUIRED_PHRASES = (
     "repoRoot query parameter",
     "Within the linked HTML design set, the documentation index assigns one owner to each substantive topic.",
     "The generated diagram and generated cards are the intentional duplicate views",
+    "adapters/[runtime]/skills/[skill-name]/SKILL.md",
+    "The matching adapter skill source is merged only when that adapter is selected.",
+    "codex-harness-directives",
 )
 DEVELOPMENT_METHODOLOGY_REQUIRED_PHRASES = (
     "Do not copy this bundle's skills or generated native agent definitions into user-home runtime folders",
@@ -350,6 +358,9 @@ GENERIC_AGENT_DEFINITIONS_REQUIRED_PHRASES = (
     "fixedBehavior.userInvocable",
     "fixedBehavior.automaticDelegation",
     "design/generated/role-definitions.js",
+    "Harness-specific skill source",
+    "adapters/&lt;harness-name&gt;/skills/&lt;skill-name&gt;/SKILL.md",
+    "Mutation-capable definitions enable <code>codex-harness-directives</code>",
 )
 AGENTIC_CONFIGURATION_REQUIRED_PHRASES = (
     "Agentic Configuration",
@@ -405,6 +416,9 @@ AGENTIC_CONFIGURATION_REQUIRED_PHRASES = (
     "Inherited through the applicable <code>CLAUDE.md</code> bridge",
     "&lt;folder-path&gt;/AGENTS.md</code> with a colocated <code>&lt;folder-path&gt;/CLAUDE.md",
     "same portable folder guidance as other harnesses",
+    "Adapter-owned skill definitions use the same <code>SKILL.md</code> format",
+    "Codex-generated agents that may mutate the repository enable it",
+    "Read-only Codex agents and non-Codex adapters do not receive it.",
 )
 DOCUMENT_INFORMATION_OWNERS = {
     "agent-and-skill-definitions.html": (
@@ -1255,6 +1269,7 @@ class BundleContentTests(unittest.TestCase):
         generation_manifest = json.loads(
             AGENT_GENERATION_MANIFEST_PATH.read_text(encoding="utf-8")
         )
+        self.assertEqual(2, generation_manifest["version"])
         self.assertEqual(len(roles), generation_manifest["canonicalRoleCount"])
         for adapter_name, extension in (
             ("codex", ".toml"),
@@ -1276,6 +1291,16 @@ class BundleContentTests(unittest.TestCase):
                 self.assertEqual(len(roles), adapter_manifest["agentCount"])
                 self.assertEqual(source_role_names, manifest_role_names)
                 self.assertEqual(source_role_names, generated_role_names)
+                harness_skills = adapter_manifest["harnessSkills"]
+                if adapter_name == "codex":
+                    self.assertEqual([CODEX_HARNESS_SKILL_NAME], [item["name"] for item in harness_skills])
+                    self.assertEqual(
+                        "adapters/codex/skills/codex-harness-directives",
+                        harness_skills[0]["source"],
+                    )
+                    self.assertRegex(harness_skills[0]["sha256"], r"^[0-9a-f]{64}$")
+                else:
+                    self.assertEqual([], harness_skills)
                 for agent in adapter_manifest["agents"]:
                     generated_agent_path = REPOSITORY_ROOT / agent["output"]
                     self.assertEqual(
@@ -1387,14 +1412,28 @@ class BundleContentTests(unittest.TestCase):
                         self.assertIn(f"Use the {skill} skill {condition}.", codex_agent_text)
                 self.assertIn("# Output purposes:", codex_agent_text)
                 self.assertEqual(
-                    build_skill_docs.role_instruction_text(role),
+                    build_skill_docs.codex_role_instruction_text(role),
                     tomllib.loads(codex_agent_text)["developer_instructions"],
                 )
                 self.assertIn(
                     "Before acting, load these definition-owned skills completely; they govern the work:",
                     codex_agent_text,
                 )
-                if "skillAvailability" not in role.optional_fields:
+                codex_payload = tomllib.loads(codex_agent_text)
+                configured_skills = codex_payload.get("skills", {}).get("config", [])
+                if role.repository_mutation == "never":
+                    self.assertNotIn(CODEX_HARNESS_SKILL_NAME, codex_agent_text)
+                    self.assertNotIn(
+                        CODEX_HARNESS_SKILL_NAME,
+                        [item.get("name") for item in configured_skills],
+                    )
+                else:
+                    self.assertIn(CODEX_HARNESS_SKILL_NAME, codex_agent_text)
+                    self.assertIn(
+                        {"name": CODEX_HARNESS_SKILL_NAME, "enabled": True},
+                        configured_skills,
+                    )
+                if role.repository_mutation == "never" and "skillAvailability" not in role.optional_fields:
                     self.assertNotIn("[[skills.config]]", codex_agent_text)
                 self.assertTrue(
                     (GENERATED_ADAPTERS_ROOT / "claude" / "agents" / f"{role.filename}.md").is_file()
@@ -1402,6 +1441,7 @@ class BundleContentTests(unittest.TestCase):
                 claude_agent_text = (
                     GENERATED_ADAPTERS_ROOT / "claude" / "agents" / f"{role.filename}.md"
                 ).read_text(encoding="utf-8")
+                self.assertNotIn(CODEX_HARNESS_SKILL_NAME, claude_agent_text)
                 self.assertIn("Skill justifications:", claude_agent_text)
                 self.assertIn("Output purposes:", claude_agent_text)
                 claude_frontmatter = yaml.safe_load(claude_agent_text.split("---", 2)[1])
@@ -1516,6 +1556,39 @@ class BundleContentTests(unittest.TestCase):
         self.assertTrue((SKILLS_ROOT / "agent-claim" / "scripts" / "claim.py").is_file())
         self.assertIn("Agent Claims And Worktrees", README_PATH.read_text(encoding="utf-8"))
         self.assertNotIn("Agent Claims And Worktrees", AGENTS_PATH.read_text(encoding="utf-8"))
+
+    def test_codex_harness_directives_are_adapter_owned_and_mutation_scoped(self) -> None:
+        """Keep Codex-only routing policy out of portable roles and other harness outputs."""
+
+        build_skill_docs = load_build_skill_docs_module()
+        skill_text = (CODEX_HARNESS_SKILL_ROOT / "SKILL.md").read_text(encoding="utf-8")
+        self.assertIn("Sol-, Terra-, or Luna-backed Codex agent", skill_text)
+        self.assertIn("additional automated-safeguard check", skill_text)
+        self.assertEqual(
+            (CODEX_HARNESS_SKILL_NAME,),
+            build_skill_docs.adapter_skill_names("codex"),
+        )
+        self.assertNotIn(CODEX_HARNESS_SKILL_NAME, build_skill_docs.build_payload()["skills"])
+
+        roles = build_skill_docs.load_role_definitions(
+            set(build_skill_docs.build_payload()["skills"])
+        )
+        codex_profiles = build_skill_docs.load_adapter_model_profiles(
+            "codex", set(build_skill_docs.load_model_profiles())
+        )
+        for role in roles:
+            with self.subTest(role=role.name, mutation=role.repository_mutation):
+                rendered = build_skill_docs.render_codex_agent(role, codex_profiles)
+                instructions = tomllib.loads(rendered)["developer_instructions"]
+                if role.repository_mutation == "never":
+                    self.assertNotIn(CODEX_HARNESS_SKILL_NAME, instructions)
+                else:
+                    self.assertEqual(1, instructions.count(CODEX_HARNESS_SKILL_NAME))
+
+        for adapter_name, extension in (("claude", ".md"), ("gemini", ".md"), ("junie", ".md")):
+            for path in (GENERATED_ADAPTERS_ROOT / adapter_name / "agents").glob(f"*{extension}"):
+                with self.subTest(adapter=adapter_name, agent=path.stem):
+                    self.assertNotIn(CODEX_HARNESS_SKILL_NAME, path.read_text(encoding="utf-8"))
 
     def test_direct_agent_dependencies_have_complete_routing_contracts(self) -> None:
         """Every maintained direct dependency should have an explicit orchestration contract."""
@@ -2344,6 +2417,7 @@ class BundleContentTests(unittest.TestCase):
         parsed = tomllib.loads(rendered)
         self.assertEqual(
             [
+                {"name": CODEX_HARNESS_SKILL_NAME, "enabled": True},
                 {"name": "python", "enabled": False},
                 {"path": "/opt/skills/fastapi", "enabled": True},
             ],

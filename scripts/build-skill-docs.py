@@ -33,6 +33,7 @@ CLAUDE_AGENT_OUTPUT_ROOT = GENERATED_ADAPTERS_ROOT / "claude" / "agents"
 GEMINI_AGENT_OUTPUT_ROOT = GENERATED_ADAPTERS_ROOT / "gemini" / "agents"
 JUNIE_AGENT_OUTPUT_ROOT = GENERATED_ADAPTERS_ROOT / "junie" / "agents"
 ADAPTERS_ROOT = REPOSITORY_ROOT / "adapters"
+ADAPTER_SKILLS_FOLDER_NAME = "skills"
 SKILL_FILE_NAME = "SKILL.md"
 AGENTS_FOLDER_NAME = "agents"
 OPENAI_METADATA_FILE_NAME = "openai.yaml"
@@ -161,6 +162,7 @@ CODEX_ADAPTER_NAME = "codex"
 CLAUDE_ADAPTER_NAME = "claude"
 GEMINI_ADAPTER_NAME = "gemini"
 JUNIE_ADAPTER_NAME = "junie"
+CODEX_HARNESS_DIRECTIVES_SKILL_NAME = "codex-harness-directives"
 CODEX_AGENT_EXTENSION = ".toml"
 CLAUDE_AGENT_EXTENSION = ".md"
 GEMINI_AGENT_EXTENSION = ".md"
@@ -516,6 +518,40 @@ def load_skill_definition(skill_directory: Path, categories_by_id: dict[str, Cat
 
 def skill_directories() -> list[Path]:
     return sorted(path.parent for path in SKILLS_ROOT.glob(f"*/{SKILL_FILE_NAME}"))
+
+
+def adapter_skill_directories(adapter_name: str) -> list[Path]:
+    """Return validated harness-specific skill directories for one adapter."""
+
+    skills_root = ADAPTERS_ROOT / adapter_name / ADAPTER_SKILLS_FOLDER_NAME
+    if not skills_root.exists():
+        return []
+    if not skills_root.is_dir() or skills_root.is_symlink():
+        raise ValueError(f"Adapter skills root must be a non-symlink directory: {skills_root}")
+
+    directories = sorted(path.parent for path in skills_root.glob(f"*/{SKILL_FILE_NAME}"))
+    names: set[str] = set()
+    for directory in directories:
+        skill_path = directory / SKILL_FILE_NAME
+        if directory.is_symlink() or skill_path.is_symlink():
+            raise ValueError(f"Adapter skill must not be a symlink: {skill_path}")
+        frontmatter, _ = split_frontmatter(skill_path.read_text(encoding="utf-8"), skill_path)
+        name = frontmatter.get(NAME_FIELD_NAME)
+        description = frontmatter.get(DESCRIPTION_FIELD_NAME)
+        if not isinstance(name, str) or not name.strip() or not isinstance(description, str) or not description.strip():
+            raise ValueError(f"Adapter skill frontmatter must define name and description: {skill_path}")
+        if name != directory.name:
+            raise ValueError(f"Adapter skill name must match its directory: {skill_path}")
+        if name in names:
+            raise ValueError(f"Duplicate adapter skill name {name}: {skills_root}")
+        names.add(name)
+    return directories
+
+
+def adapter_skill_names(adapter_name: str) -> tuple[str, ...]:
+    """Return the stable names of skills owned only by one runtime adapter."""
+
+    return tuple(directory.name for directory in adapter_skill_directories(adapter_name))
 
 
 def role_display_name(role_name: str) -> str:
@@ -1076,6 +1112,37 @@ def role_instruction_text(role: RoleDefinition) -> str:
     )
 
 
+def codex_role_instruction_text(role: RoleDefinition) -> str:
+    """Add the Codex harness skill at generation time without changing portable roles."""
+
+    if role.repository_mutation == "never":
+        return role_instruction_text(role)
+    output_text = "; ".join(role.output_contract)
+    harness_instruction = (
+        f"Before acting, load the {CODEX_HARNESS_DIRECTIVES_SKILL_NAME} skill completely; "
+        "it governs Codex-specific directives for this mutation-capable agent."
+    )
+    return (
+        f"{role.instructions}\n\n"
+        f"{harness_instruction}\n\n"
+        f"{role_loading_instruction_text(role)}\n\n"
+        f"{ROLE_OUTPUT_INSTRUCTION_PREFIX} {output_text}."
+    )
+
+
+def codex_skill_availability(role: RoleDefinition) -> list[dict[str, object]]:
+    """Enable the Codex harness skill and retain explicit role-level overrides."""
+
+    configured = [dict(item) for item in role.optional_fields.get(ROLE_SKILL_AVAILABILITY_FIELD_NAME, [])]
+    if role.repository_mutation == "never":
+        return configured
+    if any(item.get("name") == CODEX_HARNESS_DIRECTIVES_SKILL_NAME for item in configured):
+        raise ValueError(
+            f"Conceptual role must not override generated Codex harness skill {CODEX_HARNESS_DIRECTIVES_SKILL_NAME}: {role.source_path}"
+        )
+    return [{"name": CODEX_HARNESS_DIRECTIVES_SKILL_NAME, "enabled": True}, *configured]
+
+
 def role_adapter_comments(
     role: RoleDefinition,
     prefix: str,
@@ -1127,7 +1194,7 @@ def render_codex_agent(
         f"name = {json.dumps(role.name)}",
         f"description = {json.dumps(role.description)}",
         "developer_instructions = "
-        + render_toml_multiline_basic_string(role_instruction_text(role)),
+        + render_toml_multiline_basic_string(codex_role_instruction_text(role)),
     ]
     fields.append(f"model = {json.dumps(adapter_profile.model)}")
     if adapter_profile.effort is not None:
@@ -1135,7 +1202,7 @@ def render_codex_agent(
     isolation = role.optional_fields.get("isolation")
     if isolation == CODEX_READ_ONLY_ISOLATION:
         fields.append(f"{CODEX_SANDBOX_FIELD_NAME} = {json.dumps(isolation)}")
-    for item in role.optional_fields.get(ROLE_SKILL_AVAILABILITY_FIELD_NAME, []):
+    for item in codex_skill_availability(role):
         fields.extend([
             "",
             "[[skills.config]]",
@@ -1255,6 +1322,25 @@ def render_agent_generation_manifest(
     }
     adapters: dict[str, object] = {}
     for adapter_name, (output_root, extension, output_format) in adapter_specs.items():
+        harness_skills = []
+        for directory in adapter_skill_directories(adapter_name):
+            digest = hashlib.sha256()
+            for source_file in sorted(path for path in directory.rglob("*") if path.is_file()):
+                if source_file.is_symlink():
+                    raise ValueError(f"Adapter skill file must not be a symlink: {source_file}")
+                relative = source_file.relative_to(directory).as_posix().encode("utf-8")
+                payload = source_file.read_bytes()
+                digest.update(len(relative).to_bytes(4, "big"))
+                digest.update(relative)
+                digest.update(len(payload).to_bytes(8, "big"))
+                digest.update(payload)
+            harness_skills.append(
+                {
+                    "name": directory.name,
+                    "sha256": digest.hexdigest(),
+                    "source": str(directory.relative_to(REPOSITORY_ROOT)),
+                }
+            )
         agents = []
         for role in roles:
             output_path = output_root / f"{role.filename}{extension}"
@@ -1271,12 +1357,13 @@ def render_agent_generation_manifest(
             "agentCount": len(agents),
             "agents": agents,
             "format": output_format,
+            "harnessSkills": harness_skills,
             "outputRoot": str(output_root.relative_to(REPOSITORY_ROOT)),
         }
 
     manifest = {
         "schema": "dev-methodology-agent-generation-manifest",
-        "version": 1,
+        "version": 2,
         "generator": GENERATOR_RELATIVE_PATH,
         "canonicalRoleCount": len(roles),
         "adapters": adapters,
@@ -1285,6 +1372,11 @@ def render_agent_generation_manifest(
 
 
 def expected_role_outputs(roles: Sequence[RoleDefinition]) -> dict[Path, str]:
+    codex_harness_skills = set(adapter_skill_names(CODEX_ADAPTER_NAME))
+    if CODEX_HARNESS_DIRECTIVES_SKILL_NAME not in codex_harness_skills:
+        raise ValueError(
+            f"Codex generation requires adapter skill {CODEX_HARNESS_DIRECTIVES_SKILL_NAME}"
+        )
     source_profile_ids = set(load_model_profiles())
     codex_profiles = load_adapter_model_profiles(CODEX_ADAPTER_NAME, source_profile_ids)
     claude_profiles = load_adapter_model_profiles(CLAUDE_ADAPTER_NAME, source_profile_ids)

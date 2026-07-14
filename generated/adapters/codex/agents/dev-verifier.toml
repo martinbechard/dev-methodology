@@ -27,6 +27,8 @@ description = "Runs acceptance checks, builds, unit tests, integration tests, E2
 developer_instructions = """
 Select checks from actual behavior and risk with the technology guidance supplied for the active scope, run them without weakening gates, and distinguish failures from skipped checks.
 
+Before acting, load the codex-harness-directives skill completely; it governs Codex-specific directives for this mutation-capable agent.
+
 Before acting, load these definition-owned skills completely; they govern the work: test-strategy, review-structured-artifact, structured-explanation.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
@@ -40,3 +42,7 @@ Load request-specific skills only when their conditions apply. Use judgment when
 Return: command results; coverage notes; skipped-check rationale; PASS WARN or FAIL status."""
 model = "gpt-5.6-luna"
 model_reasoning_effort = "high"
+
+[[skills.config]]
+name = "codex-harness-directives"
+enabled = true

@@ -327,6 +327,7 @@
             <li>The portable <code>SKILL.md</code> remains authoritative before and after deployment.</li>
             <li>Supporting files in the skill directory remain part of the same portable package.</li>
             <li>Adjacent harness metadata, such as Codex <code>agents/openai.yaml</code>, supplements the package for that harness; it does not replace or rewrite <code>SKILL.md</code>.</li>
+            <li>A harness-specific skill source under <code>adapters/&lt;harness-name&gt;/skills/</code> uses the same package format but is installed only with that adapter.</li>
           </ul>
         </article>
         <article class="card risk">
@@ -351,11 +352,11 @@
         </div>
         <div class="flow-row">
           <div><span class="name">2. Validate And Resolve</span></div>
-          <p><code>agents/role-schema.yaml</code> defines the allowed conceptual agent definition properties. Skill IDs resolve against portable skill sources, semantic model profiles resolve through adapter model mappings, and unsupported or defaulted behavior follows the documented adapter rules.</p>
+          <p><code>agents/role-schema.yaml</code> defines the allowed conceptual agent definition properties. Skill IDs resolve against portable skill sources, semantic model profiles resolve through adapter model mappings, adapter-owned skills resolve only within their harness, and unsupported or defaulted behavior follows the documented adapter rules.</p>
         </div>
         <div class="flow-row">
           <div><span class="name">3. Render Each Harness Format</span></div>
-          <p><code>scripts/build-skill-docs.py</code> converts the conceptual values into native property names and file structures. For example, conceptual <code>instructions</code> becomes Codex <code>developer_instructions</code> or the Markdown body of a Claude Code, Gemini CLI, or Junie CLI agent.</p>
+          <p><code>scripts/build-skill-docs.py</code> converts the conceptual values into native property names and file structures. For example, conceptual <code>instructions</code> becomes Codex <code>developer_instructions</code> or the Markdown body of a Claude Code, Gemini CLI, or Junie CLI agent. The Codex adapter also enables and adds a loading directive for <code>codex-harness-directives</code> when <code>repositoryMutation</code> is required or conditional.</p>
         </div>
         <div class="flow-row">
           <div><span class="name">4. Use Generated Native Agent Definition Files</span></div>
@@ -385,6 +386,11 @@
               <td><span class="name">Portable skill source</span></td>
               <td><code>skills/&lt;skill-name&gt;/SKILL.md</code></td>
               <td>Copied as the same portable skill definition. It is not converted into an agent file.</td>
+            </tr>
+            <tr>
+              <td><span class="name">Harness-specific skill source</span></td>
+              <td><code>adapters/&lt;harness-name&gt;/skills/&lt;skill-name&gt;/SKILL.md</code></td>
+              <td>Uses the portable skill package format but is deployed only with the matching adapter. It keeps runtime directives out of provider-neutral roles and shared skills.</td>
             </tr>
             <tr>
               <td><span class="name">Conceptual agent definition vocabulary</span></td>
@@ -506,7 +512,7 @@
           <tr>
             <td><span class="name">Repository mutation</span></td>
             <td><code>repositoryMutation</code></td>
-            <td>Declares whether repository mutation is required, conditional, or never allowed for the agent. Generation validates that <code>agent-claim</code> is definition-owned, conditional, or absent to match, so runtimes provide the shared claim capability instead of relying on copied project instructions.</td>
+            <td>Declares whether repository mutation is required, conditional, or never allowed for the agent. Generation validates that <code>agent-claim</code> is definition-owned, conditional, or absent to match. The Codex adapter separately uses required or conditional mutation to load its harness directives skill; this does not make those directives part of claim handling.</td>
           </tr>
           <tr>
             <td><span class="name">Max turns</span></td>
@@ -587,7 +593,7 @@
             <tr>
               <td><span class="name">Codex</span></td>
               <td>One standalone TOML file per custom agent.</td>
-              <td>Codex discovers project <code>.codex/agents/</code> and user <code>~/.codex/agents/</code>. This bundle generates <code>generated/adapters/codex/agents/*.toml</code>.</td>
+              <td>Codex discovers project <code>.codex/agents/</code> and user <code>~/.codex/agents/</code>. This bundle generates <code>generated/adapters/codex/agents/*.toml</code>. Mutation-capable definitions enable <code>codex-harness-directives</code> through <code>[[skills.config]]</code> and instruct the agent to load it before acting; read-only definitions omit it.</td>
             </tr>
             <tr>
               <td><span class="name">Claude Code</span></td>
@@ -707,6 +713,14 @@
             <td>Resolved through shared skill guidance.</td>
             <td>Resolved through shared skill guidance.</td>
             <td>Resolved through shared skill guidance.</td>
+          </tr>
+          <tr>
+            <td><span class="name">repositoryMutation</span></td>
+            <td>No native field. Generation validates <code>agent-claim</code> assignment and loads <code>codex-harness-directives</code> for required or conditional mutation.</td>
+            <td>No native field. Generation validates the portable <code>agent-claim</code> assignment.</td>
+            <td>No native field. Generation validates the portable <code>agent-claim</code> assignment.</td>
+            <td>No native field. Generation validates the portable <code>agent-claim</code> assignment.</td>
+            <td>No native field. Generation validates the portable <code>agent-claim</code> assignment.</td>
           </tr>
           <tr>
             <td><span class="name">adapter profile settings</span></td>

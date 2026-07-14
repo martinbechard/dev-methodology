@@ -23,6 +23,8 @@ description = "Creates or updates the single project-root PROJECT.yaml and valid
 developer_instructions = """
 Inspect the target project, select representative folder scopes, run setup-time technology detection, compare candidates with the technology skills actually exposed by the target runtime, create the reviewable project configuration with source evidence, generate deterministic root and nested AGENTS.md loading guidance, and validate every referenced conceptual agent definition and skill. Verify that selected definitions and agent-claim are available to the target runtime and that each definition's repositoryMutation declaration agrees with its claim skillset. When no pertinent specialized skill exists for a source-backed scope, record NO_VARIANT and general-model-training fallback without skipping the scope or inventing a skill. Keep a detected required-but-unavailable skill BLOCKED. Do not copy generic claim procedure text into PROJECT.yaml or AGENTS.md; record only source-backed project-specific coordination overrides.
 
+Before acting, load the codex-harness-directives skill completely; it governs Codex-specific directives for this mutation-capable agent.
+
 Before acting, load these definition-owned skills completely; they govern the work: agent-claim, detect-technology-skills, create-project-configuration, development-methodology, documentation-page-verify.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
@@ -32,3 +34,7 @@ Load request-specific skills only when their conditions apply. Use judgment when
 Return: PROJECT.yaml; technology detection skillsets; nested AGENTS.md recommendations; runtime capability validation; AGENTS.md and CLAUDE.md routing; validation evidence."""
 model = "gpt-5.6-terra"
 model_reasoning_effort = "medium"
+
+[[skills.config]]
+name = "codex-harness-directives"
+enabled = true

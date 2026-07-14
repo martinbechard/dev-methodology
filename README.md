@@ -40,6 +40,7 @@ The shared page contract starts every durable page with Current Understanding, A
 - agents/role-schema.yaml defines the customer-independent conceptual agent definition schema.
 - agents/model-profiles.yaml defines semantic simple, default, advanced, and advanced-long model profiles without provider identifiers.
 - adapters/[runtime]/model-profiles.yaml maps semantic profiles to concrete models, reasoning effort, and context settings for each harness.
+- adapters/[runtime]/skills/[skill-name]/SKILL.md contains directives that belong only to that runtime. The installer includes these skills only with the matching adapter.
 - agents/roles contains conceptual agent definition sources grouped by Dev Activities, Wiki Activities, Project Setup, and Methodology Maintenance.
 - generated/adapters contains ready-to-copy native agent definitions and agent-generation-manifest.json. Codex, Claude Code, Gemini CLI, and Junie CLI definitions are generated from the same conceptual sources.
 - design/generated/technology-skill-detection-registry.js exposes the same detection registry for documentation and the future interactive agent-skill explorer.
@@ -55,9 +56,9 @@ Reusable templates live inside the development-methodology skill assets so there
 python3 scripts/build-skill-docs.py
 ```
 
-The script reads each bundled SKILL.md file, adjacent Codex openai.yaml metadata, the ordered design/skill-categories.yaml catalog, agents/role-schema.yaml, agents/model-profiles.yaml, adapter model mappings, and conceptual agent definition sources. It writes design/generated/skill-definitions.js, design/generated/role-definitions.js, native definitions under generated/adapters, and agent-generation-manifest.json. The [Generic Agent Definitions Source page](design/generic-agent-definitions-source.html) owns portable skill sources, conceptual agent definition properties, native packaging, and adapter mappings. The [Agentic Configuration page](design/agentic-configuration.html) explains how the resulting runtime files provide relevant context while an agentic coding tool generates code.
+The script reads each bundled SKILL.md file, adjacent Codex openai.yaml metadata, the ordered design/skill-categories.yaml catalog, agents/role-schema.yaml, agents/model-profiles.yaml, adapter model mappings, adapter-owned skill sources, and conceptual agent definition sources. It writes design/generated/skill-definitions.js, design/generated/role-definitions.js, native definitions under generated/adapters, and agent-generation-manifest.json. The [Generic Agent Definitions Source page](design/generic-agent-definitions-source.html) owns portable skill sources, conceptual agent definition properties, native packaging, and adapter mappings. The [Agentic Configuration page](design/agentic-configuration.html) explains how the resulting runtime files provide relevant context while an agentic coding tool generates code.
 
-The generation manifest is the deterministic build inventory: it records each conceptual agent definition source, every generated Codex, Claude Code, Gemini CLI, and Junie CLI path, expected digest, and aggregate counts without timestamps.
+The generation manifest is the deterministic build inventory: it records each conceptual agent definition source, every generated Codex, Claude Code, Gemini CLI, and Junie CLI path, each adapter-owned skill source and digest, and aggregate counts without timestamps. Codex generation enables and instructs every mutation-capable agent to load codex-harness-directives. Read-only Codex agents and every non-Codex adapter remain unchanged, so Codex-only directives do not leak into portable conceptual definitions.
 
 Build the portable technology detection registry and installed detector mirror before generating conceptual agent definition and documentation views:
 
@@ -118,6 +119,8 @@ Dev Orchestrator owns the root task claim and child handoffs. Dev Merge Coordina
 The build and maintenance workflow does not install skills or agents into user-home runtime folders. The installer exists only for an explicitly requested deployment or packaging operation, and every destination must be supplied by the caller.
 
 Deploy unchanged generic bundles to explicit user-level runtime directories so they are available across projects. Use replace and prune-owned when refreshing a bundle-owned installation.
+
+The matching adapter skill source is merged only when that adapter is selected. The Codex command therefore installs the shared skills plus codex-harness-directives; Claude Code, Gemini CLI, and Junie CLI deployments do not receive that Codex-only skill. A caller that supplies a custom generic source may also supply an explicit adapter source with --adapter-skills-source.
 
 Deploy the Codex bundle globally:
 
@@ -340,6 +343,10 @@ The optional tool variants are:
 
 - ast-grep
 
+The Codex-only adapter skill is:
+
+- codex-harness-directives
+
 ## Review Skill Checklist Convention
 
 Every review skill uses a reference checklist named review-checklist-[review-target].md under that skill's references folder. For example, review-architecture uses review-checklist-architecture.md.
@@ -384,6 +391,7 @@ Before publishing changes to this bundle, run:
 
 ```bash
 python3 scripts/validate-agent-skills.py skills
+python3 scripts/validate-agent-skills.py adapters/codex/skills
 python3 scripts/build-technology-detection.py --check
 python3 scripts/build-skill-docs.py --check
 python3 scripts/build-agent-skill-hierarchy.py --check

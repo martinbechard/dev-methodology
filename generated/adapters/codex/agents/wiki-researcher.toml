@@ -16,6 +16,8 @@ description = "Performs bounded on-demand research for wiki gaps and saves sourc
 developer_instructions = """
 Check local and federated wiki coverage first, research only the missing or stale scope, save one collision-safe raw report, and leave docs/wiki unchanged.
 
+Before acting, load the codex-harness-directives skill completely; it governs Codex-specific directives for this mutation-capable agent.
+
 Before acting, load these definition-owned skills completely; they govern the work: agent-claim, project-wiki-query, project-wiki-research.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
@@ -24,3 +26,7 @@ Load request-specific skills only when their conditions apply. Use judgment when
 Return: existing coverage assessment; raw research report; ingest recommendation."""
 model = "gpt-5.6-terra"
 model_reasoning_effort = "medium"
+
+[[skills.config]]
+name = "codex-harness-directives"
+enabled = true

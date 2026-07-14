@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex Harness Directives"
+  short_description: "Apply Codex-specific routing safeguards"
+  default_prompt: "Use $codex-harness-directives to apply Codex-specific routing and safeguard rules."
