@@ -326,12 +326,15 @@ AGENTIC_CONFIGURATION_REQUIRED_PHRASES = (
     "which skills, roles, and project instructions apply",
     "Provide The Relevant Context",
     "Context Layers",
+    "Skills Describe How To Perform Actions",
     "Agent Definition Files",
     "Shared And Project Definitions",
     "Root Project Instructions",
     "Nested Project Instructions",
     "Runtime Configuration File Locations",
-    "The Agent Skills format is a text file format centered on <code>SKILL.md</code>",
+    "The Agent Skills format is a text file format centered on <code>SKILL.md</code> for describing how to perform actions.",
+    "It is adopted by all agentic coding vendors and is the most granular unit of description.",
+    "Describes how to perform actions.",
     "Each agent operates with its own context and history",
     "&lt;project-root&gt;/.&lt;harness-name&gt;/agents/&lt;agent-name&gt;.md",
     "&lt;project-root&gt;/&lt;folder-path&gt;/AGENTS.md",
@@ -2661,7 +2664,7 @@ class BundleContentTests(unittest.TestCase):
             '<ol class="context-layers">', maxsplit=1
         )[1].split("</ol>", maxsplit=1)[0]
         layer_headings = (
-            "Skills",
+            "Skills Describe How To Perform Actions",
             "Agent Definition Files",
             "Agent Configuration",
             "Shared And Project Definitions",
