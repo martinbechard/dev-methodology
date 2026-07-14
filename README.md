@@ -40,7 +40,7 @@ The shared page contract starts every durable page with Current Understanding, A
 - agents/model-profiles.yaml defines semantic simple, default, advanced, and advanced-long model profiles without provider identifiers.
 - adapters/[runtime]/model-profiles.yaml maps semantic profiles to concrete models, reasoning effort, and context settings for each harness.
 - agents/roles contains source role files grouped by Dev Activities, Wiki Activities, Project Setup, and Methodology Maintenance.
-- generated/adapters contains ready-to-copy native agent definitions and agent-generation-manifest.json. The current milestone generates Codex and Claude definitions from the same source roles.
+- generated/adapters contains ready-to-copy native agent definitions and agent-generation-manifest.json. Codex, Claude Code, Gemini CLI, and Junie CLI definitions are generated from the same source roles.
 - design/generated/technology-skill-detection-registry.js exposes the same detection registry for documentation and the future interactive agent-skill explorer.
 - scripts/openai_metadata.py refreshes derived Codex interface fields from SKILL.md while preserving hand-authored policy and dependencies.
 - scripts contains regression tests for installer behavior and bundle content.
@@ -56,7 +56,7 @@ python3 scripts/build-skill-docs.py
 
 The script reads each bundled SKILL.md file, adjacent Codex openai.yaml metadata, the ordered design/skill-categories.yaml catalog, agents/role-schema.yaml, agents/model-profiles.yaml, adapter model mappings, and source role files. It writes design/generated/skill-definitions.js, design/generated/role-definitions.js, native definitions under generated/adapters, and agent-generation-manifest.json. The [Agentic Configuration page](design/generic-agent-definitions-source.html) owns the context model, configuration file locations, portable skill sources, logical agent properties, native packaging, and adapter mappings.
 
-The generation manifest is the deterministic build inventory: it records each source role, generated Codex and Claude path, expected digest, and aggregate counts without timestamps.
+The generation manifest is the deterministic build inventory: it records each source role, every generated Codex, Claude Code, Gemini CLI, and Junie CLI path, expected digest, and aggregate counts without timestamps.
 
 Build the portable technology detection registry and installed detector mirror before generating role and documentation views:
 
@@ -116,29 +116,61 @@ Dev Orchestrator owns the root task claim and child handoffs. Dev Merge Coordina
 
 The build and maintenance workflow does not install skills or agents into user-home runtime folders. The installer exists only for an explicitly requested deployment or packaging operation, and every destination must be supplied by the caller.
 
-Deploy the Codex bundle to explicit target-project directories:
+Deploy unchanged generic bundles to explicit user-level runtime directories so they are available across projects. Use replace and prune-owned when refreshing a bundle-owned installation.
+
+Deploy the Codex bundle globally:
 
 ```bash
 python3 scripts/install-skills.py \
   --adapter codex \
-  --dest /path/to/target/.agents/skills \
+  --dest ~/.codex/skills \
   --install-agents \
-  --agents-dest /path/to/target/.codex/agents
+  --agents-dest ~/.codex/agents \
+  --replace \
+  --prune-owned
 ```
 
-Deploy the Claude bundle to explicit target-project directories:
+Deploy the Claude Code bundle globally:
 
 ```bash
 python3 scripts/install-skills.py \
   --adapter claude \
-  --dest /path/to/target/.claude/skills \
+  --dest ~/.claude/skills \
   --install-agents \
-  --agents-dest /path/to/target/.claude/agents
+  --agents-dest ~/.claude/agents \
+  --replace \
+  --prune-owned
+```
+
+Deploy the Gemini CLI bundle globally:
+
+```bash
+python3 scripts/install-skills.py \
+  --adapter gemini \
+  --dest ~/.gemini/skills \
+  --install-agents \
+  --agents-dest ~/.gemini/agents \
+  --replace \
+  --prune-owned
+```
+
+Deploy the Junie CLI bundle globally:
+
+```bash
+python3 scripts/install-skills.py \
+  --adapter junie \
+  --dest ~/.junie/skills \
+  --install-agents \
+  --agents-dest ~/.junie/agents \
+  --replace \
+  --prune-owned
 ```
 
 The installer never infers AGENTS_HOME, CODEX_HOME, CLAUDE_HOME, or a user-home destination. Use --dry-run to inspect an explicit deployment, --replace to update bundle-owned copies, and --prune-owned to remove obsolete owned artifacts at that target.
 
-The same explicit-destination rule applies to the generic, Gemini, and Junie adapters, including --adapter junie.
+Use project-level skill and agent directories only when the project needs customized definitions, deliberate project-only scoping, or a checked-in team configuration. An unchanged generic bundle belongs in the runtime's user-level directories.
+
+The same explicit-destination rule applies to every adapter, including Gemini CLI and Junie CLI.
 
 Each explicit destination keeps an ownership manifest named .dev-methodology-install.json. Ownership manifests record content digests. Replacement, pruning, and cleanup refuse to discard a customized owned artifact without discrepancy analysis and explicit approval. Unowned skills and agents are never removed.
 

@@ -48,7 +48,9 @@ DEFAULT_AGENTS_FOLDER_NAME = "agents"
 GENERATED_ADAPTERS_RELATIVE_PATH = Path("generated") / "adapters"
 AGENT_FILE_EXTENSIONS = {
     CODEX_ADAPTER_NAME: ".toml",
+    GEMINI_ADAPTER_NAME: ".md",
     CLAUDE_ADAPTER_NAME: ".md",
+    JUNIE_ADAPTER_NAME: ".md",
 }
 PRUNE_SKIPPED_NO_MANIFEST_MESSAGE = "prune skipped; no ownership manifest"
 

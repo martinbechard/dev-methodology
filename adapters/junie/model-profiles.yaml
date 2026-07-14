@@ -1,0 +1,17 @@
+schema: dev-methodology-adapter-model-profiles
+version: 1
+adapter: junie
+profiles:
+  simple:
+    model: gemini-flash
+    effort: low
+  default:
+    model: sonnet
+    effort: medium
+  advanced:
+    model: opus
+    effort: high
+  advanced-long:
+    model: opus
+    effort: high
+    context: extra-long

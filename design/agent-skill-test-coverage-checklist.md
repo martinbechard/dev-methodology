@@ -26,8 +26,8 @@ This page is generated from the role definitions, bundled skill frontmatter, set
 | Generic Agent Skills | [x] | [ ] | [ ] | Installer behavior is unit-tested; no native role format or captured behavior evidence. |
 | Codex | [x] | [x] | [ ] | Native generation and manual runs exist; current evidence lacks machine-verifiable load and invocation receipts. |
 | Claude Code | [x] | [ ] | [ ] | Skill installation and native role generation are tested; no captured behavior evidence. |
-| Gemini CLI | [x] | [ ] | [ ] | Skill installation behavior is unit-tested; native role generation and behavior are not covered. |
-| JetBrains Junie CLI | [x] | [ ] | [ ] | Destination and dry-run installation behavior are unit-tested; native role generation and behavior are not covered. |
+| Gemini CLI | [x] | [ ] | [ ] | Skill installation and native role generation are tested; no captured behavior evidence. |
+| JetBrains Junie CLI | [x] | [ ] | [ ] | Skill installation and native role generation are tested; no captured behavior evidence. |
 
 ## Technology Detection Registry
 
@@ -199,9 +199,9 @@ This page is generated from the role definitions, bundled skill frontmatter, set
 
 - [x] Agent Skill format validation for every bundled skill.
 - [x] Role schema, skill reference, model profile, and adapter completeness tests.
-- [x] Codex TOML and Claude Code Markdown native role generation checks.
+- [x] Codex TOML plus Claude Code, Gemini CLI, and Junie CLI Markdown native role generation checks.
 - [x] Generic, Codex, Gemini CLI, Claude Code, and Junie CLI installer behavior tests.
 - [x] Generated documentation and agent-skill hierarchy freshness checks.
-- [x] Shared installation refresh exercised for Agents, Codex, and Claude destinations.
+- [x] Explicit destination installation is covered for generic skills and all four native agent adapters.
 - [x] Evaluation fixture runner verifies expected project behavior, including intentionally failing review fixtures.
 - [ ] Agent and skill attribution remains unchecked until a valid evidence receipt is supplied.

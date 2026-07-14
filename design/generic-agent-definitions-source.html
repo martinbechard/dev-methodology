@@ -532,11 +532,11 @@
         </div>
         <div class="flow-row">
           <div><span class="name">3. Render Each Harness Format</span></div>
-          <p><code>scripts/build-skill-docs.py</code> converts the logical values into native property names and file structures. For example, logical <code>instructions</code> becomes Codex <code>developer_instructions</code> or the Markdown body of a Claude agent.</p>
+          <p><code>scripts/build-skill-docs.py</code> converts the logical values into native property names and file structures. For example, logical <code>instructions</code> becomes Codex <code>developer_instructions</code> or the Markdown body of a Claude Code, Gemini CLI, or Junie CLI agent.</p>
         </div>
         <div class="flow-row">
           <div><span class="name">4. Use Generated Agent Files</span></div>
-          <p>The generated Codex TOML and Claude Markdown files are deployable runtime artifacts. They are regenerated from the role source and must not become independent sources of truth.</p>
+          <p>The generated Codex TOML and Claude Code, Gemini CLI, and Junie CLI Markdown files are deployable runtime artifacts. They are regenerated from the role source and must not become independent sources of truth.</p>
         </div>
       </div>
       <div class="panel">
@@ -581,7 +581,7 @@
             <tr>
               <td><span class="name">Native agent outputs</span></td>
               <td><code>generated/adapters/&lt;harness-name&gt;/agents/&lt;role-name&gt;.&lt;harness-extension&gt;</code></td>
-              <td>Contains the harness-specific agent files produced by generation. Current outputs are Codex TOML and Claude Markdown.</td>
+              <td>Contains the harness-specific agent files produced by generation. Current outputs are Codex TOML plus Claude Code, Gemini CLI, and Junie CLI Markdown.</td>
             </tr>
             <tr>
               <td><span class="name">Generation inventory</span></td>
@@ -774,12 +774,12 @@
             <tr>
               <td><span class="name">Gemini CLI</span></td>
               <td>Markdown with YAML frontmatter and a Markdown instruction body.</td>
-              <td>Workspace <code>.gemini/agents/</code> and user <code>~/.gemini/agents/</code>. Native generation is not part of the current adapter milestone.</td>
+              <td>Gemini CLI discovers workspace <code>.gemini/agents/</code> and user <code>~/.gemini/agents/</code>. This bundle generates <code>generated/adapters/gemini/agents/&lt;agent-name&gt;.md</code>.</td>
             </tr>
             <tr>
               <td><span class="name">Junie CLI</span></td>
               <td>Markdown with YAML metadata and a Markdown instruction body.</td>
-              <td>Project <code>.junie/agents/</code> or <code>.agents/</code> and corresponding user locations. Native generation is not part of the current adapter milestone.</td>
+              <td>Junie CLI discovers project <code>.junie/agents/</code> or <code>.agents/</code>, user <code>~/.junie/agents/</code> or <code>~/.agents/</code>, and explicit agent locations. This bundle generates <code>generated/adapters/junie/agents/&lt;agent-name&gt;.md</code>.</td>
             </tr>
             <tr>
               <td><span class="name">GitHub Copilot Agent Mode</span></td>
@@ -865,7 +865,7 @@
             <td><span class="name">mcpServers</span></td>
             <td><code>[mcp_servers.name]</code> sections in the custom agent TOML file.</td>
             <td><code>mcpServers</code></td>
-            <td><code>mcpServers</code></td>
+            <td>Gemini inline <code>mcpServers</code> requires full server configuration objects, so the logical server-name list remains deployment configuration rather than being expanded with invented connection details.</td>
             <td><code>mcpServers</code></td>
             <td><code>mcp-servers</code></td>
           </tr>
@@ -889,7 +889,7 @@
             <td><span class="name">adapter profile settings</span></td>
             <td><code>model_reasoning_effort</code></td>
             <td><code>effort</code></td>
-            <td>No documented field.</td>
+            <td>No documented subagent effort field; the adapter resolves only <code>model</code>.</td>
             <td><code>reasoningLevel</code> or <code>effort</code></td>
             <td>No documented field.</td>
           </tr>

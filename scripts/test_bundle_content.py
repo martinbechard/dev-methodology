@@ -32,6 +32,8 @@ MODEL_PROFILES_PATH = REPOSITORY_ROOT / "agents" / "model-profiles.yaml"
 ADAPTER_MODEL_PROFILE_PATHS = {
     "codex": REPOSITORY_ROOT / "adapters" / "codex" / "model-profiles.yaml",
     "claude": REPOSITORY_ROOT / "adapters" / "claude" / "model-profiles.yaml",
+    "gemini": REPOSITORY_ROOT / "adapters" / "gemini" / "model-profiles.yaml",
+    "junie": REPOSITORY_ROOT / "adapters" / "junie" / "model-profiles.yaml",
 }
 ROLE_DEFINITIONS_PATH = REPOSITORY_ROOT / "design" / "generated" / "role-definitions.js"
 SUPPORT_CHECKLIST_PATH = REPOSITORY_ROOT / "design" / "agent-skill-test-coverage-checklist.md"
@@ -198,6 +200,10 @@ README_REQUIRED_PHRASES = (
     "review-module-design",
     "Junie CLI",
     "--adapter junie",
+    "Codex, Claude Code, Gemini CLI, and Junie CLI definitions",
+    "Deploy the Gemini CLI bundle globally",
+    "Deploy the Junie CLI bundle globally",
+    "Use project-level skill and agent directories only when the project needs customized definitions",
     "skills/development-methodology/assets/templates",
     "python3 scripts/validate-agent-skills.py skills",
     "ownership manifest",
@@ -301,6 +307,8 @@ GENERIC_AGENT_DEFINITIONS_REQUIRED_PHRASES = (
     "Claude Code Subagents",
     "Gemini CLI Subagents",
     "Junie CLI Custom Subagents",
+    "generated/adapters/gemini/agents/",
+    "generated/adapters/junie/agents/",
     "GitHub Copilot Agent Mode",
     "GitHub Copilot Custom Agents",
     "agent-generation-manifest.json",
@@ -1141,7 +1149,12 @@ class BundleContentTests(unittest.TestCase):
             AGENT_GENERATION_MANIFEST_PATH.read_text(encoding="utf-8")
         )
         self.assertEqual(len(roles), generation_manifest["canonicalRoleCount"])
-        for adapter_name, extension in (("codex", ".toml"), ("claude", ".md")):
+        for adapter_name, extension in (
+            ("codex", ".toml"),
+            ("claude", ".md"),
+            ("gemini", ".md"),
+            ("junie", ".md"),
+        ):
             with self.subTest(adapter=adapter_name):
                 adapter_manifest = generation_manifest["adapters"][adapter_name]
                 manifest_role_names = {
@@ -1293,6 +1306,40 @@ class BundleContentTests(unittest.TestCase):
                 for skill, condition in role.skill_conditions.items():
                     self.assertNotIn(skill, claude_frontmatter["skills"])
                     self.assertIn(f"Use the {skill} skill {condition}.", claude_agent_text)
+
+                gemini_agent_path = (
+                    GENERATED_ADAPTERS_ROOT / "gemini" / "agents" / f"{role.filename}.md"
+                )
+                self.assertTrue(gemini_agent_path.is_file())
+                gemini_agent_text = gemini_agent_path.read_text(encoding="utf-8")
+                self.assertTrue(gemini_agent_text.startswith("---\n"))
+                gemini_frontmatter = yaml.safe_load(gemini_agent_text.split("---", 2)[1])
+                self.assertEqual(role.name, gemini_frontmatter["name"])
+                self.assertEqual(role.description, gemini_frontmatter["description"])
+                self.assertEqual("local", gemini_frontmatter["kind"])
+                self.assertNotIn("skills", gemini_frontmatter)
+                self.assertIn("Before acting, load these fixed-role skills completely", gemini_agent_text)
+                for skill, condition in role.skill_conditions.items():
+                    self.assertIn(f"Use the {skill} skill {condition}.", gemini_agent_text)
+
+                junie_agent_path = (
+                    GENERATED_ADAPTERS_ROOT / "junie" / "agents" / f"{role.filename}.md"
+                )
+                self.assertTrue(junie_agent_path.is_file())
+                junie_agent_text = junie_agent_path.read_text(encoding="utf-8")
+                self.assertTrue(junie_agent_text.startswith("---\n"))
+                junie_frontmatter = yaml.safe_load(junie_agent_text.split("---", 2)[1])
+                self.assertEqual(role.name, junie_frontmatter["name"])
+                self.assertEqual(role.description, junie_frontmatter["description"])
+                self.assertEqual(
+                    list(build_skill_docs.fixed_role_skills(role)),
+                    junie_frontmatter["skills"],
+                )
+                self.assertIn("reasoningLevel", junie_frontmatter)
+                self.assertIn("These fixed-role skills are preloaded and govern the work", junie_agent_text)
+                for skill, condition in role.skill_conditions.items():
+                    self.assertNotIn(skill, junie_frontmatter["skills"])
+                    self.assertIn(f"Use the {skill} skill {condition}.", junie_agent_text)
 
         non_setup_roles = [
             role for role in roles
@@ -1740,6 +1787,50 @@ class BundleContentTests(unittest.TestCase):
             ],
             parsed["skills"]["config"],
         )
+
+    def test_gemini_and_junie_render_native_frontmatter_fields(self) -> None:
+        build_skill_docs = load_build_skill_docs_module()
+        skill_payload = build_skill_docs.build_payload()
+        model_profiles = set(build_skill_docs.load_model_profiles())
+        role = next(
+            role for role in build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
+            if role.name == "dev-coder"
+        )
+        role = replace(
+            role,
+            optional_fields={
+                **role.optional_fields,
+                "tools": ["Read", "Grep"],
+                "disallowedTools": ["WebSearch"],
+                "mcpServers": ["github"],
+                "maxTurns": 12,
+                "timeout": 8,
+            },
+        )
+
+        gemini_profiles = build_skill_docs.load_adapter_model_profiles("gemini", model_profiles)
+        gemini_text = build_skill_docs.render_gemini_agent(role, gemini_profiles)
+        gemini_frontmatter = yaml.safe_load(gemini_text.split("---", 2)[1])
+        self.assertEqual(["Read", "Grep"], gemini_frontmatter["tools"])
+        self.assertEqual(12, gemini_frontmatter["max_turns"])
+        self.assertEqual(8, gemini_frontmatter["timeout_mins"])
+        self.assertNotIn("skills", gemini_frontmatter)
+        self.assertNotIn("disallowedTools", gemini_frontmatter)
+        self.assertNotIn("mcpServers", gemini_frontmatter)
+
+        junie_profiles = build_skill_docs.load_adapter_model_profiles("junie", model_profiles)
+        junie_text = build_skill_docs.render_junie_agent(role, junie_profiles)
+        junie_frontmatter = yaml.safe_load(junie_text.split("---", 2)[1])
+        self.assertEqual(["Read", "Grep"], junie_frontmatter["tools"])
+        self.assertEqual(["WebSearch"], junie_frontmatter["disallowedTools"])
+        self.assertEqual(["github"], junie_frontmatter["mcpServers"])
+        self.assertEqual(12, junie_frontmatter["maxTurns"])
+        self.assertEqual(
+            junie_profiles[role.model_profile].effort,
+            junie_frontmatter["reasoningLevel"],
+        )
+        self.assertNotIn("timeout", junie_frontmatter)
+        self.assertNotIn("timeout_mins", junie_frontmatter)
 
     def test_model_profiles_are_semantic_and_adapter_complete(self) -> None:
         source_profiles = load_yaml_object(MODEL_PROFILES_PATH)["profiles"]

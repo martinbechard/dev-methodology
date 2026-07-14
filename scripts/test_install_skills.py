@@ -337,6 +337,43 @@ class InstallSkillsTests(unittest.TestCase):
             self.assertEqual(["reviewer"], self.read_manifest_agent_names(agents_destination))
             self.assertIn(f"agents destination {agents_destination}", output.getvalue())
 
+    def test_installs_generated_markdown_agents_for_gemini_claude_and_junie(self) -> None:
+        installer = load_installer()
+
+        for adapter_name in ("gemini", "claude", "junie"):
+            with self.subTest(adapter=adapter_name), tempfile.TemporaryDirectory() as temp_dir:
+                root = Path(temp_dir)
+                source = root / "source"
+                destination = root / "skills-dest"
+                agents_source = root / "agents-source"
+                agents_destination = root / "agents-dest"
+                self.create_skill(source, "alpha")
+                agents_source.mkdir()
+                (agents_source / "reviewer.md").write_text(AGENT_FILE_CONTENT, encoding="utf-8")
+
+                exit_code = installer.main(
+                    [
+                        "--adapter",
+                        adapter_name,
+                        "--source",
+                        str(source),
+                        "--dest",
+                        str(destination),
+                        "--install-agents",
+                        "--agents-source",
+                        str(agents_source),
+                        "--agents-dest",
+                        str(agents_destination),
+                    ]
+                )
+
+                self.assertEqual(installer.SUCCESS_EXIT_CODE, exit_code)
+                self.assertEqual(
+                    AGENT_FILE_CONTENT,
+                    (agents_destination / "reviewer.md").read_text(encoding="utf-8"),
+                )
+                self.assertEqual(["reviewer"], self.read_manifest_agent_names(agents_destination))
+
     def test_agent_install_requires_explicit_destination_before_copying_skills(self) -> None:
         installer = load_installer()
 

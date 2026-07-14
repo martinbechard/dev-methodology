@@ -30,6 +30,8 @@ GENERATED_ADAPTERS_ROOT = REPOSITORY_ROOT / "generated" / "adapters"
 AGENT_GENERATION_MANIFEST_PATH = GENERATED_ADAPTERS_ROOT / "agent-generation-manifest.json"
 CODEX_AGENT_OUTPUT_ROOT = GENERATED_ADAPTERS_ROOT / "codex" / "agents"
 CLAUDE_AGENT_OUTPUT_ROOT = GENERATED_ADAPTERS_ROOT / "claude" / "agents"
+GEMINI_AGENT_OUTPUT_ROOT = GENERATED_ADAPTERS_ROOT / "gemini" / "agents"
+JUNIE_AGENT_OUTPUT_ROOT = GENERATED_ADAPTERS_ROOT / "junie" / "agents"
 ADAPTERS_ROOT = REPOSITORY_ROOT / "adapters"
 SKILL_FILE_NAME = "SKILL.md"
 AGENTS_FOLDER_NAME = "agents"
@@ -157,8 +159,12 @@ SKILL_ACTOR_SUFFIXES = {
 }
 CODEX_ADAPTER_NAME = "codex"
 CLAUDE_ADAPTER_NAME = "claude"
+GEMINI_ADAPTER_NAME = "gemini"
+JUNIE_ADAPTER_NAME = "junie"
 CODEX_AGENT_EXTENSION = ".toml"
 CLAUDE_AGENT_EXTENSION = ".md"
+GEMINI_AGENT_EXTENSION = ".md"
+JUNIE_AGENT_EXTENSION = ".md"
 CODEX_REASONING_FIELD_NAME = "model_reasoning_effort"
 CODEX_SANDBOX_FIELD_NAME = "sandbox_mode"
 CODEX_READ_ONLY_ISOLATION = "read-only"
@@ -1171,6 +1177,69 @@ def render_claude_agent(
     )
 
 
+def render_gemini_agent(
+    role: RoleDefinition,
+    model_profiles: dict[str, AdapterModelProfile],
+) -> str:
+    profile_id = role.model_profile
+    adapter_profile = model_profiles[profile_id]
+    frontmatter: dict[str, object] = {
+        ROLE_NAME_FIELD_NAME: role.name,
+        ROLE_DESCRIPTION_FIELD_NAME: role.description,
+        "kind": "local",
+        "model": adapter_profile.model,
+    }
+    for source_field, native_field in (
+        ("tools", "tools"),
+        ("maxTurns", "max_turns"),
+        ("timeout", "timeout_mins"),
+    ):
+        if source_field in role.optional_fields:
+            frontmatter[native_field] = role.optional_fields[source_field]
+    frontmatter_text = yaml.safe_dump(frontmatter, sort_keys=False).strip()
+    output_lines = "\n".join(f"- {item}" for item in role.output_contract)
+    return (
+        f"---\n{frontmatter_text}\n---\n\n"
+        f"<!-- {GENERATED_FILE_HEADER}\n{role_adapter_comments(role, '', adapter_profile)}\n-->\n\n"
+        f"{role.instructions}\n\n"
+        f"{role_loading_instruction_text(role)}\n\n"
+        + f"Return:\n\n{output_lines}\n"
+    )
+
+
+def render_junie_agent(
+    role: RoleDefinition,
+    model_profiles: dict[str, AdapterModelProfile],
+) -> str:
+    profile_id = role.model_profile
+    adapter_profile = model_profiles[profile_id]
+    frontmatter: dict[str, object] = {
+        ROLE_NAME_FIELD_NAME: role.name,
+        ROLE_DESCRIPTION_FIELD_NAME: role.description,
+        ROLE_SKILLS_FIELD_NAME: list(fixed_role_skills(role)),
+        "model": adapter_profile.model,
+    }
+    if adapter_profile.effort is not None:
+        frontmatter["reasoningLevel"] = adapter_profile.effort
+    for field_name in (
+        "tools",
+        "disallowedTools",
+        "mcpServers",
+        "maxTurns",
+    ):
+        if field_name in role.optional_fields:
+            frontmatter[field_name] = role.optional_fields[field_name]
+    frontmatter_text = yaml.safe_dump(frontmatter, sort_keys=False).strip()
+    output_lines = "\n".join(f"- {item}" for item in role.output_contract)
+    return (
+        f"---\n{frontmatter_text}\n---\n\n"
+        f"<!-- {GENERATED_FILE_HEADER}\n{role_adapter_comments(role, '', adapter_profile)}\n-->\n\n"
+        f"{role.instructions}\n\n"
+        f"{role_loading_instruction_text(role, fixed_skills_preloaded=True)}\n\n"
+        + f"Return:\n\n{output_lines}\n"
+    )
+
+
 def render_agent_generation_manifest(
     roles: Sequence[RoleDefinition],
     outputs: dict[Path, str],
@@ -1179,6 +1248,8 @@ def render_agent_generation_manifest(
     adapter_specs = {
         CODEX_ADAPTER_NAME: (CODEX_AGENT_OUTPUT_ROOT, CODEX_AGENT_EXTENSION, "toml"),
         CLAUDE_ADAPTER_NAME: (CLAUDE_AGENT_OUTPUT_ROOT, CLAUDE_AGENT_EXTENSION, "markdown"),
+        GEMINI_ADAPTER_NAME: (GEMINI_AGENT_OUTPUT_ROOT, GEMINI_AGENT_EXTENSION, "markdown"),
+        JUNIE_ADAPTER_NAME: (JUNIE_AGENT_OUTPUT_ROOT, JUNIE_AGENT_EXTENSION, "markdown"),
     }
     adapters: dict[str, object] = {}
     for adapter_name, (output_root, extension, output_format) in adapter_specs.items():
@@ -1215,6 +1286,8 @@ def expected_role_outputs(roles: Sequence[RoleDefinition]) -> dict[Path, str]:
     source_profile_ids = set(load_model_profiles())
     codex_profiles = load_adapter_model_profiles(CODEX_ADAPTER_NAME, source_profile_ids)
     claude_profiles = load_adapter_model_profiles(CLAUDE_ADAPTER_NAME, source_profile_ids)
+    gemini_profiles = load_adapter_model_profiles(GEMINI_ADAPTER_NAME, source_profile_ids)
+    junie_profiles = load_adapter_model_profiles(JUNIE_ADAPTER_NAME, source_profile_ids)
     outputs = {ROLE_OUTPUT_PATH: render_role_javascript(roles)}
     for role in roles:
         outputs[CODEX_AGENT_OUTPUT_ROOT / f"{role.filename}{CODEX_AGENT_EXTENSION}"] = render_codex_agent(
@@ -1223,16 +1296,26 @@ def expected_role_outputs(roles: Sequence[RoleDefinition]) -> dict[Path, str]:
         outputs[CLAUDE_AGENT_OUTPUT_ROOT / f"{role.filename}{CLAUDE_AGENT_EXTENSION}"] = render_claude_agent(
             role, claude_profiles
         )
+        outputs[GEMINI_AGENT_OUTPUT_ROOT / f"{role.filename}{GEMINI_AGENT_EXTENSION}"] = render_gemini_agent(
+            role, gemini_profiles
+        )
+        outputs[JUNIE_AGENT_OUTPUT_ROOT / f"{role.filename}{JUNIE_AGENT_EXTENSION}"] = render_junie_agent(
+            role, junie_profiles
+        )
     outputs[AGENT_GENERATION_MANIFEST_PATH] = render_agent_generation_manifest(roles, outputs)
     return outputs
 
 
 def stale_generated_adapter_paths(expected_paths: set[Path]) -> list[Path]:
     generated_paths: set[Path] = set()
-    if CODEX_AGENT_OUTPUT_ROOT.is_dir():
-        generated_paths.update(CODEX_AGENT_OUTPUT_ROOT.glob(f"*{CODEX_AGENT_EXTENSION}"))
-    if CLAUDE_AGENT_OUTPUT_ROOT.is_dir():
-        generated_paths.update(CLAUDE_AGENT_OUTPUT_ROOT.glob(f"*{CLAUDE_AGENT_EXTENSION}"))
+    for output_root, extension in (
+        (CODEX_AGENT_OUTPUT_ROOT, CODEX_AGENT_EXTENSION),
+        (CLAUDE_AGENT_OUTPUT_ROOT, CLAUDE_AGENT_EXTENSION),
+        (GEMINI_AGENT_OUTPUT_ROOT, GEMINI_AGENT_EXTENSION),
+        (JUNIE_AGENT_OUTPUT_ROOT, JUNIE_AGENT_EXTENSION),
+    ):
+        if output_root.is_dir():
+            generated_paths.update(output_root.glob(f"*{extension}"))
     return sorted(generated_paths - expected_paths)
 
 

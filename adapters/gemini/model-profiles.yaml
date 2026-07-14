@@ -1,0 +1,13 @@
+schema: dev-methodology-adapter-model-profiles
+version: 1
+adapter: gemini
+profiles:
+  simple:
+    model: flash
+  default:
+    model: auto
+  advanced:
+    model: pro
+  advanced-long:
+    model: pro
+    context: extra-long
