@@ -567,6 +567,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             )
             self.assertIn("api/**: load fastapi, python before acting", completed.stdout)
             self.assertIn("Do not rerun detection during ordinary work", completed.stdout)
+            self.assertIn("most-specific matching pattern wins", completed.stdout)
             self.assertNotIn("Agent Claims And Worktrees", completed.stdout)
             self.assertNotIn("agent-claim", completed.stdout)
 
@@ -600,6 +601,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 "config/**: no pertinent specialized technology skill is available; use general model training and continue full scope coverage",
                 completed.stdout,
             )
+            self.assertIn("most-specific matching pattern wins", completed.stdout)
 
     def test_registry_contains_only_specialized_skills(self) -> None:
         registry = yaml.safe_load(REGISTRY.read_text(encoding="utf-8"))

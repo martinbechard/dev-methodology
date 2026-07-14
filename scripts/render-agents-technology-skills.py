@@ -36,6 +36,8 @@ def render(value: dict[str, object]) -> str:
         "",
         "Folder skillsets:",
         "",
+        "When configured folder patterns overlap, the most-specific matching pattern wins.",
+        "",
     ]
     rendered = 0
     for item in loadouts(value):

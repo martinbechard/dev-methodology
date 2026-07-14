@@ -2953,6 +2953,9 @@ class BundleContentTests(unittest.TestCase):
             "general-model-training fallback",
             "required-but-unavailable skill `BLOCKED`",
             "Reject owning-manifest overreach",
+            "complete fixed and conditional skill metadata",
+            "Use only real repository-relative paths or valid globs",
+            "most-specific-pattern-wins rule",
         ):
             with self.subTest(configuration_phrase=phrase):
                 self.assertIn(phrase, configuration_text)
@@ -2962,6 +2965,8 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("runtimeAvailability:", template_text)
         self.assertIn("fallback:", template_text)
         self.assertIn("rejectedCandidates:", template_text)
+        self.assertIn("conditional_skills:", template_text)
+        self.assertIn("folder_route_precedence:", template_text)
         self.assertIn("NO_VARIANT scopes use general model training", template_text)
 
 

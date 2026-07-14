@@ -82,7 +82,10 @@ role_agent_set:
     hands_off:
       - "TODO: Work this agent must hand off."
     skills:
-      - "TODO: Definition-owned skill normally loaded by this agent."
+      - "TODO: Every fixed skill from the canonical conceptual agent definition."
+    conditional_skills:
+      - skill: "TODO: Conditional skill id or Not applicable."
+        condition: "TODO: Preserve the canonical load condition without flattening it into the fixed skillset."
     completion_checks:
       - "TODO: Command, review, or evidence required before completion."
 
@@ -105,8 +108,10 @@ technology_skill_loadouts:
     local_rules_source: "TODO: AGENTS.md, nested AGENTS.md, procedure, or Not yet identified."
     notes: "TODO: Keep skills reusable and portable. Keep project-specific rules in AGENTS.md or PROJECT.yaml until they are promoted into a reusable skill."
 
+folder_route_precedence: "Most-specific matching path pattern wins. Prefer non-overlapping routes and use this rule only when overlap is unavoidable."
+
 folder_routing:
-  - pattern: "TODO: Folder or path pattern."
+  - pattern: "TODO: Real repository-relative folder path or valid glob; never use a prose scope label."
     tier_or_workflow: "TODO: Tier or workflow name."
     primary_role: "TODO: Conceptual agent definition name."
     required_skills:
