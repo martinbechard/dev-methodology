@@ -441,16 +441,23 @@
     </div>
   </section>
 
-  <section class="section" aria-labelledby="examples-title">
-    <h2 id="examples-title">Core Skill Examples</h2>
+  <section class="section" aria-labelledby="skill-split-title">
+    <h2 id="skill-split-title">Why Core Agent Skills Split Into Two Loading Modes</h2>
+    <p class="lede">The split is based on whether a capability is part of the agent's minimum operating contract or is a situational method. Always-loaded skills protect the responsibilities the agent must fulfill on every invocation. On-demand skills are valid extensions of that role, but load only when an explicit condition makes them relevant. This is a loading decision within each agent definition, not a way of categorizing agents.</p>
+    <div class="wide-grid">
+      <article class="card agent"><h3>Always loaded: protect the role</h3><p>These skills provide safeguards and responsibilities that cannot be omitted without weakening the agent's basic contract. Making them conditional would allow the agent to skip work it must always perform.</p></article>
+      <article class="card skill"><h3>On demand: adapt the method</h3><p>These skills add a method needed only for a particular request or evidence state. Their conditions keep the method available without imposing it on work where it does not apply.</p></article>
+      <article class="card reference"><h3>The split keeps instructions relevant</h3><p>If every core skill were always loaded, irrelevant procedures would compete for attention and could introduce work the request does not need. If foundational skills were on demand, required safeguards could disappear from an invocation.</p></article>
+    </div>
+    <p>The existing agent definitions below show how the same boundary is applied in practice.</p>
     <div class="matrix">
       <table>
         <thead>
           <tr>
             <th>Agent definition</th>
-            <th>Always used</th>
-            <th>Selected by a rule</th>
-            <th>Why the split matters</th>
+            <th>Always-loaded contract</th>
+            <th>On-demand variation</th>
+            <th>Why these loading choices matter</th>
           </tr>
         </thead>
         <tbody>
@@ -458,19 +465,19 @@
             <td><span class="name">Dev Coder</span></td>
             <td>agent-claim, careful-coding, code-comments, code-discovery, fix-explanation</td>
             <td>organise-project-files when creating a file or directory; test-driven-development when tests can guide the behavior</td>
-            <td>Every implementation needs ownership, discovery, disciplined coding, and a handoff. File placement and test-first work apply only to relevant changes.</td>
+            <td>Ownership, discovery, disciplined editing, comment contracts, and handoff are required for every implementation. File placement is irrelevant when no path is created, and test-first work applies only when behavior can be expressed through executable tests.</td>
           </tr>
           <tr>
             <td><span class="name">Dev Artifact Reviewer</span></td>
             <td>review-structured-artifact, documentation-page-verify</td>
             <td>The matching review skill for a functional specification, architecture, high-level design, module design, or unit test plan; agent-claim and organise-project-files only when the review writes an artifact</td>
-            <td>The shared review and verification contract stays constant, while the artifact-specific checklist and write ownership depend on the requested review.</td>
+            <td>Every review needs the generic evidence checklist and independent page verification. Loading every artifact-specific review skill would mix unrelated checklists, while loading claim and placement procedures for a read-only review would add a mutation workflow the task does not need.</td>
           </tr>
           <tr>
             <td><span class="name">Project Configurator</span></td>
             <td>agent-claim, detect-technology-skills, create-project-configuration, development-methodology, documentation-page-verify</td>
             <td>organise-project-files when adding a path not fixed by the configuration contract; documentation-bootstrap when the project lacks the required documentation structure</td>
-            <td>The setup responsibility is stable across repositories, while placement and bootstrap work depend on the existing project.</td>
+            <td>Every configuration run must own its changes, detect technologies, maintain PROJECT.yaml, route methodology, and verify the result. Placement is unnecessary for contract-fixed paths, and bootstrap work would create needless structure in a project that already has it.</td>
           </tr>
         </tbody>
       </table>

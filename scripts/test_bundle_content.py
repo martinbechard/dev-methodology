@@ -251,8 +251,12 @@ DEVELOPMENT_METHODOLOGY_REQUIRED_PHRASES = (
 )
 MODULARIZATION_REQUIRED_PHRASES = (
     "Core Agent Skills",
-    "Core Skill Examples",
+    "Why Core Agent Skills Split Into Two Loading Modes",
     "Technology Extensions Are Bound During Setup",
+    "minimum operating contract",
+    "This is a loading decision within each agent definition",
+    "If every core skill were always loaded",
+    "If foundational skills were on demand",
     "directly references a small set of core skills",
     "loaded on demand",
     "limited to technology-agnostic skills",
