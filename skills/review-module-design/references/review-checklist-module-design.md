@@ -34,15 +34,15 @@ Do not mark pass without quoted evidence.
 
 ## Artifact-Specific Questions
 
-- Question: Does Purpose And Runtime Path name the module and its project-relative runtime path?
+- Question: Does Runtime Path name the module's project-relative runtime path and identify its entry point when the module is a folder?
 - Question: Does Parent Context explain the subsystem, architecture, feature, or workflow that owns the module?
 - Question: Are Responsibilities coherent, bounded, and not a mixed list of unrelated work?
-- Question: Do Callers And Dependencies identify direct callers, imported dependencies, external systems, generated artifacts, and test seams?
+- Question: Do Callers and Dependencies identify direct callers, imported dependencies, external systems, generated artifacts, and test seams?
 - Question: Do Public Contracts describe exports, inputs, outputs, events, messages, side effects, and expected errors?
 - Question: Do Internal Data And State describe maintained state, caches, derived values, persistence, and ownership rules?
 - Question: Do Processing Rules describe main flow, branches, retries, validation, ordering, idempotency, and concurrency rules when applicable?
 - Question: Do Invariants state rules that must always hold?
-- Question: Are Configuration, External Interfaces, UI Behavior, And Notifications covered when the module owns them?
+- Question: Are Configuration, External Interfaces, and UI And Notification Behavior covered when the module owns them?
 - Question: Does Error Handling name expected failures, propagation, logging, retry, recovery, and user-visible outcomes?
 - Question: Does Verification link unit, integration, end-to-end, lint, validation, or manual evidence for each important responsibility?
 - Question: Does Processing Diagram exist only when it clarifies real branches, state transitions, retries, or error handling?
