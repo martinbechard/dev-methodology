@@ -24,6 +24,8 @@ TODO: Link the accepted functional specifications, architecture, high-level desi
 
 TODO: State which source wins when sources disagree.
 
+TODO: Apply that precedence at the same level of specificity. A more specific accepted operation contract governs a general principle for that operation unless the authoritative sources actually conflict.
+
 ## Related Code
 
 TODO: Link the primary implementation file, entry point, internal files, generated artifacts, configuration files, scripts, or runtime files owned by this module.
@@ -117,6 +119,10 @@ TODO: For each contract, describe actor, trigger, inputs, identity selector, val
 TODO: When path, body, token, session, message, or persistence identifiers can name the same subject or record, state precedence and mismatch behavior explicitly.
 
 TODO: When the current contract and intended target differ, state both. Apply an explicit operation-specific response, selector, validation, or failure exception before any broader invariant or safety principle.
+
+TODO: Before filling this section, build an operation-contract ledger from the authoritative inputs. Copy the exact accepted selector and response wording for every operation, including current limitations and exceptions. Do not turn a generic term such as body identity into body login or body ID; keep the original specificity and mark the missing field OPEN.
+
+TODO: Do not replace an operation-specific current response or disclosure contract with a generally safer projection. Preserve that baseline as CURRENT_BEHAVIOR or CURRENT_LIMITATION and state the safer intended target separately.
 
 ## Trust And Identity Boundaries
 

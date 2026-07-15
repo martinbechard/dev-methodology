@@ -1111,6 +1111,8 @@ class BundleContentTests(unittest.TestCase):
                     "transaction or asynchronous boundary",
                     "failure timing",
                     "sensitive-data handling",
+                    "operation-contract ledger",
+                    "exact level of specificity",
                 ),
             },
         }
@@ -1161,6 +1163,13 @@ class BundleContentTests(unittest.TestCase):
                     "affected downstream work",
                     "Do not collapse the baseline and target",
                     "operation-specific",
+                ) + (
+                    (
+                        "body identity",
+                        "safer intended target separately",
+                    )
+                    if skill_name == "create-module-design"
+                    else ()
                 ):
                     self.assertIn(phrase, template_text)
 
@@ -1348,7 +1357,14 @@ class BundleContentTests(unittest.TestCase):
                     "CURRENT_LIMITATION",
                     "baseline and target stated separately",
                     "operation-specific",
-                ) + specific_phrases:
+                ) + specific_phrases + (
+                    (
+                        "exact level of specificity",
+                        "operation-contract ledger",
+                    )
+                    if skill_name == "review-module-design"
+                    else ()
+                ):
                     self.assertIn(phrase, checklist_text)
 
     def test_documentation_page_verifier_uses_completed_checklist_evidence(self) -> None:

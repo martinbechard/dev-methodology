@@ -41,6 +41,7 @@ Do not mark pass without quoted evidence.
 - Question: Does each requirement preserve its CURRENT_BEHAVIOR, CURRENT_LIMITATION, INTENDED_BEHAVIOR, PROPOSED_CHANGE, or OPEN_QUESTION mode, with baseline and target stated separately when they differ?
 - Question: Does every OUT_OF_SCOPE requirement name the authority, rationale, and owning artifact that accepts it instead of using status as an omission escape hatch?
 - Question: Are unsupported specifics labeled as inferences or open questions instead of being presented as decided behavior?
+- Question: Does each operation preserve the authoritative input's exact level of specificity, so a generic selector such as body identity is not silently specialized to body login, body ID, or another field?
 - Question: Does Implementation Readiness say BLOCKED for affected downstream work when any applicable requirement or required contract is OPEN or any high-impact blocking question remains?
 
 ## Identity And Security Questions
@@ -50,6 +51,7 @@ Do not mark pass without quoted evidence.
 - Question: Does each applicable trust boundary distinguish authentication, authorization, roles, ownership, tenancy, and data filtering and name the evidence for each?
 - Question: Does each applicable protected operation define disclosure limits, validation ownership, state transitions, failure timing, committed side effects, and sensitive logging behavior?
 - Question: Does every explicit operation-specific response, selector, validation, or failure exception govern that operation instead of being overwritten by a broader safety or consistency rule?
+- Question: Does every operation-specific current response or disclosure exception remain visible as CURRENT_BEHAVIOR or CURRENT_LIMITATION beside any safer intended target, including exceptions that expose more data than a general projection rule recommends?
 
 ## Artifact-Specific Questions
 
@@ -57,7 +59,7 @@ Do not mark pass without quoted evidence.
 - Question: Does Parent Context explain the subsystem, architecture, feature, or workflow that owns the module?
 - Question: Are Responsibilities coherent, bounded, and not a mixed list of unrelated work?
 - Question: Do Callers and Dependencies identify direct callers, imported dependencies, external systems, generated artifacts, and test seams?
-- Question: Do Public Contracts describe actors, triggers, inputs, selectors, validation owners, outputs, response or disclosure shapes, side effects, state owners, transaction or asynchronous boundaries, and expected errors?
+- Question: Do Public Contracts describe actors, triggers, inputs, selectors, validation owners, outputs, response or disclosure shapes, side effects, state owners, transaction or asynchronous boundaries, and expected errors, and do they agree with a source-traced operation-contract ledger prepared before prose?
 - Question: Do Internal Data And State describe maintained state, caches, derived values, persistence, and ownership rules?
 - Question: Do Processing Rules describe main flow, branches, retries, validation, ordering, idempotency, and concurrency rules when applicable?
 - Question: Do Invariants state rules that must always hold?
