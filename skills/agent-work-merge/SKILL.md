@@ -27,7 +27,7 @@ Before merging a worktree:
 
 ## Merge Claim
 
-Claim the integration resource and any files likely to be touched by conflict resolution.
+Claim the target-specific integration resource only for the shared target update, together with any files likely to be touched by conflict resolution. Separate worktrees may commit to their unique branches without a repository-global commit resource. Release the integration resource promptly after the merge, cherry-pick, rebase, or equivalent target update and its required verification complete.
 
 Example claim:
 
@@ -36,7 +36,7 @@ Example claim:
   "agent": "merge-agent",
   "task": "Merge completed agent work",
   "files": ["src/feature/file.ts", "test/feature/file.test.ts"],
-  "resources": ["merge:integration", "build:production"],
+  "resources": ["merge:integration:main", "build:production"],
   "claimed_at": "2026-06-10T20:30:00Z",
   "heartbeat": "2026-06-10T20:30:00Z",
   "worktree": "/absolute/path/to/integration-checkout"

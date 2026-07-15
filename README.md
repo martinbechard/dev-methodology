@@ -107,17 +107,23 @@ Every modifying agent uses agent-claim before changing repository files or exclu
 
 - The first independent writer may claim a clean primary worktree.
 - A later non-overlapping writer receives a dedicated branch and linked worktree.
-- Overlapping file or exclusive resource claims wait or coordinate.
+- Exact files, directory trees, repository-wide ownership, and exclusive resources use distinct scope forms.
+- A claim can atomically extend its narrow scope as new files or resources become necessary.
+- Overlap returns exact conflict pairs; a blocked extension leaves the live claim unchanged.
 - Dirty state without a claim enters explicit recovery instead of accepting more anonymous work.
 - A modifying claim is released only after verification, commit or explicit no-change, clean worktree status, and runtime-resource cleanup or handoff.
 
-The bundled command implements primary, isolation, wait, recovery, heartbeat, status, and release decisions:
+Separate worktrees may commit to their unique branches without a global commit resource. Integration uses a target-specific resource such as merge:integration:main only while updating that shared target branch.
+
+The live registry remains authoritative. Coordination outcomes also append to a repository-global event journal under the Git common directory. The default maintenance policy keeps today and yesterday as hot UTC JSON Lines files, archives older complete days losslessly, and writes compact daily summaries. Native reports use only that journal and the live registry; they do not parse agent transcripts.
+
+The bundled command implements primary, isolation, wait, recovery, extension, heartbeat, status, release, journal maintenance, and contention reporting:
 
 ```bash
 python3 skills/agent-claim/scripts/claim.py --help
 ```
 
-Dev Orchestrator owns the root task claim and child handoffs. Dev Merge Coordinator accepts committed clean contributions, owns shared regeneration and integration verification, commits the combined result, and releases the integration claim only from a clean worktree.
+Dev Orchestrator owns the root task claim and child handoffs. Dev Merge Coordinator accepts committed clean contributions, acquires the target-specific integration resource, owns shared regeneration and integration verification, commits the combined result, and releases the integration claim only from a clean worktree.
 
 ## Explicit Target Deployment
 

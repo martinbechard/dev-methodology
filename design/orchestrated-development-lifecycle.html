@@ -469,7 +469,7 @@
           <tr>
             <td><span class="name">Claim gate</span></td>
             <td>Every modifying claim owner</td>
-            <td>Mutation begins only after <a href="../skills/agent-claim/SKILL.md">agent-claim</a> establishes ownership of the affected files and exclusive resources.</td>
+            <td>Mutation begins only after <a href="../skills/agent-claim/SKILL.md">agent-claim</a> establishes narrow ownership of the affected exact files and exclusive resources. The owner extends that claim atomically when evidence reveals another required file, tree, or resource.</td>
           </tr>
           <tr>
             <td><span class="name">Placement, when needed</span></td>
@@ -499,7 +499,7 @@
           <tr>
             <td><span class="name">Multi-lane integration, when required</span></td>
             <td>Dev Merge Coordinator</td>
-            <td>Combine multiple accepted commits in dependency order, with their claim, review, and verification evidence. Do not create a merge lane for one accepted contribution.</td>
+            <td>Acquire the target-specific integration resource, then combine multiple accepted commits in dependency order with their claim, review, and verification evidence. Separate worktrees commit to their unique branches without a repository-global commit resource. Do not create a merge lane for one accepted contribution.</td>
           </tr>
           <tr>
             <td><span class="name">Integrated-artifact review and verification, multiple lanes only</span></td>
@@ -514,7 +514,7 @@
           <tr>
             <td><span class="name">Completion and claim release</span></td>
             <td>Dev Orchestrator and every claim owner</td>
-            <td>Record the final direct commit for the single-lane path, or the final integration commit after integrated review and verification for the multi-lane path. Release ownership only after clean status and resource cleanup or handoff.</td>
+            <td>Record the final direct commit for the single-lane path, or the final integration commit after integrated review and verification for the multi-lane path. Release ownership only after clean status and resource cleanup or handoff. Repository-global claim events retain the coordination lifecycle for later contention reporting.</td>
           </tr>
         </tbody>
       </table>
