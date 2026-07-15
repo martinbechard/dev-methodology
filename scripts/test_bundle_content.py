@@ -493,6 +493,13 @@ DOCUMENT_INFORMATION_OWNERS = {
         "Planned Design Progression",
         "Execution Evidence",
     ),
+    "documentation-templates.html": (
+        "Documentation Templates",
+        "Template Catalog",
+        "Template Selection",
+        "Wiki Format",
+        "Template Completion",
+    ),
 }
 DOCUMENT_FORBIDDEN_HEADINGS = {
     "skills-modularization.html": (
@@ -543,6 +550,16 @@ DOCUMENT_REQUIRED_CONTENT_LINKS = {
     ),
     "generic-agent-definitions-source.html": (
         "../README.md#explicit-target-deployment",
+    ),
+    "documentation-templates.html": (
+        "../skills/development-methodology/assets/templates/project-template.yaml",
+        "../skills/development-methodology/assets/templates/project-wiki-template.md",
+        "../skills/development-methodology/assets/templates/functional-spec-template.md",
+        "../skills/development-methodology/assets/templates/architecture-template.md",
+        "../skills/development-methodology/assets/templates/high-level-design-template.md",
+        "../skills/development-methodology/assets/templates/module-design-template.md",
+        "../skills/development-methodology/assets/templates/unit-test-plan-template.md",
+        "../skills/project-wiki/references/page-schema.md",
     ),
 }
 DEVELOPMENT_USE_LOADOUTS = (
@@ -3139,6 +3156,7 @@ class BundleContentTests(unittest.TestCase):
             "agent-definitions",
             "examples",
             "execution",
+            "templates",
         )
         index_owners = tuple(
             re.findall(
@@ -3253,7 +3271,7 @@ class BundleContentTests(unittest.TestCase):
         )
         self.assertNotIn('class="summary"', index_text)
         self.assertNotIn('class="pill"', index_text)
-        self.assertNotIn('aria-hidden="true">07</span>', index_text)
+        self.assertIn('aria-hidden="true">07</span>', index_text)
         for retired_page in (
             "agent-role-skill-map.html",
             "agentic-development-operating-model.html",

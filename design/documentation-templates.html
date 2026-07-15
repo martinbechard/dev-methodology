@@ -1,0 +1,625 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Documentation Templates</title>
+  <style>
+    :root {
+      --color-ink: #172033;
+      --color-muted: #5b6678;
+      --color-page: #f6f8fb;
+      --color-panel: #ffffff;
+      --color-line: #d9e1ea;
+      --color-blue: #2563eb;
+      --color-green: #0f766e;
+      --color-amber: #b45309;
+      --color-purple: #7c3aed;
+      --color-rose: #be123c;
+      --color-soft-blue: #e8f0ff;
+      --color-soft-green: #e4f7f4;
+      --color-soft-amber: #fff1d8;
+      --color-soft-purple: #f0e8ff;
+      --color-soft-rose: #ffe5ec;
+      --color-soft-gray: #edf1f6;
+      --shadow-panel: 0 14px 32px rgba(31, 41, 55, 0.08);
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.25rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --space-10: 2.5rem;
+      --radius: 0.5rem;
+      --radius-small: 0.35rem;
+      --content-max: 1220px;
+      --font-sm: 0.92rem;
+      --font-xs: 0.78rem;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      display: flex;
+      min-height: 100vh;
+      margin: 0;
+      flex-direction: column;
+      color: var(--color-ink);
+      background:
+        linear-gradient(180deg, rgba(232, 240, 255, 0.9), rgba(246, 248, 251, 0) 340px),
+        var(--color-page);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.52;
+    }
+
+    a {
+      color: var(--color-blue);
+    }
+
+    main {
+      width: 100%;
+      max-width: var(--content-max);
+      margin: 0 auto;
+      padding: var(--space-10) var(--space-6);
+      flex: 1 0 auto;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      line-height: 1.15;
+    }
+
+    h1 {
+      max-width: 900px;
+      font-size: clamp(2rem, 4vw, 3.7rem);
+    }
+
+    h2 {
+      margin-bottom: var(--space-4);
+      font-size: clamp(1.35rem, 2vw, 2rem);
+    }
+
+    h3 {
+      font-size: 1.05rem;
+    }
+
+    p {
+      margin: 0;
+      color: var(--color-muted);
+    }
+
+    code {
+      padding: 0.1rem 0.24rem;
+      border-radius: 0.25rem;
+      background: var(--color-soft-gray);
+      font-size: 0.9em;
+    }
+
+    pre {
+      margin: 0;
+      padding: var(--space-5);
+      overflow-x: auto;
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      background: #111827;
+      color: #f8fafc;
+      font-size: 0.86rem;
+      line-height: 1.55;
+    }
+
+    pre code {
+      padding: 0;
+      background: transparent;
+      color: inherit;
+    }
+
+    .site-header,
+    .site-footer {
+      width: 100%;
+      max-width: var(--content-max);
+      margin: 0 auto;
+      padding-right: var(--space-6);
+      padding-left: var(--space-6);
+    }
+
+    .site-header {
+      padding-top: var(--space-4);
+    }
+
+    .site-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-3);
+      color: var(--color-ink);
+      font-size: clamp(0.88rem, 1.4vw, 0.95rem);
+      font-weight: 750;
+      line-height: 1.2;
+      text-decoration: none;
+    }
+
+    .site-logo {
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: var(--radius-small);
+      object-fit: cover;
+      box-shadow: 0 4px 12px rgba(31, 41, 55, 0.14);
+    }
+
+    .document-nav {
+      display: grid;
+      gap: var(--space-3);
+      margin-bottom: var(--space-6);
+    }
+
+    .document-sequence {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+    }
+
+    .document-nav a {
+      display: inline-flex;
+      width: max-content;
+      align-items: center;
+      gap: var(--space-2);
+      padding: 0.45rem 0.75rem;
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      background: var(--color-panel);
+      color: var(--color-muted);
+      font-size: var(--font-sm);
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: var(--shadow-panel);
+      transition: border-color 160ms ease, color 160ms ease, transform 160ms ease;
+    }
+
+    .document-nav a:hover,
+    .document-nav a:focus-visible {
+      transform: translateY(-1px);
+      border-color: var(--color-blue);
+      color: var(--color-ink);
+      outline: none;
+    }
+
+    .hero {
+      display: grid;
+      gap: var(--space-5);
+      margin-bottom: var(--space-8);
+    }
+
+    .lede {
+      max-width: 900px;
+      font-size: 1.08rem;
+    }
+
+    .section {
+      margin-top: var(--space-8);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(285px, 1fr));
+      gap: var(--space-4);
+    }
+
+    .card,
+    .panel,
+    .matrix {
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      background: var(--color-panel);
+      box-shadow: var(--shadow-panel);
+    }
+
+    .card {
+      display: grid;
+      gap: var(--space-3);
+      padding: var(--space-5);
+      border-top: 0.35rem solid var(--accent, var(--color-blue));
+    }
+
+    .card p,
+    .card li,
+    .panel li,
+    td {
+      color: var(--color-muted);
+    }
+
+    .card ul,
+    .panel ul,
+    .contract-list {
+      margin: 0;
+      padding-left: var(--space-5);
+    }
+
+    .card li + li,
+    .panel li + li,
+    .contract-list li + li {
+      margin-top: 0.35rem;
+    }
+
+    .card.configuration {
+      --accent: var(--color-blue);
+    }
+
+    .card.wiki {
+      --accent: var(--color-purple);
+    }
+
+    .card.product {
+      --accent: var(--color-green);
+    }
+
+    .card.design {
+      --accent: var(--color-amber);
+    }
+
+    .card.test {
+      --accent: var(--color-rose);
+    }
+
+    .path-link {
+      align-self: end;
+      font-size: var(--font-xs);
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .panel {
+      padding: var(--space-5);
+    }
+
+    .panel h3 {
+      margin-bottom: var(--space-3);
+    }
+
+    .matrix {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--font-sm);
+    }
+
+    th,
+    td {
+      padding: var(--space-3) var(--space-4);
+      border-bottom: 1px solid var(--color-line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--color-soft-blue);
+      color: var(--color-ink);
+    }
+
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .wiki-layout {
+      display: grid;
+      grid-template-columns: minmax(260px, 0.8fr) minmax(420px, 1.2fr);
+      gap: var(--space-4);
+      margin-top: var(--space-4);
+    }
+
+    .contract-list {
+      columns: 2;
+      color: var(--color-muted);
+    }
+
+    .note {
+      margin-top: var(--space-4);
+      padding: var(--space-4);
+      border-left: 0.35rem solid var(--color-purple);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      background: var(--color-soft-purple);
+    }
+
+    .note p {
+      color: var(--color-ink);
+    }
+
+    .site-footer {
+      flex: 0 0 auto;
+      padding-bottom: var(--space-6);
+    }
+
+    .site-footer p {
+      padding-top: var(--space-4);
+      border-top: 1px solid var(--color-line);
+      color: var(--color-muted);
+      font-size: var(--font-xs);
+    }
+
+    .site-footer a {
+      color: inherit;
+      font-weight: 700;
+    }
+
+    @media (max-width: 780px) {
+      main {
+        padding: var(--space-8) var(--space-4);
+      }
+
+      .site-header,
+      .site-footer {
+        padding-right: var(--space-4);
+        padding-left: var(--space-4);
+      }
+
+      .wiki-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .contract-list {
+        columns: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">
+      <img class="site-logo" src="../logo.png" alt="DevConsult Canada logo">
+      <span>AI-Assisted Coding Toolkit</span>
+    </a>
+  </header>
+  <main>
+    <nav class="document-nav" aria-label="Documentation navigation">
+      <a href="../index.html">Back to Documentation Index</a>
+      <div class="document-sequence">
+        <a href="orchestrated-development-lifecycle.html" rel="prev"><span aria-hidden="true">&larr;</span> Previous: Orchestrated Development Lifecycle</a>
+      </div>
+    </nav>
+
+    <section class="hero" aria-labelledby="page-title">
+      <h1 id="page-title">Documentation Templates</h1>
+      <p class="lede">The development methodology ships seven source-backed templates for project configuration, wiki methodology, product behavior, system design, module design, and unit test planning. Each template supplies TODO instructions that are replaced with project evidence when an artifact is created.</p>
+    </section>
+
+    <section class="section" aria-labelledby="catalog-title">
+      <h2 id="catalog-title">Template Catalog</h2>
+      <div class="grid">
+        <article class="card configuration">
+          <h3>Project Configuration</h3>
+          <p>Records the complete project-wide intent for conceptual agent definitions, technology skillsets, folder routes, AGENTS.md locations, validation evidence, and customer-safe examples.</p>
+          <ul>
+            <li>Output: PROJECT.yaml at the project root</li>
+            <li>Creator: create-project-configuration</li>
+            <li>Verifier: documentation-page-verify</li>
+          </ul>
+          <a class="path-link" href="../skills/development-methodology/assets/templates/project-template.yaml">project-template.yaml</a>
+        </article>
+
+        <article class="card wiki">
+          <h3>Project Wiki Methodology</h3>
+          <p>Defines a project-specific wiki root, authority order, base page contract, topic organization, diagrams, source links, maintenance workflow, automation boundaries, and verification.</p>
+          <ul>
+            <li>Output: project wiki methodology artifact</li>
+            <li>Creator: project-wiki-create</li>
+            <li>Reviewer: project-wiki-review</li>
+          </ul>
+          <a class="path-link" href="../skills/development-methodology/assets/templates/project-wiki-template.md">project-wiki-template.md</a>
+        </article>
+
+        <article class="card product">
+          <h3>Functional Specification</h3>
+          <p>Describes actor goals, entry points, user-visible workflows, states, permissions, edge cases, acceptance behavior, and workflow-level verification.</p>
+          <ul>
+            <li>Scope: one coherent user or operator capability</li>
+            <li>Creator: create-functional-spec</li>
+            <li>Reviewer: review-functional-spec</li>
+          </ul>
+          <a class="path-link" href="../skills/development-methodology/assets/templates/functional-spec-template.md">functional-spec-template.md</a>
+        </article>
+
+        <article class="card design">
+          <h3>Architecture</h3>
+          <p>Defines project-wide boundaries, system context, technology stack, file ownership, dependency layers, major components, cross-cutting concerns, invariants, risks, and verification.</p>
+          <ul>
+            <li>Scope: a system or cross-cutting architectural concern</li>
+            <li>Creator: create-architecture</li>
+            <li>Reviewer: review-architecture</li>
+          </ul>
+          <a class="path-link" href="../skills/development-methodology/assets/templates/architecture-template.md">architecture-template.md</a>
+        </article>
+
+        <article class="card design">
+          <h3>High-Level Design</h3>
+          <p>Explains a subsystem, feature family, or system slice through requirements coverage, constituent components, interactions, data contracts, lifecycle, configuration ownership, implementation order, and readiness.</p>
+          <ul>
+            <li>Scope: a coherent multi-module design</li>
+            <li>Creator: create-high-level-design</li>
+            <li>Reviewer: review-high-level-design</li>
+          </ul>
+          <a class="path-link" href="../skills/development-methodology/assets/templates/high-level-design-template.md">high-level-design-template.md</a>
+        </article>
+
+        <article class="card design">
+          <h3>Module Design</h3>
+          <p>Specifies one implementation unit, including its responsibility, callers, dependencies, contracts, state, processing rules, interfaces, errors, tests, and implementation readiness.</p>
+          <ul>
+            <li>Scope: one module, service, class, task, utility, or UI component</li>
+            <li>Creator: create-module-design</li>
+            <li>Reviewer: review-module-design</li>
+          </ul>
+          <a class="path-link" href="../skills/development-methodology/assets/templates/module-design-template.md">module-design-template.md</a>
+        </article>
+
+        <article class="card test">
+          <h3>Unit Test Plan</h3>
+          <p>Maps one unit's observable behavior, collaborators, boundary doubles, failures, invariants, and coverage gaps to stable source-backed test scenarios.</p>
+          <ul>
+            <li>Scope: one testable implementation boundary</li>
+            <li>Creator: create-unit-test-plan</li>
+            <li>Reviewer: review-unit-test-plan</li>
+          </ul>
+          <a class="path-link" href="../skills/development-methodology/assets/templates/unit-test-plan-template.md">unit-test-plan-template.md</a>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="selection-title">
+      <h2 id="selection-title">Template Selection</h2>
+      <p class="lede">Choose the smallest artifact that fully owns the requested knowledge. Project configuration and wiki methodology establish operating context; the remaining templates form a progressively narrower development chain.</p>
+      <div class="matrix">
+        <table>
+          <thead>
+            <tr>
+              <th>Question to answer</th>
+              <th>Template</th>
+              <th>Relationship to other artifacts</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Which agents, skills, folder rules, and guidance files apply to this repository?</td>
+              <td>Project Configuration</td>
+              <td>Establishes setup intent for later agent work; it is not a product or implementation design.</td>
+            </tr>
+            <tr>
+              <td>How should durable project knowledge be organized, sourced, maintained, and verified?</td>
+              <td>Project Wiki Methodology</td>
+              <td>Defines the synthesis layer that links the authoritative specifications, designs, source, tests, and backlog.</td>
+            </tr>
+            <tr>
+              <td>What must a user, operator, administrator, service, or external system be able to accomplish?</td>
+              <td>Functional Specification</td>
+              <td>Supplies accepted behavior and workflows to architecture and downstream design.</td>
+            </tr>
+            <tr>
+              <td>What system-wide structure, boundaries, stack, and dependency rules govern implementation?</td>
+              <td>Architecture</td>
+              <td>Constrains high-level designs while leaving individual subsystem detail to them.</td>
+            </tr>
+            <tr>
+              <td>How do several components collaborate to deliver a subsystem or feature family?</td>
+              <td>High-Level Design</td>
+              <td>Accounts for accepted requirements and divides them into implementable module responsibilities.</td>
+            </tr>
+            <tr>
+              <td>What exact contract, state, processing, dependencies, and error behavior belong to one unit?</td>
+              <td>Module Design</td>
+              <td>Provides the implementation-ready boundary consumed by coding and test work.</td>
+            </tr>
+            <tr>
+              <td>Which scenarios prove one unit's behavior, boundaries, failures, and invariants?</td>
+              <td>Unit Test Plan</td>
+              <td>Translates accepted contracts and implementation evidence into durable test obligations.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="wiki-format-title">
+      <h2 id="wiki-format-title">Wiki Format</h2>
+      <p class="lede">A project wiki lives under docs/wiki and acts as compiled understanding rather than primary authority. The wiki methodology template records project-specific maintenance rules; the project-wiki page schema owns the concrete format for topic pages, folders, and required root files.</p>
+
+      <div class="wiki-layout">
+        <article class="panel">
+          <h3>Wiki repository shape</h3>
+          <ul>
+            <li>README.md introduces the wiki and its primary navigation.</li>
+            <li>schema.md records authority, page sections, and maintenance rules.</li>
+            <li>topic-index.md maps topics and their source neighborhoods.</li>
+            <li>glossary.md defines recurring project terminology.</li>
+            <li>open-decisions.md and known-defects.md retain unresolved and defective states.</li>
+            <li>maintenance-log.md records notable maintenance events.</li>
+            <li>Topic folders use index.md hub pages plus granular leaf pages.</li>
+            <li>digests/index.md and YYYY-MM.md pages summarize ingested developments when digests apply.</li>
+          </ul>
+        </article>
+
+        <pre aria-label="Project wiki topic page format"><code>---
+type: Topic
+title: Topic Name
+description: One sentence summary of the topic.
+tags: [topic-folder]
+---
+
+# Topic Name
+
+## Current Understanding
+## Authoritative Sources
+## Related Code
+## Related Tests
+## Related Backlog Items
+## Related Wiki Pages
+## Open Questions
+## Maintenance Notes</code></pre>
+      </div>
+
+      <div class="grid section">
+        <article class="panel">
+          <h3>Shared page contract</h3>
+          <ol class="contract-list">
+            <li>Current Understanding</li>
+            <li>Authoritative Sources</li>
+            <li>Related Code</li>
+            <li>Related Tests</li>
+            <li>Related Backlog Items</li>
+            <li>Related Wiki Pages</li>
+            <li>Open Questions</li>
+            <li>Maintenance Notes</li>
+          </ol>
+        </article>
+
+        <article class="panel">
+          <h3>Page organization</h3>
+          <ul>
+            <li>Non-reserved concept pages use YAML frontmatter with a non-empty type; title, description, and tags improve routing and previews.</li>
+            <li>Folder index.md and log.md files are reserved navigation pages and do not need concept frontmatter.</li>
+            <li>Hub pages describe a stable domain and link to granular leaves that can change or be maintained independently.</li>
+            <li>Additional topic-specific sections may follow the shared contract without replacing its required sections.</li>
+            <li>Specialized methodology documents keep the eight shared sections first and append the extension sections owned by their template.</li>
+          </ul>
+        </article>
+      </div>
+
+      <aside class="note">
+        <p><strong>Format boundary:</strong> the shared wiki-compatible contract applies to docs/wiki topic pages and methodology artifacts created from these templates. It does not automatically apply to README files, design HTML pages, runtime schemas, generated data, or native agent definitions that already have another authoritative format.</p>
+      </aside>
+
+      <p class="section"><a href="../skills/project-wiki/references/page-schema.md">Read the complete project wiki page schema</a> for leaf splitting, digest ordering, source-link, OKF, and maintenance rules.</p>
+    </section>
+
+    <section class="section" aria-labelledby="completion-title">
+      <h2 id="completion-title">Template Completion</h2>
+      <div class="grid">
+        <article class="panel">
+          <h3>Source-backed content</h3>
+          <ul>
+            <li>Copy only the template that matches the requested artifact.</li>
+            <li>Replace every TODO instruction with project-specific evidence.</li>
+            <li>Link authoritative sources, code, tests, backlog records, and related pages where the explanation depends on them.</li>
+            <li>Use Not yet identified when a required source, implementation, test, or related record does not exist.</li>
+          </ul>
+        </article>
+        <article class="panel">
+          <h3>Review and maintenance</h3>
+          <ul>
+            <li>Run the matching artifact reviewer after the document is complete.</li>
+            <li>Keep steady-state prose and record unresolved decisions explicitly.</li>
+            <li>Add editable Mermaid diagrams only when a real relationship is easier to understand visually.</li>
+            <li>Recheck the document when its sources, responsibilities, contracts, or verification evidence change.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <p>Copyright 2026 (c) Martin.Bechard@DevConsult.ca - <a href="../LICENSE">MIT License</a></p>
+  </footer>
+</body>
+</html>

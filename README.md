@@ -28,6 +28,8 @@ The core methodology keeps one shared wiki-compatible page contract and six docu
 
 The shared page contract starts every durable page with Current Understanding, Authoritative Sources, Related Code, Related Tests, Related Backlog Items, Related Wiki Pages, Open Questions, and Maintenance Notes. Specialized documents keep those sections first, then add their own sections.
 
+The [Documentation Templates page](design/documentation-templates.html) describes all seven distributed template assets, their creation and review routes, and the project wiki repository and topic-page formats.
+
 Normal planned development proceeds top down from accepted functional specifications and architecture through create-high-level-design and review-high-level-design, then through create-module-design and review-module-design, and finally through ordinary implementation agents with the project-routed technology skills. The design skills use PLANNED_DEVELOPMENT mode, account for every applicable requirement, and block downstream work when a critical identity, security, public-response, state-ownership, validation, transaction, asynchronous, or failure-timing contract remains unresolved.
 
 Project-specific evaluation skills may freeze inputs and compare completed candidates with hidden reference artifacts, but they do not create production designs or code and do not add project-specific development rules to the generation context. Accepted upstream specifications and designs remain valid production inputs even when a separate reverse-engineering process originally produced them.

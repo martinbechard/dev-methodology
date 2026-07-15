@@ -94,6 +94,7 @@ The design HTML files must stay aligned with the current skills and agent model:
 - design/generic-agent-definitions-source.html
 - design/agent-skill-specialization-examples.html
 - design/orchestrated-development-lifecycle.html
+- design/documentation-templates.html
 
 If a change affects the skill catalog, adapter shape, conceptual agent definition naming, dispatch profile examples, or agent specialization story, update the relevant HTML files in the same change.
 
