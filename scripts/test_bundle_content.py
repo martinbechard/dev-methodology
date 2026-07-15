@@ -1135,6 +1135,7 @@ class BundleContentTests(unittest.TestCase):
                     "Preserve the heading text and order exactly",
                     "executor acceptance or rejection before any work",
                     "Do not merge executor rejection",
+                    "first nonblank content under Implementation Readiness",
                 ),
             },
         }
@@ -1204,6 +1205,7 @@ class BundleContentTests(unittest.TestCase):
                         "shared cache is created, replaced, retained, or invalidated",
                         "failed cached source remains retained or is replaced",
                         "place executor acceptance or rejection before every executor-owned action",
+                        "Begin this section with **READY.** or **BLOCKED.**",
                     )
                     if skill_name == "create-module-design"
                     else ()
@@ -1409,6 +1411,7 @@ class BundleContentTests(unittest.TestCase):
                         "ordered level-two headings",
                         "executor acceptance or rejection occur before every executor-owned action",
                         "sender or provider rejection",
+                        "first nonblank content under Implementation Readiness",
                     )
                     if skill_name == "review-module-design"
                     else ()
@@ -2390,7 +2393,7 @@ class BundleContentTests(unittest.TestCase):
             "evaluator rubrics",
             "do not enter production generation",
             "project-specific reconstruction instructions",
-            "exact ordered template-heading gate",
+            "exact ordered template-heading and readiness-marker gate",
             "Executor acceptance precedes executor-owned work",
         ):
             with self.subTest(phrase=phrase):

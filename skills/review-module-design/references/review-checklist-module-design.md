@@ -18,6 +18,7 @@ Do not mark pass without quoted evidence.
 ## Skill Workflow Checks
 
 - Question: Before semantic review, do the artifact's ordered level-two headings match every module design template heading exactly, with no missing, renamed, duplicated, merged, or reordered heading?
+- Question: Does the first nonblank content under Implementation Readiness begin with READY or BLOCKED before any explanatory prose?
 - Question: Does the review identify runtime path, responsibility, callers, dependencies, contracts, internal state, processing rules, error handling, and verification claims before assessment?
 - Question: Does the completed review checklist name this checklist as review-checklist-module-design.md?
 - Question: Does the completed review checklist save next to the artifact using artifact-name.review-checklist-module-design.md?

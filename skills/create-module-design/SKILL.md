@@ -17,6 +17,8 @@ Copy the template only when a local editable artifact is needed. Replace every T
 
 Treat every level-two heading in the template as mandatory. Preserve the heading text and order exactly; do not rename, merge, reorder, or omit headings. When a section is not applicable, keep its heading and state why. Compare the candidate's ordered level-two headings with the template before production review. A mismatch is BLOCKED and must be corrected before spending a semantic-review pass.
 
+The first nonblank content under Implementation Readiness must begin with READY or BLOCKED. Put the decision before explanatory prose so deterministic gates and downstream agents cannot mistake an unresolved design for an accepted one.
+
 ## Design Mode
 
 Choose and state exactly one mode before writing:
@@ -82,7 +84,7 @@ Use documentation-reverse-engineer when the user asks to derive many module desi
 
 Before finishing:
 
-1. Compare the ordered level-two headings with the module design template. If any required heading is missing, renamed, duplicated, merged, or reordered, stop with BLOCKED and correct the structure before invoking review-module-design.
+1. Compare the ordered level-two headings with the module design template and verify that Implementation Readiness begins with READY or BLOCKED. If any required heading is missing, renamed, duplicated, merged, or reordered, or the readiness marker does not lead its section, stop with BLOCKED and correct the structure before invoking review-module-design.
 2. After the template-conformance gate passes, use review-module-design on the completed artifact.
 3. Use documentation-page-verify with the artifact, source evidence, and completed review checklist when the review skill calls for it.
 4. Run project wiki status and lint when docs/wiki exists and the artifact lives in or links from docs/wiki.

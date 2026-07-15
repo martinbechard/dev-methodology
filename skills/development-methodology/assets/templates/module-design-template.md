@@ -238,7 +238,7 @@ TODO: State which errors are returned, thrown, swallowed, or escalated; whether 
 
 ## Implementation Readiness
 
-TODO: State READY only when every applicable requirement and required contract is DEFINED and no high-impact blocking question remains. Otherwise state BLOCKED for the affected downstream work and list the exact decisions or upstream artifacts required before implementation.
+TODO: Begin this section with **READY.** or **BLOCKED.** State READY only when every applicable requirement and required contract is DEFINED and no high-impact blocking question remains. Otherwise state BLOCKED for the affected downstream work and list the exact decisions or upstream artifacts required before implementation.
 
 ## Verification
 
