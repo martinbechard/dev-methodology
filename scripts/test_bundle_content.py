@@ -1095,6 +1095,9 @@ class BundleContentTests(unittest.TestCase):
                     "error timing",
                     "installed documentation path",
                     "transient assembly or control files",
+                    "source-category inventory",
+                    "operation-and-obligation inventory",
+                    "boundary-edge inventory",
                 ),
             },
             "create-module-design": {
@@ -2400,6 +2403,7 @@ class BundleContentTests(unittest.TestCase):
             "exact ordered template-heading and readiness-marker gate",
             "installed documentation path",
             "transient assembly or control files",
+            "boundary-edge inventory",
             "Executor acceptance precedes executor-owned work",
         ):
             with self.subTest(phrase=phrase):
