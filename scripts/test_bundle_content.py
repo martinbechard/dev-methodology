@@ -1113,6 +1113,7 @@ class BundleContentTests(unittest.TestCase):
                     "sensitive-data handling",
                     "operation-contract ledger",
                     "exact level of specificity",
+                    "Preserve partial specificity",
                 ),
             },
         }
@@ -1167,6 +1168,7 @@ class BundleContentTests(unittest.TestCase):
                     (
                         "body identity",
                         "safer intended target separately",
+                        "entity-shaped response",
                     )
                     if skill_name == "create-module-design"
                     else ()
@@ -1361,6 +1363,8 @@ class BundleContentTests(unittest.TestCase):
                     (
                         "exact level of specificity",
                         "operation-contract ledger",
+                        "partial specificity",
+                        "close synonym",
                     )
                     if skill_name == "review-module-design"
                     else ()

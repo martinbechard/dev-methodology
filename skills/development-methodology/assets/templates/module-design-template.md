@@ -120,9 +120,11 @@ TODO: When path, body, token, session, message, or persistence identifiers can n
 
 TODO: When the current contract and intended target differ, state both. Apply an explicit operation-specific response, selector, validation, or failure exception before any broader invariant or safety principle.
 
-TODO: Before filling this section, build an operation-contract ledger from the authoritative inputs. Copy the exact accepted selector and response wording for every operation, including current limitations and exceptions. Do not turn a generic term such as body identity into body login or body ID; keep the original specificity and mark the missing field OPEN.
+TODO: Before filling this section, build an operation-contract ledger from the authoritative inputs. Search every operation name, route, responsibility, and close synonym across all authoritative inputs. Copy the exact accepted selector and response wording, including current limitations and exceptions. Do not turn a generic term such as body identity into body login or body ID; keep the original specificity and mark only the missing field OPEN.
 
 TODO: Do not replace an operation-specific current response or disclosure contract with a generally safer projection. Preserve that baseline as CURRENT_BEHAVIOR or CURRENT_LIMITATION and state the safer intended target separately.
+
+TODO: Preserve partial specificity. If an input establishes an entity-shaped response, DTO projection, no body, or another response category but not its exact fields, record the known category and mark only the unresolved fields OPEN; do not mark the whole response shape OPEN.
 
 ## Trust And Identity Boundaries
 

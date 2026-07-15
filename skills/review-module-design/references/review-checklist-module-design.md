@@ -42,6 +42,8 @@ Do not mark pass without quoted evidence.
 - Question: Does every OUT_OF_SCOPE requirement name the authority, rationale, and owning artifact that accepts it instead of using status as an omission escape hatch?
 - Question: Are unsupported specifics labeled as inferences or open questions instead of being presented as decided behavior?
 - Question: Does each operation preserve the authoritative input's exact level of specificity, so a generic selector such as body identity is not silently specialized to body login, body ID, or another field?
+- Question: Before accepting an OPEN claim, did the review search every occurrence of the operation name, route, responsibility, and close synonym across the authoritative inputs and quote evidence for what remains unresolved?
+- Question: Does the artifact preserve partial specificity by recording a known response category such as entity-shaped response, DTO projection, or no body while marking only unknown fields or details OPEN?
 - Question: Does Implementation Readiness say BLOCKED for affected downstream work when any applicable requirement or required contract is OPEN or any high-impact blocking question remains?
 
 ## Identity And Security Questions
@@ -52,6 +54,7 @@ Do not mark pass without quoted evidence.
 - Question: Does each applicable protected operation define disclosure limits, validation ownership, state transitions, failure timing, committed side effects, and sensitive logging behavior?
 - Question: Does every explicit operation-specific response, selector, validation, or failure exception govern that operation instead of being overwritten by a broader safety or consistency rule?
 - Question: Does every operation-specific current response or disclosure exception remain visible as CURRENT_BEHAVIOR or CURRENT_LIMITATION beside any safer intended target, including exceptions that expose more data than a general projection rule recommends?
+- Question: Does the artifact avoid inferring that one general DTO projection applies to every operation when an authoritative source records an operation-specific entity-shaped or other disclosure exception?
 
 ## Artifact-Specific Questions
 
