@@ -3,7 +3,6 @@ Copyright (c) 2025 Martin Bechard [martin.bechard@DevConsult.ca]
 This software is licensed under the MIT License.
 File path: skills/development-methodology/assets/templates/project-wiki-template.md
 1-line summary: Template for project wiki setup and code-aware maintenance.
-Witty remark: The wiki should keep a flashlight pointed at the source tree.
 -->
 
 # TODO Project Wiki Methodology

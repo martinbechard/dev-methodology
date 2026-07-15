@@ -3,7 +3,6 @@ Copyright (c) 2025 Martin Bechard [martin.bechard@DevConsult.ca]
 This software is licensed under the MIT License.
 File path: skills/development-methodology/assets/templates/functional-spec-template.md
 1-line summary: Template for user-visible workflow and acceptance documentation.
-Witty remark: A feature spec should know what the user is trying to get done.
 -->
 
 # TODO Functional Specification Name

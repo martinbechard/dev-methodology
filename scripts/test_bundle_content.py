@@ -28,6 +28,7 @@ SKILLS_ROOT = REPOSITORY_ROOT / "skills"
 ROLES_ROOT = REPOSITORY_ROOT / "agents" / "roles"
 SKILL_CATEGORIES_PATH = REPOSITORY_ROOT / "design" / "skill-categories.yaml"
 SKILL_DEFINITIONS_PATH = REPOSITORY_ROOT / "design" / "generated" / "skill-definitions.js"
+TEMPLATE_DEFINITIONS_PATH = REPOSITORY_ROOT / "design" / "generated" / "template-definitions.js"
 ROLE_SCHEMA_PATH = REPOSITORY_ROOT / "agents" / "role-schema.yaml"
 MODEL_PROFILES_PATH = REPOSITORY_ROOT / "agents" / "model-profiles.yaml"
 ADAPTER_MODEL_PROFILE_PATHS = {
@@ -43,6 +44,7 @@ CODEX_HARNESS_SKILL_ROOT = (
 ROLE_DEFINITIONS_PATH = REPOSITORY_ROOT / "design" / "generated" / "role-definitions.js"
 SUPPORT_CHECKLIST_PATH = REPOSITORY_ROOT / "design" / "agent-skill-test-coverage-checklist.md"
 AGENT_BROWSER_PATH = REPOSITORY_ROOT / "design" / "agent-browser.js"
+TEMPLATE_BROWSER_PATH = REPOSITORY_ROOT / "design" / "template-browser.js"
 GENERATED_ADAPTERS_ROOT = REPOSITORY_ROOT / "generated" / "adapters"
 AGENT_GENERATION_MANIFEST_PATH = GENERATED_ADAPTERS_ROOT / "agent-generation-manifest.json"
 BUILD_SKILL_DOCS_PATH = REPOSITORY_ROOT / "scripts" / "build-skill-docs.py"
@@ -133,6 +135,9 @@ ARTIFACT_CREATION_SKILLS = (
         "unit-test-plan-template.md",
         "review-unit-test-plan",
     ),
+)
+DOCUMENTATION_TEMPLATE_FILENAMES = (PROJECT_TEMPLATE,) + tuple(
+    template_name for _, template_name, _ in ARTIFACT_CREATION_SKILLS
 )
 WIKI_ROLE_SKILLS = {
     "project-wiki",
@@ -250,6 +255,7 @@ README_REQUIRED_PHRASES = (
     "python3 scripts/build-skill-docs.py",
     "python3 scripts/build-support-checklist.py",
     "design/generated/skill-definitions.js",
+    "design/generated/template-definitions.js",
     "design/generated/role-definitions.js",
     "design/skill-categories.yaml",
     "agents/role-schema.yaml",
@@ -1624,6 +1630,24 @@ class BundleContentTests(unittest.TestCase):
             rendered,
             SKILL_DEFINITIONS_PATH.read_text(encoding="utf-8"),
         )
+
+    def test_generated_template_definition_data_is_current(self) -> None:
+        build_skill_docs = load_build_skill_docs_module()
+        payload = build_skill_docs.build_template_payload()
+        rendered = build_skill_docs.render_template_javascript(payload)
+
+        self.assertEqual(
+            set(DOCUMENTATION_TEMPLATE_FILENAMES),
+            set(payload["templates"]),
+        )
+        self.assertEqual(
+            rendered,
+            TEMPLATE_DEFINITIONS_PATH.read_text(encoding="utf-8"),
+        )
+        for template_name, template in payload["templates"].items():
+            with self.subTest(template=template_name):
+                self.assertNotIn("Witty remark:", template["content"])
+                self.assertTrue((REPOSITORY_ROOT / template["sourcePath"]).is_file())
 
     def test_generated_skill_definition_links_resolve_from_design_pages(self) -> None:
         build_skill_docs = load_build_skill_docs_module()
@@ -3135,6 +3159,24 @@ class BundleContentTests(unittest.TestCase):
                 with self.subTest(filename=filename, required_link=link):
                     self.assertIn(f'href="{link}', page_text[filename])
 
+        template_page_text = page_text["documentation-templates.html"]
+        for template_name in DOCUMENTATION_TEMPLATE_FILENAMES:
+            with self.subTest(template_modal_trigger=template_name):
+                self.assertEqual(
+                    1,
+                    template_page_text.count(
+                        f'data-template-definition="{template_name}"'
+                    ),
+                )
+        self.assertIn(
+            '<script src="generated/template-definitions.js"></script>',
+            template_page_text,
+        )
+        self.assertIn(
+            '<script src="template-browser.js"></script>',
+            template_page_text,
+        )
+
         for filename, text in page_text.items():
             if "skill-browser.js" not in text:
                 continue
@@ -3390,6 +3432,42 @@ class BundleContentTests(unittest.TestCase):
             skill_browser_text,
         )
         self.assertIn("lastFocusedElement.scrollIntoView", skill_browser_text)
+
+        template_browser_text = TEMPLATE_BROWSER_PATH.read_text(encoding="utf-8")
+        for phrase in (
+            "Copyright (c) 2026 Martin.Bechard@DevConsult.ca",
+            "AI attribution: Generated with AI assistance.",
+            "Design: design/documentation-templates.html",
+            "DEV_METHODOLOGY_TEMPLATE_DEFINITIONS",
+            "[data-template-definition]",
+            'aria-modal="true"',
+            "aria-haspopup",
+            "Open source",
+            "Escape",
+            "Tab",
+            "lastFocusedElement.focus",
+            "template-modal-open",
+            ".template-modal__content code {",
+        ):
+            with self.subTest(template_browser_phrase=phrase):
+                self.assertIn(phrase, template_browser_text)
+        template_code_foreground = css_hex_property(
+            template_browser_text,
+            ".template-modal__content",
+            "color",
+        )
+        template_code_background = css_hex_property(
+            template_browser_text,
+            ".template-modal__content",
+            "background",
+        )
+        self.assertGreaterEqual(
+            wcag_contrast_ratio(
+                template_code_foreground,
+                template_code_background,
+            ),
+            4.5,
+        )
 
     def test_user_experience_review_requires_measured_color_contrast(self) -> None:
         skill_root = SKILLS_ROOT / "user-experience-review"

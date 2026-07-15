@@ -3,7 +3,6 @@ Copyright (c) 2025 Martin Bechard [martin.bechard@DevConsult.ca]
 This software is licensed under the MIT License.
 File path: skills/development-methodology/assets/templates/unit-test-plan-template.md
 1-line summary: Template for a source-backed unit test plan.
-Witty remark: A test plan is a map of promises, not a census of lines.
 -->
 
 # TODO Unit Test Plan

@@ -389,6 +389,7 @@
 
     <section class="section" aria-labelledby="catalog-title">
       <h2 id="catalog-title">Template Catalog</h2>
+      <p class="lede">Select a template filename to inspect its complete source without leaving this page.</p>
       <div class="grid">
         <article class="card configuration">
           <h3>Project Configuration</h3>
@@ -398,7 +399,7 @@
             <li>Creator: create-project-configuration</li>
             <li>Verifier: documentation-page-verify</li>
           </ul>
-          <a class="path-link" href="../skills/development-methodology/assets/templates/project-template.yaml">project-template.yaml</a>
+          <a class="path-link" data-template-definition="project-template.yaml" data-template-title="Project Configuration" href="../skills/development-methodology/assets/templates/project-template.yaml">project-template.yaml</a>
         </article>
 
         <article class="card wiki">
@@ -409,7 +410,7 @@
             <li>Creator: project-wiki-create</li>
             <li>Reviewer: project-wiki-review</li>
           </ul>
-          <a class="path-link" href="../skills/development-methodology/assets/templates/project-wiki-template.md">project-wiki-template.md</a>
+          <a class="path-link" data-template-definition="project-wiki-template.md" data-template-title="Project Wiki Methodology" href="../skills/development-methodology/assets/templates/project-wiki-template.md">project-wiki-template.md</a>
         </article>
 
         <article class="card product">
@@ -420,7 +421,7 @@
             <li>Creator: create-functional-spec</li>
             <li>Reviewer: review-functional-spec</li>
           </ul>
-          <a class="path-link" href="../skills/development-methodology/assets/templates/functional-spec-template.md">functional-spec-template.md</a>
+          <a class="path-link" data-template-definition="functional-spec-template.md" data-template-title="Functional Specification" href="../skills/development-methodology/assets/templates/functional-spec-template.md">functional-spec-template.md</a>
         </article>
 
         <article class="card design">
@@ -431,7 +432,7 @@
             <li>Creator: create-architecture</li>
             <li>Reviewer: review-architecture</li>
           </ul>
-          <a class="path-link" href="../skills/development-methodology/assets/templates/architecture-template.md">architecture-template.md</a>
+          <a class="path-link" data-template-definition="architecture-template.md" data-template-title="Architecture" href="../skills/development-methodology/assets/templates/architecture-template.md">architecture-template.md</a>
         </article>
 
         <article class="card design">
@@ -442,7 +443,7 @@
             <li>Creator: create-high-level-design</li>
             <li>Reviewer: review-high-level-design</li>
           </ul>
-          <a class="path-link" href="../skills/development-methodology/assets/templates/high-level-design-template.md">high-level-design-template.md</a>
+          <a class="path-link" data-template-definition="high-level-design-template.md" data-template-title="High-Level Design" href="../skills/development-methodology/assets/templates/high-level-design-template.md">high-level-design-template.md</a>
         </article>
 
         <article class="card design">
@@ -453,7 +454,7 @@
             <li>Creator: create-module-design</li>
             <li>Reviewer: review-module-design</li>
           </ul>
-          <a class="path-link" href="../skills/development-methodology/assets/templates/module-design-template.md">module-design-template.md</a>
+          <a class="path-link" data-template-definition="module-design-template.md" data-template-title="Module Design" href="../skills/development-methodology/assets/templates/module-design-template.md">module-design-template.md</a>
         </article>
 
         <article class="card test">
@@ -464,7 +465,7 @@
             <li>Creator: create-unit-test-plan</li>
             <li>Reviewer: review-unit-test-plan</li>
           </ul>
-          <a class="path-link" href="../skills/development-methodology/assets/templates/unit-test-plan-template.md">unit-test-plan-template.md</a>
+          <a class="path-link" data-template-definition="unit-test-plan-template.md" data-template-title="Unit Test Plan" href="../skills/development-methodology/assets/templates/unit-test-plan-template.md">unit-test-plan-template.md</a>
         </article>
       </div>
     </section>
@@ -621,5 +622,7 @@ tags: [topic-folder]
   <footer class="site-footer">
     <p>Copyright 2026 (c) Martin.Bechard@DevConsult.ca - <a href="../LICENSE">MIT License</a></p>
   </footer>
+  <script src="generated/template-definitions.js"></script>
+  <script src="template-browser.js"></script>
 </body>
 </html>

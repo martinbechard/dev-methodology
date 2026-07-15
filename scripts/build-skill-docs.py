@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Modified with AI assistance.
-# Summary: Generates skill documentation, conceptual agent definition views, runtime agent adapters, and their deterministic inventory.
+# Summary: Generates skill and template documentation data, conceptual agent definition views, runtime agent adapters, and their deterministic inventory.
 
 from __future__ import annotations
 
@@ -23,6 +23,8 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 SKILLS_ROOT = REPOSITORY_ROOT / "skills"
 CATEGORIES_PATH = REPOSITORY_ROOT / "design" / "skill-categories.yaml"
 OUTPUT_PATH = REPOSITORY_ROOT / "design" / "generated" / "skill-definitions.js"
+TEMPLATE_ROOT = SKILLS_ROOT / "development-methodology" / "assets" / "templates"
+TEMPLATE_OUTPUT_PATH = REPOSITORY_ROOT / "design" / "generated" / "template-definitions.js"
 ROLE_SCHEMA_PATH = REPOSITORY_ROOT / "agents" / "role-schema.yaml"
 MODEL_PROFILES_PATH = REPOSITORY_ROOT / "agents" / "model-profiles.yaml"
 ROLES_ROOT = REPOSITORY_ROOT / "agents" / "roles"
@@ -58,6 +60,7 @@ SUCCESS_EXIT_CODE = 0
 ERROR_EXIT_CODE = 1
 GENERATOR_RELATIVE_PATH = "scripts/build-skill-docs.py"
 OUTPUT_GLOBAL_NAME = "DEV_METHODOLOGY_SKILL_DEFINITIONS"
+TEMPLATE_OUTPUT_GLOBAL_NAME = "DEV_METHODOLOGY_TEMPLATE_DEFINITIONS"
 ROLE_OUTPUT_GLOBAL_NAME = "DEV_METHODOLOGY_ROLE_DEFINITIONS"
 ROLE_FILE_SUFFIX = ".role.yaml"
 ROLE_SCHEMA_REQUIRED_KEY = "required"
@@ -190,6 +193,10 @@ ORDERED_PATTERN = re.compile(r"^\s*\d+\.\s+(.*)$")
 MARKDOWN_LINK_PATTERN = re.compile(r"\[([^\]]+)]\(([^)]+)\)")
 STRONG_PATTERN = re.compile(r"\*\*([^*]+)\*\*")
 EMPHASIS_PATTERN = re.compile(r"\*([^*]+)\*")
+TEMPLATE_LANGUAGE_BY_SUFFIX = {
+    ".md": "Markdown",
+    ".yaml": "YAML",
+}
 
 
 @dataclass(frozen=True)
@@ -1054,6 +1061,37 @@ def render_javascript(payload: dict[str, object]) -> str:
     )
 
 
+def build_template_payload() -> dict[str, object]:
+    """Build deterministic browser data from the distributed template sources."""
+
+    templates: dict[str, object] = {}
+    for template_path in sorted(TEMPLATE_ROOT.iterdir()):
+        language = TEMPLATE_LANGUAGE_BY_SUFFIX.get(template_path.suffix)
+        if not template_path.is_file() or language is None:
+            continue
+        templates[template_path.name] = {
+            "content": template_path.read_text(encoding="utf-8"),
+            "language": language,
+            "name": template_path.name,
+            "sourcePath": str(template_path.relative_to(REPOSITORY_ROOT)),
+        }
+
+    if not templates:
+        raise ValueError(f"No documentation templates found: {TEMPLATE_ROOT}")
+    return {"templates": templates}
+
+
+def render_template_javascript(payload: dict[str, object]) -> str:
+    """Render template browser data as a deterministic static JavaScript payload."""
+
+    serialized = json.dumps(payload, indent=2, sort_keys=True)
+    return (
+        f"{GENERATED_JAVASCRIPT_HEADER}\n"
+        f"// {GENERATED_FILE_HEADER}\n"
+        f"window.{TEMPLATE_OUTPUT_GLOBAL_NAME} = {serialized};\n"
+    )
+
+
 def build_role_payload(roles: Sequence[RoleDefinition]) -> dict[str, object]:
     return {
         "groups": [
@@ -1473,9 +1511,27 @@ def write_output(check: bool) -> bool:
     return True
 
 
+def write_template_output(check: bool) -> bool:
+    """Write generated template browser data, or report whether it is stale."""
+
+    rendered = render_template_javascript(build_template_payload())
+    current = (
+        TEMPLATE_OUTPUT_PATH.read_text(encoding="utf-8")
+        if TEMPLATE_OUTPUT_PATH.is_file()
+        else None
+    )
+    if current == rendered:
+        return False
+    if check:
+        return True
+    TEMPLATE_OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    TEMPLATE_OUTPUT_PATH.write_text(rendered, encoding="utf-8")
+    return True
+
+
 def main(arguments: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Generate skill, conceptual agent definition, adapter, and HTML documentation data."
+        description="Generate skill, template, conceptual agent definition, adapter, and HTML documentation data."
     )
     parser.add_argument("--check", action="store_true", help="Fail when generated methodology data is stale.")
     args = parser.parse_args(arguments)
@@ -1483,23 +1539,28 @@ def main(arguments: Sequence[str] | None = None) -> int:
     try:
         skill_payload = build_payload()
         changed = write_output(args.check)
+        template_changed = write_template_output(args.check)
         roles = load_role_definitions(set(skill_payload["skills"]))
         changed_role_paths = write_role_outputs(roles, args.check)
     except (OSError, ValueError, yaml.YAMLError) as error:
         print(error, file=sys.stderr)
         return ERROR_EXIT_CODE
 
-    if args.check and (changed or changed_role_paths):
+    if args.check and (changed or template_changed or changed_role_paths):
         if changed:
             print(f"stale {OUTPUT_PATH}")
+        if template_changed:
+            print(f"stale {TEMPLATE_OUTPUT_PATH}")
         for path in changed_role_paths:
             print(f"stale {path}")
         return ERROR_EXIT_CODE
     if changed:
         print(f"generated {OUTPUT_PATH}")
+    if template_changed:
+        print(f"generated {TEMPLATE_OUTPUT_PATH}")
     for path in changed_role_paths:
         print(f"generated {path}")
-    if not changed and not changed_role_paths:
+    if not changed and not template_changed and not changed_role_paths:
         print("Methodology documentation data is current.")
     return SUCCESS_EXIT_CODE
 
