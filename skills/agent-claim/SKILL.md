@@ -15,6 +15,34 @@ Claims make shared work explicit and keep completed work durable. The first inde
 
 Start with the narrow scope supported by current evidence. Extend the same claim atomically when another file or resource becomes necessary. Do not speculate about entire directories merely because future scope is unknown.
 
+## Command Path
+
+Use the claim.py script inside the agent-claim skill package that the runtime actually loaded. Do not assume the target repository contains skills/agent-claim. Resolve the script path once and reuse it for every command in the task:
+
+```bash
+CLAIM_SCRIPT=/absolute/path/to/the-loaded-agent-claim-skill/scripts/claim.py
+```
+
+Inside the dev-methodology source checkout, the bundle-owned path is:
+
+```bash
+CLAIM_SCRIPT=skills/agent-claim/scripts/claim.py
+```
+
+For a normal Codex user-level installation, use:
+
+```bash
+CLAIM_SCRIPT="${CODEX_HOME:-$HOME/.codex}/skills/agent-claim/scripts/claim.py"
+```
+
+That default resolves to:
+
+```text
+~/.codex/skills/agent-claim/scripts/claim.py
+```
+
+Other runtimes use the scripts/claim.py file beside the loaded skill’s SKILL.md. The workflow examples below are complete for normal operation. Use the help option only to diagnose an installed-version mismatch or an unsupported option, not to locate the command or discover the standard workflow.
+
 ## Repository-Global State
 
 Use the Git common directory returned by:
@@ -55,26 +83,39 @@ Read-only inspection does not need a writer claim unless it mutates caches, gene
 
 Use the smallest useful file and resource scope. A parent agent keeps the root task identity. Writing subagents use the same root task identity and their parent claim id, but still receive distinct ownership.
 
-## Atomic Acquisition
+## Stable Exit Codes
 
-Use the bundled command before mutation:
+The structured JSON outcome is the authoritative coordination result. Stable process exit codes support shell control flow:
+
+- 0 means the command succeeded. Acquisition success returns PRIMARY, ISOLATE, or RECOVER.
+- 1 means a general rejection or failure such as INVALID_SCOPE, CLAIM_NOT_FOUND, RELEASE_REJECTED, or worktree creation failure.
+- 3 means WAIT. Requested scope overlaps another active claim.
+- 4 means ISOLATE_REQUIRED. Another non-overlapping claim exists, but branch and worktree arguments were not supplied.
+- 5 means RECOVERY_REQUIRED. The unclaimed primary worktree is dirty and explicit recovery authorization was not supplied.
+
+Several successful and error outcomes share exit codes 0 and 1, so always inspect the JSON outcome. A malformed command line may be rejected by the Python argument parser with exit code 2 before claim coordination runs; that is not a claim outcome.
+
+## Acquisition Workflow
+
+The acquisition command uses an exclusive registry lock. Its result includes the claim mode, branch, and target worktree.
+
+### Primary Acquisition
+
+Request only the narrow scope currently supported by evidence. When no other claim exists and the primary worktree is clean, this returns PRIMARY with exit code 0:
 
 ```bash
-python3 skills/agent-claim/scripts/claim.py --repo . acquire \
+python3 "$CLAIM_SCRIPT" --repo . acquire \
   --claim-id task-123 \
   --agent agent-name \
   --task claim-task-123 \
   --root-task-id task-123 \
-  --file src/feature.py \
-  --resource build:production \
-  --branch codex/task-123 \
-  --worktree-path ../project-task-123
+  --file src/feature.py
 ```
 
 Use an explicit broad form only when the operation truly owns that scope:
 
 ```bash
-python3 skills/agent-claim/scripts/claim.py --repo . acquire \
+python3 "$CLAIM_SCRIPT" --repo . acquire \
   --claim-id migration-123 \
   --agent agent-name \
   --task migration-123 \
@@ -89,23 +130,62 @@ For a true repository-wide migration, replace the tree argument with:
 --all-files --scope-reason "repository-wide migration"
 ```
 
-The command uses an exclusive registry lock and returns one established outcome:
+### Isolation Acquisition
 
-- PRIMARY means no other writer claim exists and the clean primary worktree is now owned by this task.
-- ISOLATE means another non-overlapping writer exists and a branch plus linked worktree was created atomically for this task.
-- WAIT means requested scope overlaps an active claim. The result includes conflicting claim identifiers and exact overlap pairs. Do not edit or create a competing worktree.
-- ISOLATE_REQUIRED means another non-overlapping claim exists but the required branch and worktree path were not supplied.
-- RECOVERY_REQUIRED means the primary worktree is dirty without an active claim. Do not add more work.
-- RECOVER means an explicitly authorized recovery owner claimed the dirty primary state with the allow-recovery option.
+When another non-overlapping claim is active, the primary command without isolation arguments returns ISOLATE_REQUIRED with exit code 4 and does not create a claim. Retry the same claim identifier with a unique branch and worktree:
 
-The result includes the claim mode, branch, and target worktree so the owner can distinguish primary, isolated, and recovery behavior.
+```bash
+python3 "$CLAIM_SCRIPT" --repo . acquire \
+  --claim-id task-123 \
+  --agent agent-name \
+  --task claim-task-123 \
+  --root-task-id task-123 \
+  --file src/feature.py \
+  --branch codex/task-123 \
+  --worktree-path ../project-task-123 \
+  --base main
+```
+
+This returns ISOLATE with exit code 0. The base option selects the Git commit or ref from which the isolated branch is created; it defaults to HEAD. Do not supply branch and worktree arguments to bypass overlap: conflicting scope still returns WAIT.
+
+### WAIT
+
+Given an active claim that already owns src/feature.py, this overlapping request returns WAIT with exit code 3, conflicting claim identifiers, and exact overlap pairs:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . acquire \
+  --claim-id blocked-task-456 \
+  --agent agent-name \
+  --task blocked-task-456 \
+  --root-task-id blocked-task-456 \
+  --file src/feature.py
+```
+
+Do not edit, create a competing worktree, or add isolation arguments. Wait, coordinate a handoff, or choose genuinely non-overlapping scope.
+
+### Recovery Acquisition
+
+When the unclaimed primary worktree is dirty, a normal acquisition returns RECOVERY_REQUIRED with exit code 5. After explicit authorization to preserve the complete dirty state, acquire recovery ownership with the allow-recovery option:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . acquire \
+  --claim-id recovery-123 \
+  --agent recovery-owner \
+  --task recovery-123 \
+  --root-task-id recovery-123 \
+  --all-files \
+  --scope-reason "recover anonymous dirty state" \
+  --allow-recovery
+```
+
+This returns RECOVER with exit code 0. Create the required checkpoint commit before cleanup or release.
 
 ## Atomic Scope Extension
 
 Stop before touching newly discovered scope. Extend the existing claim while its original ownership remains active:
 
 ```bash
-python3 skills/agent-claim/scripts/claim.py --repo . extend \
+python3 "$CLAIM_SCRIPT" --repo . extend \
   --claim-id task-123 \
   --file tests/test_feature.py \
   --resource generated:codegen
@@ -120,7 +200,7 @@ Scope contraction is not supported. Relinquishing a path while it still has unco
 Keep the heartbeat current during long work:
 
 ```bash
-python3 skills/agent-claim/scripts/claim.py --repo . heartbeat --claim-id task-123
+python3 "$CLAIM_SCRIPT" --repo . heartbeat --claim-id task-123
 ```
 
 ## Runtime And Integration Resources
@@ -165,7 +245,7 @@ Journal maintenance uses a separate narrow lock and processes only completed UTC
 Keep today and the preceding UTC calendar day hot, and archive every older complete day:
 
 ```bash
-python3 skills/agent-claim/scripts/claim.py --repo . maintain-journal --hot-days 2
+python3 "$CLAIM_SCRIPT" --repo . maintain-journal --hot-days 2
 ```
 
 Maintenance writes a temporary compressed file, validates that decompression exactly matches the hot source, atomically renames the archive, writes a deterministic daily summary, and only then removes the hot file. Reruns are idempotent. An interruption before validation leaves the hot source intact. Compressed archives remain indefinitely by default; deletion requires a separate explicit policy.
@@ -175,8 +255,8 @@ Maintenance writes a temporary compressed file, validates that decompression exa
 Use only the event journal and live registry for claim diagnostics:
 
 ```bash
-python3 skills/agent-claim/scripts/claim.py --repo . report --since 2d
-python3 skills/agent-claim/scripts/claim.py --repo . report --since 12h --format text
+python3 "$CLAIM_SCRIPT" --repo . report --since 2d
+python3 "$CLAIM_SCRIPT" --repo . report --since 12h --format text
 ```
 
 The versioned JSON report counts primary, isolated, and recovery acquisitions; waits and rejected transitions; correlated wait episodes; claim duration statistics; exact-file, tree, and resource hotspots; broad-scope reasons; open and incomplete claims; stale heartbeat evidence; integration-resource use; and journal coverage gaps. Repeated WAIT polling by the same claim and action becomes one wait episode while preserving the raw attempt count. Report is read-only and never parses agent harness transcripts.
@@ -200,7 +280,7 @@ Recovery is the one-time bridge from anonymous dirty state to normal coordinatio
 
 1. Stop new mutation and obtain handoffs from active writers.
 2. Assign one recovery owner for the complete dirty scope.
-3. Acquire with allow-recovery.
+3. Run the Recovery Acquisition command with the allow-recovery option.
 4. Create a checkpoint commit on a recovery branch before attempting cleanup or historical separation.
 5. Validate and stabilize the committed recovery state.
 6. Release only after the recovery worktree is clean and its commit differs from the recorded baseline.
@@ -218,8 +298,22 @@ A modifying task is not complete merely because implementation or tests are comp
 - The claim is released with the bundled command.
 - The final response reports the commit hash, verification, and final status.
 
+### Committed Release
+
+After the claimed worktree is clean and contains the verified task commit, release normally:
+
 ```bash
-python3 skills/agent-claim/scripts/claim.py --repo . release --claim-id task-123
+python3 "$CLAIM_SCRIPT" --repo . release --claim-id task-123
 ```
 
-Release rejects dirty worktrees and claims with neither a new commit nor an explicit no-change result. If a safe commit cannot be created, the work remains incomplete and the claim remains active or is handed off explicitly.
+### No-Change Release
+
+When the task legitimately produced no repository change, first confirm the claimed worktree is clean, then declare that result explicitly:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . release \
+  --claim-id task-123 \
+  --no-change
+```
+
+The no-change option is not permission to discard or ignore dirty files. Release rejects every dirty worktree. Without no-change, release also rejects a claim whose current commit still equals its recorded baseline. If a safe commit or truthful no-change result cannot be produced, the work remains incomplete and the claim remains active or is handed off explicitly.

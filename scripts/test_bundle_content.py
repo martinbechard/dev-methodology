@@ -2019,6 +2019,25 @@ class BundleContentTests(unittest.TestCase):
         merge_skill = (SKILLS_ROOT / "agent-work-merge" / "SKILL.md").read_text(encoding="utf-8")
         claim_script = SKILLS_ROOT / "agent-claim" / "scripts" / "claim.py"
         self.assertTrue(claim_script.is_file())
+        self.assertIn("## Command Path", claim_skill)
+        self.assertIn(
+            'CLAIM_SCRIPT="${CODEX_HOME:-$HOME/.codex}/skills/agent-claim/scripts/claim.py"',
+            claim_skill,
+        )
+        self.assertIn("~/.codex/skills/agent-claim/scripts/claim.py", claim_skill)
+        self.assertNotIn("python3 skills/agent-claim/scripts/claim.py", claim_skill)
+        self.assertIn("## Stable Exit Codes", claim_skill)
+        self.assertIn("ISOLATE_REQUIRED with exit code 4", claim_skill)
+        self.assertIn("RECOVERY_REQUIRED with exit code 5", claim_skill)
+        self.assertIn("### Primary Acquisition", claim_skill)
+        self.assertIn("### Isolation Acquisition", claim_skill)
+        self.assertIn("### WAIT", claim_skill)
+        self.assertIn("### Recovery Acquisition", claim_skill)
+        self.assertIn("--base main", claim_skill)
+        self.assertIn("--allow-recovery", claim_skill)
+        self.assertIn("## Heartbeat", claim_skill)
+        self.assertIn("### No-Change Release", claim_skill)
+        self.assertIn("--no-change", claim_skill)
         self.assertIn("## Atomic Scope Extension", claim_skill)
         self.assertIn("--tree", claim_skill)
         self.assertIn("--all-files", claim_skill)
