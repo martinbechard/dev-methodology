@@ -261,10 +261,34 @@ class AgentSkillHierarchyTests(unittest.TestCase):
             '<section class="section" aria-labelledby="hierarchy-title">', 1
         )[1].split("</section>", 1)[0]
 
-        self.assertIn("Amber marks an always-used skill edge", hierarchy_section)
-        self.assertIn("blue arrows mark direct agent dependencies", hierarchy_section)
+        self.assertIn(
+            "This diagram uses color to distinguish agent-to-skill assignments from agent-to-agent dependencies.",
+            hierarchy_section,
+        )
+        self.assertIn("Amber lines show skills an agent always uses", hierarchy_section)
+        self.assertIn("Blue arrows show direct dependencies between agents", hierarchy_section)
+        self.assertIn(
+            "Blue skill cards have a separate meaning: they identify technology skills selected during project setup.",
+            hierarchy_section,
+        )
         self.assertNotIn("Role Agent Categories", role_map)
         self.assertNotIn("The role model has four operating categories", role_map)
+
+    def test_default_edges_are_balanced_and_selected_edges_use_full_intensity(self) -> None:
+        """Unselected relationship types should be comparable while selected paths remain prominent."""
+        self.assertIn(
+            ".edge{fill:none;stroke:#94a3b8;stroke-width:1;opacity:.32;",
+            self.rendered,
+        )
+        self.assertIn(".edge.active{stroke:#0f766e;stroke-width:2.4;opacity:1}", self.rendered)
+        self.assertIn(
+            ".show-agent-dependencies .dependency-edge{opacity:.32}",
+            self.rendered,
+        )
+        self.assertIn(
+            ".show-agent-dependencies .dependency-edge.active{stroke-width:3;opacity:1}",
+            self.rendered,
+        )
 
     def test_selected_items_expose_the_definition_view_bridge(self) -> None:
         """A selected conceptual agent definition or skill enables a reusable definition control."""

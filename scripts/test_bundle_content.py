@@ -3104,9 +3104,9 @@ class BundleContentTests(unittest.TestCase):
                     index_text.count(f'data-information-owner="{owner}"'),
                 )
 
-        self.assertIn("<title>AI-Assisted Coding Starter Kit</title>", index_text)
+        self.assertIn("<title>AI-Assisted Coding Toolkit</title>", index_text)
         self.assertIn(
-            '<h1 id="page-title">AI-Assisted Coding Starter Kit</h1>',
+            '<h1 id="page-title">AI-Assisted Coding Toolkit</h1>',
             index_text,
         )
         self.assertIn("<h3>Core Agent and Skills</h3>", index_text)
@@ -3121,7 +3121,7 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(site_chrome=filename):
                 self.assertEqual(1, text.count('<header class="site-header">'))
                 self.assertEqual(1, text.count('<footer class="site-footer">'))
-                self.assertIn("AI-Assisted Coding Starter Kit", text)
+                self.assertIn("AI-Assisted Coding Toolkit", text)
                 self.assertEqual(1, text.count(expected_gradient))
                 if filename == "index.html":
                     self.assertIn('src="logo.png"', text)

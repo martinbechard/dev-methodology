@@ -10,10 +10,10 @@ text{font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;fill:#172033}
 .node{transition:fill 150ms ease,stroke 150ms ease,stroke-width 150ms ease}
 .node.role{fill:#f8fafc;stroke:#64748b}.node.skill{fill:#fff7e6;stroke:#b45309}
 .node.skill.conditional{fill:#eeeafd;stroke:#7c3aed}
-.edge{fill:none;stroke:#94a3b8;stroke-width:1;opacity:.07;transition:opacity 150ms ease,stroke 150ms ease,stroke-width 150ms ease}
-.edge.conditional-edge{stroke:#7c3aed}.edge.active{stroke:#0f766e;stroke-width:2.4;opacity:.96}.edge.dimmed{opacity:.012}
+.edge{fill:none;stroke:#94a3b8;stroke-width:1;opacity:.32;transition:opacity 150ms ease,stroke 150ms ease,stroke-width 150ms ease}
+.edge.conditional-edge{stroke:#7c3aed}.edge.active{stroke:#0f766e;stroke-width:2.4;opacity:1}.edge.dimmed{opacity:.012}
 .dependency-edge{fill:none;stroke:#2563eb;stroke-width:1.8;opacity:0;pointer-events:none;transition:opacity 150ms ease,stroke-width 150ms ease}.dependency-arrowhead{fill:none;stroke:#2563eb;stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round}
-.show-agent-dependencies .dependency-edge{opacity:.72}.show-agent-dependencies .dependency-edge.active{stroke-width:3;opacity:1}.show-agent-dependencies .dependency-edge.dimmed{opacity:.08}
+.show-agent-dependencies .dependency-edge{opacity:.32}.show-agent-dependencies .dependency-edge.active{stroke-width:3;opacity:1}.show-agent-dependencies .dependency-edge.dimmed{opacity:.08}
 .role-node,.skill-node{cursor:pointer;outline:none;transition:opacity 150ms ease}
 .role-node:hover .node,.role-node:focus .node,.skill-node:hover .node,.skill-node:focus .node{stroke:#0f766e;stroke-width:2.2}
 .role-node:focus .node,.skill-node:focus .node{stroke-dasharray:4 2}
