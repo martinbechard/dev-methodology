@@ -66,6 +66,8 @@ Do not mark pass without quoted evidence.
 - Question: Does failure timing distinguish transaction commit, submission rejection, later execution or delivery failure, response timing, and durable receipt instead of collapsing them into one asynchronous outcome?
 - Question: Does one effect phase ledger govern Public Contracts, Processing Rules, diagrams, Error Handling, Invariants, and Verification without moving work between phases or inventing a provider-delivery phase?
 - Question: Does the effect design state required observable outcomes without prescribing transaction ordering, preconstruction, or another implementation mechanism that the accepted inputs do not establish?
+- Question: For observable, promise, callback, stream, signal, store, or cached-result flows, does the design distinguish the returned or emitted value, signal/store mutation, cache replacement or retention, and subscriber side effects?
+- Question: Does the design avoid treating a mapped, caught, or fallback emission as proof that persistent or reactive state or a shared cache was mutated?
 - Question: For sensitive inputs, does the operation define or explicitly leave open validation, handoff, encryption or hashing ownership, response exclusion, failure timing, and logging behavior?
 
 ## Artifact-Specific Questions

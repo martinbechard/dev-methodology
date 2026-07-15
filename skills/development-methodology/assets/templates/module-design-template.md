@@ -138,6 +138,8 @@ TODO: For external or asynchronous effects, distinguish the operation that initi
 
 TODO: For credential, token, key, secret, or other sensitive inputs, state the input-only or write-only contract, validation owner, forwarding boundary, protection owner, response exclusion, failure timing, and logging behavior. Mark unsupported details OPEN.
 
+TODO: For observable, promise, callback, stream, signal, store, or cached-result contracts, state separately what is returned or emitted to the current caller, what persistent or reactive state is mutated, whether a shared cache is created, replaced, retained, or invalidated, and what subscriber side effects occur. A mapped, caught, or fallback emission does not by itself mutate state or replace a cache.
+
 ## External And Asynchronous Effect Phases
 
 TODO: Complete one row for every phase of each external or asynchronous effect. Use only phases established by accepted inputs. If the module has no external or asynchronous effect, state that this ledger is not applicable.
@@ -171,6 +173,8 @@ TODO: Describe internal state, cached values, derived values, persisted values, 
 TODO: State which values are authoritative and which are derived.
 
 TODO: State how stale or invalid values are detected.
+
+TODO: Distinguish transient returned or emitted values from persistent signal/store state and cached sources. For failure paths, state whether existing state survives and whether a failed cached source remains retained or is replaced.
 
 ## Processing Rules
 

@@ -1128,6 +1128,9 @@ class BundleContentTests(unittest.TestCase):
                     "security outcome separate from its implementation mechanism",
                     "public projection",
                     "do not prove anonymous access",
+                    "returned or emitted value",
+                    "fallback emission",
+                    "cache replacement or retention",
                 ),
             },
         }
@@ -1194,6 +1197,8 @@ class BundleContentTests(unittest.TestCase):
                         "Do not invent a provider-delivery phase",
                         "authenticated-only or role-required outcome",
                         "similar label as anonymous-access evidence",
+                        "shared cache is created, replaced, retained, or invalidated",
+                        "failed cached source remains retained or is replaced",
                     )
                     if skill_name == "create-module-design"
                     else ()
