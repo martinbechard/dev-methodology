@@ -1098,6 +1098,8 @@ class BundleContentTests(unittest.TestCase):
                     "source-category inventory",
                     "operation-and-obligation inventory",
                     "boundary-edge inventory",
+                    "configuration, default, lifetime",
+                    "accepted exact validation commands",
                 ),
             },
             "create-module-design": {
