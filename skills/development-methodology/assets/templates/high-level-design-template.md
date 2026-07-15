@@ -68,6 +68,8 @@ TODO: Account for every applicable requirement from the authoritative functional
 
 TODO: Preserve accepted current behavior and current limitations even when a safer target is proposed. Do not collapse the baseline and target into one normalized contract.
 
+TODO: Give every exact route variant or supporting UI action named by an authoritative input its own traceable row, even when several rows reuse the same component or contract. Grouped CRUD or navigation prose may summarize those rows but must not replace them.
+
 | Requirement source and ID | Claim mode | Required outcome | Satisfying components, interaction, contract, state, or error path | Status | Out-of-scope authority, rationale, and owning artifact | Verification |
 | --- | --- | --- | --- | --- | --- | --- |
 | TODO | CURRENT_BEHAVIOR, CURRENT_LIMITATION, INTENDED_BEHAVIOR, PROPOSED_CHANGE, or OPEN_QUESTION | TODO | TODO | DEFINED, OPEN, or OUT_OF_SCOPE | TODO; required for OUT_OF_SCOPE | TODO |
@@ -142,6 +144,8 @@ TODO: If an SVG artifact is maintained, link it only when a review or publishing
 ## Critical Trust And Identity Boundaries
 
 TODO: Complete this section whenever the subsystem contains an authenticated actor, protected operation, trust-boundary crossing, privileged background task, or sensitive-data flow. If none apply, state why no critical trust or identity boundary exists.
+
+TODO: For each protected operation family, independently inventory every applicable anonymous, authenticated, administrator, service, or background actor. Record denial and equivalent-role behavior explicitly instead of subsuming those actors into a broader row.
 
 | Boundary or operation | Actor and authentication source | Protected asset or side effect | Authorization, ownership, tenancy, and data filtering | Entry point and selector | Disclosure limit | Sensitive-data handling | Failure posture |
 | --- | --- | --- | --- | --- | --- | --- | --- |

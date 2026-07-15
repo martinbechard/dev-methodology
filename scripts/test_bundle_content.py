@@ -1102,6 +1102,8 @@ class BundleContentTests(unittest.TestCase):
                     "accepted exact validation commands",
                     "exact method, route, command, event, or job identity",
                     "abstract operation group",
+                    "exact route variant or supporting UI action",
+                    "anonymous, authenticated, administrator, service, or background actor",
                 ),
             },
             "create-module-design": {
@@ -1284,6 +1286,19 @@ class BundleContentTests(unittest.TestCase):
             self.assertIn("operation inventory reconciliation", skill_text)
             self.assertIn("operation inventory reconciliation", checklist_text)
             self.assertIn("supporting operation", checklist_text)
+
+        hld_template = (
+            SKILLS_ROOT
+            / "development-methodology"
+            / "assets"
+            / "templates"
+            / "high-level-design-template.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("exact route variant or supporting UI action", hld_template)
+        self.assertIn(
+            "anonymous, authenticated, administrator, service, or background actor",
+            hld_template,
+        )
 
     def test_project_configuration_routes_to_template_and_verifier(self) -> None:
         development_methodology_text = (
