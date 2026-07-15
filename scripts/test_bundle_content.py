@@ -214,7 +214,7 @@ README_REQUIRED_PHRASES = (
     "- spring-data-jpa",
     "- spring-boot-testing",
     "jhipster-domain-modeling",
-    "[Skills Modularization](design/skills-modularization.html) explains always-used and rule-selected agent skills",
+    "[Technology Skills](design/skills-modularization.html) explains always-used and rule-selected agent skills",
     "project-wiki-create",
     "create-functional-spec",
     "create-architecture",
@@ -459,7 +459,7 @@ AGENTIC_CONFIGURATION_REQUIRED_PHRASES = (
 )
 DOCUMENT_INFORMATION_OWNERS = {
     "agent-and-skill-definitions.html": (
-        "Agent And Skill Definitions",
+        "Core Agent and Skills",
         "Interactive Agent And Skill Map",
         "Skill Catalog",
     ),
@@ -468,7 +468,7 @@ DOCUMENT_INFORMATION_OWNERS = {
         "Context Layers",
         "Runtime Configuration File Locations",
     ),
-    "skills-modularization.html": MODULARIZATION_REQUIRED_PHRASES[:3] + (
+    "skills-modularization.html": ("Technology Skills",) + MODULARIZATION_REQUIRED_PHRASES[:3] + (
         "Technology Extension Skills",
         "How Setup-Time Technology Detection Works",
     ),
@@ -2866,8 +2866,38 @@ class BundleContentTests(unittest.TestCase):
                     index_text.count(f'data-information-owner="{owner}"'),
                 )
 
-        self.assertIn("<title>AI Coding Kit Documentation</title>", index_text)
-        self.assertIn('<h1 id="page-title">AI Coding Kit Documentation</h1>', index_text)
+        self.assertIn("<title>AI-Assisted Coding Starter Kit</title>", index_text)
+        self.assertIn(
+            '<h1 id="page-title">AI-Assisted Coding Starter Kit</h1>',
+            index_text,
+        )
+        self.assertIn("<h3>Core Agent and Skills</h3>", index_text)
+        self.assertIn("<h3>Technology Skills</h3>", index_text)
+
+        expected_gradient = (
+            "linear-gradient(180deg, rgba(232, 240, 255, 0.9), "
+            "rgba(246, 248, 251, 0) 340px)"
+        )
+        html_pages = {"index.html": index_text, **page_text}
+        for filename, text in html_pages.items():
+            with self.subTest(site_chrome=filename):
+                self.assertEqual(1, text.count('<header class="site-header">'))
+                self.assertEqual(1, text.count('<footer class="site-footer">'))
+                self.assertIn("AI-Assisted Coding Starter Kit", text)
+                self.assertEqual(1, text.count(expected_gradient))
+                if filename == "index.html":
+                    self.assertIn('src="logo.png"', text)
+                    self.assertIn('href="LICENSE">MIT License</a>', text)
+                else:
+                    self.assertIn('src="../logo.png"', text)
+                    self.assertIn('href="../LICENSE">MIT License</a>', text)
+
+        license_text = (REPOSITORY_ROOT / "LICENSE").read_text(encoding="utf-8")
+        self.assertIn("MIT License", license_text)
+        self.assertIn(
+            "Copyright (c) 2026 Martin.Bechard@DevConsult.ca",
+            license_text,
+        )
         self.assertNotIn('class="summary"', index_text)
         self.assertNotIn('class="pill"', index_text)
         self.assertNotIn('aria-hidden="true">07</span>', index_text)

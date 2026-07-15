@@ -65,7 +65,7 @@ Build the portable technology detection registry and installed detector mirror b
 python3 scripts/build-technology-detection.py
 ```
 
-The detection build validates the specialized metadata and refreshes the portable registry plus installed detector mirror. [Skills Modularization](design/skills-modularization.html) explains always-used and rule-selected agent skills, detector inputs, activation semantics, proof boundaries, and setup-time technology bindings.
+The detection build validates the specialized metadata and refreshes the portable registry plus installed detector mirror. [Technology Skills](design/skills-modularization.html) explains always-used and rule-selected agent skills, detector inputs, activation semantics, proof boundaries, and setup-time technology bindings.
 
 The generated [interactive agent and skill hierarchy](design/agent-and-skill-definitions.html#hierarchy-title) is published with the conceptual agent definition catalog, which owns its interaction instructions and scope. Regenerate the SVG with:
 
@@ -204,7 +204,7 @@ After that analysis and explicit user approval, --replace-customized may be comb
 
 ## Agent Responsibility Boundaries
 
-Wiki work remains separate from general documentation, coding, review, backlog, and project setup. The generated [agent and skill definitions](design/agent-and-skill-definitions.html) page owns catalog views of current conceptual agent definitions and skill definitions, including responsibilities, assigned skills, output contracts, examples, model profiles, repository mutation policies, and agent-skill relationships. [Skills Modularization](design/skills-modularization.html) explains technology-agnostic agent skills and setup-bound technology extensions. The [orchestrated development lifecycle](design/orchestrated-development-lifecycle.html) owns bootstrap, complete source-backed documentation, execution, review, verification, integration, claim release, and execution evidence.
+Wiki work remains separate from general documentation, coding, review, backlog, and project setup. The generated [Core Agent and Skills](design/agent-and-skill-definitions.html) page owns catalog views of current conceptual agent definitions and skill definitions, including responsibilities, assigned skills, output contracts, examples, model profiles, repository mutation policies, and agent-skill relationships. [Technology Skills](design/skills-modularization.html) explains technology-agnostic agent skills and setup-bound technology extensions. The [orchestrated development lifecycle](design/orchestrated-development-lifecycle.html) owns bootstrap, complete source-backed documentation, execution, review, verification, integration, claim release, and execution evidence.
 
 Whole-project reverse engineering finishes after project configuration and exact path coverage, one reviewed module design per meaningful responsibility, complete reviewed HLD grouping, reviewed architecture, reviewed functional workflow coverage, and verified README/wiki navigation. Sampling may be useful for later project-owned experiments, but it never reduces the shared documentation coverage contract.
 
@@ -341,7 +341,7 @@ Artifact-specific review skills pass the artifact, source evidence, and complete
 Invoke Project Bootstrapper once and describe the desired steady state:
 
 1. Use the repository bundle sources and matching generated runtime adapter.
-2. Review the resulting PROJECT.yaml, root or nested AGENTS.md guidance, and verification commands. [Skills Modularization](design/skills-modularization.html) explains setup-time detection and folder skillsets.
+2. Review the resulting PROJECT.yaml, root or nested AGENTS.md guidance, and verification commands. [Technology Skills](design/skills-modularization.html) explains setup-time detection and folder skillsets.
 3. Use documentation-bootstrap and documentation-reverse-engineer when the project needs a source-backed documentation baseline. Whole-project reverse engineering covers every meaningful module by default: inventory and review module designs first, group the complete set into high-level designs, derive architecture from those groups, cover all observable workflows, and expose the complete hierarchy through README and wiki hubs. Narrower coverage is valid only when the user explicitly names the boundary.
 4. Follow the [orchestrated development lifecycle](design/orchestrated-development-lifecycle.html) for the owning execution, independent review, integrated verification, commit, and claim-release gates.
 

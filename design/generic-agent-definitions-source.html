@@ -42,7 +42,7 @@
       margin: 0;
       color: var(--color-ink);
       background:
-        linear-gradient(180deg, rgba(232, 240, 255, 0.8), rgba(246, 248, 251, 0) 360px),
+        linear-gradient(180deg, rgba(232, 240, 255, 0.9), rgba(246, 248, 251, 0) 340px),
         var(--color-page);
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       line-height: 1.52;
@@ -272,14 +272,88 @@
         overflow-x: auto;
       }
     }
+
+    body {
+      display: flex;
+      min-height: 100vh;
+      flex-direction: column;
+    }
+
+    main {
+      width: 100%;
+      flex: 1 0 auto;
+    }
+
+    .site-header,
+    .site-footer {
+      width: 100%;
+      max-width: var(--content-max);
+      margin: 0 auto;
+      padding-right: var(--space-6);
+      padding-left: var(--space-6);
+    }
+
+    .site-header {
+      padding-top: var(--space-4);
+    }
+
+    .site-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-3);
+      color: var(--color-ink);
+      font-size: clamp(0.88rem, 1.4vw, 0.95rem);
+      font-weight: 750;
+      line-height: 1.2;
+      text-decoration: none;
+    }
+
+    .site-logo {
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: var(--radius-small, 0.35rem);
+      object-fit: cover;
+      box-shadow: 0 4px 12px rgba(31, 41, 55, 0.14);
+    }
+
+    .site-footer {
+      flex: 0 0 auto;
+      padding-bottom: var(--space-6);
+    }
+
+    .site-footer p {
+      padding-top: var(--space-4);
+      border-top: 1px solid var(--color-line);
+      color: var(--color-muted);
+      font-size: var(--font-xs);
+    }
+
+    .site-footer a {
+      color: inherit;
+      font-weight: 700;
+    }
+
+    @media (max-width: 680px) {
+      .site-header,
+      .site-footer {
+        padding-right: var(--space-4);
+        padding-left: var(--space-4);
+      }
+    }
   </style>
 </head>
 <body>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">
+      <img class="site-logo" src="../logo.png" alt="DevConsult Canada logo">
+      <span>AI-Assisted Coding Starter Kit</span>
+    </a>
+  </header>
   <main>
     <nav class="document-nav" aria-label="Documentation navigation">
       <a href="../index.html">Back to Documentation Index</a>
       <div class="document-sequence">
-        <a href="skills-modularization.html" rel="prev"><span aria-hidden="true">&larr;</span> Previous: Skills Modularization</a>
+        <a href="skills-modularization.html" rel="prev"><span aria-hidden="true">&larr;</span> Previous: Technology Skills</a>
         <a href="agent-skill-specialization-examples.html" rel="next">Next: Examples <span aria-hidden="true">&rarr;</span></a>
       </div>
     </nav>
@@ -824,5 +898,8 @@
 
     <p class="note">For explicit target deployment, ownership manifests, customer updates, pruning, and removal, follow the operational commands and policy in the <a href="../README.md#explicit-target-deployment">README</a>.</p>
   </main>
+  <footer class="site-footer">
+    <p>Copyright 2026 (c) Martin.Bechard@DevConsult.ca - <a href="../LICENSE">MIT License</a></p>
+  </footer>
 </body>
 </html>
