@@ -56,6 +56,7 @@ Do not mark pass without quoted evidence.
 - Question: Does Trust And Identity Boundaries cover every applicable route, event, command, job, UI guard, protected operation, and sensitive-data flow?
 - Question: Does each applicable trust boundary distinguish authentication, authorization, roles, ownership, tenancy, and data filtering and name the evidence for each?
 - Question: Does the artifact preserve an accepted authenticated-only or role-required outcome as DEFINED while independently marking an unknown filter, annotation, guard, or middleware mechanism OPEN?
+- Question: Does the artifact avoid treating public API, public user, public projection, guest view, open catalog, or a similar label as proof of anonymous access?
 - Question: Does each applicable protected operation define disclosure limits, validation ownership, state transitions, failure timing, committed side effects, and sensitive logging behavior?
 - Question: Does every explicit operation-specific response, selector, validation, or failure exception govern that operation instead of being overwritten by a broader safety or consistency rule?
 - Question: Does every operation-specific current response or disclosure exception remain visible as CURRENT_BEHAVIOR or CURRENT_LIMITATION beside any safer intended target, including exceptions that expose more data than a general projection rule recommends?

@@ -1126,6 +1126,8 @@ class BundleContentTests(unittest.TestCase):
                     "invent a provider-delivery phase",
                     "unsupported transaction or construction mechanism",
                     "security outcome separate from its implementation mechanism",
+                    "public projection",
+                    "do not prove anonymous access",
                 ),
             },
         }
@@ -1191,6 +1193,7 @@ class BundleContentTests(unittest.TestCase):
                         "Completion evidence",
                         "Do not invent a provider-delivery phase",
                         "authenticated-only or role-required outcome",
+                        "similar label as anonymous-access evidence",
                     )
                     if skill_name == "create-module-design"
                     else ()

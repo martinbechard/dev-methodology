@@ -162,6 +162,8 @@ TODO: Keep authentication, authorization, roles, ownership, tenancy, and data fi
 
 TODO: Keep an accepted security outcome separate from its implementation mechanism. An authenticated-only or role-required outcome may be DEFINED while the exact filter, annotation, guard, or middleware remains OPEN.
 
+TODO: Do not treat public API, public user, public projection, guest view, open catalog, or a similar label as anonymous-access evidence. Require operation-specific authentication authority or keep the outcome OPEN.
+
 ## Internal Data And State
 
 TODO: Describe internal state, cached values, derived values, persisted values, and temporary values.
