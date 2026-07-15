@@ -16,6 +16,7 @@ from dataclasses import replace
 from html.parser import HTMLParser
 from pathlib import Path
 from types import ModuleType
+from urllib.parse import urlsplit
 
 import yaml
 
@@ -1297,6 +1298,39 @@ class BundleContentTests(unittest.TestCase):
             rendered,
             SKILL_DEFINITIONS_PATH.read_text(encoding="utf-8"),
         )
+
+    def test_generated_skill_definition_links_resolve_from_design_pages(self) -> None:
+        build_skill_docs = load_build_skill_docs_module()
+        payload = build_skill_docs.build_payload()
+
+        for skill_name, skill in payload["skills"].items():
+            for href in re.findall(r'href="([^"]+)"', skill["html"]):
+                parsed = urlsplit(href)
+                if parsed.scheme or parsed.netloc or not parsed.path or parsed.path.startswith("/"):
+                    continue
+                target = (REPOSITORY_ROOT / "design" / parsed.path).resolve()
+                with self.subTest(skill_name=skill_name, href=href):
+                    self.assertTrue(target.is_file(), f"Generated skill link does not exist: {target}")
+
+    def test_skill_link_rebasing_preserves_nonlocal_targets_and_fragments(self) -> None:
+        build_skill_docs = load_build_skill_docs_module()
+        skill_directory = SKILLS_ROOT / "spring-boot-design"
+
+        expected_links = {
+            "https://example.com/guidance": "https://example.com/guidance",
+            "#design-boundary": "#design-boundary",
+            "/shared/guidance.md": "/shared/guidance.md",
+            "references/design-principles-spring-boot.md#modules": (
+                "../skills/spring-boot-design/references/"
+                "design-principles-spring-boot.md#modules"
+            ),
+        }
+        for source, expected in expected_links.items():
+            with self.subTest(source=source):
+                self.assertEqual(
+                    expected,
+                    build_skill_docs._design_href_for_skill_link(source, skill_directory),
+                )
 
     def test_source_roles_generate_current_documentation_and_adapters(self) -> None:
         build_skill_docs = load_build_skill_docs_module()

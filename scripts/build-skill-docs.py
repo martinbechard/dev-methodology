@@ -14,6 +14,7 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Sequence
+from urllib.parse import urlsplit, urlunsplit
 
 import yaml
 
@@ -378,12 +379,32 @@ def first_sentence(description: str) -> str:
     return re.split(r"(?<=[.!?])\s+", description.strip(), maxsplit=NEXT_INDEX)[EMPTY_INDEX]
 
 
-def format_inline(text: str) -> str:
+def _design_href_for_skill_link(href: str, skill_directory: Path) -> str:
+    """Return a skill Markdown link that resolves correctly from a design page."""
+
+    parsed = urlsplit(href)
+    if parsed.scheme or parsed.netloc or not parsed.path or parsed.path.startswith("/"):
+        return href
+
+    target = (skill_directory / parsed.path).resolve()
+    try:
+        repository_path = target.relative_to(REPOSITORY_ROOT)
+    except ValueError as error:
+        raise ValueError(f"Skill link resolves outside the repository: {href}") from error
+
+    design_path = f"../{repository_path.as_posix()}"
+    return urlunsplit(("", "", design_path, parsed.query, parsed.fragment))
+
+
+def format_inline(text: str, skill_directory: Path) -> str:
     escaped = html.escape(text, quote=True)
 
     def replace_link(match: re.Match[str]) -> str:
         label = html.escape(match.group(NEXT_INDEX), quote=True)
-        href = html.escape(match.group(2), quote=True)
+        href = html.escape(
+            _design_href_for_skill_link(match.group(2), skill_directory),
+            quote=True,
+        )
         return f'<a href="{href}">{label}</a>'
 
     escaped = MARKDOWN_LINK_PATTERN.sub(replace_link, escaped)
@@ -391,7 +412,7 @@ def format_inline(text: str) -> str:
     return EMPHASIS_PATTERN.sub(r"<em>\1</em>", escaped)
 
 
-def render_markdown(markdown: str) -> str:
+def render_markdown(markdown: str, skill_directory: Path) -> str:
     lines = markdown.splitlines()
     parts: list[str] = []
     paragraph_lines: list[str] = []
@@ -402,7 +423,9 @@ def render_markdown(markdown: str) -> str:
 
     def close_paragraph() -> None:
         if paragraph_lines:
-            parts.append(f"<p>{format_inline(' '.join(paragraph_lines))}</p>")
+            parts.append(
+                f"<p>{format_inline(' '.join(paragraph_lines), skill_directory)}</p>"
+            )
             paragraph_lines.clear()
 
     def close_list() -> None:
@@ -443,7 +466,9 @@ def render_markdown(markdown: str) -> str:
             close_paragraph()
             close_list()
             heading_level = min(len(heading_match.group(NEXT_INDEX)) + HEADING_LEVEL_OFFSET, MAX_HEADING_LEVEL)
-            parts.append(f"<h{heading_level}>{format_inline(heading_match.group(2))}</h{heading_level}>")
+            parts.append(
+                f"<h{heading_level}>{format_inline(heading_match.group(2), skill_directory)}</h{heading_level}>"
+            )
             continue
 
         bullet_match = BULLET_PATTERN.match(line)
@@ -452,7 +477,9 @@ def render_markdown(markdown: str) -> str:
             if list_tag and list_tag != "ul":
                 close_list()
             list_tag = "ul"
-            list_items.append(f"<li>{format_inline(bullet_match.group(NEXT_INDEX))}</li>")
+            list_items.append(
+                f"<li>{format_inline(bullet_match.group(NEXT_INDEX), skill_directory)}</li>"
+            )
             continue
 
         ordered_match = ORDERED_PATTERN.match(line)
@@ -461,7 +488,9 @@ def render_markdown(markdown: str) -> str:
             if list_tag and list_tag != "ol":
                 close_list()
             list_tag = "ol"
-            list_items.append(f"<li>{format_inline(ordered_match.group(NEXT_INDEX))}</li>")
+            list_items.append(
+                f"<li>{format_inline(ordered_match.group(NEXT_INDEX), skill_directory)}</li>"
+            )
             continue
 
         close_list()
@@ -512,7 +541,7 @@ def load_skill_definition(skill_directory: Path, categories_by_id: dict[str, Cat
         category_label=category.label,
         source_path=str(skill_path.relative_to(REPOSITORY_ROOT)),
         markdown=raw_markdown,
-        html=render_markdown(body_markdown),
+        html=render_markdown(body_markdown, skill_directory),
     )
 
 
