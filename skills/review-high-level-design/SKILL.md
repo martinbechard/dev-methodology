@@ -23,7 +23,8 @@ Use this skill to review a high-level design artifact created from the methodolo
 4. Save the completed review checklist next to the artifact using this form: artifact-name.review-checklist-high-level-design.md.
 5. Use documentation-page-verify with the artifact, source evidence, and completed review checklist for shared page contract, source authority, link, diagram, and steady-state checks.
 6. Verify high-level design sections against the checklist, especially requirements coverage, parent architecture, data anchors, constituent components, interaction model, trust boundaries, identity selectors, authorization, disclosure limits, cross-module contracts, validation and state ownership, transaction and asynchronous boundaries, error timing, configuration, implementation order, invariants, readiness, definition of good, and verification.
-7. Return findings first, ordered by severity, with file paths and section names. Separate Response Adequacy findings from Identity And Security findings, then report other contract or evidence findings. Derive each finding or pass assessment from the completed review checklist.
+7. Perform operation inventory reconciliation before passing coverage. Enumerate every primary or supporting route, API, command, event, job, notification, and reference-data lookup named in any allowed functional or architecture input, then locate its Requirements Coverage row, owning component, boundary contract, and verification or its explicit out-of-scope authority. An unresolved facet does not justify omitting the supporting operation.
+8. Return findings first, ordered by severity, with file paths and section names. Separate Response Adequacy findings from Identity And Security findings, then report other contract or evidence findings. Derive each finding or pass assessment from the completed review checklist.
 
 ## Output
 

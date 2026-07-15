@@ -38,15 +38,16 @@ Use documentation-reverse-engineer when the user asks to derive a set of functio
 
 1. Inspect the target repository before writing. Read product requirements, README files, task-relevant procedures, routes, UI surfaces, commands, integrations, services, tests, backlog files, existing docs, wiki pages, and current worktree status.
 2. Identify the actor goal, entry points, states, permissions, visible outcomes, and verification evidence.
-3. Copy the functional specification template into the target documentation location when a new artifact is needed.
-4. Replace each TODO with behavior grounded in authoritative source material.
-5. Keep the shared page contract sections first.
-6. Write workflow steps from the actor's point of view.
-7. Include disabled states, error states, empty states, unavailable states, confirmation behavior, redirects, persistence outcomes, and important negative behavior when source evidence supports them.
-8. When scenario-heavy behavior is involved, map actors, entry points, states, permissions, main paths, alternate paths, and recovery paths to named scenarios. Keep diagrams, prose, tables, and machine-readable contracts consistent.
-9. Record the project-owned approval or acceptance authority when one exists. Do not invent a universal approval gate.
-10. Say Not yet identified for related code, tests, backlog items, or wiki pages that do not exist yet.
-11. Keep the artifact steady-state. Do not describe it as new, revised, or enhanced unless the document is explicitly a change plan.
+3. Build a primary and supporting operation inventory before prose. Include every route, API, command, event, job, notification, and supporting reference-data lookup directly invoked by the workflow, even when it is not the workflow's main subject. For each operation record actor and authentication source; authorization, ownership, tenancy, and data filtering; selector, request, paging, and sort; response projection, disclosure, status, and error; state or side effects; and verification. Preserve supported facts and mark only unresolved facets open.
+4. Copy the functional specification template into the target documentation location when a new artifact is needed.
+5. Replace each TODO with behavior grounded in authoritative source material.
+6. Keep the shared page contract sections first.
+7. Write workflow steps from the actor's point of view.
+8. Include disabled states, error states, empty states, unavailable states, confirmation behavior, redirects, persistence outcomes, and important negative behavior when source evidence supports them.
+9. When scenario-heavy behavior is involved, map actors, entry points, states, permissions, main paths, alternate paths, and recovery paths to named scenarios. Keep diagrams, prose, tables, and machine-readable contracts consistent.
+10. Record the project-owned approval or acceptance authority when one exists. Do not invent a universal approval gate.
+11. Say Not yet identified for related code, tests, backlog items, or wiki pages that do not exist yet.
+12. Keep the artifact steady-state. Do not describe it as new, revised, or enhanced unless the document is explicitly a change plan.
 
 ## Verification
 
@@ -57,5 +58,6 @@ Before finishing:
 3. Run project wiki status and lint when docs/wiki exists and the artifact lives in or links from docs/wiki.
 4. Search the artifact for unresolved TODO markers that are not intentional.
 5. Confirm every workflow, state group, edge case, and acceptance claim has source evidence or a clearly recorded open question.
+6. Reconcile every primary and supporting operation inventory row with Entry Points, Workflows, States And Rules, Edge Cases, and Verification. Do not omit a supporting operation merely because its most specific filter, projection, paging, or error detail remains open.
 
 Do not send private, proprietary, sensitive, PII, or company-internal material to an external service unless the user explicitly authorizes it.

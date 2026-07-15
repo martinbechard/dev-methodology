@@ -78,6 +78,8 @@ TODO: List routes, pages, commands, scheduled jobs, integrations, widgets, butto
 
 TODO: State which entry point is primary and which entry points are alternate paths.
 
+TODO: Build a primary and supporting operation inventory that includes every route, API, command, event, job, notification, and supporting reference-data lookup directly invoked by the workflow. For each operation record actor and authentication source; authorization, ownership, tenancy, and data filtering; selector, request, paging, and sort; response projection, disclosure, status, and error; state or side effects; and verification. Preserve supported facts and mark only unresolved facets open.
+
 ## Scope
 
 TODO: List the capabilities included in this functional specification.

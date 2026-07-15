@@ -38,6 +38,7 @@ Do not mark pass without quoted evidence.
 
 ## Response Adequacy Questions
 
+- Question: Does operation inventory reconciliation enumerate every primary or supporting route, API, command, event, job, notification, and reference-data lookup named by the assignment or allowed inputs, and map each supporting operation to Requirements Coverage, Public Contracts, an owner, boundaries, and verification or explicit out-of-scope authority without treating an upstream omission or unresolved facet as permission to omit it?
 - Question: Does Requirements Coverage account for every applicable functional and parent-design requirement as DEFINED, OPEN, or OUT_OF_SCOPE and map it to concrete design and verification?
 - Question: Does Requirements Coverage preserve every scope-bearing qualifier from the target assignment and owning-HLD constituent-component description as an explicit requirement or operation facet instead of shortening the assignment to a generic module label?
 - Question: Does each DEFINED requirement identify its satisfying contract, rule, state, error path, and verification rather than relying on vague prose?

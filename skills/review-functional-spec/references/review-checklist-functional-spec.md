@@ -37,6 +37,7 @@ Do not mark pass without quoted evidence.
 - Question: Does User Or Actor Goal name the actor and the outcome they need?
 - Question: Do Parent Workflow And Entry Points identify where the workflow starts and how users reach it?
 - Question: Does Route Or Surface List cover relevant routes, screens, commands, APIs, notifications, or external surfaces?
+- Question: Does a primary and supporting operation inventory cover every route, API, command, event, job, notification, and supporting reference-data lookup directly invoked by the workflow, with actor and authentication source; authorization, ownership, tenancy, and data filtering; selector, request, paging, and sort; response projection, disclosure, status, and error; state or side effects; and verification?
 - Question: Do Scope And Non-Goals distinguish included behavior from excluded or deferred behavior?
 - Question: Do Concepts define terms the actor must understand without drifting into module design?
 - Question: Are Workflow Steps written from the actor's point of view and do they cover main, alternate, empty, error, and recovery paths?

@@ -36,6 +36,7 @@ Do not mark pass without quoted evidence.
 
 ## Response Adequacy Questions
 
+- Question: Does operation inventory reconciliation enumerate every primary or supporting route, API, command, event, job, notification, and reference-data lookup named by the allowed inputs, and map each supporting operation to Requirements Coverage, an owning component, boundary contracts, and verification or explicit out-of-scope authority without treating unresolved facets as permission to omit it?
 - Question: Does Requirements Coverage account for every applicable functional and architecture requirement as DEFINED, OPEN, or OUT_OF_SCOPE and map it to concrete components, interactions, contracts, states, errors, and verification?
 - Question: Does each DEFINED requirement identify its satisfying components, interaction, contract, state, error path, and verification rather than relying on vague subsystem prose?
 - Question: Does each requirement preserve its CURRENT_BEHAVIOR, CURRENT_LIMITATION, INTENDED_BEHAVIOR, PROPOSED_CHANGE, or OPEN_QUESTION mode, with baseline and target stated separately when they differ?

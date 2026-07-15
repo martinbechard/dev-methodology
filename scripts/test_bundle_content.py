@@ -1239,6 +1239,50 @@ class BundleContentTests(unittest.TestCase):
         ):
             self.assertIn(phrase, module_template)
 
+    def test_forward_design_closes_supporting_operation_inventories(self) -> None:
+        """Keep supporting APIs from disappearing between functional and design levels."""
+        functional_create = (SKILLS_ROOT / "create-functional-spec" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        functional_template = (
+            SKILLS_ROOT
+            / "development-methodology"
+            / "assets"
+            / "templates"
+            / "functional-spec-template.md"
+        ).read_text(encoding="utf-8")
+        functional_review = (
+            SKILLS_ROOT
+            / "review-functional-spec"
+            / "references"
+            / "review-checklist-functional-spec.md"
+        ).read_text(encoding="utf-8")
+
+        for text in (functional_create, functional_template, functional_review):
+            for phrase in (
+                "primary and supporting operation inventory",
+                "supporting reference-data lookup",
+                "actor and authentication source",
+                "authorization, ownership, tenancy, and data filtering",
+                "selector, request, paging, and sort",
+                "response projection, disclosure, status, and error",
+            ):
+                self.assertIn(phrase, text)
+
+        for skill_name, checklist_name in (
+            ("review-high-level-design", "review-checklist-high-level-design.md"),
+            ("review-module-design", "review-checklist-module-design.md"),
+        ):
+            skill_text = (SKILLS_ROOT / skill_name / "SKILL.md").read_text(
+                encoding="utf-8"
+            )
+            checklist_text = (
+                SKILLS_ROOT / skill_name / "references" / checklist_name
+            ).read_text(encoding="utf-8")
+            self.assertIn("operation inventory reconciliation", skill_text)
+            self.assertIn("operation inventory reconciliation", checklist_text)
+            self.assertIn("supporting operation", checklist_text)
+
     def test_project_configuration_routes_to_template_and_verifier(self) -> None:
         development_methodology_text = (
             SKILLS_ROOT / "development-methodology" / "SKILL.md"
@@ -2409,6 +2453,7 @@ class BundleContentTests(unittest.TestCase):
             "evaluator rubrics",
             "do not enter production generation",
             "project-specific reconstruction instructions",
+            "primary and supporting operation inventory",
             "exact ordered template-heading and readiness-marker gate",
             "installed documentation path",
             "transient assembly or control files",
