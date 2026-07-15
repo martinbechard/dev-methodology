@@ -1114,6 +1114,9 @@ class BundleContentTests(unittest.TestCase):
                     "operation-contract ledger",
                     "exact level of specificity",
                     "Preserve partial specificity",
+                    "exact operation identity",
+                    "field-level input constraints",
+                    "sensitive inputs",
                 ),
             },
         }
@@ -1169,6 +1172,8 @@ class BundleContentTests(unittest.TestCase):
                         "body identity",
                         "safer intended target separately",
                         "entity-shaped response",
+                        "exact method and route",
+                        "write-only contract",
                     )
                     if skill_name == "create-module-design"
                     else ()
@@ -1365,6 +1370,9 @@ class BundleContentTests(unittest.TestCase):
                         "operation-contract ledger",
                         "partial specificity",
                         "close synonym",
+                        "field-level constraint",
+                        "exact method and route",
+                        "sensitive inputs",
                     )
                     if skill_name == "review-module-design"
                     else ()

@@ -114,7 +114,7 @@ TODO: Verify dependency paths against existing source files or an accepted plann
 
 TODO: List public classes, functions, methods, routes, events, commands, state variables, configuration fields, or payloads exposed by this module.
 
-TODO: For each contract, describe actor, trigger, inputs, identity selector, validation owner, outputs, response or disclosure shape, side effects, state owner, transaction or asynchronous boundary, synchronous and asynchronous failure behavior, and ownership.
+TODO: For each contract, describe actor, trigger, inputs, exact field-level constraints and required or optional status, identity selector, validation owner, outputs, response or disclosure shape, side effects, state owner, transaction or asynchronous boundary, synchronous and asynchronous failure behavior, and ownership.
 
 TODO: When path, body, token, session, message, or persistence identifiers can name the same subject or record, state precedence and mismatch behavior explicitly.
 
@@ -125,6 +125,10 @@ TODO: Before filling this section, build an operation-contract ledger from the a
 TODO: Do not replace an operation-specific current response or disclosure contract with a generally safer projection. Preserve that baseline as CURRENT_BEHAVIOR or CURRENT_LIMITATION and state the safer intended target separately.
 
 TODO: Preserve partial specificity. If an input establishes an entity-shaped response, DTO projection, no body, or another response category but not its exact fields, record the known category and mark only the unresolved fields OPEN; do not mark the whole response shape OPEN.
+
+TODO: Bind every response, validation, side-effect, and failure statement to the exact method and route, command, event, or job that its evidence names. Do not borrow a failure from a sibling operation or assume similar routes share the same response.
+
+TODO: For credential, token, key, secret, or other sensitive inputs, state the input-only or write-only contract, validation owner, forwarding boundary, protection owner, response exclusion, failure timing, and logging behavior. Mark unsupported details OPEN.
 
 ## Trust And Identity Boundaries
 

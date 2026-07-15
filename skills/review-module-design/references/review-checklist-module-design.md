@@ -44,6 +44,7 @@ Do not mark pass without quoted evidence.
 - Question: Does each operation preserve the authoritative input's exact level of specificity, so a generic selector such as body identity is not silently specialized to body login, body ID, or another field?
 - Question: Before accepting an OPEN claim, did the review search every occurrence of the operation name, route, responsibility, and close synonym across the authoritative inputs and quote evidence for what remains unresolved?
 - Question: Does the artifact preserve partial specificity by recording a known response category such as entity-shaped response, DTO projection, or no body while marking only unknown fields or details OPEN?
+- Question: Does each operation copy every authoritative field-level constraint and required or optional status instead of replacing concrete rules with a generic validated-payload statement?
 - Question: Does Implementation Readiness say BLOCKED for affected downstream work when any applicable requirement or required contract is OPEN or any high-impact blocking question remains?
 
 ## Identity And Security Questions
@@ -55,6 +56,8 @@ Do not mark pass without quoted evidence.
 - Question: Does every explicit operation-specific response, selector, validation, or failure exception govern that operation instead of being overwritten by a broader safety or consistency rule?
 - Question: Does every operation-specific current response or disclosure exception remain visible as CURRENT_BEHAVIOR or CURRENT_LIMITATION beside any safer intended target, including exceptions that expose more data than a general projection rule recommends?
 - Question: Does the artifact avoid inferring that one general DTO projection applies to every operation when an authoritative source records an operation-specific entity-shaped or other disclosure exception?
+- Question: Is every response, validation, side-effect, and failure claim supported by evidence for that exact method and route, command, event, or job, without transferring a sibling operation's contract?
+- Question: For sensitive inputs, does the operation define or explicitly leave open validation, handoff, encryption or hashing ownership, response exclusion, failure timing, and logging behavior?
 
 ## Artifact-Specific Questions
 
@@ -62,7 +65,7 @@ Do not mark pass without quoted evidence.
 - Question: Does Parent Context explain the subsystem, architecture, feature, or workflow that owns the module?
 - Question: Are Responsibilities coherent, bounded, and not a mixed list of unrelated work?
 - Question: Do Callers and Dependencies identify direct callers, imported dependencies, external systems, generated artifacts, and test seams?
-- Question: Do Public Contracts describe actors, triggers, inputs, selectors, validation owners, outputs, response or disclosure shapes, side effects, state owners, transaction or asynchronous boundaries, and expected errors, and do they agree with a source-traced operation-contract ledger prepared before prose?
+- Question: Do Public Contracts describe actors, triggers, field-level input constraints, required or optional status, selectors, validation owners, outputs, response or disclosure shapes, side effects, state owners, transaction or asynchronous boundaries, and expected errors, and do they agree with a source-traced operation-contract ledger prepared before prose?
 - Question: Do Internal Data And State describe maintained state, caches, derived values, persistence, and ownership rules?
 - Question: Do Processing Rules describe main flow, branches, retries, validation, ordering, idempotency, and concurrency rules when applicable?
 - Question: Do Invariants state rules that must always hold?
