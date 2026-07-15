@@ -1144,6 +1144,8 @@ class BundleContentTests(unittest.TestCase):
                     "executor acceptance or rejection before any work",
                     "Do not merge executor rejection",
                     "first nonblank content under Implementation Readiness",
+                    "installed documentation path",
+                    "transient assembly or control files",
                 ),
             },
         }
