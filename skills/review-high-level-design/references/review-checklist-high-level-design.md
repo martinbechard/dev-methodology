@@ -38,6 +38,7 @@ Do not mark pass without quoted evidence.
 
 - Question: Does Requirements Coverage account for every applicable functional and architecture requirement as DEFINED, OPEN, or OUT_OF_SCOPE and map it to concrete components, interactions, contracts, states, errors, and verification?
 - Question: Does each DEFINED requirement identify its satisfying components, interaction, contract, state, error path, and verification rather than relying on vague subsystem prose?
+- Question: Does each requirement preserve its CURRENT_BEHAVIOR, CURRENT_LIMITATION, INTENDED_BEHAVIOR, PROPOSED_CHANGE, or OPEN_QUESTION mode, with baseline and target stated separately when they differ?
 - Question: Does every OUT_OF_SCOPE requirement name the authority, rationale, and owning artifact that accepts it instead of using status as an omission escape hatch?
 - Question: Are unsupported specifics labeled as inferences or open questions instead of being presented as decided behavior?
 - Question: Does Implementation Readiness say BLOCKED for affected downstream work when any applicable requirement is OPEN, any required cross-module contract is OPEN or CONFLICT, or any high-impact blocking question remains?
@@ -51,6 +52,7 @@ Do not mark pass without quoted evidence.
 
 - Question: Does Cross-Module Contract Reconciliation cover every producer-consumer boundary with actor and authentication source; authorization, role, ownership, tenancy, and data filtering; selector mismatch behavior; payload and disclosure; validation owner; state owner and transition; and transaction, asynchronous, and error timing?
 - Question: Does the design expose cross-module conflicts as OPEN or CONFLICT instead of silently selecting one contract or erasing the issue through generalization?
+- Question: Does every explicit operation-specific response, selector, validation, state, or failure exception govern that boundary instead of being overwritten by a broader safety or consistency rule?
 
 ## Artifact-Specific Questions
 

@@ -1137,6 +1137,10 @@ class BundleContentTests(unittest.TestCase):
                     "Requirements Coverage",
                     "DEFINED, OPEN, or OUT_OF_SCOPE",
                     "blocking open question",
+                    "CURRENT_BEHAVIOR",
+                    "CURRENT_LIMITATION",
+                    "PROPOSED_CHANGE",
+                    "specific operation",
                 ) + case["phrases"]:
                     self.assertIn(phrase, skill_text)
 
@@ -1155,6 +1159,8 @@ class BundleContentTests(unittest.TestCase):
                     "required for OUT_OF_SCOPE",
                     "every applicable requirement",
                     "affected downstream work",
+                    "Do not collapse the baseline and target",
+                    "operation-specific",
                 ):
                     self.assertIn(phrase, template_text)
 
@@ -1339,6 +1345,9 @@ class BundleContentTests(unittest.TestCase):
                     "high-impact blocking question",
                     "authority, rationale, and owning artifact",
                     "affected downstream work",
+                    "CURRENT_LIMITATION",
+                    "baseline and target stated separately",
+                    "operation-specific",
                 ) + specific_phrases:
                     self.assertIn(phrase, checklist_text)
 

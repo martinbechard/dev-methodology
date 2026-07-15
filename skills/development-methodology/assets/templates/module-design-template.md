@@ -66,9 +66,11 @@ TODO: Include the last meaningful source review when known.
 
 TODO: Account for every applicable requirement from the authoritative functional specifications and parent designs. Do not hide an omitted requirement in general prose.
 
-| Requirement source and ID | Required outcome | Satisfying contract, rule, state, or error path | Status | Out-of-scope authority, rationale, and owning artifact | Verification |
-| --- | --- | --- | --- | --- | --- |
-| TODO | TODO | TODO | DEFINED, OPEN, or OUT_OF_SCOPE | TODO; required for OUT_OF_SCOPE | TODO |
+TODO: Preserve accepted current behavior and current limitations even when a safer target is proposed. Do not collapse the baseline and target into one normalized contract.
+
+| Requirement source and ID | Claim mode | Required outcome | Satisfying contract, rule, state, or error path | Status | Out-of-scope authority, rationale, and owning artifact | Verification |
+| --- | --- | --- | --- | --- | --- | --- |
+| TODO | CURRENT_BEHAVIOR, CURRENT_LIMITATION, INTENDED_BEHAVIOR, PROPOSED_CHANGE, or OPEN_QUESTION | TODO | TODO | DEFINED, OPEN, or OUT_OF_SCOPE | TODO; required for OUT_OF_SCOPE | TODO |
 
 ## Runtime Path
 
@@ -113,6 +115,8 @@ TODO: List public classes, functions, methods, routes, events, commands, state v
 TODO: For each contract, describe actor, trigger, inputs, identity selector, validation owner, outputs, response or disclosure shape, side effects, state owner, transaction or asynchronous boundary, synchronous and asynchronous failure behavior, and ownership.
 
 TODO: When path, body, token, session, message, or persistence identifiers can name the same subject or record, state precedence and mismatch behavior explicitly.
+
+TODO: When the current contract and intended target differ, state both. Apply an explicit operation-specific response, selector, validation, or failure exception before any broader invariant or safety principle.
 
 ## Trust And Identity Boundaries
 

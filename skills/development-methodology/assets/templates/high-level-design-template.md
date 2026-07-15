@@ -66,9 +66,11 @@ TODO: Include the last meaningful source review when known.
 
 TODO: Account for every applicable requirement from the authoritative functional specifications and parent architecture. Do not hide an omitted requirement in general subsystem prose.
 
-| Requirement source and ID | Required outcome | Satisfying components, interaction, contract, state, or error path | Status | Out-of-scope authority, rationale, and owning artifact | Verification |
-| --- | --- | --- | --- | --- | --- |
-| TODO | TODO | TODO | DEFINED, OPEN, or OUT_OF_SCOPE | TODO; required for OUT_OF_SCOPE | TODO |
+TODO: Preserve accepted current behavior and current limitations even when a safer target is proposed. Do not collapse the baseline and target into one normalized contract.
+
+| Requirement source and ID | Claim mode | Required outcome | Satisfying components, interaction, contract, state, or error path | Status | Out-of-scope authority, rationale, and owning artifact | Verification |
+| --- | --- | --- | --- | --- | --- | --- |
+| TODO | CURRENT_BEHAVIOR, CURRENT_LIMITATION, INTENDED_BEHAVIOR, PROPOSED_CHANGE, or OPEN_QUESTION | TODO | TODO | DEFINED, OPEN, or OUT_OF_SCOPE | TODO; required for OUT_OF_SCOPE | TODO |
 
 ## Parent Architecture
 
@@ -172,6 +174,8 @@ TODO: The Data Contract Map should show the shape owner, producers, consumers, a
 ## Cross-Module Contract Reconciliation
 
 TODO: Reconcile every producer-consumer or caller-callee boundary before module implementation begins. Do not select one conflicting contract silently or erase a missing critical fact through generalization.
+
+TODO: When the current contract and intended target differ, state both. Apply an explicit operation-specific response, selector, validation, state, or failure exception before any broader invariant or safety principle.
 
 | Boundary | Producer and consumer | Actor and authentication source | Authorization, role, ownership, tenancy, and data filtering | Selector and mismatch behavior | Payload, response, and disclosure | Validation owner | State owner and transition | Transaction, asynchronous, and error boundary | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |

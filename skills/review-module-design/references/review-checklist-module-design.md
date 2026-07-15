@@ -38,6 +38,7 @@ Do not mark pass without quoted evidence.
 
 - Question: Does Requirements Coverage account for every applicable functional and parent-design requirement as DEFINED, OPEN, or OUT_OF_SCOPE and map it to concrete design and verification?
 - Question: Does each DEFINED requirement identify its satisfying contract, rule, state, error path, and verification rather than relying on vague prose?
+- Question: Does each requirement preserve its CURRENT_BEHAVIOR, CURRENT_LIMITATION, INTENDED_BEHAVIOR, PROPOSED_CHANGE, or OPEN_QUESTION mode, with baseline and target stated separately when they differ?
 - Question: Does every OUT_OF_SCOPE requirement name the authority, rationale, and owning artifact that accepts it instead of using status as an omission escape hatch?
 - Question: Are unsupported specifics labeled as inferences or open questions instead of being presented as decided behavior?
 - Question: Does Implementation Readiness say BLOCKED for affected downstream work when any applicable requirement or required contract is OPEN or any high-impact blocking question remains?
@@ -48,6 +49,7 @@ Do not mark pass without quoted evidence.
 - Question: Does Trust And Identity Boundaries cover every applicable route, event, command, job, UI guard, protected operation, and sensitive-data flow?
 - Question: Does each applicable trust boundary distinguish authentication, authorization, roles, ownership, tenancy, and data filtering and name the evidence for each?
 - Question: Does each applicable protected operation define disclosure limits, validation ownership, state transitions, failure timing, committed side effects, and sensitive logging behavior?
+- Question: Does every explicit operation-specific response, selector, validation, or failure exception govern that operation instead of being overwritten by a broader safety or consistency rule?
 
 ## Artifact-Specific Questions
 
