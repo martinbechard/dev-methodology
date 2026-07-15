@@ -150,6 +150,8 @@ TODO: Complete one row for every phase of each external or asynchronous effect. 
 
 TODO: Keep Public Contracts, Processing Rules, diagrams, Error Handling, Invariants, and Verification consistent with this ledger. Do not move rendering, construction, network send, persistence, or another action between phases in different sections.
 
+TODO: For executor-backed work, place executor acceptance or rejection before every executor-owned action. Put rendering, construction, persistence, or sending before acceptance only when an accepted source assigns that precomputation to the initiator or submission owner. Keep executor rejection distinct from later sender or provider rejection.
+
 TODO: Do not invent a provider-delivery phase when accepted inputs establish only submission and later execution. Do not prescribe transaction ordering, preconstruction, or another implementation mechanism merely because it could satisfy the required observable outcome.
 
 ## Trust And Identity Boundaries

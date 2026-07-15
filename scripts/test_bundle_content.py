@@ -1133,6 +1133,8 @@ class BundleContentTests(unittest.TestCase):
                     "cache replacement or retention",
                     "level-two heading",
                     "Preserve the heading text and order exactly",
+                    "executor acceptance or rejection before any work",
+                    "Do not merge executor rejection",
                 ),
             },
         }
@@ -1201,6 +1203,7 @@ class BundleContentTests(unittest.TestCase):
                         "similar label as anonymous-access evidence",
                         "shared cache is created, replaced, retained, or invalidated",
                         "failed cached source remains retained or is replaced",
+                        "place executor acceptance or rejection before every executor-owned action",
                     )
                     if skill_name == "create-module-design"
                     else ()
@@ -1404,6 +1407,8 @@ class BundleContentTests(unittest.TestCase):
                         "submission owner",
                         "durable receipt",
                         "ordered level-two headings",
+                        "executor acceptance or rejection occur before every executor-owned action",
+                        "sender or provider rejection",
                     )
                     if skill_name == "review-module-design"
                     else ()
@@ -2386,6 +2391,7 @@ class BundleContentTests(unittest.TestCase):
             "do not enter production generation",
             "project-specific reconstruction instructions",
             "exact ordered template-heading gate",
+            "Executor acceptance precedes executor-owned work",
         ):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, lifecycle_text)
