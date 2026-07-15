@@ -1093,6 +1093,8 @@ class BundleContentTests(unittest.TestCase):
                     "state owner and transition",
                     "transaction or asynchronous boundary",
                     "error timing",
+                    "installed documentation path",
+                    "transient assembly or control files",
                 ),
             },
             "create-module-design": {
@@ -2396,6 +2398,8 @@ class BundleContentTests(unittest.TestCase):
             "do not enter production generation",
             "project-specific reconstruction instructions",
             "exact ordered template-heading and readiness-marker gate",
+            "installed documentation path",
+            "transient assembly or control files",
             "Executor acceptance precedes executor-owned work",
         ):
             with self.subTest(phrase=phrase):

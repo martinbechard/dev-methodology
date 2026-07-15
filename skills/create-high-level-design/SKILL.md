@@ -65,6 +65,7 @@ Use documentation-reverse-engineer when the user asks to derive subsystem design
 12. Use diagrams only where component collaboration, lifecycle, contracts, configuration, implementation order, or verification coverage are easier to inspect visually.
 13. Say Not yet identified for related code, tests, backlog items, or wiki pages that do not exist yet.
 14. Keep the artifact steady-state. Do not describe it as new, revised, or enhanced unless the document is explicitly a change plan.
+15. Treat the target as the installed documentation path when resolving links. Link only durable project artifacts that will exist from that location. Temporary inputs may guide the draft, but do not link or cite transient assembly or control files such as prompts, manifests, assignments, copied project context, evaluation case roots, or scratch files. When no durable project source exists, state that it is not yet identified instead of inventing a link.
 
 ## Verification
 
@@ -80,5 +81,6 @@ Before finishing:
 8. Confirm every critical trust boundary identifies protected assets, entry points, identities, authority checks, disclosure limits, and sensitive-data handling.
 9. Confirm blocking open questions prevent dependent module implementation until the affected contract is decided.
 10. Confirm every accepted current limitation remains visible beside any proposed target and every operation-specific exception survives broader security or response-shape generalization.
+11. Resolve every local Markdown link from the installed documentation path and remove links to transient assembly or control files before review.
 
 Do not send private, proprietary, sensitive, PII, or company-internal material to an external service unless the user explicitly authorizes it.
