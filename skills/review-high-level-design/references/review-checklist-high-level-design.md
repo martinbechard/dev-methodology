@@ -28,15 +28,35 @@ Do not mark pass without quoted evidence.
 
 - Question: Does the artifact start with Current Understanding, Authoritative Sources, Related Code, Related Tests, Related Backlog Items, Related Wiki Pages, Open Questions, and Maintenance Notes?
 - Question: Does Current Understanding describe the subsystem or feature family as it exists or is intended now?
-- Question: Do Authoritative Sources include the accepted parent architecture, or an explicit Pass 3 parent target during ordered bottom-up reverse engineering, plus source files, tests, functional specifications, procedures, and related module designs?
-- Question: Do Related Code and Related Tests identify evidence or say Not yet identified after a real search?
-- Question: Do Open Questions capture unresolved subsystem ownership, boundaries, contracts, or verification issues?
+- Question: Does Current Understanding select PLANNED_DEVELOPMENT, EXISTING_IMPLEMENTATION, or MIXED_CHANGE, and does the evidence set obey that mode?
+- Question: In PLANNED_DEVELOPMENT mode, do Authoritative Sources include accepted functional specifications, parent architecture, decisions, backlog requirements, project configuration, and relevant technology guidance without requiring module designs, source, or tests that do not exist?
+- Question: In EXISTING_IMPLEMENTATION or MIXED_CHANGE mode, do Authoritative Sources include the applicable accepted module designs, source, tests, configuration, procedures, and runtime evidence?
+- Question: Do Related Code and Related Tests identify evidence permitted by the selected mode or say Not yet identified when planned implementation and tests do not exist?
+- Question: Do Open Questions capture unresolved subsystem ownership, boundaries, contracts, identity, security, selectors, validation, state, response, or verification issues and classify each as blocking or non-blocking with a decision owner?
+
+## Response Adequacy Questions
+
+- Question: Does Requirements Coverage account for every applicable functional and architecture requirement as DEFINED, OPEN, or OUT_OF_SCOPE and map it to concrete components, interactions, contracts, states, errors, and verification?
+- Question: Does each DEFINED requirement identify its satisfying components, interaction, contract, state, error path, and verification rather than relying on vague subsystem prose?
+- Question: Does every OUT_OF_SCOPE requirement name the authority, rationale, and owning artifact that accepts it instead of using status as an omission escape hatch?
+- Question: Are unsupported specifics labeled as inferences or open questions instead of being presented as decided behavior?
+- Question: Does Implementation Readiness say BLOCKED for affected downstream work when any applicable requirement is OPEN, any required cross-module contract is OPEN or CONFLICT, or any high-impact blocking question remains?
+
+## Identity And Security Questions
+
+- Question: Does Critical Trust And Identity Boundaries cover every applicable authenticated actor, protected operation, privileged background task, trust-boundary crossing, and sensitive-data flow?
+- Question: Does each critical boundary distinguish authentication, authorization, roles, ownership, tenancy, and data filtering and define entrypoint, selector, protected asset, disclosure limit, failure posture, and sensitive-data handling?
+
+## Cross-Module Reconciliation Questions
+
+- Question: Does Cross-Module Contract Reconciliation cover every producer-consumer boundary with actor and authentication source; authorization, role, ownership, tenancy, and data filtering; selector mismatch behavior; payload and disclosure; validation owner; state owner and transition; and transaction, asynchronous, and error timing?
+- Question: Does the design expose cross-module conflicts as OPEN or CONFLICT instead of silently selecting one contract or erasing the issue through generalization?
 
 ## Artifact-Specific Questions
 
-- Question: Does Subsystem Purpose And Parent Architecture explain why the subsystem exists and how it fits the accepted parent architecture, or explicitly record the provisional target, inherited constraints, and backfill obligation during ordered bottom-up reverse engineering?
+- Question: Does Parent Architecture explain why the subsystem exists and how it fits an accepted parent architecture, or mark its absence as a blocking upstream design question?
 - Question: Do Scope And Non-Goals distinguish included components, excluded components, and deferred work?
-- Question: Do Current Data Anchors name authoritative data sources, state owners, records, events, messages, or external systems?
+- Question: Do Data Anchors name planned or existing authoritative data sources, state owners, records, events, messages, or external systems?
 - Question: Do Constituent Components identify each component and responsibility without collapsing into implementation detail for every module?
 - Question: Does Interaction Model explain calls, events, jobs, user actions, external handoffs, and sequencing?
 - Question: Do Lifecycle And State describe meaningful states, transitions, retries, cleanup, and long-running behavior?
@@ -49,4 +69,4 @@ Do not mark pass without quoted evidence.
 
 ## Findings
 
-Report findings first. Treat a missing parent architecture without the explicit ordered reverse-engineering provisional state, vague component responsibilities, unclear data contracts, unsupported interaction claims, missing invariants, and missing verification as review findings. After Pass 3 creates the parent architecture, treat any remaining provisional target or missing resolving parent link as a finding.
+Report findings first in separate Response Adequacy, Identity And Security, and Other Contract Or Evidence groups. Treat unaccounted requirements, unsupported specificity, hidden omissions, unjustified out-of-scope requirements, unresolved identity or selector conflicts, collapsed authentication and authorization claims, unclear disclosure, validation, or state ownership, missing transaction or error timing, unsafe sensitive-data handling, false readiness, a missing accepted parent architecture, vague component responsibilities, unclear data contracts, unsupported interaction claims, missing invariants, and missing verification as findings.

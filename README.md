@@ -28,6 +28,10 @@ The core methodology keeps one shared wiki-compatible page contract and six docu
 
 The shared page contract starts every durable page with Current Understanding, Authoritative Sources, Related Code, Related Tests, Related Backlog Items, Related Wiki Pages, Open Questions, and Maintenance Notes. Specialized documents keep those sections first, then add their own sections.
 
+Normal planned development proceeds top down from accepted functional specifications and architecture through create-high-level-design and review-high-level-design, then through create-module-design and review-module-design, and finally through ordinary implementation agents with the project-routed technology skills. The design skills use PLANNED_DEVELOPMENT mode, account for every applicable requirement, and block downstream work when a critical identity, security, public-response, state-ownership, validation, transaction, asynchronous, or failure-timing contract remains unresolved.
+
+Project-specific evaluation skills may freeze inputs and compare completed candidates with hidden reference artifacts, but they do not create production designs or code and do not add project-specific development rules to the generation context. Accepted upstream specifications and designs remain valid production inputs even when a separate reverse-engineering process originally produced them.
+
 ## Repository Shape
 
 - skills contains the portable Agent Skills.
@@ -204,7 +208,7 @@ After that analysis and explicit user approval, --replace-customized may be comb
 
 ## Agent Responsibility Boundaries
 
-Wiki work remains separate from general documentation, coding, review, backlog, and project setup. The generated [Core Agent and Skills](design/agent-and-skill-definitions.html) page owns catalog views of current conceptual agent definitions and skill definitions, including responsibilities, assigned skills, output contracts, examples, model profiles, repository mutation policies, and agent-skill relationships. [Technology Skills](design/skills-modularization.html) explains technology-agnostic agent skills and setup-bound technology extensions. The [orchestrated development lifecycle](design/orchestrated-development-lifecycle.html) owns bootstrap, complete source-backed documentation, execution, review, verification, integration, claim release, and execution evidence.
+Wiki work remains separate from general documentation, coding, review, backlog, and project setup. The generated [Core Agent and Skills](design/agent-and-skill-definitions.html) page owns catalog views of current conceptual agent definitions and skill definitions, including responsibilities, assigned skills, output contracts, examples, model profiles, repository mutation policies, and agent-skill relationships. [Technology Skills](design/skills-modularization.html) explains technology-agnostic agent skills and setup-bound technology extensions. The [orchestrated development lifecycle](design/orchestrated-development-lifecycle.html) owns bootstrap, normal planned design progression, complete source-backed documentation, execution, review, verification, integration, claim release, and execution evidence.
 
 Whole-project reverse engineering finishes after project configuration and exact path coverage, one reviewed module design per meaningful responsibility, complete reviewed HLD grouping, reviewed architecture, reviewed functional workflow coverage, and verified README/wiki navigation. Sampling may be useful for later project-owned experiments, but it never reduces the shared documentation coverage contract.
 
@@ -343,7 +347,8 @@ Invoke Project Bootstrapper once and describe the desired steady state:
 1. Use the repository bundle sources and matching generated runtime adapter.
 2. Review the resulting PROJECT.yaml, root or nested AGENTS.md guidance, and verification commands. [Technology Skills](design/skills-modularization.html) explains setup-time detection and folder skillsets.
 3. Use documentation-bootstrap and documentation-reverse-engineer when the project needs a source-backed documentation baseline. Whole-project reverse engineering covers every meaningful module by default: inventory and review module designs first, group the complete set into high-level designs, derive architecture from those groups, cover all observable workflows, and expose the complete hierarchy through README and wiki hubs. Narrower coverage is valid only when the user explicitly names the boundary.
-4. Follow the [orchestrated development lifecycle](design/orchestrated-development-lifecycle.html) for the owning execution, independent review, integrated verification, commit, and claim-release gates.
+4. For normal planned development, treat accepted functional specifications and architecture as the upstream authority. Create and review the HLD, create and review its module designs, then implement with the ordinary coding agent and project-routed technology skills. A missing high-impact contract blocks dependent work instead of being filled with an unsupported assumption.
+5. Follow the [orchestrated development lifecycle](design/orchestrated-development-lifecycle.html) for the owning execution, independent review, integrated verification, commit, and claim-release gates.
 
 Separately requested deployment still requires caller-supplied destinations under Explicit Target Deployment.
 

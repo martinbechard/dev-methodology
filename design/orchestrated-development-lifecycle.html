@@ -439,7 +439,7 @@
   <section class="hero" aria-labelledby="page-title">
     <h1 id="page-title">Orchestrated Development Lifecycle</h1>
     <p class="lede">
-      This page owns the orchestrated bootstrap, complete source-backed documentation, execution, review, verification, integration, completion, and evidence sequence.
+      This page owns the orchestrated bootstrap, planned design progression, complete source-backed documentation, execution, review, verification, integration, completion, and evidence sequence.
     </p>
   </section>
 
@@ -514,6 +514,49 @@
             <td><span class="name">Completion and claim release</span></td>
             <td>Dev Orchestrator and every claim owner</td>
             <td>Record the final direct commit for the single-lane path, or the final integration commit after integrated review and verification for the multi-lane path. Release ownership only after clean status and resource cleanup or handoff.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="planned-design-title">
+    <h2 id="planned-design-title">Planned Design Progression</h2>
+    <p class="lede">Normal development uses the shared production skills from accepted functional intent down to verified code. Project-specific evaluation harnesses may compare frozen outputs afterward, but hidden reference artifacts, evaluator rubrics, and an original implementation do not enter production generation.</p>
+    <div class="matrix">
+      <table>
+        <thead>
+          <tr>
+            <th>Stage</th>
+            <th>Production input and owner</th>
+            <th>Acceptance gate</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="name">Functional intent</span></td>
+            <td>Accepted functional specifications and architecture define required outcomes, actors, permissions, workflows, constraints, and system boundaries.</td>
+            <td>Every applicable requirement has stable authority or is explicitly open before subsystem design begins.</td>
+          </tr>
+          <tr>
+            <td><span class="name">High-level design</span></td>
+            <td>The standard <span class="tag" data-skill-definition="create-high-level-design">create-high-level-design</span> skill works in PLANNED_DEVELOPMENT mode; <span class="tag" data-skill-definition="review-high-level-design">review-high-level-design</span> independently checks the result.</td>
+            <td>Requirements coverage, critical trust and identity boundaries, and cross-module contracts pass review. An unresolved high-impact actor, authority, selector, disclosure, validation, state, transaction, asynchronous, or error-timing contract blocks downstream module design.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Module design</span></td>
+            <td>The standard <span class="tag" data-skill-definition="create-module-design">create-module-design</span> skill consumes the accepted functional and HLD inputs; <span class="tag" data-skill-definition="review-module-design">review-module-design</span> independently checks the result.</td>
+            <td>Every applicable requirement maps to an implementable contract, rule, state, error path, and verification obligation. Identity selectors, validation ownership, response disclosure, state changes, side effects, failure timing, and sensitive logging are explicit.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Implementation</span></td>
+            <td>The ordinary coding agent implements the accepted design with the technology skills already routed for the affected project folders.</td>
+            <td>Implementation does not receive project-specific reconstruction instructions or evaluator guidance. It preserves accepted contracts and supplies tests for the named verification obligations.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Verification and evaluation</span></td>
+            <td>Normal independent review and verification prove the implementation. A separate project-owned evaluator may then compare frozen artifacts or observable behavior with hidden references.</td>
+            <td>Production acceptance remains distinct from comparative scoring. The evaluator records fidelity or quality findings without changing the generation instructions after seeing the answer key.</td>
           </tr>
         </tbody>
       </table>

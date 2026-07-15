@@ -16,9 +16,11 @@ TODO: State the single primary responsibility of the module.
 
 TODO: State whether this module design describes existing behavior, intended behavior, or a known mix of both.
 
+TODO: State the selected design mode: PLANNED_DEVELOPMENT, EXISTING_IMPLEMENTATION, or MIXED_CHANGE.
+
 ## Authoritative Sources
 
-TODO: Link the implementation file, callers, imports, exported contracts, tests, procedures, parent designs, backlog records, and plan documents used to derive this module design.
+TODO: Link the accepted functional specifications, architecture, high-level design, decisions, backlog requirements, project configuration, implementation evidence, tests, procedures, and plan documents permitted by the selected design mode.
 
 TODO: State which source wins when sources disagree.
 
@@ -48,7 +50,9 @@ TODO: Say Not yet identified when no related wiki page is known.
 
 ## Open Questions
 
-TODO: Record unresolved module ownership, caller, dependency, behavior, verification, state, or source-of-truth questions.
+TODO: Record unresolved module ownership, caller, dependency, behavior, verification, state, identity, security, response, selector, validation, or source-of-truth questions.
+
+TODO: Classify each question as blocking or non-blocking, name the decision owner, and identify the affected contract, state transition, or verification obligation. Implementation must not proceed across an unresolved high-impact blocking question.
 
 TODO: If there are no unresolved questions, replace this section with a sentence saying no open questions are recorded.
 
@@ -57,6 +61,14 @@ TODO: If there are no unresolved questions, replace this section with a sentence
 TODO: Record what future maintainers should recheck when exports, imports, callers, configuration, tests, or side effects change.
 
 TODO: Include the last meaningful source review when known.
+
+## Requirements Coverage
+
+TODO: Account for every applicable requirement from the authoritative functional specifications and parent designs. Do not hide an omitted requirement in general prose.
+
+| Requirement source and ID | Required outcome | Satisfying contract, rule, state, or error path | Status | Out-of-scope authority, rationale, and owning artifact | Verification |
+| --- | --- | --- | --- | --- | --- |
+| TODO | TODO | TODO | DEFINED, OPEN, or OUT_OF_SCOPE | TODO; required for OUT_OF_SCOPE | TODO |
 
 ## Runtime Path
 
@@ -88,17 +100,29 @@ TODO: For each caller, explain why it calls this module and link the caller desi
 
 ## Dependencies
 
-TODO: List every imported project module, interface, type, constant group, external library, browser API, runtime file, or service this module depends on.
+TODO: List every planned or existing project module, interface, type, constant group, external library, browser API, runtime file, or service this module depends on.
 
 TODO: For each dependency, explain why the module needs it and link the dependency design when available.
 
-TODO: Verify dependency paths against existing source files or a type registry. Do not invent paths.
+TODO: Verify dependency paths against existing source files or an accepted planned type or interface registry. Do not invent paths.
 
 ## Public Contracts
 
 TODO: List public classes, functions, methods, routes, events, commands, state variables, configuration fields, or payloads exposed by this module.
 
-TODO: For each contract, describe inputs, outputs, side effects, failure behavior, and ownership.
+TODO: For each contract, describe actor, trigger, inputs, identity selector, validation owner, outputs, response or disclosure shape, side effects, state owner, transaction or asynchronous boundary, synchronous and asynchronous failure behavior, and ownership.
+
+TODO: When path, body, token, session, message, or persistence identifiers can name the same subject or record, state precedence and mismatch behavior explicitly.
+
+## Trust And Identity Boundaries
+
+TODO: Complete this section whenever the module exposes a route, event, command, job, UI guard, protected operation, or sensitive-data flow. If none apply, state why no trust or identity boundary exists.
+
+| Operation or data flow | Actor and authentication source | Authorization, ownership, tenancy, and data filtering | Selector and mismatch behavior | Validation owner | Success response and disclosure | State owner and transition | Failure timing and side effects | Sensitive data and logging |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO |
+
+TODO: Keep authentication, authorization, roles, ownership, tenancy, and data filtering distinct. A framework convention, route name, or likely generated default is not evidence for any of them.
 
 ## Internal Data And State
 
@@ -160,9 +184,13 @@ TODO: Remove this section if the module has no UI or notification behavior.
 
 ## Error Handling
 
-TODO: Describe expected errors, unexpected errors, failure-closed behavior, retries, logging, and user notification ownership.
+TODO: Describe expected errors, unexpected errors, failure-closed behavior, retries, rollback, logging, and user notification ownership.
 
-TODO: State which errors are returned, thrown, swallowed, or escalated.
+TODO: State which errors are returned, thrown, swallowed, or escalated; whether each occurs before the response, after the response, or asynchronously; and which side effects have already committed.
+
+## Implementation Readiness
+
+TODO: State READY only when every applicable requirement and required contract is DEFINED and no high-impact blocking question remains. Otherwise state BLOCKED for the affected downstream work and list the exact decisions or upstream artifacts required before implementation.
 
 ## Verification
 

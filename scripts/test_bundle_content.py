@@ -205,6 +205,8 @@ README_REQUIRED_PHRASES = (
     "create-project-configuration",
     "PROJECT.yaml",
     "intermediate, reviewable intent log",
+    "Normal planned development proceeds top down",
+    "Project-specific evaluation skills may freeze inputs and compare completed candidates",
     "detection.yaml",
     "python3 scripts/build-technology-detection.py",
     "detect-technology-skills",
@@ -488,6 +490,7 @@ DOCUMENT_INFORMATION_OWNERS = {
     ),
     "orchestrated-development-lifecycle.html": (
         "Orchestrated Development Loop",
+        "Planned Design Progression",
         "Execution Evidence",
     ),
 }
@@ -1070,6 +1073,106 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(template_name, development_methodology_text)
                 self.assertIn(review_skill_name, development_methodology_text)
 
+    def test_planned_hld_and_module_creation_contracts(self) -> None:
+        cases = {
+            "create-high-level-design": {
+                "template": "high-level-design-template.md",
+                "sections": (
+                    "## Requirements Coverage",
+                    "## Critical Trust And Identity Boundaries",
+                    "## Cross-Module Contract Reconciliation",
+                    "## Implementation Readiness",
+                ),
+                "phrases": (
+                    "producer-consumer boundary",
+                    "actor and authentication source",
+                    "authorization, ownership, tenancy, and data filtering",
+                    "selector and mismatch behavior",
+                    "payload and response disclosure",
+                    "validation owner",
+                    "state owner and transition",
+                    "transaction or asynchronous boundary",
+                    "error timing",
+                ),
+            },
+            "create-module-design": {
+                "template": "module-design-template.md",
+                "sections": (
+                    "## Requirements Coverage",
+                    "## Trust And Identity Boundaries",
+                    "## Implementation Readiness",
+                ),
+                "phrases": (
+                    "route, event, command, job, UI guard",
+                    "identity selector and mismatch behavior",
+                    "validation owner",
+                    "response and disclosure shape",
+                    "state owner and transition",
+                    "transaction or asynchronous boundary",
+                    "failure timing",
+                    "sensitive-data handling",
+                ),
+            },
+        }
+
+        for skill_name, case in cases.items():
+            with self.subTest(skill_name=skill_name):
+                skill_text = (SKILLS_ROOT / skill_name / "SKILL.md").read_text(
+                    encoding="utf-8"
+                )
+                template_text = (
+                    SKILLS_ROOT
+                    / "development-methodology"
+                    / "assets"
+                    / "templates"
+                    / case["template"]
+                ).read_text(encoding="utf-8")
+
+                for phrase in (
+                    "PLANNED_DEVELOPMENT",
+                    "EXISTING_IMPLEMENTATION",
+                    "MIXED_CHANGE",
+                    "authoritative input set",
+                    "source-precedence rule",
+                    "Requirements Coverage",
+                    "DEFINED, OPEN, or OUT_OF_SCOPE",
+                    "blocking open question",
+                ) + case["phrases"]:
+                    self.assertIn(phrase, skill_text)
+
+                for evaluation_phrase in (
+                    "target reference artifact",
+                    "hidden comparison material",
+                    "evaluator rubric",
+                ):
+                    self.assertNotIn(evaluation_phrase, skill_text)
+
+                for section in case["sections"]:
+                    self.assertEqual(1, template_text.count(section))
+
+                for phrase in (
+                    "Out-of-scope authority, rationale, and owning artifact",
+                    "required for OUT_OF_SCOPE",
+                    "every applicable requirement",
+                    "affected downstream work",
+                ):
+                    self.assertIn(phrase, template_text)
+
+        module_template = (
+            SKILLS_ROOT
+            / "development-methodology"
+            / "assets"
+            / "templates"
+            / "module-design-template.md"
+        ).read_text(encoding="utf-8")
+        for phrase in (
+            "path, body, token, session, message, or persistence identifiers",
+            "synchronous and asynchronous failure behavior",
+            "which side effects have already committed",
+            "Sensitive data and logging",
+        ):
+            self.assertIn(phrase, module_template)
+
     def test_project_configuration_routes_to_template_and_verifier(self) -> None:
         development_methodology_text = (
             SKILLS_ROOT / "development-methodology" / "SKILL.md"
@@ -1185,6 +1288,59 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn("Quoted evidence:", checklist_text)
                 self.assertIn("Assessment:", checklist_text)
                 self.assertIn("?", checklist_text)
+
+    def test_hld_and_module_reviews_enforce_adequacy_and_security_contracts(self) -> None:
+        cases = {
+            "review-high-level-design": (
+                "review-checklist-high-level-design.md",
+                (
+                    "## Cross-Module Reconciliation Questions",
+                    "producer-consumer boundary",
+                    "actor and authentication source",
+                    "authorization, role, ownership, tenancy, and data filtering",
+                    "selector mismatch behavior",
+                    "state owner and transition",
+                    "transaction, asynchronous, and error timing",
+                ),
+            ),
+            "review-module-design": (
+                "review-checklist-module-design.md",
+                (
+                    "route, event, command, job, UI guard",
+                    "precedence and mismatch behavior",
+                    "committed side effects",
+                    "sensitive logging behavior",
+                ),
+            ),
+        }
+
+        for skill_name, (checklist_name, specific_phrases) in cases.items():
+            with self.subTest(skill_name=skill_name):
+                skill_text = (SKILLS_ROOT / skill_name / "SKILL.md").read_text(
+                    encoding="utf-8"
+                )
+                checklist_text = (
+                    SKILLS_ROOT / skill_name / "references" / checklist_name
+                ).read_text(encoding="utf-8")
+
+                for phrase in (
+                    "requirements coverage",
+                    "implementation readiness",
+                    "response adequacy",
+                    "identity and security",
+                ):
+                    self.assertIn(phrase, skill_text.lower())
+
+                for phrase in (
+                    "## Response Adequacy Questions",
+                    "## Identity And Security Questions",
+                    "every applicable",
+                    "DEFINED, OPEN, or OUT_OF_SCOPE",
+                    "high-impact blocking question",
+                    "authority, rationale, and owning artifact",
+                    "affected downstream work",
+                ) + specific_phrases:
+                    self.assertIn(phrase, checklist_text)
 
     def test_documentation_page_verifier_uses_completed_checklist_evidence(self) -> None:
         skill_text = (
@@ -2126,6 +2282,44 @@ class BundleContentTests(unittest.TestCase):
         ):
             with self.subTest(completion_phrase=phrase):
                 self.assertIn(phrase, completion_row)
+
+    def test_lifecycle_documents_planned_design_progression(self) -> None:
+        lifecycle_text = (
+            REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
+        ).read_text(encoding="utf-8")
+
+        self.assertEqual(1, lifecycle_text.count(">Planned Design Progression<"))
+        ordered_stages = (
+            "Functional intent",
+            "High-level design",
+            "Module design",
+            "Implementation",
+            "Verification and evaluation",
+        )
+        planned_text = lifecycle_text[
+            lifecycle_text.index(">Planned Design Progression<") :
+        ]
+        stage_positions = tuple(
+            planned_text.index(f">{stage}<") for stage in ordered_stages
+        )
+        self.assertEqual(tuple(sorted(stage_positions)), stage_positions)
+
+        for phrase in (
+            "Accepted functional specifications and architecture",
+            "create-high-level-design",
+            "review-high-level-design",
+            "create-module-design",
+            "review-module-design",
+            "technology skills already routed",
+            "unresolved high-impact",
+            "blocks downstream module design",
+            "hidden reference artifacts",
+            "evaluator rubrics",
+            "do not enter production generation",
+            "project-specific reconstruction instructions",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, lifecycle_text)
 
     def test_project_bootstrapper_routes_direct_and_integrated_handoffs(self) -> None:
         """Project bootstrap should preserve distinct single- and multi-contribution gates."""

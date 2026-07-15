@@ -16,9 +16,11 @@ TODO: State the user or runtime outcome the subsystem must provide.
 
 TODO: State whether this design describes existing behavior, intended behavior, or a known mix of both.
 
+TODO: State the selected design mode: PLANNED_DEVELOPMENT, EXISTING_IMPLEMENTATION, or MIXED_CHANGE.
+
 ## Authoritative Sources
 
-TODO: Link code, tests, procedures, README files, architecture documents, module designs, functional specifications, backlog records, and plan documents used to derive this design.
+TODO: Link accepted functional specifications, architecture, decisions, backlog requirements, project configuration, module designs, code, tests, procedures, and plan documents permitted by the selected design mode.
 
 TODO: State which source wins when sources disagree.
 
@@ -48,7 +50,9 @@ TODO: Say Not yet identified when no related wiki page is known.
 
 ## Open Questions
 
-TODO: Record unresolved subsystem ownership, behavior, data flow, verification, dependency, or source-of-truth questions.
+TODO: Record unresolved subsystem ownership, behavior, data flow, verification, dependency, identity, security, response, selector, validation, state, or source-of-truth questions.
+
+TODO: Classify each question as blocking or non-blocking, name the decision owner, and identify affected components, contracts, state transitions, or verification obligations. Dependent module design and implementation must not proceed across an unresolved high-impact blocking question.
 
 TODO: If there are no unresolved questions, replace this section with a sentence saying no open questions are recorded.
 
@@ -58,11 +62,19 @@ TODO: Record what future maintainers should recheck when modules, data contracts
 
 TODO: Include the last meaningful source review when known.
 
+## Requirements Coverage
+
+TODO: Account for every applicable requirement from the authoritative functional specifications and parent architecture. Do not hide an omitted requirement in general subsystem prose.
+
+| Requirement source and ID | Required outcome | Satisfying components, interaction, contract, state, or error path | Status | Out-of-scope authority, rationale, and owning artifact | Verification |
+| --- | --- | --- | --- | --- | --- |
+| TODO | TODO | TODO | DEFINED, OPEN, or OUT_OF_SCOPE | TODO; required for OUT_OF_SCOPE | TODO |
+
 ## Parent Architecture
 
 TODO: Link the architecture document that governs this subsystem.
 
-TODO: During ordered bottom-up reverse engineering only, when the parent architecture is created in the next pass, record its expected project-relative path as inline code instead of a broken link. State that the target is provisional, name the module- and configuration-derived constraints that currently govern the subsystem, and record the required parent-link backfill and independent re-review after architecture acceptance.
+TODO: If no accepted parent architecture exists, record it as a blocking upstream design question rather than inventing architectural constraints.
 
 TODO: State which architectural constraints apply most directly to this subsystem.
 
@@ -80,9 +92,9 @@ TODO: Add a Scope Boundary Diagram in this section when included capabilities, n
 
 TODO: The Scope Boundary Diagram should show what belongs inside the subsystem, what sits next to it, and what is explicitly outside the design.
 
-## Current Data Anchors
+## Data Anchors
 
-TODO: List the existing data structures, state variables, configuration fields, logs, files, API routes, or UI surfaces that this subsystem must use.
+TODO: List the planned or existing data structures, state variables, configuration fields, logs, files, API routes, or UI surfaces that this subsystem must use.
 
 TODO: State which anchors are authoritative and which are derived outputs.
 
@@ -125,6 +137,16 @@ sequenceDiagram
 
 TODO: If an SVG artifact is maintained, link it only when a review or publishing surface cannot render Mermaid and record its source relationship in Maintenance Notes.
 
+## Critical Trust And Identity Boundaries
+
+TODO: Complete this section whenever the subsystem contains an authenticated actor, protected operation, trust-boundary crossing, privileged background task, or sensitive-data flow. If none apply, state why no critical trust or identity boundary exists.
+
+| Boundary or operation | Actor and authentication source | Protected asset or side effect | Authorization, ownership, tenancy, and data filtering | Entry point and selector | Disclosure limit | Sensitive-data handling | Failure posture |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO |
+
+TODO: Keep authentication, authorization, roles, ownership, tenancy, and data filtering distinct. A framework convention, route name, or likely generated default is not evidence for any of them.
+
 ## Lifecycle
 
 TODO: Describe subsystem startup, normal operation, user-triggered actions, scheduled actions, error handling, persistence, recovery, and shutdown.
@@ -146,6 +168,14 @@ TODO: Link existing types or define the required new types at a design level.
 TODO: Add a Data Contract Map in this section when multiple payloads, records, state summaries, route bodies, events, or view models are shared across components.
 
 TODO: The Data Contract Map should show the shape owner, producers, consumers, and any serialization or persistence boundary that matters to the subsystem.
+
+## Cross-Module Contract Reconciliation
+
+TODO: Reconcile every producer-consumer or caller-callee boundary before module implementation begins. Do not select one conflicting contract silently or erase a missing critical fact through generalization.
+
+| Boundary | Producer and consumer | Actor and authentication source | Authorization, role, ownership, tenancy, and data filtering | Selector and mismatch behavior | Payload, response, and disclosure | Validation owner | State owner and transition | Transaction, asynchronous, and error boundary | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO | AGREED, OPEN, or CONFLICT |
 
 ## Configuration
 
@@ -184,6 +214,10 @@ TODO: Link future work documents if a non-goal is expected to become its own des
 TODO: Describe what complete and correct looks like for this subsystem.
 
 TODO: Include user-visible outcomes, runtime behavior, observability, maintainability, and test coverage.
+
+## Implementation Readiness
+
+TODO: State READY only when every applicable requirement is DEFINED, every required cross-module contract is AGREED, and no high-impact blocking question remains. Otherwise state BLOCKED for the affected downstream work and list the exact decisions or upstream artifacts required before dependent module design or implementation.
 
 ## Verification
 

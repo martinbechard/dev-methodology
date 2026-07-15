@@ -13,7 +13,17 @@ Use this skill to create or substantially rewrite one high-level design artifact
 
 Use skills/development-methodology/assets/templates/high-level-design-template.md as the starting asset.
 
-Copy the template only when a local editable artifact is needed. Replace every TODO instruction with source-backed content from the target repository.
+Copy the template only when a local editable artifact is needed. Replace every TODO instruction with content supported by the authoritative inputs for the selected design mode.
+
+## Design Mode
+
+Choose and state exactly one mode before writing:
+
+- PLANNED_DEVELOPMENT defines an intended subsystem from accepted functional specifications, architecture, decisions, and backlog requirements. Module designs, code, and tests may be Not yet identified.
+- EXISTING_IMPLEMENTATION documents current subsystem behavior from accepted lower-level designs, executable source, configuration, tests, and retained runtime evidence.
+- MIXED_CHANGE separates current behavior from the intended change and names the authority for each statement.
+
+Use only the authoritative inputs permitted by the selected design mode. Names, framework conventions, generated defaults, and likely implementation patterns are not requirements evidence.
 
 ## Scope
 
@@ -26,6 +36,8 @@ Create one high-level design that defines:
 - Interaction model.
 - Lifecycle.
 - Data shapes and contracts.
+- Requirements coverage.
+- Cross-module contract reconciliation.
 - Configuration.
 - Implementation order.
 - Invariants.
@@ -39,16 +51,19 @@ Use documentation-reverse-engineer when the user asks to derive subsystem design
 
 ## Workflow
 
-1. Inspect the target repository before writing. Read parent architecture when it exists, functional specifications, module designs, source roots, relevant code, tests, procedures, configuration, backlog files, wiki pages, and current worktree status.
-2. Identify subsystem boundaries, components, data anchors, contracts, lifecycle, configuration ownership, implementation order, invariants, and verification evidence.
-3. Copy the high-level design template into the target documentation location when a new artifact is needed.
-4. Replace each TODO with source-backed subsystem content.
-5. Keep the shared page contract sections first.
-6. Link constituent module design documents when they exist and identify missing module designs when they are needed.
-7. Use diagrams only where component collaboration, lifecycle, contracts, configuration, implementation order, or verification coverage are easier to inspect visually.
-8. Say Not yet identified for related code, tests, backlog items, or wiki pages that do not exist yet.
-9. Keep the artifact steady-state. Do not describe it as new, revised, or enhanced unless the document is explicitly a change plan.
-10. In an explicitly bottom-up reverse-engineering workflow where the parent architecture is created after high-level designs, name the expected architecture path as inline code, state the module- and configuration-derived constraints currently governing the subsystem, and record the required Pass 3 backfill. Do not create a broken link or present the provisional target as accepted architecture.
+1. Select PLANNED_DEVELOPMENT, EXISTING_IMPLEMENTATION, or MIXED_CHANGE. Record the authoritative input set and source-precedence rule before deriving behavior.
+2. Inspect only the evidence permitted by that mode. For planned development, read accepted functional specifications, parent architecture, decisions, backlog requirements, project configuration, and relevant technology guidance. For existing behavior, also read accepted module designs, source, tests, procedures, configuration, and runtime evidence.
+3. Build a requirements coverage ledger before prose. Account for every applicable requirement as DEFINED, OPEN, or OUT_OF_SCOPE and map it to components, contracts, interactions, state transitions, error behavior, and verification.
+4. Identify subsystem boundaries, components, data anchors, contracts, lifecycle, configuration ownership, implementation order, invariants, and verification obligations.
+5. Reconcile every cross-module contract. For each producer-consumer boundary, define actor and authentication source; authorization, ownership, tenancy, and data filtering; selector and mismatch behavior; payload and response disclosure; state owner and transition; validation owner; transaction or asynchronous boundary; error timing; and sensitive-data handling.
+6. Do not resolve missing critical facts by generalization. Record a conflicting or absent high-impact identity, security, persistence, public-response, state-ownership, or failure-timing contract as a blocking open question.
+7. Copy the high-level design template into the target documentation location when a new artifact is needed.
+8. Replace each TODO with authoritative content, an explicit inference, or an open question.
+9. Keep the shared page contract sections first.
+10. Link constituent module design documents when they exist and identify missing module designs when they are needed.
+11. Use diagrams only where component collaboration, lifecycle, contracts, configuration, implementation order, or verification coverage are easier to inspect visually.
+12. Say Not yet identified for related code, tests, backlog items, or wiki pages that do not exist yet.
+13. Keep the artifact steady-state. Do not describe it as new, revised, or enhanced unless the document is explicitly a change plan.
 
 ## Verification
 
@@ -59,5 +74,9 @@ Before finishing:
 3. Run project wiki status and lint when docs/wiki exists and the artifact lives in or links from docs/wiki.
 4. Search the artifact for unresolved TODO markers that are not intentional.
 5. Confirm every component, interaction, data contract, implementation step, and verification claim has source evidence or an open question.
+6. Confirm every applicable functional requirement appears in Requirements Coverage with one explicit status and no high-impact omission hidden in general subsystem prose.
+7. Confirm Cross-Module Contract Reconciliation detects conflicting actor, selector, authorization, validation, response, state, transaction, asynchronous, and error-timing claims instead of choosing one silently.
+8. Confirm every critical trust boundary identifies protected assets, entry points, identities, authority checks, disclosure limits, and sensitive-data handling.
+9. Confirm blocking open questions prevent dependent module implementation until the affected contract is decided.
 
 Do not send private, proprietary, sensitive, PII, or company-internal material to an external service unless the user explicitly authorizes it.
