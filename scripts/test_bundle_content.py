@@ -1391,6 +1391,9 @@ class BundleContentTests(unittest.TestCase):
                 ):
                     self.assertIn(phrase, skill_text.lower())
 
+                if skill_name == "review-high-level-design":
+                    self.assertIn("never qualify a status", skill_text)
+
                 for phrase in (
                     "## Response Adequacy Questions",
                     "## Identity And Security Questions",
