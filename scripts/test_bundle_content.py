@@ -1100,6 +1100,8 @@ class BundleContentTests(unittest.TestCase):
                     "boundary-edge inventory",
                     "configuration, default, lifetime",
                     "accepted exact validation commands",
+                    "exact method, route, command, event, or job identity",
+                    "abstract operation group",
                 ),
             },
             "create-module-design": {
