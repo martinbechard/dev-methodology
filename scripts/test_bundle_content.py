@@ -1146,6 +1146,8 @@ class BundleContentTests(unittest.TestCase):
                     "first nonblank content under Implementation Readiness",
                     "installed documentation path",
                     "transient assembly or control files",
+                    "source-category inventory",
+                    "owning-HLD open question",
                 ),
             },
         }
