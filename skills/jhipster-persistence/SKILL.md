@@ -1,6 +1,6 @@
 ---
 name: jhipster-persistence
-description: Use when implementing, reviewing, testing, or diagnosing JHipster SQL database profiles, JPA persistence, generated database changes, test-data contexts, or development and production database parity.
+description: Use when implementing, reviewing, testing, or diagnosing JHipster SQL database profiles, JPA persistence, generated database changes, test-data contexts, or database parity in a Java and Spring Boot application.
 metadata:
   category: stack-and-domain
 ---

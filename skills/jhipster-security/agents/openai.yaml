@@ -4,9 +4,9 @@ interface:
   # User-facing name shown in Codex skill surfaces.
   display_name: JHipster Security
   # User-facing summary shown in Codex skill surfaces.
-  short_description: Use when implementing, reviewing, testing, or diagnosing JHipster authentication, Spring...
+  short_description: Use when implementing, reviewing, testing, or diagnosing JHipster-generated authentication...
   # Prompt Codex can use when launching this skill directly.
-  default_prompt: Use $jhipster-security to implement or review authentication, authorization, CORS, secrets, and management exposure.
+  default_prompt: Use $jhipster-security to change or review a generated authentication mode, user and authority conventions, security wiring, or gateway boundaries.
 
 # Optional invocation policy placeholder.
 # policy:

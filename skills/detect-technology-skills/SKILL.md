@@ -38,6 +38,7 @@ Repeat the scope option for separately analyzed folders and repeat `--available-
 - Activation uses an anyOf root. Each branch may be one evidence predicate or an allOf clause whose predicates must all match.
 - FileMatch binds a path glob and allowed extensions to the same file. Use it when a broad path name must not be satisfied by documentation or configuration files.
 - OwningDependency and manifestFile read only the nearest owning project boundary.
+- OwningContentPattern reads only files beside the nearest owning manifest. Use it for project-root markers that must not be satisfied by nested documentation or examples.
 - SourceImport parses supported source code so comments and string examples do not count as imports.
 - The detector records the concrete matches from every satisfied branch as source evidence.
 - An owning-manifest match is candidate evidence, not automatic proof that every nested folder uses the matched technology. Confirm pertinence from that folder's source, configuration, test runner, or runtime responsibility before accepting the skill.

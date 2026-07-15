@@ -316,6 +316,8 @@ The stack and project-domain skill packs are:
 - plan-engine
 - local-model-integration
 
+The jhipster skill family targets Java and Spring Boot applications generated with JHipster. Setup-time detection requires JHipster evidence at the nearest owning project boundary before it adds the project skill or any concern-specific JHipster skill.
+
 The optional tool variants are:
 
 - ast-grep

@@ -239,9 +239,21 @@ skills:
   activation:
     anyOf:
     - allOf:
-      - contentPattern:
-          glob: .yo-rc.json
-          contains: '"generator-jhipster"'
+      - anyOf:
+        - allOf:
+          - owningContentPattern:
+              glob: .yo-rc.json
+              contains: '"generator-jhipster"'
+          - owningContentPattern:
+              glob: .yo-rc.json
+              contains: '"jhipsterVersion"'
+        - owningDependency: generator-jhipster
+        - owningContentPattern:
+            glob: pom.xml
+            contains: tech.jhipster
+        - owningContentPattern:
+            glob: build.gradle*
+            contains: tech.jhipster
       - anyOf:
         - contentPattern:
             glob: pom.xml
@@ -272,9 +284,21 @@ skills:
   activation:
     anyOf:
     - allOf:
-      - contentPattern:
-          glob: .yo-rc.json
-          contains: '"generator-jhipster"'
+      - anyOf:
+        - allOf:
+          - owningContentPattern:
+              glob: .yo-rc.json
+              contains: '"generator-jhipster"'
+          - owningContentPattern:
+              glob: .yo-rc.json
+              contains: '"jhipsterVersion"'
+        - owningDependency: generator-jhipster
+        - owningContentPattern:
+            glob: pom.xml
+            contains: tech.jhipster
+        - owningContentPattern:
+            glob: build.gradle*
+            contains: tech.jhipster
       - anyOf:
         - contentPattern:
             glob: pom.xml
@@ -298,9 +322,21 @@ skills:
     anyOf:
     - allOf:
       - fileExtension: .java
-      - contentPattern:
-          glob: .yo-rc.json
-          contains: '"generator-jhipster"'
+      - anyOf:
+        - allOf:
+          - owningContentPattern:
+              glob: .yo-rc.json
+              contains: '"generator-jhipster"'
+          - owningContentPattern:
+              glob: .yo-rc.json
+              contains: '"jhipsterVersion"'
+        - owningDependency: generator-jhipster
+        - owningContentPattern:
+            glob: pom.xml
+            contains: tech.jhipster
+        - owningContentPattern:
+            glob: build.gradle*
+            contains: tech.jhipster
       - anyOf:
         - contentPattern:
             glob: pom.xml
@@ -322,9 +358,21 @@ skills:
   activation:
     anyOf:
     - allOf:
-      - contentPattern:
-          glob: .yo-rc.json
-          contains: '"generator-jhipster"'
+      - anyOf:
+        - allOf:
+          - owningContentPattern:
+              glob: .yo-rc.json
+              contains: '"generator-jhipster"'
+          - owningContentPattern:
+              glob: .yo-rc.json
+              contains: '"jhipsterVersion"'
+        - owningDependency: generator-jhipster
+        - owningContentPattern:
+            glob: pom.xml
+            contains: tech.jhipster
+        - owningContentPattern:
+            glob: build.gradle*
+            contains: tech.jhipster
       - anyOf:
         - contentPattern:
             glob: pom.xml
@@ -354,9 +402,21 @@ skills:
   activation:
     anyOf:
     - allOf:
-      - contentPattern:
-          glob: .yo-rc.json
-          contains: '"generator-jhipster"'
+      - anyOf:
+        - allOf:
+          - owningContentPattern:
+              glob: .yo-rc.json
+              contains: '"generator-jhipster"'
+          - owningContentPattern:
+              glob: .yo-rc.json
+              contains: '"jhipsterVersion"'
+        - owningDependency: generator-jhipster
+        - owningContentPattern:
+            glob: pom.xml
+            contains: tech.jhipster
+        - owningContentPattern:
+            glob: build.gradle*
+            contains: tech.jhipster
       - anyOf:
         - contentPattern:
             glob: pom.xml

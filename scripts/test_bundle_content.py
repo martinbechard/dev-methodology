@@ -916,7 +916,7 @@ class BundleContentTests(unittest.TestCase):
             "jhipster-domain-modeling": "relationship direction",
             "jhipster-persistence": "development fake data",
             "jhipster-testing": "Testcontainers profile",
-            "jhipster-security": "two distinct identities",
+            "jhipster-security": "AuthoritiesConstants",
         }
 
         for skill_name, phrase in expected_phrases.items():
@@ -925,7 +925,15 @@ class BundleContentTests(unittest.TestCase):
                 skill_text = (skill_root / "SKILL.md").read_text(encoding="utf-8")
                 self.assertLessEqual(len(skill_text.splitlines()), 40)
                 self.assertIn(phrase, skill_text)
+                self.assertIn("Java and Spring Boot", skill_text)
                 self.assertTrue((skill_root / "detection.yaml").is_file())
+
+        testing_text = (SKILLS_ROOT / "jhipster-testing" / "SKILL.md").read_text(encoding="utf-8")
+        security_text = (SKILLS_ROOT / "jhipster-security" / "SKILL.md").read_text(encoding="utf-8")
+        self.assertIn("Test Strategy", testing_text)
+        self.assertNotIn("Run the narrow affected tests", testing_text)
+        self.assertIn("Application Security", security_text)
+        self.assertNotIn("Keep signing keys", security_text)
 
     def test_java_and_spring_design_are_separate_from_coding_guidance(self) -> None:
         expected = {

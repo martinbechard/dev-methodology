@@ -228,9 +228,10 @@ def predicate_evidence(
     if key == "owningDependency":
         dependency = str(expected).lower()
         return [f"owning manifest dependency {expected}"] if dependency in dependencies else []
-    if key == "contentPattern":
+    if key in {"contentPattern", "owningContentPattern"}:
         pattern = str(expected["glob"])
-        for path in sorted(set(files + owner_evidence)):
+        candidates = owner_evidence if key == "owningContentPattern" else sorted(set(files + owner_evidence))
+        for path in candidates:
             if not glob_matches(relative(path, root), pattern) and not glob_matches(path.name, pattern):
                 continue
             try:
@@ -238,7 +239,8 @@ def predicate_evidence(
             except (OSError, UnicodeDecodeError):
                 continue
             if str(expected["contains"]) in text:
-                return [f"content {expected['contains']}: {relative(path, root)}"]
+                prefix = "owning content" if key == "owningContentPattern" else "content"
+                return [f"{prefix} {expected['contains']}: {relative(path, root)}"]
         return []
     if key == "sourceImport":
         module = str(expected["module"])

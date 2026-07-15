@@ -28,7 +28,7 @@ SCHEMA = "dev-methodology-technology-detection"
 SCHEMA_VERSION = 2
 COMPOSITE_KEYS = {"allOf", "anyOf"}
 STRING_PREDICATES = {"fileExtension", "fileGlob", "manifestFile", "owningDependency"}
-MAPPING_PREDICATES = {"contentPattern", "fileMatch", "sourceImport"}
+MAPPING_PREDICATES = {"contentPattern", "owningContentPattern", "fileMatch", "sourceImport"}
 
 
 def load_yaml(path: Path) -> dict[str, object]:
@@ -75,6 +75,7 @@ def validate_mapping_predicate(key: str, value: object, field: str, path: Path) 
         raise ValueError(f"{field}.{key} must be a mapping: {path}")
     required = {
         "contentPattern": ("glob", "contains"),
+        "owningContentPattern": ("glob", "contains"),
         "fileMatch": ("glob", "extensions"),
         "sourceImport": ("module", "extensions"),
     }[key]

@@ -25,7 +25,7 @@ Each definition contains:
 - Kind and label.
 - Capabilities for documentation and exploration.
 - An any-of activation root containing atomic evidence or all-of clauses.
-- File extension, file glob, same-file path and extension, owning manifest, dependency, content, or parsed source-import predicates.
+- File extension, file glob, same-file path and extension, owning manifest, dependency, content, owning-project content, or parsed source-import predicates.
 - Companion specialized skills.
 - Optional exclusive group and priority.
 - Required-when-detected policy.
@@ -34,7 +34,7 @@ The skill identifier is explicit even though the source file also sits beside th
 
 An any-of branch succeeds when its atomic predicate succeeds or every predicate in its all-of clause succeeds. The detector selects the named skill when at least one complete branch succeeds. It records the concrete files, manifests, dependencies, or imports from satisfied branches as evidence.
 
-FileMatch binds its glob and extensions to one file. This prevents an unrelated source file from supplying the extension for a documentation file whose name happens to match a domain pattern. SourceImport parses Python syntax and does not treat comments or string literals as imports. Globstar path segments match zero or more directories, including root-level app and pages folders.
+FileMatch binds its glob and extensions to one file. This prevents an unrelated source file from supplying the extension for a documentation file whose name happens to match a domain pattern. OwningContentPattern reads only files beside the nearest owning manifest, so nested documentation and examples cannot satisfy project-root markers. SourceImport parses Python syntax and does not treat comments or string literals as imports. Globstar path segments match zero or more directories, including root-level app and pages folders.
 
 Example:
 
@@ -113,6 +113,8 @@ The detector skill contains a generated runtime mirror only so a standalone inst
 
 - A TypeScript folder produces TypeScript skills and no Java skills.
 - A Spring Boot folder produces Java and Spring Boot skills.
+- JHipster skills require Java and Spring Boot ownership plus versioned generator configuration or an owning JHipster dependency.
+- A non-Java JHipster generator scope produces an explicit no-variant result.
 - A FastAPI folder produces Python and FastAPI skills.
 - A parsed FastAPI import activates FastAPI, while the same text in a comment or string does not.
 - Every detection definition explicitly names the skill selected by its activation clauses.
@@ -120,6 +122,7 @@ The detector skill contains a generated runtime mirror only so a standalone inst
 - A Python cli.py path produces Python skills without Node CLI.
 - A Next.js API route requires a JavaScript or TypeScript route file and the owning Next.js dependency.
 - Domain-oriented path names in documentation and configuration files do not activate product implementation skills.
+- Project-root markers cannot be satisfied by nested documentation or examples.
 - Root-level paths satisfy leading globstar patterns.
 - A mixed repository produces separate skillsets for separate analyzed scopes.
 - A child package does not inherit unrelated root workspace dependencies.

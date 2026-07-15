@@ -279,7 +279,10 @@ class TechnologyDetectionTests(unittest.TestCase):
             (root / "src" / "main" / "java" / "example" / "config").mkdir(parents=True)
             (root / "src" / "main" / "resources" / "config" / "liquibase").mkdir(parents=True)
             (root / "src" / "test" / "java" / "example").mkdir(parents=True)
-            (root / ".yo-rc.json").write_text('{"generator-jhipster":{"baseName":"sample"}}\n', encoding="utf-8")
+            (root / ".yo-rc.json").write_text(
+                '{"generator-jhipster":{"baseName":"sample","jhipsterVersion":"9.1.0"}}\n',
+                encoding="utf-8",
+            )
             (root / "pom.xml").write_text(
                 "<artifactId>spring-boot</artifactId>\n<artifactId>archunit-junit5</artifactId>\n",
                 encoding="utf-8",
@@ -319,6 +322,99 @@ class TechnologyDetectionTests(unittest.TestCase):
                 with self.subTest(detector=detector):
                     result = run_detection(root, ".", detector=detector)
                     self.assertEqual(expected, result["loadouts"][0]["skills"])
+
+    def test_jhipster_concern_paths_do_not_activate_without_an_owning_marker(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "src" / "main" / "java" / "example" / "config"
+            tests = root / "src" / "test" / "java" / "example"
+            liquibase = root / "src" / "main" / "resources" / "config" / "liquibase"
+            source.mkdir(parents=True)
+            tests.mkdir(parents=True)
+            liquibase.mkdir(parents=True)
+            (root / ".jhipster").mkdir()
+            (root / "pom.xml").write_text("<artifactId>spring-boot</artifactId>\n", encoding="utf-8")
+            (source / "Application.java").write_text("class Application {}\n", encoding="utf-8")
+            (source / "SecurityConfiguration.java").write_text("class SecurityConfiguration {}\n", encoding="utf-8")
+            (tests / "ApplicationTest.java").write_text("class ApplicationTest {}\n", encoding="utf-8")
+            (liquibase / "master.xml").write_text("<databaseChangeLog/>\n", encoding="utf-8")
+            (root / ".jhipster" / "Order.json").write_text("{}\n", encoding="utf-8")
+
+            for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+                with self.subTest(detector=detector):
+                    result = run_detection(root, ".", detector=detector)
+                    self.assertFalse(any(skill.startswith("jhipster-") for skill in result["loadouts"][0]["skills"]))
+
+    def test_jhipster_generator_config_requires_a_version(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "src" / "main" / "java" / "example"
+            source.mkdir(parents=True)
+            (root / ".yo-rc.json").write_text(
+                '{"generator-jhipster":{"baseName":"sample"}}\n',
+                encoding="utf-8",
+            )
+            (root / "pom.xml").write_text("<artifactId>spring-boot</artifactId>\n", encoding="utf-8")
+            (source / "Application.java").write_text("class Application {}\n", encoding="utf-8")
+
+            for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+                with self.subTest(detector=detector):
+                    result = run_detection(root, ".", detector=detector)
+                    self.assertNotIn("jhipster-project", result["loadouts"][0]["skills"])
+
+    def test_nested_jhipster_example_does_not_supply_the_owning_marker(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "src" / "main" / "java" / "example"
+            example = root / "docs" / "jhipster-example"
+            source.mkdir(parents=True)
+            example.mkdir(parents=True)
+            (root / "pom.xml").write_text("<artifactId>spring-boot</artifactId>\n", encoding="utf-8")
+            (source / "Application.java").write_text("class Application {}\n", encoding="utf-8")
+            (example / ".yo-rc.json").write_text(
+                '{"generator-jhipster":{"jhipsterVersion":"9.1.0"}}\n',
+                encoding="utf-8",
+            )
+
+            for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+                with self.subTest(detector=detector):
+                    result = run_detection(root, ".", detector=detector)
+                    self.assertNotIn("jhipster-project", result["loadouts"][0]["skills"])
+
+    def test_jhipster_gradle_runtime_marker_works_without_generator_config(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "src" / "main" / "java" / "example"
+            source.mkdir(parents=True)
+            (root / "build.gradle.kts").write_text(
+                'plugins { id("org.springframework.boot") }\n'
+                'dependencies { implementation("tech.jhipster:jhipster-framework:9.1.0") }\n',
+                encoding="utf-8",
+            )
+            (source / "GatewayApplication.java").write_text("class GatewayApplication {}\n", encoding="utf-8")
+
+            for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+                with self.subTest(detector=detector):
+                    result = run_detection(root, ".", detector=detector)
+                    self.assertIn("jhipster-project", result["loadouts"][0]["skills"])
+
+    def test_non_java_jhipster_generator_scope_is_no_variant(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "package.json").write_text(
+                '{"devDependencies":{"generator-jhipster":"9.1.0"}}\n',
+                encoding="utf-8",
+            )
+            (root / ".yo-rc.json").write_text(
+                '{"generator-jhipster":{"jhipsterVersion":"9.1.0"}}\n',
+                encoding="utf-8",
+            )
+
+            for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+                with self.subTest(detector=detector):
+                    result = run_detection(root, ".yo-rc.json", detector=detector)
+                    self.assertEqual("NO_VARIANT", result["loadouts"][0]["status"])
+                    self.assertEqual([], result["loadouts"][0]["skills"])
 
     def test_python_scope_has_exact_loadout(self) -> None:
         for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):

@@ -1952,10 +1952,39 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
             {
               "allOf": [
                 {
-                  "contentPattern": {
-                    "contains": "\"generator-jhipster\"",
-                    "glob": ".yo-rc.json"
-                  }
+                  "anyOf": [
+                    {
+                      "allOf": [
+                        {
+                          "owningContentPattern": {
+                            "contains": "\"generator-jhipster\"",
+                            "glob": ".yo-rc.json"
+                          }
+                        },
+                        {
+                          "owningContentPattern": {
+                            "contains": "\"jhipsterVersion\"",
+                            "glob": ".yo-rc.json"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "owningDependency": "generator-jhipster"
+                    },
+                    {
+                      "owningContentPattern": {
+                        "contains": "tech.jhipster",
+                        "glob": "pom.xml"
+                      }
+                    },
+                    {
+                      "owningContentPattern": {
+                        "contains": "tech.jhipster",
+                        "glob": "build.gradle*"
+                      }
+                    }
+                  ]
                 },
                 {
                   "anyOf": [
@@ -2025,10 +2054,39 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
             {
               "allOf": [
                 {
-                  "contentPattern": {
-                    "contains": "\"generator-jhipster\"",
-                    "glob": ".yo-rc.json"
-                  }
+                  "anyOf": [
+                    {
+                      "allOf": [
+                        {
+                          "owningContentPattern": {
+                            "contains": "\"generator-jhipster\"",
+                            "glob": ".yo-rc.json"
+                          }
+                        },
+                        {
+                          "owningContentPattern": {
+                            "contains": "\"jhipsterVersion\"",
+                            "glob": ".yo-rc.json"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "owningDependency": "generator-jhipster"
+                    },
+                    {
+                      "owningContentPattern": {
+                        "contains": "tech.jhipster",
+                        "glob": "pom.xml"
+                      }
+                    },
+                    {
+                      "owningContentPattern": {
+                        "contains": "tech.jhipster",
+                        "glob": "build.gradle*"
+                      }
+                    }
+                  ]
                 },
                 {
                   "anyOf": [
@@ -2082,10 +2140,39 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
                   "fileExtension": ".java"
                 },
                 {
-                  "contentPattern": {
-                    "contains": "\"generator-jhipster\"",
-                    "glob": ".yo-rc.json"
-                  }
+                  "anyOf": [
+                    {
+                      "allOf": [
+                        {
+                          "owningContentPattern": {
+                            "contains": "\"generator-jhipster\"",
+                            "glob": ".yo-rc.json"
+                          }
+                        },
+                        {
+                          "owningContentPattern": {
+                            "contains": "\"jhipsterVersion\"",
+                            "glob": ".yo-rc.json"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "owningDependency": "generator-jhipster"
+                    },
+                    {
+                      "owningContentPattern": {
+                        "contains": "tech.jhipster",
+                        "glob": "pom.xml"
+                      }
+                    },
+                    {
+                      "owningContentPattern": {
+                        "contains": "tech.jhipster",
+                        "glob": "build.gradle*"
+                      }
+                    }
+                  ]
                 },
                 {
                   "anyOf": [
@@ -2133,10 +2220,39 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
             {
               "allOf": [
                 {
-                  "contentPattern": {
-                    "contains": "\"generator-jhipster\"",
-                    "glob": ".yo-rc.json"
-                  }
+                  "anyOf": [
+                    {
+                      "allOf": [
+                        {
+                          "owningContentPattern": {
+                            "contains": "\"generator-jhipster\"",
+                            "glob": ".yo-rc.json"
+                          }
+                        },
+                        {
+                          "owningContentPattern": {
+                            "contains": "\"jhipsterVersion\"",
+                            "glob": ".yo-rc.json"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "owningDependency": "generator-jhipster"
+                    },
+                    {
+                      "owningContentPattern": {
+                        "contains": "tech.jhipster",
+                        "glob": "pom.xml"
+                      }
+                    },
+                    {
+                      "owningContentPattern": {
+                        "contains": "tech.jhipster",
+                        "glob": "build.gradle*"
+                      }
+                    }
+                  ]
                 },
                 {
                   "anyOf": [
@@ -2203,10 +2319,39 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
             {
               "allOf": [
                 {
-                  "contentPattern": {
-                    "contains": "\"generator-jhipster\"",
-                    "glob": ".yo-rc.json"
-                  }
+                  "anyOf": [
+                    {
+                      "allOf": [
+                        {
+                          "owningContentPattern": {
+                            "contains": "\"generator-jhipster\"",
+                            "glob": ".yo-rc.json"
+                          }
+                        },
+                        {
+                          "owningContentPattern": {
+                            "contains": "\"jhipsterVersion\"",
+                            "glob": ".yo-rc.json"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "owningDependency": "generator-jhipster"
+                    },
+                    {
+                      "owningContentPattern": {
+                        "contains": "tech.jhipster",
+                        "glob": "pom.xml"
+                      }
+                    },
+                    {
+                      "owningContentPattern": {
+                        "contains": "tech.jhipster",
+                        "glob": "build.gradle*"
+                      }
+                    }
+                  ]
                 },
                 {
                   "anyOf": [

@@ -4,7 +4,7 @@ interface:
   # User-facing name shown in Codex skill surfaces.
   display_name: JHipster Testing
   # User-facing summary shown in Codex skill surfaces.
-  short_description: Use when creating, selecting, running, reviewing, or diagnosing JHipster backend, frontend...
+  short_description: Use when maintaining or running JHipster-generated test profiles, fixtures, architecture rules...
   # Prompt Codex can use when launching this skill directly.
   default_prompt: Use $jhipster-testing to choose and run the focused JHipster test and quality gates for this change.
 
