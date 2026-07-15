@@ -43,7 +43,9 @@ Do not mark pass without quoted evidence.
 - Question: Are unsupported specifics labeled as inferences or open questions instead of being presented as decided behavior?
 - Question: Does each operation preserve the authoritative input's exact level of specificity, so a generic selector such as body identity is not silently specialized to body login, body ID, or another field?
 - Question: Before accepting an OPEN claim, did the review search every occurrence of the operation name, route, responsibility, and close synonym across the authoritative inputs and quote evidence for what remains unresolved?
+- Question: When compatible accepted inputs describe different facets of the same exact operation, does the artifact reconcile them into one contract while retaining the authority for each facet instead of marking the whole contract OPEN?
 - Question: Does the artifact preserve partial specificity by recording a known response category such as entity-shaped response, DTO projection, or no body while marking only unknown fields or details OPEN?
+- Question: For each list or query operation, are presentation sort state, request filter/page/sort inputs, server acceptance and validation, deterministic ordering, response rows and metadata, and reload behavior distinguished rather than inferred from one another?
 - Question: Does each operation copy every authoritative field-level constraint and required or optional status instead of replacing concrete rules with a generic validated-payload statement?
 - Question: Is every concrete request or response type bound to an authoritative statement for that exact operation rather than selected from a nearby type catalog or suggestive name?
 - Question: Does Implementation Readiness say BLOCKED for affected downstream work when any applicable requirement or required contract is OPEN or any high-impact blocking question remains?
@@ -53,6 +55,7 @@ Do not mark pass without quoted evidence.
 - Question: When several identifiers can select the same subject or record, does the design define precedence and mismatch behavior instead of silently choosing one?
 - Question: Does Trust And Identity Boundaries cover every applicable route, event, command, job, UI guard, protected operation, and sensitive-data flow?
 - Question: Does each applicable trust boundary distinguish authentication, authorization, roles, ownership, tenancy, and data filtering and name the evidence for each?
+- Question: Does the artifact preserve an accepted authenticated-only or role-required outcome as DEFINED while independently marking an unknown filter, annotation, guard, or middleware mechanism OPEN?
 - Question: Does each applicable protected operation define disclosure limits, validation ownership, state transitions, failure timing, committed side effects, and sensitive logging behavior?
 - Question: Does every explicit operation-specific response, selector, validation, or failure exception govern that operation instead of being overwritten by a broader safety or consistency rule?
 - Question: Does every operation-specific current response or disclosure exception remain visible as CURRENT_BEHAVIOR or CURRENT_LIMITATION beside any safer intended target, including exceptions that expose more data than a general projection rule recommends?
@@ -60,6 +63,8 @@ Do not mark pass without quoted evidence.
 - Question: Is every response, validation, side-effect, and failure claim supported by evidence for that exact method and route, command, event, or job, without transferring a sibling operation's contract?
 - Question: For each external or asynchronous effect, does the design preserve the exact state owner, initiator, submission owner, executor or delivery owner, completion signal, and failure phase shown by authoritative prose or sequence diagrams?
 - Question: Does failure timing distinguish transaction commit, submission rejection, later execution or delivery failure, response timing, and durable receipt instead of collapsing them into one asynchronous outcome?
+- Question: Does one effect phase ledger govern Public Contracts, Processing Rules, diagrams, Error Handling, Invariants, and Verification without moving work between phases or inventing a provider-delivery phase?
+- Question: Does the effect design state required observable outcomes without prescribing transaction ordering, preconstruction, or another implementation mechanism that the accepted inputs do not establish?
 - Question: For sensitive inputs, does the operation define or explicitly leave open validation, handoff, encryption or hashing ownership, response exclusion, failure timing, and logging behavior?
 
 ## Artifact-Specific Questions

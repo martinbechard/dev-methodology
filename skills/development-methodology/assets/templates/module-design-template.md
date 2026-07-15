@@ -128,11 +128,27 @@ TODO: Preserve partial specificity. If an input establishes an entity-shaped res
 
 TODO: Bind every response, validation, side-effect, and failure statement to the exact method and route, command, event, or job that its evidence names. Do not borrow a failure from a sibling operation or assume similar routes share the same response.
 
+TODO: Reconcile compatible facts from accepted functional, architecture, and high-level-design inputs when they unambiguously describe different facets of the same exact operation. Retain the authority for each facet. Do not mark the whole contract OPEN merely because no single source sentence contains every facet.
+
+TODO: For list or query operations, record presentation sort state, request filter/page/sort inputs, server acceptance and validation, deterministic ordering, response rows and metadata, and reload behavior separately. One facet does not establish another.
+
 TODO: Bind each concrete request or response type to an authoritative statement for this exact operation. A nearby data-shape catalog or suggestive type name is not sufficient; keep the type OPEN when the operation binding is absent.
 
 TODO: For external or asynchronous effects, distinguish the operation that initiates the effect, the component that submits it, the executor or delivery owner, any durable completion signal, and failures before commit, including submission rejection, after submission, during later execution or delivery, or after the response.
 
 TODO: For credential, token, key, secret, or other sensitive inputs, state the input-only or write-only contract, validation owner, forwarding boundary, protection owner, response exclusion, failure timing, and logging behavior. Mark unsupported details OPEN.
+
+## External And Asynchronous Effect Phases
+
+TODO: Complete one row for every phase of each external or asynchronous effect. Use only phases established by accepted inputs. If the module has no external or asynchronous effect, state that this ledger is not applicable.
+
+| Effect and phase | Trigger | State already committed | Initiator | Submission owner | Executor or delivery owner | Response visibility and failure outcome | Retry or compensation | Completion evidence | Source and claim mode |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO |
+
+TODO: Keep Public Contracts, Processing Rules, diagrams, Error Handling, Invariants, and Verification consistent with this ledger. Do not move rendering, construction, network send, persistence, or another action between phases in different sections.
+
+TODO: Do not invent a provider-delivery phase when accepted inputs establish only submission and later execution. Do not prescribe transaction ordering, preconstruction, or another implementation mechanism merely because it could satisfy the required observable outcome.
 
 ## Trust And Identity Boundaries
 
@@ -143,6 +159,8 @@ TODO: Complete this section whenever the module exposes a route, event, command,
 | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO | TODO |
 
 TODO: Keep authentication, authorization, roles, ownership, tenancy, and data filtering distinct. A framework convention, route name, or likely generated default is not evidence for any of them.
+
+TODO: Keep an accepted security outcome separate from its implementation mechanism. An authenticated-only or role-required outcome may be DEFINED while the exact filter, annotation, guard, or middleware remains OPEN.
 
 ## Internal Data And State
 
@@ -159,6 +177,8 @@ TODO: Describe the main processing flow in business terms.
 TODO: Break complex logic into named steps.
 
 TODO: Include conditions, loops, retries, early exits, and error paths.
+
+TODO: When an external or asynchronous effect exists, follow the accepted effect phase ledger exactly and identify the owner and failure visibility at every transition.
 
 ## Processing Diagram
 

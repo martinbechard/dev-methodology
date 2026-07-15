@@ -1100,6 +1100,7 @@ class BundleContentTests(unittest.TestCase):
                 "sections": (
                     "## Requirements Coverage",
                     "## Trust And Identity Boundaries",
+                    "## External And Asynchronous Effect Phases",
                     "## Implementation Readiness",
                 ),
                 "phrases": (
@@ -1119,6 +1120,12 @@ class BundleContentTests(unittest.TestCase):
                     "sensitive inputs",
                     "submission owner",
                     "operation uses it",
+                    "compatible accepted inputs",
+                    "list or query operations",
+                    "phase ledger",
+                    "invent a provider-delivery phase",
+                    "unsupported transaction or construction mechanism",
+                    "security outcome separate from its implementation mechanism",
                 ),
             },
         }
@@ -1178,6 +1185,12 @@ class BundleContentTests(unittest.TestCase):
                         "write-only contract",
                         "suggestive type name",
                         "submission rejection",
+                        "different facets of the same exact operation",
+                        "deterministic ordering",
+                        "State already committed",
+                        "Completion evidence",
+                        "Do not invent a provider-delivery phase",
+                        "authenticated-only or role-required outcome",
                     )
                     if skill_name == "create-module-design"
                     else ()
