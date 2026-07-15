@@ -39,12 +39,14 @@ Do not mark pass without quoted evidence.
 ## Response Adequacy Questions
 
 - Question: Does Requirements Coverage account for every applicable functional and parent-design requirement as DEFINED, OPEN, or OUT_OF_SCOPE and map it to concrete design and verification?
+- Question: Does Requirements Coverage preserve every scope-bearing qualifier from the target assignment and owning-HLD constituent-component description as an explicit requirement or operation facet instead of shortening the assignment to a generic module label?
 - Question: Does each DEFINED requirement identify its satisfying contract, rule, state, error path, and verification rather than relying on vague prose?
 - Question: Does each requirement preserve its CURRENT_BEHAVIOR, CURRENT_LIMITATION, INTENDED_BEHAVIOR, PROPOSED_CHANGE, or OPEN_QUESTION mode, with baseline and target stated separately when they differ?
 - Question: Does every OUT_OF_SCOPE requirement name the authority, rationale, and owning artifact that accepts it instead of using status as an omission escape hatch?
 - Question: Are unsupported specifics labeled as inferences or open questions instead of being presented as decided behavior?
 - Question: Does each operation preserve the authoritative input's exact level of specificity, so a generic selector such as body identity is not silently specialized to body login, body ID, or another field?
 - Question: Before accepting an OPEN claim, did the review search every occurrence of the operation name, route, responsibility, and close synonym across the authoritative inputs and quote evidence for what remains unresolved?
+- Question: Does each operation preserve authoritative qualifiers for eligibility, audience, ownership, projection, paging, lifecycle, best-effort behavior, or another contract-bearing restriction rather than retaining only the generic operation noun?
 - Question: When compatible accepted inputs describe different facets of the same exact operation, does the artifact reconcile them into one contract while retaining the authority for each facet instead of marking the whole contract OPEN?
 - Question: Does the artifact preserve partial specificity by recording a known response category such as entity-shaped response, DTO projection, or no body while marking only unknown fields or details OPEN?
 - Question: For each list or query operation, are presentation sort state, request filter/page/sort inputs, server acceptance and validation, deterministic ordering, response rows and metadata, and reload behavior distinguished rather than inferred from one another?

@@ -1113,6 +1113,7 @@ class BundleContentTests(unittest.TestCase):
                     "failure timing",
                     "sensitive-data handling",
                     "operation-contract ledger",
+                    "scope-bearing qualifier",
                     "exact level of specificity",
                     "Preserve partial specificity",
                     "exact operation identity",
@@ -1412,6 +1413,7 @@ class BundleContentTests(unittest.TestCase):
                         "executor acceptance or rejection occur before every executor-owned action",
                         "sender or provider rejection",
                         "first nonblank content under Implementation Readiness",
+                        "scope-bearing qualifier",
                     )
                     if skill_name == "review-module-design"
                     else ()

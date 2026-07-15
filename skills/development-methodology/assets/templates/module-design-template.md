@@ -68,6 +68,8 @@ TODO: Include the last meaningful source review when known.
 
 TODO: Account for every applicable requirement from the authoritative functional specifications and parent designs. Do not hide an omitted requirement in general prose.
 
+TODO: Copy the target assignment and owning-HLD constituent-component description into this ledger. Preserve every scope-bearing qualifier as an explicit requirement or operation facet; do not shorten a qualified responsibility to a generic module label.
+
 TODO: Preserve accepted current behavior and current limitations even when a safer target is proposed. Do not collapse the baseline and target into one normalized contract.
 
 | Requirement source and ID | Claim mode | Required outcome | Satisfying contract, rule, state, or error path | Status | Out-of-scope authority, rationale, and owning artifact | Verification |
@@ -115,6 +117,8 @@ TODO: Verify dependency paths against existing source files or an accepted plann
 TODO: List public classes, functions, methods, routes, events, commands, state variables, configuration fields, or payloads exposed by this module.
 
 TODO: For each contract, describe actor, trigger, inputs, exact field-level constraints and required or optional status, identity selector, validation owner, outputs, response or disclosure shape, state owner, side-effect initiator, submission owner, asynchronous executor or delivery owner, completion signal, transaction boundary, synchronous and asynchronous failure behavior, and ownership.
+
+TODO: Preserve assignment and parent-design qualifiers for eligibility, audience, ownership, projection, paging, lifecycle, best-effort behavior, or another contract-bearing restriction. Do not keep only the generic operation noun.
 
 TODO: When path, body, token, session, message, or persistence identifiers can name the same subject or record, state precedence and mismatch behavior explicitly.
 
