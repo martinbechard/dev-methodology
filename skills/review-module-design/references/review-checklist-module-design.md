@@ -45,6 +45,7 @@ Do not mark pass without quoted evidence.
 - Question: Before accepting an OPEN claim, did the review search every occurrence of the operation name, route, responsibility, and close synonym across the authoritative inputs and quote evidence for what remains unresolved?
 - Question: Does the artifact preserve partial specificity by recording a known response category such as entity-shaped response, DTO projection, or no body while marking only unknown fields or details OPEN?
 - Question: Does each operation copy every authoritative field-level constraint and required or optional status instead of replacing concrete rules with a generic validated-payload statement?
+- Question: Is every concrete request or response type bound to an authoritative statement for that exact operation rather than selected from a nearby type catalog or suggestive name?
 - Question: Does Implementation Readiness say BLOCKED for affected downstream work when any applicable requirement or required contract is OPEN or any high-impact blocking question remains?
 
 ## Identity And Security Questions
@@ -57,6 +58,8 @@ Do not mark pass without quoted evidence.
 - Question: Does every operation-specific current response or disclosure exception remain visible as CURRENT_BEHAVIOR or CURRENT_LIMITATION beside any safer intended target, including exceptions that expose more data than a general projection rule recommends?
 - Question: Does the artifact avoid inferring that one general DTO projection applies to every operation when an authoritative source records an operation-specific entity-shaped or other disclosure exception?
 - Question: Is every response, validation, side-effect, and failure claim supported by evidence for that exact method and route, command, event, or job, without transferring a sibling operation's contract?
+- Question: For each external or asynchronous effect, does the design preserve the exact state owner, initiator, submission owner, executor or delivery owner, completion signal, and failure phase shown by authoritative prose or sequence diagrams?
+- Question: Does failure timing distinguish transaction commit, submission rejection, later execution or delivery failure, response timing, and durable receipt instead of collapsing them into one asynchronous outcome?
 - Question: For sensitive inputs, does the operation define or explicitly leave open validation, handoff, encryption or hashing ownership, response exclusion, failure timing, and logging behavior?
 
 ## Artifact-Specific Questions

@@ -1117,6 +1117,8 @@ class BundleContentTests(unittest.TestCase):
                     "exact operation identity",
                     "field-level input constraints",
                     "sensitive inputs",
+                    "submission owner",
+                    "operation uses it",
                 ),
             },
         }
@@ -1174,6 +1176,8 @@ class BundleContentTests(unittest.TestCase):
                         "entity-shaped response",
                         "exact method and route",
                         "write-only contract",
+                        "suggestive type name",
+                        "submission rejection",
                     )
                     if skill_name == "create-module-design"
                     else ()
@@ -1373,6 +1377,9 @@ class BundleContentTests(unittest.TestCase):
                         "field-level constraint",
                         "exact method and route",
                         "sensitive inputs",
+                        "suggestive name",
+                        "submission owner",
+                        "durable receipt",
                     )
                     if skill_name == "review-module-design"
                     else ()
