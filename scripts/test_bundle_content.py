@@ -1131,6 +1131,8 @@ class BundleContentTests(unittest.TestCase):
                     "returned or emitted value",
                     "fallback emission",
                     "cache replacement or retention",
+                    "level-two heading",
+                    "Preserve the heading text and order exactly",
                 ),
             },
         }
@@ -1401,6 +1403,7 @@ class BundleContentTests(unittest.TestCase):
                         "suggestive name",
                         "submission owner",
                         "durable receipt",
+                        "ordered level-two headings",
                     )
                     if skill_name == "review-module-design"
                     else ()
@@ -2382,6 +2385,7 @@ class BundleContentTests(unittest.TestCase):
             "evaluator rubrics",
             "do not enter production generation",
             "project-specific reconstruction instructions",
+            "exact ordered template-heading gate",
         ):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, lifecycle_text)

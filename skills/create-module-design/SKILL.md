@@ -15,6 +15,8 @@ Use skills/development-methodology/assets/templates/module-design-template.md as
 
 Copy the template only when a local editable artifact is needed. Replace every TODO instruction with content supported by the authoritative inputs for the selected design mode.
 
+Treat every level-two heading in the template as mandatory. Preserve the heading text and order exactly; do not rename, merge, reorder, or omit headings. When a section is not applicable, keep its heading and state why. Compare the candidate's ordered level-two headings with the template before production review. A mismatch is BLOCKED and must be corrected before spending a semantic-review pass.
+
 ## Design Mode
 
 Choose and state exactly one mode before writing:
@@ -62,11 +64,11 @@ Use documentation-reverse-engineer when the user asks to derive many module desi
 7. Reconcile duplicate or conflicting selectors and contracts across path, body, token, session, message, and persistence identifiers. Do not choose one silently. Preserve the source's exact level of specificity: `body identity` does not authorize choosing body login, body ID, or another field. Keep the accepted wording and record the missing field or rule as OPEN. Bind evidence to the exact operation identity, such as method plus route, command, event, or job. Do not transfer a response, failure, validation, or side-effect contract from a sibling operation merely because names or responsibilities are similar. A high-impact unresolved conflict is a blocking open question.
 8. Reconcile specific operation contracts before applying general principles. Within the accepted source-precedence rule, a more specific operation contract governs a general architecture or safety principle for that operation. Preserve the specific contract as CURRENT_BEHAVIOR or CURRENT_LIMITATION and describe a safer target separately; do not silently replace, sanitize, or generalize it. Preserve partial specificity: if the source establishes an entity-shaped response, a DTO projection, no body, or another shape category but not exact fields, record the known category and mark only the fields OPEN. Compatible operation-bound facts may be distributed across accepted functional, architecture, and high-level-design inputs; combine them when they name the same operation and do not conflict, while retaining each fact's authority. This is evidence reconciliation, not permission to transfer a sibling operation's contract. A type named in a data-shape catalog is not evidence that a particular operation uses it; require an operation-bound statement or leave the request or response type OPEN. Do not assume two routes, overloads, or sibling operations share a response or failure contract unless an accepted source states the shared rule. Treat actual contradictions between authoritative sources as open conflicts rather than resolving them by preference.
 9. For credential, token, key, secret, or other sensitive inputs, define or explicitly leave open the input-only or write-only contract, field constraints, validation owner, forwarding boundary, encryption or hashing owner, response exclusion, failure timing, and logging prohibition. A general non-disclosure statement does not replace the operation-level input contract.
-10. Copy the module design template into the target documentation location when a new artifact is needed.
+10. Copy the module design template into the target documentation location when a new artifact is needed, preserving every level-two heading exactly and in order.
 11. Replace each TODO with authoritative content, an explicit inference, or an open question.
 12. Keep the shared page contract sections first.
 13. Verify dependency paths against existing source files or an accepted planned type registry. Do not invent paths.
-14. Remove configuration, external interface, or UI behavior sections only when they genuinely do not apply.
+14. Keep configuration, external interface, and UI behavior headings. When one does not apply, state that explicitly instead of removing or renaming the section.
 15. Say Not yet identified for related code, tests, backlog items, or wiki pages that do not exist yet.
 16. Keep the artifact steady-state. Do not describe it as new, revised, or enhanced unless the document is explicitly a change plan.
 17. Treat owned files as the responsibility boundary, not the evidence boundary. Add direct links to non-owned callers, dependencies, schemas, configuration, security rules, error adapters, tests, procedures, and parent documents whenever the page relies on them.
@@ -80,30 +82,31 @@ Use documentation-reverse-engineer when the user asks to derive many module desi
 
 Before finishing:
 
-1. Use review-module-design on the completed artifact.
-2. Use documentation-page-verify with the artifact, source evidence, and completed review checklist when the review skill calls for it.
-3. Run project wiki status and lint when docs/wiki exists and the artifact lives in or links from docs/wiki.
-4. Search the artifact for unresolved TODO markers that are not intentional.
-5. Confirm every responsibility, dependency, public contract, processing rule, invariant, and verification claim has source evidence or an open question.
-6. Confirm Runtime Path contains an explicit project-relative implementation path and folder entry point when applicable.
-7. Confirm Authoritative Sources includes the direct evidence used by Callers, Dependencies, Configuration, Error Handling, and Verification, including evidence owned by other modules.
-8. In existing-implementation or mixed mode, confirm every claimed test is discovered and executes the asserted branch; do not count helper methods, dormant fixtures, or prospective commands as coverage.
-9. In existing-implementation or mixed mode, confirm error, wrapper, build-lifecycle, and validation prose matches the implemented failure branches rather than intended behavior.
-10. Confirm every applicable functional requirement appears in Requirements Coverage with one explicit status and no high-impact omission hidden in prose.
-11. Confirm every identity or security-sensitive contract distinguishes authentication, authorization, ownership or tenancy, data filtering, selector precedence, validation ownership, response disclosure, state ownership, error timing, and sensitive logging.
-12. Confirm blocking open questions prevent implementation across the affected contract instead of being resolved by an unsupported guess.
-13. Confirm every accepted current limitation remains visible beside any proposed target and every operation-specific exception survives broader security or response-shape generalization.
-14. Confirm every public operation agrees with the pre-draft operation-contract ledger, including exact source specificity. A generic selector such as `body identity` must remain generic and OPEN unless an accepted source names its field.
-15. Confirm a more specific accepted operation response or disclosure contract has not been replaced by a general safe-projection principle; preserve the baseline contract and state the safer target separately.
-16. Confirm every OPEN contract is open only at the unresolved level. Do not mark an entire response or selector OPEN when its category, source, or current behavior is established but finer details are not.
-17. Confirm each stated input constraint appears in the exact operation contract with required or optional status and validation ownership; do not collapse concrete limits into `validated payload`.
-18. Confirm every failure and response claim traces to the same exact operation. Remove cross-operation transfers and unsupported route-equivalence claims.
-19. Confirm sensitive input contracts cover validation, handoff, protection, response exclusion, failure timing, and logging or mark each unresolved element OPEN.
-20. Confirm every external or asynchronous effect identifies the exact initiator, submission owner, executor or delivery owner, completion signal, and failure phase. Distinguish transaction commit, submission rejection, later execution or delivery failure, and durable receipt; do not collapse them into one asynchronous outcome.
-21. Confirm every concrete request or response type is bound to that exact operation by an authoritative source rather than selected from a nearby type catalog or suggestive name.
-22. Confirm compatible facts distributed across accepted inputs were reconciled for the same exact operation before marking the whole contract OPEN, while sibling-operation facts remain separate.
-23. For list or query operations, confirm presentation sort state, request sort/page/filter inputs, server validation, deterministic ordering, response metadata, and reload behavior are each DEFINED, OPEN, or OUT_OF_SCOPE independently.
-24. Confirm every external or asynchronous effect has one internally consistent phase ledger and that no prose or diagram moves work between phases, invents a later delivery phase, or prescribes an unsupported transaction or construction mechanism.
-25. Confirm every reactive or asynchronous failure distinguishes its returned or emitted value from signal/store mutation, cache replacement or retention, and subscriber side effects; do not convert a fallback emission into an unproved state transition.
+1. Compare the ordered level-two headings with the module design template. If any required heading is missing, renamed, duplicated, merged, or reordered, stop with BLOCKED and correct the structure before invoking review-module-design.
+2. After the template-conformance gate passes, use review-module-design on the completed artifact.
+3. Use documentation-page-verify with the artifact, source evidence, and completed review checklist when the review skill calls for it.
+4. Run project wiki status and lint when docs/wiki exists and the artifact lives in or links from docs/wiki.
+5. Search the artifact for unresolved TODO markers that are not intentional.
+6. Confirm every responsibility, dependency, public contract, processing rule, invariant, and verification claim has source evidence or an open question.
+7. Confirm Runtime Path contains an explicit project-relative implementation path and folder entry point when applicable.
+8. Confirm Authoritative Sources includes the direct evidence used by Callers, Dependencies, Configuration, Error Handling, and Verification, including evidence owned by other modules.
+9. In existing-implementation or mixed mode, confirm every claimed test is discovered and executes the asserted branch; do not count helper methods, dormant fixtures, or prospective commands as coverage.
+10. In existing-implementation or mixed mode, confirm error, wrapper, build-lifecycle, and validation prose matches the implemented failure branches rather than intended behavior.
+11. Confirm every applicable functional requirement appears in Requirements Coverage with one explicit status and no high-impact omission hidden in prose.
+12. Confirm every identity or security-sensitive contract distinguishes authentication, authorization, ownership or tenancy, data filtering, selector precedence, validation ownership, response disclosure, state ownership, error timing, and sensitive logging.
+13. Confirm blocking open questions prevent implementation across the affected contract instead of being resolved by an unsupported guess.
+14. Confirm every accepted current limitation remains visible beside any proposed target and every operation-specific exception survives broader security or response-shape generalization.
+15. Confirm every public operation agrees with the pre-draft operation-contract ledger, including exact source specificity. A generic selector such as `body identity` must remain generic and OPEN unless an accepted source names its field.
+16. Confirm a more specific accepted operation response or disclosure contract has not been replaced by a general safe-projection principle; preserve the baseline contract and state the safer target separately.
+17. Confirm every OPEN contract is open only at the unresolved level. Do not mark an entire response or selector OPEN when its category, source, or current behavior is established but finer details are not.
+18. Confirm each stated input constraint appears in the exact operation contract with required or optional status and validation ownership; do not collapse concrete limits into `validated payload`.
+19. Confirm every failure and response claim traces to the same exact operation. Remove cross-operation transfers and unsupported route-equivalence claims.
+20. Confirm sensitive input contracts cover validation, handoff, protection, response exclusion, failure timing, and logging or mark each unresolved element OPEN.
+21. Confirm every external or asynchronous effect identifies the exact initiator, submission owner, executor or delivery owner, completion signal, and failure phase. Distinguish transaction commit, submission rejection, later execution or delivery failure, and durable receipt; do not collapse them into one asynchronous outcome.
+22. Confirm every concrete request or response type is bound to that exact operation by an authoritative source rather than selected from a nearby type catalog or suggestive name.
+23. Confirm compatible facts distributed across accepted inputs were reconciled for the same exact operation before marking the whole contract OPEN, while sibling-operation facts remain separate.
+24. For list or query operations, confirm presentation sort state, request sort/page/filter inputs, server validation, deterministic ordering, response metadata, and reload behavior are each DEFINED, OPEN, or OUT_OF_SCOPE independently.
+25. Confirm every external or asynchronous effect has one internally consistent phase ledger and that no prose or diagram moves work between phases, invents a later delivery phase, or prescribes an unsupported transaction or construction mechanism.
+26. Confirm every reactive or asynchronous failure distinguishes its returned or emitted value from signal/store mutation, cache replacement or retention, and subscriber side effects; do not convert a fallback emission into an unproved state transition.
 
 Do not send private, proprietary, sensitive, PII, or company-internal material to an external service unless the user explicitly authorizes it.
