@@ -125,11 +125,11 @@ python3 skills/agent-claim/scripts/claim.py --help
 
 Dev Orchestrator owns the root task claim and child handoffs. Dev Merge Coordinator accepts committed clean contributions, acquires the target-specific integration resource, owns shared regeneration and integration verification, commits the combined result, and releases the integration claim only from a clean worktree.
 
-## Explicit Target Deployment
+## Scoped Target Deployment
 
-The build and maintenance workflow does not install skills or agents into user-home runtime folders. The installer exists only for an explicitly requested deployment or packaging operation, and every destination must be supplied by the caller.
+The build and maintenance workflow does not install skills or agents automatically. The installer acts only when explicitly invoked. Use --scope user to select the adapter's standard user directories or --scope project to select its standard directories under the current project. Explicit --dest and --agents-dest values override the corresponding scoped defaults.
 
-Deploy unchanged generic bundles to explicit user-level runtime directories so they are available across projects. Use replace and prune-owned when refreshing a bundle-owned installation.
+Cleanup is enabled by default and removes obsolete bundle-owned artifacts recorded in the destination ownership manifest. Use --cleanup false to retain them. Cleanup never removes unowned skills or agents. Use --replace when refreshing existing bundle-owned files.
 
 The matching adapter skill source is merged only when that adapter is selected. The Codex command therefore installs the shared skills plus codex-harness-directives; Claude Code, Gemini CLI, and Junie CLI deployments do not receive that Codex-only skill. A caller that supplies a custom generic source may also supply an explicit adapter source with --adapter-skills-source.
 
@@ -138,11 +138,9 @@ Deploy the Codex bundle globally:
 ```bash
 python3 scripts/install-skills.py \
   --adapter codex \
-  --dest ~/.codex/skills \
+  --scope user \
   --install-agents \
-  --agents-dest ~/.codex/agents \
-  --replace \
-  --prune-owned
+  --replace
 ```
 
 Deploy the Claude Code bundle globally:
@@ -150,11 +148,9 @@ Deploy the Claude Code bundle globally:
 ```bash
 python3 scripts/install-skills.py \
   --adapter claude \
-  --dest ~/.claude/skills \
+  --scope user \
   --install-agents \
-  --agents-dest ~/.claude/agents \
-  --replace \
-  --prune-owned
+  --replace
 ```
 
 Deploy the Gemini CLI bundle globally:
@@ -162,11 +158,9 @@ Deploy the Gemini CLI bundle globally:
 ```bash
 python3 scripts/install-skills.py \
   --adapter gemini \
-  --dest ~/.gemini/skills \
+  --scope user \
   --install-agents \
-  --agents-dest ~/.gemini/agents \
-  --replace \
-  --prune-owned
+  --replace
 ```
 
 Deploy the Junie CLI bundle globally:
@@ -174,11 +168,19 @@ Deploy the Junie CLI bundle globally:
 ```bash
 python3 scripts/install-skills.py \
   --adapter junie \
-  --dest ~/.junie/skills \
+  --scope user \
   --install-agents \
-  --agents-dest ~/.junie/agents \
-  --replace \
-  --prune-owned
+  --replace
+```
+
+Deploy the Codex bundle to the current project instead:
+
+```bash
+python3 scripts/install-skills.py \
+  --adapter codex \
+  --scope project \
+  --install-agents \
+  --replace
 ```
 
 ### Preferred MCP Operations Layer
@@ -229,20 +231,20 @@ See the [Codex MCP configuration reference](https://learn.chatgpt.com/docs/exten
 
 Host approval policy remains user-owned. The evaluation runner's automatic approval of ten exact MCP operations and its Git-lifecycle permissions are isolated evaluation policy and are not copied into normal Codex or Junie host configuration.
 
-The installer never infers AGENTS_HOME, CODEX_HOME, CLAUDE_HOME, or a user-home destination. Use --dry-run to inspect an explicit deployment, --replace to update bundle-owned copies, and --prune-owned to remove obsolete owned artifacts at that target.
+The installer derives destinations only when --scope user or --scope project is supplied. Without a scope, provide --dest and, when installing agents, --agents-dest. Use --dry-run to inspect a deployment, --replace to update bundle-owned copies, and --cleanup false only when obsolete owned artifacts must be retained.
 
 Use project-level skill and agent directories only when the project needs customized definitions, deliberate project-only scoping, or a checked-in team configuration. An unchanged generic bundle belongs in the runtime's user-level directories.
 
-The same explicit-destination rule applies to every adapter, including Gemini CLI and Junie CLI.
+The same scoped-default and explicit-override rules apply to every adapter, including Gemini CLI and Junie CLI.
 
-Each explicit destination keeps an ownership manifest named .dev-methodology-install.json. Ownership manifests record content digests. Replacement, pruning, and cleanup refuse to discard a customized owned artifact without discrepancy analysis and explicit approval. Unowned skills and agents are never removed.
+Each destination keeps an ownership manifest named .dev-methodology-install.json. Ownership manifests record content digests. Replacement, cleanup, and removal refuse to discard a customized owned artifact without discrepancy analysis and explicit approval. Unowned skills and agents are never removed.
 
 Remove bundle-owned artifacts from an explicit skills destination and optional agent destination with:
 
 ```bash
 python3 scripts/install-skills.py \
-  --dest /explicit/skills/destination \
-  --agents-dest /explicit/agents/destination \
+  --adapter codex \
+  --scope user \
   --remove-owned
 ```
 
@@ -406,7 +408,7 @@ Invoke Project Bootstrapper once and describe the desired steady state:
 4. For normal planned development, treat accepted functional specifications and architecture as the upstream authority. Create and review the HLD, create and review its module designs, then implement with the ordinary coding agent and project-routed technology skills. A missing high-impact contract blocks dependent work instead of being filled with an unsupported assumption.
 5. Follow the [orchestrated development lifecycle](design/orchestrated-development-lifecycle.html) for the owning execution, independent review, integrated verification, commit, and claim-release gates.
 
-Separately requested deployment still requires caller-supplied destinations under Explicit Target Deployment.
+Separately requested deployment uses the user or project defaults, or caller-supplied destination overrides, under Scoped Target Deployment.
 
 ## Neutral Target Project Layout
 

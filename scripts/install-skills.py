@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Modified with AI assistance.
-# Summary: Installs or removes bundle-owned skills and agents only at explicit deployment destinations.
+# Summary: Installs or removes bundle-owned skills and agents at scoped or explicit destinations.
 
 from __future__ import annotations
 
@@ -21,6 +21,9 @@ ERROR_EXIT_CODE = 1
 MANIFEST_SCHEMA_VERSION = 1
 DEFAULT_SKILLS_FOLDER_NAME = "skills"
 DEFAULT_ADAPTER_NAME = "generic"
+USER_SCOPE = "user"
+PROJECT_SCOPE = "project"
+DEPLOYMENT_SCOPES = (USER_SCOPE, PROJECT_SCOPE)
 GENERIC_ADAPTER_NAME = "generic"
 CODEX_ADAPTER_NAME = "codex"
 GEMINI_ADAPTER_NAME = "gemini"
@@ -53,11 +56,13 @@ AGENT_FILE_EXTENSIONS = {
     CLAUDE_ADAPTER_NAME: ".md",
     JUNIE_ADAPTER_NAME: ".md",
 }
-PRUNE_SKIPPED_NO_MANIFEST_MESSAGE = "prune skipped; no ownership manifest"
+CLEANUP_SKIPPED_NO_MANIFEST_MESSAGE = "cleanup skipped; no ownership manifest"
 
 
 class Adapter(NamedTuple):
     name: str
+    skills_directory: Path
+    agents_directory: Optional[Path]
 
 
 class SkillInstallResult(NamedTuple):
@@ -67,19 +72,25 @@ class SkillInstallResult(NamedTuple):
 
 
 ADAPTERS = {
-    adapter_name: Adapter(name=adapter_name)
-    for adapter_name in (
-        GENERIC_ADAPTER_NAME,
-        CODEX_ADAPTER_NAME,
-        GEMINI_ADAPTER_NAME,
-        CLAUDE_ADAPTER_NAME,
-        JUNIE_ADAPTER_NAME,
-    )
+    GENERIC_ADAPTER_NAME: Adapter(GENERIC_ADAPTER_NAME, Path(".agents/skills"), None),
+    CODEX_ADAPTER_NAME: Adapter(CODEX_ADAPTER_NAME, Path(".agents/skills"), Path(".codex/agents")),
+    GEMINI_ADAPTER_NAME: Adapter(GEMINI_ADAPTER_NAME, Path(".gemini/skills"), Path(".gemini/agents")),
+    CLAUDE_ADAPTER_NAME: Adapter(CLAUDE_ADAPTER_NAME, Path(".claude/skills"), Path(".claude/agents")),
+    JUNIE_ADAPTER_NAME: Adapter(JUNIE_ADAPTER_NAME, Path(".junie/skills"), Path(".junie/agents")),
 }
 
 
 def default_source() -> Path:
     return Path(__file__).resolve().parents[1] / DEFAULT_SKILLS_FOLDER_NAME
+
+
+def parse_boolean(value: str) -> bool:
+    normalized = value.lower()
+    if normalized == "true":
+        return True
+    if normalized == "false":
+        return False
+    raise argparse.ArgumentTypeError("expected true or false")
 
 
 def parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
@@ -105,8 +116,14 @@ def parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
     parser.add_argument(
         "--dest",
         type=Path,
-        required=True,
-        help="Explicit deployment or cleanup destination for skills.",
+        default=None,
+        help="Skills destination. Defaults from --scope when supplied.",
+    )
+    parser.add_argument(
+        "--scope",
+        choices=DEPLOYMENT_SCOPES,
+        default=None,
+        help="Default destinations to the current user or current project.",
     )
     parser.add_argument(
         "--replace",
@@ -124,9 +141,11 @@ def parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
         help="Print the install plan without copying files.",
     )
     parser.add_argument(
-        "--prune-owned",
-        action="store_true",
-        help="Remove obsolete skills previously installed by this bundle.",
+        "--cleanup",
+        type=parse_boolean,
+        default=True,
+        metavar="true|false",
+        help="Remove obsolete bundle-owned skills and agents. Defaults to true.",
     )
     parser.add_argument(
         "--install-agents",
@@ -143,7 +162,7 @@ def parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
         "--agents-dest",
         type=Path,
         default=None,
-        help="Explicit deployment or cleanup destination for native agents.",
+        help="Native agent destination. Defaults from --scope when supplied.",
     )
     parser.add_argument(
         "--remove-owned",
@@ -160,6 +179,25 @@ def default_agents_source(adapter_name: str) -> Path:
         / adapter_name
         / DEFAULT_AGENTS_FOLDER_NAME
     )
+
+
+def default_destinations(
+    adapter: Adapter,
+    scope: str,
+    *,
+    home: Path | None = None,
+    project_root: Path | None = None,
+) -> tuple[Path, Optional[Path]]:
+    if scope == USER_SCOPE:
+        base = Path.home() if home is None else home
+    elif scope == PROJECT_SCOPE:
+        base = Path.cwd() if project_root is None else project_root
+    else:
+        raise ValueError(f"Unknown deployment scope: {scope}")
+    agents_destination = (
+        base / adapter.agents_directory if adapter.agents_directory is not None else None
+    )
+    return base / adapter.skills_directory, agents_destination
 
 
 def default_adapter_skills_source(adapter_name: str) -> Path:
@@ -430,7 +468,7 @@ def prune_obsolete_owned_skills(
     dry_run: bool,
 ) -> list[str]:
     if previous_manifest is None:
-        return [PRUNE_SKIPPED_NO_MANIFEST_MESSAGE]
+        return [CLEANUP_SKIPPED_NO_MANIFEST_MESSAGE]
 
     previous_skill_names = manifest_skill_names(previous_manifest)
     obsolete_skill_names = sorted(previous_skill_names - current_skill_names)
@@ -438,12 +476,12 @@ def prune_obsolete_owned_skills(
     for skill_name in obsolete_skill_names:
         destination_skill = destination / skill_name
         if dry_run:
-            results.append(f"would prune obsolete {skill_name}")
+            results.append(f"would clean up obsolete {skill_name}")
             continue
 
         if destination_skill.exists() or destination_skill.is_symlink():
             remove_existing_destination(destination_skill)
-            results.append(f"pruned obsolete {skill_name}")
+            results.append(f"cleaned up obsolete {skill_name}")
         else:
             results.append(f"obsolete already absent {skill_name}")
 
@@ -488,7 +526,7 @@ def install_skills(
     replace: bool,
     dry_run: bool,
     adapter: Adapter,
-    prune_owned: bool,
+    cleanup: bool,
     replace_customized: bool,
 ) -> list[str]:
     resolved_source = source.expanduser().resolve()
@@ -529,7 +567,7 @@ def install_skills(
         destination.mkdir(parents=True, exist_ok=True)
 
     results: list[str] = []
-    if prune_owned:
+    if cleanup:
         results.extend(
             prune_obsolete_owned_skills(
                 destination,
@@ -553,10 +591,10 @@ def install_skills(
             newly_owned_skill_names.add(install_result.skill_name)
 
     if not dry_run:
-        previously_owned_current_skills = (
-            manifest_skill_names(previous_manifest) & current_skill_names
-        )
-        owned_skill_names = previously_owned_current_skills | newly_owned_skill_names
+        previously_owned_skills = manifest_skill_names(previous_manifest)
+        if cleanup:
+            previously_owned_skills &= current_skill_names
+        owned_skill_names = previously_owned_skills | newly_owned_skill_names
         write_install_manifest(destination, resolved_source, adapter, owned_skill_names)
         results.append("wrote ownership manifest")
 
@@ -602,18 +640,18 @@ def prune_obsolete_owned_agents(
     dry_run: bool,
 ) -> list[str]:
     if previous_manifest is None:
-        return [PRUNE_SKIPPED_NO_MANIFEST_MESSAGE]
+        return [CLEANUP_SKIPPED_NO_MANIFEST_MESSAGE]
     previous_agent_paths = manifest_agent_paths(previous_manifest)
     obsolete_agent_names = sorted(set(previous_agent_paths) - current_agent_names)
     results: list[str] = []
     for agent_name in obsolete_agent_names:
         destination_agent = destination / previous_agent_paths[agent_name]
         if dry_run:
-            results.append(f"would prune obsolete agent {agent_name}")
+            results.append(f"would clean up obsolete agent {agent_name}")
             continue
         if destination_agent.exists() or destination_agent.is_symlink():
             remove_existing_destination(destination_agent)
-            results.append(f"pruned obsolete agent {agent_name}")
+            results.append(f"cleaned up obsolete agent {agent_name}")
         else:
             results.append(f"obsolete agent already absent {agent_name}")
     return results
@@ -625,7 +663,7 @@ def install_agents(
     replace: bool,
     dry_run: bool,
     adapter: Adapter,
-    prune_owned: bool,
+    cleanup: bool,
     replace_customized: bool,
 ) -> list[str]:
     resolved_source = source.expanduser().resolve()
@@ -649,7 +687,7 @@ def install_agents(
         destination.mkdir(parents=True, exist_ok=True)
 
     results: list[str] = []
-    if prune_owned:
+    if cleanup:
         results.extend(
             prune_obsolete_owned_agents(
                 destination,
@@ -684,12 +722,12 @@ def install_agents(
         results.append(f"{action} agent {source_agent.stem}")
 
     if not dry_run:
-        previously_owned_current_agents = {
+        previously_owned_agents = {
             agent_name: agent_path
             for agent_name, agent_path in manifest_agent_paths(previous_manifest).items()
-            if agent_name in current_agent_names
+            if not cleanup or agent_name in current_agent_names
         }
-        owned_agent_paths = previously_owned_current_agents | newly_owned_agent_paths
+        owned_agent_paths = previously_owned_agents | newly_owned_agent_paths
         write_agent_manifest(destination, resolved_source, adapter, owned_agent_paths)
         results.append("wrote agent ownership manifest")
     return results
@@ -701,8 +739,18 @@ def main(argv: Sequence[str] | None = None) -> int:
     destination = args.dest
     agents_destination: Optional[Path] = args.agents_dest
     try:
+        if args.scope is not None:
+            scoped_destination, scoped_agents_destination = default_destinations(adapter, args.scope)
+            if destination is None:
+                destination = scoped_destination
+            if agents_destination is None:
+                agents_destination = scoped_agents_destination
+        if destination is None:
+            raise ValueError("provide --dest or --scope")
         if args.install_agents and agents_destination is None:
-            raise ValueError("--install-agents requires an explicit --agents-dest")
+            if adapter.agents_directory is None:
+                raise ValueError(f"adapter {adapter.name} does not support generated native agents")
+            raise ValueError("--install-agents requires --agents-dest or --scope")
         if args.remove_owned and args.install_agents:
             raise ValueError("--remove-owned cannot be combined with --install-agents")
         if args.remove_owned:
@@ -739,7 +787,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 args.replace,
                 args.dry_run,
                 adapter,
-                args.prune_owned,
+                args.cleanup,
                 args.replace_customized,
             )
         if args.install_agents:
@@ -755,7 +803,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                     args.replace,
                     args.dry_run,
                     adapter,
-                    args.prune_owned,
+                    args.cleanup,
                     args.replace_customized,
                 )
             )

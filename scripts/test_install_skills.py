@@ -1,6 +1,6 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Modified with AI assistance.
-# Summary: Verifies explicit bundle deployment, ownership protection, pruning, and cleanup behavior.
+# Summary: Verifies scoped bundle deployment, ownership protection, cleanup, and removal behavior.
 
 from __future__ import annotations
 
@@ -186,11 +186,52 @@ class InstallSkillsTests(unittest.TestCase):
                 (destination / "alpha" / "SKILL.md").read_text(encoding="utf-8"),
             )
 
-    def test_destination_is_required_instead_of_defaulting_to_user_home(self) -> None:
+    def test_scope_defaults_destinations_for_each_adapter(self) -> None:
         installer = load_installer()
 
+        home = Path("/home/example")
+        project = Path("/workspace/example")
+        expected = {
+            "generic": (Path(".agents/skills"), None),
+            "codex": (Path(".agents/skills"), Path(".codex/agents")),
+            "claude": (Path(".claude/skills"), Path(".claude/agents")),
+            "gemini": (Path(".gemini/skills"), Path(".gemini/agents")),
+            "junie": (Path(".junie/skills"), Path(".junie/agents")),
+        }
+        for adapter_name, (skills_path, agents_path) in expected.items():
+            with self.subTest(adapter=adapter_name):
+                adapter = installer.ADAPTERS[adapter_name]
+                self.assertEqual(
+                    (home / skills_path, home / agents_path if agents_path is not None else None),
+                    installer.default_destinations(adapter, "user", home=home),
+                )
+                self.assertEqual(
+                    (
+                        project / skills_path,
+                        project / agents_path if agents_path is not None else None,
+                    ),
+                    installer.default_destinations(adapter, "project", project_root=project),
+                )
+
+    def test_destination_or_scope_is_required(self) -> None:
+        installer = load_installer()
+
+        error_output = io.StringIO()
+        with redirect_stdout(io.StringIO()), redirect_stderr(error_output):
+            exit_code = installer.main(["--adapter", "codex"])
+
+        self.assertEqual(installer.ERROR_EXIT_CODE, exit_code)
+        self.assertIn("provide --dest or --scope", error_output.getvalue())
+
+    def test_cleanup_defaults_true_and_accepts_explicit_false(self) -> None:
+        installer = load_installer()
+
+        self.assertTrue(installer.parse_args(["--dest", "target"]).cleanup)
+        self.assertFalse(
+            installer.parse_args(["--dest", "target", "--cleanup", "false"]).cleanup
+        )
         with self.assertRaises(SystemExit), redirect_stderr(io.StringIO()):
-            installer.parse_args(["--adapter", "codex"])
+            installer.parse_args(["--dest", "target", "--cleanup", "sometimes"])
 
     def test_explicit_destination_is_used(self) -> None:
         installer = load_installer()
@@ -469,7 +510,7 @@ class InstallSkillsTests(unittest.TestCase):
                 )
                 self.assertEqual(["reviewer"], self.read_manifest_agent_names(agents_destination))
 
-    def test_agent_install_requires_explicit_destination_before_copying_skills(self) -> None:
+    def test_agent_install_requires_destination_or_scope_before_copying_skills(self) -> None:
         installer = load_installer()
 
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -494,7 +535,7 @@ class InstallSkillsTests(unittest.TestCase):
 
             self.assertEqual(installer.ERROR_EXIT_CODE, exit_code)
             self.assertFalse(destination.exists())
-            self.assertIn("requires an explicit --agents-dest", error_output.getvalue())
+            self.assertIn("requires --agents-dest or --scope", error_output.getvalue())
 
     def test_remove_owned_cleans_skills_and_agents_but_preserves_unowned_content(self) -> None:
         installer = load_installer()
@@ -579,7 +620,7 @@ class InstallSkillsTests(unittest.TestCase):
             self.assertTrue((destination / "alpha" / "SKILL.md").is_file())
             self.assertIn("customized owned skills require discrepancy analysis", error_output.getvalue())
 
-    def test_prune_owned_removes_deleted_skill_but_preserves_unowned_skill(self) -> None:
+    def test_cleanup_removes_deleted_skill_but_preserves_unowned_skill(self) -> None:
         installer = load_installer()
 
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -601,7 +642,6 @@ class InstallSkillsTests(unittest.TestCase):
                         "--dest",
                         str(destination),
                         "--replace",
-                        "--prune-owned",
                     ]
                 )
 
@@ -609,9 +649,9 @@ class InstallSkillsTests(unittest.TestCase):
             self.assertFalse((destination / "obsolete").exists())
             self.assertTrue((destination / "local-only" / "SKILL.md").is_file())
             self.assertEqual(["alpha"], self.read_manifest_skill_names(destination))
-            self.assertIn("pruned obsolete obsolete", output.getvalue())
+            self.assertIn("cleaned up obsolete obsolete", output.getvalue())
 
-    def test_prune_owned_bootstraps_manifest_without_deleting_unknown_destination(self) -> None:
+    def test_cleanup_bootstraps_manifest_without_deleting_unknown_destination(self) -> None:
         installer = load_installer()
 
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -630,16 +670,47 @@ class InstallSkillsTests(unittest.TestCase):
                         "--dest",
                         str(destination),
                         "--replace",
-                        "--prune-owned",
                     ]
                 )
 
             self.assertEqual(exit_code, installer.SUCCESS_EXIT_CODE)
             self.assertTrue((destination / "legacy" / "SKILL.md").is_file())
             self.assertEqual(["alpha"], self.read_manifest_skill_names(destination))
-            self.assertIn("prune skipped; no ownership manifest", output.getvalue())
+            self.assertIn("cleanup skipped; no ownership manifest", output.getvalue())
 
-    def test_dry_run_prune_owned_reports_without_deleting_or_rewriting_manifest(self) -> None:
+    def test_cleanup_false_preserves_obsolete_owned_skill_for_later_cleanup(self) -> None:
+        installer = load_installer()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            source = root / "source"
+            destination = root / "dest"
+            self.create_skill(source, "alpha")
+            self.create_skill(destination, "alpha", UPDATED_SKILL_FILE_CONTENT)
+            self.create_skill(destination, "obsolete", SECOND_SKILL_FILE_CONTENT)
+            self.create_manifest(destination, ["alpha", "obsolete"])
+
+            with redirect_stdout(io.StringIO()):
+                exit_code = installer.main(
+                    [
+                        "--source",
+                        str(source),
+                        "--dest",
+                        str(destination),
+                        "--replace",
+                        "--cleanup",
+                        "false",
+                    ]
+                )
+
+            self.assertEqual(installer.SUCCESS_EXIT_CODE, exit_code)
+            self.assertTrue((destination / "obsolete" / "SKILL.md").is_file())
+            self.assertEqual(
+                ["alpha", "obsolete"],
+                self.read_manifest_skill_names(destination),
+            )
+
+    def test_dry_run_cleanup_reports_without_deleting_or_rewriting_manifest(self) -> None:
         installer = load_installer()
 
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -663,7 +734,6 @@ class InstallSkillsTests(unittest.TestCase):
                         "--dest",
                         str(destination),
                         "--replace",
-                        "--prune-owned",
                         "--dry-run",
                     ]
                 )
@@ -674,7 +744,7 @@ class InstallSkillsTests(unittest.TestCase):
                 before_manifest,
                 (destination / ".dev-methodology-install.json").read_text(encoding="utf-8"),
             )
-            self.assertIn("would prune obsolete obsolete", output.getvalue())
+            self.assertIn("would clean up obsolete obsolete", output.getvalue())
 
 
 if __name__ == "__main__":
