@@ -513,6 +513,20 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-junit
+    skill: junit
+    source: skills/junit/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: verification-contract
+    activationCondition: JUnit owns the affected Java tests, engine, lifecycle, extensions, or execution configuration.
+    negativeCondition: Application runtime, dependency injection, persistence, container, or packaged-artifact behavior remains with the detected framework testing skill.
+    expectedBehavior: Use compatible JUnit APIs and engines, assert observable behavior, isolate fixtures, select parameterization and extensions deliberately, preserve thread-dependent context under timeouts, and control shared resources under parallel execution.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, test-state-transition, operation-coverage], modelRubric: workflow-quality}
+    scenarioAssociations: [dev-verifier-happy, dev-coder-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: tailwind-design-system}
   - id: probe-jest
     skill: jest
     source: skills/jest/SKILL.md
@@ -905,6 +919,20 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: fastapi}
+  - id: probe-mockito
+    skill: mockito
+    source: skills/mockito/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: Mockito test doubles, stubbing, verification, matchers, captors, spies, or mock lifecycle are in scope.
+    negativeCondition: Test lifecycle and application-framework runtime behavior do not receive credit from Mockito mechanics alone.
+    expectedBehavior: Mock intentional collaborator boundaries, preserve strict stubbing, verify only contractual interactions, prefer state assertions and real values where clearer, keep fresh mocks per test, and justify advanced or partial mocking.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, test-state-transition, operation-coverage], modelRubric: source-faithfulness}
+    scenarioAssociations: [dev-coder-happy, dev-code-reviewer-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
   - id: probe-quarkus-design
     skill: quarkus-design
     source: skills/quarkus-design/SKILL.md

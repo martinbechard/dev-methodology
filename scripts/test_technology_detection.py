@@ -228,6 +228,8 @@ class TechnologyDetectionTests(unittest.TestCase):
             expected = [
                 "java",
                 "java-design",
+                "junit",
+                "mockito",
                 "spring-boot",
                 "spring-boot-design",
                 "spring-boot-testing",
@@ -277,10 +279,34 @@ class TechnologyDetectionTests(unittest.TestCase):
             expected = [
                 "java",
                 "java-design",
+                "junit",
                 "quarkus",
                 "quarkus-design",
                 "quarkus-testing",
             ]
+            for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+                with self.subTest(detector=detector):
+                    result = run_detection(root, "src/test", detector=detector)
+                    self.assertEqual(expected, result["loadouts"][0]["skills"])
+
+    def test_junit_and_mockito_compose_for_java_tests(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            tests = root / "src" / "test" / "java" / "example"
+            tests.mkdir(parents=True)
+            (tests / "OrderTest.java").write_text(
+                "import org.junit.jupiter.api.Test;\n"
+                "import org.mockito.Mock;\n"
+                "class OrderTest {}\n",
+                encoding="utf-8",
+            )
+            (root / "pom.xml").write_text(
+                "<artifactId>junit-jupiter</artifactId>\n"
+                "<artifactId>mockito-core</artifactId>\n",
+                encoding="utf-8",
+            )
+
+            expected = ["java", "java-design", "junit", "mockito"]
             for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
                 with self.subTest(detector=detector):
                     result = run_detection(root, "src/test", detector=detector)

@@ -7,7 +7,7 @@ metadata:
 
 # Spring Boot Testing
 
-Combine with Spring Boot, Java, the detected persistence or security skills, and the project test framework.
+Combine with Spring Boot, Java, JUnit, Mockito, and the detected persistence or security skills. This skill owns Spring test boundaries and application-context behavior; JUnit and Mockito own their respective test-framework and test-double mechanics.
 
 ## Test Selection
 

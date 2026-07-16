@@ -1,0 +1,20 @@
+schema: dev-methodology-technology-detection
+version: 2
+skill: junit
+kind: technology
+label: JUnit
+capabilities:
+- test-framework
+activation:
+  anyOf:
+  - allOf:
+    - fileMatch: {glob: "**/src/test/**/*.java", extensions: [.java]}
+    - anyOf:
+      - contentPattern: {glob: pom.xml, contains: junit-jupiter}
+      - contentPattern: {glob: pom.xml, contains: junit-platform}
+      - contentPattern: {glob: build.gradle*, contains: junit-jupiter}
+      - contentPattern: {glob: build.gradle*, contains: junit-platform}
+      - contentPattern: {glob: "**/src/test/**/*.java", contains: org.junit.jupiter}
+      - contentPattern: {glob: "**/src/test/**/*.java", contains: org.junit.Test}
+companions:
+- java

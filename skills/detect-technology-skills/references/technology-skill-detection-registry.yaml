@@ -435,6 +435,42 @@ skills:
   selection: additive
   priority: 100
   requiredWhenDetected: true
+- skill: junit
+  kind: technology
+  label: JUnit
+  capabilities:
+  - test-framework
+  activation:
+    anyOf:
+    - allOf:
+      - fileMatch:
+          glob: '**/src/test/**/*.java'
+          extensions:
+          - .java
+      - anyOf:
+        - contentPattern:
+            glob: pom.xml
+            contains: junit-jupiter
+        - contentPattern:
+            glob: pom.xml
+            contains: junit-platform
+        - contentPattern:
+            glob: build.gradle*
+            contains: junit-jupiter
+        - contentPattern:
+            glob: build.gradle*
+            contains: junit-platform
+        - contentPattern:
+            glob: '**/src/test/**/*.java'
+            contains: org.junit.jupiter
+        - contentPattern:
+            glob: '**/src/test/**/*.java'
+            contains: org.junit.Test
+  companions:
+  - java
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
 - skill: langgraph
   kind: technology
   label: LangGraph
@@ -561,6 +597,39 @@ skills:
         glob: '**/*model*.java'
         contains: localModel
   companions: []
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
+- skill: mockito
+  kind: technology
+  label: Mockito
+  capabilities:
+  - test-doubles
+  activation:
+    anyOf:
+    - allOf:
+      - fileMatch:
+          glob: '**/src/test/**/*.java'
+          extensions:
+          - .java
+      - anyOf:
+        - contentPattern:
+            glob: pom.xml
+            contains: mockito-core
+        - contentPattern:
+            glob: pom.xml
+            contains: mockito-junit-jupiter
+        - contentPattern:
+            glob: build.gradle*
+            contains: mockito-core
+        - contentPattern:
+            glob: build.gradle*
+            contains: mockito-junit-jupiter
+        - contentPattern:
+            glob: '**/src/test/**/*.java'
+            contains: org.mockito
+  companions:
+  - java
   selection: additive
   priority: 100
   requiredWhenDetected: true
@@ -829,6 +898,7 @@ skills:
             contains: quarkus-junit
   companions:
   - quarkus
+  - junit
   selection: additive
   priority: 100
   requiredWhenDetected: true
@@ -934,6 +1004,8 @@ skills:
             contains: spring-boot-starter-test
   companions:
   - spring-boot
+  - junit
+  - mockito
   selection: additive
   priority: 100
   requiredWhenDetected: true

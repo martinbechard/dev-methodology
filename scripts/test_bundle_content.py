@@ -89,6 +89,8 @@ NEW_DEVELOPMENT_SKILLS = (
     "fastapi",
     "java",
     "java-design",
+    "junit",
+    "mockito",
     "spring-boot",
     "spring-boot-design",
     "spring-data-jpa",
@@ -182,6 +184,8 @@ EXAMPLE_PROJECT_SKILL_PACKS = (
     "agent-harness",
     "java",
     "java-design",
+    "junit",
+    "mockito",
     "jest",
     "langgraph",
     "local-model-integration",
@@ -225,6 +229,8 @@ README_REQUIRED_PHRASES = (
     "detect-technology-skills",
     "- liquibase",
     "- java-design",
+    "- junit",
+    "- mockito",
     "- spring-boot-design",
     "- spring-data-jpa",
     "- spring-boot-testing",
@@ -345,6 +351,8 @@ TECHNOLOGY_EXTENSION_SKILLS = (
     "fastapi",
     "java",
     "java-design",
+    "junit",
+    "mockito",
     "spring-boot",
     "spring-boot-design",
     "spring-data-jpa",
@@ -1031,6 +1039,26 @@ class BundleContentTests(unittest.TestCase):
         spring_design = (SKILLS_ROOT / "spring-boot-design" / "SKILL.md").read_text(encoding="utf-8")
         self.assertIn("Do not own formatting", java_design)
         self.assertIn("not annotation syntax or routine framework coding", spring_design)
+
+    def test_junit_and_mockito_are_separate_detection_backed_skills(self) -> None:
+        expected = {
+            "junit": (
+                "JUnit Boundary",
+                "references/testing-guidelines-junit.md",
+            ),
+            "mockito": (
+                "Mockito Boundary",
+                "references/mocking-guidelines-mockito.md",
+            ),
+        }
+
+        for skill_name, (boundary_phrase, reference_path) in expected.items():
+            with self.subTest(skill_name=skill_name):
+                skill_root = SKILLS_ROOT / skill_name
+                skill_text = (skill_root / "SKILL.md").read_text(encoding="utf-8")
+                self.assertIn(boundary_phrase, skill_text)
+                self.assertTrue((skill_root / reference_path).is_file())
+                self.assertTrue((skill_root / "detection.yaml").is_file())
 
     def test_quarkus_concerns_are_separate_and_detection_backed(self) -> None:
         expected = {

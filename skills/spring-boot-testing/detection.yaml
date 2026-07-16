@@ -14,3 +14,5 @@ activation:
       - contentPattern: {glob: build.gradle*, contains: spring-boot-starter-test}
 companions:
 - spring-boot
+- junit
+- mockito

@@ -7,7 +7,7 @@ metadata:
 
 # Quarkus Testing
 
-Combine with Quarkus, Java, the detected persistence or security skills, and the project test framework.
+Combine with Quarkus, Java, JUnit, the detected persistence or security skills, and Mockito when present. This skill owns Quarkus runtime and built-artifact test boundaries; JUnit and Mockito own their respective test-framework and test-double mechanics.
 
 ## Test Selection
 

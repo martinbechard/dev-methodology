@@ -14,3 +14,4 @@ activation:
       - contentPattern: {glob: build.gradle*, contains: quarkus-junit}
 companions:
 - quarkus
+- junit

@@ -1,0 +1,19 @@
+schema: dev-methodology-technology-detection
+version: 2
+skill: mockito
+kind: technology
+label: Mockito
+capabilities:
+- test-doubles
+activation:
+  anyOf:
+  - allOf:
+    - fileMatch: {glob: "**/src/test/**/*.java", extensions: [.java]}
+    - anyOf:
+      - contentPattern: {glob: pom.xml, contains: mockito-core}
+      - contentPattern: {glob: pom.xml, contains: mockito-junit-jupiter}
+      - contentPattern: {glob: build.gradle*, contains: mockito-core}
+      - contentPattern: {glob: build.gradle*, contains: mockito-junit-jupiter}
+      - contentPattern: {glob: "**/src/test/**/*.java", contains: org.mockito}
+companions:
+- java

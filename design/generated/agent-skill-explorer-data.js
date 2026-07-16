@@ -833,7 +833,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "modelJudgeNotRequiredAgentCount": 0,
     "modelJudgeNotRequiredSkillCount": 21,
     "modelJudgePendingAgentCount": 26,
-    "modelJudgePendingSkillCount": 70,
+    "modelJudgePendingSkillCount": 72,
     "negativeCaseBackedSkillCount": 0,
     "ordinaryLocalCaseCount": 7,
     "pairedControlsExecutableSkillCount": 0,
@@ -845,7 +845,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "positiveSecurityContainedSkillCount": 0,
     "positiveStaleByDigestSkillCount": 0,
     "positiveVerifiedSkillCount": 0,
-    "probeDeclaredSkillCount": 91,
+    "probeDeclaredSkillCount": 93,
     "scenarioDeclaredAgentCount": 26,
     "securityContainedAgentCount": 0,
     "securityContainedRunCount": 0,
@@ -854,7 +854,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "staleByDigestRunCount": 0,
     "staleByDigestSkillCount": 0,
     "structuralAgentCount": 26,
-    "structuralSkillCount": 91,
+    "structuralSkillCount": 93,
     "verifiedAgentCount": 0,
     "verifiedRunCount": 0,
     "verifiedSkillCount": 0,
@@ -5309,6 +5309,121 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "executedCases": [],
         "fixtureBacked": false,
         "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": false,
+        "positiveCaseBackedCases": [],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
+          "probe-junit"
+        ],
+        "scenarioAssociations": [
+          "dev-coder-boundary",
+          "dev-verifier-happy"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "code-delivery"
+        ]
+      },
+      "declaredCases": [],
+      "detection": {
+        "activation": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "fileMatch": {
+                    "extensions": [
+                      ".java"
+                    ],
+                    "glob": "**/src/test/**/*.java"
+                  }
+                },
+                {
+                  "anyOf": [
+                    {
+                      "contentPattern": {
+                        "contains": "junit-jupiter",
+                        "glob": "pom.xml"
+                      }
+                    },
+                    {
+                      "contentPattern": {
+                        "contains": "junit-platform",
+                        "glob": "pom.xml"
+                      }
+                    },
+                    {
+                      "contentPattern": {
+                        "contains": "junit-jupiter",
+                        "glob": "build.gradle*"
+                      }
+                    },
+                    {
+                      "contentPattern": {
+                        "contains": "junit-platform",
+                        "glob": "build.gradle*"
+                      }
+                    },
+                    {
+                      "contentPattern": {
+                        "contains": "org.junit.jupiter",
+                        "glob": "**/src/test/**/*.java"
+                      }
+                    },
+                    {
+                      "contentPattern": {
+                        "contains": "org.junit.Test",
+                        "glob": "**/src/test/**/*.java"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "capabilities": [
+          "test-framework"
+        ],
+        "companions": [
+          "java"
+        ],
+        "kind": "technology",
+        "label": "JUnit",
+        "priority": 100,
+        "requiredWhenDetected": true,
+        "selection": "additive",
+        "skill": "junit"
+      },
+      "executedCases": [],
+      "id": "junit",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
+      "verifiedCases": []
+    },
+    {
+      "category": "stack-and-domain",
+      "coverage": {
+        "catalogFixtureBacked": false,
+        "evaluationCategory": "stack-and-domain",
+        "executableCases": [],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
         "judgeCalibration": "not-required",
         "judgePassedCases": [],
         "negativeCaseBacked": false,
@@ -5770,6 +5885,115 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "detection": null,
       "executedCases": [],
       "id": "manage-backlog",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
+      "verifiedCases": []
+    },
+    {
+      "category": "stack-and-domain",
+      "coverage": {
+        "catalogFixtureBacked": false,
+        "evaluationCategory": "stack-and-domain",
+        "executableCases": [],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": false,
+        "positiveCaseBackedCases": [],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
+          "probe-mockito"
+        ],
+        "scenarioAssociations": [
+          "dev-code-reviewer-boundary",
+          "dev-coder-happy"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "code-delivery"
+        ]
+      },
+      "declaredCases": [],
+      "detection": {
+        "activation": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "fileMatch": {
+                    "extensions": [
+                      ".java"
+                    ],
+                    "glob": "**/src/test/**/*.java"
+                  }
+                },
+                {
+                  "anyOf": [
+                    {
+                      "contentPattern": {
+                        "contains": "mockito-core",
+                        "glob": "pom.xml"
+                      }
+                    },
+                    {
+                      "contentPattern": {
+                        "contains": "mockito-junit-jupiter",
+                        "glob": "pom.xml"
+                      }
+                    },
+                    {
+                      "contentPattern": {
+                        "contains": "mockito-core",
+                        "glob": "build.gradle*"
+                      }
+                    },
+                    {
+                      "contentPattern": {
+                        "contains": "mockito-junit-jupiter",
+                        "glob": "build.gradle*"
+                      }
+                    },
+                    {
+                      "contentPattern": {
+                        "contains": "org.mockito",
+                        "glob": "**/src/test/**/*.java"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "capabilities": [
+          "test-doubles"
+        ],
+        "companions": [
+          "java"
+        ],
+        "kind": "technology",
+        "label": "Mockito",
+        "priority": 100,
+        "requiredWhenDetected": true,
+        "selection": "additive",
+        "skill": "mockito"
+      },
+      "executedCases": [],
+      "id": "mockito",
       "judgePassedCases": [],
       "securityContainedCases": [],
       "verifiedCases": []
@@ -7191,7 +7415,8 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "application-testing"
         ],
         "companions": [
-          "quarkus"
+          "quarkus",
+          "junit"
         ],
         "kind": "technology",
         "label": "Quarkus Testing",
@@ -8043,7 +8268,9 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "application-testing"
         ],
         "companions": [
-          "spring-boot"
+          "spring-boot",
+          "junit",
+          "mockito"
         ],
         "kind": "technology",
         "label": "Spring Boot Testing",

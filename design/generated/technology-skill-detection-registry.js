@@ -844,6 +844,76 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
           {
             "allOf": [
               {
+                "fileMatch": {
+                  "extensions": [
+                    ".java"
+                  ],
+                  "glob": "**/src/test/**/*.java"
+                }
+              },
+              {
+                "anyOf": [
+                  {
+                    "contentPattern": {
+                      "contains": "junit-jupiter",
+                      "glob": "pom.xml"
+                    }
+                  },
+                  {
+                    "contentPattern": {
+                      "contains": "junit-platform",
+                      "glob": "pom.xml"
+                    }
+                  },
+                  {
+                    "contentPattern": {
+                      "contains": "junit-jupiter",
+                      "glob": "build.gradle*"
+                    }
+                  },
+                  {
+                    "contentPattern": {
+                      "contains": "junit-platform",
+                      "glob": "build.gradle*"
+                    }
+                  },
+                  {
+                    "contentPattern": {
+                      "contains": "org.junit.jupiter",
+                      "glob": "**/src/test/**/*.java"
+                    }
+                  },
+                  {
+                    "contentPattern": {
+                      "contains": "org.junit.Test",
+                      "glob": "**/src/test/**/*.java"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "capabilities": [
+        "test-framework"
+      ],
+      "companions": [
+        "java"
+      ],
+      "kind": "technology",
+      "label": "JUnit",
+      "priority": 100,
+      "requiredWhenDetected": true,
+      "selection": "additive",
+      "skill": "junit"
+    },
+    {
+      "activation": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
                 "anyOf": [
                   {
                     "fileExtension": ".ts"
@@ -1079,6 +1149,70 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
       "requiredWhenDetected": true,
       "selection": "additive",
       "skill": "local-model-integration"
+    },
+    {
+      "activation": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "fileMatch": {
+                  "extensions": [
+                    ".java"
+                  ],
+                  "glob": "**/src/test/**/*.java"
+                }
+              },
+              {
+                "anyOf": [
+                  {
+                    "contentPattern": {
+                      "contains": "mockito-core",
+                      "glob": "pom.xml"
+                    }
+                  },
+                  {
+                    "contentPattern": {
+                      "contains": "mockito-junit-jupiter",
+                      "glob": "pom.xml"
+                    }
+                  },
+                  {
+                    "contentPattern": {
+                      "contains": "mockito-core",
+                      "glob": "build.gradle*"
+                    }
+                  },
+                  {
+                    "contentPattern": {
+                      "contains": "mockito-junit-jupiter",
+                      "glob": "build.gradle*"
+                    }
+                  },
+                  {
+                    "contentPattern": {
+                      "contains": "org.mockito",
+                      "glob": "**/src/test/**/*.java"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "capabilities": [
+        "test-doubles"
+      ],
+      "companions": [
+        "java"
+      ],
+      "kind": "technology",
+      "label": "Mockito",
+      "priority": 100,
+      "requiredWhenDetected": true,
+      "selection": "additive",
+      "skill": "mockito"
     },
     {
       "activation": {
@@ -1561,7 +1695,8 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
         "application-testing"
       ],
       "companions": [
-        "quarkus"
+        "quarkus",
+        "junit"
       ],
       "kind": "technology",
       "label": "Quarkus Testing",
@@ -1761,7 +1896,9 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
         "application-testing"
       ],
       "companions": [
-        "spring-boot"
+        "spring-boot",
+        "junit",
+        "mockito"
       ],
       "kind": "technology",
       "label": "Spring Boot Testing",
