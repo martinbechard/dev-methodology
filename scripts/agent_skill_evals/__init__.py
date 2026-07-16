@@ -7,10 +7,12 @@ from .invocations import (
     ExternalRunnerInvocation,
     HarnessIdentity,
     SUPPORTED_HARNESSES,
+    CODEX_OUTPUT_SCHEMA_SHA256,
     agent_attribution_verified,
     build_harness_command,
     capture_harness_identity,
     normalize_harness_events,
+    validate_codex_output_schema,
     wrap_junie_external_runner,
 )
 from .judges import (
@@ -71,6 +73,7 @@ from .workspace import (
 
 __all__ = [
     "CASES_PATH",
+    "CODEX_OUTPUT_SCHEMA_SHA256",
     "CacheKeyLock",
     "JUDGE_TYPES",
     "ROOT",
@@ -122,6 +125,7 @@ __all__ = [
     "snapshot_tree",
     "selected_context_identity",
     "validate_calibration_record",
+    "validate_codex_output_schema",
     "validate_case",
     "validate_case_definition",
     "validate_evidence",

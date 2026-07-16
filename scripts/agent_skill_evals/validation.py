@@ -8,7 +8,7 @@ import hashlib
 import json
 import os
 from dataclasses import dataclass
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Iterable, Mapping, Sequence
 
 import yaml
@@ -18,6 +18,7 @@ from .invocations import SUPPORTED_HARNESSES, agent_attribution_verified
 from .judges import JUDGE_TYPES, validate_calibration_record
 from .staging import selected_context_identity
 from .workspace import (
+    PROTECTED_DEPENDENCY_OR_TOOL_TREE_NAMES,
     TRANSIENT_TREE_NAMES,
     dependency_inputs_digest,
     prepared_fixture_identity_key,
@@ -25,9 +26,40 @@ from .workspace import (
     snapshot_tree,
 )
 
+try:
+    from agent_skill_judge_contract import (
+        CONTRACT_VERSION as JUDGE_CONTRACT_VERSION,
+        JudgeContractError,
+        canonical_judge_identity,
+        load_judge_request,
+        validate_judge_output,
+    )
+except ModuleNotFoundError:
+    from scripts.agent_skill_judge_contract import (
+        CONTRACT_VERSION as JUDGE_CONTRACT_VERSION,
+        JudgeContractError,
+        canonical_judge_identity,
+        load_judge_request,
+        validate_judge_output,
+    )
+
 
 ROOT = Path(__file__).resolve().parents[2]
 CASES_PATH = ROOT / "evals" / "cases.yaml"
+_RECOGNIZED_EPHEMERAL_OUTPUT_LEAVES = frozenset({
+    ".coverage",
+    ".mypy_cache",
+    ".next",
+    ".pytest_cache",
+    ".ruff_cache",
+    ".turbo",
+    "__pycache__",
+    "build",
+    "coverage",
+    "dist",
+    "out",
+    "target",
+})
 _CATALOG_SPECS = {
     "skill-probes.yaml": (
         "probes",
@@ -191,6 +223,8 @@ def validate_case_definition(case: Mapping[str, object]) -> list[str]:
     _require_non_empty_string(case.get("id"), "case.id", errors)
     _require_non_empty_string(case.get("project"), "case.project", errors)
     _require_non_empty_string(case.get("task"), "case.task", errors)
+    _validate_case_project_path(case.get("project"), errors)
+    _validate_case_relative_path(case.get("task"), "case.task", errors)
     for field in ("requiredAgents", "requiredSkills", "requiredEvidence"):
         _validate_string_list(case.get(field), f"case.{field}", errors, required=True)
     _validate_string_list(case.get("requiredFindings", []), "case.requiredFindings", errors)
@@ -213,11 +247,42 @@ def validate_case_definition(case: Mapping[str, object]) -> list[str]:
                 errors.append(f"case.{field} must not inherit the complete host environment")
     if "readOnly" in case and not isinstance(case.get("readOnly"), bool):
         errors.append("case.readOnly must be a boolean")
-    for field in ("allowedWritePaths", "protectedPaths"):
+    for field in ("allowedWritePaths", "ephemeralWritePaths", "protectedPaths"):
         if field in case:
             _validate_string_list(case.get(field), f"case.{field}", errors)
+            for path in _string_items(case.get(field)):
+                _validate_case_relative_path(path, f"case.{field}", errors)
+    ephemeral_paths = set(_string_items(case.get("ephemeralWritePaths")))
+    allowed_paths = set(_string_items(case.get("allowedWritePaths")))
+    protected_paths = set(_string_items(case.get("protectedPaths")))
+    for path in sorted(ephemeral_paths):
+        if any(
+            part in PROTECTED_DEPENDENCY_OR_TOOL_TREE_NAMES
+            for part in PurePosixPath(path).parts
+        ):
+            errors.append(
+                f"case.ephemeralWritePaths cannot include a dependency or tool tree: {path}"
+            )
+        if PurePosixPath(path).name not in _RECOGNIZED_EPHEMERAL_OUTPUT_LEAVES:
+            errors.append(
+                f"case.ephemeralWritePaths must end at a recognized generated-output leaf: {path}"
+            )
+        if any(_relative_paths_overlap(path, other) for other in allowed_paths):
+            errors.append(
+                f"case.ephemeralWritePaths overlaps allowedWritePaths: {path}"
+            )
+        if any(_relative_paths_overlap(path, other) for other in protected_paths):
+            errors.append(
+                f"case.ephemeralWritePaths overlaps protectedPaths: {path}"
+            )
     if isinstance(case.get("judgePlan"), Mapping) and not case.get("readOnly") and "allowedWritePaths" not in case:
         errors.append("case.allowedWritePaths is required for a mutation-capable version-two case")
+    if isinstance(case.get("judgePlan"), Mapping) and case.get(
+        "postRunVerificationStatus"
+    ) != "external-runner-required":
+        errors.append(
+            "case.postRunVerificationStatus must be external-runner-required until a trusted verifier is implemented"
+        )
     for field in ("sandboxProfiles", "minimumContainment"):
         value = case.get(field)
         if value is not None and not isinstance(value, Mapping):
@@ -256,8 +321,17 @@ def validate_case(
     """Validate a case definition and its selected fixture and result artifacts."""
 
     errors = validate_case_definition(case)
-    task_path = project_root / str(case.get("task", ""))
-    if not task_path.is_file():
+    resolved_project = project_root.resolve()
+    task_path = resolved_project / str(case.get("task", ""))
+    try:
+        resolved_task = task_path.resolve(strict=True)
+    except OSError:
+        resolved_task = task_path.resolve()
+    if task_path.is_symlink():
+        errors.append(f"task must not be a symlink: {task_path}")
+    if resolved_task != resolved_project and resolved_project not in resolved_task.parents:
+        errors.append(f"task escapes the selected project: {task_path}")
+    elif not resolved_task.is_file():
         errors.append(f"missing task: {task_path}")
     for skill in _string_items(case.get("requiredSkills")):
         skill_path = ROOT / "skills" / skill / "SKILL.md"
@@ -336,21 +410,61 @@ def validate_framework_catalogs(
         if not isinstance(order, list) or not order or not str(order[0]).lower().startswith("deterministic"):
             errors.append("judges.yaml executionOrder must start with Deterministic Judge")
         calibration_policy = judge_catalog.get("calibrationPolicy")
+        if not isinstance(calibration_policy, Mapping) or calibration_policy.get(
+            "promotionStatus"
+        ) != "disabled-pending-provenance":
+            errors.append(
+                "judges.yaml calibrationPolicy.promotionStatus must remain disabled-pending-provenance"
+            )
+        if isinstance(calibration_policy, Mapping) and calibration_policy.get(
+            "status"
+        ) != "pending":
+            errors.append(
+                "judges.yaml calibrationPolicy.status must remain pending while promotion is disabled"
+            )
         human_set = calibration_policy.get("humanScoredSet") if isinstance(calibration_policy, Mapping) else None
         if not isinstance(human_set, Mapping):
             errors.append("judges.yaml calibrationPolicy.humanScoredSet must be a mapping")
         else:
-            minimums = {
+            exact_counts = {
+                "pilotMinimumExamples": 20,
                 "minimumExamples": 25,
                 "minimumExamplesPerClass": 5,
                 "minimumCriticalDefects": 5,
             }
-            for field, minimum in minimums.items():
+            for field, expected_value in exact_counts.items():
                 value = human_set.get(field)
-                if not isinstance(value, int) or isinstance(value, bool) or value < minimum:
+                if value != expected_value or isinstance(value, bool):
                     errors.append(
-                        f"judges.yaml calibrationPolicy.humanScoredSet.{field} must be at least {minimum}"
+                        f"judges.yaml calibrationPolicy.humanScoredSet.{field} must equal {expected_value} in the v1 policy"
                     )
+            expected_classes = {
+                "clear-pass",
+                "clear-fail",
+                "boundary",
+                "incomplete-plausible",
+                "adversarially-polished",
+            }
+            if set(_string_items(human_set.get("requiredClasses"))) != expected_classes:
+                errors.append(
+                    "judges.yaml calibrationPolicy.humanScoredSet.requiredClasses must match the v1 class set"
+                )
+            ambiguous = human_set.get("ambiguousExamples")
+            if not isinstance(ambiguous, Mapping) or ambiguous.get(
+                "independentHumanJudges"
+            ) != 2 or ambiguous.get("adjudicationRequired") is not True:
+                errors.append(
+                    "judges.yaml calibrationPolicy ambiguous examples must require two Human Judges and adjudication"
+                )
+        thresholds = calibration_policy.get("thresholds") if isinstance(calibration_policy, Mapping) else None
+        if thresholds != {
+            "binaryF1": 0.85,
+            "orderedWeightedKappa": 0.70,
+            "criticalDefectRecall": 1.0,
+        }:
+            errors.append(
+                "judges.yaml calibrationPolicy.thresholds must match the v1 implementation"
+            )
         records = calibration_policy.get("records") if isinstance(calibration_policy, Mapping) else None
         if records is not None and not isinstance(records, list):
             errors.append("judges.yaml calibrationPolicy.records must be a list")
@@ -381,7 +495,12 @@ def validate_framework_catalogs(
                         f"judges.yaml calibrationPolicy.records[{index}] must identify a current rubricId"
                     )
                 else:
-                    expected["rubricSha256"] = case_definition_digest(rubric)
+                    try:
+                        expected.update(canonical_judge_identity(rubric))
+                    except ValueError as error:
+                        errors.append(
+                            f"judges.yaml calibrationPolicy.records[{index}] has an invalid canonical Judge contract: {error}"
+                        )
                 errors.extend(
                     f"judges.yaml calibrationPolicy.records[{index}]: {error}"
                     for error in validate_calibration_record(record, expected)
@@ -422,11 +541,6 @@ def classify_evidence(
         return EvidenceClassification(False, False, False, (f"invalid evidence receipt: {error}",), ())
     if not isinstance(evidence, dict):
         return EvidenceClassification(False, False, False, (f"evidence receipt must be a YAML mapping: {evidence_path}",), ())
-    executed = (
-        evidence.get("schema") == "dev-methodology-eval-evidence"
-        and evidence.get("version") in {1, 2}
-        and evidence.get("case") == case.get("id")
-    )
     errors: list[str] = []
     stale_reasons: list[str] = []
     if evidence.get("schema") != "dev-methodology-eval-evidence" or evidence.get("version") not in {1, 2}:
@@ -435,12 +549,18 @@ def classify_evidence(
         errors.append("evidence receipt case does not match selected case")
     if evidence.get("verdict") != "verified":
         errors.append("evidence receipt verdict must be verified")
-    _validate_capture_provenance(evidence, evidence_path, errors)
+    _validate_capture_provenance(
+        evidence,
+        evidence_path,
+        errors,
+        require_external_trust=evidence.get("version") == 2,
+    )
     if evidence.get("version") == 2:
         _validate_version_two(case, evidence, evidence_path, errors, stale_reasons)
     else:
         _validate_version_one(case, evidence, evidence_path, errors, stale_reasons)
     _validate_forbidden_skill_reads(case, evidence, evidence_path, errors)
+    executed = _has_complete_execution_capture(case, evidence, evidence_path)
     verified = executed and evidence.get("version") == 2 and not errors and not stale_reasons
     return EvidenceClassification(
         executed=executed,
@@ -451,6 +571,89 @@ def classify_evidence(
     )
 
 
+def _has_complete_execution_capture(
+    case: Mapping[str, object],
+    evidence: Mapping[str, object],
+    evidence_path: Path,
+) -> bool:
+    """Return whether trusted core harness evidence proves that a v2 run occurred."""
+
+    if (
+        evidence.get("schema") != "dev-methodology-eval-evidence"
+        or evidence.get("version") != 2
+        or evidence.get("case") != case.get("id")
+    ):
+        return False
+    capture_errors: list[str] = []
+    _validate_capture_provenance(
+        evidence,
+        evidence_path,
+        capture_errors,
+        require_external_trust=False,
+    )
+    run = evidence.get("run")
+    if not isinstance(run, Mapping):
+        return False
+    for field in (
+        "id",
+        "harness",
+        "harnessVersion",
+        "harnessDigest",
+        "harnessIdentityEvidence",
+        "model",
+        "modelDigest",
+        "modelIdentityEvidence",
+        "agentId",
+        "nativeAdapterEffectiveDigest",
+        "invocationEvidence",
+        "agentStartEvidence",
+        "eventLedger",
+    ):
+        _require_non_empty_string(run.get(field), f"run.{field}", capture_errors)
+    for field in ("harnessDigest", "modelDigest", "nativeAdapterEffectiveDigest"):
+        _require_digest(run.get(field), f"run.{field}", capture_errors)
+    for field in ("harnessIdentityEvidence", "modelIdentityEvidence", "eventLedger"):
+        validate_reference(run.get(field), f"run.{field}", evidence_path, capture_errors)
+    harness = run.get("harness")
+    if harness not in SUPPORTED_HARNESSES:
+        capture_errors.append("execution capture harness is unsupported")
+    if run.get("agentId") not in _string_items(case.get("requiredAgents")):
+        capture_errors.append("execution capture agent is not required by the case")
+    if run.get("attributionStatus") != "verified":
+        capture_errors.append("execution capture agent attribution is not verified")
+    validate_harness_event(
+        run.get("invocationEvidence"),
+        "run.invocationEvidence",
+        evidence_path,
+        {
+            "type": "invocation",
+            "agent": run.get("agentId"),
+            "harness": harness,
+            "model": run.get("model"),
+        },
+        capture_errors,
+    )
+    validate_harness_event(
+        run.get("agentStartEvidence"),
+        "run.agentStartEvidence",
+        evidence_path,
+        {
+            "type": "agent-start",
+            "agent": run.get("agentId"),
+            "contentDigest": run.get("nativeAdapterEffectiveDigest"),
+        },
+        capture_errors,
+    )
+    ledger_events = _all_events_for_reference(run.get("eventLedger"), evidence_path)
+    if not agent_attribution_verified(
+        ledger_events,
+        str(run.get("agentId", "")),
+        str(run.get("nativeAdapterEffectiveDigest", "")),
+    ):
+        capture_errors.append("execution capture ledger lacks the selected agent start")
+    return not capture_errors
+
+
 def validate_evidence(case: Mapping[str, object], evidence_path: Path | None) -> list[str]:
     """Return compatibility validation messages, including separately classified stale digests."""
 
@@ -458,31 +661,61 @@ def validate_evidence(case: Mapping[str, object], evidence_path: Path | None) ->
     return [*classification.errors, *classification.stale_reasons]
 
 
+def _resolve_evidence_reference(
+    value: object,
+    evidence_path: Path,
+) -> tuple[Path, str]:
+    """Return a contained, non-symlink artifact target without reading it."""
+
+    if not isinstance(value, str) or "#" not in value:
+        raise ValueError("must be a relative file#marker reference")
+    file_name, marker = value.rsplit("#", 1)
+    if not file_name or not marker:
+        raise ValueError("must include a file and marker")
+    relative = PurePosixPath(file_name)
+    if (
+        relative.is_absolute()
+        or relative.as_posix() != file_name
+        or any(part in {"", ".", ".."} for part in relative.parts)
+    ):
+        raise ValueError("reference escapes the receipt directory or is not normalized")
+    evidence_root = evidence_path.parent.resolve()
+    candidate = evidence_root.joinpath(*relative.parts)
+    current = candidate
+    while current != evidence_root:
+        if current.is_symlink():
+            raise ValueError("reference uses a symlink inside the receipt directory")
+        if evidence_root not in current.parents:
+            raise ValueError("reference escapes the receipt directory")
+        current = current.parent
+    try:
+        target = candidate.resolve(strict=True)
+    except FileNotFoundError as error:
+        raise ValueError(f"reference target is missing: {file_name}") from error
+    except (OSError, RuntimeError) as error:
+        raise ValueError(f"reference target cannot be resolved safely: {file_name}") from error
+    if target == evidence_root or evidence_root not in target.parents:
+        raise ValueError("reference escapes the receipt directory")
+    if not target.is_file():
+        raise ValueError(f"reference target is missing: {file_name}")
+    return target, marker
+
+
 def validate_reference(value: object, field: str, evidence_path: Path, errors: list[str]) -> None:
     """Validate a relative file-marker reference inside the evidence directory."""
 
-    if not isinstance(value, str) or "#" not in value:
-        errors.append(f"evidence {field} must be a relative file#marker reference")
-        return
-    file_name, marker = value.rsplit("#", 1)
-    if not file_name or not marker:
-        errors.append(f"evidence {field} must include a file and marker")
-        return
-    target = (evidence_path.parent / file_name).resolve()
-    evidence_root = evidence_path.parent.resolve()
-    if target != evidence_root and evidence_root not in target.parents:
-        errors.append(f"evidence {field} reference escapes the receipt directory")
-        return
-    if not target.is_file():
-        errors.append(f"evidence {field} reference target is missing: {file_name}")
+    try:
+        target, marker = _resolve_evidence_reference(value, evidence_path)
+    except ValueError as error:
+        errors.append(f"evidence {field} {error}")
         return
     try:
         referenced_text = target.read_text(encoding="utf-8")
     except UnicodeDecodeError:
-        errors.append(f"evidence {field} reference target is not UTF-8 text: {file_name}")
+        errors.append(f"evidence {field} reference target is not UTF-8 text: {target.name}")
         return
     if marker not in referenced_text:
-        errors.append(f"evidence {field} marker is missing from {file_name}: {marker}")
+        errors.append(f"evidence {field} marker is missing from {target.name}: {marker}")
 
 
 def _validate_reference_digest(
@@ -493,10 +726,11 @@ def _validate_reference_digest(
     errors: list[str],
 ) -> None:
     validate_reference(reference, field, evidence_path, errors)
-    if not isinstance(reference, str) or "#" not in reference:
+    try:
+        target, _marker = _resolve_evidence_reference(reference, evidence_path)
+    except ValueError:
         return
-    target = (evidence_path.parent / reference.rsplit("#", 1)[0]).resolve()
-    if target.is_file() and expected_digest != content_digest(target):
+    if expected_digest != content_digest(target):
         errors.append(f"evidence {field} content digest does not match the governed digest")
 
 
@@ -579,6 +813,10 @@ def _validate_version_two(
     errors: list[str],
     stale_reasons: list[str],
 ) -> None:
+    if case.get("postRunVerificationStatus") == "external-runner-required":
+        errors.append(
+            "case requires trusted external post-run verification; no governed external verifier trust anchor is implemented"
+        )
     run = evidence.get("run")
     if not isinstance(run, Mapping):
         errors.append("evidence run must be a mapping")
@@ -699,13 +937,41 @@ def _validate_version_two(
     _validate_budgets(evidence.get("budgets"), errors)
     _validate_prepared_fixture(case, evidence.get("preparedFixture"), evidence_path, errors, stale_reasons)
     _validate_isolation(case, harness, evidence.get("isolation"), evidence_path, errors)
-    _validate_judges(case, evidence.get("judges"), evidence_path, errors, stale_reasons)
+    _validate_judges(
+        case,
+        evidence.get("judges"),
+        evidence_path,
+        errors,
+        stale_reasons,
+        run=run,
+    )
     _validate_assertions_findings_commands(case, evidence, evidence_path, errors)
     independent_judge = evidence.get("independentJudge")
     if not isinstance(independent_judge, Mapping):
         errors.append("evidence independentJudge must be a mapping")
     else:
         _validate_independent_judge(independent_judge, run, evidence_path, errors)
+        judges = evidence.get("judges")
+        model = judges.get("model") if isinstance(judges, Mapping) else None
+        if isinstance(model, Mapping) and model.get("status") in {"passed", "failed"}:
+            if independent_judge.get("kind") not in {"Model Judge", "Human Judge"}:
+                errors.append(
+                    "a Model Judge result requires an independently identified Model or Human Judge"
+                )
+            if (
+                independent_judge.get("judgePromptSha256")
+                != model.get("judgePromptSha256")
+            ):
+                errors.append(
+                    "independent Judge prompt digest must match the canonical Model Judge prompt"
+                )
+            if (
+                independent_judge.get("inputManifestDigest")
+                != model.get("inputManifestSha256")
+            ):
+                errors.append(
+                    "independent Judge input manifest must match the canonical Model Judge request"
+                )
 
 
 def _validate_skills(
@@ -943,6 +1209,7 @@ def _validate_prepared_fixture(
     for field in (
         "key",
         "sourceDigest",
+        "preparedSnapshotDigest",
         "dependencyDigest",
         "toolchainDigest",
         "preparationEnvironmentDigest",
@@ -955,6 +1222,24 @@ def _validate_prepared_fixture(
         for field in ("system", "release", "machine"):
             _require_non_empty_string(platform_value.get(field), f"preparedFixture.platform.{field}", errors)
     validate_reference(value.get("toolchainEvidence"), "preparedFixture.toolchainEvidence", evidence_path, errors)
+    validate_reference(
+        value.get("preparedSnapshotEvidence"),
+        "preparedFixture.preparedSnapshotEvidence",
+        evidence_path,
+        errors,
+    )
+    prepared_events = _events_for_reference(
+        value.get("preparedSnapshotEvidence"), evidence_path
+    )
+    if prepared_events is not None and (
+        len(prepared_events) != 1
+        or prepared_events[0].get("preparedKey") != value.get("key")
+        or prepared_events[0].get("preparedSnapshotDigest")
+        != value.get("preparedSnapshotDigest")
+    ):
+        errors.append(
+            "evidence prepared snapshot capture does not match its key and digest"
+        )
     validate_reference(
         value.get("preparationEnvironmentEvidence"),
         "preparedFixture.preparationEnvironmentEvidence",
@@ -1003,28 +1288,56 @@ def _validate_isolation(
             errors.append("evidence functional isolation status must be verified")
         before = functional.get("projectHashBefore")
         after = functional.get("projectHashAfter")
+        workspace_before = functional.get("workspaceHashBefore")
+        workspace_after = functional.get("workspaceHashAfter")
         _require_non_empty_string(before, "isolation.functional.projectHashBefore", errors)
         _require_non_empty_string(after, "isolation.functional.projectHashAfter", errors)
+        _require_non_empty_string(workspace_before, "isolation.functional.workspaceHashBefore", errors)
+        _require_non_empty_string(workspace_after, "isolation.functional.workspaceHashAfter", errors)
         _validate_string_list(functional.get("allowedWritePaths", []), "isolation.functional.allowedWritePaths", errors)
+        _validate_string_list(functional.get("ephemeralWritePaths", []), "isolation.functional.ephemeralWritePaths", errors)
         _validate_string_list(functional.get("changedPaths"), "isolation.functional.changedPaths", errors)
+        _validate_string_list(functional.get("ephemeralChangedPaths"), "isolation.functional.ephemeralChangedPaths", errors)
         receipt_allowed = set(_string_items(functional.get("allowedWritePaths")))
+        receipt_ephemeral = set(_string_items(functional.get("ephemeralWritePaths")))
         configured_allowed = set(_string_items(case.get("allowedWritePaths"))) if isinstance(
             case.get("judgePlan"), Mapping,
         ) else set(receipt_allowed)
+        configured_ephemeral = set(_string_items(case.get("ephemeralWritePaths")))
         if not receipt_allowed.issubset(configured_allowed):
             errors.append("evidence functional allowedWritePaths exceeds the case contract")
+        if receipt_ephemeral != configured_ephemeral:
+            errors.append("evidence functional ephemeralWritePaths must match the case contract")
         changed_paths = set(_string_items(functional.get("changedPaths")))
+        ephemeral_changed_paths = set(_string_items(functional.get("ephemeralChangedPaths")))
         protected = set(_string_items(case.get("protectedPaths")))
         for path in sorted(changed_paths):
             if not case.get("readOnly") and not _relative_path_is_allowed(path, receipt_allowed):
                 errors.append(f"evidence functional changed path is outside allowedWritePaths: {path}")
             if _relative_path_is_allowed(path, protected):
                 errors.append(f"evidence functional changed a protected path: {path}")
+        for path in sorted(ephemeral_changed_paths):
+            if not _relative_path_is_allowed(path, receipt_ephemeral):
+                errors.append(
+                    f"evidence functional ephemeral change is outside ephemeralWritePaths: {path}"
+                )
+            if _relative_path_is_allowed(path, protected):
+                errors.append(f"evidence functional changed a protected path: {path}")
+            if path in changed_paths:
+                errors.append(
+                    f"evidence functional path cannot be both product and ephemeral: {path}"
+                )
         validate_reference(functional.get("evidence"), "isolation.functional.evidence", evidence_path, errors)
         if case.get("readOnly") and before != after:
             errors.append("read-only evaluation changed the project hash")
         if case.get("readOnly") and changed_paths:
             errors.append("read-only evaluation reports changed product paths")
+        if bool(changed_paths) != (before != after):
+            errors.append("evidence functional product hashes do not match changedPaths")
+        if bool(changed_paths or ephemeral_changed_paths) != (
+            workspace_before != workspace_after
+        ):
+            errors.append("evidence functional workspace hashes do not match recorded changes")
     containment = value.get("containment")
     if not isinstance(containment, Mapping):
         errors.append("evidence isolation.containment must be a mapping")
@@ -1037,8 +1350,10 @@ def _validate_isolation(
         _require_non_empty_string(containment.get("enforcedBy"), "isolation.containment.enforcedBy", errors)
         if level == "containment-unverified" and containment.get("status") != "unverified":
             errors.append("containment-unverified level must have unverified evidence status")
-        if level == "externally-contained" and containment.get("status") != "verified":
-            errors.append("externally-contained level must have verified evidence status")
+        if level in {"workspace-isolated-only", "externally-contained"} and containment.get(
+            "status"
+        ) != "verified":
+            errors.append(f"{level} level must have verified evidence status")
         if containment.get("status") == "verified":
             validate_reference(containment.get("evidence"), "isolation.containment.evidence", evidence_path, errors)
         minimums = case.get("minimumContainment")
@@ -1046,6 +1361,13 @@ def _validate_isolation(
         ranks = {"containment-unverified": 0, "workspace-isolated-only": 1, "externally-contained": 2}
         if minimum in ranks and level in ranks and ranks[str(level)] < ranks[str(minimum)]:
             errors.append(f"evidence containment level does not meet the case minimum for {harness}: {minimum}")
+        if (
+            minimum in {"workspace-isolated-only", "externally-contained"}
+            and containment.get("status") != "verified"
+        ):
+            errors.append(
+                f"evidence containment status does not meet the case minimum for {harness}: verified"
+            )
     sandbox_profiles = case.get("sandboxProfiles")
     if isinstance(sandbox_profiles, Mapping) and harness in sandbox_profiles:
         profile_id = sandbox_profiles[harness]
@@ -1113,6 +1435,8 @@ def _validate_judges(
     evidence_path: Path,
     errors: list[str],
     stale_reasons: list[str],
+    *,
+    run: Mapping[str, object] | None = None,
 ) -> None:
     if not isinstance(value, Mapping):
         errors.append("evidence judges must be a mapping")
@@ -1194,10 +1518,20 @@ def _validate_judges(
     if critical_deterministic_failed:
         errors.append("critical Deterministic Judge verdict must be passed")
     model_rubric = plan.get("modelRubric") if isinstance(plan, Mapping) else None
+    if model_rubric is None and status != "not-required":
+        errors.append("a deterministic-only case requires Model Judge status not-required")
     if model_rubric is not None and model_rubric not in rubric_definitions:
         errors.append(f"case references an unknown Model Judge rubric: {model_rubric}")
     rubric_definition = rubric_definitions.get(str(model_rubric)) if model_rubric is not None else None
     if rubric_definition is not None and status in {"passed", "failed"}:
+        _validate_canonical_model_contract(
+            model,
+            rubric_definition,
+            case,
+            run or {},
+            evidence_path,
+            errors,
+        )
         dimensions_pass = _validate_model_dimension_scores(model, rubric_definition, evidence_path, errors)
         derived_status = "passed" if dimensions_pass else "failed"
         if status != derived_status:
@@ -1205,6 +1539,13 @@ def _validate_judges(
     if not critical_deterministic_failed and model_rubric is not None and status != "passed":
         errors.append("case requires a passed Model Judge")
     if status == "passed":
+        calibration_policy = judge_catalog.get("calibrationPolicy")
+        if not isinstance(calibration_policy, Mapping) or calibration_policy.get(
+            "promotionStatus"
+        ) != "enabled-provenance-verified":
+            errors.append(
+                "Model Judge calibration promotion is disabled pending per-sample provenance"
+            )
         if model_rubric is not None and model.get("rubricId") != model_rubric:
             errors.append(f"Model Judge rubricId must be {model_rubric}")
         current_rubric_digest = case_definition_digest(rubric_definition) if rubric_definition is not None else None
@@ -1240,6 +1581,11 @@ def _validate_judges(
             "rubricSha256": current_rubric_digest or model.get("rubricSha256"),
             "calibrationSetSha256": model.get("calibrationSetSha256"),
         }
+        if rubric_definition is not None:
+            try:
+                expected.update(canonical_judge_identity(rubric_definition))
+            except ValueError as error:
+                errors.append(f"Model Judge canonical contract is invalid: {error}")
         calibration = model.get("calibration")
         if not isinstance(calibration, Mapping):
             errors.append("passed Model Judge requires a calibration record")
@@ -1253,10 +1599,166 @@ def _validate_judges(
         validate_reference(model.get("evidence"), "judges.model.evidence", evidence_path, errors)
 
 
+def _validate_canonical_model_contract(
+    model: Mapping[str, object],
+    rubric: Mapping[str, object],
+    case: Mapping[str, object],
+    run: Mapping[str, object],
+    evidence_path: Path,
+    errors: list[str],
+) -> None:
+    """Validate the exact canonical Judge request and output behind a receipt."""
+
+    artifacts = model.get("contractArtifacts")
+    if not isinstance(artifacts, Mapping):
+        errors.append("Model Judge contractArtifacts must be a mapping")
+        return
+    targets: dict[str, Path] = {}
+    for field in (
+        "instructionEnvelopeEvidence",
+        "inputManifestEvidence",
+        "outputEvidence",
+    ):
+        reference = artifacts.get(field)
+        validate_reference(
+            reference,
+            f"judges.model.contractArtifacts.{field}",
+            evidence_path,
+            errors,
+        )
+        try:
+            target, _marker = _resolve_evidence_reference(reference, evidence_path)
+        except ValueError:
+            continue
+        targets[field] = target
+    if len(targets) != 3:
+        return
+    try:
+        request = load_judge_request(
+            targets["instructionEnvelopeEvidence"].read_bytes(),
+            targets["inputManifestEvidence"].read_bytes(),
+        )
+        raw_manifest = json.loads(request.input_manifest_bytes)
+        if not isinstance(raw_manifest, Mapping):
+            raise JudgeContractError("Model Judge input manifest must be a JSON object")
+        raw_output = json.loads(
+            targets["outputEvidence"].read_text(encoding="utf-8")
+        )
+        if not isinstance(raw_output, Mapping):
+            raise JudgeContractError("Model Judge output must be a JSON object")
+        validate_judge_output(raw_output, request)
+    except (JudgeContractError, OSError, UnicodeError, json.JSONDecodeError) as error:
+        errors.append(f"Model Judge canonical contract validation failed: {error}")
+        return
+    expected_bindings = {
+        "caseId": case.get("id"),
+        "runId": run.get("id"),
+        "harness": run.get("harness"),
+    }
+    receipt_bindings = {
+        "caseId": model.get("caseId"),
+        "runId": model.get("evaluatedRunId"),
+        "harness": model.get("evaluatedHarness"),
+    }
+    for field, expected in expected_bindings.items():
+        if raw_manifest.get(field) != expected:
+            errors.append(
+                f"Model Judge canonical request {field} does not match the selected receipt {field}"
+            )
+        if receipt_bindings[field] != expected:
+            errors.append(
+                f"Model Judge receipt {field} does not match the selected receipt {field}"
+            )
+    candidate = raw_manifest.get("candidateOutput")
+    if not isinstance(candidate, Mapping):
+        errors.append("Model Judge canonical request lacks a candidate output document")
+    else:
+        candidate_digest = candidate.get("sha256")
+        if model.get("candidateOutputSha256") != candidate_digest:
+            errors.append(
+                "Model Judge receipt candidate output digest does not match its canonical request"
+            )
+        _validate_reference_digest(
+            model.get("candidateOutputEvidence"),
+            candidate_digest,
+            "judges.model.candidateOutputEvidence",
+            evidence_path,
+            errors,
+        )
+    manifest_evidence = raw_manifest.get("evidenceDocuments")
+    expected_evidence = [
+        (document.get("id"), document.get("sha256"))
+        for document in manifest_evidence
+        if isinstance(document, Mapping)
+    ] if isinstance(manifest_evidence, list) else []
+    governed_evidence = model.get("governedEvidence")
+    observed_evidence: list[tuple[object, object]] = []
+    if not isinstance(governed_evidence, list) or not governed_evidence:
+        errors.append("Model Judge receipt governedEvidence must be a non-empty list")
+    else:
+        for index, item in enumerate(governed_evidence):
+            if not isinstance(item, Mapping):
+                errors.append(
+                    f"Model Judge governedEvidence[{index}] must be a mapping"
+                )
+                continue
+            document_id = item.get("documentId")
+            document_digest = item.get("sha256")
+            _require_non_empty_string(
+                document_id,
+                f"judges.model.governedEvidence[{index}].documentId",
+                errors,
+            )
+            _require_digest(
+                document_digest,
+                f"judges.model.governedEvidence[{index}].sha256",
+                errors,
+            )
+            _validate_reference_digest(
+                item.get("evidence"),
+                document_digest,
+                f"judges.model.governedEvidence[{index}].evidence",
+                evidence_path,
+                errors,
+            )
+            observed_evidence.append((document_id, document_digest))
+    if observed_evidence != expected_evidence:
+        errors.append(
+            "Model Judge receipt governed evidence digests do not match its canonical request"
+        )
+    expected_summary = {
+        "contractVersion": JUDGE_CONTRACT_VERSION,
+        "rubricId": raw_output["rubricId"],
+        "rubricSha256": request.rubric_sha256,
+        "judgePromptSha256": request.prompt_sha256,
+        "judgeOutputSchemaSha256": request.output_schema_sha256,
+        "instructionEnvelopeSha256": request.instruction_envelope_sha256,
+        "inputManifestSha256": request.input_manifest_sha256,
+        "dimensionScores": raw_output["dimensionScores"],
+        "overall": raw_output["overall"],
+    }
+    for field, expected in expected_summary.items():
+        if model.get(field) != expected:
+            errors.append(
+                f"Model Judge receipt {field} does not match its canonical output"
+            )
+    if request.rubric_sha256 != case_definition_digest(rubric):
+        errors.append("Model Judge canonical request does not use the current rubric")
+    expected_status = (
+        "passed" if raw_output["overall"]["verdict"] == "pass" else "failed"
+    )
+    if model.get("status") != expected_status:
+        errors.append(
+            f"Model Judge status does not match canonical output: {expected_status}"
+        )
+
+
 def _validate_capture_provenance(
     evidence: Mapping[str, object],
     evidence_path: Path,
     errors: list[str],
+    *,
+    require_external_trust: bool,
 ) -> None:
     provenance = evidence.get("captureProvenance")
     if not isinstance(provenance, Mapping):
@@ -1265,6 +1767,10 @@ def _validate_capture_provenance(
     if provenance.get("kind") not in {"trusted-ci", "human-attested-harness-export"}:
         errors.append("evidence captureProvenance.kind must identify a trusted capture source")
     validate_reference(provenance.get("reference"), "captureProvenance.reference", evidence_path, errors)
+    if require_external_trust:
+        errors.append(
+            "capture provenance lacks governed external verification; local labels and same-directory attestations cannot promote a receipt to verified"
+        )
 
 
 def _validate_independent_judge(
@@ -1411,27 +1917,29 @@ def _validate_model_dimension_scores(
     ):
         errors.append("Model Judge rubric criticalDimensions must list known dimension ids")
         return False
+    effective_critical = set(str(item) for item in critical_dimensions)
+    for dimension in dimensions if isinstance(dimensions, list) else []:
+        if isinstance(dimension, Mapping) and dimension.get("critical") is True:
+            effective_critical.add(str(dimension.get("id")))
+    for flag, dimension_id in (
+        ("criticalCompletenessRequired", "completeness"),
+        ("readinessMustBeConsistent", "readiness"),
+    ):
+        if rules.get(flag) is True:
+            effective_critical.add(dimension_id)
     for dimension_id in expected_ids:
         item = by_id.get(dimension_id)
-        if item is not None and item.get("critical") is not (dimension_id in critical_dimensions):
+        if item is not None and item.get("critical") is not (dimension_id in effective_critical):
             errors.append(f"Model Judge critical flag does not match the current rubric: {dimension_id}")
     passed = passed and all(
         valid_scores[dimension_id] >= int(overrides.get(dimension_id, minimum))
-        for dimension_id in critical_dimensions
+        for dimension_id in effective_critical
     )
-    contradiction_maximum = rules.get("contradictionMaximum")
-    if contradiction_maximum is not None:
-        contradiction_score = valid_scores.get("contradiction")
-        if not isinstance(contradiction_maximum, int) or contradiction_score is None:
-            errors.append("Model Judge rubric contradictionMaximum requires a contradiction dimension")
-            passed = False
-        else:
-            passed = passed and contradiction_score <= contradiction_maximum
     overall = model.get("overall")
     recomputed_verdict = "pass" if passed else "fail"
     recomputed_critical = any(
         valid_scores.get(dimension_id, -1) < int(overrides.get(dimension_id, minimum))
-        for dimension_id in critical_dimensions
+        for dimension_id in effective_critical
     )
     if not isinstance(overall, Mapping):
         errors.append("Model Judge overall must be a mapping")
@@ -1464,19 +1972,18 @@ def _validate_forbidden_skill_reads(
 
 
 def _events_for_reference(value: object, evidence_path: Path) -> list[dict[str, object]] | None:
-    if not isinstance(value, str) or "#" not in value:
-        return None
-    file_name, marker = value.rsplit("#", 1)
-    target = (evidence_path.parent / file_name).resolve()
-    if not target.is_file():
+    try:
+        target, marker = _resolve_evidence_reference(value, evidence_path)
+    except ValueError:
         return None
     return [event for event in _read_json_lines(target) if str(event.get("id")) == marker]
 
 
 def _all_events_for_reference(value: object, evidence_path: Path) -> list[dict[str, object]]:
-    if not isinstance(value, str) or "#" not in value:
+    try:
+        target, _marker = _resolve_evidence_reference(value, evidence_path)
+    except ValueError:
         return []
-    target = (evidence_path.parent / value.rsplit("#", 1)[0]).resolve()
     return _read_json_lines(target)
 
 
@@ -1517,10 +2024,11 @@ def _event_ledger_paths(evidence: Mapping[str, object], evidence_path: Path) -> 
     paths: set[Path] = set()
     evidence_root = evidence_path.parent.resolve()
     for reference in references:
-        if not isinstance(reference, str) or "#" not in reference:
+        try:
+            path, _marker = _resolve_evidence_reference(reference, evidence_path)
+        except ValueError:
             continue
-        path = (evidence_path.parent / reference.rsplit("#", 1)[0]).resolve()
-        if path == evidence_root or evidence_root in path.parents:
+        if evidence_root in path.parents:
             paths.add(path)
     return paths
 
@@ -1632,6 +2140,15 @@ def _validate_catalog_cross_references(
         for scenario in agent.get("scenarios", [])
         if isinstance(scenario, Mapping) and isinstance(scenario.get("id"), str)
     }
+    scenario_owners = {
+        str(scenario["id"]): agent_id
+        for agent_id, agent in agents.items()
+        for scenario in agent.get("scenarios", [])
+        if isinstance(scenario, Mapping) and isinstance(scenario.get("id"), str)
+    }
+    fixture_profiles = _items_by_id(
+        catalogs.get("agent-scenarios.yaml", {}).get("fixtureProfiles")
+    )
 
     for probe_id, probe in probes.items():
         skill = probe.get("skill")
@@ -1675,6 +2192,23 @@ def _validate_catalog_cross_references(
                 source_value = None
             if not isinstance(source_value, Mapping) or source_value.get("name") != agent_id:
                 errors.append(f"agent-scenarios.yaml:{agent_id} source name does not match id")
+            else:
+                if agent.get("repositoryMutation") != source_value.get(
+                    "repositoryMutation"
+                ):
+                    errors.append(
+                        f"agent-scenarios.yaml:{agent_id} repositoryMutation must match its conceptual source"
+                    )
+                source_contract = source_value.get("outputContract")
+                source_fields = [
+                    next(iter(item))
+                    for item in source_contract
+                    if isinstance(item, Mapping) and len(item) == 1
+                ] if isinstance(source_contract, list) else []
+                if agent.get("outputContractFields") != source_fields:
+                    errors.append(
+                        f"agent-scenarios.yaml:{agent_id} outputContractFields must exactly match its conceptual source"
+                    )
         _validate_judge_plan_references(agent_id, agent.get("judgePlan"), checks, rubrics, errors)
         for pack_id in _string_items(agent.get("workflowAssociations")):
             if pack_id not in packs:
@@ -1685,6 +2219,15 @@ def _validate_catalog_cross_references(
                 if not isinstance(scenario, Mapping):
                     continue
                 scenario_id = str(scenario.get("id", "unknown"))
+                if scenario.get("kind") not in {"happy-path", "boundary-failure"}:
+                    errors.append(
+                        f"agent-scenarios.yaml:{scenario_id} kind must be happy-path or boundary-failure"
+                    )
+                fixture_profile = scenario.get("fixtureProfile")
+                if not isinstance(fixture_profile, str) or fixture_profile not in fixture_profiles:
+                    errors.append(
+                        f"agent-scenarios.yaml:{scenario_id} references missing fixtureProfile: {fixture_profile}"
+                    )
                 _validate_coverage_link(scenario_id, scenario, "agent-scenarios.yaml", errors)
                 _validate_judge_plan_references(
                     scenario_id, scenario.get("judgePlan"), checks, rubrics, errors,
@@ -1708,6 +2251,18 @@ def _validate_catalog_cross_references(
             for reference in _string_items(case.get(field)):
                 if reference not in known:
                     errors.append(f"cases.yaml:{case_id} {field} references missing id: {reference}")
+        linked_scenarios = _string_items(case.get("agentScenarios"))
+        if linked_scenarios:
+            expected_agents = {
+                scenario_owners[scenario_id]
+                for scenario_id in linked_scenarios
+                if scenario_id in scenario_owners
+            }
+            required_agents = set(_string_items(case.get("requiredAgents")))
+            if required_agents != expected_agents:
+                errors.append(
+                    f"cases.yaml:{case_id} requiredAgents must exactly match linked scenario owners"
+                )
         workflow_pack = case.get("workflowPack")
         if workflow_pack is not None and workflow_pack not in packs:
             errors.append(f"cases.yaml:{case_id} workflowPack references missing id: {workflow_pack}")
@@ -1899,6 +2454,16 @@ def _relative_path_is_allowed(path: str, roots: set[str]) -> bool:
     return any(candidate == Path(root) or Path(root) in candidate.parents for root in roots)
 
 
+def _relative_paths_overlap(first: str, second: str) -> bool:
+    first_path = PurePosixPath(first)
+    second_path = PurePosixPath(second)
+    return (
+        first_path == second_path
+        or first_path in second_path.parents
+        or second_path in first_path.parents
+    )
+
+
 def _unconditional_agent_skills(agent_catalog_entry: Mapping[str, object]) -> set[str]:
     source = agent_catalog_entry.get("source")
     if not isinstance(source, str):
@@ -1954,6 +2519,40 @@ def _containment_levels() -> set[str]:
 def _require_non_empty_string(value: object, field: str, errors: list[str]) -> None:
     if not isinstance(value, str) or not value.strip():
         errors.append(f"evidence missing non-empty {field}")
+
+
+def _validate_case_project_path(value: object, errors: list[str]) -> None:
+    """Require fixture sources to stay beneath the repository eval project root."""
+
+    if not isinstance(value, str) or not value:
+        return
+    path = PurePosixPath(value)
+    if (
+        path.is_absolute()
+        or path.as_posix() != value
+        or len(path.parts) < 3
+        or path.parts[:2] != ("evals", "projects")
+        or any(part in {"", ".", ".."} for part in path.parts)
+    ):
+        errors.append(
+            "case.project must be a normalized relative path beneath evals/projects"
+        )
+
+
+def _validate_case_relative_path(
+    value: object, field: str, errors: list[str]
+) -> None:
+    """Reject absolute, parent-traversing, or non-normalized case-owned paths."""
+
+    if not isinstance(value, str) or not value:
+        return
+    path = PurePosixPath(value)
+    if (
+        path.is_absolute()
+        or path.as_posix() != value
+        or any(part in {"", ".", ".."} for part in path.parts)
+    ):
+        errors.append(f"{field} must be a normalized relative path inside the fixture")
 
 
 def _require_digest(value: object, field: str, errors: list[str]) -> None:

@@ -18,6 +18,7 @@ from .commands import CommandSpec
 
 
 SUPPORTED_HARNESSES = frozenset({"codex", "junie"})
+CODEX_OUTPUT_SCHEMA_SHA256 = "36bd63a02034627ab2798a424f8915bf288265846af6e2aad5f7ec18e424c8fc"
 
 
 @dataclass(frozen=True)
@@ -49,6 +50,7 @@ def build_harness_command(
     *,
     read_only: bool,
     event_output: Path,
+    evidence_root: Path,
     isolated_config_root: Path | None = None,
     output_schema: Path | None = None,
     last_message_output: Path | None = None,
@@ -68,7 +70,23 @@ def build_harness_command(
     if harness not in SUPPORTED_HARNESSES:
         raise ValueError(f"supported harness values are codex and junie, not {harness}")
     workspace = workspace.resolve()
-    event_output = event_output.resolve()
+    if evidence_root.is_symlink():
+        raise ValueError("runner-owned evidence root must be an existing non-symlink directory")
+    evidence_root = evidence_root.resolve()
+    if not evidence_root.is_dir():
+        raise ValueError("runner-owned evidence root must be an existing non-symlink directory")
+    if (
+        evidence_root == workspace
+        or workspace in evidence_root.parents
+        or evidence_root in workspace.parents
+    ):
+        raise ValueError("runner-owned evidence root must be disjoint from the product workspace")
+    event_output = _runner_owned_output_path(
+        event_output,
+        evidence_root,
+        workspace,
+        "harness event output",
+    )
     if isolated_config_root is None:
         raise ValueError("isolated_config_root is required to prevent user-home agent and skill contamination")
     isolated_config_root = isolated_config_root.resolve()
@@ -98,11 +116,15 @@ def build_harness_command(
             "--json",
         ]
         if output_schema is not None:
-            argv.extend(["--output-schema", str(output_schema.resolve())])
+            resolved_schema = validate_codex_output_schema(output_schema, workspace)
+            argv.extend(["--output-schema", str(resolved_schema)])
         if last_message_output is not None:
-            resolved_output = last_message_output.resolve()
-            if resolved_output == workspace or workspace in resolved_output.parents:
-                raise ValueError("Codex last-message output must be outside the product workspace")
+            resolved_output = _runner_owned_output_path(
+                last_message_output,
+                evidence_root,
+                workspace,
+                "Codex last-message output",
+            )
             argv.extend(["--output-last-message", str(resolved_output)])
         argv.append(_delegation_prompt(agent_id, prompt))
         return CommandSpec(
@@ -113,11 +135,19 @@ def build_harness_command(
         )
 
     if cache_dir is not None:
-        resolved_cache = cache_dir.resolve()
-        if resolved_cache == workspace or workspace in resolved_cache.parents:
-            raise ValueError("Junie cache_dir must be outside the disposable workspace")
+        resolved_cache = _runner_owned_output_path(
+            cache_dir,
+            evidence_root,
+            workspace,
+            "Junie cache_dir",
+        )
     else:
-        resolved_cache = event_output.parent / ".junie-cache"
+        resolved_cache = _runner_owned_output_path(
+            evidence_root / ".junie-cache",
+            evidence_root,
+            workspace,
+            "Junie cache_dir",
+        )
     if not skill_locations or not agent_locations:
         raise ValueError("Junie requires explicit isolated skill and agent locations")
     for location in [*skill_locations, *agent_locations]:
@@ -149,6 +179,51 @@ def build_harness_command(
         inherit_environment=False,
         host_environment_allowlist=("PATH", *approved_environment),
     )
+
+
+def validate_codex_output_schema(path: Path, workspace: Path | None = None) -> Path:
+    """Accept only the governed JSON Schema bytes used by Codex evaluations."""
+
+    if path.is_symlink():
+        raise ValueError("output schema must be the canonical evaluator-owned Codex JSON Schema")
+    resolved = path.resolve()
+    if not resolved.is_file() or resolved.suffix != ".json":
+        raise ValueError("output schema must be the canonical evaluator-owned Codex JSON Schema")
+    if workspace is not None:
+        resolved_workspace = workspace.resolve()
+        if resolved == resolved_workspace or resolved_workspace in resolved.parents:
+            raise ValueError("output schema must be the canonical evaluator-owned Codex JSON Schema")
+    try:
+        value = json.loads(resolved.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as error:
+        raise ValueError("output schema must be valid evaluator-owned JSON Schema") from error
+    if (
+        not isinstance(value, Mapping)
+        or value.get("$schema") != "https://json-schema.org/draft/2020-12/schema"
+        or value.get("type") != "object"
+        or hashlib.sha256(resolved.read_bytes()).hexdigest()
+        != CODEX_OUTPUT_SCHEMA_SHA256
+    ):
+        raise ValueError("output schema must be the canonical evaluator-owned Codex JSON Schema")
+    return resolved
+
+
+def _runner_owned_output_path(
+    path: Path,
+    evidence_root: Path,
+    workspace: Path,
+    label: str,
+) -> Path:
+    """Resolve one output path beneath the disjoint runner-owned evidence root."""
+
+    if path.is_symlink():
+        raise ValueError(f"{label} must not be a symlink")
+    resolved = path.resolve()
+    if resolved == evidence_root or evidence_root not in resolved.parents:
+        raise ValueError(f"{label} must stay beneath the runner-owned evidence root")
+    if resolved == workspace or workspace in resolved.parents:
+        raise ValueError(f"{label} must be outside the product workspace")
+    return resolved
 
 
 def normalize_harness_events(harness: str, lines: Iterable[str]) -> list[dict[str, object]]:

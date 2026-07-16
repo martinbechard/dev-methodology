@@ -10,9 +10,9 @@ This page is generated from the live conceptual agent and skill inventories, all
 - For skills, a positive case alone does not prove activation precision or causal skill contribution. Full probe coverage additionally requires a negative-activation case and executable target-present, target-omitted, and wrong-skill controls over frozen input.
 - Executable fixture means every case required for the corresponding full coverage claim has a project, task, and verification command.
 - A workflow pack may have partial case coverage without having an end-to-end fixture for every declared phase, agent, and handoff.
-- Judge calibration is calibrated only for a Model Judge rubric with a matching calibration record and passing metrics. Deterministic-Judge-only declarations show not-required.
-- Executed requires a structurally valid receipt classified by the evaluation runner.
-- Verified requires the runner's complete receipt validation, current digests, isolation evidence, required Judge verdicts, and attribution evidence.
+- Model Judge calibration promotion is disabled pending per-sample provenance. Diagnostic records cannot create calibrated status; Deterministic-Judge-only declarations show not-required.
+- Executed means a version-two receipt has a structurally complete capture with digest-bound harness invocation, event ledger, and selected agent-start evidence; it does not imply a trusted producer.
+- Verified additionally requires a governed external verifier trust anchor over the receipt, current digests, complete workspace diff, isolation evidence, required Judge verdicts, command evidence, and attribution evidence. That verifier is not implemented yet.
 - Stale-by-digest means a prior execution no longer verifies against current agent, skill, model, or Judge calibration digests.
 - Catalog coverageStatus values never create executed or verified status.
 
@@ -23,7 +23,7 @@ This page is generated from the live conceptual agent and skill inventories, all
 - [x] 52 agent scenarios and 5 workflow packs are declared.
 - 5 workflow packs have associated cases; 5 are partial and 0 have end-to-end fixture coverage.
 - 7 cases are fixture-backed and 7 fixtures are structurally executable before harness readiness is considered.
-- 7 cases are runnable through the Codex fast path; 0 are runnable through Junie without an external-runner prerequisite.
+- 7 cases can capture a Codex harness run through the native fast path; 0 can run through Junie without an external-runner prerequisite. Every post-run verification command still requires trusted external containment.
 - 6 agents have at least one case-backed scenario; 6 are partial and 0 have all declared scenarios backed.
 - 17 skills have positive-case support, 0 have negative-activation cases, 0 have executable paired controls, and 0 satisfy the full probe contract.
 - 0 agents and 0 skills have executable full fixtures.
@@ -37,7 +37,7 @@ This page is generated from the live conceptual agent and skill inventories, all
 
 ## Evaluation Harness And Sandbox Support
 
-Evaluation execution support is limited to Codex and Junie. A declared sandbox profile reports its actual containment status; workspace isolation and tool configuration do not imply external containment.
+Evaluation execution support is limited to Codex and Junie. A declared sandbox profile reports its actual containment status; workspace isolation and tool configuration do not imply external containment. The host runner audits dependency and build trees, records declared ephemeral build output separately from product changes, never executes model-modified verification code, and cannot promote current receipts without the unimplemented governed external verifier.
 
 | Harness | Profile | Implementation | Workspace isolation | Containment status |
 | --- | --- | --- | --- | --- |
@@ -242,7 +242,7 @@ Evaluation execution support is limited to Codex and Junie. A declared sandbox p
 - Calibration policy status: pending.
 - Calibrated Model Judge rubrics: none.
 - Pending Model Judge rubrics: artifact-contract, diagnosis-quality, review-quality, security-quality, source-faithfulness, ux-quality, workflow-quality.
-- Pending Model Judge calibration leaves only Model-Judge-dependent evidence unverified; deterministic-Judge-only cases may still verify.
+- Pending Model Judge calibration blocks Model-Judge-dependent evidence. Deterministic-Judge-only cases avoid that calibration gate but remain unverified until governed external post-run verification is implemented.
 
 ## Repository Verification Layers
 

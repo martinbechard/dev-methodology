@@ -22,6 +22,8 @@ caseDefaults:
   transientTreePolicy: inherit-sandbox-profile
   stagedSkillResourcePolicy: inherit-skill-probes-catalog
   digestPolicy: sha256-source-and-effective-at-run
+  ephemeralWritePaths: []
+  postRunVerificationStatus: external-runner-required
 cases:
   - id: typescript-order-pricing
     coverageStatus: fixture-backed
@@ -29,10 +31,12 @@ cases:
     project: evals/projects/typescript-order-pricing
     task: TASK.md
     allowedWritePaths: [src, test, eval-result.md]
+    ephemeralWritePaths: [dist]
     install: npm install
     verify: npm test
     harnesses: [codex, junie]
     harnessExecutionStatus: {codex: runnable, junie: external-runner-required}
+    postRunVerificationStatus: external-runner-required
     requiredAgents:
       - dev-coder
     agentScenarios:
@@ -102,10 +106,12 @@ cases:
     project: evals/projects/spring-boot-order-cancellation
     task: TASK.md
     allowedWritePaths: [src, eval-result.md]
+    ephemeralWritePaths: [target]
     install: mvn -q -DskipTests package
     verify: mvn -q test
     harnesses: [codex, junie]
     harnessExecutionStatus: {codex: runnable, junie: external-runner-required}
+    postRunVerificationStatus: external-runner-required
     requiredAgents:
       - dev-coder
     agentScenarios:
@@ -181,8 +187,10 @@ cases:
     readOnly: true
     resultDestination: external-evidence
     allowedWritePaths: []
+    ephemeralWritePaths: [dist]
     harnesses: [codex, junie]
     harnessExecutionStatus: {codex: runnable, junie: external-runner-required}
+    postRunVerificationStatus: external-runner-required
     requiredAgents:
       - dev-code-reviewer
     agentScenarios:
@@ -244,6 +252,7 @@ cases:
     project: evals/projects/documentation-functional-spec
     task: TASK.md
     allowedWritePaths: [docs/functional-specifications, eval-result.md]
+    ephemeralWritePaths: []
     install: null
     verify:
       argv:
@@ -257,6 +266,7 @@ cases:
       modelVisible: false
     harnesses: [codex, junie]
     harnessExecutionStatus: {codex: runnable, junie: external-runner-required}
+    postRunVerificationStatus: external-runner-required
     requiredAgents: [dev-documentation-writer]
     agentScenarios: [dev-documentation-writer-happy]
     requiredSkills: [development-methodology, create-functional-spec, review-functional-spec, agent-claim]
@@ -287,6 +297,7 @@ cases:
     project: evals/projects/project-configuration-routing
     task: TASK.md
     allowedWritePaths: [PROJECT.yaml, AGENTS.md, services/api/AGENTS.md, apps/web/AGENTS.md, automation/AGENTS.md, eval-result.md]
+    ephemeralWritePaths: []
     install: null
     verify:
       argv:
@@ -302,6 +313,7 @@ cases:
       modelVisible: false
     harnesses: [codex, junie]
     harnessExecutionStatus: {codex: runnable, junie: external-runner-required}
+    postRunVerificationStatus: external-runner-required
     requiredAgents: [project-configurator]
     agentScenarios: [project-configurator-happy]
     requiredSkills: [create-project-configuration, detect-technology-skills, development-methodology, documentation-page-verify, organise-project-files, agent-claim]
@@ -334,6 +346,7 @@ cases:
     project: evals/projects/wiki-raw-ingest
     task: TASK.md
     allowedWritePaths: [docs/wiki, raw, eval-result.md]
+    ephemeralWritePaths: []
     install: null
     verify:
       argv:
@@ -349,6 +362,7 @@ cases:
       modelVisible: false
     harnesses: [codex, junie]
     harnessExecutionStatus: {codex: runnable, junie: external-runner-required}
+    postRunVerificationStatus: external-runner-required
     requiredAgents: [wiki-ingester]
     agentScenarios: [wiki-ingester-happy]
     requiredSkills: [project-wiki, project-wiki-topic-write, project-wiki-topic-verify, organise-project-files, agent-claim]
@@ -392,6 +406,7 @@ cases:
     project: evals/projects/backlog-lifecycle
     task: TASK.md
     allowedWritePaths: [backlog-status.md, eval-result.md]
+    ephemeralWritePaths: []
     install: null
     verify:
       argv:
@@ -408,6 +423,7 @@ cases:
       modelVisible: false
     harnesses: [codex, junie]
     harnessExecutionStatus: {codex: runnable, junie: external-runner-required}
+    postRunVerificationStatus: external-runner-required
     requiredAgents: [dev-backlog-steward]
     agentScenarios: [dev-backlog-steward-boundary]
     requiredSkills: [manage-backlog, agent-claim, structured-explanation]

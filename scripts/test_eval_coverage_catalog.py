@@ -4,15 +4,15 @@
 
 from __future__ import annotations
 
-import hashlib
 import importlib.util
-import json
 import tempfile
 import unittest
 from pathlib import Path
 from types import ModuleType
 
 import yaml
+
+from scripts import agent_skill_judge_contract as judge_contract
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -21,6 +21,8 @@ SCRIPT_PATH = ROOT / "scripts" / "build-support-checklist.py"
 
 class CanonicalCalibrationValidator:
     """Accept only records whose governed fields match their canonical inputs."""
+
+    canonical_judge_identity = staticmethod(judge_contract.canonical_judge_identity)
 
     @staticmethod
     def validate_calibration_record(
@@ -80,20 +82,14 @@ class EvalCoverageCatalogTests(unittest.TestCase):
         self, rubric: dict[str, object], *, accepted: bool = True
     ) -> dict[str, object]:
         """Build a digest-bound record for the fake canonical validator."""
+        identity = judge_contract.canonical_judge_identity(rubric)
         return {
             "rubricId": rubric["id"],
             "status": "accepted",
-            "judgePromptSha256": "prompt-digest",
+            **identity,
+            "harness": "codex",
             "judgeModelIdentity": "judge-model",
             "reasoningProfile": "fixed-reasoning",
-            "rubricSha256": hashlib.sha256(
-                json.dumps(
-                    rubric,
-                    sort_keys=True,
-                    separators=(",", ":"),
-                    ensure_ascii=True,
-                ).encode("utf-8")
-            ).hexdigest(),
             "calibrationSetSha256": "calibration-set-digest",
             "acceptedByCanonicalValidator": accepted,
         }
@@ -132,6 +128,7 @@ class EvalCoverageCatalogTests(unittest.TestCase):
                             "codex": "runnable",
                             "junie": "external-runner-required",
                         },
+                        "postRunVerificationStatus": "external-runner-required",
                         "requiredSkills": list(probe_skills),
                         "agentScenarios": (
                             [executable_scenario] if executable_scenario else []
@@ -306,20 +303,32 @@ class EvalCoverageCatalogTests(unittest.TestCase):
                 "rubrics": [
                     {
                         "id": "rubric-a",
+                        "type": "model",
                         "dimensions": ["completeness"],
-                        "scale": [0, 1],
+                        "scale": "0-to-4-per-dimension",
+                        "passRules": {
+                            "noAggregateCompensation": True,
+                            "minimumDimensionScore": 3,
+                        },
                     }
                 ],
                 "calibrationPolicy": {
                     "requiredBeforeVerifiedEvidence": True,
                     "status": calibration_status,
+                    "promotionStatus": "disabled-pending-provenance",
                     "missingOrPendingResult": "unverified",
                     "humanScoredSet": {
                         "pilotMinimumExamples": 20,
                         "minimumExamples": 25,
                         "minimumExamplesPerClass": 5,
                         "minimumCriticalDefects": 5,
-                        "requiredClasses": ["clear-pass", "clear-fail"],
+                        "requiredClasses": [
+                            "clear-pass",
+                            "clear-fail",
+                            "boundary",
+                            "incomplete-plausible",
+                            "adversarially-polished",
+                        ],
                         "ambiguousExamples": {
                             "independentHumanJudges": 2,
                             "adjudicationRequired": True,
@@ -338,6 +347,9 @@ class EvalCoverageCatalogTests(unittest.TestCase):
                     "recordedDigests": {
                         "required": [
                             "judgePromptSha256",
+                            "judgeOutputSchemaSha256",
+                            "instructionEnvelopeSha256",
+                            "harness",
                             "judgeModelIdentity",
                             "reasoningProfile",
                             "rubricSha256",
@@ -549,9 +561,9 @@ class EvalCoverageCatalogTests(unittest.TestCase):
         ):
             self.coverage()
 
-    def test_canonical_calibration_record_promotes_its_rubric(self) -> None:
-        """A canonical validator, not catalog metrics, controls calibration status."""
-        self.catalogs(calibration_status="calibrated")
+    def test_diagnostic_calibration_record_cannot_promote_without_provenance(self) -> None:
+        """Metric-valid self-reported labels remain diagnostic until provenance is implemented."""
+        self.catalogs(calibration_status="pending")
         judges = self.read_yaml("evals/judges.yaml")
         rubric = judges["rubrics"][0]
         judges["calibrationPolicy"]["records"] = [
@@ -561,9 +573,9 @@ class EvalCoverageCatalogTests(unittest.TestCase):
 
         snapshot = self.coverage(runner=CanonicalCalibrationValidator)
 
-        self.assertEqual("calibrated", snapshot["judgeStatus"]["calibrationStatus"])
-        self.assertEqual(["rubric-a"], snapshot["judgeStatus"]["calibratedRubrics"])
-        self.assertEqual([], snapshot["judgeStatus"]["pendingRubrics"])
+        self.assertEqual("pending", snapshot["judgeStatus"]["calibrationStatus"])
+        self.assertEqual([], snapshot["judgeStatus"]["calibratedRubrics"])
+        self.assertEqual(["rubric-a"], snapshot["judgeStatus"]["pendingRubrics"])
 
     def test_fabricated_calibration_record_cannot_promote_a_rubric(self) -> None:
         """Matching status and digest-shaped text do not bypass canonical validation."""
@@ -581,13 +593,38 @@ class EvalCoverageCatalogTests(unittest.TestCase):
         ):
             self.coverage(runner=CanonicalCalibrationValidator)
 
-    def test_partial_calibration_loads_only_valid_per_rubric_records(self) -> None:
-        """One accepted rubric leaves other Model Judge rubrics explicitly pending."""
-        self.catalogs(calibration_status="partial")
+    def test_stale_canonical_judge_prompt_cannot_promote_a_rubric(self) -> None:
+        """Calibration is invalidated when its governed Judge prompt digest drifts."""
+        self.catalogs(calibration_status="calibrated")
+        judges = self.read_yaml("evals/judges.yaml")
+        rubric = judges["rubrics"][0]
+        record = self.calibration_record(rubric)
+        record["judgePromptSha256"] = "0" * 64
+        judges["calibrationPolicy"]["records"] = [record]
+        self.write_yaml("evals/judges.yaml", judges)
+
+        with self.assertRaisesRegex(
+            ValueError,
+            r"calibrationPolicy status does not match canonical records: declared calibrated, derived pending",
+        ):
+            self.coverage(runner=CanonicalCalibrationValidator)
+
+    def test_disabled_promotion_keeps_every_rubric_pending(self) -> None:
+        """A diagnostic record cannot calibrate any harness, model, or reasoning route."""
+        self.catalogs(calibration_status="pending")
         judges = self.read_yaml("evals/judges.yaml")
         first_rubric = judges["rubrics"][0]
         judges["rubrics"].append(
-            {"id": "rubric-b", "dimensions": ["correctness"], "scale": [0, 1]}
+            {
+                "id": "rubric-b",
+                "type": "model",
+                "dimensions": ["correctness"],
+                "scale": "0-to-4-per-dimension",
+                "passRules": {
+                    "noAggregateCompensation": True,
+                    "minimumDimensionScore": 3,
+                },
+            }
         )
         judges["calibrationPolicy"]["records"] = [
             self.calibration_record(first_rubric)
@@ -596,9 +633,12 @@ class EvalCoverageCatalogTests(unittest.TestCase):
 
         snapshot = self.coverage(runner=CanonicalCalibrationValidator)
 
-        self.assertEqual("partial", snapshot["judgeStatus"]["calibrationStatus"])
-        self.assertEqual(["rubric-a"], snapshot["judgeStatus"]["calibratedRubrics"])
-        self.assertEqual(["rubric-b"], snapshot["judgeStatus"]["pendingRubrics"])
+        self.assertEqual("pending", snapshot["judgeStatus"]["calibrationStatus"])
+        self.assertEqual([], snapshot["judgeStatus"]["calibratedRubrics"])
+        self.assertEqual(
+            ["rubric-a", "rubric-b"],
+            snapshot["judgeStatus"]["pendingRubrics"],
+        )
 
     def test_partial_agent_case_coverage_is_not_full_fixture_coverage(self) -> None:
         """Backing one of two scenarios cannot promote the whole agent."""

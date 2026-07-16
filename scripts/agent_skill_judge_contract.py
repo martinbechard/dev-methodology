@@ -96,6 +96,29 @@ class _RubricRules:
     minimum_scores: Mapping[str, int]
 
 
+def canonical_judge_identity(rubric: Mapping[str, object]) -> dict[str, str]:
+    """Return the governed prompt, schema, rubric, and instruction digests.
+
+    Args:
+        rubric: Trusted Model Judge rubric governed by this contract version.
+
+    Returns:
+        Digest fields that calibration records and evaluation receipts must
+        match before a Model Judge result can be accepted.
+
+    Raises:
+        JudgeContractError: If the rubric or governed artifacts are invalid.
+    """
+
+    instruction = _instruction_envelope(rubric)
+    return {
+        "judgePromptSha256": str(instruction["judgePromptSha256"]),
+        "judgeOutputSchemaSha256": str(instruction["judgeOutputSchemaSha256"]),
+        "rubricSha256": str(instruction["rubricSha256"]),
+        "instructionEnvelopeSha256": _sha256(canonical_json_bytes(instruction)),
+    }
+
+
 def canonical_json_bytes(value: object) -> bytes:
     """Encode a JSON-compatible value into deterministic UTF-8 bytes.
 
@@ -127,6 +150,7 @@ def canonical_json_bytes(value: object) -> bytes:
 def build_judge_request(
     *,
     case_id: str,
+    run_id: str,
     harness: str,
     rubric: Mapping[str, object],
     candidate_output: str,
@@ -136,6 +160,8 @@ def build_judge_request(
 
     Args:
         case_id: Stable lowercase evaluation case identifier.
+        run_id: Stable lowercase evaluated-run identifier. This prevents a
+            canonical request from being replayed against another run.
         harness: Either codex or junie. Other harnesses are outside the current
             contract and are rejected.
         rubric: Trusted Model Judge rubric with a fixed 0 through 4 scale and
@@ -153,6 +179,7 @@ def build_judge_request(
     """
 
     _require_identifier(case_id, "case id")
+    _require_identifier(run_id, "run id")
     _require_harness(harness)
     if not isinstance(candidate_output, str):
         raise JudgeContractError("candidate output must be UTF-8 text")
@@ -178,6 +205,7 @@ def build_judge_request(
         "version": 1,
         "contractVersion": CONTRACT_VERSION,
         "caseId": case_id,
+        "runId": run_id,
         "harness": harness,
         "rubricId": str(rubric["id"]),
         "rubricSha256": _sha256(canonical_json_bytes(rubric)),
@@ -395,17 +423,17 @@ def build_calibration_binding(
         raise JudgeContractError("calibration set must be a non-empty sequence")
     model_identity = _require_non_empty_text(judge_model_identity, "Judge model identity")
     reasoning = _require_non_empty_text(reasoning_profile, "reasoning profile")
-    instruction = _instruction_envelope(rubric)
+    identity = canonical_judge_identity(rubric)
     value = {
         "schema": "dev-methodology-model-judge-calibration-binding",
         "version": 1,
         "contractVersion": CONTRACT_VERSION,
         "harness": harness,
         "rubricId": rubric["id"],
-        "judgePromptSha256": instruction["judgePromptSha256"],
-        "judgeOutputSchemaSha256": instruction["judgeOutputSchemaSha256"],
-        "rubricSha256": instruction["rubricSha256"],
-        "instructionEnvelopeSha256": _sha256(canonical_json_bytes(instruction)),
+        "judgePromptSha256": identity["judgePromptSha256"],
+        "judgeOutputSchemaSha256": identity["judgeOutputSchemaSha256"],
+        "rubricSha256": identity["rubricSha256"],
+        "instructionEnvelopeSha256": identity["instructionEnvelopeSha256"],
         "calibrationSetSha256": _sha256(canonical_json_bytes(list(calibration_set))),
         "judgeModelIdentity": model_identity,
         "reasoningProfile": reasoning,
@@ -438,6 +466,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             evidence = _read_evidence_assignments(args.evidence)
             request = build_judge_request(
                 case_id=args.case_id,
+                run_id=args.run_id,
                 harness=args.harness,
                 rubric=rubric,
                 candidate_output=args.candidate_output.read_text(encoding="utf-8"),
@@ -496,6 +525,7 @@ def _argument_parser() -> argparse.ArgumentParser:
     build = subparsers.add_parser("build", help="Build trusted instructions and an untrusted manifest.")
     _add_rubric_arguments(build)
     build.add_argument("--case-id", required=True)
+    build.add_argument("--run-id", required=True)
     build.add_argument("--harness", required=True, choices=sorted(SUPPORTED_HARNESSES))
     build.add_argument("--candidate-output", required=True, type=Path)
     build.add_argument(
@@ -621,6 +651,7 @@ def _validate_input_manifest(
         "version",
         "contractVersion",
         "caseId",
+        "runId",
         "harness",
         "rubricId",
         "rubricSha256",
@@ -638,6 +669,10 @@ def _validate_input_manifest(
     if not isinstance(case_id, str):
         raise JudgeContractError("Judge input manifest caseId must be text")
     _require_identifier(case_id, "case id")
+    run_id = manifest.get("runId")
+    if not isinstance(run_id, str):
+        raise JudgeContractError("Judge input manifest runId must be text")
+    _require_identifier(run_id, "run id")
     harness = manifest.get("harness")
     if not isinstance(harness, str):
         raise JudgeContractError("Judge input manifest harness must be text")

@@ -21,6 +21,8 @@ from unittest import mock
 
 import yaml
 
+from scripts import agent_skill_judge_contract as judge_contract
+
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT_PATH = ROOT / "scripts" / "run-agent-skill-evals.py"
@@ -170,6 +172,28 @@ class AgentSkillEvidenceTests(unittest.TestCase):
         receipt["agent"]["invocationEvidence"] = "missing.jsonl#invocation"
         errors = self.validate(receipt)
         self.assertTrue(any("reference target is missing" in error for error in errors))
+
+    def test_escaped_reference_is_rejected_before_any_artifact_read(self) -> None:
+        validation_module = sys.modules[self.module.validate_evidence.__module__]
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            receipt_root = base / "receipt"
+            receipt_root.mkdir()
+            outside = base / "outside.jsonl"
+            outside.write_text(
+                json.dumps({"id": "invocation", "type": "invocation"}) + "\n",
+                encoding="utf-8",
+            )
+            evidence_path = receipt_root / "evidence.yaml"
+            evidence_path.write_text("receipt\n", encoding="utf-8")
+            reference = "../outside.jsonl#invocation"
+            errors: list[str] = []
+            self.module.validate_reference(reference, "test", evidence_path, errors)
+            events = validation_module._events_for_reference(reference, evidence_path)
+            all_events = validation_module._all_events_for_reference(reference, evidence_path)
+        self.assertTrue(any("escapes" in error for error in errors))
+        self.assertIsNone(events)
+        self.assertEqual([], all_events)
 
     def test_plain_marker_is_not_accepted_as_a_harness_event(self) -> None:
         receipt = self.receipt()
@@ -370,6 +394,7 @@ class PreparedWorkspaceTests(unittest.TestCase):
             prepared = manager.prepare(fixture, {"runtime": "test"}, ["prepare", "fixture"])
             same = manager.prepare(fixture, {"runtime": "test"}, ["prepare", "fixture"])
             self.assertEqual(prepared.key, same.key)
+            self.assertEqual(64, len(prepared.prepared_snapshot_digest))
             self.assertEqual(1, len(calls))
             with manager.workspace(prepared) as first:
                 self.assertTrue((first.path / "source.txt").is_file())
@@ -392,6 +417,80 @@ class PreparedWorkspaceTests(unittest.TestCase):
             rebuilt = manager.prepare(fixture, {"runtime": "1"})
             self.assertFalse(rebuilt.cache_hit)
             self.assertEqual("trusted\n", (rebuilt.path / "source.txt").read_text(encoding="utf-8"))
+
+    def test_full_integrity_mode_rebuilds_a_tampered_prepared_dependency(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            fixture = root / "fixture"
+            fixture.mkdir()
+            (fixture / "source.txt").write_text("trusted\n", encoding="utf-8")
+            calls = 0
+
+            def install(command: object, cwd: Path) -> object:
+                nonlocal calls
+                calls += 1
+                dependency = cwd / "node_modules" / "dependency.txt"
+                dependency.parent.mkdir(parents=True, exist_ok=True)
+                dependency.write_text("trusted dependency\n", encoding="utf-8")
+                return self.module.CommandResult(tuple(command.argv), 0, "", "")
+
+            manager = self.module.PreparedWorkspaceManager(
+                root / "cache",
+                root / "runs",
+                command_runner=install,
+                integrity_mode="full",
+            )
+            prepared = manager.prepare(fixture, {"runtime": "1"}, ["install"])
+            (prepared.path / "node_modules" / "dependency.txt").write_text(
+                "tampered dependency\n", encoding="utf-8"
+            )
+            rebuilt = manager.prepare(fixture, {"runtime": "1"}, ["install"])
+            self.assertFalse(rebuilt.cache_hit)
+            self.assertEqual(2, calls)
+            self.assertEqual(
+                "trusted dependency\n",
+                (rebuilt.path / "node_modules" / "dependency.txt").read_text(
+                    encoding="utf-8"
+                ),
+            )
+
+    def test_preparation_may_not_mutate_fixture_source_identity(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            fixture = root / "fixture"
+            fixture.mkdir()
+            (fixture / "source.txt").write_text("trusted\n", encoding="utf-8")
+
+            def mutate_source(command: object, cwd: Path) -> object:
+                (cwd / "source.txt").write_text("changed during install\n", encoding="utf-8")
+                return self.module.CommandResult(tuple(command.argv), 0, "", "")
+
+            manager = self.module.PreparedWorkspaceManager(
+                root / "cache", root / "runs", command_runner=mutate_source
+            )
+            with self.assertRaisesRegex(RuntimeError, "changed fixture source identity"):
+                manager.prepare(fixture, {"runtime": "1"}, ["install"])
+
+    def test_live_cache_requirement_never_runs_a_missing_install(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            fixture = root / "fixture"
+            fixture.mkdir()
+            (fixture / "source.txt").write_text("trusted\n", encoding="utf-8")
+
+            def must_not_run(command: object, cwd: Path) -> object:
+                raise AssertionError("install command executed")
+
+            manager = self.module.PreparedWorkspaceManager(
+                root / "cache", root / "runs", command_runner=must_not_run
+            )
+            with self.assertRaisesRegex(RuntimeError, "trusted prepared fixture"):
+                manager.prepare(
+                    fixture,
+                    {"runtime": "1"},
+                    ["install"],
+                    allow_create=False,
+                )
 
     def test_old_live_lock_is_not_stolen_and_dead_stale_lock_is_reclaimed(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -490,6 +589,78 @@ class PreparedWorkspaceTests(unittest.TestCase):
         self.assertEqual("violated", audit.status)
         self.assertEqual(("source.txt",), audit.changed_paths)
 
+    def test_product_audit_includes_dependency_and_build_trees(self) -> None:
+        """A model cannot hide workspace mutation under dependency or build directories."""
+
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "node_modules" / "tool").mkdir(parents=True)
+            (root / "node_modules" / "tool" / "index.js").write_text(
+                "before\n", encoding="utf-8"
+            )
+            (root / "dist").mkdir()
+            (root / "dist" / "bundle.js").write_text("before\n", encoding="utf-8")
+            before = self.module.snapshot_product_tree(root)
+            (root / "node_modules" / "tool" / "index.js").write_text(
+                "after\n", encoding="utf-8"
+            )
+            (root / "dist" / "bundle.js").write_text("after\n", encoding="utf-8")
+            audit = self.module.audit_functional_isolation(
+                before,
+                self.module.snapshot_product_tree(root),
+                read_only=False,
+                allowed_write_paths=["src"],
+                ephemeral_write_paths=["dist"],
+            )
+        self.assertEqual("violated", audit.status)
+        self.assertEqual(
+            ("node_modules/tool/index.js",),
+            audit.changed_paths,
+        )
+        self.assertEqual(("dist/bundle.js",), audit.ephemeral_changed_paths)
+
+    def test_declared_build_output_is_recorded_without_becoming_product_mutation(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "src").mkdir()
+            (root / "src" / "index.ts").write_text("source\n", encoding="utf-8")
+            before = self.module.snapshot_product_tree(root)
+            (root / "dist").mkdir()
+            (root / "dist" / "index.js").write_text("compiled\n", encoding="utf-8")
+            audit = self.module.audit_functional_isolation(
+                before,
+                self.module.snapshot_product_tree(root),
+                read_only=True,
+                ephemeral_write_paths=["dist"],
+            )
+        self.assertEqual("verified", audit.status)
+        self.assertEqual((), audit.changed_paths)
+        self.assertEqual(("dist", "dist/index.js"), audit.ephemeral_changed_paths)
+        self.assertEqual(audit.before_digest, audit.after_digest)
+        self.assertNotEqual(audit.workspace_before_digest, audit.workspace_after_digest)
+
+    def test_ephemeral_ancestor_never_masks_nested_dependency_mutation(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            tool = root / "packages" / "app" / "node_modules" / "tool.js"
+            tool.parent.mkdir(parents=True)
+            tool.write_text("before\n", encoding="utf-8")
+            before = self.module.snapshot_product_tree(root)
+            tool.write_text("after\n", encoding="utf-8")
+            audit = self.module.audit_functional_isolation(
+                before,
+                self.module.snapshot_product_tree(root),
+                read_only=False,
+                ephemeral_write_paths=["packages/app"],
+            )
+        self.assertEqual("violated", audit.status)
+        self.assertEqual(
+            ("packages/app/node_modules/tool.js",), audit.changed_paths
+        )
+        self.assertNotIn(
+            "packages/app/node_modules/tool.js", audit.ephemeral_changed_paths
+        )
+
 
 class EvidenceVersionTwoTests(unittest.TestCase):
     """Verify the current receipt contract and digest-staleness classifier."""
@@ -497,7 +668,12 @@ class EvidenceVersionTwoTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.module = load_module()
-        cls.case = cls.module.load_cases()["typescript-order-pricing"]
+        cls.case = dict(cls.module.load_cases()["typescript-order-pricing"])
+        cls.case["id"] = "synthetic-deterministic-receipt"
+        cls.case["judgePlan"] = {
+            "deterministicChecks": ["required-command-outcome"],
+            "modelRubric": None,
+        }
 
     def receipt(self) -> dict[str, object]:
         agent_source = next((ROOT / "agents" / "roles").glob("**/dev-coder.role.yaml"))
@@ -563,6 +739,8 @@ class EvidenceVersionTwoTests(unittest.TestCase):
             "preparedFixture": {
                 "key": prepared_key,
                 "sourceDigest": source_digest,
+                "preparedSnapshotDigest": "3" * 64,
+                "preparedSnapshotEvidence": "prepared-snapshot.json#prepared-snapshot",
                 "dependencyDigest": dependency_digest,
                 "toolchainDigest": digest_value,
                 "preparationEnvironmentDigest": preparation_environment_digest,
@@ -572,12 +750,28 @@ class EvidenceVersionTwoTests(unittest.TestCase):
             },
             "isolation": {
                 "workspacePreparation": "copy-on-write",
+                "sandboxProfile": self.case["sandboxProfiles"]["codex"],
+                "sandboxProfileDigest": self.module.case_definition_digest(
+                    next(
+                        profile
+                        for profile in self.module.load_framework_catalogs()[
+                            "sandbox-profiles.yaml"
+                        ]["profiles"]
+                        if profile["id"]
+                        == self.case["sandboxProfiles"]["codex"]
+                    )
+                ),
+                "sandboxProfileEvidence": "isolation.json#sandbox-profile",
                 "functional": {
                     "status": "verified",
-                    "projectHashBefore": "before",
-                    "projectHashAfter": "after",
-                    "allowedWritePaths": ["src"],
+                    "projectHashBefore": "product-same",
+                    "projectHashAfter": "product-same",
+                    "workspaceHashBefore": "workspace-same",
+                    "workspaceHashAfter": "workspace-same",
+                    "allowedWritePaths": self.case["allowedWritePaths"],
+                    "ephemeralWritePaths": self.case.get("ephemeralWritePaths", []),
                     "changedPaths": [],
+                    "ephemeralChangedPaths": [],
                     "evidence": "isolation.json#functional",
                 },
                 "containment": {
@@ -595,10 +789,10 @@ class EvidenceVersionTwoTests(unittest.TestCase):
                 "deterministic": {
                     "verdict": "passed",
                     "records": [{
-                        "id": "tests",
+                        "id": "required-command-outcome",
                         "critical": True,
                         "verdict": "passed",
-                        "evidence": "judges.json#tests",
+                        "evidence": "judges.json#required-command-outcome",
                     }],
                 },
                 "model": {"status": "not-required"},
@@ -666,10 +860,24 @@ class EvidenceVersionTwoTests(unittest.TestCase):
                 "harness\nmodel\ntoolchain\npreparation-environment\n",
                 encoding="utf-8",
             )
+            (root / "prepared-snapshot.json").write_text(
+                json.dumps(
+                    {
+                        "id": "prepared-snapshot",
+                        "preparedKey": receipt["preparedFixture"]["key"],
+                        "preparedSnapshotDigest": "3" * 64,
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
             (root / "context.json").write_text("manifest\n", encoding="utf-8")
-            (root / "isolation.json").write_text("functional\ncontainment\ncodex-native\n", encoding="utf-8")
+            (root / "isolation.json").write_text(
+                "sandbox-profile\nfunctional\ncontainment\ncodex-native\n",
+                encoding="utf-8",
+            )
             (root / "judges.json").write_text(
-                "tests\nindependent\njudge-invocation\njudge-context\n",
+                "required-command-outcome\nindependent\njudge-invocation\njudge-context\n",
                 encoding="utf-8",
             )
             (root / "judge-prompt.txt").write_text("judge-prompt\n", encoding="utf-8")
@@ -681,11 +889,16 @@ class EvidenceVersionTwoTests(unittest.TestCase):
             path.write_text(yaml.safe_dump(receipt), encoding="utf-8")
             return self.module.classify_evidence(self.case, path)
 
-    def test_complete_version_two_receipt_is_verified(self) -> None:
+    def test_complete_self_attested_receipt_is_recorded_but_not_verified(self) -> None:
+        """A same-directory attestation is not an external trust anchor."""
+
         classification = self.classify(self.receipt())
         self.assertTrue(classification.executed)
-        self.assertTrue(classification.verified)
+        self.assertFalse(classification.verified)
         self.assertFalse(classification.stale_by_digest)
+        self.assertTrue(
+            any("external" in item and "verification" in item for item in classification.errors)
+        )
 
     def test_agent_source_drift_is_classified_separately(self) -> None:
         receipt = self.receipt()
@@ -696,10 +909,70 @@ class EvidenceVersionTwoTests(unittest.TestCase):
         self.assertTrue(classification.stale_by_digest)
         self.assertTrue(any("conceptual agent digest mismatch" in item for item in classification.stale_reasons))
 
+    def test_external_runner_required_case_cannot_promote_local_receipt(self) -> None:
+        receipt = self.receipt()
+        receipt["captureProvenance"]["kind"] = "trusted-ci"
+        classification = self.classify(receipt)
+        self.assertTrue(classification.executed)
+        self.assertFalse(classification.verified)
+        self.assertTrue(
+            any("trusted external post-run verification" in item for item in classification.errors)
+        )
+
     def test_codex_attribution_requires_a_digest_bound_agent_start_event(self) -> None:
         classification = self.classify(self.receipt(), include_agent_start=False)
+        self.assertFalse(classification.executed)
         self.assertFalse(classification.verified)
         self.assertTrue(any("agent-start event" in item for item in classification.errors))
+
+    def test_header_only_receipt_does_not_count_as_executed(self) -> None:
+        receipt = {
+            "schema": "dev-methodology-eval-evidence",
+            "version": 2,
+            "case": self.case["id"],
+            "verdict": "verified",
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "evidence.yaml"
+            path.write_text(yaml.safe_dump(receipt), encoding="utf-8")
+            classification = self.module.classify_evidence(self.case, path)
+        self.assertFalse(classification.executed)
+        self.assertFalse(classification.verified)
+
+    def test_unverified_workspace_containment_cannot_verify(self) -> None:
+        receipt = self.receipt()
+        receipt["isolation"]["containment"]["status"] = "unverified"
+        receipt["isolation"]["containment"].pop("evidence")
+        classification = self.classify(receipt)
+        self.assertFalse(classification.verified)
+        self.assertTrue(
+            any("workspace-isolated-only" in item for item in classification.errors)
+        )
+
+    def test_deterministic_only_case_requires_model_not_required_status(self) -> None:
+        receipt = self.receipt()
+        receipt["judges"]["model"] = {"status": "failed"}
+        classification = self.classify(receipt)
+        self.assertFalse(classification.verified)
+        self.assertTrue(any("not-required" in item for item in classification.errors))
+
+    def test_prepared_snapshot_digest_is_required(self) -> None:
+        receipt = self.receipt()
+        receipt["preparedFixture"].pop("preparedSnapshotDigest", None)
+        classification = self.classify(receipt)
+        self.assertFalse(classification.verified)
+        self.assertTrue(
+            any("preparedSnapshotDigest" in item for item in classification.errors)
+        )
+
+    def test_prepared_snapshot_digest_must_match_its_capture(self) -> None:
+        receipt = self.receipt()
+        receipt["preparedFixture"]["preparedSnapshotDigest"] = "4" * 64
+        classification = self.classify(receipt)
+        self.assertFalse(classification.verified)
+        self.assertTrue(
+            any("prepared snapshot capture" in item for item in classification.errors)
+        )
 
     def test_conceptual_agent_digest_cannot_replace_native_adapter_identity(self) -> None:
         receipt = self.receipt()
@@ -742,7 +1015,10 @@ class HarnessAndJudgeTests(unittest.TestCase):
 
     def test_harness_builders_support_only_codex_and_junie(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
+            base = Path(directory)
+            root = base / "workspace"
+            evidence_root = base / "evidence"
+            evidence_root.mkdir()
             (root / ".codex" / "agents").mkdir(parents=True)
             (root / ".codex" / "agents" / "dev-coder.toml").write_text('name = "dev-coder"\n', encoding="utf-8")
             (root / ".agents" / "skills").mkdir(parents=True)
@@ -750,7 +1026,8 @@ class HarnessAndJudgeTests(unittest.TestCase):
             (root / ".junie" / "skills").mkdir(parents=True)
             codex = self.module.build_harness_command(
                 "codex", root, "dev-coder", "Do the task", "test-model", read_only=True,
-                event_output=root / "codex.jsonl",
+                event_output=evidence_root / "codex.jsonl",
+                evidence_root=evidence_root,
                 isolated_config_root=root,
             )
             self.assertIn("--sandbox", codex.argv)
@@ -758,7 +1035,8 @@ class HarnessAndJudgeTests(unittest.TestCase):
             self.assertIn("--ephemeral", codex.argv)
             junie = self.module.build_harness_command(
                 "junie", root, "dev-coder", "Do the task", "test-model", read_only=False,
-                event_output=root / "junie.jsonl",
+                event_output=evidence_root / "junie.jsonl",
+                evidence_root=evidence_root,
                 isolated_config_root=root,
                 skill_locations=[root / ".junie" / "skills"],
                 agent_locations=[root / ".junie" / "agents"],
@@ -768,27 +1046,74 @@ class HarnessAndJudgeTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "supported harness"):
                 self.module.build_harness_command(
                     "claude", root, "dev-coder", "Do the task", "test-model", read_only=False,
-                    event_output=root / "other.jsonl",
+                    event_output=evidence_root / "other.jsonl",
+                    evidence_root=evidence_root,
                     isolated_config_root=root,
+                )
+            with self.assertRaisesRegex(ValueError, "runner-owned evidence root"):
+                self.module.build_harness_command(
+                    "codex",
+                    root,
+                    "dev-coder",
+                    "Do the task",
+                    "test-model",
+                    read_only=True,
+                    event_output=root / "events.jsonl",
+                    evidence_root=evidence_root,
+                    isolated_config_root=root,
+                )
+            with self.assertRaisesRegex(ValueError, "runner-owned evidence root"):
+                self.module.build_harness_command(
+                    "codex",
+                    root,
+                    "dev-coder",
+                    "Do the task",
+                    "test-model",
+                    read_only=True,
+                    event_output=base / "arbitrary-host-output.jsonl",
+                    evidence_root=evidence_root,
+                    isolated_config_root=root,
+                )
+            with self.assertRaisesRegex(ValueError, "runner-owned evidence root"):
+                self.module.build_harness_command(
+                    "junie",
+                    root,
+                    "dev-coder",
+                    "Do the task",
+                    "test-model",
+                    read_only=False,
+                    event_output=evidence_root / "junie-cache-check.jsonl",
+                    evidence_root=evidence_root,
+                    isolated_config_root=root,
+                    cache_dir=base / "arbitrary-host-cache",
+                    skill_locations=[root / ".junie" / "skills"],
+                    agent_locations=[root / ".junie" / "agents"],
                 )
 
     def test_harness_builder_requires_an_isolated_context_root(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
+            base = Path(directory)
+            root = base / "workspace"
+            root.mkdir()
+            evidence_root = base / "evidence"
+            evidence_root.mkdir()
             with self.assertRaisesRegex(ValueError, "isolated_config_root"):
                 self.module.build_harness_command(
                     "codex", root, "dev-coder", "Do the task", "test-model", read_only=False,
-                    event_output=root / "events.jsonl",
+                    event_output=evidence_root / "events.jsonl",
+                    evidence_root=evidence_root,
                 )
 
     def test_codex_read_only_final_response_is_captured_outside_the_workspace(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             base = Path(directory)
             root = base / "workspace"
+            evidence_root = base / "evidence"
+            evidence_root.mkdir()
             (root / ".codex" / "agents").mkdir(parents=True)
             (root / ".codex" / "agents" / "dev-coder.toml").write_text('name = "dev-coder"\n', encoding="utf-8")
             (root / ".agents" / "skills").mkdir(parents=True)
-            output = base / "evidence" / "review.md"
+            output = evidence_root / "review.md"
             command = self.module.build_harness_command(
                 "codex",
                 root,
@@ -796,13 +1121,14 @@ class HarnessAndJudgeTests(unittest.TestCase):
                 "Review the source",
                 "test-model",
                 read_only=True,
-                event_output=base / "events.jsonl",
+                event_output=evidence_root / "events.jsonl",
+                evidence_root=evidence_root,
                 isolated_config_root=root,
                 last_message_output=output,
             )
             self.assertIn("--output-last-message", command.argv)
             self.assertIn(str(output.resolve()), command.argv)
-            with self.assertRaisesRegex(ValueError, "outside the product workspace"):
+            with self.assertRaisesRegex(ValueError, "runner-owned evidence root"):
                 self.module.build_harness_command(
                     "codex",
                     root,
@@ -810,15 +1136,59 @@ class HarnessAndJudgeTests(unittest.TestCase):
                     "Review the source",
                     "test-model",
                     read_only=True,
-                    event_output=base / "events.jsonl",
+                    event_output=evidence_root / "events.jsonl",
+                    evidence_root=evidence_root,
                     isolated_config_root=root,
                     last_message_output=root / "review.md",
+                )
+
+    def test_output_schema_must_be_the_evaluator_owned_codex_json_schema(self) -> None:
+        schema_path = ROOT / "evals" / "codex-agent-output-schema.json"
+        self.assertEqual(
+            schema_path.resolve(),
+            self.module._trusted_output_schema(schema_path),
+        )
+        for rejected in (
+            ROOT / "evals" / "cases.yaml",
+            ROOT / "evals" / "judge-output-schema.yaml",
+        ):
+            with self.subTest(rejected=rejected.name):
+                with self.assertRaisesRegex(ValueError, "canonical evaluator-owned Codex JSON Schema"):
+                    self.module._trusted_output_schema(rejected)
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            external = base / "schema.json"
+            external.write_text("{}\n", encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "canonical evaluator-owned Codex JSON Schema"):
+                self.module._trusted_output_schema(external)
+            workspace = base / "workspace"
+            evidence_root = base / "evidence"
+            evidence_root.mkdir()
+            (workspace / ".codex" / "agents").mkdir(parents=True)
+            (workspace / ".codex" / "agents" / "dev-coder.toml").write_text(
+                'name = "dev-coder"\n', encoding="utf-8"
+            )
+            (workspace / ".agents" / "skills").mkdir(parents=True)
+            with self.assertRaisesRegex(ValueError, "canonical evaluator-owned Codex JSON Schema"):
+                self.module.build_harness_command(
+                    "codex",
+                    workspace,
+                    "dev-coder",
+                    "Do the task",
+                    "test-model",
+                    read_only=True,
+                    event_output=evidence_root / "events.jsonl",
+                    evidence_root=evidence_root,
+                    isolated_config_root=workspace,
+                    output_schema=external,
                 )
 
     def test_junie_live_command_requires_an_attested_external_runner(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             base = Path(directory)
             root = base / "workspace"
+            evidence_root = base / "evidence"
+            evidence_root.mkdir()
             (root / ".junie" / "agents").mkdir(parents=True)
             (root / ".junie" / "skills").mkdir(parents=True)
             command = self.module.build_harness_command(
@@ -828,7 +1198,8 @@ class HarnessAndJudgeTests(unittest.TestCase):
                 "Do the task",
                 "test-model",
                 read_only=False,
-                event_output=root.parent / "junie.jsonl",
+                event_output=evidence_root / "junie.jsonl",
+                evidence_root=evidence_root,
                 isolated_config_root=root,
                 skill_locations=[root / ".junie" / "skills"],
                 agent_locations=[root / ".junie" / "agents"],
@@ -874,6 +1245,140 @@ class HarnessAndJudgeTests(unittest.TestCase):
                     ])
         execute.assert_not_called()
 
+    def test_live_harness_path_never_runs_host_verification(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            fixture = base / "fixture"
+            fixture.mkdir()
+            (fixture / "TASK.md").write_text("Synthetic task.\n", encoding="utf-8")
+            case = {
+                "id": "host-verification-gate",
+                "project": "evals/projects/host-verification-gate",
+                "task": "TASK.md",
+                "verify": [sys.executable, "-c", "raise SystemExit('must not run')"],
+                "harnesses": ["codex", "junie"],
+                "requiredAgents": ["dev-coder"],
+                "requiredSkills": ["careful-coding"],
+                "requiredEvidence": ["SAFE"],
+                "allowedWritePaths": [],
+                "modelVisiblePaths": ["TASK.md"],
+            }
+            with mock.patch.object(
+                self.module, "load_cases", return_value={case["id"]: case}
+            ), mock.patch.object(
+                self.module, "_handle_harness_invocation", return_value=None
+            ), mock.patch.object(
+                self.module,
+                "run",
+                side_effect=AssertionError("host verification executed"),
+            ) as verify:
+                exit_code = self.module.main([
+                    "--case",
+                    case["id"],
+                    "--project-root",
+                    str(fixture),
+                    "--prepared-cache",
+                    str(base / "cache"),
+                    "--workspace-root",
+                    str(base / "runs"),
+                    "--harness",
+                    "codex",
+                    "--invoke-harness",
+                ])
+        self.assertEqual(0, exit_code)
+        verify.assert_not_called()
+
+    def test_isolation_failure_still_never_runs_host_verification(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            fixture = base / "fixture"
+            fixture.mkdir()
+            (fixture / "TASK.md").write_text("Synthetic task.\n", encoding="utf-8")
+            case = {
+                "id": "isolation-verification-gate",
+                "project": "evals/projects/isolation-verification-gate",
+                "task": "TASK.md",
+                "verify": [sys.executable, "-c", "raise SystemExit('must not run')"],
+                "harnesses": ["codex", "junie"],
+                "requiredAgents": ["dev-coder"],
+                "requiredSkills": ["careful-coding"],
+                "requiredEvidence": ["SAFE"],
+                "allowedWritePaths": [],
+                "modelVisiblePaths": ["TASK.md"],
+            }
+
+            def mutate_outside_contract(
+                args: object, selected: object, active_root: Path
+            ) -> None:
+                (active_root / "unexpected.txt").write_text("mutation\n", encoding="utf-8")
+                return None
+
+            with mock.patch.object(
+                self.module, "load_cases", return_value={case["id"]: case}
+            ), mock.patch.object(
+                self.module,
+                "_handle_harness_invocation",
+                side_effect=mutate_outside_contract,
+            ), mock.patch.object(
+                self.module,
+                "run",
+                side_effect=AssertionError("host verification executed"),
+            ) as verify, redirect_stderr(io.StringIO()):
+                exit_code = self.module.main([
+                    "--case",
+                    case["id"],
+                    "--project-root",
+                    str(fixture),
+                    "--prepared-cache",
+                    str(base / "cache"),
+                    "--workspace-root",
+                    str(base / "runs"),
+                    "--harness",
+                    "codex",
+                    "--invoke-harness",
+                ])
+        self.assertEqual(1, exit_code)
+        verify.assert_not_called()
+
+    def test_live_install_is_refused_before_workspace_or_command_execution(self) -> None:
+        with mock.patch.object(
+            self.module,
+            "_workspace_manager",
+            side_effect=AssertionError("workspace preparation started"),
+        ):
+            with redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
+                self.module.main([
+                    "--case",
+                    "typescript-code-review",
+                    "--harness",
+                    "codex",
+                    "--invoke-harness",
+                    "--install",
+                ])
+
+    def test_invalid_fixture_contract_never_reaches_host_verification(self) -> None:
+        case = {
+            "id": "invalid-fixture-contract",
+            "project": "../outside",
+            "task": "missing.md",
+            "verify": [sys.executable, "-c", "raise SystemExit('must not run')"],
+            "harnesses": ["codex", "junie"],
+            "requiredAgents": ["dev-coder"],
+            "requiredSkills": ["careful-coding"],
+            "requiredEvidence": ["SAFE"],
+            "modelVisiblePaths": ["missing.md"],
+        }
+        with mock.patch.object(
+            self.module, "load_cases", return_value={case["id"]: case}
+        ), mock.patch.object(
+            self.module,
+            "run",
+            side_effect=AssertionError("host verification executed"),
+        ) as verify, redirect_stderr(io.StringIO()):
+            exit_code = self.module.main(["--case", case["id"]])
+        self.assertEqual(1, exit_code)
+        verify.assert_not_called()
+
     def test_print_invocation_is_preflight_only_for_a_generation_case(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             fixture = Path(directory) / "fixture"
@@ -881,7 +1386,7 @@ class HarnessAndJudgeTests(unittest.TestCase):
             (fixture / "TASK.md").write_text("Generate output.md.\n", encoding="utf-8")
             case = {
                 "id": "generation-preflight",
-                "project": str(fixture),
+                "project": "evals/projects/generation-preflight",
                 "task": "TASK.md",
                 "install": None,
                 "verify": [
@@ -1014,6 +1519,36 @@ class HarnessAndJudgeTests(unittest.TestCase):
                     additional_files=["fixture.txt"],
                 )
 
+    def test_sensitive_policy_language_is_not_misclassified_as_payload(self) -> None:
+        """A safety instruction may name forbidden data without containing that data."""
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "SKILL.md"
+            path.write_text(
+                "Do not send company-internal material to an external service.\n",
+                encoding="utf-8",
+            )
+            source, effective, actions = self.module.selected_context_identity(
+                path, "treatment-skill"
+            )
+            self.assertEqual(source, effective)
+            self.assertEqual((), actions)
+            path.write_text(
+                "Copyright holder: example.author@example.com\n",
+                encoding="utf-8",
+            )
+            source, effective, actions = self.module.selected_context_identity(
+                path, "treatment-skill"
+            )
+            self.assertNotEqual(source, effective)
+            self.assertEqual(("redacted-context-email",), actions)
+            self.assertNotIn(b"example.author@example.com", effective)
+            path.write_text(
+                "classification: company-internal\nsynthetic payload\n",
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "sensitive input"):
+                self.module.selected_context_identity(path, "treatment-skill")
+
     def test_model_visible_allowlist_rejects_an_omitted_workspace_file(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -1021,6 +1556,88 @@ class HarnessAndJudgeTests(unittest.TestCase):
             (root / "hidden.txt").write_text("unlisted input\n", encoding="utf-8")
             with self.assertRaisesRegex(ValueError, "allowlist omits workspace file"):
                 self.module.build_input_manifest(root, ["TASK.md"])
+
+    def test_model_visible_inventory_rejects_file_and_directory_symlinks(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            root = base / "workspace"
+            outside = base / "outside"
+            root.mkdir()
+            outside.mkdir()
+            (root / "TASK.md").write_text("Synthetic task.\n", encoding="utf-8")
+            (outside / "secret.txt").write_text("must not be readable\n", encoding="utf-8")
+            (root / "file-link").symlink_to(outside / "secret.txt")
+            with self.assertRaisesRegex(ValueError, "symlink"):
+                self.module.build_input_manifest(root, ["."])
+            (root / "file-link").unlink()
+            (root / "directory-link").symlink_to(outside, target_is_directory=True)
+            with self.assertRaisesRegex(ValueError, "symlink"):
+                self.module.build_input_manifest(root, ["."])
+
+    def test_case_paths_must_stay_inside_the_fixture_catalog(self) -> None:
+        case = {
+            "id": "unsafe-paths",
+            "project": "../outside",
+            "task": "TASK.md",
+            "verify": ["true"],
+            "requiredAgents": ["dev-coder"],
+            "requiredSkills": ["careful-coding"],
+            "requiredEvidence": ["SAFE"],
+            "harnesses": ["codex", "junie"],
+            "modelVisiblePaths": ["TASK.md"],
+        }
+        errors = self.module.validate_case_definition(case)
+        self.assertTrue(any("case.project" in error for error in errors))
+        case["project"] = "evals/projects/synthetic"
+        case["task"] = "../outside.md"
+        errors = self.module.validate_case_definition(case)
+        self.assertTrue(any("case.task" in error for error in errors))
+
+    def test_dependency_trees_cannot_be_declared_ephemeral(self) -> None:
+        for path in (
+            "node_modules",
+            "packages/app/node_modules",
+            "services/api/.venv",
+            "third_party/vendor/generated",
+        ):
+            with self.subTest(path=path):
+                case = dict(self.module.load_cases()["typescript-order-pricing"])
+                case["ephemeralWritePaths"] = [path]
+                errors = self.module.validate_case_definition(case)
+                self.assertTrue(
+                    any("dependency or tool tree" in error for error in errors)
+                )
+
+    def test_ephemeral_paths_require_a_recognized_generated_output_leaf(self) -> None:
+        case = dict(self.module.load_cases()["typescript-order-pricing"])
+        case["ephemeralWritePaths"] = ["packages/app"]
+        errors = self.module.validate_case_definition(case)
+        self.assertTrue(
+            any("recognized generated-output leaf" in error for error in errors)
+        )
+
+    def test_agent_scenario_contract_must_match_its_conceptual_source(self) -> None:
+        validation_module = sys.modules[
+            self.module.validate_framework_catalogs.__module__
+        ]
+        catalogs = self.module.load_framework_catalogs()
+        mutated = json.loads(json.dumps(catalogs))
+        project_configurator = next(
+            agent
+            for agent in mutated["agent-scenarios.yaml"]["agents"]
+            if agent["id"] == "project-configurator"
+        )
+        project_configurator["outputContractFields"] = ["rewritten contract"]
+        project_configurator["repositoryMutation"] = "never"
+        errors: list[str] = []
+        validation_module._validate_catalog_cross_references(
+            mutated,
+            self.module.load_cases(),
+            ROOT / "evals",
+            errors,
+        )
+        self.assertTrue(any("outputContractFields" in error for error in errors))
+        self.assertTrue(any("repositoryMutation" in error for error in errors))
 
     def test_skill_resource_receipt_records_source_effective_and_sanitization_identity(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -1214,15 +1831,14 @@ class HarnessAndJudgeTests(unittest.TestCase):
 
     def test_cli_validates_calibration_from_labeled_samples(self) -> None:
         samples = _calibration_samples()
+        rubric = self.module.load_framework_catalogs()["judges.yaml"]["rubrics"][0]
+        identity = self.module.canonical_judge_identity(rubric)
         record = {
-            "rubricId": "test-rubric",
-            "judgePromptSha256": "prompt",
-            "judgeOutputSchemaSha256": "schema",
-            "instructionEnvelopeSha256": "envelope",
+            "rubricId": rubric["id"],
+            **identity,
             "harness": "codex",
             "judgeModelIdentity": "model",
             "reasoningProfile": "advanced",
-            "rubricSha256": "rubric",
             "calibrationSetSha256": self.module.calibration_set_digest(samples),
             "status": "accepted",
             "samples": samples,
@@ -1241,7 +1857,8 @@ class HarnessAndJudgeTests(unittest.TestCase):
             with redirect_stdout(output):
                 exit_code = self.module.main(["--validate-calibration", str(path)])
         self.assertEqual(0, exit_code)
-        self.assertIn('"calibration": "accepted"', output.getvalue())
+        self.assertIn('"calibration": "diagnostic-valid"', output.getvalue())
+        self.assertIn('"promotionEligible": false', output.getvalue())
 
     def test_deterministic_judge_failure_short_circuits_model_judge(self) -> None:
         calls: list[str] = []
@@ -1388,6 +2005,148 @@ class HarnessAndJudgeTests(unittest.TestCase):
                 )
         self.assertIn("case requires a passed Model Judge", bypass_errors)
         self.assertTrue(any("status must be failed" in error for error in low_errors))
+
+    def test_model_receipt_must_match_canonical_judge_artifacts(self) -> None:
+        """Receipt summaries cannot replace the bound canonical Judge request and output."""
+        validation_module = sys.modules[self.module.validate_evidence.__module__]
+        rubric = {
+            "id": "quality",
+            "type": "model",
+            "scale": "0-to-4-per-dimension",
+            "dimensions": ["correctness"],
+            "passRules": {
+                "noAggregateCompensation": True,
+                "minimumDimensionScore": 3,
+            },
+        }
+        request = judge_contract.build_judge_request(
+            case_id="canonical-model-receipt",
+            run_id="run-canonical-model-receipt",
+            harness="codex",
+            rubric=rubric,
+            candidate_output="The requirement is satisfied.",
+            evidence={"requirements": "The candidate must satisfy the requirement."},
+        )
+        output = {
+            "schema": "dev-methodology-model-judge-output",
+            "version": 1,
+            "contractVersion": judge_contract.CONTRACT_VERSION,
+            "rubricId": "quality",
+            "rubricSha256": request.rubric_sha256,
+            "instructionEnvelopeSha256": request.instruction_envelope_sha256,
+            "inputManifestSha256": request.input_manifest_sha256,
+            "dimensionScores": [
+                {
+                    "id": "correctness",
+                    "score": 3,
+                    "critical": False,
+                    "evidenceReferences": [
+                        {"documentId": "requirements", "locator": "sentence:1"}
+                    ],
+                    "rationale": "The supplied requirement supports the conclusion.",
+                }
+            ],
+            "overall": {"verdict": "pass", "criticalFailure": False},
+        }
+        model = {
+            "status": "passed",
+            "caseId": "canonical-model-receipt",
+            "evaluatedRunId": "run-canonical-model-receipt",
+            "evaluatedHarness": "codex",
+            "contractVersion": judge_contract.CONTRACT_VERSION,
+            "rubricId": "quality",
+            "rubricSha256": request.rubric_sha256,
+            "judgePromptSha256": request.prompt_sha256,
+            "judgeOutputSchemaSha256": request.output_schema_sha256,
+            "instructionEnvelopeSha256": request.instruction_envelope_sha256,
+            "inputManifestSha256": request.input_manifest_sha256,
+            "candidateOutputSha256": hashlib.sha256(
+                b"The requirement is satisfied."
+            ).hexdigest(),
+            "candidateOutputEvidence": "candidate.txt#requirement",
+            "governedEvidence": [
+                {
+                    "documentId": "requirements",
+                    "sha256": hashlib.sha256(
+                        b"The candidate must satisfy the requirement."
+                    ).hexdigest(),
+                    "evidence": "requirements.txt#candidate",
+                }
+            ],
+            "dimensionScores": output["dimensionScores"],
+            "overall": output["overall"],
+            "contractArtifacts": {
+                "instructionEnvelopeEvidence": "instructions.json#model-judge-v1",
+                "inputManifestEvidence": "manifest.json#model-judge-v1",
+                "outputEvidence": "output.json#model-judge-v1",
+            },
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            evidence_path = root / "evidence.yaml"
+            evidence_path.write_text("receipt\n", encoding="utf-8")
+            (root / "candidate.txt").write_text(
+                "The requirement is satisfied.", encoding="utf-8"
+            )
+            (root / "requirements.txt").write_text(
+                "The candidate must satisfy the requirement.", encoding="utf-8"
+            )
+            (root / "instructions.json").write_bytes(
+                request.instruction_envelope_bytes
+            )
+            (root / "manifest.json").write_bytes(request.input_manifest_bytes)
+            (root / "output.json").write_bytes(
+                judge_contract.canonical_json_bytes(output)
+            )
+            errors: list[str] = []
+            validation_module._validate_canonical_model_contract(
+                model,
+                rubric,
+                {"id": "canonical-model-receipt"},
+                {"id": "run-canonical-model-receipt", "harness": "codex"},
+                evidence_path,
+                errors,
+            )
+            self.assertEqual([], errors)
+            stale_summary = dict(model)
+            stale_summary["inputManifestSha256"] = "0" * 64
+            stale_errors: list[str] = []
+            validation_module._validate_canonical_model_contract(
+                stale_summary,
+                rubric,
+                {"id": "canonical-model-receipt"},
+                {"id": "run-canonical-model-receipt", "harness": "codex"},
+                evidence_path,
+                stale_errors,
+            )
+            replay_errors: list[str] = []
+            validation_module._validate_canonical_model_contract(
+                model,
+                rubric,
+                {"id": "wrong-case"},
+                {"id": "wrong-run", "harness": "junie"},
+                evidence_path,
+                replay_errors,
+            )
+            (root / "candidate.txt").write_text(
+                "A different candidate output.", encoding="utf-8"
+            )
+            candidate_errors: list[str] = []
+            validation_module._validate_canonical_model_contract(
+                model,
+                rubric,
+                {"id": "canonical-model-receipt"},
+                {"id": "run-canonical-model-receipt", "harness": "codex"},
+                evidence_path,
+                candidate_errors,
+            )
+        self.assertTrue(
+            any("inputManifestSha256" in error for error in stale_errors)
+        )
+        self.assertTrue(any("case" in error.lower() for error in replay_errors))
+        self.assertTrue(any("run" in error.lower() for error in replay_errors))
+        self.assertTrue(any("harness" in error.lower() for error in replay_errors))
+        self.assertTrue(any("candidate" in error.lower() for error in candidate_errors))
 
 
 if __name__ == "__main__":

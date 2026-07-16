@@ -16,11 +16,20 @@ from .invocations import SUPPORTED_HARNESSES
 from .workspace import TRANSIENT_TREE_NAMES
 
 
+_EMAIL_PATTERN = re.compile(
+    rb"[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}", re.IGNORECASE
+)
 _SENSITIVE_PATTERNS = (
-    ("email address", re.compile(rb"[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}", re.IGNORECASE)),
+    ("email address", _EMAIL_PATTERN),
     ("private key", re.compile(rb"-----BEGIN [A-Z ]*PRIVATE KEY-----")),
     ("secret assignment", re.compile(rb"(?:api[_-]?key|access[_-]?token|client[_-]?secret)\s*[:=]", re.IGNORECASE)),
-    ("sensitive marker", re.compile(rb"(?:company|customer)[_ -]?(?:confidential|internal)", re.IGNORECASE)),
+    (
+        "sensitive classification",
+        re.compile(
+            rb"^(?:data[_ -]?classification|classification)\s*[:=]\s*(?:company|customer)[_ -]?(?:confidential|internal)\b",
+            re.IGNORECASE | re.MULTILINE,
+        ),
+    ),
 )
 _RUNNER_OWNED_ROOTS = frozenset({
     ".agents",
@@ -259,14 +268,24 @@ def _walk_pruned(root: Path) -> Iterable[Path]:
     import os
 
     for directory, directory_names, file_names in os.walk(root, topdown=True, followlinks=False):
-        directory_names[:] = [
-            name for name in sorted(directory_names)
-            if name not in TRANSIENT_TREE_NAMES
-        ]
         current = Path(directory)
+        retained_directories: list[str] = []
+        for name in sorted(directory_names):
+            path = current / name
+            if path.is_symlink():
+                raise ValueError(
+                    f"model-visible input contains a directory symlink: {path.relative_to(root)}"
+                )
+            if name not in TRANSIENT_TREE_NAMES:
+                retained_directories.append(name)
+        directory_names[:] = retained_directories
         for name in sorted(file_names):
             path = current / name
-            if path.is_file() and not path.is_symlink():
+            if path.is_symlink():
+                raise ValueError(
+                    f"model-visible input contains a file symlink: {path.relative_to(root)}"
+                )
+            if path.is_file():
                 yield path
 
 
@@ -287,13 +306,18 @@ def _reject_sensitive(path: str, content: bytes) -> None:
 def _sanitize_selected_context(context_role: str, content: bytes) -> tuple[bytes, tuple[str, ...]]:
     if context_role not in {"agent-definition", "harness-required-skill", "treatment-skill"}:
         return content, ()
+    sanitized = content
+    actions: list[str] = []
     mandated_email = b"Martin.Bechard@DevConsult.ca"
-    if mandated_email not in content:
-        return content, ()
-    return (
-        content.replace(mandated_email, b"[redacted-eval-copyright-holder]"),
-        ("redacted-mandated-copyright-email",),
-    )
+    if mandated_email in sanitized:
+        sanitized = sanitized.replace(
+            mandated_email, b"[redacted-eval-copyright-holder]"
+        )
+        actions.append("redacted-mandated-copyright-email")
+    if _EMAIL_PATTERN.search(sanitized):
+        sanitized = _EMAIL_PATTERN.sub(b"[redacted-eval-email]", sanitized)
+        actions.append("redacted-context-email")
+    return sanitized, tuple(actions)
 
 
 def _manifest_digest(files: Sequence[ContextFile]) -> str:

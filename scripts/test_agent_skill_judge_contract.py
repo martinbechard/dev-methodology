@@ -74,6 +74,27 @@ def _passing_output(request: contract.JudgeRequest) -> dict[str, object]:
 class JudgeRequestTests(unittest.TestCase):
     """Protect deterministic request bytes and the trusted/untrusted message boundary."""
 
+    def test_every_live_model_rubric_builds_a_canonical_request(self) -> None:
+        """Repository rubrics must remain executable under the version-one contract."""
+        catalog = yaml.safe_load(
+            (ROOT / "evals" / "judges.yaml").read_text(encoding="utf-8")
+        )
+
+        for rubric in catalog["rubrics"]:
+            with self.subTest(rubric=rubric["id"]):
+                request = contract.build_judge_request(
+                    case_id="live-rubric-contract",
+                    run_id="run-live-rubric-contract",
+                    harness="codex",
+                    rubric=rubric,
+                    candidate_output="Synthetic candidate output.",
+                    evidence={"requirements": "Synthetic allowed evidence."},
+                )
+                self.assertEqual(
+                    rubric["id"],
+                    json.loads(request.instruction_envelope_bytes)["rubric"]["id"],
+                )
+
     def test_request_is_canonical_and_keeps_untrusted_text_out_of_instructions(self) -> None:
         """Equivalent ordered inputs produce identical bytes without promoting data to instructions."""
 
@@ -84,6 +105,7 @@ class JudgeRequestTests(unittest.TestCase):
         }
         first = contract.build_judge_request(
             case_id="review-case",
+            run_id="run-review-case",
             harness="codex",
             rubric=_rubric(),
             candidate_output=candidate,
@@ -105,6 +127,7 @@ class JudgeRequestTests(unittest.TestCase):
         }
         second = contract.build_judge_request(
             case_id="review-case",
+            run_id="run-review-case",
             harness="codex",
             rubric=reordered_rubric,
             candidate_output=candidate,
@@ -116,6 +139,10 @@ class JudgeRequestTests(unittest.TestCase):
         self.assertNotIn(candidate.encode("utf-8"), first.instruction_envelope_bytes)
         self.assertIn(candidate.encode("utf-8"), first.input_manifest_bytes)
         self.assertNotIn(evidence["trace"].encode("utf-8"), first.instruction_envelope_bytes)
+        manifest = json.loads(first.input_manifest_bytes)
+        self.assertEqual("review-case", manifest["caseId"])
+        self.assertEqual("run-review-case", manifest["runId"])
+        self.assertEqual("codex", manifest["harness"])
         self.assertEqual(
             hashlib.sha256(first.instruction_envelope_bytes).hexdigest(),
             first.instruction_envelope_sha256,
@@ -132,6 +159,7 @@ class JudgeRequestTests(unittest.TestCase):
             with self.subTest(harness=harness):
                 request = contract.build_judge_request(
                     case_id="review-case",
+                    run_id="run-review-case",
                     harness=harness,
                     rubric=_rubric(),
                     candidate_output="Candidate response.",
@@ -142,6 +170,7 @@ class JudgeRequestTests(unittest.TestCase):
         with self.assertRaisesRegex(contract.JudgeContractError, "supported harness"):
             contract.build_judge_request(
                 case_id="review-case",
+                run_id="run-review-case",
                 harness="unsupported",
                 rubric=_rubric(),
                 candidate_output="Candidate response.",
@@ -153,6 +182,7 @@ class JudgeRequestTests(unittest.TestCase):
 
         request = contract.build_judge_request(
             case_id="review-case",
+            run_id="run-review-case",
             harness="junie",
             rubric=_rubric(),
             candidate_output="Candidate response.",
@@ -179,6 +209,7 @@ class JudgeOutputValidationTests(unittest.TestCase):
     def setUp(self) -> None:
         self.request = contract.build_judge_request(
             case_id="review-case",
+            run_id="run-review-case",
             harness="codex",
             rubric=_rubric(),
             candidate_output="The response contains an unknowns section.",
@@ -234,6 +265,7 @@ class JudgeOutputValidationTests(unittest.TestCase):
         rubric["passRules"]["minimumDimensionScores"] = {"evidence-grounding": 4}
         request = contract.build_judge_request(
             case_id="review-case",
+            run_id="run-review-case",
             harness="codex",
             rubric=rubric,
             candidate_output="The response contains an unknowns section.",
@@ -316,6 +348,8 @@ class JudgeContractCliTests(unittest.TestCase):
                         "review-quality",
                         "--case-id",
                         "review-case",
+                        "--run-id",
+                        "run-review-case",
                         "--harness",
                         "codex",
                         "--candidate-output",

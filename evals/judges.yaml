@@ -284,7 +284,13 @@ rubrics:
 calibrationPolicy:
   requiredBeforeVerifiedEvidence: true
   status: pending
+  promotionStatus: disabled-pending-provenance
   missingOrPendingResult: unverified
+  promotionPrerequisites:
+    - Each sample binds a canonical Model Judge request and validated output artifact.
+    - Model harness, model identity, and reasoning profile come from a trusted invocation event.
+    - Human labels and ambiguous-case adjudication bind to independently captured evidence.
+    - Calibration coverage includes every critical rubric dimension.
   scope: Model Judge verdicts only; Deterministic Judge-only cases remain eligible for verification.
   humanScoredSet:
     pilotMinimumExamples: 20
@@ -316,6 +322,9 @@ calibrationPolicy:
   recordedDigests:
     required:
       - judgePromptSha256
+      - judgeOutputSchemaSha256
+      - instructionEnvelopeSha256
+      - harness
       - judgeModelIdentity
       - reasoningProfile
       - rubricSha256

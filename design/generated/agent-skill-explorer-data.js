@@ -852,6 +852,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
   "judgeStatus": {
     "calibratedRubrics": [],
     "calibrationStatus": "pending",
+    "diagnosticRecordCount": 0,
     "pendingRubrics": [
       "artifact-contract",
       "diagnosis-quality",
@@ -861,6 +862,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "ux-quality",
       "workflow-quality"
     ],
+    "promotionStatus": "disabled-pending-provenance",
     "requiredBeforeVerifiedEvidence": true
   },
   "roles": [
@@ -2341,9 +2343,9 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "id": "codex-read-only",
       "implementationStatus": "partial",
       "preparedSnapshot": {
-        "dependenciesPreinstalled": true,
+        "dependenciesPreinstalled": "when the trusted preparation step ran the declared install command",
         "digestInputs": "inherit-snapshot-policy",
-        "mode": "immutable-content-addressed"
+        "mode": "integrity-checked-content-addressed"
       },
       "repositoryMutation": "never",
       "warmWorker": {
@@ -2374,9 +2376,9 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "id": "codex-workspace-write",
       "implementationStatus": "partial",
       "preparedSnapshot": {
-        "dependenciesPreinstalled": true,
+        "dependenciesPreinstalled": "when the trusted preparation step ran the declared install command",
         "digestInputs": "inherit-snapshot-policy",
-        "mode": "immutable-content-addressed"
+        "mode": "integrity-checked-content-addressed"
       },
       "repositoryMutation": "required-or-conditional",
       "warmWorker": {
@@ -2406,9 +2408,9 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "id": "junie-read-only",
       "implementationStatus": "partial",
       "preparedSnapshot": {
-        "dependenciesPreinstalled": true,
+        "dependenciesPreinstalled": "when the trusted preparation step ran the declared install command",
         "digestInputs": "inherit-snapshot-policy",
-        "mode": "immutable-content-addressed"
+        "mode": "integrity-checked-content-addressed"
       },
       "repositoryMutation": "never",
       "warmWorker": {
@@ -2439,9 +2441,9 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "id": "junie-workspace-write",
       "implementationStatus": "partial",
       "preparedSnapshot": {
-        "dependenciesPreinstalled": true,
+        "dependenciesPreinstalled": "when the trusted preparation step ran the declared install command",
         "digestInputs": "inherit-snapshot-policy",
-        "mode": "immutable-content-addressed"
+        "mode": "integrity-checked-content-addressed"
       },
       "repositoryMutation": "required-or-conditional",
       "warmWorker": {

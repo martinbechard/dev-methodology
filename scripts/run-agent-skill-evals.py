@@ -21,6 +21,11 @@ try:
 except ModuleNotFoundError:
     from scripts.agent_skill_evals import *  # type: ignore[no-redef]  # noqa: F403
 
+try:
+    from agent_skill_judge_contract import canonical_judge_identity
+except ModuleNotFoundError:
+    from scripts.agent_skill_judge_contract import canonical_judge_identity
+
 
 def run(command: object, cwd: Path) -> bool:
     """Run a fixture command through the shell-free compatibility boundary."""
@@ -61,13 +66,36 @@ def main(argv: list[str] | None = None) -> int:
                 "calibrationSetSha256",
             )
         }
+        rubric_id = value.get("rubricId")
+        rubric = next(
+            (
+                item
+                for item in load_framework_catalogs()["judges.yaml"].get(
+                    "rubrics", []
+                )
+                if isinstance(item, dict) and item.get("id") == rubric_id
+            ),
+            None,
+        )
+        if rubric is None:
+            print(
+                "FAIL calibration record must identify a current Model Judge rubric",
+                file=sys.stderr,
+            )
+            return 1
+        try:
+            expected.update(canonical_judge_identity(rubric))
+        except ValueError as error:
+            print(f"FAIL canonical Judge contract: {error}", file=sys.stderr)
+            return 1
         calibration_errors = validate_calibration_record(value, expected)  # noqa: F405
         if calibration_errors:
             for error in calibration_errors:
                 print(f"FAIL {error}", file=sys.stderr)
             return 1
         print(json.dumps({
-            "calibration": "accepted",
+            "calibration": "diagnostic-valid",
+            "promotionEligible": False,
             "metrics": compute_calibration_metrics(value["samples"]),  # noqa: F405
             "recordDigest": value["recordDigest"],
         }, sort_keys=True))
@@ -89,6 +117,10 @@ def main(argv: list[str] | None = None) -> int:
         parser.error(str(error))
     if args.prepare and not args.case:
         parser.error("--prepare requires --case")
+    if args.prepare and args.project_root is not None:
+        parser.error("--prepare is limited to the catalog-owned synthetic fixture")
+    if args.install and not args.prepare:
+        parser.error("--install is allowed only with an explicit --prepare step")
     if args.probe_variant and not args.skill_probe:
         parser.error("--probe-variant requires --skill-probe")
     if args.skill_probe and (args.print_invocation or args.invoke_harness):
@@ -114,6 +146,16 @@ def main(argv: list[str] | None = None) -> int:
     ):
         parser.error("Junie external runner and containment attestation must be supplied together")
 
+    definition_failures = [
+        f"{case.get('id', 'unknown')}: {error}"
+        for case in selected
+        for error in validate_case_definition(case)  # noqa: F405
+    ]
+    if definition_failures:
+        for failure in definition_failures:
+            print(f"FAIL {failure}", file=sys.stderr)
+        return 1
+
     toolchain = _parse_toolchain(args.toolchain)
     manager = _workspace_manager(args)
     failures: list[str] = []
@@ -122,12 +164,17 @@ def main(argv: list[str] | None = None) -> int:
         project_root = args.project_root.resolve() if args.project_root else default_root
         if args.prepare:
             assert manager is not None
-            prepared = manager.prepare(project_root, toolchain, case.get("install"))
+            prepared = manager.prepare(
+                project_root,
+                toolchain,
+                case.get("install") if args.install else None,
+            )
             print(json.dumps({
                 "case": case["id"],
                 "preparedFixture": {
                     "key": prepared.key,
                     "sourceDigest": prepared.source_digest,
+                    "preparedSnapshotDigest": prepared.prepared_snapshot_digest,
                     "dependencyDigest": prepared.dependency_digest,
                     "toolchainDigest": prepared.toolchain_digest,
                     "preparationEnvironmentDigest": prepared.preparation_environment_digest,
@@ -140,8 +187,15 @@ def main(argv: list[str] | None = None) -> int:
         prepared = None
         workspace_context = nullcontext(None)
         if manager is not None:
-            prepare_command = case.get("install") if args.install else None
-            prepared = manager.prepare(project_root, toolchain, prepare_command)
+            prepare_command = case.get("install") if args.invoke_harness else None
+            prepared = manager.prepare(
+                project_root,
+                toolchain,
+                prepare_command,
+                allow_create=not (
+                    args.invoke_harness and prepare_command is not None
+                ),
+            )
             workspace_context = manager.workspace(
                 prepared,
                 initialize_git=not (args.print_invocation or args.invoke_harness),
@@ -155,25 +209,32 @@ def main(argv: list[str] | None = None) -> int:
                 case_errors.extend(classification.errors)
                 case_errors.extend(classification.stale_reasons)
                 print(json.dumps({"case": case["id"], "evidence": classification.as_dict()}, sort_keys=True))
-            if args.install and manager is None and case.get("install") is not None and not run(case["install"], active_root):
-                case_errors.append("install command failed")
             before_product = snapshot_product_tree(active_root) if args.invoke_harness else None  # noqa: F405
+            invocation_attempted = False
             if args.print_invocation or args.invoke_harness:
-                invocation_error = _handle_harness_invocation(args, case, active_root)
-                if invocation_error is not None:
-                    case_errors.append(invocation_error)
-            if args.invoke_harness and before_product is not None:
+                if not case_errors:
+                    invocation_attempted = True
+                    invocation_error = _handle_harness_invocation(args, case, active_root)
+                    if invocation_error is not None:
+                        case_errors.append(invocation_error)
+            if args.invoke_harness and invocation_attempted and before_product is not None:
                 allowed_write_paths = case.get("allowedWritePaths", [])
+                ephemeral_write_paths = case.get("ephemeralWritePaths", [])
                 if not isinstance(allowed_write_paths, list) or any(
                     not isinstance(path, str) for path in allowed_write_paths
                 ):
                     case_errors.append("case.allowedWritePaths must be a list of relative paths")
+                elif not isinstance(ephemeral_write_paths, list) or any(
+                    not isinstance(path, str) for path in ephemeral_write_paths
+                ):
+                    case_errors.append("case.ephemeralWritePaths must be a list of relative paths")
                 else:
                     isolation_audit = audit_functional_isolation(  # noqa: F405
                         before_product,
                         snapshot_product_tree(active_root),  # noqa: F405
                         read_only=bool(case.get("readOnly")),
                         allowed_write_paths=allowed_write_paths,
+                        ephemeral_write_paths=ephemeral_write_paths,
                     )
                     print(json.dumps({
                         "case": case["id"],
@@ -181,8 +242,12 @@ def main(argv: list[str] | None = None) -> int:
                             "status": isolation_audit.status,
                             "beforeDigest": isolation_audit.before_digest,
                             "afterDigest": isolation_audit.after_digest,
+                            "workspaceBeforeDigest": isolation_audit.workspace_before_digest,
+                            "workspaceAfterDigest": isolation_audit.workspace_after_digest,
                             "changedPaths": list(isolation_audit.changed_paths),
+                            "ephemeralChangedPaths": list(isolation_audit.ephemeral_changed_paths),
                             "allowedWritePaths": allowed_write_paths,
+                            "ephemeralWritePaths": ephemeral_write_paths,
                         },
                     }, sort_keys=True))
                     if isolation_audit.status != "verified":
@@ -195,6 +260,29 @@ def main(argv: list[str] | None = None) -> int:
                 else:
                     print(f"PREFLIGHT PASS {case['id']}")
                 continue
+            if args.invoke_harness:
+                if case_errors:
+                    failures.extend(f"{case['id']}: {error}" for error in case_errors)
+                else:
+                    print(
+                        f"HARNESS CAPTURE PASS {case['id']} "
+                        "(post-run verification requires trusted external containment)"
+                    )
+                continue
+            if args.result is not None or args.evidence is not None:
+                if case_errors:
+                    failures.extend(f"{case['id']}: {error}" for error in case_errors)
+                else:
+                    print(f"EVIDENCE VALID {case['id']}")
+                continue
+            if args.project_root is not None:
+                failures.append(
+                    f"{case['id']}: direct verification of a custom project root requires trusted external containment"
+                )
+                continue
+            if case_errors:
+                failures.extend(f"{case['id']}: {error}" for error in case_errors)
+                continue
             verification_passed = run(case["verify"], active_root)
             expect_verify_failure = bool(case.get("expectVerifyFailure", False))
             if verification_passed == expect_verify_failure:
@@ -203,8 +291,7 @@ def main(argv: list[str] | None = None) -> int:
             if case_errors:
                 failures.extend(f"{case['id']}: {error}" for error in case_errors)
             else:
-                label = "VERIFIED PASS" if args.result is not None else "FIXTURE PASS"
-                print(f"{label} {case['id']}")
+                print(f"FIXTURE PASS {case['id']}")
 
     if failures:
         for failure in failures:
@@ -386,6 +473,14 @@ def _workspace_manager(args: argparse.Namespace) -> object | None:
     )
 
 
+def _trusted_output_schema(path: Path | None) -> Path | None:
+    """Resolve the digest-bound evaluator-owned Codex JSON Schema."""
+
+    if path is None:
+        return None
+    return validate_codex_output_schema(path)  # noqa: F405
+
+
 def _handle_harness_invocation(
     args: argparse.Namespace,
     case: Mapping[str, object],
@@ -400,12 +495,28 @@ def _handle_harness_invocation(
         return "harness invocation requires a runner-owned disposable workspace"
     if (active_root / ".git").exists() and not is_evaluation_git_workspace(active_root):  # noqa: F405
         return "harness invocation requires a disposable evaluation-owned Git workspace"
-    default_evidence_root = Path(tempfile.gettempdir()) / "dev-methodology-evals" / "evidence"
+    default_evidence_root = Path(tempfile.gettempdir()).resolve() / "dev-methodology-evals" / "evidence"
+    if default_evidence_root.is_symlink() or default_evidence_root.parent.is_symlink():
+        return "runner-owned evidence root must not be a symlink"
+    default_evidence_root.mkdir(parents=True, exist_ok=True)
+    evidence_root = default_evidence_root.resolve()
+    repository_root = ROOT.resolve()
+    if evidence_root == repository_root or repository_root in evidence_root.parents:
+        return "runner-owned evidence root must stay outside the evaluator repository"
+    if args.prepared_cache is not None:
+        prepared_cache = args.prepared_cache.resolve()
+        if (
+            evidence_root == prepared_cache
+            or prepared_cache in evidence_root.parents
+            or evidence_root in prepared_cache.parents
+        ):
+            return "runner-owned evidence root must be disjoint from the prepared cache"
     event_output = (
         args.event_output
-        or default_evidence_root / f"{case['id']}-{args.harness}-{active_root.name}-events.jsonl"
-    ).resolve()
+        or evidence_root / f"{case['id']}-{args.harness}-{active_root.name}-events.jsonl"
+    )
     try:
+        output_schema = _trusted_output_schema(args.output_schema)
         resource_allowlist = case.get("skillResourceAllowlist", {})
         if not isinstance(resource_allowlist, dict) or any(
             not isinstance(skill, str)
@@ -437,14 +548,16 @@ def _handle_harness_invocation(
         args.model,
         read_only=bool(case.get("readOnly")),
         event_output=event_output,
+        evidence_root=evidence_root,
         isolated_config_root=active_root,
-        output_schema=args.output_schema,
+        output_schema=output_schema,
         last_message_output=args.result if case.get("readOnly") else None,
         cache_dir=event_output.parent / f".{case['id']}-{args.harness}-cache",
         skill_locations=[context_pack.skill_location],
         agent_locations=[context_pack.agent_location],
         approved_environment_names=args.approved_env_name,
     )
+    event_output = event_output.resolve()
     external_invocation = None
     if args.harness == "junie" and args.junie_external_runner is not None:
         try:

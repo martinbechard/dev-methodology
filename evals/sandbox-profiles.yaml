@@ -8,11 +8,22 @@ componentImplementationStatus:
   explicitContextPruning: implemented
   disposableCleanup: implemented
   codexNativeFastPath: implemented
+  fullPreparedIntegrityBeforeLiveClone: implemented
+  completeWorkspaceMutationAudit: implemented
+  runnerOwnedEvidenceRoot: implemented
+  governedCodexOutputSchema: implemented
+  hostInstallDuringLiveRun: forbidden
+  hostPostRunVerification: forbidden
+  dependencyCacheMounting: not-implemented
   externalContainmentRunner: not-implemented
+  externalDiffVerifier: not-implemented
+  captureTrustAnchor: not-implemented
   junieDirectExecution: forbidden-pending-external-runner
   warmWorkerPooling: proposed
 snapshotPolicy:
-  immutablePreparedSnapshots: true
+  integrityCheckedPreparedSnapshots: true
+  filesystemImmutabilityEnforced: false
+  fullIntegrityCheckBeforeLiveClone: true
   prepareOncePerDigest: true
   cacheKeyInputs:
     - fixtureSourceSha256
@@ -20,12 +31,14 @@ snapshotPolicy:
     - operatingSystem
     - architecture
     - toolchainVersions
-  dependencyInstallation: Performed while preparing the immutable snapshot, never once per run.
-  dependencyCaches: Mounted outside the writable workspace as read-only or content-addressed caches.
+  dependencyInstallation: Allowed only as an explicit trusted-fixture preparation step; live harness execution refuses install hooks.
+  dependencyCaches: External read-only or content-addressed dependency-cache mounting is not implemented.
   runWorkspace: Copy-on-write clone of the prepared snapshot.
   fallback: A full disposable copy is allowed when copy-on-write is unavailable; the containment claim must not change.
   reset: Discard the writable layer after Judges and receipt capture finish.
-  concurrency: Independent cases may run concurrently; serialize only declared exclusive resources.
+  runAudit: Hash the complete workspace, including dependency and build trees, while excluding only runner-owned context, metadata, and Git control artifacts. Record narrowly declared recognized ephemeral build output separately from product changes, and never classify a path containing a dependency or tool component as ephemeral even beneath an allowed ancestor.
+  externalVerification: Discard ephemeral output, apply only the validated allowed product diff to a fresh full-integrity clone with pristine dependencies, then run checks under governed external containment. This is not implemented.
+  concurrency: The current runner executes selected cases serially. A future bounded executor may run independent cases concurrently while serializing declared exclusive resources.
   contextStaging:
     default: Explicit case allow-list only; never stage the whole repository implicitly.
     preflight: Inventory staged files, scan model-visible content for seeded secrets, PII, and company-sensitive patterns, and reject unapproved matches.
@@ -47,8 +60,8 @@ executionTiers:
     harnesses: [codex, junie]
     externalRunnerRequired: true
     useWhen: Release evidence, live Junie execution, untrusted code, network-sensitive cases, or any case whose manifest requires full filesystem, process, network, and resource containment.
-    enforcement: External VM or equivalent runner wraps the disposable copy-on-write fixture and the selected harness policy.
-    requiredReceiptEvidence: [external-runner-attestation, prepared-snapshot-digest, copy-on-write-layer-identity, project-hash-policy, discard-confirmation]
+    enforcement: External VM or equivalent runner wraps the disposable copy-on-write fixture and the selected harness policy, applies the allowed product diff to a pristine verifier clone, and signs the complete receipt artifact manifest.
+    requiredReceiptEvidence: [external-runner-attestation, signed-receipt-manifest, prepared-snapshot-digest, copy-on-write-layer-identity, complete-workspace-diff, pristine-verifier-clone, project-hash-policy, command-evidence, discard-confirmation]
     maximumReportedStatus: externally-contained
     implementationStatus: not-implemented
   juniePolicy: Junie has no native filesystem sandbox in this catalog; tool allow and deny lists are capability routing only, so every live Junie run uses the externally-contained tier.
@@ -66,8 +79,8 @@ profiles:
       externalContainmentRunner: not-implemented
       warmWorkerPooling: proposed
     preparedSnapshot:
-      mode: immutable-content-addressed
-      dependenciesPreinstalled: true
+      mode: integrity-checked-content-addressed
+      dependenciesPreinstalled: when the trusted preparation step ran the declared install command
       digestInputs: inherit-snapshot-policy
     copyOnWriteWorkspace:
       enabled: true
@@ -114,8 +127,8 @@ profiles:
       externalContainmentRunner: not-implemented
       warmWorkerPooling: proposed
     preparedSnapshot:
-      mode: immutable-content-addressed
-      dependenciesPreinstalled: true
+      mode: integrity-checked-content-addressed
+      dependenciesPreinstalled: when the trusted preparation step ran the declared install command
       digestInputs: inherit-snapshot-policy
     copyOnWriteWorkspace:
       enabled: true
@@ -164,8 +177,8 @@ profiles:
       externalContainmentRunner: not-implemented
       warmWorkerPooling: proposed
     preparedSnapshot:
-      mode: immutable-content-addressed
-      dependenciesPreinstalled: true
+      mode: integrity-checked-content-addressed
+      dependenciesPreinstalled: when the trusted preparation step ran the declared install command
       digestInputs: inherit-snapshot-policy
     copyOnWriteWorkspace:
       enabled: true
@@ -214,8 +227,8 @@ profiles:
       externalContainmentRunner: not-implemented
       warmWorkerPooling: proposed
     preparedSnapshot:
-      mode: immutable-content-addressed
-      dependenciesPreinstalled: true
+      mode: integrity-checked-content-addressed
+      dependenciesPreinstalled: when the trusted preparation step ran the declared install command
       digestInputs: inherit-snapshot-policy
     copyOnWriteWorkspace:
       enabled: true

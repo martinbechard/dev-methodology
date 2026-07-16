@@ -324,6 +324,16 @@ def _valid_calibration_record(
         name: record.get(name)
         for name in required_digests
     }
+    canonical_identity = getattr(validator, "canonical_judge_identity", None)
+    if not callable(canonical_identity):
+        return False
+    try:
+        governed_identity = canonical_identity(rubric)
+    except (TypeError, ValueError):
+        return False
+    if not isinstance(governed_identity, dict):
+        return False
+    expected.update(governed_identity)
     expected["rubricSha256"] = hashlib.sha256(
         json.dumps(
             rubric,
@@ -332,6 +342,8 @@ def _valid_calibration_record(
             ensure_ascii=True,
         ).encode("utf-8")
     ).hexdigest()
+    if record.get("harness") not in _SUPPORTED_HARNESSES:
+        return False
     if any(
         not isinstance(expected.get(name), str) or not expected[name]
         for name in required_digests
@@ -368,6 +380,12 @@ def _judge_catalog_status(
         raise ValueError(
             "judges calibrationPolicy status must be pending, partial, or calibrated"
         )
+    promotion_status = policy.get("promotionStatus")
+    if promotion_status != "disabled-pending-provenance":
+        raise ValueError(
+            "judges calibrationPolicy promotionStatus must remain "
+            "disabled-pending-provenance until per-sample provenance is implemented"
+        )
     recorded_digests = _require_mapping(
         policy.get("recordedDigests"), "judges calibrationPolicy.recordedDigests"
     )
@@ -388,7 +406,7 @@ def _judge_catalog_status(
             "judges calibrationPolicy records require the canonical calibration validator"
         )
     for rubric_id in rubrics_by_id:
-        if any(
+        for record in records:
             _valid_calibration_record(
                 record,
                 rubric_id,
@@ -396,9 +414,6 @@ def _judge_catalog_status(
                 required_digests,
                 validator,
             )
-            for record in records
-        ):
-            rubric_status[rubric_id] = "calibrated"
     calibrated_count = sum(
         rubric_state == "calibrated" for rubric_state in rubric_status.values()
     )
@@ -430,6 +445,8 @@ def _judge_catalog_status(
             )
     judge_status = {
         "calibrationStatus": str(status),
+        "promotionStatus": str(promotion_status),
+        "diagnosticRecordCount": len(records),
         "requiredBeforeVerifiedEvidence": bool(
             policy.get("requiredBeforeVerifiedEvidence")
         ),
@@ -847,6 +864,10 @@ def build_evaluation_coverage(
                 )
             if status == "runnable" and structurally_executable:
                 runnable_cases_by_harness[str(harness)].add(case_id)
+        if case.get("postRunVerificationStatus") != "external-runner-required":
+            raise ValueError(
+                f"Evaluation case {case_id} postRunVerificationStatus must be external-runner-required"
+            )
 
     calibration_validator = eval_runner
     calibration_policy = _require_mapping(
@@ -1528,9 +1549,9 @@ def render(
         "- For skills, a positive case alone does not prove activation precision or causal skill contribution. Full probe coverage additionally requires a negative-activation case and executable target-present, target-omitted, and wrong-skill controls over frozen input.",
         "- Executable fixture means every case required for the corresponding full coverage claim has a project, task, and verification command.",
         "- A workflow pack may have partial case coverage without having an end-to-end fixture for every declared phase, agent, and handoff.",
-        "- Judge calibration is calibrated only for a Model Judge rubric with a matching calibration record and passing metrics. Deterministic-Judge-only declarations show not-required.",
-        "- Executed requires a structurally valid receipt classified by the evaluation runner.",
-        "- Verified requires the runner's complete receipt validation, current digests, isolation evidence, required Judge verdicts, and attribution evidence.",
+        "- Model Judge calibration promotion is disabled pending per-sample provenance. Diagnostic records cannot create calibrated status; Deterministic-Judge-only declarations show not-required.",
+        "- Executed means a version-two receipt has a structurally complete capture with digest-bound harness invocation, event ledger, and selected agent-start evidence; it does not imply a trusted producer.",
+        "- Verified additionally requires a governed external verifier trust anchor over the receipt, current digests, complete workspace diff, isolation evidence, required Judge verdicts, command evidence, and attribution evidence. That verifier is not implemented yet.",
         "- Stale-by-digest means a prior execution no longer verifies against current agent, skill, model, or Judge calibration digests.",
         "- Catalog coverageStatus values never create executed or verified status.",
         "",
@@ -1541,7 +1562,7 @@ def render(
         f"- [x] {evidence['declaredScenarioCount']} agent scenarios and {evidence['workflowPackCount']} workflow packs are declared.",
         f"- {evidence['caseBackedWorkflowPackCount']} workflow packs have associated cases; {evidence['partialWorkflowPackCount']} are partial and {evidence['endToEndFixtureBackedWorkflowPackCount']} have end-to-end fixture coverage.",
         f"- {evidence['fixtureBackedCaseCount']} cases are fixture-backed and {evidence['executableCaseCount']} fixtures are structurally executable before harness readiness is considered.",
-        f"- {evidence['codexRunnableCaseCount']} cases are runnable through the Codex fast path; {evidence['junieRunnableCaseCount']} are runnable through Junie without an external-runner prerequisite.",
+        f"- {evidence['codexRunnableCaseCount']} cases can capture a Codex harness run through the native fast path; {evidence['junieRunnableCaseCount']} can run through Junie without an external-runner prerequisite. Every post-run verification command still requires trusted external containment.",
         f"- {evidence['caseBackedAgentCount']} agents have at least one case-backed scenario; {evidence['partialScenarioBackedAgentCount']} are partial and {evidence['fixtureBackedAgentCount']} have all declared scenarios backed.",
         f"- {evidence['positiveCaseBackedSkillCount']} skills have positive-case support, {evidence['negativeCaseBackedSkillCount']} have negative-activation cases, {evidence['pairedControlsExecutableSkillCount']} have executable paired controls, and {evidence['fixtureBackedSkillCount']} satisfy the full probe contract.",
         f"- {evidence['executableFixtureAgentCount']} agents and {evidence['executableFixtureSkillCount']} skills have executable full fixtures.",
@@ -1555,7 +1576,7 @@ def render(
         "",
         "## Evaluation Harness And Sandbox Support",
         "",
-        "Evaluation execution support is limited to Codex and Junie. A declared sandbox profile reports its actual containment status; workspace isolation and tool configuration do not imply external containment.",
+        "Evaluation execution support is limited to Codex and Junie. A declared sandbox profile reports its actual containment status; workspace isolation and tool configuration do not imply external containment. The host runner audits dependency and build trees, records declared ephemeral build output separately from product changes, never executes model-modified verification code, and cannot promote current receipts without the unimplemented governed external verifier.",
         "",
         "| Harness | Profile | Implementation | Workspace isolation | Containment status |",
         "| --- | --- | --- | --- | --- |",
@@ -1642,7 +1663,7 @@ def render(
             f"- Calibration policy status: {active_coverage['judgeStatus']['calibrationStatus']}.",
             f"- Calibrated Model Judge rubrics: {_case_list(active_coverage['judgeStatus']['calibratedRubrics'])}.",
             f"- Pending Model Judge rubrics: {_case_list(active_coverage['judgeStatus']['pendingRubrics'])}.",
-            "- Pending Model Judge calibration leaves only Model-Judge-dependent evidence unverified; deterministic-Judge-only cases may still verify.",
+            "- Pending Model Judge calibration blocks Model-Judge-dependent evidence. Deterministic-Judge-only cases avoid that calibration gate but remain unverified until governed external post-run verification is implemented.",
             "",
             "## Repository Verification Layers",
             "",

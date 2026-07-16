@@ -37,6 +37,16 @@ TRANSIENT_TREE_NAMES = frozenset({
     "runs",
     "target",
 })
+PROTECTED_DEPENDENCY_OR_TOOL_TREE_NAMES = frozenset({
+    ".git",
+    ".gradle",
+    ".m2",
+    ".pnpm-store",
+    ".venv",
+    "node_modules",
+    "vendor",
+    "venv",
+})
 DEPENDENCY_INPUT_NAMES = frozenset({
     "Cargo.lock",
     "Cargo.toml",
@@ -61,11 +71,12 @@ DEPENDENCY_INPUT_NAMES = frozenset({
 
 @dataclass(frozen=True)
 class PreparedFixture:
-    """Describe one immutable-by-contract prepared fixture cache entry."""
+    """Describe one integrity-checked content-addressed fixture cache entry."""
 
     key: str
     path: Path
     source_digest: str
+    prepared_snapshot_digest: str
     dependency_digest: str
     toolchain_digest: str
     preparation_environment_digest: str
@@ -88,8 +99,11 @@ class FunctionalIsolationAudit:
 
     status: str
     changed_paths: tuple[str, ...]
+    ephemeral_changed_paths: tuple[str, ...]
     before_digest: str
     after_digest: str
+    workspace_before_digest: str
+    workspace_after_digest: str
 
 
 class PreparedWorkspaceManager:
@@ -120,6 +134,8 @@ class PreparedWorkspaceManager:
         fixture_root: Path,
         toolchain: Mapping[str, str],
         prepare_command: object | None = None,
+        *,
+        allow_create: bool = True,
     ) -> PreparedFixture:
         """Return a cached prepared fixture, populating it once on a cache miss.
 
@@ -128,6 +144,7 @@ class PreparedWorkspaceManager:
         """
 
         fixture_root = fixture_root.resolve()
+        validate_symlink_boundaries(fixture_root)
         if prepare_command is not None and not toolchain:
             raise ValueError("prepared installs require explicit toolchain versions")
         source_snapshot = snapshot_tree(fixture_root, exclude_transient=True)
@@ -158,6 +175,7 @@ class PreparedWorkspaceManager:
                 key,
                 destination,
                 source_digest,
+                _prepared_marker_digest(destination),
                 dependency_digest,
                 toolchain_digest,
                 preparation_environment_digest,
@@ -172,11 +190,17 @@ class PreparedWorkspaceManager:
                     key,
                     destination,
                     source_digest,
+                    _prepared_marker_digest(destination),
                     dependency_digest,
                     toolchain_digest,
                     preparation_environment_digest,
                     platform_values,
                     True,
+                )
+            if not allow_create:
+                raise RuntimeError(
+                    "trusted prepared fixture is missing or failed integrity validation; "
+                    "populate it separately with --prepare and --install"
                 )
             if destination.exists():
                 _set_tree_writable(destination)
@@ -190,10 +214,18 @@ class PreparedWorkspaceManager:
                         raise RuntimeError(
                             f"fixture preparation failed with exit code {result.exit_code}: {result.stderr.strip()}"
                         )
+                validate_symlink_boundaries(temporary)
+                prepared_source = snapshot_tree(temporary, exclude_transient=True)
+                if snapshot_digest(prepared_source) != source_digest:
+                    raise RuntimeError(
+                        "fixture preparation changed fixture source identity; "
+                        "install outputs must stay in transient dependency or build trees"
+                    )
                 temporary_marker = temporary / ".eval-prepared.json"
+                prepared_snapshot_digest = _prepared_snapshot_digest(temporary)
                 marker_data = {
                     **expected_marker,
-                    "preparedSnapshotDigest": _prepared_snapshot_digest(temporary),
+                    "preparedSnapshotDigest": prepared_snapshot_digest,
                 }
                 temporary_marker.write_text(json.dumps(marker_data, sort_keys=True) + "\n", encoding="utf-8")
                 os.replace(temporary, destination)
@@ -204,6 +236,7 @@ class PreparedWorkspaceManager:
             key,
             destination,
             source_digest,
+            prepared_snapshot_digest,
             dependency_digest,
             toolchain_digest,
             preparation_environment_digest,
@@ -213,14 +246,47 @@ class PreparedWorkspaceManager:
 
     @contextmanager
     def workspace(self, prepared: PreparedFixture, *, initialize_git: bool = True) -> Iterator[RunWorkspace]:
-        """Yield a disposable run workspace and remove it even when the run fails."""
+        """Yield a verified disposable clone and remove it even when the run fails."""
 
         self.runs_root.mkdir(parents=True, exist_ok=True)
         path = self.runs_root / f"{prepared.key[:12]}-{uuid.uuid4().hex}"
-        preparation = copy_tree_copy_on_write(prepared.path, path, exclude_transient=False)
+        expected_marker = {
+            "key": prepared.key,
+            "sourceDigest": prepared.source_digest,
+            "dependencyDigest": prepared.dependency_digest,
+            "toolchainDigest": prepared.toolchain_digest,
+            "preparationEnvironmentDigest": prepared.preparation_environment_digest,
+            "platform": dict(prepared.platform_identity),
+        }
+        with _cache_key_lock(
+            self.cache_root, prepared.key, self._lock_timeout_seconds
+        ):
+            if not _prepared_cache_matches(
+                prepared.path,
+                expected_marker,
+                full=self._integrity_mode == "full",
+            ):
+                raise RuntimeError(
+                    "prepared fixture integrity changed before workspace cloning"
+                )
+            if _prepared_marker_digest(prepared.path) != prepared.prepared_snapshot_digest:
+                raise RuntimeError(
+                    "prepared fixture snapshot digest changed before workspace cloning"
+                )
+            preparation = copy_tree_copy_on_write(
+                prepared.path, path, exclude_transient=False
+            )
         try:
             (path / ".eval-workspace.json").write_text(
-                json.dumps({"preparedKey": prepared.key, "disposable": True}, sort_keys=True) + "\n",
+                json.dumps(
+                    {
+                        "preparedKey": prepared.key,
+                        "preparedSnapshotDigest": prepared.prepared_snapshot_digest,
+                        "disposable": True,
+                    },
+                    sort_keys=True,
+                )
+                + "\n",
                 encoding="utf-8",
             )
             if initialize_git:
@@ -317,14 +383,23 @@ def copy_tree_copy_on_write(source: Path, destination: Path, *, exclude_transien
     return "full-copy"
 
 
-def snapshot_tree(root: Path, *, exclude_transient: bool = False) -> dict[str, str]:
+def snapshot_tree(
+    root: Path,
+    *,
+    exclude_transient: bool = False,
+    excluded_top_level_names: frozenset[str] = frozenset(),
+) -> dict[str, str]:
     """Hash paths, content, mode bits, empty directories, and symlink targets into a manifest."""
 
     root = root.resolve()
     if not root.is_dir():
         raise ValueError(f"snapshot root is not a directory: {root}")
     snapshot: dict[str, str] = {}
-    for path in _iter_tree(root, exclude_transient=exclude_transient):
+    for path in _iter_tree(
+        root,
+        exclude_transient=exclude_transient,
+        excluded_top_level_names=excluded_top_level_names,
+    ):
         relative = path.relative_to(root)
         key = relative.as_posix()
         mode = stat.S_IMODE(path.lstat().st_mode)
@@ -337,6 +412,30 @@ def snapshot_tree(root: Path, *, exclude_transient: bool = False) -> dict[str, s
     return snapshot
 
 
+def validate_symlink_boundaries(root: Path) -> None:
+    """Reject broken links and links whose resolved target escapes a fixture tree."""
+
+    resolved_root = root.resolve()
+    if not resolved_root.is_dir():
+        raise ValueError(f"symlink boundary root is not a directory: {resolved_root}")
+    for directory, directory_names, file_names in os.walk(
+        resolved_root, topdown=True, followlinks=False
+    ):
+        current = Path(directory)
+        for name in [*directory_names, *file_names]:
+            path = current / name
+            if not path.is_symlink():
+                continue
+            try:
+                target = path.resolve(strict=True)
+            except OSError as error:
+                raise ValueError(f"fixture contains a broken symlink: {path}") from error
+            if target != resolved_root and resolved_root not in target.parents:
+                raise ValueError(
+                    f"fixture symlink escapes the prepared tree: {path} -> {target}"
+                )
+
+
 def snapshot_digest(snapshot: Mapping[str, str]) -> str:
     """Return a deterministic digest for a tree snapshot."""
 
@@ -344,10 +443,14 @@ def snapshot_digest(snapshot: Mapping[str, str]) -> str:
 
 
 def snapshot_product_tree(root: Path) -> dict[str, str]:
-    """Snapshot product files while excluding dependencies and runner-owned context artifacts."""
+    """Snapshot the complete auditable workspace except runner-owned control artifacts."""
 
-    snapshot = snapshot_tree(root, exclude_transient=True)
-    runner_roots = {".agents", ".codex", ".eval-context", ".junie"}
+    runner_roots = {".agents", ".codex", ".eval-context", ".git", ".junie"}
+    snapshot = snapshot_tree(
+        root,
+        exclude_transient=False,
+        excluded_top_level_names=frozenset(runner_roots),
+    )
     runner_files = {".eval-prepared.json", ".eval-workspace.json"}
     return {
         path: identity
@@ -456,23 +559,60 @@ def audit_functional_isolation(
     *,
     read_only: bool,
     allowed_write_paths: Sequence[str] = (),
+    ephemeral_write_paths: Sequence[str] = (),
 ) -> FunctionalIsolationAudit:
-    """Compare workspace snapshots and classify read-only or allowed-path mutation behavior."""
+    """Separate product mutations from declared disposable build-output mutations."""
 
-    changed_paths = tuple(sorted(
+    all_changed_paths = tuple(sorted(
         path for path in set(before) | set(after)
         if before.get(path) != after.get(path)
     ))
+    ephemeral_roots = tuple(PurePosixPath(path) for path in ephemeral_write_paths)
+    ephemeral_changed_paths = tuple(
+        path
+        for path in all_changed_paths
+        if _path_is_allowed(PurePosixPath(path), ephemeral_roots)
+        and not _path_contains_protected_dependency_or_tool_tree(
+            PurePosixPath(path)
+        )
+    )
+    ephemeral_changed = set(ephemeral_changed_paths)
+    changed_paths = tuple(
+        path for path in all_changed_paths if path not in ephemeral_changed
+    )
     allowed_roots = tuple(PurePosixPath(path) for path in allowed_write_paths)
     violating = changed_paths if read_only else tuple(
         path for path in changed_paths
         if not _path_is_allowed(PurePosixPath(path), allowed_roots)
     )
+    product_before = {
+        path: identity
+        for path, identity in before.items()
+        if not (
+            _path_is_allowed(PurePosixPath(path), ephemeral_roots)
+            and not _path_contains_protected_dependency_or_tool_tree(
+                PurePosixPath(path)
+            )
+        )
+    }
+    product_after = {
+        path: identity
+        for path, identity in after.items()
+        if not (
+            _path_is_allowed(PurePosixPath(path), ephemeral_roots)
+            and not _path_contains_protected_dependency_or_tool_tree(
+                PurePosixPath(path)
+            )
+        )
+    }
     return FunctionalIsolationAudit(
         status="violated" if violating else "verified",
         changed_paths=changed_paths,
-        before_digest=snapshot_digest(before),
-        after_digest=snapshot_digest(after),
+        ephemeral_changed_paths=ephemeral_changed_paths,
+        before_digest=snapshot_digest(product_before),
+        after_digest=snapshot_digest(product_after),
+        workspace_before_digest=snapshot_digest(before),
+        workspace_after_digest=snapshot_digest(after),
     )
 
 
@@ -505,6 +645,12 @@ def _ignore_transient(_directory: str, names: list[str]) -> set[str]:
 
 def _path_is_allowed(path: PurePosixPath, roots: tuple[PurePosixPath, ...]) -> bool:
     return any(path == root or root in path.parents for root in roots)
+
+
+def _path_contains_protected_dependency_or_tool_tree(path: PurePosixPath) -> bool:
+    return any(
+        part in PROTECTED_DEPENDENCY_OR_TOOL_TREE_NAMES for part in path.parts
+    )
 
 
 def _effective_toolchain(toolchain: Mapping[str, str], platform_values: Mapping[str, str]) -> dict[str, str]:
@@ -546,14 +692,17 @@ def _prepared_snapshot_digest(root: Path) -> str:
     return snapshot_digest(snapshot)
 
 
-def _set_tree_read_only(root: Path) -> None:
-    for path in sorted(root.rglob("*"), key=lambda item: len(item.parts), reverse=True):
-        if path.is_symlink():
-            continue
-        mode = stat.S_IMODE(path.stat().st_mode)
-        path.chmod(mode & ~0o222)
-    mode = stat.S_IMODE(root.stat().st_mode)
-    root.chmod(mode & ~0o222)
+def _prepared_marker_digest(destination: Path) -> str:
+    try:
+        value = json.loads(
+            (destination / ".eval-prepared.json").read_text(encoding="utf-8")
+        )
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise RuntimeError("prepared fixture marker is unreadable") from error
+    digest = value.get("preparedSnapshotDigest") if isinstance(value, Mapping) else None
+    if not isinstance(digest, str) or len(digest) != 64:
+        raise RuntimeError("prepared fixture marker lacks a snapshot digest")
+    return digest
 
 
 def _set_tree_writable(root: Path) -> None:
@@ -653,12 +802,20 @@ def _contains_transient_tree(root: Path) -> bool:
     return False
 
 
-def _iter_tree(root: Path, *, exclude_transient: bool) -> Iterator[Path]:
+def _iter_tree(
+    root: Path,
+    *,
+    exclude_transient: bool,
+    excluded_top_level_names: frozenset[str] = frozenset(),
+) -> Iterator[Path]:
+    root = root.resolve()
     for directory, directory_names, file_names in os.walk(root, topdown=True, followlinks=False):
         current = Path(directory)
         retained_directories: list[str] = []
         for name in sorted(directory_names):
             path = current / name
+            if current == root and name in excluded_top_level_names:
+                continue
             if exclude_transient and name in TRANSIENT_TREE_NAMES:
                 continue
             if path.is_symlink():

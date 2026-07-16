@@ -1077,7 +1077,7 @@ agents:
       - technology detection skillsets
       - nested AGENTS.md recommendations
       - runtime capability validation
-      - Codex and Junie AGENTS.md routing
+      - AGENTS.md and CLAUDE.md routing
       - validation evidence
     judgePlan:
       deterministicChecks:
