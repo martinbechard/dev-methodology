@@ -1,45 +1,230 @@
 schema: dev-methodology-eval-evidence-schema
-version: 1
-required:
+version: 2
+supportedReceiptVersions:
+  - 1
+  - 2
+version2Required:
   - schema
   - version
   - case
   - verdict
   - captureProvenance
-  - agent
+  - run
   - skills
+  - budgets
+  - preparedFixture
+  - isolation
+  - judges
   - behaviorAssertions
   - commands
-  - independentVerifier
-agentRequired:
+  - independentJudge
+runRequired:
   - id
   - harness
+  - harnessVersion
+  - harnessDigest
+  - harnessIdentityEvidence
   - model
+  - modelDigest
+  - modelIdentityEvidence
+  - agentId
+  - conceptualAgentDigest
+  - nativeAdapterSourceDigest
+  - nativeAdapterEffectiveDigest
+  - nativeAdapterSanitizations
   - invocationEvidence
+  - agentStartEvidence
+  - attributionStatus
+  - eventLedger
+  - contextPackDigest
+  - contextPackEvidence
+  - approvedInputManifestDigest
+  - caseDefinitionDigest
+  - installExecuted
+probeRunRequiredWhenApplicable:
+  - probeId
+  - probeVariant
+  - probeComparisonKey
+probeVariantValues:
+  - treatment
+  - target-omitted
+  - wrong-skill
+probeCompletionRule:
+  requiredVariants: [treatment, target-omitted, wrong-skill]
+  comparisonIdentity: probeComparisonKey
+  singleVariantStatus: unverified-as-complete-probe
+supportedHarnesses:
+  - codex
+  - junie
 skillRequired:
   - id
-  - contentDigest
+  - sourceDigest
+  - effectiveDigest
+  - resourceManifestDigest
+  - resources
   - readEvidence
+skillResourceRequired:
+  - path
+  - sourceDigest
+  - effectiveDigest
+  - sanitizations
+budgetsRequired:
+  - limits
+  - usage
+budgetFields:
+  - turns
+  - tokens
+  - seconds
+  - toolCalls
+preparedFixtureRequired:
+  - key
+  - sourceDigest
+  - dependencyDigest
+  - toolchainDigest
+  - preparationEnvironmentDigest
+  - platform
+  - toolchainEvidence
+  - preparationEnvironmentEvidence
+platformRequired:
+  - system
+  - release
+  - machine
+isolationRequired:
+  - workspacePreparation
+  - functional
+  - containment
+  - sandboxProfile
+  - sandboxProfileDigest
+  - sandboxProfileEvidence
+functionalIsolationRequired:
+  - status
+  - projectHashBefore
+  - projectHashAfter
+  - allowedWritePaths
+  - changedPaths
+  - evidence
+containmentRequired:
+  - level
+  - status
+  - enforcedBy
+containmentLevelValues:
+  - externally-contained
+  - workspace-isolated-only
+  - containment-unverified
+containmentEvidenceStatusValues:
+  - verified
+  - unverified
+  - failed
+codexIsolationRequired:
+  - codexNativeSandbox
+junieIsolationRequired:
+  - junieExternalContainment
+junieExternalContainmentRequired:
+  - capability
+  - status
+  - runnerDigest
+  - attestationDigest
+  - evidence
+judgeTypes:
+  - Deterministic Judge
+  - Model Judge
+  - Human Judge
+judgeExecutionOrder:
+  - Deterministic Judge
+  - Model Judge
+  - Human Judge
+modelJudgeCalibrationRequired:
+  - rubricId
+  - judgePromptSha256
+  - judgeOutputSchemaSha256
+  - instructionEnvelopeSha256
+  - harness
+  - judgeModelIdentity
+  - reasoningProfile
+  - rubricSha256
+  - calibrationSetSha256
+  - recordDigest
+  - status
+  - metrics
+  - samples
+modelJudgeCalibrationMetrics:
+  binaryF1Minimum: 0.85
+  weightedKappaMinimum: 0.70
+  criticalDefectRecallRequired: 1.0
+  minimumExamples: 25
+  minimumExamplesPerClass: 5
+  minimumFailedExamples: 2
+  minimumCriticalFailedExamples: 5
+  orderedScoreMinimum: 0
+  orderedScoreMaximum: 4
+  requiredSampleClasses:
+    - clear-pass
+    - clear-fail
+    - boundary
+    - incomplete-plausible
+    - adversarially-polished
+  boundaryHumanJudgesMinimum: 2
+  boundaryAdjudicationRequired: true
+  sampleCountSource: computed-from-samples
+modelJudgeDimensionRequired:
+  - id
+  - score
+  - critical
+  - evidenceReferences
+  - rationale
+modelJudgeOverallRequired:
+  - verdict
+  - criticalFailure
 behaviorAssertionRequired:
   - id
   - verdict
   - evidence
 commandRequired:
-  - command
+  - argv
   - exitCode
   - expectation
   - evidence
-independentVerifierRequired:
+independentJudgeRequired:
   - kind
   - reference
+  - invocationId
+  - invocationEvidence
+  - contextIdentity
+  - contextEvidence
+  - modelIdentity
+  - reasoningProfile
+  - judgePromptSha256
+  - judgePromptEvidence
+  - inputManifestDigest
+  - inputManifestEvidence
+  - evaluatedRunId
+  - blindTo
 captureProvenanceRequired:
   - kind
   - reference
+legacyVersion1:
+  compatibility: accepted
+  status: validation-only
+  requiredAgentFields:
+    - id
+    - harness
+    - model
+    - invocationEvidence
+  independentEvidenceField: independentVerifier
 notes:
-  - A declared case is not verified evidence.
+  - A declared case or a fixture pass is not verified behavior evidence.
+  - Receipt version 2 records current agent, skill, model, harness, context-pack, and approved-input digests.
+  - Digest drift produces stale-by-digest rather than verified status.
   - Skill readEvidence must reference captured harness tool calls, not an agent-authored claim.
-  - Every evidence reference must use relative file#marker syntax and resolve inside the receipt directory.
-  - The referenced UTF-8 artifact must exist and contain the named marker.
-  - Invocation and skill-read references must resolve to unique JSON Lines harness events with matching identity and digest fields.
-  - Receipt validation proves internal consistency; trusted capture provenance remains an external evaluator responsibility.
-  - Read-only cases also require equal projectHashBefore and projectHashAfter values.
+  - Forbidden skill reads are detected from the complete normalized event ledger.
+  - Every evidence reference uses relative file#marker syntax and resolves inside the receipt directory.
+  - Functional isolation reports workspace mutation compliance separately from security containment.
+  - Codex records native sandbox mode plus the runner-owned workspace boundary.
+  - Junie records externally enforced containment or explicitly reports containment as unverified.
+  - A caller-created Junie runner attestation is self-attested and remains containment-unverified until a governed trust anchor verifies it.
+  - Every verified Codex or Junie attribution resolves a digest-bound agent-start event for the effective native adapter.
+  - Version-two skill evidence binds unsanitized source, effective model-visible content, selected resources, and sanitization actions.
+  - Prepared source and case-definition drift make a receipt stale, and the prepared key binds toolchain and controlled-environment identity.
+  - A full skill probe requires comparable treatment, target-omitted, and wrong-skill receipts with one probeComparisonKey.
+  - Deterministic Judges run first and only a critical deterministic failure skips the Model Judge.
+  - A Model Judge result is current only while every calibration identity and digest remains unchanged.

@@ -1,283 +1,524 @@
 #!/usr/bin/env python3
+# Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+# AI attribution: Modified with AI assistance.
+# Summary: Provides the CLI and compatibility API for agent and skill evaluation execution.
+
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
-import subprocess
+import shutil
 import sys
+import tempfile
+from contextlib import nullcontext
 from pathlib import Path
+from typing import Iterable, Mapping
 
 import yaml
 
-
-ROOT = Path(__file__).resolve().parents[1]
-CASES_PATH = ROOT / "evals" / "cases.yaml"
-
-
-def content_digest(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+try:
+    from agent_skill_evals import *  # noqa: F403
+except ModuleNotFoundError:
+    from scripts.agent_skill_evals import *  # type: ignore[no-redef]  # noqa: F403
 
 
-def load_cases() -> dict[str, dict[str, object]]:
-    data = yaml.safe_load(CASES_PATH.read_text(encoding="utf-8"))
-    if not isinstance(data, dict) or not isinstance(data.get("cases"), list):
-        raise ValueError("evals/cases.yaml must define a cases list.")
-    cases: dict[str, dict[str, object]] = {}
-    for item in data["cases"]:
-        if not isinstance(item, dict) or not isinstance(item.get("id"), str):
-            raise ValueError("Every eval case must define an id.")
-        cases[item["id"]] = item
-    return cases
+def run(command: object, cwd: Path) -> bool:
+    """Run a fixture command through the shell-free compatibility boundary."""
+
+    spec = command_spec(command)  # noqa: F405
+    print(f"[{cwd.name}] {json.dumps(list(spec.argv))}")
+    result = run_command(spec, cwd)  # noqa: F405
+    if result.stdout:
+        print(result.stdout, end="" if result.stdout.endswith("\n") else "\n")
+    if result.stderr:
+        print(result.stderr, file=sys.stderr, end="" if result.stderr.endswith("\n") else "\n")
+    return result.passed
 
 
-def run(command: str, cwd: Path) -> bool:
-    print(f"[{cwd.name}] {command}")
-    completed = subprocess.run(command, cwd=cwd, shell=True, check=False)
-    return completed.returncode == 0
+def main(argv: list[str] | None = None) -> int:
+    """Validate catalogs, prepare fixtures, print harness commands, or execute selected cases."""
 
+    parser = _argument_parser()
+    args = parser.parse_args(argv)
+    cases = load_cases()  # noqa: F405
 
-def validate_case(case: dict[str, object], project_root: Path, result_path: Path | None) -> list[str]:
-    errors: list[str] = []
-    task_path = project_root / str(case["task"])
-    if not task_path.is_file():
-        errors.append(f"missing task: {task_path}")
-    for skill in case["requiredSkills"]:
-        skill_path = ROOT / "skills" / str(skill) / "SKILL.md"
-        if not skill_path.is_file():
-            errors.append(f"missing skill: {skill}")
-    if result_path is not None:
-        if not result_path.is_file():
-            errors.append(f"missing result: {result_path}")
-        else:
-            text = result_path.read_text(encoding="utf-8")
-            for heading in ("Skills Used", "Evidence Packet", "Review Synthesis"):
-                if heading not in text:
-                    errors.append(f"result missing section: {heading}")
-    return errors
+    if args.validate_calibration is not None:
+        value = yaml.safe_load(args.validate_calibration.read_text(encoding="utf-8"))
+        if not isinstance(value, dict):
+            print("FAIL calibration record must be a YAML mapping", file=sys.stderr)
+            return 1
+        expected = {
+            field: value.get(field)
+            for field in (
+                "rubricId",
+                "judgePromptSha256",
+                "judgeOutputSchemaSha256",
+                "instructionEnvelopeSha256",
+                "harness",
+                "judgeModelIdentity",
+                "reasoningProfile",
+                "rubricSha256",
+                "calibrationSetSha256",
+            )
+        }
+        calibration_errors = validate_calibration_record(value, expected)  # noqa: F405
+        if calibration_errors:
+            for error in calibration_errors:
+                print(f"FAIL {error}", file=sys.stderr)
+            return 1
+        print(json.dumps({
+            "calibration": "accepted",
+            "metrics": compute_calibration_metrics(value["samples"]),  # noqa: F405
+            "recordDigest": value["recordDigest"],
+        }, sort_keys=True))
+        return 0
 
+    if args.validate_catalogs:
+        catalog_errors = validate_framework_catalogs(cases=cases)  # noqa: F405
+        if catalog_errors:
+            for error in catalog_errors:
+                print(f"FAIL {error}", file=sys.stderr)
+            return 1
+        print("CATALOGS VALID")
+        if not any((args.case, args.skill_probe, args.agent_scenario, args.workflow_pack, args.prepare, args.print_invocation, args.invoke_harness)):
+            return 0
 
-def require_non_empty_string(value: object, field: str, errors: list[str]) -> None:
-    if not isinstance(value, str) or not value.strip():
-        errors.append(f"evidence missing non-empty {field}")
-
-
-def validate_reference(value: object, field: str, evidence_path: Path, errors: list[str]) -> None:
-    if not isinstance(value, str) or "#" not in value:
-        errors.append(f"evidence {field} must be a relative file#marker reference")
-        return
-    file_name, marker = value.rsplit("#", 1)
-    if not file_name or not marker:
-        errors.append(f"evidence {field} must include a file and marker")
-        return
-    target = (evidence_path.parent / file_name).resolve()
-    evidence_root = evidence_path.parent.resolve()
-    if target != evidence_root and evidence_root not in target.parents:
-        errors.append(f"evidence {field} reference escapes the receipt directory")
-        return
-    if not target.is_file():
-        errors.append(f"evidence {field} reference target is missing: {file_name}")
-        return
     try:
-        referenced_text = target.read_text(encoding="utf-8")
-    except UnicodeDecodeError:
-        errors.append(f"evidence {field} reference target is not UTF-8 text: {file_name}")
-        return
-    if marker not in referenced_text:
-        errors.append(f"evidence {field} marker is missing from {file_name}: {marker}")
+        selected = _select_cases(cases, args.case, args.skill_probe, args.agent_scenario, args.workflow_pack)
+    except ValueError as error:
+        parser.error(str(error))
+    if args.prepare and not args.case:
+        parser.error("--prepare requires --case")
+    if args.probe_variant and not args.skill_probe:
+        parser.error("--probe-variant requires --skill-probe")
+    if args.skill_probe and (args.print_invocation or args.invoke_harness):
+        if args.probe_variant is None:
+            parser.error("harness-backed skill probes require --probe-variant")
+        try:
+            selected = [
+                _apply_probe_variant(case, args.skill_probe, args.probe_variant)
+                for case in selected
+            ]
+        except ValueError as error:
+            parser.error(str(error))
+    if args.invoke_harness and any(case.get("readOnly") for case in selected) and args.result is None:
+        parser.error("read-only harness execution requires --result outside the product workspace")
+    if (args.print_invocation or args.invoke_harness) and (len(selected) != 1 or not args.harness):
+        parser.error("harness invocation requires one selected case and --harness")
+    if args.invoke_harness and args.project_root is None and args.prepared_cache is None:
+        args.prepared_cache = Path(tempfile.gettempdir()) / "dev-methodology-evals" / "prepared"
+    if args.invoke_harness and args.harness == "junie":
+        parser.error("live Junie invocation is unavailable until a trusted external runner verifier is implemented")
+    if args.harness == "junie" and (args.junie_external_runner is None) != (
+        args.junie_containment_attestation is None
+    ):
+        parser.error("Junie external runner and containment attestation must be supplied together")
 
-
-def validate_harness_event(
-    value: object,
-    field: str,
-    evidence_path: Path,
-    expected: dict[str, object],
-    errors: list[str],
-) -> None:
-    validate_reference(value, field, evidence_path, errors)
-    if not isinstance(value, str) or "#" not in value:
-        return
-    file_name, marker = value.rsplit("#", 1)
-    target = (evidence_path.parent / file_name).resolve()
-    if not target.is_file():
-        return
-    events: list[dict[str, object]] = []
-    try:
-        for line in target.read_text(encoding="utf-8").splitlines():
-            try:
-                event = json.loads(line)
-            except json.JSONDecodeError:
-                continue
-            if isinstance(event, dict) and str(event.get("id")) == marker:
-                events.append(event)
-    except UnicodeDecodeError:
-        return
-    if len(events) != 1:
-        errors.append(f"evidence {field} must identify exactly one JSON harness event: {marker}")
-        return
-    event = events[0]
-    for key, expected_value in expected.items():
-        if event.get(key) != expected_value:
-            errors.append(f"evidence {field} harness event {key} does not match {expected_value}")
-
-
-def validate_evidence(case: dict[str, object], evidence_path: Path | None) -> list[str]:
-    errors: list[str] = []
-    if evidence_path is None:
-        return ["behavior evaluation requires --evidence"]
-    if not evidence_path.is_file():
-        return [f"missing evidence receipt: {evidence_path}"]
-    evidence = yaml.safe_load(evidence_path.read_text(encoding="utf-8"))
-    if not isinstance(evidence, dict):
-        return [f"evidence receipt must be a YAML mapping: {evidence_path}"]
-    if evidence.get("schema") != "dev-methodology-eval-evidence" or evidence.get("version") != 1:
-        errors.append("evidence receipt has unsupported schema or version")
-    if evidence.get("case") != case["id"]:
-        errors.append("evidence receipt case does not match selected case")
-    if evidence.get("verdict") != "verified":
-        errors.append("evidence receipt verdict must be verified")
-    provenance = evidence.get("captureProvenance")
-    if not isinstance(provenance, dict):
-        errors.append("evidence captureProvenance must be a mapping")
-    else:
-        if provenance.get("kind") not in {"trusted-ci", "human-attested-harness-export"}:
-            errors.append("evidence captureProvenance.kind must identify a trusted capture source")
-        validate_reference(provenance.get("reference"), "captureProvenance.reference", evidence_path, errors)
-    agent = evidence.get("agent")
-    if not isinstance(agent, dict):
-        errors.append("evidence agent must be a mapping")
-    else:
-        if agent.get("id") not in case.get("requiredAgents", []):
-            errors.append("evidence agent id does not match a required agent")
-        for field in ("harness", "model", "invocationEvidence"):
-            require_non_empty_string(agent.get(field), f"agent.{field}", errors)
-        validate_harness_event(agent.get("invocationEvidence"), "agent.invocationEvidence", evidence_path, {
-            "type": "invocation",
-            "agent": agent.get("id"),
-            "harness": agent.get("harness"),
-            "model": agent.get("model"),
-        }, errors)
-    receipt_skills: dict[str, dict[str, object]] = {}
-    skills = evidence.get("skills")
-    if not isinstance(skills, list):
-        errors.append("evidence skills must be a list")
-    else:
-        for item in skills:
-            if not isinstance(item, dict) or not isinstance(item.get("id"), str):
-                errors.append("each evidence skill must be a mapping with id")
-                continue
-            receipt_skills[item["id"]] = item
-        for skill in case["requiredSkills"]:
-            item = receipt_skills.get(str(skill))
-            if item is None:
-                errors.append(f"evidence missing required skill: {skill}")
-                continue
-            source = ROOT / "skills" / str(skill) / "SKILL.md"
-            if item.get("contentDigest") != content_digest(source):
-                errors.append(f"evidence skill digest mismatch: {skill}")
-            read_evidence = item.get("readEvidence")
-            if not isinstance(read_evidence, list) or not read_evidence:
-                errors.append(f"evidence missing skill read tool evidence: {skill}")
-            elif any(not isinstance(value, dict) or value.get("type") != "tool-call" or not value.get("reference") for value in read_evidence):
-                errors.append(f"skill read evidence must contain tool-call references: {skill}")
-            else:
-                for index, value in enumerate(read_evidence):
-                    validate_harness_event(value["reference"], f"skills.{skill}.readEvidence[{index}]", evidence_path, {
-                        "type": "tool-call",
-                        "skill": str(skill),
-                        "contentDigest": item.get("contentDigest"),
-                    }, errors)
-    assertions = evidence.get("behaviorAssertions")
-    assertion_by_id = {
-        str(item.get("id")): item
-        for item in assertions
-        if isinstance(item, dict)
-    } if isinstance(assertions, list) else {}
-    if not isinstance(assertions, list):
-        errors.append("evidence behaviorAssertions must be a list")
-    for assertion_id in case["requiredEvidence"]:
-        item = assertion_by_id.get(str(assertion_id))
-        if item is None:
-            errors.append(f"evidence missing behavior assertion: {assertion_id}")
-        elif item.get("verdict") != "passed" or not item.get("evidence"):
-            errors.append(f"behavior assertion lacks passed evidence: {assertion_id}")
-        else:
-            validate_reference(item["evidence"], f"behaviorAssertions.{assertion_id}.evidence", evidence_path, errors)
-    findings = evidence.get("findings", [])
-    finding_ids = {str(item.get("id")) for item in findings if isinstance(item, dict) and item.get("evidence")}
-    for finding_id in case.get("requiredFindings", []):
-        if str(finding_id) not in finding_ids:
-            errors.append(f"evidence missing expected finding: {finding_id}")
-        else:
-            item = next(value for value in findings if isinstance(value, dict) and str(value.get("id")) == str(finding_id))
-            validate_reference(item["evidence"], f"findings.{finding_id}.evidence", evidence_path, errors)
-    commands = evidence.get("commands")
-    if not isinstance(commands, list) or not commands:
-        errors.append("evidence commands must be a non-empty list")
-    else:
-        for item in commands:
-            if not isinstance(item, dict):
-                errors.append("each command evidence item must be a mapping")
-                continue
-            require_non_empty_string(item.get("command"), "commands.command", errors)
-            if not isinstance(item.get("exitCode"), int):
-                errors.append("command exitCode must be an integer")
-            require_non_empty_string(item.get("expectation"), "commands.expectation", errors)
-            require_non_empty_string(item.get("evidence"), "commands.evidence", errors)
-            validate_reference(item.get("evidence"), "commands.evidence", evidence_path, errors)
-    verifier = evidence.get("independentVerifier")
-    if not isinstance(verifier, dict):
-        errors.append("evidence independentVerifier must be a mapping")
-    else:
-        require_non_empty_string(verifier.get("kind"), "independentVerifier.kind", errors)
-        require_non_empty_string(verifier.get("reference"), "independentVerifier.reference", errors)
-        validate_reference(verifier.get("reference"), "independentVerifier.reference", evidence_path, errors)
-    if case.get("readOnly"):
-        before = evidence.get("projectHashBefore")
-        after = evidence.get("projectHashAfter")
-        require_non_empty_string(before, "projectHashBefore", errors)
-        require_non_empty_string(after, "projectHashAfter", errors)
-        if before != after:
-            errors.append("read-only evaluation changed the project hash")
-    return errors
-
-
-def main() -> int:
-    parser = argparse.ArgumentParser(description="Run synthetic agent and skill evaluation projects.")
-    parser.add_argument("--case", choices=sorted(load_cases()))
-    parser.add_argument("--install", action="store_true")
-    parser.add_argument("--project-root", type=Path)
-    parser.add_argument("--result", type=Path)
-    parser.add_argument("--evidence", type=Path)
-    args = parser.parse_args()
-
-    cases = load_cases()
-    selected = [cases[args.case]] if args.case else list(cases.values())
+    toolchain = _parse_toolchain(args.toolchain)
+    manager = _workspace_manager(args)
     failures: list[str] = []
     for case in selected:
-        default_root = ROOT / str(case["project"])
+        default_root = ROOT / str(case["project"])  # noqa: F405
         project_root = args.project_root.resolve() if args.project_root else default_root
-        case_errors = validate_case(case, project_root, args.result)
-        if args.result is not None:
-            case_errors.extend(validate_evidence(case, args.evidence))
-        if args.install and not run(str(case["install"]), project_root):
-            case_errors.append("install command failed")
-        verification_passed = run(str(case["verify"]), project_root)
-        expect_verify_failure = bool(case.get("expectVerifyFailure", False))
-        if verification_passed == expect_verify_failure:
-            expectation = "failure" if expect_verify_failure else "success"
-            case_errors.append(f"verification command did not produce expected {expectation}")
-        if case_errors:
-            failures.extend(f"{case['id']}: {error}" for error in case_errors)
-        else:
-            label = "VERIFIED PASS" if args.result is not None else "FIXTURE PASS"
-            print(f"{label} {case['id']}")
+        if args.prepare:
+            assert manager is not None
+            prepared = manager.prepare(project_root, toolchain, case.get("install"))
+            print(json.dumps({
+                "case": case["id"],
+                "preparedFixture": {
+                    "key": prepared.key,
+                    "sourceDigest": prepared.source_digest,
+                    "dependencyDigest": prepared.dependency_digest,
+                    "toolchainDigest": prepared.toolchain_digest,
+                    "preparationEnvironmentDigest": prepared.preparation_environment_digest,
+                    "platform": dict(prepared.platform_identity),
+                    "cacheHit": prepared.cache_hit,
+                },
+            }, sort_keys=True))
+            continue
+
+        prepared = None
+        workspace_context = nullcontext(None)
+        if manager is not None:
+            prepare_command = case.get("install") if args.install else None
+            prepared = manager.prepare(project_root, toolchain, prepare_command)
+            workspace_context = manager.workspace(
+                prepared,
+                initialize_git=not (args.print_invocation or args.invoke_harness),
+            )
+        with workspace_context as run_workspace:
+            active_root = run_workspace.path if run_workspace is not None else project_root
+            result_for_preflight = None if args.invoke_harness else args.result
+            case_errors = validate_case(case, active_root, result_for_preflight)  # noqa: F405
+            if args.result is not None or args.evidence is not None:
+                classification = classify_evidence(case, args.evidence)  # noqa: F405
+                case_errors.extend(classification.errors)
+                case_errors.extend(classification.stale_reasons)
+                print(json.dumps({"case": case["id"], "evidence": classification.as_dict()}, sort_keys=True))
+            if args.install and manager is None and case.get("install") is not None and not run(case["install"], active_root):
+                case_errors.append("install command failed")
+            before_product = snapshot_product_tree(active_root) if args.invoke_harness else None  # noqa: F405
+            if args.print_invocation or args.invoke_harness:
+                invocation_error = _handle_harness_invocation(args, case, active_root)
+                if invocation_error is not None:
+                    case_errors.append(invocation_error)
+            if args.invoke_harness and before_product is not None:
+                allowed_write_paths = case.get("allowedWritePaths", [])
+                if not isinstance(allowed_write_paths, list) or any(
+                    not isinstance(path, str) for path in allowed_write_paths
+                ):
+                    case_errors.append("case.allowedWritePaths must be a list of relative paths")
+                else:
+                    isolation_audit = audit_functional_isolation(  # noqa: F405
+                        before_product,
+                        snapshot_product_tree(active_root),  # noqa: F405
+                        read_only=bool(case.get("readOnly")),
+                        allowed_write_paths=allowed_write_paths,
+                    )
+                    print(json.dumps({
+                        "case": case["id"],
+                        "functionalIsolation": {
+                            "status": isolation_audit.status,
+                            "beforeDigest": isolation_audit.before_digest,
+                            "afterDigest": isolation_audit.after_digest,
+                            "changedPaths": list(isolation_audit.changed_paths),
+                            "allowedWritePaths": allowed_write_paths,
+                        },
+                    }, sort_keys=True))
+                    if isolation_audit.status != "verified":
+                        case_errors.append("functional isolation audit detected out-of-contract mutation")
+            if args.invoke_harness and args.result is not None:
+                case_errors.extend(validate_case(case, active_root, args.result))  # noqa: F405
+            if args.print_invocation and not args.invoke_harness:
+                if case_errors:
+                    failures.extend(f"{case['id']}: {error}" for error in case_errors)
+                else:
+                    print(f"PREFLIGHT PASS {case['id']}")
+                continue
+            verification_passed = run(case["verify"], active_root)
+            expect_verify_failure = bool(case.get("expectVerifyFailure", False))
+            if verification_passed == expect_verify_failure:
+                expectation = "failure" if expect_verify_failure else "success"
+                case_errors.append(f"verification command did not produce expected {expectation}")
+            if case_errors:
+                failures.extend(f"{case['id']}: {error}" for error in case_errors)
+            else:
+                label = "VERIFIED PASS" if args.result is not None else "FIXTURE PASS"
+                print(f"{label} {case['id']}")
 
     if failures:
         for failure in failures:
             print(f"FAIL {failure}", file=sys.stderr)
         return 1
     return 0
+
+
+def _argument_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description="Run Codex and Junie agent and skill evaluations.")
+    parser.add_argument("--case")
+    parser.add_argument("--skill-probe")
+    parser.add_argument("--probe-variant", choices=("treatment", "target-omitted", "wrong-skill"))
+    parser.add_argument("--agent-scenario")
+    parser.add_argument("--workflow-pack")
+    parser.add_argument("--validate-catalogs", action="store_true")
+    parser.add_argument("--validate-calibration", type=Path)
+    parser.add_argument("--install", action="store_true")
+    parser.add_argument("--prepare", action="store_true")
+    parser.add_argument("--prepared-cache", type=Path)
+    parser.add_argument("--workspace-root", type=Path)
+    parser.add_argument("--toolchain", action="append", default=[], metavar="NAME=VERSION")
+    parser.add_argument("--project-root", type=Path)
+    parser.add_argument("--result", type=Path)
+    parser.add_argument("--evidence", type=Path)
+    parser.add_argument("--harness", choices=sorted(SUPPORTED_HARNESSES))  # noqa: F405
+    parser.add_argument("--agent-id")
+    parser.add_argument("--model", default="configured-model")
+    parser.add_argument("--event-output", type=Path)
+    parser.add_argument("--output-schema", type=Path)
+    parser.add_argument("--print-invocation", action="store_true")
+    parser.add_argument("--invoke-harness", action="store_true")
+    parser.add_argument("--junie-external-runner", type=Path)
+    parser.add_argument("--junie-containment-attestation", type=Path)
+    parser.add_argument("--approved-env-name", action="append", default=[])
+    return parser
+
+
+def _select_cases(
+    cases: Mapping[str, dict[str, object]],
+    case_id: str | None,
+    skill_probe: str | None,
+    agent_scenario: str | None,
+    workflow_pack: str | None,
+) -> list[dict[str, object]]:
+    selectors = [value for value in (case_id, skill_probe, agent_scenario, workflow_pack) if value]
+    if len(selectors) > 1:
+        raise ValueError("select only one of --case, --skill-probe, or --agent-scenario")
+    if case_id:
+        if case_id not in cases:
+            raise ValueError(f"unknown case: {case_id}")
+        return [cases[case_id]]
+    if skill_probe:
+        linked = _linked_cases("skill-probes.yaml", skill_probe)
+        return _cases_for_ids(cases, linked, f"skill probe {skill_probe}")
+    if agent_scenario:
+        linked = _linked_cases("agent-scenarios.yaml", agent_scenario)
+        return _cases_for_ids(cases, linked, f"agent scenario {agent_scenario}")
+    if workflow_pack:
+        linked = _linked_cases("workflow-packs.yaml", workflow_pack)
+        return _cases_for_ids(cases, linked, f"workflow pack {workflow_pack}")
+    return list(cases.values())
+
+
+def _linked_cases(filename: str, selector: str) -> set[str]:
+    catalogs = load_framework_catalogs()  # noqa: F405
+    catalog = catalogs.get(filename)
+    if catalog is None:
+        raise ValueError(f"catalog is missing: {filename}")
+    matches = _find_catalog_entries(catalog, selector)
+    if not matches:
+        raise ValueError(f"unknown catalog selector in {filename}: {selector}")
+    linked: set[str] = set()
+    for match in matches:
+        linked.update(_collect_linked_cases(match))
+    if not linked:
+        raise ValueError(f"catalog selector has no executable cases: {selector}")
+    return linked
+
+
+def _apply_probe_variant(
+    case: Mapping[str, object],
+    probe_id: str,
+    variant: str,
+) -> dict[str, object]:
+    catalogs = load_framework_catalogs()  # noqa: F405
+    matches = _find_catalog_entries(catalogs.get("skill-probes.yaml", {}), probe_id)
+    if len(matches) != 1:
+        raise ValueError(f"skill probe must resolve exactly once: {probe_id}")
+    probe = matches[0]
+    target = probe.get("skill")
+    ablation = probe.get("ablation")
+    wrong = ablation.get("wrongSkillControl") if isinstance(ablation, Mapping) else probe.get("wrongSkillControl")
+    if not isinstance(target, str) or not isinstance(wrong, str):
+        raise ValueError(f"skill probe lacks target or wrong-skill control: {probe_id}")
+    treatment = list(case.get("requiredSkills", []))
+    if target not in treatment:
+        raise ValueError(f"skill probe target is not in case.requiredSkills: {probe_id}/{case.get('id')}")
+    if variant == "treatment":
+        execution_skills = treatment
+    elif variant == "target-omitted":
+        execution_skills = [skill for skill in treatment if skill != target]
+    else:
+        execution_skills = [skill for skill in treatment if skill != target]
+        if wrong not in execution_skills:
+            execution_skills.append(wrong)
+    derived = dict(case)
+    derived["probeId"] = probe_id
+    derived["probeVariant"] = variant
+    derived["executionSkills"] = execution_skills
+    derived["probeComparisonKey"] = mapping_digest({  # noqa: F405
+        "case": str(case.get("id")),
+        "caseDefinitionDigest": case_definition_digest(case),  # noqa: F405
+        "probe": probe_id,
+    })
+    return derived
+
+
+def _find_catalog_entries(value: object, selector: str) -> list[Mapping[str, object]]:
+    matches: list[Mapping[str, object]] = []
+    if isinstance(value, Mapping):
+        if value.get("id") == selector:
+            matches.append(value)
+        for item in value.values():
+            matches.extend(_find_catalog_entries(item, selector))
+    elif isinstance(value, list):
+        for item in value:
+            matches.extend(_find_catalog_entries(item, selector))
+    return matches
+
+
+def _collect_linked_cases(value: object) -> set[str]:
+    linked: set[str] = set()
+    if isinstance(value, Mapping):
+        for key, item in value.items():
+            if key == "executableCases" and isinstance(item, list):
+                linked.update(candidate for candidate in item if isinstance(candidate, str))
+            else:
+                linked.update(_collect_linked_cases(item))
+    elif isinstance(value, list):
+        for item in value:
+            linked.update(_collect_linked_cases(item))
+    return linked
+
+
+def _cases_for_ids(
+    cases: Mapping[str, dict[str, object]],
+    linked: Iterable[str],
+    label: str,
+) -> list[dict[str, object]]:
+    missing = sorted(set(linked) - set(cases))
+    if missing:
+        raise ValueError(f"{label} references missing cases: {', '.join(missing)}")
+    return [cases[case_id] for case_id in sorted(set(linked))]
+
+
+def _parse_toolchain(values: list[str]) -> dict[str, str]:
+    toolchain: dict[str, str] = {}
+    for value in values:
+        if "=" not in value:
+            raise ValueError(f"toolchain value must use NAME=VERSION: {value}")
+        name, version = value.split("=", 1)
+        if not name or not version:
+            raise ValueError(f"toolchain value must use NAME=VERSION: {value}")
+        toolchain[name] = version
+    return toolchain
+
+
+def _workspace_manager(args: argparse.Namespace) -> object | None:
+    if (args.prepare or args.print_invocation or args.invoke_harness) and args.prepared_cache is None:
+        args.prepared_cache = Path(tempfile.gettempdir()) / "dev-methodology-evals" / "prepared"
+    if args.prepared_cache is None:
+        return None
+    runs_root = args.workspace_root or args.prepared_cache.parent / "runs"
+    return PreparedWorkspaceManager(  # noqa: F405
+        args.prepared_cache,
+        runs_root,
+        integrity_mode="full" if args.invoke_harness else "source",
+    )
+
+
+def _handle_harness_invocation(
+    args: argparse.Namespace,
+    case: Mapping[str, object],
+    active_root: Path,
+) -> str | None:
+    task_path = active_root / str(case["task"])
+    prompt = task_path.read_text(encoding="utf-8")
+    agent_id = args.agent_id or next(iter(case.get("requiredAgents", [])), None)
+    if not isinstance(agent_id, str):
+        return "harness invocation requires an agent id"
+    if not (active_root / ".eval-workspace.json").is_file():
+        return "harness invocation requires a runner-owned disposable workspace"
+    if (active_root / ".git").exists() and not is_evaluation_git_workspace(active_root):  # noqa: F405
+        return "harness invocation requires a disposable evaluation-owned Git workspace"
+    default_evidence_root = Path(tempfile.gettempdir()) / "dev-methodology-evals" / "evidence"
+    event_output = (
+        args.event_output
+        or default_evidence_root / f"{case['id']}-{args.harness}-{active_root.name}-events.jsonl"
+    ).resolve()
+    try:
+        resource_allowlist = case.get("skillResourceAllowlist", {})
+        if not isinstance(resource_allowlist, dict) or any(
+            not isinstance(skill, str)
+            or not isinstance(paths, list)
+            or any(not isinstance(path, str) for path in paths)
+            for skill, paths in resource_allowlist.items()
+        ):
+            return "case.skillResourceAllowlist must map skill ids to relative file lists"
+        context_pack = ContextPackBuilder(ROOT).stage(  # noqa: F405
+            args.harness,
+            agent_id,
+            list(case.get("executionSkills", case.get("requiredSkills", []))),
+            active_root,
+            skill_files=resource_allowlist,
+        )
+        allowed_paths = case.get("modelVisiblePaths", ["."])
+        if not isinstance(allowed_paths, list) or any(not isinstance(path, str) for path in allowed_paths):
+            return "case.modelVisiblePaths must be a list of relative paths"
+        input_manifest = build_input_manifest(active_root, allowed_paths)  # noqa: F405
+        initialize_git_workspace(active_root)  # noqa: F405
+        harness_identity = capture_harness_identity(args.harness)  # noqa: F405
+    except (RuntimeError, ValueError) as error:
+        return f"model-visible context preflight failed: {error}"
+    command = build_harness_command(  # noqa: F405
+        args.harness,
+        active_root,
+        agent_id,
+        prompt,
+        args.model,
+        read_only=bool(case.get("readOnly")),
+        event_output=event_output,
+        isolated_config_root=active_root,
+        output_schema=args.output_schema,
+        last_message_output=args.result if case.get("readOnly") else None,
+        cache_dir=event_output.parent / f".{case['id']}-{args.harness}-cache",
+        skill_locations=[context_pack.skill_location],
+        agent_locations=[context_pack.agent_location],
+        approved_environment_names=args.approved_env_name,
+    )
+    external_invocation = None
+    if args.harness == "junie" and args.junie_external_runner is not None:
+        try:
+            external_invocation = wrap_junie_external_runner(  # noqa: F405
+                command,
+                args.junie_external_runner,
+                args.junie_containment_attestation,
+            )
+        except ValueError as error:
+            return f"Junie external containment validation failed: {error}"
+    execution_command = external_invocation.command if external_invocation is not None else command
+    if args.print_invocation:
+        invocation_record = {
+            "harness": args.harness,
+            "harnessVersion": harness_identity.version,
+            "harnessDigest": harness_identity.content_digest,
+            "modelDigest": mapping_digest({"harness": args.harness, "model": args.model}),  # noqa: F405
+            "argv": list(execution_command.argv),
+            "contextManifestDigest": context_pack.manifest_digest,
+            "approvedInputManifestDigest": input_manifest.manifest_digest,
+            "functionalIsolation": "pending-runtime-audit" if args.invoke_harness else "preflight-only",
+            "containment": "containment-unverified",
+            "containmentCeiling": "workspace-isolated-only" if args.harness == "codex" else "containment-unverified",
+            "approvedEnvironmentNames": list(execution_command.host_environment_allowlist),
+        }
+        if isinstance(case.get("probeId"), str):
+            invocation_record["probeId"] = case["probeId"]
+            invocation_record["probeVariant"] = case.get("probeVariant")
+            invocation_record["probeComparisonKey"] = case.get("probeComparisonKey")
+            invocation_record["executionSkills"] = list(case.get("executionSkills", []))
+            invocation_record["probeEvidenceStatus"] = "unverified-until-comparable-three-variant-receipts"
+        if external_invocation is not None:
+            invocation_record["externalRunnerDigest"] = external_invocation.runner_digest
+            invocation_record["containmentAttestationDigest"] = external_invocation.attestation_digest
+            invocation_record["externalAttestation"] = external_invocation.trust_status
+        sandbox_profiles = case.get("sandboxProfiles")
+        if isinstance(sandbox_profiles, Mapping) and args.harness in sandbox_profiles:
+            profile_id = sandbox_profiles[args.harness]
+            profiles_catalog = load_framework_catalogs().get("sandbox-profiles.yaml", {})  # noqa: F405
+            profile = next(
+                (
+                    item
+                    for item in profiles_catalog.get("profiles", [])
+                    if isinstance(item, Mapping) and item.get("id") == profile_id
+                ),
+                None,
+            )
+            invocation_record["sandboxProfile"] = profile_id
+            invocation_record["sandboxProfileDigest"] = (
+                case_definition_digest(profile) if isinstance(profile, Mapping) else None  # noqa: F405
+            )
+            minimums = case.get("minimumContainment")
+            invocation_record["minimumContainment"] = (
+                minimums.get(args.harness) if isinstance(minimums, Mapping) else None
+            )
+        print(json.dumps(invocation_record, sort_keys=True))
+    if not args.invoke_harness:
+        return None
+    event_output.parent.mkdir(parents=True, exist_ok=True)
+    scratch_value = execution_command.environment.get("TMPDIR")
+    scratch = Path(scratch_value) if isinstance(scratch_value, str) and scratch_value else None
+    if scratch is not None:
+        scratch.mkdir(parents=True, exist_ok=True)
+    try:
+        result = run_command(execution_command, active_root)  # noqa: F405
+    finally:
+        if scratch is not None and scratch.is_dir():
+            shutil.rmtree(scratch)
+    if args.harness == "codex":
+        event_output.parent.mkdir(parents=True, exist_ok=True)
+        event_output.write_text(result.stdout, encoding="utf-8")
+    if result.stderr:
+        print(result.stderr, file=sys.stderr, end="" if result.stderr.endswith("\n") else "\n")
+    return None if result.passed else f"{args.harness} invocation failed with exit code {result.exit_code}"
 
 
 if __name__ == "__main__":
