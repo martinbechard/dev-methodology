@@ -52,7 +52,7 @@ executionTiers:
     harnesses: [codex, junie]
     externalRunnerRequired: false
     useWhen: Ordinary synthetic evaluations that do not run untrusted third-party code, handle secrets, or require a security-containment claim.
-    enforcement: Both harnesses use a disposable copy-on-write fixture, controlled configuration and environment, complete mutation auditing, wall-clock timeout and process cleanup, exclusively reserved runner-owned evidence paths, and approved-value capture redaction. Codex also applies its native sandbox.
+    enforcement: Both harnesses use a disposable copy-on-write fixture, controlled configuration and environment, complete mutation auditing, wall-clock timeout and process cleanup, exclusively reserved runner-owned evidence paths, and approved-value capture redaction. Codex applies either its native legacy sandbox or an exact evaluator-owned permission profile declared by the selected sandbox profile.
     requiredReceiptEvidence: [prepared-snapshot-digest, copy-on-write-layer-identity, controlled-configuration, controlled-environment, complete-workspace-diff, timeout-policy, isolated-evidence-root, exclusive-output-reservation, approved-value-redaction, discard-confirmation]
     securityContained: false
     containmentReporting: Codex may report workspace-isolated-only from its native sandbox evidence; Junie reports containment-unverified.
@@ -163,6 +163,57 @@ profiles:
       - fixtureSourceSha256
       - sandboxProfileSha256
       - nativeAgentDefinitionSha256
+      - toolchainVersionsSha256
+  - id: codex-permission-profile-git-write
+    harness: codex
+    repositoryMutation: required
+    implementationStatus: local-tier-implemented
+    liveExecutionStatus: runnable-local
+    componentStatus:
+      preparedSnapshotCache: implemented
+      copyOnWriteWorkspace: implemented
+      explicitContextPruning: implemented
+      disposableCleanup: implemented
+      nativeHarnessPolicy: implemented-beta
+      externalContainmentRunner: not-implemented
+      warmWorkerPooling: proposed
+    preparedSnapshot:
+      mode: integrity-checked-content-addressed
+      dependenciesPreinstalled: when the trusted preparation step ran the declared install command
+      digestInputs: inherit-snapshot-policy
+    copyOnWriteWorkspace:
+      enabled: true
+      writablePaths:
+        - product-workspace
+        - run-evidence-temporary-directory
+      productWorkspaceMode: permission-profile-git-write
+      discardAfterRun: true
+    warmWorker:
+      enabled: false
+      implementationStatus: proposed
+      poolKey:
+        - codex
+        - operatingSystem
+        - architecture
+        - toolchainVersions
+      resetBoundary: fresh-copy-on-write-layer-and-fresh-harness-context
+    workspaceIsolation:
+      externalRunnerRequired: false
+      externalRunnerRequiredWhen: The case requires externally-contained evidence, executes untrusted code, or applies a network-sensitive policy.
+      nativeHarnessPolicy: An exact custom permission profile grants read-only system access, denies the host home and evidence root, grants the unique temporary directory and disposable workspace write access, preserves staged agent and configuration trees as read-only, grants Git metadata writes, and disables network access.
+      nativePolicyRole: Enforces the synthetic workspace Git lifecycle without granting host-wide writes; it does not prove process or resource containment.
+      hashExpectation: changes allowed only on the case path allow-list and Git control artifacts
+    containment:
+      fastPath: The digest-bound permission profile plus copy-on-write reset may report workspace-isolated-only when every required receipt field is present.
+      externalPath: External runner restricts filesystem access, isolates or allow-lists processes, applies network policy, and enforces resource limits.
+      reportedStatus: containment-unverified
+      permittedReportedStatuses: [containment-unverified, workspace-isolated-only, externally-contained]
+      externalAttestationRequiredFor: externally-contained
+    digestInputs:
+      - fixtureSourceSha256
+      - sandboxProfileSha256
+      - nativeAgentDefinitionSha256
+      - mcpConfigurationSha256
       - toolchainVersionsSha256
   - id: junie-read-only
     harness: junie

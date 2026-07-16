@@ -6,13 +6,15 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
+import re
 import shutil
 import sys
 import tempfile
 from contextlib import contextmanager, nullcontext
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Iterable, Iterator, Mapping
 
 import yaml
@@ -29,6 +31,8 @@ except ModuleNotFoundError:
 
 
 _MAX_CAPTURE_REDACTION_BYTES = 10 * 1024 * 1024
+_MAX_PRESERVED_OUTPUT_FILES = 512
+_MAX_PRESERVED_OUTPUT_BYTES = 20 * 1024 * 1024
 
 
 def run(command: object, cwd: Path) -> bool:
@@ -74,7 +78,7 @@ def main(argv: list[str] | None = None) -> int:
         rubric = next(
             (
                 item
-                for item in load_framework_catalogs()["judges.yaml"].get(
+                for item in load_framework_catalogs()["judges.yaml"].get(  # noqa: F405
                     "rubrics", []
                 )
                 if isinstance(item, dict) and item.get("id") == rubric_id
@@ -141,6 +145,21 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("read-only harness execution requires --result outside the product workspace")
     if (args.print_invocation or args.invoke_harness) and (len(selected) != 1 or not args.harness):
         parser.error("harness invocation requires one selected case and --harness")
+    if args.mcp_agent_ops_executable is not None and (
+        len(selected) != 1 or not _case_uses_mcp_agent_ops(selected[0])
+    ):
+        parser.error("--mcp-agent-ops-executable is valid only for an MCP-enabled base case")
+    if (
+        (args.print_invocation or args.invoke_harness)
+        and len(selected) == 1
+        and _case_uses_mcp_agent_ops(selected[0])
+        and args.mcp_agent_ops_executable is None
+    ):
+        parser.error("MCP-enabled harness invocation requires --mcp-agent-ops-executable")
+    if args.codex_auth_file is not None and (
+        not args.invoke_harness or args.harness != "codex"
+    ):
+        parser.error("--codex-auth-file is valid only for a live Codex invocation")
     if args.invoke_harness and args.project_root is None and args.prepared_cache is None:
         args.prepared_cache = Path(tempfile.gettempdir()) / "dev-methodology-evals" / "prepared"
     if args.invoke_harness and any(_requires_external_containment(case) for case in selected):
@@ -206,7 +225,9 @@ def main(argv: list[str] | None = None) -> int:
             active_root = run_workspace.path if run_workspace is not None else project_root
             result_for_preflight = None if args.invoke_harness else args.result
             case_errors = validate_case(case, active_root, result_for_preflight)  # noqa: F405
-            if args.result is not None or args.evidence is not None:
+            if args.evidence is not None or (
+                args.result is not None and not args.invoke_harness
+            ):
                 classification = classify_evidence(case, args.evidence)  # noqa: F405
                 case_errors.extend(classification.errors)
                 case_errors.extend(classification.stale_reasons)
@@ -323,6 +344,8 @@ def _argument_parser() -> argparse.ArgumentParser:
     parser.add_argument("--agent-id")
     parser.add_argument("--model", default="configured-model")
     parser.add_argument("--event-output", type=Path)
+    parser.add_argument("--mcp-agent-ops-executable", type=Path)
+    parser.add_argument("--codex-auth-file", type=Path)
     parser.add_argument("--output-schema", type=Path)
     parser.add_argument("--print-invocation", action="store_true")
     parser.add_argument("--invoke-harness", action="store_true")
@@ -340,6 +363,11 @@ def _requires_external_containment(case: Mapping[str, object]) -> bool:
         and case.get("executionTier") == "externally-contained"
         and case.get("securityContainmentRequired") is True
     )
+
+
+def _case_uses_mcp_agent_ops(case: Mapping[str, object]) -> bool:
+    """Return whether the immutable base-case contract enables MCP operations."""
+    return "probeVariant" not in case and isinstance(case.get("mcpAgentOps"), Mapping)
 
 
 @contextmanager
@@ -376,6 +404,174 @@ def _reserve_capture_paths(paths: Iterable[Path]) -> Iterator[None]:
             lock.unlink(missing_ok=True)
 
 
+def _preserve_allowed_outputs(
+    workspace: Path,
+    allowed_paths: object,
+    evidence_directory: Path,
+) -> tuple[Path, str]:
+    """Copy a bounded non-symlink output set into evaluator-owned evidence."""
+    if not isinstance(allowed_paths, list) or any(
+        not isinstance(value, str) for value in allowed_paths
+    ):
+        raise ValueError("case.allowedWritePaths must be a list of relative paths")
+    workspace = workspace.resolve()
+    evidence_directory = evidence_directory.resolve()
+    output_root = evidence_directory / "outputs"
+    if output_root.exists() or output_root.is_symlink():
+        raise ValueError("MCP output evidence destination must be unused")
+    output_root.mkdir(mode=0o700)
+    selected: dict[str, Path] = {}
+    for value in allowed_paths:
+        relative = PurePosixPath(value)
+        if (
+            not value
+            or relative.is_absolute()
+            or ".." in relative.parts
+            or relative.as_posix() != value
+        ):
+            raise ValueError(f"allowed output path must be normalized and relative: {value}")
+        source = workspace.joinpath(*relative.parts)
+        if source.is_symlink():
+            raise ValueError(f"allowed output path must not be a symlink: {value}")
+        if not source.exists():
+            continue
+        pending = [source]
+        while pending:
+            candidate = pending.pop()
+            if candidate.is_symlink():
+                raise ValueError(
+                    "allowed output evidence contains a symlink: "
+                    + candidate.relative_to(workspace).as_posix()
+                )
+            if candidate.is_dir():
+                pending.extend(sorted(candidate.iterdir(), reverse=True))
+                continue
+            if not candidate.is_file():
+                raise ValueError(
+                    "allowed output evidence contains a non-regular file: "
+                    + candidate.relative_to(workspace).as_posix()
+                )
+            resolved = candidate.resolve()
+            if workspace not in resolved.parents:
+                raise ValueError("allowed output evidence escapes the disposable workspace")
+            selected[candidate.relative_to(workspace).as_posix()] = candidate
+    if len(selected) > _MAX_PRESERVED_OUTPUT_FILES:
+        raise ValueError("allowed output evidence exceeds the file-count limit")
+    total_size = sum(path.stat().st_size for path in selected.values())
+    if total_size > _MAX_PRESERVED_OUTPUT_BYTES:
+        raise ValueError("allowed output evidence exceeds the byte limit")
+    records: list[dict[str, object]] = []
+    for relative, source in sorted(selected.items()):
+        content = source.read_bytes()
+        destination = output_root.joinpath(*PurePosixPath(relative).parts)
+        destination.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+        destination.write_bytes(content)
+        os.chmod(destination, 0o600)
+        records.append({
+            "path": relative,
+            "size": len(content),
+            "sha256": hashlib.sha256(content).hexdigest(),
+        })
+    manifest = {
+        "schema": "dev-methodology-eval-output-manifest",
+        "version": 1,
+        "allowedWritePaths": allowed_paths,
+        "files": records,
+    }
+    encoded = (
+        json.dumps(manifest, sort_keys=True, separators=(",", ":")) + "\n"
+    ).encode("utf-8")
+    manifest_path = evidence_directory / "outputs-manifest.json"
+    manifest_path.write_bytes(encoded)
+    os.chmod(manifest_path, 0o600)
+    return manifest_path, hashlib.sha256(encoded).hexdigest()
+
+
+def _preserve_junie_agent_attribution(
+    junie_home: Path,
+    agent_id: str,
+    evidence_directory: Path,
+) -> tuple[str, Path, str]:
+    """Retain bounded name-level Junie custom-agent lifecycle evidence."""
+    session_root = junie_home / "sessions"
+    relevant: dict[str, dict[str, object]] = {}
+    if session_root.is_dir() and not session_root.is_symlink():
+        for event_path in sorted(session_root.rglob("events.jsonl")):
+            if event_path.is_symlink() or not event_path.is_file():
+                continue
+            if event_path.stat().st_size > _MAX_CAPTURE_REDACTION_BYTES:
+                raise ValueError("Junie session event ledger exceeds the capture limit")
+            current = event_path.parent
+            while current != session_root:
+                if current.is_symlink():
+                    raise ValueError("Junie session event ledger uses a symlink")
+                current = current.parent
+            for line in event_path.read_text(encoding="utf-8").splitlines():
+                try:
+                    value = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                if not isinstance(value, Mapping):
+                    continue
+                event = value.get("event")
+                agent_event = event.get("agentEvent") if isinstance(event, Mapping) else None
+                agent = agent_event.get("agent") if isinstance(agent_event, Mapping) else None
+                if (
+                    not isinstance(agent_event, Mapping)
+                    or agent_event.get("kind") != "CustomAgentBlockUpdatedEvent"
+                    or not isinstance(agent, Mapping)
+                    or agent.get("kind") != "CustomAgent"
+                    or agent.get("name") != agent_id
+                    or agent_event.get("name") != agent_id
+                    or agent_event.get("status") not in {"STARTED", "FINISHED"}
+                    or not isinstance(agent_event.get("stepId"), str)
+                    or not re.fullmatch(
+                        r"[A-Za-z0-9][A-Za-z0-9._:-]{7,127}",
+                        str(agent_event.get("stepId")),
+                    )
+                ):
+                    continue
+                step_id = str(agent_event["stepId"])
+                record = relevant.setdefault(step_id, {
+                    "stepId": step_id,
+                    "statuses": [],
+                    "eventDigests": [],
+                })
+                statuses = record["statuses"]
+                event_digests = record["eventDigests"]
+                assert isinstance(statuses, list)
+                assert isinstance(event_digests, list)
+                status = str(agent_event["status"])
+                if status not in statuses:
+                    statuses.append(status)
+                line_digest = hashlib.sha256(line.encode("utf-8")).hexdigest()
+                if line_digest not in event_digests:
+                    event_digests.append(line_digest)
+    complete = [
+        record
+        for record in relevant.values()
+        if set(record["statuses"]) == {"STARTED", "FINISHED"}
+    ]
+    if len(complete) > 1:
+        raise ValueError("Junie session ledger contains multiple matching custom-agent lifecycles")
+    status = "name-verified" if len(complete) == 1 else "unverified"
+    payload = {
+        "schema": "dev-methodology-eval-junie-agent-attribution",
+        "version": 1,
+        "agentId": agent_id,
+        "status": status,
+        "definitionDigestBound": False,
+        "lifecycle": complete[0] if complete else None,
+    }
+    encoded = (
+        json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n"
+    ).encode("utf-8")
+    path = evidence_directory / "junie-agent-attribution.json"
+    path.write_bytes(encoded)
+    os.chmod(path, 0o600)
+    return status, path, hashlib.sha256(encoded).hexdigest()
+
+
 def _approved_environment_redactions(names: Iterable[str]) -> dict[str, str]:
     """Return non-empty explicitly approved environment values for capture scrubbing."""
 
@@ -384,6 +580,36 @@ def _approved_environment_redactions(names: Iterable[str]) -> dict[str, str]:
         for name in dict.fromkeys(names)
         if os.environ.get(name)
     }
+
+
+def _load_codex_auth_file(
+    path: Path,
+    workspace: Path,
+    evidence_root: Path,
+) -> bytes:
+    """Load one tightly permissioned Codex authentication file without retaining it."""
+    if path.is_symlink():
+        raise ValueError("Codex authentication source must be a regular non-symlink file")
+    resolved = path.expanduser().resolve()
+    if not resolved.is_file() or resolved.stat().st_size > 1024 * 1024:
+        raise ValueError("Codex authentication source must be a bounded regular file")
+    if (
+        resolved == workspace
+        or workspace in resolved.parents
+        or resolved == evidence_root
+        or evidence_root in resolved.parents
+    ):
+        raise ValueError("Codex authentication source must stay outside workspace and evidence roots")
+    if resolved.stat().st_mode & 0o077:
+        raise ValueError("Codex authentication source must not grant group or other permissions")
+    content = resolved.read_bytes()
+    try:
+        value = json.loads(content)
+    except (UnicodeError, json.JSONDecodeError) as error:
+        raise ValueError("Codex authentication source must contain valid JSON") from error
+    if not isinstance(value, Mapping):
+        raise ValueError("Codex authentication source must contain a JSON mapping")
+    return content
 
 
 def _redact_approved_environment(
@@ -515,6 +741,7 @@ def _apply_probe_variant(
         "caseDefinitionDigest": case_definition_digest(case),  # noqa: F405
         "probe": probe_id,
     })
+    derived.pop("mcpAgentOps", None)
     return derived
 
 
@@ -608,7 +835,7 @@ def _handle_harness_invocation(
         return "runner-owned evidence root must not be a symlink"
     default_evidence_root.mkdir(parents=True, exist_ok=True)
     evidence_root = default_evidence_root.resolve()
-    repository_root = ROOT.resolve()
+    repository_root = ROOT.resolve()  # noqa: F405
     if evidence_root == repository_root or repository_root in evidence_root.parents:
         return "runner-owned evidence root must stay outside the evaluator repository"
     if args.prepared_cache is not None:
@@ -623,10 +850,29 @@ def _handle_harness_invocation(
         args.event_output
         or evidence_root / f"{case['id']}-{args.harness}-{active_root.name}-events.jsonl"
     )
+    event_output = event_output.resolve()
+    mcp_audit_output = event_output.with_name(
+        f"{event_output.stem}-mcp-audit.jsonl"
+    )
+    mcp_identity_output = event_output.with_name(
+        f"{event_output.stem}-mcp-identity.json"
+    )
     cache_dir = (
         event_output.parent
         / f".{case['id']}-{args.harness}-{active_root.name}-cache"
     )
+    codex_auth_content: bytes | None = None
+    codex_home: Path | None = None
+    if args.codex_auth_file is not None:
+        try:
+            codex_auth_content = _load_codex_auth_file(
+                args.codex_auth_file,
+                active_root,
+                evidence_root,
+            )
+        except ValueError as error:
+            return f"Codex authentication preflight failed: {error}"
+        codex_home = event_output.parent / f".codex-home-{active_root.name}"
     try:
         output_schema = _trusted_output_schema(args.output_schema)
         resource_allowlist = case.get("skillResourceAllowlist", {})
@@ -644,6 +890,55 @@ def _handle_harness_invocation(
             active_root,
             skill_files=resource_allowlist,
         )
+        mcp_context = None
+        required_tool_sequences: list[list[str]] = []
+        required_tool_outcomes: dict[str, list[str]] = {}
+        required_tool_argument_digests: dict[str, str] = {}
+        permission_profile_host_home_digest: str | None = None
+        if _case_uses_mcp_agent_ops(case):
+            mcp_contract = case["mcpAgentOps"]
+            assert isinstance(mcp_contract, Mapping)
+            available_skills = read_mcp_skill_catalog(  # noqa: F405
+                active_root,
+                str(mcp_contract["skillCatalogSource"]),
+                ROOT,  # noqa: F405
+            )
+            required_tool_sequences = [
+                list(sequence)
+                for sequence in mcp_contract["requiredToolSequences"]
+            ]
+            required_tool_outcomes = {
+                str(tool): list(outcomes)
+                for tool, outcomes in mcp_contract["requiredToolOutcomes"].items()
+            }
+            required_tool_argument_digests = resolve_mcp_tool_argument_digests(  # noqa: F405
+                mcp_contract["requiredToolArguments"],
+                active_root,
+            )
+            mcp_identity = capture_mcp_agent_ops_identity(  # noqa: F405
+                args.mcp_agent_ops_executable,
+                required_version=str(mcp_contract["requiredVersion"]),
+                required_runtime_digest=str(mcp_contract["requiredRuntimeDigest"]),
+            )
+            mcp_context = stage_mcp_agent_ops_context(  # noqa: F405
+                args.harness,
+                active_root,
+                mcp_identity,
+                ROOT,  # noqa: F405
+                context_pack.skill_location,
+                available_skills,
+                list(case.get("executionSkills", case.get("requiredSkills", []))),
+                mcp_audit_output,
+                evidence_root,
+                catalog_resource_allowlist=mcp_contract[
+                    "catalogResourceAllowlist"
+                ],
+            )
+            if args.harness == "codex":
+                permission_profile_host_home_digest = mcp_value_digest(  # noqa: F405
+                    str(mcp_context.host_home)
+                )
+            mcp_identity_output = mcp_context.evidence_directory / "identity.json"
         allowed_paths = case.get("modelVisiblePaths", ["."])
         if not isinstance(allowed_paths, list) or any(not isinstance(path, str) for path in allowed_paths):
             return "case.modelVisiblePaths must be a list of relative paths"
@@ -663,14 +958,15 @@ def _handle_harness_invocation(
         evidence_root=evidence_root,
         isolated_config_root=active_root,
         output_schema=output_schema,
-        last_message_output=args.result if case.get("readOnly") else None,
+        last_message_output=args.result,
         cache_dir=cache_dir,
         skill_locations=[context_pack.skill_location],
         agent_locations=[context_pack.agent_location],
         approved_environment_names=args.approved_env_name,
         harness_executable=harness_identity.executable,
+        mcp_agent_ops=mcp_context,
+        codex_home=codex_home,
     )
-    event_output = event_output.resolve()
     execution_command = command
     if args.print_invocation:
         invocation_record = {
@@ -699,6 +995,25 @@ def _handle_harness_invocation(
             invocation_record["probeComparisonKey"] = case.get("probeComparisonKey")
             invocation_record["executionSkills"] = list(case.get("executionSkills", []))
             invocation_record["probeEvidenceStatus"] = "unverified-until-comparable-three-variant-receipts"
+        if mcp_context is not None:
+            invocation_record["mcpAgentOps"] = {
+                "serverName": mcp_context.server_name,
+                "version": mcp_context.identity.version,
+                "launcherDigest": mcp_context.identity.launcher_digest,
+                "runtimeDigest": mcp_context.identity.runtime_digest,
+                "identityDigest": mcp_context.identity.identity_digest,
+                "configurationDigest": mcp_context.configuration_digest,
+                "catalogManifestDigest": mcp_context.catalog_manifest_digest,
+                "auditSessionId": mcp_context.audit_session_id,
+                "skillRoot": mcp_context.skill_root.relative_to(active_root).as_posix(),
+                "requiredToolSequences": required_tool_sequences,
+                "requiredToolOutcomes": required_tool_outcomes,
+                "requiredToolArgumentDigests": required_tool_argument_digests,
+                "permissionProfileHostHomeDigest": (
+                    permission_profile_host_home_digest
+                ),
+                "toolEvidenceStatus": "pending-runtime",
+            }
         sandbox_profiles = case.get("sandboxProfiles")
         if isinstance(sandbox_profiles, Mapping) and args.harness in sandbox_profiles:
             profile_id = sandbox_profiles[args.harness]
@@ -734,12 +1049,78 @@ def _handle_harness_invocation(
     capture_paths = [event_output]
     if result_output is not None:
         capture_paths.append(result_output)
+    if mcp_context is not None:
+        capture_paths.extend((mcp_context.audit_log, mcp_identity_output))
+    junie_attribution_status: str | None = None
+    junie_attribution_path: Path | None = None
+    junie_attribution_digest: str | None = None
     try:
         with _reserve_capture_paths(capture_paths):
+            if mcp_context is not None:
+                mcp_identity_output.write_text(
+                    json.dumps(
+                        {
+                            "schema": "dev-methodology-eval-mcp-identity",
+                            "version": 3,
+                            "serverName": mcp_context.server_name,
+                            "packageVersion": mcp_context.identity.version,
+                            "launcherDigest": mcp_context.identity.launcher_digest,
+                            "runtimeDigest": mcp_context.identity.runtime_digest,
+                            "identityDigest": mcp_context.identity.identity_digest,
+                            "configurationDigest": mcp_context.configuration_digest,
+                            "catalogManifestDigest": mcp_context.catalog_manifest_digest,
+                            "auditSessionId": mcp_context.audit_session_id,
+                            "configurationEvidenceDigest": hashlib.sha256(
+                                mcp_context.configuration_evidence.read_bytes()
+                            ).hexdigest(),
+                            "catalogEvidenceDigest": hashlib.sha256(
+                                mcp_context.catalog_evidence.read_bytes()
+                            ).hexdigest(),
+                            "authorizationDigest": mcp_context.authorization_digest,
+                            "requiredToolArgumentDigests": (
+                                required_tool_argument_digests
+                            ),
+                            "permissionProfileHostHomeDigest": (
+                                permission_profile_host_home_digest
+                            ),
+                        },
+                        sort_keys=True,
+                    )
+                    + "\n",
+                    encoding="utf-8",
+                )
+                os.chmod(mcp_identity_output, 0o600)
             if scratch is not None:
                 scratch.mkdir(parents=True, exist_ok=True)
+            if junie_home is not None:
+                if junie_home.exists() or junie_home.is_symlink():
+                    raise ValueError("isolated Junie home must be an unused non-symlink path")
+                junie_home.mkdir(mode=0o700)
+                if mcp_context is not None:
+                    if mcp_context.authorization_evidence is None:
+                        raise ValueError("Junie MCP execution requires an authorization policy")
+                    allowlist = junie_home / "allowlist.json"
+                    allowlist.write_bytes(
+                        mcp_context.authorization_evidence.read_bytes()
+                    )
+                    os.chmod(allowlist, 0o600)
+            if codex_home is not None and codex_auth_content is not None:
+                codex_home.mkdir(mode=0o700)
+                auth_destination = codex_home / "auth.json"
+                auth_destination.write_bytes(codex_auth_content)
+                os.chmod(auth_destination, 0o600)
             try:
                 result = run_command(execution_command, active_root)  # noqa: F405
+                if junie_home is not None and mcp_context is not None:
+                    (
+                        junie_attribution_status,
+                        junie_attribution_path,
+                        junie_attribution_digest,
+                    ) = _preserve_junie_agent_attribution(
+                        junie_home,
+                        agent_id,
+                        mcp_context.evidence_directory,
+                    )
             finally:
                 if scratch is not None and scratch.is_dir():
                     shutil.rmtree(scratch)
@@ -747,6 +1128,8 @@ def _handle_harness_invocation(
                     shutil.rmtree(cache_dir)
                 if junie_home is not None and junie_home.is_dir():
                     shutil.rmtree(junie_home)
+                if codex_home is not None and codex_home.is_dir():
+                    shutil.rmtree(codex_home)
             if args.harness == "codex":
                 event_output.write_text(
                     _redact_approved_environment(result.stdout, redactions),
@@ -779,6 +1162,83 @@ def _handle_harness_invocation(
                 final_response = extract_harness_final_response("junie", events)  # noqa: F405
                 if result_output is not None:
                     result_output.write_text(final_response, encoding="utf-8")
+            if mcp_context is not None:
+                output_manifest, output_manifest_digest = _preserve_allowed_outputs(
+                    active_root,
+                    case.get("allowedWritePaths", []),
+                    mcp_context.evidence_directory,
+                )
+                audit_records = read_mcp_agent_ops_audit(mcp_context.audit_log)  # noqa: F405
+                session_ids = {
+                    str(record.get("sessionId")) for record in audit_records
+                }
+                if session_ids != {mcp_context.audit_session_id}:
+                    return "captured MCP tool audit session does not match the staged run"
+                selected_stream, completed_tools, tool_outcomes = select_mcp_tool_stream(  # noqa: F405
+                    audit_records,
+                    required_tool_sequences,
+                    required_tool_outcomes,
+                    required_tool_argument_digests,
+                )
+                identity_digest = hashlib.sha256(
+                    mcp_identity_output.read_bytes()
+                ).hexdigest()
+                print(json.dumps({
+                    "case": case["id"],
+                    "mcpAgentOps": {
+                        "serverName": mcp_context.server_name,
+                        "version": mcp_context.identity.version,
+                        "launcherDigest": mcp_context.identity.launcher_digest,
+                        "runtimeDigest": mcp_context.identity.runtime_digest,
+                        "identityDigest": mcp_context.identity.identity_digest,
+                        "configurationDigest": mcp_context.configuration_digest,
+                        "catalogManifestDigest": mcp_context.catalog_manifest_digest,
+                        "auditSessionId": mcp_context.audit_session_id,
+                        "auditStreamId": selected_stream,
+                        "auditDigest": hashlib.sha256(
+                            mcp_context.audit_log.read_bytes()
+                        ).hexdigest(),
+                        "auditEvidence": str(mcp_context.audit_log),
+                        "identityEvidence": str(mcp_identity_output),
+                        "identityEvidenceDigest": identity_digest,
+                        "configurationEvidence": str(
+                            mcp_context.configuration_evidence
+                        ),
+                        "catalogEvidence": str(mcp_context.catalog_evidence),
+                        "catalogEvidenceDigest": hashlib.sha256(
+                            mcp_context.catalog_evidence.read_bytes()
+                        ).hexdigest(),
+                        "authorizationEvidence": (
+                            str(mcp_context.authorization_evidence)
+                            if mcp_context.authorization_evidence is not None
+                            else None
+                        ),
+                        "authorizationDigest": mcp_context.authorization_digest,
+                        "outputManifestEvidence": str(output_manifest),
+                        "outputManifestDigest": output_manifest_digest,
+                        "resultEvidence": (
+                            str(result_output) if result_output is not None else None
+                        ),
+                        "junieAgentAttributionStatus": junie_attribution_status,
+                        "junieAgentAttributionEvidence": (
+                            str(junie_attribution_path)
+                            if junie_attribution_path is not None
+                            else None
+                        ),
+                        "junieAgentAttributionDigest": junie_attribution_digest,
+                        "completedTools": completed_tools,
+                        "toolOutcomes": tool_outcomes,
+                        "requiredToolSequences": required_tool_sequences,
+                        "requiredToolOutcomes": required_tool_outcomes,
+                        "requiredToolArgumentDigests": (
+                            required_tool_argument_digests
+                        ),
+                        "permissionProfileHostHomeDigest": (
+                            permission_profile_host_home_digest
+                        ),
+                        "toolEvidenceStatus": "verified",
+                    },
+                }, sort_keys=True))
     except ValueError as error:
         return str(error)
     return None

@@ -72,6 +72,37 @@ probeCompletionRule:
   requiredVariants: [treatment, target-omitted, wrong-skill]
   comparisonIdentity: probeComparisonKey
   singleVariantStatus: unverified-as-complete-probe
+mcpAgentOpsRunRequiredWhenApplicable:
+  - serverName
+  - version
+  - launcherDigest
+  - runtimeDigest
+  - identityDigest
+  - configurationDigest
+  - catalogManifestDigest
+  - configurationEvidence
+  - catalogEvidence
+  - catalogEvidenceDigest
+  - authorizationEvidence
+  - authorizationDigest
+  - junieAgentAttributionStatus
+  - junieAgentAttributionEvidence
+  - junieAgentAttributionDigest
+  - identityEvidence
+  - identityEvidenceDigest
+  - auditSessionId
+  - auditStreamId
+  - auditDigest
+  - auditEvidence
+  - outputManifestDigest
+  - outputManifestEvidence
+  - completedTools
+  - toolOutcomes
+  - requiredToolSequences
+  - requiredToolOutcomes
+  - requiredToolArgumentDigests
+  - permissionProfileHostHomeDigest
+  - toolEvidenceStatus
 supportedHarnesses:
   - codex
   - junie
@@ -280,13 +311,16 @@ notes:
   - Every evidence reference uses relative file#marker syntax and resolves inside the receipt directory.
   - Functional isolation reports workspace mutation compliance separately from security containment.
   - Functional isolation hashes the complete workspace, reports declared ephemeral build output separately, and never permits dependency or tool trees as ephemeral paths.
-  - Codex records native sandbox mode plus the runner-owned workspace boundary.
+  - MCP tool evidence binds each required tool, privacy-safe argument digest, and bounded outcome to the same completed call.
+  - Codex records either its native legacy sandbox mode or the exact evaluator-owned permission profile, together with the runner-owned workspace boundary.
   - Ordinary Junie receipts report containment-unverified and do not require a Junie external-containment mapping.
   - An external Junie containment field remains optional for legacy version-two receipts and cannot establish security-contained status without a governed trust anchor.
-  - Every claimed Codex or Junie attribution resolves a digest-bound agent-start event for the effective native adapter.
+  - Every exact Codex or Junie attribution claim resolves a digest-bound agent-start event for the effective native adapter; Junie name-level lifecycle evidence is recorded separately and does not satisfy that claim.
   - Version-two skill evidence binds unsanitized source, effective model-visible content, selected resources, and sanitization actions.
   - Prepared source and case-definition drift make a receipt stale, and the prepared key binds toolchain and controlled-environment identity.
   - A full skill probe requires comparable treatment, target-omitted, and wrong-skill receipts with one probeComparisonKey.
+  - An MCP-enabled base-case receipt binds release version, launcher and runtime identities, exact staged catalog and host configuration artifacts, a run session, one satisfying process stream, same-call argument digests and bounded outcomes, and retained allowed-output evidence.
+  - MCP evidence is forbidden for skill-probe variants so the complete availability catalog cannot reintroduce an omitted treatment skill.
   - Deterministic Judges run first and only a critical deterministic failure skips the Model Judge.
   - A Model Judge result is current only while every calibration identity and digest remains unchanged.
   - A canonical Model Judge request binds the selected case, run, harness, candidate-output artifact, and every governed evidence artifact by digest.

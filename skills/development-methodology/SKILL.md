@@ -42,6 +42,10 @@ Treat generated conceptual agent definition conditions as judgment guidance, not
 
 For a normal creation job, load this skill and exactly one artifact creation skill, plus source-domain skills that the repository evidence requires. Load the matching review skill only when the artifact is ready to review. Use documentation-page-verify for mixed, unknown, or custom artifacts, or when an artifact review skill calls for it.
 
+Harness-native preloading remains authoritative. Do not reread a skill through MCP when its complete content is already in context. When routing has selected several exact skill names but the harness has not inserted their content, use one skill_load call for the complete selected set instead of listing the catalog or loading each skill separately. Load required supporting resources in one skill_resource_load call after reading the selected skill instructions. Use harness-native loading or direct installed packages only when the MCP tools are absent or the server cannot initialize or connect before request dispatch. Never use direct loading to bypass a path, root, authorization, input-policy, or other structured rejection.
+
+The returned catalog revision and content digests identify the bytes supplied by the server; they do not prove that a model retained or followed those instructions. The harness or evaluator owns context insertion and digest-bound load evidence.
+
 ## Shared Page Contract
 
 The shared page contract applies to docs/wiki topic pages and methodology artifacts created from this bundle's templates.
@@ -88,7 +92,7 @@ Use project-wiki-topic-write for ordinary docs/wiki topic pages that summarize o
 
 ## Template Assets
 
-Template assets live under skills/development-methodology/assets/templates.
+Template assets live under skills/development-methodology/assets/templates. Read an already staged template directly. When the required template is not staged and mcp-agent-ops is available, retrieve it through skill_resource_load. Use the direct skill-relative asset as the fallback only when the tool is absent or its server cannot initialize or connect before dispatch; do not bypass a structured policy rejection.
 
 - project-wiki-template.md defines project wiki setup and code-aware maintenance rules.
 - project-template.yaml defines project conceptual agent definitions, folder technology skillsets, root and nested AGENTS.md operational guidance, proprietary validation notes, and customer-safe example boundaries in one project-root configuration.

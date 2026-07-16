@@ -2475,6 +2475,40 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "copyOnWriteWorkspace": {
         "discardAfterRun": true,
         "enabled": true,
+        "productWorkspaceMode": "permission-profile-git-write",
+        "writablePaths": [
+          "product-workspace",
+          "run-evidence-temporary-directory"
+        ]
+      },
+      "harness": "codex",
+      "id": "codex-permission-profile-git-write",
+      "implementationStatus": "local-tier-implemented",
+      "liveExecutionStatus": "runnable-local",
+      "preparedSnapshot": {
+        "dependenciesPreinstalled": "when the trusted preparation step ran the declared install command",
+        "digestInputs": "inherit-snapshot-policy",
+        "mode": "integrity-checked-content-addressed"
+      },
+      "repositoryMutation": "required",
+      "warmWorker": {
+        "enabled": false,
+        "implementationStatus": "proposed",
+        "poolKey": [
+          "codex",
+          "operatingSystem",
+          "architecture",
+          "toolchainVersions"
+        ],
+        "resetBoundary": "fresh-copy-on-write-layer-and-fresh-harness-context"
+      },
+      "workspaceIsolation": "native-policy-plus-copy-on-write-declared"
+    },
+    {
+      "containmentStatus": "containment-unverified",
+      "copyOnWriteWorkspace": {
+        "discardAfterRun": true,
+        "enabled": true,
         "productWorkspaceMode": "read-only",
         "writablePaths": [
           "run-evidence"

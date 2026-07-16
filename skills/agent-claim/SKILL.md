@@ -15,9 +15,31 @@ Claims make shared work explicit and keep completed work durable. The first inde
 
 Start with the narrow scope supported by current evidence. Extend the same claim atomically when another file or resource becomes necessary. Do not speculate about entire directories merely because future scope is unknown.
 
-## Command Path
+## Operation Selection
 
-Use the claim.py script inside the agent-claim skill package that the runtime actually loaded. Do not assume the target repository contains skills/agent-claim. Resolve the script path once and reuse it for every command in the task:
+Use the mcp-agent-ops claim tools when the host exposes them. They are the preferred deterministic interface because they accept structured arguments and return a structured exit_code plus result object without shell construction or JSON parsing.
+
+Use the tool that matches the intended operation:
+
+| Operation | MCP tool | Fallback subcommand |
+|---|---|---|
+| Read live ownership | claim_status | status |
+| Acquire ownership | claim_acquire | acquire |
+| Extend scope | claim_extend | extend |
+| Refresh heartbeat | claim_heartbeat | heartbeat |
+| Release ownership | claim_release | release |
+| Maintain the journal | claim_maintain_journal | maintain-journal |
+| Report contention | claim_report | report |
+
+Always inspect result.outcome. PRIMARY, ISOLATE, RECOVER, WAIT, ISOLATE_REQUIRED, RECOVERY_REQUIRED, and structured rejections are valid coordination results. A valid result is not an MCP failure and must not be retried through a fallback command.
+
+Use a fallback only when the tool is absent or the MCP server cannot initialize or connect before request dispatch. Never use a fallback after a path, root, authorization, input-policy, or other structured rejection; those results enforce the active boundary. Prefer the installed mcp-agent-ops-claims command when available. Otherwise use the claim.py script inside the loaded agent-claim package. Resolve the script path once and reuse it for every fallback command in the task. Do not assume the target repository contains skills/agent-claim.
+
+When a transport interruption makes a mutating claim call ambiguous after dispatch, do not repeat the mutation or switch transports immediately. Reconcile with claim_status first. Reconnect and use the MCP status operation when possible; if the server remains unavailable, use only the read-only status fallback. Continue, retry, or release only from the observed registry state so a successful but unacknowledged acquisition cannot become a duplicate claim.
+
+## Fallback Command Path
+
+The distributed script fallback can be resolved with:
 
 ```bash
 CLAIM_SCRIPT=/absolute/path/to/the-loaded-agent-claim-skill/scripts/claim.py
@@ -41,7 +63,7 @@ That default resolves to:
 ~/.codex/skills/agent-claim/scripts/claim.py
 ```
 
-Other runtimes use the scripts/claim.py file beside the loaded skill’s SKILL.md. The workflow examples below are complete for normal operation. Use the help option only to diagnose an installed-version mismatch or an unsupported option, not to locate the command or discover the standard workflow.
+Other runtimes use the scripts/claim.py file beside the loaded skill’s SKILL.md. The workflow examples below show the portable script fallback. The installed mcp-agent-ops-claims command accepts the same arguments without python3 and the script path. Use the help option only to diagnose an installed-version mismatch or an unsupported option, not to locate the command or discover the standard workflow.
 
 ## Repository-Global State
 

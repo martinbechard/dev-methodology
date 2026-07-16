@@ -181,6 +181,54 @@ python3 scripts/install-skills.py \
   --prune-owned
 ```
 
+### Preferred MCP Operations Layer
+
+Codex and Junie can use mcp-agent-ops as the preferred deterministic interface for claims, skill catalog reads, technology detection, skill validation, YAML verification, and Markdown link checks. The distributed scripts remain portability fallbacks only when the tool is absent or its server cannot initialize or connect before request dispatch. A valid structured result such as WAIT, BLOCKED, NO_VARIANT, a validation finding, or a path and authorization rejection is not a transport failure and must not be retried through a fallback.
+
+Install mcp-agent-ops 0.2.2 or newer from its verified release wheel before configuring either host. Follow the companion project's [verified release installation procedure](https://github.com/martinbechard/mcp-agent-ops#install-the-latest-release), including checksum verification and the installed identity checks. The bundle installer deploys only skills and generated agents; it never edits host MCP configuration or installs an external executable.
+
+Configure Codex at user or trusted-project scope in config.toml. Custom subagents inherit parent MCP configuration when they omit an agent-specific server table, so the generated conceptual agents do not duplicate this connection definition.
+
+```toml
+[mcp_servers.mcp-agent-ops]
+enabled = true
+required = false
+command = "/absolute/path/to/mcp-agent-ops"
+startup_timeout_sec = 15.0
+tool_timeout_sec = 60.0
+
+[mcp_servers.mcp-agent-ops.env]
+MCP_AGENT_OPS_SKILL_ROOTS = "/absolute/path/to/codex/skills"
+MCP_AGENT_OPS_DETECTION_REGISTRY = "/absolute/path/to/codex/skills/detect-technology-skills/references/technology-skill-detection-registry.yaml"
+MCP_AGENT_OPS_WORKSPACE_ROOTS = "/absolute/path/to/allowed/projects"
+```
+
+Configure Junie in the user or project mcp.json file. A generated Junie agent without an mcpServers allowlist can use the servers configured for its session.
+
+```json
+{
+  "mcpServers": {
+    "mcp-agent-ops": {
+      "command": "/absolute/path/to/mcp-agent-ops",
+      "args": [],
+      "env": {
+        "MCP_AGENT_OPS_SKILL_ROOTS": "/absolute/path/to/junie/skills",
+        "MCP_AGENT_OPS_DETECTION_REGISTRY": "/absolute/path/to/junie/skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+        "MCP_AGENT_OPS_WORKSPACE_ROOTS": "/absolute/path/to/allowed/projects"
+      }
+    }
+  }
+}
+```
+
+Use the operating-system path separator when more than one root is required. Every model-supplied repository, project, worktree, verification, and validation path must be absolute and resolve beneath a configured root. A configured skill symlink may target another location only when that resolved target is also configured as a skill root.
+
+The server reuses one immutable catalog snapshot. After an explicit deployment updates installed skills, start a new host session or call skill_refresh. Normal routing must not reread skills already preloaded by the host. When selected skill content is not yet in context, load the complete selected set with one skill_load call and retrieve only required supporting resources with skill_resource_load.
+
+See the [Codex MCP configuration reference](https://learn.chatgpt.com/docs/extend/mcp) and [Junie MCP configuration reference](https://junie.jetbrains.com/docs/junie-cli-mcp-configuration.html) for the host-owned configuration surfaces.
+
+Host approval policy remains user-owned. The evaluation runner's automatic approval of ten exact MCP operations and its Git-lifecycle permissions are isolated evaluation policy and are not copied into normal Codex or Junie host configuration.
+
 The installer never infers AGENTS_HOME, CODEX_HOME, CLAUDE_HOME, or a user-home destination. Use --dry-run to inspect an explicit deployment, --replace to update bundle-owned copies, and --prune-owned to remove obsolete owned artifacts at that target.
 
 Use project-level skill and agent directories only when the project needs customized definitions, deliberate project-only scoping, or a checked-in team configuration. An unchanged generic bundle belongs in the runtime's user-level directories.
@@ -394,7 +442,7 @@ Deterministic Judges run before semantic judgment and own executable checks, sch
 
 Fixtures are prepared once per content digest, dependency inputs, platform, architecture, and toolchain. A trusted fixture-preparation step may install dependencies while populating the integrity-checked prepared snapshot; live harness execution refuses install hooks. Before a live clone, the runner checks the full prepared-tree digest while holding the cache-key lock. Each run receives a disposable copy-on-write workspace when the platform supports it and a full disposable copy otherwise. Transient dependency, build, cache, and version-control trees do not participate in source hashing or source copying. The prepared cache is not claimed as filesystem-immutable, and external dependency-cache mounts are not implemented.
 
-Ordinary Codex and Junie cases run in the local tier. This tier isolates reproducibility and host state; it is not a hostile-code sandbox. Both receive a disposable workspace, controlled configuration and environment, isolated evidence, bounded output and time, cleanup, and a complete mutation audit. Personal configuration and credentials are not inherited. Any explicitly approved authentication variable must contain a dedicated evaluation credential, and its value is redacted from retained captures and printed diagnostics. The host runner does not rerun model-modified verification code; required command outcomes come from captured harness evidence. Codex additionally applies its native read-only or workspace-write sandbox. Junie receives a pinned executable plus unique JUNIE_HOME, HOME, cache, temporary, and event locations, and a successful run must produce one non-empty terminal result event. Junie tool allow and deny lists are capability routing rather than filesystem containment. The current Junie JSON stream does not prove digest-bound custom-agent startup, so attribution is never inferred from the task prompt.
+Ordinary Codex and Junie cases run in the local tier. This tier isolates reproducibility and host state; it is not a hostile-code sandbox. Both receive a disposable workspace, controlled configuration and environment, isolated evidence, bounded output and time, cleanup, and a complete mutation audit. Personal configuration and credentials are not inherited. Any explicitly approved authentication variable must contain a dedicated evaluation credential, and its value is redacted from retained captures and printed diagnostics. The host runner does not rerun model-modified verification code; required command outcomes come from captured harness evidence. Codex applies either its native read-only or workspace-write sandbox, or the exact evaluator-owned permission profile used by the MCP Git-lifecycle case. That profile denies the host home and evidence root, disables network access, preserves staged agent and configuration trees as read-only, and grants writes only to the disposable workspace, its Git metadata, and the unique temporary directory; other system paths remain read-only. Junie receives a pinned executable plus unique JUNIE_HOME, HOME, cache, temporary, and event locations, and a successful run must produce one non-empty terminal result event. Its MCP case allows ordinary read-only commands, Git add and Git commit, and the same ten exact mcp-agent-ops operations; unmatched actions still require approval. This is capability routing rather than filesystem containment. Junie session-ledger events can prove the named custom agent started and finished, but they do not carry the adapter digest, so exact-definition attribution remains unverified and is never inferred from the task prompt.
 
 The prepared-snapshot cache, copy-on-write workspaces, transient-tree pruning, cleanup, and local Codex and Junie execution paths are implemented. All seven current cases are ordinary local cases and are runnable through both harnesses. Selected cases currently execute serially. Bounded parallel case execution, the externally-contained tier for explicitly high-risk cases, read-only dependency mounts or copy-on-write delta enumeration, and warm-worker pooling remain follow-on components.
 

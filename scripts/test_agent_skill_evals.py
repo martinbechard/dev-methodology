@@ -9,6 +9,7 @@ import importlib.util
 import io
 import json
 import os
+import shutil
 import sys
 import threading
 import tempfile
@@ -814,7 +815,13 @@ class EvidenceVersionTwoTests(unittest.TestCase):
                     "evidence": "isolation.json#containment",
                 },
                 "codexNativeSandbox": {
-                    "mode": "workspace-write",
+                    "mode": next(
+                        profile
+                        for profile in self.module.load_framework_catalogs()[
+                            "sandbox-profiles.yaml"
+                        ]["profiles"]
+                        if profile["id"] == self.case["sandboxProfiles"]["codex"]
+                    )["copyOnWriteWorkspace"]["productWorkspaceMode"],
                     "evidence": "isolation.json#codex-native",
                 },
             },
@@ -1365,7 +1372,7 @@ class HarnessAndJudgeTests(unittest.TestCase):
             )
             self.assertIn("--sandbox", codex.argv)
             self.assertIn("read-only", codex.argv)
-            self.assertIn("--ephemeral", codex.argv)
+            self.assertNotIn("--ephemeral", codex.argv)
             junie = self.module.build_harness_command(
                 "junie", root, "dev-coder", "Do the task", "test-model", read_only=False,
                 event_output=evidence_root / "junie.jsonl",
@@ -1561,6 +1568,19 @@ class HarnessAndJudgeTests(unittest.TestCase):
             )
             self.assertIn("--output-last-message", command.argv)
             self.assertIn(str(output.resolve()), command.argv)
+            mutation = self.module.build_harness_command(
+                "codex",
+                root,
+                "dev-coder",
+                "Implement the change",
+                "test-model",
+                read_only=False,
+                event_output=evidence_root / "mutation-events.jsonl",
+                evidence_root=evidence_root,
+                isolated_config_root=root,
+                last_message_output=evidence_root / "mutation-result.md",
+            )
+            self.assertIn("--output-last-message", mutation.argv)
             with self.assertRaisesRegex(ValueError, "runner-owned evidence root"):
                 self.module.build_harness_command(
                     "codex",
@@ -1573,6 +1593,53 @@ class HarnessAndJudgeTests(unittest.TestCase):
                     evidence_root=evidence_root,
                     isolated_config_root=root,
                     last_message_output=root / "review.md",
+                )
+
+    def test_codex_authentication_uses_an_ephemeral_auth_only_home(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            workspace = base / "workspace"
+            evidence = base / "evidence"
+            evidence.mkdir()
+            (workspace / ".codex" / "agents").mkdir(parents=True)
+            (workspace / ".codex" / "agents" / "dev-coder.toml").write_text(
+                'name = "dev-coder"\n',
+                encoding="utf-8",
+            )
+            (workspace / ".agents" / "skills").mkdir(parents=True)
+            auth_source = base / "auth.json"
+            auth_source.write_text('{"auth_mode":"test"}\n', encoding="utf-8")
+            auth_source.chmod(0o600)
+            content = self.module._load_codex_auth_file(
+                auth_source,
+                workspace,
+                evidence,
+            )
+            self.assertEqual(auth_source.read_bytes(), content)
+            isolated_home = evidence / ".codex-home-test"
+            command = self.module.build_harness_command(
+                "codex",
+                workspace,
+                "dev-coder",
+                "Do the task",
+                "test-model",
+                read_only=False,
+                event_output=evidence / "events.jsonl",
+                evidence_root=evidence,
+                isolated_config_root=workspace,
+                codex_home=isolated_home,
+            )
+            self.assertEqual(
+                str(isolated_home.resolve()),
+                command.environment["CODEX_HOME"],
+            )
+            self.assertNotIn(str(auth_source), json.dumps(command.environment))
+            auth_source.chmod(0o644)
+            with self.assertRaisesRegex(ValueError, "group or other"):
+                self.module._load_codex_auth_file(
+                    auth_source,
+                    workspace,
+                    evidence,
                 )
 
     def test_junie_read_only_result_path_is_runner_owned(self) -> None:
@@ -1720,6 +1787,216 @@ class HarnessAndJudgeTests(unittest.TestCase):
             self.assertFalse(observed_scratch[0].exists())
             self.assertFalse(observed_junie_home[0].exists())
 
+    def test_mcp_handler_preserves_governed_evidence_and_selects_agent_stream(self) -> None:
+        case = self.module.load_cases()["project-configuration-routing"]
+        contract = case["mcpAgentOps"]
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            workspace = base / "workspace"
+            shutil.copytree(
+                ROOT / case["project"],
+                workspace,
+            )
+            (workspace / ".eval-workspace.json").write_text(
+                "{}\n", encoding="utf-8"
+            )
+            evidence_root = base / "dev-methodology-evals" / "evidence"
+            event_path = evidence_root / "events.jsonl"
+            result_path = evidence_root / "result.md"
+            args = self.module._argument_parser().parse_args([
+                "--case",
+                case["id"],
+                "--harness",
+                "codex",
+                "--invoke-harness",
+                "--event-output",
+                str(event_path),
+                "--result",
+                str(result_path),
+            ])
+            identity = self.module.McpAgentOpsIdentity(
+                Path(sys.executable).resolve(),
+                contract["requiredVersion"],
+                "1" * 64,
+                contract["requiredRuntimeDigest"],
+                "2" * 64,
+            )
+            harness_identity = self.module.HarnessIdentity(
+                "codex",
+                Path(sys.executable).resolve(),
+                "Codex test",
+                digest(Path(sys.executable)),
+            )
+            real_stage = self.module.stage_mcp_agent_ops_context
+            staged: list[object] = []
+
+            def stage(*stage_args: object, **stage_kwargs: object) -> object:
+                context = real_stage(*stage_args, **stage_kwargs)
+                staged.append(context)
+                return context
+
+            def execute(command: object, cwd: Path) -> object:
+                context = staged[0]
+                for relative in case["allowedWritePaths"]:
+                    output = cwd / relative
+                    output.parent.mkdir(parents=True, exist_ok=True)
+                    output.write_text(f"synthetic output for {relative}\n", encoding="utf-8")
+                result_path.write_text("synthetic final response\n", encoding="utf-8")
+                outcome_by_tool = {
+                    "skill_list": "CATALOG",
+                    "skill_resource_load": "LOADED",
+                    "detect_technology_skills": "NO_VARIANT",
+                    "claim_acquire": "PRIMARY",
+                    "verify_yaml": "OK",
+                    "verify_markdown_links": "OK",
+                    "claim_release": "RELEASED",
+                }
+                argument_digests = self.module.resolve_mcp_tool_argument_digests(
+                    contract["requiredToolArguments"],
+                    cwd,
+                )
+                records: list[dict[str, object]] = []
+                for index, (tool, outcome) in enumerate(outcome_by_tool.items(), start=1):
+                    records.extend((
+                        {
+                            "schema": "mcp-agent-ops-tool-audit",
+                            "version": 2,
+                            "sequence": len(records) + 1,
+                            "streamId": "3" * 32,
+                            "sessionId": context.audit_session_id,
+                            "callId": str(index),
+                            "tool": tool,
+                            "status": "started",
+                            "argumentsDigest": argument_digests[tool],
+                        },
+                        {
+                            "schema": "mcp-agent-ops-tool-audit",
+                            "version": 2,
+                            "sequence": len(records) + 2,
+                            "streamId": "3" * 32,
+                            "sessionId": context.audit_session_id,
+                            "callId": str(index),
+                            "tool": tool,
+                            "status": "completed",
+                            "resultDigest": "5" * 64,
+                            "outcome": outcome,
+                        },
+                    ))
+                context.audit_log.write_text(
+                    "\n".join(json.dumps(record) for record in records) + "\n",
+                    encoding="utf-8",
+                )
+                return self.module.CommandResult(
+                    command.argv,
+                    0,
+                    json.dumps({"type": "turn.completed"}) + "\n",
+                    "",
+                )
+
+            captured = io.StringIO()
+            with mock.patch.object(
+                self.module.tempfile, "gettempdir", return_value=str(base)
+            ), mock.patch.object(
+                self.module,
+                "capture_mcp_agent_ops_identity",
+                return_value=identity,
+            ), mock.patch.object(
+                self.module,
+                "capture_harness_identity",
+                return_value=harness_identity,
+            ), mock.patch.object(
+                self.module,
+                "stage_mcp_agent_ops_context",
+                side_effect=stage,
+            ), mock.patch.object(
+                self.module,
+                "run_command",
+                side_effect=execute,
+            ), redirect_stdout(captured):
+                error = self.module._handle_harness_invocation(args, case, workspace)
+            self.assertIsNone(error)
+            self.assertEqual(1, len(staged))
+            context = staged[0]
+            manifest_path = context.evidence_directory / "outputs-manifest.json"
+            self.assertTrue(manifest_path.is_file())
+            evidence_records = [
+                json.loads(line)
+                for line in captured.getvalue().splitlines()
+                if line.startswith("{")
+            ]
+            mcp_record = next(
+                record["mcpAgentOps"]
+                for record in evidence_records
+                if "mcpAgentOps" in record
+            )
+            self.assertEqual("3" * 32, mcp_record["auditStreamId"])
+            self.assertEqual("verified", mcp_record["toolEvidenceStatus"])
+            self.assertEqual(
+                contract["requiredToolOutcomes"],
+                mcp_record["requiredToolOutcomes"],
+            )
+            self.assertEqual(
+                self.module.resolve_mcp_tool_argument_digests(
+                    contract["requiredToolArguments"],
+                    workspace,
+                ),
+                mcp_record["requiredToolArgumentDigests"],
+            )
+            self.assertEqual(
+                self.module.mcp_value_digest(str(Path.home().resolve())),
+                mcp_record["permissionProfileHostHomeDigest"],
+            )
+            shutil.rmtree(workspace)
+            self.assertTrue(manifest_path.is_file())
+            self.assertTrue(
+                (context.evidence_directory / "outputs" / "PROJECT.yaml").is_file()
+            )
+
+    def test_junie_session_ledger_yields_name_level_not_digest_bound_attribution(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            junie_home = root / "junie-home"
+            session = junie_home / "sessions" / "session-1"
+            session.mkdir(parents=True)
+            evidence = root / "evidence"
+            evidence.mkdir()
+            events: list[dict[str, object]] = []
+            for status in ("STARTED", "STARTED", "FINISHED"):
+                events.append({
+                    "kind": "SessionA2uxEvent",
+                    "event": {
+                        "state": "IN_PROGRESS",
+                        "agentEvent": {
+                            "kind": "CustomAgentBlockUpdatedEvent",
+                            "agent": {
+                                "kind": "CustomAgent",
+                                "id": "agent-1",
+                                "name": "project-configurator",
+                            },
+                            "name": "project-configurator",
+                            "status": status,
+                            "stepId": "step-12345678",
+                        },
+                    },
+                })
+            (session / "events.jsonl").write_text(
+                "\n".join(json.dumps(event) for event in events) + "\n",
+                encoding="utf-8",
+            )
+            status, path, content_digest = self.module._preserve_junie_agent_attribution(
+                junie_home,
+                "project-configurator",
+                evidence,
+            )
+            self.assertEqual("name-verified", status)
+            self.assertEqual(digest(path), content_digest)
+            payload = json.loads(path.read_text(encoding="utf-8"))
+            self.assertFalse(payload["definitionDigestBound"])
+            self.assertEqual(
+                ["STARTED", "FINISHED"],
+                payload["lifecycle"]["statuses"],
+            )
+
     def test_capture_paths_are_exclusively_reserved_and_never_overwritten(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "events.jsonl"
@@ -1835,7 +2112,9 @@ class HarnessAndJudgeTests(unittest.TestCase):
                 self.module, "validate_case", return_value=[]
             ), mock.patch.object(
                 self.module, "_handle_harness_invocation", return_value=None
-            ) as invoke:
+            ) as invoke, mock.patch.object(
+                self.module, "classify_evidence"
+            ) as classify:
                 exit_code = self.module.main([
                     "--case",
                     standard_case["id"],
@@ -1844,9 +2123,12 @@ class HarnessAndJudgeTests(unittest.TestCase):
                     "--harness",
                     "junie",
                     "--invoke-harness",
+                    "--result",
+                    str(Path(directory) / "live-result.md"),
                 ])
             self.assertEqual(0, exit_code)
             invoke.assert_called_once()
+            classify.assert_not_called()
 
             high_risk_case = {
                 **standard_case,
@@ -2777,6 +3059,1005 @@ class HarnessAndJudgeTests(unittest.TestCase):
         self.assertTrue(any("run" in error.lower() for error in replay_errors))
         self.assertTrue(any("harness" in error.lower() for error in replay_errors))
         self.assertTrue(any("candidate" in error.lower() for error in candidate_errors))
+
+    def _write_fake_mcp_agent_ops(
+        self,
+        path: Path,
+        runtime_digest: str,
+    ) -> None:
+        path.write_text(
+            f"#!{sys.executable}\n"
+            "import json, sys\n"
+            "if sys.argv[1:] == ['--version']:\n"
+            "    print('mcp-agent-ops 0.2.2')\n"
+            "elif sys.argv[1:] == ['--identity-json']:\n"
+            "    print(json.dumps({\n"
+            "        'schema': 'mcp-agent-ops-runtime-identity',\n"
+            "        'schemaVersion': 1,\n"
+            "        'package': 'mcp-agent-ops',\n"
+            "        'packageVersion': '0.2.2',\n"
+            f"        'runtimeDigest': '{runtime_digest}',\n"
+            "        'fileCount': 3,\n"
+            "    }, sort_keys=True))\n"
+            "else:\n"
+            "    raise SystemExit(2)\n",
+            encoding="utf-8",
+        )
+        path.chmod(0o700)
+
+    def test_mcp_identity_binds_launcher_and_runtime_and_fails_on_drift(self) -> None:
+        runtime_digest = "a" * 64
+        with tempfile.TemporaryDirectory() as directory:
+            executable = Path(directory) / "mcp-agent-ops"
+            self._write_fake_mcp_agent_ops(executable, runtime_digest)
+            identity = self.module.capture_mcp_agent_ops_identity(
+                executable,
+                required_version="0.2.2",
+                required_runtime_digest=runtime_digest,
+            )
+            self.assertEqual(executable.resolve(), identity.executable)
+            self.assertEqual(digest(executable), identity.launcher_digest)
+            self.assertEqual(runtime_digest, identity.runtime_digest)
+            self.assertRegex(identity.identity_digest, r"^[0-9a-f]{64}$")
+            with self.assertRaisesRegex(RuntimeError, "runtime digest"):
+                self.module.capture_mcp_agent_ops_identity(
+                    executable,
+                    required_version="0.2.2",
+                    required_runtime_digest="b" * 64,
+                )
+
+    def test_mcp_catalog_and_host_configuration_are_exact_and_isolated(self) -> None:
+        case = self.module.load_cases()["project-configuration-routing"]
+        fixture = ROOT / "evals" / "projects" / "project-configuration-routing"
+        available_source = fixture / "available-skills.txt"
+        expected_skills = tuple(
+            available_source.read_text(encoding="utf-8").splitlines()
+        )
+        identity = self.module.McpAgentOpsIdentity(
+            Path(sys.executable).resolve(),
+            "0.2.2",
+            "1" * 64,
+            "2" * 64,
+            "3" * 64,
+        )
+        for harness in ("codex", "junie"):
+            with self.subTest(harness=harness), tempfile.TemporaryDirectory() as directory:
+                base = Path(directory)
+                workspace = base / "workspace"
+                workspace.mkdir()
+                shutil.copy2(available_source, workspace / "available-skills.txt")
+                evidence = base / "evidence"
+                evidence.mkdir()
+                context = self.module.ContextPackBuilder(ROOT).stage(
+                    harness,
+                    "project-configurator",
+                    case["requiredSkills"],
+                    workspace,
+                    skill_files=case["skillResourceAllowlist"],
+                )
+                self.assertFalse(
+                    (
+                        context.skill_location
+                        / "development-methodology"
+                        / "assets"
+                        / "templates"
+                        / "project-template.yaml"
+                    ).exists()
+                )
+                available = self.module.read_mcp_skill_catalog(
+                    workspace,
+                    "available-skills.txt",
+                    ROOT,
+                )
+                self.assertEqual(expected_skills, available)
+                mcp = self.module.stage_mcp_agent_ops_context(
+                    harness,
+                    workspace,
+                    identity,
+                    ROOT,
+                    context.skill_location,
+                    available,
+                    case["requiredSkills"],
+                    evidence / "audit.jsonl",
+                    evidence,
+                    catalog_resource_allowlist=case["mcpAgentOps"][
+                        "catalogResourceAllowlist"
+                    ],
+                )
+                staged_names = {
+                    path.name for path in mcp.skill_root.iterdir() if path.is_dir()
+                }
+                self.assertEqual(set(expected_skills), staged_names)
+                self.assertNotIn("codex-harness-directives", staged_names)
+                self.assertIn(
+                    "# Create Project Configuration",
+                    (
+                        mcp.skill_root
+                        / "create-project-configuration"
+                        / "SKILL.md"
+                    ).read_text(encoding="utf-8"),
+                )
+                self.assertTrue(
+                    (
+                        mcp.skill_root
+                        / "development-methodology"
+                        / "assets"
+                        / "templates"
+                        / "project-template.yaml"
+                    ).is_file()
+                )
+                catalog_only = (
+                    mcp.skill_root / "fastapi" / "SKILL.md"
+                ).read_text(encoding="utf-8")
+                self.assertIn("# Evaluation catalog entry", catalog_only)
+                self.assertNotIn("Application Boundaries", catalog_only)
+                command = self.module.build_harness_command(
+                    harness,
+                    workspace,
+                    "project-configurator",
+                    "Configure the project",
+                    "test-model",
+                    read_only=False,
+                    event_output=evidence / "events.jsonl",
+                    evidence_root=evidence,
+                    isolated_config_root=workspace,
+                    skill_locations=[context.skill_location],
+                    agent_locations=[context.agent_location],
+                    harness_executable=Path(sys.executable),
+                    mcp_agent_ops=mcp,
+                )
+                if harness == "codex":
+                    joined = "\n".join(command.argv)
+                    self.assertIn("--ignore-user-config", command.argv)
+                    self.assertNotIn("--sandbox", command.argv)
+                    self.assertIn('approval_policy="never"', joined)
+                    self.assertIn(
+                        'default_permissions="mcp-eval-git-write"',
+                        joined,
+                    )
+                    self.assertIn(
+                        "permissions.mcp-eval-git-write",
+                        joined,
+                    )
+                    self.assertIn("mcp_servers.mcp-agent-ops.command", joined)
+                    self.assertIn(
+                        "mcp_servers.mcp-agent-ops.enabled_tools",
+                        joined,
+                    )
+                    self.assertIn(
+                        'mcp_servers.mcp-agent-ops.default_tools_approval_mode="approve"',
+                        joined,
+                    )
+                    self.assertIn(
+                        "MCP_AGENT_OPS_REQUIRED_RUNTIME_DIGEST",
+                        joined,
+                    )
+                    codex_configuration = json.loads(
+                        mcp.configuration_evidence.read_text(encoding="utf-8")
+                    )
+                    self.assertEqual(
+                        "never",
+                        codex_configuration["approval_policy"],
+                    )
+                    self.assertEqual(
+                        "mcp-eval-git-write",
+                        codex_configuration["default_permissions"],
+                    )
+                    codex_profile = codex_configuration["permissions"][
+                        "mcp-eval-git-write"
+                    ]
+                    self.assertEqual(
+                        "write",
+                        codex_profile["filesystem"][":workspace_roots"][".git"],
+                    )
+                    self.assertEqual(
+                        "read",
+                        codex_profile["filesystem"][":workspace_roots"][".codex"],
+                    )
+                    self.assertFalse(codex_profile["network"]["enabled"])
+                    self.assertEqual(
+                        [
+                            "claim_status",
+                            "claim_acquire",
+                            "claim_extend",
+                            "claim_heartbeat",
+                            "claim_release",
+                            "skill_list",
+                            "skill_resource_load",
+                            "detect_technology_skills",
+                            "verify_yaml",
+                            "verify_markdown_links",
+                        ],
+                        codex_configuration["mcp_servers"]["mcp-agent-ops"][
+                            "enabled_tools"
+                        ],
+                    )
+                    self.assertIsNone(mcp.config_location)
+                else:
+                    self.assertIsNotNone(mcp.config_location)
+                    expected_location = mcp.config_location.resolve()
+                    self.assertNotIn(workspace.resolve(), expected_location.parents)
+                    self.assertIn(evidence.resolve(), expected_location.parents)
+                    self.assertIn(
+                        f"--mcp-location={expected_location}",
+                        command.argv,
+                    )
+                    self.assertIn("--mcp-default-locations=false", command.argv)
+                    config = json.loads(
+                        (expected_location / "mcp.json").read_text(
+                            encoding="utf-8"
+                        )
+                    )
+                    self.assertEqual(
+                        ["mcp-agent-ops"],
+                        list(config["mcpServers"]),
+                    )
+                    self.assertIsNotNone(mcp.authorization_evidence)
+                    allowlist = json.loads(
+                        mcp.authorization_evidence.read_text(encoding="utf-8")
+                    )
+                    self.assertEqual(
+                        [
+                            {
+                                "pattern": f"mcp-agent-ops:{tool}",
+                                "action": "allow",
+                            }
+                            for tool in (
+                                "claim_status",
+                                "claim_acquire",
+                                "claim_extend",
+                                "claim_heartbeat",
+                                "claim_release",
+                                "skill_list",
+                                "skill_resource_load",
+                                "detect_technology_skills",
+                                "verify_yaml",
+                                "verify_markdown_links",
+                            )
+                        ],
+                        allowlist["rules"]["mcpTools"]["rules"],
+                    )
+                    self.assertEqual(
+                        [
+                            {"prefix": "git add", "action": "allow"},
+                            {"prefix": "git commit", "action": "allow"},
+                        ],
+                        allowlist["rules"]["executables"]["rules"],
+                    )
+                    self.assertEqual("ask", allowlist["defaultBehavior"])
+                    self.assertTrue(allowlist["allowReadonlyCommands"])
+                self.assertEqual(
+                    mcp.configuration_digest,
+                    digest(mcp.configuration_evidence),
+                )
+                self.assertEqual(
+                    mcp.catalog_evidence.read_bytes(),
+                    (mcp.skill_root.parent / "catalog-manifest.json").read_bytes(),
+                )
+
+    def test_mcp_audit_parser_rejects_untrusted_or_incomplete_lifecycles(self) -> None:
+        valid = [
+            {
+                "schema": "mcp-agent-ops-tool-audit",
+                "version": 1,
+                "sequence": 1,
+                "callId": "1",
+                "tool": "skill_list",
+                "status": "started",
+                "argumentsDigest": "a" * 64,
+            },
+            {
+                "schema": "mcp-agent-ops-tool-audit",
+                "version": 1,
+                "sequence": 2,
+                "callId": "1",
+                "tool": "skill_list",
+                "status": "completed",
+                "resultDigest": "b" * 64,
+            },
+            {
+                "schema": "mcp-agent-ops-tool-audit",
+                "version": 1,
+                "sequence": 3,
+                "callId": "2",
+                "tool": "detect_technology_skills",
+                "status": "started",
+                "argumentsDigest": "c" * 64,
+            },
+            {
+                "schema": "mcp-agent-ops-tool-audit",
+                "version": 1,
+                "sequence": 4,
+                "callId": "2",
+                "tool": "detect_technology_skills",
+                "status": "completed",
+                "resultDigest": "d" * 64,
+            },
+        ]
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "audit.jsonl"
+
+            def write(records: list[dict[str, object]]) -> None:
+                path.write_text(
+                    "\n".join(json.dumps(record) for record in records) + "\n",
+                    encoding="utf-8",
+                )
+
+            write(valid)
+            records = self.module.read_mcp_agent_ops_audit(path)
+            completed = self.module.completed_mcp_tool_sequence(records)
+            self.assertEqual(
+                ["skill_list", "detect_technology_skills"],
+                completed,
+            )
+            self.assertTrue(
+                self.module.required_tools_are_subsequence(
+                    ["skill_list", "detect_technology_skills"],
+                    ["claim_status", *completed, "verify_yaml"],
+                )
+            )
+            self.assertFalse(
+                self.module.required_tools_are_subsequence(
+                    ["detect_technology_skills", "skill_list"],
+                    completed,
+                )
+            )
+            invalid_variants: list[tuple[list[dict[str, object]], str]] = []
+            forbidden = [dict(record) for record in valid]
+            forbidden[0]["path"] = "/private/example"
+            invalid_variants.append((forbidden, "forbidden fields"))
+            empty_call = [dict(record) for record in valid]
+            empty_call[0]["callId"] = ""
+            invalid_variants.append((empty_call, "invalid contract"))
+            failed = [dict(record) for record in valid]
+            failed[1]["status"] = "failed"
+            invalid_variants.append((failed, "failed tool call"))
+            invalid_variants.append((valid[:-1], "incomplete tool lifecycle"))
+            for variant, message in invalid_variants:
+                with self.subTest(message=message):
+                    write(variant)
+                    with self.assertRaisesRegex(ValueError, message):
+                        self.module.read_mcp_agent_ops_audit(path)
+
+    def test_mcp_shared_audit_selects_one_session_bound_outcome_stream(self) -> None:
+        session_id = "a" * 32
+        parent_stream = "b" * 32
+        agent_stream = "c" * 32
+        tools = [
+            ("skill_list", "CATALOG"),
+            ("detect_technology_skills", "READY"),
+            ("claim_acquire", "PRIMARY"),
+            ("verify_yaml", "OK"),
+            ("verify_markdown_links", "OK"),
+            ("claim_release", "RELEASED"),
+        ]
+        records: list[dict[str, object]] = [
+            {
+                "schema": "mcp-agent-ops-tool-audit",
+                "version": 2,
+                "sequence": 1,
+                "streamId": parent_stream,
+                "sessionId": session_id,
+                "callId": "1",
+                "tool": "skill_list",
+                "status": "started",
+                "argumentsDigest": "1" * 64,
+            }
+        ]
+        sequence = 0
+        for index, (tool, outcome) in enumerate(tools, start=1):
+            sequence += 1
+            records.append({
+                "schema": "mcp-agent-ops-tool-audit",
+                "version": 2,
+                "sequence": sequence,
+                "streamId": agent_stream,
+                "sessionId": session_id,
+                "callId": str(index),
+                "tool": tool,
+                "status": "started",
+                "argumentsDigest": "2" * 64,
+            })
+            sequence += 1
+            records.append({
+                "schema": "mcp-agent-ops-tool-audit",
+                "version": 2,
+                "sequence": sequence,
+                "streamId": agent_stream,
+                "sessionId": session_id,
+                "callId": str(index),
+                "tool": tool,
+                "status": "completed",
+                "resultDigest": "3" * 64,
+                "outcome": outcome,
+            })
+        records.append({
+            "schema": "mcp-agent-ops-tool-audit",
+            "version": 2,
+            "sequence": 2,
+            "streamId": parent_stream,
+            "sessionId": session_id,
+            "callId": "1",
+            "tool": "skill_list",
+            "status": "completed",
+            "resultDigest": "4" * 64,
+            "outcome": "CATALOG",
+        })
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "audit.jsonl"
+            path.write_text(
+                "\n".join(json.dumps(record) for record in records) + "\n",
+                encoding="utf-8",
+            )
+            validated = self.module.read_mcp_agent_ops_audit(path)
+            selected, completed, outcomes = self.module.select_mcp_tool_stream(
+                validated,
+                [["skill_list", "detect_technology_skills"], [
+                    "claim_acquire",
+                    "verify_yaml",
+                    "verify_markdown_links",
+                    "claim_release",
+                ]],
+                {tool: [outcome] for tool, outcome in tools},
+            )
+            self.assertEqual(agent_stream, selected)
+            self.assertEqual([tool for tool, _outcome in tools], completed)
+            self.assertEqual(["OK"], outcomes["verify_yaml"])
+
+            mixed = [dict(record) for record in records]
+            mixed[-1]["sessionId"] = "d" * 32
+            path.write_text(
+                "\n".join(json.dumps(record) for record in mixed) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "mixes evaluation session"):
+                self.module.read_mcp_agent_ops_audit(path)
+
+            missing_outcome = [dict(record) for record in records]
+            missing_outcome[-2].pop("outcome")
+            path.write_text(
+                "\n".join(json.dumps(record) for record in missing_outcome) + "\n",
+                encoding="utf-8",
+            )
+            validated = self.module.read_mcp_agent_ops_audit(path)
+            with self.assertRaisesRegex(ValueError, "no process stream"):
+                self.module.select_mcp_tool_stream(
+                    validated,
+                    [[tool for tool, _outcome in tools]],
+                    {tool: [outcome] for tool, outcome in tools},
+                )
+
+    def test_mcp_stream_selection_binds_outcome_to_expected_arguments(self) -> None:
+        session_id = "a" * 32
+        wrong_stream = "b" * 32
+        expected_stream = "c" * 32
+        with tempfile.TemporaryDirectory() as directory:
+            workspace = Path(directory) / "workspace"
+            workspace.mkdir()
+            expected_digests = self.module.resolve_mcp_tool_argument_digests(
+                {
+                    "verify_yaml": {
+                        "repository_root": "$WORKSPACE",
+                        "paths": ["PROJECT.yaml"],
+                    }
+                },
+                workspace,
+            )
+            expected_digest = expected_digests["verify_yaml"]
+            records: list[dict[str, object]] = []
+            for stream_id, argument_digest, outcome in (
+                (wrong_stream, "d" * 64, "OK"),
+                (expected_stream, expected_digest, "OK"),
+            ):
+                records.extend((
+                    {
+                        "schema": "mcp-agent-ops-tool-audit",
+                        "version": 2,
+                        "sequence": 1,
+                        "streamId": stream_id,
+                        "sessionId": session_id,
+                        "callId": "1",
+                        "tool": "verify_yaml",
+                        "status": "started",
+                        "argumentsDigest": argument_digest,
+                    },
+                    {
+                        "schema": "mcp-agent-ops-tool-audit",
+                        "version": 2,
+                        "sequence": 2,
+                        "streamId": stream_id,
+                        "sessionId": session_id,
+                        "callId": "1",
+                        "tool": "verify_yaml",
+                        "status": "completed",
+                        "resultDigest": "e" * 64,
+                        "outcome": outcome,
+                    },
+                ))
+            path = Path(directory) / "audit.jsonl"
+            path.write_text(
+                "\n".join(json.dumps(record) for record in records) + "\n",
+                encoding="utf-8",
+            )
+            validated = self.module.read_mcp_agent_ops_audit(path)
+            selected, _completed, _outcomes = self.module.select_mcp_tool_stream(
+                validated,
+                [["verify_yaml"]],
+                {"verify_yaml": ["OK"]},
+                expected_digests,
+            )
+            self.assertEqual(expected_stream, selected)
+
+            exact_but_rejected = [dict(record) for record in records[:2]]
+            exact_but_rejected[0]["argumentsDigest"] = expected_digest
+            exact_but_rejected[1]["outcome"] = "FINDINGS"
+            path.write_text(
+                "\n".join(json.dumps(record) for record in exact_but_rejected) + "\n",
+                encoding="utf-8",
+            )
+            validated = self.module.read_mcp_agent_ops_audit(path)
+            with self.assertRaisesRegex(ValueError, "no process stream"):
+                self.module.select_mcp_tool_stream(
+                    validated,
+                    [["verify_yaml"]],
+                    {"verify_yaml": ["OK"]},
+                    expected_digests,
+                )
+
+    def test_mcp_argument_digest_matches_protocol_and_rejects_placeholders(self) -> None:
+        self.assertEqual(
+            "6d9eb45284090145dc16661b06abe01185a16a7dabba07c992a131bffa6b8114",
+            self.module.mcp_value_digest({"b": 1, "a": "é"}),
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            workspace = Path(directory)
+            with self.assertRaisesRegex(ValueError, "complete value"):
+                self.module.resolve_mcp_tool_argument_digests(
+                    {"verify_yaml": {"repository_root": "$WORKSPACE/child"}},
+                    workspace,
+                )
+            with self.assertRaisesRegex(ValueError, "unknown.*placeholder"):
+                self.module.resolve_mcp_tool_argument_digests(
+                    {"verify_yaml": {"repository_root": "$PROJECT_ROOT"}},
+                    workspace,
+                )
+
+    def test_mcp_stream_requires_the_exact_calls_in_declared_order(self) -> None:
+        session_id = "a" * 32
+        stream_id = "b" * 32
+        expected = {
+            "verify_yaml": "1" * 64,
+            "verify_markdown_links": "2" * 64,
+        }
+        calls = [
+            ("verify_markdown_links", expected["verify_markdown_links"]),
+            ("verify_yaml", expected["verify_yaml"]),
+            ("verify_yaml", "3" * 64),
+            ("verify_markdown_links", "4" * 64),
+        ]
+        records: list[dict[str, object]] = []
+        for call_index, (tool, argument_digest) in enumerate(calls, start=1):
+            records.extend((
+                {
+                    "schema": "mcp-agent-ops-tool-audit",
+                    "version": 2,
+                    "sequence": len(records) + 1,
+                    "streamId": stream_id,
+                    "sessionId": session_id,
+                    "callId": str(call_index),
+                    "tool": tool,
+                    "status": "started",
+                    "argumentsDigest": argument_digest,
+                },
+                {
+                    "schema": "mcp-agent-ops-tool-audit",
+                    "version": 2,
+                    "sequence": len(records) + 2,
+                    "streamId": stream_id,
+                    "sessionId": session_id,
+                    "callId": str(call_index),
+                    "tool": tool,
+                    "status": "completed",
+                    "resultDigest": "5" * 64,
+                    "outcome": "OK",
+                },
+            ))
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "audit.jsonl"
+            path.write_text(
+                "\n".join(json.dumps(record) for record in records) + "\n",
+                encoding="utf-8",
+            )
+            validated = self.module.read_mcp_agent_ops_audit(path)
+            with self.assertRaisesRegex(ValueError, "no process stream"):
+                self.module.select_mcp_tool_stream(
+                    validated,
+                    [["verify_yaml", "verify_markdown_links"]],
+                    {
+                        "verify_yaml": ["OK"],
+                        "verify_markdown_links": ["OK"],
+                    },
+                    expected,
+                )
+
+    def test_mcp_case_contract_is_valid_and_probe_variants_disable_mcp(self) -> None:
+        case = self.module.load_cases()["project-configuration-routing"]
+        self.assertEqual([], self.module.validate_case_definition(case))
+        duplicated = yaml.safe_load(yaml.safe_dump(case))
+        duplicated["mcpAgentOps"]["requiredToolSequences"][1].append(
+            "verify_yaml"
+        )
+        self.assertTrue(
+            any(
+                "must not repeat" in error
+                for error in self.module.validate_case_definition(duplicated)
+            )
+        )
+        missing_arguments = yaml.safe_load(yaml.safe_dump(case))
+        del missing_arguments["mcpAgentOps"]["requiredToolArguments"][
+            "verify_yaml"
+        ]
+        self.assertTrue(
+            any(
+                "must cover exactly" in error
+                for error in self.module.validate_case_definition(missing_arguments)
+            )
+        )
+        derived = self.module._apply_probe_variant(
+            case,
+            "probe-create-project-configuration",
+            "treatment",
+        )
+        self.assertNotIn("mcpAgentOps", derived)
+        self.assertFalse(self.module._case_uses_mcp_agent_ops(derived))
+
+    def test_mcp_cli_requires_explicit_executable_only_for_the_base_case(self) -> None:
+        with redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
+            self.module.main([
+                "--case",
+                "project-configuration-routing",
+                "--harness",
+                "codex",
+                "--print-invocation",
+            ])
+        with redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
+            self.module.main([
+                "--case",
+                "typescript-order-pricing",
+                "--harness",
+                "codex",
+                "--mcp-agent-ops-executable",
+                sys.executable,
+                "--print-invocation",
+            ])
+        with redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
+            self.module.main([
+                "--skill-probe",
+                "probe-create-project-configuration",
+                "--probe-variant",
+                "treatment",
+                "--harness",
+                "codex",
+                "--mcp-agent-ops-executable",
+                sys.executable,
+                "--print-invocation",
+            ])
+
+    def test_mcp_receipt_evidence_replays_identity_and_audit_contract(self) -> None:
+        case = self.module.load_cases()["project-configuration-routing"]
+        contract = case["mcpAgentOps"]
+        validation_module = sys.modules[self.module.validate_evidence.__module__]
+        outcomes = {
+            "skill_list": "CATALOG",
+            "skill_resource_load": "LOADED",
+            "detect_technology_skills": "READY",
+            "claim_acquire": "PRIMARY",
+            "verify_yaml": "OK",
+            "verify_markdown_links": "OK",
+            "claim_release": "RELEASED",
+        }
+        tools = list(outcomes)
+        session_id = "5" * 32
+        stream_id = "6" * 32
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            argument_digests = self.module.resolve_mcp_tool_argument_digests(
+                contract["requiredToolArguments"],
+                root / "workspace",
+            )
+            records: list[dict[str, object]] = []
+            for call_index, tool in enumerate(tools, start=1):
+                records.extend((
+                    {
+                        "schema": "mcp-agent-ops-tool-audit",
+                        "version": 2,
+                        "sequence": len(records) + 1,
+                        "streamId": stream_id,
+                        "sessionId": session_id,
+                        "callId": str(call_index),
+                        "tool": tool,
+                        "status": "started",
+                        "argumentsDigest": argument_digests[tool],
+                    },
+                    {
+                        "schema": "mcp-agent-ops-tool-audit",
+                        "version": 2,
+                        "sequence": len(records) + 2,
+                        "streamId": stream_id,
+                        "sessionId": session_id,
+                        "callId": str(call_index),
+                        "tool": tool,
+                        "status": "completed",
+                        "resultDigest": "b" * 64,
+                        "outcome": outcomes[tool],
+                    },
+                ))
+            evidence_path = root / "evidence.yaml"
+            evidence_path.write_text("receipt\n", encoding="utf-8")
+            audit_path = root / "audit.jsonl"
+            audit_path.write_text(
+                "\n".join(json.dumps(record) for record in records) + "\n",
+                encoding="utf-8",
+            )
+            configuration_path = root / "configuration.json"
+            configuration = {
+                "approval_policy": "never",
+                "default_permissions": "mcp-eval-git-write",
+                "permissions": {
+                    "mcp-eval-git-write": {
+                        "description": "Disposable MCP evaluation workspace with Git metadata writes",
+                        "filesystem": {
+                            ":root": "read",
+                            ":tmpdir": "write",
+                            str(Path.home().resolve()): "deny",
+                            str(root.resolve()): "deny",
+                            ":workspace_roots": {
+                                ".": "write",
+                                ".agents": "read",
+                                ".codex": "read",
+                                ".eval-context": "read",
+                                ".git": "write",
+                                ".junie": "read",
+                            },
+                        },
+                        "network": {"enabled": False},
+                    }
+                },
+                "mcp_servers": {
+                    "mcp-agent-ops": {
+                        "command": str(Path(sys.executable).resolve()),
+                        "args": [],
+                        "env": {
+                            "MCP_AGENT_OPS_SKILL_ROOTS": str(root / "skills"),
+                            "MCP_AGENT_OPS_DETECTION_REGISTRY": str(root / "registry.yaml"),
+                            "MCP_AGENT_OPS_WORKSPACE_ROOTS": str(root / "workspace"),
+                            "MCP_AGENT_OPS_AUDIT_LOG": str(audit_path),
+                            "MCP_AGENT_OPS_AUDIT_ROOTS": str(root),
+                            "MCP_AGENT_OPS_AUDIT_SHARED": "true",
+                            "MCP_AGENT_OPS_AUDIT_SESSION_ID": session_id,
+                            "MCP_AGENT_OPS_REQUIRED_RUNTIME_DIGEST": contract["requiredRuntimeDigest"],
+                        },
+                        "enabled": True,
+                        "required": True,
+                        "enabled_tools": [
+                            "claim_status",
+                            "claim_acquire",
+                            "claim_extend",
+                            "claim_heartbeat",
+                            "claim_release",
+                            "skill_list",
+                            "skill_resource_load",
+                            "detect_technology_skills",
+                            "verify_yaml",
+                            "verify_markdown_links",
+                        ],
+                        "default_tools_approval_mode": "approve",
+                        "startup_timeout_sec": 15.0,
+                        "tool_timeout_sec": 60.0,
+                    }
+                }
+            }
+            configuration_path.write_text(
+                json.dumps(configuration, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
+            catalog_files = [{
+                "skill": "example",
+                "path": "SKILL.md",
+                "role": "catalog-metadata-only",
+                "digest": "7" * 64,
+                "size": 10,
+            }]
+            catalog_manifest_digest = hashlib.sha256(
+                json.dumps(
+                    catalog_files,
+                    sort_keys=True,
+                    separators=(",", ":"),
+                ).encode("utf-8")
+            ).hexdigest()
+            catalog_path = root / "catalog.json"
+            catalog_path.write_text(
+                json.dumps({
+                    "schema": "dev-methodology-eval-mcp-skill-catalog",
+                    "version": 1,
+                    "manifestDigest": catalog_manifest_digest,
+                    "skills": ["example"],
+                    "files": catalog_files,
+                }, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
+            (root / "outputs").mkdir()
+            output_manifest_path = root / "outputs-manifest.json"
+            output_manifest_path.write_text(
+                json.dumps({
+                    "schema": "dev-methodology-eval-output-manifest",
+                    "version": 1,
+                    "allowedWritePaths": case["allowedWritePaths"],
+                    "files": [],
+                }, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
+            mcp_run: dict[str, object] = {
+                "serverName": contract["serverName"],
+                "version": contract["requiredVersion"],
+                "launcherDigest": "1" * 64,
+                "runtimeDigest": contract["requiredRuntimeDigest"],
+                "identityDigest": "2" * 64,
+                "configurationDigest": digest(configuration_path),
+                "catalogManifestDigest": catalog_manifest_digest,
+                "configurationEvidence": "configuration.json#mcp_servers",
+                "catalogEvidence": "catalog.json#dev-methodology-eval-mcp-skill-catalog",
+                "catalogEvidenceDigest": digest(catalog_path),
+                "authorizationEvidence": None,
+                "authorizationDigest": None,
+                "junieAgentAttributionStatus": None,
+                "junieAgentAttributionEvidence": None,
+                "junieAgentAttributionDigest": None,
+                "identityEvidence": "identity.json#mcp-identity",
+                "identityEvidenceDigest": "0" * 64,
+                "auditSessionId": session_id,
+                "auditStreamId": stream_id,
+                "auditDigest": digest(audit_path),
+                "auditEvidence": "audit.jsonl#mcp-agent-ops-tool-audit",
+                "outputManifestDigest": digest(output_manifest_path),
+                "outputManifestEvidence": "outputs-manifest.json#dev-methodology-eval-output-manifest",
+                "completedTools": tools,
+                "toolOutcomes": {
+                    tool: [outcome] for tool, outcome in outcomes.items()
+                },
+                "requiredToolSequences": contract["requiredToolSequences"],
+                "requiredToolOutcomes": contract["requiredToolOutcomes"],
+                "requiredToolArgumentDigests": argument_digests,
+                "permissionProfileHostHomeDigest": self.module.mcp_value_digest(
+                    str(Path.home().resolve())
+                ),
+                "toolEvidenceStatus": "verified",
+            }
+            identity = {
+                "schema": "dev-methodology-eval-mcp-identity",
+                "version": 3,
+                "serverName": mcp_run["serverName"],
+                "packageVersion": mcp_run["version"],
+                "launcherDigest": mcp_run["launcherDigest"],
+                "runtimeDigest": mcp_run["runtimeDigest"],
+                "identityDigest": mcp_run["identityDigest"],
+                "configurationDigest": mcp_run["configurationDigest"],
+                "catalogManifestDigest": mcp_run["catalogManifestDigest"],
+                "auditSessionId": session_id,
+                "configurationEvidenceDigest": mcp_run["configurationDigest"],
+                "catalogEvidenceDigest": mcp_run["catalogEvidenceDigest"],
+                "authorizationDigest": None,
+                "requiredToolArgumentDigests": argument_digests,
+                "permissionProfileHostHomeDigest": mcp_run[
+                    "permissionProfileHostHomeDigest"
+                ],
+            }
+            identity_path = root / "identity.json"
+            identity_path.write_text(
+                json.dumps(identity, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
+            mcp_run["identityEvidenceDigest"] = digest(identity_path)
+            errors: list[str] = []
+            stale: list[str] = []
+            validation_module._validate_mcp_agent_ops_run(
+                case,
+                {"harness": "codex", "mcpAgentOps": mcp_run},
+                evidence_path,
+                errors,
+                stale,
+            )
+            self.assertEqual([], errors)
+            self.assertEqual([], stale)
+            home_key = str(Path.home().resolve())
+            filesystem = configuration["permissions"]["mcp-eval-git-write"][
+                "filesystem"
+            ]
+            del filesystem[home_key]
+            filesystem[str((root / "unrelated-denial").resolve())] = "deny"
+            configuration_path.write_text(
+                json.dumps(configuration, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
+            mcp_run["configurationDigest"] = digest(configuration_path)
+            identity["configurationDigest"] = mcp_run["configurationDigest"]
+            identity["configurationEvidenceDigest"] = mcp_run[
+                "configurationDigest"
+            ]
+            identity_path.write_text(
+                json.dumps(identity, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
+            mcp_run["identityEvidenceDigest"] = digest(identity_path)
+            denial_errors: list[str] = []
+            validation_module._validate_mcp_agent_ops_run(
+                case,
+                {"harness": "codex", "mcpAgentOps": mcp_run},
+                evidence_path,
+                denial_errors,
+                [],
+            )
+            self.assertTrue(
+                any("host-home denial" in error for error in denial_errors)
+            )
+
+            del filesystem[str((root / "unrelated-denial").resolve())]
+            filesystem[home_key] = "deny"
+            configuration_path.write_text(
+                json.dumps(configuration, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
+            mcp_run["configurationDigest"] = digest(configuration_path)
+            identity["configurationDigest"] = mcp_run["configurationDigest"]
+            identity["configurationEvidenceDigest"] = mcp_run[
+                "configurationDigest"
+            ]
+            identity_path.write_text(
+                json.dumps(identity, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
+            mcp_run["identityEvidenceDigest"] = digest(identity_path)
+            wrong_argument_records = [dict(record) for record in records]
+            wrong_argument_records[0]["argumentsDigest"] = "f" * 64
+            audit_path.write_text(
+                "\n".join(
+                    json.dumps(record) for record in wrong_argument_records
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            mcp_run["auditDigest"] = digest(audit_path)
+            argument_errors: list[str] = []
+            validation_module._validate_mcp_agent_ops_run(
+                case,
+                {"harness": "codex", "mcpAgentOps": mcp_run},
+                evidence_path,
+                argument_errors,
+                [],
+            )
+            self.assertTrue(
+                any("no process stream" in error for error in argument_errors)
+            )
+            audit_path.write_text(
+                "\n".join(json.dumps(record) for record in records) + "\n",
+                encoding="utf-8",
+            )
+            mcp_run["auditDigest"] = digest(audit_path)
+            audit_path.write_text(
+                audit_path.read_text(encoding="utf-8") + "{}\n",
+                encoding="utf-8",
+            )
+            drift_errors: list[str] = []
+            validation_module._validate_mcp_agent_ops_run(
+                case,
+                {"harness": "codex", "mcpAgentOps": mcp_run},
+                evidence_path,
+                drift_errors,
+                [],
+            )
+            self.assertTrue(
+                any("content digest" in error or "audit is invalid" in error for error in drift_errors)
+            )
 
 
 if __name__ == "__main__":

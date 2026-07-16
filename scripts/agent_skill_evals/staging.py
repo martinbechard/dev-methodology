@@ -6,13 +6,21 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import re
+import secrets
 import shutil
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
-from typing import Iterable, Sequence
+from typing import Iterable, Mapping, Sequence
 
-from .invocations import SUPPORTED_HARNESSES
+from .invocations import (
+    SUPPORTED_HARNESSES,
+    McpAgentOpsContext,
+    McpAgentOpsIdentity,
+    junie_mcp_agent_ops_authorization_payload,
+    mcp_agent_ops_configuration_payload,
+)
 from .workspace import TRANSIENT_TREE_NAMES
 
 
@@ -191,6 +199,307 @@ class ContextPackBuilder:
             agent_location=agent_location,
             skill_location=skill_location,
         )
+
+
+def stage_mcp_agent_ops_context(
+    harness: str,
+    destination_root: Path,
+    identity: McpAgentOpsIdentity,
+    source_root: Path,
+    treatment_skill_root: Path,
+    available_skill_ids: Sequence[str],
+    treatment_skill_ids: Sequence[str],
+    audit_log: Path,
+    audit_root: Path,
+    *,
+    catalog_resource_allowlist: Mapping[str, Sequence[str]],
+) -> McpAgentOpsContext:
+    """Create one isolated Codex or Junie MCP configuration for an evaluation run."""
+    if harness not in SUPPORTED_HARNESSES:
+        raise ValueError(f"supported harness values are codex and junie, not {harness}")
+    destination_root = destination_root.resolve()
+    source_root = source_root.resolve()
+    treatment_skill_root = treatment_skill_root.resolve()
+    audit_root = audit_root.resolve()
+    if audit_root.is_symlink() or not audit_root.is_dir():
+        raise ValueError("MCP audit root must be an existing non-symlink directory")
+    if (
+        audit_root == destination_root
+        or destination_root in audit_root.parents
+        or audit_root in destination_root.parents
+    ):
+        raise ValueError("MCP audit root must be disjoint from the product workspace")
+    evidence_directory = (
+        audit_root
+        / f".mcp-agent-ops-{harness}-{destination_root.name}-{secrets.token_hex(8)}"
+    )
+    evidence_directory.mkdir(mode=0o700)
+    if (
+        treatment_skill_root != destination_root
+        and destination_root not in treatment_skill_root.parents
+    ):
+        raise ValueError("MCP treatment skill root must stay inside the disposable context root")
+    available = tuple(available_skill_ids)
+    treatment = frozenset(treatment_skill_ids)
+    if (
+        not available
+        or len(available) != len(set(available))
+        or any(not re.fullmatch(r"[a-z0-9][a-z0-9-]*", skill) for skill in available)
+    ):
+        raise ValueError("MCP available skill ids must be unique normalized skill names")
+    if not treatment.issubset(available):
+        raise ValueError("MCP treatment skills must be present in the complete available catalog")
+    if set(catalog_resource_allowlist) - treatment:
+        raise ValueError("MCP catalog resources may be staged only for treatment skills")
+    skill_root = destination_root / ".eval-context" / "mcp-agent-ops" / "skills"
+    if skill_root.exists():
+        raise ValueError("MCP skill catalog destination must be unused")
+    catalog_records: list[dict[str, object]] = []
+    for skill_id in sorted(available):
+        destination_skill = skill_root / skill_id
+        if skill_id in treatment:
+            source_skill = treatment_skill_root / skill_id
+            if source_skill.is_symlink() or not source_skill.is_dir():
+                raise ValueError(f"staged MCP treatment skill is missing: {skill_id}")
+            source_manifest = source_skill / "SKILL.md"
+            if source_manifest.is_symlink() or not source_manifest.is_file():
+                raise ValueError(f"staged MCP treatment skill lacks SKILL.md: {skill_id}")
+            selected_files: list[tuple[Path, PurePosixPath, str]] = [
+                (source_manifest, PurePosixPath("SKILL.md"), "treatment-skill")
+            ]
+            declared_resources = catalog_resource_allowlist.get(skill_id, ())
+            if len(declared_resources) != len(set(declared_resources)):
+                raise ValueError(f"MCP catalog resource allowlist repeats a path: {skill_id}")
+            bundle_skill = source_root / "skills" / skill_id
+            if bundle_skill.is_symlink() or not bundle_skill.is_dir():
+                raise ValueError(f"MCP bundle treatment skill is missing or unsafe: {skill_id}")
+            for resource_path in declared_resources:
+                relative = _safe_relative_path(resource_path)
+                if relative in {PurePosixPath("."), PurePosixPath("SKILL.md")}:
+                    raise ValueError(
+                        f"MCP catalog resource must be a supporting file: {skill_id}/{relative}"
+                    )
+                resource = bundle_skill / relative
+                resolved_resource = resource.resolve()
+                resolved_bundle_skill = bundle_skill.resolve()
+                if (
+                    resource.is_symlink()
+                    or not resolved_resource.is_file()
+                    or resolved_bundle_skill not in resolved_resource.parents
+                ):
+                    raise ValueError(
+                        f"MCP catalog resource is missing or unsafe: {skill_id}/{relative}"
+                    )
+                selected_files.append((resolved_resource, relative, "mcp-resource"))
+            for source, relative, role in selected_files:
+                destination = destination_skill / relative
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                _source_content, content, _sanitizations = selected_context_identity(
+                    source,
+                    "treatment-skill",
+                )
+                destination.write_bytes(content)
+                shutil.copymode(source, destination)
+                catalog_records.append({
+                    "skill": skill_id,
+                    "path": relative.as_posix(),
+                    "role": role,
+                    "digest": hashlib.sha256(content).hexdigest(),
+                    "size": len(content),
+                })
+        else:
+            source_skill_dir = source_root / "skills" / skill_id
+            source_manifest = source_skill_dir / "SKILL.md"
+            if (
+                source_skill_dir.is_symlink()
+                or source_manifest.is_symlink()
+                or not source_manifest.is_file()
+                or source_root not in source_manifest.resolve().parents
+            ):
+                raise ValueError(f"MCP available skill is missing or unsafe: {skill_id}")
+            _source, effective, _sanitizations = selected_context_identity(
+                source_manifest,
+                "treatment-skill",
+            )
+            content = _catalog_only_skill(effective)
+            destination = destination_skill / "SKILL.md"
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_bytes(content)
+            catalog_records.append({
+                "skill": skill_id,
+                "path": "SKILL.md",
+                "role": "catalog-metadata-only",
+                "digest": hashlib.sha256(content).hexdigest(),
+                "size": len(content),
+            })
+    staged_ids = {
+        path.name for path in skill_root.iterdir() if path.is_dir()
+    }
+    if staged_ids != set(available):
+        raise ValueError("staged MCP skill catalog differs from declared runtime availability")
+    catalog_manifest_digest = hashlib.sha256(
+        json.dumps(
+            catalog_records,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+    ).hexdigest()
+    manifest_path = destination_root / ".eval-context" / "mcp-agent-ops" / "catalog-manifest.json"
+    manifest_bytes = (
+        json.dumps(
+            {
+                "schema": "dev-methodology-eval-mcp-skill-catalog",
+                "version": 1,
+                "manifestDigest": catalog_manifest_digest,
+                "skills": list(sorted(available)),
+                "files": catalog_records,
+            },
+            sort_keys=True,
+        )
+        + "\n"
+    ).encode("utf-8")
+    manifest_path.write_bytes(manifest_bytes)
+    catalog_evidence = evidence_directory / "catalog-manifest.json"
+    catalog_evidence.write_bytes(manifest_bytes)
+    os.chmod(catalog_evidence, 0o600)
+    detection_registry = (
+        skill_root
+        / "detect-technology-skills"
+        / "references"
+        / "technology-skill-detection-registry.yaml"
+    ).resolve()
+    if detection_registry.is_symlink() or not detection_registry.is_file():
+        raise ValueError("staged MCP technology detection registry is missing")
+    audit_log = audit_log.resolve()
+    if audit_log == audit_root or audit_root not in audit_log.parents:
+        raise ValueError("MCP audit log must stay beneath the runner-owned audit root")
+    if audit_log.exists() or audit_log.is_symlink():
+        raise ValueError("MCP audit log must be an unused non-symlink path")
+    audit_session_id = secrets.token_hex(16)
+    environment = {
+        "MCP_AGENT_OPS_SKILL_ROOTS": str(skill_root),
+        "MCP_AGENT_OPS_DETECTION_REGISTRY": str(detection_registry),
+        "MCP_AGENT_OPS_WORKSPACE_ROOTS": str(destination_root),
+        "MCP_AGENT_OPS_AUDIT_LOG": str(audit_log),
+        "MCP_AGENT_OPS_AUDIT_ROOTS": str(audit_root),
+        "MCP_AGENT_OPS_AUDIT_SHARED": "true",
+        "MCP_AGENT_OPS_AUDIT_SESSION_ID": audit_session_id,
+        "MCP_AGENT_OPS_REQUIRED_RUNTIME_DIGEST": identity.runtime_digest,
+    }
+    server_config = {
+        "command": str(identity.executable),
+        "args": [],
+        "env": environment,
+    }
+    host_home = Path.home().resolve()
+    configuration_payload = mcp_agent_ops_configuration_payload(
+        harness,
+        server_config,
+        workspace_root=destination_root,
+        evidence_root=audit_root,
+        host_home=host_home,
+    )
+    config_location: Path | None = None
+    if harness == "junie":
+        config_location = evidence_directory / "junie"
+        config_location.mkdir(mode=0o700)
+        configuration_evidence = config_location / "mcp.json"
+    else:
+        configuration_evidence = evidence_directory / "codex-mcp-config.json"
+    configuration_bytes = (
+        json.dumps(configuration_payload, sort_keys=True, separators=(",", ":"))
+        + "\n"
+    ).encode("utf-8")
+    configuration_evidence.write_bytes(configuration_bytes)
+    os.chmod(configuration_evidence, 0o600)
+    configuration_digest = hashlib.sha256(configuration_bytes).hexdigest()
+    authorization_digest: str | None = None
+    authorization_evidence: Path | None = None
+    if harness == "junie":
+        authorization_payload = junie_mcp_agent_ops_authorization_payload()
+        authorization_bytes = (
+            json.dumps(authorization_payload, sort_keys=True, separators=(",", ":"))
+            + "\n"
+        ).encode("utf-8")
+        authorization_evidence = evidence_directory / "junie-allowlist.json"
+        authorization_evidence.write_bytes(authorization_bytes)
+        os.chmod(authorization_evidence, 0o600)
+        authorization_digest = hashlib.sha256(authorization_bytes).hexdigest()
+    return McpAgentOpsContext(
+        server_name="mcp-agent-ops",
+        identity=identity,
+        skill_root=skill_root,
+        detection_registry=detection_registry,
+        workspace_root=destination_root,
+        audit_log=audit_log,
+        audit_root=audit_root,
+        audit_session_id=audit_session_id,
+        configuration_digest=configuration_digest,
+        catalog_manifest_digest=catalog_manifest_digest,
+        configuration_evidence=configuration_evidence,
+        catalog_evidence=catalog_evidence,
+        evidence_directory=evidence_directory,
+        host_home=host_home,
+        authorization_digest=authorization_digest,
+        authorization_evidence=authorization_evidence,
+        config_location=config_location,
+    )
+
+
+def read_mcp_skill_catalog(
+    workspace: Path,
+    relative_path: str,
+    source_root: Path,
+) -> tuple[str, ...]:
+    """Read and validate one exact evaluator-owned runtime-availability catalog."""
+    workspace = workspace.resolve()
+    relative = _safe_relative_path(relative_path)
+    path = workspace / relative
+    if path.is_symlink():
+        raise ValueError("MCP skill catalog source must be a regular non-symlink file")
+    resolved = path.resolve()
+    if workspace not in resolved.parents or not resolved.is_file():
+        raise ValueError("MCP skill catalog source must stay inside the disposable workspace")
+    lines = resolved.read_text(encoding="utf-8").splitlines()
+    if (
+        not lines
+        or any(not line or line.strip() != line for line in lines)
+        or any(not re.fullmatch(r"[a-z0-9][a-z0-9-]*", line) for line in lines)
+        or len(lines) != len(set(lines))
+    ):
+        raise ValueError("MCP skill catalog must contain unique normalized skill ids")
+    bundle_root = source_root.resolve() / "skills"
+    for skill_id in lines:
+        directory = bundle_root / skill_id
+        manifest = directory / "SKILL.md"
+        if (
+            directory.is_symlink()
+            or manifest.is_symlink()
+            or not manifest.is_file()
+            or bundle_root not in manifest.resolve().parents
+        ):
+            raise ValueError(f"MCP skill catalog references an unavailable bundle skill: {skill_id}")
+    return tuple(lines)
+
+
+def _catalog_only_skill(effective_manifest: bytes) -> bytes:
+    """Retain only safe frontmatter for a catalog entry that is not an execution skill."""
+    try:
+        lines = effective_manifest.decode("utf-8").splitlines()
+    except UnicodeError as error:
+        raise ValueError("MCP skill manifest must be UTF-8") from error
+    if not lines or lines[0] != "---":
+        raise ValueError("MCP skill manifest must start with YAML frontmatter")
+    try:
+        end = lines.index("---", 1)
+    except ValueError as error:
+        raise ValueError("MCP skill manifest frontmatter is not closed") from error
+    frontmatter = "\n".join(lines[: end + 1])
+    return (
+        frontmatter
+        + "\n\n# Evaluation catalog entry\n\n"
+        + "The complete instructions are intentionally unavailable in this isolated evaluation.\n"
+    ).encode("utf-8")
 
 
 def selected_context_identity(path: Path, context_role: str) -> tuple[bytes, bytes, tuple[str, ...]]:

@@ -331,10 +331,57 @@ cases:
     skillProbes: [probe-create-project-configuration, probe-detect-technology-skills, probe-development-methodology, probe-documentation-page-verify, probe-organise-project-files, probe-agent-claim]
     fixtureBackedProbeClaims: [probe-create-project-configuration, probe-detect-technology-skills, probe-development-methodology, probe-organise-project-files]
     workflowPack: project-setup
-    sandboxProfiles: {codex: codex-workspace-write, junie: junie-workspace-write}
+    sandboxProfiles: {codex: codex-permission-profile-git-write, junie: junie-workspace-write}
     judgePlan:
-      deterministicChecks: [model-input-safety, skill-read-trace, harness-agent-identity, technology-detection-evidence, artifact-structure, allowed-paths-only, contradiction-scan, snapshot-reset, local-execution-boundary]
+      deterministicChecks: [model-input-safety, skill-read-trace, harness-agent-identity, mcp-tool-trace, claim-lifecycle, technology-detection-evidence, artifact-structure, allowed-paths-only, contradiction-scan, snapshot-reset, local-execution-boundary]
       modelRubric: workflow-quality
+    mcpAgentOps:
+      schemaVersion: 2
+      enablement: base-case-only
+      serverName: mcp-agent-ops
+      requiredVersion: 0.2.2
+      requiredRuntimeDigest: 78a807fd368730c0ec4856927baa4303f63551e3c2b60db519790a8fb404e2af
+      skillCatalogSource: available-skills.txt
+      catalogResourceAllowlist:
+        detect-technology-skills: [references/technology-skill-detection-registry.yaml]
+        development-methodology: [assets/templates/project-template.yaml]
+      requiredToolSequences:
+        - [skill_list, skill_resource_load, detect_technology_skills]
+        - [claim_acquire, verify_yaml, verify_markdown_links, claim_release]
+      requiredToolOutcomes:
+        skill_list: [CATALOG]
+        skill_resource_load: [LOADED]
+        detect_technology_skills: [READY, NO_VARIANT]
+        claim_acquire: [PRIMARY, ISOLATE, RECOVER]
+        verify_yaml: [OK]
+        verify_markdown_links: [OK]
+        claim_release: [RELEASED]
+      requiredToolArguments:
+        skill_list: {}
+        skill_resource_load:
+          requests:
+            - skill_name: development-methodology
+              resource_path: assets/templates/project-template.yaml
+        detect_technology_skills:
+          project_root: $WORKSPACE
+          scopes: [services/api, apps/web, automation]
+        claim_acquire:
+          repository: $WORKSPACE
+          claim_id: project-configuration-routing
+          agent: project-configurator
+          task: project-configuration-routing
+          root_task_id: project-configuration-routing
+          files: [PROJECT.yaml, AGENTS.md, services/api/AGENTS.md, apps/web/AGENTS.md, automation/AGENTS.md, eval-result.md]
+          scope_reason: evaluation output ownership
+        verify_yaml:
+          repository_root: $WORKSPACE
+          paths: [PROJECT.yaml]
+        verify_markdown_links:
+          repository_root: $WORKSPACE
+          patterns: [AGENTS.md, services/api/AGENTS.md, apps/web/AGENTS.md, automation/AGENTS.md, eval-result.md]
+        claim_release:
+          repository: $WORKSPACE
+          claim_id: project-configuration-routing
     contextPack:
       fixtureRoot: evals/projects/project-configuration-routing
       include: [TASK.md, README.md, available-skills.txt, docs, services, apps, automation]
@@ -345,7 +392,7 @@ cases:
     skillResourceAllowlist:
       create-project-configuration: [SKILL.md]
       detect-technology-skills: [SKILL.md, references/technology-skill-detection-registry.yaml, scripts/detect.py]
-      development-methodology: [SKILL.md, assets/templates/project-template.yaml]
+      development-methodology: [SKILL.md]
       documentation-page-verify: [SKILL.md]
       organise-project-files: [SKILL.md]
       agent-claim: [SKILL.md, scripts/claim.py]

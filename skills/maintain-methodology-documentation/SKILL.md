@@ -21,6 +21,14 @@ Keep source files, generated outputs, documentation, installers, and tests align
 8. Run stale-output checks, repository regression tests, Agent Skill validation, and git diff checks.
 9. Keep maintenance repository-local. Do not populate user-home skill or agent folders to validate or use the bundle.
 
+## Deterministic Operations
+
+When mcp-agent-ops is available, prefer skill_validate for changed skill packages, verify_yaml for changed YAML, and verify_markdown_links for Markdown link checks. These operations supplement the generators, repository regression suites, and git diff gate; they do not replace them.
+
+Treat structured findings as valid failed gates. Fall back to the commands below only when the corresponding MCP tool is absent or the server cannot initialize or connect before request dispatch. Do not rerun a valid failed result through the fallback to seek a different outcome, and never bypass a path, root, authorization, input-policy, or other structured rejection.
+
+After an explicitly requested deployment changes a configured installed skill root, call skill_refresh so a long-running server atomically publishes the new catalog revision. Source-only maintenance does not refresh a user installation.
+
 ## Commands
 
 ```bash

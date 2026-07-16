@@ -25,7 +25,7 @@ Keep each skill focused on task-specific knowledge that the agent runtime does n
 4. Keep the main workflow concise and move optional detail into directly referenced resources only when progressive disclosure reduces routine context.
 5. Name every explicit dependency that the agent must load or execute because the harness does not provide it automatically.
 6. Preserve legitimate instruction-file artifact work without presenting it as ordinary agent startup.
-7. Validate the complete skill package and test any bundled scripts or deterministic workflows.
+7. Validate the complete skill package and test any bundled scripts or deterministic workflows. Prefer the mcp-agent-ops skill_validate tool when available. A returned finding is a validation result, not a transport failure. Fall back to the applicable repository validator only when the tool is absent or its server cannot initialize or connect before request dispatch. Never use the fallback to bypass a path, root, authorization, input-policy, or other structured rejection. In this bundle the fallback is scripts/validate-agent-skills.py.
 
 ## Review Rules
 

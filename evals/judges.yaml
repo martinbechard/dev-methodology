@@ -101,6 +101,10 @@ checks:
     type: deterministic
     critical: true
     description: Claim events prove acquisition, non-overlap handling, commit or truthful no-change, clean state, and release.
+  - id: mcp-tool-trace
+    type: deterministic
+    critical: true
+    description: Evaluator-owned session-bound audit evidence selects one process stream that completed every required tool sequence with the expected privacy-safe argument digest and accepted nonempty domain outcome bound to the same call, with no failed or incomplete calls.
   - id: test-state-transition
     type: deterministic
     critical: false

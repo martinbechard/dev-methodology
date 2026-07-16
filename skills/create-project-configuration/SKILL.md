@@ -11,7 +11,7 @@ Use this skill to create or substantially rewrite a PROJECT.yaml artifact. The a
 
 ## Template
 
-Use skills/development-methodology/assets/templates/project-template.yaml as the starting asset.
+Use skills/development-methodology/assets/templates/project-template.yaml as the starting asset. When the asset is already staged or directly available through the loaded skill package, read it there. When it is not staged and mcp-agent-ops is available, load it with skill_resource_load. Use the direct skill-relative file as the fallback only when the tool is absent or its server cannot initialize or connect before dispatch; do not bypass a structured policy rejection.
 
 Copy the template only when a local editable artifact is needed. Replace every TODO instruction with source-backed content from the target repository.
 
@@ -33,7 +33,7 @@ Generic repository-mutation behavior belongs to conceptual agent definitions and
 2. Classify the project family, application tiers, technology stacks, documentation surfaces, runtime boundaries, data boundaries, and verification commands.
 3. Identify the conceptual agent definitions needed for the project. Prefer shared reusable definitions such as Development Orchestrator, Project Configurator, Coding Agent, Code Review Agent, QA And Verification Agent, Documentation Writer, Wiki Query Agent, and specialist reviewers only when the project evidence requires them. Copy each selected definition's complete fixed and conditional skill metadata from its canonical definition; do not abridge the skillset or flatten conditional skills into fixed ones.
 4. Map each tier, technology, folder, or workflow to the reusable skills it needs.
-5. As Project Configurator, inspect the technology skills actually exposed by the target runtime, then pass the complete catalog to detect-technology-skills with repeated `--available-skill` inputs while analyzing representative folder scopes. Review source paths, owning manifests, configuration, and build evidence. Preserve the catalog source and detector runtime-availability result in PROJECT.yaml.
+5. As Project Configurator, inspect the technology skills actually exposed by the target runtime. Prefer skill_list plus detect_technology_skills when mcp-agent-ops is available; the server binds detection to its complete active catalog. Use the loaded detector only when the MCP tools are absent or the server cannot initialize or connect before request dispatch. Never use it to bypass a path, root, authorization, input-policy, or other structured rejection. Pass the complete catalog to the fallback detector with repeated available-skill inputs. Review source paths, owning manifests, configuration, and build evidence. Preserve the catalog source, catalog revision or portable fallback identity, and detector runtime-availability result in PROJECT.yaml.
 6. Review each detector candidate for pertinence to the analyzed folder. Reject owning-manifest overreach when the folder's source, configuration, runner, or runtime responsibility belongs to another technology, and record the rejection evidence.
 7. Record deterministic technology_skill_loadouts and folder bindings, including source evidence, runtime availability, rejected candidates, missing required skills, exclusive conflicts, and explicit no-variant results. Store repository evidence as project-relative paths and external tool evidence as portable identifiers, versions, digests, or declared variables. Never embed an absolute checkout, user-home, worktree, cache, or temporary-directory path in PROJECT.yaml. For a scope with no pertinent specialized skill, record `NO_VARIANT` plus a general-model-training fallback; do not invent a skill or omit the scope. Keep a detected required-but-unavailable skill `BLOCKED`.
 8. Decide which subfolders need nested AGENTS.md guidance and record every decision in the root PROJECT.yaml. Use only real repository-relative paths or valid globs in loadouts and folder routes, never prose labels. Prefer non-overlapping routes. When overlap is unavoidable, record a deterministic most-specific-pattern-wins rule and verify that generated AGENTS.md guidance preserves it.
@@ -52,18 +52,19 @@ Generic repository-mutation behavior belongs to conceptual agent definitions and
 
 Before finishing:
 
-1. Use documentation-page-verify on the created or materially rewritten root PROJECT.yaml file.
-2. Search PROJECT.yaml for unresolved TODO markers that are not intentional.
-3. Confirm every conceptual agent definition, complete fixed and conditional definition-owned skillset, folder route, validation command, and file contract has source evidence or an open question. Search for POSIX and Windows user-home paths and replace any workstation-specific evidence location with a project-relative path or portable declared variable.
-4. Run setup-time detection for representative folders in every declared tier. Confirm each result matches the planned skillset, every selected skill is exposed by the target runtime, every required skill is available, and every no-variant scope explicitly falls back to general model training.
-5. Confirm AGENTS.md contains unconditional folder skill-loading instructions or an explicit general-model-training fallback, does not tell ordinary agents to rerun detection, and matches PROJECT.yaml. Confirm every route is a real path or valid glob, conflicting broad fallbacks were split into non-overlapping scopes where possible, and any remaining overlap uses the same documented precedence in PROJECT.yaml and generated guidance.
-6. Confirm every selected conceptual agent definition's repositoryMutation declaration agrees with its definition-owned, conditional, or absent agent-claim skillset. Confirm the required conceptual definitions, skill, and atomic command are available to the target runtime, and confirm generic claim procedure text was not copied into PROJECT.yaml or AGENTS.md.
-7. Confirm the project contains exactly one PROJECT.yaml at its root and that it records every nested AGENTS.md placement decision.
-8. Confirm every planned AGENTS.md exists and matches the validated routing plan.
-9. When Claude Code is used, confirm every applicable AGENTS.md has a thin colocated CLAUDE.md import and that no guidance is duplicated between them.
-10. Confirm maintainer edits to PROJECT.yaml were preserved when valid or reported with the evidence and constraint that blocks them.
-11. Confirm customer-shareable examples are fictitious and proprietary examples remain only inside their target repositories.
-12. Run project wiki status and lint when docs/wiki exists and the plan references wiki pages.
-13. Run the target project build when code, imports, generated artifacts, or project metadata changed.
+1. When mcp-agent-ops is available, run verify_yaml on the created or materially rewritten root PROJECT.yaml before documentation-page-verify. A structured YAML finding is a failed gate, not an MCP transport failure. Use the applicable local YAML check only when the tool is absent or the server cannot initialize or connect before request dispatch. Never use the local check to bypass a path, root, authorization, input-policy, or other structured rejection.
+2. Use documentation-page-verify on the created or materially rewritten root PROJECT.yaml file.
+3. Search PROJECT.yaml for unresolved TODO markers that are not intentional.
+4. Confirm every conceptual agent definition, complete fixed and conditional definition-owned skillset, folder route, validation command, and file contract has source evidence or an open question. Search for POSIX and Windows user-home paths and replace any workstation-specific evidence location with a project-relative path or portable declared variable.
+5. Run setup-time detection for representative folders in every declared tier. Confirm each result matches the planned skillset, every selected skill is exposed by the target runtime, every required skill is available, and every no-variant scope explicitly falls back to general model training.
+6. Confirm AGENTS.md contains unconditional folder skill-loading instructions or an explicit general-model-training fallback, does not tell ordinary agents to rerun detection, and matches PROJECT.yaml. Confirm every route is a real path or valid glob, conflicting broad fallbacks were split into non-overlapping scopes where possible, and any remaining overlap uses the same documented precedence in PROJECT.yaml and generated guidance.
+7. Confirm every selected conceptual agent definition's repositoryMutation declaration agrees with its definition-owned, conditional, or absent agent-claim skillset. Confirm the required conceptual definitions, skill, and atomic command are available to the target runtime, and confirm generic claim procedure text was not copied into PROJECT.yaml or AGENTS.md.
+8. Confirm the project contains exactly one PROJECT.yaml at its root and that it records every nested AGENTS.md placement decision.
+9. Confirm every planned AGENTS.md exists and matches the validated routing plan.
+10. When Claude Code is used, confirm every applicable AGENTS.md has a thin colocated CLAUDE.md import and that no guidance is duplicated between them.
+11. Confirm maintainer edits to PROJECT.yaml were preserved when valid or reported with the evidence and constraint that blocks them.
+12. Confirm customer-shareable examples are fictitious and proprietary examples remain only inside their target repositories.
+13. Run project wiki status and lint when docs/wiki exists and the plan references wiki pages.
+14. Run the target project build when code, imports, generated artifacts, or project metadata changed.
 
 Do not send private, proprietary, sensitive, PII, or company-internal material to an external service unless the user explicitly authorizes it.

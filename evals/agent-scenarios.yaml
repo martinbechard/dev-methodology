@@ -1099,6 +1099,7 @@ agents:
           - Run setup-time technology detection once for representative scopes.
           - Preserve complete fixed and conditional definition-owned skill metadata.
           - Record only project-specific coordination overrides.
+          - Use configured deterministic MCP operations as the primary path and preserve valid structured outcomes.
         forbiddenBehaviors:
           - Create nested PROJECT.yaml files.
           - Copy generic claim procedure text into project guidance.

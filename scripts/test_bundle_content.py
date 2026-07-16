@@ -2019,7 +2019,22 @@ class BundleContentTests(unittest.TestCase):
         merge_skill = (SKILLS_ROOT / "agent-work-merge" / "SKILL.md").read_text(encoding="utf-8")
         claim_script = SKILLS_ROOT / "agent-claim" / "scripts" / "claim.py"
         self.assertTrue(claim_script.is_file())
-        self.assertIn("## Command Path", claim_skill)
+        self.assertIn("## Operation Selection", claim_skill)
+        self.assertIn("## Fallback Command Path", claim_skill)
+        for tool_name in (
+            "claim_status",
+            "claim_acquire",
+            "claim_extend",
+            "claim_heartbeat",
+            "claim_release",
+            "claim_maintain_journal",
+            "claim_report",
+        ):
+            self.assertIn(tool_name, claim_skill)
+        self.assertIn("A valid result is not an MCP failure", claim_skill)
+        self.assertIn("cannot initialize or connect before request dispatch", claim_skill)
+        self.assertIn("Never use a fallback after a path", claim_skill)
+        self.assertIn("Reconcile with claim_status first", claim_skill)
         self.assertIn(
             'CLAIM_SCRIPT="${CODEX_HOME:-$HOME/.codex}/skills/agent-claim/scripts/claim.py"',
             claim_skill,
@@ -2052,6 +2067,48 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("repository-global event journal", readme_text)
         self.assertIn("target-specific integration resource", readme_text)
         self.assertNotIn("Agent Claims And Worktrees", AGENTS_PATH.read_text(encoding="utf-8"))
+
+    def test_mcp_agent_ops_is_preferred_without_becoming_a_hard_runtime_dependency(self) -> None:
+        skill_texts = {
+            skill: (SKILLS_ROOT / skill / "SKILL.md").read_text(encoding="utf-8")
+            for skill in (
+                "agent-claim",
+                "detect-technology-skills",
+                "create-project-configuration",
+                "skill-authoring",
+                "maintain-methodology-documentation",
+                "documentation-page-verify",
+                "development-methodology",
+            )
+        }
+        for skill, text in skill_texts.items():
+            with self.subTest(skill=skill):
+                self.assertIn("mcp-agent-ops", text)
+                self.assertIn("rejection", text)
+
+        self.assertIn("one skill_load call", skill_texts["development-methodology"])
+        self.assertIn("skill_resource_load", skill_texts["development-methodology"])
+        self.assertIn("Do not reread a skill through MCP", skill_texts["development-methodology"])
+        self.assertIn("detect_technology_skills", skill_texts["detect-technology-skills"])
+        self.assertIn("skill_list plus detect_technology_skills", skill_texts["create-project-configuration"])
+        self.assertIn("skill_validate", skill_texts["skill-authoring"])
+        self.assertIn("verify_markdown_links", skill_texts["documentation-page-verify"])
+        self.assertIn("skill_refresh", skill_texts["maintain-methodology-documentation"])
+
+        readme_text = README_PATH.read_text(encoding="utf-8")
+        for phrase in (
+            "Preferred MCP Operations Layer",
+            "[mcp_servers.mcp-agent-ops]",
+            '"mcpServers"',
+            "MCP_AGENT_OPS_SKILL_ROOTS",
+            "MCP_AGENT_OPS_DETECTION_REGISTRY",
+            "MCP_AGENT_OPS_WORKSPACE_ROOTS",
+            "installer deploys only skills and generated agents",
+        ):
+            self.assertIn(phrase, readme_text)
+
+        for role_path in ROLES_ROOT.rglob("*.role.yaml"):
+            self.assertNotIn("mcp-agent-ops", role_path.read_text(encoding="utf-8"))
 
     def test_codex_harness_directives_are_adapter_owned_and_mutation_scoped(self) -> None:
         """Keep Codex-only routing policy out of portable roles and other harness outputs."""
@@ -3833,7 +3890,7 @@ class BundleContentTests(unittest.TestCase):
 
         for phrase in (
             "inspect the technology skills actually exposed by the target runtime",
-            "pass the complete catalog to detect-technology-skills",
+            "Pass the complete catalog to the fallback detector",
             "general-model-training fallback",
             "required-but-unavailable skill `BLOCKED`",
             "Reject owning-manifest overreach",

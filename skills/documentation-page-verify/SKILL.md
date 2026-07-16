@@ -72,6 +72,7 @@ Each section must contain source-backed content or a clear Not yet identified en
 7. Use wiki pages as synthesis and navigation, not as the highest authority.
 8. Check that Related Code and Related Tests are project-relative or explicitly marked as not yet identified.
 9. Check that source links resolve when the repository is available.
+10. When mcp-agent-ops is available, use verify_markdown_links for the applicable Markdown scope. Treat returned findings as verification failures, not transport failures. Use the repository-specific checker or direct resolution only when the tool is absent or its server cannot initialize or connect before request dispatch. Never use the fallback to bypass a path, root, authorization, input-policy, or other structured rejection.
 
 ## Specialized Section Checks
 

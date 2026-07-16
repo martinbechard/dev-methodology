@@ -543,7 +543,7 @@
           <tr>
             <td><span class="name">MCP servers</span></td>
             <td><code>mcpServers</code></td>
-            <td>Names or configures MCP servers available to the agent. Keep server access separate from tool names because several runtimes expose both fields.</td>
+            <td>Names adapter-specific server allowlists when a conceptual role must narrow session access. Connection commands, environment boundaries, and credentials remain host deployment configuration.</td>
           </tr>
           <tr>
             <td><span class="name">Model profile</span></td>
@@ -727,7 +727,7 @@
           </tr>
           <tr>
             <td><span class="name">tools</span></td>
-            <td>Subagents use the tools available to the parent task. Add agent-specific MCP servers with <code>[mcp_servers.name]</code> and keep tool-use guidance in <code>developer_instructions</code>.</td>
+            <td>Subagents use the tools and MCP servers available to the parent task when agent-specific configuration is omitted. Full agent-specific server tables remain native deployment configuration rather than a generated names-only mapping.</td>
             <td><code>tools</code></td>
             <td><code>tools</code></td>
             <td><code>tools</code></td>
@@ -743,10 +743,10 @@
           </tr>
           <tr>
             <td><span class="name">mcpServers</span></td>
-            <td><code>[mcp_servers.name]</code> sections in the custom agent TOML file.</td>
+            <td>Omit the field so the agent inherits parent-session servers. A full <code>[mcp_servers.name]</code> table may be supplied only as native deployment configuration.</td>
             <td><code>mcpServers</code></td>
             <td>Gemini inline <code>mcpServers</code> requires full server configuration objects, so the conceptual server-name list remains deployment configuration rather than being expanded with invented connection details.</td>
-            <td><code>mcpServers</code></td>
+            <td>Render <code>mcpServers</code> only for a deliberate names-only allowlist; omit it to use the servers configured for the Junie session.</td>
             <td><code>mcp-servers</code></td>
           </tr>
           <tr>

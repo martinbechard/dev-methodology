@@ -7,14 +7,23 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
-from typing import Iterable, Mapping, Sequence
+from typing import Mapping, Sequence
 
 import yaml
 
 from .commands import command_spec
-from .invocations import SUPPORTED_HARNESSES, agent_attribution_verified
+from .invocations import (
+    SUPPORTED_HARNESSES,
+    agent_attribution_verified,
+    junie_mcp_agent_ops_authorization_payload,
+    mcp_value_digest,
+    read_mcp_agent_ops_audit,
+    resolve_mcp_tool_argument_digests,
+    select_mcp_tool_stream,
+)
 from .judges import JUDGE_TYPES, validate_calibration_record
 from .staging import selected_context_identity
 from .workspace import (
@@ -59,6 +68,25 @@ _RECOGNIZED_EPHEMERAL_OUTPUT_LEAVES = frozenset({
     "dist",
     "out",
     "target",
+})
+_MCP_AGENT_OPS_TOOL_NAMES = frozenset({
+    "claim_acquire",
+    "claim_extend",
+    "claim_heartbeat",
+    "claim_maintain_journal",
+    "claim_release",
+    "claim_report",
+    "claim_status",
+    "detect_technology_skills",
+    "skill_list",
+    "skill_load",
+    "skill_read",
+    "skill_read_resource",
+    "skill_refresh",
+    "skill_resource_load",
+    "skill_validate",
+    "verify_markdown_links",
+    "verify_yaml",
 })
 _CATALOG_SPECS = {
     "skill-probes.yaml": (
@@ -315,7 +343,215 @@ def validate_case_definition(case: Mapping[str, object]) -> list[str]:
         for skill in _string_items(case.get("requiredSkills")):
             if skill not in resource_allowlist:
                 errors.append(f"case.skillResourceAllowlist is missing required skill resources: {skill}")
+    _validate_mcp_agent_ops_case(case, errors)
     return errors
+
+
+def _validate_mcp_agent_ops_case(
+    case: Mapping[str, object],
+    errors: list[str],
+) -> None:
+    """Validate the optional release-pinned MCP base-case execution contract."""
+    value = case.get("mcpAgentOps")
+    if value is None:
+        return
+    if not isinstance(value, Mapping):
+        errors.append("case.mcpAgentOps must be a mapping")
+        return
+    expected_fields = {
+        "schemaVersion",
+        "enablement",
+        "serverName",
+        "requiredVersion",
+        "requiredRuntimeDigest",
+        "skillCatalogSource",
+        "catalogResourceAllowlist",
+        "requiredToolSequences",
+        "requiredToolOutcomes",
+        "requiredToolArguments",
+    }
+    if set(value) != expected_fields:
+        errors.append("case.mcpAgentOps must define the complete version-two contract")
+    if value.get("schemaVersion") != 2:
+        errors.append("case.mcpAgentOps.schemaVersion must be 2")
+    if value.get("enablement") != "base-case-only":
+        errors.append("case.mcpAgentOps.enablement must be base-case-only")
+    if value.get("serverName") != "mcp-agent-ops":
+        errors.append("case.mcpAgentOps.serverName must be mcp-agent-ops")
+    if not isinstance(value.get("requiredVersion"), str) or not re.fullmatch(
+        r"\d+\.\d+\.\d+(?:[-+][A-Za-z0-9.-]+)?",
+        str(value.get("requiredVersion")),
+    ):
+        errors.append("case.mcpAgentOps.requiredVersion must be a semantic version")
+    _require_digest(
+        value.get("requiredRuntimeDigest"),
+        "case.mcpAgentOps.requiredRuntimeDigest",
+        errors,
+    )
+    catalog_source = value.get("skillCatalogSource")
+    _validate_case_relative_path(
+        catalog_source,
+        "case.mcpAgentOps.skillCatalogSource",
+        errors,
+    )
+    if isinstance(catalog_source, str) and catalog_source not in _string_items(
+        case.get("modelVisiblePaths")
+    ):
+        errors.append("case.mcpAgentOps.skillCatalogSource must be model-visible")
+    catalog_resources = value.get("catalogResourceAllowlist")
+    execution_skills = set(
+        _string_items(case.get("executionSkills", case.get("requiredSkills")))
+    )
+    if not isinstance(catalog_resources, Mapping) or not catalog_resources:
+        errors.append("case.mcpAgentOps.catalogResourceAllowlist must be a non-empty mapping")
+        catalog_resources = {}
+    for skill, paths in catalog_resources.items():
+        field = f"case.mcpAgentOps.catalogResourceAllowlist.{skill}"
+        if not isinstance(skill, str) or skill not in execution_skills:
+            errors.append(f"{field} must name one execution skill")
+        if (
+            not isinstance(paths, list)
+            or not paths
+            or len(paths) != len(set(path for path in paths if isinstance(path, str)))
+        ):
+            errors.append(f"{field} must list unique supporting resource paths")
+            continue
+        for path in paths:
+            _validate_case_relative_path(path, field, errors)
+            if path in {".", "SKILL.md"}:
+                errors.append(f"{field} must contain supporting resources, not {path}")
+    sequences = value.get("requiredToolSequences")
+    if not isinstance(sequences, list) or not sequences:
+        errors.append("case.mcpAgentOps.requiredToolSequences must be a non-empty list")
+        return
+    for index, sequence in enumerate(sequences):
+        if not isinstance(sequence, list) or not sequence:
+            errors.append(
+                f"case.mcpAgentOps.requiredToolSequences[{index}] must be a non-empty list"
+            )
+            continue
+        if any(not isinstance(tool, str) or tool not in _MCP_AGENT_OPS_TOOL_NAMES for tool in sequence):
+            errors.append(
+                f"case.mcpAgentOps.requiredToolSequences[{index}] contains an unknown tool"
+            )
+    outcomes = value.get("requiredToolOutcomes")
+    if not isinstance(outcomes, Mapping) or not outcomes:
+        errors.append("case.mcpAgentOps.requiredToolOutcomes must be a non-empty mapping")
+        return
+    required_tools = {
+        tool
+        for sequence in sequences
+        if isinstance(sequence, list)
+        for tool in sequence
+        if isinstance(tool, str)
+    }
+    sequenced_tools = [
+        tool
+        for sequence in sequences
+        if isinstance(sequence, list)
+        for tool in sequence
+        if isinstance(tool, str)
+    ]
+    if len(sequenced_tools) != len(required_tools):
+        errors.append(
+            "case.mcpAgentOps.requiredToolSequences must not repeat a required tool"
+        )
+    if set(outcomes) != required_tools:
+        errors.append(
+            "case.mcpAgentOps.requiredToolOutcomes must cover exactly the sequenced tools"
+        )
+    for tool, allowed in outcomes.items():
+        if tool not in _MCP_AGENT_OPS_TOOL_NAMES:
+            errors.append(
+                f"case.mcpAgentOps.requiredToolOutcomes contains an unknown tool: {tool}"
+            )
+        if (
+            not isinstance(allowed, list)
+            or not allowed
+            or any(
+                not isinstance(outcome, str)
+                or not re.fullmatch(r"[A-Z][A-Z0-9_]{0,63}", outcome)
+                for outcome in allowed
+            )
+        ):
+            errors.append(
+                f"case.mcpAgentOps.requiredToolOutcomes.{tool} must list canonical outcomes"
+            )
+    arguments = value.get("requiredToolArguments")
+    if not isinstance(arguments, Mapping) or not arguments:
+        errors.append("case.mcpAgentOps.requiredToolArguments must be a non-empty mapping")
+        return
+    if set(arguments) != required_tools:
+        errors.append(
+            "case.mcpAgentOps.requiredToolArguments must cover exactly the sequenced tools"
+        )
+    for tool, argument_mapping in arguments.items():
+        field = f"case.mcpAgentOps.requiredToolArguments.{tool}"
+        if tool not in _MCP_AGENT_OPS_TOOL_NAMES:
+            errors.append(f"{field} names an unknown tool")
+        if not isinstance(argument_mapping, Mapping):
+            errors.append(f"{field} must be a mapping")
+            continue
+        _validate_mcp_argument_template(argument_mapping, field, errors)
+    resource_arguments = arguments.get("skill_resource_load")
+    if isinstance(resource_arguments, Mapping):
+        requests = resource_arguments.get("requests")
+        if not isinstance(requests, list) or not requests:
+            errors.append(
+                "case.mcpAgentOps.requiredToolArguments.skill_resource_load.requests "
+                "must be a non-empty list"
+            )
+        else:
+            context_resources = case.get("skillResourceAllowlist")
+            for index, request in enumerate(requests):
+                field = (
+                    "case.mcpAgentOps.requiredToolArguments.skill_resource_load.requests"
+                    f"[{index}]"
+                )
+                if not isinstance(request, Mapping) or set(request) != {
+                    "skill_name",
+                    "resource_path",
+                }:
+                    errors.append(f"{field} must identify one exact skill resource")
+                    continue
+                skill = request.get("skill_name")
+                resource = request.get("resource_path")
+                allowed = catalog_resources.get(skill) if isinstance(skill, str) else None
+                if not isinstance(allowed, list) or resource not in allowed:
+                    errors.append(f"{field} must reference an MCP-catalog resource")
+                if isinstance(context_resources, Mapping):
+                    staged = context_resources.get(skill)
+                    if isinstance(staged, list) and resource in staged:
+                        errors.append(f"{field} resource must be available only through MCP")
+
+
+def _validate_mcp_argument_template(
+    value: object,
+    field: str,
+    errors: list[str],
+) -> None:
+    """Validate one JSON-compatible exact tool argument template."""
+
+    if isinstance(value, Mapping):
+        if any(not isinstance(key, str) or not key for key in value):
+            errors.append(f"{field} mappings require non-empty string keys")
+            return
+        for key, child in value.items():
+            _validate_mcp_argument_template(child, f"{field}.{key}", errors)
+        return
+    if isinstance(value, list):
+        for index, child in enumerate(value):
+            _validate_mcp_argument_template(child, f"{field}[{index}]", errors)
+        return
+    if isinstance(value, str):
+        if "$WORKSPACE" in value and value != "$WORKSPACE":
+            errors.append(f"{field} must use $WORKSPACE as a complete value")
+        elif re.fullmatch(r"\$[A-Z][A-Z0-9_]*", value) and value != "$WORKSPACE":
+            errors.append(f"{field} contains an unknown placeholder")
+        return
+    if value is None or isinstance(value, (bool, int, float)):
+        return
+    errors.append(f"{field} must contain only JSON-compatible values")
 
 
 def _validate_case_execution_policy(
@@ -432,6 +668,17 @@ def validate_framework_catalogs(
     errors: list[str] = []
     for case in selected_cases.values():
         errors.extend(f"cases.yaml:{case.get('id')}: {error}" for error in validate_case_definition(case))
+    mcp_cases = sorted(
+        str(case.get("id"))
+        for case in selected_cases.values()
+        if case.get("mcpAgentOps") is not None
+    )
+    if root == (ROOT / "evals").resolve() and mcp_cases != [
+        "project-configuration-routing"
+    ]:
+        errors.append(
+            "cases.yaml must enable mcp-agent-ops only for project-configuration-routing"
+        )
     catalogs = load_framework_catalogs(root)
     for filename, data in catalogs.items():
         item_key, required = _CATALOG_SPECS[filename]
@@ -1091,6 +1338,7 @@ def _validate_version_two(
     if run.get("attributionStatus") != "verified":
         errors.append("evidence agent attribution must be verified")
 
+    _validate_mcp_agent_ops_run(case, run, evidence_path, errors, stale_reasons)
     _validate_skills(case, harness, evidence, evidence_path, errors, stale_reasons)
     _validate_budgets(evidence.get("budgets"), errors)
     _validate_prepared_fixture(case, evidence.get("preparedFixture"), evidence_path, errors, stale_reasons)
@@ -1139,6 +1387,674 @@ def _validate_version_two(
                 errors.append(
                     "independent Judge input manifest must match the canonical Model Judge request"
                 )
+
+
+def _validate_mcp_agent_ops_run(
+    case: Mapping[str, object],
+    run: Mapping[str, object],
+    evidence_path: Path,
+    errors: list[str],
+    stale_reasons: list[str],
+) -> None:
+    """Validate conditional release identity and digest-only MCP audit evidence."""
+    contract = case.get("mcpAgentOps")
+    value = run.get("mcpAgentOps")
+    if contract is None:
+        if value is not None:
+            errors.append("evidence run.mcpAgentOps is forbidden for a non-MCP case")
+        return
+    if not isinstance(contract, Mapping):
+        errors.append("selected case has an invalid MCP contract")
+        return
+    if not isinstance(value, Mapping):
+        errors.append("evidence run.mcpAgentOps must be a mapping for an MCP-enabled case")
+        return
+    required_fields = {
+        "serverName",
+        "version",
+        "launcherDigest",
+        "runtimeDigest",
+        "identityDigest",
+        "configurationDigest",
+        "catalogManifestDigest",
+        "configurationEvidence",
+        "catalogEvidence",
+        "catalogEvidenceDigest",
+        "authorizationEvidence",
+        "authorizationDigest",
+        "junieAgentAttributionStatus",
+        "junieAgentAttributionEvidence",
+        "junieAgentAttributionDigest",
+        "identityEvidence",
+        "identityEvidenceDigest",
+        "auditSessionId",
+        "auditStreamId",
+        "auditDigest",
+        "auditEvidence",
+        "outputManifestDigest",
+        "outputManifestEvidence",
+        "completedTools",
+        "toolOutcomes",
+        "requiredToolSequences",
+        "requiredToolOutcomes",
+        "requiredToolArgumentDigests",
+        "permissionProfileHostHomeDigest",
+        "toolEvidenceStatus",
+    }
+    if set(value) != required_fields:
+        errors.append("evidence run.mcpAgentOps must define the complete MCP evidence contract")
+    for field in (
+        "launcherDigest",
+        "runtimeDigest",
+        "identityDigest",
+        "configurationDigest",
+        "catalogManifestDigest",
+        "catalogEvidenceDigest",
+        "identityEvidenceDigest",
+        "auditDigest",
+        "outputManifestDigest",
+    ):
+        _require_digest(value.get(field), f"run.mcpAgentOps.{field}", errors)
+    if value.get("serverName") != contract.get("serverName"):
+        errors.append("evidence MCP server name does not match the selected case")
+    if value.get("version") != contract.get("requiredVersion"):
+        stale_reasons.append("evidence MCP package version does not match the selected case")
+    if value.get("runtimeDigest") != contract.get("requiredRuntimeDigest"):
+        stale_reasons.append("evidence MCP runtime digest does not match the selected case")
+    required_sequences = contract.get("requiredToolSequences")
+    if value.get("requiredToolSequences") != required_sequences:
+        errors.append("evidence MCP required tool sequences do not match the selected case")
+    required_outcomes = contract.get("requiredToolOutcomes")
+    if value.get("requiredToolOutcomes") != required_outcomes:
+        errors.append("evidence MCP required tool outcomes do not match the selected case")
+    required_argument_digests = value.get("requiredToolArgumentDigests")
+    required_arguments = contract.get("requiredToolArguments")
+    if not isinstance(required_argument_digests, Mapping) or (
+        isinstance(required_arguments, Mapping)
+        and set(required_argument_digests) != set(required_arguments)
+    ):
+        errors.append(
+            "evidence MCP required tool argument digests must cover the selected case"
+        )
+        required_argument_digests = {}
+    for tool, argument_digest in required_argument_digests.items():
+        _require_digest(
+            argument_digest,
+            f"run.mcpAgentOps.requiredToolArgumentDigests.{tool}",
+            errors,
+        )
+    host_home_digest = value.get("permissionProfileHostHomeDigest")
+    if run.get("harness") == "codex":
+        _require_digest(
+            host_home_digest,
+            "run.mcpAgentOps.permissionProfileHostHomeDigest",
+            errors,
+        )
+    elif host_home_digest is not None:
+        errors.append(
+            "evidence Junie MCP run must not claim a Codex permission-profile home digest"
+        )
+    completed = value.get("completedTools")
+    if not isinstance(completed, list) or any(
+        not isinstance(tool, str) for tool in completed
+    ):
+        errors.append("evidence MCP completedTools must be a list of tool names")
+        completed = []
+    if value.get("toolEvidenceStatus") != "verified":
+        errors.append("evidence MCP toolEvidenceStatus must be verified")
+    for field, digest_field in (
+        ("identityEvidence", "identityEvidenceDigest"),
+        ("configurationEvidence", "configurationDigest"),
+        ("catalogEvidence", "catalogEvidenceDigest"),
+        ("auditEvidence", "auditDigest"),
+        ("outputManifestEvidence", "outputManifestDigest"),
+    ):
+        _validate_reference_digest(
+            value.get(field),
+            value.get(digest_field),
+            f"run.mcpAgentOps.{field}",
+            evidence_path,
+            errors,
+        )
+    if run.get("harness") == "junie":
+        _require_digest(
+            value.get("authorizationDigest"),
+            "run.mcpAgentOps.authorizationDigest",
+            errors,
+        )
+        _validate_reference_digest(
+            value.get("authorizationEvidence"),
+            value.get("authorizationDigest"),
+            "run.mcpAgentOps.authorizationEvidence",
+            evidence_path,
+            errors,
+        )
+        if value.get("junieAgentAttributionStatus") != "name-verified":
+            errors.append("evidence Junie MCP run requires name-verified custom-agent lifecycle")
+        _require_digest(
+            value.get("junieAgentAttributionDigest"),
+            "run.mcpAgentOps.junieAgentAttributionDigest",
+            errors,
+        )
+        _validate_reference_digest(
+            value.get("junieAgentAttributionEvidence"),
+            value.get("junieAgentAttributionDigest"),
+            "run.mcpAgentOps.junieAgentAttributionEvidence",
+            evidence_path,
+            errors,
+        )
+    elif value.get("authorizationEvidence") is not None or value.get("authorizationDigest") is not None:
+        errors.append("evidence Codex MCP run must not claim Junie authorization evidence")
+    if run.get("harness") != "junie" and any(
+        value.get(field) is not None
+        for field in (
+            "junieAgentAttributionStatus",
+            "junieAgentAttributionEvidence",
+            "junieAgentAttributionDigest",
+        )
+    ):
+        errors.append("evidence Codex MCP run must not claim Junie agent attribution")
+    try:
+        identity_path, _identity_marker = _resolve_evidence_reference(
+            value.get("identityEvidence"),
+            evidence_path,
+        )
+        identity_value = json.loads(identity_path.read_text(encoding="utf-8"))
+    except (ValueError, OSError, UnicodeError, json.JSONDecodeError):
+        identity_value = None
+    if not isinstance(identity_value, Mapping):
+        errors.append("evidence MCP identity artifact must be valid JSON")
+    else:
+        expected_identity = {
+            "schema": "dev-methodology-eval-mcp-identity",
+            "version": 3,
+            "serverName": value.get("serverName"),
+            "packageVersion": value.get("version"),
+            "launcherDigest": value.get("launcherDigest"),
+            "runtimeDigest": value.get("runtimeDigest"),
+            "identityDigest": value.get("identityDigest"),
+            "configurationDigest": value.get("configurationDigest"),
+            "catalogManifestDigest": value.get("catalogManifestDigest"),
+            "auditSessionId": value.get("auditSessionId"),
+            "configurationEvidenceDigest": value.get("configurationDigest"),
+            "catalogEvidenceDigest": value.get("catalogEvidenceDigest"),
+            "authorizationDigest": value.get("authorizationDigest"),
+            "requiredToolArgumentDigests": value.get(
+                "requiredToolArgumentDigests"
+            ),
+            "permissionProfileHostHomeDigest": value.get(
+                "permissionProfileHostHomeDigest"
+            ),
+        }
+        if dict(identity_value) != expected_identity:
+            errors.append("evidence MCP identity artifact does not match the receipt")
+    if not isinstance(value.get("auditSessionId"), str) or not re.fullmatch(
+        r"[0-9a-f]{32}", str(value.get("auditSessionId"))
+    ):
+        errors.append("evidence MCP auditSessionId must be lowercase 128-bit hexadecimal")
+    if not isinstance(value.get("auditStreamId"), str) or not re.fullmatch(
+        r"[0-9a-f]{32}", str(value.get("auditStreamId"))
+    ):
+        errors.append("evidence MCP auditStreamId must be lowercase 128-bit hexadecimal")
+    try:
+        audit_path, _audit_marker = _resolve_evidence_reference(
+            value.get("auditEvidence"),
+            evidence_path,
+        )
+        audit_records = read_mcp_agent_ops_audit(audit_path)
+    except ValueError as error:
+        errors.append(f"evidence MCP audit is invalid: {error}")
+        return
+    sessions = {str(record.get("sessionId")) for record in audit_records}
+    if sessions != {value.get("auditSessionId")}:
+        errors.append("evidence MCP audit session does not match the receipt")
+    if (
+        not isinstance(required_sequences, list)
+        or not isinstance(required_outcomes, Mapping)
+        or not isinstance(required_argument_digests, Mapping)
+    ):
+        return
+    try:
+        selected_stream, observed, observed_outcomes = select_mcp_tool_stream(
+            audit_records,
+            [sequence for sequence in required_sequences if isinstance(sequence, list)],
+            {
+                str(tool): outcomes
+                for tool, outcomes in required_outcomes.items()
+                if isinstance(outcomes, list)
+            },
+            {
+                str(tool): str(argument_digest)
+                for tool, argument_digest in required_argument_digests.items()
+                if isinstance(argument_digest, str)
+            },
+        )
+    except ValueError as error:
+        errors.append(f"evidence MCP audit does not satisfy the run contract: {error}")
+        return
+    if value.get("auditStreamId") != selected_stream:
+        errors.append("evidence MCP auditStreamId does not match the selected tool stream")
+    if completed != observed:
+        errors.append("evidence MCP completedTools do not match the governed audit")
+    if value.get("toolOutcomes") != observed_outcomes:
+        errors.append("evidence MCP toolOutcomes do not match the governed audit")
+    _validate_mcp_configuration_artifact(
+        value,
+        run,
+        contract,
+        evidence_path,
+        errors,
+    )
+    _validate_mcp_catalog_artifact(value, evidence_path, errors)
+    _validate_mcp_output_manifest(value, case, evidence_path, errors)
+    if run.get("harness") == "junie":
+        _validate_junie_mcp_authorization(value, evidence_path, errors)
+        _validate_junie_agent_attribution(value, run, evidence_path, errors)
+
+
+def _load_mcp_json_artifact(
+    reference: object,
+    field: str,
+    evidence_path: Path,
+    errors: list[str],
+) -> Mapping[str, object] | None:
+    """Load one already reference-validated MCP JSON artifact."""
+    try:
+        path, _marker = _resolve_evidence_reference(reference, evidence_path)
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (ValueError, OSError, UnicodeError, json.JSONDecodeError):
+        errors.append(f"evidence {field} must reference valid JSON")
+        return None
+    if not isinstance(value, Mapping):
+        errors.append(f"evidence {field} must contain a JSON mapping")
+        return None
+    return value
+
+
+def _validate_mcp_configuration_artifact(
+    value: Mapping[str, object],
+    run: Mapping[str, object],
+    contract: Mapping[str, object],
+    evidence_path: Path,
+    errors: list[str],
+) -> None:
+    """Validate the retained exact Codex or Junie MCP host configuration."""
+    configuration = _load_mcp_json_artifact(
+        value.get("configurationEvidence"),
+        "run.mcpAgentOps.configurationEvidence",
+        evidence_path,
+        errors,
+    )
+    if configuration is None:
+        return
+    harness = run.get("harness")
+    root_key = "mcp_servers" if harness == "codex" else "mcpServers"
+    expected_root_fields = (
+        {root_key, "approval_policy", "default_permissions", "permissions"}
+        if harness == "codex"
+        else {root_key}
+    )
+    if set(configuration) != expected_root_fields:
+        errors.append("evidence MCP configuration has an unexpected host shape")
+        return
+    if harness == "codex" and configuration.get("approval_policy") != "never":
+        errors.append("evidence Codex MCP configuration must use the noninteractive approval policy")
+    if harness == "codex":
+        _validate_codex_mcp_permission_profile(
+            configuration,
+            value.get("permissionProfileHostHomeDigest"),
+            errors,
+        )
+    servers = configuration.get(root_key)
+    if not isinstance(servers, Mapping) or set(servers) != {"mcp-agent-ops"}:
+        errors.append("evidence MCP configuration must contain exactly mcp-agent-ops")
+        return
+    server = servers.get("mcp-agent-ops")
+    if not isinstance(server, Mapping):
+        errors.append("evidence MCP server configuration must be a mapping")
+        return
+    expected_fields = {"command", "args", "env"}
+    if harness == "codex":
+        expected_fields.update({
+            "enabled",
+            "required",
+            "enabled_tools",
+            "default_tools_approval_mode",
+            "startup_timeout_sec",
+            "tool_timeout_sec",
+        })
+    if set(server) != expected_fields:
+        errors.append("evidence MCP server configuration has unexpected fields")
+    command = server.get("command")
+    if not isinstance(command, str) or not Path(command).is_absolute():
+        errors.append("evidence MCP server command must be an absolute executable path")
+    if server.get("args") != []:
+        errors.append("evidence MCP server args must be the governed empty list")
+    if harness == "codex" and (
+        server.get("enabled") is not True
+        or server.get("required") is not True
+        or server.get("enabled_tools") != [
+            "claim_status",
+            "claim_acquire",
+            "claim_extend",
+            "claim_heartbeat",
+            "claim_release",
+            "skill_list",
+            "skill_resource_load",
+            "detect_technology_skills",
+            "verify_yaml",
+            "verify_markdown_links",
+        ]
+        or server.get("default_tools_approval_mode") != "approve"
+        or server.get("startup_timeout_sec") != 15.0
+        or server.get("tool_timeout_sec") != 60.0
+    ):
+        errors.append("evidence Codex MCP strict execution policy differs from the run contract")
+    environment = server.get("env")
+    expected_environment = {
+        "MCP_AGENT_OPS_SKILL_ROOTS",
+        "MCP_AGENT_OPS_DETECTION_REGISTRY",
+        "MCP_AGENT_OPS_WORKSPACE_ROOTS",
+        "MCP_AGENT_OPS_AUDIT_LOG",
+        "MCP_AGENT_OPS_AUDIT_ROOTS",
+        "MCP_AGENT_OPS_AUDIT_SHARED",
+        "MCP_AGENT_OPS_AUDIT_SESSION_ID",
+        "MCP_AGENT_OPS_REQUIRED_RUNTIME_DIGEST",
+    }
+    if not isinstance(environment, Mapping) or set(environment) != expected_environment:
+        errors.append("evidence MCP server environment differs from the governed set")
+        return
+    if environment.get("MCP_AGENT_OPS_AUDIT_SHARED") != "true":
+        errors.append("evidence MCP server must enable shared inherited-process audit")
+    if environment.get("MCP_AGENT_OPS_AUDIT_SESSION_ID") != value.get("auditSessionId"):
+        errors.append("evidence MCP server audit session differs from the receipt")
+    if environment.get("MCP_AGENT_OPS_REQUIRED_RUNTIME_DIGEST") != value.get("runtimeDigest"):
+        errors.append("evidence MCP server runtime pin differs from the receipt")
+    workspace_root = environment.get("MCP_AGENT_OPS_WORKSPACE_ROOTS")
+    required_arguments = contract.get("requiredToolArguments")
+    if isinstance(workspace_root, str) and isinstance(required_arguments, Mapping):
+        try:
+            expected_argument_digests = resolve_mcp_tool_argument_digests(
+                required_arguments,
+                Path(workspace_root),
+            )
+        except ValueError as error:
+            errors.append(f"evidence MCP tool argument contract is invalid: {error}")
+        else:
+            if value.get("requiredToolArgumentDigests") != expected_argument_digests:
+                errors.append(
+                    "evidence MCP tool argument digests do not match the configured workspace"
+                )
+    for field in expected_environment - {
+        "MCP_AGENT_OPS_AUDIT_SHARED",
+        "MCP_AGENT_OPS_AUDIT_SESSION_ID",
+        "MCP_AGENT_OPS_REQUIRED_RUNTIME_DIGEST",
+    }:
+        configured_path = environment.get(field)
+        if not isinstance(configured_path, str) or not Path(configured_path).is_absolute():
+            errors.append(f"evidence MCP environment path must be absolute: {field}")
+
+
+def _validate_codex_mcp_permission_profile(
+    configuration: Mapping[str, object],
+    host_home_digest: object,
+    errors: list[str],
+) -> None:
+    """Validate the exact semantic boundary of the Codex synthetic Git profile."""
+
+    profile_name = "mcp-eval-git-write"
+    if configuration.get("default_permissions") != profile_name:
+        errors.append("evidence Codex MCP configuration selects an unexpected permission profile")
+    profiles = configuration.get("permissions")
+    if not isinstance(profiles, Mapping) or set(profiles) != {profile_name}:
+        errors.append("evidence Codex MCP configuration must contain exactly its governed profile")
+        return
+    profile = profiles.get(profile_name)
+    if not isinstance(profile, Mapping) or set(profile) != {
+        "description",
+        "filesystem",
+        "network",
+    }:
+        errors.append("evidence Codex MCP permission profile has an unexpected shape")
+        return
+    if profile.get("description") != (
+        "Disposable MCP evaluation workspace with Git metadata writes"
+    ):
+        errors.append("evidence Codex MCP permission profile description differs")
+    network = profile.get("network")
+    if network != {"enabled": False}:
+        errors.append("evidence Codex MCP permission profile must disable network access")
+    filesystem = profile.get("filesystem")
+    if not isinstance(filesystem, Mapping):
+        errors.append("evidence Codex MCP permission profile filesystem must be a mapping")
+        return
+    workspace_rules = filesystem.get(":workspace_roots")
+    if workspace_rules != {
+        ".": "write",
+        ".agents": "read",
+        ".codex": "read",
+        ".eval-context": "read",
+        ".git": "write",
+        ".junie": "read",
+    }:
+        errors.append("evidence Codex MCP workspace permission rules differ from the contract")
+    if filesystem.get(":root") != "read" or filesystem.get(":tmpdir") != "write":
+        errors.append("evidence Codex MCP base filesystem permissions differ from the contract")
+    absolute_denials = {
+        key
+        for key, item in filesystem.items()
+        if isinstance(key, str) and Path(key).is_absolute() and item == "deny"
+    }
+    if len(absolute_denials) != 2 or set(filesystem) != {
+        ":root",
+        ":tmpdir",
+        ":workspace_roots",
+        *absolute_denials,
+    }:
+        errors.append("evidence Codex MCP profile must deny exactly host home and evidence roots")
+    audit_root = (
+        configuration.get("mcp_servers", {})
+        .get("mcp-agent-ops", {})
+        .get("env", {})
+        .get("MCP_AGENT_OPS_AUDIT_ROOTS")
+        if isinstance(configuration.get("mcp_servers"), Mapping)
+        else None
+    )
+    resolved_denials = {str(Path(path).resolve()) for path in absolute_denials}
+    if (
+        not isinstance(audit_root, str)
+        or str(Path(audit_root).resolve()) not in resolved_denials
+    ):
+        errors.append("evidence Codex MCP profile must deny its audit evidence root")
+        return
+    audit_denial = str(Path(audit_root).resolve())
+    home_denials = resolved_denials - {audit_denial}
+    if (
+        len(home_denials) != 1
+        or not isinstance(host_home_digest, str)
+        or mcp_value_digest(next(iter(home_denials), "")) != host_home_digest
+    ):
+        errors.append("evidence Codex MCP profile host-home denial is not identity-bound")
+
+
+def _validate_mcp_catalog_artifact(
+    value: Mapping[str, object],
+    evidence_path: Path,
+    errors: list[str],
+) -> None:
+    """Validate the retained staged catalog manifest and its internal digest."""
+    catalog = _load_mcp_json_artifact(
+        value.get("catalogEvidence"),
+        "run.mcpAgentOps.catalogEvidence",
+        evidence_path,
+        errors,
+    )
+    if catalog is None:
+        return
+    if (
+        set(catalog) != {"schema", "version", "manifestDigest", "skills", "files"}
+        or catalog.get("schema") != "dev-methodology-eval-mcp-skill-catalog"
+        or catalog.get("version") != 1
+    ):
+        errors.append("evidence MCP catalog artifact has an invalid contract")
+        return
+    if catalog.get("manifestDigest") != value.get("catalogManifestDigest"):
+        errors.append("evidence MCP catalog manifest digest differs from the receipt")
+    skills = catalog.get("skills")
+    files = catalog.get("files")
+    if (
+        not isinstance(skills, list)
+        or not skills
+        or any(not isinstance(skill, str) for skill in skills)
+        or len(skills) != len(set(skills))
+        or not isinstance(files, list)
+    ):
+        errors.append("evidence MCP catalog skills or files are invalid")
+        return
+    computed = hashlib.sha256(
+        json.dumps(files, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+    if computed != catalog.get("manifestDigest"):
+        errors.append("evidence MCP catalog file records do not match their manifest digest")
+
+
+def _validate_mcp_output_manifest(
+    value: Mapping[str, object],
+    case: Mapping[str, object],
+    evidence_path: Path,
+    errors: list[str],
+) -> None:
+    """Replay retained output file identities before the disposable workspace is gone."""
+    manifest = _load_mcp_json_artifact(
+        value.get("outputManifestEvidence"),
+        "run.mcpAgentOps.outputManifestEvidence",
+        evidence_path,
+        errors,
+    )
+    if manifest is None:
+        return
+    if (
+        set(manifest) != {"schema", "version", "allowedWritePaths", "files"}
+        or manifest.get("schema") != "dev-methodology-eval-output-manifest"
+        or manifest.get("version") != 1
+        or manifest.get("allowedWritePaths") != case.get("allowedWritePaths", [])
+    ):
+        errors.append("evidence MCP output manifest differs from the selected case")
+        return
+    files = manifest.get("files")
+    if not isinstance(files, list) or len(files) > 512:
+        errors.append("evidence MCP output manifest has an invalid file list")
+        return
+    try:
+        manifest_path, _marker = _resolve_evidence_reference(
+            value.get("outputManifestEvidence"), evidence_path
+        )
+    except ValueError:
+        return
+    output_root = manifest_path.parent / "outputs"
+    seen: set[str] = set()
+    total_size = 0
+    for record in files:
+        if not isinstance(record, Mapping) or set(record) != {"path", "size", "sha256"}:
+            errors.append("evidence MCP output manifest contains an invalid file record")
+            continue
+        relative_value = record.get("path")
+        relative = PurePosixPath(str(relative_value))
+        if (
+            not isinstance(relative_value, str)
+            or relative.is_absolute()
+            or relative.as_posix() != relative_value
+            or any(part in {"", ".", ".."} for part in relative.parts)
+            or relative_value in seen
+        ):
+            errors.append("evidence MCP output manifest contains an unsafe or duplicate path")
+            continue
+        seen.add(relative_value)
+        candidate = output_root.joinpath(*relative.parts)
+        try:
+            resolved = candidate.resolve(strict=True)
+        except (OSError, RuntimeError):
+            errors.append(f"evidence MCP preserved output is missing: {relative_value}")
+            continue
+        if (
+            candidate.is_symlink()
+            or output_root.resolve() not in resolved.parents
+            or not resolved.is_file()
+        ):
+            errors.append(f"evidence MCP preserved output is unsafe: {relative_value}")
+            continue
+        content = resolved.read_bytes()
+        total_size += len(content)
+        if record.get("size") != len(content) or record.get("sha256") != hashlib.sha256(content).hexdigest():
+            errors.append(f"evidence MCP preserved output digest differs: {relative_value}")
+    if total_size > 20 * 1024 * 1024:
+        errors.append("evidence MCP preserved outputs exceed the replay byte limit")
+    if output_root.is_dir():
+        actual = {
+            path.relative_to(output_root).as_posix()
+            for path in output_root.rglob("*")
+            if path.is_file() and not path.is_symlink()
+        }
+        if actual != seen:
+            errors.append("evidence MCP output manifest does not cover the exact preserved files")
+
+
+def _validate_junie_mcp_authorization(
+    value: Mapping[str, object],
+    evidence_path: Path,
+    errors: list[str],
+) -> None:
+    """Validate the retained server-scoped Junie noninteractive allowlist."""
+    authorization = _load_mcp_json_artifact(
+        value.get("authorizationEvidence"),
+        "run.mcpAgentOps.authorizationEvidence",
+        evidence_path,
+        errors,
+    )
+    if authorization is not None and dict(authorization) != junie_mcp_agent_ops_authorization_payload():
+        errors.append("evidence Junie MCP authorization is not the narrow evaluator policy")
+
+
+def _validate_junie_agent_attribution(
+    value: Mapping[str, object],
+    run: Mapping[str, object],
+    evidence_path: Path,
+    errors: list[str],
+) -> None:
+    """Validate name-level Junie lifecycle evidence without claiming digest binding."""
+    attribution = _load_mcp_json_artifact(
+        value.get("junieAgentAttributionEvidence"),
+        "run.mcpAgentOps.junieAgentAttributionEvidence",
+        evidence_path,
+        errors,
+    )
+    if attribution is None:
+        return
+    if (
+        set(attribution)
+        != {"schema", "version", "agentId", "status", "definitionDigestBound", "lifecycle"}
+        or attribution.get("schema")
+        != "dev-methodology-eval-junie-agent-attribution"
+        or attribution.get("version") != 1
+        or attribution.get("agentId") != run.get("agentId")
+        or attribution.get("status") != "name-verified"
+        or attribution.get("definitionDigestBound") is not False
+    ):
+        errors.append("evidence Junie custom-agent attribution artifact is invalid")
+        return
+    lifecycle = attribution.get("lifecycle")
+    if (
+        not isinstance(lifecycle, Mapping)
+        or set(lifecycle) != {"stepId", "statuses", "eventDigests"}
+        or set(lifecycle.get("statuses", [])) != {"STARTED", "FINISHED"}
+        or not isinstance(lifecycle.get("eventDigests"), list)
+        or not lifecycle.get("eventDigests")
+        or any(
+            not isinstance(digest, str) or not re.fullmatch(r"[0-9a-f]{64}", digest)
+            for digest in lifecycle.get("eventDigests", [])
+        )
+    ):
+        errors.append("evidence Junie custom-agent lifecycle is incomplete")
 
 
 def _validate_skills(
@@ -1560,6 +2476,20 @@ def _validate_isolation(
             errors.append("evidence isolation.codexNativeSandbox must be a mapping")
         else:
             expected_mode = "read-only" if case.get("readOnly") else "workspace-write"
+            if isinstance(sandbox_profiles, Mapping):
+                profile_id = sandbox_profiles.get("codex")
+                profiles = _items_by_id(
+                    load_framework_catalogs().get("sandbox-profiles.yaml", {}).get("profiles")
+                )
+                profile = profiles.get(str(profile_id))
+                workspace = profile.get("copyOnWriteWorkspace") if isinstance(profile, Mapping) else None
+                product_mode = (
+                    workspace.get("productWorkspaceMode")
+                    if isinstance(workspace, Mapping)
+                    else None
+                )
+                if isinstance(product_mode, str):
+                    expected_mode = product_mode
             if native.get("mode") != expected_mode:
                 errors.append(f"evidence Codex native sandbox mode must be {expected_mode}")
             validate_reference(native.get("evidence"), "isolation.codexNativeSandbox.evidence", evidence_path, errors)
@@ -2470,6 +3400,12 @@ def _validate_catalog_cross_references(
                 elif profile.get("harness") != harness:
                     errors.append(
                         f"cases.yaml:{case_id} sandbox profile {profile_id} does not belong to harness {harness}"
+                    )
+                elif profile_id == "codex-permission-profile-git-write" and (
+                    case.get("readOnly") is True or not isinstance(case.get("mcpAgentOps"), Mapping)
+                ):
+                    errors.append(
+                        f"cases.yaml:{case_id} Codex Git-write permission profile requires an MCP mutation case"
                     )
         fixture_claims = set(_string_items(case.get("fixtureBackedProbeClaims")))
         declared_probes = set(_string_items(case.get("skillProbes")))

@@ -13,7 +13,7 @@ Run technology detection during project setup, not during ordinary coding, revie
 
 1. Inventory project tiers, ownership boundaries, manifests, source roots, and tests.
 2. Choose representative folders that do not combine unrelated sibling technologies.
-3. Run scripts/detect.py once for those scopes.
+3. Run the detect_technology_skills MCP tool once for those scopes when available; otherwise run the loaded scripts/detect.py fallback once.
 4. Review source evidence, missing required skills, exclusive conflicts, and explicit no-variant results. Reject a candidate when its evidence proves only that a dependency exists in an owning manifest but not that the analyzed folder owns the behavior or verification workflow covered by that skill.
 5. Record accepted skillsets and source evidence in PROJECT.yaml.
 6. Compare every detected candidate with the technology skills actually exposed by the target runtime, not only with skills present in the methodology source tree.
@@ -21,7 +21,13 @@ Run technology detection during project setup, not during ordinary coding, revie
 8. Verify every listed skill is installed and exposed to the agents that will work in that folder.
 9. Rerun only when project setup, technology boundaries, or the runtime's available-skill catalog changes.
 
-## Command
+## Operation Selection
+
+Use detect_technology_skills when mcp-agent-ops is available. Pass the absolute project root and the representative project-relative scopes. The server supplies its configured technology registry and complete active skill catalog, so do not reconstruct repeated available-skill arguments for the MCP call.
+
+READY, BLOCKED, and explicit NO_VARIANT loadouts are valid detection results. Do not reinterpret BLOCKED or NO_VARIANT as a transport failure and do not retry them through the script. Use the fallback only when the MCP tool is absent or the server cannot initialize or connect before request dispatch. Never bypass a path, root, authorization, input-policy, or other structured rejection through the script.
+
+## Fallback Command
 
 ```bash
 python3 [detector-skill]/scripts/detect.py \
@@ -30,7 +36,7 @@ python3 [detector-skill]/scripts/detect.py \
   --available-skill [runtime-exposed-skill-id]
 ```
 
-Repeat the scope option for separately analyzed folders and repeat `--available-skill` for the complete technology-skill catalog exposed by the target runtime. Keep each returned skillset separate. Use `--skills-root` only when that directory is the target runtime's actual installed-skill catalog; do not rely on the methodology source-tree default as proof of runtime availability.
+Repeat the scope option for separately analyzed folders and repeat the available-skill option for the complete technology-skill catalog exposed by the target runtime. Keep each returned skillset separate. Use the skills-root option only when that directory is the target runtime's actual installed-skill catalog; do not rely on the methodology source-tree default as proof of runtime availability. The fallback remains authoritative when MCP is unavailable before dispatch, but it is not a second opinion on a valid MCP result or policy rejection.
 
 ## Evidence Model
 

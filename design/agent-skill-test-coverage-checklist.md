@@ -45,6 +45,7 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 
 | Harness | Profile | Implementation | Workspace isolation | Containment status |
 | --- | --- | --- | --- | --- |
+| codex | codex-permission-profile-git-write | local-tier-implemented | native-policy-plus-copy-on-write-declared | containment-unverified |
 | codex | codex-read-only | partial | native-policy-plus-copy-on-write-declared | containment-unverified |
 | codex | codex-workspace-write | partial | native-policy-plus-copy-on-write-declared | containment-unverified |
 | junie | junie-read-only | local-tier-implemented | disposable-workspace-plus-mutation-audit | containment-unverified |

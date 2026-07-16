@@ -9,6 +9,7 @@ import json
 import os
 import re
 import shutil
+import stat
 import subprocess
 import tempfile
 from dataclasses import dataclass
@@ -22,6 +23,26 @@ from .commands import CommandSpec
 SUPPORTED_HARNESSES = frozenset({"codex", "junie"})
 CODEX_OUTPUT_SCHEMA_SHA256 = "36bd63a02034627ab2798a424f8915bf288265846af6e2aad5f7ec18e424c8fc"
 _MAX_EVENT_STREAM_BYTES = 10 * 1024 * 1024
+_MAX_MCP_AUDIT_BYTES = 2 * 1024 * 1024
+_MCP_STARTUP_TIMEOUT_SECONDS = 15.0
+_MCP_TOOL_TIMEOUT_SECONDS = 60.0
+_CODEX_NONINTERACTIVE_APPROVAL_POLICY = "never"
+_CODEX_EVAL_PERMISSION_PROFILE_NAME = "mcp-eval-git-write"
+_CODEX_EVAL_PERMISSION_PROFILE_DESCRIPTION = (
+    "Disposable MCP evaluation workspace with Git metadata writes"
+)
+_CODEX_MCP_AGENT_OPS_ENABLED_TOOLS = (
+    "claim_status",
+    "claim_acquire",
+    "claim_extend",
+    "claim_heartbeat",
+    "claim_release",
+    "skill_list",
+    "skill_resource_load",
+    "detect_technology_skills",
+    "verify_yaml",
+    "verify_markdown_links",
+)
 
 
 @dataclass(frozen=True)
@@ -32,6 +53,141 @@ class HarnessIdentity:
     executable: Path
     version: str
     content_digest: str
+
+
+@dataclass(frozen=True)
+class McpAgentOpsIdentity:
+    """Record the pinned MCP executable, package version, and executable digest."""
+
+    executable: Path
+    version: str
+    launcher_digest: str
+    runtime_digest: str
+    identity_digest: str
+
+
+@dataclass(frozen=True)
+class McpAgentOpsContext:
+    """Describe one isolated evaluator-owned mcp-agent-ops host configuration."""
+
+    server_name: str
+    identity: McpAgentOpsIdentity
+    skill_root: Path
+    detection_registry: Path
+    workspace_root: Path
+    audit_log: Path
+    audit_root: Path
+    audit_session_id: str
+    configuration_digest: str
+    catalog_manifest_digest: str
+    configuration_evidence: Path
+    catalog_evidence: Path
+    evidence_directory: Path
+    host_home: Path
+    authorization_digest: str | None = None
+    authorization_evidence: Path | None = None
+    config_location: Path | None = None
+
+
+def mcp_agent_ops_configuration_payload(
+    harness: str,
+    server_config: Mapping[str, object],
+    *,
+    workspace_root: Path | None = None,
+    evidence_root: Path | None = None,
+    host_home: Path | None = None,
+) -> dict[str, object]:
+    """Return the complete canonical host configuration represented by one run."""
+    if harness not in SUPPORTED_HARNESSES:
+        raise ValueError(f"supported harness values are codex and junie, not {harness}")
+    server = dict(server_config)
+    if harness == "codex":
+        if workspace_root is None or evidence_root is None or host_home is None:
+            raise ValueError(
+                "Codex MCP configuration requires workspace, evidence, and host-home roots"
+            )
+        server.update({
+            "enabled": True,
+            "required": True,
+            "enabled_tools": list(_CODEX_MCP_AGENT_OPS_ENABLED_TOOLS),
+            "default_tools_approval_mode": "approve",
+            "startup_timeout_sec": _MCP_STARTUP_TIMEOUT_SECONDS,
+            "tool_timeout_sec": _MCP_TOOL_TIMEOUT_SECONDS,
+        })
+        return {
+            "approval_policy": _CODEX_NONINTERACTIVE_APPROVAL_POLICY,
+            "default_permissions": _CODEX_EVAL_PERMISSION_PROFILE_NAME,
+            "permissions": {
+                _CODEX_EVAL_PERMISSION_PROFILE_NAME: (
+                    _codex_eval_permission_profile_payload(
+                        workspace_root,
+                        evidence_root,
+                        host_home,
+                    )
+                )
+            },
+            "mcp_servers": {"mcp-agent-ops": server},
+        }
+    return {"mcpServers": {"mcp-agent-ops": server}}
+
+
+def _codex_eval_permission_profile_payload(
+    workspace_root: Path,
+    evidence_root: Path,
+    host_home: Path,
+) -> dict[str, object]:
+    """Return the exact least-privilege profile used by the synthetic Git lifecycle case."""
+
+    workspace = workspace_root.resolve()
+    evidence = evidence_root.resolve()
+    home = host_home.resolve()
+    if not workspace.is_absolute() or not evidence.is_absolute() or not home.is_absolute():
+        raise ValueError("Codex evaluation permission roots must be absolute")
+    return {
+        "description": _CODEX_EVAL_PERMISSION_PROFILE_DESCRIPTION,
+        "filesystem": {
+            ":root": "read",
+            ":tmpdir": "write",
+            str(home): "deny",
+            str(evidence): "deny",
+            ":workspace_roots": {
+                ".": "write",
+                ".agents": "read",
+                ".codex": "read",
+                ".eval-context": "read",
+                ".git": "write",
+                ".junie": "read",
+            },
+        },
+        "network": {"enabled": False},
+    }
+
+
+def junie_mcp_agent_ops_authorization_payload() -> dict[str, object]:
+    """Return the narrow noninteractive policy for the one staged Junie MCP server."""
+    return {
+        "defaultBehavior": "ask",
+        "allowReadonlyCommands": True,
+        "rules": {
+            "fileEditing": {"rules": []},
+            "executables": {
+                "rules": [
+                    {"prefix": "git add", "action": "allow"},
+                    {"prefix": "git commit", "action": "allow"},
+                ]
+            },
+            "mcpTools": {
+                "rules": [
+                    {
+                        "pattern": f"mcp-agent-ops:{tool}",
+                        "action": "allow",
+                    }
+                    for tool in _CODEX_MCP_AGENT_OPS_ENABLED_TOOLS
+                ]
+            },
+            "readOutsideProject": {"rules": []},
+        },
+    }
 
 
 def build_harness_command(
@@ -52,6 +208,8 @@ def build_harness_command(
     agent_locations: Sequence[Path] = (),
     approved_environment_names: Sequence[str] = (),
     harness_executable: Path | None = None,
+    mcp_agent_ops: McpAgentOpsContext | None = None,
+    codex_home: Path | None = None,
 ) -> CommandSpec:
     """Build a noninteractive Codex or Junie invocation without executing it.
 
@@ -96,6 +254,8 @@ def build_harness_command(
         raise ValueError("isolated_config_root must be the disposable workspace context overlay root")
     approved_environment = _approved_environment_names(approved_environment_names)
     executable = _validated_harness_executable(harness, harness_executable)
+    if mcp_agent_ops is not None:
+        _validate_mcp_agent_ops_context(mcp_agent_ops, workspace, isolated_config_root)
     controlled_environment = {
         "HOME": str(workspace / ".eval-context" / "home"),
         "TMPDIR": str(event_output.parent / f".eval-tmp-{workspace.name}"),
@@ -105,24 +265,40 @@ def build_harness_command(
         expected_skills = isolated_config_root / ".agents" / "skills"
         if not expected_agent.is_file() or not expected_skills.is_dir():
             raise ValueError("Codex isolated context must contain the selected project agent and skill locations")
+        if codex_home is not None:
+            resolved_codex_home = _runner_owned_output_path(
+                codex_home,
+                evidence_root,
+                workspace,
+                "isolated Codex authentication home",
+            )
+            controlled_environment["CODEX_HOME"] = str(resolved_codex_home)
         argv = [
             executable,
             "exec",
-            "--ephemeral",
             "--ignore-user-config",
-            "--sandbox",
-            "read-only" if read_only else "workspace-write",
+        ]
+        if mcp_agent_ops is None:
+            argv.extend((
+                "--sandbox",
+                "read-only" if read_only else "workspace-write",
+            ))
+        elif read_only:
+            raise ValueError("the MCP Git-lifecycle permission profile requires a mutation case")
+        argv.extend((
             "-C",
             str(workspace),
             "--model",
             model,
             "--json",
-        ]
+        ))
         if output_schema is not None:
             resolved_schema = validate_codex_output_schema(output_schema, workspace)
             argv.extend(["--output-schema", str(resolved_schema)])
         if resolved_last_message_output is not None:
             argv.extend(["--output-last-message", str(resolved_last_message_output)])
+        if mcp_agent_ops is not None:
+            _append_codex_mcp_configuration(argv, mcp_agent_ops)
         argv.append(_delegation_prompt(agent_id, prompt))
         return CommandSpec(
             tuple(argv),
@@ -131,6 +307,8 @@ def build_harness_command(
             host_environment_allowlist=("PATH", *approved_environment),
         )
 
+    if codex_home is not None:
+        raise ValueError("isolated Codex authentication home is valid only for Codex")
     controlled_environment["JUNIE_HOME"] = str(
         event_output.parent / f".junie-home-{workspace.name}"
     )
@@ -172,6 +350,10 @@ def build_harness_command(
     ]
     argv.extend(f"--skill-location={path.resolve()}" for path in skill_locations)
     argv.extend(f"--agent-location={path.resolve()}" for path in agent_locations)
+    if mcp_agent_ops is not None:
+        if mcp_agent_ops.config_location is None:
+            raise ValueError("Junie MCP context requires one explicit configuration location")
+        argv.append(f"--mcp-location={mcp_agent_ops.config_location.resolve()}")
     argv.append(f"--task={_delegation_prompt(agent_id, prompt)}")
     return CommandSpec(
         tuple(argv),
@@ -285,6 +467,371 @@ def read_harness_event_stream(
     return records
 
 
+def read_mcp_agent_ops_audit(path: Path) -> list[dict[str, object]]:
+    """Read and validate one digest-only mcp-agent-ops tool lifecycle audit."""
+    if path.is_symlink() or not path.is_file():
+        raise ValueError("captured MCP tool audit must be a regular non-symlink file")
+    if path.stat().st_size > _MAX_MCP_AUDIT_BYTES:
+        raise ValueError("captured MCP tool audit exceeds the configured capture limit")
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except (OSError, UnicodeError) as error:
+        raise ValueError("captured MCP tool audit is unreadable") from error
+    records: list[dict[str, object]] = []
+    allowed_fields = {
+        "schema",
+        "version",
+        "sequence",
+        "callId",
+        "tool",
+        "status",
+        "argumentsDigest",
+        "resultDigest",
+        "streamId",
+        "sessionId",
+        "outcome",
+    }
+    for line_number, line in enumerate(lines, start=1):
+        try:
+            record = json.loads(line)
+        except json.JSONDecodeError as error:
+            raise ValueError(f"captured MCP tool audit line {line_number} is invalid JSON") from error
+        if not isinstance(record, dict):
+            raise ValueError(f"captured MCP tool audit line {line_number} must be a JSON object")
+        if set(record) - allowed_fields:
+            raise ValueError(f"captured MCP tool audit line {line_number} contains forbidden fields")
+        version = record.get("version")
+        if (
+            record.get("schema") != "mcp-agent-ops-tool-audit"
+            or version not in {1, 2}
+            or not isinstance(record.get("sequence"), int)
+            or isinstance(record.get("sequence"), bool)
+            or int(record["sequence"]) < 1
+            or not isinstance(record.get("callId"), str)
+            or not re.fullmatch(
+                r"[A-Za-z0-9][A-Za-z0-9._:-]{0,127}",
+                str(record.get("callId")),
+            )
+            or not isinstance(record.get("tool"), str)
+            or not re.fullmatch(r"[a-z][a-z0-9_]*", str(record.get("tool")))
+            or record.get("status") not in {"started", "completed", "failed"}
+        ):
+            raise ValueError(f"captured MCP tool audit line {line_number} has an invalid contract")
+        if version == 1:
+            if (
+                record["sequence"] != line_number
+                or "streamId" in record
+                or "sessionId" in record
+                or "outcome" in record
+            ):
+                raise ValueError(
+                    f"captured MCP tool audit line {line_number} has invalid version-one evidence"
+                )
+        elif (
+            not isinstance(record.get("streamId"), str)
+            or not re.fullmatch(r"[0-9a-f]{32}", str(record.get("streamId")))
+            or not isinstance(record.get("sessionId"), str)
+            or not re.fullmatch(r"[0-9a-f]{32}", str(record.get("sessionId")))
+        ):
+            raise ValueError(
+                f"captured MCP tool audit line {line_number} has invalid shared-stream evidence"
+            )
+        digest_field = "argumentsDigest" if record["status"] == "started" else "resultDigest"
+        other_digest = "resultDigest" if digest_field == "argumentsDigest" else "argumentsDigest"
+        if (
+            not isinstance(record.get(digest_field), str)
+            or not re.fullmatch(r"[0-9a-f]{64}", str(record[digest_field]))
+            or other_digest in record
+        ):
+            raise ValueError(f"captured MCP tool audit line {line_number} has invalid digest evidence")
+        outcome = record.get("outcome")
+        if record["status"] == "started" and outcome is not None:
+            raise ValueError(
+                f"captured MCP tool audit line {line_number} has an outcome before completion"
+            )
+        if outcome is not None and (
+            not isinstance(outcome, str)
+            or not re.fullmatch(r"[A-Z][A-Z0-9_]{0,63}", outcome)
+        ):
+            raise ValueError(
+                f"captured MCP tool audit line {line_number} has an invalid outcome"
+            )
+        records.append(record)
+    if not records:
+        raise ValueError("captured MCP tool audit is empty")
+    versions = {int(record["version"]) for record in records}
+    if len(versions) != 1:
+        raise ValueError("captured MCP tool audit mixes incompatible schema versions")
+    if versions == {2}:
+        sessions = {str(record["sessionId"]) for record in records}
+        if len(sessions) != 1:
+            raise ValueError("captured MCP tool audit mixes evaluation session identities")
+        next_sequence: dict[str, int] = {}
+        for record in records:
+            stream_id = str(record["streamId"])
+            expected = next_sequence.get(stream_id, 1)
+            if record["sequence"] != expected:
+                raise ValueError(
+                    "captured MCP tool audit has a non-contiguous process-local sequence"
+                )
+            next_sequence[stream_id] = expected + 1
+    started: dict[tuple[str, str], str] = {}
+    terminal: set[tuple[str, str]] = set()
+    for record in records:
+        stream_id = str(record.get("streamId", "version-one"))
+        call_id = str(record["callId"])
+        identity = (stream_id, call_id)
+        tool = str(record["tool"])
+        if record["status"] == "started":
+            if identity in started:
+                raise ValueError("captured MCP tool audit repeats a started call identity")
+            started[identity] = tool
+        elif (
+            identity not in started
+            or identity in terminal
+            or started[identity] != tool
+        ):
+            raise ValueError("captured MCP tool audit has an unmatched terminal record")
+        else:
+            terminal.add(identity)
+    if terminal != set(started):
+        raise ValueError("captured MCP tool audit has an incomplete tool lifecycle")
+    if any(record["status"] == "failed" for record in records):
+        raise ValueError("captured MCP tool audit contains a failed tool call")
+    return records
+
+
+def completed_mcp_tool_sequence(records: Sequence[Mapping[str, object]]) -> list[str]:
+    """Return the single completed stream, rejecting ambiguous shared audits."""
+    streams = completed_mcp_tool_streams(records)
+    if len(streams) != 1:
+        raise ValueError("captured MCP tool audit contains multiple process streams")
+    return streams[0]
+
+
+def completed_mcp_tool_streams(
+    records: Sequence[Mapping[str, object]],
+) -> list[list[str]]:
+    """Return completed tool names grouped by process stream in first-seen order."""
+    ordered_streams: list[str] = []
+    tools_by_stream: dict[str, list[str]] = {}
+    for record in records:
+        stream_id = str(record.get("streamId", "version-one"))
+        if stream_id not in tools_by_stream:
+            ordered_streams.append(stream_id)
+            tools_by_stream[stream_id] = []
+        if record.get("status") == "completed":
+            tools_by_stream[stream_id].append(str(record["tool"]))
+    return [tools_by_stream[stream_id] for stream_id in ordered_streams]
+
+
+def completed_mcp_tool_outcomes(
+    records: Sequence[Mapping[str, object]],
+) -> list[dict[str, list[str]]]:
+    """Return bounded terminal outcomes grouped by process stream and tool."""
+    ordered_streams: list[str] = []
+    outcomes_by_stream: dict[str, dict[str, list[str]]] = {}
+    for record in records:
+        stream_id = str(record.get("streamId", "version-one"))
+        if stream_id not in outcomes_by_stream:
+            ordered_streams.append(stream_id)
+            outcomes_by_stream[stream_id] = {}
+        if record.get("status") != "completed" or not isinstance(record.get("outcome"), str):
+            continue
+        tool = str(record["tool"])
+        outcomes_by_stream[stream_id].setdefault(tool, []).append(str(record["outcome"]))
+    return [outcomes_by_stream[stream_id] for stream_id in ordered_streams]
+
+
+def completed_mcp_tool_calls(
+    records: Sequence[Mapping[str, object]],
+) -> list[list[dict[str, str | None]]]:
+    """Return completed calls with their privacy-safe argument digests by stream."""
+
+    ordered_streams = mcp_audit_stream_ids(records)
+    calls_by_stream: dict[str, list[dict[str, str | None]]] = {
+        stream_id: [] for stream_id in ordered_streams
+    }
+    started_arguments: dict[tuple[str, str], str] = {}
+    for record in records:
+        stream_id = str(record.get("streamId", "version-one"))
+        call_id = str(record["callId"])
+        identity = (stream_id, call_id)
+        if record.get("status") == "started":
+            started_arguments[identity] = str(record["argumentsDigest"])
+        elif record.get("status") == "completed":
+            calls_by_stream[stream_id].append({
+                "tool": str(record["tool"]),
+                "argumentsDigest": started_arguments[identity],
+                "outcome": (
+                    str(record["outcome"])
+                    if isinstance(record.get("outcome"), str)
+                    else None
+                ),
+            })
+    return [calls_by_stream[stream_id] for stream_id in ordered_streams]
+
+
+def mcp_audit_stream_ids(records: Sequence[Mapping[str, object]]) -> list[str]:
+    """Return process stream identities in first-seen order."""
+    streams: list[str] = []
+    for record in records:
+        stream_id = str(record.get("streamId", "version-one"))
+        if stream_id not in streams:
+            streams.append(stream_id)
+    return streams
+
+
+def select_mcp_tool_stream(
+    records: Sequence[Mapping[str, object]],
+    required_sequences: Sequence[Sequence[str]],
+    required_outcomes: Mapping[str, Sequence[str]],
+    required_argument_digests: Mapping[str, str] | None = None,
+) -> tuple[str, list[str], dict[str, list[str]]]:
+    """Select the one process stream that satisfies the complete tool contract."""
+    stream_ids = mcp_audit_stream_ids(records)
+    tool_streams = completed_mcp_tool_streams(records)
+    outcome_streams = completed_mcp_tool_outcomes(records)
+    call_streams = completed_mcp_tool_calls(records)
+    candidates: list[tuple[str, list[str], dict[str, list[str]]]] = []
+    for stream_id, tools, outcomes, calls in zip(
+        stream_ids,
+        tool_streams,
+        outcome_streams,
+        call_streams,
+        strict=True,
+    ):
+        sequences_match = (
+            all(
+                required_mcp_calls_are_subsequence(
+                    sequence,
+                    calls,
+                    required_argument_digests,
+                    required_outcomes,
+                )
+                for sequence in required_sequences
+            )
+            if required_argument_digests
+            else all(
+                required_tools_are_subsequence(sequence, tools)
+                for sequence in required_sequences
+            )
+        )
+        if not sequences_match:
+            continue
+        if not all(
+            set(outcomes.get(tool, ())) & set(allowed)
+            for tool, allowed in required_outcomes.items()
+        ):
+            continue
+        if required_argument_digests and not all(
+            any(
+                call["tool"] == tool
+                and call["argumentsDigest"] == expected_digest
+                and call["outcome"] in set(required_outcomes.get(tool, ()))
+                for call in calls
+            )
+            for tool, expected_digest in required_argument_digests.items()
+        ):
+            continue
+        candidates.append((stream_id, tools, outcomes))
+    if not candidates:
+        raise ValueError(
+            "captured MCP tool audit has no process stream satisfying required sequences and outcomes"
+        )
+    if len(candidates) != 1:
+        raise ValueError(
+            "captured MCP tool audit has multiple process streams satisfying the run contract"
+        )
+    return candidates[0]
+
+
+def required_mcp_calls_are_subsequence(
+    required: Sequence[str],
+    observed: Sequence[Mapping[str, str | None]],
+    required_argument_digests: Mapping[str, str],
+    required_outcomes: Mapping[str, Sequence[str]],
+) -> bool:
+    """Return whether exact argument-and-outcome calls appear in declared order."""
+
+    iterator = iter(observed)
+    for tool in required:
+        expected_digest = required_argument_digests.get(tool)
+        allowed_outcomes = set(required_outcomes.get(tool, ()))
+        if expected_digest is None or not allowed_outcomes:
+            return False
+        if not any(
+            call.get("tool") == tool
+            and call.get("argumentsDigest") == expected_digest
+            and call.get("outcome") in allowed_outcomes
+            for call in iterator
+        ):
+            return False
+    return True
+
+
+def resolve_mcp_tool_argument_digests(
+    required_arguments: Mapping[str, object],
+    workspace: Path,
+) -> dict[str, str]:
+    """Resolve the workspace sentinel and digest exact JSON-compatible tool arguments."""
+
+    resolved_workspace = workspace.resolve()
+    if not resolved_workspace.is_absolute():
+        raise ValueError("MCP tool argument workspace must be absolute")
+
+    def resolve(value: object) -> object:
+        if value == "$WORKSPACE":
+            return str(resolved_workspace)
+        if isinstance(value, str):
+            if "$WORKSPACE" in value:
+                raise ValueError("MCP tool argument workspace sentinel must occupy the complete value")
+            if re.fullmatch(r"\$[A-Z][A-Z0-9_]*", value):
+                raise ValueError(f"unknown MCP tool argument placeholder: {value}")
+            return value
+        if isinstance(value, Mapping):
+            if any(not isinstance(key, str) for key in value):
+                raise ValueError("MCP tool argument mappings require string keys")
+            return {str(key): resolve(child) for key, child in value.items()}
+        if isinstance(value, list):
+            return [resolve(child) for child in value]
+        if value is None or isinstance(value, (bool, int, float)):
+            return value
+        raise ValueError("MCP tool arguments must contain only JSON-compatible values")
+
+    digests: dict[str, str] = {}
+    for tool, arguments in required_arguments.items():
+        if not isinstance(tool, str) or not re.fullmatch(r"[a-z][a-z0-9_]*", tool):
+            raise ValueError("MCP required tool argument keys must be normalized tool names")
+        if not isinstance(arguments, Mapping):
+            raise ValueError(f"MCP required tool arguments for {tool} must be a mapping")
+        digests[tool] = mcp_value_digest(resolve(arguments))
+    if not digests:
+        raise ValueError("MCP required tool arguments must not be empty")
+    return digests
+
+
+def mcp_value_digest(value: object) -> str:
+    """Return the MCP audit protocol's canonical JSON digest for a safe value."""
+
+    encoded = json.dumps(
+        value,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=True,
+    ).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def required_tools_are_subsequence(
+    required: Sequence[str],
+    observed: Sequence[str],
+) -> bool:
+    """Return whether every required tool appears in order within observed calls."""
+    iterator = iter(observed)
+    return all(any(candidate == tool for candidate in iterator) for tool in required)
+
+
 def extract_harness_final_response(
     harness: str, events: Sequence[Mapping[str, object]]
 ) -> str:
@@ -368,6 +915,123 @@ def capture_harness_identity(harness: str) -> HarnessIdentity:
     )
 
 
+def capture_mcp_agent_ops_identity(
+    executable: Path | None = None,
+    *,
+    required_version: str | None = None,
+    required_runtime_digest: str | None = None,
+) -> McpAgentOpsIdentity:
+    """Capture and optionally enforce launcher and installed-runtime identity."""
+    discovered = executable or (
+        Path(value) if (value := shutil.which("mcp-agent-ops")) is not None else None
+    )
+    if discovered is None:
+        raise RuntimeError("mcp-agent-ops executable is not installed")
+    resolved = discovered.expanduser().resolve()
+    if not resolved.is_file() or not resolved.stat().st_mode & 0o111:
+        raise ValueError("mcp-agent-ops executable must be an executable file")
+    launcher_before = hashlib.sha256(resolved.read_bytes()).hexdigest()
+    with tempfile.TemporaryDirectory(prefix="dev-methodology-mcp-agent-ops-identity-") as directory:
+        scratch = Path(directory)
+        environment = {
+            "HOME": str(scratch / "home"),
+            "PATH": os.environ.get("PATH", "/usr/bin:/bin"),
+            "TMPDIR": str(scratch / "tmp"),
+        }
+        Path(environment["HOME"]).mkdir()
+        Path(environment["TMPDIR"]).mkdir()
+        try:
+            version_probe = subprocess.run(
+                [str(resolved), "--version"],
+                capture_output=True,
+                text=True,
+                check=False,
+                timeout=10,
+                env=environment,
+            )
+            runtime_probe = subprocess.run(
+                [str(resolved), "--identity-json"],
+                capture_output=True,
+                text=True,
+                check=False,
+                timeout=10,
+                env=environment,
+            )
+        except (OSError, subprocess.TimeoutExpired) as error:
+            raise RuntimeError("unable to execute mcp-agent-ops identity probes") from error
+    launcher_after = hashlib.sha256(resolved.read_bytes()).hexdigest()
+    if launcher_before != launcher_after:
+        raise RuntimeError("mcp-agent-ops launcher changed during identity capture")
+    version_identity = version_probe.stdout.strip()
+    if (
+        version_probe.returncode != 0
+        or version_probe.stderr
+        or not re.fullmatch(
+            r"mcp-agent-ops \d+\.\d+\.\d+(?:[-+][A-Za-z0-9.-]+)?",
+            version_identity,
+        )
+    ):
+        raise RuntimeError("unable to capture mcp-agent-ops package version")
+    try:
+        runtime_identity = json.loads(runtime_probe.stdout)
+    except json.JSONDecodeError as error:
+        raise RuntimeError("unable to capture mcp-agent-ops runtime identity") from error
+    expected_fields = {
+        "schema",
+        "schemaVersion",
+        "package",
+        "packageVersion",
+        "runtimeDigest",
+        "fileCount",
+    }
+    if (
+        runtime_probe.returncode != 0
+        or runtime_probe.stderr
+        or not isinstance(runtime_identity, dict)
+        or set(runtime_identity) != expected_fields
+        or runtime_identity.get("schema") != "mcp-agent-ops-runtime-identity"
+        or runtime_identity.get("schemaVersion") != 1
+        or runtime_identity.get("package") != "mcp-agent-ops"
+        or not isinstance(runtime_identity.get("packageVersion"), str)
+        or not re.fullmatch(
+            r"\d+\.\d+\.\d+(?:[-+][A-Za-z0-9.-]+)?",
+            str(runtime_identity.get("packageVersion")),
+        )
+        or not isinstance(runtime_identity.get("runtimeDigest"), str)
+        or not re.fullmatch(r"[0-9a-f]{64}", str(runtime_identity.get("runtimeDigest")))
+        or not isinstance(runtime_identity.get("fileCount"), int)
+        or int(runtime_identity.get("fileCount", 0)) < 1
+    ):
+        raise RuntimeError("unable to capture mcp-agent-ops runtime identity")
+    version_value = version_identity.removeprefix("mcp-agent-ops ")
+    runtime_version = str(runtime_identity["packageVersion"])
+    runtime_digest = str(runtime_identity["runtimeDigest"])
+    if version_value != runtime_version:
+        raise RuntimeError("mcp-agent-ops identity probes report different versions")
+    if required_version is not None and version_value != required_version:
+        raise RuntimeError("mcp-agent-ops version does not match the evaluation contract")
+    if required_runtime_digest is not None and runtime_digest != required_runtime_digest:
+        raise RuntimeError("mcp-agent-ops runtime digest does not match the evaluation contract")
+    identity_digest = hashlib.sha256(
+        json.dumps(
+            {
+                "version": version_value,
+                "launcherDigest": launcher_before,
+                "runtimeDigest": runtime_digest,
+            },
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+    ).hexdigest()
+    return McpAgentOpsIdentity(
+        executable=resolved,
+        version=version_value,
+        launcher_digest=launcher_before,
+        runtime_digest=runtime_digest,
+        identity_digest=identity_digest,
+    )
+
+
 def _resolve_harness_executable(harness: str, discovered: Path) -> Path:
     """Resolve a managed harness shim before a run replaces HOME."""
 
@@ -424,6 +1088,210 @@ def _approved_environment_names(values: Sequence[str]) -> tuple[str, ...]:
         if value not in names and value != "PATH":
             names.append(value)
     return tuple(sorted(names))
+
+
+def _validate_mcp_agent_ops_context(
+    context: McpAgentOpsContext,
+    workspace: Path,
+    isolated_config_root: Path,
+) -> None:
+    """Reject MCP paths that escape the disposable workspace or evidence boundary."""
+    if context.server_name != "mcp-agent-ops":
+        raise ValueError("evaluation MCP server name must be mcp-agent-ops")
+    if context.workspace_root.resolve() != workspace:
+        raise ValueError("MCP workspace root must be the disposable product workspace")
+    if not re.fullmatch(r"[0-9a-f]{32}", context.audit_session_id):
+        raise ValueError("MCP audit session identity must be 32 lowercase hexadecimal characters")
+    skill_root = context.skill_root.resolve()
+    if skill_root != isolated_config_root and isolated_config_root not in skill_root.parents:
+        raise ValueError("MCP skill root must stay inside the isolated context root")
+    if context.skill_root.is_symlink() or not skill_root.is_dir():
+        raise ValueError("MCP skill root must be an existing non-symlink directory")
+    for label, digest in (
+        ("launcher", context.identity.launcher_digest),
+        ("runtime", context.identity.runtime_digest),
+        ("identity", context.identity.identity_digest),
+        ("configuration", context.configuration_digest),
+        ("catalog manifest", context.catalog_manifest_digest),
+    ):
+        if not re.fullmatch(r"[0-9a-f]{64}", digest):
+            raise ValueError(f"MCP {label} digest must be lowercase SHA-256")
+    catalog_manifest = skill_root.parent / "catalog-manifest.json"
+    if catalog_manifest.is_symlink() or not catalog_manifest.is_file():
+        raise ValueError("MCP catalog manifest must stay beside the staged skill root")
+    try:
+        catalog_value = json.loads(catalog_manifest.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as error:
+        raise ValueError("MCP catalog manifest must be valid evaluator-owned JSON") from error
+    if (
+        not isinstance(catalog_value, dict)
+        or catalog_value.get("manifestDigest") != context.catalog_manifest_digest
+    ):
+        raise ValueError("MCP catalog manifest digest does not match its context")
+    registry = context.detection_registry.resolve()
+    if not registry.is_file() or skill_root not in registry.parents:
+        raise ValueError("MCP detection registry must stay inside the staged skill root")
+    audit_root = context.audit_root.resolve()
+    audit_log = context.audit_log.resolve()
+    if context.audit_root.is_symlink() or not audit_root.is_dir():
+        raise ValueError("MCP audit root must be an existing non-symlink directory")
+    if audit_log == audit_root or audit_root not in audit_log.parents:
+        raise ValueError("MCP audit log must stay beneath its runner-owned audit root")
+    if audit_root == workspace or workspace in audit_root.parents or audit_root in workspace.parents:
+        raise ValueError("MCP audit root must be disjoint from the product workspace")
+    if audit_log.exists() or audit_log.is_symlink():
+        raise ValueError("MCP audit log must be an unused non-symlink path")
+    evidence_directory = context.evidence_directory.resolve()
+    if (
+        context.evidence_directory.is_symlink()
+        or not evidence_directory.is_dir()
+        or audit_root not in evidence_directory.parents
+    ):
+        raise ValueError("MCP evidence directory must stay beneath its runner-owned audit root")
+    if stat.S_IMODE(evidence_directory.stat().st_mode) & 0o077:
+        raise ValueError("MCP evidence directory must be owner-only")
+    evidence_files = {
+        "configuration": context.configuration_evidence,
+        "catalog": context.catalog_evidence,
+    }
+    if context.authorization_evidence is not None:
+        evidence_files["authorization"] = context.authorization_evidence
+    for label, path in evidence_files.items():
+        resolved = path.resolve()
+        if (
+            path.is_symlink()
+            or not resolved.is_file()
+            or evidence_directory not in resolved.parents
+        ):
+            raise ValueError(f"MCP {label} evidence must stay beneath its evidence directory")
+        if stat.S_IMODE(resolved.stat().st_mode) & 0o077:
+            raise ValueError(f"MCP {label} evidence must be owner-only")
+    if hashlib.sha256(context.configuration_evidence.read_bytes()).hexdigest() != context.configuration_digest:
+        raise ValueError("MCP configuration evidence digest does not match its context")
+    if context.catalog_evidence.read_bytes() != catalog_manifest.read_bytes():
+        raise ValueError("MCP catalog evidence differs from the staged catalog manifest")
+    if context.authorization_evidence is None:
+        if context.authorization_digest is not None:
+            raise ValueError("MCP authorization digest requires authorization evidence")
+    elif (
+        context.authorization_digest is None
+        or hashlib.sha256(context.authorization_evidence.read_bytes()).hexdigest()
+        != context.authorization_digest
+    ):
+        raise ValueError("MCP authorization evidence digest does not match its context")
+    server_config = {
+        "command": str(context.identity.executable),
+        "args": [],
+        "env": {
+            "MCP_AGENT_OPS_SKILL_ROOTS": str(context.skill_root),
+            "MCP_AGENT_OPS_DETECTION_REGISTRY": str(context.detection_registry),
+            "MCP_AGENT_OPS_WORKSPACE_ROOTS": str(context.workspace_root),
+            "MCP_AGENT_OPS_AUDIT_LOG": str(context.audit_log),
+            "MCP_AGENT_OPS_AUDIT_ROOTS": str(context.audit_root),
+            "MCP_AGENT_OPS_AUDIT_SHARED": "true",
+            "MCP_AGENT_OPS_AUDIT_SESSION_ID": context.audit_session_id,
+            "MCP_AGENT_OPS_REQUIRED_RUNTIME_DIGEST": context.identity.runtime_digest,
+        },
+    }
+    expected_configuration = mcp_agent_ops_configuration_payload(
+        "junie" if context.config_location is not None else "codex",
+        server_config,
+        workspace_root=context.workspace_root,
+        evidence_root=context.audit_root,
+        host_home=context.host_home,
+    )
+    try:
+        recorded_configuration = json.loads(
+            context.configuration_evidence.read_text(encoding="utf-8")
+        )
+    except (OSError, UnicodeError, json.JSONDecodeError) as error:
+        raise ValueError("MCP configuration evidence must be valid evaluator-owned JSON") from error
+    if recorded_configuration != expected_configuration:
+        raise ValueError("MCP configuration evidence differs from the effective host configuration")
+    if context.config_location is not None:
+        location = context.config_location.resolve()
+        if (
+            context.config_location.is_symlink()
+            or not location.is_dir()
+            or location != evidence_directory / "junie"
+        ):
+            raise ValueError("Junie MCP configuration must stay in its runner-owned evidence directory")
+        if context.configuration_evidence.resolve() != location / "mcp.json":
+            raise ValueError("Junie MCP configuration location must contain the governed mcp.json")
+        if context.authorization_evidence is None:
+            raise ValueError("Junie MCP execution requires evaluator-owned authorization evidence")
+        try:
+            authorization = json.loads(
+                context.authorization_evidence.read_text(encoding="utf-8")
+            )
+        except (OSError, UnicodeError, json.JSONDecodeError) as error:
+            raise ValueError("Junie MCP authorization evidence must be valid JSON") from error
+        expected_authorization = junie_mcp_agent_ops_authorization_payload()
+        if authorization != expected_authorization:
+            raise ValueError("Junie MCP authorization evidence is not the narrow evaluator policy")
+    elif context.authorization_evidence is not None:
+        raise ValueError("Codex MCP execution must not use Junie authorization evidence")
+
+
+def _append_codex_mcp_configuration(
+    argv: list[str],
+    context: McpAgentOpsContext,
+) -> None:
+    """Append one complete strict Codex stdio MCP configuration through CLI overrides."""
+    prefix = f"mcp_servers.{context.server_name}"
+    values: tuple[tuple[str, object], ...] = (
+        ("approval_policy", _CODEX_NONINTERACTIVE_APPROVAL_POLICY),
+        ("default_permissions", _CODEX_EVAL_PERMISSION_PROFILE_NAME),
+        (
+            f"permissions.{_CODEX_EVAL_PERMISSION_PROFILE_NAME}",
+            _codex_eval_permission_profile_payload(
+                context.workspace_root,
+                context.audit_root,
+                context.host_home,
+            ),
+        ),
+        (f"{prefix}.enabled", True),
+        (f"{prefix}.required", True),
+        (f"{prefix}.enabled_tools", list(_CODEX_MCP_AGENT_OPS_ENABLED_TOOLS)),
+        (f"{prefix}.default_tools_approval_mode", "approve"),
+        (f"{prefix}.command", str(context.identity.executable)),
+        (f"{prefix}.args", []),
+        (f"{prefix}.startup_timeout_sec", _MCP_STARTUP_TIMEOUT_SECONDS),
+        (f"{prefix}.tool_timeout_sec", _MCP_TOOL_TIMEOUT_SECONDS),
+        (f"{prefix}.env.MCP_AGENT_OPS_SKILL_ROOTS", str(context.skill_root)),
+        (f"{prefix}.env.MCP_AGENT_OPS_DETECTION_REGISTRY", str(context.detection_registry)),
+        (f"{prefix}.env.MCP_AGENT_OPS_WORKSPACE_ROOTS", str(context.workspace_root)),
+        (f"{prefix}.env.MCP_AGENT_OPS_AUDIT_LOG", str(context.audit_log)),
+        (f"{prefix}.env.MCP_AGENT_OPS_AUDIT_ROOTS", str(context.audit_root)),
+        (f"{prefix}.env.MCP_AGENT_OPS_AUDIT_SHARED", "true"),
+        (f"{prefix}.env.MCP_AGENT_OPS_AUDIT_SESSION_ID", context.audit_session_id),
+        (
+            f"{prefix}.env.MCP_AGENT_OPS_REQUIRED_RUNTIME_DIGEST",
+            context.identity.runtime_digest,
+        ),
+    )
+    for key, value in values:
+        argv.extend(("-c", f"{key}={_toml_literal(value)}"))
+
+
+def _toml_literal(value: object) -> str:
+    """Serialize the small evaluator-owned value subset accepted by Codex CLI overrides."""
+
+    if isinstance(value, str):
+        return json.dumps(value)
+    if isinstance(value, bool):
+        return "true" if value else "false"
+    if isinstance(value, (int, float)) and not isinstance(value, bool):
+        return str(value)
+    if isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
+        return "[" + ", ".join(_toml_literal(item) for item in value) + "]"
+    if isinstance(value, Mapping):
+        entries = (
+            f"{json.dumps(str(key))} = {_toml_literal(item)}"
+            for key, item in value.items()
+        )
+        return "{" + ", ".join(entries) + "}"
+    raise ValueError("unsupported Codex CLI configuration value")
 
 
 def _delegation_prompt(agent_id: str, prompt: str) -> str:
