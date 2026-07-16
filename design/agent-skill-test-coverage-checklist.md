@@ -1,227 +1,254 @@
 # Agent, Skill, Technology, And Test Coverage Checklist
 
-This page is generated from the conceptual agent definitions, bundled skill frontmatter, setup-time technology detection registry, declared evaluation cases, and verified evidence receipts. Regenerate it with scripts/build-support-checklist.py.
+This page is generated from the live conceptual agent and skill inventories, all six evaluation catalogs, executable fixture checks, sandbox declarations, Judge calibration records, and classified evidence receipts. Regenerate it with scripts/build-support-checklist.py.
 
 ## Status Meaning
 
-- [x] Structural means the item exists in the catalog and is covered by repository validation or generation checks.
-- Declared means an evaluation case names the item. Declaration does not prove invocation or behavior.
-- Manual means a human-observed run exists without a complete machine-verifiable invocation and skill-read receipt.
-- [x] Verified behavior requires captured agent identity, concrete model, skill content digests, skill-read tool evidence, deterministic assertions, and an independent verdict.
-- [ ] Verified behavior means that proof is absent.
-- A passing structural check is not a substitute for a behavior evaluation.
+- Structural means the current agent or skill source exists and passes repository catalog checks.
+- Probe-declared and scenario-declared mean the current source has an explicit evaluation declaration. Declaration is not execution.
+- For agents, case-backed scenarios report exactly which declared scenarios have cases. Full fixture-backed status requires every declared scenario to be backed.
+- For skills, a positive case alone does not prove activation precision or causal skill contribution. Full probe coverage additionally requires a negative-activation case and executable target-present, target-omitted, and wrong-skill controls over frozen input.
+- Executable fixture means every case required for the corresponding full coverage claim has a project, task, and verification command.
+- A workflow pack may have partial case coverage without having an end-to-end fixture for every declared phase, agent, and handoff.
+- Judge calibration is calibrated only for a Model Judge rubric with a matching calibration record and passing metrics. Deterministic-Judge-only declarations show not-required.
+- Executed requires a structurally valid receipt classified by the evaluation runner.
+- Verified requires the runner's complete receipt validation, current digests, isolation evidence, required Judge verdicts, and attribution evidence.
+- Stale-by-digest means a prior execution no longer verifies against current agent, skill, model, or Judge calibration digests.
+- Catalog coverageStatus values never create executed or verified status.
 
 ## Summary
 
-- [x] 26 conceptual agent definitions generate through the supported native agent definition adapters.
-- [x] 87 bundled skills pass catalog and Agent Skill validation.
-- [x] 2 agents and 12 skills are named in current evaluation cases.
-- [ ] 0 agents and 0 skills have independently verified behavior evidence under the current proof contract.
-- TypeScript implementation, Java and Spring Boot implementation, SQL behavior, and TypeScript code review have useful manual observations that must be rerun with truthful receipts.
+- [x] 26 conceptual agents and 87 bundled skills have structural coverage.
+- [x] 26 agents are scenario-declared and 87 skills are probe-declared.
+- [x] 52 agent scenarios and 5 workflow packs are declared.
+- 5 workflow packs have associated cases; 5 are partial and 0 have end-to-end fixture coverage.
+- 7 cases are fixture-backed and 7 fixtures are structurally executable before harness readiness is considered.
+- 7 cases are runnable through the Codex fast path; 0 are runnable through Junie without an external-runner prerequisite.
+- 6 agents have at least one case-backed scenario; 6 are partial and 0 have all declared scenarios backed.
+- 17 skills have positive-case support, 0 have negative-activation cases, 0 have executable paired controls, and 0 satisfy the full probe contract.
+- 0 agents and 0 skills have executable full fixtures.
+- 0 agents and 0 skills have calibrated Model Judge status.
+- 26 agents and 66 skills have pending Model Judge status.
+- 0 agents and 21 skills use Deterministic Judges only and do not require Model Judge calibration.
+- 0 agents and 0 skills have classified executions.
+- 0 agents and 0 skills have verified evidence.
+- 0 agents and 0 skills have stale-by-digest evidence.
+- Positive-case-only skill evidence: 0 executed, 0 verified, and 0 stale; these do not promote full-probe status.
 
-## Harness Support
+## Evaluation Harness And Sandbox Support
 
-| Harness | Structural | Manual run | Verified behavior | Coverage |
+Evaluation execution support is limited to Codex and Junie. A declared sandbox profile reports its actual containment status; workspace isolation and tool configuration do not imply external containment.
+
+| Harness | Profile | Implementation | Workspace isolation | Containment status |
 | --- | --- | --- | --- | --- |
-| Generic Agent Skills | [x] | [ ] | [ ] | Installer behavior is unit-tested; no native agent definition format or captured behavior evidence. |
-| Codex | [x] | [x] | [ ] | Native generation and manual runs exist; current evidence lacks machine-verifiable load and invocation receipts. |
-| Claude Code | [x] | [ ] | [ ] | Skill installation and native agent definition generation are tested; no captured behavior evidence. |
-| Gemini CLI | [x] | [ ] | [ ] | Skill installation and native agent definition generation are tested; no captured behavior evidence. |
-| JetBrains Junie CLI | [x] | [ ] | [ ] | Skill installation and native agent definition generation are tested; no captured behavior evidence. |
-
-## Technology Detection Registry
-
-| Skill | Kind | Label | Capabilities | Declared cases | Verified behavior |
-| --- | --- | --- | --- | --- | --- |
-| agent-harness | domain | Agent harness | agent-harness-runtime | None | [ ] None |
-| api-routes | technology | Application route handlers | http-api | None | [ ] None |
-| clerk-auth | technology | Clerk identity integration | identity-provider | None | [ ] None |
-| electron-main | technology | Electron main process | desktop-main-runtime | None | [ ] None |
-| electron-preload | technology | Electron preload boundary | desktop-preload-boundary | None | [ ] None |
-| fastapi | technology | FastAPI | web-application-framework | None | [ ] None |
-| java | technology | Java | language-coding | spring-boot-order-cancellation | [ ] None |
-| java-design | technology | Java Design | language-design | None | [ ] None |
-| jest | technology | Jest | test-framework | None | [ ] None |
-| jhipster-domain-modeling | domain | JHipster Domain Modeling | domain-modeling | None | [ ] None |
-| jhipster-persistence | domain | JHipster Persistence | database-migrations | None | [ ] None |
-| jhipster-project | technology | JHipster Project | application-scaffolding | None | [ ] None |
-| jhipster-security | domain | JHipster Security | application-security | None | [ ] None |
-| jhipster-testing | domain | JHipster Testing | application-testing | None | [ ] None |
-| langgraph | technology | LangGraph | workflow-runtime | None | [ ] None |
-| liquibase | technology | Liquibase | database-migrations | None | [ ] None |
-| local-model-integration | domain | Local model integration | local-model-runtime | None | [ ] None |
-| nextjs-app-router | technology | Next.js App Router | web-application-framework | None | [ ] None |
-| node-cli | technology | Node command line application | command-line-runtime | None | [ ] None |
-| plan-engine | domain | Plan engine | planning-runtime | None | [ ] None |
-| playwright | technology | Playwright | end-to-end-framework | None | [ ] None |
-| postgres-drizzle | technology | PostgreSQL with Drizzle | persistence-framework | None | [ ] None |
-| python | technology | Python | language-coding | None | [ ] None |
-| react-server-components | technology | React Server Components | server-user-interface | None | [ ] None |
-| react-vite-renderer | technology | React renderer with Vite | client-user-interface | None | [ ] None |
-| spring-boot | technology | Spring Boot | application-framework | spring-boot-order-cancellation | [ ] None |
-| spring-boot-design | technology | Spring Boot Design | application-design | None | [ ] None |
-| spring-boot-testing | technology | Spring Boot Testing | application-testing | None | [ ] None |
-| spring-data-jpa | technology | Spring Data JPA | persistence-framework | None | [ ] None |
-| sql | technology | SQL | query-language | spring-boot-order-cancellation | [ ] None |
-| tailwind-design-system | technology | Tailwind design system | styling-system | None | [ ] None |
-| tool-runtime | domain | Tool runtime | tool-runtime | None | [ ] None |
-| typescript | technology | TypeScript | language-coding | typescript-order-pricing, typescript-code-review | [ ] None |
-| typescript-esm | technology | TypeScript ECMAScript modules | module-system | typescript-order-pricing, typescript-code-review | [ ] None |
-| typescript-strict | technology | Strict TypeScript | strict-type-system | typescript-order-pricing, typescript-code-review | [ ] None |
-| vitest | technology | Vitest | test-framework | None | [ ] None |
+| codex | codex-read-only | partial | native-policy-plus-copy-on-write-declared | containment-unverified |
+| codex | codex-workspace-write | partial | native-policy-plus-copy-on-write-declared | containment-unverified |
+| junie | junie-read-only | partial | external-runner-required | containment-unverified |
+| junie | junie-workspace-write | partial | external-runner-required | containment-unverified |
 
 ## Agent Checklist
 
-| Agent | Profile | Structural | Declared cases | Verified behavior | Verified evidence |
-| --- | --- | --- | --- | --- | --- |
-| dev-artifact-reviewer | advanced | [x] | None | [ ] | None |
-| dev-backlog-steward | default | [x] | None | [ ] | None |
-| dev-browser-operator | advanced | [x] | None | [ ] | None |
-| dev-code-reviewer | advanced | [x] | typescript-code-review | [ ] | None |
-| dev-coder | advanced | [x] | typescript-order-pricing, spring-boot-order-cancellation | [ ] | None |
-| dev-documentation-writer | default | [x] | None | [ ] | None |
-| dev-merge-coordinator | advanced | [x] | None | [ ] | None |
-| dev-orchestrator | advanced-long | [x] | None | [ ] | None |
-| dev-prompt-reviewer | advanced | [x] | None | [ ] | None |
-| dev-runtime-diagnostician | advanced | [x] | None | [ ] | None |
-| dev-security-reviewer | advanced | [x] | None | [ ] | None |
-| dev-ux-specialist | default | [x] | None | [ ] | None |
-| dev-verifier | advanced | [x] | None | [ ] | None |
-| methodology-artifact-reviewer | advanced | [x] | None | [ ] | None |
-| methodology-maintainer | advanced | [x] | None | [ ] | None |
-| project-bootstrapper | advanced-long | [x] | None | [ ] | None |
-| project-configurator | default | [x] | None | [ ] | None |
-| project-organiser | default | [x] | None | [ ] | None |
-| wiki-architect | advanced | [x] | None | [ ] | None |
-| wiki-artifact-reviewer | advanced | [x] | None | [ ] | None |
-| wiki-ingester | default | [x] | None | [ ] | None |
-| wiki-query-responder | default | [x] | None | [ ] | None |
-| wiki-researcher | default | [x] | None | [ ] | None |
-| wiki-source-collector | simple | [x] | None | [ ] | None |
-| wiki-topic-verifier | advanced | [x] | None | [ ] | None |
-| wiki-writer | default | [x] | None | [ ] | None |
+| Agent | Profile | Structural | Scenario-declared | Case-backed scenarios | All scenarios backed | Executable full fixture | Judge calibration | Executed | Verified | Stale-by-digest |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| dev-artifact-reviewer | advanced | [x] | [x] dev-artifact-reviewer-boundary, dev-artifact-reviewer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none |
+| dev-backlog-steward | default | [x] | [x] dev-backlog-steward-boundary, dev-backlog-steward-happy | [x] dev-backlog-steward-boundary | [ ] none | [ ] none | pending | none | none | none |
+| dev-browser-operator | advanced | [x] | [x] dev-browser-operator-boundary, dev-browser-operator-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none |
+| dev-code-reviewer | advanced | [x] | [x] dev-code-reviewer-boundary, dev-code-reviewer-happy | [x] dev-code-reviewer-happy | [ ] none | [ ] none | pending | none | none | none |
+| dev-coder | advanced | [x] | [x] dev-coder-boundary, dev-coder-happy | [x] dev-coder-happy | [ ] none | [ ] none | pending | none | none | none |
+| dev-documentation-writer | default | [x] | [x] dev-documentation-writer-boundary, dev-documentation-writer-happy | [x] dev-documentation-writer-happy | [ ] none | [ ] none | pending | none | none | none |
+| dev-merge-coordinator | advanced | [x] | [x] dev-merge-coordinator-boundary, dev-merge-coordinator-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none |
+| dev-orchestrator | advanced-long | [x] | [x] dev-orchestrator-boundary, dev-orchestrator-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none |
+| dev-prompt-reviewer | advanced | [x] | [x] dev-prompt-reviewer-boundary, dev-prompt-reviewer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none |
+| dev-runtime-diagnostician | advanced | [x] | [x] dev-runtime-diagnostician-boundary, dev-runtime-diagnostician-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none |
+| dev-security-reviewer | advanced | [x] | [x] dev-security-reviewer-boundary, dev-security-reviewer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none |
+| dev-ux-specialist | default | [x] | [x] dev-ux-specialist-boundary, dev-ux-specialist-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none |
+| dev-verifier | advanced | [x] | [x] dev-verifier-boundary, dev-verifier-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none |
+| methodology-artifact-reviewer | advanced | [x] | [x] methodology-artifact-reviewer-boundary, methodology-artifact-reviewer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none |
+| methodology-maintainer | advanced | [x] | [x] methodology-maintainer-boundary, methodology-maintainer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none |
+| project-bootstrapper | advanced-long | [x] | [x] project-bootstrapper-boundary, project-bootstrapper-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none |
+| project-configurator | default | [x] | [x] project-configurator-boundary, project-configurator-happy | [x] project-configurator-happy | [ ] none | [ ] none | pending | none | none | none |
+| project-organiser | default | [x] | [x] project-organiser-boundary, project-organiser-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none |
+| wiki-architect | advanced | [x] | [x] wiki-architect-boundary, wiki-architect-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none |
+| wiki-artifact-reviewer | advanced | [x] | [x] wiki-artifact-reviewer-boundary, wiki-artifact-reviewer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none |
+| wiki-ingester | default | [x] | [x] wiki-ingester-boundary, wiki-ingester-happy | [x] wiki-ingester-happy | [ ] none | [ ] none | pending | none | none | none |
+| wiki-query-responder | default | [x] | [x] wiki-query-responder-boundary, wiki-query-responder-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none |
+| wiki-researcher | default | [x] | [x] wiki-researcher-boundary, wiki-researcher-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none |
+| wiki-source-collector | simple | [x] | [x] wiki-source-collector-boundary, wiki-source-collector-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none |
+| wiki-topic-verifier | advanced | [x] | [x] wiki-topic-verifier-boundary, wiki-topic-verifier-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none |
+| wiki-writer | default | [x] | [x] wiki-writer-boundary, wiki-writer-happy | [ ] none | [ ] none | [ ] none | pending | none | none | none |
 
 ## Bundled Skill Checklist
 
 ### Wiki and knowledge skills
 
-- [x] code-project-wiki — structural; declared: none; verified behavior: [ ] none
-- [x] project-wiki — structural; declared: none; verified behavior: [ ] none
-- [x] project-wiki-create — structural; declared: none; verified behavior: [ ] none
-- [x] project-wiki-query — structural; declared: none; verified behavior: [ ] none
-- [x] project-wiki-research — structural; declared: none; verified behavior: [ ] none
-- [x] project-wiki-review — structural; declared: none; verified behavior: [ ] none
-- [x] project-wiki-topic-verify — structural; declared: none; verified behavior: [ ] none
-- [x] project-wiki-topic-write — structural; declared: none; verified behavior: [ ] none
+| Skill | Structural | Probe-declared | Positive case | Negative case | Paired controls | Full probe | Executable full fixture | Judge calibration | Executed | Verified | Stale-by-digest |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| code-project-wiki | [x] | [x] probe-code-project-wiki | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| project-wiki | [x] | [x] probe-project-wiki | [x] wiki-raw-ingest | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| project-wiki-create | [x] | [x] probe-project-wiki-create | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| project-wiki-query | [x] | [x] probe-project-wiki-query | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| project-wiki-research | [x] | [x] probe-project-wiki-research | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| project-wiki-review | [x] | [x] probe-project-wiki-review | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| project-wiki-topic-verify | [x] | [x] probe-project-wiki-topic-verify | [x] wiki-raw-ingest | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| project-wiki-topic-write | [x] | [x] probe-project-wiki-topic-write | [x] wiki-raw-ingest | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
 
 ### Documentation methodology skills
 
-- [x] agent-role-authoring — structural; declared: none; verified behavior: [ ] none
-- [x] create-project-configuration — structural; declared: none; verified behavior: [ ] none
-- [x] development-methodology — structural; declared: none; verified behavior: [ ] none
-- [x] documentation-bootstrap — structural; declared: none; verified behavior: [ ] none
-- [x] documentation-page-verify — structural; declared: none; verified behavior: [ ] none
-- [x] documentation-reverse-engineer — structural; declared: none; verified behavior: [ ] none
-- [x] maintain-methodology-documentation — structural; declared: none; verified behavior: [ ] none
-- [x] name-methodology-artifacts — structural; declared: none; verified behavior: [ ] none
-- [x] skill-authoring — structural; declared: none; verified behavior: [ ] none
+| Skill | Structural | Probe-declared | Positive case | Negative case | Paired controls | Full probe | Executable full fixture | Judge calibration | Executed | Verified | Stale-by-digest |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| agent-role-authoring | [x] | [x] probe-agent-role-authoring | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| create-project-configuration | [x] | [x] probe-create-project-configuration | [x] project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| development-methodology | [x] | [x] probe-development-methodology | [x] documentation-functional-spec, project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| documentation-bootstrap | [x] | [x] probe-documentation-bootstrap | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| documentation-page-verify | [x] | [x] probe-documentation-page-verify | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| documentation-reverse-engineer | [x] | [x] probe-documentation-reverse-engineer | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| maintain-methodology-documentation | [x] | [x] probe-maintain-methodology-documentation | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| name-methodology-artifacts | [x] | [x] probe-name-methodology-artifacts | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| skill-authoring | [x] | [x] probe-skill-authoring | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
 
 ### Artifact creation skills
 
-- [x] create-architecture — structural; declared: none; verified behavior: [ ] none
-- [x] create-functional-spec — structural; declared: none; verified behavior: [ ] none
-- [x] create-high-level-design — structural; declared: none; verified behavior: [ ] none
-- [x] create-module-design — structural; declared: none; verified behavior: [ ] none
-- [x] create-unit-test-plan — structural; declared: none; verified behavior: [ ] none
+| Skill | Structural | Probe-declared | Positive case | Negative case | Paired controls | Full probe | Executable full fixture | Judge calibration | Executed | Verified | Stale-by-digest |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| create-architecture | [x] | [x] probe-create-architecture | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| create-functional-spec | [x] | [x] probe-create-functional-spec | [x] documentation-functional-spec | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| create-high-level-design | [x] | [x] probe-create-high-level-design | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| create-module-design | [x] | [x] probe-create-module-design | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| create-unit-test-plan | [x] | [x] probe-create-unit-test-plan | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
 
 ### Artifact review skills
 
-- [x] review-architecture — structural; declared: none; verified behavior: [ ] none
-- [x] review-functional-spec — structural; declared: none; verified behavior: [ ] none
-- [x] review-high-level-design — structural; declared: none; verified behavior: [ ] none
-- [x] review-module-design — structural; declared: none; verified behavior: [ ] none
-- [x] review-structured-artifact — structural; declared: typescript-code-review; verified behavior: [ ] none
-- [x] review-unit-test-plan — structural; declared: none; verified behavior: [ ] none
+| Skill | Structural | Probe-declared | Positive case | Negative case | Paired controls | Full probe | Executable full fixture | Judge calibration | Executed | Verified | Stale-by-digest |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| review-architecture | [x] | [x] probe-review-architecture | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| review-functional-spec | [x] | [x] probe-review-functional-spec | [x] documentation-functional-spec | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| review-high-level-design | [x] | [x] probe-review-high-level-design | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| review-module-design | [x] | [x] probe-review-module-design | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| review-structured-artifact | [x] | [x] probe-review-structured-artifact | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| review-unit-test-plan | [x] | [x] probe-review-unit-test-plan | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
 
 ### Development practice skills
 
-- [x] agent-claim — structural; declared: typescript-order-pricing, spring-boot-order-cancellation; verified behavior: [ ] none
-- [x] agent-work-merge — structural; declared: none; verified behavior: [ ] none
-- [x] application-security — structural; declared: none; verified behavior: [ ] none
-- [x] ast-grep — structural; declared: none; verified behavior: [ ] none
-- [x] careful-coding — structural; declared: typescript-order-pricing, spring-boot-order-cancellation, typescript-code-review; verified behavior: [ ] none
-- [x] code-comments — structural; declared: typescript-order-pricing, spring-boot-order-cancellation, typescript-code-review; verified behavior: [ ] none
-- [x] code-discovery — structural; declared: none; verified behavior: [ ] none
-- [x] code-execution-tracing — structural; declared: none; verified behavior: [ ] none
-- [x] code-review-evidence — structural; declared: typescript-order-pricing, spring-boot-order-cancellation, typescript-code-review; verified behavior: [ ] none
-- [x] create-backlog — structural; declared: none; verified behavior: [ ] none
-- [x] detect-technology-skills — structural; declared: none; verified behavior: [ ] none
-- [x] end-to-end-verification — structural; declared: none; verified behavior: [ ] none
-- [x] fix-explanation — structural; declared: none; verified behavior: [ ] none
-- [x] manage-backlog — structural; declared: none; verified behavior: [ ] none
-- [x] organise-project-files — structural; declared: none; verified behavior: [ ] none
-- [x] prompt-contracts — structural; declared: none; verified behavior: [ ] none
-- [x] root-cause-analysis — structural; declared: none; verified behavior: [ ] none
-- [x] runtime-evidence-collection — structural; declared: none; verified behavior: [ ] none
-- [x] structured-design — structural; declared: none; verified behavior: [ ] none
-- [x] structured-explanation — structural; declared: none; verified behavior: [ ] none
-- [x] test-driven-development — structural; declared: typescript-order-pricing, spring-boot-order-cancellation; verified behavior: [ ] none
-- [x] test-strategy — structural; declared: none; verified behavior: [ ] none
-- [x] user-experience-review — structural; declared: none; verified behavior: [ ] none
+| Skill | Structural | Probe-declared | Positive case | Negative case | Paired controls | Full probe | Executable full fixture | Judge calibration | Executed | Verified | Stale-by-digest |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| agent-claim | [x] | [x] probe-agent-claim | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none |
+| agent-work-merge | [x] | [x] probe-agent-work-merge | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| application-security | [x] | [x] probe-application-security | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| ast-grep | [x] | [x] probe-ast-grep | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none |
+| careful-coding | [x] | [x] probe-careful-coding | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none |
+| code-comments | [x] | [x] probe-code-comments | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| code-discovery | [x] | [x] probe-code-discovery | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| code-execution-tracing | [x] | [x] probe-code-execution-tracing | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| code-review-evidence | [x] | [x] probe-code-review-evidence | [x] typescript-code-review | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| create-backlog | [x] | [x] probe-create-backlog | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none |
+| detect-technology-skills | [x] | [x] probe-detect-technology-skills | [x] project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none |
+| end-to-end-verification | [x] | [x] probe-end-to-end-verification | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| fix-explanation | [x] | [x] probe-fix-explanation | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| manage-backlog | [x] | [x] probe-manage-backlog | [x] backlog-lifecycle | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| organise-project-files | [x] | [x] probe-organise-project-files | [x] project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| prompt-contracts | [x] | [x] probe-prompt-contracts | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| root-cause-analysis | [x] | [x] probe-root-cause-analysis | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| runtime-evidence-collection | [x] | [x] probe-runtime-evidence-collection | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| structured-design | [x] | [x] probe-structured-design | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| structured-explanation | [x] | [x] probe-structured-explanation | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| test-driven-development | [x] | [x] probe-test-driven-development | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| test-strategy | [x] | [x] probe-test-strategy | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| user-experience-review | [x] | [x] probe-user-experience-review | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
 
 ### Stack and domain skills
 
-- [x] agent-harness — structural; declared: none; verified behavior: [ ] none
-- [x] api-routes — structural; declared: none; verified behavior: [ ] none
-- [x] clerk-auth — structural; declared: none; verified behavior: [ ] none
-- [x] electron-main — structural; declared: none; verified behavior: [ ] none
-- [x] electron-preload — structural; declared: none; verified behavior: [ ] none
-- [x] fastapi — structural; declared: none; verified behavior: [ ] none
-- [x] java — structural; declared: spring-boot-order-cancellation; verified behavior: [ ] none
-- [x] java-design — structural; declared: none; verified behavior: [ ] none
-- [x] jest — structural; declared: none; verified behavior: [ ] none
-- [x] jhipster-domain-modeling — structural; declared: none; verified behavior: [ ] none
-- [x] jhipster-persistence — structural; declared: none; verified behavior: [ ] none
-- [x] jhipster-project — structural; declared: none; verified behavior: [ ] none
-- [x] jhipster-security — structural; declared: none; verified behavior: [ ] none
-- [x] jhipster-testing — structural; declared: none; verified behavior: [ ] none
-- [x] langgraph — structural; declared: none; verified behavior: [ ] none
-- [x] liquibase — structural; declared: none; verified behavior: [ ] none
-- [x] local-model-integration — structural; declared: none; verified behavior: [ ] none
-- [x] nextjs-app-router — structural; declared: none; verified behavior: [ ] none
-- [x] node-cli — structural; declared: none; verified behavior: [ ] none
-- [x] plan-engine — structural; declared: none; verified behavior: [ ] none
-- [x] playwright — structural; declared: none; verified behavior: [ ] none
-- [x] postgres-drizzle — structural; declared: none; verified behavior: [ ] none
-- [x] python — structural; declared: none; verified behavior: [ ] none
-- [x] react-server-components — structural; declared: none; verified behavior: [ ] none
-- [x] react-vite-renderer — structural; declared: none; verified behavior: [ ] none
-- [x] spring-boot — structural; declared: spring-boot-order-cancellation; verified behavior: [ ] none
-- [x] spring-boot-design — structural; declared: none; verified behavior: [ ] none
-- [x] spring-boot-testing — structural; declared: none; verified behavior: [ ] none
-- [x] spring-data-jpa — structural; declared: none; verified behavior: [ ] none
-- [x] sql — structural; declared: spring-boot-order-cancellation; verified behavior: [ ] none
-- [x] tailwind-design-system — structural; declared: none; verified behavior: [ ] none
-- [x] tool-runtime — structural; declared: none; verified behavior: [ ] none
-- [x] typescript — structural; declared: typescript-order-pricing, typescript-code-review; verified behavior: [ ] none
-- [x] typescript-esm — structural; declared: typescript-order-pricing, typescript-code-review; verified behavior: [ ] none
-- [x] typescript-strict — structural; declared: typescript-order-pricing, typescript-code-review; verified behavior: [ ] none
-- [x] vitest — structural; declared: none; verified behavior: [ ] none
+| Skill | Structural | Probe-declared | Positive case | Negative case | Paired controls | Full probe | Executable full fixture | Judge calibration | Executed | Verified | Stale-by-digest |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| agent-harness | [x] | [x] probe-agent-harness | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none |
+| api-routes | [x] | [x] probe-api-routes | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none |
+| clerk-auth | [x] | [x] probe-clerk-auth | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none |
+| electron-main | [x] | [x] probe-electron-main | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none |
+| electron-preload | [x] | [x] probe-electron-preload | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none |
+| fastapi | [x] | [x] probe-fastapi | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none |
+| java | [x] | [x] probe-java | [x] spring-boot-order-cancellation | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none |
+| java-design | [x] | [x] probe-java-design | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| jest | [x] | [x] probe-jest | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none |
+| jhipster-domain-modeling | [x] | [x] probe-jhipster-domain-modeling | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none |
+| jhipster-persistence | [x] | [x] probe-jhipster-persistence | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none |
+| jhipster-project | [x] | [x] probe-jhipster-project | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none |
+| jhipster-security | [x] | [x] probe-jhipster-security | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none |
+| jhipster-testing | [x] | [x] probe-jhipster-testing | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none |
+| langgraph | [x] | [x] probe-langgraph | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none |
+| liquibase | [x] | [x] probe-liquibase | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none |
+| local-model-integration | [x] | [x] probe-local-model-integration | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none |
+| nextjs-app-router | [x] | [x] probe-nextjs-app-router | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| node-cli | [x] | [x] probe-node-cli | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| plan-engine | [x] | [x] probe-plan-engine | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| playwright | [x] | [x] probe-playwright | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| postgres-drizzle | [x] | [x] probe-postgres-drizzle | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| python | [x] | [x] probe-python | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| react-server-components | [x] | [x] probe-react-server-components | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| react-vite-renderer | [x] | [x] probe-react-vite-renderer | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| spring-boot | [x] | [x] probe-spring-boot | [x] spring-boot-order-cancellation | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| spring-boot-design | [x] | [x] probe-spring-boot-design | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| spring-boot-testing | [x] | [x] probe-spring-boot-testing | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| spring-data-jpa | [x] | [x] probe-spring-data-jpa | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| sql | [x] | [x] probe-sql | [x] spring-boot-order-cancellation | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| tailwind-design-system | [x] | [x] probe-tailwind-design-system | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| tool-runtime | [x] | [x] probe-tool-runtime | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| typescript | [x] | [x] probe-typescript | [x] typescript-code-review, typescript-order-pricing | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| typescript-esm | [x] | [x] probe-typescript-esm | [x] typescript-code-review, typescript-order-pricing | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| typescript-strict | [x] | [x] probe-typescript-strict | [x] typescript-code-review, typescript-order-pricing | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
+| vitest | [x] | [x] probe-vitest | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none |
 
-## Manual Evaluation Observations Requiring Receipt-Based Reruns
+## Technology Detection Registry
 
-- [ ] TypeScript order pricing produced eight passing tests and a build, but lacks a machine-verifiable agent and skill-read receipt.
-- [ ] Spring Boot order cancellation produced ten passing tests and useful boundary evidence, but lacks a machine-verifiable agent and skill-read receipt.
-- [ ] TypeScript code review truthfully found all seeded defects in a read-only run, but lacks a complete captured invocation and skill-read receipt.
-- [ ] Staged model execution remains unverified until separate evidence-extraction and synthesis invocations are captured.
+| Skill | Kind | Label | Probe-declared | Positive case | Full probe fixture | Executed | Verified | Stale-by-digest |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| agent-harness | domain | Agent harness | [x] | [ ] | [ ] | none | none | none |
+| api-routes | technology | Application route handlers | [x] | [ ] | [ ] | none | none | none |
+| clerk-auth | technology | Clerk identity integration | [x] | [ ] | [ ] | none | none | none |
+| electron-main | technology | Electron main process | [x] | [ ] | [ ] | none | none | none |
+| electron-preload | technology | Electron preload boundary | [x] | [ ] | [ ] | none | none | none |
+| fastapi | technology | FastAPI | [x] | [ ] | [ ] | none | none | none |
+| java | technology | Java | [x] | [x] | [ ] | none | none | none |
+| java-design | technology | Java Design | [x] | [ ] | [ ] | none | none | none |
+| jest | technology | Jest | [x] | [ ] | [ ] | none | none | none |
+| jhipster-domain-modeling | domain | JHipster Domain Modeling | [x] | [ ] | [ ] | none | none | none |
+| jhipster-persistence | domain | JHipster Persistence | [x] | [ ] | [ ] | none | none | none |
+| jhipster-project | technology | JHipster Project | [x] | [ ] | [ ] | none | none | none |
+| jhipster-security | domain | JHipster Security | [x] | [ ] | [ ] | none | none | none |
+| jhipster-testing | domain | JHipster Testing | [x] | [ ] | [ ] | none | none | none |
+| langgraph | technology | LangGraph | [x] | [ ] | [ ] | none | none | none |
+| liquibase | technology | Liquibase | [x] | [ ] | [ ] | none | none | none |
+| local-model-integration | domain | Local model integration | [x] | [ ] | [ ] | none | none | none |
+| nextjs-app-router | technology | Next.js App Router | [x] | [ ] | [ ] | none | none | none |
+| node-cli | technology | Node command line application | [x] | [ ] | [ ] | none | none | none |
+| plan-engine | domain | Plan engine | [x] | [ ] | [ ] | none | none | none |
+| playwright | technology | Playwright | [x] | [ ] | [ ] | none | none | none |
+| postgres-drizzle | technology | PostgreSQL with Drizzle | [x] | [ ] | [ ] | none | none | none |
+| python | technology | Python | [x] | [ ] | [ ] | none | none | none |
+| react-server-components | technology | React Server Components | [x] | [ ] | [ ] | none | none | none |
+| react-vite-renderer | technology | React renderer with Vite | [x] | [ ] | [ ] | none | none | none |
+| spring-boot | technology | Spring Boot | [x] | [x] | [ ] | none | none | none |
+| spring-boot-design | technology | Spring Boot Design | [x] | [ ] | [ ] | none | none | none |
+| spring-boot-testing | technology | Spring Boot Testing | [x] | [ ] | [ ] | none | none | none |
+| spring-data-jpa | technology | Spring Data JPA | [x] | [ ] | [ ] | none | none | none |
+| sql | technology | SQL | [x] | [x] | [ ] | none | none | none |
+| tailwind-design-system | technology | Tailwind design system | [x] | [ ] | [ ] | none | none | none |
+| tool-runtime | domain | Tool runtime | [x] | [ ] | [ ] | none | none | none |
+| typescript | technology | TypeScript | [x] | [x] | [ ] | none | none | none |
+| typescript-esm | technology | TypeScript ECMAScript modules | [x] | [x] | [ ] | none | none | none |
+| typescript-strict | technology | Strict TypeScript | [x] | [x] | [ ] | none | none | none |
+| vitest | technology | Vitest | [x] | [ ] | [ ] | none | none | none |
+
+## Judge Calibration
+
+- Calibration policy status: pending.
+- Calibrated Model Judge rubrics: none.
+- Pending Model Judge rubrics: artifact-contract, diagnosis-quality, review-quality, security-quality, source-faithfulness, ux-quality, workflow-quality.
+- Pending Model Judge calibration leaves only Model-Judge-dependent evidence unverified; deterministic-Judge-only cases may still verify.
 
 ## Repository Verification Layers
 
-- [x] Agent Skill format validation for every bundled skill.
-- [x] Conceptual agent definition schema, skill reference, model profile, and adapter completeness tests.
-- [x] Codex TOML plus Claude Code, Gemini CLI, and Junie CLI Markdown native agent definition generation checks.
-- [x] Generic, Codex, Gemini CLI, Claude Code, and Junie CLI installer behavior tests.
-- [x] Generated documentation and agent-skill hierarchy freshness checks.
-- [x] Explicit destination installation is covered for generic skills and all four native agent adapters.
-- [x] Evaluation fixture runner verifies expected project behavior, including intentionally failing review fixtures.
-- [ ] Agent and skill attribution remains unchecked until a valid evidence receipt is supplied.
+- [x] Every live skill has exactly one probe declaration.
+- [x] Every live conceptual agent has exactly one scenario declaration with at least one scenario.
+- [x] Evaluation catalog references, fixture paths, Judge plans, harnesses, workflow links, and sandbox profiles are validated.
+- [x] Codex and Junie are the only supported evaluation harnesses.
+- [x] Verified claims remain gated by the evaluation runner's receipt validation.
+- [x] Explorer data carries the same conservative coverage snapshot.

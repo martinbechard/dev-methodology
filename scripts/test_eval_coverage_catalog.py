@@ -4,7 +4,9 @@
 
 from __future__ import annotations
 
+import hashlib
 import importlib.util
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -15,6 +17,24 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT_PATH = ROOT / "scripts" / "build-support-checklist.py"
+
+
+class CanonicalCalibrationValidator:
+    """Accept only records whose governed fields match their canonical inputs."""
+
+    @staticmethod
+    def validate_calibration_record(
+        record: dict[str, object], expected: dict[str, object]
+    ) -> list[str]:
+        """Model the runner boundary without trusting catalog-owned metrics."""
+        errors = [
+            f"{name} mismatch"
+            for name, value in expected.items()
+            if record.get(name) != value
+        ]
+        if record.get("acceptedByCanonicalValidator") is not True:
+            errors.append("record was not canonically accepted")
+        return errors
 
 
 def load_module() -> ModuleType:
@@ -49,6 +69,35 @@ class EvalCoverageCatalogTests(unittest.TestCase):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(yaml.safe_dump(value, sort_keys=False), encoding="utf-8")
 
+    def read_yaml(self, relative_path: str) -> dict[str, object]:
+        """Read one temporary catalog for a focused mutation in a test."""
+        value = yaml.safe_load((self.root / relative_path).read_text(encoding="utf-8"))
+        if not isinstance(value, dict):
+            raise AssertionError(f"Expected a YAML mapping in {relative_path}")
+        return value
+
+    def calibration_record(
+        self, rubric: dict[str, object], *, accepted: bool = True
+    ) -> dict[str, object]:
+        """Build a digest-bound record for the fake canonical validator."""
+        return {
+            "rubricId": rubric["id"],
+            "status": "accepted",
+            "judgePromptSha256": "prompt-digest",
+            "judgeModelIdentity": "judge-model",
+            "reasoningProfile": "fixed-reasoning",
+            "rubricSha256": hashlib.sha256(
+                json.dumps(
+                    rubric,
+                    sort_keys=True,
+                    separators=(",", ":"),
+                    ensure_ascii=True,
+                ).encode("utf-8")
+            ).hexdigest(),
+            "calibrationSetSha256": "calibration-set-digest",
+            "acceptedByCanonicalValidator": accepted,
+        }
+
     def catalogs(
         self,
         *,
@@ -79,6 +128,11 @@ class EvalCoverageCatalogTests(unittest.TestCase):
                         "verify": {"argv": ["test-command"]},
                         "coverageStatus": "fixture-backed",
                         "harnesses": ["codex", "junie"],
+                        "harnessExecutionStatus": {
+                            "codex": "runnable",
+                            "junie": "external-runner-required",
+                        },
+                        "requiredSkills": list(probe_skills),
                         "agentScenarios": (
                             [executable_scenario] if executable_scenario else []
                         ),
@@ -134,7 +188,7 @@ class EvalCoverageCatalogTests(unittest.TestCase):
                         ),
                         "ablation": {
                             "omitTargetSkill": True,
-                            "wrongSkillControl": "skill-a",
+                            "wrongSkillControl": "control-skill",
                         },
                     }
                     for skill in probe_skills
@@ -222,7 +276,8 @@ class EvalCoverageCatalogTests(unittest.TestCase):
                             "junie": ["junie-write"],
                         },
                         "executableCases": ["case-a"],
-                        "coverageStatus": "fixture-backed",
+                        "caseCoverageStatus": "partial",
+                        "coverageStatus": "declared",
                     }
                 ],
             },
@@ -260,7 +315,10 @@ class EvalCoverageCatalogTests(unittest.TestCase):
                     "status": calibration_status,
                     "missingOrPendingResult": "unverified",
                     "humanScoredSet": {
-                        "minimumExamples": 20,
+                        "pilotMinimumExamples": 20,
+                        "minimumExamples": 25,
+                        "minimumExamplesPerClass": 5,
+                        "minimumCriticalDefects": 5,
                         "requiredClasses": ["clear-pass", "clear-fail"],
                         "ambiguousExamples": {
                             "independentHumanJudges": 2,
@@ -403,8 +461,11 @@ class EvalCoverageCatalogTests(unittest.TestCase):
 
         self.assertTrue(skill["structural"])
         self.assertTrue(skill["probeDeclared"])
-        self.assertTrue(skill["fixtureBacked"])
-        self.assertTrue(skill["executableFixture"])
+        self.assertTrue(skill["positiveCaseBacked"])
+        self.assertFalse(skill["negativeCaseBacked"])
+        self.assertFalse(skill["pairedControlsExecutable"])
+        self.assertFalse(skill["fixtureBacked"])
+        self.assertFalse(skill["executableFixture"])
         self.assertEqual("pending", skill["judgeCalibration"])
         self.assertEqual([], skill["executedCases"])
         self.assertEqual([], skill["verifiedCases"])
@@ -419,6 +480,13 @@ class EvalCoverageCatalogTests(unittest.TestCase):
             {"codex", "junie"},
             {profile["harness"] for profile in snapshot["sandboxProfiles"]},
         )
+        workflow = snapshot["workflows"]["workflow-a"]
+        self.assertTrue(workflow["caseBacked"])
+        self.assertEqual("partial", workflow["caseCoverageStatus"])
+        self.assertFalse(workflow["fixtureBacked"])
+        self.assertFalse(workflow["executableFixture"])
+        self.assertEqual(["case-a"], snapshot["runnableCasesByHarness"]["codex"])
+        self.assertEqual([], snapshot["runnableCasesByHarness"]["junie"])
         self.assertTrue(
             all(
                 profile["containmentStatus"] == "containment-unverified"
@@ -433,12 +501,22 @@ class EvalCoverageCatalogTests(unittest.TestCase):
                 "scenarioDeclaredAgentCount": 1,
                 "declaredScenarioCount": 1,
                 "workflowPackCount": 1,
+                "caseBackedWorkflowPackCount": 1,
+                "partialWorkflowPackCount": 1,
+                "endToEndFixtureBackedWorkflowPackCount": 0,
                 "fixtureBackedCaseCount": 1,
                 "executableCaseCount": 1,
+                "codexRunnableCaseCount": 1,
+                "junieRunnableCaseCount": 0,
+                "caseBackedAgentCount": 1,
+                "partialScenarioBackedAgentCount": 0,
                 "fixtureBackedAgentCount": 1,
-                "fixtureBackedSkillCount": 1,
+                "positiveCaseBackedSkillCount": 1,
+                "negativeCaseBackedSkillCount": 0,
+                "pairedControlsExecutableSkillCount": 0,
+                "fixtureBackedSkillCount": 0,
                 "executableFixtureAgentCount": 1,
-                "executableFixtureSkillCount": 1,
+                "executableFixtureSkillCount": 0,
                 "modelJudgeCalibratedAgentCount": 0,
                 "modelJudgeCalibratedSkillCount": 0,
                 "modelJudgePendingAgentCount": 1,
@@ -454,6 +532,9 @@ class EvalCoverageCatalogTests(unittest.TestCase):
                 "verifiedSkillCount": 0,
                 "staleByDigestAgentCount": 0,
                 "staleByDigestSkillCount": 0,
+                "positiveExecutedSkillCount": 0,
+                "positiveVerifiedSkillCount": 0,
+                "positiveStaleByDigestSkillCount": 0,
             },
             snapshot["evidenceStatus"],
         )
@@ -464,7 +545,102 @@ class EvalCoverageCatalogTests(unittest.TestCase):
 
         with self.assertRaisesRegex(
             ValueError,
-            r"calibrationPolicy status is calibrated but valid records are missing for: rubric-a",
+            r"calibrationPolicy status does not match canonical records: declared calibrated, derived pending",
+        ):
+            self.coverage()
+
+    def test_canonical_calibration_record_promotes_its_rubric(self) -> None:
+        """A canonical validator, not catalog metrics, controls calibration status."""
+        self.catalogs(calibration_status="calibrated")
+        judges = self.read_yaml("evals/judges.yaml")
+        rubric = judges["rubrics"][0]
+        judges["calibrationPolicy"]["records"] = [
+            self.calibration_record(rubric)
+        ]
+        self.write_yaml("evals/judges.yaml", judges)
+
+        snapshot = self.coverage(runner=CanonicalCalibrationValidator)
+
+        self.assertEqual("calibrated", snapshot["judgeStatus"]["calibrationStatus"])
+        self.assertEqual(["rubric-a"], snapshot["judgeStatus"]["calibratedRubrics"])
+        self.assertEqual([], snapshot["judgeStatus"]["pendingRubrics"])
+
+    def test_fabricated_calibration_record_cannot_promote_a_rubric(self) -> None:
+        """Matching status and digest-shaped text do not bypass canonical validation."""
+        self.catalogs(calibration_status="calibrated")
+        judges = self.read_yaml("evals/judges.yaml")
+        rubric = judges["rubrics"][0]
+        judges["calibrationPolicy"]["records"] = [
+            self.calibration_record(rubric, accepted=False)
+        ]
+        self.write_yaml("evals/judges.yaml", judges)
+
+        with self.assertRaisesRegex(
+            ValueError,
+            r"calibrationPolicy status does not match canonical records: declared calibrated, derived pending",
+        ):
+            self.coverage(runner=CanonicalCalibrationValidator)
+
+    def test_partial_calibration_loads_only_valid_per_rubric_records(self) -> None:
+        """One accepted rubric leaves other Model Judge rubrics explicitly pending."""
+        self.catalogs(calibration_status="partial")
+        judges = self.read_yaml("evals/judges.yaml")
+        first_rubric = judges["rubrics"][0]
+        judges["rubrics"].append(
+            {"id": "rubric-b", "dimensions": ["correctness"], "scale": [0, 1]}
+        )
+        judges["calibrationPolicy"]["records"] = [
+            self.calibration_record(first_rubric)
+        ]
+        self.write_yaml("evals/judges.yaml", judges)
+
+        snapshot = self.coverage(runner=CanonicalCalibrationValidator)
+
+        self.assertEqual("partial", snapshot["judgeStatus"]["calibrationStatus"])
+        self.assertEqual(["rubric-a"], snapshot["judgeStatus"]["calibratedRubrics"])
+        self.assertEqual(["rubric-b"], snapshot["judgeStatus"]["pendingRubrics"])
+
+    def test_partial_agent_case_coverage_is_not_full_fixture_coverage(self) -> None:
+        """Backing one of two scenarios cannot promote the whole agent."""
+        self.catalogs()
+        catalog = self.read_yaml("evals/agent-scenarios.yaml")
+        catalog["agents"][0]["scenarios"].append(
+            {
+                "id": "scenario-agent-a-boundary",
+                "kind": "boundary",
+                "fixtureProfile": "fixture-a",
+                "promptIntent": "refuse out-of-scope work",
+                "expectedOutcome": "BLOCKED",
+                "requiredBehaviors": ["behavior-a"],
+                "forbiddenBehaviors": ["behavior-b"],
+                "judgePlan": {
+                    "deterministicChecks": ["check-a"],
+                    "modelRubric": "rubric-a",
+                },
+                "executableCases": [],
+                "coverageStatus": "declared",
+            }
+        )
+        self.write_yaml("evals/agent-scenarios.yaml", catalog)
+
+        snapshot = self.coverage()
+        state = snapshot["agents"]["agent-a"]
+
+        self.assertTrue(state["caseBacked"])
+        self.assertTrue(state["partialScenarioCoverage"])
+        self.assertFalse(state["fixtureBacked"])
+        self.assertFalse(state["executableFixture"])
+
+    def test_wrong_skill_control_cannot_already_be_required_by_the_case(self) -> None:
+        """A wrong-skill control must be distinct from both target and base support skills."""
+        self.catalogs()
+        catalog = self.read_yaml("evals/cases.yaml")
+        catalog["cases"][0]["requiredSkills"].append("control-skill")
+        self.write_yaml("evals/cases.yaml", catalog)
+
+        with self.assertRaisesRegex(
+            ValueError,
+            r"wrongSkillControl control-skill is already required by evaluation case case-a",
         ):
             self.coverage()
 
@@ -510,13 +686,70 @@ class EvalCoverageCatalogTests(unittest.TestCase):
         snapshot = self.coverage(runner=StaleRunner)
 
         self.assertEqual(["case-a"], StaleRunner.calls)
-        self.assertEqual(["case-a"], snapshot["skills"]["skill-a"]["executedCases"])
+        self.assertEqual([], snapshot["skills"]["skill-a"]["executedCases"])
         self.assertEqual(
-            ["case-a"], snapshot["skills"]["skill-a"]["staleByDigestCases"]
+            ["case-a"], snapshot["skills"]["skill-a"]["positiveExecutedCases"]
+        )
+        self.assertEqual(
+            ["case-a"],
+            snapshot["skills"]["skill-a"]["positiveStaleByDigestCases"],
         )
         self.assertEqual([], snapshot["skills"]["skill-a"]["verifiedCases"])
         self.assertEqual(["case-a"], snapshot["agents"]["agent-a"]["executedCases"])
         self.assertEqual([], snapshot["agents"]["agent-a"]["verifiedCases"])
+
+    def test_receipt_does_not_credit_support_skills_as_target_probes(self) -> None:
+        """A case receipt attributes positive evidence only to explicit target probes."""
+        self.catalogs(probe_skills=("skill-a", "skill-support"))
+        self.write_yaml(
+            "evals/evidence/run-a.yaml",
+            {
+                "schema": "dev-methodology-eval-evidence",
+                "version": 2,
+                "case": "case-a",
+                "verdict": "verified",
+                "run": {"agentId": "agent-a", "harness": "codex"},
+                "skills": [
+                    {"id": "skill-a", "contentDigest": "current"},
+                    {"id": "skill-support", "contentDigest": "current"},
+                ],
+            },
+        )
+
+        class VerifiedClassification:
+            """Represents a valid positive-case execution from the runner."""
+
+            def as_dict(self) -> dict[str, object]:
+                """Expose the accepted receipt classification."""
+                return {
+                    "executed": True,
+                    "verified": True,
+                    "staleByDigest": False,
+                    "errors": [],
+                }
+
+        class VerifiedRunner:
+            """Returns one accepted positive-case classification."""
+
+            @staticmethod
+            def classify_evidence(
+                case: dict[str, object], path: Path
+            ) -> VerifiedClassification:
+                """Classify the synthetic receipt as accepted."""
+                return VerifiedClassification()
+
+        snapshot = self.coverage(
+            skills=("skill-a", "skill-support"), runner=VerifiedRunner
+        )
+
+        target = snapshot["skills"]["skill-a"]
+        support = snapshot["skills"]["skill-support"]
+        self.assertEqual(["case-a"], target["positiveExecutedCases"])
+        self.assertEqual(["case-a"], target["positiveVerifiedCases"])
+        self.assertEqual([], target["executedCases"])
+        self.assertEqual([], support["positiveExecutedCases"])
+        self.assertEqual([], support["positiveVerifiedCases"])
+        self.assertEqual([], support["executedCases"])
 
     def test_classifier_tuple_errors_are_not_dropped(self) -> None:
         """Runner validation errors remain blocking even when represented as tuples."""

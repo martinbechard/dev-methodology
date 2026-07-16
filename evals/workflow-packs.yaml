@@ -148,11 +148,13 @@ packs:
       - typescript-order-pricing
       - spring-boot-order-cancellation
       - typescript-code-review
-    coverageStatus: fixture-backed
+    caseCoverageStatus: partial
+    coverageStatus: declared
   - id: documentation-methodology
     agents:
       - dev-documentation-writer
       - dev-artifact-reviewer
+      - dev-verifier
       - methodology-maintainer
       - methodology-artifact-reviewer
     skillProbes:
@@ -199,6 +201,7 @@ packs:
       - id: deterministic-and-semantic-gates
         agents:
           - dev-artifact-reviewer
+          - dev-verifier
         requiredEvidence:
           - structure and link checks
           - calibrated semantic Judge only when exact checks cannot decide completeness
@@ -221,12 +224,16 @@ packs:
         - junie-workspace-write
     executableCases:
       - documentation-functional-spec
-    coverageStatus: fixture-backed
+    caseCoverageStatus: partial
+    coverageStatus: declared
   - id: project-setup
     agents:
       - project-bootstrapper
       - project-configurator
       - project-organiser
+      - dev-documentation-writer
+      - dev-merge-coordinator
+      - dev-verifier
     skillProbes:
       - probe-agent-claim
       - probe-create-project-configuration
@@ -250,12 +257,16 @@ packs:
       - id: document-and-review
         agents:
           - project-bootstrapper
+          - dev-documentation-writer
+          - dev-verifier
         requiredEvidence:
           - path ledger and complete coverage manifest for whole-project scope
           - independently reviewed setup and documentation artifacts
       - id: direct-or-integrated-closeout
         agents:
           - project-bootstrapper
+          - dev-merge-coordinator
+          - dev-verifier
         requiredEvidence:
           - direct commit for exactly one accepted contribution or integration for several
           - complete final verification, clean state, and released claims
@@ -276,7 +287,8 @@ packs:
         - junie-workspace-write
     executableCases:
       - project-configuration-routing
-    coverageStatus: fixture-backed
+    caseCoverageStatus: partial
+    coverageStatus: declared
   - id: wiki-lifecycle
     agents:
       - wiki-architect
@@ -346,7 +358,8 @@ packs:
         - junie-workspace-write
     executableCases:
       - wiki-raw-ingest
-    coverageStatus: fixture-backed
+    caseCoverageStatus: partial
+    coverageStatus: declared
   - id: backlog
     agents:
       - dev-backlog-steward
@@ -388,4 +401,5 @@ packs:
         - junie-workspace-write
     executableCases:
       - backlog-lifecycle
-    coverageStatus: fixture-backed
+    caseCoverageStatus: partial
+    coverageStatus: declared

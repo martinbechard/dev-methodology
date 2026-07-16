@@ -1077,7 +1077,7 @@ agents:
       - technology detection skillsets
       - nested AGENTS.md recommendations
       - runtime capability validation
-      - AGENTS.md and CLAUDE.md routing
+      - Codex and Junie AGENTS.md routing
       - validation evidence
     judgePlan:
       deterministicChecks:
@@ -1094,7 +1094,7 @@ agents:
         kind: happy-path
         fixtureProfile: project-setup-repository
         promptIntent: Create one root PROJECT.yaml and deterministic root and nested guidance for a mixed repository from representative folder evidence.
-        expectedOutcome: Source-backed folder loadouts, runtime availability, rejected candidates, NO_VARIANT results, mutation-policy validation, and matching AGENTS and Claude bridges.
+        expectedOutcome: Source-backed folder loadouts, runtime availability, rejected candidates, NO_VARIANT results, mutation-policy validation, and matching root and nested AGENTS.md guidance for Codex and Junie.
         requiredBehaviors:
           - Run setup-time technology detection once for representative scopes.
           - Preserve complete fixed and conditional definition-owned skill metadata.

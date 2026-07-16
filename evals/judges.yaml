@@ -201,7 +201,12 @@ rubrics:
     passRules:
       noAggregateCompensation: true
       minimumDimensionScore: 3
-      contradictionMaximum: 0
+      minimumDimensionScores:
+        contradiction: 4
+      criticalDimensions:
+        - completeness
+        - contradiction
+        - readiness
       criticalCompletenessRequired: true
       readinessMustBeConsistent: true
   - id: review-quality
@@ -282,7 +287,10 @@ calibrationPolicy:
   missingOrPendingResult: unverified
   scope: Model Judge verdicts only; Deterministic Judge-only cases remain eligible for verification.
   humanScoredSet:
-    minimumExamples: 20
+    pilotMinimumExamples: 20
+    minimumExamples: 25
+    minimumExamplesPerClass: 5
+    minimumCriticalDefects: 5
     requiredClasses:
       - clear-pass
       - clear-fail

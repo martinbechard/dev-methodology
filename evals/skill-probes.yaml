@@ -46,6 +46,7 @@ defaults:
     - skill-ablation
     - wrong-skill-negative-control
   controlValidation: Every wrongSkillControl must resolve to a bundled skill ID, differ from the target skill, and be irrelevant to the probe activation condition; catalog validation fails otherwise.
+  coverageSemantics: A linked executableCases entry is positive-case support only. Full probe coverage also requires an executable negative-activation case and paired target-present, target-omitted, and wrong-skill controls over frozen input.
   verifiedEvidenceRule: A declared probe or fixture link is not a verified run; verified evidence requires a valid receipt, captured identity and skill-read events, current digests, Judge results, and trusted provenance.
   modelJudgeRule: A Model Judge rubric may contribute only while a matching calibration record satisfies evals/judges.yaml.
   junieIdentityRule: A Junie result remains unverified unless captured subagent-start evidence identifies the intended custom agent.
@@ -945,7 +946,7 @@ probes:
     workflowAssociations: [documentation-methodology]
     executableCases: [documentation-functional-spec]
     coverageStatus: fixture-backed
-    ablation: {omitTargetSkill: true, wrongSkillControl: create-functional-spec}
+    ablation: {omitTargetSkill: true, wrongSkillControl: sql}
   - id: probe-review-high-level-design
     skill: review-high-level-design
     source: skills/review-high-level-design/SKILL.md

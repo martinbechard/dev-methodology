@@ -381,6 +381,8 @@ The project wiki should live at docs/wiki. It is a synthesized navigation and un
 
 The evals directory owns synthetic fixtures, complete agent and skill coverage declarations, workflow packs, Judge definitions, sandbox profiles, evidence receipts, and concise results. Evaluation support targets Codex and Junie. Other generated adapters remain part of the distributable bundle but are outside this evaluation harness.
 
+Operational commands and receipt requirements are documented in [evals/README.md](evals/README.md). The generated [agent and skill coverage checklist](design/agent-skill-test-coverage-checklist.md) reports declaration, fixture, calibration, execution, verification, and stale-evidence states separately.
+
 Evaluation coverage has four distinct layers:
 
 1. Structural checks validate every skill, conceptual agent definition, generated adapter, detection rule, and catalog reference.
@@ -393,6 +395,8 @@ Deterministic Judges run before semantic judgment and own executable checks, sch
 Fixtures are prepared once per content digest, dependency inputs, platform, architecture, and toolchain. Dependencies are installed only while populating that immutable prepared snapshot. Each run receives a disposable copy-on-write workspace when the platform supports it and a full disposable copy otherwise. Transient dependency, build, cache, and version-control trees do not participate in source hashing or source copying.
 
 Codex evaluation combines the runner-owned workspace boundary with the native read-only or workspace-write sandbox selected for the scenario. Junie evaluation uses isolated configuration, agent, skill, cache, and workspace locations, but its tool allow and deny lists are not treated as filesystem containment. Junie runs require captured evidence that the intended automatically selected subagent actually started. Every receipt reports external containment, workspace-only isolation, or unverified containment according to the evidence that the runner can prove.
+
+The prepared-snapshot cache, copy-on-write workspaces, transient-tree pruning, cleanup, and Codex native fast path are implemented. External containment and warm-worker pooling remain explicit follow-on components. Until a trusted external runner is available, live Junie execution is refused rather than being treated as sandboxed.
 
 Model-visible context is allow-listed and recorded before invocation. Evaluation-only references, expected findings, Judge prompts, and calibration answers remain outside the evaluated workspace. A receipt without captured harness identity, exact skill digests and reads, Judge evidence, command evidence, workspace hashes, and trusted provenance remains declared or executed evidence rather than verified behavior.
 
@@ -407,6 +411,7 @@ python3 scripts/build-technology-detection.py --check
 python3 scripts/build-skill-docs.py --check
 python3 scripts/build-agent-skill-hierarchy.py --check
 python3 scripts/build-support-checklist.py --check
+python3 scripts/run-agent-skill-evals.py --validate-catalogs
 python3 -m unittest discover scripts
 PYTHONPATH=skills/project-wiki/scripts python3 -m unittest discover skills/project-wiki/scripts
 ```

@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import importlib.util
 import json
 from collections.abc import Sequence
@@ -312,41 +313,45 @@ def _validate_judge_plan(
 def _valid_calibration_record(
     record: dict[str, object],
     rubric_id: str,
+    rubric: dict[str, object],
     required_digests: list[str],
-    thresholds: dict[str, object],
+    validator: object,
 ) -> bool:
     record_rubric = record.get("rubricId", record.get("rubric"))
     if record_rubric != rubric_id:
         return False
-    digests = record.get("digests")
-    if not isinstance(digests, dict):
+    expected = {
+        name: record.get(name)
+        for name in required_digests
+    }
+    expected["rubricSha256"] = hashlib.sha256(
+        json.dumps(
+            rubric,
+            sort_keys=True,
+            separators=(",", ":"),
+            ensure_ascii=True,
+        ).encode("utf-8")
+    ).hexdigest()
+    if any(
+        not isinstance(expected.get(name), str) or not expected[name]
+        for name in required_digests
+    ):
         return False
-    if any(not isinstance(digests.get(name), str) or not digests[name] for name in required_digests):
+    validate = getattr(validator, "validate_calibration_record", None)
+    if not callable(validate):
         return False
-    metrics = record.get("metrics")
-    if not isinstance(metrics, dict):
+    try:
+        errors = validate(record, expected)
+    except (TypeError, ValueError):
         return False
-    comparisons = (
-        (("binaryF1",), "binaryF1"),
-        (("weightedKappa", "orderedWeightedKappa"), "orderedWeightedKappa"),
-        (("criticalDefectRecall",), "criticalDefectRecall"),
-    )
-    for metric_names, threshold_name in comparisons:
-        metric = next(
-            (metrics[name] for name in metric_names if name in metrics), None
-        )
-        threshold = thresholds.get(threshold_name)
-        if not isinstance(metric, (int, float)) or not isinstance(
-            threshold, (int, float)
-        ):
-            return False
-        if float(metric) < float(threshold):
-            return False
-    return True
+    return isinstance(errors, Sequence) and not isinstance(
+        errors, (bytes, bytearray, str)
+    ) and not errors
 
 
 def _judge_catalog_status(
     catalog: dict[str, object],
+    validator: object | None,
 ) -> tuple[set[str], set[str], dict[str, str], dict[str, object]]:
     checks, checks_by_id = _unique_items(catalog.get("checks"), "judges checks")
     rubrics, rubrics_by_id = _unique_items(catalog.get("rubrics"), "judges rubrics")
@@ -359,8 +364,10 @@ def _judge_catalog_status(
         catalog.get("calibrationPolicy"), "judges calibrationPolicy"
     )
     status = policy.get("status")
-    if status not in {"pending", "calibrated"}:
-        raise ValueError("judges calibrationPolicy status must be pending or calibrated")
+    if status not in {"pending", "partial", "calibrated"}:
+        raise ValueError(
+            "judges calibrationPolicy status must be pending, partial, or calibrated"
+        )
     recorded_digests = _require_mapping(
         policy.get("recordedDigests"), "judges calibrationPolicy.recordedDigests"
     )
@@ -368,9 +375,7 @@ def _judge_catalog_status(
         recorded_digests.get("required"),
         "judges calibrationPolicy.recordedDigests.required",
     )
-    thresholds = _require_mapping(
-        policy.get("thresholds"), "judges calibrationPolicy.thresholds"
-    )
+    _require_mapping(policy.get("thresholds"), "judges calibrationPolicy.thresholds")
     records = [
         _require_mapping(item, "judges calibrationPolicy record")
         for item in _require_list(
@@ -378,24 +383,50 @@ def _judge_catalog_status(
         )
     ]
     rubric_status = {rubric_id: "pending" for rubric_id in rubrics_by_id}
-    if status == "calibrated":
-        for rubric_id in rubrics_by_id:
-            if any(
-                _valid_calibration_record(
-                    record, rubric_id, required_digests, thresholds
-                )
-                for record in records
-            ):
-                rubric_status[rubric_id] = "calibrated"
-        missing_records = sorted(
-            rubric_id
-            for rubric_id, state in rubric_status.items()
-            if state != "calibrated"
+    if records and validator is None:
+        raise ValueError(
+            "judges calibrationPolicy records require the canonical calibration validator"
         )
-        if missing_records:
+    for rubric_id in rubrics_by_id:
+        if any(
+            _valid_calibration_record(
+                record,
+                rubric_id,
+                rubrics_by_id[rubric_id],
+                required_digests,
+                validator,
+            )
+            for record in records
+        ):
+            rubric_status[rubric_id] = "calibrated"
+    calibrated_count = sum(
+        rubric_state == "calibrated" for rubric_state in rubric_status.values()
+    )
+    derived_status = (
+        "pending"
+        if calibrated_count == 0
+        else "calibrated"
+        if calibrated_count == len(rubric_status)
+        else "partial"
+    )
+    if status != derived_status:
+        raise ValueError(
+            "judges calibrationPolicy status does not match canonical records: "
+            f"declared {status}, derived {derived_status}"
+        )
+    if records:
+        unknown_record_rubrics = sorted(
+            {
+                str(record.get("rubricId", record.get("rubric")))
+                for record in records
+                if record.get("rubricId", record.get("rubric"))
+                not in rubrics_by_id
+            }
+        )
+        if unknown_record_rubrics:
             raise ValueError(
-                "judges calibrationPolicy status is calibrated but valid records are missing for: "
-                + ", ".join(missing_records)
+                "judges calibrationPolicy records reference unknown rubrics: "
+                + ", ".join(unknown_record_rubrics)
             )
     judge_status = {
         "calibrationStatus": str(status),
@@ -620,6 +651,11 @@ def _apply_evidence(
 ) -> None:
     evidence_root = root / "evals" / "evidence"
     evidence_paths = sorted(evidence_root.glob("*.yaml")) if evidence_root.is_dir() else []
+    probe_skill = {
+        probe_id: skill_id
+        for skill_id, state in coverage["skills"].items()
+        for probe_id in state["probeIds"]
+    }
     executed_runs = 0
     verified_runs = 0
     stale_runs = 0
@@ -650,8 +686,22 @@ def _apply_evidence(
                 raise ValueError(
                     f"Evaluation evidence references unknown skills {', '.join(unknown_skills)}: {path}"
                 )
+            case = cases_by_id[case_id]
+            extra_skills = sorted(
+                set(skill_ids)
+                - set(
+                    _string_list(
+                        case.get("requiredSkills", []),
+                        f"Evaluation case {case_id} requiredSkills",
+                    )
+                )
+            )
+            if extra_skills:
+                raise ValueError(
+                    f"Evaluation evidence references non-case skills {', '.join(extra_skills)}: {path}"
+                )
             classification = _classify_receipt(
-                active_runner, cases_by_id[case_id], path, receipt
+                active_runner, case, path, receipt
             )
             errors = [
                 str(error)
@@ -671,22 +721,36 @@ def _apply_evidence(
                 raise ValueError(
                     f"Evidence classifier marked stale receipt as verified: {path}"
                 )
-            target_states = [coverage["agents"][agent_id]]
-            target_states.extend(
-                coverage["skills"][skill_id] for skill_id in skill_ids
+            target_agent_state = coverage["agents"][agent_id]
+            target_probe_ids = _string_list(
+                case.get("fixtureBackedProbeClaims", []),
+                f"Evaluation case {case_id} fixtureBackedProbeClaims",
             )
+            target_skill_states = [
+                coverage["skills"][probe_skill[probe_id]]
+                for probe_id in target_probe_ids
+            ]
             if bool(classification["executed"]):
                 executed_runs += 1
-                for state in target_states:
-                    _append_case(state, "executedCases", case_id)
+                _append_case(target_agent_state, "executedCases", case_id)
+                for state in target_skill_states:
+                    _append_case(state, "positiveExecutedCases", case_id)
+                    if state["fixtureBacked"]:
+                        _append_case(state, "executedCases", case_id)
             if bool(classification["verified"]):
                 verified_runs += 1
-                for state in target_states:
-                    _append_case(state, "verifiedCases", case_id)
+                _append_case(target_agent_state, "verifiedCases", case_id)
+                for state in target_skill_states:
+                    _append_case(state, "positiveVerifiedCases", case_id)
+                    if state["fixtureBacked"]:
+                        _append_case(state, "verifiedCases", case_id)
             if stale:
                 stale_runs += 1
-                for state in target_states:
-                    _append_case(state, "staleByDigestCases", case_id)
+                _append_case(target_agent_state, "staleByDigestCases", case_id)
+                for state in target_skill_states:
+                    _append_case(state, "positiveStaleByDigestCases", case_id)
+                    if state["fixtureBacked"]:
+                        _append_case(state, "staleByDigestCases", case_id)
     evidence_status = coverage["evidenceStatus"]
     evidence_status.update(
         {
@@ -717,6 +781,18 @@ def _apply_evidence(
                 bool(state["staleByDigestCases"])
                 for state in coverage["skills"].values()
             ),
+            "positiveExecutedSkillCount": sum(
+                bool(state["positiveExecutedCases"])
+                for state in coverage["skills"].values()
+            ),
+            "positiveVerifiedSkillCount": sum(
+                bool(state["positiveVerifiedCases"])
+                for state in coverage["skills"].values()
+            ),
+            "positiveStaleByDigestSkillCount": sum(
+                bool(state["positiveStaleByDigestCases"])
+                for state in coverage["skills"].values()
+            ),
         }
     )
 
@@ -737,19 +813,55 @@ def build_evaluation_coverage(
         catalogs["cases"].get("supportedHarnesses"), "evals/cases.yaml"
     )
     executable_cases: set[str] = set()
+    runnable_cases_by_harness: dict[str, set[str]] = {
+        harness: set() for harness in _SUPPORTED_HARNESSES
+    }
+    harness_case_status_values = {
+        "runnable",
+        "external-runner-required",
+        "unavailable",
+    }
     for case in cases:
         case_id = _item_id(case, "evaluation case")
         _coverage_status(case, f"Evaluation case {case_id}")
         _validate_harnesses(case.get("harnesses"), f"Evaluation case {case_id}")
-        if _case_is_executable(root, case):
+        structurally_executable = _case_is_executable(root, case)
+        if structurally_executable:
             executable_cases.add(case_id)
         elif case.get("coverageStatus") == "fixture-backed":
             raise ValueError(
                 f"Fixture-backed evaluation case {case_id} is not executable"
             )
+        harness_status = _require_mapping(
+            case.get("harnessExecutionStatus"),
+            f"Evaluation case {case_id} harnessExecutionStatus",
+        )
+        if set(harness_status) != set(_SUPPORTED_HARNESSES):
+            raise ValueError(
+                f"Evaluation case {case_id} harnessExecutionStatus must define codex and junie"
+            )
+        for harness, status in harness_status.items():
+            if status not in harness_case_status_values:
+                raise ValueError(
+                    f"Evaluation case {case_id} has unsupported {harness} execution status {status}"
+                )
+            if status == "runnable" and structurally_executable:
+                runnable_cases_by_harness[str(harness)].add(case_id)
 
+    calibration_validator = eval_runner
+    calibration_policy = _require_mapping(
+        catalogs["judges"].get("calibrationPolicy"),
+        "judges calibrationPolicy",
+    )
+    calibration_records = calibration_policy.get("records")
+    if (
+        isinstance(calibration_records, list)
+        and calibration_records
+        and calibration_validator is None
+    ):
+        calibration_validator = load_eval_runner(root)
     checks, rubrics, rubric_status, judge_status = _judge_catalog_status(
-        catalogs["judges"]
+        catalogs["judges"], calibration_validator
     )
     sandbox_profiles, sandbox_profiles_by_id = _load_sandbox_profiles(
         catalogs["sandboxProfiles"]
@@ -807,10 +919,29 @@ def build_evaluation_coverage(
             f"Skill probe {probe_id} executableCases",
             cases_by_id,
         )
-        fixture_backed = status == "fixture-backed"
-        if fixture_backed != bool(case_refs):
+        catalog_fixture_backed = status == "fixture-backed"
+        if catalog_fixture_backed != bool(case_refs):
             raise ValueError(
                 f"Skill probe {probe_id} fixture-backed status must match executableCases"
+            )
+        ablation = _require_mapping(
+            probe.get("ablation"), f"Skill probe {probe_id} ablation"
+        )
+        if ablation.get("omitTargetSkill") is not True:
+            raise ValueError(
+                f"Skill probe {probe_id} must declare omitTargetSkill true"
+            )
+        wrong_skill = ablation.get("wrongSkillControl")
+        if (
+            not isinstance(wrong_skill, str)
+            or ((root / "skills").is_dir() and wrong_skill not in skills)
+        ):
+            raise ValueError(
+                f"Skill probe {probe_id} wrongSkillControl must reference a bundled skill"
+            )
+        if wrong_skill == skill_id:
+            raise ValueError(
+                f"Skill probe {probe_id} wrongSkillControl must differ from its target skill"
             )
         rubric = _validate_judge_plan(
             probe.get("judgePlan"), f"Skill probe {probe_id}", checks, rubrics
@@ -820,10 +951,15 @@ def build_evaluation_coverage(
             "probeDeclared": True,
             "probeIds": [probe_id],
             "evaluationCategory": str(evaluation_category),
-            "fixtureBacked": fixture_backed,
+            "catalogFixtureBacked": catalog_fixture_backed,
+            "positiveCaseBacked": False,
+            "positiveCaseBackedCases": [],
+            "negativeCaseBacked": False,
+            "negativeCaseBackedCases": [],
+            "pairedControlsExecutable": False,
+            "fixtureBacked": False,
             "fixtureBackedCases": [],
-            "executableFixture": bool(case_refs)
-            and all(case_id in executable_cases for case_id in case_refs),
+            "executableFixture": False,
             "executableCases": case_refs,
             "judgeCalibration": _calibration_for_rubrics(
                 [rubric], rubric_status
@@ -847,6 +983,9 @@ def build_evaluation_coverage(
             "executedCases": [],
             "verifiedCases": [],
             "staleByDigestCases": [],
+            "positiveExecutedCases": [],
+            "positiveVerifiedCases": [],
+            "positiveStaleByDigestCases": [],
         }
     _validate_declared_inventory(
         set(skills),
@@ -888,7 +1027,8 @@ def build_evaluation_coverage(
         if not scenarios:
             raise ValueError(f"Agent {agent_id} requires at least one scenario")
         case_refs: set[str] = set()
-        fixture_backed = False
+        scenario_coverage: dict[str, dict[str, object]] = {}
+        case_backed_scenarios: set[str] = set()
         for scenario in scenarios:
             scenario_id = _item_id(scenario, f"Agent {agent_id} scenario")
             if scenario_id in scenario_by_id:
@@ -908,8 +1048,15 @@ def build_evaluation_coverage(
                 raise ValueError(
                     f"Agent scenario {scenario_id} fixture-backed status must match executableCases"
                 )
-            fixture_backed = fixture_backed or scenario_fixture_backed
+            if scenario_fixture_backed:
+                case_backed_scenarios.add(scenario_id)
             case_refs.update(scenario_cases)
+            scenario_coverage[scenario_id] = {
+                "caseBacked": scenario_fixture_backed,
+                "executableFixture": scenario_fixture_backed
+                and all(case_id in executable_cases for case_id in scenario_cases),
+                "executableCases": scenario_cases,
+            }
             agent_rubrics.append(
                 _validate_judge_plan(
                     scenario.get("judgePlan"),
@@ -918,15 +1065,24 @@ def build_evaluation_coverage(
                     rubrics,
                 )
             )
+        all_scenarios_backed = len(case_backed_scenarios) == len(scenarios)
+        some_scenarios_backed = bool(case_backed_scenarios)
         agent_state[agent_id] = {
             "structural": True,
             "scenarioDeclared": True,
             "scenarioIds": sorted(scenario_items),
-            "fixtureBacked": fixture_backed,
-            "fixtureBackedCases": sorted(case_refs) if fixture_backed else [],
-            "executableFixture": bool(case_refs)
+            "caseBacked": some_scenarios_backed,
+            "caseBackedScenarioIds": sorted(case_backed_scenarios),
+            "caseBackedCases": sorted(case_refs),
+            "partialScenarioCoverage": some_scenarios_backed
+            and not all_scenarios_backed,
+            "fixtureBacked": all_scenarios_backed,
+            "fixtureBackedCases": sorted(case_refs) if all_scenarios_backed else [],
+            "executableFixture": all_scenarios_backed
+            and bool(case_refs)
             and all(case_id in executable_cases for case_id in case_refs),
             "executableCases": sorted(case_refs),
+            "scenarioCoverage": scenario_coverage,
             "judgeCalibration": _calibration_for_rubrics(
                 agent_rubrics, rubric_status
             ),
@@ -961,10 +1117,19 @@ def build_evaluation_coverage(
             f"Workflow pack {pack_id} executableCases",
             cases_by_id,
         )
-        pack_fixture_backed = pack_status == "fixture-backed"
-        if pack_fixture_backed != bool(pack_case_refs):
+        case_coverage_status = pack.get("caseCoverageStatus", "none")
+        if case_coverage_status not in {"none", "partial", "complete"}:
             raise ValueError(
-                f"Workflow pack {pack_id} fixture-backed status must match executableCases"
+                f"Workflow pack {pack_id} caseCoverageStatus must be none, partial, or complete"
+            )
+        if bool(pack_case_refs) != (case_coverage_status != "none"):
+            raise ValueError(
+                f"Workflow pack {pack_id} caseCoverageStatus must match its associated executableCases"
+            )
+        pack_fixture_backed = pack_status == "fixture-backed"
+        if pack_fixture_backed != (case_coverage_status == "complete"):
+            raise ValueError(
+                f"Workflow pack {pack_id} fixture-backed status requires complete end-to-end case coverage"
             )
         pack_agents = _string_list(
             pack.get("agents"), f"Workflow pack {pack_id} agents"
@@ -1024,9 +1189,13 @@ def build_evaluation_coverage(
         workflow_state[pack_id] = {
             "agents": sorted(set(pack_agents)),
             "skillProbes": sorted(set(pack_probes)),
+            "caseBacked": bool(pack_case_refs),
+            "caseCoverageStatus": str(case_coverage_status),
+            "caseBackedCases": pack_case_refs,
             "fixtureBacked": pack_fixture_backed,
             "fixtureBackedCases": pack_case_refs if pack_fixture_backed else [],
-            "executableFixture": bool(pack_case_refs)
+            "executableFixture": pack_fixture_backed
+            and bool(pack_case_refs)
             and all(case_id in executable_cases for case_id in pack_case_refs),
             "executableCases": pack_case_refs,
             "judgeCalibration": _calibration_for_rubrics(
@@ -1063,6 +1232,12 @@ def build_evaluation_coverage(
 
     for case in cases:
         case_id = _item_id(case, "evaluation case")
+        required_case_skills = set(
+            _string_list(
+                case.get("requiredSkills", []),
+                f"Evaluation case {case_id} requiredSkills",
+            )
+        )
         case_probe_ids = set(
             _string_list(
                 case.get("skillProbes"),
@@ -1138,15 +1313,24 @@ def build_evaluation_coverage(
                 raise ValueError(
                     f"Evaluation case {case_id} and skill probe {probe_id} disagree on fixture association"
                 )
-            if not probe_state[str(probes_by_id[probe_id]["skill"])][
-                "fixtureBacked"
+            probe = probes_by_id[probe_id]
+            target_skill_id = str(probe["skill"])
+            if not probe_state[target_skill_id][
+                "catalogFixtureBacked"
             ]:
                 raise ValueError(
                     f"Evaluation case {case_id} claims declared-only skill probe {probe_id} as fixture-backed"
                 )
+            wrong_skill = _require_mapping(
+                probe.get("ablation"), f"Skill probe {probe_id} ablation"
+            ).get("wrongSkillControl")
+            if wrong_skill in required_case_skills:
+                raise ValueError(
+                    f"Skill probe {probe_id} wrongSkillControl {wrong_skill} is already required by evaluation case {case_id}"
+                )
             _append_case(
-                probe_state[str(probes_by_id[probe_id]["skill"])],
-                "fixtureBackedCases",
+                probe_state[target_skill_id],
+                "positiveCaseBackedCases",
                 case_id,
             )
         for probe_id, probe in probes_by_id.items():
@@ -1163,13 +1347,36 @@ def build_evaluation_coverage(
                 )
 
     for skill_id, state in probe_state.items():
-        if bool(state["fixtureBacked"]) != bool(state["fixtureBackedCases"]):
+        if bool(state["catalogFixtureBacked"]) != bool(
+            state["positiveCaseBackedCases"]
+        ):
             raise ValueError(
                 f"Skill probe for {skill_id} fixture-backed status must match fixtureBackedProbeClaims"
             )
+        state["positiveCaseBacked"] = bool(state["positiveCaseBackedCases"])
+        state["fixtureBacked"] = bool(
+            state["positiveCaseBacked"]
+            and state["negativeCaseBacked"]
+            and state["pairedControlsExecutable"]
+        )
+        state["fixtureBackedCases"] = (
+            sorted(
+                set(state["positiveCaseBackedCases"])
+                | set(state["negativeCaseBackedCases"])
+            )
+            if state["fixtureBacked"]
+            else []
+        )
+        state["executableFixture"] = bool(state["fixtureBackedCases"]) and all(
+            case_id in executable_cases for case_id in state["fixtureBackedCases"]
+        )
 
     coverage: dict[str, object] = {
         "harnesses": list(_SUPPORTED_HARNESSES),
+        "runnableCasesByHarness": {
+            harness: sorted(case_ids)
+            for harness, case_ids in runnable_cases_by_harness.items()
+        },
         "cases": cases_by_id,
         "skills": probe_state,
         "agents": agent_state,
@@ -1185,12 +1392,43 @@ def build_evaluation_coverage(
                 len(state["scenarioIds"]) for state in agent_state.values()
             ),
             "workflowPackCount": len(workflow_state),
+            "caseBackedWorkflowPackCount": sum(
+                bool(state["caseBacked"]) for state in workflow_state.values()
+            ),
+            "partialWorkflowPackCount": sum(
+                state["caseCoverageStatus"] == "partial"
+                for state in workflow_state.values()
+            ),
+            "endToEndFixtureBackedWorkflowPackCount": sum(
+                bool(state["fixtureBacked"]) for state in workflow_state.values()
+            ),
             "fixtureBackedCaseCount": sum(
                 case.get("coverageStatus") == "fixture-backed" for case in cases
             ),
             "executableCaseCount": len(executable_cases),
+            "codexRunnableCaseCount": len(runnable_cases_by_harness["codex"]),
+            "junieRunnableCaseCount": len(runnable_cases_by_harness["junie"]),
+            "caseBackedAgentCount": sum(
+                bool(state["caseBacked"]) for state in agent_state.values()
+            ),
+            "partialScenarioBackedAgentCount": sum(
+                bool(state["partialScenarioCoverage"])
+                for state in agent_state.values()
+            ),
             "fixtureBackedAgentCount": sum(
                 bool(state["fixtureBacked"]) for state in agent_state.values()
+            ),
+            "positiveCaseBackedSkillCount": sum(
+                bool(state["positiveCaseBacked"])
+                for state in probe_state.values()
+            ),
+            "negativeCaseBackedSkillCount": sum(
+                bool(state["negativeCaseBacked"])
+                for state in probe_state.values()
+            ),
+            "pairedControlsExecutableSkillCount": sum(
+                bool(state["pairedControlsExecutable"])
+                for state in probe_state.values()
             ),
             "fixtureBackedSkillCount": sum(
                 bool(state["fixtureBacked"]) for state in probe_state.values()
@@ -1286,7 +1524,10 @@ def render(
         "",
         "- Structural means the current agent or skill source exists and passes repository catalog checks.",
         "- Probe-declared and scenario-declared mean the current source has an explicit evaluation declaration. Declaration is not execution.",
-        "- Fixture-backed means the declaration references an evaluation case. Executable fixture additionally requires the project, task, and verification command to exist.",
+        "- For agents, case-backed scenarios report exactly which declared scenarios have cases. Full fixture-backed status requires every declared scenario to be backed.",
+        "- For skills, a positive case alone does not prove activation precision or causal skill contribution. Full probe coverage additionally requires a negative-activation case and executable target-present, target-omitted, and wrong-skill controls over frozen input.",
+        "- Executable fixture means every case required for the corresponding full coverage claim has a project, task, and verification command.",
+        "- A workflow pack may have partial case coverage without having an end-to-end fixture for every declared phase, agent, and handoff.",
         "- Judge calibration is calibrated only for a Model Judge rubric with a matching calibration record and passing metrics. Deterministic-Judge-only declarations show not-required.",
         "- Executed requires a structurally valid receipt classified by the evaluation runner.",
         "- Verified requires the runner's complete receipt validation, current digests, isolation evidence, required Judge verdicts, and attribution evidence.",
@@ -1298,15 +1539,19 @@ def render(
         f"- [x] {evidence['structuralAgentCount']} conceptual agents and {evidence['structuralSkillCount']} bundled skills have structural coverage.",
         f"- [x] {evidence['scenarioDeclaredAgentCount']} agents are scenario-declared and {evidence['probeDeclaredSkillCount']} skills are probe-declared.",
         f"- [x] {evidence['declaredScenarioCount']} agent scenarios and {evidence['workflowPackCount']} workflow packs are declared.",
-        f"- {evidence['fixtureBackedCaseCount']} cases are fixture-backed and {evidence['executableCaseCount']} cases are executable.",
-        f"- {evidence['fixtureBackedAgentCount']} agents and {evidence['fixtureBackedSkillCount']} skills are fixture-backed.",
-        f"- {evidence['executableFixtureAgentCount']} agents and {evidence['executableFixtureSkillCount']} skills have executable fixtures.",
+        f"- {evidence['caseBackedWorkflowPackCount']} workflow packs have associated cases; {evidence['partialWorkflowPackCount']} are partial and {evidence['endToEndFixtureBackedWorkflowPackCount']} have end-to-end fixture coverage.",
+        f"- {evidence['fixtureBackedCaseCount']} cases are fixture-backed and {evidence['executableCaseCount']} fixtures are structurally executable before harness readiness is considered.",
+        f"- {evidence['codexRunnableCaseCount']} cases are runnable through the Codex fast path; {evidence['junieRunnableCaseCount']} are runnable through Junie without an external-runner prerequisite.",
+        f"- {evidence['caseBackedAgentCount']} agents have at least one case-backed scenario; {evidence['partialScenarioBackedAgentCount']} are partial and {evidence['fixtureBackedAgentCount']} have all declared scenarios backed.",
+        f"- {evidence['positiveCaseBackedSkillCount']} skills have positive-case support, {evidence['negativeCaseBackedSkillCount']} have negative-activation cases, {evidence['pairedControlsExecutableSkillCount']} have executable paired controls, and {evidence['fixtureBackedSkillCount']} satisfy the full probe contract.",
+        f"- {evidence['executableFixtureAgentCount']} agents and {evidence['executableFixtureSkillCount']} skills have executable full fixtures.",
         f"- {evidence['modelJudgeCalibratedAgentCount']} agents and {evidence['modelJudgeCalibratedSkillCount']} skills have calibrated Model Judge status.",
         f"- {evidence['modelJudgePendingAgentCount']} agents and {evidence['modelJudgePendingSkillCount']} skills have pending Model Judge status.",
         f"- {evidence['modelJudgeNotRequiredAgentCount']} agents and {evidence['modelJudgeNotRequiredSkillCount']} skills use Deterministic Judges only and do not require Model Judge calibration.",
         f"- {evidence['executedAgentCount']} agents and {evidence['executedSkillCount']} skills have classified executions.",
         f"- {evidence['verifiedAgentCount']} agents and {evidence['verifiedSkillCount']} skills have verified evidence.",
         f"- {evidence['staleByDigestAgentCount']} agents and {evidence['staleByDigestSkillCount']} skills have stale-by-digest evidence.",
+        f"- Positive-case-only skill evidence: {evidence['positiveExecutedSkillCount']} executed, {evidence['positiveVerifiedSkillCount']} verified, and {evidence['positiveStaleByDigestSkillCount']} stale; these do not promote full-probe status.",
         "",
         "## Evaluation Harness And Sandbox Support",
         "",
@@ -1326,8 +1571,8 @@ def render(
             "",
             "## Agent Checklist",
             "",
-            "| Agent | Profile | Structural | Scenario-declared | Fixture-backed | Executable fixture | Judge calibration | Executed | Verified | Stale-by-digest |",
-            "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+            "| Agent | Profile | Structural | Scenario-declared | Case-backed scenarios | All scenarios backed | Executable full fixture | Judge calibration | Executed | Verified | Stale-by-digest |",
+            "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
         ]
     )
     for name, role in sorted(active_roles.items()):
@@ -1335,8 +1580,9 @@ def render(
         lines.append(
             f"| {name} | {role['modelProfile']} | {checkbox(state['structural'])} | "
             f"{checkbox(state['scenarioDeclared'])} {_case_list(state['scenarioIds'])} | "
+            f"{checkbox(state['caseBacked'])} {_case_list(state['caseBackedScenarioIds'])} | "
             f"{checkbox(state['fixtureBacked'])} {_case_list(state['fixtureBackedCases'])} | {checkbox(state['executableFixture'])} "
-            f"{_case_list(state['executableCases'])} | {state['judgeCalibration']} | "
+            f"{_case_list(state['fixtureBackedCases'])} | {state['judgeCalibration']} | "
             f"{_case_list(state['executedCases'])} | {_case_list(state['verifiedCases'])} | "
             f"{_case_list(state['staleByDigestCases'])} |"
         )
@@ -1348,8 +1594,8 @@ def render(
         lines.extend([f"### {category_labels[category_id]}", ""])
         lines.extend(
             [
-                "| Skill | Structural | Probe-declared | Fixture-backed | Executable fixture | Judge calibration | Executed | Verified | Stale-by-digest |",
-                "| --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+                "| Skill | Structural | Probe-declared | Positive case | Negative case | Paired controls | Full probe | Executable full fixture | Judge calibration | Executed | Verified | Stale-by-digest |",
+                "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
             ]
         )
         for name in sorted(
@@ -1359,8 +1605,11 @@ def render(
             lines.append(
                 f"| {name} | {checkbox(state['structural'])} | "
                 f"{checkbox(state['probeDeclared'])} {_case_list(state['probeIds'])} | "
+                f"{checkbox(state['positiveCaseBacked'])} {_case_list(state['positiveCaseBackedCases'])} | "
+                f"{checkbox(state['negativeCaseBacked'])} {_case_list(state['negativeCaseBackedCases'])} | "
+                f"{checkbox(state['pairedControlsExecutable'])} | "
                 f"{checkbox(state['fixtureBacked'])} {_case_list(state['fixtureBackedCases'])} | {checkbox(state['executableFixture'])} "
-                f"{_case_list(state['executableCases'])} | {state['judgeCalibration']} | "
+                f"{_case_list(state['fixtureBackedCases'])} | {state['judgeCalibration']} | "
                 f"{_case_list(state['executedCases'])} | {_case_list(state['verifiedCases'])} | "
                 f"{_case_list(state['staleByDigestCases'])} |"
             )
@@ -1370,8 +1619,8 @@ def render(
         [
             "## Technology Detection Registry",
             "",
-            "| Skill | Kind | Label | Probe-declared | Executable fixture | Executed | Verified | Stale-by-digest |",
-            "| --- | --- | --- | --- | --- | --- | --- | --- |",
+            "| Skill | Kind | Label | Probe-declared | Positive case | Full probe fixture | Executed | Verified | Stale-by-digest |",
+            "| --- | --- | --- | --- | --- | --- | --- | --- | --- |",
         ]
     )
     for entry in _require_list(registry["skills"], "technology registry skills"):
@@ -1380,7 +1629,7 @@ def render(
         state = active_coverage["skills"][skill_id]
         lines.append(
             f"| {skill_id} | {mapping['kind']} | {mapping['label']} | "
-            f"{checkbox(state['probeDeclared'])} | {checkbox(state['executableFixture'])} | "
+            f"{checkbox(state['probeDeclared'])} | {checkbox(state['positiveCaseBacked'])} | {checkbox(state['executableFixture'])} | "
             f"{_case_list(state['executedCases'])} | {_case_list(state['verifiedCases'])} | "
             f"{_case_list(state['staleByDigestCases'])} |"
         )

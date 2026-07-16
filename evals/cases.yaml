@@ -28,6 +28,7 @@ cases:
     executionStatus: runnable
     project: evals/projects/typescript-order-pricing
     task: TASK.md
+    allowedWritePaths: [src, test, eval-result.md]
     install: npm install
     verify: npm test
     harnesses: [codex, junie]
@@ -40,6 +41,9 @@ cases:
       - agent-claim
       - careful-coding
       - code-comments
+      - code-discovery
+      - fix-explanation
+      - structured-explanation
       - test-driven-development
       - typescript
       - typescript-strict
@@ -49,6 +53,9 @@ cases:
       - probe-agent-claim
       - probe-careful-coding
       - probe-code-comments
+      - probe-code-discovery
+      - probe-fix-explanation
+      - probe-structured-explanation
       - probe-test-driven-development
       - probe-typescript
       - probe-typescript-strict
@@ -67,7 +74,7 @@ cases:
     contextPack:
       fixtureRoot: evals/projects/typescript-order-pricing
       include: [.gitignore, TASK.md, package-lock.json, package.json, src, test, tsconfig.json]
-      stagedSkillPackages: [agent-claim, careful-coding, code-comments, test-driven-development, typescript, typescript-strict, typescript-esm, code-review-evidence]
+      stagedSkillPackages: [agent-claim, careful-coding, code-comments, code-discovery, fix-explanation, structured-explanation, test-driven-development, typescript, typescript-strict, typescript-esm, code-review-evidence]
       wholeRepositoryAllowed: false
       approvedSensitiveData: false
     modelVisiblePaths: [.gitignore, TASK.md, package-lock.json, package.json, src, test, tsconfig.json]
@@ -75,6 +82,9 @@ cases:
       agent-claim: [SKILL.md, scripts/claim.py]
       careful-coding: [SKILL.md]
       code-comments: [SKILL.md, references/review-checklist-code-comments.md]
+      code-discovery: [SKILL.md]
+      fix-explanation: [SKILL.md]
+      structured-explanation: [SKILL.md]
       test-driven-development: [SKILL.md]
       typescript: [SKILL.md, references/review-checklist-typescript.md]
       typescript-strict: [SKILL.md, references/review-checklist-typescript-strict.md]
@@ -91,6 +101,7 @@ cases:
     executionStatus: runnable
     project: evals/projects/spring-boot-order-cancellation
     task: TASK.md
+    allowedWritePaths: [src, eval-result.md]
     install: mvn -q -DskipTests package
     verify: mvn -q test
     harnesses: [codex, junie]
@@ -103,6 +114,9 @@ cases:
       - agent-claim
       - careful-coding
       - code-comments
+      - code-discovery
+      - fix-explanation
+      - structured-explanation
       - test-driven-development
       - java
       - spring-boot
@@ -112,6 +126,9 @@ cases:
       - probe-agent-claim
       - probe-careful-coding
       - probe-code-comments
+      - probe-code-discovery
+      - probe-fix-explanation
+      - probe-structured-explanation
       - probe-test-driven-development
       - probe-java
       - probe-spring-boot
@@ -130,7 +147,7 @@ cases:
     contextPack:
       fixtureRoot: evals/projects/spring-boot-order-cancellation
       include: [.gitignore, TASK.md, pom.xml, src]
-      stagedSkillPackages: [agent-claim, careful-coding, code-comments, test-driven-development, java, spring-boot, sql, code-review-evidence]
+      stagedSkillPackages: [agent-claim, careful-coding, code-comments, code-discovery, fix-explanation, structured-explanation, test-driven-development, java, spring-boot, sql, code-review-evidence]
       wholeRepositoryAllowed: false
       approvedSensitiveData: false
     modelVisiblePaths: [.gitignore, TASK.md, pom.xml, src]
@@ -138,6 +155,9 @@ cases:
       agent-claim: [SKILL.md, scripts/claim.py]
       careful-coding: [SKILL.md]
       code-comments: [SKILL.md, references/review-checklist-code-comments.md]
+      code-discovery: [SKILL.md]
+      fix-explanation: [SKILL.md]
+      structured-explanation: [SKILL.md]
       test-driven-development: [SKILL.md]
       java: [SKILL.md, references/coding-guidelines-java.md, references/review-checklist-java.md]
       spring-boot: [SKILL.md, references/coding-guidelines-spring-boot.md, references/review-checklist-spring-boot.md]
@@ -159,6 +179,8 @@ cases:
     verify: npm test
     expectVerifyFailure: true
     readOnly: true
+    resultDestination: external-evidence
+    allowedWritePaths: []
     harnesses: [codex, junie]
     harnessExecutionStatus: {codex: runnable, junie: external-runner-required}
     requiredAgents:
@@ -221,6 +243,7 @@ cases:
     executionStatus: runnable
     project: evals/projects/documentation-functional-spec
     task: TASK.md
+    allowedWritePaths: [docs/functional-specifications, eval-result.md]
     install: null
     verify:
       argv:
@@ -263,6 +286,7 @@ cases:
     executionStatus: runnable
     project: evals/projects/project-configuration-routing
     task: TASK.md
+    allowedWritePaths: [PROJECT.yaml, AGENTS.md, services/api/AGENTS.md, apps/web/AGENTS.md, automation/AGENTS.md, eval-result.md]
     install: null
     verify:
       argv:
@@ -309,6 +333,7 @@ cases:
     executionStatus: runnable
     project: evals/projects/wiki-raw-ingest
     task: TASK.md
+    allowedWritePaths: [docs/wiki, raw, eval-result.md]
     install: null
     verify:
       argv:
@@ -366,6 +391,7 @@ cases:
     executionStatus: runnable
     project: evals/projects/backlog-lifecycle
     task: TASK.md
+    allowedWritePaths: [backlog-status.md, eval-result.md]
     install: null
     verify:
       argv:
