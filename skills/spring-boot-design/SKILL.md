@@ -21,7 +21,7 @@ Combine with Spring Boot and Java Design when the selected design is implemented
 2. Define application modules and their public interactions before selecting controllers, services, repositories, events, or clients.
 3. Place transaction, authorization, retry, caching, and side-effect ownership at boundaries that can enforce their guarantees.
 4. Choose imperative or reactive execution from workload and dependency evidence, not fashion.
-5. Verify dependencies, module APIs, failure behavior, and representative workflows with architecture and integration evidence.
+5. Verify dependencies, module APIs, AOT and native constraints, failure behavior, deployment form, and representative workflows with architecture and integration evidence.
 
 Read [Spring Boot Design Principles](references/design-principles-spring-boot.md) when the task needs detailed decision criteria.
 

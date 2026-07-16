@@ -728,6 +728,110 @@ skills:
   selection: additive
   priority: 100
   requiredWhenDetected: true
+- skill: quarkus
+  kind: technology
+  label: Quarkus
+  capabilities:
+  - application-framework
+  activation:
+    anyOf:
+    - allOf:
+      - fileExtension: .java
+      - anyOf:
+        - contentPattern:
+            glob: pom.xml
+            contains: quarkus-maven-plugin
+        - contentPattern:
+            glob: pom.xml
+            contains: io.quarkus.platform
+        - contentPattern:
+            glob: build.gradle*
+            contains: io.quarkus
+  companions:
+  - java
+  - java-design
+  - quarkus-design
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
+- skill: quarkus-design
+  kind: technology
+  label: Quarkus Design
+  capabilities:
+  - application-design
+  activation:
+    anyOf:
+    - allOf:
+      - fileExtension: .java
+      - anyOf:
+        - contentPattern:
+            glob: pom.xml
+            contains: quarkus-maven-plugin
+        - contentPattern:
+            glob: pom.xml
+            contains: io.quarkus.platform
+        - contentPattern:
+            glob: build.gradle*
+            contains: io.quarkus
+  companions:
+  - java
+  - java-design
+  - quarkus
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
+- skill: quarkus-persistence
+  kind: technology
+  label: Quarkus Persistence
+  capabilities:
+  - persistence-framework
+  activation:
+    anyOf:
+    - allOf:
+      - fileExtension: .java
+      - anyOf:
+        - contentPattern:
+            glob: pom.xml
+            contains: quarkus-hibernate-orm
+        - contentPattern:
+            glob: pom.xml
+            contains: quarkus-hibernate-reactive
+        - contentPattern:
+            glob: build.gradle*
+            contains: quarkus-hibernate-orm
+        - contentPattern:
+            glob: build.gradle*
+            contains: quarkus-hibernate-reactive
+  companions:
+  - quarkus
+  - sql
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
+- skill: quarkus-testing
+  kind: technology
+  label: Quarkus Testing
+  capabilities:
+  - application-testing
+  activation:
+    anyOf:
+    - allOf:
+      - fileMatch:
+          glob: '**/src/test/**/*.java'
+          extensions:
+          - .java
+      - anyOf:
+        - contentPattern:
+            glob: pom.xml
+            contains: quarkus-junit
+        - contentPattern:
+            glob: build.gradle*
+            contains: quarkus-junit
+  companions:
+  - quarkus
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
 - skill: react-server-components
   kind: technology
   label: React Server Components

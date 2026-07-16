@@ -371,6 +371,10 @@ The stack and project-domain skill packs are:
 - spring-boot-design
 - spring-data-jpa
 - spring-boot-testing
+- quarkus
+- quarkus-design
+- quarkus-persistence
+- quarkus-testing
 - liquibase
 - jhipster-project
 - jhipster-domain-modeling

@@ -20,8 +20,8 @@ This page is generated from the live conceptual agent and skill inventories, all
 
 ## Summary
 
-- [x] 26 conceptual agents and 87 bundled skills have structural coverage.
-- [x] 26 agents are scenario-declared and 87 skills are probe-declared.
+- [x] 26 conceptual agents and 91 bundled skills have structural coverage.
+- [x] 26 agents are scenario-declared and 91 skills are probe-declared.
 - [x] 52 agent scenarios and 5 workflow packs are declared.
 - 5 workflow packs have associated cases; 5 are partial and 0 have end-to-end fixture coverage.
 - 7 cases are fixture-backed and 7 fixtures are structurally executable before harness readiness is considered.
@@ -31,7 +31,7 @@ This page is generated from the live conceptual agent and skill inventories, all
 - 17 skills have positive-case support, 0 have negative-activation cases, 0 have executable paired controls, and 0 satisfy the full probe contract.
 - 0 agents and 0 skills have executable full fixtures.
 - 0 agents and 0 skills have calibrated Model Judge status.
-- 26 agents and 66 skills have pending Model Judge status.
+- 26 agents and 70 skills have pending Model Judge status.
 - 0 agents and 21 skills use Deterministic Judges only and do not require Model Judge calibration.
 - 0 agents and 0 skills have classified executions.
 - 0 agents and 0 skills have Judge-passed evidence.
@@ -187,6 +187,10 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | playwright | [x] | [x] probe-playwright | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | postgres-drizzle | [x] | [x] probe-postgres-drizzle | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | python | [x] | [x] probe-python | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| quarkus | [x] | [x] probe-quarkus | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| quarkus-design | [x] | [x] probe-quarkus-design | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| quarkus-persistence | [x] | [x] probe-quarkus-persistence | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| quarkus-testing | [x] | [x] probe-quarkus-testing | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | react-server-components | [x] | [x] probe-react-server-components | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | react-vite-renderer | [x] | [x] probe-react-vite-renderer | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | spring-boot | [x] | [x] probe-spring-boot | [x] spring-boot-order-cancellation | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
@@ -228,6 +232,10 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | playwright | technology | Playwright | [x] | [ ] | [ ] | none | none | none | none |
 | postgres-drizzle | technology | PostgreSQL with Drizzle | [x] | [ ] | [ ] | none | none | none | none |
 | python | technology | Python | [x] | [ ] | [ ] | none | none | none | none |
+| quarkus | technology | Quarkus | [x] | [ ] | [ ] | none | none | none | none |
+| quarkus-design | technology | Quarkus Design | [x] | [ ] | [ ] | none | none | none | none |
+| quarkus-persistence | technology | Quarkus Persistence | [x] | [ ] | [ ] | none | none | none | none |
+| quarkus-testing | technology | Quarkus Testing | [x] | [ ] | [ ] | none | none | none | none |
 | react-server-components | technology | React Server Components | [x] | [ ] | [ ] | none | none | none | none |
 | react-vite-renderer | technology | React renderer with Vite | [x] | [ ] | [ ] | none | none | none | none |
 | spring-boot | technology | Spring Boot | [x] | [x] | [ ] | none | none | none | none |

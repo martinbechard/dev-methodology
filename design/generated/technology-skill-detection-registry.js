@@ -1376,6 +1376,204 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
       "activation": {
         "anyOf": [
           {
+            "allOf": [
+              {
+                "fileExtension": ".java"
+              },
+              {
+                "anyOf": [
+                  {
+                    "contentPattern": {
+                      "contains": "quarkus-maven-plugin",
+                      "glob": "pom.xml"
+                    }
+                  },
+                  {
+                    "contentPattern": {
+                      "contains": "io.quarkus.platform",
+                      "glob": "pom.xml"
+                    }
+                  },
+                  {
+                    "contentPattern": {
+                      "contains": "io.quarkus",
+                      "glob": "build.gradle*"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "capabilities": [
+        "application-framework"
+      ],
+      "companions": [
+        "java",
+        "java-design",
+        "quarkus-design"
+      ],
+      "kind": "technology",
+      "label": "Quarkus",
+      "priority": 100,
+      "requiredWhenDetected": true,
+      "selection": "additive",
+      "skill": "quarkus"
+    },
+    {
+      "activation": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "fileExtension": ".java"
+              },
+              {
+                "anyOf": [
+                  {
+                    "contentPattern": {
+                      "contains": "quarkus-maven-plugin",
+                      "glob": "pom.xml"
+                    }
+                  },
+                  {
+                    "contentPattern": {
+                      "contains": "io.quarkus.platform",
+                      "glob": "pom.xml"
+                    }
+                  },
+                  {
+                    "contentPattern": {
+                      "contains": "io.quarkus",
+                      "glob": "build.gradle*"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "capabilities": [
+        "application-design"
+      ],
+      "companions": [
+        "java",
+        "java-design",
+        "quarkus"
+      ],
+      "kind": "technology",
+      "label": "Quarkus Design",
+      "priority": 100,
+      "requiredWhenDetected": true,
+      "selection": "additive",
+      "skill": "quarkus-design"
+    },
+    {
+      "activation": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "fileExtension": ".java"
+              },
+              {
+                "anyOf": [
+                  {
+                    "contentPattern": {
+                      "contains": "quarkus-hibernate-orm",
+                      "glob": "pom.xml"
+                    }
+                  },
+                  {
+                    "contentPattern": {
+                      "contains": "quarkus-hibernate-reactive",
+                      "glob": "pom.xml"
+                    }
+                  },
+                  {
+                    "contentPattern": {
+                      "contains": "quarkus-hibernate-orm",
+                      "glob": "build.gradle*"
+                    }
+                  },
+                  {
+                    "contentPattern": {
+                      "contains": "quarkus-hibernate-reactive",
+                      "glob": "build.gradle*"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "capabilities": [
+        "persistence-framework"
+      ],
+      "companions": [
+        "quarkus",
+        "sql"
+      ],
+      "kind": "technology",
+      "label": "Quarkus Persistence",
+      "priority": 100,
+      "requiredWhenDetected": true,
+      "selection": "additive",
+      "skill": "quarkus-persistence"
+    },
+    {
+      "activation": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "fileMatch": {
+                  "extensions": [
+                    ".java"
+                  ],
+                  "glob": "**/src/test/**/*.java"
+                }
+              },
+              {
+                "anyOf": [
+                  {
+                    "contentPattern": {
+                      "contains": "quarkus-junit",
+                      "glob": "pom.xml"
+                    }
+                  },
+                  {
+                    "contentPattern": {
+                      "contains": "quarkus-junit",
+                      "glob": "build.gradle*"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "capabilities": [
+        "application-testing"
+      ],
+      "companions": [
+        "quarkus"
+      ],
+      "kind": "technology",
+      "label": "Quarkus Testing",
+      "priority": 100,
+      "requiredWhenDetected": true,
+      "selection": "additive",
+      "skill": "quarkus-testing"
+    },
+    {
+      "activation": {
+        "anyOf": [
+          {
             "fileGlob": "**/app/**/*.tsx"
           },
           {

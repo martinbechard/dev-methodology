@@ -7,4 +7,6 @@
 - Question: Do tests cover validation, authentication, authorization, translated failures, transaction outcomes, and side-effect timing where applicable?
 - Question: Are assertions about observable behavior rather than incidental implementation calls?
 - Question: Does context reuse remain safe without unnecessary dirty-context resets or order dependence?
-- Question: Does the reported evidence identify the test layer, application context, database engine, external services, and commands that actually ran?
+- Question: Does container lifecycle remain valid for the cached application context and dependent bean shutdown behavior?
+- Question: Do packaged JAR, container, AOT, or native-image tests cover delivery-specific risks when applicable?
+- Question: Does the reported evidence identify the test layer, application context, artifact form, database engine, external services, and commands that actually ran?

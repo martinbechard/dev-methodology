@@ -1,0 +1,19 @@
+schema: dev-methodology-technology-detection
+version: 2
+skill: quarkus-persistence
+kind: technology
+label: Quarkus Persistence
+capabilities:
+- persistence-framework
+activation:
+  anyOf:
+  - allOf:
+    - fileExtension: .java
+    - anyOf:
+      - contentPattern: {glob: pom.xml, contains: quarkus-hibernate-orm}
+      - contentPattern: {glob: pom.xml, contains: quarkus-hibernate-reactive}
+      - contentPattern: {glob: build.gradle*, contains: quarkus-hibernate-orm}
+      - contentPattern: {glob: build.gradle*, contains: quarkus-hibernate-reactive}
+companions:
+- quarkus
+- sql

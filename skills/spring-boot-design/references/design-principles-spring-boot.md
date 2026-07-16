@@ -36,9 +36,22 @@
 - Define health, readiness, metrics, tracing, logging, and administrative access as part of the operational contract.
 - Keep deployment topology, scaling, caching, and resilience decisions tied to measured failure and workload characteristics.
 
+## AOT And Deployment Form
+
+- Decide whether JVM-only, AOT-on-JVM, or native delivery is required before accepting runtime discovery, dynamic proxy, reflection, resource, or serialization assumptions.
+- Keep build-time conditions and generated runtime hints aligned with the configuration used to produce the deployed artifact.
+- Treat executable JAR, layered container, buildpack image, and native image as deployment forms with distinct startup, memory, compatibility, observability, and verification costs.
+- Require packaged-runtime evidence for the selected form rather than inferring deployability from an application-context test.
+
 ## Architecture Options
 
 - Use a simple layered application while the responsibilities are clear and change together.
 - Use package-by-feature or a modular monolith when independent capabilities need explicit APIs and dependency rules inside one deployment.
 - Use ports and adapters when volatile infrastructure or multiple adapters justify a stable application-facing boundary.
 - Split services only when independent deployment, scaling, ownership, availability, or regulatory boundaries outweigh distributed-system cost.
+
+## Authoritative References
+
+- [Spring Boot Ahead-of-Time Processing](https://docs.spring.io/spring-boot/reference/packaging/aot.html)
+- [Introducing GraalVM Native Images](https://docs.spring.io/spring-boot/reference/packaging/native-image/introducing-graalvm-native-images.html)
+- [Spring Boot Container Images](https://docs.spring.io/spring-boot/reference/packaging/container-images/index.html)

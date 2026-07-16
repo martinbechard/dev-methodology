@@ -237,6 +237,55 @@ class TechnologyDetectionTests(unittest.TestCase):
                     result = run_detection(root, "src/test", detector=detector)
                     self.assertEqual(expected, result["loadouts"][0]["skills"])
 
+    def test_quarkus_persistence_composes_with_java_design_and_sql(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "src" / "main" / "java" / "example"
+            source.mkdir(parents=True)
+            (source / "Order.java").write_text("class Order {}\n", encoding="utf-8")
+            (root / "pom.xml").write_text(
+                "<artifactId>quarkus-maven-plugin</artifactId>\n"
+                "<artifactId>quarkus-hibernate-orm-panache</artifactId>\n",
+                encoding="utf-8",
+            )
+
+            expected = [
+                "java",
+                "java-design",
+                "quarkus",
+                "quarkus-design",
+                "quarkus-persistence",
+                "sql",
+            ]
+            for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+                with self.subTest(detector=detector):
+                    result = run_detection(root, "src/main", detector=detector)
+                    self.assertEqual(expected, result["loadouts"][0]["skills"])
+
+    def test_quarkus_testing_requires_test_source_and_test_dependency(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            tests = root / "src" / "test" / "java" / "example"
+            tests.mkdir(parents=True)
+            (tests / "OrderTest.java").write_text("class OrderTest {}\n", encoding="utf-8")
+            (root / "pom.xml").write_text(
+                "<artifactId>quarkus-maven-plugin</artifactId>\n"
+                "<artifactId>quarkus-junit</artifactId>\n",
+                encoding="utf-8",
+            )
+
+            expected = [
+                "java",
+                "java-design",
+                "quarkus",
+                "quarkus-design",
+                "quarkus-testing",
+            ]
+            for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+                with self.subTest(detector=detector):
+                    result = run_detection(root, "src/test", detector=detector)
+                    self.assertEqual(expected, result["loadouts"][0]["skills"])
+
     def test_liquibase_scope_composes_with_sql_without_jhipster(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

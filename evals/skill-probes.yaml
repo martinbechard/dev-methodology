@@ -891,6 +891,62 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: java}
+  - id: probe-quarkus
+    skill: quarkus
+    source: skills/quarkus/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: Work implements, tests, reviews, or diagnoses Quarkus application behavior, configuration, execution models, packaging, or native compatibility.
+    negativeCondition: Plain Java code without Quarkus platform or extension ownership does not receive framework-specific credit.
+    expectedBehavior: Read the platform and extensions, preserve CDI and configuration lifecycle rules, keep blocking work off event loops, match transactions to the persistence model, and verify the affected JVM, packaged, or native form.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, test-state-transition, operation-coverage], modelRubric: source-faithfulness}
+    scenarioAssociations: [dev-coder-happy, dev-code-reviewer-happy]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: fastapi}
+  - id: probe-quarkus-design
+    skill: quarkus-design
+    source: skills/quarkus-design/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: artifact-contract
+    activationCondition: A design artifact describes Quarkus modules, CDI ownership, execution models, transactions, build-time augmentation, security, or deployment behavior.
+    negativeCondition: Generic Java architecture language without source-backed Quarkus ownership does not satisfy the design contract.
+    expectedBehavior: Define cohesive modules and public interactions, choose one supported execution model across each dependency chain, place transactions and side effects deliberately, and account for build-time, runtime, and native deployment constraints.
+    judgePlan: {deterministicChecks: [skill-read-trace, source-link-resolution, operation-coverage, artifact-structure], modelRubric: artifact-contract}
+    scenarioAssociations: [dev-documentation-writer-happy, dev-artifact-reviewer-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: tailwind-design-system}
+  - id: probe-quarkus-persistence
+    skill: quarkus-persistence
+    source: skills/quarkus-persistence/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: Work changes, reviews, tests, or diagnoses Quarkus Hibernate ORM, Hibernate Reactive, Panache entities, repositories, queries, or transactions.
+    negativeCondition: SQL-only or non-Hibernate persistence does not activate Panache, CDI session, or Quarkus transaction guidance.
+    expectedBehavior: Identify the blocking or reactive stack, preserve mapping and persistence-unit contracts, select active record or repositories deliberately, bound and optimize queries, match transaction context to the stack, and verify real database behavior.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, operation-coverage, actor-boundary-coverage], modelRubric: source-faithfulness}
+    scenarioAssociations: [dev-coder-happy, dev-code-reviewer-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: react-vite-renderer}
+  - id: probe-quarkus-testing
+    skill: quarkus-testing
+    source: skills/quarkus-testing/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: verification-contract
+    activationCondition: Quarkus behavior requires test selection, implementation, review, execution, or diagnosis.
+    negativeCondition: QuarkusTest or a full built-artifact test is not used by default when plain JUnit proves the contract.
+    expectedBehavior: Choose the smallest valid unit, component, QuarkusTest, or integration boundary, control profiles and service lifecycles, verify transaction and execution behavior, and test packaged or native forms when delivery-specific risks apply.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, test-state-transition, operation-coverage], modelRubric: workflow-quality}
+    scenarioAssociations: [dev-verifier-happy, dev-coder-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: jest}
   - id: probe-react-server-components
     skill: react-server-components
     source: skills/react-server-components/SKILL.md

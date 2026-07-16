@@ -1,0 +1,19 @@
+schema: dev-methodology-technology-detection
+version: 2
+skill: quarkus
+kind: technology
+label: Quarkus
+capabilities:
+- application-framework
+activation:
+  anyOf:
+  - allOf:
+    - fileExtension: .java
+    - anyOf:
+      - contentPattern: {glob: pom.xml, contains: quarkus-maven-plugin}
+      - contentPattern: {glob: pom.xml, contains: io.quarkus.platform}
+      - contentPattern: {glob: build.gradle*, contains: io.quarkus}
+companions:
+- java
+- java-design
+- quarkus-design

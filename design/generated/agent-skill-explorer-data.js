@@ -833,7 +833,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "modelJudgeNotRequiredAgentCount": 0,
     "modelJudgeNotRequiredSkillCount": 21,
     "modelJudgePendingAgentCount": 26,
-    "modelJudgePendingSkillCount": 66,
+    "modelJudgePendingSkillCount": 70,
     "negativeCaseBackedSkillCount": 0,
     "ordinaryLocalCaseCount": 7,
     "pairedControlsExecutableSkillCount": 0,
@@ -845,7 +845,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "positiveSecurityContainedSkillCount": 0,
     "positiveStaleByDigestSkillCount": 0,
     "positiveVerifiedSkillCount": 0,
-    "probeDeclaredSkillCount": 87,
+    "probeDeclaredSkillCount": 91,
     "scenarioDeclaredAgentCount": 26,
     "securityContainedAgentCount": 0,
     "securityContainedRunCount": 0,
@@ -854,7 +854,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "staleByDigestRunCount": 0,
     "staleByDigestSkillCount": 0,
     "structuralAgentCount": 26,
-    "structuralSkillCount": 87,
+    "structuralSkillCount": 91,
     "verifiedAgentCount": 0,
     "verifiedRunCount": 0,
     "verifiedSkillCount": 0,
@@ -6824,6 +6824,384 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "executedCases": [],
       "id": "python",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
+      "verifiedCases": []
+    },
+    {
+      "category": "stack-and-domain",
+      "coverage": {
+        "catalogFixtureBacked": false,
+        "evaluationCategory": "stack-and-domain",
+        "executableCases": [],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": false,
+        "positiveCaseBackedCases": [],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
+          "probe-quarkus"
+        ],
+        "scenarioAssociations": [
+          "dev-code-reviewer-happy",
+          "dev-coder-happy"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "code-delivery"
+        ]
+      },
+      "declaredCases": [],
+      "detection": {
+        "activation": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "fileExtension": ".java"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "contentPattern": {
+                        "contains": "quarkus-maven-plugin",
+                        "glob": "pom.xml"
+                      }
+                    },
+                    {
+                      "contentPattern": {
+                        "contains": "io.quarkus.platform",
+                        "glob": "pom.xml"
+                      }
+                    },
+                    {
+                      "contentPattern": {
+                        "contains": "io.quarkus",
+                        "glob": "build.gradle*"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "capabilities": [
+          "application-framework"
+        ],
+        "companions": [
+          "java",
+          "java-design",
+          "quarkus-design"
+        ],
+        "kind": "technology",
+        "label": "Quarkus",
+        "priority": 100,
+        "requiredWhenDetected": true,
+        "selection": "additive",
+        "skill": "quarkus"
+      },
+      "executedCases": [],
+      "id": "quarkus",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
+      "verifiedCases": []
+    },
+    {
+      "category": "stack-and-domain",
+      "coverage": {
+        "catalogFixtureBacked": false,
+        "evaluationCategory": "stack-and-domain",
+        "executableCases": [],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": false,
+        "positiveCaseBackedCases": [],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
+          "probe-quarkus-design"
+        ],
+        "scenarioAssociations": [
+          "dev-artifact-reviewer-boundary",
+          "dev-documentation-writer-happy"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "code-delivery"
+        ]
+      },
+      "declaredCases": [],
+      "detection": {
+        "activation": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "fileExtension": ".java"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "contentPattern": {
+                        "contains": "quarkus-maven-plugin",
+                        "glob": "pom.xml"
+                      }
+                    },
+                    {
+                      "contentPattern": {
+                        "contains": "io.quarkus.platform",
+                        "glob": "pom.xml"
+                      }
+                    },
+                    {
+                      "contentPattern": {
+                        "contains": "io.quarkus",
+                        "glob": "build.gradle*"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "capabilities": [
+          "application-design"
+        ],
+        "companions": [
+          "java",
+          "java-design",
+          "quarkus"
+        ],
+        "kind": "technology",
+        "label": "Quarkus Design",
+        "priority": 100,
+        "requiredWhenDetected": true,
+        "selection": "additive",
+        "skill": "quarkus-design"
+      },
+      "executedCases": [],
+      "id": "quarkus-design",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
+      "verifiedCases": []
+    },
+    {
+      "category": "stack-and-domain",
+      "coverage": {
+        "catalogFixtureBacked": false,
+        "evaluationCategory": "stack-and-domain",
+        "executableCases": [],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": false,
+        "positiveCaseBackedCases": [],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
+          "probe-quarkus-persistence"
+        ],
+        "scenarioAssociations": [
+          "dev-code-reviewer-boundary",
+          "dev-coder-happy"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "code-delivery"
+        ]
+      },
+      "declaredCases": [],
+      "detection": {
+        "activation": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "fileExtension": ".java"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "contentPattern": {
+                        "contains": "quarkus-hibernate-orm",
+                        "glob": "pom.xml"
+                      }
+                    },
+                    {
+                      "contentPattern": {
+                        "contains": "quarkus-hibernate-reactive",
+                        "glob": "pom.xml"
+                      }
+                    },
+                    {
+                      "contentPattern": {
+                        "contains": "quarkus-hibernate-orm",
+                        "glob": "build.gradle*"
+                      }
+                    },
+                    {
+                      "contentPattern": {
+                        "contains": "quarkus-hibernate-reactive",
+                        "glob": "build.gradle*"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "capabilities": [
+          "persistence-framework"
+        ],
+        "companions": [
+          "quarkus",
+          "sql"
+        ],
+        "kind": "technology",
+        "label": "Quarkus Persistence",
+        "priority": 100,
+        "requiredWhenDetected": true,
+        "selection": "additive",
+        "skill": "quarkus-persistence"
+      },
+      "executedCases": [],
+      "id": "quarkus-persistence",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
+      "verifiedCases": []
+    },
+    {
+      "category": "stack-and-domain",
+      "coverage": {
+        "catalogFixtureBacked": false,
+        "evaluationCategory": "stack-and-domain",
+        "executableCases": [],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": false,
+        "positiveCaseBackedCases": [],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
+          "probe-quarkus-testing"
+        ],
+        "scenarioAssociations": [
+          "dev-coder-boundary",
+          "dev-verifier-happy"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "code-delivery"
+        ]
+      },
+      "declaredCases": [],
+      "detection": {
+        "activation": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "fileMatch": {
+                    "extensions": [
+                      ".java"
+                    ],
+                    "glob": "**/src/test/**/*.java"
+                  }
+                },
+                {
+                  "anyOf": [
+                    {
+                      "contentPattern": {
+                        "contains": "quarkus-junit",
+                        "glob": "pom.xml"
+                      }
+                    },
+                    {
+                      "contentPattern": {
+                        "contains": "quarkus-junit",
+                        "glob": "build.gradle*"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "capabilities": [
+          "application-testing"
+        ],
+        "companions": [
+          "quarkus"
+        ],
+        "kind": "technology",
+        "label": "Quarkus Testing",
+        "priority": 100,
+        "requiredWhenDetected": true,
+        "selection": "additive",
+        "skill": "quarkus-testing"
+      },
+      "executedCases": [],
+      "id": "quarkus-testing",
       "judgePassedCases": [],
       "securityContainedCases": [],
       "verifiedCases": []

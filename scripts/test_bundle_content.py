@@ -93,6 +93,10 @@ NEW_DEVELOPMENT_SKILLS = (
     "spring-boot-design",
     "spring-data-jpa",
     "spring-boot-testing",
+    "quarkus",
+    "quarkus-design",
+    "quarkus-persistence",
+    "quarkus-testing",
     "liquibase",
     "jhipster-project",
     "jhipster-domain-modeling",
@@ -194,6 +198,10 @@ EXAMPLE_PROJECT_SKILL_PACKS = (
     "spring-boot-design",
     "spring-data-jpa",
     "spring-boot-testing",
+    "quarkus",
+    "quarkus-design",
+    "quarkus-persistence",
+    "quarkus-testing",
     "sql",
     "typescript",
     "typescript-esm",
@@ -220,6 +228,10 @@ README_REQUIRED_PHRASES = (
     "- spring-boot-design",
     "- spring-data-jpa",
     "- spring-boot-testing",
+    "- quarkus",
+    "- quarkus-design",
+    "- quarkus-persistence",
+    "- quarkus-testing",
     "jhipster-domain-modeling",
     "[Technology Skills](design/skills-modularization.html) explains always-used and rule-selected agent skills",
     "project-wiki-create",
@@ -337,6 +349,10 @@ TECHNOLOGY_EXTENSION_SKILLS = (
     "spring-boot-design",
     "spring-data-jpa",
     "spring-boot-testing",
+    "quarkus",
+    "quarkus-design",
+    "quarkus-persistence",
+    "quarkus-testing",
     "liquibase",
     "jhipster-project",
     "jhipster-domain-modeling",
@@ -1015,6 +1031,34 @@ class BundleContentTests(unittest.TestCase):
         spring_design = (SKILLS_ROOT / "spring-boot-design" / "SKILL.md").read_text(encoding="utf-8")
         self.assertIn("Do not own formatting", java_design)
         self.assertIn("not annotation syntax or routine framework coding", spring_design)
+
+    def test_quarkus_concerns_are_separate_and_detection_backed(self) -> None:
+        expected = {
+            "quarkus": (
+                "Framework Baseline",
+                "references/coding-guidelines-quarkus.md",
+            ),
+            "quarkus-design": (
+                "Design Boundary",
+                "references/design-principles-quarkus.md",
+            ),
+            "quarkus-persistence": (
+                "Persistence Model",
+                "references/persistence-guidelines-quarkus.md",
+            ),
+            "quarkus-testing": (
+                "Test Selection",
+                "references/testing-guidelines-quarkus.md",
+            ),
+        }
+
+        for skill_name, (boundary_phrase, reference_path) in expected.items():
+            with self.subTest(skill_name=skill_name):
+                skill_root = SKILLS_ROOT / skill_name
+                skill_text = (skill_root / "SKILL.md").read_text(encoding="utf-8")
+                self.assertIn(boundary_phrase, skill_text)
+                self.assertTrue((skill_root / reference_path).is_file())
+                self.assertTrue((skill_root / "detection.yaml").is_file())
 
     def test_liquibase_guidance_is_portable_and_detection_backed(self) -> None:
         skill_root = SKILLS_ROOT / "liquibase"

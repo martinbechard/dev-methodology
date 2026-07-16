@@ -23,7 +23,9 @@ Combine with Spring Boot Design when the task chooses application boundaries, pa
 - Apply transaction annotations with explicit awareness of proxy interception, rollback rules, thread boundaries, and reactive context.
 - Preserve framework-provided authentication, authorization, CSRF, CORS, and token validation behavior unless the application contract intentionally replaces it.
 - Keep Actuator exposure, logging, metrics, and tracing bounded and free of secrets or full sensitive payloads.
+- Preserve AOT and native-image compatibility when closed-world processing, reflection, resources, serialization, or generated proxies are part of the delivery target.
 - Use focused unit or slice tests first and integration tests when wiring, serialization, security, persistence, or transactions are material.
+- Verify the packaged JAR, container, or native image when launch behavior, classpath layout, resources, AOT processing, or deployment configuration changes.
 
 Read [Spring Boot Coding Guidelines](references/coding-guidelines-spring-boot.md) when implementation or review needs detailed framework rules.
 

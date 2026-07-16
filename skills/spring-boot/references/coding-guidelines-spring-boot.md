@@ -39,9 +39,24 @@
 - Expose only required Actuator endpoints and secure any endpoint that can reveal operational or sensitive information.
 - Preserve trace and correlation context across supported asynchronous boundaries without logging tokens or personal data.
 
+## AOT And Native Images
+
+- Identify whether the application ships only on the JVM or also uses Spring AOT processing and a GraalVM native image.
+- Treat reflection, resources, serialization, dynamic proxies, classpath scanning, and runtime bean registration as compatibility-sensitive under the native closed-world model.
+- Prefer framework and library support that contributes AOT hints. Add custom runtime hints only for runtime behavior that actually needs them.
+- Verify conditional beans and configuration using the same build-time inputs used for the delivered artifact; runtime changes cannot recreate types or proxies omitted during AOT processing.
+
 ## Verification
 
 - Run the project wrapper and the focused test slice for the changed boundary.
 - Add context tests only when auto-configuration, bean wiring, serialization, security, persistence, or transaction behavior must be proved.
 - Verify startup configuration when properties, profiles, conditional beans, or auto-configuration change.
 - Verify both success and translated failure behavior at the framework boundary.
+- Run the packaged JAR or container when classpath, resources, launch behavior, layers, or deployment configuration changes.
+- Build and test the native image when native delivery is required or when reflection, proxies, resources, serialization, or AOT-sensitive bean registration changes.
+
+## Authoritative References
+
+- [Spring Boot Externalized Configuration](https://docs.spring.io/spring-boot/reference/features/external-config.html)
+- [Spring Boot Testing](https://docs.spring.io/spring-boot/reference/testing/index.html)
+- [Introducing GraalVM Native Images](https://docs.spring.io/spring-boot/reference/packaging/native-image/introducing-graalvm-native-images.html)
