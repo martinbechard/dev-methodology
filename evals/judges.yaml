@@ -24,7 +24,7 @@ executionPolicy:
   requiredPreflightChecks:
     - model-input-safety
     - snapshot-reset
-    - containment-attestation
+    - local-execution-boundary
   skipModelJudgeAfterCriticalDeterministicFailure: true
   normalModelPasses: 1
   secondPassTriggers:
@@ -173,10 +173,10 @@ checks:
     type: deterministic
     critical: true
     description: The run begins from the declared prepared-snapshot digest and discards all writable state afterward.
-  - id: containment-attestation
+  - id: local-execution-boundary
     type: deterministic
     critical: true
-    description: The receipt reports workspace-isolated-only only from prepared-snapshot, copy-on-write, native-policy, hash, and discard evidence, and reports externally-contained only from a matching external-runner attestation.
+    description: The run uses a disposable workspace, controlled harness configuration and environment, mutation auditing, a wall-clock timeout with process cleanup, and a disjoint runner-owned evidence path.
   - id: calibrated-model-judge
     type: deterministic
     critical: true
@@ -282,16 +282,16 @@ rubrics:
       noAggregateCompensation: true
       minimumDimensionScore: 3
 calibrationPolicy:
-  requiredBeforeVerifiedEvidence: true
+  requiredBeforeJudgeCalibrationClaim: true
   status: pending
   promotionStatus: disabled-pending-provenance
-  missingOrPendingResult: unverified
+  missingOrPendingResult: calibration-pending
   promotionPrerequisites:
     - Each sample binds a canonical Model Judge request and validated output artifact.
     - Model harness, model identity, and reasoning profile come from a trusted invocation event.
     - Human labels and ambiguous-case adjudication bind to independently captured evidence.
     - Calibration coverage includes every critical rubric dimension.
-  scope: Model Judge verdicts only; Deterministic Judge-only cases remain eligible for verification.
+  scope: Calibration applies to Model Judge reliability claims only. Raw Judge outcomes, deterministic outcomes, execution, and security containment remain separate claims.
   humanScoredSet:
     pilotMinimumExamples: 20
     minimumExamples: 25

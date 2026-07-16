@@ -6,9 +6,11 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import re
 import shutil
 import subprocess
+import tempfile
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
@@ -19,6 +21,7 @@ from .commands import CommandSpec
 
 SUPPORTED_HARNESSES = frozenset({"codex", "junie"})
 CODEX_OUTPUT_SCHEMA_SHA256 = "36bd63a02034627ab2798a424f8915bf288265846af6e2aad5f7ec18e424c8fc"
+_MAX_EVENT_STREAM_BYTES = 10 * 1024 * 1024
 
 
 @dataclass(frozen=True)
@@ -29,16 +32,6 @@ class HarnessIdentity:
     executable: Path
     version: str
     content_digest: str
-
-
-@dataclass(frozen=True)
-class ExternalRunnerInvocation:
-    """Record a self-attested, unverified wrapper around a Junie command."""
-
-    command: CommandSpec
-    runner_digest: str
-    attestation_digest: str
-    trust_status: str
 
 
 def build_harness_command(
@@ -58,11 +51,10 @@ def build_harness_command(
     skill_locations: Sequence[Path] = (),
     agent_locations: Sequence[Path] = (),
     approved_environment_names: Sequence[str] = (),
+    harness_executable: Path | None = None,
 ) -> CommandSpec:
     """Build a noninteractive Codex or Junie invocation without executing it.
 
-    Junie has no filesystem sandbox flag. Its command therefore describes only the harness
-    invocation; runner-owned external containment must be established and recorded separately.
     Agent naming in the task is a routing request, not proof of attribution. Captured events must
     contain a matching agent-start event before attribution can be marked verified.
     """
@@ -87,12 +79,23 @@ def build_harness_command(
         workspace,
         "harness event output",
     )
+    resolved_last_message_output = (
+        _runner_owned_output_path(
+            last_message_output,
+            evidence_root,
+            workspace,
+            "harness final-response output",
+        )
+        if last_message_output is not None
+        else None
+    )
     if isolated_config_root is None:
         raise ValueError("isolated_config_root is required to prevent user-home agent and skill contamination")
     isolated_config_root = isolated_config_root.resolve()
     if isolated_config_root != workspace:
         raise ValueError("isolated_config_root must be the disposable workspace context overlay root")
     approved_environment = _approved_environment_names(approved_environment_names)
+    executable = _validated_harness_executable(harness, harness_executable)
     controlled_environment = {
         "HOME": str(workspace / ".eval-context" / "home"),
         "TMPDIR": str(event_output.parent / f".eval-tmp-{workspace.name}"),
@@ -103,7 +106,7 @@ def build_harness_command(
         if not expected_agent.is_file() or not expected_skills.is_dir():
             raise ValueError("Codex isolated context must contain the selected project agent and skill locations")
         argv = [
-            "codex",
+            executable,
             "exec",
             "--ephemeral",
             "--ignore-user-config",
@@ -118,14 +121,8 @@ def build_harness_command(
         if output_schema is not None:
             resolved_schema = validate_codex_output_schema(output_schema, workspace)
             argv.extend(["--output-schema", str(resolved_schema)])
-        if last_message_output is not None:
-            resolved_output = _runner_owned_output_path(
-                last_message_output,
-                evidence_root,
-                workspace,
-                "Codex last-message output",
-            )
-            argv.extend(["--output-last-message", str(resolved_output)])
+        if resolved_last_message_output is not None:
+            argv.extend(["--output-last-message", str(resolved_last_message_output)])
         argv.append(_delegation_prompt(agent_id, prompt))
         return CommandSpec(
             tuple(argv),
@@ -134,6 +131,9 @@ def build_harness_command(
             host_environment_allowlist=("PATH", *approved_environment),
         )
 
+    controlled_environment["JUNIE_HOME"] = str(
+        event_output.parent / f".junie-home-{workspace.name}"
+    )
     if cache_dir is not None:
         resolved_cache = _runner_owned_output_path(
             cache_dir,
@@ -155,7 +155,7 @@ def build_harness_command(
         if resolved_location != isolated_config_root and isolated_config_root not in resolved_location.parents:
             raise ValueError("Junie skill and agent locations must stay inside the isolated context root")
     argv = [
-        "junie",
+        executable,
         f"--project={workspace}",
         "--output-format=json-stream",
         f"--json-output-file={event_output}",
@@ -244,6 +244,67 @@ def normalize_harness_events(harness: str, lines: Iterable[str]) -> list[dict[st
     return normalized
 
 
+def read_harness_event_stream(
+    harness: str, path: Path
+) -> list[dict[str, object]]:
+    """Read a complete non-empty JSON Lines event stream without silently dropping records."""
+
+    if harness not in SUPPORTED_HARNESSES:
+        raise ValueError(f"supported harness values are codex and junie, not {harness}")
+    if path.is_symlink():
+        raise ValueError(
+            f"captured {harness} event stream must be a regular non-symlink file"
+        )
+    if not path.is_file():
+        raise ValueError(f"captured {harness} event stream is missing: {path}")
+    if path.stat().st_size > _MAX_EVENT_STREAM_BYTES:
+        raise ValueError(
+            f"captured {harness} event stream exceeds the configured capture limit"
+        )
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except (OSError, UnicodeError) as error:
+        raise ValueError(f"captured {harness} event stream is unreadable: {error}") from error
+    records: list[dict[str, object]] = []
+    for line_number, line in enumerate(lines, start=1):
+        if not line.strip():
+            continue
+        try:
+            value = json.loads(line)
+        except json.JSONDecodeError as error:
+            raise ValueError(
+                f"captured {harness} event stream line {line_number} is invalid JSON"
+            ) from error
+        if not isinstance(value, dict):
+            raise ValueError(
+                f"captured {harness} event stream line {line_number} must be a JSON object"
+            )
+        records.append(value)
+    if not records:
+        raise ValueError(f"captured {harness} event stream is empty")
+    return records
+
+
+def extract_harness_final_response(
+    harness: str, events: Sequence[Mapping[str, object]]
+) -> str:
+    """Extract the final review document from one supported harness event stream."""
+
+    if harness != "junie":
+        raise ValueError("Codex final responses are captured with --output-last-message")
+    result_events = [event for event in events if event.get("type") == "result"]
+    if not result_events:
+        raise ValueError("captured Junie event stream has no final result event")
+    if len(result_events) != 1:
+        raise ValueError("captured Junie event stream must contain exactly one result event")
+    if events[-1] is not result_events[0]:
+        raise ValueError("captured Junie result event must be terminal")
+    result = result_events[0].get("result")
+    if not isinstance(result, str) or not result.strip():
+        raise ValueError("captured Junie final result must be a non-empty string")
+    return result
+
+
 def agent_attribution_verified(
     events: Iterable[Mapping[str, object]],
     agent_id: str,
@@ -271,13 +332,32 @@ def capture_harness_identity(harness: str) -> HarnessIdentity:
     executable_name = shutil.which(harness)
     if executable_name is None:
         raise RuntimeError(f"harness executable is not installed: {harness}")
-    executable = Path(executable_name).resolve()
-    completed = subprocess.run(
-        [str(executable), "--version"],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    executable = _resolve_harness_executable(harness, Path(executable_name))
+    with tempfile.TemporaryDirectory(prefix=f"dev-methodology-{harness}-identity-") as directory:
+        identity_root = Path(directory)
+        home = identity_root / "home"
+        scratch = identity_root / "tmp"
+        home.mkdir()
+        scratch.mkdir()
+        environment = {
+            "HOME": str(home),
+            "PATH": os.environ.get("PATH", "/usr/bin:/bin"),
+            "TMPDIR": str(scratch),
+        }
+        for name in ("LANG", "LC_ALL"):
+            if name in os.environ:
+                environment[name] = os.environ[name]
+        if harness == "junie":
+            junie_home = identity_root / "junie-home"
+            junie_home.mkdir()
+            environment["JUNIE_HOME"] = str(junie_home)
+        completed = subprocess.run(
+            [str(executable), "--version"],
+            capture_output=True,
+            text=True,
+            check=False,
+            env=environment,
+        )
     if completed.returncode != 0:
         raise RuntimeError(f"unable to capture {harness} version: {completed.stderr.strip()}")
     return HarnessIdentity(
@@ -288,59 +368,50 @@ def capture_harness_identity(harness: str) -> HarnessIdentity:
     )
 
 
-def wrap_junie_external_runner(
-    command: CommandSpec,
-    runner_path: Path,
-    attestation_path: Path,
-) -> ExternalRunnerInvocation:
-    """Wrap Junie with an identity-bound self-attestation that does not establish containment trust."""
+def _resolve_harness_executable(harness: str, discovered: Path) -> Path:
+    """Resolve a managed harness shim before a run replaces HOME."""
 
-    if not command.argv or command.argv[0] != "junie":
-        raise ValueError("external Junie containment can wrap only a Junie command")
-    runner = runner_path.resolve()
-    attestation = attestation_path.resolve()
-    project_arguments = [argument for argument in command.argv if argument.startswith("--project=")]
-    if len(project_arguments) != 1:
-        raise ValueError("Junie command must identify exactly one project workspace")
-    workspace = Path(project_arguments[0].split("=", 1)[1]).resolve()
-    if runner == workspace or workspace in runner.parents or attestation == workspace or workspace in attestation.parents:
-        raise ValueError("Junie external runner and attestation must be outside the disposable workspace")
-    if not runner.is_file() or not runner.stat().st_mode & 0o111:
-        raise ValueError("Junie external runner must be an executable file")
-    if not attestation.is_file():
-        raise ValueError("Junie external containment attestation is missing")
+    executable = discovered.resolve()
+    if harness != "junie":
+        return executable
     try:
-        value = json.loads(attestation.read_text(encoding="utf-8"))
-    except (json.JSONDecodeError, UnicodeDecodeError) as error:
-        raise ValueError(f"Junie external containment attestation is invalid: {error}") from error
-    if not isinstance(value, Mapping):
-        raise ValueError("Junie external containment attestation must be a JSON object")
-    runner_digest = hashlib.sha256(runner.read_bytes()).hexdigest()
-    if (
-        value.get("schema") != "dev-methodology-junie-containment-attestation"
-        or value.get("version") != 1
-        or value.get("status") != "self-attested-unverified"
-        or value.get("runnerDigest") != runner_digest
-    ):
-        raise ValueError("Junie external containment attestation must be identity-bound and explicitly unverified")
-    capabilities = value.get("capabilities")
-    required = {"filesystem", "process", "network", "cpu", "memory", "time"}
-    if not isinstance(capabilities, list) or not required.issubset(set(capabilities)):
-        raise ValueError("Junie external containment attestation lacks required capabilities")
-    wrapped = CommandSpec(
-        argv=(str(runner), "--", *command.argv),
-        environment=command.environment,
-        timeout_seconds=command.timeout_seconds,
-        maximum_output_bytes=command.maximum_output_bytes,
-        inherit_environment=command.inherit_environment,
-        host_environment_allowlist=command.host_environment_allowlist,
+        marker = discovered.read_text(encoding="utf-8", errors="ignore")[:4096]
+    except OSError:
+        return executable
+    if "JUNIE_MANAGED_SHIM" not in marker:
+        return executable
+    data_root = Path(
+        os.environ.get("JUNIE_DATA", str(Path.home() / ".local" / "share" / "junie"))
+    ).expanduser()
+    current = data_root / "current"
+    candidates = (
+        current / "Applications" / "junie.app" / "Contents" / "MacOS" / "junie",
+        current / "junie" / "bin" / "junie",
+        current / "junie",
     )
-    return ExternalRunnerInvocation(
-        command=wrapped,
-        runner_digest=runner_digest,
-        attestation_digest=hashlib.sha256(attestation.read_bytes()).hexdigest(),
-        trust_status="self-attested-unverified",
+    for candidate in candidates:
+        try:
+            resolved = candidate.resolve(strict=True)
+        except OSError:
+            continue
+        if resolved.is_file() and resolved.stat().st_mode & 0o111:
+            return resolved
+    raise RuntimeError(
+        f"managed Junie shim has no executable current runtime beneath {data_root}"
     )
+
+
+def _validated_harness_executable(
+    harness: str, executable: Path | None
+) -> str:
+    """Return a supported executable name or a pinned absolute harness path."""
+
+    if executable is None:
+        return harness
+    resolved = executable.resolve()
+    if not resolved.is_file() or not resolved.stat().st_mode & 0o111:
+        raise ValueError(f"{harness} harness executable must be an executable file")
+    return str(resolved)
 
 
 def _approved_environment_names(values: Sequence[str]) -> tuple[str, ...]:
@@ -364,7 +435,7 @@ def _delegation_prompt(agent_id: str, prompt: str) -> str:
 
 
 def _normalize_event(harness: str, sequence: int, raw: Mapping[str, object]) -> dict[str, object]:
-    raw_type = str(raw.get("type", raw.get("event", "unknown")))
+    raw_type = str(raw.get("type", raw.get("event", raw.get("kind", "unknown"))))
     normalized_type = raw_type
     if raw_type in {"agent-start", "agent_started", "subagent-start", "subagent_started"}:
         normalized_type = "agent-start"

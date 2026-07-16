@@ -18,7 +18,7 @@ componentImplementationStatus:
   externalContainmentRunner: not-implemented
   externalDiffVerifier: not-implemented
   captureTrustAnchor: not-implemented
-  junieDirectExecution: forbidden-pending-external-runner
+  junieDirectExecution: implemented-local-tier
   warmWorkerPooling: proposed
 snapshotPolicy:
   integrityCheckedPreparedSnapshots: true
@@ -37,7 +37,7 @@ snapshotPolicy:
   fallback: A full disposable copy is allowed when copy-on-write is unavailable; the containment claim must not change.
   reset: Discard the writable layer after Judges and receipt capture finish.
   runAudit: Hash the complete workspace, including dependency and build trees, while excluding only runner-owned context, metadata, and Git control artifacts. Record narrowly declared recognized ephemeral build output separately from product changes, and never classify a path containing a dependency or tool component as ephemeral even beneath an allowed ancestor.
-  externalVerification: Discard ephemeral output, apply only the validated allowed product diff to a fresh full-integrity clone with pristine dependencies, then run checks under governed external containment. This is not implemented.
+  highRiskExternalVerification: For an explicitly high-risk case, discard ephemeral output, apply only the validated allowed product diff to a fresh full-integrity clone with pristine dependencies, then run checks under governed external containment. This tier is not implemented.
   concurrency: The current runner executes selected cases serially. A future bounded executor may run independent cases concurrently while serializing declared exclusive resources.
   contextStaging:
     default: Explicit case allow-list only; never stage the whole repository implicitly.
@@ -48,23 +48,24 @@ containmentStatusVocabulary:
   workspace-isolated-only: Disposable workspace isolation is proved, but one or more wider containment dimensions are not.
   containment-unverified: The run has no sufficient external attestation for containment or workspace isolation.
 executionTiers:
-  codex-fast-workspace:
-    harnesses: [codex]
+  local:
+    harnesses: [codex, junie]
     externalRunnerRequired: false
-    useWhen: Iteration, calibration development, and ordinary cases that require disposable workspace isolation but do not require full process, network, or resource containment.
-    enforcement: Codex native read-only or workspace-write policy plus a fresh disposable copy-on-write fixture layer.
-    requiredReceiptEvidence: [prepared-snapshot-digest, copy-on-write-layer-identity, native-sandbox-policy-digest, project-hash-policy, discard-confirmation]
-    maximumReportedStatus: workspace-isolated-only
+    useWhen: Ordinary synthetic evaluations that do not run untrusted third-party code, handle secrets, or require a security-containment claim.
+    enforcement: Both harnesses use a disposable copy-on-write fixture, controlled configuration and environment, complete mutation auditing, wall-clock timeout and process cleanup, exclusively reserved runner-owned evidence paths, and approved-value capture redaction. Codex also applies its native sandbox.
+    requiredReceiptEvidence: [prepared-snapshot-digest, copy-on-write-layer-identity, controlled-configuration, controlled-environment, complete-workspace-diff, timeout-policy, isolated-evidence-root, exclusive-output-reservation, approved-value-redaction, discard-confirmation]
+    securityContained: false
+    containmentReporting: Codex may report workspace-isolated-only from its native sandbox evidence; Junie reports containment-unverified.
     implementationStatus: implemented
   externally-contained:
     harnesses: [codex, junie]
     externalRunnerRequired: true
-    useWhen: Release evidence, live Junie execution, untrusted code, network-sensitive cases, or any case whose manifest requires full filesystem, process, network, and resource containment.
+    useWhen: An explicitly high-risk case that runs untrusted third-party code, handles secrets, permits destructive commands, or requires full filesystem, process, network, and resource containment.
     enforcement: External VM or equivalent runner wraps the disposable copy-on-write fixture and the selected harness policy, applies the allowed product diff to a pristine verifier clone, and signs the complete receipt artifact manifest.
     requiredReceiptEvidence: [external-runner-attestation, signed-receipt-manifest, prepared-snapshot-digest, copy-on-write-layer-identity, complete-workspace-diff, pristine-verifier-clone, project-hash-policy, command-evidence, discard-confirmation]
     maximumReportedStatus: externally-contained
     implementationStatus: not-implemented
-  juniePolicy: Junie has no native filesystem sandbox in this catalog; tool allow and deny lists are capability routing only, so every live Junie run uses the externally-contained tier.
+  juniePolicy: Junie runs ordinary cases in the local tier. Its tool allow and deny lists are capability routing rather than security containment, so local Junie runs never claim security-contained status.
 profiles:
   - id: codex-read-only
     harness: codex
@@ -107,7 +108,7 @@ profiles:
       fastPath: Native read-only policy plus copy-on-write reset may report workspace-isolated-only when every required receipt field is present.
       externalPath: External runner restricts filesystem access, isolates or allow-lists processes, applies network policy, and enforces resource limits.
       reportedStatus: containment-unverified
-      permittedReportedStatuses: [workspace-isolated-only, externally-contained]
+      permittedReportedStatuses: [containment-unverified, workspace-isolated-only, externally-contained]
       externalAttestationRequiredFor: externally-contained
     digestInputs:
       - fixtureSourceSha256
@@ -156,7 +157,7 @@ profiles:
       fastPath: Native workspace-write policy plus copy-on-write reset may report workspace-isolated-only when every required receipt field is present.
       externalPath: External runner restricts filesystem access, isolates or allow-lists processes, applies network policy, and enforces resource limits.
       reportedStatus: containment-unverified
-      permittedReportedStatuses: [workspace-isolated-only, externally-contained]
+      permittedReportedStatuses: [containment-unverified, workspace-isolated-only, externally-contained]
       externalAttestationRequiredFor: externally-contained
     digestInputs:
       - fixtureSourceSha256
@@ -166,8 +167,8 @@ profiles:
   - id: junie-read-only
     harness: junie
     repositoryMutation: never
-    implementationStatus: partial
-    liveExecutionStatus: forbidden-pending-external-runner
+    implementationStatus: local-tier-implemented
+    liveExecutionStatus: runnable-local
     componentStatus:
       preparedSnapshotCache: implemented
       copyOnWriteWorkspace: implemented
@@ -184,7 +185,7 @@ profiles:
       enabled: true
       writablePaths:
         - run-evidence
-      productWorkspaceMode: externally-enforced-read-only
+      productWorkspaceMode: writable-with-read-only-contract-audit
       discardAfterRun: true
     warmWorker:
       enabled: false
@@ -196,18 +197,17 @@ profiles:
         - toolchainVersions
       resetBoundary: fresh-copy-on-write-layer-and-fresh-junie-session
     workspaceIsolation:
-      externalRunnerRequired: true
+      externalRunnerRequired: false
+      externalRunnerRequiredWhen: The case explicitly declares high risk and selects the externally-contained tier.
       nativeHarnessPolicy: tool allow and deny lists may reduce available actions
-      nativePolicyRole: tool policy only; Junie tool allow and deny lists are not containment
+      nativePolicyRole: Tool policy is not security containment; the local tier detects and rejects any product mutation after the run.
       hashExpectation: unchanged product workspace
     containment:
-      filesystem: External VM or equivalent runner must enforce read-only fixture access and a separate evidence path.
-      process: External VM or equivalent runner isolates or allow-lists child processes.
-      network: External VM or equivalent runner applies the case network policy.
-      resources: External VM or equivalent runner enforces time, CPU, memory, process, and output limits.
+      localPath: Disposable workspace, controlled configuration, timeout, isolated evidence, and post-run mutation audit without a security-containment claim.
+      externalPath: An external VM or equivalent runner enforces filesystem, process, network, and resource containment for an explicitly high-risk case.
       reportedStatus: containment-unverified
-      permittedReportedStatuses: [externally-contained]
-      externalAttestationRequiredFor: every-live-run
+      permittedReportedStatuses: [containment-unverified, externally-contained]
+      externalAttestationRequiredFor: externally-contained
     digestInputs:
       - fixtureSourceSha256
       - sandboxProfileSha256
@@ -216,8 +216,8 @@ profiles:
   - id: junie-workspace-write
     harness: junie
     repositoryMutation: required-or-conditional
-    implementationStatus: partial
-    liveExecutionStatus: forbidden-pending-external-runner
+    implementationStatus: local-tier-implemented
+    liveExecutionStatus: runnable-local
     componentStatus:
       preparedSnapshotCache: implemented
       copyOnWriteWorkspace: implemented
@@ -235,7 +235,7 @@ profiles:
       writablePaths:
         - product-workspace
         - run-evidence
-      productWorkspaceMode: externally-enforced-workspace-write
+      productWorkspaceMode: writable-with-allowed-path-audit
       discardAfterRun: true
     warmWorker:
       enabled: false
@@ -247,18 +247,17 @@ profiles:
         - toolchainVersions
       resetBoundary: fresh-copy-on-write-layer-and-fresh-junie-session
     workspaceIsolation:
-      externalRunnerRequired: true
+      externalRunnerRequired: false
+      externalRunnerRequiredWhen: The case explicitly declares high risk and selects the externally-contained tier.
       nativeHarnessPolicy: tool allow and deny lists may reduce available actions
-      nativePolicyRole: tool policy only; Junie tool allow and deny lists are not containment
+      nativePolicyRole: Tool policy is not security containment; the local tier rejects writes outside the case allow-list after the run.
       hashExpectation: changes allowed only on the case path allow-list
     containment:
-      filesystem: External VM or equivalent runner must restrict writes to the disposable workspace and evidence path.
-      process: External VM or equivalent runner isolates or allow-lists child processes.
-      network: External VM or equivalent runner applies the case network policy.
-      resources: External VM or equivalent runner enforces time, CPU, memory, process, and output limits.
+      localPath: Disposable workspace, controlled configuration, timeout, isolated evidence, and post-run mutation audit without a security-containment claim.
+      externalPath: An external VM or equivalent runner enforces filesystem, process, network, and resource containment for an explicitly high-risk case.
       reportedStatus: containment-unverified
-      permittedReportedStatuses: [externally-contained]
-      externalAttestationRequiredFor: every-live-run
+      permittedReportedStatuses: [containment-unverified, externally-contained]
+      externalAttestationRequiredFor: externally-contained
     digestInputs:
       - fixtureSourceSha256
       - sandboxProfileSha256

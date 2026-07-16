@@ -3,6 +3,25 @@ version: 2
 supportedReceiptVersions:
   - 1
   - 2
+receiptVerdictValues:
+  - recorded
+  - verified
+classificationOutput:
+  primaryClaims:
+    - executed
+    - judgePassed
+    - securityContained
+    - judgeCalibrationStatus
+    - staleByDigest
+  compatibilityFields:
+    - verified
+  semantics:
+    executed: A structurally complete harness capture exists.
+    judgePassed: Required Judge checks passed independently of security containment.
+    securityContained: A governed external runner established the declared security boundary.
+    judgeCalibrationStatus: Model Judge calibration is not-required, pending, or calibrated.
+    staleByDigest: One or more governed source or evidence identities have drifted.
+    verified: Deprecated compatibility field; not used as a primary reporting claim.
 version2Required:
   - schema
   - version
@@ -124,7 +143,10 @@ containmentEvidenceStatusValues:
 codexIsolationRequired:
   - codexNativeSandbox
 junieIsolationRequired:
-  - junieExternalContainment
+  - containment
+junieExternalContainmentPolicy:
+  status: optional-legacy-field
+  requiredWhen: The receipt claims externally-contained security evidence.
 junieExternalContainmentRequired:
   - capability
   - status
@@ -233,6 +255,10 @@ independentJudgeRequired:
 captureProvenanceRequired:
   - kind
   - reference
+captureProvenanceKindValues:
+  - local-runner
+  - trusted-ci
+  - human-attested-harness-export
 legacyVersion1:
   compatibility: accepted
   status: validation-only
@@ -243,20 +269,21 @@ legacyVersion1:
     - invocationEvidence
   independentEvidenceField: independentVerifier
 notes:
-  - A declared case or a fixture pass is not verified behavior evidence.
-  - Human-attested and locally labeled CI exports can record execution, but cannot become verified until a governed external verifier validates a trust-anchored attestation.
-  - Every current case requires external post-run verification, so local receipt classification remains unverified even when its captured run is structurally complete.
+  - A declared case or a fixture pass is not receipt-backed behavior evidence.
+  - Ordinary Codex and Junie cases run locally with disposable workspaces, controlled harness state, mutation auditing, timeouts, cleanup, and isolated evidence.
+  - Local-runner provenance may establish captured execution but never establishes security-contained evidence.
+  - External containment is required only for explicitly high-risk cases or an explicit security-contained claim.
   - Receipt version 2 records current agent, skill, model, harness, context-pack, and approved-input digests.
-  - Digest drift produces stale-by-digest rather than verified status.
+  - Digest drift produces stale-by-digest independently of execution, Judge, and security claims.
   - Skill readEvidence must reference captured harness tool calls, not an agent-authored claim.
   - Forbidden skill reads are detected from the complete normalized event ledger.
   - Every evidence reference uses relative file#marker syntax and resolves inside the receipt directory.
   - Functional isolation reports workspace mutation compliance separately from security containment.
   - Functional isolation hashes the complete workspace, reports declared ephemeral build output separately, and never permits dependency or tool trees as ephemeral paths.
   - Codex records native sandbox mode plus the runner-owned workspace boundary.
-  - Junie records externally enforced containment or explicitly reports containment as unverified.
-  - A caller-created Junie runner attestation is self-attested and remains containment-unverified until a governed trust anchor verifies it.
-  - Every verified Codex or Junie attribution resolves a digest-bound agent-start event for the effective native adapter.
+  - Ordinary Junie receipts report containment-unverified and do not require a Junie external-containment mapping.
+  - An external Junie containment field remains optional for legacy version-two receipts and cannot establish security-contained status without a governed trust anchor.
+  - Every claimed Codex or Junie attribution resolves a digest-bound agent-start event for the effective native adapter.
   - Version-two skill evidence binds unsanitized source, effective model-visible content, selected resources, and sanitization actions.
   - Prepared source and case-definition drift make a receipt stale, and the prepared key binds toolchain and controlled-environment identity.
   - A full skill probe requires comparable treatment, target-omitted, and wrong-skill receipts with one probeComparisonKey.

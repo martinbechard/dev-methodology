@@ -12,6 +12,7 @@ import os
 import sys
 import threading
 import tempfile
+import time
 import unittest
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import redirect_stderr, redirect_stdout
@@ -533,6 +534,38 @@ class PreparedWorkspaceTests(unittest.TestCase):
         self.assertLessEqual(len(result.stdout.encode("utf-8")), 128)
         self.assertIn("capture cap", result.stderr)
 
+    def test_successful_command_terminates_remaining_process_group_members(self) -> None:
+        child_pid: int | None = None
+        try:
+            with tempfile.TemporaryDirectory() as directory:
+                script = (
+                    "import subprocess, sys\n"
+                    "child = subprocess.Popen("
+                    "[sys.executable, '-c', 'import time; time.sleep(60)'], "
+                    "stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)\n"
+                    "print(child.pid, flush=True)\n"
+                )
+                result = self.module.run_command(
+                    self.module.command_spec([sys.executable, "-c", script]),
+                    Path(directory),
+                )
+            self.assertTrue(result.passed)
+            child_pid = int(result.stdout.strip())
+            for _ in range(100):
+                try:
+                    os.kill(child_pid, 0)
+                except ProcessLookupError:
+                    break
+                time.sleep(0.01)
+            else:
+                self.fail("successful command left a child process running")
+        finally:
+            if child_pid is not None:
+                try:
+                    os.kill(child_pid, 9)
+                except ProcessLookupError:
+                    pass
+
     def test_workspace_is_removed_after_context_exit(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -825,10 +858,65 @@ class EvidenceVersionTwoTests(unittest.TestCase):
             },
         }
 
-    def classify(self, receipt: dict[str, object], *, include_agent_start: bool = True) -> object:
+    def junie_receipt(self) -> dict[str, object]:
+        receipt = self.receipt()
+        adapter_identity = self.module.build_agent_evidence_identity(
+            "junie", "dev-coder"
+        )
+        receipt["captureProvenance"]["kind"] = "local-runner"
+        receipt["run"].update({
+            "harness": "junie",
+            "harnessVersion": "Junie test",
+            **adapter_identity,
+        })
+        receipt["skills"] = [
+            {
+                **self.module.build_skill_evidence_identity(
+                    self.case, "junie", skill
+                ),
+                "readEvidence": [{
+                    "type": "tool-call",
+                    "reference": f"events.jsonl#read-{skill}",
+                }],
+            }
+            for skill in self.case["requiredSkills"]
+        ]
+        profile_id = self.case["sandboxProfiles"]["junie"]
+        profile = next(
+            item
+            for item in self.module.load_framework_catalogs()[
+                "sandbox-profiles.yaml"
+            ]["profiles"]
+            if item["id"] == profile_id
+        )
+        receipt["isolation"] = {
+            "workspacePreparation": "copy-on-write",
+            "sandboxProfile": profile_id,
+            "sandboxProfileDigest": self.module.case_definition_digest(profile),
+            "sandboxProfileEvidence": "isolation.json#sandbox-profile",
+            "functional": receipt["isolation"]["functional"],
+            "containment": {
+                "level": "containment-unverified",
+                "status": "unverified",
+                "enforcedBy": "local-runner",
+            },
+        }
+        return receipt
+
+    def classify(
+        self,
+        receipt: dict[str, object],
+        *,
+        include_agent_start: bool = True,
+        case: dict[str, object] | None = None,
+        extra_files: dict[str, bytes | str] | None = None,
+    ) -> object:
+        selected_case = case or self.case
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             path = root / "evidence.yaml"
+            run = receipt["run"]
+            harness = run.get("harness", "codex")
             events = [{
                 "id": "ledger-start",
                 "type": "ledger",
@@ -836,7 +924,7 @@ class EvidenceVersionTwoTests(unittest.TestCase):
                 "id": "invocation",
                 "type": "invocation",
                 "agent": "dev-coder",
-                "harness": "codex",
+                "harness": harness,
                 "model": "test-model",
             }]
             if include_agent_start:
@@ -853,7 +941,7 @@ class EvidenceVersionTwoTests(unittest.TestCase):
                 "contentDigest": next(
                     item["effectiveDigest"] for item in receipt["skills"] if item["id"] == skill
                 ),
-            } for skill in self.case["requiredSkills"])
+            } for skill in selected_case["requiredSkills"])
             (root / "events.jsonl").write_text("\n".join(json.dumps(event) for event in events) + "\n", encoding="utf-8")
             (root / "attestation.json").write_text("capture\n", encoding="utf-8")
             (root / "identities.json").write_text(
@@ -886,19 +974,185 @@ class EvidenceVersionTwoTests(unittest.TestCase):
                 "\n".join(str(item) for item in self.case["requiredEvidence"]) + "\n", encoding="utf-8",
             )
             (root / "commands.log").write_text("test\n", encoding="utf-8")
+            for name, content in (extra_files or {}).items():
+                target = root / name
+                target.parent.mkdir(parents=True, exist_ok=True)
+                if isinstance(content, bytes):
+                    target.write_bytes(content)
+                else:
+                    target.write_text(content, encoding="utf-8")
             path.write_text(yaml.safe_dump(receipt), encoding="utf-8")
-            return self.module.classify_evidence(self.case, path)
+            return self.module.classify_evidence(selected_case, path)
 
-    def test_complete_self_attested_receipt_is_recorded_but_not_verified(self) -> None:
-        """A same-directory attestation is not an external trust anchor."""
-
+    def test_local_receipt_reports_execution_judge_and_security_claims_independently(self) -> None:
         classification = self.classify(self.receipt())
         self.assertTrue(classification.executed)
-        self.assertFalse(classification.verified)
+        self.assertTrue(classification.judge_passed)
+        self.assertFalse(classification.security_contained)
+        self.assertEqual("not-required", classification.judge_calibration_status)
         self.assertFalse(classification.stale_by_digest)
-        self.assertTrue(
-            any("external" in item and "verification" in item for item in classification.errors)
+
+    def test_recorded_receipt_label_does_not_override_derived_claims(self) -> None:
+        receipt = self.receipt()
+        receipt["verdict"] = "recorded"
+        classification = self.classify(receipt)
+        self.assertTrue(classification.executed)
+        self.assertTrue(classification.judge_passed)
+        self.assertFalse(classification.security_contained)
+        self.assertFalse(any("receipt verdict" in item for item in classification.errors))
+
+    def test_failed_judge_does_not_erase_a_captured_execution(self) -> None:
+        receipt = self.receipt()
+        receipt["judges"]["deterministic"]["verdict"] = "failed"
+        receipt["judges"]["deterministic"]["records"][0]["verdict"] = "failed"
+        receipt["judges"]["model"] = {"status": "skipped-deterministic-failure"}
+        classification = self.classify(receipt)
+        self.assertTrue(classification.executed)
+        self.assertFalse(classification.judge_passed)
+        self.assertFalse(classification.security_contained)
+
+    def test_invalid_governed_evidence_cannot_receive_judge_credit(self) -> None:
+        receipt = self.receipt()
+        receipt["verdict"] = "recorded"
+        receipt["skills"][0]["readEvidence"] = []
+        classification = self.classify(receipt)
+        self.assertTrue(classification.executed)
+        self.assertFalse(classification.judge_passed)
+        self.assertTrue(any(
+            "missing skill read tool evidence" in item
+            for item in classification.errors
+        ))
+
+    def test_ordinary_local_junie_receipt_needs_no_external_containment_mapping(self) -> None:
+        classification = self.classify(self.junie_receipt())
+        self.assertTrue(classification.executed)
+        self.assertTrue(classification.judge_passed)
+        self.assertFalse(classification.security_contained)
+        self.assertFalse(any(
+            "junieExternalContainment" in item for item in classification.errors
+        ))
+        self.assertFalse(any(
+            "captureProvenance.kind" in item for item in classification.errors
+        ))
+
+    def test_failed_model_judge_is_not_reported_as_calibrated(self) -> None:
+        case = dict(self.case)
+        case["judgePlan"] = {
+            "deterministicChecks": ["required-command-outcome"],
+            "modelRubric": "artifact-contract",
+        }
+        receipt = self.receipt()
+        receipt["run"]["caseDefinitionDigest"] = self.module.case_definition_digest(case)
+        receipt["judges"]["model"] = {"status": "failed"}
+        classification = self.classify(receipt, case=case)
+        self.assertTrue(classification.executed)
+        self.assertFalse(classification.judge_passed)
+        self.assertEqual("pending", classification.judge_calibration_status)
+
+    def test_passed_model_judge_is_accepted_while_calibration_remains_pending(self) -> None:
+        rubric = next(
+            item
+            for item in self.module.load_framework_catalogs()["judges.yaml"]["rubrics"]
+            if item["id"] == "artifact-contract"
         )
+        case = dict(self.case)
+        case["judgePlan"] = {
+            "deterministicChecks": ["required-command-outcome"],
+            "modelRubric": rubric["id"],
+        }
+        candidate = "The artifact satisfies the governed requirements."
+        requirements = "The governed requirements define the acceptance boundary."
+        request = judge_contract.build_judge_request(
+            case_id=str(case["id"]),
+            run_id="run-1",
+            harness="codex",
+            rubric=rubric,
+            candidate_output=candidate,
+            evidence={"requirements": requirements},
+        )
+        critical_dimensions = set(rubric["passRules"]["criticalDimensions"])
+        dimension_scores = [
+            {
+                "id": dimension["id"],
+                "score": 4,
+                "critical": dimension["id"] in critical_dimensions,
+                "evidenceReferences": [
+                    {"documentId": "requirements", "locator": "sentence:1"}
+                ],
+                "rationale": "The governed evidence supports this dimension.",
+            }
+            for dimension in rubric["dimensions"]
+        ]
+        output = {
+            "schema": "dev-methodology-model-judge-output",
+            "version": 1,
+            "contractVersion": judge_contract.CONTRACT_VERSION,
+            "rubricId": rubric["id"],
+            "rubricSha256": request.rubric_sha256,
+            "instructionEnvelopeSha256": request.instruction_envelope_sha256,
+            "inputManifestSha256": request.input_manifest_sha256,
+            "dimensionScores": dimension_scores,
+            "overall": {"verdict": "pass", "criticalFailure": False},
+        }
+        receipt = self.receipt()
+        receipt["run"]["caseDefinitionDigest"] = self.module.case_definition_digest(case)
+        receipt["judges"]["model"] = {
+            "status": "passed",
+            "caseId": case["id"],
+            "evaluatedRunId": "run-1",
+            "evaluatedHarness": "codex",
+            "contractVersion": judge_contract.CONTRACT_VERSION,
+            "rubricId": rubric["id"],
+            "rubricSha256": request.rubric_sha256,
+            "judgePromptSha256": request.prompt_sha256,
+            "judgeOutputSchemaSha256": request.output_schema_sha256,
+            "instructionEnvelopeSha256": request.instruction_envelope_sha256,
+            "inputManifestSha256": request.input_manifest_sha256,
+            "candidateOutputSha256": hashlib.sha256(candidate.encode("utf-8")).hexdigest(),
+            "candidateOutputEvidence": "candidate.txt#artifact",
+            "governedEvidence": [{
+                "documentId": "requirements",
+                "sha256": hashlib.sha256(requirements.encode("utf-8")).hexdigest(),
+                "evidence": "requirements.txt#requirements",
+            }],
+            "dimensionScores": dimension_scores,
+            "overall": output["overall"],
+            "judgeModelIdentity": "judge-model-1",
+            "judgeModelIdentityEvidence": "judge-model.txt#judge-model-1",
+            "reasoningProfile": "independent",
+            "reasoningProfileEvidence": "reasoning.txt#independent",
+            "judgePromptEvidence": "judge-prompt.txt#Model Judge Contract Version 1",
+            "evidence": "output.json#model-judge-v1",
+            "contractArtifacts": {
+                "instructionEnvelopeEvidence": "instructions.json#model-judge-v1",
+                "inputManifestEvidence": "manifest.json#model-judge-v1",
+                "outputEvidence": "output.json#model-judge-v1",
+            },
+        }
+        receipt["independentJudge"].update({
+            "kind": "Model Judge",
+            "judgePromptSha256": request.prompt_sha256,
+            "judgePromptEvidence": "judge-prompt.txt#Model Judge Contract Version 1",
+            "inputManifestDigest": request.input_manifest_sha256,
+        })
+        classification = self.classify(
+            receipt,
+            case=case,
+            extra_files={
+                "candidate.txt": candidate,
+                "requirements.txt": requirements,
+                "instructions.json": request.instruction_envelope_bytes,
+                "manifest.json": request.input_manifest_bytes,
+                "output.json": judge_contract.canonical_json_bytes(output),
+                "judge-prompt.txt": judge_contract.PROMPT_PATH.read_bytes(),
+                "judge-model.txt": "judge-model-1\n",
+                "reasoning.txt": "independent\n",
+            },
+        )
+        self.assertTrue(classification.executed)
+        self.assertTrue(classification.judge_passed, classification)
+        self.assertEqual("pending", classification.judge_calibration_status)
+        self.assertEqual((), classification.errors)
 
     def test_agent_source_drift_is_classified_separately(self) -> None:
         receipt = self.receipt()
@@ -910,13 +1164,29 @@ class EvidenceVersionTwoTests(unittest.TestCase):
         self.assertTrue(any("conceptual agent digest mismatch" in item for item in classification.stale_reasons))
 
     def test_external_runner_required_case_cannot_promote_local_receipt(self) -> None:
+        high_risk_case = dict(self.case)
+        high_risk_case["risk"] = {
+            "level": "high",
+            "reasons": ["executes an untrusted repository hook"],
+        }
+        high_risk_case["executionTier"] = "externally-contained"
+        high_risk_case["securityContainmentRequired"] = True
+        high_risk_case["harnessExecutionStatus"] = {
+            "codex": "external-runner-required",
+            "junie": "external-runner-required",
+        }
         receipt = self.receipt()
         receipt["captureProvenance"]["kind"] = "trusted-ci"
-        classification = self.classify(receipt)
+        receipt["run"]["caseDefinitionDigest"] = self.module.case_definition_digest(
+            high_risk_case
+        )
+        classification = self.classify(receipt, case=high_risk_case)
         self.assertTrue(classification.executed)
+        self.assertTrue(classification.judge_passed)
         self.assertFalse(classification.verified)
+        self.assertFalse(classification.security_contained)
         self.assertTrue(
-            any("trusted external post-run verification" in item for item in classification.errors)
+            any("governed external verification" in item for item in classification.errors)
         )
 
     def test_codex_attribution_requires_a_digest_bound_agent_start_event(self) -> None:
@@ -1013,6 +1283,69 @@ class HarnessAndJudgeTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.module = load_module()
 
+    def test_junie_event_stream_must_be_valid_and_exposes_the_final_result(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "junie.jsonl"
+            with self.assertRaisesRegex(ValueError, "missing"):
+                self.module.read_harness_event_stream("junie", path)
+            path.write_text("\n", encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "empty"):
+                self.module.read_harness_event_stream("junie", path)
+            path.write_text('{"kind":"AgentStartedEvent"}\nnot-json\n', encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "line 2"):
+                self.module.read_harness_event_stream("junie", path)
+            target = Path(directory) / "target.jsonl"
+            target.write_text('{"type":"result","result":"done"}\n', encoding="utf-8")
+            path.unlink()
+            path.symlink_to(target)
+            with self.assertRaisesRegex(ValueError, "non-symlink"):
+                self.module.read_harness_event_stream("junie", path)
+            path.unlink()
+            path.write_bytes(b"x" * (10 * 1024 * 1024 + 1))
+            with self.assertRaisesRegex(ValueError, "capture limit"):
+                self.module.read_harness_event_stream("junie", path)
+            path.write_text(
+                "\n".join(
+                    (
+                        json.dumps({"type": "session", "sessionId": "session-1"}),
+                        json.dumps({
+                            "type": "result",
+                            "result": "## Skills Used\n\ncareful-coding",
+                        }),
+                    )
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            events = self.module.read_harness_event_stream("junie", path)
+        self.assertEqual(2, len(events))
+        self.assertEqual(
+            "## Skills Used\n\ncareful-coding",
+            self.module.extract_harness_final_response("junie", events),
+        )
+
+    def test_junie_final_response_requires_a_result_event(self) -> None:
+        with self.assertRaisesRegex(ValueError, "final result"):
+            self.module.extract_harness_final_response(
+                "junie", [{"type": "step", "message": "working"}]
+            )
+        with self.assertRaisesRegex(ValueError, "exactly one"):
+            self.module.extract_harness_final_response(
+                "junie",
+                [
+                    {"type": "result", "result": "first"},
+                    {"type": "result", "result": "second"},
+                ],
+            )
+        with self.assertRaisesRegex(ValueError, "terminal"):
+            self.module.extract_harness_final_response(
+                "junie",
+                [
+                    {"type": "result", "result": "done"},
+                    {"type": "system", "message": "late"},
+                ],
+            )
+
     def test_harness_builders_support_only_codex_and_junie(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             base = Path(directory)
@@ -1043,6 +1376,11 @@ class HarnessAndJudgeTests(unittest.TestCase):
             )
             self.assertTrue(any(value.startswith("--task=Delegate the following task") for value in junie.argv))
             self.assertFalse(any("sandbox" in value.lower() for value in junie.argv))
+            self.assertIn("JUNIE_HOME", junie.environment)
+            self.assertNotEqual(junie.environment["HOME"], junie.environment["JUNIE_HOME"])
+            self.assertTrue(
+                str(evidence_root.resolve()) in junie.environment["JUNIE_HOME"]
+            )
             with self.assertRaisesRegex(ValueError, "supported harness"):
                 self.module.build_harness_command(
                     "claude", root, "dev-coder", "Do the task", "test-model", read_only=False,
@@ -1090,6 +1428,48 @@ class HarnessAndJudgeTests(unittest.TestCase):
                     agent_locations=[root / ".junie" / "agents"],
                 )
 
+    def test_harness_identity_pins_the_managed_junie_runtime(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            shim = root / "bin" / "junie"
+            shim.parent.mkdir()
+            shim.write_text(
+                "#!/bin/sh\n# JUNIE_MANAGED_SHIM\nexit 99\n", encoding="utf-8"
+            )
+            shim.chmod(0o700)
+            data = root / "share" / "junie"
+            version = data / "versions" / "test-version"
+            version.mkdir(parents=True)
+            concrete = version / "junie"
+            concrete.write_text(
+                "#!/bin/sh\n"
+                "[ -n \"${JUNIE_HOME:-}\" ] || exit 42\n"
+                "[ \"${HOME:-}\" != \"${HOST_HOME_SENTINEL:-}\" ] || exit 43\n"
+                "printf 'Junie version: test-version\\n'\n",
+                encoding="utf-8",
+            )
+            concrete.chmod(0o700)
+            (data / "current").symlink_to(version, target_is_directory=True)
+            concrete_digest = digest(concrete)
+            self.module.capture_harness_identity.cache_clear()
+            try:
+                with mock.patch.object(
+                    self.module.shutil, "which", return_value=str(shim)
+                ), mock.patch.dict(
+                    os.environ,
+                    {
+                        "JUNIE_DATA": str(data),
+                        "HOST_HOME_SENTINEL": os.environ.get("HOME", "host-home"),
+                    },
+                    clear=False,
+                ):
+                    identity = self.module.capture_harness_identity("junie")
+            finally:
+                self.module.capture_harness_identity.cache_clear()
+        self.assertEqual(concrete.resolve(), identity.executable)
+        self.assertEqual("Junie version: test-version", identity.version)
+        self.assertEqual(concrete_digest, identity.content_digest)
+
     def test_harness_builder_requires_an_isolated_context_root(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             base = Path(directory)
@@ -1103,6 +1483,59 @@ class HarnessAndJudgeTests(unittest.TestCase):
                     event_output=evidence_root / "events.jsonl",
                     evidence_root=evidence_root,
                 )
+
+    def test_case_risk_selects_local_or_external_execution_without_implicit_escalation(self) -> None:
+        ordinary = dict(self.module.load_cases()["typescript-order-pricing"])
+        ordinary.pop("postRunVerificationStatus", None)
+        ordinary.pop("minimumContainment", None)
+        ordinary.update({
+            "risk": {"level": "ordinary", "reasons": []},
+            "executionTier": "local",
+            "securityContainmentRequired": False,
+            "harnessExecutionStatus": {"codex": "runnable", "junie": "runnable"},
+        })
+        self.assertEqual([], self.module.validate_case_definition(ordinary))
+
+        high_without_reason = {
+            **ordinary,
+            "risk": {"level": "high", "reasons": []},
+            "executionTier": "externally-contained",
+            "securityContainmentRequired": True,
+            "harnessExecutionStatus": {
+                "codex": "external-runner-required",
+                "junie": "external-runner-required",
+            },
+        }
+        self.assertTrue(any(
+            "high-risk case must declare at least one reason" in error
+            for error in self.module.validate_case_definition(high_without_reason)
+        ))
+
+        high_on_local_tier = {
+            **high_without_reason,
+            "risk": {"level": "high", "reasons": ["untrusted-third-party-code"]},
+            "executionTier": "local",
+            "securityContainmentRequired": False,
+            "harnessExecutionStatus": {"codex": "runnable", "junie": "runnable"},
+        }
+        self.assertTrue(any(
+            "high-risk case must use the externally-contained tier" in error
+            for error in self.module.validate_case_definition(high_on_local_tier)
+        ))
+
+        ordinary_on_external_tier = {
+            **ordinary,
+            "executionTier": "externally-contained",
+            "securityContainmentRequired": True,
+            "harnessExecutionStatus": {
+                "codex": "external-runner-required",
+                "junie": "external-runner-required",
+            },
+        }
+        self.assertTrue(any(
+            "ordinary case must use the local tier" in error
+            for error in self.module.validate_case_definition(ordinary_on_external_tier)
+        ))
 
     def test_codex_read_only_final_response_is_captured_outside_the_workspace(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -1141,6 +1574,167 @@ class HarnessAndJudgeTests(unittest.TestCase):
                     isolated_config_root=root,
                     last_message_output=root / "review.md",
                 )
+
+    def test_junie_read_only_result_path_is_runner_owned(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            root = base / "workspace"
+            evidence_root = base / "evidence"
+            evidence_root.mkdir()
+            (root / ".junie" / "agents").mkdir(parents=True)
+            (root / ".junie" / "skills").mkdir(parents=True)
+            command = self.module.build_harness_command(
+                "junie",
+                root,
+                "dev-coder",
+                "Review the source",
+                "test-model",
+                read_only=True,
+                event_output=evidence_root / "events.jsonl",
+                evidence_root=evidence_root,
+                isolated_config_root=root,
+                last_message_output=evidence_root / "review.md",
+                skill_locations=[root / ".junie" / "skills"],
+                agent_locations=[root / ".junie" / "agents"],
+            )
+            self.assertIn("--output-format=json-stream", command.argv)
+            with self.assertRaisesRegex(ValueError, "runner-owned evidence root"):
+                self.module.build_harness_command(
+                    "junie",
+                    root,
+                    "dev-coder",
+                    "Review the source",
+                    "test-model",
+                    read_only=True,
+                    event_output=evidence_root / "events.jsonl",
+                    evidence_root=evidence_root,
+                    isolated_config_root=root,
+                    last_message_output=root / "review.md",
+                    skill_locations=[root / ".junie" / "skills"],
+                    agent_locations=[root / ".junie" / "agents"],
+                )
+
+    def test_local_junie_run_writes_result_and_cleans_run_scratch(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            root = base / "workspace"
+            root.mkdir()
+            (root / "TASK.md").write_text("Return the requested evidence packet.\n", encoding="utf-8")
+            (root / ".eval-workspace.json").write_text("{}\n", encoding="utf-8")
+            evidence_root = base / "dev-methodology-evals" / "evidence"
+            result_path = evidence_root / "review.md"
+            event_path = evidence_root / "events.jsonl"
+            case = dict(self.module.load_cases()["typescript-order-pricing"])
+            case.update({
+                "id": "junie-handler-test",
+                "task": "TASK.md",
+                "readOnly": True,
+                "allowedWritePaths": [],
+                "ephemeralWritePaths": [],
+                "modelVisiblePaths": ["TASK.md"],
+            })
+            args = self.module._argument_parser().parse_args([
+                "--case",
+                case["id"],
+                "--harness",
+                "junie",
+                "--invoke-harness",
+                "--result",
+                str(result_path),
+                "--event-output",
+                str(event_path),
+                "--approved-env-name",
+                "EVAL_API_TOKEN",
+            ])
+            identity = self.module.HarnessIdentity(
+                "junie",
+                Path(sys.executable),
+                "Junie test",
+                digest(Path(sys.executable)),
+            )
+            observed_cache: list[Path] = []
+            observed_scratch: list[Path] = []
+            observed_junie_home: list[Path] = []
+            secret = "eval-secret-token-123456"
+
+            def capture(command: object, cwd: Path) -> object:
+                cache = Path(next(
+                    item.split("=", 1)[1]
+                    for item in command.argv
+                    if item.startswith("--cache-dir=")
+                ))
+                scratch = Path(command.environment["TMPDIR"])
+                junie_home = Path(command.environment["JUNIE_HOME"])
+                cache.mkdir(parents=True)
+                scratch.mkdir(parents=True, exist_ok=True)
+                junie_home.mkdir(parents=True, exist_ok=True)
+                (cache / "state").write_text("temporary\n", encoding="utf-8")
+                (junie_home / "state").write_text("temporary\n", encoding="utf-8")
+                observed_cache.append(cache)
+                observed_scratch.append(scratch)
+                observed_junie_home.append(junie_home)
+                event_path.parent.mkdir(parents=True, exist_ok=True)
+                event_path.write_text(
+                    json.dumps({
+                        "type": "result",
+                        "result": f"## Skills Used\n\ncareful-coding\n\ntoken={secret}\n",
+                    })
+                    + "\n",
+                    encoding="utf-8",
+                )
+                return self.module.CommandResult(
+                    command.argv,
+                    0,
+                    "",
+                    f"diagnostic token={secret}\n",
+                )
+
+            captured_stderr = io.StringIO()
+            with mock.patch.dict(
+                os.environ, {"EVAL_API_TOKEN": secret}
+            ), mock.patch.object(
+                self.module.tempfile, "gettempdir", return_value=str(base)
+            ), mock.patch.object(
+                self.module, "capture_harness_identity", return_value=identity
+            ), mock.patch.object(
+                self.module, "run_command", side_effect=capture
+            ), redirect_stderr(captured_stderr):
+                error = self.module._handle_harness_invocation(args, case, root)
+            self.assertIsNone(error)
+            self.assertEqual(
+                "## Skills Used\n\ncareful-coding\n\n"
+                "token=[REDACTED_APPROVED_ENV:EVAL_API_TOKEN]\n",
+                result_path.read_text(encoding="utf-8"),
+            )
+            self.assertTrue(event_path.is_file())
+            self.assertNotIn(secret, event_path.read_text(encoding="utf-8"))
+            self.assertNotIn(secret, captured_stderr.getvalue())
+            self.assertIn(
+                "[REDACTED_APPROVED_ENV:EVAL_API_TOKEN]",
+                captured_stderr.getvalue(),
+            )
+            self.assertTrue(observed_cache)
+            self.assertTrue(observed_scratch)
+            self.assertTrue(observed_junie_home)
+            self.assertFalse(observed_cache[0].exists())
+            self.assertFalse(observed_scratch[0].exists())
+            self.assertFalse(observed_junie_home[0].exists())
+
+    def test_capture_paths_are_exclusively_reserved_and_never_overwritten(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "events.jsonl"
+            with self.module._reserve_capture_paths([output]):
+                with self.assertRaisesRegex(ValueError, "already reserved"):
+                    with self.module._reserve_capture_paths([output]):
+                        pass
+            output.write_text("existing evidence\n", encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "already exists"):
+                with self.module._reserve_capture_paths([output]):
+                    pass
+            self.assertEqual(
+                "existing evidence\n",
+                output.read_text(encoding="utf-8"),
+            )
 
     def test_output_schema_must_be_the_evaluator_owned_codex_json_schema(self) -> None:
         schema_path = ROOT / "evals" / "codex-agent-output-schema.json"
@@ -1183,7 +1777,7 @@ class HarnessAndJudgeTests(unittest.TestCase):
                     output_schema=external,
                 )
 
-    def test_junie_live_command_requires_an_attested_external_runner(self) -> None:
+    def test_junie_local_command_uses_the_pinned_harness_directly(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             base = Path(directory)
             root = base / "workspace"
@@ -1191,6 +1785,9 @@ class HarnessAndJudgeTests(unittest.TestCase):
             evidence_root.mkdir()
             (root / ".junie" / "agents").mkdir(parents=True)
             (root / ".junie" / "skills").mkdir(parents=True)
+            executable = base / "junie-runtime"
+            executable.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
+            executable.chmod(0o700)
             command = self.module.build_harness_command(
                 "junie",
                 root,
@@ -1203,47 +1800,80 @@ class HarnessAndJudgeTests(unittest.TestCase):
                 isolated_config_root=root,
                 skill_locations=[root / ".junie" / "skills"],
                 agent_locations=[root / ".junie" / "agents"],
+                harness_executable=executable,
             )
-            runner = base / "external-runner"
-            runner.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
-            runner.chmod(0o700)
-            attestation = base / "attestation.json"
-            with self.assertRaisesRegex(ValueError, "attestation"):
-                self.module.wrap_junie_external_runner(command, runner, attestation)
-            attestation.write_text(json.dumps({
-                "schema": "dev-methodology-junie-containment-attestation",
-                "version": 1,
-                "status": "verified",
-                "runnerDigest": digest(runner),
-                "capabilities": ["filesystem", "process", "network", "cpu", "memory", "time"],
-            }), encoding="utf-8")
-            with self.assertRaisesRegex(ValueError, "explicitly unverified"):
-                self.module.wrap_junie_external_runner(command, runner, attestation)
-            attestation.write_text(json.dumps({
-                "schema": "dev-methodology-junie-containment-attestation",
-                "version": 1,
-                "status": "self-attested-unverified",
-                "runnerDigest": digest(runner),
-                "capabilities": ["filesystem", "process", "network", "cpu", "memory", "time"],
-            }), encoding="utf-8")
-            wrapped = self.module.wrap_junie_external_runner(command, runner, attestation)
-            self.assertEqual(str(runner.resolve()), wrapped.command.argv[0])
-            self.assertEqual("--", wrapped.command.argv[1])
-            self.assertEqual("junie", wrapped.command.argv[2])
-            self.assertEqual("self-attested-unverified", wrapped.trust_status)
+        self.assertEqual(str(executable.resolve()), command.argv[0])
+        self.assertTrue(any(item.startswith("--project=") for item in command.argv))
+        self.assertFalse(any("attestation" in item for item in command.argv))
 
-    def test_cli_never_executes_junie_directly(self) -> None:
-        with mock.patch.object(self.module, "run_command") as execute:
-            with redirect_stderr(io.StringIO()):
-                with self.assertRaises(SystemExit):
-                    self.module.main([
-                        "--case",
-                        "typescript-code-review",
-                        "--harness",
-                        "junie",
-                        "--invoke-harness",
-                    ])
-        execute.assert_not_called()
+    def test_cli_runs_standard_junie_locally_and_blocks_high_risk_cases(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "TASK.md").write_text("Synthetic task.\n", encoding="utf-8")
+            standard_case = {
+                "id": "local-junie",
+                "project": "evals/projects/local-junie",
+                "task": "TASK.md",
+                "verify": ["true"],
+                "risk": {"level": "ordinary", "reasons": []},
+                "executionTier": "local",
+                "securityContainmentRequired": False,
+                "harnesses": ["codex", "junie"],
+                "harnessExecutionStatus": {"codex": "runnable", "junie": "runnable"},
+                "requiredAgents": ["dev-coder"],
+                "requiredSkills": ["careful-coding"],
+                "requiredEvidence": ["SAFE"],
+                "allowedWritePaths": [],
+                "ephemeralWritePaths": [],
+                "modelVisiblePaths": ["TASK.md"],
+            }
+            with mock.patch.object(
+                self.module, "load_cases", return_value={standard_case["id"]: standard_case}
+            ), mock.patch.object(
+                self.module, "_workspace_manager", return_value=None
+            ), mock.patch.object(
+                self.module, "validate_case", return_value=[]
+            ), mock.patch.object(
+                self.module, "_handle_harness_invocation", return_value=None
+            ) as invoke:
+                exit_code = self.module.main([
+                    "--case",
+                    standard_case["id"],
+                    "--project-root",
+                    str(root),
+                    "--harness",
+                    "junie",
+                    "--invoke-harness",
+                ])
+            self.assertEqual(0, exit_code)
+            invoke.assert_called_once()
+
+            high_risk_case = {
+                **standard_case,
+                "id": "high-risk-junie",
+                "risk": {"level": "high", "reasons": ["untrusted-third-party-code"]},
+                "executionTier": "externally-contained",
+                "securityContainmentRequired": True,
+                "harnessExecutionStatus": {
+                    "codex": "external-runner-required",
+                    "junie": "external-runner-required",
+                },
+            }
+            with mock.patch.object(
+                self.module, "load_cases", return_value={high_risk_case["id"]: high_risk_case}
+            ), mock.patch.object(self.module, "_handle_harness_invocation") as invoke:
+                with redirect_stderr(io.StringIO()):
+                    with self.assertRaises(SystemExit):
+                        self.module.main([
+                            "--case",
+                            high_risk_case["id"],
+                            "--project-root",
+                            str(root),
+                            "--harness",
+                            "junie",
+                            "--invoke-harness",
+                        ])
+            invoke.assert_not_called()
 
     def test_live_harness_path_never_runs_host_verification(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -1403,9 +2033,9 @@ class HarnessAndJudgeTests(unittest.TestCase):
             output = io.StringIO()
             harness_identity = self.module.HarnessIdentity(
                 "codex",
-                SCRIPT_PATH,
+                Path(sys.executable),
                 "codex test",
-                digest(SCRIPT_PATH),
+                digest(Path(sys.executable)),
             )
             with mock.patch.object(self.module, "load_cases", return_value={case["id"]: case}), mock.patch.object(
                 self.module,

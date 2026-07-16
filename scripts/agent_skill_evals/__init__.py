@@ -4,16 +4,16 @@
 
 from .commands import CommandResult, CommandSpec, command_spec, run_command
 from .invocations import (
-    ExternalRunnerInvocation,
     HarnessIdentity,
     SUPPORTED_HARNESSES,
     CODEX_OUTPUT_SCHEMA_SHA256,
     agent_attribution_verified,
     build_harness_command,
     capture_harness_identity,
+    extract_harness_final_response,
     normalize_harness_events,
+    read_harness_event_stream,
     validate_codex_output_schema,
-    wrap_junie_external_runner,
 )
 from .judges import (
     JUDGE_TYPES,
@@ -84,7 +84,6 @@ __all__ = [
     "ContextPack",
     "ContextPackBuilder",
     "EvidenceClassification",
-    "ExternalRunnerInvocation",
     "FunctionalIsolationAudit",
     "HarnessIdentity",
     "JudgePipelineResult",
@@ -109,12 +108,14 @@ __all__ = [
     "compute_calibration_metrics",
     "content_digest",
     "dependency_inputs_digest",
+    "extract_harness_final_response",
     "initialize_git_workspace",
     "is_evaluation_git_workspace",
     "load_cases",
     "load_framework_catalogs",
     "mapping_digest",
     "normalize_harness_events",
+    "read_harness_event_stream",
     "prepared_fixture_key",
     "prepared_fixture_identity_key",
     "require_non_empty_string",
@@ -132,5 +133,4 @@ __all__ = [
     "validate_framework_catalogs",
     "validate_harness_event",
     "validate_reference",
-    "wrap_junie_external_runner",
 ]

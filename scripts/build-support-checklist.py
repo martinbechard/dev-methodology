@@ -447,8 +447,8 @@ def _judge_catalog_status(
         "calibrationStatus": str(status),
         "promotionStatus": str(promotion_status),
         "diagnosticRecordCount": len(records),
-        "requiredBeforeVerifiedEvidence": bool(
-            policy.get("requiredBeforeVerifiedEvidence")
+        "requiredBeforeJudgeCalibrationClaim": bool(
+            policy.get("requiredBeforeJudgeCalibrationClaim")
         ),
         "calibratedRubrics": sorted(
             rubric
@@ -511,7 +511,11 @@ def _load_sandbox_profiles(
             if workspace_isolation.get("externalRunnerRequired") is True:
                 workspace_status: object = "external-runner-required"
             elif workspace_isolation.get("externalRunnerRequired") is False:
-                workspace_status = "native-policy-plus-copy-on-write-declared"
+                workspace_status = (
+                    "disposable-workspace-plus-mutation-audit"
+                    if harness == "junie"
+                    else "native-policy-plus-copy-on-write-declared"
+                )
             else:
                 workspace_status = workspace_isolation.get(
                     "reportedStatus", workspace_isolation.get("status", "declared")
@@ -528,6 +532,7 @@ def _load_sandbox_profiles(
                 "harness": str(harness),
                 "repositoryMutation": profile.get("repositoryMutation"),
                 "implementationStatus": profile.get("implementationStatus"),
+                "liveExecutionStatus": profile.get("liveExecutionStatus"),
                 "preparedSnapshot": profile.get("preparedSnapshot"),
                 "copyOnWriteWorkspace": profile.get("copyOnWriteWorkspace"),
                 "warmWorker": profile.get("warmWorker"),
@@ -609,6 +614,32 @@ def _classify_receipt(
                     classification, "verified", "verified", False
                 )
             ),
+            "judgePassed": bool(
+                _classification_value(
+                    classification,
+                    "judgePassed",
+                    "judge_passed",
+                    _classification_value(
+                        classification, "verified", "verified", False
+                    ),
+                )
+            ),
+            "securityContained": bool(
+                _classification_value(
+                    classification,
+                    "securityContained",
+                    "security_contained",
+                    False,
+                )
+            ),
+            "judgeCalibrationStatus": str(
+                _classification_value(
+                    classification,
+                    "judgeCalibrationStatus",
+                    "judge_calibration_status",
+                    "not-evaluated",
+                )
+            ),
             "staleByDigest": bool(
                 _classification_value(
                     classification, "staleByDigest", "stale_by_digest", False
@@ -624,6 +655,9 @@ def _classify_receipt(
     return {
         "executed": True,
         "verified": receipt.get("verdict") == "verified" and not errors,
+        "judgePassed": receipt.get("verdict") == "verified" and not errors,
+        "securityContained": False,
+        "judgeCalibrationStatus": "not-evaluated",
         "staleByDigest": stale,
         "errors": errors,
     }
@@ -674,8 +708,11 @@ def _apply_evidence(
         for probe_id in state["probeIds"]
     }
     executed_runs = 0
+    judge_passed_runs = 0
+    security_contained_runs = 0
     verified_runs = 0
     stale_runs = 0
+    calibration_status_counts: dict[str, int] = {}
     if evidence_paths:
         active_runner = runner if runner is not None else load_eval_runner(root)
         for path in evidence_paths:
@@ -754,6 +791,20 @@ def _apply_evidence(
                     _append_case(state, "positiveExecutedCases", case_id)
                     if state["fixtureBacked"]:
                         _append_case(state, "executedCases", case_id)
+            if bool(classification["judgePassed"]):
+                judge_passed_runs += 1
+                _append_case(target_agent_state, "judgePassedCases", case_id)
+                for state in target_skill_states:
+                    _append_case(state, "positiveJudgePassedCases", case_id)
+                    if state["fixtureBacked"]:
+                        _append_case(state, "judgePassedCases", case_id)
+            if bool(classification["securityContained"]):
+                security_contained_runs += 1
+                _append_case(target_agent_state, "securityContainedCases", case_id)
+                for state in target_skill_states:
+                    _append_case(state, "positiveSecurityContainedCases", case_id)
+                    if state["fixtureBacked"]:
+                        _append_case(state, "securityContainedCases", case_id)
             if bool(classification["verified"]):
                 verified_runs += 1
                 _append_case(target_agent_state, "verifiedCases", case_id)
@@ -768,18 +819,45 @@ def _apply_evidence(
                     _append_case(state, "positiveStaleByDigestCases", case_id)
                     if state["fixtureBacked"]:
                         _append_case(state, "staleByDigestCases", case_id)
+            calibration_status = str(
+                classification.get("judgeCalibrationStatus", "not-evaluated")
+            )
+            calibration_status_counts[calibration_status] = (
+                calibration_status_counts.get(calibration_status, 0) + 1
+            )
     evidence_status = coverage["evidenceStatus"]
     evidence_status.update(
         {
             "executedRunCount": executed_runs,
+            "judgePassedRunCount": judge_passed_runs,
+            "securityContainedRunCount": security_contained_runs,
             "verifiedRunCount": verified_runs,
             "staleByDigestRunCount": stale_runs,
+            "judgeCalibrationStatusCounts": dict(
+                sorted(calibration_status_counts.items())
+            ),
             "executedAgentCount": sum(
                 bool(state["executedCases"])
                 for state in coverage["agents"].values()
             ),
             "executedSkillCount": sum(
                 bool(state["executedCases"])
+                for state in coverage["skills"].values()
+            ),
+            "judgePassedAgentCount": sum(
+                bool(state["judgePassedCases"])
+                for state in coverage["agents"].values()
+            ),
+            "judgePassedSkillCount": sum(
+                bool(state["judgePassedCases"])
+                for state in coverage["skills"].values()
+            ),
+            "securityContainedAgentCount": sum(
+                bool(state["securityContainedCases"])
+                for state in coverage["agents"].values()
+            ),
+            "securityContainedSkillCount": sum(
+                bool(state["securityContainedCases"])
                 for state in coverage["skills"].values()
             ),
             "verifiedAgentCount": sum(
@@ -800,6 +878,14 @@ def _apply_evidence(
             ),
             "positiveExecutedSkillCount": sum(
                 bool(state["positiveExecutedCases"])
+                for state in coverage["skills"].values()
+            ),
+            "positiveJudgePassedSkillCount": sum(
+                bool(state["positiveJudgePassedCases"])
+                for state in coverage["skills"].values()
+            ),
+            "positiveSecurityContainedSkillCount": sum(
+                bool(state["positiveSecurityContainedCases"])
                 for state in coverage["skills"].values()
             ),
             "positiveVerifiedSkillCount": sum(
@@ -833,6 +919,8 @@ def build_evaluation_coverage(
     runnable_cases_by_harness: dict[str, set[str]] = {
         harness: set() for harness in _SUPPORTED_HARNESSES
     }
+    ordinary_local_cases: set[str] = set()
+    high_risk_external_cases: set[str] = set()
     harness_case_status_values = {
         "runnable",
         "external-runner-required",
@@ -864,9 +952,42 @@ def build_evaluation_coverage(
                 )
             if status == "runnable" and structurally_executable:
                 runnable_cases_by_harness[str(harness)].add(case_id)
-        if case.get("postRunVerificationStatus") != "external-runner-required":
+        risk = _require_mapping(case.get("risk"), f"Evaluation case {case_id} risk")
+        level = risk.get("level")
+        reasons = _string_list(
+            risk.get("reasons"), f"Evaluation case {case_id} risk reasons"
+        )
+        if level == "ordinary":
+            if reasons:
+                raise ValueError(
+                    f"Ordinary evaluation case {case_id} must not declare risk reasons"
+                )
+            if (
+                case.get("executionTier") != "local"
+                or case.get("securityContainmentRequired") is not False
+                or set(harness_status.values()) != {"runnable"}
+            ):
+                raise ValueError(
+                    f"Ordinary evaluation case {case_id} must run locally on Codex and Junie without a security-containment requirement"
+                )
+            ordinary_local_cases.add(case_id)
+        elif level == "high":
+            if not reasons:
+                raise ValueError(
+                    f"High-risk evaluation case {case_id} must declare at least one reason"
+                )
+            if (
+                case.get("executionTier") != "externally-contained"
+                or case.get("securityContainmentRequired") is not True
+                or set(harness_status.values()) != {"external-runner-required"}
+            ):
+                raise ValueError(
+                    f"High-risk evaluation case {case_id} must use the externally-contained tier for Codex and Junie"
+                )
+            high_risk_external_cases.add(case_id)
+        else:
             raise ValueError(
-                f"Evaluation case {case_id} postRunVerificationStatus must be external-runner-required"
+                f"Evaluation case {case_id} risk level must be ordinary or high"
             )
 
     calibration_validator = eval_runner
@@ -1002,9 +1123,13 @@ def build_evaluation_coverage(
                 )
             ),
             "executedCases": [],
+            "judgePassedCases": [],
+            "securityContainedCases": [],
             "verifiedCases": [],
             "staleByDigestCases": [],
             "positiveExecutedCases": [],
+            "positiveJudgePassedCases": [],
+            "positiveSecurityContainedCases": [],
             "positiveVerifiedCases": [],
             "positiveStaleByDigestCases": [],
         }
@@ -1116,6 +1241,8 @@ def build_evaluation_coverage(
                 )
             ),
             "executedCases": [],
+            "judgePassedCases": [],
+            "securityContainedCases": [],
             "verifiedCases": [],
             "staleByDigestCases": [],
         }
@@ -1429,6 +1556,8 @@ def build_evaluation_coverage(
             "executableCaseCount": len(executable_cases),
             "codexRunnableCaseCount": len(runnable_cases_by_harness["codex"]),
             "junieRunnableCaseCount": len(runnable_cases_by_harness["junie"]),
+            "ordinaryLocalCaseCount": len(ordinary_local_cases),
+            "highRiskExternalCaseCount": len(high_risk_external_cases),
             "caseBackedAgentCount": sum(
                 bool(state["caseBacked"]) for state in agent_state.values()
             ),
@@ -1550,10 +1679,12 @@ def render(
         "- Executable fixture means every case required for the corresponding full coverage claim has a project, task, and verification command.",
         "- A workflow pack may have partial case coverage without having an end-to-end fixture for every declared phase, agent, and handoff.",
         "- Model Judge calibration promotion is disabled pending per-sample provenance. Diagnostic records cannot create calibrated status; Deterministic-Judge-only declarations show not-required.",
-        "- Executed means a version-two receipt has a structurally complete capture with digest-bound harness invocation, event ledger, and selected agent-start evidence; it does not imply a trusted producer.",
-        "- Verified additionally requires a governed external verifier trust anchor over the receipt, current digests, complete workspace diff, isolation evidence, required Judge verdicts, command evidence, and attribution evidence. That verifier is not implemented yet.",
-        "- Stale-by-digest means a prior execution no longer verifies against current agent, skill, model, or Judge calibration digests.",
-        "- Catalog coverageStatus values never create executed or verified status.",
+        "- Executed means a version-two receipt has a structurally complete harness capture. It does not imply a Judge pass or security containment.",
+        "- Judge-passed means the required Deterministic Judge and Model Judge checks passed. Model Judge calibration is reported separately and may remain pending.",
+        "- Security-contained means a governed external runner established filesystem, process, network, and resource containment. The local tier does not make this claim.",
+        "- Stale-by-digest means a prior execution no longer matches current agent, skill, model, or Judge artifacts.",
+        "- Legacy verified fields remain for data compatibility only; primary reporting uses Executed, Judge-passed, Security-contained, and Stale-by-digest.",
+        "- Catalog coverageStatus values never create execution or evidence claims.",
         "",
         "## Summary",
         "",
@@ -1562,7 +1693,8 @@ def render(
         f"- [x] {evidence['declaredScenarioCount']} agent scenarios and {evidence['workflowPackCount']} workflow packs are declared.",
         f"- {evidence['caseBackedWorkflowPackCount']} workflow packs have associated cases; {evidence['partialWorkflowPackCount']} are partial and {evidence['endToEndFixtureBackedWorkflowPackCount']} have end-to-end fixture coverage.",
         f"- {evidence['fixtureBackedCaseCount']} cases are fixture-backed and {evidence['executableCaseCount']} fixtures are structurally executable before harness readiness is considered.",
-        f"- {evidence['codexRunnableCaseCount']} cases can capture a Codex harness run through the native fast path; {evidence['junieRunnableCaseCount']} can run through Junie without an external-runner prerequisite. Every post-run verification command still requires trusted external containment.",
+        f"- {evidence['codexRunnableCaseCount']} cases can run locally through Codex and {evidence['junieRunnableCaseCount']} can run locally through Junie.",
+        f"- {evidence['ordinaryLocalCaseCount']} cases use the ordinary local tier; {evidence['highRiskExternalCaseCount']} explicitly high-risk cases require the externally-contained tier.",
         f"- {evidence['caseBackedAgentCount']} agents have at least one case-backed scenario; {evidence['partialScenarioBackedAgentCount']} are partial and {evidence['fixtureBackedAgentCount']} have all declared scenarios backed.",
         f"- {evidence['positiveCaseBackedSkillCount']} skills have positive-case support, {evidence['negativeCaseBackedSkillCount']} have negative-activation cases, {evidence['pairedControlsExecutableSkillCount']} have executable paired controls, and {evidence['fixtureBackedSkillCount']} satisfy the full probe contract.",
         f"- {evidence['executableFixtureAgentCount']} agents and {evidence['executableFixtureSkillCount']} skills have executable full fixtures.",
@@ -1570,13 +1702,14 @@ def render(
         f"- {evidence['modelJudgePendingAgentCount']} agents and {evidence['modelJudgePendingSkillCount']} skills have pending Model Judge status.",
         f"- {evidence['modelJudgeNotRequiredAgentCount']} agents and {evidence['modelJudgeNotRequiredSkillCount']} skills use Deterministic Judges only and do not require Model Judge calibration.",
         f"- {evidence['executedAgentCount']} agents and {evidence['executedSkillCount']} skills have classified executions.",
-        f"- {evidence['verifiedAgentCount']} agents and {evidence['verifiedSkillCount']} skills have verified evidence.",
+        f"- {evidence['judgePassedAgentCount']} agents and {evidence['judgePassedSkillCount']} skills have Judge-passed evidence.",
+        f"- {evidence['securityContainedAgentCount']} agents and {evidence['securityContainedSkillCount']} skills have security-contained evidence.",
         f"- {evidence['staleByDigestAgentCount']} agents and {evidence['staleByDigestSkillCount']} skills have stale-by-digest evidence.",
-        f"- Positive-case-only skill evidence: {evidence['positiveExecutedSkillCount']} executed, {evidence['positiveVerifiedSkillCount']} verified, and {evidence['positiveStaleByDigestSkillCount']} stale; these do not promote full-probe status.",
+        f"- Positive-case-only skill evidence: {evidence['positiveExecutedSkillCount']} executed, {evidence['positiveJudgePassedSkillCount']} Judge-passed, {evidence['positiveSecurityContainedSkillCount']} security-contained, and {evidence['positiveStaleByDigestSkillCount']} stale; these do not promote full-probe status.",
         "",
         "## Evaluation Harness And Sandbox Support",
         "",
-        "Evaluation execution support is limited to Codex and Junie. A declared sandbox profile reports its actual containment status; workspace isolation and tool configuration do not imply external containment. The host runner audits dependency and build trees, records declared ephemeral build output separately from product changes, never executes model-modified verification code, and cannot promote current receipts without the unimplemented governed external verifier.",
+        "Evaluation execution support is limited to Codex and Junie. Ordinary synthetic cases run locally in disposable workspaces with controlled harness state, timeouts, cleanup, isolated evidence, and mutation audits. External containment is reserved for explicitly high-risk cases. Workspace isolation and tool configuration do not create a security-containment claim.",
         "",
         "| Harness | Profile | Implementation | Workspace isolation | Containment status |",
         "| --- | --- | --- | --- | --- |",
@@ -1592,8 +1725,8 @@ def render(
             "",
             "## Agent Checklist",
             "",
-            "| Agent | Profile | Structural | Scenario-declared | Case-backed scenarios | All scenarios backed | Executable full fixture | Judge calibration | Executed | Verified | Stale-by-digest |",
-            "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+            "| Agent | Profile | Structural | Scenario-declared | Case-backed scenarios | All scenarios backed | Executable full fixture | Judge calibration | Executed | Judge-passed | Security-contained | Stale-by-digest |",
+            "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
         ]
     )
     for name, role in sorted(active_roles.items()):
@@ -1604,7 +1737,8 @@ def render(
             f"{checkbox(state['caseBacked'])} {_case_list(state['caseBackedScenarioIds'])} | "
             f"{checkbox(state['fixtureBacked'])} {_case_list(state['fixtureBackedCases'])} | {checkbox(state['executableFixture'])} "
             f"{_case_list(state['fixtureBackedCases'])} | {state['judgeCalibration']} | "
-            f"{_case_list(state['executedCases'])} | {_case_list(state['verifiedCases'])} | "
+            f"{_case_list(state['executedCases'])} | {_case_list(state['judgePassedCases'])} | "
+            f"{_case_list(state['securityContainedCases'])} | "
             f"{_case_list(state['staleByDigestCases'])} |"
         )
 
@@ -1615,8 +1749,8 @@ def render(
         lines.extend([f"### {category_labels[category_id]}", ""])
         lines.extend(
             [
-                "| Skill | Structural | Probe-declared | Positive case | Negative case | Paired controls | Full probe | Executable full fixture | Judge calibration | Executed | Verified | Stale-by-digest |",
-                "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+                "| Skill | Structural | Probe-declared | Positive case | Negative case | Paired controls | Full probe | Executable full fixture | Judge calibration | Executed | Judge-passed | Security-contained | Stale-by-digest |",
+                "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
             ]
         )
         for name in sorted(
@@ -1631,7 +1765,8 @@ def render(
                 f"{checkbox(state['pairedControlsExecutable'])} | "
                 f"{checkbox(state['fixtureBacked'])} {_case_list(state['fixtureBackedCases'])} | {checkbox(state['executableFixture'])} "
                 f"{_case_list(state['fixtureBackedCases'])} | {state['judgeCalibration']} | "
-                f"{_case_list(state['executedCases'])} | {_case_list(state['verifiedCases'])} | "
+                f"{_case_list(state['executedCases'])} | {_case_list(state['judgePassedCases'])} | "
+                f"{_case_list(state['securityContainedCases'])} | "
                 f"{_case_list(state['staleByDigestCases'])} |"
             )
         lines.append("")
@@ -1640,8 +1775,8 @@ def render(
         [
             "## Technology Detection Registry",
             "",
-            "| Skill | Kind | Label | Probe-declared | Positive case | Full probe fixture | Executed | Verified | Stale-by-digest |",
-            "| --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+            "| Skill | Kind | Label | Probe-declared | Positive case | Full probe fixture | Executed | Judge-passed | Security-contained | Stale-by-digest |",
+            "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
         ]
     )
     for entry in _require_list(registry["skills"], "technology registry skills"):
@@ -1651,7 +1786,8 @@ def render(
         lines.append(
             f"| {skill_id} | {mapping['kind']} | {mapping['label']} | "
             f"{checkbox(state['probeDeclared'])} | {checkbox(state['positiveCaseBacked'])} | {checkbox(state['executableFixture'])} | "
-            f"{_case_list(state['executedCases'])} | {_case_list(state['verifiedCases'])} | "
+            f"{_case_list(state['executedCases'])} | {_case_list(state['judgePassedCases'])} | "
+            f"{_case_list(state['securityContainedCases'])} | "
             f"{_case_list(state['staleByDigestCases'])} |"
         )
 
@@ -1663,7 +1799,7 @@ def render(
             f"- Calibration policy status: {active_coverage['judgeStatus']['calibrationStatus']}.",
             f"- Calibrated Model Judge rubrics: {_case_list(active_coverage['judgeStatus']['calibratedRubrics'])}.",
             f"- Pending Model Judge rubrics: {_case_list(active_coverage['judgeStatus']['pendingRubrics'])}.",
-            "- Pending Model Judge calibration blocks Model-Judge-dependent evidence. Deterministic-Judge-only cases avoid that calibration gate but remain unverified until governed external post-run verification is implemented.",
+            "- Judge outcome and calibration are separate: a raw Model Judge pass does not become calibrated until the governed calibration policy is enabled and satisfied.",
             "",
             "## Repository Verification Layers",
             "",
@@ -1671,7 +1807,7 @@ def render(
             "- [x] Every live conceptual agent has exactly one scenario declaration with at least one scenario.",
             "- [x] Evaluation catalog references, fixture paths, Judge plans, harnesses, workflow links, and sandbox profiles are validated.",
             "- [x] Codex and Junie are the only supported evaluation harnesses.",
-            "- [x] Verified claims remain gated by the evaluation runner's receipt validation.",
+            "- [x] Executed, Judge-passed, security-contained, calibration, and stale claims are classified independently by the evaluation runner.",
             "- [x] Explorer data carries the same conservative coverage snapshot.",
             "",
         ]
@@ -1707,6 +1843,9 @@ def build_explorer_payload(
                 "conditionalSkills": conditional_skills,
                 "dynamicFolderSkills": bool(role.get("dynamicFolderSkills", False)),
                 "declaredCases": state["executableCases"],
+                "executedCases": state["executedCases"],
+                "judgePassedCases": state["judgePassedCases"],
+                "securityContainedCases": state["securityContainedCases"],
                 "verifiedCases": state["verifiedCases"],
                 "coverage": state,
             }
@@ -1733,6 +1872,9 @@ def build_explorer_payload(
                 "category": category,
                 "detection": detection.get(skill_id),
                 "declaredCases": state["executableCases"],
+                "executedCases": state["executedCases"],
+                "judgePassedCases": state["judgePassedCases"],
+                "securityContainedCases": state["securityContainedCases"],
                 "verifiedCases": state["verifiedCases"],
                 "coverage": state,
             }

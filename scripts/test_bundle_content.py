@@ -3100,12 +3100,15 @@ class BundleContentTests(unittest.TestCase):
             "Executable full fixture",
             "Judge calibration",
             "Executed",
-            "Verified",
+            "Judge-passed",
+            "Security-contained",
             "Stale-by-digest",
         ):
             with self.subTest(status=phrase):
                 self.assertIn(phrase, checklist)
         self.assertIn("Evaluation execution support is limited to Codex and Junie.", checklist)
+        self.assertIn("7 cases can run locally through Codex and 7 can run locally through Junie.", checklist)
+        self.assertNotIn("Every post-run verification command still requires trusted external containment.", checklist)
         self.assertNotIn("| Claude Code |", checklist)
         self.assertNotIn("| Gemini CLI |", checklist)
 

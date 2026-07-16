@@ -822,7 +822,12 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "fixtureBackedAgentCount": 0,
     "fixtureBackedCaseCount": 7,
     "fixtureBackedSkillCount": 0,
-    "junieRunnableCaseCount": 0,
+    "highRiskExternalCaseCount": 0,
+    "judgeCalibrationStatusCounts": {},
+    "judgePassedAgentCount": 0,
+    "judgePassedRunCount": 0,
+    "judgePassedSkillCount": 0,
+    "junieRunnableCaseCount": 7,
     "modelJudgeCalibratedAgentCount": 0,
     "modelJudgeCalibratedSkillCount": 0,
     "modelJudgeNotRequiredAgentCount": 0,
@@ -830,15 +835,21 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "modelJudgePendingAgentCount": 26,
     "modelJudgePendingSkillCount": 66,
     "negativeCaseBackedSkillCount": 0,
+    "ordinaryLocalCaseCount": 7,
     "pairedControlsExecutableSkillCount": 0,
     "partialScenarioBackedAgentCount": 6,
     "partialWorkflowPackCount": 5,
     "positiveCaseBackedSkillCount": 17,
     "positiveExecutedSkillCount": 0,
+    "positiveJudgePassedSkillCount": 0,
+    "positiveSecurityContainedSkillCount": 0,
     "positiveStaleByDigestSkillCount": 0,
     "positiveVerifiedSkillCount": 0,
     "probeDeclaredSkillCount": 87,
     "scenarioDeclaredAgentCount": 26,
+    "securityContainedAgentCount": 0,
+    "securityContainedRunCount": 0,
+    "securityContainedSkillCount": 0,
     "staleByDigestAgentCount": 0,
     "staleByDigestRunCount": 0,
     "staleByDigestSkillCount": 0,
@@ -863,7 +874,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "workflow-quality"
     ],
     "promotionStatus": "disabled-pending-provenance",
-    "requiredBeforeVerifiedEvidence": true
+    "requiredBeforeJudgeCalibrationClaim": true
   },
   "roles": [
     {
@@ -886,6 +897,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "partialScenarioCoverage": false,
         "scenarioCoverage": {
           "dev-artifact-reviewer-boundary": {
@@ -904,6 +916,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-artifact-reviewer-boundary",
           "dev-artifact-reviewer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -914,13 +927,16 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "declaredCases": [],
       "description": "Reviews finished non-wiki project documentation with the generic checklist, the matching artifact-specific checklist when one applies, and the shared page verifier.",
       "dynamicFolderSkills": true,
+      "executedCases": [],
       "fixedSkills": [
         "review-structured-artifact",
         "documentation-page-verify"
       ],
       "id": "dev-artifact-reviewer",
+      "judgePassedCases": [],
       "label": "dev-artifact-reviewer",
       "modelProfile": "advanced",
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -945,6 +961,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "partialScenarioCoverage": true,
         "scenarioCoverage": {
           "dev-backlog-steward-boundary": {
@@ -965,6 +982,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-backlog-steward-boundary",
           "dev-backlog-steward-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -977,13 +995,16 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       ],
       "description": "Creates, claims, resumes, blocks, completes, and archives typed backlog work with recoverable status evidence.",
       "dynamicFolderSkills": false,
+      "executedCases": [],
       "fixedSkills": [
         "manage-backlog",
         "structured-explanation"
       ],
       "id": "dev-backlog-steward",
+      "judgePassedCases": [],
       "label": "dev-backlog-steward",
       "modelProfile": "default",
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -1001,6 +1022,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "partialScenarioCoverage": false,
         "scenarioCoverage": {
           "dev-browser-operator-boundary": {
@@ -1019,6 +1041,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-browser-operator-boundary",
           "dev-browser-operator-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -1029,13 +1052,16 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "declaredCases": [],
       "description": "Owns interactive runtime state, service coordination, authenticated workflows, and diagnostic evidence for end-to-end work.",
       "dynamicFolderSkills": true,
+      "executedCases": [],
       "fixedSkills": [
         "end-to-end-verification",
         "structured-explanation"
       ],
       "id": "dev-browser-operator",
+      "judgePassedCases": [],
       "label": "dev-browser-operator",
       "modelProfile": "advanced",
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -1059,6 +1085,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "partialScenarioCoverage": true,
         "scenarioCoverage": {
           "dev-code-reviewer-boundary": {
@@ -1079,6 +1106,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-code-reviewer-boundary",
           "dev-code-reviewer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -1091,6 +1119,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       ],
       "description": "Reviews diffs for regressions, missing tests, weak verification, unsafe abstractions, rule violations, and documentation drift.",
       "dynamicFolderSkills": true,
+      "executedCases": [],
       "fixedSkills": [
         "code-review-evidence",
         "review-structured-artifact",
@@ -1098,8 +1127,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "code-comments"
       ],
       "id": "dev-code-reviewer",
+      "judgePassedCases": [],
       "label": "dev-code-reviewer",
       "modelProfile": "advanced",
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -1125,6 +1156,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "partialScenarioCoverage": true,
         "scenarioCoverage": {
           "dev-coder-boundary": {
@@ -1146,6 +1178,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-coder-boundary",
           "dev-coder-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -1159,6 +1192,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       ],
       "description": "Implements scoped source changes using applicable project guidance, repository patterns, focused tests, and build commands.",
       "dynamicFolderSkills": true,
+      "executedCases": [],
       "fixedSkills": [
         "agent-claim",
         "careful-coding",
@@ -1167,8 +1201,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fix-explanation"
       ],
       "id": "dev-coder",
+      "judgePassedCases": [],
       "label": "dev-coder",
       "modelProfile": "advanced",
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -1199,6 +1235,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "partialScenarioCoverage": true,
         "scenarioCoverage": {
           "dev-documentation-writer-boundary": {
@@ -1219,6 +1256,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-documentation-writer-boundary",
           "dev-documentation-writer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -1232,13 +1270,16 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       ],
       "description": "Writes source-backed non-wiki project documentation by selecting one methodology artifact route or the README and custom-document integration route for the requested outcome.",
       "dynamicFolderSkills": true,
+      "executedCases": [],
       "fixedSkills": [
         "agent-claim",
         "development-methodology"
       ],
       "id": "dev-documentation-writer",
+      "judgePassedCases": [],
       "label": "dev-documentation-writer",
       "modelProfile": "default",
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -1255,6 +1296,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "partialScenarioCoverage": false,
         "scenarioCoverage": {
           "dev-merge-coordinator-boundary": {
@@ -1273,6 +1315,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-merge-coordinator-boundary",
           "dev-merge-coordinator-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -1284,6 +1327,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "declaredCases": [],
       "description": "Integrates work from multiple agents or worktrees while preserving claims, ownership, verification, and conflict evidence.",
       "dynamicFolderSkills": false,
+      "executedCases": [],
       "fixedSkills": [
         "agent-work-merge",
         "agent-claim",
@@ -1291,8 +1335,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fix-explanation"
       ],
       "id": "dev-merge-coordinator",
+      "judgePassedCases": [],
       "label": "dev-merge-coordinator",
       "modelProfile": "advanced",
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -1309,6 +1355,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "partialScenarioCoverage": false,
         "scenarioCoverage": {
           "dev-orchestrator-boundary": {
@@ -1327,6 +1374,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-orchestrator-boundary",
           "dev-orchestrator-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -1337,6 +1385,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "declaredCases": [],
       "description": "Coordinates multi-step development work across implementation and writing agents, fresh-context source and artifact reviewers, independent verification, and deliberate integration while preserving bounded context, explicit handoffs, and claim evidence.",
       "dynamicFolderSkills": false,
+      "executedCases": [],
       "fixedSkills": [
         "structured-design",
         "structured-explanation",
@@ -1344,8 +1393,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "agent-claim"
       ],
       "id": "dev-orchestrator",
+      "judgePassedCases": [],
       "label": "dev-orchestrator",
       "modelProfile": "advanced-long",
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -1363,6 +1414,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "partialScenarioCoverage": false,
         "scenarioCoverage": {
           "dev-prompt-reviewer-boundary": {
@@ -1381,6 +1433,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-prompt-reviewer-boundary",
           "dev-prompt-reviewer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -1391,13 +1444,16 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "declaredCases": [],
       "description": "Reviews prompt protocol, tool-call safety, schema promises, evaluation coverage, and model-facing data boundaries.",
       "dynamicFolderSkills": true,
+      "executedCases": [],
       "fixedSkills": [
         "prompt-contracts",
         "review-structured-artifact"
       ],
       "id": "dev-prompt-reviewer",
+      "judgePassedCases": [],
       "label": "dev-prompt-reviewer",
       "modelProfile": "advanced",
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -1417,6 +1473,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "partialScenarioCoverage": false,
         "scenarioCoverage": {
           "dev-runtime-diagnostician-boundary": {
@@ -1435,6 +1492,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-runtime-diagnostician-boundary",
           "dev-runtime-diagnostician-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -1445,6 +1503,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "declaredCases": [],
       "description": "Investigates long-running local runtime failures with logs, processes, exclusive resources, and a tight reproduction loop.",
       "dynamicFolderSkills": true,
+      "executedCases": [],
       "fixedSkills": [
         "code-discovery",
         "test-strategy",
@@ -1453,8 +1512,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "structured-explanation"
       ],
       "id": "dev-runtime-diagnostician",
+      "judgePassedCases": [],
       "label": "dev-runtime-diagnostician",
       "modelProfile": "advanced",
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -1472,6 +1533,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "partialScenarioCoverage": false,
         "scenarioCoverage": {
           "dev-security-reviewer-boundary": {
@@ -1490,6 +1552,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-security-reviewer-boundary",
           "dev-security-reviewer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -1500,14 +1563,17 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "declaredCases": [],
       "description": "Reviews threat, data, dependency, authentication, logging, prompt, and exploitability concerns with read-only authority.",
       "dynamicFolderSkills": true,
+      "executedCases": [],
       "fixedSkills": [
         "application-security",
         "review-structured-artifact",
         "structured-explanation"
       ],
       "id": "dev-security-reviewer",
+      "judgePassedCases": [],
       "label": "dev-security-reviewer",
       "modelProfile": "advanced",
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -1525,6 +1591,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "partialScenarioCoverage": false,
         "scenarioCoverage": {
           "dev-ux-specialist-boundary": {
@@ -1543,6 +1610,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-ux-specialist-boundary",
           "dev-ux-specialist-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -1553,14 +1621,17 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "declaredCases": [],
       "description": "Handles interaction design, accessibility concerns, visual review, and independent usability assessment without changing code authority.",
       "dynamicFolderSkills": true,
+      "executedCases": [],
       "fixedSkills": [
         "user-experience-review",
         "end-to-end-verification",
         "review-structured-artifact"
       ],
       "id": "dev-ux-specialist",
+      "judgePassedCases": [],
       "label": "dev-ux-specialist",
       "modelProfile": "default",
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -1583,6 +1654,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "partialScenarioCoverage": false,
         "scenarioCoverage": {
           "dev-verifier-boundary": {
@@ -1601,6 +1673,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-verifier-boundary",
           "dev-verifier-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -1613,14 +1686,17 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "declaredCases": [],
       "description": "Runs acceptance checks, builds, unit tests, integration tests, E2E tests, lint gates, and artifact-specific verification.",
       "dynamicFolderSkills": true,
+      "executedCases": [],
       "fixedSkills": [
         "test-strategy",
         "review-structured-artifact",
         "structured-explanation"
       ],
       "id": "dev-verifier",
+      "judgePassedCases": [],
       "label": "dev-verifier",
       "modelProfile": "advanced",
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -1638,6 +1714,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "partialScenarioCoverage": false,
         "scenarioCoverage": {
           "methodology-artifact-reviewer-boundary": {
@@ -1656,6 +1733,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "methodology-artifact-reviewer-boundary",
           "methodology-artifact-reviewer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -1666,6 +1744,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "declaredCases": [],
       "description": "Reviews methodology artifacts for catalog drift, source and adapter mismatch, stale examples, missing tests, and unclear maintenance rules.",
       "dynamicFolderSkills": false,
+      "executedCases": [],
       "fixedSkills": [
         "review-structured-artifact",
         "skill-authoring",
@@ -1675,8 +1754,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "development-methodology"
       ],
       "id": "methodology-artifact-reviewer",
+      "judgePassedCases": [],
       "label": "methodology-artifact-reviewer",
       "modelProfile": "advanced",
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -1694,6 +1775,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "partialScenarioCoverage": false,
         "scenarioCoverage": {
           "methodology-maintainer-boundary": {
@@ -1712,6 +1794,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "methodology-maintainer-boundary",
           "methodology-maintainer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -1722,6 +1805,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "declaredCases": [],
       "description": "Maintains the reusable methodology artifacts, skill catalog, conceptual agent definitions, generated adapters, documentation, scripts, and regression tests through independent review and verification.",
       "dynamicFolderSkills": false,
+      "executedCases": [],
       "fixedSkills": [
         "agent-claim",
         "maintain-methodology-documentation",
@@ -1732,8 +1816,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "structured-explanation"
       ],
       "id": "methodology-maintainer",
+      "judgePassedCases": [],
       "label": "methodology-maintainer",
       "modelProfile": "advanced",
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -1750,6 +1836,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "partialScenarioCoverage": false,
         "scenarioCoverage": {
           "project-bootstrapper-boundary": {
@@ -1768,6 +1855,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "project-bootstrapper-boundary",
           "project-bootstrapper-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -1778,14 +1866,17 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "declaredCases": [],
       "description": "Sets up a project for later development work. It creates or reuses the project configuration, produces the required documentation, sends each setup and documentation artifact for independent review, keeps exactly one accepted committed contribution as the final direct commit or integrates multiple accepted committed contributions, and verifies the completed project state.",
       "dynamicFolderSkills": false,
+      "executedCases": [],
       "fixedSkills": [
         "agent-claim",
         "documentation-bootstrap",
         "development-methodology"
       ],
       "id": "project-bootstrapper",
+      "judgePassedCases": [],
       "label": "project-bootstrapper",
       "modelProfile": "advanced-long",
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -1809,6 +1900,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "partialScenarioCoverage": true,
         "scenarioCoverage": {
           "project-configurator-boundary": {
@@ -1829,6 +1921,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "project-configurator-boundary",
           "project-configurator-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -1841,6 +1934,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       ],
       "description": "Creates or updates the single project-root PROJECT.yaml and validates conceptual agent definitions, skillsets, folder routing, nested AGENTS.md guidance, and Claude bridges.",
       "dynamicFolderSkills": false,
+      "executedCases": [],
       "fixedSkills": [
         "agent-claim",
         "detect-technology-skills",
@@ -1849,8 +1943,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "documentation-page-verify"
       ],
       "id": "project-configurator",
+      "judgePassedCases": [],
       "label": "project-configurator",
       "modelProfile": "default",
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -1867,6 +1963,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "partialScenarioCoverage": false,
         "scenarioCoverage": {
           "project-organiser-boundary": {
@@ -1885,6 +1982,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "project-organiser-boundary",
           "project-organiser-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -1895,14 +1993,17 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "declaredCases": [],
       "description": "Classifies project artifacts by purpose, chooses paths from the project taxonomy, applies path intent, and audits generated files.",
       "dynamicFolderSkills": false,
+      "executedCases": [],
       "fixedSkills": [
         "organise-project-files",
         "structured-design",
         "structured-explanation"
       ],
       "id": "project-organiser",
+      "judgePassedCases": [],
       "label": "project-organiser",
       "modelProfile": "default",
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -1921,6 +2022,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "partialScenarioCoverage": false,
         "scenarioCoverage": {
           "wiki-architect-boundary": {
@@ -1939,6 +2041,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "wiki-architect-boundary",
           "wiki-architect-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -1949,13 +2052,16 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "declaredCases": [],
       "description": "Establishes or substantially restructures a project wiki, its ownership boundaries, source workflow, navigation, and verification contract.",
       "dynamicFolderSkills": false,
+      "executedCases": [],
       "fixedSkills": [
         "agent-claim",
         "project-wiki"
       ],
       "id": "wiki-architect",
+      "judgePassedCases": [],
       "label": "wiki-architect",
       "modelProfile": "advanced",
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -1973,6 +2079,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "partialScenarioCoverage": false,
         "scenarioCoverage": {
           "wiki-artifact-reviewer-boundary": {
@@ -1991,6 +2098,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "wiki-artifact-reviewer-boundary",
           "wiki-artifact-reviewer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -2001,13 +2109,16 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "declaredCases": [],
       "description": "Reviews project-wiki methodology artifacts for source authority, structure, navigation, maintenance rules, automation, and verification completeness.",
       "dynamicFolderSkills": false,
+      "executedCases": [],
       "fixedSkills": [
         "project-wiki-review",
         "documentation-page-verify"
       ],
       "id": "wiki-artifact-reviewer",
+      "judgePassedCases": [],
       "label": "wiki-artifact-reviewer",
       "modelProfile": "advanced",
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -2031,6 +2142,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "partialScenarioCoverage": true,
         "scenarioCoverage": {
           "wiki-ingester-boundary": {
@@ -2051,6 +2163,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "wiki-ingester-boundary",
           "wiki-ingester-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -2063,14 +2176,17 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       ],
       "description": "Processes raw inputs into durable wiki leaves, digest entries, processed-source links, linted pages, and verifier evidence.",
       "dynamicFolderSkills": false,
+      "executedCases": [],
       "fixedSkills": [
         "agent-claim",
         "project-wiki",
         "project-wiki-topic-write"
       ],
       "id": "wiki-ingester",
+      "judgePassedCases": [],
       "label": "wiki-ingester",
       "modelProfile": "default",
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -2085,6 +2201,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "partialScenarioCoverage": false,
         "scenarioCoverage": {
           "wiki-query-responder-boundary": {
@@ -2103,6 +2220,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "wiki-query-responder-boundary",
           "wiki-query-responder-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -2113,12 +2231,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "declaredCases": [],
       "description": "Answers project questions from docs/wiki first, verifies against authoritative files, and identifies durable knowledge gaps.",
       "dynamicFolderSkills": false,
+      "executedCases": [],
       "fixedSkills": [
         "project-wiki-query"
       ],
       "id": "wiki-query-responder",
+      "judgePassedCases": [],
       "label": "wiki-query-responder",
       "modelProfile": "default",
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -2135,6 +2256,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "partialScenarioCoverage": false,
         "scenarioCoverage": {
           "wiki-researcher-boundary": {
@@ -2153,6 +2275,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "wiki-researcher-boundary",
           "wiki-researcher-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -2163,14 +2286,17 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "declaredCases": [],
       "description": "Performs bounded on-demand research for wiki gaps and saves sourced raw reports for later ingest without editing durable wiki pages.",
       "dynamicFolderSkills": false,
+      "executedCases": [],
       "fixedSkills": [
         "agent-claim",
         "project-wiki-query",
         "project-wiki-research"
       ],
       "id": "wiki-researcher",
+      "judgePassedCases": [],
       "label": "wiki-researcher",
       "modelProfile": "default",
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -2187,6 +2313,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "partialScenarioCoverage": false,
         "scenarioCoverage": {
           "wiki-source-collector-boundary": {
@@ -2205,6 +2332,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "wiki-source-collector-boundary",
           "wiki-source-collector-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -2215,6 +2343,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "declaredCases": [],
       "description": "Collects public raw source artifacts for approved wiki topics, records exclusions, and leaves synthesis to wiki ingest.",
       "dynamicFolderSkills": false,
+      "executedCases": [],
       "fixedSkills": [
         "agent-claim",
         "project-wiki-research",
@@ -2222,8 +2351,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "structured-explanation"
       ],
       "id": "wiki-source-collector",
+      "judgePassedCases": [],
       "label": "wiki-source-collector",
       "modelProfile": "simple",
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -2238,6 +2369,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "partialScenarioCoverage": false,
         "scenarioCoverage": {
           "wiki-topic-verifier-boundary": {
@@ -2256,6 +2388,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "wiki-topic-verifier-boundary",
           "wiki-topic-verifier-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -2266,12 +2399,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "declaredCases": [],
       "description": "Independently verifies created or updated wiki topic pages, durable leaf coverage, source links, digests, federation boundaries, lint, and OKF status.",
       "dynamicFolderSkills": false,
+      "executedCases": [],
       "fixedSkills": [
         "project-wiki-topic-verify"
       ],
       "id": "wiki-topic-verifier",
+      "judgePassedCases": [],
       "label": "wiki-topic-verifier",
       "modelProfile": "advanced",
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -2289,6 +2425,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "partialScenarioCoverage": false,
         "scenarioCoverage": {
           "wiki-writer-boundary": {
@@ -2307,6 +2444,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "wiki-writer-boundary",
           "wiki-writer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -2317,14 +2455,17 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "declaredCases": [],
       "description": "Creates and maintains durable wiki topic pages, hubs, links, digests, and code-aware project knowledge outside raw-source ingest.",
       "dynamicFolderSkills": true,
+      "executedCases": [],
       "fixedSkills": [
         "agent-claim",
         "project-wiki",
         "project-wiki-topic-write"
       ],
       "id": "wiki-writer",
+      "judgePassedCases": [],
       "label": "wiki-writer",
       "modelProfile": "default",
+      "securityContainedCases": [],
       "verifiedCases": []
     }
   ],
@@ -2342,6 +2483,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "harness": "codex",
       "id": "codex-read-only",
       "implementationStatus": "partial",
+      "liveExecutionStatus": null,
       "preparedSnapshot": {
         "dependenciesPreinstalled": "when the trusted preparation step ran the declared install command",
         "digestInputs": "inherit-snapshot-policy",
@@ -2375,6 +2517,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "harness": "codex",
       "id": "codex-workspace-write",
       "implementationStatus": "partial",
+      "liveExecutionStatus": null,
       "preparedSnapshot": {
         "dependenciesPreinstalled": "when the trusted preparation step ran the declared install command",
         "digestInputs": "inherit-snapshot-policy",
@@ -2399,14 +2542,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "copyOnWriteWorkspace": {
         "discardAfterRun": true,
         "enabled": true,
-        "productWorkspaceMode": "externally-enforced-read-only",
+        "productWorkspaceMode": "writable-with-read-only-contract-audit",
         "writablePaths": [
           "run-evidence"
         ]
       },
       "harness": "junie",
       "id": "junie-read-only",
-      "implementationStatus": "partial",
+      "implementationStatus": "local-tier-implemented",
+      "liveExecutionStatus": "runnable-local",
       "preparedSnapshot": {
         "dependenciesPreinstalled": "when the trusted preparation step ran the declared install command",
         "digestInputs": "inherit-snapshot-policy",
@@ -2424,14 +2568,14 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         ],
         "resetBoundary": "fresh-copy-on-write-layer-and-fresh-junie-session"
       },
-      "workspaceIsolation": "external-runner-required"
+      "workspaceIsolation": "disposable-workspace-plus-mutation-audit"
     },
     {
       "containmentStatus": "containment-unverified",
       "copyOnWriteWorkspace": {
         "discardAfterRun": true,
         "enabled": true,
-        "productWorkspaceMode": "externally-enforced-workspace-write",
+        "productWorkspaceMode": "writable-with-allowed-path-audit",
         "writablePaths": [
           "product-workspace",
           "run-evidence"
@@ -2439,7 +2583,8 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "harness": "junie",
       "id": "junie-workspace-write",
-      "implementationStatus": "partial",
+      "implementationStatus": "local-tier-implemented",
+      "liveExecutionStatus": "runnable-local",
       "preparedSnapshot": {
         "dependenciesPreinstalled": "when the trusted preparation step ran the declared install command",
         "digestInputs": "inherit-snapshot-policy",
@@ -2457,7 +2602,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         ],
         "resetBoundary": "fresh-copy-on-write-layer-and-fresh-junie-session"
       },
-      "workspaceIsolation": "external-runner-required"
+      "workspaceIsolation": "disposable-workspace-plus-mutation-audit"
     }
   ],
   "schema": "dev-methodology-agent-skill-explorer-data",
@@ -2473,12 +2618,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "not-required",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -2491,6 +2639,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-orchestrator-boundary",
           "wiki-ingester-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -2504,7 +2653,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "agent-claim",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -2518,12 +2670,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "not-required",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -2534,6 +2689,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-coder-happy",
           "dev-prompt-reviewer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -2624,7 +2780,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "agent-harness"
       },
+      "executedCases": [],
       "id": "agent-harness",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -2638,12 +2797,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -2654,6 +2816,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "methodology-artifact-reviewer-happy",
           "methodology-maintainer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -2663,7 +2826,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "agent-role-authoring",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -2677,12 +2843,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -2693,6 +2862,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-merge-coordinator-happy",
           "dev-orchestrator-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -2702,7 +2872,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "agent-work-merge",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -2716,12 +2889,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "not-required",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -2732,6 +2908,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-coder-happy",
           "dev-security-reviewer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -2797,7 +2974,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "api-routes"
       },
+      "executedCases": [],
       "id": "api-routes",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -2811,12 +2991,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -2827,6 +3010,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-security-reviewer-boundary",
           "dev-security-reviewer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -2836,7 +3020,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "application-security",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -2850,12 +3037,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "not-required",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -2866,6 +3056,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-code-reviewer-happy",
           "dev-coder-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -2875,7 +3066,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "ast-grep",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -2889,12 +3083,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "not-required",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -2905,6 +3102,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-coder-boundary",
           "dev-coder-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -2914,7 +3112,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "careful-coding",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -2928,12 +3129,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "not-required",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -2944,6 +3148,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-browser-operator-happy",
           "dev-security-reviewer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -3004,7 +3209,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "clerk-auth"
       },
+      "executedCases": [],
       "id": "clerk-auth",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -3018,12 +3226,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -3034,6 +3245,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-code-reviewer-happy",
           "dev-coder-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -3043,7 +3255,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "code-comments",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -3057,12 +3272,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -3073,6 +3291,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-coder-happy",
           "dev-runtime-diagnostician-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -3082,7 +3301,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "code-discovery",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -3096,12 +3318,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -3112,6 +3337,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-runtime-diagnostician-happy",
           "dev-verifier-boundary"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -3121,7 +3347,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "code-execution-tracing",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -3135,12 +3364,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -3151,6 +3383,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "wiki-ingester-happy",
           "wiki-writer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -3160,7 +3393,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "code-project-wiki",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -3176,6 +3412,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
@@ -3184,6 +3421,8 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "typescript-code-review"
         ],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -3194,6 +3433,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-code-reviewer-boundary",
           "dev-code-reviewer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -3205,7 +3445,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "typescript-code-review"
       ],
       "detection": null,
+      "executedCases": [],
       "id": "code-review-evidence",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -3219,12 +3462,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -3235,6 +3481,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-artifact-reviewer-happy",
           "dev-documentation-writer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -3244,7 +3491,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "create-architecture",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -3258,12 +3508,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "not-required",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -3274,6 +3527,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-backlog-steward-boundary",
           "dev-backlog-steward-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -3283,7 +3537,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "create-backlog",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -3299,6 +3556,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
@@ -3307,6 +3565,8 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "documentation-functional-spec"
         ],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -3317,6 +3577,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-artifact-reviewer-happy",
           "dev-documentation-writer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -3328,7 +3589,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "documentation-functional-spec"
       ],
       "detection": null,
+      "executedCases": [],
       "id": "create-functional-spec",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -3342,12 +3606,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -3358,6 +3625,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-artifact-reviewer-boundary",
           "dev-documentation-writer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -3367,7 +3635,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "create-high-level-design",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -3381,12 +3652,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -3397,6 +3671,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-artifact-reviewer-happy",
           "dev-documentation-writer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -3406,7 +3681,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "create-module-design",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -3422,6 +3700,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
@@ -3430,6 +3709,8 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "project-configuration-routing"
         ],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -3440,6 +3721,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "project-configurator-boundary",
           "project-configurator-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -3451,7 +3733,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "project-configuration-routing"
       ],
       "detection": null,
+      "executedCases": [],
       "id": "create-project-configuration",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -3465,12 +3750,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -3481,6 +3769,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-artifact-reviewer-happy",
           "dev-documentation-writer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -3490,7 +3779,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "create-unit-test-plan",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -3506,6 +3798,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "not-required",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
@@ -3514,6 +3807,8 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "project-configuration-routing"
         ],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -3524,6 +3819,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "project-configurator-boundary",
           "project-configurator-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -3535,7 +3831,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "project-configuration-routing"
       ],
       "detection": null,
+      "executedCases": [],
       "id": "detect-technology-skills",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -3552,6 +3851,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
@@ -3561,6 +3861,8 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "project-configuration-routing"
         ],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -3571,6 +3873,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-documentation-writer-happy",
           "project-bootstrapper-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -3584,7 +3887,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "project-configuration-routing"
       ],
       "detection": null,
+      "executedCases": [],
       "id": "development-methodology",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -3598,12 +3904,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -3614,6 +3923,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "project-bootstrapper-happy",
           "wiki-architect-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -3625,7 +3935,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "documentation-bootstrap",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -3639,12 +3952,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -3655,6 +3971,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-artifact-reviewer-boundary",
           "wiki-artifact-reviewer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -3666,7 +3983,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "documentation-page-verify",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -3680,12 +4000,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -3696,6 +4019,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-documentation-writer-boundary",
           "project-bootstrapper-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -3706,7 +4030,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "documentation-reverse-engineer",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -3720,12 +4047,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "not-required",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -3736,6 +4066,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-coder-happy",
           "dev-runtime-diagnostician-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -3777,7 +4108,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "electron-main"
       },
+      "executedCases": [],
       "id": "electron-main",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -3791,12 +4125,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "not-required",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -3807,6 +4144,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-coder-happy",
           "dev-security-reviewer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -3848,7 +4186,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "electron-preload"
       },
+      "executedCases": [],
       "id": "electron-preload",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -3862,12 +4203,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -3878,6 +4222,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-browser-operator-happy",
           "dev-verifier-boundary"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -3887,7 +4232,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "end-to-end-verification",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -3901,12 +4249,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "not-required",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -3917,6 +4268,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-code-reviewer-happy",
           "dev-coder-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -3961,7 +4313,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "fastapi"
       },
+      "executedCases": [],
       "id": "fastapi",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -3975,12 +4330,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -3991,6 +4349,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-coder-happy",
           "dev-merge-coordinator-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -4000,7 +4359,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "fix-explanation",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -4016,6 +4378,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "not-required",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
@@ -4024,6 +4387,8 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "spring-boot-order-cancellation"
         ],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -4034,6 +4399,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-code-reviewer-happy",
           "dev-coder-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -4065,7 +4431,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "java"
       },
+      "executedCases": [],
       "id": "java",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -4079,12 +4448,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -4095,6 +4467,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-artifact-reviewer-happy",
           "dev-coder-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -4124,7 +4497,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "java-design"
       },
+      "executedCases": [],
       "id": "java-design",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -4138,12 +4514,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "not-required",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -4154,6 +4533,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-coder-happy",
           "dev-verifier-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -4223,7 +4603,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "jest"
       },
+      "executedCases": [],
       "id": "jest",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -4237,12 +4620,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "not-required",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -4253,6 +4639,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-code-reviewer-happy",
           "dev-coder-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -4357,7 +4744,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "jhipster-domain-modeling"
       },
+      "executedCases": [],
       "id": "jhipster-domain-modeling",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -4371,12 +4761,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "not-required",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -4387,6 +4780,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-coder-happy",
           "dev-verifier-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -4472,7 +4866,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "jhipster-persistence"
       },
+      "executedCases": [],
       "id": "jhipster-persistence",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -4486,12 +4883,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "not-required",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -4502,6 +4902,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-code-reviewer-happy",
           "dev-coder-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -4587,7 +4988,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "jhipster-project"
       },
+      "executedCases": [],
       "id": "jhipster-project",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -4601,12 +5005,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "not-required",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -4617,6 +5024,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-coder-happy",
           "dev-security-reviewer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -4718,7 +5126,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "jhipster-security"
       },
+      "executedCases": [],
       "id": "jhipster-security",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -4732,12 +5143,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "not-required",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -4748,6 +5162,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-coder-happy",
           "dev-verifier-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -4844,7 +5259,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "jhipster-testing"
       },
+      "executedCases": [],
       "id": "jhipster-testing",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -4858,12 +5276,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "not-required",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -4874,6 +5295,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-coder-happy",
           "dev-prompt-reviewer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -4931,7 +5353,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "langgraph"
       },
+      "executedCases": [],
       "id": "langgraph",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -4945,12 +5370,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "not-required",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -4961,6 +5389,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-coder-happy",
           "dev-verifier-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -5110,7 +5539,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "liquibase"
       },
+      "executedCases": [],
       "id": "liquibase",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -5124,12 +5556,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "not-required",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -5140,6 +5575,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-coder-happy",
           "dev-runtime-diagnostician-boundary"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -5200,7 +5636,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "local-model-integration"
       },
+      "executedCases": [],
       "id": "local-model-integration",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -5214,12 +5653,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -5230,6 +5672,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "methodology-maintainer-boundary",
           "methodology-maintainer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -5239,7 +5682,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "maintain-methodology-documentation",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -5255,6 +5701,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
@@ -5263,6 +5710,8 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "backlog-lifecycle"
         ],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -5273,6 +5722,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-backlog-steward-boundary",
           "dev-backlog-steward-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -5284,7 +5734,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "backlog-lifecycle"
       ],
       "detection": null,
+      "executedCases": [],
       "id": "manage-backlog",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -5298,12 +5751,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -5314,6 +5770,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "methodology-artifact-reviewer-boundary",
           "methodology-maintainer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -5323,7 +5780,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "name-methodology-artifacts",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -5337,12 +5797,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -5353,6 +5816,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-code-reviewer-boundary",
           "dev-coder-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -5399,7 +5863,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "nextjs-app-router"
       },
+      "executedCases": [],
       "id": "nextjs-app-router",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -5413,12 +5880,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -5429,6 +5899,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-coder-happy",
           "dev-verifier-boundary"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -5516,7 +5987,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "node-cli"
       },
+      "executedCases": [],
       "id": "node-cli",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -5532,6 +6006,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
@@ -5540,6 +6015,8 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "project-configuration-routing"
         ],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -5550,6 +6027,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "project-organiser-boundary",
           "project-organiser-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -5565,7 +6043,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "project-configuration-routing"
       ],
       "detection": null,
+      "executedCases": [],
       "id": "organise-project-files",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -5579,12 +6060,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -5595,6 +6079,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-coder-happy",
           "dev-runtime-diagnostician-boundary"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -5641,7 +6126,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "plan-engine"
       },
+      "executedCases": [],
       "id": "plan-engine",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -5655,12 +6143,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -5671,6 +6162,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-browser-operator-boundary",
           "dev-browser-operator-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -5740,7 +6232,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "playwright"
       },
+      "executedCases": [],
       "id": "playwright",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -5754,12 +6249,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -5770,6 +6268,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-coder-happy",
           "dev-security-reviewer-boundary"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -5832,7 +6331,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "postgres-drizzle"
       },
+      "executedCases": [],
       "id": "postgres-drizzle",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -5848,6 +6350,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
@@ -5856,6 +6359,8 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "wiki-raw-ingest"
         ],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -5867,6 +6372,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "wiki-ingester-boundary",
           "wiki-query-responder-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -5878,7 +6384,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "wiki-raw-ingest"
       ],
       "detection": null,
+      "executedCases": [],
       "id": "project-wiki",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -5892,12 +6401,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -5908,6 +6420,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "wiki-architect-boundary",
           "wiki-architect-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -5918,7 +6431,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "project-wiki-create",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -5932,12 +6448,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -5948,6 +6467,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "wiki-query-responder-boundary",
           "wiki-query-responder-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -5957,7 +6477,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "project-wiki-query",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -5971,12 +6494,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -5987,6 +6513,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "wiki-researcher-boundary",
           "wiki-researcher-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -5996,7 +6523,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "project-wiki-research",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -6010,12 +6540,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -6026,6 +6559,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "wiki-artifact-reviewer-boundary",
           "wiki-artifact-reviewer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -6036,7 +6570,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "project-wiki-review",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -6052,6 +6589,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
@@ -6060,6 +6598,8 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "wiki-raw-ingest"
         ],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -6070,6 +6610,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "wiki-topic-verifier-boundary",
           "wiki-topic-verifier-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -6081,7 +6622,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "wiki-raw-ingest"
       ],
       "detection": null,
+      "executedCases": [],
       "id": "project-wiki-topic-verify",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -6097,6 +6641,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
@@ -6105,6 +6650,8 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "wiki-raw-ingest"
         ],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -6116,6 +6663,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "wiki-writer-boundary",
           "wiki-writer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -6127,7 +6675,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "wiki-raw-ingest"
       ],
       "detection": null,
+      "executedCases": [],
       "id": "project-wiki-topic-write",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -6141,12 +6692,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -6157,6 +6711,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-prompt-reviewer-boundary",
           "dev-prompt-reviewer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -6166,7 +6721,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "prompt-contracts",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -6180,12 +6738,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -6196,6 +6757,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-code-reviewer-happy",
           "dev-coder-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -6226,7 +6788,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "python"
       },
+      "executedCases": [],
       "id": "python",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -6240,12 +6805,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -6256,6 +6824,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-coder-happy",
           "dev-security-reviewer-boundary"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -6286,7 +6855,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "react-server-components"
       },
+      "executedCases": [],
       "id": "react-server-components",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -6300,12 +6872,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -6316,6 +6891,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-coder-happy",
           "dev-ux-specialist-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -6370,7 +6946,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "react-vite-renderer"
       },
+      "executedCases": [],
       "id": "react-vite-renderer",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -6384,12 +6963,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -6400,6 +6982,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "methodology-artifact-reviewer-boundary",
           "methodology-artifact-reviewer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -6409,7 +6992,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "review-architecture",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -6425,6 +7011,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
@@ -6433,6 +7020,8 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "documentation-functional-spec"
         ],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -6443,6 +7032,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "methodology-artifact-reviewer-boundary",
           "methodology-artifact-reviewer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -6454,7 +7044,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "documentation-functional-spec"
       ],
       "detection": null,
+      "executedCases": [],
       "id": "review-functional-spec",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -6468,12 +7061,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -6484,6 +7080,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "methodology-artifact-reviewer-boundary",
           "methodology-artifact-reviewer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -6493,7 +7090,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "review-high-level-design",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -6507,12 +7107,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -6523,6 +7126,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-artifact-reviewer-boundary",
           "methodology-artifact-reviewer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -6532,7 +7136,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "review-module-design",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -6546,12 +7153,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -6562,6 +7172,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-artifact-reviewer-boundary",
           "dev-artifact-reviewer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -6572,7 +7183,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "review-structured-artifact",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -6586,12 +7200,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -6602,6 +7219,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-verifier-boundary",
           "methodology-artifact-reviewer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -6611,7 +7229,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "review-unit-test-plan",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -6625,12 +7246,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -6641,6 +7265,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-runtime-diagnostician-boundary",
           "dev-runtime-diagnostician-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -6650,7 +7275,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "root-cause-analysis",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -6664,12 +7292,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -6680,6 +7311,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-runtime-diagnostician-boundary",
           "dev-runtime-diagnostician-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -6689,7 +7321,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "runtime-evidence-collection",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -6703,12 +7338,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -6719,6 +7357,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "methodology-artifact-reviewer-boundary",
           "methodology-maintainer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -6728,7 +7367,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "skill-authoring",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -6744,6 +7386,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
@@ -6752,6 +7395,8 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "spring-boot-order-cancellation"
         ],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -6762,6 +7407,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-code-reviewer-happy",
           "dev-coder-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -6815,7 +7461,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "spring-boot"
       },
+      "executedCases": [],
       "id": "spring-boot",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -6829,12 +7478,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -6845,6 +7497,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-artifact-reviewer-boundary",
           "dev-documentation-writer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -6896,7 +7549,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "spring-boot-design"
       },
+      "executedCases": [],
       "id": "spring-boot-design",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -6910,12 +7566,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -6926,6 +7585,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-coder-boundary",
           "dev-verifier-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -6980,7 +7640,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "spring-boot-testing"
       },
+      "executedCases": [],
       "id": "spring-boot-testing",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -6994,12 +7657,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -7010,6 +7676,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-code-reviewer-boundary",
           "dev-coder-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -7060,7 +7727,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "spring-data-jpa"
       },
+      "executedCases": [],
       "id": "spring-data-jpa",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -7076,6 +7746,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
@@ -7084,6 +7755,8 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "spring-boot-order-cancellation"
         ],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -7094,6 +7767,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-coder-happy",
           "dev-security-reviewer-boundary"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -7123,7 +7797,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "sql"
       },
+      "executedCases": [],
       "id": "sql",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -7137,12 +7814,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -7153,6 +7833,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-artifact-reviewer-boundary",
           "dev-documentation-writer-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -7164,7 +7845,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "structured-design",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -7178,12 +7862,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -7194,6 +7881,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-documentation-writer-happy",
           "wiki-query-responder-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -7207,7 +7895,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "structured-explanation",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -7221,12 +7912,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -7237,6 +7931,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-ux-specialist-boundary",
           "dev-ux-specialist-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -7294,7 +7989,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "tailwind-design-system"
       },
+      "executedCases": [],
       "id": "tailwind-design-system",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -7308,12 +8006,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -7324,6 +8025,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-coder-boundary",
           "dev-coder-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -7333,7 +8035,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "test-driven-development",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -7347,12 +8052,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -7363,6 +8071,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-verifier-boundary",
           "dev-verifier-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -7372,7 +8081,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "test-strategy",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -7386,12 +8098,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -7403,6 +8118,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-runtime-diagnostician-boundary",
           "dev-security-reviewer-boundary"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -7493,7 +8209,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "tool-runtime"
       },
+      "executedCases": [],
       "id": "tool-runtime",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -7510,6 +8229,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
@@ -7519,6 +8239,8 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "typescript-order-pricing"
         ],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -7529,6 +8251,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-code-reviewer-happy",
           "dev-coder-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -7568,7 +8291,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "typescript"
       },
+      "executedCases": [],
       "id": "typescript",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -7585,6 +8311,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
@@ -7594,6 +8321,8 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "typescript-order-pricing"
         ],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -7604,6 +8333,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-coder-happy",
           "dev-runtime-diagnostician-boundary"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -7669,7 +8399,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "typescript-esm"
       },
+      "executedCases": [],
       "id": "typescript-esm",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -7686,6 +8419,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
@@ -7695,6 +8429,8 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "typescript-order-pricing"
         ],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -7705,6 +8441,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-code-reviewer-happy",
           "dev-coder-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -7760,7 +8497,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "typescript-strict"
       },
+      "executedCases": [],
       "id": "typescript-strict",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -7774,12 +8514,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -7790,6 +8533,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-ux-specialist-boundary",
           "dev-ux-specialist-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -7799,7 +8543,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "executedCases": [],
       "id": "user-experience-review",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     },
     {
@@ -7813,12 +8560,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "fixtureBacked": false,
         "fixtureBackedCases": [],
         "judgeCalibration": "pending",
+        "judgePassedCases": [],
         "negativeCaseBacked": false,
         "negativeCaseBackedCases": [],
         "pairedControlsExecutable": false,
         "positiveCaseBacked": false,
         "positiveCaseBackedCases": [],
         "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
         "positiveStaleByDigestCases": [],
         "positiveVerifiedCases": [],
         "probeDeclared": true,
@@ -7829,6 +8579,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "dev-runtime-diagnostician-boundary",
           "dev-verifier-happy"
         ],
+        "securityContainedCases": [],
         "staleByDigestCases": [],
         "structural": true,
         "verifiedCases": [],
@@ -7895,7 +8646,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "vitest"
       },
+      "executedCases": [],
       "id": "vitest",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
       "verifiedCases": []
     }
   ],

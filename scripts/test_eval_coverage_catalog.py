@@ -126,9 +126,11 @@ class EvalCoverageCatalogTests(unittest.TestCase):
                         "harnesses": ["codex", "junie"],
                         "harnessExecutionStatus": {
                             "codex": "runnable",
-                            "junie": "external-runner-required",
+                            "junie": "runnable",
                         },
-                        "postRunVerificationStatus": "external-runner-required",
+                        "risk": {"level": "ordinary", "reasons": []},
+                        "executionTier": "local",
+                        "securityContainmentRequired": False,
                         "requiredSkills": list(probe_skills),
                         "agentScenarios": (
                             [executable_scenario] if executable_scenario else []
@@ -313,10 +315,10 @@ class EvalCoverageCatalogTests(unittest.TestCase):
                     }
                 ],
                 "calibrationPolicy": {
-                    "requiredBeforeVerifiedEvidence": True,
+                    "requiredBeforeJudgeCalibrationClaim": True,
                     "status": calibration_status,
                     "promotionStatus": "disabled-pending-provenance",
-                    "missingOrPendingResult": "unverified",
+                    "missingOrPendingResult": "calibration-pending",
                     "humanScoredSet": {
                         "pilotMinimumExamples": 20,
                         "minimumExamples": 25,
@@ -463,6 +465,37 @@ class EvalCoverageCatalogTests(unittest.TestCase):
         ):
             self.coverage()
 
+    def test_high_risk_cases_are_explicit_and_not_locally_runnable(self) -> None:
+        """Only an explicit high-risk contract selects the external tier."""
+        self.catalogs()
+        catalog = self.read_yaml("evals/cases.yaml")
+        case = catalog["cases"][0]
+        case["risk"] = {
+            "level": "high",
+            "reasons": ["executes an untrusted repository hook"],
+        }
+        case["executionTier"] = "externally-contained"
+        case["securityContainmentRequired"] = True
+        case["harnessExecutionStatus"] = {
+            "codex": "external-runner-required",
+            "junie": "external-runner-required",
+        }
+        self.write_yaml("evals/cases.yaml", catalog)
+
+        snapshot = self.coverage()
+
+        self.assertEqual([], snapshot["runnableCasesByHarness"]["codex"])
+        self.assertEqual([], snapshot["runnableCasesByHarness"]["junie"])
+        self.assertEqual(0, snapshot["evidenceStatus"]["ordinaryLocalCaseCount"])
+        self.assertEqual(1, snapshot["evidenceStatus"]["highRiskExternalCaseCount"])
+
+        case["executionTier"] = "local"
+        case["securityContainmentRequired"] = False
+        case["harnessExecutionStatus"] = {"codex": "runnable", "junie": "runnable"}
+        self.write_yaml("evals/cases.yaml", catalog)
+        with self.assertRaisesRegex(ValueError, "High-risk evaluation case"):
+            self.coverage()
+
     def test_snapshot_distinguishes_declaration_fixture_and_pending_judge(self) -> None:
         """A fixture-backed declaration must not become executed, calibrated, or verified."""
         self.catalogs()
@@ -480,6 +513,8 @@ class EvalCoverageCatalogTests(unittest.TestCase):
         self.assertFalse(skill["executableFixture"])
         self.assertEqual("pending", skill["judgeCalibration"])
         self.assertEqual([], skill["executedCases"])
+        self.assertEqual([], skill["judgePassedCases"])
+        self.assertEqual([], skill["securityContainedCases"])
         self.assertEqual([], skill["verifiedCases"])
         self.assertEqual([], skill["staleByDigestCases"])
         self.assertTrue(agent["structural"])
@@ -498,7 +533,7 @@ class EvalCoverageCatalogTests(unittest.TestCase):
         self.assertFalse(workflow["fixtureBacked"])
         self.assertFalse(workflow["executableFixture"])
         self.assertEqual(["case-a"], snapshot["runnableCasesByHarness"]["codex"])
-        self.assertEqual([], snapshot["runnableCasesByHarness"]["junie"])
+        self.assertEqual(["case-a"], snapshot["runnableCasesByHarness"]["junie"])
         self.assertTrue(
             all(
                 profile["containmentStatus"] == "containment-unverified"
@@ -519,7 +554,9 @@ class EvalCoverageCatalogTests(unittest.TestCase):
                 "fixtureBackedCaseCount": 1,
                 "executableCaseCount": 1,
                 "codexRunnableCaseCount": 1,
-                "junieRunnableCaseCount": 0,
+                "junieRunnableCaseCount": 1,
+                "ordinaryLocalCaseCount": 1,
+                "highRiskExternalCaseCount": 0,
                 "caseBackedAgentCount": 1,
                 "partialScenarioBackedAgentCount": 0,
                 "fixtureBackedAgentCount": 1,
@@ -536,15 +573,24 @@ class EvalCoverageCatalogTests(unittest.TestCase):
                 "modelJudgeNotRequiredAgentCount": 0,
                 "modelJudgeNotRequiredSkillCount": 0,
                 "executedRunCount": 0,
+                "judgePassedRunCount": 0,
+                "securityContainedRunCount": 0,
                 "verifiedRunCount": 0,
                 "staleByDigestRunCount": 0,
+                "judgeCalibrationStatusCounts": {},
                 "executedAgentCount": 0,
                 "executedSkillCount": 0,
+                "judgePassedAgentCount": 0,
+                "judgePassedSkillCount": 0,
+                "securityContainedAgentCount": 0,
+                "securityContainedSkillCount": 0,
                 "verifiedAgentCount": 0,
                 "verifiedSkillCount": 0,
                 "staleByDigestAgentCount": 0,
                 "staleByDigestSkillCount": 0,
                 "positiveExecutedSkillCount": 0,
+                "positiveJudgePassedSkillCount": 0,
+                "positiveSecurityContainedSkillCount": 0,
                 "positiveVerifiedSkillCount": 0,
                 "positiveStaleByDigestSkillCount": 0,
             },
@@ -684,8 +730,8 @@ class EvalCoverageCatalogTests(unittest.TestCase):
         ):
             self.coverage()
 
-    def test_receipt_classifier_controls_executed_verified_and_stale_states(self) -> None:
-        """Reporting must preserve the runner verdict and keep stale evidence unverified."""
+    def test_receipt_classifier_preserves_independent_claims_and_stale_state(self) -> None:
+        """Reporting keeps execution, Judge, security, and digest claims independent."""
         self.catalogs()
         receipt = {
             "schema": "dev-methodology-eval-evidence",
@@ -704,6 +750,9 @@ class EvalCoverageCatalogTests(unittest.TestCase):
                 """Expose conservative evidence state through the runner contract."""
                 return {
                     "executed": True,
+                    "judgePassed": True,
+                    "securityContained": False,
+                    "judgeCalibrationStatus": "pending",
                     "verified": False,
                     "staleByDigest": True,
                     "errors": [],
@@ -734,8 +783,18 @@ class EvalCoverageCatalogTests(unittest.TestCase):
             ["case-a"],
             snapshot["skills"]["skill-a"]["positiveStaleByDigestCases"],
         )
+        self.assertEqual(
+            ["case-a"],
+            snapshot["skills"]["skill-a"]["positiveJudgePassedCases"],
+        )
+        self.assertEqual(
+            [],
+            snapshot["skills"]["skill-a"]["positiveSecurityContainedCases"],
+        )
         self.assertEqual([], snapshot["skills"]["skill-a"]["verifiedCases"])
         self.assertEqual(["case-a"], snapshot["agents"]["agent-a"]["executedCases"])
+        self.assertEqual(["case-a"], snapshot["agents"]["agent-a"]["judgePassedCases"])
+        self.assertEqual([], snapshot["agents"]["agent-a"]["securityContainedCases"])
         self.assertEqual([], snapshot["agents"]["agent-a"]["verifiedCases"])
 
     def test_receipt_does_not_credit_support_skills_as_target_probes(self) -> None:
@@ -763,6 +822,9 @@ class EvalCoverageCatalogTests(unittest.TestCase):
                 """Expose the accepted receipt classification."""
                 return {
                     "executed": True,
+                    "judgePassed": True,
+                    "securityContained": False,
+                    "judgeCalibrationStatus": "pending",
                     "verified": True,
                     "staleByDigest": False,
                     "errors": [],
@@ -785,9 +847,13 @@ class EvalCoverageCatalogTests(unittest.TestCase):
         target = snapshot["skills"]["skill-a"]
         support = snapshot["skills"]["skill-support"]
         self.assertEqual(["case-a"], target["positiveExecutedCases"])
+        self.assertEqual(["case-a"], target["positiveJudgePassedCases"])
+        self.assertEqual([], target["positiveSecurityContainedCases"])
         self.assertEqual(["case-a"], target["positiveVerifiedCases"])
         self.assertEqual([], target["executedCases"])
         self.assertEqual([], support["positiveExecutedCases"])
+        self.assertEqual([], support["positiveJudgePassedCases"])
+        self.assertEqual([], support["positiveSecurityContainedCases"])
         self.assertEqual([], support["positiveVerifiedCases"])
         self.assertEqual([], support["executedCases"])
 
@@ -810,6 +876,9 @@ class EvalCoverageCatalogTests(unittest.TestCase):
             """Matches the attribute form of the runner classification."""
 
             executed = True
+            judge_passed = False
+            security_contained = False
+            judge_calibration_status = "not-evaluated"
             verified = False
             stale_by_digest = False
             errors = ("missing captured agent attribution",)
@@ -850,7 +919,11 @@ class EvalCoverageCatalogTests(unittest.TestCase):
         )
 
         self.assertEqual(2, payload["version"])
+        self.assertEqual([], payload["roles"][0]["judgePassedCases"])
+        self.assertEqual([], payload["roles"][0]["securityContainedCases"])
         self.assertEqual([], payload["roles"][0]["coverage"]["verifiedCases"])
+        self.assertEqual([], payload["skills"][0]["judgePassedCases"])
+        self.assertEqual([], payload["skills"][0]["securityContainedCases"])
         self.assertEqual([], payload["skills"][0]["coverage"]["verifiedCases"])
         self.assertEqual("pending", payload["judgeStatus"]["calibrationStatus"])
         self.assertEqual(["codex", "junie"], payload["evaluationHarnesses"])

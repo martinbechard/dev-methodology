@@ -7,12 +7,13 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import shutil
 import sys
 import tempfile
-from contextlib import nullcontext
+from contextlib import contextmanager, nullcontext
 from pathlib import Path
-from typing import Iterable, Mapping
+from typing import Iterable, Iterator, Mapping
 
 import yaml
 
@@ -25,6 +26,9 @@ try:
     from agent_skill_judge_contract import canonical_judge_identity
 except ModuleNotFoundError:
     from scripts.agent_skill_judge_contract import canonical_judge_identity
+
+
+_MAX_CAPTURE_REDACTION_BYTES = 10 * 1024 * 1024
 
 
 def run(command: object, cwd: Path) -> bool:
@@ -139,13 +143,11 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("harness invocation requires one selected case and --harness")
     if args.invoke_harness and args.project_root is None and args.prepared_cache is None:
         args.prepared_cache = Path(tempfile.gettempdir()) / "dev-methodology-evals" / "prepared"
-    if args.invoke_harness and args.harness == "junie":
-        parser.error("live Junie invocation is unavailable until a trusted external runner verifier is implemented")
-    if args.harness == "junie" and (args.junie_external_runner is None) != (
-        args.junie_containment_attestation is None
-    ):
-        parser.error("Junie external runner and containment attestation must be supplied together")
-
+    if args.invoke_harness and any(_requires_external_containment(case) for case in selected):
+        parser.error(
+            "high-risk evaluation cases require the externally-contained tier, "
+            "which is not implemented"
+        )
     definition_failures = [
         f"{case.get('id', 'unknown')}: {error}"
         for case in selected
@@ -266,7 +268,7 @@ def main(argv: list[str] | None = None) -> int:
                 else:
                     print(
                         f"HARNESS CAPTURE PASS {case['id']} "
-                        "(post-run verification requires trusted external containment)"
+                        "(local execution; security containment not claimed)"
                     )
                 continue
             if args.result is not None or args.evidence is not None:
@@ -277,7 +279,7 @@ def main(argv: list[str] | None = None) -> int:
                 continue
             if args.project_root is not None:
                 failures.append(
-                    f"{case['id']}: direct verification of a custom project root requires trusted external containment"
+                    f"{case['id']}: direct verification is limited to catalog-owned synthetic fixtures"
                 )
                 continue
             if case_errors:
@@ -324,10 +326,116 @@ def _argument_parser() -> argparse.ArgumentParser:
     parser.add_argument("--output-schema", type=Path)
     parser.add_argument("--print-invocation", action="store_true")
     parser.add_argument("--invoke-harness", action="store_true")
-    parser.add_argument("--junie-external-runner", type=Path)
-    parser.add_argument("--junie-containment-attestation", type=Path)
     parser.add_argument("--approved-env-name", action="append", default=[])
     return parser
+
+
+def _requires_external_containment(case: Mapping[str, object]) -> bool:
+    """Return whether a case explicitly opts into the high-risk execution tier."""
+
+    risk = case.get("risk")
+    return (
+        isinstance(risk, Mapping)
+        and risk.get("level") == "high"
+        and case.get("executionTier") == "externally-contained"
+        and case.get("securityContainmentRequired") is True
+    )
+
+
+@contextmanager
+def _reserve_capture_paths(paths: Iterable[Path]) -> Iterator[None]:
+    """Reserve unused evidence destinations so concurrent runs cannot share them."""
+
+    outputs = [path.resolve() for path in paths]
+    if len(outputs) != len(set(outputs)):
+        raise ValueError("capture output paths must be distinct")
+    locks: list[Path] = []
+    try:
+        for output in outputs:
+            output.parent.mkdir(parents=True, exist_ok=True)
+            if output.is_symlink() or output.exists():
+                raise ValueError(f"capture output path already exists: {output}")
+            lock = output.with_name(f".{output.name}.eval-lock")
+            try:
+                descriptor = os.open(
+                    lock,
+                    os.O_CREAT | os.O_EXCL | os.O_WRONLY,
+                    0o600,
+                )
+            except FileExistsError as error:
+                raise ValueError(
+                    f"capture output path is already reserved: {output}"
+                ) from error
+            os.close(descriptor)
+            locks.append(lock)
+            if output.is_symlink() or output.exists():
+                raise ValueError(f"capture output path already exists: {output}")
+        yield
+    finally:
+        for lock in reversed(locks):
+            lock.unlink(missing_ok=True)
+
+
+def _approved_environment_redactions(names: Iterable[str]) -> dict[str, str]:
+    """Return non-empty explicitly approved environment values for capture scrubbing."""
+
+    return {
+        name: os.environ[name]
+        for name in dict.fromkeys(names)
+        if os.environ.get(name)
+    }
+
+
+def _redact_approved_environment(
+    text: str,
+    redactions: Mapping[str, str],
+) -> str:
+    """Remove approved environment values from one captured text artifact."""
+
+    result = text
+    values = sorted(redactions.items(), key=lambda item: (-len(item[1]), item[0]))
+    for name, value in values:
+        placeholder = f"[REDACTED_APPROVED_ENV:{name}]"
+        result = result.replace(value, placeholder)
+        escaped = json.dumps(value)[1:-1]
+        if escaped != value:
+            result = result.replace(escaped, placeholder)
+    return result
+
+
+def _redact_capture_file(path: Path, redactions: Mapping[str, str]) -> None:
+    """Scrub a bounded regular capture file before it is parsed, printed, or retained."""
+
+    if not (path.exists() or path.is_symlink()):
+        return
+    if path.is_symlink() or not path.is_file():
+        path.unlink(missing_ok=True)
+        raise ValueError(f"capture output must be a regular non-symlink file: {path}")
+    if path.stat().st_size > _MAX_CAPTURE_REDACTION_BYTES:
+        path.unlink()
+        raise ValueError(f"capture output exceeded the redaction size limit and was removed: {path}")
+    try:
+        text = path.read_text(encoding="utf-8")
+    except (OSError, UnicodeError) as error:
+        path.unlink(missing_ok=True)
+        raise ValueError(f"capture output could not be safely redacted and was removed: {path}") from error
+    if not redactions:
+        return
+    redacted = _redact_approved_environment(text, redactions)
+    if redacted == text:
+        return
+    temporary = path.with_name(f".{path.name}.redacted-{os.getpid()}")
+    try:
+        descriptor = os.open(
+            temporary,
+            os.O_CREAT | os.O_EXCL | os.O_WRONLY,
+            0o600,
+        )
+        with os.fdopen(descriptor, "w", encoding="utf-8") as stream:
+            stream.write(redacted)
+        os.replace(temporary, path)
+    finally:
+        temporary.unlink(missing_ok=True)
 
 
 def _select_cases(
@@ -515,6 +623,10 @@ def _handle_harness_invocation(
         args.event_output
         or evidence_root / f"{case['id']}-{args.harness}-{active_root.name}-events.jsonl"
     )
+    cache_dir = (
+        event_output.parent
+        / f".{case['id']}-{args.harness}-{active_root.name}-cache"
+    )
     try:
         output_schema = _trusted_output_schema(args.output_schema)
         resource_allowlist = case.get("skillResourceAllowlist", {})
@@ -552,23 +664,14 @@ def _handle_harness_invocation(
         isolated_config_root=active_root,
         output_schema=output_schema,
         last_message_output=args.result if case.get("readOnly") else None,
-        cache_dir=event_output.parent / f".{case['id']}-{args.harness}-cache",
+        cache_dir=cache_dir,
         skill_locations=[context_pack.skill_location],
         agent_locations=[context_pack.agent_location],
         approved_environment_names=args.approved_env_name,
+        harness_executable=harness_identity.executable,
     )
     event_output = event_output.resolve()
-    external_invocation = None
-    if args.harness == "junie" and args.junie_external_runner is not None:
-        try:
-            external_invocation = wrap_junie_external_runner(  # noqa: F405
-                command,
-                args.junie_external_runner,
-                args.junie_containment_attestation,
-            )
-        except ValueError as error:
-            return f"Junie external containment validation failed: {error}"
-    execution_command = external_invocation.command if external_invocation is not None else command
+    execution_command = command
     if args.print_invocation:
         invocation_record = {
             "harness": args.harness,
@@ -579,8 +682,15 @@ def _handle_harness_invocation(
             "contextManifestDigest": context_pack.manifest_digest,
             "approvedInputManifestDigest": input_manifest.manifest_digest,
             "functionalIsolation": "pending-runtime-audit" if args.invoke_harness else "preflight-only",
-            "containment": "containment-unverified",
-            "containmentCeiling": "workspace-isolated-only" if args.harness == "codex" else "containment-unverified",
+            "executionTier": case.get("executionTier"),
+            "riskLevel": (
+                case.get("risk", {}).get("level")
+                if isinstance(case.get("risk"), Mapping)
+                else None
+            ),
+            "securityContainmentRequired": case.get("securityContainmentRequired"),
+            "securityContained": False,
+            "containmentLevel": "containment-unverified",
             "approvedEnvironmentNames": list(execution_command.host_environment_allowlist),
         }
         if isinstance(case.get("probeId"), str):
@@ -589,10 +699,6 @@ def _handle_harness_invocation(
             invocation_record["probeComparisonKey"] = case.get("probeComparisonKey")
             invocation_record["executionSkills"] = list(case.get("executionSkills", []))
             invocation_record["probeEvidenceStatus"] = "unverified-until-comparable-three-variant-receipts"
-        if external_invocation is not None:
-            invocation_record["externalRunnerDigest"] = external_invocation.runner_digest
-            invocation_record["containmentAttestationDigest"] = external_invocation.attestation_digest
-            invocation_record["externalAttestation"] = external_invocation.trust_status
         sandbox_profiles = case.get("sandboxProfiles")
         if isinstance(sandbox_profiles, Mapping) and args.harness in sandbox_profiles:
             profile_id = sandbox_profiles[args.harness]
@@ -609,29 +715,73 @@ def _handle_harness_invocation(
             invocation_record["sandboxProfileDigest"] = (
                 case_definition_digest(profile) if isinstance(profile, Mapping) else None  # noqa: F405
             )
-            minimums = case.get("minimumContainment")
-            invocation_record["minimumContainment"] = (
-                minimums.get(args.harness) if isinstance(minimums, Mapping) else None
-            )
         print(json.dumps(invocation_record, sort_keys=True))
     if not args.invoke_harness:
         return None
     event_output.parent.mkdir(parents=True, exist_ok=True)
+    result_output = args.result.resolve() if args.result is not None else None
+    if result_output is not None:
+        result_output.parent.mkdir(parents=True, exist_ok=True)
     scratch_value = execution_command.environment.get("TMPDIR")
     scratch = Path(scratch_value) if isinstance(scratch_value, str) and scratch_value else None
-    if scratch is not None:
-        scratch.mkdir(parents=True, exist_ok=True)
+    junie_home_value = execution_command.environment.get("JUNIE_HOME")
+    junie_home = (
+        Path(junie_home_value)
+        if isinstance(junie_home_value, str) and junie_home_value
+        else None
+    )
+    redactions = _approved_environment_redactions(args.approved_env_name)
+    capture_paths = [event_output]
+    if result_output is not None:
+        capture_paths.append(result_output)
     try:
-        result = run_command(execution_command, active_root)  # noqa: F405
-    finally:
-        if scratch is not None and scratch.is_dir():
-            shutil.rmtree(scratch)
-    if args.harness == "codex":
-        event_output.parent.mkdir(parents=True, exist_ok=True)
-        event_output.write_text(result.stdout, encoding="utf-8")
-    if result.stderr:
-        print(result.stderr, file=sys.stderr, end="" if result.stderr.endswith("\n") else "\n")
-    return None if result.passed else f"{args.harness} invocation failed with exit code {result.exit_code}"
+        with _reserve_capture_paths(capture_paths):
+            if scratch is not None:
+                scratch.mkdir(parents=True, exist_ok=True)
+            try:
+                result = run_command(execution_command, active_root)  # noqa: F405
+            finally:
+                if scratch is not None and scratch.is_dir():
+                    shutil.rmtree(scratch)
+                if cache_dir.is_dir():
+                    shutil.rmtree(cache_dir)
+                if junie_home is not None and junie_home.is_dir():
+                    shutil.rmtree(junie_home)
+            if args.harness == "codex":
+                event_output.write_text(
+                    _redact_approved_environment(result.stdout, redactions),
+                    encoding="utf-8",
+                )
+            else:
+                _redact_capture_file(event_output, redactions)
+            if result_output is not None:
+                _redact_capture_file(result_output, redactions)
+            stderr = _redact_approved_environment(result.stderr, redactions)
+            if stderr:
+                print(
+                    stderr,
+                    file=sys.stderr,
+                    end="" if stderr.endswith("\n") else "\n",
+                )
+            if not result.passed:
+                return f"{args.harness} invocation failed with exit code {result.exit_code}"
+            if (
+                args.harness == "codex"
+                and result_output is not None
+                and (
+                    not result_output.is_file()
+                    or result_output.stat().st_size == 0
+                )
+            ):
+                return "captured Codex final response is missing or empty"
+            events = read_harness_event_stream(args.harness, event_output)  # noqa: F405
+            if args.harness == "junie":
+                final_response = extract_harness_final_response("junie", events)  # noqa: F405
+                if result_output is not None:
+                    result_output.write_text(final_response, encoding="utf-8")
+    except ValueError as error:
+        return str(error)
+    return None
 
 
 if __name__ == "__main__":

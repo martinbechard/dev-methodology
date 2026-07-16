@@ -170,6 +170,10 @@ def run_command(command: CommandSpec, cwd: Path) -> CommandResult:
         timed_out = True
         _kill_process_group(process.pid)
         process.wait()
+    finally:
+        # The direct command may exit after spawning children. End the runner-created
+        # session before joining capture threads so no ordinary eval process survives.
+        _kill_process_group(process.pid)
     for thread in threads:
         thread.join()
     if process.stdout is not None:

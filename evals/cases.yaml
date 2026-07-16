@@ -13,8 +13,11 @@ catalogs:
   sandboxProfiles: evals/sandbox-profiles.yaml
 coverageSemantics:
   declared: The case contract exists, but no runnable fixture and current valid receipt establish execution coverage.
-  fixture-backed: The fixture and commands exist; this status alone does not assert a successful or verified run.
-  verified: A current receipt satisfies digests, identity evidence, containment reporting, deterministic Judges, and any calibrated Model Judge requirement.
+  fixture-backed: The fixture and commands exist; this status alone does not assert a successful run.
+  executed: A current receipt establishes a structurally complete harness capture.
+  judge-passed: Required Deterministic Judge and Model Judge checks passed; calibration status is reported separately.
+  security-contained: A governed external runner established the required security boundary.
+  stale-by-digest: A prior receipt no longer matches one or more governed identities.
 caseDefaults:
   contextStaging: explicit-allow-list
   wholeRepositoryAllowed: false
@@ -23,7 +26,9 @@ caseDefaults:
   stagedSkillResourcePolicy: inherit-skill-probes-catalog
   digestPolicy: sha256-source-and-effective-at-run
   ephemeralWritePaths: []
-  postRunVerificationStatus: external-runner-required
+  risk: {level: ordinary, reasons: []}
+  executionTier: local
+  securityContainmentRequired: false
 cases:
   - id: typescript-order-pricing
     coverageStatus: fixture-backed
@@ -35,8 +40,10 @@ cases:
     install: npm install
     verify: npm test
     harnesses: [codex, junie]
-    harnessExecutionStatus: {codex: runnable, junie: external-runner-required}
-    postRunVerificationStatus: external-runner-required
+    risk: {level: ordinary, reasons: []}
+    executionTier: local
+    securityContainmentRequired: false
+    harnessExecutionStatus: {codex: runnable, junie: runnable}
     requiredAgents:
       - dev-coder
     agentScenarios:
@@ -71,9 +78,8 @@ cases:
       - probe-typescript-esm
     workflowPack: code-delivery
     sandboxProfiles: {codex: codex-workspace-write, junie: junie-workspace-write}
-    minimumContainment: {codex: workspace-isolated-only, junie: externally-contained}
     judgePlan:
-      deterministicChecks: [model-input-safety, skill-read-trace, harness-agent-identity, required-command-outcome, allowed-paths-only, test-state-transition, snapshot-reset, containment-attestation]
+      deterministicChecks: [model-input-safety, skill-read-trace, harness-agent-identity, required-command-outcome, allowed-paths-only, test-state-transition, snapshot-reset, local-execution-boundary]
       modelRubric: source-faithfulness
     contextPack:
       fixtureRoot: evals/projects/typescript-order-pricing
@@ -110,8 +116,10 @@ cases:
     install: mvn -q -DskipTests package
     verify: mvn -q test
     harnesses: [codex, junie]
-    harnessExecutionStatus: {codex: runnable, junie: external-runner-required}
-    postRunVerificationStatus: external-runner-required
+    risk: {level: ordinary, reasons: []}
+    executionTier: local
+    securityContainmentRequired: false
+    harnessExecutionStatus: {codex: runnable, junie: runnable}
     requiredAgents:
       - dev-coder
     agentScenarios:
@@ -146,9 +154,8 @@ cases:
       - probe-sql
     workflowPack: code-delivery
     sandboxProfiles: {codex: codex-workspace-write, junie: junie-workspace-write}
-    minimumContainment: {codex: workspace-isolated-only, junie: externally-contained}
     judgePlan:
-      deterministicChecks: [model-input-safety, skill-read-trace, harness-agent-identity, required-command-outcome, allowed-paths-only, test-state-transition, snapshot-reset, containment-attestation]
+      deterministicChecks: [model-input-safety, skill-read-trace, harness-agent-identity, required-command-outcome, allowed-paths-only, test-state-transition, snapshot-reset, local-execution-boundary]
       modelRubric: source-faithfulness
     contextPack:
       fixtureRoot: evals/projects/spring-boot-order-cancellation
@@ -189,8 +196,10 @@ cases:
     allowedWritePaths: []
     ephemeralWritePaths: [dist]
     harnesses: [codex, junie]
-    harnessExecutionStatus: {codex: runnable, junie: external-runner-required}
-    postRunVerificationStatus: external-runner-required
+    risk: {level: ordinary, reasons: []}
+    executionTier: local
+    securityContainmentRequired: false
+    harnessExecutionStatus: {codex: runnable, junie: runnable}
     requiredAgents:
       - dev-code-reviewer
     agentScenarios:
@@ -218,9 +227,8 @@ cases:
       - probe-typescript-esm
     workflowPack: code-delivery
     sandboxProfiles: {codex: codex-read-only, junie: junie-read-only}
-    minimumContainment: {codex: workspace-isolated-only, junie: externally-contained}
     judgePlan:
-      deterministicChecks: [model-input-safety, skill-read-trace, forbidden-skill-absence, harness-agent-identity, required-command-outcome, no-forbidden-mutation, finding-recall, finding-precision, snapshot-reset, containment-attestation]
+      deterministicChecks: [model-input-safety, skill-read-trace, forbidden-skill-absence, harness-agent-identity, required-command-outcome, no-forbidden-mutation, finding-recall, finding-precision, snapshot-reset, local-execution-boundary]
       modelRubric: review-quality
     contextPack:
       fixtureRoot: evals/projects/typescript-code-review
@@ -265,8 +273,10 @@ cases:
           raise SystemExit("missing required output: " + ", ".join(missing) if missing else 0)
       modelVisible: false
     harnesses: [codex, junie]
-    harnessExecutionStatus: {codex: runnable, junie: external-runner-required}
-    postRunVerificationStatus: external-runner-required
+    risk: {level: ordinary, reasons: []}
+    executionTier: local
+    securityContainmentRequired: false
+    harnessExecutionStatus: {codex: runnable, junie: runnable}
     requiredAgents: [dev-documentation-writer]
     agentScenarios: [dev-documentation-writer-happy]
     requiredSkills: [development-methodology, create-functional-spec, review-functional-spec, agent-claim]
@@ -274,9 +284,8 @@ cases:
     fixtureBackedProbeClaims: [probe-development-methodology, probe-create-functional-spec, probe-review-functional-spec]
     workflowPack: documentation-methodology
     sandboxProfiles: {codex: codex-workspace-write, junie: junie-workspace-write}
-    minimumContainment: {codex: workspace-isolated-only, junie: externally-contained}
     judgePlan:
-      deterministicChecks: [model-input-safety, skill-read-trace, harness-agent-identity, artifact-structure, artifact-review-checklist, operation-coverage, actor-boundary-coverage, contradiction-scan, readiness-consistency, snapshot-reset, containment-attestation]
+      deterministicChecks: [model-input-safety, skill-read-trace, harness-agent-identity, artifact-structure, artifact-review-checklist, operation-coverage, actor-boundary-coverage, contradiction-scan, readiness-consistency, snapshot-reset, local-execution-boundary]
       modelRubric: artifact-contract
     contextPack:
       fixtureRoot: evals/projects/documentation-functional-spec
@@ -312,8 +321,10 @@ cases:
           raise SystemExit(message if message else 0)
       modelVisible: false
     harnesses: [codex, junie]
-    harnessExecutionStatus: {codex: runnable, junie: external-runner-required}
-    postRunVerificationStatus: external-runner-required
+    risk: {level: ordinary, reasons: []}
+    executionTier: local
+    securityContainmentRequired: false
+    harnessExecutionStatus: {codex: runnable, junie: runnable}
     requiredAgents: [project-configurator]
     agentScenarios: [project-configurator-happy]
     requiredSkills: [create-project-configuration, detect-technology-skills, development-methodology, documentation-page-verify, organise-project-files, agent-claim]
@@ -321,9 +332,8 @@ cases:
     fixtureBackedProbeClaims: [probe-create-project-configuration, probe-detect-technology-skills, probe-development-methodology, probe-organise-project-files]
     workflowPack: project-setup
     sandboxProfiles: {codex: codex-workspace-write, junie: junie-workspace-write}
-    minimumContainment: {codex: workspace-isolated-only, junie: externally-contained}
     judgePlan:
-      deterministicChecks: [model-input-safety, skill-read-trace, harness-agent-identity, technology-detection-evidence, artifact-structure, allowed-paths-only, contradiction-scan, snapshot-reset, containment-attestation]
+      deterministicChecks: [model-input-safety, skill-read-trace, harness-agent-identity, technology-detection-evidence, artifact-structure, allowed-paths-only, contradiction-scan, snapshot-reset, local-execution-boundary]
       modelRubric: workflow-quality
     contextPack:
       fixtureRoot: evals/projects/project-configuration-routing
@@ -361,8 +371,10 @@ cases:
           raise SystemExit(message if message else 0)
       modelVisible: false
     harnesses: [codex, junie]
-    harnessExecutionStatus: {codex: runnable, junie: external-runner-required}
-    postRunVerificationStatus: external-runner-required
+    risk: {level: ordinary, reasons: []}
+    executionTier: local
+    securityContainmentRequired: false
+    harnessExecutionStatus: {codex: runnable, junie: runnable}
     requiredAgents: [wiki-ingester]
     agentScenarios: [wiki-ingester-happy]
     requiredSkills: [project-wiki, project-wiki-topic-write, project-wiki-topic-verify, organise-project-files, agent-claim]
@@ -370,9 +382,8 @@ cases:
     fixtureBackedProbeClaims: [probe-project-wiki, probe-project-wiki-topic-write, probe-project-wiki-topic-verify]
     workflowPack: wiki-lifecycle
     sandboxProfiles: {codex: codex-workspace-write, junie: junie-workspace-write}
-    minimumContainment: {codex: workspace-isolated-only, junie: externally-contained}
     judgePlan:
-      deterministicChecks: [model-input-safety, skill-read-trace, harness-agent-identity, raw-processed-boundary, wiki-validation, queue-state-transition, source-link-resolution, snapshot-reset, containment-attestation]
+      deterministicChecks: [model-input-safety, skill-read-trace, harness-agent-identity, raw-processed-boundary, wiki-validation, queue-state-transition, source-link-resolution, snapshot-reset, local-execution-boundary]
       modelRubric: workflow-quality
     contextPack:
       fixtureRoot: evals/projects/wiki-raw-ingest
@@ -422,8 +433,10 @@ cases:
           raise SystemExit(message if message else 0)
       modelVisible: false
     harnesses: [codex, junie]
-    harnessExecutionStatus: {codex: runnable, junie: external-runner-required}
-    postRunVerificationStatus: external-runner-required
+    risk: {level: ordinary, reasons: []}
+    executionTier: local
+    securityContainmentRequired: false
+    harnessExecutionStatus: {codex: runnable, junie: runnable}
     requiredAgents: [dev-backlog-steward]
     agentScenarios: [dev-backlog-steward-boundary]
     requiredSkills: [manage-backlog, agent-claim, structured-explanation]
@@ -431,9 +444,8 @@ cases:
     fixtureBackedProbeClaims: [probe-manage-backlog]
     workflowPack: backlog
     sandboxProfiles: {codex: codex-workspace-write, junie: junie-workspace-write}
-    minimumContainment: {codex: workspace-isolated-only, junie: externally-contained}
     judgePlan:
-      deterministicChecks: [model-input-safety, skill-read-trace, harness-agent-identity, queue-state-transition, claim-lifecycle, artifact-structure, readiness-consistency, snapshot-reset, containment-attestation]
+      deterministicChecks: [model-input-safety, skill-read-trace, harness-agent-identity, queue-state-transition, claim-lifecycle, artifact-structure, readiness-consistency, snapshot-reset, local-execution-boundary]
       modelRubric: workflow-quality
     contextPack:
       fixtureRoot: evals/projects/backlog-lifecycle

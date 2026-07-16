@@ -109,6 +109,9 @@ class EvidenceClassification:
     """Expose stable receipt state without requiring callers to parse validation messages."""
 
     executed: bool
+    judge_passed: bool
+    security_contained: bool
+    judge_calibration_status: str
     verified: bool
     stale_by_digest: bool
     errors: tuple[str, ...]
@@ -119,6 +122,9 @@ class EvidenceClassification:
 
         return {
             "executed": self.executed,
+            "judgePassed": self.judge_passed,
+            "securityContained": self.security_contained,
+            "judgeCalibrationStatus": self.judge_calibration_status,
             "verified": self.verified,
             "staleByDigest": self.stale_by_digest,
             "errors": list(self.errors),
@@ -277,12 +283,11 @@ def validate_case_definition(case: Mapping[str, object]) -> list[str]:
             )
     if isinstance(case.get("judgePlan"), Mapping) and not case.get("readOnly") and "allowedWritePaths" not in case:
         errors.append("case.allowedWritePaths is required for a mutation-capable version-two case")
-    if isinstance(case.get("judgePlan"), Mapping) and case.get(
-        "postRunVerificationStatus"
-    ) != "external-runner-required":
-        errors.append(
-            "case.postRunVerificationStatus must be external-runner-required until a trusted verifier is implemented"
-        )
+    if isinstance(case.get("judgePlan"), Mapping) or any(
+        field in case
+        for field in ("risk", "executionTier", "securityContainmentRequired")
+    ):
+        _validate_case_execution_policy(case, errors)
     for field in ("sandboxProfiles", "minimumContainment"):
         value = case.get(field)
         if value is not None and not isinstance(value, Mapping):
@@ -311,6 +316,54 @@ def validate_case_definition(case: Mapping[str, object]) -> list[str]:
             if skill not in resource_allowlist:
                 errors.append(f"case.skillResourceAllowlist is missing required skill resources: {skill}")
     return errors
+
+
+def _validate_case_execution_policy(
+    case: Mapping[str, object], errors: list[str]
+) -> None:
+    """Require an explicit local or high-risk external execution policy."""
+
+    risk = case.get("risk")
+    if not isinstance(risk, Mapping):
+        errors.append("case.risk must be a mapping")
+        return
+    level = risk.get("level")
+    if level not in {"ordinary", "high"}:
+        errors.append("case.risk.level must be ordinary or high")
+        return
+    reasons = risk.get("reasons")
+    _validate_string_list(reasons, "case.risk.reasons", errors)
+    reason_values = _string_items(reasons)
+    tier = case.get("executionTier")
+    security_required = case.get("securityContainmentRequired")
+    harness_status = case.get("harnessExecutionStatus")
+    if not isinstance(harness_status, Mapping) or set(harness_status) != SUPPORTED_HARNESSES:
+        errors.append("case.harnessExecutionStatus must define codex and junie")
+        return
+    expected_status = (
+        "external-runner-required" if level == "high" else "runnable"
+    )
+    if any(status != expected_status for status in harness_status.values()):
+        errors.append(
+            f"{level}-risk case harnessExecutionStatus must be {expected_status} for codex and junie"
+        )
+    if level == "high":
+        if not reason_values:
+            errors.append("high-risk case must declare at least one reason")
+        if tier != "externally-contained" or security_required is not True:
+            errors.append(
+                "high-risk case must use the externally-contained tier and require security containment"
+            )
+    else:
+        if reason_values:
+            errors.append("ordinary case risk reasons must be empty")
+        if tier != "local" or security_required is not False:
+            errors.append(
+                "ordinary case must use the local tier without requiring security containment"
+            )
+        minimums = case.get("minimumContainment")
+        if isinstance(minimums, Mapping) and "externally-contained" in minimums.values():
+            errors.append("ordinary case cannot require external containment")
 
 
 def validate_case(
@@ -532,43 +585,151 @@ def classify_evidence(
     """Classify execution, verification, and digest staleness for one evidence receipt."""
 
     if evidence_path is None:
-        return EvidenceClassification(False, False, False, ("behavior evaluation requires --evidence",), ())
+        return _empty_evidence_classification("behavior evaluation requires --evidence")
     if not evidence_path.is_file():
-        return EvidenceClassification(False, False, False, (f"missing evidence receipt: {evidence_path}",), ())
+        return _empty_evidence_classification(f"missing evidence receipt: {evidence_path}")
     try:
         evidence = yaml.safe_load(evidence_path.read_text(encoding="utf-8"))
     except (OSError, UnicodeDecodeError, yaml.YAMLError) as error:
-        return EvidenceClassification(False, False, False, (f"invalid evidence receipt: {error}",), ())
+        return _empty_evidence_classification(f"invalid evidence receipt: {error}")
     if not isinstance(evidence, dict):
-        return EvidenceClassification(False, False, False, (f"evidence receipt must be a YAML mapping: {evidence_path}",), ())
+        return _empty_evidence_classification(
+            f"evidence receipt must be a YAML mapping: {evidence_path}"
+        )
     errors: list[str] = []
+    security_errors: list[str] = []
     stale_reasons: list[str] = []
     if evidence.get("schema") != "dev-methodology-eval-evidence" or evidence.get("version") not in {1, 2}:
         errors.append("evidence receipt has unsupported schema or version")
     if evidence.get("case") != case.get("id"):
         errors.append("evidence receipt case does not match selected case")
-    if evidence.get("verdict") != "verified":
-        errors.append("evidence receipt verdict must be verified")
+    if evidence.get("verdict") not in {"recorded", "verified"}:
+        errors.append("evidence receipt verdict must be recorded or legacy verified")
     _validate_capture_provenance(
         evidence,
         evidence_path,
         errors,
-        require_external_trust=evidence.get("version") == 2,
+        require_external_trust=(
+            evidence.get("version") == 2
+            and case.get("securityContainmentRequired") is True
+        ),
+        external_trust_errors=security_errors,
     )
     if evidence.get("version") == 2:
-        _validate_version_two(case, evidence, evidence_path, errors, stale_reasons)
+        _validate_version_two(
+            case,
+            evidence,
+            evidence_path,
+            errors,
+            stale_reasons,
+            security_errors,
+        )
     else:
         _validate_version_one(case, evidence, evidence_path, errors, stale_reasons)
     _validate_forbidden_skill_reads(case, evidence, evidence_path, errors)
     executed = _has_complete_execution_capture(case, evidence, evidence_path)
-    verified = executed and evidence.get("version") == 2 and not errors and not stale_reasons
+    judge_passed, judge_calibration_status = _classify_judge_claim(
+        case,
+        evidence,
+        evidence_path,
+        executed=executed,
+        stale_reasons=stale_reasons,
+    )
+    judge_passed = judge_passed and not errors and not stale_reasons
+    security_contained = _classify_security_containment(evidence)
+    all_errors = [*errors, *security_errors]
+    verified = (
+        executed
+        and evidence.get("version") == 2
+        and not all_errors
+        and not stale_reasons
+    )
     return EvidenceClassification(
         executed=executed,
+        judge_passed=judge_passed,
+        security_contained=security_contained,
+        judge_calibration_status=judge_calibration_status,
         verified=verified,
         stale_by_digest=bool(stale_reasons),
-        errors=tuple(errors),
+        errors=tuple(all_errors),
         stale_reasons=tuple(stale_reasons),
     )
+
+
+def _empty_evidence_classification(error: str) -> EvidenceClassification:
+    """Return the conservative classification for a missing or unreadable receipt."""
+
+    return EvidenceClassification(
+        executed=False,
+        judge_passed=False,
+        security_contained=False,
+        judge_calibration_status="not-evaluated",
+        verified=False,
+        stale_by_digest=False,
+        errors=(error,),
+        stale_reasons=(),
+    )
+
+
+def _classify_judge_claim(
+    case: Mapping[str, object],
+    evidence: Mapping[str, object],
+    evidence_path: Path,
+    *,
+    executed: bool,
+    stale_reasons: list[str],
+) -> tuple[bool, str]:
+    """Classify Judge outcome without treating security containment as a Judge result."""
+
+    plan = case.get("judgePlan")
+    model_rubric = plan.get("modelRubric") if isinstance(plan, Mapping) else None
+    calibration_status = "not-required" if model_rubric is None else "pending"
+    if not executed or evidence.get("version") != 2:
+        return False, calibration_status
+    judge_errors: list[str] = []
+    calibration_errors: list[str] = []
+    judge_stale: list[str] = []
+    run = evidence.get("run")
+    _validate_judges(
+        case,
+        evidence.get("judges"),
+        evidence_path,
+        judge_errors,
+        judge_stale,
+        run=run if isinstance(run, Mapping) else None,
+        calibration_errors=calibration_errors,
+    )
+    _validate_assertions_findings_commands(
+        case, evidence, evidence_path, judge_errors
+    )
+    independent = evidence.get("independentJudge")
+    if not isinstance(independent, Mapping) or not isinstance(run, Mapping):
+        judge_errors.append("Judge-passed evidence requires an independent Judge record")
+    else:
+        _validate_independent_judge(independent, run, evidence_path, judge_errors)
+    model = evidence.get("judges")
+    model_record = model.get("model") if isinstance(model, Mapping) else None
+    if (
+        model_rubric is not None
+        and isinstance(model_record, Mapping)
+        and model_record.get("status") == "passed"
+        and not calibration_errors
+    ):
+        calibration_status = "calibrated"
+    stale_reasons.extend(
+        reason for reason in judge_stale if reason not in stale_reasons
+    )
+    return not judge_errors and not judge_stale, calibration_status
+
+
+def _classify_security_containment(evidence: Mapping[str, object]) -> bool:
+    """Return true only for a governed external-runner claim.
+
+    The governed external runner is not implemented, so caller-authored receipt fields cannot
+    establish this claim yet.
+    """
+
+    return False
 
 
 def _has_complete_execution_capture(
@@ -812,11 +973,8 @@ def _validate_version_two(
     evidence_path: Path,
     errors: list[str],
     stale_reasons: list[str],
+    security_errors: list[str],
 ) -> None:
-    if case.get("postRunVerificationStatus") == "external-runner-required":
-        errors.append(
-            "case requires trusted external post-run verification; no governed external verifier trust anchor is implemented"
-        )
     run = evidence.get("run")
     if not isinstance(run, Mapping):
         errors.append("evidence run must be a mapping")
@@ -936,7 +1094,15 @@ def _validate_version_two(
     _validate_skills(case, harness, evidence, evidence_path, errors, stale_reasons)
     _validate_budgets(evidence.get("budgets"), errors)
     _validate_prepared_fixture(case, evidence.get("preparedFixture"), evidence_path, errors, stale_reasons)
-    _validate_isolation(case, harness, evidence.get("isolation"), evidence_path, errors)
+    _validate_isolation(
+        case,
+        harness,
+        evidence.get("isolation"),
+        evidence_path,
+        errors,
+        security_errors=security_errors,
+    )
+    calibration_diagnostics: list[str] = []
     _validate_judges(
         case,
         evidence.get("judges"),
@@ -944,6 +1110,7 @@ def _validate_version_two(
         errors,
         stale_reasons,
         run=run,
+        calibration_errors=calibration_diagnostics,
     )
     _validate_assertions_findings_commands(case, evidence, evidence_path, errors)
     independent_judge = evidence.get("independentJudge")
@@ -1274,6 +1441,8 @@ def _validate_isolation(
     value: object,
     evidence_path: Path,
     errors: list[str],
+    *,
+    security_errors: list[str] | None = None,
 ) -> None:
     if not isinstance(value, Mapping):
         errors.append("evidence isolation must be a mapping")
@@ -1395,38 +1564,50 @@ def _validate_isolation(
                 errors.append(f"evidence Codex native sandbox mode must be {expected_mode}")
             validate_reference(native.get("evidence"), "isolation.codexNativeSandbox.evidence", evidence_path, errors)
     if harness == "junie":
+        external_errors = errors if security_errors is None else security_errors
         external = value.get("junieExternalContainment")
-        if not isinstance(external, Mapping):
-            errors.append("evidence isolation.junieExternalContainment must be a mapping")
-        else:
+        requires_external_record = (
+            case.get("securityContainmentRequired") is True
+            or (
+                isinstance(containment, Mapping)
+                and containment.get("level") == "externally-contained"
+            )
+        )
+        if external is None and requires_external_record:
+            external_errors.append(
+                "evidence isolation.junieExternalContainment is required for an external containment claim"
+            )
+        elif external is not None and not isinstance(external, Mapping):
+            external_errors.append("evidence isolation.junieExternalContainment must be a mapping")
+        elif isinstance(external, Mapping):
             if external.get("capability") not in {"self-attested", "unavailable"}:
-                errors.append("Junie external containment capability must be self-attested or unavailable")
+                external_errors.append("Junie external containment capability must be self-attested or unavailable")
             if external.get("status") not in {"verified", "unverified", "failed"}:
-                errors.append("Junie external containment status must be verified, unverified, or failed")
+                external_errors.append("Junie external containment status must be verified, unverified, or failed")
             if external.get("capability") == "unavailable" and external.get("status") != "unverified":
-                errors.append("unavailable Junie external containment must be unverified")
+                external_errors.append("unavailable Junie external containment must be unverified")
             if external.get("capability") == "self-attested":
-                _require_digest(external.get("runnerDigest"), "isolation.junieExternalContainment.runnerDigest", errors)
+                _require_digest(external.get("runnerDigest"), "isolation.junieExternalContainment.runnerDigest", external_errors)
                 _require_digest(
                     external.get("attestationDigest"),
                     "isolation.junieExternalContainment.attestationDigest",
-                    errors,
+                    external_errors,
                 )
                 if external.get("status") != "unverified":
-                    errors.append("self-attested Junie containment must remain unverified without a trust anchor")
+                    external_errors.append("self-attested Junie containment must remain unverified without a trust anchor")
             if isinstance(containment, Mapping) and (
                 containment.get("level") == "externally-contained"
                 or containment.get("status") == "verified"
             ):
-                errors.append("Junie self-attestation cannot establish externally-contained verified evidence")
+                external_errors.append("Junie self-attestation cannot establish externally-contained verified evidence")
                 validate_reference(
                     external.get("evidence"),
                     "isolation.junieExternalContainment.evidence",
                     evidence_path,
-                    errors,
+                    external_errors,
                 )
             if isinstance(containment, Mapping) and external.get("status") != containment.get("status"):
-                errors.append("Junie external containment status must match the containment status")
+                external_errors.append("Junie external containment status must match the containment status")
 
 
 def _validate_judges(
@@ -1437,6 +1618,7 @@ def _validate_judges(
     stale_reasons: list[str],
     *,
     run: Mapping[str, object] | None = None,
+    calibration_errors: list[str] | None = None,
 ) -> None:
     if not isinstance(value, Mapping):
         errors.append("evidence judges must be a mapping")
@@ -1539,11 +1721,12 @@ def _validate_judges(
     if not critical_deterministic_failed and model_rubric is not None and status != "passed":
         errors.append("case requires a passed Model Judge")
     if status == "passed":
+        calibration_target = errors if calibration_errors is None else calibration_errors
         calibration_policy = judge_catalog.get("calibrationPolicy")
         if not isinstance(calibration_policy, Mapping) or calibration_policy.get(
             "promotionStatus"
         ) != "enabled-provenance-verified":
-            errors.append(
+            calibration_target.append(
                 "Model Judge calibration promotion is disabled pending per-sample provenance"
             )
         if model_rubric is not None and model.get("rubricId") != model_rubric:
@@ -1588,14 +1771,16 @@ def _validate_judges(
                 errors.append(f"Model Judge canonical contract is invalid: {error}")
         calibration = model.get("calibration")
         if not isinstance(calibration, Mapping):
-            errors.append("passed Model Judge requires a calibration record")
+            calibration_target.append("passed Model Judge requires a calibration record")
         else:
-            calibration_errors = validate_calibration_record(calibration, expected)  # type: ignore[arg-type]
-            for error in calibration_errors:
-                if "stale" in error or "recordDigest" in error:
+            record_errors = validate_calibration_record(calibration, expected)  # type: ignore[arg-type]
+            for error in record_errors:
+                if calibration_target is errors and (
+                    "stale" in error or "recordDigest" in error
+                ):
                     stale_reasons.append(error)
                 else:
-                    errors.append(error)
+                    calibration_target.append(error)
         validate_reference(model.get("evidence"), "judges.model.evidence", evidence_path, errors)
 
 
@@ -1759,17 +1944,23 @@ def _validate_capture_provenance(
     errors: list[str],
     *,
     require_external_trust: bool,
+    external_trust_errors: list[str] | None = None,
 ) -> None:
     provenance = evidence.get("captureProvenance")
     if not isinstance(provenance, Mapping):
         errors.append("evidence captureProvenance must be a mapping")
         return
-    if provenance.get("kind") not in {"trusted-ci", "human-attested-harness-export"}:
+    if provenance.get("kind") not in {
+        "local-runner",
+        "trusted-ci",
+        "human-attested-harness-export",
+    }:
         errors.append("evidence captureProvenance.kind must identify a trusted capture source")
     validate_reference(provenance.get("reference"), "captureProvenance.reference", evidence_path, errors)
     if require_external_trust:
-        errors.append(
-            "capture provenance lacks governed external verification; local labels and same-directory attestations cannot promote a receipt to verified"
+        target = errors if external_trust_errors is None else external_trust_errors
+        target.append(
+            "capture provenance lacks governed external verification and cannot establish security-contained evidence"
         )
 
 
