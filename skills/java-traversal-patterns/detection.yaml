@@ -1,0 +1,13 @@
+schema: dev-methodology-technology-detection
+version: 2
+skill: java-traversal-patterns
+kind: technology
+label: Java Traversal Patterns
+capabilities:
+- traversal-operation-patterns
+activation:
+  anyOf:
+  - fileMatch: {glob: "**/*Iterator.java", extensions: [.java]}
+  - fileMatch: {glob: "**/*Visitor.java", extensions: [.java]}
+companions:
+- java-design

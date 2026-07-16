@@ -833,7 +833,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "modelJudgeNotRequiredAgentCount": 0,
     "modelJudgeNotRequiredSkillCount": 21,
     "modelJudgePendingAgentCount": 26,
-    "modelJudgePendingSkillCount": 72,
+    "modelJudgePendingSkillCount": 80,
     "negativeCaseBackedSkillCount": 0,
     "ordinaryLocalCaseCount": 7,
     "pairedControlsExecutableSkillCount": 0,
@@ -845,7 +845,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "positiveSecurityContainedSkillCount": 0,
     "positiveStaleByDigestSkillCount": 0,
     "positiveVerifiedSkillCount": 0,
-    "probeDeclaredSkillCount": 93,
+    "probeDeclaredSkillCount": 101,
     "scenarioDeclaredAgentCount": 26,
     "securityContainedAgentCount": 0,
     "securityContainedRunCount": 0,
@@ -854,7 +854,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "staleByDigestRunCount": 0,
     "staleByDigestSkillCount": 0,
     "structuralAgentCount": 26,
-    "structuralSkillCount": 93,
+    "structuralSkillCount": 101,
     "verifiedAgentCount": 0,
     "verifiedRunCount": 0,
     "verifiedSkillCount": 0,
@@ -4495,6 +4495,267 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "positiveVerifiedCases": [],
         "probeDeclared": true,
         "probeIds": [
+          "probe-java-collaboration-patterns"
+        ],
+        "scenarioAssociations": [
+          "dev-code-reviewer-boundary",
+          "dev-coder-happy"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "code-delivery"
+        ]
+      },
+      "declaredCases": [],
+      "detection": {
+        "activation": {
+          "anyOf": [
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java"
+                ],
+                "glob": "**/*Observer.java"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java"
+                ],
+                "glob": "**/*Mediator.java"
+              }
+            }
+          ]
+        },
+        "capabilities": [
+          "collaboration-patterns"
+        ],
+        "companions": [
+          "java-design"
+        ],
+        "kind": "technology",
+        "label": "Java Collaboration Patterns",
+        "priority": 100,
+        "requiredWhenDetected": true,
+        "selection": "additive",
+        "skill": "java-collaboration-patterns"
+      },
+      "executedCases": [],
+      "id": "java-collaboration-patterns",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
+      "verifiedCases": []
+    },
+    {
+      "category": "stack-and-domain",
+      "coverage": {
+        "catalogFixtureBacked": false,
+        "evaluationCategory": "stack-and-domain",
+        "executableCases": [],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": false,
+        "positiveCaseBackedCases": [],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
+          "probe-java-composition-patterns"
+        ],
+        "scenarioAssociations": [
+          "dev-code-reviewer-boundary",
+          "dev-coder-happy"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "code-delivery"
+        ]
+      },
+      "declaredCases": [],
+      "detection": {
+        "activation": {
+          "anyOf": [
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java"
+                ],
+                "glob": "**/*Composite.java"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java"
+                ],
+                "glob": "**/*Decorator.java"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java"
+                ],
+                "glob": "**/*Proxy.java"
+              }
+            }
+          ]
+        },
+        "capabilities": [
+          "object-composition-patterns"
+        ],
+        "companions": [
+          "java-design"
+        ],
+        "kind": "technology",
+        "label": "Java Composition Patterns",
+        "priority": 100,
+        "requiredWhenDetected": true,
+        "selection": "additive",
+        "skill": "java-composition-patterns"
+      },
+      "executedCases": [],
+      "id": "java-composition-patterns",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
+      "verifiedCases": []
+    },
+    {
+      "category": "stack-and-domain",
+      "coverage": {
+        "catalogFixtureBacked": false,
+        "evaluationCategory": "stack-and-domain",
+        "executableCases": [],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": false,
+        "positiveCaseBackedCases": [],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
+          "probe-java-creation-patterns"
+        ],
+        "scenarioAssociations": [
+          "dev-artifact-reviewer-boundary",
+          "dev-coder-happy"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "code-delivery"
+        ]
+      },
+      "declaredCases": [],
+      "detection": {
+        "activation": {
+          "anyOf": [
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java"
+                ],
+                "glob": "**/*Factory.java"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java"
+                ],
+                "glob": "**/*FactoryMethod.java"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java"
+                ],
+                "glob": "**/*Builder.java"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java"
+                ],
+                "glob": "**/*Prototype.java"
+              }
+            }
+          ]
+        },
+        "capabilities": [
+          "object-creation-patterns"
+        ],
+        "companions": [
+          "java-design"
+        ],
+        "kind": "technology",
+        "label": "Java Creation Patterns",
+        "priority": 100,
+        "requiredWhenDetected": true,
+        "selection": "additive",
+        "skill": "java-creation-patterns"
+      },
+      "executedCases": [],
+      "id": "java-creation-patterns",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
+      "verifiedCases": []
+    },
+    {
+      "category": "stack-and-domain",
+      "coverage": {
+        "catalogFixtureBacked": false,
+        "evaluationCategory": "stack-and-domain",
+        "executableCases": [],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": false,
+        "positiveCaseBackedCases": [],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
           "probe-java-design"
         ],
         "scenarioAssociations": [
@@ -4533,6 +4794,409 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "executedCases": [],
       "id": "java-design",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
+      "verifiedCases": []
+    },
+    {
+      "category": "stack-and-domain",
+      "coverage": {
+        "catalogFixtureBacked": false,
+        "evaluationCategory": "stack-and-domain",
+        "executableCases": [],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": false,
+        "positiveCaseBackedCases": [],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
+          "probe-java-interface-patterns"
+        ],
+        "scenarioAssociations": [
+          "dev-artifact-reviewer-boundary",
+          "dev-coder-happy"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "code-delivery"
+        ]
+      },
+      "declaredCases": [],
+      "detection": {
+        "activation": {
+          "anyOf": [
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java"
+                ],
+                "glob": "**/*Adapter.java"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java"
+                ],
+                "glob": "**/*Bridge.java"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java"
+                ],
+                "glob": "**/*Facade.java"
+              }
+            }
+          ]
+        },
+        "capabilities": [
+          "interface-boundary-patterns"
+        ],
+        "companions": [
+          "java-design"
+        ],
+        "kind": "technology",
+        "label": "Java Interface Patterns",
+        "priority": 100,
+        "requiredWhenDetected": true,
+        "selection": "additive",
+        "skill": "java-interface-patterns"
+      },
+      "executedCases": [],
+      "id": "java-interface-patterns",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
+      "verifiedCases": []
+    },
+    {
+      "category": "stack-and-domain",
+      "coverage": {
+        "catalogFixtureBacked": false,
+        "evaluationCategory": "stack-and-domain",
+        "executableCases": [],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": false,
+        "positiveCaseBackedCases": [],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
+          "probe-java-request-patterns"
+        ],
+        "scenarioAssociations": [
+          "dev-coder-happy",
+          "dev-verifier-boundary"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "code-delivery"
+        ]
+      },
+      "declaredCases": [],
+      "detection": {
+        "activation": {
+          "anyOf": [
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java"
+                ],
+                "glob": "**/*Command.java"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java"
+                ],
+                "glob": "**/*ChainOfResponsibility.java"
+              }
+            }
+          ]
+        },
+        "capabilities": [
+          "request-processing-patterns"
+        ],
+        "companions": [
+          "java-design"
+        ],
+        "kind": "technology",
+        "label": "Java Request Patterns",
+        "priority": 100,
+        "requiredWhenDetected": true,
+        "selection": "additive",
+        "skill": "java-request-patterns"
+      },
+      "executedCases": [],
+      "id": "java-request-patterns",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
+      "verifiedCases": []
+    },
+    {
+      "category": "stack-and-domain",
+      "coverage": {
+        "catalogFixtureBacked": false,
+        "evaluationCategory": "stack-and-domain",
+        "executableCases": [],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": false,
+        "positiveCaseBackedCases": [],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
+          "probe-java-singleton-pattern"
+        ],
+        "scenarioAssociations": [
+          "dev-code-reviewer-boundary",
+          "dev-coder-boundary"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "code-delivery"
+        ]
+      },
+      "declaredCases": [],
+      "detection": {
+        "activation": {
+          "anyOf": [
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java"
+                ],
+                "glob": "**/*Singleton.java"
+              }
+            }
+          ]
+        },
+        "capabilities": [
+          "singleton-pattern"
+        ],
+        "companions": [
+          "java-design"
+        ],
+        "kind": "technology",
+        "label": "Java Singleton Pattern",
+        "priority": 100,
+        "requiredWhenDetected": true,
+        "selection": "additive",
+        "skill": "java-singleton-pattern"
+      },
+      "executedCases": [],
+      "id": "java-singleton-pattern",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
+      "verifiedCases": []
+    },
+    {
+      "category": "stack-and-domain",
+      "coverage": {
+        "catalogFixtureBacked": false,
+        "evaluationCategory": "stack-and-domain",
+        "executableCases": [],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": false,
+        "positiveCaseBackedCases": [],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
+          "probe-java-state-strategy-patterns"
+        ],
+        "scenarioAssociations": [
+          "dev-artifact-reviewer-boundary",
+          "dev-coder-happy"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "code-delivery"
+        ]
+      },
+      "declaredCases": [],
+      "detection": {
+        "activation": {
+          "anyOf": [
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java"
+                ],
+                "glob": "**/*Strategy.java"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java"
+                ],
+                "glob": "**/*StatePattern.java"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java"
+                ],
+                "glob": "**/*TemplateMethod.java"
+              }
+            }
+          ]
+        },
+        "capabilities": [
+          "behavior-selection-patterns"
+        ],
+        "companions": [
+          "java-design"
+        ],
+        "kind": "technology",
+        "label": "Java State And Strategy Patterns",
+        "priority": 100,
+        "requiredWhenDetected": true,
+        "selection": "additive",
+        "skill": "java-state-strategy-patterns"
+      },
+      "executedCases": [],
+      "id": "java-state-strategy-patterns",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
+      "verifiedCases": []
+    },
+    {
+      "category": "stack-and-domain",
+      "coverage": {
+        "catalogFixtureBacked": false,
+        "evaluationCategory": "stack-and-domain",
+        "executableCases": [],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": false,
+        "positiveCaseBackedCases": [],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
+          "probe-java-traversal-patterns"
+        ],
+        "scenarioAssociations": [
+          "dev-artifact-reviewer-boundary",
+          "dev-coder-happy"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "code-delivery"
+        ]
+      },
+      "declaredCases": [],
+      "detection": {
+        "activation": {
+          "anyOf": [
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java"
+                ],
+                "glob": "**/*Iterator.java"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java"
+                ],
+                "glob": "**/*Visitor.java"
+              }
+            }
+          ]
+        },
+        "capabilities": [
+          "traversal-operation-patterns"
+        ],
+        "companions": [
+          "java-design"
+        ],
+        "kind": "technology",
+        "label": "Java Traversal Patterns",
+        "priority": 100,
+        "requiredWhenDetected": true,
+        "selection": "additive",
+        "skill": "java-traversal-patterns"
+      },
+      "executedCases": [],
+      "id": "java-traversal-patterns",
       "judgePassedCases": [],
       "securityContainedCases": [],
       "verifiedCases": []

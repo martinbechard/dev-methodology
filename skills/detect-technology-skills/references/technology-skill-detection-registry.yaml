@@ -193,6 +193,78 @@ skills:
   selection: additive
   priority: 100
   requiredWhenDetected: true
+- skill: java-collaboration-patterns
+  kind: technology
+  label: Java Collaboration Patterns
+  capabilities:
+  - collaboration-patterns
+  activation:
+    anyOf:
+    - fileMatch:
+        glob: '**/*Observer.java'
+        extensions:
+        - .java
+    - fileMatch:
+        glob: '**/*Mediator.java'
+        extensions:
+        - .java
+  companions:
+  - java-design
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
+- skill: java-composition-patterns
+  kind: technology
+  label: Java Composition Patterns
+  capabilities:
+  - object-composition-patterns
+  activation:
+    anyOf:
+    - fileMatch:
+        glob: '**/*Composite.java'
+        extensions:
+        - .java
+    - fileMatch:
+        glob: '**/*Decorator.java'
+        extensions:
+        - .java
+    - fileMatch:
+        glob: '**/*Proxy.java'
+        extensions:
+        - .java
+  companions:
+  - java-design
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
+- skill: java-creation-patterns
+  kind: technology
+  label: Java Creation Patterns
+  capabilities:
+  - object-creation-patterns
+  activation:
+    anyOf:
+    - fileMatch:
+        glob: '**/*Factory.java'
+        extensions:
+        - .java
+    - fileMatch:
+        glob: '**/*FactoryMethod.java'
+        extensions:
+        - .java
+    - fileMatch:
+        glob: '**/*Builder.java'
+        extensions:
+        - .java
+    - fileMatch:
+        glob: '**/*Prototype.java'
+        extensions:
+        - .java
+  companions:
+  - java-design
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
 - skill: java-design
   kind: technology
   label: Java Design
@@ -203,6 +275,110 @@ skills:
     - fileExtension: .java
   companions:
   - java
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
+- skill: java-interface-patterns
+  kind: technology
+  label: Java Interface Patterns
+  capabilities:
+  - interface-boundary-patterns
+  activation:
+    anyOf:
+    - fileMatch:
+        glob: '**/*Adapter.java'
+        extensions:
+        - .java
+    - fileMatch:
+        glob: '**/*Bridge.java'
+        extensions:
+        - .java
+    - fileMatch:
+        glob: '**/*Facade.java'
+        extensions:
+        - .java
+  companions:
+  - java-design
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
+- skill: java-request-patterns
+  kind: technology
+  label: Java Request Patterns
+  capabilities:
+  - request-processing-patterns
+  activation:
+    anyOf:
+    - fileMatch:
+        glob: '**/*Command.java'
+        extensions:
+        - .java
+    - fileMatch:
+        glob: '**/*ChainOfResponsibility.java'
+        extensions:
+        - .java
+  companions:
+  - java-design
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
+- skill: java-singleton-pattern
+  kind: technology
+  label: Java Singleton Pattern
+  capabilities:
+  - singleton-pattern
+  activation:
+    anyOf:
+    - fileMatch:
+        glob: '**/*Singleton.java'
+        extensions:
+        - .java
+  companions:
+  - java-design
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
+- skill: java-state-strategy-patterns
+  kind: technology
+  label: Java State And Strategy Patterns
+  capabilities:
+  - behavior-selection-patterns
+  activation:
+    anyOf:
+    - fileMatch:
+        glob: '**/*Strategy.java'
+        extensions:
+        - .java
+    - fileMatch:
+        glob: '**/*StatePattern.java'
+        extensions:
+        - .java
+    - fileMatch:
+        glob: '**/*TemplateMethod.java'
+        extensions:
+        - .java
+  companions:
+  - java-design
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
+- skill: java-traversal-patterns
+  kind: technology
+  label: Java Traversal Patterns
+  capabilities:
+  - traversal-operation-patterns
+  activation:
+    anyOf:
+    - fileMatch:
+        glob: '**/*Iterator.java'
+        extensions:
+        - .java
+    - fileMatch:
+        glob: '**/*Visitor.java'
+        extensions:
+        - .java
+  companions:
+  - java-design
   selection: additive
   priority: 100
   requiredWhenDetected: true

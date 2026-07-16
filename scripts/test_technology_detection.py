@@ -312,6 +312,53 @@ class TechnologyDetectionTests(unittest.TestCase):
                     result = run_detection(root, "src/test", detector=detector)
                     self.assertEqual(expected, result["loadouts"][0]["skills"])
 
+    def test_explicit_java_pattern_types_load_focused_pattern_skills(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "src" / "main" / "java" / "example"
+            source.mkdir(parents=True)
+            for filename in (
+                "OrderFactory.java",
+                "RegistrySingleton.java",
+                "GatewayAdapter.java",
+                "MenuComposite.java",
+                "PricingStrategy.java",
+                "SubmitCommand.java",
+                "StatusObserver.java",
+                "TreeVisitor.java",
+            ):
+                (source / filename).write_text("class Example {}\n", encoding="utf-8")
+
+            expected = [
+                "java",
+                "java-collaboration-patterns",
+                "java-composition-patterns",
+                "java-creation-patterns",
+                "java-design",
+                "java-interface-patterns",
+                "java-request-patterns",
+                "java-singleton-pattern",
+                "java-state-strategy-patterns",
+                "java-traversal-patterns",
+            ]
+            for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+                with self.subTest(detector=detector):
+                    result = run_detection(root, "src/main", detector=detector)
+                    self.assertEqual(expected, result["loadouts"][0]["skills"])
+
+    def test_ordinary_state_type_does_not_infer_state_pattern(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "src" / "main" / "java" / "example"
+            source.mkdir(parents=True)
+            (source / "OrderState.java").write_text("class OrderState {}\n", encoding="utf-8")
+
+            expected = ["java", "java-design"]
+            for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+                with self.subTest(detector=detector):
+                    result = run_detection(root, "src/main", detector=detector)
+                    self.assertEqual(expected, result["loadouts"][0]["skills"])
+
     def test_liquibase_scope_composes_with_sql_without_jhipster(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

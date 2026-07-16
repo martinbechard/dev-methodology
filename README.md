@@ -367,6 +367,14 @@ The stack and project-domain skill packs are:
 - fastapi
 - java
 - java-design
+- java-creation-patterns
+- java-singleton-pattern
+- java-interface-patterns
+- java-composition-patterns
+- java-state-strategy-patterns
+- java-request-patterns
+- java-collaboration-patterns
+- java-traversal-patterns
 - junit
 - mockito
 - spring-boot

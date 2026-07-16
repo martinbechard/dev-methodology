@@ -1,0 +1,13 @@
+schema: dev-methodology-technology-detection
+version: 2
+skill: java-request-patterns
+kind: technology
+label: Java Request Patterns
+capabilities:
+- request-processing-patterns
+activation:
+  anyOf:
+  - fileMatch: {glob: "**/*Command.java", extensions: [.java]}
+  - fileMatch: {glob: "**/*ChainOfResponsibility.java", extensions: [.java]}
+companions:
+- java-design

@@ -1,0 +1,14 @@
+schema: dev-methodology-technology-detection
+version: 2
+skill: java-composition-patterns
+kind: technology
+label: Java Composition Patterns
+capabilities:
+- object-composition-patterns
+activation:
+  anyOf:
+  - fileMatch: {glob: "**/*Composite.java", extensions: [.java]}
+  - fileMatch: {glob: "**/*Decorator.java", extensions: [.java]}
+  - fileMatch: {glob: "**/*Proxy.java", extensions: [.java]}
+companions:
+- java-design

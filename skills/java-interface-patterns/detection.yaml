@@ -1,0 +1,14 @@
+schema: dev-methodology-technology-detection
+version: 2
+skill: java-interface-patterns
+kind: technology
+label: Java Interface Patterns
+capabilities:
+- interface-boundary-patterns
+activation:
+  anyOf:
+  - fileMatch: {glob: "**/*Adapter.java", extensions: [.java]}
+  - fileMatch: {glob: "**/*Bridge.java", extensions: [.java]}
+  - fileMatch: {glob: "**/*Facade.java", extensions: [.java]}
+companions:
+- java-design

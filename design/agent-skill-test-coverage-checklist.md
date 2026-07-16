@@ -20,8 +20,8 @@ This page is generated from the live conceptual agent and skill inventories, all
 
 ## Summary
 
-- [x] 26 conceptual agents and 93 bundled skills have structural coverage.
-- [x] 26 agents are scenario-declared and 93 skills are probe-declared.
+- [x] 26 conceptual agents and 101 bundled skills have structural coverage.
+- [x] 26 agents are scenario-declared and 101 skills are probe-declared.
 - [x] 52 agent scenarios and 5 workflow packs are declared.
 - 5 workflow packs have associated cases; 5 are partial and 0 have end-to-end fixture coverage.
 - 7 cases are fixture-backed and 7 fixtures are structurally executable before harness readiness is considered.
@@ -31,7 +31,7 @@ This page is generated from the live conceptual agent and skill inventories, all
 - 17 skills have positive-case support, 0 have negative-activation cases, 0 have executable paired controls, and 0 satisfy the full probe contract.
 - 0 agents and 0 skills have executable full fixtures.
 - 0 agents and 0 skills have calibrated Model Judge status.
-- 26 agents and 72 skills have pending Model Judge status.
+- 26 agents and 80 skills have pending Model Judge status.
 - 0 agents and 21 skills use Deterministic Judges only and do not require Model Judge calibration.
 - 0 agents and 0 skills have classified executions.
 - 0 agents and 0 skills have Judge-passed evidence.
@@ -171,7 +171,15 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | electron-preload | [x] | [x] probe-electron-preload | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | fastapi | [x] | [x] probe-fastapi | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | java | [x] | [x] probe-java | [x] spring-boot-order-cancellation | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
+| java-collaboration-patterns | [x] | [x] probe-java-collaboration-patterns | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| java-composition-patterns | [x] | [x] probe-java-composition-patterns | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| java-creation-patterns | [x] | [x] probe-java-creation-patterns | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | java-design | [x] | [x] probe-java-design | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| java-interface-patterns | [x] | [x] probe-java-interface-patterns | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| java-request-patterns | [x] | [x] probe-java-request-patterns | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| java-singleton-pattern | [x] | [x] probe-java-singleton-pattern | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| java-state-strategy-patterns | [x] | [x] probe-java-state-strategy-patterns | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| java-traversal-patterns | [x] | [x] probe-java-traversal-patterns | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | jest | [x] | [x] probe-jest | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | jhipster-domain-modeling | [x] | [x] probe-jhipster-domain-modeling | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | jhipster-persistence | [x] | [x] probe-jhipster-persistence | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
@@ -218,7 +226,15 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | electron-preload | technology | Electron preload boundary | [x] | [ ] | [ ] | none | none | none | none |
 | fastapi | technology | FastAPI | [x] | [ ] | [ ] | none | none | none | none |
 | java | technology | Java | [x] | [x] | [ ] | none | none | none | none |
+| java-collaboration-patterns | technology | Java Collaboration Patterns | [x] | [ ] | [ ] | none | none | none | none |
+| java-composition-patterns | technology | Java Composition Patterns | [x] | [ ] | [ ] | none | none | none | none |
+| java-creation-patterns | technology | Java Creation Patterns | [x] | [ ] | [ ] | none | none | none | none |
 | java-design | technology | Java Design | [x] | [ ] | [ ] | none | none | none | none |
+| java-interface-patterns | technology | Java Interface Patterns | [x] | [ ] | [ ] | none | none | none | none |
+| java-request-patterns | technology | Java Request Patterns | [x] | [ ] | [ ] | none | none | none | none |
+| java-singleton-pattern | technology | Java Singleton Pattern | [x] | [ ] | [ ] | none | none | none | none |
+| java-state-strategy-patterns | technology | Java State And Strategy Patterns | [x] | [ ] | [ ] | none | none | none | none |
+| java-traversal-patterns | technology | Java Traversal Patterns | [x] | [ ] | [ ] | none | none | none | none |
 | jest | technology | Jest | [x] | [ ] | [ ] | none | none | none | none |
 | jhipster-domain-modeling | domain | JHipster Domain Modeling | [x] | [ ] | [ ] | none | none | none | none |
 | jhipster-persistence | domain | JHipster Persistence | [x] | [ ] | [ ] | none | none | none | none |

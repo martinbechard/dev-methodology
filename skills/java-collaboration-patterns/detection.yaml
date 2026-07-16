@@ -1,0 +1,13 @@
+schema: dev-methodology-technology-detection
+version: 2
+skill: java-collaboration-patterns
+kind: technology
+label: Java Collaboration Patterns
+capabilities:
+- collaboration-patterns
+activation:
+  anyOf:
+  - fileMatch: {glob: "**/*Observer.java", extensions: [.java]}
+  - fileMatch: {glob: "**/*Mediator.java", extensions: [.java]}
+companions:
+- java-design

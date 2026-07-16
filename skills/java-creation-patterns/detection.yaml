@@ -1,0 +1,15 @@
+schema: dev-methodology-technology-detection
+version: 2
+skill: java-creation-patterns
+kind: technology
+label: Java Creation Patterns
+capabilities:
+- object-creation-patterns
+activation:
+  anyOf:
+  - fileMatch: {glob: "**/*Factory.java", extensions: [.java]}
+  - fileMatch: {glob: "**/*FactoryMethod.java", extensions: [.java]}
+  - fileMatch: {glob: "**/*Builder.java", extensions: [.java]}
+  - fileMatch: {glob: "**/*Prototype.java", extensions: [.java]}
+companions:
+- java-design

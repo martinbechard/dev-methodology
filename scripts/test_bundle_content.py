@@ -89,6 +89,14 @@ NEW_DEVELOPMENT_SKILLS = (
     "fastapi",
     "java",
     "java-design",
+    "java-creation-patterns",
+    "java-singleton-pattern",
+    "java-interface-patterns",
+    "java-composition-patterns",
+    "java-state-strategy-patterns",
+    "java-request-patterns",
+    "java-collaboration-patterns",
+    "java-traversal-patterns",
     "junit",
     "mockito",
     "spring-boot",
@@ -184,6 +192,14 @@ EXAMPLE_PROJECT_SKILL_PACKS = (
     "agent-harness",
     "java",
     "java-design",
+    "java-creation-patterns",
+    "java-singleton-pattern",
+    "java-interface-patterns",
+    "java-composition-patterns",
+    "java-state-strategy-patterns",
+    "java-request-patterns",
+    "java-collaboration-patterns",
+    "java-traversal-patterns",
     "junit",
     "mockito",
     "jest",
@@ -229,6 +245,14 @@ README_REQUIRED_PHRASES = (
     "detect-technology-skills",
     "- liquibase",
     "- java-design",
+    "- java-creation-patterns",
+    "- java-singleton-pattern",
+    "- java-interface-patterns",
+    "- java-composition-patterns",
+    "- java-state-strategy-patterns",
+    "- java-request-patterns",
+    "- java-collaboration-patterns",
+    "- java-traversal-patterns",
     "- junit",
     "- mockito",
     "- spring-boot-design",
@@ -334,6 +358,7 @@ MODULARIZATION_REQUIRED_PHRASES = (
     "edit PROJECT.yaml to force a correction",
     "Operational result — after setup",
     "Technology Extension Skills",
+    "practical cross-section of twenty classic Gang of Four object-oriented patterns",
     "Changeset identity, include-chain, validation, update, rollback, and recovery guidance together with SQL.",
     "jhipster-domain-modeling",
     "How Setup-Time Technology Detection Works",
@@ -351,6 +376,14 @@ TECHNOLOGY_EXTENSION_SKILLS = (
     "fastapi",
     "java",
     "java-design",
+    "java-creation-patterns",
+    "java-singleton-pattern",
+    "java-interface-patterns",
+    "java-composition-patterns",
+    "java-state-strategy-patterns",
+    "java-request-patterns",
+    "java-collaboration-patterns",
+    "java-traversal-patterns",
     "junit",
     "mockito",
     "spring-boot",
@@ -1059,6 +1092,76 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(boundary_phrase, skill_text)
                 self.assertTrue((skill_root / reference_path).is_file())
                 self.assertTrue((skill_root / "detection.yaml").is_file())
+
+    def test_java_design_pattern_families_are_focused_and_detection_backed(self) -> None:
+        expected = {
+            "java-creation-patterns": (
+                "Factory Method",
+                "references/design-guidelines-java-creation-patterns.md",
+            ),
+            "java-singleton-pattern": (
+                "exactly one instance",
+                "references/design-guidelines-java-singleton-pattern.md",
+            ),
+            "java-interface-patterns": (
+                "Use Adapter",
+                "references/design-guidelines-java-interface-patterns.md",
+            ),
+            "java-composition-patterns": (
+                "Use Composite",
+                "references/design-guidelines-java-composition-patterns.md",
+            ),
+            "java-state-strategy-patterns": (
+                "Use Strategy",
+                "references/design-guidelines-java-state-strategy-patterns.md",
+            ),
+            "java-request-patterns": (
+                "Use Command",
+                "references/design-guidelines-java-request-patterns.md",
+            ),
+            "java-collaboration-patterns": (
+                "Use Observer",
+                "references/design-guidelines-java-collaboration-patterns.md",
+            ),
+            "java-traversal-patterns": (
+                "Use Iterator",
+                "references/design-guidelines-java-traversal-patterns.md",
+            ),
+        }
+        covered_patterns = {
+            "java-creation-patterns": (
+                "Factory Method",
+                "Abstract Factory",
+                "Builder",
+                "Prototype",
+            ),
+            "java-singleton-pattern": ("Singleton",),
+            "java-interface-patterns": ("Adapter", "Bridge", "Facade"),
+            "java-composition-patterns": ("Composite", "Decorator", "Proxy"),
+            "java-state-strategy-patterns": ("Strategy", "State", "Template Method"),
+            "java-request-patterns": ("Command", "Chain of Responsibility"),
+            "java-collaboration-patterns": ("Observer", "Mediator"),
+            "java-traversal-patterns": ("Iterator", "Visitor"),
+        }
+
+        flattened_patterns = {
+            pattern
+            for patterns in covered_patterns.values()
+            for pattern in patterns
+        }
+        self.assertEqual(20, len(flattened_patterns))
+
+        for skill_name, (boundary_phrase, reference_path) in expected.items():
+            with self.subTest(skill_name=skill_name):
+                skill_root = SKILLS_ROOT / skill_name
+                skill_text = (skill_root / "SKILL.md").read_text(encoding="utf-8")
+                reference_text = (skill_root / reference_path).read_text(encoding="utf-8")
+                self.assertLessEqual(len(skill_text.splitlines()), 40)
+                self.assertIn(boundary_phrase, skill_text)
+                self.assertTrue((skill_root / reference_path).is_file())
+                self.assertTrue((skill_root / "detection.yaml").is_file())
+                for pattern in covered_patterns[skill_name]:
+                    self.assertIn(pattern, skill_text + reference_text)
 
     def test_quarkus_concerns_are_separate_and_detection_backed(self) -> None:
         expected = {
