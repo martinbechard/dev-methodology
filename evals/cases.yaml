@@ -1,13 +1,41 @@
 schema: dev-methodology-agent-skill-evals
-version: 1
+version: 2
+coverageStatus: mixed
+sourceDigestPolicy: sha256-at-run
+supportedHarnesses:
+  - codex
+  - junie
+catalogs:
+  skillProbes: evals/skill-probes.yaml
+  agentScenarios: evals/agent-scenarios.yaml
+  workflowPacks: evals/workflow-packs.yaml
+  judges: evals/judges.yaml
+  sandboxProfiles: evals/sandbox-profiles.yaml
+coverageSemantics:
+  declared: The case contract exists, but no runnable fixture and current valid receipt establish execution coverage.
+  fixture-backed: The fixture and commands exist; this status alone does not assert a successful or verified run.
+  verified: A current receipt satisfies digests, identity evidence, containment reporting, deterministic Judges, and any calibrated Model Judge requirement.
+caseDefaults:
+  contextStaging: explicit-allow-list
+  wholeRepositoryAllowed: false
+  approvedSensitiveData: false
+  transientTreePolicy: inherit-sandbox-profile
+  stagedSkillResourcePolicy: inherit-skill-probes-catalog
+  digestPolicy: sha256-source-and-effective-at-run
 cases:
   - id: typescript-order-pricing
+    coverageStatus: fixture-backed
+    executionStatus: runnable
     project: evals/projects/typescript-order-pricing
     task: TASK.md
     install: npm install
     verify: npm test
+    harnesses: [codex, junie]
+    harnessExecutionStatus: {codex: runnable, junie: external-runner-required}
     requiredAgents:
       - dev-coder
+    agentScenarios:
+      - dev-coder-happy
     requiredSkills:
       - agent-claim
       - careful-coding
@@ -17,6 +45,41 @@ cases:
       - typescript-strict
       - typescript-esm
       - code-review-evidence
+    skillProbes:
+      - probe-agent-claim
+      - probe-careful-coding
+      - probe-code-comments
+      - probe-test-driven-development
+      - probe-typescript
+      - probe-typescript-strict
+      - probe-typescript-esm
+      - probe-code-review-evidence
+    fixtureBackedProbeClaims:
+      - probe-typescript
+      - probe-typescript-strict
+      - probe-typescript-esm
+    workflowPack: code-delivery
+    sandboxProfiles: {codex: codex-workspace-write, junie: junie-workspace-write}
+    minimumContainment: {codex: workspace-isolated-only, junie: externally-contained}
+    judgePlan:
+      deterministicChecks: [model-input-safety, skill-read-trace, harness-agent-identity, required-command-outcome, allowed-paths-only, test-state-transition, snapshot-reset, containment-attestation]
+      modelRubric: source-faithfulness
+    contextPack:
+      fixtureRoot: evals/projects/typescript-order-pricing
+      include: [.gitignore, TASK.md, package-lock.json, package.json, src, test, tsconfig.json]
+      stagedSkillPackages: [agent-claim, careful-coding, code-comments, test-driven-development, typescript, typescript-strict, typescript-esm, code-review-evidence]
+      wholeRepositoryAllowed: false
+      approvedSensitiveData: false
+    modelVisiblePaths: [.gitignore, TASK.md, package-lock.json, package.json, src, test, tsconfig.json]
+    skillResourceAllowlist:
+      agent-claim: [SKILL.md, scripts/claim.py]
+      careful-coding: [SKILL.md]
+      code-comments: [SKILL.md, references/review-checklist-code-comments.md]
+      test-driven-development: [SKILL.md]
+      typescript: [SKILL.md, references/review-checklist-typescript.md]
+      typescript-strict: [SKILL.md, references/review-checklist-typescript-strict.md]
+      typescript-esm: [SKILL.md, references/review-checklist-typescript-esm.md]
+      code-review-evidence: [SKILL.md, references/review-checklist-code-evidence.md]
     requiredEvidence:
       - TS-BOUNDARY
       - TS-CONTRACT
@@ -24,12 +87,18 @@ cases:
       - TS-TESTS
       - REVIEW-SYNTHESIS
   - id: spring-boot-order-cancellation
+    coverageStatus: fixture-backed
+    executionStatus: runnable
     project: evals/projects/spring-boot-order-cancellation
     task: TASK.md
     install: mvn -q -DskipTests package
     verify: mvn -q test
+    harnesses: [codex, junie]
+    harnessExecutionStatus: {codex: runnable, junie: external-runner-required}
     requiredAgents:
       - dev-coder
+    agentScenarios:
+      - dev-coder-happy
     requiredSkills:
       - agent-claim
       - careful-coding
@@ -39,6 +108,41 @@ cases:
       - spring-boot
       - sql
       - code-review-evidence
+    skillProbes:
+      - probe-agent-claim
+      - probe-careful-coding
+      - probe-code-comments
+      - probe-test-driven-development
+      - probe-java
+      - probe-spring-boot
+      - probe-sql
+      - probe-code-review-evidence
+    fixtureBackedProbeClaims:
+      - probe-java
+      - probe-spring-boot
+      - probe-sql
+    workflowPack: code-delivery
+    sandboxProfiles: {codex: codex-workspace-write, junie: junie-workspace-write}
+    minimumContainment: {codex: workspace-isolated-only, junie: externally-contained}
+    judgePlan:
+      deterministicChecks: [model-input-safety, skill-read-trace, harness-agent-identity, required-command-outcome, allowed-paths-only, test-state-transition, snapshot-reset, containment-attestation]
+      modelRubric: source-faithfulness
+    contextPack:
+      fixtureRoot: evals/projects/spring-boot-order-cancellation
+      include: [.gitignore, TASK.md, pom.xml, src]
+      stagedSkillPackages: [agent-claim, careful-coding, code-comments, test-driven-development, java, spring-boot, sql, code-review-evidence]
+      wholeRepositoryAllowed: false
+      approvedSensitiveData: false
+    modelVisiblePaths: [.gitignore, TASK.md, pom.xml, src]
+    skillResourceAllowlist:
+      agent-claim: [SKILL.md, scripts/claim.py]
+      careful-coding: [SKILL.md]
+      code-comments: [SKILL.md, references/review-checklist-code-comments.md]
+      test-driven-development: [SKILL.md]
+      java: [SKILL.md, references/coding-guidelines-java.md, references/review-checklist-java.md]
+      spring-boot: [SKILL.md, references/coding-guidelines-spring-boot.md, references/review-checklist-spring-boot.md]
+      sql: [SKILL.md, references/review-checklist-sql.md]
+      code-review-evidence: [SKILL.md, references/review-checklist-code-evidence.md]
     requiredEvidence:
       - JAVA-CONTRACT
       - SPRING-BOUNDARY
@@ -47,14 +151,20 @@ cases:
       - JAVA-TESTS
       - REVIEW-SYNTHESIS
   - id: typescript-code-review
+    coverageStatus: fixture-backed
+    executionStatus: runnable
     project: evals/projects/typescript-code-review
     task: TASK.md
     install: npm install
     verify: npm test
     expectVerifyFailure: true
     readOnly: true
+    harnesses: [codex, junie]
+    harnessExecutionStatus: {codex: runnable, junie: external-runner-required}
     requiredAgents:
       - dev-code-reviewer
+    agentScenarios:
+      - dev-code-reviewer-happy
     requiredSkills:
       - code-review-evidence
       - review-structured-artifact
@@ -63,6 +173,40 @@ cases:
       - typescript
       - typescript-strict
       - typescript-esm
+    skillProbes:
+      - probe-code-review-evidence
+      - probe-review-structured-artifact
+      - probe-careful-coding
+      - probe-code-comments
+      - probe-typescript
+      - probe-typescript-strict
+      - probe-typescript-esm
+    fixtureBackedProbeClaims:
+      - probe-code-review-evidence
+      - probe-typescript
+      - probe-typescript-strict
+      - probe-typescript-esm
+    workflowPack: code-delivery
+    sandboxProfiles: {codex: codex-read-only, junie: junie-read-only}
+    minimumContainment: {codex: workspace-isolated-only, junie: externally-contained}
+    judgePlan:
+      deterministicChecks: [model-input-safety, skill-read-trace, forbidden-skill-absence, harness-agent-identity, required-command-outcome, no-forbidden-mutation, finding-recall, finding-precision, snapshot-reset, containment-attestation]
+      modelRubric: review-quality
+    contextPack:
+      fixtureRoot: evals/projects/typescript-code-review
+      include: [.gitignore, TASK.md, package-lock.json, package.json, src, test, tsconfig.json]
+      stagedSkillPackages: [code-review-evidence, review-structured-artifact, careful-coding, code-comments, typescript, typescript-strict, typescript-esm]
+      wholeRepositoryAllowed: false
+      approvedSensitiveData: false
+    modelVisiblePaths: [.gitignore, TASK.md, package-lock.json, package.json, src, test, tsconfig.json]
+    skillResourceAllowlist:
+      code-review-evidence: [SKILL.md, references/review-checklist-code-evidence.md]
+      review-structured-artifact: [SKILL.md, references/review-checklist-structured.md]
+      careful-coding: [SKILL.md]
+      code-comments: [SKILL.md, references/review-checklist-code-comments.md]
+      typescript: [SKILL.md, references/review-checklist-typescript.md]
+      typescript-strict: [SKILL.md, references/review-checklist-typescript-strict.md]
+      typescript-esm: [SKILL.md, references/review-checklist-typescript-esm.md]
     requiredEvidence:
       - Async ownership
       - Error handling
@@ -72,3 +216,192 @@ cases:
       - ASYNC-AWAIT
       - ERROR-PROPAGATION
       - PERCENT-RANGE
+  - id: documentation-functional-spec
+    coverageStatus: fixture-backed
+    executionStatus: runnable
+    project: evals/projects/documentation-functional-spec
+    task: TASK.md
+    install: null
+    verify:
+      argv:
+        - python3
+        - -c
+        - |
+          from pathlib import Path
+          required = [Path("docs/functional-specifications/order-cancellation.md"), Path("eval-result.md")]
+          missing = [str(path) for path in required if not path.is_file()]
+          raise SystemExit("missing required output: " + ", ".join(missing) if missing else 0)
+      modelVisible: false
+    harnesses: [codex, junie]
+    harnessExecutionStatus: {codex: runnable, junie: external-runner-required}
+    requiredAgents: [dev-documentation-writer]
+    agentScenarios: [dev-documentation-writer-happy]
+    requiredSkills: [development-methodology, create-functional-spec, review-functional-spec, agent-claim]
+    skillProbes: [probe-development-methodology, probe-create-functional-spec, probe-review-functional-spec, probe-agent-claim]
+    fixtureBackedProbeClaims: [probe-development-methodology, probe-create-functional-spec, probe-review-functional-spec]
+    workflowPack: documentation-methodology
+    sandboxProfiles: {codex: codex-workspace-write, junie: junie-workspace-write}
+    minimumContainment: {codex: workspace-isolated-only, junie: externally-contained}
+    judgePlan:
+      deterministicChecks: [model-input-safety, skill-read-trace, harness-agent-identity, artifact-structure, artifact-review-checklist, operation-coverage, actor-boundary-coverage, contradiction-scan, readiness-consistency, snapshot-reset, containment-attestation]
+      modelRubric: artifact-contract
+    contextPack:
+      fixtureRoot: evals/projects/documentation-functional-spec
+      include: [TASK.md, sources]
+      stagedSkillPackages: [development-methodology, create-functional-spec, review-functional-spec, agent-claim]
+      wholeRepositoryAllowed: false
+      approvedSensitiveData: false
+    modelVisiblePaths: [TASK.md, sources]
+    skillResourceAllowlist:
+      development-methodology: [SKILL.md, assets/templates/functional-spec-template.md]
+      create-functional-spec: [SKILL.md]
+      review-functional-spec: [SKILL.md, references/review-checklist-functional-spec.md]
+      agent-claim: [SKILL.md, scripts/claim.py]
+    requiredEvidence: [FUNCTIONAL-OPERATIONS, ACTOR-BOUNDARIES, REVIEW-CHECKLIST, READINESS-VERDICT]
+  - id: project-configuration-routing
+    coverageStatus: fixture-backed
+    executionStatus: runnable
+    project: evals/projects/project-configuration-routing
+    task: TASK.md
+    install: null
+    verify:
+      argv:
+        - python3
+        - -c
+        - |
+          from pathlib import Path
+          required = [Path("PROJECT.yaml"), Path("AGENTS.md"), Path("services/api/AGENTS.md"), Path("apps/web/AGENTS.md"), Path("automation/AGENTS.md"), Path("eval-result.md")]
+          missing = [str(path) for path in required if not path.is_file()]
+          nested = [path for path in Path(".").rglob("PROJECT.yaml") if path != Path("PROJECT.yaml")]
+          message = ("missing required output: " + ", ".join(missing)) if missing else (("nested PROJECT.yaml forbidden: " + ", ".join(map(str, nested))) if nested else "")
+          raise SystemExit(message if message else 0)
+      modelVisible: false
+    harnesses: [codex, junie]
+    harnessExecutionStatus: {codex: runnable, junie: external-runner-required}
+    requiredAgents: [project-configurator]
+    agentScenarios: [project-configurator-happy]
+    requiredSkills: [create-project-configuration, detect-technology-skills, development-methodology, documentation-page-verify, organise-project-files, agent-claim]
+    skillProbes: [probe-create-project-configuration, probe-detect-technology-skills, probe-development-methodology, probe-documentation-page-verify, probe-organise-project-files, probe-agent-claim]
+    fixtureBackedProbeClaims: [probe-create-project-configuration, probe-detect-technology-skills, probe-development-methodology, probe-organise-project-files]
+    workflowPack: project-setup
+    sandboxProfiles: {codex: codex-workspace-write, junie: junie-workspace-write}
+    minimumContainment: {codex: workspace-isolated-only, junie: externally-contained}
+    judgePlan:
+      deterministicChecks: [model-input-safety, skill-read-trace, harness-agent-identity, technology-detection-evidence, artifact-structure, allowed-paths-only, contradiction-scan, snapshot-reset, containment-attestation]
+      modelRubric: workflow-quality
+    contextPack:
+      fixtureRoot: evals/projects/project-configuration-routing
+      include: [TASK.md, README.md, available-skills.txt, docs, services, apps, automation]
+      stagedSkillPackages: [create-project-configuration, detect-technology-skills, development-methodology, documentation-page-verify, organise-project-files, agent-claim]
+      wholeRepositoryAllowed: false
+      approvedSensitiveData: false
+    modelVisiblePaths: [TASK.md, README.md, available-skills.txt, docs, services, apps, automation]
+    skillResourceAllowlist:
+      create-project-configuration: [SKILL.md]
+      detect-technology-skills: [SKILL.md, references/technology-skill-detection-registry.yaml, scripts/detect.py]
+      development-methodology: [SKILL.md, assets/templates/project-template.yaml]
+      documentation-page-verify: [SKILL.md]
+      organise-project-files: [SKILL.md]
+      agent-claim: [SKILL.md, scripts/claim.py]
+    requiredEvidence: [PROJECT-CONFIGURATION, DETECTION-SKILLSETS, ROUTING-FILES, PLACEMENT-AUDIT]
+  - id: wiki-raw-ingest
+    coverageStatus: fixture-backed
+    executionStatus: runnable
+    project: evals/projects/wiki-raw-ingest
+    task: TASK.md
+    install: null
+    verify:
+      argv:
+        - python3
+        - -c
+        - |
+          from pathlib import Path
+          required = [Path("docs/wiki/orders/order-cancellation.md"), Path("raw/processed/2026-07-15-order-cancellation.md"), Path("eval-result.md")]
+          missing = [str(path) for path in required if not path.is_file()]
+          old_raw = Path("raw/2026-07-15-order-cancellation.md")
+          message = ("missing required output: " + ", ".join(missing)) if missing else ("unprocessed source still present" if old_raw.exists() else "")
+          raise SystemExit(message if message else 0)
+      modelVisible: false
+    harnesses: [codex, junie]
+    harnessExecutionStatus: {codex: runnable, junie: external-runner-required}
+    requiredAgents: [wiki-ingester]
+    agentScenarios: [wiki-ingester-happy]
+    requiredSkills: [project-wiki, project-wiki-topic-write, project-wiki-topic-verify, organise-project-files, agent-claim]
+    skillProbes: [probe-project-wiki, probe-project-wiki-topic-write, probe-project-wiki-topic-verify, probe-organise-project-files, probe-agent-claim]
+    fixtureBackedProbeClaims: [probe-project-wiki, probe-project-wiki-topic-write, probe-project-wiki-topic-verify]
+    workflowPack: wiki-lifecycle
+    sandboxProfiles: {codex: codex-workspace-write, junie: junie-workspace-write}
+    minimumContainment: {codex: workspace-isolated-only, junie: externally-contained}
+    judgePlan:
+      deterministicChecks: [model-input-safety, skill-read-trace, harness-agent-identity, raw-processed-boundary, wiki-validation, queue-state-transition, source-link-resolution, snapshot-reset, containment-attestation]
+      modelRubric: workflow-quality
+    contextPack:
+      fixtureRoot: evals/projects/wiki-raw-ingest
+      include: [TASK.md, docs, raw]
+      stagedSkillPackages: [project-wiki, project-wiki-topic-write, project-wiki-topic-verify, organise-project-files, agent-claim]
+      wholeRepositoryAllowed: false
+      approvedSensitiveData: false
+    modelVisiblePaths: [TASK.md, docs, raw]
+    skillResourceAllowlist:
+      project-wiki:
+        - SKILL.md
+        - references/operations.md
+        - references/page-schema.md
+        - references/source-priority.md
+        - references/topic-page-verification-checklist.md
+        - scripts/wiki_ops.py
+        - scripts/project_wiki_ops/__init__.py
+        - scripts/project_wiki_ops/cli.py
+        - scripts/project_wiki_ops/constants.py
+        - scripts/project_wiki_ops/core.py
+        - scripts/project_wiki_ops/models.py
+        - scripts/project_wiki_ops/okf.py
+      project-wiki-topic-write: [SKILL.md]
+      project-wiki-topic-verify: [SKILL.md]
+      organise-project-files: [SKILL.md]
+      agent-claim: [SKILL.md, scripts/claim.py]
+    requiredEvidence: [PRE-MOVE-VERDICT, PROCESSED-SOURCE-LINKS, POST-MOVE-VERDICT, QUEUE-CLOSEOUT]
+  - id: backlog-lifecycle
+    coverageStatus: fixture-backed
+    executionStatus: runnable
+    project: evals/projects/backlog-lifecycle
+    task: TASK.md
+    install: null
+    verify:
+      argv:
+        - python3
+        - -c
+        - |
+          from pathlib import Path
+          required = [Path("backlog-status.md"), Path("eval-result.md"), Path("docs/feature-backlog/retry-policy.md"), Path(".backlog-state/claims/retry-policy.yaml"), Path(".backlog-state/logs/retry-policy.log")]
+          missing = [str(path) for path in required if not path.is_file()]
+          forbidden = [Path("docs/completed-backlog/features/retry-policy.md"), Path("docs/failed-backlog/features/retry-policy.md")]
+          moved = [str(path) for path in forbidden if path.exists()]
+          message = ("missing required state or output: " + ", ".join(missing)) if missing else (("unsupported archive transition: " + ", ".join(moved)) if moved else "")
+          raise SystemExit(message if message else 0)
+      modelVisible: false
+    harnesses: [codex, junie]
+    harnessExecutionStatus: {codex: runnable, junie: external-runner-required}
+    requiredAgents: [dev-backlog-steward]
+    agentScenarios: [dev-backlog-steward-boundary]
+    requiredSkills: [manage-backlog, agent-claim, structured-explanation]
+    skillProbes: [probe-manage-backlog, probe-agent-claim, probe-structured-explanation]
+    fixtureBackedProbeClaims: [probe-manage-backlog]
+    workflowPack: backlog
+    sandboxProfiles: {codex: codex-workspace-write, junie: junie-workspace-write}
+    minimumContainment: {codex: workspace-isolated-only, junie: externally-contained}
+    judgePlan:
+      deterministicChecks: [model-input-safety, skill-read-trace, harness-agent-identity, queue-state-transition, claim-lifecycle, artifact-structure, readiness-consistency, snapshot-reset, containment-attestation]
+      modelRubric: workflow-quality
+    contextPack:
+      fixtureRoot: evals/projects/backlog-lifecycle
+      include: [TASK.md, docs, .backlog-state]
+      stagedSkillPackages: [manage-backlog, agent-claim, structured-explanation]
+      wholeRepositoryAllowed: false
+      approvedSensitiveData: false
+    modelVisiblePaths: [TASK.md, docs, .backlog-state]
+    skillResourceAllowlist:
+      manage-backlog: [SKILL.md]
+      agent-claim: [SKILL.md, scripts/claim.py]
+      structured-explanation: [SKILL.md]
+    requiredEvidence: [BACKLOG-ITEM, OWNERSHIP-RECORD, STATE-TRANSITION, TERMINAL-SUMMARY]

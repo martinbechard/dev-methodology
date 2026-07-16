@@ -1,0 +1,321 @@
+schema: dev-methodology-eval-judges
+version: 2
+coverageStatus: declared
+sourceDigestPolicy: sha256-at-run
+judgeTypes:
+  deterministic:
+    name: Deterministic Judge
+    purpose: Decide exact, executable, schema, trace, mutation, and state-transition conditions.
+    calibrationRequired: false
+  model:
+    name: Model Judge
+    purpose: Judge semantic completeness, source faithfulness, prioritization, and handoff quality only where exact checks are insufficient.
+    calibrationRequired: true
+  human:
+    name: Human Judge
+    purpose: Create calibration labels and adjudicate ambiguous, disputed, or high-risk results.
+    calibrationRequired: false
+executionOrder:
+  - deterministic-critical-gates
+  - deterministic-behavior-checks
+  - calibrated-model-judge-when-needed
+  - second-model-pass-or-human-adjudication-when-triggered
+executionPolicy:
+  requiredPreflightChecks:
+    - model-input-safety
+    - snapshot-reset
+    - containment-attestation
+  skipModelJudgeAfterCriticalDeterministicFailure: true
+  normalModelPasses: 1
+  secondPassTriggers:
+    - near-threshold
+    - conflicting-evidence
+    - high-risk-result
+  blindModelJudgeTo:
+    - treatment
+    - expected-winner
+    - evaluated-model-identity
+    - harness-identity-unless-harness-behavior-is-the-target
+checks:
+  - id: model-input-safety
+    type: deterministic
+    critical: true
+    description: Preflight inventories only the explicitly staged context pack, rejects seeded secrets, PII, and company-sensitive patterns unless specifically approved, and records the approved context-pack SHA-256 digest.
+  - id: skill-read-trace
+    type: deterministic
+    critical: true
+    description: A unique captured tool event identifies the loaded skill and its run-time SHA-256 digest.
+  - id: forbidden-skill-absence
+    type: deterministic
+    critical: true
+    description: Captured events contain no read of a skill declared forbidden for the treatment.
+  - id: harness-agent-identity
+    type: deterministic
+    critical: true
+    description: Captured harness evidence identifies the intended conceptual agent definition and concrete invocation.
+  - id: required-command-outcome
+    type: deterministic
+    critical: true
+    description: Each required command has the declared exit-code and pass or expected-failure outcome.
+  - id: project-hash-policy
+    type: deterministic
+    critical: true
+    description: Before and after project hashes satisfy the scenario mutation policy.
+  - id: allowed-paths-only
+    type: deterministic
+    critical: true
+    description: Every changed path is inside the case allow-list and no unrelated file changed.
+  - id: no-forbidden-mutation
+    type: deterministic
+    critical: true
+    description: Read-only and non-authoritative scenarios leave the protected workspace state unchanged.
+  - id: output-contract-presence
+    type: deterministic
+    critical: true
+    description: Every required conceptual agent definition output-contract field is present and non-empty.
+  - id: source-link-resolution
+    type: deterministic
+    critical: false
+    description: Declared project-relative source and documentation links resolve from the artifact location.
+  - id: artifact-structure
+    type: deterministic
+    critical: true
+    description: Required headings, keys, statuses, and ordering match the owning template or schema.
+  - id: artifact-review-checklist
+    type: deterministic
+    critical: true
+    description: The named review checklist exists, covers every applicable item, and precedes findings synthesis.
+  - id: finding-recall
+    type: deterministic
+    critical: true
+    description: Required seeded findings are reported with the expected identifiers and locations.
+  - id: finding-precision
+    type: deterministic
+    critical: false
+    description: Reported findings match the seeded defect inventory and unsupported findings are counted.
+  - id: fresh-context-identity
+    type: deterministic
+    critical: true
+    description: Review and verification invocations have distinct captured context identities from production work.
+  - id: claim-lifecycle
+    type: deterministic
+    critical: true
+    description: Claim events prove acquisition, non-overlap handling, commit or truthful no-change, clean state, and release.
+  - id: test-state-transition
+    type: deterministic
+    critical: false
+    description: Captured focused test evidence proves the expected red-to-green or failure-to-classified transition.
+  - id: technology-detection-evidence
+    type: deterministic
+    critical: true
+    description: Detection output matches source activation evidence, runtime availability, conflicts, and NO_VARIANT rules.
+  - id: wiki-validation
+    type: deterministic
+    critical: true
+    description: Required leaf-link, lint, status, and applicable OKF checks pass for the changed page inventory.
+  - id: raw-processed-boundary
+    type: deterministic
+    critical: true
+    description: Raw sources move only after a GOOD pre-move verdict and link changes receive the required post-move verdict.
+  - id: queue-state-transition
+    type: deterministic
+    critical: true
+    description: Backlog or wiki queue state follows allowed transitions and terminal evidence requirements.
+  - id: generated-output-freshness
+    type: deterministic
+    critical: true
+    description: Generated adapters and documentation data match their current source digests and check-mode generators.
+  - id: agent-dependency-routing
+    type: deterministic
+    critical: true
+    description: Captured delegation events use required agents and do not substitute same-owner review or verification.
+  - id: correction-loop-cap
+    type: deterministic
+    critical: true
+    description: Correction attempts stop at the conceptual agent definition or skill cap and produce the required terminal status.
+  - id: operation-coverage
+    type: deterministic
+    critical: true
+    description: Every seeded exact route, command, event, job, lookup, or side effect has an explicit coverage row.
+  - id: actor-boundary-coverage
+    type: deterministic
+    critical: true
+    description: Every seeded actor and protected operation has an explicit applicable, denied, equivalent, or out-of-scope boundary row.
+  - id: contradiction-scan
+    type: deterministic
+    critical: true
+    description: Known mutually exclusive contract assertions are not both accepted by the produced artifact.
+  - id: readiness-consistency
+    type: deterministic
+    critical: true
+    description: READY or pass is forbidden while a critical requirement, contract conflict, or blocking question remains unresolved.
+  - id: no-sensitive-output
+    type: deterministic
+    critical: true
+    description: Captured prompts, outputs, logs, and artifacts contain none of the seeded secrets, tokens, PII, or forbidden payloads.
+  - id: tool-authority
+    type: deterministic
+    critical: true
+    description: Tool calls and side effects stay inside declared authority and preserve denied-action evidence.
+  - id: external-effect-phase
+    type: deterministic
+    critical: true
+    description: External or asynchronous effects preserve seeded initiator, submission, execution, completion, and failure phases.
+  - id: paired-run-lift
+    type: deterministic
+    critical: false
+    description: A skill-on run improves the target score over its matched skill-omitted run without weakening critical gates.
+  - id: wrong-skill-noninterference
+    type: deterministic
+    critical: false
+    description: Replacing the target with an irrelevant skill does not receive target-skill credit or bypass activation checks.
+  - id: snapshot-reset
+    type: deterministic
+    critical: true
+    description: The run begins from the declared prepared-snapshot digest and discards all writable state afterward.
+  - id: containment-attestation
+    type: deterministic
+    critical: true
+    description: The receipt reports workspace-isolated-only only from prepared-snapshot, copy-on-write, native-policy, hash, and discard evidence, and reports externally-contained only from a matching external-runner attestation.
+  - id: calibrated-model-judge
+    type: deterministic
+    critical: true
+    description: A Model Judge verdict references a matching calibration record whose metrics meet policy thresholds.
+rubrics:
+  - id: artifact-contract
+    type: model
+    scale: 0-to-4-per-dimension
+    dimensions:
+      - id: completeness
+        description: All applicable requirements and required sections are accounted for, including exact operations and supporting behavior.
+      - id: asserted-claim-correctness
+        description: Claims that are made agree with the allowed authoritative evidence.
+      - id: contradiction
+        description: The artifact does not accept mutually inconsistent contracts or erase source conflicts.
+      - id: readiness
+        description: READY, BLOCKED, pass, or fail agrees with unresolved requirements and critical questions.
+      - id: operation-coverage
+        description: Exact routes, commands, events, jobs, lookups, side effects, and route variants remain one-to-one traceable.
+      - id: actor-boundary-coverage
+        description: Anonymous, authenticated, administrator, service, background, and other applicable actors are treated explicitly.
+    passRules:
+      noAggregateCompensation: true
+      minimumDimensionScore: 3
+      contradictionMaximum: 0
+      criticalCompletenessRequired: true
+      readinessMustBeConsistent: true
+  - id: review-quality
+    type: model
+    scale: 0-to-4-per-dimension
+    dimensions:
+      - evidence-grounding
+      - required-finding-prioritization
+      - uncertainty-separation
+      - correction-actionability
+      - residual-risk-clarity
+    passRules:
+      noAggregateCompensation: true
+      minimumDimensionScore: 3
+  - id: workflow-quality
+    type: model
+    scale: 0-to-4-per-dimension
+    dimensions:
+      - responsibility-boundaries
+      - handoff-completeness
+      - dependency-order
+      - failure-ownership
+      - terminal-status-integrity
+    passRules:
+      noAggregateCompensation: true
+      minimumDimensionScore: 3
+  - id: source-faithfulness
+    type: model
+    scale: 0-to-4-per-dimension
+    dimensions:
+      - authority-order
+      - citation-support
+      - inference-labeling
+      - source-conflict-preservation
+      - scope-discipline
+    passRules:
+      noAggregateCompensation: true
+      minimumDimensionScore: 3
+  - id: diagnosis-quality
+    type: model
+    scale: 0-to-4-per-dimension
+    dimensions:
+      - reproduction-quality
+      - competing-hypotheses
+      - earliest-divergence
+      - mechanism-level-cause
+      - verification-path
+    passRules:
+      noAggregateCompensation: true
+      minimumDimensionScore: 3
+  - id: security-quality
+    type: model
+    scale: 0-to-4-per-dimension
+    dimensions:
+      - attack-path-plausibility
+      - exploit-preconditions
+      - protected-impact
+      - correction-boundary
+      - residual-risk
+    passRules:
+      noAggregateCompensation: true
+      minimumDimensionScore: 3
+  - id: ux-quality
+    type: model
+    scale: 0-to-4-per-dimension
+    dimensions:
+      - task-flow-coverage
+      - accessibility-evidence
+      - state-and-recovery-coverage
+      - preference-separation
+      - recommendation-actionability
+    passRules:
+      noAggregateCompensation: true
+      minimumDimensionScore: 3
+calibrationPolicy:
+  requiredBeforeVerifiedEvidence: true
+  status: pending
+  missingOrPendingResult: unverified
+  scope: Model Judge verdicts only; Deterministic Judge-only cases remain eligible for verification.
+  humanScoredSet:
+    minimumExamples: 20
+    requiredClasses:
+      - clear-pass
+      - clear-fail
+      - boundary
+      - incomplete-plausible
+      - adversarially-polished
+    ambiguousExamples:
+      independentHumanJudges: 2
+      adjudicationRequired: true
+  agreementMetrics:
+    binary:
+      - precision
+      - recall
+      - f1
+    ordered:
+      - weighted-kappa
+    critical:
+      - recall
+  thresholds:
+    binaryF1: 0.85
+    orderedWeightedKappa: 0.70
+    criticalDefectRecall: 1.0
+  recordedDigests:
+    required:
+      - judgePromptSha256
+      - judgeModelIdentity
+      - reasoningProfile
+      - rubricSha256
+      - calibrationSetSha256
+  recalibrationTriggers:
+    - Judge prompt changes materially
+    - Judge model identity changes
+    - reasoning profile changes
+    - rubric or pass rules change
+    - calibration set changes materially
+  records: []

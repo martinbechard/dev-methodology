@@ -1,0 +1,391 @@
+schema: dev-methodology-eval-workflow-packs
+version: 2
+coverageStatus: declared
+sourceDigestPolicy: sha256-at-run
+controls:
+  - id: skill-ablation
+    purpose: Measure whether the target skill materially improves its own behavior rather than receiving credit for a generally capable model.
+    treatment: Run the frozen prompt and fixture with the target skill available and require captured skill-read evidence.
+    matchedControl: Run the same prompt, fixture, harness, model, reasoning profile, budget, seed policy, and sandbox with only the target skill omitted.
+    judgePlan:
+      deterministicChecks:
+        - skill-read-trace
+        - forbidden-skill-absence
+        - paired-run-lift
+      modelRubric: null
+    passCondition: Target-specific score improves without weakening any critical Judge gate.
+    coverageStatus: declared
+  - id: wrong-skill-negative-control
+    purpose: Prove that an irrelevant skill cannot receive target-skill credit or bypass activation discipline.
+    treatment: Replace the target skill with the probe's declared wrongSkillControl while holding every other run input fixed.
+    judgePlan:
+      deterministicChecks:
+        - forbidden-skill-absence
+        - wrong-skill-noninterference
+      modelRubric: null
+    passCondition: The target skill remains absent and target-specific behavior is not credited to the irrelevant replacement.
+    coverageStatus: declared
+packs:
+  - id: code-delivery
+    agents:
+      - dev-coder
+      - dev-code-reviewer
+      - dev-verifier
+      - dev-browser-operator
+      - dev-runtime-diagnostician
+      - dev-security-reviewer
+      - dev-ux-specialist
+      - dev-prompt-reviewer
+      - dev-merge-coordinator
+      - dev-orchestrator
+    skillProbes:
+      - probe-agent-claim
+      - probe-agent-harness
+      - probe-agent-work-merge
+      - probe-api-routes
+      - probe-application-security
+      - probe-ast-grep
+      - probe-careful-coding
+      - probe-clerk-auth
+      - probe-code-comments
+      - probe-code-discovery
+      - probe-code-execution-tracing
+      - probe-code-review-evidence
+      - probe-electron-main
+      - probe-electron-preload
+      - probe-end-to-end-verification
+      - probe-fastapi
+      - probe-fix-explanation
+      - probe-java
+      - probe-java-design
+      - probe-jest
+      - probe-jhipster-domain-modeling
+      - probe-jhipster-persistence
+      - probe-jhipster-project
+      - probe-jhipster-security
+      - probe-jhipster-testing
+      - probe-langgraph
+      - probe-liquibase
+      - probe-local-model-integration
+      - probe-nextjs-app-router
+      - probe-node-cli
+      - probe-organise-project-files
+      - probe-plan-engine
+      - probe-playwright
+      - probe-postgres-drizzle
+      - probe-prompt-contracts
+      - probe-python
+      - probe-react-server-components
+      - probe-react-vite-renderer
+      - probe-review-structured-artifact
+      - probe-root-cause-analysis
+      - probe-runtime-evidence-collection
+      - probe-spring-boot
+      - probe-spring-boot-design
+      - probe-spring-boot-testing
+      - probe-spring-data-jpa
+      - probe-sql
+      - probe-structured-design
+      - probe-structured-explanation
+      - probe-tailwind-design-system
+      - probe-test-driven-development
+      - probe-test-strategy
+      - probe-tool-runtime
+      - probe-typescript
+      - probe-typescript-esm
+      - probe-typescript-strict
+      - probe-user-experience-review
+      - probe-vitest
+    phases:
+      - id: scoped-production
+        agents:
+          - dev-coder
+        requiredEvidence:
+          - narrow claim and clean committed handoff
+          - focused regression and build evidence
+      - id: independent-contribution-review
+        agents:
+          - dev-code-reviewer
+        requiredEvidence:
+          - fresh-context identity
+          - finding-first cited review
+      - id: risk-and-runtime-specialists
+        agents:
+          - dev-browser-operator
+          - dev-runtime-diagnostician
+          - dev-security-reviewer
+          - dev-ux-specialist
+          - dev-prompt-reviewer
+        requiredEvidence:
+          - task-selected specialist evidence only when the scenario requires it
+      - id: integration-and-final-verification
+        agents:
+          - dev-merge-coordinator
+          - dev-verifier
+          - dev-orchestrator
+        requiredEvidence:
+          - dependency-ordered integration when multiple contributions exist
+          - post-integration fresh review before complete verification
+          - final commit, clean worktrees, and released claims
+    judgePlan:
+      deterministicChecks:
+        - harness-agent-identity
+        - claim-lifecycle
+        - agent-dependency-routing
+        - fresh-context-identity
+        - required-command-outcome
+        - allowed-paths-only
+        - output-contract-presence
+      modelRubric: workflow-quality
+    sandboxProfiles:
+      codex:
+        - codex-read-only
+        - codex-workspace-write
+      junie:
+        - junie-read-only
+        - junie-workspace-write
+    executableCases:
+      - typescript-order-pricing
+      - spring-boot-order-cancellation
+      - typescript-code-review
+    coverageStatus: fixture-backed
+  - id: documentation-methodology
+    agents:
+      - dev-documentation-writer
+      - dev-artifact-reviewer
+      - methodology-maintainer
+      - methodology-artifact-reviewer
+    skillProbes:
+      - probe-agent-claim
+      - probe-agent-role-authoring
+      - probe-create-architecture
+      - probe-create-functional-spec
+      - probe-create-high-level-design
+      - probe-create-module-design
+      - probe-create-unit-test-plan
+      - probe-development-methodology
+      - probe-documentation-bootstrap
+      - probe-documentation-page-verify
+      - probe-documentation-reverse-engineer
+      - probe-maintain-methodology-documentation
+      - probe-name-methodology-artifacts
+      - probe-organise-project-files
+      - probe-project-wiki-create
+      - probe-project-wiki-review
+      - probe-review-architecture
+      - probe-review-functional-spec
+      - probe-review-high-level-design
+      - probe-review-module-design
+      - probe-review-structured-artifact
+      - probe-review-unit-test-plan
+      - probe-skill-authoring
+      - probe-structured-design
+      - probe-structured-explanation
+    phases:
+      - id: route-and-author
+        agents:
+          - dev-documentation-writer
+          - methodology-maintainer
+        requiredEvidence:
+          - exactly one applicable artifact route
+          - source-backed artifact or aligned methodology source and derived outputs
+      - id: independent-artifact-review
+        agents:
+          - dev-artifact-reviewer
+          - methodology-artifact-reviewer
+        requiredEvidence:
+          - completed checklist
+          - fresh-context verdict and required corrections
+      - id: deterministic-and-semantic-gates
+        agents:
+          - dev-artifact-reviewer
+        requiredEvidence:
+          - structure and link checks
+          - calibrated semantic Judge only when exact checks cannot decide completeness
+    judgePlan:
+      deterministicChecks:
+        - artifact-structure
+        - artifact-review-checklist
+        - source-link-resolution
+        - operation-coverage
+        - actor-boundary-coverage
+        - readiness-consistency
+        - generated-output-freshness
+      modelRubric: artifact-contract
+    sandboxProfiles:
+      codex:
+        - codex-read-only
+        - codex-workspace-write
+      junie:
+        - junie-read-only
+        - junie-workspace-write
+    executableCases:
+      - documentation-functional-spec
+    coverageStatus: fixture-backed
+  - id: project-setup
+    agents:
+      - project-bootstrapper
+      - project-configurator
+      - project-organiser
+    skillProbes:
+      - probe-agent-claim
+      - probe-create-project-configuration
+      - probe-detect-technology-skills
+      - probe-development-methodology
+      - probe-documentation-bootstrap
+      - probe-documentation-page-verify
+      - probe-documentation-reverse-engineer
+      - probe-organise-project-files
+      - probe-structured-design
+      - probe-structured-explanation
+    phases:
+      - id: inspect-and-configure
+        agents:
+          - project-configurator
+          - project-organiser
+        requiredEvidence:
+          - one root PROJECT.yaml
+          - source-backed folder routes and runtime capability validation
+          - approved placement decisions
+      - id: document-and-review
+        agents:
+          - project-bootstrapper
+        requiredEvidence:
+          - path ledger and complete coverage manifest for whole-project scope
+          - independently reviewed setup and documentation artifacts
+      - id: direct-or-integrated-closeout
+        agents:
+          - project-bootstrapper
+        requiredEvidence:
+          - direct commit for exactly one accepted contribution or integration for several
+          - complete final verification, clean state, and released claims
+    judgePlan:
+      deterministicChecks:
+        - technology-detection-evidence
+        - artifact-structure
+        - agent-dependency-routing
+        - correction-loop-cap
+        - claim-lifecycle
+      modelRubric: workflow-quality
+    sandboxProfiles:
+      codex:
+        - codex-read-only
+        - codex-workspace-write
+      junie:
+        - junie-read-only
+        - junie-workspace-write
+    executableCases:
+      - project-configuration-routing
+    coverageStatus: fixture-backed
+  - id: wiki-lifecycle
+    agents:
+      - wiki-architect
+      - wiki-artifact-reviewer
+      - wiki-ingester
+      - wiki-query-responder
+      - wiki-researcher
+      - wiki-source-collector
+      - wiki-topic-verifier
+      - wiki-writer
+    skillProbes:
+      - probe-agent-claim
+      - probe-code-project-wiki
+      - probe-documentation-bootstrap
+      - probe-documentation-page-verify
+      - probe-organise-project-files
+      - probe-project-wiki
+      - probe-project-wiki-create
+      - probe-project-wiki-query
+      - probe-project-wiki-research
+      - probe-project-wiki-review
+      - probe-project-wiki-topic-verify
+      - probe-project-wiki-topic-write
+      - probe-structured-explanation
+    phases:
+      - id: setup-or-coverage-check
+        agents:
+          - wiki-architect
+          - wiki-query-responder
+        requiredEvidence:
+          - approved ownership and federation boundaries or a wiki-backed answer with live-source verification
+      - id: raw-only-collection-and-research
+        agents:
+          - wiki-source-collector
+          - wiki-researcher
+        requiredEvidence:
+          - raw-only artifact, source provenance, exclusions, and no durable wiki mutation
+      - id: durable-writing-or-ingest
+        agents:
+          - wiki-writer
+          - wiki-ingester
+        requiredEvidence:
+          - granular leaves, item-level digests, portable links, and queue state
+      - id: independent-wiki-gates
+        agents:
+          - wiki-artifact-reviewer
+          - wiki-topic-verifier
+        requiredEvidence:
+          - fresh read-only verdicts
+          - pre-move and applicable post-move acceptance
+          - leaf-link, lint, and OKF evidence
+    judgePlan:
+      deterministicChecks:
+        - no-forbidden-mutation
+        - wiki-validation
+        - raw-processed-boundary
+        - source-link-resolution
+        - fresh-context-identity
+        - correction-loop-cap
+      modelRubric: source-faithfulness
+    sandboxProfiles:
+      codex:
+        - codex-read-only
+        - codex-workspace-write
+      junie:
+        - junie-read-only
+        - junie-workspace-write
+    executableCases:
+      - wiki-raw-ingest
+    coverageStatus: fixture-backed
+  - id: backlog
+    agents:
+      - dev-backlog-steward
+    skillProbes:
+      - probe-agent-claim
+      - probe-create-backlog
+      - probe-manage-backlog
+      - probe-organise-project-files
+      - probe-structured-explanation
+    phases:
+      - id: classify-and-create
+        agents:
+          - dev-backlog-steward
+        requiredEvidence:
+          - typed dispatchable item, stable slug, dependencies, acceptance criteria, and verification
+      - id: claim-run-and-recover
+        agents:
+          - dev-backlog-steward
+        requiredEvidence:
+          - exclusive ownership and explicit queued, claimed, running, or blocked state
+      - id: terminal-transition
+        agents:
+          - dev-backlog-steward
+        requiredEvidence:
+          - delivery evidence before completed archive or preserved failure evidence before failed archive
+    judgePlan:
+      deterministicChecks:
+        - artifact-structure
+        - queue-state-transition
+        - claim-lifecycle
+        - output-contract-presence
+      modelRubric: workflow-quality
+    sandboxProfiles:
+      codex:
+        - codex-read-only
+        - codex-workspace-write
+      junie:
+        - junie-read-only
+        - junie-workspace-write
+    executableCases:
+      - backlog-lifecycle
+    coverageStatus: fixture-backed
