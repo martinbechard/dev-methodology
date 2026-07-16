@@ -1,0 +1,253 @@
+schema: dev-methodology-eval-sandbox-profiles
+version: 2
+coverageStatus: declared
+sourceDigestPolicy: sha256-at-run
+componentImplementationStatus:
+  preparedSnapshotCache: implemented
+  copyOnWriteWorkspace: implemented
+  explicitContextPruning: implemented
+  disposableCleanup: implemented
+  codexNativeFastPath: implemented
+  externalContainmentRunner: not-implemented
+  junieDirectExecution: forbidden-pending-external-runner
+  warmWorkerPooling: proposed
+snapshotPolicy:
+  immutablePreparedSnapshots: true
+  prepareOncePerDigest: true
+  cacheKeyInputs:
+    - fixtureSourceSha256
+    - dependencyLockSha256
+    - operatingSystem
+    - architecture
+    - toolchainVersions
+  dependencyInstallation: Performed while preparing the immutable snapshot, never once per run.
+  dependencyCaches: Mounted outside the writable workspace as read-only or content-addressed caches.
+  runWorkspace: Copy-on-write clone of the prepared snapshot.
+  fallback: A full disposable copy is allowed when copy-on-write is unavailable; the containment claim must not change.
+  reset: Discard the writable layer after Judges and receipt capture finish.
+  concurrency: Independent cases may run concurrently; serialize only declared exclusive resources.
+  contextStaging:
+    default: Explicit case allow-list only; never stage the whole repository implicitly.
+    preflight: Inventory staged files, scan model-visible content for seeded secrets, PII, and company-sensitive patterns, and reject unapproved matches.
+    receipt: Record the approved context-pack SHA-256 digest and any explicit sensitive-data approval reference.
+containmentStatusVocabulary:
+  externally-contained: External runner evidence proves filesystem, process, network, and resource containment.
+  workspace-isolated-only: Disposable workspace isolation is proved, but one or more wider containment dimensions are not.
+  containment-unverified: The run has no sufficient external attestation for containment or workspace isolation.
+executionTiers:
+  codex-fast-workspace:
+    harnesses: [codex]
+    externalRunnerRequired: false
+    useWhen: Iteration, calibration development, and ordinary cases that require disposable workspace isolation but do not require full process, network, or resource containment.
+    enforcement: Codex native read-only or workspace-write policy plus a fresh disposable copy-on-write fixture layer.
+    requiredReceiptEvidence: [prepared-snapshot-digest, copy-on-write-layer-identity, native-sandbox-policy-digest, project-hash-policy, discard-confirmation]
+    maximumReportedStatus: workspace-isolated-only
+    implementationStatus: implemented
+  externally-contained:
+    harnesses: [codex, junie]
+    externalRunnerRequired: true
+    useWhen: Release evidence, live Junie execution, untrusted code, network-sensitive cases, or any case whose manifest requires full filesystem, process, network, and resource containment.
+    enforcement: External VM or equivalent runner wraps the disposable copy-on-write fixture and the selected harness policy.
+    requiredReceiptEvidence: [external-runner-attestation, prepared-snapshot-digest, copy-on-write-layer-identity, project-hash-policy, discard-confirmation]
+    maximumReportedStatus: externally-contained
+    implementationStatus: not-implemented
+  juniePolicy: Junie has no native filesystem sandbox in this catalog; tool allow and deny lists are capability routing only, so every live Junie run uses the externally-contained tier.
+profiles:
+  - id: codex-read-only
+    harness: codex
+    repositoryMutation: never
+    implementationStatus: partial
+    componentStatus:
+      preparedSnapshotCache: implemented
+      copyOnWriteWorkspace: implemented
+      explicitContextPruning: implemented
+      disposableCleanup: implemented
+      nativeHarnessPolicy: implemented
+      externalContainmentRunner: not-implemented
+      warmWorkerPooling: proposed
+    preparedSnapshot:
+      mode: immutable-content-addressed
+      dependenciesPreinstalled: true
+      digestInputs: inherit-snapshot-policy
+    copyOnWriteWorkspace:
+      enabled: true
+      writablePaths:
+        - run-evidence
+      productWorkspaceMode: read-only
+      discardAfterRun: true
+    warmWorker:
+      enabled: false
+      implementationStatus: proposed
+      poolKey:
+        - codex
+        - operatingSystem
+        - architecture
+        - toolchainVersions
+      resetBoundary: fresh-copy-on-write-layer-and-fresh-harness-context
+    workspaceIsolation:
+      externalRunnerRequired: false
+      externalRunnerRequiredWhen: The case requires externally-contained evidence, executes untrusted code, or applies a network-sensitive policy.
+      nativeHarnessPolicy: read-only sandbox metadata from the generated Codex agent definition
+      nativePolicyRole: Enforces the native read-only boundary inside the disposable fixture; it does not prove process, network, or resource containment.
+      hashExpectation: unchanged product workspace
+    containment:
+      fastPath: Native read-only policy plus copy-on-write reset may report workspace-isolated-only when every required receipt field is present.
+      externalPath: External runner restricts filesystem access, isolates or allow-lists processes, applies network policy, and enforces resource limits.
+      reportedStatus: containment-unverified
+      permittedReportedStatuses: [workspace-isolated-only, externally-contained]
+      externalAttestationRequiredFor: externally-contained
+    digestInputs:
+      - fixtureSourceSha256
+      - sandboxProfileSha256
+      - nativeAgentDefinitionSha256
+      - toolchainVersionsSha256
+  - id: codex-workspace-write
+    harness: codex
+    repositoryMutation: required-or-conditional
+    implementationStatus: partial
+    componentStatus:
+      preparedSnapshotCache: implemented
+      copyOnWriteWorkspace: implemented
+      explicitContextPruning: implemented
+      disposableCleanup: implemented
+      nativeHarnessPolicy: implemented
+      externalContainmentRunner: not-implemented
+      warmWorkerPooling: proposed
+    preparedSnapshot:
+      mode: immutable-content-addressed
+      dependenciesPreinstalled: true
+      digestInputs: inherit-snapshot-policy
+    copyOnWriteWorkspace:
+      enabled: true
+      writablePaths:
+        - product-workspace
+        - run-evidence
+      productWorkspaceMode: workspace-write
+      discardAfterRun: true
+    warmWorker:
+      enabled: false
+      implementationStatus: proposed
+      poolKey:
+        - codex
+        - operatingSystem
+        - architecture
+        - toolchainVersions
+      resetBoundary: fresh-copy-on-write-layer-and-fresh-harness-context
+    workspaceIsolation:
+      externalRunnerRequired: false
+      externalRunnerRequiredWhen: The case requires externally-contained evidence, executes untrusted code, or applies a network-sensitive policy.
+      nativeHarnessPolicy: workspace-write limited to the disposable workspace
+      nativePolicyRole: Enforces the native workspace-write boundary inside the disposable fixture; it does not prove process, network, or resource containment.
+      hashExpectation: changes allowed only on the case path allow-list
+    containment:
+      fastPath: Native workspace-write policy plus copy-on-write reset may report workspace-isolated-only when every required receipt field is present.
+      externalPath: External runner restricts filesystem access, isolates or allow-lists processes, applies network policy, and enforces resource limits.
+      reportedStatus: containment-unverified
+      permittedReportedStatuses: [workspace-isolated-only, externally-contained]
+      externalAttestationRequiredFor: externally-contained
+    digestInputs:
+      - fixtureSourceSha256
+      - sandboxProfileSha256
+      - nativeAgentDefinitionSha256
+      - toolchainVersionsSha256
+  - id: junie-read-only
+    harness: junie
+    repositoryMutation: never
+    implementationStatus: partial
+    liveExecutionStatus: forbidden-pending-external-runner
+    componentStatus:
+      preparedSnapshotCache: implemented
+      copyOnWriteWorkspace: implemented
+      explicitContextPruning: implemented
+      disposableCleanup: implemented
+      nativeHarnessPolicy: unavailable
+      externalContainmentRunner: not-implemented
+      warmWorkerPooling: proposed
+    preparedSnapshot:
+      mode: immutable-content-addressed
+      dependenciesPreinstalled: true
+      digestInputs: inherit-snapshot-policy
+    copyOnWriteWorkspace:
+      enabled: true
+      writablePaths:
+        - run-evidence
+      productWorkspaceMode: externally-enforced-read-only
+      discardAfterRun: true
+    warmWorker:
+      enabled: false
+      implementationStatus: proposed
+      poolKey:
+        - junie
+        - operatingSystem
+        - architecture
+        - toolchainVersions
+      resetBoundary: fresh-copy-on-write-layer-and-fresh-junie-session
+    workspaceIsolation:
+      externalRunnerRequired: true
+      nativeHarnessPolicy: tool allow and deny lists may reduce available actions
+      nativePolicyRole: tool policy only; Junie tool allow and deny lists are not containment
+      hashExpectation: unchanged product workspace
+    containment:
+      filesystem: External VM or equivalent runner must enforce read-only fixture access and a separate evidence path.
+      process: External VM or equivalent runner isolates or allow-lists child processes.
+      network: External VM or equivalent runner applies the case network policy.
+      resources: External VM or equivalent runner enforces time, CPU, memory, process, and output limits.
+      reportedStatus: containment-unverified
+      permittedReportedStatuses: [externally-contained]
+      externalAttestationRequiredFor: every-live-run
+    digestInputs:
+      - fixtureSourceSha256
+      - sandboxProfileSha256
+      - junieAgentDefinitionSha256
+      - toolchainVersionsSha256
+  - id: junie-workspace-write
+    harness: junie
+    repositoryMutation: required-or-conditional
+    implementationStatus: partial
+    liveExecutionStatus: forbidden-pending-external-runner
+    componentStatus:
+      preparedSnapshotCache: implemented
+      copyOnWriteWorkspace: implemented
+      explicitContextPruning: implemented
+      disposableCleanup: implemented
+      nativeHarnessPolicy: unavailable
+      externalContainmentRunner: not-implemented
+      warmWorkerPooling: proposed
+    preparedSnapshot:
+      mode: immutable-content-addressed
+      dependenciesPreinstalled: true
+      digestInputs: inherit-snapshot-policy
+    copyOnWriteWorkspace:
+      enabled: true
+      writablePaths:
+        - product-workspace
+        - run-evidence
+      productWorkspaceMode: externally-enforced-workspace-write
+      discardAfterRun: true
+    warmWorker:
+      enabled: false
+      implementationStatus: proposed
+      poolKey:
+        - junie
+        - operatingSystem
+        - architecture
+        - toolchainVersions
+      resetBoundary: fresh-copy-on-write-layer-and-fresh-junie-session
+    workspaceIsolation:
+      externalRunnerRequired: true
+      nativeHarnessPolicy: tool allow and deny lists may reduce available actions
+      nativePolicyRole: tool policy only; Junie tool allow and deny lists are not containment
+      hashExpectation: changes allowed only on the case path allow-list
+    containment:
+      filesystem: External VM or equivalent runner must restrict writes to the disposable workspace and evidence path.
+      process: External VM or equivalent runner isolates or allow-lists child processes.
+      network: External VM or equivalent runner applies the case network policy.
+      resources: External VM or equivalent runner enforces time, CPU, memory, process, and output limits.
+      reportedStatus: containment-unverified
+      permittedReportedStatuses: [externally-contained]
+      externalAttestationRequiredFor: every-live-run
+    digestInputs:
+      - fixtureSourceSha256
+      - sandboxProfileSha256
+      - junieAgentDefinitionSha256
+      - toolchainVersionsSha256

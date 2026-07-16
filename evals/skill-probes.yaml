@@ -1,0 +1,1270 @@
+schema: dev-methodology-eval-skill-probes
+version: 2
+coverageStatus: declared
+sourceDigestPolicy: sha256-at-run
+harnesses:
+  - codex
+  - junie
+stagedResourcePolicy:
+  defaultMode: selected-skill-package
+  description: Stage the selected skill directory, including directly referenced task resources needed by the probe, rather than treating SKILL.md alone as the executable behavior contract.
+  explicitTaskResources: Case manifests must list any fixture, template, script, reference, or schema outside the selected skill package that is visible to the run.
+  transientTreeExclusions:
+    - __pycache__
+    - .pytest_cache
+    - node_modules
+    - dist
+    - build
+    - coverage
+    - '*.pyc'
+  derivativeSanitization:
+    nonBehavioralPii: Replace non-behavioral PII in staged derivatives, including mandated copyright email addresses, with stable non-identifying placeholders while retaining the unsanitized source digest in trusted runner metadata.
+    behavioralContent: Never sanitize content whose exact value is part of the behavior under evaluation; require explicit approval or a synthetic fixture instead.
+  receipts:
+    required: true
+    fields:
+      - sourceResourceDigests
+      - effectiveResourceDigests
+      - includedResources
+      - excludedTransientTrees
+      - sanitizationActions
+  overrides: Per-probe overrides are permitted only when full-package staging is excessive or unsafe and must name included resources, exclusions, rationale, and both source and effective digests.
+evaluationCategoryVocabulary:
+  artifact-creation: Produces one named durable artifact under a specific creation contract.
+  development-practice: Enforces a cross-cutting implementation or repository-work invariant.
+  diagnosis: Establishes causal or runtime evidence for a defect or execution path.
+  documentation-methodology: Creates, reviews, or explains structured methodology documentation.
+  experience-and-interface: Reviews or implements user-facing interaction and presentation behavior.
+  project-wiki: Operates on the repository project-wiki lifecycle and its raw, durable, and query boundaries.
+  prompt-and-agent: Creates or reviews model-facing agent, prompt, skill, or tool contracts.
+  stack-and-domain: Applies implementation behavior specific to a technology stack or runtime domain.
+  verification: Selects, implements, or executes test and verification behavior.
+  wiki-and-knowledge: Maintains source-backed code or knowledge documentation outside a project-wiki operation.
+sourceCategoryPolicy: evaluationCategory is an evaluation taxonomy, not the skill frontmatter category; reporting reads the bundle catalog category directly from each source SKILL.md digest when that dimension is needed.
+defaults:
+  controls:
+    - skill-ablation
+    - wrong-skill-negative-control
+  controlValidation: Every wrongSkillControl must resolve to a bundled skill ID, differ from the target skill, and be irrelevant to the probe activation condition; catalog validation fails otherwise.
+  verifiedEvidenceRule: A declared probe or fixture link is not a verified run; verified evidence requires a valid receipt, captured identity and skill-read events, current digests, Judge results, and trusted provenance.
+  modelJudgeRule: A Model Judge rubric may contribute only while a matching calibration record satisfies evals/judges.yaml.
+  junieIdentityRule: A Junie result remains unverified unless captured subagent-start evidence identifies the intended custom agent.
+probes:
+  - id: probe-agent-claim
+    skill: agent-claim
+    source: skills/agent-claim/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: workflow-invariant
+    activationCondition: Repository mutation, claim extension, recovery, integration, or exclusive runtime resources are required.
+    negativeCondition: Pure read-only inspection with no exclusive resource does not acquire a writer claim.
+    expectedBehavior: Acquire the narrow supported scope, isolate non-overlapping writers, wait on overlap, journal transitions, and finish with a committed or truthful no-change clean release.
+    judgePlan: {deterministicChecks: [skill-read-trace, claim-lifecycle, allowed-paths-only], modelRubric: null}
+    scenarioAssociations: [dev-coder-happy, dev-orchestrator-boundary, dev-backlog-steward-happy, wiki-ingester-happy]
+    workflowAssociations: [code-delivery, documentation-methodology, project-setup, wiki-lifecycle, backlog]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-agent-harness
+    skill: agent-harness
+    source: skills/agent-harness/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: Product code owns an agent execution loop, harness state, tool orchestration, modes, retries, cancellation, or resume.
+    negativeCondition: Development-agent planning without product harness code does not activate this skill.
+    expectedBehavior: Keep harness, prompt, tool, and user-visible state distinct and verify execution, cancellation, retry, routing, and long-running logs.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, tool-authority], modelRubric: null}
+    scenarioAssociations: [dev-coder-happy, dev-prompt-reviewer-happy]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-agent-role-authoring
+    skill: agent-role-authoring
+    source: skills/agent-role-authoring/SKILL.md
+    evaluationCategory: documentation-methodology
+    evaluationKind: artifact-contract
+    activationCondition: A conceptual agent definition, its schema, examples, dependencies, output contract, or generated native behavior changes.
+    negativeCondition: Ordinary product implementation that does not change conceptual definitions does not activate this skill.
+    expectedBehavior: Define one stable responsibility with aligned authority, bounded structured workflow, real skill and agent dependencies, distinct examples, generated adapters, and regression evidence.
+    judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, generated-output-freshness, readiness-consistency], modelRubric: artifact-contract}
+    scenarioAssociations: [methodology-maintainer-happy, methodology-artifact-reviewer-happy]
+    workflowAssociations: [documentation-methodology]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
+  - id: probe-agent-work-merge
+    skill: agent-work-merge
+    source: skills/agent-work-merge/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: workflow-invariant
+    activationCondition: Several agent worktrees or branches must be integrated into one target lane.
+    negativeCondition: A single accepted direct contribution does not invoke a merge workflow.
+    expectedBehavior: Accept only clean committed handoffs, merge in dependency order, resolve conflicts from authoritative intent, verify the combined result, and close integration claims cleanly.
+    judgePlan: {deterministicChecks: [skill-read-trace, claim-lifecycle, required-command-outcome, allowed-paths-only], modelRubric: workflow-quality}
+    scenarioAssociations: [dev-merge-coordinator-happy, dev-orchestrator-happy]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-api-routes
+    skill: api-routes
+    source: skills/api-routes/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: The scoped change owns an HTTP route, request or response contract, validation, authorization, status, or integration endpoint.
+    negativeCondition: An in-app mutation with no external HTTP boundary does not create an API route merely to use this skill.
+    expectedBehavior: Validate before side effects, keep authorization at the boundary, return stable error shapes, and cover success, invalid, unauthorized, and domain-failure responses.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, operation-coverage, actor-boundary-coverage], modelRubric: null}
+    scenarioAssociations: [dev-coder-happy, dev-security-reviewer-happy]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-application-security
+    skill: application-security
+    source: skills/application-security/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: review-contract
+    activationCondition: The task is a security review, threat analysis, exploitability assessment, or touches protected trust and data boundaries.
+    negativeCondition: A non-security style review does not manufacture attack paths or severity.
+    expectedBehavior: Trace untrusted input through identity, authority, validation, protected effects, data exposure, logging, and failure behavior, then confirm exploit preconditions and residual risk.
+    judgePlan: {deterministicChecks: [skill-read-trace, finding-recall, no-sensitive-output, actor-boundary-coverage], modelRubric: security-quality}
+    scenarioAssociations: [dev-security-reviewer-happy, dev-security-reviewer-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-ast-grep
+    skill: ast-grep
+    source: skills/ast-grep/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: activation-and-behavior
+    activationCondition: A code query depends on syntax, nesting, arguments, bodies, JSX, imports, or structural relationships.
+    negativeCondition: Plain literal or regular-expression text lookup continues to use rg, and unavailable ast-grep falls back without automatic installation.
+    expectedBehavior: Test the smallest structural rule on a known example, run it over scoped paths only after it works, and report matches or qualified no-match evidence.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome], modelRubric: null}
+    scenarioAssociations: [dev-coder-happy, dev-code-reviewer-happy]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-careful-coding
+    skill: careful-coding
+    source: skills/careful-coding/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: workflow-invariant
+    activationCondition: Implementation, modification, refactoring, or debugging requires explicit assumptions, surgical scope, and success criteria.
+    negativeCondition: The skill does not justify speculative features, adjacent cleanup, or abstractions unrelated to the request.
+    expectedBehavior: Inspect intent and callers, choose the simplest complete design, preserve unrelated work, handle errors at the owning boundary, and verify stated success criteria.
+    judgePlan: {deterministicChecks: [skill-read-trace, allowed-paths-only, required-command-outcome], modelRubric: null}
+    scenarioAssociations: [dev-coder-happy, dev-coder-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-clerk-auth
+    skill: clerk-auth
+    source: skills/clerk-auth/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: Clerk sessions, organizations, middleware, protected routes, user lookup, or permissions are in scope.
+    negativeCondition: Generic authentication not backed by Clerk does not activate this implementation variant.
+    expectedBehavior: Enforce server-side authentication and authorization, separate user, organization, and application permission identities, avoid client leakage, and test unauthenticated, unauthorized, and tenant cases.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, actor-boundary-coverage, no-sensitive-output], modelRubric: null}
+    scenarioAssociations: [dev-security-reviewer-happy, dev-browser-operator-happy]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-code-comments
+    skill: code-comments
+    source: skills/code-comments/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: artifact-contract
+    activationCondition: Code artifacts, public constructs, executable scripts, tests, or migrations are created or materially changed.
+    negativeCondition: Configuration, documentation, data, lock, and manifest files do not receive mandatory code headers.
+    expectedBehavior: Preserve syntax-leading directives, apply the exact project copyright and truthful AI attribution, document public contracts and non-obvious rationale, and keep comments aligned with behavior.
+    judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, allowed-paths-only], modelRubric: source-faithfulness}
+    scenarioAssociations: [dev-coder-happy, dev-code-reviewer-happy]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-code-discovery
+    skill: code-discovery
+    source: skills/code-discovery/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: workflow-invariant
+    activationCondition: Change boundaries, ownership, dependencies, callers, contracts, tests, or impact must be established from live code.
+    negativeCondition: An unavailable optional structural-search tool does not stop direct source discovery.
+    expectedBehavior: Trace the named behavior through callers, dependencies, state, errors, configuration, and tests, then record the smallest evidence-backed scope and uncertainty.
+    judgePlan: {deterministicChecks: [skill-read-trace, allowed-paths-only], modelRubric: source-faithfulness}
+    scenarioAssociations: [dev-coder-happy, dev-runtime-diagnostician-happy]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-code-execution-tracing
+    skill: code-execution-tracing
+    source: skills/code-execution-tracing/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: activation-and-behavior
+    activationCondition: The task asks for a source-level execution path, branch, state change, error, or exit explanation.
+    negativeCondition: Runtime-dependent branches are not presented as guaranteed from source inspection alone.
+    expectedBehavior: Trace a named entry point through material callers, branches, async boundaries, state and exits with tight locations, separating guaranteed, conditional, and runtime-dependent paths.
+    judgePlan: {deterministicChecks: [skill-read-trace, source-link-resolution, operation-coverage], modelRubric: source-faithfulness}
+    scenarioAssociations: [dev-runtime-diagnostician-happy, dev-verifier-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-code-project-wiki
+    skill: code-project-wiki
+    source: skills/code-project-wiki/SKILL.md
+    evaluationCategory: wiki-and-knowledge
+    evaluationKind: workflow-invariant
+    activationCondition: docs/wiki maintenance follows code, tests, commits, procedures, configuration, or backlog changes.
+    negativeCondition: A commit with no durable knowledge change is recorded as skipped rather than forcing a wiki edit.
+    expectedBehavior: Treat code and tests as behavior authority, map changed files to durable leaves, update Related Code and Tests, record open conflicts, and run leaf-link, lint, and topic verification.
+    judgePlan: {deterministicChecks: [skill-read-trace, wiki-validation, source-link-resolution], modelRubric: source-faithfulness}
+    scenarioAssociations: [wiki-writer-happy, wiki-ingester-happy]
+    workflowAssociations: [wiki-lifecycle]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
+  - id: probe-code-review-evidence
+    skill: code-review-evidence
+    source: skills/code-review-evidence/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: review-contract
+    activationCondition: A source, diff, regression, or delegated evidence review is requested.
+    negativeCondition: modelStages declarations or self-authored comments do not count as captured staged execution.
+    expectedBehavior: Load all applicable review checklists, record supported, contradicted, unknown, and not-applicable evidence before synthesis, then derive prioritized findings with citations and residual risk.
+    judgePlan: {deterministicChecks: [skill-read-trace, artifact-review-checklist, finding-recall, finding-precision, fresh-context-identity], modelRubric: review-quality}
+    scenarioAssociations: [dev-code-reviewer-happy, dev-code-reviewer-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: [typescript-code-review]
+    coverageStatus: fixture-backed
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-create-architecture
+    skill: create-architecture
+    source: skills/create-architecture/SKILL.md
+    evaluationCategory: artifact-creation
+    evaluationKind: artifact-contract
+    activationCondition: One whole-system or cross-cutting architecture artifact is created or substantially rewritten.
+    negativeCondition: A subsystem or one implementation unit routes to high-level or module design instead.
+    expectedBehavior: Use the architecture template to document system context, stack, organization, layers, components, flows, cross-cutting concerns, invariants, risks, and verification from source evidence.
+    judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, source-link-resolution, readiness-consistency], modelRubric: artifact-contract}
+    scenarioAssociations: [dev-documentation-writer-happy, dev-artifact-reviewer-happy]
+    workflowAssociations: [documentation-methodology]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
+  - id: probe-create-backlog
+    skill: create-backlog
+    source: skills/create-backlog/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: artifact-contract
+    activationCondition: A request, defect, feature, analysis, or investigation must become a durable dispatchable backlog item.
+    negativeCondition: Completed or failed archive folders never receive newly proposed work, and one coherent outcome is not split needlessly.
+    expectedBehavior: Classify the outcome, choose the typed folder and stable slug, avoid duplicates, and write self-contained context, requirements, acceptance criteria, dependencies, and verification.
+    judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, queue-state-transition], modelRubric: null}
+    scenarioAssociations: [dev-backlog-steward-happy, dev-backlog-steward-boundary]
+    workflowAssociations: [backlog]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
+  - id: probe-create-functional-spec
+    skill: create-functional-spec
+    source: skills/create-functional-spec/SKILL.md
+    evaluationCategory: artifact-creation
+    evaluationKind: artifact-contract
+    activationCondition: Observable actor behavior, workflows, states, permissions, edge cases, acceptance, and verification need a functional specification.
+    negativeCondition: A durable wiki synthesis page does not replace or become the functional specification.
+    expectedBehavior: Inventory every primary and supporting operation, bind actors and authority, describe visible success and failure states, and reconcile each operation across workflow, state, edge-case, and verification sections.
+    judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, operation-coverage, actor-boundary-coverage, readiness-consistency], modelRubric: artifact-contract}
+    scenarioAssociations: [dev-documentation-writer-happy, dev-artifact-reviewer-happy]
+    workflowAssociations: [documentation-methodology]
+    executableCases: [documentation-functional-spec]
+    coverageStatus: fixture-backed
+    ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
+  - id: probe-create-high-level-design
+    skill: create-high-level-design
+    source: skills/create-high-level-design/SKILL.md
+    evaluationCategory: artifact-creation
+    evaluationKind: artifact-contract
+    activationCondition: A subsystem, feature family, integration path, or multi-module plan needs a high-level design.
+    negativeCondition: Missing critical contracts are not generalized into defined behavior and transient assembly files are not cited as durable sources.
+    expectedBehavior: Select one design mode, inventory exact operations and boundary edges, reconcile requirements, actors, cross-module contracts and current limitations, and keep blocking questions BLOCKED.
+    judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, operation-coverage, actor-boundary-coverage, contradiction-scan, readiness-consistency], modelRubric: artifact-contract}
+    scenarioAssociations: [dev-documentation-writer-happy, dev-artifact-reviewer-boundary]
+    workflowAssociations: [documentation-methodology]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
+  - id: probe-create-module-design
+    skill: create-module-design
+    source: skills/create-module-design/SKILL.md
+    evaluationCategory: artifact-creation
+    evaluationKind: artifact-contract
+    activationCondition: One implementation unit needs precise runtime, contract, state, dependency, error, and verification design.
+    negativeCondition: The artifact does not rename, merge, omit, or reorder mandatory template headings and cannot mark unresolved critical contracts READY.
+    expectedBehavior: Select a design mode, preserve exact source specificity, build requirement, operation, actor, and async phase ledgers, separate returned value from state and cache effects, and lead readiness with READY or BLOCKED.
+    judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, operation-coverage, actor-boundary-coverage, external-effect-phase, contradiction-scan, readiness-consistency], modelRubric: artifact-contract}
+    scenarioAssociations: [dev-documentation-writer-happy, dev-artifact-reviewer-happy]
+    workflowAssociations: [documentation-methodology]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
+  - id: probe-create-project-configuration
+    skill: create-project-configuration
+    source: skills/create-project-configuration/SKILL.md
+    evaluationCategory: documentation-methodology
+    evaluationKind: artifact-contract
+    activationCondition: The single root PROJECT.yaml and generated root or nested agent guidance are created or substantially rewritten.
+    negativeCondition: No nested PROJECT.yaml, workstation path, copied generic claim procedure, or invented skill is allowed.
+    expectedBehavior: Preserve complete conceptual definition skill metadata, detect pertinent folder variants against runtime availability, record NO_VARIANT and BLOCKED distinctly, generate matching guidance, and validate mutation policy.
+    judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, technology-detection-evidence, source-link-resolution], modelRubric: source-faithfulness}
+    scenarioAssociations: [project-configurator-happy, project-configurator-boundary]
+    workflowAssociations: [project-setup]
+    executableCases: [project-configuration-routing]
+    coverageStatus: fixture-backed
+    ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
+  - id: probe-create-unit-test-plan
+    skill: create-unit-test-plan
+    source: skills/create-unit-test-plan/SKILL.md
+    evaluationCategory: artifact-creation
+    evaluationKind: artifact-contract
+    activationCondition: A durable unit test plan will help implementation, review, handoff, or audit.
+    negativeCondition: Small changes do not require a plan merely to satisfy a template route.
+    expectedBehavior: Derive the unit boundary, behavior, invariants, state, errors, and external contracts from sources, then define traceable setup-action-result scenarios and honest omissions.
+    judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, operation-coverage], modelRubric: artifact-contract}
+    scenarioAssociations: [dev-documentation-writer-happy, dev-artifact-reviewer-happy]
+    workflowAssociations: [documentation-methodology]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
+  - id: probe-detect-technology-skills
+    skill: detect-technology-skills
+    source: skills/detect-technology-skills/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: routing
+    activationCondition: Project setup, technology-boundary change, or runtime skill-catalog change requires folder technology loadouts.
+    negativeCondition: Ordinary coding, review, verification, or diagnosis consumes accepted routing and does not rerun detection.
+    expectedBehavior: Analyze representative non-mixed scopes, require a complete activation branch and pertinence, compare runtime availability, preserve conflicts and NO_VARIANT, and generate unconditional folder routing.
+    judgePlan: {deterministicChecks: [skill-read-trace, technology-detection-evidence, readiness-consistency], modelRubric: null}
+    scenarioAssociations: [project-configurator-happy, project-configurator-boundary]
+    workflowAssociations: [project-setup]
+    executableCases: [project-configuration-routing]
+    coverageStatus: fixture-backed
+    ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
+  - id: probe-development-methodology
+    skill: development-methodology
+    source: skills/development-methodology/SKILL.md
+    evaluationCategory: documentation-methodology
+    evaluationKind: routing
+    activationCondition: Software documentation work needs one methodology artifact, setup, reverse-engineering, wiki, or page-verification route.
+    negativeCondition: The router does not load every creation or review skill or impose shared wiki sections on format-owned artifacts.
+    expectedBehavior: Choose the smallest complete document type, preserve the indicated format, load exactly one creation route for normal artifact work, and use the matching review or shared verifier.
+    judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, forbidden-skill-absence], modelRubric: source-faithfulness}
+    scenarioAssociations: [dev-documentation-writer-happy, project-bootstrapper-happy]
+    workflowAssociations: [documentation-methodology, project-setup]
+    executableCases: [documentation-functional-spec, project-configuration-routing]
+    coverageStatus: fixture-backed
+    ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
+  - id: probe-documentation-bootstrap
+    skill: documentation-bootstrap
+    source: skills/documentation-bootstrap/SKILL.md
+    evaluationCategory: documentation-methodology
+    evaluationKind: workflow-invariant
+    activationCondition: The development methodology is applied meaningfully to a target repository for the first time.
+    negativeCondition: Whole-project bootstrap does not offer sampled breadth and does not copy the full reusable bundle into the project.
+    expectedBehavior: Recommend source-backed documentation and wiki roots, configure routing first, require exhaustive reverse-engineering gates when in scope, copy only active templates, and verify the resulting structure.
+    judgePlan: {deterministicChecks: [skill-read-trace, operation-coverage, readiness-consistency, source-link-resolution], modelRubric: workflow-quality}
+    scenarioAssociations: [project-bootstrapper-happy, wiki-architect-happy]
+    workflowAssociations: [documentation-methodology, project-setup, wiki-lifecycle]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
+  - id: probe-documentation-page-verify
+    skill: documentation-page-verify
+    source: skills/documentation-page-verify/SKILL.md
+    evaluationCategory: documentation-methodology
+    evaluationKind: review-contract
+    activationCondition: A mixed, unknown, custom, or shared documentation concern has no clearer artifact-specific review route.
+    negativeCondition: Format-owned README, HTML, adapter, generated data, or schema files retain their own structure instead of receiving forced shared-page sections.
+    expectedBehavior: Identify the authoritative format, verify source support, links, completeness, diagrams, steady-state prose, and checklist evidence, then return finding-first results or a qualified pass.
+    judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, source-link-resolution, artifact-review-checklist], modelRubric: review-quality}
+    scenarioAssociations: [dev-artifact-reviewer-boundary, wiki-artifact-reviewer-happy]
+    workflowAssociations: [documentation-methodology, project-setup, wiki-lifecycle]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
+  - id: probe-documentation-reverse-engineer
+    skill: documentation-reverse-engineer
+    source: skills/documentation-reverse-engineer/SKILL.md
+    evaluationCategory: documentation-methodology
+    evaluationKind: workflow-invariant
+    activationCondition: A complete source-backed documentation hierarchy is derived from an existing repository.
+    negativeCondition: Higher-level synthesis cannot substitute for missing paths, modules, HLD membership, workflows, or independent reviews.
+    expectedBehavior: Freeze the baseline, reconcile every path to one classification and module, gate module then HLD then architecture then functional coverage, and expose the accepted hierarchy through README and wiki.
+    judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, operation-coverage, actor-boundary-coverage, readiness-consistency], modelRubric: artifact-contract}
+    scenarioAssociations: [dev-documentation-writer-boundary, project-bootstrapper-happy]
+    workflowAssociations: [documentation-methodology, project-setup]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
+  - id: probe-electron-main
+    skill: electron-main
+    source: skills/electron-main/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: Electron main-process lifecycle, windows, IPC handlers, background tasks, privileged resources, or startup are in scope.
+    negativeCondition: Renderer-only state and presentation remain outside main-process modules unless an explicit boundary requires them.
+    expectedBehavior: Keep lifecycle and privileged ownership explicit, validate IPC contracts, preserve host path and process rules, and verify focused main tests, build, startup, logs, and user-data paths.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, tool-authority], modelRubric: null}
+    scenarioAssociations: [dev-coder-happy, dev-runtime-diagnostician-happy]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-electron-preload
+    skill: electron-preload
+    source: skills/electron-preload/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: Electron preload, context bridge, renderer-exposed desktop APIs, IPC clients, or trust boundaries change.
+    negativeCondition: Secrets, unrestricted filesystem access, or process control are never exposed merely for renderer convenience.
+    expectedBehavior: Expose the smallest stable renderer API, validate bridge inputs, keep privileged authority in main, inspect both sides, and run preload, renderer, IPC, build, and declaration checks.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, tool-authority, actor-boundary-coverage], modelRubric: null}
+    scenarioAssociations: [dev-coder-happy, dev-security-reviewer-happy]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-end-to-end-verification
+    skill: end-to-end-verification
+    source: skills/end-to-end-verification/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: workflow-invariant
+    activationCondition: Confidence depends on a complete user or system workflow across real runtime boundaries.
+    negativeCondition: Component checks alone do not receive end-to-end credit and environment blockers are not reported as product failures.
+    expectedBehavior: Own environment, process, session, identity, data, and cleanup state, exercise success and material failures through public boundaries, and capture stable observable assertions.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, claim-lifecycle], modelRubric: workflow-quality}
+    scenarioAssociations: [dev-browser-operator-happy, dev-verifier-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-fastapi
+    skill: fastapi
+    source: skills/fastapi/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: Python scope is owned by a FastAPI application, router, dependency, validation, exception, lifespan, or async boundary.
+    negativeCondition: Python code without FastAPI ownership loads Python alone and does not receive framework assumptions.
+    expectedBehavior: Keep request and response models explicit, use scoped dependencies, translate domain failures at the HTTP boundary, isolate blocking work, own lifespan, and test through ASGI with success and failures.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, operation-coverage, actor-boundary-coverage], modelRubric: null}
+    scenarioAssociations: [dev-coder-happy, dev-code-reviewer-happy]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-fix-explanation
+    skill: fix-explanation
+    source: skills/fix-explanation/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: artifact-contract
+    activationCondition: A completed code fix or patch must be explained with cause, mechanism, conformance, relationships, and classification.
+    negativeCondition: One fix receives exactly one supported classification and is not mislabeled as optimization, compatibility, or new functionality.
+    expectedBehavior: Use structured explanation, ground facts in changed evidence, distinguish downstream non-conformity from an undesirable upstream contract, and end with one taxonomy classification.
+    judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, source-link-resolution], modelRubric: source-faithfulness}
+    scenarioAssociations: [dev-coder-happy, dev-merge-coordinator-happy]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-java
+    skill: java
+    source: skills/java/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: Java implementation, refactoring, testing, or review is in scope.
+    negativeCondition: Public API, package, domain-type, or ownership design changes also require Java Design rather than coding rules alone.
+    expectedBehavior: Respect configured release and tooling, preserve null, exception, resource, concurrency, collection, numeric, time, locale, and charset semantics, and run project-native compile and tests.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, operation-coverage], modelRubric: null}
+    scenarioAssociations: [dev-coder-happy, dev-code-reviewer-happy]
+    workflowAssociations: [code-delivery]
+    executableCases: [spring-boot-order-cancellation]
+    coverageStatus: fixture-backed
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-java-design
+    skill: java-design
+    source: skills/java-design/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: Java API, domain state, ownership, package, module, dependency, extension, or compatibility decisions are in scope.
+    negativeCondition: Routine syntax, formatting, build, and exception mechanics remain with Java coding guidance.
+    expectedBehavior: Model callers, valid states and invariants, choose cohesive ownership and smallest public surface, preserve architecture, and verify dependencies, callers, tests, and compatibility.
+    judgePlan: {deterministicChecks: [skill-read-trace, operation-coverage, contradiction-scan], modelRubric: artifact-contract}
+    scenarioAssociations: [dev-coder-happy, dev-artifact-reviewer-happy]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-jest
+    skill: jest
+    source: skills/jest/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: Jest owns the affected unit or integration tests and runner configuration.
+    negativeCondition: A project using another test runner does not activate Jest from TypeScript or React alone.
+    expectedBehavior: Test observable contracts, mock only external or nondeterministic boundaries, restore state, cover failure modes, reconcile any durable test plan, and run focused then broader project-native checks.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, test-state-transition], modelRubric: null}
+    scenarioAssociations: [dev-coder-happy, dev-verifier-happy]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-jhipster-domain-modeling
+    skill: jhipster-domain-modeling
+    source: skills/jhipster-domain-modeling/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: JHipster JDL, entities, fields, validations, relationships, DTOs, services, filtering, pagination, or regeneration changes.
+    negativeCondition: A Java or Spring project without JHipster model ownership does not activate generator assumptions.
+    expectedBehavior: Change the owning JDL or entity definition, review the generated plan, keep relationships and DTO boundaries deliberate, inspect full server-client-migration-test diff, and verify API and data behavior.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, generated-output-freshness, operation-coverage], modelRubric: null}
+    scenarioAssociations: [dev-coder-happy, dev-code-reviewer-happy]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-jhipster-persistence
+    skill: jhipster-persistence
+    source: skills/jhipster-persistence/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: JHipster SQL profiles, generated JPA, database changes, test-data contexts, or engine parity are in scope.
+    negativeCondition: Generic persistence without JHipster generator and profile ownership uses its database and ORM skills instead.
+    expectedBehavior: Inspect generator and profile ownership, coordinate JPA and migration changes, separate fake data contexts, avoid production schema auto-update, and verify profiles, Testcontainers, startup, recovery, and health.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, generated-output-freshness], modelRubric: null}
+    scenarioAssociations: [dev-coder-happy, dev-verifier-happy]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-jhipster-project
+    skill: jhipster-project
+    source: skills/jhipster-project/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: A JHipster Java and Spring application, generator configuration, generated boundary, wrapper, profile, or upgrade-safe change is in scope.
+    negativeCondition: Plain Java and Spring work without JHipster ownership does not receive generator workflow rules.
+    expectedBehavior: Record generator version and owning inputs, distinguish generated and custom extension points, inspect regeneration before overwrite, preserve needles and profiles, and run affected backend and frontend paths.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, generated-output-freshness], modelRubric: null}
+    scenarioAssociations: [dev-coder-happy, dev-code-reviewer-happy]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-jhipster-security
+    skill: jhipster-security
+    source: skills/jhipster-security/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: JHipster authentication modes, users, authorities, Spring Security wiring, regeneration, or gateway trust boundaries are in scope.
+    negativeCondition: Generic Spring Security work without JHipster-generated identity contracts does not activate this variant.
+    expectedBehavior: Preserve generator-owned accounts, authority names, claims, endpoints and anchors, keep gateway and direct-service boundaries distinct, inspect server-client regeneration, and test configured flows separately.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, actor-boundary-coverage, generated-output-freshness], modelRubric: null}
+    scenarioAssociations: [dev-security-reviewer-happy, dev-coder-happy]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-jhipster-testing
+    skill: jhipster-testing
+    source: skills/jhipster-testing/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: JHipster-generated profiles, fixtures, ArchUnit rules, Testcontainers, frontend checks, or E2E scaffolding own the test scope.
+    negativeCondition: Generic Java tests outside JHipster-generated contracts use the detected test framework without generator assumptions.
+    expectedBehavior: Inspect generator and test profiles, preserve generated and custom coverage boundaries, update fixtures with domain validation, run only applicable generated commands, and report engine and profile limitations.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, generated-output-freshness], modelRubric: null}
+    scenarioAssociations: [dev-coder-happy, dev-verifier-happy]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-langgraph
+    skill: langgraph
+    source: skills/langgraph/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: LangGraph state, nodes, edges, tools, checkpoints, retries, streaming, or analysis pipelines change.
+    negativeCondition: A generic model call without graph workflow ownership does not activate LangGraph.
+    expectedBehavior: Keep graph state typed and inspectable, give each node one transformation or decision, preserve input-to-output traceability and data safety, and test deterministic, retry, partial-failure, and resume paths.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, tool-authority, queue-state-transition], modelRubric: null}
+    scenarioAssociations: [dev-coder-happy, dev-prompt-reviewer-happy]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-liquibase
+    skill: liquibase
+    source: skills/liquibase/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: Liquibase changelogs, changesets, includes, contexts, labels, preconditions, checksums, updates, or recovery change.
+    negativeCondition: An already applied changeset is not edited, moved, or renamed without an explicit compatibility plan.
+    expectedBehavior: Preserve changeset identity, inspect the include chain and generated SQL, validate and apply against empty and representative prior state, test repeat execution, and prove rollback or forward recovery.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, test-state-transition], modelRubric: null}
+    scenarioAssociations: [dev-coder-happy, dev-verifier-happy]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-local-model-integration
+    skill: local-model-integration
+    source: skills/local-model-integration/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: Product code manages local models, downloads, cache, inference server lifecycle, resources, logs, or local and remote routing.
+    negativeCondition: A hosted-only model call with no local runtime responsibility does not activate this skill.
+    expectedBehavior: Separate model metadata, artifacts, runtime and user-visible state, make interrupted download and cache paths observable, classify resource failures honestly, and test selection, setup, routing, and errors.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, no-sensitive-output], modelRubric: null}
+    scenarioAssociations: [dev-coder-happy, dev-runtime-diagnostician-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-maintain-methodology-documentation
+    skill: maintain-methodology-documentation
+    source: skills/maintain-methodology-documentation/SKILL.md
+    evaluationCategory: documentation-methodology
+    evaluationKind: workflow-invariant
+    activationCondition: A distributed skill, conceptual agent definition, adapter, category, design page, installer, generated data, or bundle test materially changes.
+    negativeCondition: Generated outputs are never edited as source and user-home deployment is not used as maintenance verification.
+    expectedBehavior: Update owning sources, synchronize metadata and detection, regenerate all affected adapters and documentation data, update hand-authored policy and tests, inspect outputs, and run stale and regression checks.
+    judgePlan: {deterministicChecks: [skill-read-trace, generated-output-freshness, required-command-outcome, allowed-paths-only], modelRubric: workflow-quality}
+    scenarioAssociations: [methodology-maintainer-happy, methodology-maintainer-boundary]
+    workflowAssociations: [documentation-methodology]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
+  - id: probe-manage-backlog
+    skill: manage-backlog
+    source: skills/manage-backlog/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: workflow-invariant
+    activationCondition: Backlog inventory, dispatch, claim, resume, blocking, completion, failure, archive, or recovery is requested.
+    negativeCondition: Holding and archived items are not dispatched, and missing logs or silence never imply completion.
+    expectedBehavior: Reconcile visible items and durable state, respect typed folders, series and dependencies, resume claimed work first, enforce explicit transitions, and preserve delivery or failure evidence in archives.
+    judgePlan: {deterministicChecks: [skill-read-trace, queue-state-transition, claim-lifecycle, artifact-structure], modelRubric: workflow-quality}
+    scenarioAssociations: [dev-backlog-steward-happy, dev-backlog-steward-boundary]
+    workflowAssociations: [backlog]
+    executableCases: [backlog-lifecycle]
+    coverageStatus: fixture-backed
+    ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
+  - id: probe-name-methodology-artifacts
+    skill: name-methodology-artifacts
+    source: skills/name-methodology-artifacts/SKILL.md
+    evaluationCategory: documentation-methodology
+    evaluationKind: artifact-contract
+    activationCondition: Methodology agent categories, conceptual definitions, distributed skills, or their cross-references are named, grouped, or renamed.
+    negativeCondition: Existing stable names are not changed only to force superficial symmetry.
+    expectedBehavior: Use unique category prefixes, singular actor nouns for conceptual definitions, operation-oriented skill names, align source filenames and names, sweep references, regenerate, and validate.
+    judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, generated-output-freshness], modelRubric: source-faithfulness}
+    scenarioAssociations: [methodology-maintainer-happy, methodology-artifact-reviewer-boundary]
+    workflowAssociations: [documentation-methodology]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
+  - id: probe-nextjs-app-router
+    skill: nextjs-app-router
+    source: skills/nextjs-app-router/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: Work implements, reviews, tests, or diagnoses a Next.js application using the App Router.
+    negativeCondition: A non-Next.js React renderer does not activate App Router conventions.
+    expectedBehavior: Inspect route ownership and rendering boundaries, preserve server and client component semantics, use framework-native routing and data behavior, and verify the affected route in the real application.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, operation-coverage, allowed-paths-only], modelRubric: source-faithfulness}
+    scenarioAssociations: [dev-coder-happy, dev-code-reviewer-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: spring-boot}
+  - id: probe-node-cli
+    skill: node-cli
+    source: skills/node-cli/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: Work changes, reviews, tests, or diagnoses a Node.js command-line application or command surface.
+    negativeCondition: A library with no command entry point does not receive CLI-specific argument and exit-code credit.
+    expectedBehavior: Trace the command entry point, argument parsing, streams, exit behavior, filesystem effects, and packaging; preserve automation-safe output and verify success and failure paths through the real command.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, operation-coverage, no-sensitive-output], modelRubric: source-faithfulness}
+    scenarioAssociations: [dev-coder-happy, dev-verifier-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: fastapi}
+  - id: probe-organise-project-files
+    skill: organise-project-files
+    source: skills/organise-project-files/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: workflow-invariant
+    activationCondition: Work must determine, audit, create, move, or validate repository paths for artifacts.
+    negativeCondition: A known path explicitly fixed by the owning contract does not require speculative reorganization.
+    expectedBehavior: Inspect repository guidance and comparable artifacts, select the owning location before creation, explain ambiguous placement, avoid duplicates, and audit the final path against project conventions.
+    judgePlan: {deterministicChecks: [skill-read-trace, allowed-paths-only, artifact-structure], modelRubric: workflow-quality}
+    scenarioAssociations: [project-organiser-happy, project-organiser-boundary]
+    workflowAssociations: [code-delivery, documentation-methodology, project-setup, wiki-lifecycle, backlog]
+    executableCases: [project-configuration-routing]
+    coverageStatus: fixture-backed
+    ablation: {omitTargetSkill: true, wrongSkillControl: runtime-evidence-collection}
+  - id: probe-plan-engine
+    skill: plan-engine
+    source: skills/plan-engine/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: Product code implements, reviews, or tests plan construction, dependency ordering, execution state, recovery, or plan persistence.
+    negativeCondition: An ordinary task list without an executable plan state machine does not activate plan-engine behavior.
+    expectedBehavior: Preserve plan identity and dependency invariants, make state transitions explicit, handle retries and interruption deterministically, retain evidence for recovery, and test ordering plus terminal states.
+    judgePlan: {deterministicChecks: [skill-read-trace, test-state-transition, operation-coverage, contradiction-scan], modelRubric: source-faithfulness}
+    scenarioAssociations: [dev-coder-happy, dev-runtime-diagnostician-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: tailwind-design-system}
+  - id: probe-playwright
+    skill: playwright
+    source: skills/playwright/SKILL.md
+    evaluationCategory: verification
+    evaluationKind: activation-and-behavior
+    activationCondition: Work creates, reviews, diagnoses, or runs Playwright browser tests or browser-backed verification.
+    negativeCondition: Unit behavior that does not require a browser is not upgraded to Playwright merely for coverage volume.
+    expectedBehavior: Use resilient user-facing locators, control test isolation and fixtures, wait on observable state instead of timing guesses, preserve failure artifacts, and execute focused browser verification.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, no-forbidden-mutation, output-contract-presence], modelRubric: workflow-quality}
+    scenarioAssociations: [dev-browser-operator-happy, dev-browser-operator-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: jest}
+  - id: probe-postgres-drizzle
+    skill: postgres-drizzle
+    source: skills/postgres-drizzle/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: Work changes or reviews PostgreSQL persistence implemented through Drizzle schemas, queries, migrations, or transactions.
+    negativeCondition: A non-PostgreSQL store or a project without Drizzle does not activate this integration contract.
+    expectedBehavior: Trace schema and query ownership, preserve PostgreSQL types and constraints, generate and inspect migrations, control transaction boundaries, avoid unsafe raw SQL, and verify behavior against a representative database.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, operation-coverage, actor-boundary-coverage], modelRubric: source-faithfulness}
+    scenarioAssociations: [dev-coder-happy, dev-security-reviewer-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: electron-preload}
+  - id: probe-project-wiki
+    skill: project-wiki
+    source: skills/project-wiki/SKILL.md
+    evaluationCategory: project-wiki
+    evaluationKind: workflow-invariant
+    activationCondition: A task creates, maintains, validates, queries, researches, or routes work through a repository project wiki.
+    negativeCondition: Repo-local source remains authoritative, and raw collection never silently becomes durable ingest.
+    expectedBehavior: Route to the narrow wiki operation, honor source priority and federation boundaries, preserve raw versus processed state, use the supplied wiki operations, and close with applicable status, link, lint, and OKF evidence.
+    judgePlan: {deterministicChecks: [skill-read-trace, wiki-validation, raw-processed-boundary, queue-state-transition], modelRubric: workflow-quality}
+    scenarioAssociations: [wiki-architect-happy, wiki-ingester-boundary, wiki-query-responder-happy]
+    workflowAssociations: [wiki-lifecycle]
+    executableCases: [wiki-raw-ingest]
+    coverageStatus: fixture-backed
+    ablation: {omitTargetSkill: true, wrongSkillControl: manage-backlog}
+  - id: probe-project-wiki-create
+    skill: project-wiki-create
+    source: skills/project-wiki-create/SKILL.md
+    evaluationCategory: project-wiki
+    evaluationKind: artifact-contract
+    activationCondition: A repository project wiki is initialized or substantially restructured.
+    negativeCondition: Existing wiki content is not overwritten or reinitialized without an explicit structural request.
+    expectedBehavior: Inspect repository sources and existing wiki state, create the contract and topic structure, preserve source-priority and federation rules, seed traceable coverage, and run setup verification.
+    judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, source-link-resolution, wiki-validation], modelRubric: artifact-contract}
+    scenarioAssociations: [wiki-architect-happy, wiki-architect-boundary]
+    workflowAssociations: [documentation-methodology, wiki-lifecycle]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: create-backlog}
+  - id: probe-project-wiki-query
+    skill: project-wiki-query
+    source: skills/project-wiki-query/SKILL.md
+    evaluationCategory: project-wiki
+    evaluationKind: answer-contract
+    activationCondition: A question should be answered from the repository wiki synthesis and linked project sources.
+    negativeCondition: Missing or stale wiki coverage triggers verification or research handoff rather than unsupported invention.
+    expectedBehavior: Search the wiki first, follow source links where the answer needs confirmation, distinguish documented fact from inference, answer with traceability, and identify a research gap when coverage is insufficient.
+    judgePlan: {deterministicChecks: [skill-read-trace, source-link-resolution, no-forbidden-mutation, contradiction-scan], modelRubric: source-faithfulness}
+    scenarioAssociations: [wiki-query-responder-happy, wiki-query-responder-boundary]
+    workflowAssociations: [wiki-lifecycle]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-topic-write}
+  - id: probe-project-wiki-research
+    skill: project-wiki-research
+    source: skills/project-wiki-research/SKILL.md
+    evaluationCategory: project-wiki
+    evaluationKind: workflow-invariant
+    activationCondition: Existing repository and wiki sources do not adequately cover a requested topic and ad hoc research is needed.
+    negativeCondition: Research output remains raw-only and does not claim durable wiki integration.
+    expectedBehavior: Assess existing coverage, define the gap and source strategy, collect attributable evidence within boundaries, write one raw research report with exclusions and uncertainty, and hand it off for ingest.
+    judgePlan: {deterministicChecks: [skill-read-trace, raw-processed-boundary, source-link-resolution, no-sensitive-output], modelRubric: source-faithfulness}
+    scenarioAssociations: [wiki-researcher-happy, wiki-researcher-boundary]
+    workflowAssociations: [wiki-lifecycle]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: documentation-reverse-engineer}
+  - id: probe-project-wiki-review
+    skill: project-wiki-review
+    source: skills/project-wiki-review/SKILL.md
+    evaluationCategory: project-wiki
+    evaluationKind: review-contract
+    activationCondition: A project wiki page or wiki change set requires an independent structured review.
+    negativeCondition: The author does not self-approve and a general prose review does not replace the named wiki checklist.
+    expectedBehavior: Load the applicable review checklist, verify claims and links against sources, report findings before summary, separate corrections from residual risk, and preserve independent review evidence.
+    judgePlan: {deterministicChecks: [skill-read-trace, artifact-review-checklist, finding-recall, fresh-context-identity], modelRubric: review-quality}
+    scenarioAssociations: [wiki-artifact-reviewer-happy, wiki-artifact-reviewer-boundary]
+    workflowAssociations: [documentation-methodology, wiki-lifecycle]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-project-wiki-topic-verify
+    skill: project-wiki-topic-verify
+    source: skills/project-wiki-topic-verify/SKILL.md
+    evaluationCategory: project-wiki
+    evaluationKind: verification-contract
+    activationCondition: Created or updated durable wiki topics require independent verification before closeout.
+    negativeCondition: A failing or incomplete critical check cannot produce a GOOD or ready verdict.
+    expectedBehavior: Verify the reviewed-page inventory, source traceability, link and queue state, required wiki operations, and review corrections; return a clear verdict with actionable failures.
+    judgePlan: {deterministicChecks: [skill-read-trace, wiki-validation, readiness-consistency, fresh-context-identity], modelRubric: workflow-quality}
+    scenarioAssociations: [wiki-topic-verifier-happy, wiki-topic-verifier-boundary]
+    workflowAssociations: [wiki-lifecycle]
+    executableCases: [wiki-raw-ingest]
+    coverageStatus: fixture-backed
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-research}
+  - id: probe-project-wiki-topic-write
+    skill: project-wiki-topic-write
+    source: skills/project-wiki-topic-write/SKILL.md
+    evaluationCategory: project-wiki
+    evaluationKind: artifact-contract
+    activationCondition: Raw or repository evidence must be created, rewritten, or split into durable project wiki topics.
+    negativeCondition: Source movement never precedes a GOOD pre-move verdict, and destination collisions stop the operation.
+    expectedBehavior: Read each source, resolve destinations and ownership, write traceable durable pages, obtain review and verification, move processed sources only after approval, repair links, and rerun post-move validation.
+    judgePlan: {deterministicChecks: [skill-read-trace, raw-processed-boundary, wiki-validation, agent-dependency-routing], modelRubric: artifact-contract}
+    scenarioAssociations: [wiki-writer-happy, wiki-writer-boundary, wiki-ingester-happy]
+    workflowAssociations: [wiki-lifecycle]
+    executableCases: [wiki-raw-ingest]
+    coverageStatus: fixture-backed
+    ablation: {omitTargetSkill: true, wrongSkillControl: create-functional-spec}
+  - id: probe-prompt-contracts
+    skill: prompt-contracts
+    source: skills/prompt-contracts/SKILL.md
+    evaluationCategory: prompt-and-agent
+    evaluationKind: review-contract
+    activationCondition: Work reviews model-facing instructions, tool schemas, state, inputs, outputs, or prompt boundaries.
+    negativeCondition: Human-facing copy alone does not activate prompt-contract analysis.
+    expectedBehavior: Trace the complete model-visible contract, identify conflicting authority and underspecified state or tool behavior, cover adversarial and failure paths, and express findings as testable contract corrections.
+    judgePlan: {deterministicChecks: [skill-read-trace, contradiction-scan, operation-coverage, actor-boundary-coverage], modelRubric: review-quality}
+    scenarioAssociations: [dev-prompt-reviewer-happy, dev-prompt-reviewer-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: tailwind-design-system}
+  - id: probe-python
+    skill: python
+    source: skills/python/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: Work implements, refactors, tests, reviews, or diagnoses Python source.
+    negativeCondition: Python tooling that merely launches a non-Python target does not make unrelated source subject to Python design rules.
+    expectedBehavior: Inspect project version and conventions, preserve explicit data and error contracts, use typed and idiomatic boundaries, limit side effects, add focused tests, and run the owning formatter, type, test, and build checks that exist.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, allowed-paths-only, test-state-transition], modelRubric: source-faithfulness}
+    scenarioAssociations: [dev-coder-happy, dev-code-reviewer-happy]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: java}
+  - id: probe-react-server-components
+    skill: react-server-components
+    source: skills/react-server-components/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: Work implements, reviews, or diagnoses React Server Components or the server and client boundary around them.
+    negativeCondition: A client-only React application does not receive Server Component credit.
+    expectedBehavior: Keep server-only work and secrets off the client, minimize client boundaries, pass serializable data, preserve framework cache and rendering semantics, and verify the server/client bundle and route behavior.
+    judgePlan: {deterministicChecks: [skill-read-trace, no-sensitive-output, actor-boundary-coverage, required-command-outcome], modelRubric: source-faithfulness}
+    scenarioAssociations: [dev-coder-happy, dev-security-reviewer-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: react-vite-renderer}
+  - id: probe-react-vite-renderer
+    skill: react-vite-renderer
+    source: skills/react-vite-renderer/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: Work implements, reviews, tests, or diagnoses a React renderer built and served through Vite.
+    negativeCondition: Next.js server rendering or a non-React Vite application does not activate this combined renderer contract.
+    expectedBehavior: Trace the Vite entry and React root, preserve environment and asset boundaries, keep rendering and state ownership explicit, follow the repository build configuration, and verify focused UI behavior plus production build output.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, allowed-paths-only, no-sensitive-output], modelRubric: source-faithfulness}
+    scenarioAssociations: [dev-coder-happy, dev-ux-specialist-happy]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: react-server-components}
+  - id: probe-review-architecture
+    skill: review-architecture
+    source: skills/review-architecture/SKILL.md
+    evaluationCategory: documentation-methodology
+    evaluationKind: review-contract
+    activationCondition: An architecture artifact requires source-backed review for system boundaries, responsibilities, constraints, and decisions.
+    negativeCondition: The reviewer does not silently rewrite the artifact or treat stylistic preference as a defect.
+    expectedBehavior: Load the architecture review checklist, inspect governing sources and adjacent artifacts, report severity-ordered findings with evidence, cover contradictions and readiness, and record residual risks.
+    judgePlan: {deterministicChecks: [skill-read-trace, artifact-review-checklist, finding-recall, readiness-consistency], modelRubric: review-quality}
+    scenarioAssociations: [methodology-artifact-reviewer-happy, methodology-artifact-reviewer-boundary]
+    workflowAssociations: [documentation-methodology]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: create-architecture}
+  - id: probe-review-functional-spec
+    skill: review-functional-spec
+    source: skills/review-functional-spec/SKILL.md
+    evaluationCategory: documentation-methodology
+    evaluationKind: review-contract
+    activationCondition: A functional specification requires source-backed review for behavior, actors, operations, rules, and acceptance boundaries.
+    negativeCondition: Factual prose completeness cannot compensate for missing operations, actors, contradictions, or an unready verdict.
+    expectedBehavior: Apply the functional-spec review checklist, enumerate exact operations and actors, verify assertions against sources, separate completeness from correctness, report findings first, and gate readiness on critical closure.
+    judgePlan: {deterministicChecks: [skill-read-trace, artifact-review-checklist, operation-coverage, actor-boundary-coverage, contradiction-scan, readiness-consistency], modelRubric: artifact-contract}
+    scenarioAssociations: [methodology-artifact-reviewer-happy, methodology-artifact-reviewer-boundary]
+    workflowAssociations: [documentation-methodology]
+    executableCases: [documentation-functional-spec]
+    coverageStatus: fixture-backed
+    ablation: {omitTargetSkill: true, wrongSkillControl: create-functional-spec}
+  - id: probe-review-high-level-design
+    skill: review-high-level-design
+    source: skills/review-high-level-design/SKILL.md
+    evaluationCategory: documentation-methodology
+    evaluationKind: review-contract
+    activationCondition: A high-level design requires review for component boundaries, interactions, data flow, deployment, and operational fit.
+    negativeCondition: Missing critical flows or contradictory component ownership cannot receive a ready verdict.
+    expectedBehavior: Use the named high-level-design checklist, trace every significant component and interaction to sources, test cross-cutting and failure behavior, report prioritized findings, and identify residual design risk.
+    judgePlan: {deterministicChecks: [skill-read-trace, artifact-review-checklist, operation-coverage, contradiction-scan, readiness-consistency], modelRubric: review-quality}
+    scenarioAssociations: [methodology-artifact-reviewer-happy, methodology-artifact-reviewer-boundary]
+    workflowAssociations: [documentation-methodology]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: create-high-level-design}
+  - id: probe-review-module-design
+    skill: review-module-design
+    source: skills/review-module-design/SKILL.md
+    evaluationCategory: documentation-methodology
+    evaluationKind: review-contract
+    activationCondition: A module design requires review against implemented runtime boundaries, contracts, dependencies, state, and failure behavior.
+    negativeCondition: A high-level summary without module-level contracts does not pass this review.
+    expectedBehavior: Apply the module-design checklist, verify interfaces and runtime flows against source, cover state and error boundaries, report evidence-backed findings before summary, and block readiness on critical gaps.
+    judgePlan: {deterministicChecks: [skill-read-trace, artifact-review-checklist, operation-coverage, contradiction-scan], modelRubric: review-quality}
+    scenarioAssociations: [methodology-artifact-reviewer-happy, dev-artifact-reviewer-boundary]
+    workflowAssociations: [documentation-methodology]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: create-module-design}
+  - id: probe-review-structured-artifact
+    skill: review-structured-artifact
+    source: skills/review-structured-artifact/SKILL.md
+    evaluationCategory: documentation-methodology
+    evaluationKind: review-contract
+    activationCondition: A structured design, plan, specification, or comparable artifact needs a source-backed review and no narrower review skill owns it.
+    negativeCondition: A target with a dedicated review skill routes to that narrower contract instead of this fallback.
+    expectedBehavior: Identify the governing schema and sources, create or use the applicable checklist, separate completeness, correctness, contradictions, and readiness, report findings in severity order, and preserve review evidence.
+    judgePlan: {deterministicChecks: [skill-read-trace, artifact-review-checklist, finding-recall, contradiction-scan, readiness-consistency], modelRubric: review-quality}
+    scenarioAssociations: [dev-artifact-reviewer-happy, dev-artifact-reviewer-boundary]
+    workflowAssociations: [code-delivery, documentation-methodology]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: structured-explanation}
+  - id: probe-review-unit-test-plan
+    skill: review-unit-test-plan
+    source: skills/review-unit-test-plan/SKILL.md
+    evaluationCategory: documentation-methodology
+    evaluationKind: review-contract
+    activationCondition: A unit test plan requires source-backed review for units, behaviors, boundaries, seams, and traceability.
+    negativeCondition: Test count or framework syntax alone does not establish behavioral coverage.
+    expectedBehavior: Apply the unit-test-plan checklist, map planned tests to source-owned behavior and failure paths, identify over-mocking and missing seams, report prioritized gaps, and gate readiness on critical coverage.
+    judgePlan: {deterministicChecks: [skill-read-trace, artifact-review-checklist, operation-coverage, readiness-consistency], modelRubric: review-quality}
+    scenarioAssociations: [methodology-artifact-reviewer-happy, dev-verifier-boundary]
+    workflowAssociations: [documentation-methodology]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: create-unit-test-plan}
+  - id: probe-root-cause-analysis
+    skill: root-cause-analysis
+    source: skills/root-cause-analysis/SKILL.md
+    evaluationCategory: diagnosis
+    evaluationKind: diagnosis-contract
+    activationCondition: A reproducible defect, failing test, incident, or behavioral regression requires causal diagnosis.
+    negativeCondition: A plausible symptom correlation is not reported as root cause without discriminating evidence.
+    expectedBehavior: Establish a stable reproduction, record competing hypotheses, collect evidence that rules alternatives in or out, identify the causal mechanism and contributing conditions, and verify the fix or escalation against the reproduction.
+    judgePlan: {deterministicChecks: [skill-read-trace, test-state-transition, required-command-outcome, contradiction-scan], modelRubric: diagnosis-quality}
+    scenarioAssociations: [dev-runtime-diagnostician-happy, dev-runtime-diagnostician-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: fix-explanation}
+  - id: probe-runtime-evidence-collection
+    skill: runtime-evidence-collection
+    source: skills/runtime-evidence-collection/SKILL.md
+    evaluationCategory: diagnosis
+    evaluationKind: workflow-invariant
+    activationCondition: A defect or execution path needs temporary instrumentation, logs, traces, or runtime probes to distinguish hypotheses.
+    negativeCondition: Instrumentation does not expose secrets, change product semantics, or remain after the evidence run unless explicitly requested.
+    expectedBehavior: Define the evidence question first, add the narrowest safe instrumentation, capture a reproducible run with timestamps and identifiers, interpret observations separately from conclusions, and remove or explicitly retain probes.
+    judgePlan: {deterministicChecks: [skill-read-trace, no-sensitive-output, allowed-paths-only, required-command-outcome], modelRubric: diagnosis-quality}
+    scenarioAssociations: [dev-runtime-diagnostician-happy, dev-runtime-diagnostician-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: code-comments}
+  - id: probe-skill-authoring
+    skill: skill-authoring
+    source: skills/skill-authoring/SKILL.md
+    evaluationCategory: prompt-and-agent
+    evaluationKind: artifact-contract
+    activationCondition: A concise portable Agent Skill is created or reviewed in this methodology repository.
+    negativeCondition: Repo-local maintenance rules and customer-specific procedures do not become distributed skill content.
+    expectedBehavior: Define a narrow trigger and outcome, keep instructions portable and source-backed, route variants deliberately, include only necessary resources and metadata, validate the package, and inspect activation plus negative cases.
+    judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, generated-output-freshness, contradiction-scan], modelRubric: source-faithfulness}
+    scenarioAssociations: [methodology-maintainer-happy, methodology-artifact-reviewer-boundary]
+    workflowAssociations: [documentation-methodology]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: create-functional-spec}
+  - id: probe-spring-boot
+    skill: spring-boot
+    source: skills/spring-boot/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: Work implements, tests, reviews, or diagnoses Spring Boot application behavior or configuration.
+    negativeCondition: Plain Java code without Spring Boot ownership does not receive framework-specific credit.
+    expectedBehavior: Trace configuration and bean ownership, preserve dependency injection and lifecycle boundaries, keep controllers, services, persistence, validation, and errors appropriately separated, and verify with focused Spring tests plus the owning build.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, test-state-transition, operation-coverage], modelRubric: source-faithfulness}
+    scenarioAssociations: [dev-coder-happy, dev-code-reviewer-happy]
+    workflowAssociations: [code-delivery]
+    executableCases: [spring-boot-order-cancellation]
+    coverageStatus: fixture-backed
+    ablation: {omitTargetSkill: true, wrongSkillControl: fastapi}
+  - id: probe-spring-boot-design
+    skill: spring-boot-design
+    source: skills/spring-boot-design/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: artifact-contract
+    activationCondition: A design artifact describes Spring Boot runtime composition, modules, request flow, persistence, security, or operational behavior.
+    negativeCondition: Generic layered-architecture language without source-backed Spring ownership does not satisfy the design contract.
+    expectedBehavior: Document actual configuration, bean and module boundaries, framework entry points, transactions, security, failure behavior, and deployment concerns with source traceability and exact runtime flows.
+    judgePlan: {deterministicChecks: [skill-read-trace, source-link-resolution, operation-coverage, artifact-structure], modelRubric: artifact-contract}
+    scenarioAssociations: [dev-documentation-writer-happy, dev-artifact-reviewer-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: java-design}
+  - id: probe-spring-boot-testing
+    skill: spring-boot-testing
+    source: skills/spring-boot-testing/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: verification-contract
+    activationCondition: Spring Boot behavior requires test selection, implementation, review, execution, or diagnosis.
+    negativeCondition: Full application context tests are not used by default when a narrower unit or slice test proves the contract.
+    expectedBehavior: Choose the smallest valid Spring test boundary, control context and data isolation, cover validation, authorization, transactions, and failure mapping where applicable, and run focused tests before the owning suite.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, test-state-transition, operation-coverage], modelRubric: workflow-quality}
+    scenarioAssociations: [dev-verifier-happy, dev-coder-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: vitest}
+  - id: probe-spring-data-jpa
+    skill: spring-data-jpa
+    source: skills/spring-data-jpa/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: Work changes, reviews, tests, or diagnoses persistence implemented with Spring Data JPA and ORM entities or repositories.
+    negativeCondition: SQL-only or non-JPA persistence does not activate repository-derived-query and persistence-context rules.
+    expectedBehavior: Preserve aggregate and transaction boundaries, model mappings and constraints explicitly, avoid unsafe fetching and query ambiguity, control persistence-context effects, and verify repository plus database behavior.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, operation-coverage, actor-boundary-coverage], modelRubric: source-faithfulness}
+    scenarioAssociations: [dev-coder-happy, dev-code-reviewer-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: postgres-drizzle}
+  - id: probe-sql
+    skill: sql
+    source: skills/sql/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: Work writes, changes, tests, or reviews SQL, database constraints, queries, migrations, or transaction behavior.
+    negativeCondition: ORM syntax is not treated as proof of the generated SQL or database contract.
+    expectedBehavior: Preserve data and transaction invariants, parameterize inputs, make joins and cardinality explicit, consider indexes and locking, keep migrations safe and reversible where supported, and verify against the owning database behavior.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, operation-coverage, actor-boundary-coverage], modelRubric: source-faithfulness}
+    scenarioAssociations: [dev-coder-happy, dev-security-reviewer-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: [spring-boot-order-cancellation]
+    coverageStatus: fixture-backed
+    ablation: {omitTargetSkill: true, wrongSkillControl: tailwind-design-system}
+  - id: probe-structured-design
+    skill: structured-design
+    source: skills/structured-design/SKILL.md
+    evaluationCategory: documentation-methodology
+    evaluationKind: artifact-contract
+    activationCondition: A structured technical design or plan must be written or revised and no narrower artifact-creation skill owns it.
+    negativeCondition: A target with a dedicated creation skill routes to that specific contract rather than this fallback.
+    expectedBehavior: Establish artifact purpose, audience, governing sources, schema, decisions, alternatives, exact operations and actors, risks, traceability, and verification; keep unknowns explicit and readiness consistent.
+    judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, operation-coverage, actor-boundary-coverage, contradiction-scan, readiness-consistency], modelRubric: artifact-contract}
+    scenarioAssociations: [dev-documentation-writer-happy, dev-artifact-reviewer-boundary]
+    workflowAssociations: [code-delivery, documentation-methodology, project-setup]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: structured-explanation}
+  - id: probe-structured-explanation
+    skill: structured-explanation
+    source: skills/structured-explanation/SKILL.md
+    evaluationCategory: documentation-methodology
+    evaluationKind: answer-contract
+    activationCondition: Reasoning, behavior, a decision, or a workflow needs a concise structured explanation rather than a durable design artifact.
+    negativeCondition: Explanation structure does not invent evidence or conceal uncertainty and does not replace a required formal artifact.
+    expectedBehavior: Lead with the outcome, organize causes, evidence, constraints, tradeoffs, and next actions at the reader's altitude, distinguish fact from inference, and use only the minimum structure that improves comprehension.
+    judgePlan: {deterministicChecks: [skill-read-trace, contradiction-scan, readiness-consistency, no-sensitive-output], modelRubric: source-faithfulness}
+    scenarioAssociations: [dev-documentation-writer-happy, wiki-query-responder-happy]
+    workflowAssociations: [code-delivery, documentation-methodology, project-setup, wiki-lifecycle, backlog]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: sql}
+  - id: probe-tailwind-design-system
+    skill: tailwind-design-system
+    source: skills/tailwind-design-system/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: Work implements, reviews, or tests a Tailwind CSS design system, shared tokens, component recipes, or responsive utility conventions.
+    negativeCondition: A one-off style change does not justify inventing a new token or abstract component layer.
+    expectedBehavior: Reuse established tokens and component patterns, preserve responsive and state variants, keep utility composition maintainable, cover accessibility and visual states, and verify rendered behavior at relevant viewports.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, artifact-structure, actor-boundary-coverage], modelRubric: ux-quality}
+    scenarioAssociations: [dev-ux-specialist-happy, dev-ux-specialist-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: sql}
+  - id: probe-test-driven-development
+    skill: test-driven-development
+    source: skills/test-driven-development/SKILL.md
+    evaluationCategory: verification
+    evaluationKind: workflow-invariant
+    activationCondition: Behavior is being implemented through a framework-neutral red-green-refactor development loop.
+    negativeCondition: A pre-existing failing suite, non-behavioral generation, or an infeasible test seam is classified honestly instead of fabricating a red step.
+    expectedBehavior: Define one observable behavior, add the smallest meaningful failing test, capture the expected failure, implement only enough to pass, refactor under green, and repeat without weakening assertions.
+    judgePlan: {deterministicChecks: [skill-read-trace, test-state-transition, required-command-outcome, contradiction-scan], modelRubric: workflow-quality}
+    scenarioAssociations: [dev-coder-happy, dev-coder-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: code-comments}
+  - id: probe-test-strategy
+    skill: test-strategy
+    source: skills/test-strategy/SKILL.md
+    evaluationCategory: verification
+    evaluationKind: verification-contract
+    activationCondition: Work must select, execute, and report a technology-neutral verification strategy across unit, integration, system, or manual checks.
+    negativeCondition: More tests are not automatically better; checks must be proportional to changed risk and owning contracts.
+    expectedBehavior: Map risks and behavior to the smallest reliable test layers, identify environments and fixtures, distinguish required from optional checks, run focused checks before broader ones, and report skips and residual gaps truthfully.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, operation-coverage, readiness-consistency], modelRubric: workflow-quality}
+    scenarioAssociations: [dev-verifier-happy, dev-verifier-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: fix-explanation}
+  - id: probe-tool-runtime
+    skill: tool-runtime
+    source: skills/tool-runtime/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: Product code implements or reviews tool registration, schemas, dispatch, permissions, results, retries, or lifecycle inside an agent runtime.
+    negativeCondition: A standalone command that is not model-callable does not activate agent tool-runtime semantics.
+    expectedBehavior: Keep schemas and runtime handlers aligned, validate inputs and permissions at the boundary, make side effects and idempotency explicit, return structured failures, preserve call identity and lifecycle evidence, and test allowed and denied paths.
+    judgePlan: {deterministicChecks: [skill-read-trace, tool-authority, operation-coverage, external-effect-phase], modelRubric: source-faithfulness}
+    scenarioAssociations: [dev-coder-happy, dev-security-reviewer-boundary, dev-runtime-diagnostician-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: tailwind-design-system}
+  - id: probe-typescript
+    skill: typescript
+    source: skills/typescript/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: Work implements, refactors, tests, reviews, or diagnoses TypeScript source.
+    negativeCondition: Generated declarations or configuration-only edits do not justify unrelated source rewrites.
+    expectedBehavior: Inspect compiler and package contracts, model runtime data with explicit types and narrowing, avoid unsafe assertions, preserve async and error behavior, keep imports consistent, and run focused type, test, lint, and build checks.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, test-state-transition, allowed-paths-only], modelRubric: source-faithfulness}
+    scenarioAssociations: [dev-coder-happy, dev-code-reviewer-happy]
+    workflowAssociations: [code-delivery]
+    executableCases: [typescript-order-pricing, typescript-code-review]
+    coverageStatus: fixture-backed
+    ablation: {omitTargetSkill: true, wrongSkillControl: java}
+  - id: probe-typescript-esm
+    skill: typescript-esm
+    source: skills/typescript-esm/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: TypeScript work runs under native or configured ECMAScript module semantics.
+    negativeCondition: CommonJS ownership is not silently converted to ESM, and type-check success alone does not prove runtime resolution.
+    expectedBehavior: Follow package type and compiler resolution settings, preserve explicit runtime file extensions where required, distinguish type-only imports, avoid CommonJS interop guesses, and verify emitted or executed module loading.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, operation-coverage, contradiction-scan], modelRubric: source-faithfulness}
+    scenarioAssociations: [dev-coder-happy, dev-runtime-diagnostician-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: [typescript-order-pricing, typescript-code-review]
+    coverageStatus: fixture-backed
+    ablation: {omitTargetSkill: true, wrongSkillControl: node-cli}
+  - id: probe-typescript-strict
+    skill: typescript-strict
+    source: skills/typescript-strict/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: TypeScript work is owned by strict compiler settings or is explicitly expected to satisfy strict typing.
+    negativeCondition: Assertions, any, or weakened compiler options are not accepted as substitutes for resolving a strictness defect.
+    expectedBehavior: Preserve strict configuration, narrow unknown and nullable values at real boundaries, model exhaustive variants, keep generics sound, avoid unchecked indexing and assertion escapes, and prove the changed code with the compiler and focused tests.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, contradiction-scan, no-sensitive-output], modelRubric: source-faithfulness}
+    scenarioAssociations: [dev-coder-happy, dev-code-reviewer-happy]
+    workflowAssociations: [code-delivery]
+    executableCases: [typescript-order-pricing, typescript-code-review]
+    coverageStatus: fixture-backed
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-user-experience-review
+    skill: user-experience-review
+    source: skills/user-experience-review/SKILL.md
+    evaluationCategory: experience-and-interface
+    evaluationKind: review-contract
+    activationCondition: A user workflow, interface, information architecture, accessibility surface, or interaction change requires UX review.
+    negativeCondition: Aesthetic preference without user, task, accessibility, or consistency evidence is not reported as a defect.
+    expectedBehavior: Trace representative user tasks and states, inspect clarity, feedback, recovery, consistency, responsive behavior, keyboard and assistive access, report evidence-backed findings, and distinguish blocking usability defects from recommendations.
+    judgePlan: {deterministicChecks: [skill-read-trace, actor-boundary-coverage, operation-coverage, finding-recall], modelRubric: ux-quality}
+    scenarioAssociations: [dev-ux-specialist-happy, dev-ux-specialist-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: sql}
+  - id: probe-vitest
+    skill: vitest
+    source: skills/vitest/SKILL.md
+    evaluationCategory: verification
+    evaluationKind: activation-and-behavior
+    activationCondition: Work creates, reviews, runs, or diagnoses Vitest tests or configuration.
+    negativeCondition: Jest-specific behavior is not assumed equivalent where Vitest APIs, module handling, timers, or environment differ.
+    expectedBehavior: Follow repository Vitest configuration and environment, keep tests isolated and deterministic, use appropriate mocks and timers without hiding integration behavior, run focused tests, and capture actionable failure evidence.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, test-state-transition, no-forbidden-mutation], modelRubric: workflow-quality}
+    scenarioAssociations: [dev-verifier-happy, dev-runtime-diagnostician-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: jest}

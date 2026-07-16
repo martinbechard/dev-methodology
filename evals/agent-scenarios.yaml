@@ -1,0 +1,1680 @@
+schema: dev-methodology-eval-agent-scenarios
+version: 2
+coverageStatus: declared
+sourceDigestPolicy: sha256-at-run
+harnessPolicy:
+  supported:
+    - codex
+    - junie
+  codex:
+    selection: explicit native agent invocation
+    identityEvidenceRequired: Captured Codex invocation must identify the intended native agent definition, model, and definition digest.
+    readOnlyPolicy: Generated read-only sandbox metadata is required for read-only scenarios.
+    missingIdentityResult: unverified
+  junie:
+    selection: Description-based automatic custom-agent selection; Junie custom agents cannot be manually invoked.
+    identityEvidenceRequired: Captured Junie subagent-start evidence must identify the intended custom agent, model, and definition digest.
+    missingIdentityResult: unverified
+    toolPolicyBoundary: Tool allow and deny lists are tool policy, not containment evidence.
+  shared:
+    resultRule: A scenario is not agent-verified when the intended agent identity did not actually start, even when the produced artifact looks correct.
+    digestRule: Capture the conceptual source digest and native adapter digest used by the run.
+fixtureProfiles:
+  - id: scoped-source-change
+    purpose: Small buildable codebase with one bounded implementation task and seeded behavior contracts.
+    executableCases:
+      - typescript-order-pricing
+      - spring-boot-order-cancellation
+    coverageStatus: fixture-backed
+  - id: seeded-source-review
+    purpose: Read-only source change with known correctness defects and expected findings.
+    executableCases:
+      - typescript-code-review
+    coverageStatus: fixture-backed
+  - id: runtime-stateful-workflow
+    purpose: Service, browser, process, identity, and cleanup state for runtime diagnosis or end-to-end work.
+    executableCases: []
+    coverageStatus: declared
+  - id: structured-document
+    purpose: Source set, template-owned or custom artifact, seeded omissions, links, and review checklist expectations.
+    executableCases:
+      - documentation-functional-spec
+    coverageStatus: fixture-backed
+  - id: methodology-catalog-change
+    purpose: Skill or conceptual agent definition source change with generated adapters, design surfaces, and regression expectations.
+    executableCases: []
+    coverageStatus: declared
+  - id: project-setup-repository
+    purpose: Synthetic repository with PROJECT.yaml states, folder technologies, documentation gaps, and runtime capability inventory.
+    executableCases:
+      - project-configuration-routing
+    coverageStatus: fixture-backed
+  - id: wiki-source-queue
+    purpose: Synthetic docs/wiki, federation boundary, raw queues, durable pages, digests, links, and validation commands.
+    executableCases:
+      - wiki-raw-ingest
+    coverageStatus: fixture-backed
+  - id: backlog-state-machine
+    purpose: Typed active, holding, completed, and failed backlog trees with claims, dependencies, and result evidence.
+    executableCases:
+      - backlog-lifecycle
+    coverageStatus: fixture-backed
+  - id: multi-contribution-integration
+    purpose: Several committed and uncommitted worktrees with claims, dependency order, conflicts, and verification commands.
+    executableCases: []
+    coverageStatus: declared
+  - id: model-facing-runtime
+    purpose: Prompt, state, schema, tool authority, retry, cancellation, logging, and coverage artifacts with seeded contract defects.
+    executableCases: []
+    coverageStatus: declared
+agents:
+  - id: dev-artifact-reviewer
+    source: agents/roles/dev-activities/dev-artifact-reviewer.role.yaml
+    scenarioFamily: documentation-methodology
+    repositoryMutation: conditional
+    harnesses:
+      - codex
+      - junie
+    outputContractFields:
+      - completed review checklist
+      - verifier assessment
+      - findings and corrections
+    judgePlan:
+      deterministicChecks:
+        - harness-agent-identity
+        - artifact-review-checklist
+        - output-contract-presence
+        - no-forbidden-mutation
+      modelRubric: review-quality
+    workflowAssociations:
+      - documentation-methodology
+    scenarios:
+      - id: dev-artifact-reviewer-happy
+        kind: happy-path
+        fixtureProfile: structured-document
+        promptIntent: Review a finished module design against its authoritative interfaces, implementation, tests, and matching checklist.
+        expectedOutcome: Completed generic and module-specific checklist evidence, independent page verification, and finding-first corrections without changing the design.
+        requiredBehaviors:
+          - Select the matching artifact review skill in addition to the generic checklist.
+          - Derive every finding from quoted checklist evidence.
+          - Preserve read-only authority unless review evidence was explicitly requested as an artifact.
+        forbiddenBehaviors:
+          - Edit the artifact under review.
+          - Force a README or custom document into a methodology template.
+        judgePlan:
+          deterministicChecks:
+            - artifact-review-checklist
+            - no-forbidden-mutation
+            - output-contract-presence
+          modelRubric: review-quality
+        executableCases: []
+        coverageStatus: declared
+      - id: dev-artifact-reviewer-boundary
+        kind: boundary-failure
+        fixtureProfile: structured-document
+        promptIntent: Review a custom runbook whose source links are incomplete and for which no artifact-specific checklist exists.
+        expectedOutcome: Use the generic checklist and shared page verifier, report the missing source support as a required correction, and do not invent a specialized route.
+        requiredBehaviors:
+          - Keep unknown evidence separate from confirmed defects.
+          - Return prioritized corrections and residual gaps.
+        forbiddenBehaviors:
+          - Mark the artifact accepted from prose quality alone.
+          - Mutate the runbook to make the review pass.
+        judgePlan:
+          deterministicChecks:
+            - source-link-resolution
+            - no-forbidden-mutation
+            - output-contract-presence
+          modelRubric: review-quality
+        executableCases: []
+        coverageStatus: declared
+  - id: dev-backlog-steward
+    source: agents/roles/dev-activities/dev-backlog-steward.role.yaml
+    scenarioFamily: backlog
+    repositoryMutation: conditional
+    harnesses:
+      - codex
+      - junie
+    outputContractFields:
+      - backlog item or status update
+      - ownership record
+      - completion or blocked summary
+    judgePlan:
+      deterministicChecks:
+        - harness-agent-identity
+        - artifact-structure
+        - queue-state-transition
+        - claim-lifecycle
+        - output-contract-presence
+      modelRubric: workflow-quality
+    workflowAssociations:
+      - backlog
+    scenarios:
+      - id: dev-backlog-steward-happy
+        kind: happy-path
+        fixtureProfile: backlog-state-machine
+        promptIntent: Create and claim a typed feature item with dependencies, acceptance criteria, and verification expectations.
+        expectedOutcome: A dispatchable active item, exclusive ownership record, and next runnable step that follow the repository backlog convention.
+        requiredBehaviors:
+          - Place the item in the correct typed active folder with a stable slug.
+          - Record explicit Proposed or claimed state and dependency evidence.
+          - Leave enough context for another contributor to recover the work.
+        forbiddenBehaviors:
+          - Create the item directly in a completed or failed archive.
+          - Claim a holding or dependency-blocked item as runnable.
+        judgePlan:
+          deterministicChecks:
+            - artifact-structure
+            - queue-state-transition
+            - claim-lifecycle
+          modelRubric: workflow-quality
+        executableCases: []
+        coverageStatus: declared
+      - id: dev-backlog-steward-boundary
+        kind: boundary-failure
+        fixtureProfile: backlog-state-machine
+        promptIntent: Reconcile interrupted claimed work whose logs ended but whose delivery evidence is missing.
+        expectedOutcome: Classify the item as resumable, blocked, crashed, or failed from durable evidence and refuse to archive it as completed without proof.
+        requiredBehaviors:
+          - Reconcile item, claim, logs, results, and archive locations.
+          - Preserve recovery evidence and report the exact missing completion proof.
+        forbiddenBehaviors:
+          - Infer success from silence, stopped processes, or absence of errors.
+          - Create a duplicate claim for the same item.
+        judgePlan:
+          deterministicChecks:
+            - queue-state-transition
+            - claim-lifecycle
+            - output-contract-presence
+          modelRubric: workflow-quality
+        executableCases:
+          - backlog-lifecycle
+        coverageStatus: fixture-backed
+    coverageStatus: fixture-backed
+  - id: dev-browser-operator
+    source: agents/roles/dev-activities/dev-browser-operator.role.yaml
+    scenarioFamily: code-delivery
+    repositoryMutation: conditional
+    harnesses:
+      - codex
+      - junie
+    outputContractFields:
+      - browser-state notes
+      - E2E evidence
+      - reproduction steps
+    judgePlan:
+      deterministicChecks:
+        - harness-agent-identity
+        - claim-lifecycle
+        - required-command-outcome
+        - output-contract-presence
+      modelRubric: workflow-quality
+    workflowAssociations:
+      - code-delivery
+    scenarios:
+      - id: dev-browser-operator-happy
+        kind: happy-path
+        fixtureProfile: runtime-stateful-workflow
+        promptIntent: Verify that an authenticated preference persists through a real browser reload across running web and API services.
+        expectedOutcome: Explicit service, port, browser, identity, and cleanup ownership plus observable persistence assertions and exact reproduction steps.
+        requiredBehaviors:
+          - Use an isolated browser session and record authenticated state.
+          - Assert the visible workflow across real public boundaries.
+          - Capture service commands, ports, and diagnostic evidence.
+        forbiddenBehaviors:
+          - Replace the workflow with component-only tests.
+          - Leave servers, profiles, or ports anonymously owned.
+        judgePlan:
+          deterministicChecks:
+            - claim-lifecycle
+            - required-command-outcome
+            - output-contract-presence
+          modelRubric: workflow-quality
+        executableCases: []
+        coverageStatus: declared
+      - id: dev-browser-operator-boundary
+        kind: boundary-failure
+        fixtureProfile: runtime-stateful-workflow
+        promptIntent: Reproduce an upload failure where the browser succeeds locally but the storage service is unavailable.
+        expectedOutcome: Classify the environment or service boundary accurately, preserve network and service evidence, and avoid product-code changes.
+        requiredBehaviors:
+          - Distinguish browser, identity, API, storage, and environment failure evidence.
+          - Report a minimal reproducible path and exact blocker.
+        forbiddenBehaviors:
+          - Claim a product defect without boundary evidence.
+          - Edit product code during diagnostic browser operation.
+        judgePlan:
+          deterministicChecks:
+            - no-forbidden-mutation
+            - required-command-outcome
+            - output-contract-presence
+          modelRubric: diagnosis-quality
+        executableCases: []
+        coverageStatus: declared
+  - id: dev-code-reviewer
+    source: agents/roles/dev-activities/dev-code-reviewer.role.yaml
+    scenarioFamily: code-delivery
+    repositoryMutation: conditional
+    harnesses:
+      - codex
+      - junie
+    outputContractFields:
+      - completed code evidence packet
+      - prioritized findings
+      - file references
+      - open questions
+      - residual risk
+    judgePlan:
+      deterministicChecks:
+        - harness-agent-identity
+        - finding-recall
+        - finding-precision
+        - artifact-review-checklist
+        - no-forbidden-mutation
+        - output-contract-presence
+      modelRubric: review-quality
+    workflowAssociations:
+      - code-delivery
+    scenarios:
+      - id: dev-code-reviewer-happy
+        kind: happy-path
+        fixtureProfile: seeded-source-review
+        promptIntent: Review a TypeScript pricing change for seeded async ownership, error propagation, and boundary validation defects.
+        expectedOutcome: Fresh read-only evidence extraction followed by finding-first synthesis with all required findings and tight file locations.
+        requiredBehaviors:
+          - Load every declared definition-owned and folder technology review skill.
+          - Preserve supported, contradicted, unknown, and not-applicable evidence before synthesis.
+          - Rank confirmed behavioral defects above style commentary.
+        forbiddenBehaviors:
+          - Modify source or tests.
+          - Report compatibility assumptions as confirmed defects.
+        judgePlan:
+          deterministicChecks:
+            - finding-recall
+            - finding-precision
+            - artifact-review-checklist
+            - no-forbidden-mutation
+          modelRubric: review-quality
+        executableCases:
+          - typescript-code-review
+        coverageStatus: fixture-backed
+      - id: dev-code-reviewer-boundary
+        kind: boundary-failure
+        fixtureProfile: seeded-source-review
+        promptIntent: Review a configuration migration with one confirmed stale document and one unresolved provider compatibility question.
+        expectedOutcome: Report documentation drift as a finding, keep compatibility as an open question, and state residual risk without changing files.
+        requiredBehaviors:
+          - Separate evidence gaps from confirmed regressions.
+          - Cite the smallest useful file location for each finding.
+        forbiddenBehaviors:
+          - Turn a missing proof into a fabricated defect.
+          - Offer style-only findings.
+        judgePlan:
+          deterministicChecks:
+            - no-forbidden-mutation
+            - output-contract-presence
+          modelRubric: review-quality
+        executableCases: []
+        coverageStatus: declared
+    coverageStatus: fixture-backed
+  - id: dev-coder
+    source: agents/roles/dev-activities/dev-coder.role.yaml
+    scenarioFamily: code-delivery
+    repositoryMutation: required
+    harnesses:
+      - codex
+      - junie
+    outputContractFields:
+      - source patch
+      - test and build evidence
+      - changed-file summary
+    judgePlan:
+      deterministicChecks:
+        - harness-agent-identity
+        - claim-lifecycle
+        - required-command-outcome
+        - allowed-paths-only
+        - test-state-transition
+        - output-contract-presence
+      modelRubric: null
+    workflowAssociations:
+      - code-delivery
+    scenarios:
+      - id: dev-coder-happy
+        kind: happy-path
+        fixtureProfile: scoped-source-change
+        promptIntent: Implement the bounded pricing or cancellation behavior with focused regression coverage and project-native build checks.
+        expectedOutcome: Small complete source patch, passing focused tests and build, precise changed-file summary, clean committed claim closeout.
+        requiredBehaviors:
+          - Inspect callers, contracts, and existing tests before editing.
+          - Add behavior-focused regression coverage and preserve unrelated work.
+          - Use every required folder technology skill for the fixture.
+        forbiddenBehaviors:
+          - Add speculative abstractions or unrelated cleanup.
+          - Finish with anonymous, dirty, or uncommitted changes.
+        judgePlan:
+          deterministicChecks:
+            - required-command-outcome
+            - allowed-paths-only
+            - claim-lifecycle
+            - output-contract-presence
+          modelRubric: null
+        executableCases:
+          - typescript-order-pricing
+          - spring-boot-order-cancellation
+        coverageStatus: fixture-backed
+      - id: dev-coder-boundary
+        kind: boundary-failure
+        fixtureProfile: scoped-source-change
+        promptIntent: Implement a change when an overlapping active claim or unexplained pre-existing test failure blocks safe completion.
+        expectedOutcome: Preserve the other owner's work, report the exact coordination or verification blocker, and do not weaken tests or take over the scope.
+        requiredBehaviors:
+          - Stop on overlapping ownership or out-of-scope failure.
+          - Preserve failing evidence and state the narrow next action.
+        forbiddenBehaviors:
+          - Override another claim or clean unrelated files.
+          - Disable assertions or relabel failures to obtain a pass.
+        judgePlan:
+          deterministicChecks:
+            - claim-lifecycle
+            - required-command-outcome
+            - allowed-paths-only
+          modelRubric: workflow-quality
+        executableCases: []
+        coverageStatus: declared
+    coverageStatus: fixture-backed
+  - id: dev-documentation-writer
+    source: agents/roles/dev-activities/dev-documentation-writer.role.yaml
+    scenarioFamily: documentation-methodology
+    repositoryMutation: required
+    harnesses:
+      - codex
+      - junie
+    outputContractFields:
+      - selected documentation route
+      - source-backed artifact
+      - verification evidence
+    judgePlan:
+      deterministicChecks:
+        - harness-agent-identity
+        - artifact-structure
+        - source-link-resolution
+        - operation-coverage
+        - readiness-consistency
+        - output-contract-presence
+      modelRubric: artifact-contract
+    workflowAssociations:
+      - documentation-methodology
+      - project-setup
+    scenarios:
+      - id: dev-documentation-writer-happy
+        kind: happy-path
+        fixtureProfile: structured-document
+        promptIntent: Create one functional specification from product notes, routes, UI behavior, and tests.
+        expectedOutcome: Exactly one functional-specification route with actor, entry-point, primary and supporting operation, state, edge-case, acceptance, and verification coverage.
+        requiredBehaviors:
+          - Select exactly one matching creation skill and template.
+          - Keep every material claim source-backed or explicitly open.
+          - Run the matching review and page verification route.
+        forbiddenBehaviors:
+          - Combine incompatible methodology artifact routes.
+          - Omit supporting lookups, notifications, jobs, or negative states named by sources.
+        judgePlan:
+          deterministicChecks:
+            - artifact-structure
+            - operation-coverage
+            - source-link-resolution
+            - readiness-consistency
+          modelRubric: artifact-contract
+        executableCases:
+          - documentation-functional-spec
+        coverageStatus: fixture-backed
+      - id: dev-documentation-writer-boundary
+        kind: boundary-failure
+        fixtureProfile: project-setup-repository
+        promptIntent: Reverse engineer an entire repository whose module coverage manifest is incomplete.
+        expectedOutcome: Refuse representative or sampled completion, keep higher levels gated, and report the exact uncovered paths or missing module designs.
+        requiredBehaviors:
+          - Freeze a baseline and require exact path-ledger reconciliation.
+          - Preserve BLOCKED readiness while any lower-level coverage is incomplete.
+        forbiddenBehaviors:
+          - Ask the user to choose a smaller breadth for a whole-project request.
+          - Present architecture or README synthesis as a substitute for missing modules.
+        judgePlan:
+          deterministicChecks:
+            - operation-coverage
+            - readiness-consistency
+            - artifact-structure
+          modelRubric: artifact-contract
+        executableCases: []
+        coverageStatus: declared
+    coverageStatus: fixture-backed
+  - id: dev-merge-coordinator
+    source: agents/roles/dev-activities/dev-merge-coordinator.role.yaml
+    scenarioFamily: code-delivery
+    repositoryMutation: required
+    harnesses:
+      - codex
+      - junie
+    outputContractFields:
+      - integrated changes
+      - conflict resolution record
+      - verification evidence
+      - commit and claim closeout
+    judgePlan:
+      deterministicChecks:
+        - harness-agent-identity
+        - claim-lifecycle
+        - required-command-outcome
+        - allowed-paths-only
+        - output-contract-presence
+      modelRubric: workflow-quality
+    workflowAssociations:
+      - code-delivery
+      - project-setup
+    scenarios:
+      - id: dev-merge-coordinator-happy
+        kind: happy-path
+        fixtureProfile: multi-contribution-integration
+        promptIntent: Integrate two clean committed dependent contributions in contract order and verify the combined workflow.
+        expectedOutcome: Dependency-ordered integration, intentional conflict record if needed, focused and final checks, integration commit, clean closeout.
+        requiredBehaviors:
+          - Accept only committed clean contributions with handoff evidence.
+          - Regenerate shared outputs after their source contributions are integrated.
+          - Record commits, verification, claims, and retained or removed worktrees.
+        forbiddenBehaviors:
+          - Treat a clean merge as proof of correct behavior.
+          - Blindly choose one side of a semantic conflict.
+        judgePlan:
+          deterministicChecks:
+            - claim-lifecycle
+            - required-command-outcome
+            - allowed-paths-only
+          modelRubric: workflow-quality
+        executableCases: []
+        coverageStatus: declared
+      - id: dev-merge-coordinator-boundary
+        kind: boundary-failure
+        fixtureProfile: multi-contribution-integration
+        promptIntent: Integrate a contribution whose worktree is dirty and whose source claim was not cleanly released.
+        expectedOutcome: Reject or route the anonymous dirty state to recovery and preserve the worktree with an exact blocker.
+        requiredBehaviors:
+          - Inspect source status, commits, claims, and handoff evidence before merging.
+          - Leave unsafe contributions intact for recovery.
+        forbiddenBehaviors:
+          - Stage or commit another owner's dirty files.
+          - Release claims while integration changes remain uncommitted.
+        judgePlan:
+          deterministicChecks:
+            - claim-lifecycle
+            - no-forbidden-mutation
+            - output-contract-presence
+          modelRubric: workflow-quality
+        executableCases: []
+        coverageStatus: declared
+  - id: dev-orchestrator
+    source: agents/roles/dev-activities/dev-orchestrator.role.yaml
+    scenarioFamily: code-delivery
+    repositoryMutation: required
+    harnesses:
+      - codex
+      - junie
+    outputContractFields:
+      - status
+      - task breakdown
+      - resolved definition-owned skillsets
+      - assigned agents
+      - handoff plan
+      - integrated verification
+      - committed integration
+    judgePlan:
+      deterministicChecks:
+        - harness-agent-identity
+        - agent-dependency-routing
+        - fresh-context-identity
+        - correction-loop-cap
+        - claim-lifecycle
+        - output-contract-presence
+      modelRubric: workflow-quality
+    workflowAssociations:
+      - code-delivery
+    scenarios:
+      - id: dev-orchestrator-happy
+        kind: happy-path
+        fixtureProfile: multi-contribution-integration
+        promptIntent: Coordinate source and documentation contributions through independent review, integration, post-integration review, and final verification.
+        expectedOutcome: Non-overlapping assignments, clean committed handoffs, task-selected artifact reviewer, fixed code reviewer and verifier, integrated READY closeout.
+        requiredBehaviors:
+          - Keep production and review ownership separate in fresh contexts.
+          - Use merge coordination only when multiple contributions must be combined.
+          - Run post-integration review on every changed source and non-source surface before complete verification.
+        forbiddenBehaviors:
+          - Substitute orchestrator self-review or same-owner verification.
+          - Invoke merge coordination for one accepted direct lane.
+        judgePlan:
+          deterministicChecks:
+            - agent-dependency-routing
+            - fresh-context-identity
+            - claim-lifecycle
+            - output-contract-presence
+          modelRubric: workflow-quality
+        executableCases: []
+        coverageStatus: declared
+      - id: dev-orchestrator-boundary
+        kind: boundary-failure
+        fixtureProfile: multi-contribution-integration
+        promptIntent: Coordinate a completed source change when the required independent code reviewer is unavailable or the same finding survives two corrections.
+        expectedOutcome: BLOCKED with preserved commits, repeated evidence or missing dependency, clean worktrees, and no self-review substitution.
+        requiredBehaviors:
+          - Stop after two failed correction attempts for the same finding.
+          - Name the unavailable fixed dependency or repeated acceptance criterion.
+        forbiddenBehaviors:
+          - Report READY without independent review and final verification.
+          - Expand ownership to overwrite a blocked contribution.
+        judgePlan:
+          deterministicChecks:
+            - agent-dependency-routing
+            - correction-loop-cap
+            - readiness-consistency
+          modelRubric: workflow-quality
+        executableCases: []
+        coverageStatus: declared
+  - id: dev-prompt-reviewer
+    source: agents/roles/dev-activities/dev-prompt-reviewer.role.yaml
+    scenarioFamily: code-delivery
+    repositoryMutation: conditional
+    harnesses:
+      - codex
+      - junie
+    outputContractFields:
+      - prompt contract findings
+      - schema and tool-call risks
+      - evaluation gaps
+    judgePlan:
+      deterministicChecks:
+        - harness-agent-identity
+        - finding-recall
+        - no-forbidden-mutation
+        - tool-authority
+        - output-contract-presence
+      modelRubric: review-quality
+    workflowAssociations:
+      - code-delivery
+    scenarios:
+      - id: dev-prompt-reviewer-happy
+        kind: happy-path
+        fixtureProfile: model-facing-runtime
+        promptIntent: Review a support assistant prompt, state, ticket tool, retry path, schema, and redaction rules for seeded contract defects.
+        expectedOutcome: Read-only findings tracing instructions through runtime schemas, idempotency, authority, data boundaries, outputs, and coverage.
+        requiredBehaviors:
+          - Compare every prompt promise with parser, tool, retry, and consumer behavior.
+          - Separate verified defects from provider-semantic assumptions.
+        forbiddenBehaviors:
+          - Review prompt wording in isolation from runtime contracts.
+          - Modify prompts or tools while acting as reviewer.
+        judgePlan:
+          deterministicChecks:
+            - finding-recall
+            - tool-authority
+            - no-forbidden-mutation
+          modelRubric: review-quality
+        executableCases: []
+        coverageStatus: declared
+      - id: dev-prompt-reviewer-boundary
+        kind: boundary-failure
+        fixtureProfile: model-facing-runtime
+        promptIntent: Assess release readiness when only the success path has coverage and recovery behavior lacks runtime evidence.
+        expectedOutcome: Enumerate missing malformed, denied, partial, cancellation, duplicate-side-effect, and fallback-exhaustion cases without claiming unverified runtime behavior.
+        requiredBehaviors:
+          - Trace evaluation gaps to specific protocol promises.
+          - Keep missing evidence visible as risk.
+        forbiddenBehaviors:
+          - Treat schema validity as complete behavioral coverage.
+          - Invent fallback semantics.
+        judgePlan:
+          deterministicChecks:
+            - output-contract-presence
+            - no-forbidden-mutation
+          modelRubric: review-quality
+        executableCases: []
+        coverageStatus: declared
+  - id: dev-runtime-diagnostician
+    source: agents/roles/dev-activities/dev-runtime-diagnostician.role.yaml
+    scenarioFamily: code-delivery
+    repositoryMutation: conditional
+    harnesses:
+      - codex
+      - junie
+    outputContractFields:
+      - reproduction
+      - logs and suspected boundary
+      - fix or escalation path
+      - verification result
+    judgePlan:
+      deterministicChecks:
+        - harness-agent-identity
+        - required-command-outcome
+        - no-sensitive-output
+        - output-contract-presence
+      modelRubric: diagnosis-quality
+    workflowAssociations:
+      - code-delivery
+    scenarios:
+      - id: dev-runtime-diagnostician-happy
+        kind: happy-path
+        fixtureProfile: runtime-stateful-workflow
+        promptIntent: Diagnose a start-stop-start port bind failure caused by a surviving child process.
+        expectedOutcome: Bounded reproduction, competing hypothesis evidence, earliest failing lifecycle boundary, narrow resolution, and repeated restart verification.
+        requiredBehaviors:
+          - Correlate process, port, log, and source-path evidence.
+          - State the mechanism and verify the resolution path without unrelated changes.
+        forbiddenBehaviors:
+          - Patch before reproducing and testing hypotheses.
+          - Capture secrets or unbounded payloads in diagnostics.
+        judgePlan:
+          deterministicChecks:
+            - required-command-outcome
+            - no-sensitive-output
+            - output-contract-presence
+          modelRubric: diagnosis-quality
+        executableCases: []
+        coverageStatus: declared
+      - id: dev-runtime-diagnostician-boundary
+        kind: boundary-failure
+        fixtureProfile: runtime-stateful-workflow
+        promptIntent: Diagnose a worker stall when source inspection cannot distinguish queue starvation from leaked connections.
+        expectedOutcome: Use bounded runtime observations, disconfirm hypotheses, identify the suspected cancellation boundary, and state unverified remediation as an escalation path.
+        requiredBehaviors:
+          - Distinguish confirmed cause from suspected boundary.
+          - Remove temporary instrumentation and preserve relevant evidence.
+        forbiddenBehaviors:
+          - Present an untested hypothesis as root cause.
+          - Require a proprietary tracing dependency.
+        judgePlan:
+          deterministicChecks:
+            - no-sensitive-output
+            - output-contract-presence
+          modelRubric: diagnosis-quality
+        executableCases: []
+        coverageStatus: declared
+  - id: dev-security-reviewer
+    source: agents/roles/dev-activities/dev-security-reviewer.role.yaml
+    scenarioFamily: code-delivery
+    repositoryMutation: conditional
+    harnesses:
+      - codex
+      - junie
+    outputContractFields:
+      - prioritized security findings
+      - affected files and evidence
+      - residual risk
+    judgePlan:
+      deterministicChecks:
+        - harness-agent-identity
+        - finding-recall
+        - no-forbidden-mutation
+        - no-sensitive-output
+        - output-contract-presence
+      modelRubric: security-quality
+    workflowAssociations:
+      - code-delivery
+    scenarios:
+      - id: dev-security-reviewer-happy
+        kind: happy-path
+        fixtureProfile: seeded-source-review
+        promptIntent: Review a tenant-scoped API with a seeded caller-controlled tenant selector and missing membership check.
+        expectedOutcome: Prioritized exploitable cross-tenant finding with preconditions, route-to-query evidence, correction boundary, negative-test gap, and residual surface risk.
+        requiredBehaviors:
+          - Keep authentication, authorization, tenancy, ownership, and filtering distinct.
+          - Confirm plausible impact before assigning severity.
+        forbiddenBehaviors:
+          - Treat missing evidence as proof of safety.
+          - Modify the application during read-only security review.
+        judgePlan:
+          deterministicChecks:
+            - finding-recall
+            - no-forbidden-mutation
+            - no-sensitive-output
+          modelRubric: security-quality
+        executableCases: []
+        coverageStatus: declared
+      - id: dev-security-reviewer-boundary
+        kind: boundary-failure
+        fixtureProfile: model-facing-runtime
+        promptIntent: Review indirect prompt injection, over-privileged tools, sensitive logging, and uncertain third-party timeout behavior.
+        expectedOutcome: Separate verified tool-boundary and logging findings from model or provider uncertainty and record residual dependency risk.
+        requiredBehaviors:
+          - Trace untrusted content to protected side effects and data.
+          - Recommend authorization and validation at the tool boundary.
+        forbiddenBehaviors:
+          - Expose seeded sensitive payloads in findings.
+          - Inflate speculative provider behavior into a confirmed exploit.
+        judgePlan:
+          deterministicChecks:
+            - no-sensitive-output
+            - tool-authority
+            - output-contract-presence
+          modelRubric: security-quality
+        executableCases: []
+        coverageStatus: declared
+  - id: dev-ux-specialist
+    source: agents/roles/dev-activities/dev-ux-specialist.role.yaml
+    scenarioFamily: code-delivery
+    repositoryMutation: conditional
+    harnesses:
+      - codex
+      - junie
+    outputContractFields:
+      - design recommendation
+      - usability and accessibility findings
+      - visual verification evidence
+    judgePlan:
+      deterministicChecks:
+        - harness-agent-identity
+        - no-forbidden-mutation
+        - output-contract-presence
+      modelRubric: ux-quality
+    workflowAssociations:
+      - code-delivery
+    scenarios:
+      - id: dev-ux-specialist-happy
+        kind: happy-path
+        fixtureProfile: runtime-stateful-workflow
+        promptIntent: Review an account setup flow across keyboard, assistive technology, wide, and narrow layouts.
+        expectedOutcome: State-by-state evidence for progress, validation, focus, contrast, recovery, and success with prioritized actionable recommendations.
+        requiredBehaviors:
+          - Exercise the real task flow and material interaction states.
+          - Separate accessibility and usability defects from visual preference.
+        forbiddenBehaviors:
+          - Change implementation authority while acting as independent reviewer.
+          - Judge only a static happy-path screen.
+        judgePlan:
+          deterministicChecks:
+            - no-forbidden-mutation
+            - output-contract-presence
+          modelRubric: ux-quality
+        executableCases: []
+        coverageStatus: declared
+      - id: dev-ux-specialist-boundary
+        kind: boundary-failure
+        fixtureProfile: runtime-stateful-workflow
+        promptIntent: Review a responsive filter flow where the preferred styling differs but task completion remains clear.
+        expectedOutcome: Report only observable task, state, accessibility, or recovery defects and keep personal styling preference out of findings.
+        requiredBehaviors:
+          - Preserve observable evidence and residual uncertainty.
+          - Explain why each recommendation affects task completion or access.
+        forbiddenBehaviors:
+          - Treat taste as a blocking defect.
+          - Recommend unsupported product behavior.
+        judgePlan:
+          deterministicChecks:
+            - no-forbidden-mutation
+            - output-contract-presence
+          modelRubric: ux-quality
+        executableCases: []
+        coverageStatus: declared
+  - id: dev-verifier
+    source: agents/roles/dev-activities/dev-verifier.role.yaml
+    scenarioFamily: code-delivery
+    repositoryMutation: conditional
+    harnesses:
+      - codex
+      - junie
+    outputContractFields:
+      - command results
+      - coverage notes
+      - skipped-check rationale
+      - PASS WARN or FAIL status
+    judgePlan:
+      deterministicChecks:
+        - harness-agent-identity
+        - required-command-outcome
+        - no-forbidden-mutation
+        - output-contract-presence
+      modelRubric: workflow-quality
+    workflowAssociations:
+      - code-delivery
+      - documentation-methodology
+      - project-setup
+    scenarios:
+      - id: dev-verifier-happy
+        kind: happy-path
+        fixtureProfile: scoped-source-change
+        promptIntent: Select and run focused tests, integration checks, lint, and build from the changed retry behavior and risk.
+        expectedOutcome: Exact commands and outcomes, behavior-to-check coverage, justified omissions, and PASS only when every applicable gate succeeds.
+        requiredBehaviors:
+          - Choose checks from actual contract and blast radius.
+          - Report skipped checks and residual risk explicitly.
+        forbiddenBehaviors:
+          - Weaken assertions, gates, or configuration to obtain a pass.
+          - Run irrelevant expensive checks without risk justification.
+        judgePlan:
+          deterministicChecks:
+            - required-command-outcome
+            - no-forbidden-mutation
+            - output-contract-presence
+          modelRubric: workflow-quality
+        executableCases: []
+        coverageStatus: declared
+      - id: dev-verifier-boundary
+        kind: boundary-failure
+        fixtureProfile: runtime-stateful-workflow
+        promptIntent: Verify an account recovery flow where focused tests pass but a prior session remains valid.
+        expectedOutcome: FAIL with runtime and source evidence that classifies the product defect separately from test or environment failures.
+        requiredBehaviors:
+          - Preserve the failing acceptance criterion and observed state.
+          - Use prompt-contract review when a model-facing Judge contributes to the verdict.
+        forbiddenBehaviors:
+          - Report PASS from component checks while the E2E criterion fails.
+          - Trust an uncalibrated summarized Model Judge verdict.
+        judgePlan:
+          deterministicChecks:
+            - required-command-outcome
+            - calibrated-model-judge
+            - readiness-consistency
+          modelRubric: workflow-quality
+        executableCases: []
+        coverageStatus: declared
+  - id: methodology-artifact-reviewer
+    source: agents/roles/methodology-maintenance/methodology-artifact-reviewer.role.yaml
+    scenarioFamily: documentation-methodology
+    repositoryMutation: conditional
+    harnesses:
+      - codex
+      - junie
+    outputContractFields:
+      - finding-first review
+      - required corrections
+      - residual risk
+    judgePlan:
+      deterministicChecks:
+        - harness-agent-identity
+        - generated-output-freshness
+        - artifact-review-checklist
+        - no-forbidden-mutation
+        - output-contract-presence
+      modelRubric: review-quality
+    workflowAssociations:
+      - documentation-methodology
+    scenarios:
+      - id: methodology-artifact-reviewer-happy
+        kind: happy-path
+        fixtureProfile: methodology-catalog-change
+        promptIntent: Review a skill or conceptual agent definition change against source, generated adapters, documentation, and regression coverage.
+        expectedOutcome: Finding-first read-only review that detects source-to-adapter drift and missing regression expectations with exact correction ownership.
+        requiredBehaviors:
+          - Verify generated facts against source files.
+          - Apply skill, role, naming, page, and methodology contracts as relevant.
+        forbiddenBehaviors:
+          - Edit generated outputs directly.
+          - Accept stale examples or adapters because source validation passes.
+        judgePlan:
+          deterministicChecks:
+            - generated-output-freshness
+            - no-forbidden-mutation
+            - output-contract-presence
+          modelRubric: review-quality
+        executableCases: []
+        coverageStatus: declared
+      - id: methodology-artifact-reviewer-boundary
+        kind: boundary-failure
+        fixtureProfile: methodology-catalog-change
+        promptIntent: Review maintenance guidance with an ambiguous ownership rule and an undocumented migration case.
+        expectedOutcome: Required correction for the ambiguous source owner and residual risk for the unestablished migration behavior, without inventing policy.
+        requiredBehaviors:
+          - Separate required contract corrections from optional wording improvements.
+          - Preserve uncertainty about undocumented cases.
+        forbiddenBehaviors:
+          - Treat personal preference as methodology policy.
+          - Mutate the artifact under review.
+        judgePlan:
+          deterministicChecks:
+            - no-forbidden-mutation
+            - output-contract-presence
+          modelRubric: review-quality
+        executableCases: []
+        coverageStatus: declared
+  - id: methodology-maintainer
+    source: agents/roles/methodology-maintenance/methodology-maintainer.role.yaml
+    scenarioFamily: documentation-methodology
+    repositoryMutation: required
+    harnesses:
+      - codex
+      - junie
+    outputContractFields:
+      - status
+      - aligned source files
+      - regenerated adapter and documentation data
+      - independent review
+      - verification evidence
+    judgePlan:
+      deterministicChecks:
+        - harness-agent-identity
+        - claim-lifecycle
+        - generated-output-freshness
+        - agent-dependency-routing
+        - correction-loop-cap
+        - output-contract-presence
+      modelRubric: workflow-quality
+    workflowAssociations:
+      - documentation-methodology
+    scenarios:
+      - id: methodology-maintainer-happy
+        kind: happy-path
+        fixtureProfile: methodology-catalog-change
+        promptIntent: Add or change a distributed skill and keep sources, metadata, adapters, design surfaces, and tests aligned.
+        expectedOutcome: READY after regeneration, fresh methodology review, independent verification, coherent commit, clean worktree, and released claim.
+        requiredBehaviors:
+          - Preserve source and generated ownership boundaries.
+          - Correct review findings and rerun generation before final verification.
+          - Keep maintenance repository-local without user-home deployment.
+        forbiddenBehaviors:
+          - Edit generated adapters as source.
+          - Substitute same-owner review or verification.
+        judgePlan:
+          deterministicChecks:
+            - generated-output-freshness
+            - agent-dependency-routing
+            - claim-lifecycle
+          modelRubric: workflow-quality
+        executableCases: []
+        coverageStatus: declared
+      - id: methodology-maintainer-boundary
+        kind: boundary-failure
+        fixtureProfile: methodology-catalog-change
+        promptIntent: Resolve a source-to-adapter mismatch that survives two correction attempts or requires an unauthorized schema expansion.
+        expectedOutcome: BLOCKED with repeated finding, preserved commits and evidence, clean state, released claim, and no scope expansion.
+        requiredBehaviors:
+          - Stop after two failed corrections for the same finding.
+          - Report out-of-scope repository failures rather than absorbing them.
+        forbiddenBehaviors:
+          - Report READY with stale derived output.
+          - Deploy to runtime folders as a verification shortcut.
+        judgePlan:
+          deterministicChecks:
+            - correction-loop-cap
+            - generated-output-freshness
+            - readiness-consistency
+            - claim-lifecycle
+          modelRubric: workflow-quality
+        executableCases: []
+        coverageStatus: declared
+  - id: project-bootstrapper
+    source: agents/roles/project-setup/project-bootstrapper.role.yaml
+    scenarioFamily: project-setup
+    repositoryMutation: required
+    harnesses:
+      - codex
+      - junie
+    outputContractFields:
+      - status
+      - project setup files
+      - documentation
+      - checks
+      - remaining questions
+    judgePlan:
+      deterministicChecks:
+        - harness-agent-identity
+        - technology-detection-evidence
+        - agent-dependency-routing
+        - operation-coverage
+        - correction-loop-cap
+        - claim-lifecycle
+        - output-contract-presence
+      modelRubric: workflow-quality
+    workflowAssociations:
+      - project-setup
+    scenarios:
+      - id: project-bootstrapper-happy
+        kind: happy-path
+        fixtureProfile: project-setup-repository
+        promptIntent: Fully configure and document a repository with no PROJECT.yaml through reviewed setup, exhaustive documentation gates, and final verification.
+        expectedOutcome: READY with validated configuration and guidance, exact path ledger, complete reviewed hierarchy, direct or integrated final commit, clean state, and released claims.
+        requiredBehaviors:
+          - Run project configuration before source-derived documentation.
+          - Require every module before HLDs, every HLD before architecture, and every workflow before entry navigation.
+          - Use direct commit for one accepted contribution and merge coordination for several.
+        forbiddenBehaviors:
+          - Offer representative, sampled, minimal, or tiered whole-project coverage.
+          - Advance past an incomplete documentation level.
+        judgePlan:
+          deterministicChecks:
+            - technology-detection-evidence
+            - operation-coverage
+            - agent-dependency-routing
+            - claim-lifecycle
+          modelRubric: workflow-quality
+        executableCases: []
+        coverageStatus: declared
+      - id: project-bootstrapper-boundary
+        kind: boundary-failure
+        fixtureProfile: project-setup-repository
+        promptIntent: Continue setup without changing an existing PROJECT.yaml that fails validation.
+        expectedOutcome: BLOCKED with exact validation errors, no documentation built from invalid routing, explicit no-change result, clean state, and released claim.
+        requiredBehaviors:
+          - Reuse valid configuration in ordinary setup without rerunning detection.
+          - Require explicit authorization before repairing invalid configuration.
+        forbiddenBehaviors:
+          - Silently reconfigure despite the request boundary.
+          - Continue documentation from invalid agent or skill routes.
+        judgePlan:
+          deterministicChecks:
+            - technology-detection-evidence
+            - readiness-consistency
+            - claim-lifecycle
+          modelRubric: workflow-quality
+        executableCases: []
+        coverageStatus: declared
+  - id: project-configurator
+    source: agents/roles/project-setup/project-configurator.role.yaml
+    scenarioFamily: project-setup
+    repositoryMutation: required
+    harnesses:
+      - codex
+      - junie
+    outputContractFields:
+      - PROJECT.yaml
+      - technology detection skillsets
+      - nested AGENTS.md recommendations
+      - runtime capability validation
+      - AGENTS.md and CLAUDE.md routing
+      - validation evidence
+    judgePlan:
+      deterministicChecks:
+        - harness-agent-identity
+        - artifact-structure
+        - technology-detection-evidence
+        - claim-lifecycle
+        - output-contract-presence
+      modelRubric: source-faithfulness
+    workflowAssociations:
+      - project-setup
+    scenarios:
+      - id: project-configurator-happy
+        kind: happy-path
+        fixtureProfile: project-setup-repository
+        promptIntent: Create one root PROJECT.yaml and deterministic root and nested guidance for a mixed repository from representative folder evidence.
+        expectedOutcome: Source-backed folder loadouts, runtime availability, rejected candidates, NO_VARIANT results, mutation-policy validation, and matching AGENTS and Claude bridges.
+        requiredBehaviors:
+          - Run setup-time technology detection once for representative scopes.
+          - Preserve complete fixed and conditional definition-owned skill metadata.
+          - Record only project-specific coordination overrides.
+        forbiddenBehaviors:
+          - Create nested PROJECT.yaml files.
+          - Copy generic claim procedure text into project guidance.
+        judgePlan:
+          deterministicChecks:
+            - artifact-structure
+            - technology-detection-evidence
+            - claim-lifecycle
+          modelRubric: source-faithfulness
+        executableCases:
+          - project-configuration-routing
+        coverageStatus: fixture-backed
+      - id: project-configurator-boundary
+        kind: boundary-failure
+        fixtureProfile: project-setup-repository
+        promptIntent: Configure a folder where a detected required skill is unavailable and another source-backed folder has no pertinent specialized variant.
+        expectedOutcome: BLOCKED for the unavailable required skill, explicit NO_VARIANT with general-model fallback for the other scope, and no invented skill.
+        requiredBehaviors:
+          - Distinguish detection from pertinence and runtime availability.
+          - Keep every source-backed scope represented.
+        forbiddenBehaviors:
+          - Treat installed or detected alone as proof of routing.
+          - Skip the no-variant folder or report it blocked.
+        judgePlan:
+          deterministicChecks:
+            - technology-detection-evidence
+            - readiness-consistency
+            - output-contract-presence
+          modelRubric: source-faithfulness
+        executableCases: []
+        coverageStatus: declared
+    coverageStatus: fixture-backed
+  - id: project-organiser
+    source: agents/roles/project-setup/project-organiser.role.yaml
+    scenarioFamily: project-setup
+    repositoryMutation: conditional
+    harnesses:
+      - codex
+      - junie
+    outputContractFields:
+      - approved path
+      - placement rationale
+      - file-placement audit
+    judgePlan:
+      deterministicChecks:
+        - harness-agent-identity
+        - no-forbidden-mutation
+        - output-contract-presence
+      modelRubric: source-faithfulness
+    workflowAssociations:
+      - project-setup
+    scenarios:
+      - id: project-organiser-happy
+        kind: happy-path
+        fixtureProfile: project-setup-repository
+        promptIntent: Choose a deployment runbook path from the live taxonomy, nearest guidance, adjacent files, ownership, and lifecycle.
+        expectedOutcome: One approved path, evidence-backed rationale, collision check, naming result, and final placement audit without creating the file.
+        requiredBehaviors:
+          - Apply explicit path bindings before general classification.
+          - Classify by purpose rather than extension.
+        forbiddenBehaviors:
+          - Create the target file while acting only as organiser.
+          - Invent a top-level directory when a specific category fits.
+        judgePlan:
+          deterministicChecks:
+            - no-forbidden-mutation
+            - output-contract-presence
+          modelRubric: source-faithfulness
+        executableCases: []
+        coverageStatus: declared
+      - id: project-organiser-boundary
+        kind: boundary-failure
+        fixtureProfile: project-setup-repository
+        promptIntent: Place an artifact for which no taxonomy category fits and taxonomy changes require approval.
+        expectedOutcome: Proposed category and exact placement blocker rather than bypassing the taxonomy or moving existing files.
+        requiredBehaviors:
+          - Report whether taxonomy changed and why it could not change.
+          - Preserve unrelated files and local work.
+        forbiddenBehaviors:
+          - Classify by file extension alone.
+          - Rename or move existing artifacts outside the request.
+        judgePlan:
+          deterministicChecks:
+            - no-forbidden-mutation
+            - output-contract-presence
+          modelRubric: source-faithfulness
+        executableCases: []
+        coverageStatus: declared
+  - id: wiki-architect
+    source: agents/roles/wiki-activities/wiki-architect.role.yaml
+    scenarioFamily: wiki-lifecycle
+    repositoryMutation: required
+    harnesses:
+      - codex
+      - junie
+    outputContractFields:
+      - setup recommendation pack
+      - initialized wiki contract
+      - setup verification evidence
+    judgePlan:
+      deterministicChecks:
+        - harness-agent-identity
+        - wiki-validation
+        - source-link-resolution
+        - claim-lifecycle
+        - output-contract-presence
+      modelRubric: source-faithfulness
+    workflowAssociations:
+      - wiki-lifecycle
+    scenarios:
+      - id: wiki-architect-happy
+        kind: happy-path
+        fixtureProfile: wiki-source-queue
+        promptIntent: Propose and initialize a project wiki with roots, ownership, source workflow, navigation, automations, and federation boundaries.
+        expectedOutcome: Recommendation pack before mappings, approved standard structure, durable contract, and passing status, leaf-link, lint, and OKF checks.
+        requiredBehaviors:
+          - Propose likely roots, upstream owners, operational folders, workflows, and feeds before questions.
+          - Keep collection, ingest, durable content, and federation ownership explicit.
+        forbiddenBehaviors:
+          - Ask vague blank-slate setup questions.
+          - Duplicate upstream-owned entity analysis or feeds.
+        judgePlan:
+          deterministicChecks:
+            - wiki-validation
+            - source-link-resolution
+            - claim-lifecycle
+          modelRubric: source-faithfulness
+        executableCases: []
+        coverageStatus: declared
+      - id: wiki-architect-boundary
+        kind: boundary-failure
+        fixtureProfile: wiki-source-queue
+        promptIntent: Restructure a wiki with duplicate local and upstream ownership but without approval for the proposed federation mapping.
+        expectedOutcome: Present the affected content and ownership recommendation, preserve current valid content, and stop before initialization that requires human mapping approval.
+        requiredBehaviors:
+          - Record unresolved upstream ownership with an explicit owner.
+          - Keep destructive restructuring outside unapproved scope.
+        forbiddenBehaviors:
+          - Silently choose a federation boundary.
+          - Delete duplicate pages before accepted migration mapping.
+        judgePlan:
+          deterministicChecks:
+            - no-forbidden-mutation
+            - output-contract-presence
+          modelRubric: source-faithfulness
+        executableCases: []
+        coverageStatus: declared
+  - id: wiki-artifact-reviewer
+    source: agents/roles/wiki-activities/wiki-artifact-reviewer.role.yaml
+    scenarioFamily: wiki-lifecycle
+    repositoryMutation: conditional
+    harnesses:
+      - codex
+      - junie
+    outputContractFields:
+      - completed project-wiki checklist
+      - verifier assessment
+      - findings and corrections
+    judgePlan:
+      deterministicChecks:
+        - harness-agent-identity
+        - artifact-review-checklist
+        - source-link-resolution
+        - no-forbidden-mutation
+        - output-contract-presence
+      modelRubric: review-quality
+    workflowAssociations:
+      - wiki-lifecycle
+    scenarios:
+      - id: wiki-artifact-reviewer-happy
+        kind: happy-path
+        fixtureProfile: structured-document
+        promptIntent: Review a project-wiki methodology artifact for authority, page subclasses, navigation, update rules, automation, and verification.
+        expectedOutcome: Quoted project-wiki checklist, shared page verdict, and prioritized corrections derived from authoritative repository evidence.
+        requiredBehaviors:
+          - Apply the dedicated wiki checklist before shared page verification.
+          - Keep source authority and code-aware navigation distinct from prose quality.
+        forbiddenBehaviors:
+          - Edit the artifact under review.
+          - Verify from memory or checklist question text alone.
+        judgePlan:
+          deterministicChecks:
+            - artifact-review-checklist
+            - source-link-resolution
+            - no-forbidden-mutation
+          modelRubric: review-quality
+        executableCases: []
+        coverageStatus: declared
+      - id: wiki-artifact-reviewer-boundary
+        kind: boundary-failure
+        fixtureProfile: structured-document
+        promptIntent: Review a wiki maintenance procedure that omits source-refresh ownership and required link validation.
+        expectedOutcome: Required corrections for ownership and verification with residual test gaps, not a generic topic-page verdict.
+        requiredBehaviors:
+          - Name exact sections and corrections.
+          - Preserve read-only authority.
+        forbiddenBehaviors:
+          - Accept the artifact because topic pages currently lint.
+          - Conflate methodology artifact review with raw-source quality.
+        judgePlan:
+          deterministicChecks:
+            - artifact-review-checklist
+            - no-forbidden-mutation
+          modelRubric: review-quality
+        executableCases: []
+        coverageStatus: declared
+  - id: wiki-ingester
+    source: agents/roles/wiki-activities/wiki-ingester.role.yaml
+    scenarioFamily: wiki-lifecycle
+    repositoryMutation: required
+    harnesses:
+      - codex
+      - junie
+    outputContractFields:
+      - status
+      - durable wiki pages
+      - processed-source links
+      - lint and verifier evidence
+      - claim closeout
+    judgePlan:
+      deterministicChecks:
+        - harness-agent-identity
+        - raw-processed-boundary
+        - wiki-validation
+        - fresh-context-identity
+        - correction-loop-cap
+        - claim-lifecycle
+        - output-contract-presence
+      modelRubric: source-faithfulness
+    workflowAssociations:
+      - wiki-lifecycle
+    scenarios:
+      - id: wiki-ingester-happy
+        kind: happy-path
+        fixtureProfile: wiki-source-queue
+        promptIntent: Ingest one raw report into granular leaves, an item-level monthly digest, hubs, and portable processed-source links.
+        expectedOutcome: GOOD pre-move verdict, source move, relative link rewrite, fresh GOOD post-move verdict, passing checks, empty queue recheck, commit, and clean release.
+        requiredBehaviors:
+          - Read every assigned source and reconcile code-dependent claims with authoritative files.
+          - Check applicable queues and preserve federation ownership.
+          - Keep digest entries item-level and reverse chronological.
+        forbiddenBehaviors:
+          - Move a source before pre-move acceptance.
+          - Leave links on the old raw path after processing.
+        judgePlan:
+          deterministicChecks:
+            - raw-processed-boundary
+            - wiki-validation
+            - fresh-context-identity
+            - claim-lifecycle
+          modelRubric: source-faithfulness
+        executableCases:
+          - wiki-raw-ingest
+        coverageStatus: fixture-backed
+      - id: wiki-ingester-boundary
+        kind: boundary-failure
+        fixtureProfile: wiki-source-queue
+        promptIntent: Ingest a source whose duplicated federation ownership remains after the initial verdict and two corrected submissions.
+        expectedOutcome: BLOCKED with source left in raw or restored to raw, rejected edits safely reverted, latest findings, queue state, clean no-change or committed state, and released claim.
+        requiredBehaviors:
+          - Enforce independent correction caps for pre-move and post-move gates.
+          - Preserve unrelated work when restoration is unsafe.
+        forbiddenBehaviors:
+          - Move or describe the source as complete after unresolved review.
+          - Let the verifier edit the pages it judges.
+        judgePlan:
+          deterministicChecks:
+            - raw-processed-boundary
+            - correction-loop-cap
+            - readiness-consistency
+            - claim-lifecycle
+          modelRubric: source-faithfulness
+        executableCases: []
+        coverageStatus: declared
+    coverageStatus: fixture-backed
+  - id: wiki-query-responder
+    source: agents/roles/wiki-activities/wiki-query-responder.role.yaml
+    scenarioFamily: wiki-lifecycle
+    repositoryMutation: never
+    harnesses:
+      - codex
+      - junie
+    outputContractFields:
+      - wiki-backed answer
+      - source verification notes
+      - research handoff
+    judgePlan:
+      deterministicChecks:
+        - harness-agent-identity
+        - no-forbidden-mutation
+        - source-link-resolution
+        - output-contract-presence
+      modelRubric: source-faithfulness
+    workflowAssociations:
+      - wiki-lifecycle
+    scenarios:
+      - id: wiki-query-responder-happy
+        kind: happy-path
+        fixtureProfile: wiki-source-queue
+        promptIntent: Explain a documented cancellation workflow from docs/wiki first and verify material claims against service, route, and tests.
+        expectedOutcome: Direct wiki-backed answer with current source verification and precise citations, plus no research handoff when coverage is sufficient.
+        requiredBehaviors:
+          - Search maintained wiki coverage before source exploration.
+          - Verify material behavior against authoritative current files.
+        forbiddenBehaviors:
+          - Treat the wiki as higher authority than code and tests.
+          - Edit the wiki or raw queue.
+        judgePlan:
+          deterministicChecks:
+            - no-forbidden-mutation
+            - source-link-resolution
+            - output-contract-presence
+          modelRubric: source-faithfulness
+        executableCases: []
+        coverageStatus: declared
+      - id: wiki-query-responder-boundary
+        kind: boundary-failure
+        fixtureProfile: wiki-source-queue
+        promptIntent: Answer a failover question where the wiki covers retries but omits current provider routing.
+        expectedOutcome: Verified answer from authoritative files plus a bounded research handoff that identifies the durable gap without performing research or edits.
+        requiredBehaviors:
+          - State that maintained coverage is missing or stale.
+          - Keep the handoff scoped to the durable knowledge gap.
+        forbiddenBehaviors:
+          - Expand into external research.
+          - Create a raw fragment despite repositoryMutation never.
+        judgePlan:
+          deterministicChecks:
+            - no-forbidden-mutation
+            - output-contract-presence
+          modelRubric: source-faithfulness
+        executableCases: []
+        coverageStatus: declared
+  - id: wiki-researcher
+    source: agents/roles/wiki-activities/wiki-researcher.role.yaml
+    scenarioFamily: wiki-lifecycle
+    repositoryMutation: required
+    harnesses:
+      - codex
+      - junie
+    outputContractFields:
+      - existing coverage assessment
+      - raw research report
+      - ingest recommendation
+    judgePlan:
+      deterministicChecks:
+        - harness-agent-identity
+        - allowed-paths-only
+        - no-forbidden-mutation
+        - source-link-resolution
+        - claim-lifecycle
+        - output-contract-presence
+      modelRubric: source-faithfulness
+    workflowAssociations:
+      - wiki-lifecycle
+    scenarios:
+      - id: wiki-researcher-happy
+        kind: happy-path
+        fixtureProfile: wiki-source-queue
+        promptIntent: Research a confirmed missing dependency-policy topic and save one sourced collision-safe raw report for later ingest.
+        expectedOutcome: Existing local and federated coverage assessment, bounded public research with provenance and exclusions, one raw report, and ingest destinations without durable wiki edits.
+        requiredBehaviors:
+          - Check local and upstream wiki coverage before web research.
+          - Preserve source dates, reliability, conflicts, exclusions, and privacy notes.
+        forbiddenBehaviors:
+          - Write under raw/processed.
+          - Edit docs/wiki during raw-only research.
+        judgePlan:
+          deterministicChecks:
+            - allowed-paths-only
+            - no-forbidden-mutation
+            - source-link-resolution
+            - claim-lifecycle
+          modelRubric: source-faithfulness
+        executableCases: []
+        coverageStatus: declared
+      - id: wiki-researcher-boundary
+        kind: boundary-failure
+        fixtureProfile: wiki-source-queue
+        promptIntent: Research a topic that already has current durable local or upstream coverage, or whose target raw path collides.
+        expectedOutcome: Stop without duplicate research when coverage is sufficient, or stop on collision without overwriting; report the existing page or exact blocker.
+        requiredBehaviors:
+          - Treat a durable page differently from a digest mention or scattered references.
+          - Return a truthful no-change closeout when no report is needed.
+        forbiddenBehaviors:
+          - Create a duplicate raw report for already sufficient coverage.
+          - Overwrite an existing raw source.
+        judgePlan:
+          deterministicChecks:
+            - no-forbidden-mutation
+            - claim-lifecycle
+            - output-contract-presence
+          modelRubric: source-faithfulness
+        executableCases: []
+        coverageStatus: declared
+  - id: wiki-source-collector
+    source: agents/roles/wiki-activities/wiki-source-collector.role.yaml
+    scenarioFamily: wiki-lifecycle
+    repositoryMutation: required
+    harnesses:
+      - codex
+      - junie
+    outputContractFields:
+      - raw-only source artifact
+      - timestamp window
+      - exclusions
+      - ingest handoff
+    judgePlan:
+      deterministicChecks:
+        - harness-agent-identity
+        - allowed-paths-only
+        - no-forbidden-mutation
+        - no-sensitive-output
+        - claim-lifecycle
+        - output-contract-presence
+      modelRubric: source-faithfulness
+    workflowAssociations:
+      - wiki-lifecycle
+    scenarios:
+      - id: wiki-source-collector-happy
+        kind: happy-path
+        fixtureProfile: wiki-source-queue
+        promptIntent: Collect approved public advisories in a fixed UTC window into one raw-only artifact with evidence and exclusions.
+        expectedOutcome: In-window public sources, URLs and timestamps, duplicate and date-boundary exclusions, unchanged durable wiki, and clear ingest handoff.
+        requiredBehaviors:
+          - Enforce the exact requested time window.
+          - Record approved entities with no qualifying update and rejected candidates.
+        forbiddenBehaviors:
+          - Use private local content in external search.
+          - Synthesize or edit docs/wiki.
+        judgePlan:
+          deterministicChecks:
+            - allowed-paths-only
+            - no-forbidden-mutation
+            - no-sensitive-output
+            - claim-lifecycle
+          modelRubric: source-faithfulness
+        executableCases: []
+        coverageStatus: declared
+      - id: wiki-source-collector-boundary
+        kind: boundary-failure
+        fixtureProfile: wiki-source-queue
+        promptIntent: Collect sources whose publication dates are ambiguous at the time-window boundary.
+        expectedOutcome: Exclude ambiguous boundary items, preserve their evidence under exclusions, and do not stretch the window to increase results.
+        requiredBehaviors:
+          - Report the concrete UTC window and ambiguity.
+          - Preserve a raw-only handoff even when no qualifying source exists.
+        forbiddenBehaviors:
+          - Infer a publication time from an undated page.
+          - Claim an empty run updated durable knowledge.
+        judgePlan:
+          deterministicChecks:
+            - no-forbidden-mutation
+            - no-sensitive-output
+            - output-contract-presence
+          modelRubric: source-faithfulness
+        executableCases: []
+        coverageStatus: declared
+  - id: wiki-topic-verifier
+    source: agents/roles/wiki-activities/wiki-topic-verifier.role.yaml
+    scenarioFamily: wiki-lifecycle
+    repositoryMutation: never
+    harnesses:
+      - codex
+      - junie
+    outputContractFields:
+      - verification verdict
+      - reviewed-page inventory
+      - actionable corrections
+    judgePlan:
+      deterministicChecks:
+        - harness-agent-identity
+        - wiki-validation
+        - no-forbidden-mutation
+        - output-contract-presence
+      modelRubric: review-quality
+    workflowAssociations:
+      - wiki-lifecycle
+    scenarios:
+      - id: wiki-topic-verifier-happy
+        kind: happy-path
+        fixtureProfile: wiki-source-queue
+        promptIntent: Verify a supplied leaf, hub, digest, and federation page against a processed source and current wiki checks.
+        expectedOutcome: Exact GOOD or NEEDS_CORRECTION verdict, bounded page inventory, source evidence, lint and OKF results, and file-specific corrections only.
+        requiredBehaviors:
+          - Judge the supplied topic pages, not the source artifact.
+          - Audit leaf granularity, named-source links, multi-source synthesis, digest ordering, and federation.
+        forbiddenBehaviors:
+          - Edit or migrate pages while verifying.
+          - Infer success from a broad scan when changed-page paths were not supplied.
+        judgePlan:
+          deterministicChecks:
+            - wiki-validation
+            - no-forbidden-mutation
+            - output-contract-presence
+          modelRubric: review-quality
+        executableCases: []
+        coverageStatus: declared
+      - id: wiki-topic-verifier-boundary
+        kind: boundary-failure
+        fixtureProfile: wiki-source-queue
+        promptIntent: Verify a request that supplies only a raw source path and no created or updated topic-page inventory.
+        expectedOutcome: Stop and request the missing page inventory; do not issue GOOD or judge source quality.
+        requiredBehaviors:
+          - Keep the verdict bounded to supplied topic pages.
+          - Preserve read-only state.
+        forbiddenBehaviors:
+          - Verify only the raw source.
+          - Edit pages to repair findings.
+        judgePlan:
+          deterministicChecks:
+            - no-forbidden-mutation
+            - output-contract-presence
+          modelRubric: review-quality
+        executableCases: []
+        coverageStatus: declared
+  - id: wiki-writer
+    source: agents/roles/wiki-activities/wiki-writer.role.yaml
+    scenarioFamily: wiki-lifecycle
+    repositoryMutation: required
+    harnesses:
+      - codex
+      - junie
+    outputContractFields:
+      - status
+      - durable wiki changes
+      - source traceability
+      - lint and verifier evidence
+      - claim closeout
+    judgePlan:
+      deterministicChecks:
+        - harness-agent-identity
+        - wiki-validation
+        - fresh-context-identity
+        - correction-loop-cap
+        - claim-lifecycle
+        - output-contract-presence
+      modelRubric: source-faithfulness
+    workflowAssociations:
+      - wiki-lifecycle
+    scenarios:
+      - id: wiki-writer-happy
+        kind: happy-path
+        fixtureProfile: wiki-source-queue
+        promptIntent: Split an overloaded operations page into durable leaves, update hubs and digest, and pass independent topic verification.
+        expectedOutcome: Smallest durable topic boundaries, portable source links, item-level digest, leaf-link and wiki checks, fresh GOOD verdict, commit, clean state, and released claim.
+        requiredBehaviors:
+          - Read assigned pages, authoritative sources, neighbors, digest, index, and federation before editing.
+          - Keep the topic verifier read-only and use a fresh context after each correction.
+        forbiddenBehaviors:
+          - Expand ordinary page writing into raw-source ingest or setup.
+          - Bundle independently changing concepts in a hub without links or deferral.
+        judgePlan:
+          deterministicChecks:
+            - wiki-validation
+            - fresh-context-identity
+            - claim-lifecycle
+          modelRubric: source-faithfulness
+        executableCases: []
+        coverageStatus: declared
+      - id: wiki-writer-boundary
+        kind: boundary-failure
+        fixtureProfile: wiki-source-queue
+        promptIntent: Correct a page set whose same leaf-granularity findings remain after two writer resubmissions.
+        expectedOutcome: BLOCKED with latest findings, attempt count, validation results, restored or safely preserved changes, clean no-change or committed state, and released claim.
+        requiredBehaviors:
+          - Stop at the governing correction cap.
+          - Preserve exact reviewed page inventory and unresolved condition.
+        forbiddenBehaviors:
+          - Continue retrying until a favorable verdict appears.
+          - Let the topic verifier own corrections.
+        judgePlan:
+          deterministicChecks:
+            - correction-loop-cap
+            - readiness-consistency
+            - claim-lifecycle
+          modelRubric: source-faithfulness
+        executableCases: []
+        coverageStatus: declared
