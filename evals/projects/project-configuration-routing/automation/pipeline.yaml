@@ -1,0 +1,5 @@
+name: verification
+steps:
+  - api-tests
+  - web-tests
+  - project-configuration-validation

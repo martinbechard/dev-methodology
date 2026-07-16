@@ -1,0 +1,16 @@
+agent-claim
+careful-coding
+create-project-configuration
+detect-technology-skills
+development-methodology
+documentation-bootstrap
+documentation-page-verify
+documentation-reverse-engineer
+fastapi
+nextjs-app-router
+organise-project-files
+python
+react-server-components
+structured-design
+structured-explanation
+tailwind-design-system

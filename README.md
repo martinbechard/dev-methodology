@@ -377,6 +377,25 @@ The placeholder [documentation-root] means the documentation root chosen by the 
 
 The project wiki should live at docs/wiki. It is a synthesized navigation and understanding layer, not the highest source of truth. Code and tests remain authoritative for actual behavior. Functional and technical documents can live under docs/wiki as wiki page subclasses or remain in their project documentation folders with wiki pages linking to them.
 
+## Agent And Skill Evaluations
+
+The evals directory owns synthetic fixtures, complete agent and skill coverage declarations, workflow packs, Judge definitions, sandbox profiles, evidence receipts, and concise results. Evaluation support targets Codex and Junie. Other generated adapters remain part of the distributable bundle but are outside this evaluation harness.
+
+Evaluation coverage has four distinct layers:
+
+1. Structural checks validate every skill, conceptual agent definition, generated adapter, detection rule, and catalog reference.
+2. Skill probes declare the applicable trigger, negative trigger, observable behavior, Judge plan, workflow associations, and matched skill-omission and wrong-skill controls for every bundled skill.
+3. Agent scenarios declare happy-path and boundary behavior, repository mutation authority, output-contract fields, supported harnesses, and Judge plans for every conceptual agent definition.
+4. Workflow packs evaluate code delivery, documentation and methodology, project setup, wiki lifecycle, and backlog work across their required independent handoffs.
+
+Deterministic Judges run before semantic judgment and own executable checks, schemas, trace identity, skill reads, mutation boundaries, command results, state transitions, and source or fixture hashes. A Model Judge is used only when exact checks cannot decide semantic quality. Its verdict cannot count as verified evidence until a Human Judge calibration set proves the configured agreement and critical-defect recall thresholds for the exact Judge prompt, model, reasoning profile, rubric, and calibration-set digests. A deterministic critical failure skips Model Judge execution.
+
+Fixtures are prepared once per content digest, dependency inputs, platform, architecture, and toolchain. Dependencies are installed only while populating that immutable prepared snapshot. Each run receives a disposable copy-on-write workspace when the platform supports it and a full disposable copy otherwise. Transient dependency, build, cache, and version-control trees do not participate in source hashing or source copying.
+
+Codex evaluation combines the runner-owned workspace boundary with the native read-only or workspace-write sandbox selected for the scenario. Junie evaluation uses isolated configuration, agent, skill, cache, and workspace locations, but its tool allow and deny lists are not treated as filesystem containment. Junie runs require captured evidence that the intended automatically selected subagent actually started. Every receipt reports external containment, workspace-only isolation, or unverified containment according to the evidence that the runner can prove.
+
+Model-visible context is allow-listed and recorded before invocation. Evaluation-only references, expected findings, Judge prompts, and calibration answers remain outside the evaluated workspace. A receipt without captured harness identity, exact skill digests and reads, Judge evidence, command evidence, workspace hashes, and trusted provenance remains declared or executed evidence rather than verified behavior.
+
 ## Verification
 
 Before publishing changes to this bundle, run:
