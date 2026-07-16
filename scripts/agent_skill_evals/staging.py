@@ -213,6 +213,7 @@ def stage_mcp_agent_ops_context(
     audit_root: Path,
     *,
     catalog_resource_allowlist: Mapping[str, Sequence[str]],
+    mcp_only_skill_ids: Sequence[str] = (),
 ) -> McpAgentOpsContext:
     """Create one isolated Codex or Junie MCP configuration for an evaluation run."""
     if harness not in SUPPORTED_HARNESSES:
@@ -241,15 +242,24 @@ def stage_mcp_agent_ops_context(
         raise ValueError("MCP treatment skill root must stay inside the disposable context root")
     available = tuple(available_skill_ids)
     treatment = frozenset(treatment_skill_ids)
+    mcp_only = frozenset(mcp_only_skill_ids)
+    catalog_treatment = treatment | mcp_only
     if (
         not available
         or len(available) != len(set(available))
         or any(not re.fullmatch(r"[a-z0-9][a-z0-9-]*", skill) for skill in available)
     ):
         raise ValueError("MCP available skill ids must be unique normalized skill names")
-    if not treatment.issubset(available):
+    if len(mcp_only_skill_ids) != len(mcp_only) or any(
+        not re.fullmatch(r"[a-z0-9][a-z0-9-]*", skill)
+        for skill in mcp_only_skill_ids
+    ):
+        raise ValueError("MCP-only skill ids must be unique normalized skill names")
+    if treatment & mcp_only:
+        raise ValueError("MCP-only skills must not be harness-preloaded treatment skills")
+    if not catalog_treatment.issubset(available):
         raise ValueError("MCP treatment skills must be present in the complete available catalog")
-    if set(catalog_resource_allowlist) - treatment:
+    if set(catalog_resource_allowlist) - catalog_treatment:
         raise ValueError("MCP catalog resources may be staged only for treatment skills")
     skill_root = destination_root / ".eval-context" / "mcp-agent-ops" / "skills"
     if skill_root.exists():
@@ -257,8 +267,12 @@ def stage_mcp_agent_ops_context(
     catalog_records: list[dict[str, object]] = []
     for skill_id in sorted(available):
         destination_skill = skill_root / skill_id
-        if skill_id in treatment:
-            source_skill = treatment_skill_root / skill_id
+        if skill_id in catalog_treatment:
+            source_skill = (
+                source_root / "skills" / skill_id
+                if skill_id in mcp_only
+                else treatment_skill_root / skill_id
+            )
             if source_skill.is_symlink() or not source_skill.is_dir():
                 raise ValueError(f"staged MCP treatment skill is missing: {skill_id}")
             source_manifest = source_skill / "SKILL.md"

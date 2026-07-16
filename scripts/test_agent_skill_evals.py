@@ -1844,9 +1844,15 @@ class HarnessAndJudgeTests(unittest.TestCase):
                 result_path.write_text("synthetic final response\n", encoding="utf-8")
                 outcome_by_tool = {
                     "skill_list": "CATALOG",
+                    "skill_load": "LOADED",
                     "skill_resource_load": "LOADED",
+                    "skill_validate": "VALID",
+                    "skill_refresh": "CATALOG",
                     "detect_technology_skills": "NO_VARIANT",
                     "claim_acquire": "PRIMARY",
+                    "claim_status": "STATUS",
+                    "claim_extend": "EXTENDED",
+                    "claim_heartbeat": "HEARTBEAT",
                     "verify_yaml": "OK",
                     "verify_markdown_links": "OK",
                     "claim_release": "RELEASED",
@@ -1854,9 +1860,23 @@ class HarnessAndJudgeTests(unittest.TestCase):
                 argument_digests = self.module.resolve_mcp_tool_argument_digests(
                     contract["requiredToolArguments"],
                     cwd,
+                    skill_root=context.skill_root,
                 )
                 records: list[dict[str, object]] = []
                 for index, (tool, outcome) in enumerate(outcome_by_tool.items(), start=1):
+                    completed_record = {
+                        "schema": "mcp-agent-ops-tool-audit",
+                        "version": 2,
+                        "sequence": len(records) + 2,
+                        "streamId": "3" * 32,
+                        "sessionId": context.audit_session_id,
+                        "callId": str(index),
+                        "tool": tool,
+                        "status": "completed",
+                        "resultDigest": "5" * 64,
+                    }
+                    if outcome is not None:
+                        completed_record["outcome"] = outcome
                     records.extend((
                         {
                             "schema": "mcp-agent-ops-tool-audit",
@@ -1869,18 +1889,7 @@ class HarnessAndJudgeTests(unittest.TestCase):
                             "status": "started",
                             "argumentsDigest": argument_digests[tool],
                         },
-                        {
-                            "schema": "mcp-agent-ops-tool-audit",
-                            "version": 2,
-                            "sequence": len(records) + 2,
-                            "streamId": "3" * 32,
-                            "sessionId": context.audit_session_id,
-                            "callId": str(index),
-                            "tool": tool,
-                            "status": "completed",
-                            "resultDigest": "5" * 64,
-                            "outcome": outcome,
-                        },
+                        completed_record,
                     ))
                 context.audit_log.write_text(
                     "\n".join(json.dumps(record) for record in records) + "\n",
@@ -1939,6 +1948,7 @@ class HarnessAndJudgeTests(unittest.TestCase):
                 self.module.resolve_mcp_tool_argument_digests(
                     contract["requiredToolArguments"],
                     workspace,
+                    skill_root=context.skill_root,
                 ),
                 mcp_record["requiredToolArgumentDigests"],
             )
@@ -3069,13 +3079,13 @@ class HarnessAndJudgeTests(unittest.TestCase):
             f"#!{sys.executable}\n"
             "import json, sys\n"
             "if sys.argv[1:] == ['--version']:\n"
-            "    print('mcp-agent-ops 0.2.2')\n"
+            "    print('mcp-agent-ops 0.2.3')\n"
             "elif sys.argv[1:] == ['--identity-json']:\n"
             "    print(json.dumps({\n"
             "        'schema': 'mcp-agent-ops-runtime-identity',\n"
             "        'schemaVersion': 1,\n"
             "        'package': 'mcp-agent-ops',\n"
-            "        'packageVersion': '0.2.2',\n"
+            "        'packageVersion': '0.2.3',\n"
             f"        'runtimeDigest': '{runtime_digest}',\n"
             "        'fileCount': 3,\n"
             "    }, sort_keys=True))\n"
@@ -3092,7 +3102,7 @@ class HarnessAndJudgeTests(unittest.TestCase):
             self._write_fake_mcp_agent_ops(executable, runtime_digest)
             identity = self.module.capture_mcp_agent_ops_identity(
                 executable,
-                required_version="0.2.2",
+                required_version="0.2.3",
                 required_runtime_digest=runtime_digest,
             )
             self.assertEqual(executable.resolve(), identity.executable)
@@ -3102,7 +3112,7 @@ class HarnessAndJudgeTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "runtime digest"):
                 self.module.capture_mcp_agent_ops_identity(
                     executable,
-                    required_version="0.2.2",
+                    required_version="0.2.3",
                     required_runtime_digest="b" * 64,
                 )
 
@@ -3115,7 +3125,7 @@ class HarnessAndJudgeTests(unittest.TestCase):
         )
         identity = self.module.McpAgentOpsIdentity(
             Path(sys.executable).resolve(),
-            "0.2.2",
+            "0.2.3",
             "1" * 64,
             "2" * 64,
             "3" * 64,
@@ -3131,7 +3141,7 @@ class HarnessAndJudgeTests(unittest.TestCase):
                 context = self.module.ContextPackBuilder(ROOT).stage(
                     harness,
                     "project-configurator",
-                    case["requiredSkills"],
+                    case["executionSkills"],
                     workspace,
                     skill_files=case["skillResourceAllowlist"],
                 )
@@ -3157,12 +3167,13 @@ class HarnessAndJudgeTests(unittest.TestCase):
                     ROOT,
                     context.skill_location,
                     available,
-                    case["requiredSkills"],
+                    case["executionSkills"],
                     evidence / "audit.jsonl",
                     evidence,
                     catalog_resource_allowlist=case["mcpAgentOps"][
                         "catalogResourceAllowlist"
                     ],
+                    mcp_only_skill_ids=case["mcpAgentOps"]["mcpOnlySkills"],
                 )
                 staged_names = {
                     path.name for path in mcp.skill_root.iterdir() if path.is_dir()
@@ -3177,6 +3188,14 @@ class HarnessAndJudgeTests(unittest.TestCase):
                         / "SKILL.md"
                     ).read_text(encoding="utf-8"),
                 )
+                for skill_id in case["mcpAgentOps"]["mcpOnlySkills"]:
+                    self.assertFalse((context.skill_location / skill_id).exists())
+                    self.assertNotIn(
+                        "# Evaluation catalog entry",
+                        (mcp.skill_root / skill_id / "SKILL.md").read_text(
+                            encoding="utf-8"
+                        ),
+                    )
                 self.assertTrue(
                     (
                         mcp.skill_root
@@ -3256,18 +3275,7 @@ class HarnessAndJudgeTests(unittest.TestCase):
                     )
                     self.assertFalse(codex_profile["network"]["enabled"])
                     self.assertEqual(
-                        [
-                            "claim_status",
-                            "claim_acquire",
-                            "claim_extend",
-                            "claim_heartbeat",
-                            "claim_release",
-                            "skill_list",
-                            "skill_resource_load",
-                            "detect_technology_skills",
-                            "verify_yaml",
-                            "verify_markdown_links",
-                        ],
+                        case["mcpAgentOps"]["enabledTools"],
                         codex_configuration["mcp_servers"]["mcp-agent-ops"][
                             "enabled_tools"
                         ],
@@ -3302,18 +3310,7 @@ class HarnessAndJudgeTests(unittest.TestCase):
                                 "pattern": f"mcp-agent-ops:{tool}",
                                 "action": "allow",
                             }
-                            for tool in (
-                                "claim_status",
-                                "claim_acquire",
-                                "claim_extend",
-                                "claim_heartbeat",
-                                "claim_release",
-                                "skill_list",
-                                "skill_resource_load",
-                                "detect_technology_skills",
-                                "verify_yaml",
-                                "verify_markdown_links",
-                            )
+                            for tool in case["mcpAgentOps"]["enabledTools"]
                         ],
                         allowlist["rules"]["mcpTools"]["rules"],
                     )
@@ -3419,7 +3416,7 @@ class HarnessAndJudgeTests(unittest.TestCase):
                     with self.assertRaisesRegex(ValueError, message):
                         self.module.read_mcp_agent_ops_audit(path)
 
-    def test_mcp_shared_audit_selects_one_session_bound_outcome_stream(self) -> None:
+    def test_mcp_shared_audit_rejects_calls_across_process_streams(self) -> None:
         session_id = "a" * 32
         parent_stream = "b" * 32
         agent_stream = "c" * 32
@@ -3490,19 +3487,12 @@ class HarnessAndJudgeTests(unittest.TestCase):
                 encoding="utf-8",
             )
             validated = self.module.read_mcp_agent_ops_audit(path)
-            selected, completed, outcomes = self.module.select_mcp_tool_stream(
-                validated,
-                [["skill_list", "detect_technology_skills"], [
-                    "claim_acquire",
-                    "verify_yaml",
-                    "verify_markdown_links",
-                    "claim_release",
-                ]],
-                {tool: [outcome] for tool, outcome in tools},
-            )
-            self.assertEqual(agent_stream, selected)
-            self.assertEqual([tool for tool, _outcome in tools], completed)
-            self.assertEqual(["OK"], outcomes["verify_yaml"])
+            with self.assertRaisesRegex(ValueError, "one call-bearing process stream"):
+                self.module.select_mcp_tool_stream(
+                    validated,
+                    [[tool for tool, _outcome in tools]],
+                    {tool: [outcome] for tool, outcome in tools},
+                )
 
             mixed = [dict(record) for record in records]
             mixed[-1]["sessionId"] = "d" * 32
@@ -3513,8 +3503,12 @@ class HarnessAndJudgeTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "mixes evaluation session"):
                 self.module.read_mcp_agent_ops_audit(path)
 
-            missing_outcome = [dict(record) for record in records]
-            missing_outcome[-2].pop("outcome")
+            missing_outcome = [
+                dict(record)
+                for record in records
+                if record["streamId"] == agent_stream
+            ]
+            missing_outcome[-1].pop("outcome")
             path.write_text(
                 "\n".join(json.dumps(record) for record in missing_outcome) + "\n",
                 encoding="utf-8",
@@ -3580,13 +3574,13 @@ class HarnessAndJudgeTests(unittest.TestCase):
                 encoding="utf-8",
             )
             validated = self.module.read_mcp_agent_ops_audit(path)
-            selected, _completed, _outcomes = self.module.select_mcp_tool_stream(
-                validated,
-                [["verify_yaml"]],
-                {"verify_yaml": ["OK"]},
-                expected_digests,
-            )
-            self.assertEqual(expected_stream, selected)
+            with self.assertRaisesRegex(ValueError, "one call-bearing process stream"):
+                self.module.select_mcp_tool_stream(
+                    validated,
+                    [["verify_yaml"]],
+                    {"verify_yaml": ["OK"]},
+                    expected_digests,
+                )
 
             exact_but_rejected = [dict(record) for record in records[:2]]
             exact_but_rejected[0]["argumentsDigest"] = expected_digest
@@ -3611,6 +3605,15 @@ class HarnessAndJudgeTests(unittest.TestCase):
         )
         with tempfile.TemporaryDirectory() as directory:
             workspace = Path(directory)
+            skill_root = workspace / ".eval-context" / "mcp-agent-ops" / "skills"
+            self.assertEqual(
+                self.module.mcp_value_digest({"paths": [str(skill_root.resolve())]}),
+                self.module.resolve_mcp_tool_argument_digests(
+                    {"skill_validate": {"paths": ["$SKILL_ROOT"]}},
+                    workspace,
+                    skill_root=skill_root,
+                )["skill_validate"],
+            )
             with self.assertRaisesRegex(ValueError, "complete value"):
                 self.module.resolve_mcp_tool_argument_digests(
                     {"verify_yaml": {"repository_root": "$WORKSPACE/child"}},
@@ -3621,6 +3624,130 @@ class HarnessAndJudgeTests(unittest.TestCase):
                     {"verify_yaml": {"repository_root": "$PROJECT_ROOT"}},
                     workspace,
                 )
+
+    def test_mcp_case_requires_every_integrated_operation_under_exact_policy(self) -> None:
+        case = self.module.load_cases()["project-configuration-routing"]
+        contract = case["mcpAgentOps"]
+        expected_tools = [
+            "claim_status",
+            "claim_acquire",
+            "claim_extend",
+            "claim_heartbeat",
+            "claim_release",
+            "skill_list",
+            "skill_load",
+            "skill_resource_load",
+            "skill_refresh",
+            "skill_validate",
+            "detect_technology_skills",
+            "verify_yaml",
+            "verify_markdown_links",
+        ]
+        self.assertEqual(expected_tools, contract["enabledTools"])
+        self.assertEqual("0.2.3", contract["requiredVersion"])
+        self.assertEqual(
+            "86e8d2b0af7fe421e88e3aec18e035b005c33474c4351332c9d31830908e5193",
+            contract["requiredRuntimeDigest"],
+        )
+        self.assertEqual(
+            ["PRIMARY"],
+            contract["requiredToolOutcomes"]["claim_acquire"],
+        )
+        required = {
+            tool
+            for sequence in contract["requiredToolSequences"]
+            for tool in sequence
+        }
+        self.assertTrue(
+            {
+                "skill_load",
+                "skill_validate",
+                "skill_refresh",
+                "claim_status",
+                "claim_extend",
+                "claim_heartbeat",
+            }.issubset(required)
+        )
+        self.assertEqual(
+            ["skill-authoring", "maintain-methodology-documentation"],
+            contract["mcpOnlySkills"],
+        )
+        self.assertEqual(set(contract["enabledTools"]), required)
+        self.assertEqual(
+            [[
+                "skill_list",
+                "skill_load",
+                "skill_resource_load",
+                "skill_validate",
+                "skill_refresh",
+                "detect_technology_skills",
+                "claim_acquire",
+                "claim_status",
+                "claim_extend",
+                "claim_heartbeat",
+                "verify_yaml",
+                "verify_markdown_links",
+                "claim_release",
+            ]],
+            contract["requiredToolSequences"],
+        )
+        escaping_skill_root = yaml.safe_load(yaml.safe_dump(case))
+        escaping_skill_root["mcpAgentOps"]["requiredToolArguments"][
+            "skill_validate"
+        ]["paths"] = ["$SKILL_ROOT/child"]
+        self.assertTrue(
+            any(
+                "path sentinels as complete values" in error
+                for error in self.module.validate_case_definition(
+                    escaping_skill_root
+                )
+            )
+        )
+
+    def test_completed_mcp_call_without_safe_outcome_is_not_semantic_evidence(self) -> None:
+        records = [
+            {
+                "schema": "mcp-agent-ops-tool-audit",
+                "version": 2,
+                "sequence": 1,
+                "streamId": "a" * 32,
+                "sessionId": "b" * 32,
+                "callId": "1",
+                "tool": "skill_validate",
+                "status": "started",
+                "argumentsDigest": "c" * 64,
+            },
+            {
+                "schema": "mcp-agent-ops-tool-audit",
+                "version": 2,
+                "sequence": 2,
+                "streamId": "a" * 32,
+                "sessionId": "b" * 32,
+                "callId": "1",
+                "tool": "skill_validate",
+                "status": "completed",
+                "resultDigest": "d" * 64,
+            },
+        ]
+        self.assertEqual(
+            [{}],
+            self.module.completed_mcp_tool_outcomes(records),
+        )
+        self.assertEqual(
+            [[{
+                "tool": "skill_validate",
+                "argumentsDigest": "c" * 64,
+                "outcome": None,
+            }]],
+            self.module.completed_mcp_tool_calls(records),
+        )
+        with self.assertRaisesRegex(ValueError, "no process stream"):
+            self.module.select_mcp_tool_stream(
+                records,
+                [["skill_validate"]],
+                {"skill_validate": ["VALID"]},
+                {"skill_validate": "c" * 64},
+            )
 
     def test_mcp_stream_requires_the_exact_calls_in_declared_order(self) -> None:
         session_id = "a" * 32
@@ -3680,11 +3807,61 @@ class HarnessAndJudgeTests(unittest.TestCase):
                     expected,
                 )
 
+    def test_mcp_stream_rejects_extra_or_repeated_enabled_calls(self) -> None:
+        session_id = "a" * 32
+        stream_id = "b" * 32
+        expected = {
+            "skill_validate": "1" * 64,
+            "skill_refresh": "2" * 64,
+        }
+        calls = [
+            ("skill_validate", expected["skill_validate"], "VALID"),
+            ("skill_refresh", expected["skill_refresh"], "CATALOG"),
+            ("skill_validate", expected["skill_validate"], "VALID"),
+        ]
+        records: list[dict[str, object]] = []
+        for call_index, (tool, argument_digest, outcome) in enumerate(calls, start=1):
+            records.extend((
+                {
+                    "schema": "mcp-agent-ops-tool-audit",
+                    "version": 2,
+                    "sequence": len(records) + 1,
+                    "streamId": stream_id,
+                    "sessionId": session_id,
+                    "callId": str(call_index),
+                    "tool": tool,
+                    "status": "started",
+                    "argumentsDigest": argument_digest,
+                },
+                {
+                    "schema": "mcp-agent-ops-tool-audit",
+                    "version": 2,
+                    "sequence": len(records) + 2,
+                    "streamId": stream_id,
+                    "sessionId": session_id,
+                    "callId": str(call_index),
+                    "tool": tool,
+                    "status": "completed",
+                    "resultDigest": "3" * 64,
+                    "outcome": outcome,
+                },
+            ))
+        with self.assertRaisesRegex(ValueError, "no process stream"):
+            self.module.select_mcp_tool_stream(
+                records,
+                [["skill_validate", "skill_refresh"]],
+                {
+                    "skill_validate": ["VALID"],
+                    "skill_refresh": ["CATALOG"],
+                },
+                expected,
+            )
+
     def test_mcp_case_contract_is_valid_and_probe_variants_disable_mcp(self) -> None:
         case = self.module.load_cases()["project-configuration-routing"]
         self.assertEqual([], self.module.validate_case_definition(case))
         duplicated = yaml.safe_load(yaml.safe_dump(case))
-        duplicated["mcpAgentOps"]["requiredToolSequences"][1].append(
+        duplicated["mcpAgentOps"]["requiredToolSequences"][0].append(
             "verify_yaml"
         )
         self.assertTrue(
@@ -3749,9 +3926,15 @@ class HarnessAndJudgeTests(unittest.TestCase):
         validation_module = sys.modules[self.module.validate_evidence.__module__]
         outcomes = {
             "skill_list": "CATALOG",
+            "skill_load": "LOADED",
             "skill_resource_load": "LOADED",
+            "skill_validate": "VALID",
+            "skill_refresh": "CATALOG",
             "detect_technology_skills": "READY",
             "claim_acquire": "PRIMARY",
+            "claim_status": "STATUS",
+            "claim_extend": "EXTENDED",
+            "claim_heartbeat": "HEARTBEAT",
             "verify_yaml": "OK",
             "verify_markdown_links": "OK",
             "claim_release": "RELEASED",
@@ -3764,9 +3947,28 @@ class HarnessAndJudgeTests(unittest.TestCase):
             argument_digests = self.module.resolve_mcp_tool_argument_digests(
                 contract["requiredToolArguments"],
                 root / "workspace",
+                skill_root=(
+                    root
+                    / "workspace"
+                    / ".eval-context"
+                    / "mcp-agent-ops"
+                    / "skills"
+                ),
             )
             records: list[dict[str, object]] = []
             for call_index, tool in enumerate(tools, start=1):
+                completed_record = {
+                    "schema": "mcp-agent-ops-tool-audit",
+                    "version": 2,
+                    "sequence": len(records) + 2,
+                    "streamId": stream_id,
+                    "sessionId": session_id,
+                    "callId": str(call_index),
+                    "tool": tool,
+                    "status": "completed",
+                    "resultDigest": "b" * 64,
+                }
+                completed_record["outcome"] = outcomes[tool]
                 records.extend((
                     {
                         "schema": "mcp-agent-ops-tool-audit",
@@ -3779,18 +3981,7 @@ class HarnessAndJudgeTests(unittest.TestCase):
                         "status": "started",
                         "argumentsDigest": argument_digests[tool],
                     },
-                    {
-                        "schema": "mcp-agent-ops-tool-audit",
-                        "version": 2,
-                        "sequence": len(records) + 2,
-                        "streamId": stream_id,
-                        "sessionId": session_id,
-                        "callId": str(call_index),
-                        "tool": tool,
-                        "status": "completed",
-                        "resultDigest": "b" * 64,
-                        "outcome": outcomes[tool],
-                    },
+                    completed_record,
                 ))
             evidence_path = root / "evidence.yaml"
             evidence_path.write_text("receipt\n", encoding="utf-8")
@@ -3828,7 +4019,13 @@ class HarnessAndJudgeTests(unittest.TestCase):
                         "command": str(Path(sys.executable).resolve()),
                         "args": [],
                         "env": {
-                            "MCP_AGENT_OPS_SKILL_ROOTS": str(root / "skills"),
+                            "MCP_AGENT_OPS_SKILL_ROOTS": str(
+                                root
+                                / "workspace"
+                                / ".eval-context"
+                                / "mcp-agent-ops"
+                                / "skills"
+                            ),
                             "MCP_AGENT_OPS_DETECTION_REGISTRY": str(root / "registry.yaml"),
                             "MCP_AGENT_OPS_WORKSPACE_ROOTS": str(root / "workspace"),
                             "MCP_AGENT_OPS_AUDIT_LOG": str(audit_path),
@@ -3839,18 +4036,7 @@ class HarnessAndJudgeTests(unittest.TestCase):
                         },
                         "enabled": True,
                         "required": True,
-                        "enabled_tools": [
-                            "claim_status",
-                            "claim_acquire",
-                            "claim_extend",
-                            "claim_heartbeat",
-                            "claim_release",
-                            "skill_list",
-                            "skill_resource_load",
-                            "detect_technology_skills",
-                            "verify_yaml",
-                            "verify_markdown_links",
-                        ],
+                        "enabled_tools": contract["enabledTools"],
                         "default_tools_approval_mode": "approve",
                         "startup_timeout_sec": 15.0,
                         "tool_timeout_sec": 60.0,
@@ -3969,6 +4155,39 @@ class HarnessAndJudgeTests(unittest.TestCase):
             )
             self.assertEqual([], errors)
             self.assertEqual([], stale)
+            server_environment = configuration["mcp_servers"]["mcp-agent-ops"][
+                "env"
+            ]
+            staged_skill_root = server_environment["MCP_AGENT_OPS_SKILL_ROOTS"]
+            server_environment["MCP_AGENT_OPS_SKILL_ROOTS"] = str(
+                root / "unrelated-skills"
+            )
+            configuration_path.write_text(
+                json.dumps(configuration, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
+            mcp_run["configurationDigest"] = digest(configuration_path)
+            identity["configurationDigest"] = mcp_run["configurationDigest"]
+            identity["configurationEvidenceDigest"] = mcp_run[
+                "configurationDigest"
+            ]
+            identity_path.write_text(
+                json.dumps(identity, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
+            mcp_run["identityEvidenceDigest"] = digest(identity_path)
+            skill_root_errors: list[str] = []
+            validation_module._validate_mcp_agent_ops_run(
+                case,
+                {"harness": "codex", "mcpAgentOps": mcp_run},
+                evidence_path,
+                skill_root_errors,
+                [],
+            )
+            self.assertTrue(
+                any("staged workspace catalog" in error for error in skill_root_errors)
+            )
+            server_environment["MCP_AGENT_OPS_SKILL_ROOTS"] = staged_skill_root
             home_key = str(Path.home().resolve())
             filesystem = configuration["permissions"]["mcp-eval-git-write"][
                 "filesystem"

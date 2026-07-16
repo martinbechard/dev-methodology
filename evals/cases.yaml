@@ -305,7 +305,7 @@ cases:
     executionStatus: runnable
     project: evals/projects/project-configuration-routing
     task: TASK.md
-    allowedWritePaths: [PROJECT.yaml, AGENTS.md, services/api/AGENTS.md, apps/web/AGENTS.md, automation/AGENTS.md, eval-result.md]
+    allowedWritePaths: [PROJECT.yaml, AGENTS.md, services/api/AGENTS.md, apps/web/AGENTS.md, automation/AGENTS.md, eval-result.md, mcp-operation-evidence.md]
     ephemeralWritePaths: []
     install: null
     verify:
@@ -314,7 +314,7 @@ cases:
         - -c
         - |
           from pathlib import Path
-          required = [Path("PROJECT.yaml"), Path("AGENTS.md"), Path("services/api/AGENTS.md"), Path("apps/web/AGENTS.md"), Path("automation/AGENTS.md"), Path("eval-result.md")]
+          required = [Path("PROJECT.yaml"), Path("AGENTS.md"), Path("services/api/AGENTS.md"), Path("apps/web/AGENTS.md"), Path("automation/AGENTS.md"), Path("eval-result.md"), Path("mcp-operation-evidence.md")]
           missing = [str(path) for path in required if not path.is_file()]
           nested = [path for path in Path(".").rglob("PROJECT.yaml") if path != Path("PROJECT.yaml")]
           message = ("missing required output: " + ", ".join(missing)) if missing else (("nested PROJECT.yaml forbidden: " + ", ".join(map(str, nested))) if nested else "")
@@ -327,7 +327,8 @@ cases:
     harnessExecutionStatus: {codex: runnable, junie: runnable}
     requiredAgents: [project-configurator]
     agentScenarios: [project-configurator-happy]
-    requiredSkills: [create-project-configuration, detect-technology-skills, development-methodology, documentation-page-verify, organise-project-files, agent-claim]
+    requiredSkills: [create-project-configuration, detect-technology-skills, development-methodology, documentation-page-verify, organise-project-files, agent-claim, skill-authoring, maintain-methodology-documentation]
+    executionSkills: [create-project-configuration, detect-technology-skills, development-methodology, documentation-page-verify, organise-project-files, agent-claim]
     skillProbes: [probe-create-project-configuration, probe-detect-technology-skills, probe-development-methodology, probe-documentation-page-verify, probe-organise-project-files, probe-agent-claim]
     fixtureBackedProbeClaims: [probe-create-project-configuration, probe-detect-technology-skills, probe-development-methodology, probe-organise-project-files]
     workflowPack: project-setup
@@ -336,32 +337,44 @@ cases:
       deterministicChecks: [model-input-safety, skill-read-trace, harness-agent-identity, mcp-tool-trace, claim-lifecycle, technology-detection-evidence, artifact-structure, allowed-paths-only, contradiction-scan, snapshot-reset, local-execution-boundary]
       modelRubric: workflow-quality
     mcpAgentOps:
-      schemaVersion: 2
+      schemaVersion: 3
       enablement: base-case-only
       serverName: mcp-agent-ops
-      requiredVersion: 0.2.2
-      requiredRuntimeDigest: 78a807fd368730c0ec4856927baa4303f63551e3c2b60db519790a8fb404e2af
+      enabledTools: [claim_status, claim_acquire, claim_extend, claim_heartbeat, claim_release, skill_list, skill_load, skill_resource_load, skill_refresh, skill_validate, detect_technology_skills, verify_yaml, verify_markdown_links]
+      mcpOnlySkills: [skill-authoring, maintain-methodology-documentation]
+      requiredVersion: 0.2.3
+      requiredRuntimeDigest: 86e8d2b0af7fe421e88e3aec18e035b005c33474c4351332c9d31830908e5193
       skillCatalogSource: available-skills.txt
       catalogResourceAllowlist:
         detect-technology-skills: [references/technology-skill-detection-registry.yaml]
         development-methodology: [assets/templates/project-template.yaml]
       requiredToolSequences:
-        - [skill_list, skill_resource_load, detect_technology_skills]
-        - [claim_acquire, verify_yaml, verify_markdown_links, claim_release]
+        - [skill_list, skill_load, skill_resource_load, skill_validate, skill_refresh, detect_technology_skills, claim_acquire, claim_status, claim_extend, claim_heartbeat, verify_yaml, verify_markdown_links, claim_release]
       requiredToolOutcomes:
         skill_list: [CATALOG]
+        skill_load: [LOADED]
         skill_resource_load: [LOADED]
+        skill_validate: [VALID]
+        skill_refresh: [CATALOG]
         detect_technology_skills: [READY, NO_VARIANT]
-        claim_acquire: [PRIMARY, ISOLATE, RECOVER]
+        claim_acquire: [PRIMARY]
+        claim_status: [STATUS]
+        claim_extend: [EXTENDED]
+        claim_heartbeat: [HEARTBEAT]
         verify_yaml: [OK]
         verify_markdown_links: [OK]
         claim_release: [RELEASED]
       requiredToolArguments:
         skill_list: {}
+        skill_load:
+          names: [skill-authoring, maintain-methodology-documentation]
         skill_resource_load:
           requests:
             - skill_name: development-methodology
               resource_path: assets/templates/project-template.yaml
+        skill_validate:
+          paths: [$SKILL_ROOT]
+        skill_refresh: {}
         detect_technology_skills:
           project_root: $WORKSPACE
           scopes: [services/api, apps/web, automation]
@@ -373,12 +386,21 @@ cases:
           root_task_id: project-configuration-routing
           files: [PROJECT.yaml, AGENTS.md, services/api/AGENTS.md, apps/web/AGENTS.md, automation/AGENTS.md, eval-result.md]
           scope_reason: evaluation output ownership
+        claim_status:
+          repository: $WORKSPACE
+        claim_extend:
+          repository: $WORKSPACE
+          claim_id: project-configuration-routing
+          files: [mcp-operation-evidence.md]
+        claim_heartbeat:
+          repository: $WORKSPACE
+          claim_id: project-configuration-routing
         verify_yaml:
           repository_root: $WORKSPACE
           paths: [PROJECT.yaml]
         verify_markdown_links:
           repository_root: $WORKSPACE
-          patterns: [AGENTS.md, services/api/AGENTS.md, apps/web/AGENTS.md, automation/AGENTS.md, eval-result.md]
+          patterns: [AGENTS.md, services/api/AGENTS.md, apps/web/AGENTS.md, automation/AGENTS.md, eval-result.md, mcp-operation-evidence.md]
         claim_release:
           repository: $WORKSPACE
           claim_id: project-configuration-routing
@@ -396,7 +418,9 @@ cases:
       documentation-page-verify: [SKILL.md]
       organise-project-files: [SKILL.md]
       agent-claim: [SKILL.md, scripts/claim.py]
-    requiredEvidence: [PROJECT-CONFIGURATION, DETECTION-SKILLSETS, ROUTING-FILES, PLACEMENT-AUDIT]
+      skill-authoring: [SKILL.md]
+      maintain-methodology-documentation: [SKILL.md]
+    requiredEvidence: [PROJECT-CONFIGURATION, DETECTION-SKILLSETS, ROUTING-FILES, PLACEMENT-AUDIT, MCP-SKILL-LOAD, MCP-SKILL-VALIDATION, MCP-SKILL-REFRESH, MCP-CLAIM-STATUS, MCP-CLAIM-EXTENSION, MCP-CLAIM-HEARTBEAT]
   - id: wiki-raw-ingest
     coverageStatus: fixture-backed
     executionStatus: runnable

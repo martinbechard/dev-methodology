@@ -362,6 +362,8 @@ def _validate_mcp_agent_ops_case(
         "schemaVersion",
         "enablement",
         "serverName",
+        "enabledTools",
+        "mcpOnlySkills",
         "requiredVersion",
         "requiredRuntimeDigest",
         "skillCatalogSource",
@@ -371,13 +373,27 @@ def _validate_mcp_agent_ops_case(
         "requiredToolArguments",
     }
     if set(value) != expected_fields:
-        errors.append("case.mcpAgentOps must define the complete version-two contract")
-    if value.get("schemaVersion") != 2:
-        errors.append("case.mcpAgentOps.schemaVersion must be 2")
+        errors.append("case.mcpAgentOps must define the complete version-three contract")
+    if value.get("schemaVersion") != 3:
+        errors.append("case.mcpAgentOps.schemaVersion must be 3")
     if value.get("enablement") != "base-case-only":
         errors.append("case.mcpAgentOps.enablement must be base-case-only")
     if value.get("serverName") != "mcp-agent-ops":
         errors.append("case.mcpAgentOps.serverName must be mcp-agent-ops")
+    enabled_tools = value.get("enabledTools")
+    _validate_string_list(
+        enabled_tools,
+        "case.mcpAgentOps.enabledTools",
+        errors,
+        required=True,
+    )
+    if isinstance(enabled_tools, list) and (
+        len(enabled_tools) != len(set(_string_items(enabled_tools)))
+        or any(tool not in _MCP_AGENT_OPS_TOOL_NAMES for tool in enabled_tools)
+    ):
+        errors.append(
+            "case.mcpAgentOps.enabledTools must list unique known operations"
+        )
     if not isinstance(value.get("requiredVersion"), str) or not re.fullmatch(
         r"\d+\.\d+\.\d+(?:[-+][A-Za-z0-9.-]+)?",
         str(value.get("requiredVersion")),
@@ -402,13 +418,33 @@ def _validate_mcp_agent_ops_case(
     execution_skills = set(
         _string_items(case.get("executionSkills", case.get("requiredSkills")))
     )
+    required_skills = set(_string_items(case.get("requiredSkills")))
+    if not execution_skills or not execution_skills.issubset(required_skills):
+        errors.append(
+            "case.executionSkills must be a non-empty subset of requiredSkills"
+        )
+    mcp_only_skills = value.get("mcpOnlySkills")
+    _validate_string_list(
+        mcp_only_skills,
+        "case.mcpAgentOps.mcpOnlySkills",
+        errors,
+        required=True,
+    )
+    mcp_only = set(_string_items(mcp_only_skills))
+    if isinstance(mcp_only_skills, list) and len(mcp_only_skills) != len(mcp_only):
+        errors.append("case.mcpAgentOps.mcpOnlySkills must be unique")
+    if not mcp_only.issubset(required_skills) or mcp_only & execution_skills:
+        errors.append(
+            "case.mcpAgentOps.mcpOnlySkills must be required and excluded from harness preloading"
+        )
+    catalog_treatment_skills = execution_skills | mcp_only
     if not isinstance(catalog_resources, Mapping) or not catalog_resources:
         errors.append("case.mcpAgentOps.catalogResourceAllowlist must be a non-empty mapping")
         catalog_resources = {}
     for skill, paths in catalog_resources.items():
         field = f"case.mcpAgentOps.catalogResourceAllowlist.{skill}"
-        if not isinstance(skill, str) or skill not in execution_skills:
-            errors.append(f"{field} must name one execution skill")
+        if not isinstance(skill, str) or skill not in catalog_treatment_skills:
+            errors.append(f"{field} must name one catalog treatment skill")
         if (
             not isinstance(paths, list)
             or not paths
@@ -455,6 +491,10 @@ def _validate_mcp_agent_ops_case(
     if len(sequenced_tools) != len(required_tools):
         errors.append(
             "case.mcpAgentOps.requiredToolSequences must not repeat a required tool"
+        )
+    if set(_string_items(enabled_tools)) != required_tools:
+        errors.append(
+            "case.mcpAgentOps.enabledTools must cover exactly the sequenced tools"
         )
     if set(outcomes) != required_tools:
         errors.append(
@@ -523,6 +563,23 @@ def _validate_mcp_agent_ops_case(
                     staged = context_resources.get(skill)
                     if isinstance(staged, list) and resource in staged:
                         errors.append(f"{field} resource must be available only through MCP")
+    skill_load_arguments = arguments.get("skill_load")
+    expected_mcp_only = (
+        list(mcp_only_skills) if isinstance(mcp_only_skills, list) else []
+    )
+    if not isinstance(skill_load_arguments, Mapping) or skill_load_arguments.get(
+        "names"
+    ) != expected_mcp_only:
+        errors.append(
+            "case.mcpAgentOps.requiredToolArguments.skill_load.names must match mcpOnlySkills"
+        )
+    skill_validate_arguments = arguments.get("skill_validate")
+    if not isinstance(skill_validate_arguments, Mapping) or skill_validate_arguments.get(
+        "paths"
+    ) != ["$SKILL_ROOT"]:
+        errors.append(
+            "case.mcpAgentOps.requiredToolArguments.skill_validate.paths must be the staged skill root"
+        )
 
 
 def _validate_mcp_argument_template(
@@ -544,9 +601,16 @@ def _validate_mcp_argument_template(
             _validate_mcp_argument_template(child, f"{field}[{index}]", errors)
         return
     if isinstance(value, str):
-        if "$WORKSPACE" in value and value != "$WORKSPACE":
-            errors.append(f"{field} must use $WORKSPACE as a complete value")
-        elif re.fullmatch(r"\$[A-Z][A-Z0-9_]*", value) and value != "$WORKSPACE":
+        if (
+            "$WORKSPACE" in value and value != "$WORKSPACE"
+        ) or (
+            "$SKILL_ROOT" in value and value != "$SKILL_ROOT"
+        ):
+            errors.append(f"{field} must use path sentinels as complete values")
+        elif re.fullmatch(r"\$[A-Z][A-Z0-9_]*", value) and value not in {
+            "$WORKSPACE",
+            "$SKILL_ROOT",
+        }:
             errors.append(f"{field} contains an unknown placeholder")
         return
     if value is None or isinstance(value, (bool, int, float)):
@@ -1733,18 +1797,7 @@ def _validate_mcp_configuration_artifact(
     if harness == "codex" and (
         server.get("enabled") is not True
         or server.get("required") is not True
-        or server.get("enabled_tools") != [
-            "claim_status",
-            "claim_acquire",
-            "claim_extend",
-            "claim_heartbeat",
-            "claim_release",
-            "skill_list",
-            "skill_resource_load",
-            "detect_technology_skills",
-            "verify_yaml",
-            "verify_markdown_links",
-        ]
+        or server.get("enabled_tools") != contract.get("enabledTools")
         or server.get("default_tools_approval_mode") != "approve"
         or server.get("startup_timeout_sec") != 15.0
         or server.get("tool_timeout_sec") != 60.0
@@ -1771,12 +1824,28 @@ def _validate_mcp_configuration_artifact(
     if environment.get("MCP_AGENT_OPS_REQUIRED_RUNTIME_DIGEST") != value.get("runtimeDigest"):
         errors.append("evidence MCP server runtime pin differs from the receipt")
     workspace_root = environment.get("MCP_AGENT_OPS_WORKSPACE_ROOTS")
+    skill_root = environment.get("MCP_AGENT_OPS_SKILL_ROOTS")
     required_arguments = contract.get("requiredToolArguments")
-    if isinstance(workspace_root, str) and isinstance(required_arguments, Mapping):
+    if (
+        isinstance(workspace_root, str)
+        and isinstance(skill_root, str)
+        and isinstance(required_arguments, Mapping)
+    ):
+        expected_skill_root = (
+            Path(workspace_root).resolve()
+            / ".eval-context"
+            / "mcp-agent-ops"
+            / "skills"
+        )
+        if Path(skill_root).resolve() != expected_skill_root:
+            errors.append(
+                "evidence MCP skill root must be the staged workspace catalog"
+            )
         try:
             expected_argument_digests = resolve_mcp_tool_argument_digests(
                 required_arguments,
                 Path(workspace_root),
+                skill_root=Path(skill_root),
             )
         except ValueError as error:
             errors.append(f"evidence MCP tool argument contract is invalid: {error}")

@@ -911,9 +911,13 @@ def _handle_harness_invocation(
                 str(tool): list(outcomes)
                 for tool, outcomes in mcp_contract["requiredToolOutcomes"].items()
             }
+            staged_mcp_skill_root = (
+                active_root / ".eval-context" / "mcp-agent-ops" / "skills"
+            )
             required_tool_argument_digests = resolve_mcp_tool_argument_digests(  # noqa: F405
                 mcp_contract["requiredToolArguments"],
                 active_root,
+                skill_root=staged_mcp_skill_root,
             )
             mcp_identity = capture_mcp_agent_ops_identity(  # noqa: F405
                 args.mcp_agent_ops_executable,
@@ -933,6 +937,7 @@ def _handle_harness_invocation(
                 catalog_resource_allowlist=mcp_contract[
                     "catalogResourceAllowlist"
                 ],
+                mcp_only_skill_ids=mcp_contract["mcpOnlySkills"],
             )
             if args.harness == "codex":
                 permission_profile_host_home_digest = mcp_value_digest(  # noqa: F405

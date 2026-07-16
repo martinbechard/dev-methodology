@@ -245,8 +245,15 @@ README_REQUIRED_PHRASES = (
     "--scope user",
     "--scope project",
     "--cleanup false",
+    "--prune-owned remains accepted as a deprecated compatibility alias",
     "--remove-owned",
     "Unowned skills and agents are never removed.",
+    "For a user-scope Codex deployment, the MCP skill root is the resolved absolute path to ~/.agents/skills.",
+    "--dest ~/.codex/skills",
+    "Install mcp-agent-ops 0.2.3 or newer",
+    "thirteen exact MCP operations",
+    "one call-bearing MCP process stream",
+    "An outcome-less completed call is not semantic evidence.",
     "Keep Codex openai.yaml metadata beside each source SKILL.md",
     "Before renaming or deleting a source skill",
     "conceptual agent definitions",
@@ -466,6 +473,10 @@ AGENTIC_CONFIGURATION_REQUIRED_PHRASES = (
     "Adapter-owned skill definitions use the same <code>SKILL.md</code> format",
     "Codex-generated agents that may mutate the repository enable it",
     "Read-only Codex agents and non-Codex adapters do not receive it.",
+    "The Codex MCP skill root must match the selected installer destination.",
+    "same thirteen MCP operations",
+    "one call-bearing MCP process stream",
+    "An outcome-less completed call is not semantic evidence.",
 )
 DOCUMENT_INFORMATION_OWNERS = {
     "agent-and-skill-definitions.html": (

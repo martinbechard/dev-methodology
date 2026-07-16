@@ -38,7 +38,10 @@ _CODEX_MCP_AGENT_OPS_ENABLED_TOOLS = (
     "claim_heartbeat",
     "claim_release",
     "skill_list",
+    "skill_load",
     "skill_resource_load",
+    "skill_refresh",
+    "skill_validate",
     "detect_technology_skills",
     "verify_yaml",
     "verify_markdown_links",
@@ -628,7 +631,7 @@ def completed_mcp_tool_streams(
 def completed_mcp_tool_outcomes(
     records: Sequence[Mapping[str, object]],
 ) -> list[dict[str, list[str]]]:
-    """Return bounded terminal outcomes grouped by process stream and tool."""
+    """Return explicit bounded terminal outcomes grouped by process stream and tool."""
     ordered_streams: list[str] = []
     outcomes_by_stream: dict[str, dict[str, list[str]]] = {}
     for record in records:
@@ -693,6 +696,10 @@ def select_mcp_tool_stream(
     tool_streams = completed_mcp_tool_streams(records)
     outcome_streams = completed_mcp_tool_outcomes(records)
     call_streams = completed_mcp_tool_calls(records)
+    if sum(bool(calls) for calls in call_streams) != 1:
+        raise ValueError(
+            "captured MCP tool audit must contain one call-bearing process stream"
+        )
     candidates: list[tuple[str, list[str], dict[str, list[str]]]] = []
     for stream_id, tools, outcomes, calls in zip(
         stream_ids,
@@ -701,6 +708,14 @@ def select_mcp_tool_stream(
         call_streams,
         strict=True,
     ):
+        if required_argument_digests:
+            expected_tools = set(required_argument_digests)
+            observed_tools = [str(call.get("tool")) for call in calls]
+            if (
+                len(observed_tools) != len(expected_tools)
+                or set(observed_tools) != expected_tools
+            ):
+                continue
         sequences_match = (
             all(
                 required_mcp_calls_are_subsequence(
@@ -773,19 +788,34 @@ def required_mcp_calls_are_subsequence(
 def resolve_mcp_tool_argument_digests(
     required_arguments: Mapping[str, object],
     workspace: Path,
+    *,
+    skill_root: Path | None = None,
 ) -> dict[str, str]:
-    """Resolve the workspace sentinel and digest exact JSON-compatible tool arguments."""
+    """Resolve evaluator-owned path sentinels and digest exact tool arguments.
+
+    Workspace is required for the workspace sentinel. Skill root is required only when the
+    argument template uses the staged-skill-root sentinel. Both paths are resolved before the
+    canonical JSON digest is computed; malformed or unknown sentinels raise ValueError.
+    """
 
     resolved_workspace = workspace.resolve()
     if not resolved_workspace.is_absolute():
         raise ValueError("MCP tool argument workspace must be absolute")
 
+    resolved_skill_root = skill_root.resolve() if skill_root is not None else None
+    if resolved_skill_root is not None and not resolved_skill_root.is_absolute():
+        raise ValueError("MCP skill root must be absolute")
+
     def resolve(value: object) -> object:
         if value == "$WORKSPACE":
             return str(resolved_workspace)
+        if value == "$SKILL_ROOT":
+            if resolved_skill_root is None:
+                raise ValueError("MCP tool argument skill root is required")
+            return str(resolved_skill_root)
         if isinstance(value, str):
-            if "$WORKSPACE" in value:
-                raise ValueError("MCP tool argument workspace sentinel must occupy the complete value")
+            if "$WORKSPACE" in value or "$SKILL_ROOT" in value:
+                raise ValueError("MCP tool argument path sentinel must occupy the complete value")
             if re.fullmatch(r"\$[A-Z][A-Z0-9_]*", value):
                 raise ValueError(f"unknown MCP tool argument placeholder: {value}")
             return value

@@ -7,10 +7,12 @@ documentation-bootstrap
 documentation-page-verify
 documentation-reverse-engineer
 fastapi
+maintain-methodology-documentation
 nextjs-app-router
 organise-project-files
 python
 react-server-components
+skill-authoring
 structured-design
 structured-explanation
 tailwind-design-system
