@@ -170,7 +170,7 @@
         {
           "name": "dev-artifact-reviewer",
           "output": "generated/adapters/codex/agents/dev-artifact-reviewer.toml",
-          "sha256": "c4a78e83f4775b9113465862cd0ce5891c8b5b90909ef7e6c4d0af3401c25d4e",
+          "sha256": "ae93e5720a2840ae64d257573891932f1c5dfe55c1bef1aa3dd68ac381139c63",
           "source": "agents/roles/dev-activities/dev-artifact-reviewer.role.yaml"
         },
         {
@@ -182,19 +182,19 @@
         {
           "name": "dev-browser-operator",
           "output": "generated/adapters/codex/agents/dev-browser-operator.toml",
-          "sha256": "f9abac389ae7343956cc8bcf7ed381ff5dd245054ee746650bf92e7ff173e9f6",
+          "sha256": "99202550a78cfff87ee2a2cc7d8091dcc5b8356b0b92da55d7fdf72849aa59cc",
           "source": "agents/roles/dev-activities/dev-browser-operator.role.yaml"
         },
         {
           "name": "dev-code-reviewer",
           "output": "generated/adapters/codex/agents/dev-code-reviewer.toml",
-          "sha256": "02547f299c51ff1826dd80b99d4da1c7b3cb026b13bd52f516b4fc8a892d3bd2",
+          "sha256": "c4deb29ed6c367b2e0a7a1c3f58d88c68406571713d77a134e731d52fa07d0d3",
           "source": "agents/roles/dev-activities/dev-code-reviewer.role.yaml"
         },
         {
           "name": "dev-coder",
           "output": "generated/adapters/codex/agents/dev-coder.toml",
-          "sha256": "9cce72ff5ff0202eacf2036e4538814f32d8cba53f0667c8d2b73fb8f361b094",
+          "sha256": "ee3748d4dd83bcb73456e13c17ac8294efaf97e33b9b3ee7d3343b7aabbadcd5",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
         },
         {
@@ -206,7 +206,7 @@
         {
           "name": "dev-merge-coordinator",
           "output": "generated/adapters/codex/agents/dev-merge-coordinator.toml",
-          "sha256": "b8c7757873169446e3edd65a4f80051ac4cb369b201cbb390f870295340aa4e3",
+          "sha256": "c6d390776c3e1972e2fc4ec9b358bf9720e415d76ca2b04fa734b1814fdca524",
           "source": "agents/roles/dev-activities/dev-merge-coordinator.role.yaml"
         },
         {
@@ -218,19 +218,19 @@
         {
           "name": "dev-prompt-reviewer",
           "output": "generated/adapters/codex/agents/dev-prompt-reviewer.toml",
-          "sha256": "b3dd95f23fa368d626cb036110b6e2958d9e3a9c9f8fbeb6c8838212b88cf2dc",
+          "sha256": "7788142d33b1f6d2e04322f0e2a07383c8cf89bc69ab65be5a5be1e78c44bf3b",
           "source": "agents/roles/dev-activities/dev-prompt-reviewer.role.yaml"
         },
         {
           "name": "dev-runtime-diagnostician",
           "output": "generated/adapters/codex/agents/dev-runtime-diagnostician.toml",
-          "sha256": "dc58d0bc438c12e6e5139b672114abf352bb0317b542126674da5faca03abe0a",
+          "sha256": "493d7e78ce94d933f0326680699913afd76ecb2fb6bf0cc45ee0e7b263b36d94",
           "source": "agents/roles/dev-activities/dev-runtime-diagnostician.role.yaml"
         },
         {
           "name": "dev-security-reviewer",
           "output": "generated/adapters/codex/agents/dev-security-reviewer.toml",
-          "sha256": "535284833d464c2befd2631f8708bb59db39396e2eeb18304471b9e48f5a1577",
+          "sha256": "65228042df4e47aec7342f50968e1b82fb56ab355a19415aa7fbdac27bd44343",
           "source": "agents/roles/dev-activities/dev-security-reviewer.role.yaml"
         },
         {
@@ -242,19 +242,19 @@
         {
           "name": "dev-verifier",
           "output": "generated/adapters/codex/agents/dev-verifier.toml",
-          "sha256": "3dce36059bcaec6eb7f7fe9802bd3db2ae11f3450345ddfeef727c03cd489275",
+          "sha256": "32cb6da4272f3110a8b631087c083db1239f6bc3d02b44e9f94074b16f421c47",
           "source": "agents/roles/dev-activities/dev-verifier.role.yaml"
         },
         {
           "name": "methodology-artifact-reviewer",
           "output": "generated/adapters/codex/agents/methodology-artifact-reviewer.toml",
-          "sha256": "e2bb9c36e0545ab1d3ca7ea3b59814c0b29b20360de14555773a0515ad922c49",
+          "sha256": "bf1de1de0a1fe271d552df78aef483c2d5d706db73251325443aba1a646af005",
           "source": "agents/roles/methodology-maintenance/methodology-artifact-reviewer.role.yaml"
         },
         {
           "name": "methodology-maintainer",
           "output": "generated/adapters/codex/agents/methodology-maintainer.toml",
-          "sha256": "9b07650e2494ae3bccbf7770fb1cc9e6ebd517ee718ad539fdc823fc8c3524dc",
+          "sha256": "40a59bff83bdc9222aeb3485e4a1f2930140eb5dacbdb2390079e51a22bf232a",
           "source": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml"
         },
         {
@@ -278,13 +278,13 @@
         {
           "name": "wiki-architect",
           "output": "generated/adapters/codex/agents/wiki-architect.toml",
-          "sha256": "ed60af2bf593e6cac81a7b1ab2602119a16776e4b0b44cf974637bab5874f2fc",
+          "sha256": "cbcb7f74e297e7139b4c5590fed05cd74d9b6d8ccabadef462f10517f11d1650",
           "source": "agents/roles/wiki-activities/wiki-architect.role.yaml"
         },
         {
           "name": "wiki-artifact-reviewer",
           "output": "generated/adapters/codex/agents/wiki-artifact-reviewer.toml",
-          "sha256": "3facdb026c991ef7d700a3f40a25e13e7e068d6c39fbe2c82ace4d01d487038e",
+          "sha256": "78baa5e7d2b8ae4f64e20e9f275f6c0bfe7deff64eb70d272ecc84a0c26eb2a8",
           "source": "agents/roles/wiki-activities/wiki-artifact-reviewer.role.yaml"
         },
         {
@@ -308,13 +308,13 @@
         {
           "name": "wiki-source-collector",
           "output": "generated/adapters/codex/agents/wiki-source-collector.toml",
-          "sha256": "efd5e1b49ad8d651e292d9e69617693072bda5d6be79e6d126866fe4434ce14b",
+          "sha256": "96d4e3f3702117bb10e726e9a6337a93801afd4ed7232cf7fe89e46db50b42e8",
           "source": "agents/roles/wiki-activities/wiki-source-collector.role.yaml"
         },
         {
           "name": "wiki-topic-verifier",
           "output": "generated/adapters/codex/agents/wiki-topic-verifier.toml",
-          "sha256": "a44973de0714df41312bd59f474e77a08ea2fdd88bdf0d097ce0b5905edf948c",
+          "sha256": "55337267fbeb00a100f3ff47a0c0a2e55c65e112140129105c8d1b63552cfb2f",
           "source": "agents/roles/wiki-activities/wiki-topic-verifier.role.yaml"
         },
         {

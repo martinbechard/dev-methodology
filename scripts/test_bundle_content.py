@@ -3096,8 +3096,18 @@ class BundleContentTests(unittest.TestCase):
                     self.assertIsInstance(profile.get("model"), str)
                     self.assertTrue(profile["model"].strip())
 
-        for profile in adapter_profiles["codex"].values():
-            self.assertTrue(profile["model"].startswith("gpt-5.6-"))
+        self.assertEqual(
+            {
+                "simple": "gpt-5.6-luna",
+                "default": "gpt-5.6-terra",
+                "advanced": "gpt-5.6-sol",
+                "advanced-long": "gpt-5.6-sol",
+            },
+            {
+                profile_name: profile["model"]
+                for profile_name, profile in adapter_profiles["codex"].items()
+            },
+        )
 
         for role_path in sorted((REPOSITORY_ROOT / "agents" / "roles").glob("*/*.role.yaml")):
             with self.subTest(role_path=role_path):
