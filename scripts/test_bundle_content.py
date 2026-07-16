@@ -3052,12 +3052,18 @@ class BundleContentTests(unittest.TestCase):
                     self.assertIn(profile, source_profiles)
 
     def test_agent_skill_evals_cover_implementation_and_independent_review(self) -> None:
+        """Code-delivery fixtures keep coding contracts without imposing them on other workflows."""
         evals = load_yaml_object(REPOSITORY_ROOT / "evals" / "cases.yaml")["cases"]
         by_id = {case["id"]: case for case in evals}
 
         self.assertIn("typescript-order-pricing", by_id)
         self.assertIn("spring-boot-order-cancellation", by_id)
-        for case in by_id.values():
+        code_delivery_cases = [
+            case
+            for case in by_id.values()
+            if case.get("workflowPack") in {None, "code-delivery"}
+        ]
+        for case in code_delivery_cases:
             with self.subTest(code_comments_case=case["id"]):
                 self.assertIn("code-comments", case["requiredSkills"])
         review_case = by_id["typescript-code-review"]
@@ -3066,17 +3072,48 @@ class BundleContentTests(unittest.TestCase):
         self.assertEqual(3, len(review_case["requiredFindings"]))
 
     def test_support_checklist_covers_every_agent_and_skill(self) -> None:
+        """The generated report must expose every live declaration without inflating evidence."""
         checklist = SUPPORT_CHECKLIST_PATH.read_text(encoding="utf-8")
+        agent_section = checklist.split("## Agent Checklist", 1)[1].split(
+            "## Bundled Skill Checklist", 1
+        )[0]
+        skill_section = checklist.split("## Bundled Skill Checklist", 1)[1].split(
+            "## Technology Detection Registry", 1
+        )[0]
+        role_paths = sorted(
+            (REPOSITORY_ROOT / "agents" / "roles").glob("*/*.role.yaml")
+        )
+        skill_paths = sorted(SKILLS_ROOT.glob("*/SKILL.md"))
 
-        for role_path in sorted((REPOSITORY_ROOT / "agents" / "roles").glob("*/*.role.yaml")):
+        self.assertIn(
+            f"- [x] {len(role_paths)} conceptual agents and {len(skill_paths)} bundled skills have structural coverage.",
+            checklist,
+        )
+        for phrase in (
+            "Probe-declared",
+            "Scenario-declared",
+            "Fixture-backed",
+            "Executable fixture",
+            "Judge calibration",
+            "Executed",
+            "Verified",
+            "Stale-by-digest",
+        ):
+            with self.subTest(status=phrase):
+                self.assertIn(phrase, checklist)
+        self.assertIn("Evaluation execution support is limited to Codex and Junie.", checklist)
+        self.assertNotIn("| Claude Code |", checklist)
+        self.assertNotIn("| Gemini CLI |", checklist)
+
+        for role_path in role_paths:
             role = load_yaml_object(role_path)
             with self.subTest(agent=role["name"]):
-                self.assertIn(f"| {role['name']} |", checklist)
+                self.assertIn(f"| {role['name']} |", agent_section)
 
-        for skill_path in sorted(SKILLS_ROOT.glob("*/SKILL.md")):
+        for skill_path in skill_paths:
             skill_name = load_yaml_object_from_frontmatter(skill_path)["name"]
             with self.subTest(skill=skill_name):
-                self.assertIn(f"- [x] {skill_name} — structural;", checklist)
+                self.assertIn(f"| {skill_name} | [x] | [x] ", skill_section)
 
 
     def test_readme_points_to_skill_based_setup(self) -> None:
