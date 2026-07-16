@@ -10,6 +10,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 import yaml
 
@@ -143,6 +144,34 @@ class RoleMutationPolicyTests(unittest.TestCase):
                     skill_names,
                     model_profiles,
                 )
+
+    def test_generator_rejects_read_only_isolation_for_mutating_role(self) -> None:
+        """Reserve read-only isolation for conceptual definitions that never mutate repositories."""
+        build_skill_docs = _load_build_skill_docs()
+        required, allowed, groups = build_skill_docs.load_role_schema()
+        skill_names = set(build_skill_docs.build_payload()["skills"])
+        model_profiles = set(build_skill_docs.load_model_profiles())
+        source = ROOT / "agents" / "roles" / "dev-activities" / "dev-code-reviewer.role.yaml"
+        role = yaml.safe_load(source.read_text(encoding="utf-8"))
+        role["isolation"] = "read-only"
+
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory) / "dev-activities" / "dev-code-reviewer.role.yaml"
+            target.parent.mkdir()
+            target.write_text(yaml.safe_dump(role, sort_keys=False), encoding="utf-8")
+            with mock.patch.object(build_skill_docs, "REPOSITORY_ROOT", Path(directory)):
+                with self.assertRaisesRegex(
+                    ValueError,
+                    "read-only isolation must declare repositoryMutation never",
+                ):
+                    build_skill_docs.load_role_definition(
+                        target,
+                        required,
+                        allowed,
+                        groups,
+                        skill_names,
+                        model_profiles,
+                    )
 
 
 if __name__ == "__main__":

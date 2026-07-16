@@ -54,7 +54,6 @@ skills:
 - review-structured-artifact:
     justification: We need this to distinguish evidence-backed usability and accessibility
       issues from preferences and prioritize actionable findings.
-isolation: read-only
 outputContract:
 - design recommendation:
     purpose: Gives product and implementation owners an actionable direction while

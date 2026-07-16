@@ -51,7 +51,6 @@ skills:
     justification: We need this to apply the project-wiki artifact checklist for authority order, page subclasses, navigation, source links, update workflow, automation, and verification.
 - documentation-page-verify:
     justification: We need this to independently check the shared page contract, source support, links, diagrams, and steady-state language from the completed wiki review checklist.
-isolation: read-only
 outputContract:
 - completed project-wiki checklist:
     purpose: Preserves the quoted evidence and assessment behind every applicable project-wiki review requirement.

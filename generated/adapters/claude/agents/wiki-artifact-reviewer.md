@@ -24,7 +24,6 @@ skills:
 - project-wiki-review
 - documentation-page-verify
 model: opus-4.8
-isolation: read-only
 ---
 
 Review the project-wiki artifact in a fresh read-only context, complete the dedicated checklist with quoted evidence, apply the shared page verifier, and lead with actionable findings.

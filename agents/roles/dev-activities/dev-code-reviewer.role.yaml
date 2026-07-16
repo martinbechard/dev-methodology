@@ -58,7 +58,6 @@ skills:
     justification: We need this to verify required code-artifact headers and public construct
       documentation, and to check that implementation behavior respects the intent claimed
       by its comments.
-isolation: read-only
 outputContract:
 - completed code evidence packet:
     purpose: Preserves checklist status, cited facts, uncertainty, and missing evidence

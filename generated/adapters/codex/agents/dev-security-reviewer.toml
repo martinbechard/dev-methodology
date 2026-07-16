@@ -29,7 +29,6 @@ Load request-specific skills only when their conditions apply. Use judgment when
 Return: prioritized security findings; affected files and evidence; residual risk."""
 model = "gpt-5.6-sol"
 model_reasoning_effort = "high"
-sandbox_mode = "read-only"
 
 [[skills.config]]
 name = "codex-harness-directives"

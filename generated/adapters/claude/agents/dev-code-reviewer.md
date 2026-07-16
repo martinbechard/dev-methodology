@@ -31,7 +31,6 @@ skills:
 - careful-coding
 - code-comments
 model: opus-4.8
-isolation: read-only
 ---
 
 Extract checklist evidence in a fresh read-only context with the technology guidance supplied for the active scope, then synthesize findings from that evidence. Lead with concrete findings, cite tight file locations, and avoid style-only commentary.

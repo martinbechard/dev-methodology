@@ -563,7 +563,7 @@
           <tr>
             <td><span class="name">Repository mutation</span></td>
             <td><code>repositoryMutation</code></td>
-            <td>Declares whether repository mutation is required, conditional, or never allowed for the agent. Generation validates that <code>agent-claim</code> is definition-owned, conditional, or absent to match. The Codex adapter separately uses required or conditional mutation to load its harness directives skill; this does not make those directives part of claim handling.</td>
+            <td>Declares whether repository mutation is required, conditional, or never allowed for the agent. Generation validates that <code>agent-claim</code> is definition-owned, conditional, or absent to match, and rejects read-only isolation for required or conditional mutation. The Codex adapter separately uses required or conditional mutation to load its harness directives skill; this does not make those directives part of claim handling.</td>
           </tr>
           <tr>
             <td><span class="name">Max turns</span></td>
@@ -583,7 +583,7 @@
           <tr>
             <td><span class="name">Isolation</span></td>
             <td><code>isolation</code></td>
-            <td>Controls filesystem, network, or workspace isolation where supported. Keep it separate from permission mode because sandboxing changes what the agent can reach, not only what it may ask to do.</td>
+            <td>Controls filesystem, network, or workspace isolation where supported. Keep it separate from permission mode because sandboxing changes what the agent can reach, not only what it may ask to do. Read-only isolation is valid only when repository mutation is never allowed. Conditional reviewers retain a writable sandbox so they can claim and save scoped review evidence while remaining prohibited from modifying the artifact under review.</td>
           </tr>
           <tr>
             <td><span class="name">Memory</span></td>
@@ -807,7 +807,7 @@
           </tr>
           <tr>
             <td><span class="name">isolation</span></td>
-            <td><code>sandbox_mode</code></td>
+            <td><code>sandbox_mode</code>; read-only is generated only for roles whose <code>repositoryMutation</code> value is <code>never</code></td>
             <td><code>isolation</code> for workspace isolation; permission behavior uses <code>permissionMode</code></td>
             <td>No documented field.</td>
             <td>No documented field.</td>

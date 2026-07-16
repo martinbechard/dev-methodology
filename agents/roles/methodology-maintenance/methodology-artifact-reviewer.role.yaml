@@ -52,7 +52,6 @@ skills:
     justification: We need this to judge methodology documentation against its authoritative sources and required page contracts instead of reviewing prose in isolation.
 - development-methodology:
     justification: We need this to evaluate artifacts against the bundle's documented routes, templates, and maintenance rules rather than personal preference.
-isolation: read-only
 outputContract:
 - finding-first review:
     purpose: Gives the artifact owner an evidence-backed, severity-aware account of issues that can be acted on directly.

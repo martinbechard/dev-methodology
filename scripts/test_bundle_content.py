@@ -2081,6 +2081,42 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("target-specific integration resource", readme_text)
         self.assertNotIn("Agent Claims And Worktrees", AGENTS_PATH.read_text(encoding="utf-8"))
 
+    def test_codex_read_only_sandbox_is_reserved_for_never_mutating_roles(self) -> None:
+        """Keep evidence-writing reviewers writable while preserving true read-only agents."""
+        build_skill_docs = load_build_skill_docs_module()
+        skill_payload = build_skill_docs.build_payload()
+        roles = build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
+        codex_profiles = build_skill_docs.load_adapter_model_profiles(
+            "codex", set(build_skill_docs.load_model_profiles())
+        )
+        read_only_roles = {
+            role.name
+            for role in roles
+            if role.optional_fields.get("isolation") == "read-only"
+        }
+
+        self.assertEqual(
+            {"wiki-query-responder", "wiki-topic-verifier"},
+            read_only_roles,
+        )
+        for role in roles:
+            with self.subTest(role=role.name, mutation_policy=role.repository_mutation):
+                rendered = tomllib.loads(
+                    build_skill_docs.render_codex_agent(role, codex_profiles)
+                )
+                if role.repository_mutation == "never":
+                    self.assertEqual("read-only", rendered.get("sandbox_mode"))
+                else:
+                    self.assertNotIn("sandbox_mode", rendered)
+
+        design_text = (
+            REPOSITORY_ROOT / "design" / "generic-agent-definitions-source.html"
+        ).read_text(encoding="utf-8")
+        self.assertIn(
+            "Read-only isolation is valid only when repository mutation is never allowed",
+            design_text,
+        )
+
     def test_mcp_agent_ops_is_preferred_without_becoming_a_hard_runtime_dependency(self) -> None:
         skill_texts = {
             skill: (SKILLS_ROOT / skill / "SKILL.md").read_text(encoding="utf-8")

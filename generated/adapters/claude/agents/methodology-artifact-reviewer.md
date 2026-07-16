@@ -32,7 +32,6 @@ skills:
 - documentation-page-verify
 - development-methodology
 model: opus-4.8
-isolation: read-only
 ---
 
 Review the changed methodology as a read-only owner. Lead with actionable findings and verify generated facts against source files.

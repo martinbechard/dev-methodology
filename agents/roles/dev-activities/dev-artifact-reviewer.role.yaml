@@ -80,7 +80,6 @@ skills:
 - documentation-page-verify:
     justification: We need this to apply a shared independent quality gate after the
       artifact-specific review so acceptance does not depend solely on the focused reviewer.
-isolation: read-only
 outputContract:
 - completed review checklist:
     purpose: Preserves the artifact-specific evidence behind the assessment so reviewers

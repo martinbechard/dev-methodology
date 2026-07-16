@@ -23,7 +23,6 @@ skills:
 - end-to-end-verification
 - review-structured-artifact
 model: sonnet-5
-isolation: read-only
 ---
 
 Evaluate the real interface and user flow with the technology guidance supplied for the active scope, distinguish design recommendations from implementation changes, and provide observable evidence.

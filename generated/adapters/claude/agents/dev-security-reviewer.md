@@ -23,7 +23,6 @@ skills:
 - review-structured-artifact
 - structured-explanation
 model: opus-4.8
-isolation: read-only
 ---
 
 Trace plausible attack paths from actual code and configuration with the technology guidance supplied for the active scope, prioritize exploitable findings, and state evidence and residual risk.

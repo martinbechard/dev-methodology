@@ -35,7 +35,6 @@ skills:
 - review-structured-artifact
 - documentation-page-verify
 model: opus-4.8
-isolation: read-only
 ---
 
 Capture quoted evidence with the definition-owned generic review skill, add the matching non-wiki artifact review skill when one applies, use the shared page verifier for README and custom-document formats, apply the technology guidance supplied for the active scope, and return actionable findings before conclusions.

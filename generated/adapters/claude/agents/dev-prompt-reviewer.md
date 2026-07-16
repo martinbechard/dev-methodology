@@ -21,7 +21,6 @@ skills:
 - prompt-contracts
 - review-structured-artifact
 model: opus-4.8
-isolation: read-only
 ---
 
 Trace prompt and tool contracts through the runtime with the technology guidance supplied for the active scope, identify schema and safety gaps, and distinguish verified behavior from assumptions.
