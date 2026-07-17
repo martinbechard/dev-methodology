@@ -34,23 +34,181 @@ Do not create separate skill files for repo-local maintenance procedures. Keep r
 
 Technology detection is owned by Project Configurator. Do not rerun detection during ordinary work.
 
-Before acting on files under a matching folder, every agent must read each listed skill completely. These folder skills govern technology-specific implementation, review, diagnosis, verification, security, interface, prompt, and technical documentation work together with the agent's definition-owned skills.
+Before acting on files under a matching folder, every agent must apply each inlined skill completely. These folder skills govern technology-specific implementation, review, diagnosis, verification, security, interface, prompt, and technical documentation work together with the agent's definition-owned skills.
 
 Folder skillsets:
 
 When configured folder patterns overlap, the most-specific matching pattern wins.
 
-- scripts/**: load python before acting.
+- scripts/**: apply the inlined python skill instructions before acting.
   - python evidence: Python source evidence: scripts/build-agent-skill-hierarchy.py and sibling .py files
-- skills/project-wiki/scripts/**: load python before acting.
+- skills/project-wiki/scripts/**: apply the inlined python skill instructions before acting.
   - python evidence: Python package evidence: skills/project-wiki/scripts/project_wiki_ops/__init__.py and sibling .py files
-- skills/detect-technology-skills/scripts/**: load python before acting.
+- skills/detect-technology-skills/scripts/**: apply the inlined python skill instructions before acting.
   - python evidence: Python source evidence: skills/detect-technology-skills/scripts/detect.py
-- evals/projects/python-inventory/**: load python before acting.
+- evals/projects/python-inventory/**: apply the inlined python skill instructions before acting.
   - python evidence: Python source evidence: evals/projects/python-inventory/src/inventory.py; Owning manifest evidence: evals/projects/python-inventory/pyproject.toml requires Python 3.11 or newer
-- evals/projects/fastapi-orders/**: load fastapi, python before acting.
+- evals/projects/fastapi-orders/**: apply the inlined fastapi, python skills instructions before acting.
   - fastapi evidence: Owning manifest dependency: evals/projects/fastapi-orders/pyproject.toml declares fastapi; Framework source evidence: evals/projects/fastapi-orders/app/main.py imports FastAPI and declares an application route
   - python evidence: Python source evidence: evals/projects/fastapi-orders/app/main.py
+
+Inlined folder skill instructions:
+
+### Folder pattern: scripts/**
+
+Apply every inlined technology skill below when working under this folder pattern.
+
+----- BEGIN INLINED TECHNOLOGY SKILL: python -----
+# Python
+
+Follow the owning project's Python version, packaging metadata, formatter, linter, type checker, and test runner.
+
+## Implementation
+
+- Keep public functions, classes, exceptions, and module boundaries explicit.
+- Prefer standard library types and direct control flow over speculative abstractions.
+- Use context managers for resources with deterministic cleanup.
+- Preserve exception causes when translating errors at an owning boundary.
+- Avoid mutable default arguments and implicit shared state.
+- Keep asynchronous and synchronous call paths distinct.
+- When a Gang of Four pattern is explicit, combine its generic pattern skill with Python Design Pattern Examples and prefer native functions, protocols, dataclasses, modules, and generators where they preserve the intent.
+
+## Verification
+
+- Add focused tests for changed behavior and failure boundaries.
+- Run the narrow project-native test command first, then applicable lint, formatting, and type checks.
+- Verify supported Python versions when syntax or library behavior is version-sensitive.
+----- END INLINED TECHNOLOGY SKILL: python -----
+
+### Folder pattern: skills/project-wiki/scripts/**
+
+Apply every inlined technology skill below when working under this folder pattern.
+
+----- BEGIN INLINED TECHNOLOGY SKILL: python -----
+# Python
+
+Follow the owning project's Python version, packaging metadata, formatter, linter, type checker, and test runner.
+
+## Implementation
+
+- Keep public functions, classes, exceptions, and module boundaries explicit.
+- Prefer standard library types and direct control flow over speculative abstractions.
+- Use context managers for resources with deterministic cleanup.
+- Preserve exception causes when translating errors at an owning boundary.
+- Avoid mutable default arguments and implicit shared state.
+- Keep asynchronous and synchronous call paths distinct.
+- When a Gang of Four pattern is explicit, combine its generic pattern skill with Python Design Pattern Examples and prefer native functions, protocols, dataclasses, modules, and generators where they preserve the intent.
+
+## Verification
+
+- Add focused tests for changed behavior and failure boundaries.
+- Run the narrow project-native test command first, then applicable lint, formatting, and type checks.
+- Verify supported Python versions when syntax or library behavior is version-sensitive.
+----- END INLINED TECHNOLOGY SKILL: python -----
+
+### Folder pattern: skills/detect-technology-skills/scripts/**
+
+Apply every inlined technology skill below when working under this folder pattern.
+
+----- BEGIN INLINED TECHNOLOGY SKILL: python -----
+# Python
+
+Follow the owning project's Python version, packaging metadata, formatter, linter, type checker, and test runner.
+
+## Implementation
+
+- Keep public functions, classes, exceptions, and module boundaries explicit.
+- Prefer standard library types and direct control flow over speculative abstractions.
+- Use context managers for resources with deterministic cleanup.
+- Preserve exception causes when translating errors at an owning boundary.
+- Avoid mutable default arguments and implicit shared state.
+- Keep asynchronous and synchronous call paths distinct.
+- When a Gang of Four pattern is explicit, combine its generic pattern skill with Python Design Pattern Examples and prefer native functions, protocols, dataclasses, modules, and generators where they preserve the intent.
+
+## Verification
+
+- Add focused tests for changed behavior and failure boundaries.
+- Run the narrow project-native test command first, then applicable lint, formatting, and type checks.
+- Verify supported Python versions when syntax or library behavior is version-sensitive.
+----- END INLINED TECHNOLOGY SKILL: python -----
+
+### Folder pattern: evals/projects/python-inventory/**
+
+Apply every inlined technology skill below when working under this folder pattern.
+
+----- BEGIN INLINED TECHNOLOGY SKILL: python -----
+# Python
+
+Follow the owning project's Python version, packaging metadata, formatter, linter, type checker, and test runner.
+
+## Implementation
+
+- Keep public functions, classes, exceptions, and module boundaries explicit.
+- Prefer standard library types and direct control flow over speculative abstractions.
+- Use context managers for resources with deterministic cleanup.
+- Preserve exception causes when translating errors at an owning boundary.
+- Avoid mutable default arguments and implicit shared state.
+- Keep asynchronous and synchronous call paths distinct.
+- When a Gang of Four pattern is explicit, combine its generic pattern skill with Python Design Pattern Examples and prefer native functions, protocols, dataclasses, modules, and generators where they preserve the intent.
+
+## Verification
+
+- Add focused tests for changed behavior and failure boundaries.
+- Run the narrow project-native test command first, then applicable lint, formatting, and type checks.
+- Verify supported Python versions when syntax or library behavior is version-sensitive.
+----- END INLINED TECHNOLOGY SKILL: python -----
+
+### Folder pattern: evals/projects/fastapi-orders/**
+
+Apply every inlined technology skill below when working under this folder pattern.
+
+----- BEGIN INLINED TECHNOLOGY SKILL: fastapi -----
+# FastAPI
+
+Load Python with this skill.
+
+## Application Boundaries
+
+- Keep request and response models explicit and separate persistence or internal domain shapes when their contracts differ.
+- Use dependency injection for request-scoped collaborators and cross-cutting policies.
+- Translate domain failures to HTTP responses at the API boundary without losing useful causes in logs.
+- Keep blocking work out of asynchronous request paths unless it is isolated behind an appropriate executor or synchronous endpoint.
+- Put startup and shutdown ownership in lifespan handling.
+
+## Routing And Validation
+
+- Make status codes, response models, validation constraints, authentication requirements, and error bodies observable in the route contract.
+- Avoid hidden side effects in dependencies and validators.
+- Preserve framework-generated validation behavior unless the API contract intentionally replaces it.
+
+## Verification
+
+- Test routes through the ASGI application boundary with dependency overrides scoped to the test.
+- Cover successful responses, invalid input, authorization failure, and translated domain failures.
+- Verify asynchronous tests and lifespan behavior with the project's chosen test client and event-loop tooling.
+----- END INLINED TECHNOLOGY SKILL: fastapi -----
+
+----- BEGIN INLINED TECHNOLOGY SKILL: python -----
+# Python
+
+Follow the owning project's Python version, packaging metadata, formatter, linter, type checker, and test runner.
+
+## Implementation
+
+- Keep public functions, classes, exceptions, and module boundaries explicit.
+- Prefer standard library types and direct control flow over speculative abstractions.
+- Use context managers for resources with deterministic cleanup.
+- Preserve exception causes when translating errors at an owning boundary.
+- Avoid mutable default arguments and implicit shared state.
+- Keep asynchronous and synchronous call paths distinct.
+- When a Gang of Four pattern is explicit, combine its generic pattern skill with Python Design Pattern Examples and prefer native functions, protocols, dataclasses, modules, and generators where they preserve the intent.
+
+## Verification
+
+- Add focused tests for changed behavior and failure boundaries.
+- Run the narrow project-native test command first, then applicable lint, formatting, and type checks.
+- Verify supported Python versions when syntax or library behavior is version-sensitive.
+----- END INLINED TECHNOLOGY SKILL: python -----
 ## Skill Catalog Maintenance
 
 When adding, renaming, deleting, or materially changing a distributed skill:

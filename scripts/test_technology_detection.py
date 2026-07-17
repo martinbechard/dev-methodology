@@ -970,6 +970,80 @@ class TechnologyDetectionTests(unittest.TestCase):
             self.assertEqual(2, invalid.returncode)
             self.assertIn("expected true or false", invalid.stderr)
 
+    def test_agents_section_output_requires_explicit_replace(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            plan = root / "PROJECT.yaml"
+            output = root / "AGENTS.md"
+            plan.write_text(yaml.safe_dump({
+                "technology_skill_loadouts": [{
+                    "pathPattern": "src/**",
+                    "skills": ["python"],
+                }],
+            }), encoding="utf-8")
+
+            created = subprocess.run(
+                [
+                    sys.executable,
+                    str(RENDER_SCRIPT),
+                    "--project",
+                    str(plan),
+                    "--output",
+                    str(output),
+                ],
+                cwd=ROOT,
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(0, created.returncode, created.stderr)
+            self.assertIn(
+                "BEGIN INLINED TECHNOLOGY SKILL: python",
+                output.read_text(encoding="utf-8"),
+            )
+
+            original = "existing project instructions\n"
+            output.write_text(original, encoding="utf-8")
+            protected = subprocess.run(
+                [
+                    sys.executable,
+                    str(RENDER_SCRIPT),
+                    "--project",
+                    str(plan),
+                    "--output",
+                    str(output),
+                ],
+                cwd=ROOT,
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(1, protected.returncode)
+            self.assertIn(f"output file already exists: {output}", protected.stderr)
+            self.assertIn("--replace", protected.stderr)
+            self.assertEqual(original, output.read_text(encoding="utf-8"))
+
+            replaced = subprocess.run(
+                [
+                    sys.executable,
+                    str(RENDER_SCRIPT),
+                    "--project",
+                    str(plan),
+                    "--output",
+                    str(output),
+                    "--replace",
+                ],
+                cwd=ROOT,
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(0, replaced.returncode, replaced.stderr)
+            self.assertIn(
+                "BEGIN INLINED TECHNOLOGY SKILL: python",
+                output.read_text(encoding="utf-8"),
+            )
+
     def test_agents_section_rejects_invalid_inlined_skill_names(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             plan = Path(directory) / "PROJECT.yaml"

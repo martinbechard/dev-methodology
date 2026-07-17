@@ -459,6 +459,8 @@ Invoke Project Bootstrapper once and describe the desired steady state:
 
 Separately requested deployment uses the user or project defaults, or caller-supplied destination overrides, under Scoped Target Deployment.
 
+The technology-skill renderer writes the rendered section to standard output by default so Project Configurator can merge it into an existing AGENTS.md without disturbing project instructions. The --output option creates a file only when the target does not exist. If the target already exists, the command stops and directs the caller to --replace; use that option only when complete replacement of the target file is intentional.
+
 ```bash
 python3 scripts/render-agents-technology-skills.py --project PROJECT.yaml --inline-tech-skills false
 ```

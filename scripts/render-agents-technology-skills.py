@@ -141,10 +141,15 @@ def render(value: dict[str, object], inline_tech_skills: bool = True) -> str:
 
 
 def main(arguments: Sequence[str] | None = None) -> int:
-    """Render configured AGENTS.md sections to stdout or an explicit output file."""
+    """Render configured AGENTS.md sections without replacing an output file implicitly."""
     parser = argparse.ArgumentParser(description="Render unconditional AGENTS.md technology skill guidance.")
     parser.add_argument("--project", type=Path, required=True)
     parser.add_argument("--output", type=Path)
+    parser.add_argument(
+        "--replace",
+        action="store_true",
+        help="Replace an existing output file. Without this option, --output is create-only.",
+    )
     parser.add_argument(
         "--inline-tech-skills",
         type=parse_boolean,
@@ -156,6 +161,10 @@ def main(arguments: Sequence[str] | None = None) -> int:
     try:
         content = render(load_yaml(args.project), args.inline_tech_skills)
         if args.output:
+            if args.output.exists() and not args.replace:
+                raise ValueError(
+                    f"output file already exists: {args.output}; use --replace to replace it"
+                )
             args.output.write_text(content, encoding="utf-8")
         else:
             print(content, end="")
