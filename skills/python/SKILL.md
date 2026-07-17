@@ -17,6 +17,7 @@ Follow the owning project's Python version, packaging metadata, formatter, linte
 - Preserve exception causes when translating errors at an owning boundary.
 - Avoid mutable default arguments and implicit shared state.
 - Keep asynchronous and synchronous call paths distinct.
+- When a Gang of Four pattern is explicit, combine its generic pattern skill with Python Design Pattern Examples and prefer native functions, protocols, dataclasses, modules, and generators where they preserve the intent.
 
 ## Verification
 

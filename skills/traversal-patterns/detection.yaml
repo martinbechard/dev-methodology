@@ -1,0 +1,12 @@
+schema: dev-methodology-technology-detection
+version: 2
+skill: traversal-patterns
+kind: domain
+label: Traversal Patterns
+capabilities: [traversal-operation-patterns]
+activation:
+  anyOf:
+  - fileMatch: {glob: "**/*Iterator.*", extensions: [.java, .kt, .cs, .cpp, .h, .hpp, .swift, .ts, .tsx, .py, .rb, .php]}
+  - fileMatch: {glob: "**/*Visitor.*", extensions: [.java, .kt, .cs, .cpp, .h, .hpp, .swift, .ts, .tsx, .py, .rb, .php]}
+  - fileMatch: {glob: "**/*iterator_pattern.py", extensions: [.py]}
+  - fileMatch: {glob: "**/*visitor_pattern.py", extensions: [.py]}

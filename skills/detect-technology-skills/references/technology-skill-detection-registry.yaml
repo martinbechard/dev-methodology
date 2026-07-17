@@ -129,6 +129,142 @@ skills:
   selection: additive
   priority: 100
   requiredWhenDetected: true
+- skill: collaboration-patterns
+  kind: domain
+  label: Collaboration Patterns
+  capabilities:
+  - collaboration-patterns
+  activation:
+    anyOf:
+    - fileMatch:
+        glob: '**/*Observer.*'
+        extensions:
+        - .java
+        - .kt
+        - .cs
+        - .cpp
+        - .h
+        - .hpp
+        - .swift
+        - .ts
+        - .tsx
+        - .py
+        - .rb
+        - .php
+    - fileMatch:
+        glob: '**/*Mediator.*'
+        extensions:
+        - .java
+        - .kt
+        - .cs
+        - .cpp
+        - .h
+        - .hpp
+        - .swift
+        - .ts
+        - .tsx
+        - .py
+        - .rb
+        - .php
+    - fileMatch:
+        glob: '**/*observer_pattern.py'
+        extensions:
+        - .py
+    - fileMatch:
+        glob: '**/*mediator_pattern.py'
+        extensions:
+        - .py
+  companions: []
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
+- skill: composition-patterns
+  kind: domain
+  label: Composition Patterns
+  capabilities:
+  - object-composition-patterns
+  activation:
+    anyOf:
+    - fileMatch:
+        glob: '**/*Composite.*'
+        extensions:
+        - .java
+        - .kt
+        - .cs
+        - .cpp
+        - .h
+        - .hpp
+        - .swift
+        - .ts
+        - .tsx
+        - .py
+        - .rb
+        - .php
+    - fileMatch:
+        glob: '**/*Decorator.*'
+        extensions:
+        - .java
+        - .kt
+        - .cs
+        - .cpp
+        - .h
+        - .hpp
+        - .swift
+        - .ts
+        - .tsx
+        - .py
+        - .rb
+        - .php
+    - fileMatch:
+        glob: '**/*Proxy.*'
+        extensions:
+        - .java
+        - .kt
+        - .cs
+        - .cpp
+        - .h
+        - .hpp
+        - .swift
+        - .ts
+        - .tsx
+        - .py
+        - .rb
+        - .php
+    - fileMatch:
+        glob: '**/*Flyweight.*'
+        extensions:
+        - .java
+        - .kt
+        - .cs
+        - .cpp
+        - .h
+        - .hpp
+        - .swift
+        - .ts
+        - .tsx
+        - .py
+        - .rb
+        - .php
+    - fileMatch:
+        glob: '**/*composite_pattern.py'
+        extensions:
+        - .py
+    - fileMatch:
+        glob: '**/*decorator_pattern.py'
+        extensions:
+        - .py
+    - fileMatch:
+        glob: '**/*proxy_pattern.py'
+        extensions:
+        - .py
+    - fileMatch:
+        glob: '**/*flyweight_pattern.py'
+        extensions:
+        - .py
+  companions: []
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
 - skill: electron-main
   kind: technology
   label: Electron main process
@@ -180,6 +316,104 @@ skills:
   selection: additive
   priority: 100
   requiredWhenDetected: true
+- skill: interface-patterns
+  kind: domain
+  label: Interface Patterns
+  capabilities:
+  - interface-boundary-patterns
+  activation:
+    anyOf:
+    - fileMatch:
+        glob: '**/*Adapter.*'
+        extensions:
+        - .java
+        - .kt
+        - .cs
+        - .cpp
+        - .h
+        - .hpp
+        - .swift
+        - .ts
+        - .tsx
+        - .py
+        - .rb
+        - .php
+    - fileMatch:
+        glob: '**/*Bridge.*'
+        extensions:
+        - .java
+        - .kt
+        - .cs
+        - .cpp
+        - .h
+        - .hpp
+        - .swift
+        - .ts
+        - .tsx
+        - .py
+        - .rb
+        - .php
+    - fileMatch:
+        glob: '**/*Facade.*'
+        extensions:
+        - .java
+        - .kt
+        - .cs
+        - .cpp
+        - .h
+        - .hpp
+        - .swift
+        - .ts
+        - .tsx
+        - .py
+        - .rb
+        - .php
+    - fileMatch:
+        glob: '**/*adapter_pattern.py'
+        extensions:
+        - .py
+    - fileMatch:
+        glob: '**/*bridge_pattern.py'
+        extensions:
+        - .py
+    - fileMatch:
+        glob: '**/*facade_pattern.py'
+        extensions:
+        - .py
+  companions: []
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
+- skill: interpreter-pattern
+  kind: domain
+  label: Interpreter Pattern
+  capabilities:
+  - language-interpreter-pattern
+  activation:
+    anyOf:
+    - fileMatch:
+        glob: '**/*Interpreter.*'
+        extensions:
+        - .java
+        - .kt
+        - .cs
+        - .cpp
+        - .h
+        - .hpp
+        - .swift
+        - .ts
+        - .tsx
+        - .py
+        - .rb
+        - .php
+    - fileMatch:
+        glob: '**/*interpreter_pattern.py'
+        extensions:
+        - .py
+  companions: []
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
 - skill: java
   kind: technology
   label: Java
@@ -188,78 +422,6 @@ skills:
   activation:
     anyOf:
     - fileExtension: .java
-  companions:
-  - java-design
-  selection: additive
-  priority: 100
-  requiredWhenDetected: true
-- skill: java-collaboration-patterns
-  kind: technology
-  label: Java Collaboration Patterns
-  capabilities:
-  - collaboration-patterns
-  activation:
-    anyOf:
-    - fileMatch:
-        glob: '**/*Observer.java'
-        extensions:
-        - .java
-    - fileMatch:
-        glob: '**/*Mediator.java'
-        extensions:
-        - .java
-  companions:
-  - java-design
-  selection: additive
-  priority: 100
-  requiredWhenDetected: true
-- skill: java-composition-patterns
-  kind: technology
-  label: Java Composition Patterns
-  capabilities:
-  - object-composition-patterns
-  activation:
-    anyOf:
-    - fileMatch:
-        glob: '**/*Composite.java'
-        extensions:
-        - .java
-    - fileMatch:
-        glob: '**/*Decorator.java'
-        extensions:
-        - .java
-    - fileMatch:
-        glob: '**/*Proxy.java'
-        extensions:
-        - .java
-  companions:
-  - java-design
-  selection: additive
-  priority: 100
-  requiredWhenDetected: true
-- skill: java-creation-patterns
-  kind: technology
-  label: Java Creation Patterns
-  capabilities:
-  - object-creation-patterns
-  activation:
-    anyOf:
-    - fileMatch:
-        glob: '**/*Factory.java'
-        extensions:
-        - .java
-    - fileMatch:
-        glob: '**/*FactoryMethod.java'
-        extensions:
-        - .java
-    - fileMatch:
-        glob: '**/*Builder.java'
-        extensions:
-        - .java
-    - fileMatch:
-        glob: '**/*Prototype.java'
-        extensions:
-        - .java
   companions:
   - java-design
   selection: additive
@@ -278,13 +440,29 @@ skills:
   selection: additive
   priority: 100
   requiredWhenDetected: true
-- skill: java-interface-patterns
+- skill: java-design-pattern-examples
   kind: technology
-  label: Java Interface Patterns
+  label: Java Design Pattern Examples
   capabilities:
-  - interface-boundary-patterns
+  - design-pattern-examples
   activation:
     anyOf:
+    - fileMatch:
+        glob: '**/*Factory.java'
+        extensions:
+        - .java
+    - fileMatch:
+        glob: '**/*Builder.java'
+        extensions:
+        - .java
+    - fileMatch:
+        glob: '**/*Prototype.java'
+        extensions:
+        - .java
+    - fileMatch:
+        glob: '**/*Singleton.java'
+        extensions:
+        - .java
     - fileMatch:
         glob: '**/*Adapter.java'
         extensions:
@@ -294,59 +472,51 @@ skills:
         extensions:
         - .java
     - fileMatch:
+        glob: '**/*Composite.java'
+        extensions:
+        - .java
+    - fileMatch:
+        glob: '**/*Decorator.java'
+        extensions:
+        - .java
+    - fileMatch:
         glob: '**/*Facade.java'
         extensions:
         - .java
-  companions:
-  - java-design
-  selection: additive
-  priority: 100
-  requiredWhenDetected: true
-- skill: java-request-patterns
-  kind: technology
-  label: Java Request Patterns
-  capabilities:
-  - request-processing-patterns
-  activation:
-    anyOf:
     - fileMatch:
-        glob: '**/*Command.java'
+        glob: '**/*Flyweight.java'
+        extensions:
+        - .java
+    - fileMatch:
+        glob: '**/*Proxy.java'
         extensions:
         - .java
     - fileMatch:
         glob: '**/*ChainOfResponsibility.java'
         extensions:
         - .java
-  companions:
-  - java-design
-  selection: additive
-  priority: 100
-  requiredWhenDetected: true
-- skill: java-singleton-pattern
-  kind: technology
-  label: Java Singleton Pattern
-  capabilities:
-  - singleton-pattern
-  activation:
-    anyOf:
     - fileMatch:
-        glob: '**/*Singleton.java'
+        glob: '**/*Command.java'
         extensions:
         - .java
-  companions:
-  - java-design
-  selection: additive
-  priority: 100
-  requiredWhenDetected: true
-- skill: java-state-strategy-patterns
-  kind: technology
-  label: Java State And Strategy Patterns
-  capabilities:
-  - behavior-selection-patterns
-  activation:
-    anyOf:
     - fileMatch:
-        glob: '**/*Strategy.java'
+        glob: '**/*Interpreter.java'
+        extensions:
+        - .java
+    - fileMatch:
+        glob: '**/*Iterator.java'
+        extensions:
+        - .java
+    - fileMatch:
+        glob: '**/*Mediator.java'
+        extensions:
+        - .java
+    - fileMatch:
+        glob: '**/*Memento.java'
+        extensions:
+        - .java
+    - fileMatch:
+        glob: '**/*Observer.java'
         extensions:
         - .java
     - fileMatch:
@@ -354,23 +524,11 @@ skills:
         extensions:
         - .java
     - fileMatch:
-        glob: '**/*TemplateMethod.java'
+        glob: '**/*Strategy.java'
         extensions:
         - .java
-  companions:
-  - java-design
-  selection: additive
-  priority: 100
-  requiredWhenDetected: true
-- skill: java-traversal-patterns
-  kind: technology
-  label: Java Traversal Patterns
-  capabilities:
-  - traversal-operation-patterns
-  activation:
-    anyOf:
     - fileMatch:
-        glob: '**/*Iterator.java'
+        glob: '**/*TemplateMethod.java'
         extensions:
         - .java
     - fileMatch:
@@ -883,6 +1041,74 @@ skills:
   selection: additive
   priority: 100
   requiredWhenDetected: true
+- skill: object-creation-patterns
+  kind: domain
+  label: Object Creation Patterns
+  capabilities:
+  - object-creation-patterns
+  activation:
+    anyOf:
+    - fileMatch:
+        glob: '**/*Factory.*'
+        extensions:
+        - .java
+        - .kt
+        - .cs
+        - .cpp
+        - .h
+        - .hpp
+        - .swift
+        - .ts
+        - .tsx
+        - .py
+        - .rb
+        - .php
+    - fileMatch:
+        glob: '**/*Builder.*'
+        extensions:
+        - .java
+        - .kt
+        - .cs
+        - .cpp
+        - .h
+        - .hpp
+        - .swift
+        - .ts
+        - .tsx
+        - .py
+        - .rb
+        - .php
+    - fileMatch:
+        glob: '**/*Prototype.*'
+        extensions:
+        - .java
+        - .kt
+        - .cs
+        - .cpp
+        - .h
+        - .hpp
+        - .swift
+        - .ts
+        - .tsx
+        - .py
+        - .rb
+        - .php
+    - fileMatch:
+        glob: '**/*factory_pattern.py'
+        extensions:
+        - .py
+    - fileMatch:
+        glob: '**/*builder_pattern.py'
+        extensions:
+        - .py
+    - fileMatch:
+        glob: '**/*prototype_pattern.py'
+        extensions:
+        - .py
+  companions: []
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
 - skill: plan-engine
   kind: domain
   label: Plan engine
@@ -970,6 +1196,106 @@ skills:
     - fileExtension: .py
     - fileExtension: .pyi
   companions: []
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
+- skill: python-design-pattern-examples
+  kind: technology
+  label: Python Design Pattern Examples
+  capabilities:
+  - design-pattern-examples
+  activation:
+    anyOf:
+    - fileMatch:
+        glob: '**/*factory_pattern.py'
+        extensions:
+        - .py
+    - fileMatch:
+        glob: '**/*builder_pattern.py'
+        extensions:
+        - .py
+    - fileMatch:
+        glob: '**/*prototype_pattern.py'
+        extensions:
+        - .py
+    - fileMatch:
+        glob: '**/*singleton_pattern.py'
+        extensions:
+        - .py
+    - fileMatch:
+        glob: '**/*adapter_pattern.py'
+        extensions:
+        - .py
+    - fileMatch:
+        glob: '**/*bridge_pattern.py'
+        extensions:
+        - .py
+    - fileMatch:
+        glob: '**/*composite_pattern.py'
+        extensions:
+        - .py
+    - fileMatch:
+        glob: '**/*decorator_pattern.py'
+        extensions:
+        - .py
+    - fileMatch:
+        glob: '**/*facade_pattern.py'
+        extensions:
+        - .py
+    - fileMatch:
+        glob: '**/*flyweight_pattern.py'
+        extensions:
+        - .py
+    - fileMatch:
+        glob: '**/*proxy_pattern.py'
+        extensions:
+        - .py
+    - fileMatch:
+        glob: '**/*command_pattern.py'
+        extensions:
+        - .py
+    - fileMatch:
+        glob: '**/*chain_of_responsibility_pattern.py'
+        extensions:
+        - .py
+    - fileMatch:
+        glob: '**/*interpreter_pattern.py'
+        extensions:
+        - .py
+    - fileMatch:
+        glob: '**/*iterator_pattern.py'
+        extensions:
+        - .py
+    - fileMatch:
+        glob: '**/*mediator_pattern.py'
+        extensions:
+        - .py
+    - fileMatch:
+        glob: '**/*memento_pattern.py'
+        extensions:
+        - .py
+    - fileMatch:
+        glob: '**/*observer_pattern.py'
+        extensions:
+        - .py
+    - fileMatch:
+        glob: '**/*state_pattern*.py'
+        extensions:
+        - .py
+    - fileMatch:
+        glob: '**/*strategy_pattern.py'
+        extensions:
+        - .py
+    - fileMatch:
+        glob: '**/*template_method_pattern.py'
+        extensions:
+        - .py
+    - fileMatch:
+        glob: '**/*visitor_pattern.py'
+        extensions:
+        - .py
+  companions:
+  - python
   selection: additive
   priority: 100
   requiredWhenDetected: true
@@ -1113,6 +1439,104 @@ skills:
   selection: additive
   priority: 100
   requiredWhenDetected: true
+- skill: request-patterns
+  kind: domain
+  label: Request And History Patterns
+  capabilities:
+  - request-processing-patterns
+  activation:
+    anyOf:
+    - fileMatch:
+        glob: '**/*Command.*'
+        extensions:
+        - .java
+        - .kt
+        - .cs
+        - .cpp
+        - .h
+        - .hpp
+        - .swift
+        - .ts
+        - .tsx
+        - .py
+        - .rb
+        - .php
+    - fileMatch:
+        glob: '**/*ChainOfResponsibility.*'
+        extensions:
+        - .java
+        - .kt
+        - .cs
+        - .cpp
+        - .h
+        - .hpp
+        - .swift
+        - .ts
+        - .tsx
+        - .py
+        - .rb
+        - .php
+    - fileMatch:
+        glob: '**/*Memento.*'
+        extensions:
+        - .java
+        - .kt
+        - .cs
+        - .cpp
+        - .h
+        - .hpp
+        - .swift
+        - .ts
+        - .tsx
+        - .py
+        - .rb
+        - .php
+    - fileMatch:
+        glob: '**/*command_pattern.py'
+        extensions:
+        - .py
+    - fileMatch:
+        glob: '**/*chain_of_responsibility_pattern.py'
+        extensions:
+        - .py
+    - fileMatch:
+        glob: '**/*memento_pattern.py'
+        extensions:
+        - .py
+  companions: []
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
+- skill: singleton-pattern
+  kind: domain
+  label: Singleton Pattern
+  capabilities:
+  - singleton-pattern
+  activation:
+    anyOf:
+    - fileMatch:
+        glob: '**/*Singleton.*'
+        extensions:
+        - .java
+        - .kt
+        - .cs
+        - .cpp
+        - .h
+        - .hpp
+        - .swift
+        - .ts
+        - .tsx
+        - .py
+        - .rb
+        - .php
+    - fileMatch:
+        glob: '**/*singleton_pattern.py'
+        extensions:
+        - .py
+  companions: []
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
 - skill: spring-boot
   kind: technology
   label: Spring Boot
@@ -1219,6 +1643,74 @@ skills:
   selection: additive
   priority: 100
   requiredWhenDetected: true
+- skill: state-strategy-patterns
+  kind: domain
+  label: State And Strategy Patterns
+  capabilities:
+  - behavior-selection-patterns
+  activation:
+    anyOf:
+    - fileMatch:
+        glob: '**/*Strategy.*'
+        extensions:
+        - .java
+        - .kt
+        - .cs
+        - .cpp
+        - .h
+        - .hpp
+        - .swift
+        - .ts
+        - .tsx
+        - .py
+        - .rb
+        - .php
+    - fileMatch:
+        glob: '**/*StatePattern.*'
+        extensions:
+        - .java
+        - .kt
+        - .cs
+        - .cpp
+        - .h
+        - .hpp
+        - .swift
+        - .ts
+        - .tsx
+        - .py
+        - .rb
+        - .php
+    - fileMatch:
+        glob: '**/*TemplateMethod.*'
+        extensions:
+        - .java
+        - .kt
+        - .cs
+        - .cpp
+        - .h
+        - .hpp
+        - .swift
+        - .ts
+        - .tsx
+        - .py
+        - .rb
+        - .php
+    - fileMatch:
+        glob: '**/*strategy_pattern.py'
+        extensions:
+        - .py
+    - fileMatch:
+        glob: '**/*state_pattern.py'
+        extensions:
+        - .py
+    - fileMatch:
+        glob: '**/*template_method_pattern.py'
+        extensions:
+        - .py
+  companions: []
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
 - skill: tailwind-design-system
   kind: technology
   label: Tailwind design system
@@ -1305,6 +1797,55 @@ skills:
   selection: additive
   priority: 100
   requiredWhenDetected: true
+- skill: traversal-patterns
+  kind: domain
+  label: Traversal Patterns
+  capabilities:
+  - traversal-operation-patterns
+  activation:
+    anyOf:
+    - fileMatch:
+        glob: '**/*Iterator.*'
+        extensions:
+        - .java
+        - .kt
+        - .cs
+        - .cpp
+        - .h
+        - .hpp
+        - .swift
+        - .ts
+        - .tsx
+        - .py
+        - .rb
+        - .php
+    - fileMatch:
+        glob: '**/*Visitor.*'
+        extensions:
+        - .java
+        - .kt
+        - .cs
+        - .cpp
+        - .h
+        - .hpp
+        - .swift
+        - .ts
+        - .tsx
+        - .py
+        - .rb
+        - .php
+    - fileMatch:
+        glob: '**/*iterator_pattern.py'
+        extensions:
+        - .py
+    - fileMatch:
+        glob: '**/*visitor_pattern.py'
+        extensions:
+        - .py
+  companions: []
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
 - skill: typescript
   kind: technology
   label: TypeScript
@@ -1317,6 +1858,128 @@ skills:
     - fileExtension: .mts
     - fileExtension: .cts
   companions: []
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
+- skill: typescript-design-pattern-examples
+  kind: technology
+  label: TypeScript Design Pattern Examples
+  capabilities:
+  - design-pattern-examples
+  activation:
+    anyOf:
+    - fileMatch:
+        glob: '**/*Factory.*'
+        extensions:
+        - .ts
+        - .tsx
+    - fileMatch:
+        glob: '**/*Builder.*'
+        extensions:
+        - .ts
+        - .tsx
+    - fileMatch:
+        glob: '**/*Prototype.*'
+        extensions:
+        - .ts
+        - .tsx
+    - fileMatch:
+        glob: '**/*Singleton.*'
+        extensions:
+        - .ts
+        - .tsx
+    - fileMatch:
+        glob: '**/*Adapter.*'
+        extensions:
+        - .ts
+        - .tsx
+    - fileMatch:
+        glob: '**/*Bridge.*'
+        extensions:
+        - .ts
+        - .tsx
+    - fileMatch:
+        glob: '**/*Composite.*'
+        extensions:
+        - .ts
+        - .tsx
+    - fileMatch:
+        glob: '**/*Decorator.*'
+        extensions:
+        - .ts
+        - .tsx
+    - fileMatch:
+        glob: '**/*Facade.*'
+        extensions:
+        - .ts
+        - .tsx
+    - fileMatch:
+        glob: '**/*Flyweight.*'
+        extensions:
+        - .ts
+        - .tsx
+    - fileMatch:
+        glob: '**/*Proxy.*'
+        extensions:
+        - .ts
+        - .tsx
+    - fileMatch:
+        glob: '**/*ChainOfResponsibility.*'
+        extensions:
+        - .ts
+        - .tsx
+    - fileMatch:
+        glob: '**/*Command.*'
+        extensions:
+        - .ts
+        - .tsx
+    - fileMatch:
+        glob: '**/*Interpreter.*'
+        extensions:
+        - .ts
+        - .tsx
+    - fileMatch:
+        glob: '**/*Iterator.*'
+        extensions:
+        - .ts
+        - .tsx
+    - fileMatch:
+        glob: '**/*Mediator.*'
+        extensions:
+        - .ts
+        - .tsx
+    - fileMatch:
+        glob: '**/*Memento.*'
+        extensions:
+        - .ts
+        - .tsx
+    - fileMatch:
+        glob: '**/*Observer.*'
+        extensions:
+        - .ts
+        - .tsx
+    - fileMatch:
+        glob: '**/*StatePattern.*'
+        extensions:
+        - .ts
+        - .tsx
+    - fileMatch:
+        glob: '**/*Strategy.*'
+        extensions:
+        - .ts
+        - .tsx
+    - fileMatch:
+        glob: '**/*TemplateMethod.*'
+        extensions:
+        - .ts
+        - .tsx
+    - fileMatch:
+        glob: '**/*Visitor.*'
+        extensions:
+        - .ts
+        - .tsx
+  companions:
+  - typescript
   selection: additive
   priority: 100
   requiredWhenDetected: true

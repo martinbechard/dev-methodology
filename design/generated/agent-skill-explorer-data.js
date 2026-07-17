@@ -833,7 +833,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "modelJudgeNotRequiredAgentCount": 0,
     "modelJudgeNotRequiredSkillCount": 21,
     "modelJudgePendingAgentCount": 26,
-    "modelJudgePendingSkillCount": 80,
+    "modelJudgePendingSkillCount": 84,
     "negativeCaseBackedSkillCount": 0,
     "ordinaryLocalCaseCount": 7,
     "pairedControlsExecutableSkillCount": 0,
@@ -845,7 +845,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "positiveSecurityContainedSkillCount": 0,
     "positiveStaleByDigestSkillCount": 0,
     "positiveVerifiedSkillCount": 0,
-    "probeDeclaredSkillCount": 101,
+    "probeDeclaredSkillCount": 105,
     "scenarioDeclaredAgentCount": 26,
     "securityContainedAgentCount": 0,
     "securityContainedRunCount": 0,
@@ -854,7 +854,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "staleByDigestRunCount": 0,
     "staleByDigestSkillCount": 0,
     "structuralAgentCount": 26,
-    "structuralSkillCount": 101,
+    "structuralSkillCount": 105,
     "verifiedAgentCount": 0,
     "verifiedRunCount": 0,
     "verifiedSkillCount": 0,
@@ -3486,6 +3486,290 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
+      "category": "stack-and-domain",
+      "coverage": {
+        "catalogFixtureBacked": false,
+        "evaluationCategory": "stack-and-domain",
+        "executableCases": [],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": false,
+        "positiveCaseBackedCases": [],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
+          "probe-collaboration-patterns"
+        ],
+        "scenarioAssociations": [
+          "dev-code-reviewer-boundary",
+          "dev-coder-happy"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "code-delivery"
+        ]
+      },
+      "declaredCases": [],
+      "detection": {
+        "activation": {
+          "anyOf": [
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java",
+                  ".kt",
+                  ".cs",
+                  ".cpp",
+                  ".h",
+                  ".hpp",
+                  ".swift",
+                  ".ts",
+                  ".tsx",
+                  ".py",
+                  ".rb",
+                  ".php"
+                ],
+                "glob": "**/*Observer.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java",
+                  ".kt",
+                  ".cs",
+                  ".cpp",
+                  ".h",
+                  ".hpp",
+                  ".swift",
+                  ".ts",
+                  ".tsx",
+                  ".py",
+                  ".rb",
+                  ".php"
+                ],
+                "glob": "**/*Mediator.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*observer_pattern.py"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*mediator_pattern.py"
+              }
+            }
+          ]
+        },
+        "capabilities": [
+          "collaboration-patterns"
+        ],
+        "companions": [],
+        "kind": "domain",
+        "label": "Collaboration Patterns",
+        "priority": 100,
+        "requiredWhenDetected": true,
+        "selection": "additive",
+        "skill": "collaboration-patterns"
+      },
+      "executedCases": [],
+      "id": "collaboration-patterns",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
+      "verifiedCases": []
+    },
+    {
+      "category": "stack-and-domain",
+      "coverage": {
+        "catalogFixtureBacked": false,
+        "evaluationCategory": "stack-and-domain",
+        "executableCases": [],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": false,
+        "positiveCaseBackedCases": [],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
+          "probe-composition-patterns"
+        ],
+        "scenarioAssociations": [
+          "dev-code-reviewer-boundary",
+          "dev-coder-happy"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "code-delivery"
+        ]
+      },
+      "declaredCases": [],
+      "detection": {
+        "activation": {
+          "anyOf": [
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java",
+                  ".kt",
+                  ".cs",
+                  ".cpp",
+                  ".h",
+                  ".hpp",
+                  ".swift",
+                  ".ts",
+                  ".tsx",
+                  ".py",
+                  ".rb",
+                  ".php"
+                ],
+                "glob": "**/*Composite.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java",
+                  ".kt",
+                  ".cs",
+                  ".cpp",
+                  ".h",
+                  ".hpp",
+                  ".swift",
+                  ".ts",
+                  ".tsx",
+                  ".py",
+                  ".rb",
+                  ".php"
+                ],
+                "glob": "**/*Decorator.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java",
+                  ".kt",
+                  ".cs",
+                  ".cpp",
+                  ".h",
+                  ".hpp",
+                  ".swift",
+                  ".ts",
+                  ".tsx",
+                  ".py",
+                  ".rb",
+                  ".php"
+                ],
+                "glob": "**/*Proxy.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java",
+                  ".kt",
+                  ".cs",
+                  ".cpp",
+                  ".h",
+                  ".hpp",
+                  ".swift",
+                  ".ts",
+                  ".tsx",
+                  ".py",
+                  ".rb",
+                  ".php"
+                ],
+                "glob": "**/*Flyweight.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*composite_pattern.py"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*decorator_pattern.py"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*proxy_pattern.py"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*flyweight_pattern.py"
+              }
+            }
+          ]
+        },
+        "capabilities": [
+          "object-composition-patterns"
+        ],
+        "companions": [],
+        "kind": "domain",
+        "label": "Composition Patterns",
+        "priority": 100,
+        "requiredWhenDetected": true,
+        "selection": "additive",
+        "skill": "composition-patterns"
+      },
+      "executedCases": [],
+      "id": "composition-patterns",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
+      "verifiedCases": []
+    },
+    {
       "category": "artifact-creation",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -4402,6 +4686,236 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "category": "stack-and-domain",
       "coverage": {
+        "catalogFixtureBacked": false,
+        "evaluationCategory": "stack-and-domain",
+        "executableCases": [],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": false,
+        "positiveCaseBackedCases": [],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
+          "probe-interface-patterns"
+        ],
+        "scenarioAssociations": [
+          "dev-artifact-reviewer-boundary",
+          "dev-coder-happy"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "code-delivery"
+        ]
+      },
+      "declaredCases": [],
+      "detection": {
+        "activation": {
+          "anyOf": [
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java",
+                  ".kt",
+                  ".cs",
+                  ".cpp",
+                  ".h",
+                  ".hpp",
+                  ".swift",
+                  ".ts",
+                  ".tsx",
+                  ".py",
+                  ".rb",
+                  ".php"
+                ],
+                "glob": "**/*Adapter.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java",
+                  ".kt",
+                  ".cs",
+                  ".cpp",
+                  ".h",
+                  ".hpp",
+                  ".swift",
+                  ".ts",
+                  ".tsx",
+                  ".py",
+                  ".rb",
+                  ".php"
+                ],
+                "glob": "**/*Bridge.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java",
+                  ".kt",
+                  ".cs",
+                  ".cpp",
+                  ".h",
+                  ".hpp",
+                  ".swift",
+                  ".ts",
+                  ".tsx",
+                  ".py",
+                  ".rb",
+                  ".php"
+                ],
+                "glob": "**/*Facade.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*adapter_pattern.py"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*bridge_pattern.py"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*facade_pattern.py"
+              }
+            }
+          ]
+        },
+        "capabilities": [
+          "interface-boundary-patterns"
+        ],
+        "companions": [],
+        "kind": "domain",
+        "label": "Interface Patterns",
+        "priority": 100,
+        "requiredWhenDetected": true,
+        "selection": "additive",
+        "skill": "interface-patterns"
+      },
+      "executedCases": [],
+      "id": "interface-patterns",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
+      "verifiedCases": []
+    },
+    {
+      "category": "stack-and-domain",
+      "coverage": {
+        "catalogFixtureBacked": false,
+        "evaluationCategory": "stack-and-domain",
+        "executableCases": [],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": false,
+        "positiveCaseBackedCases": [],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
+          "probe-interpreter-pattern"
+        ],
+        "scenarioAssociations": [
+          "dev-artifact-reviewer-boundary",
+          "dev-coder-boundary"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "code-delivery"
+        ]
+      },
+      "declaredCases": [],
+      "detection": {
+        "activation": {
+          "anyOf": [
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java",
+                  ".kt",
+                  ".cs",
+                  ".cpp",
+                  ".h",
+                  ".hpp",
+                  ".swift",
+                  ".ts",
+                  ".tsx",
+                  ".py",
+                  ".rb",
+                  ".php"
+                ],
+                "glob": "**/*Interpreter.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*interpreter_pattern.py"
+              }
+            }
+          ]
+        },
+        "capabilities": [
+          "language-interpreter-pattern"
+        ],
+        "companions": [],
+        "kind": "domain",
+        "label": "Interpreter Pattern",
+        "priority": 100,
+        "requiredWhenDetected": true,
+        "selection": "additive",
+        "skill": "interpreter-pattern"
+      },
+      "executedCases": [],
+      "id": "interpreter-pattern",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
+      "verifiedCases": []
+    },
+    {
+      "category": "stack-and-domain",
+      "coverage": {
         "catalogFixtureBacked": true,
         "evaluationCategory": "stack-and-domain",
         "executableCases": [
@@ -4467,267 +4981,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "executedCases": [],
       "id": "java",
-      "judgePassedCases": [],
-      "securityContainedCases": [],
-      "verifiedCases": []
-    },
-    {
-      "category": "stack-and-domain",
-      "coverage": {
-        "catalogFixtureBacked": false,
-        "evaluationCategory": "stack-and-domain",
-        "executableCases": [],
-        "executableFixture": false,
-        "executedCases": [],
-        "fixtureBacked": false,
-        "fixtureBackedCases": [],
-        "judgeCalibration": "pending",
-        "judgePassedCases": [],
-        "negativeCaseBacked": false,
-        "negativeCaseBackedCases": [],
-        "pairedControlsExecutable": false,
-        "positiveCaseBacked": false,
-        "positiveCaseBackedCases": [],
-        "positiveExecutedCases": [],
-        "positiveJudgePassedCases": [],
-        "positiveSecurityContainedCases": [],
-        "positiveStaleByDigestCases": [],
-        "positiveVerifiedCases": [],
-        "probeDeclared": true,
-        "probeIds": [
-          "probe-java-collaboration-patterns"
-        ],
-        "scenarioAssociations": [
-          "dev-code-reviewer-boundary",
-          "dev-coder-happy"
-        ],
-        "securityContainedCases": [],
-        "staleByDigestCases": [],
-        "structural": true,
-        "verifiedCases": [],
-        "workflowAssociations": [
-          "code-delivery"
-        ]
-      },
-      "declaredCases": [],
-      "detection": {
-        "activation": {
-          "anyOf": [
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".java"
-                ],
-                "glob": "**/*Observer.java"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".java"
-                ],
-                "glob": "**/*Mediator.java"
-              }
-            }
-          ]
-        },
-        "capabilities": [
-          "collaboration-patterns"
-        ],
-        "companions": [
-          "java-design"
-        ],
-        "kind": "technology",
-        "label": "Java Collaboration Patterns",
-        "priority": 100,
-        "requiredWhenDetected": true,
-        "selection": "additive",
-        "skill": "java-collaboration-patterns"
-      },
-      "executedCases": [],
-      "id": "java-collaboration-patterns",
-      "judgePassedCases": [],
-      "securityContainedCases": [],
-      "verifiedCases": []
-    },
-    {
-      "category": "stack-and-domain",
-      "coverage": {
-        "catalogFixtureBacked": false,
-        "evaluationCategory": "stack-and-domain",
-        "executableCases": [],
-        "executableFixture": false,
-        "executedCases": [],
-        "fixtureBacked": false,
-        "fixtureBackedCases": [],
-        "judgeCalibration": "pending",
-        "judgePassedCases": [],
-        "negativeCaseBacked": false,
-        "negativeCaseBackedCases": [],
-        "pairedControlsExecutable": false,
-        "positiveCaseBacked": false,
-        "positiveCaseBackedCases": [],
-        "positiveExecutedCases": [],
-        "positiveJudgePassedCases": [],
-        "positiveSecurityContainedCases": [],
-        "positiveStaleByDigestCases": [],
-        "positiveVerifiedCases": [],
-        "probeDeclared": true,
-        "probeIds": [
-          "probe-java-composition-patterns"
-        ],
-        "scenarioAssociations": [
-          "dev-code-reviewer-boundary",
-          "dev-coder-happy"
-        ],
-        "securityContainedCases": [],
-        "staleByDigestCases": [],
-        "structural": true,
-        "verifiedCases": [],
-        "workflowAssociations": [
-          "code-delivery"
-        ]
-      },
-      "declaredCases": [],
-      "detection": {
-        "activation": {
-          "anyOf": [
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".java"
-                ],
-                "glob": "**/*Composite.java"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".java"
-                ],
-                "glob": "**/*Decorator.java"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".java"
-                ],
-                "glob": "**/*Proxy.java"
-              }
-            }
-          ]
-        },
-        "capabilities": [
-          "object-composition-patterns"
-        ],
-        "companions": [
-          "java-design"
-        ],
-        "kind": "technology",
-        "label": "Java Composition Patterns",
-        "priority": 100,
-        "requiredWhenDetected": true,
-        "selection": "additive",
-        "skill": "java-composition-patterns"
-      },
-      "executedCases": [],
-      "id": "java-composition-patterns",
-      "judgePassedCases": [],
-      "securityContainedCases": [],
-      "verifiedCases": []
-    },
-    {
-      "category": "stack-and-domain",
-      "coverage": {
-        "catalogFixtureBacked": false,
-        "evaluationCategory": "stack-and-domain",
-        "executableCases": [],
-        "executableFixture": false,
-        "executedCases": [],
-        "fixtureBacked": false,
-        "fixtureBackedCases": [],
-        "judgeCalibration": "pending",
-        "judgePassedCases": [],
-        "negativeCaseBacked": false,
-        "negativeCaseBackedCases": [],
-        "pairedControlsExecutable": false,
-        "positiveCaseBacked": false,
-        "positiveCaseBackedCases": [],
-        "positiveExecutedCases": [],
-        "positiveJudgePassedCases": [],
-        "positiveSecurityContainedCases": [],
-        "positiveStaleByDigestCases": [],
-        "positiveVerifiedCases": [],
-        "probeDeclared": true,
-        "probeIds": [
-          "probe-java-creation-patterns"
-        ],
-        "scenarioAssociations": [
-          "dev-artifact-reviewer-boundary",
-          "dev-coder-happy"
-        ],
-        "securityContainedCases": [],
-        "staleByDigestCases": [],
-        "structural": true,
-        "verifiedCases": [],
-        "workflowAssociations": [
-          "code-delivery"
-        ]
-      },
-      "declaredCases": [],
-      "detection": {
-        "activation": {
-          "anyOf": [
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".java"
-                ],
-                "glob": "**/*Factory.java"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".java"
-                ],
-                "glob": "**/*FactoryMethod.java"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".java"
-                ],
-                "glob": "**/*Builder.java"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".java"
-                ],
-                "glob": "**/*Prototype.java"
-              }
-            }
-          ]
-        },
-        "capabilities": [
-          "object-creation-patterns"
-        ],
-        "companions": [
-          "java-design"
-        ],
-        "kind": "technology",
-        "label": "Java Creation Patterns",
-        "priority": 100,
-        "requiredWhenDetected": true,
-        "selection": "additive",
-        "skill": "java-creation-patterns"
-      },
-      "executedCases": [],
-      "id": "java-creation-patterns",
       "judgePassedCases": [],
       "securityContainedCases": [],
       "verifiedCases": []
@@ -4822,10 +5075,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "positiveVerifiedCases": [],
         "probeDeclared": true,
         "probeIds": [
-          "probe-java-interface-patterns"
+          "probe-java-design-pattern-examples"
         ],
         "scenarioAssociations": [
-          "dev-artifact-reviewer-boundary",
+          "dev-code-reviewer-boundary",
           "dev-coder-happy"
         ],
         "securityContainedCases": [],
@@ -4840,6 +5093,38 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "detection": {
         "activation": {
           "anyOf": [
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java"
+                ],
+                "glob": "**/*Factory.java"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java"
+                ],
+                "glob": "**/*Builder.java"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java"
+                ],
+                "glob": "**/*Prototype.java"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java"
+                ],
+                "glob": "**/*Singleton.java"
+              }
+            },
             {
               "fileMatch": {
                 "extensions": [
@@ -4861,72 +5146,49 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
                 "extensions": [
                   ".java"
                 ],
+                "glob": "**/*Composite.java"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java"
+                ],
+                "glob": "**/*Decorator.java"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java"
+                ],
                 "glob": "**/*Facade.java"
               }
-            }
-          ]
-        },
-        "capabilities": [
-          "interface-boundary-patterns"
-        ],
-        "companions": [
-          "java-design"
-        ],
-        "kind": "technology",
-        "label": "Java Interface Patterns",
-        "priority": 100,
-        "requiredWhenDetected": true,
-        "selection": "additive",
-        "skill": "java-interface-patterns"
-      },
-      "executedCases": [],
-      "id": "java-interface-patterns",
-      "judgePassedCases": [],
-      "securityContainedCases": [],
-      "verifiedCases": []
-    },
-    {
-      "category": "stack-and-domain",
-      "coverage": {
-        "catalogFixtureBacked": false,
-        "evaluationCategory": "stack-and-domain",
-        "executableCases": [],
-        "executableFixture": false,
-        "executedCases": [],
-        "fixtureBacked": false,
-        "fixtureBackedCases": [],
-        "judgeCalibration": "pending",
-        "judgePassedCases": [],
-        "negativeCaseBacked": false,
-        "negativeCaseBackedCases": [],
-        "pairedControlsExecutable": false,
-        "positiveCaseBacked": false,
-        "positiveCaseBackedCases": [],
-        "positiveExecutedCases": [],
-        "positiveJudgePassedCases": [],
-        "positiveSecurityContainedCases": [],
-        "positiveStaleByDigestCases": [],
-        "positiveVerifiedCases": [],
-        "probeDeclared": true,
-        "probeIds": [
-          "probe-java-request-patterns"
-        ],
-        "scenarioAssociations": [
-          "dev-coder-happy",
-          "dev-verifier-boundary"
-        ],
-        "securityContainedCases": [],
-        "staleByDigestCases": [],
-        "structural": true,
-        "verifiedCases": [],
-        "workflowAssociations": [
-          "code-delivery"
-        ]
-      },
-      "declaredCases": [],
-      "detection": {
-        "activation": {
-          "anyOf": [
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java"
+                ],
+                "glob": "**/*Flyweight.java"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java"
+                ],
+                "glob": "**/*Proxy.java"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java"
+                ],
+                "glob": "**/*ChainOfResponsibility.java"
+              }
+            },
             {
               "fileMatch": {
                 "extensions": [
@@ -4940,149 +5202,39 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
                 "extensions": [
                   ".java"
                 ],
-                "glob": "**/*ChainOfResponsibility.java"
+                "glob": "**/*Interpreter.java"
               }
-            }
-          ]
-        },
-        "capabilities": [
-          "request-processing-patterns"
-        ],
-        "companions": [
-          "java-design"
-        ],
-        "kind": "technology",
-        "label": "Java Request Patterns",
-        "priority": 100,
-        "requiredWhenDetected": true,
-        "selection": "additive",
-        "skill": "java-request-patterns"
-      },
-      "executedCases": [],
-      "id": "java-request-patterns",
-      "judgePassedCases": [],
-      "securityContainedCases": [],
-      "verifiedCases": []
-    },
-    {
-      "category": "stack-and-domain",
-      "coverage": {
-        "catalogFixtureBacked": false,
-        "evaluationCategory": "stack-and-domain",
-        "executableCases": [],
-        "executableFixture": false,
-        "executedCases": [],
-        "fixtureBacked": false,
-        "fixtureBackedCases": [],
-        "judgeCalibration": "pending",
-        "judgePassedCases": [],
-        "negativeCaseBacked": false,
-        "negativeCaseBackedCases": [],
-        "pairedControlsExecutable": false,
-        "positiveCaseBacked": false,
-        "positiveCaseBackedCases": [],
-        "positiveExecutedCases": [],
-        "positiveJudgePassedCases": [],
-        "positiveSecurityContainedCases": [],
-        "positiveStaleByDigestCases": [],
-        "positiveVerifiedCases": [],
-        "probeDeclared": true,
-        "probeIds": [
-          "probe-java-singleton-pattern"
-        ],
-        "scenarioAssociations": [
-          "dev-code-reviewer-boundary",
-          "dev-coder-boundary"
-        ],
-        "securityContainedCases": [],
-        "staleByDigestCases": [],
-        "structural": true,
-        "verifiedCases": [],
-        "workflowAssociations": [
-          "code-delivery"
-        ]
-      },
-      "declaredCases": [],
-      "detection": {
-        "activation": {
-          "anyOf": [
+            },
             {
               "fileMatch": {
                 "extensions": [
                   ".java"
                 ],
-                "glob": "**/*Singleton.java"
+                "glob": "**/*Iterator.java"
               }
-            }
-          ]
-        },
-        "capabilities": [
-          "singleton-pattern"
-        ],
-        "companions": [
-          "java-design"
-        ],
-        "kind": "technology",
-        "label": "Java Singleton Pattern",
-        "priority": 100,
-        "requiredWhenDetected": true,
-        "selection": "additive",
-        "skill": "java-singleton-pattern"
-      },
-      "executedCases": [],
-      "id": "java-singleton-pattern",
-      "judgePassedCases": [],
-      "securityContainedCases": [],
-      "verifiedCases": []
-    },
-    {
-      "category": "stack-and-domain",
-      "coverage": {
-        "catalogFixtureBacked": false,
-        "evaluationCategory": "stack-and-domain",
-        "executableCases": [],
-        "executableFixture": false,
-        "executedCases": [],
-        "fixtureBacked": false,
-        "fixtureBackedCases": [],
-        "judgeCalibration": "pending",
-        "judgePassedCases": [],
-        "negativeCaseBacked": false,
-        "negativeCaseBackedCases": [],
-        "pairedControlsExecutable": false,
-        "positiveCaseBacked": false,
-        "positiveCaseBackedCases": [],
-        "positiveExecutedCases": [],
-        "positiveJudgePassedCases": [],
-        "positiveSecurityContainedCases": [],
-        "positiveStaleByDigestCases": [],
-        "positiveVerifiedCases": [],
-        "probeDeclared": true,
-        "probeIds": [
-          "probe-java-state-strategy-patterns"
-        ],
-        "scenarioAssociations": [
-          "dev-artifact-reviewer-boundary",
-          "dev-coder-happy"
-        ],
-        "securityContainedCases": [],
-        "staleByDigestCases": [],
-        "structural": true,
-        "verifiedCases": [],
-        "workflowAssociations": [
-          "code-delivery"
-        ]
-      },
-      "declaredCases": [],
-      "detection": {
-        "activation": {
-          "anyOf": [
+            },
             {
               "fileMatch": {
                 "extensions": [
                   ".java"
                 ],
-                "glob": "**/*Strategy.java"
+                "glob": "**/*Mediator.java"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java"
+                ],
+                "glob": "**/*Memento.java"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java"
+                ],
+                "glob": "**/*Observer.java"
               }
             },
             {
@@ -5098,78 +5250,15 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
                 "extensions": [
                   ".java"
                 ],
-                "glob": "**/*TemplateMethod.java"
+                "glob": "**/*Strategy.java"
               }
-            }
-          ]
-        },
-        "capabilities": [
-          "behavior-selection-patterns"
-        ],
-        "companions": [
-          "java-design"
-        ],
-        "kind": "technology",
-        "label": "Java State And Strategy Patterns",
-        "priority": 100,
-        "requiredWhenDetected": true,
-        "selection": "additive",
-        "skill": "java-state-strategy-patterns"
-      },
-      "executedCases": [],
-      "id": "java-state-strategy-patterns",
-      "judgePassedCases": [],
-      "securityContainedCases": [],
-      "verifiedCases": []
-    },
-    {
-      "category": "stack-and-domain",
-      "coverage": {
-        "catalogFixtureBacked": false,
-        "evaluationCategory": "stack-and-domain",
-        "executableCases": [],
-        "executableFixture": false,
-        "executedCases": [],
-        "fixtureBacked": false,
-        "fixtureBackedCases": [],
-        "judgeCalibration": "pending",
-        "judgePassedCases": [],
-        "negativeCaseBacked": false,
-        "negativeCaseBackedCases": [],
-        "pairedControlsExecutable": false,
-        "positiveCaseBacked": false,
-        "positiveCaseBackedCases": [],
-        "positiveExecutedCases": [],
-        "positiveJudgePassedCases": [],
-        "positiveSecurityContainedCases": [],
-        "positiveStaleByDigestCases": [],
-        "positiveVerifiedCases": [],
-        "probeDeclared": true,
-        "probeIds": [
-          "probe-java-traversal-patterns"
-        ],
-        "scenarioAssociations": [
-          "dev-artifact-reviewer-boundary",
-          "dev-coder-happy"
-        ],
-        "securityContainedCases": [],
-        "staleByDigestCases": [],
-        "structural": true,
-        "verifiedCases": [],
-        "workflowAssociations": [
-          "code-delivery"
-        ]
-      },
-      "declaredCases": [],
-      "detection": {
-        "activation": {
-          "anyOf": [
+            },
             {
               "fileMatch": {
                 "extensions": [
                   ".java"
                 ],
-                "glob": "**/*Iterator.java"
+                "glob": "**/*TemplateMethod.java"
               }
             },
             {
@@ -5183,20 +5272,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           ]
         },
         "capabilities": [
-          "traversal-operation-patterns"
+          "design-pattern-examples"
         ],
         "companions": [
           "java-design"
         ],
         "kind": "technology",
-        "label": "Java Traversal Patterns",
+        "label": "Java Design Pattern Examples",
         "priority": 100,
         "requiredWhenDetected": true,
         "selection": "additive",
-        "skill": "java-traversal-patterns"
+        "skill": "java-design-pattern-examples"
       },
       "executedCases": [],
-      "id": "java-traversal-patterns",
+      "id": "java-design-pattern-examples",
       "judgePassedCases": [],
       "securityContainedCases": [],
       "verifiedCases": []
@@ -6916,6 +7005,148 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
+      "category": "stack-and-domain",
+      "coverage": {
+        "catalogFixtureBacked": false,
+        "evaluationCategory": "stack-and-domain",
+        "executableCases": [],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": false,
+        "positiveCaseBackedCases": [],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
+          "probe-object-creation-patterns"
+        ],
+        "scenarioAssociations": [
+          "dev-artifact-reviewer-boundary",
+          "dev-coder-happy"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "code-delivery"
+        ]
+      },
+      "declaredCases": [],
+      "detection": {
+        "activation": {
+          "anyOf": [
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java",
+                  ".kt",
+                  ".cs",
+                  ".cpp",
+                  ".h",
+                  ".hpp",
+                  ".swift",
+                  ".ts",
+                  ".tsx",
+                  ".py",
+                  ".rb",
+                  ".php"
+                ],
+                "glob": "**/*Factory.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java",
+                  ".kt",
+                  ".cs",
+                  ".cpp",
+                  ".h",
+                  ".hpp",
+                  ".swift",
+                  ".ts",
+                  ".tsx",
+                  ".py",
+                  ".rb",
+                  ".php"
+                ],
+                "glob": "**/*Builder.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java",
+                  ".kt",
+                  ".cs",
+                  ".cpp",
+                  ".h",
+                  ".hpp",
+                  ".swift",
+                  ".ts",
+                  ".tsx",
+                  ".py",
+                  ".rb",
+                  ".php"
+                ],
+                "glob": "**/*Prototype.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*factory_pattern.py"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*builder_pattern.py"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*prototype_pattern.py"
+              }
+            }
+          ]
+        },
+        "capabilities": [
+          "object-creation-patterns"
+        ],
+        "companions": [],
+        "kind": "domain",
+        "label": "Object Creation Patterns",
+        "priority": 100,
+        "requiredWhenDetected": true,
+        "selection": "additive",
+        "skill": "object-creation-patterns"
+      },
+      "executedCases": [],
+      "id": "object-creation-patterns",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
+      "verifiedCases": []
+    },
+    {
       "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": true,
@@ -7740,6 +7971,245 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "positiveVerifiedCases": [],
         "probeDeclared": true,
         "probeIds": [
+          "probe-python-design-pattern-examples"
+        ],
+        "scenarioAssociations": [
+          "dev-code-reviewer-boundary",
+          "dev-coder-happy"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "code-delivery"
+        ]
+      },
+      "declaredCases": [],
+      "detection": {
+        "activation": {
+          "anyOf": [
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*factory_pattern.py"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*builder_pattern.py"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*prototype_pattern.py"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*singleton_pattern.py"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*adapter_pattern.py"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*bridge_pattern.py"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*composite_pattern.py"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*decorator_pattern.py"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*facade_pattern.py"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*flyweight_pattern.py"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*proxy_pattern.py"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*command_pattern.py"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*chain_of_responsibility_pattern.py"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*interpreter_pattern.py"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*iterator_pattern.py"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*mediator_pattern.py"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*memento_pattern.py"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*observer_pattern.py"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*state_pattern*.py"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*strategy_pattern.py"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*template_method_pattern.py"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*visitor_pattern.py"
+              }
+            }
+          ]
+        },
+        "capabilities": [
+          "design-pattern-examples"
+        ],
+        "companions": [
+          "python"
+        ],
+        "kind": "technology",
+        "label": "Python Design Pattern Examples",
+        "priority": 100,
+        "requiredWhenDetected": true,
+        "selection": "additive",
+        "skill": "python-design-pattern-examples"
+      },
+      "executedCases": [],
+      "id": "python-design-pattern-examples",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
+      "verifiedCases": []
+    },
+    {
+      "category": "stack-and-domain",
+      "coverage": {
+        "catalogFixtureBacked": false,
+        "evaluationCategory": "stack-and-domain",
+        "executableCases": [],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": false,
+        "positiveCaseBackedCases": [],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
           "probe-quarkus"
         ],
         "scenarioAssociations": [
@@ -8254,6 +8724,148 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
+      "category": "stack-and-domain",
+      "coverage": {
+        "catalogFixtureBacked": false,
+        "evaluationCategory": "stack-and-domain",
+        "executableCases": [],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": false,
+        "positiveCaseBackedCases": [],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
+          "probe-request-patterns"
+        ],
+        "scenarioAssociations": [
+          "dev-coder-happy",
+          "dev-verifier-boundary"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "code-delivery"
+        ]
+      },
+      "declaredCases": [],
+      "detection": {
+        "activation": {
+          "anyOf": [
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java",
+                  ".kt",
+                  ".cs",
+                  ".cpp",
+                  ".h",
+                  ".hpp",
+                  ".swift",
+                  ".ts",
+                  ".tsx",
+                  ".py",
+                  ".rb",
+                  ".php"
+                ],
+                "glob": "**/*Command.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java",
+                  ".kt",
+                  ".cs",
+                  ".cpp",
+                  ".h",
+                  ".hpp",
+                  ".swift",
+                  ".ts",
+                  ".tsx",
+                  ".py",
+                  ".rb",
+                  ".php"
+                ],
+                "glob": "**/*ChainOfResponsibility.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java",
+                  ".kt",
+                  ".cs",
+                  ".cpp",
+                  ".h",
+                  ".hpp",
+                  ".swift",
+                  ".ts",
+                  ".tsx",
+                  ".py",
+                  ".rb",
+                  ".php"
+                ],
+                "glob": "**/*Memento.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*command_pattern.py"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*chain_of_responsibility_pattern.py"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*memento_pattern.py"
+              }
+            }
+          ]
+        },
+        "capabilities": [
+          "request-processing-patterns"
+        ],
+        "companions": [],
+        "kind": "domain",
+        "label": "Request And History Patterns",
+        "priority": 100,
+        "requiredWhenDetected": true,
+        "selection": "additive",
+        "skill": "request-patterns"
+      },
+      "executedCases": [],
+      "id": "request-patterns",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
+      "verifiedCases": []
+    },
+    {
       "category": "artifact-review",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -8624,6 +9236,94 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "detection": null,
       "executedCases": [],
       "id": "runtime-evidence-collection",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
+      "verifiedCases": []
+    },
+    {
+      "category": "stack-and-domain",
+      "coverage": {
+        "catalogFixtureBacked": false,
+        "evaluationCategory": "stack-and-domain",
+        "executableCases": [],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": false,
+        "positiveCaseBackedCases": [],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
+          "probe-singleton-pattern"
+        ],
+        "scenarioAssociations": [
+          "dev-code-reviewer-boundary",
+          "dev-coder-boundary"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "code-delivery"
+        ]
+      },
+      "declaredCases": [],
+      "detection": {
+        "activation": {
+          "anyOf": [
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java",
+                  ".kt",
+                  ".cs",
+                  ".cpp",
+                  ".h",
+                  ".hpp",
+                  ".swift",
+                  ".ts",
+                  ".tsx",
+                  ".py",
+                  ".rb",
+                  ".php"
+                ],
+                "glob": "**/*Singleton.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*singleton_pattern.py"
+              }
+            }
+          ]
+        },
+        "capabilities": [
+          "singleton-pattern"
+        ],
+        "companions": [],
+        "kind": "domain",
+        "label": "Singleton Pattern",
+        "priority": 100,
+        "requiredWhenDetected": true,
+        "selection": "additive",
+        "skill": "singleton-pattern"
+      },
+      "executedCases": [],
+      "id": "singleton-pattern",
       "judgePassedCases": [],
       "securityContainedCases": [],
       "verifiedCases": []
@@ -9107,6 +9807,148 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
+      "category": "stack-and-domain",
+      "coverage": {
+        "catalogFixtureBacked": false,
+        "evaluationCategory": "stack-and-domain",
+        "executableCases": [],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": false,
+        "positiveCaseBackedCases": [],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
+          "probe-state-strategy-patterns"
+        ],
+        "scenarioAssociations": [
+          "dev-artifact-reviewer-boundary",
+          "dev-coder-happy"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "code-delivery"
+        ]
+      },
+      "declaredCases": [],
+      "detection": {
+        "activation": {
+          "anyOf": [
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java",
+                  ".kt",
+                  ".cs",
+                  ".cpp",
+                  ".h",
+                  ".hpp",
+                  ".swift",
+                  ".ts",
+                  ".tsx",
+                  ".py",
+                  ".rb",
+                  ".php"
+                ],
+                "glob": "**/*Strategy.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java",
+                  ".kt",
+                  ".cs",
+                  ".cpp",
+                  ".h",
+                  ".hpp",
+                  ".swift",
+                  ".ts",
+                  ".tsx",
+                  ".py",
+                  ".rb",
+                  ".php"
+                ],
+                "glob": "**/*StatePattern.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java",
+                  ".kt",
+                  ".cs",
+                  ".cpp",
+                  ".h",
+                  ".hpp",
+                  ".swift",
+                  ".ts",
+                  ".tsx",
+                  ".py",
+                  ".rb",
+                  ".php"
+                ],
+                "glob": "**/*TemplateMethod.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*strategy_pattern.py"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*state_pattern.py"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*template_method_pattern.py"
+              }
+            }
+          ]
+        },
+        "capabilities": [
+          "behavior-selection-patterns"
+        ],
+        "companions": [],
+        "kind": "domain",
+        "label": "State And Strategy Patterns",
+        "priority": 100,
+        "requiredWhenDetected": true,
+        "selection": "additive",
+        "skill": "state-strategy-patterns"
+      },
+      "executedCases": [],
+      "id": "state-strategy-patterns",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
+      "verifiedCases": []
+    },
+    {
       "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -9521,6 +10363,121 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "category": "stack-and-domain",
       "coverage": {
+        "catalogFixtureBacked": false,
+        "evaluationCategory": "stack-and-domain",
+        "executableCases": [],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": false,
+        "positiveCaseBackedCases": [],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
+          "probe-traversal-patterns"
+        ],
+        "scenarioAssociations": [
+          "dev-artifact-reviewer-boundary",
+          "dev-coder-happy"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "code-delivery"
+        ]
+      },
+      "declaredCases": [],
+      "detection": {
+        "activation": {
+          "anyOf": [
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java",
+                  ".kt",
+                  ".cs",
+                  ".cpp",
+                  ".h",
+                  ".hpp",
+                  ".swift",
+                  ".ts",
+                  ".tsx",
+                  ".py",
+                  ".rb",
+                  ".php"
+                ],
+                "glob": "**/*Iterator.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".java",
+                  ".kt",
+                  ".cs",
+                  ".cpp",
+                  ".h",
+                  ".hpp",
+                  ".swift",
+                  ".ts",
+                  ".tsx",
+                  ".py",
+                  ".rb",
+                  ".php"
+                ],
+                "glob": "**/*Visitor.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*iterator_pattern.py"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".py"
+                ],
+                "glob": "**/*visitor_pattern.py"
+              }
+            }
+          ]
+        },
+        "capabilities": [
+          "traversal-operation-patterns"
+        ],
+        "companions": [],
+        "kind": "domain",
+        "label": "Traversal Patterns",
+        "priority": 100,
+        "requiredWhenDetected": true,
+        "selection": "additive",
+        "skill": "traversal-patterns"
+      },
+      "executedCases": [],
+      "id": "traversal-patterns",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
+      "verifiedCases": []
+    },
+    {
+      "category": "stack-and-domain",
+      "coverage": {
         "catalogFixtureBacked": true,
         "evaluationCategory": "stack-and-domain",
         "executableCases": [
@@ -9596,6 +10553,267 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "executedCases": [],
       "id": "typescript",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
+      "verifiedCases": []
+    },
+    {
+      "category": "stack-and-domain",
+      "coverage": {
+        "catalogFixtureBacked": false,
+        "evaluationCategory": "stack-and-domain",
+        "executableCases": [],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": false,
+        "positiveCaseBackedCases": [],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
+          "probe-typescript-design-pattern-examples"
+        ],
+        "scenarioAssociations": [
+          "dev-code-reviewer-boundary",
+          "dev-coder-happy"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "code-delivery"
+        ]
+      },
+      "declaredCases": [],
+      "detection": {
+        "activation": {
+          "anyOf": [
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".ts",
+                  ".tsx"
+                ],
+                "glob": "**/*Factory.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".ts",
+                  ".tsx"
+                ],
+                "glob": "**/*Builder.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".ts",
+                  ".tsx"
+                ],
+                "glob": "**/*Prototype.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".ts",
+                  ".tsx"
+                ],
+                "glob": "**/*Singleton.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".ts",
+                  ".tsx"
+                ],
+                "glob": "**/*Adapter.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".ts",
+                  ".tsx"
+                ],
+                "glob": "**/*Bridge.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".ts",
+                  ".tsx"
+                ],
+                "glob": "**/*Composite.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".ts",
+                  ".tsx"
+                ],
+                "glob": "**/*Decorator.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".ts",
+                  ".tsx"
+                ],
+                "glob": "**/*Facade.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".ts",
+                  ".tsx"
+                ],
+                "glob": "**/*Flyweight.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".ts",
+                  ".tsx"
+                ],
+                "glob": "**/*Proxy.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".ts",
+                  ".tsx"
+                ],
+                "glob": "**/*ChainOfResponsibility.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".ts",
+                  ".tsx"
+                ],
+                "glob": "**/*Command.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".ts",
+                  ".tsx"
+                ],
+                "glob": "**/*Interpreter.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".ts",
+                  ".tsx"
+                ],
+                "glob": "**/*Iterator.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".ts",
+                  ".tsx"
+                ],
+                "glob": "**/*Mediator.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".ts",
+                  ".tsx"
+                ],
+                "glob": "**/*Memento.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".ts",
+                  ".tsx"
+                ],
+                "glob": "**/*Observer.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".ts",
+                  ".tsx"
+                ],
+                "glob": "**/*StatePattern.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".ts",
+                  ".tsx"
+                ],
+                "glob": "**/*Strategy.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".ts",
+                  ".tsx"
+                ],
+                "glob": "**/*TemplateMethod.*"
+              }
+            },
+            {
+              "fileMatch": {
+                "extensions": [
+                  ".ts",
+                  ".tsx"
+                ],
+                "glob": "**/*Visitor.*"
+              }
+            }
+          ]
+        },
+        "capabilities": [
+          "design-pattern-examples"
+        ],
+        "companions": [
+          "typescript"
+        ],
+        "kind": "technology",
+        "label": "TypeScript Design Pattern Examples",
+        "priority": 100,
+        "requiredWhenDetected": true,
+        "selection": "additive",
+        "skill": "typescript-design-pattern-examples"
+      },
+      "executedCases": [],
+      "id": "typescript-design-pattern-examples",
       "judgePassedCases": [],
       "securityContainedCases": [],
       "verifiedCases": []

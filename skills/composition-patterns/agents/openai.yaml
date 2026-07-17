@@ -1,0 +1,17 @@
+# Codex app metadata for this skill.
+# Derived interface fields are refreshed from SKILL.md by scripts/openai_metadata.py.
+interface:
+  # User-facing name shown in Codex skill surfaces.
+  display_name: Composition Patterns
+  # User-facing summary shown in Codex skill surfaces.
+  short_description: Design or review Composite, Decorator, Proxy, or Flyweight when clients need uniform trees...
+  # Prompt Codex can use when launching this skill directly.
+  default_prompt: Use $composition-patterns to design or review this pattern.
+
+# Optional invocation policy placeholder.
+# policy:
+#   allow_implicit_invocation: false
+
+# Optional tool dependency placeholder.
+# dependencies:
+#   tools: []

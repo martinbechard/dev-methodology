@@ -312,7 +312,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                     result = run_detection(root, "src/test", detector=detector)
                     self.assertEqual(expected, result["loadouts"][0]["skills"])
 
-    def test_explicit_java_pattern_types_load_focused_pattern_skills(self) -> None:
+    def test_explicit_java_pattern_types_load_generic_patterns_and_java_examples(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             source = root / "src" / "main" / "java" / "example"
@@ -322,24 +322,29 @@ class TechnologyDetectionTests(unittest.TestCase):
                 "RegistrySingleton.java",
                 "GatewayAdapter.java",
                 "MenuComposite.java",
+                "StyleFlyweight.java",
                 "PricingStrategy.java",
                 "SubmitCommand.java",
+                "EditorMemento.java",
                 "StatusObserver.java",
                 "TreeVisitor.java",
+                "ExpressionInterpreter.java",
             ):
                 (source / filename).write_text("class Example {}\n", encoding="utf-8")
 
             expected = [
+                "collaboration-patterns",
+                "composition-patterns",
+                "interface-patterns",
+                "interpreter-pattern",
                 "java",
-                "java-collaboration-patterns",
-                "java-composition-patterns",
-                "java-creation-patterns",
                 "java-design",
-                "java-interface-patterns",
-                "java-request-patterns",
-                "java-singleton-pattern",
-                "java-state-strategy-patterns",
-                "java-traversal-patterns",
+                "java-design-pattern-examples",
+                "object-creation-patterns",
+                "request-patterns",
+                "singleton-pattern",
+                "state-strategy-patterns",
+                "traversal-patterns",
             ]
             for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
                 with self.subTest(detector=detector):
@@ -357,6 +362,46 @@ class TechnologyDetectionTests(unittest.TestCase):
             for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
                 with self.subTest(detector=detector):
                     result = run_detection(root, "src/main", detector=detector)
+                    self.assertEqual(expected, result["loadouts"][0]["skills"])
+
+    def test_explicit_typescript_pattern_types_load_generic_patterns_and_typescript_examples(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "src"
+            source.mkdir(parents=True)
+            for filename in ("PricingStrategy.ts", "StyleFlyweight.ts", "ExpressionInterpreter.ts"):
+                (source / filename).write_text("export class Example {}\n", encoding="utf-8")
+
+            expected = [
+                "composition-patterns",
+                "interpreter-pattern",
+                "state-strategy-patterns",
+                "typescript",
+                "typescript-design-pattern-examples",
+            ]
+            for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+                with self.subTest(detector=detector):
+                    result = run_detection(root, "src", detector=detector)
+                    self.assertEqual(expected, result["loadouts"][0]["skills"])
+
+    def test_explicit_python_pattern_modules_load_generic_patterns_and_python_examples(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "src"
+            source.mkdir(parents=True)
+            for filename in ("pricing_strategy_pattern.py", "style_flyweight_pattern.py", "expression_interpreter_pattern.py"):
+                (source / filename).write_text("class Example:\n    pass\n", encoding="utf-8")
+
+            expected = [
+                "composition-patterns",
+                "interpreter-pattern",
+                "python",
+                "python-design-pattern-examples",
+                "state-strategy-patterns",
+            ]
+            for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+                with self.subTest(detector=detector):
+                    result = run_detection(root, "src", detector=detector)
                     self.assertEqual(expected, result["loadouts"][0]["skills"])
 
     def test_liquibase_scope_composes_with_sql_without_jhipster(self) -> None:

@@ -206,6 +206,200 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
       "activation": {
         "anyOf": [
           {
+            "fileMatch": {
+              "extensions": [
+                ".java",
+                ".kt",
+                ".cs",
+                ".cpp",
+                ".h",
+                ".hpp",
+                ".swift",
+                ".ts",
+                ".tsx",
+                ".py",
+                ".rb",
+                ".php"
+              ],
+              "glob": "**/*Observer.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".java",
+                ".kt",
+                ".cs",
+                ".cpp",
+                ".h",
+                ".hpp",
+                ".swift",
+                ".ts",
+                ".tsx",
+                ".py",
+                ".rb",
+                ".php"
+              ],
+              "glob": "**/*Mediator.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*observer_pattern.py"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*mediator_pattern.py"
+            }
+          }
+        ]
+      },
+      "capabilities": [
+        "collaboration-patterns"
+      ],
+      "companions": [],
+      "kind": "domain",
+      "label": "Collaboration Patterns",
+      "priority": 100,
+      "requiredWhenDetected": true,
+      "selection": "additive",
+      "skill": "collaboration-patterns"
+    },
+    {
+      "activation": {
+        "anyOf": [
+          {
+            "fileMatch": {
+              "extensions": [
+                ".java",
+                ".kt",
+                ".cs",
+                ".cpp",
+                ".h",
+                ".hpp",
+                ".swift",
+                ".ts",
+                ".tsx",
+                ".py",
+                ".rb",
+                ".php"
+              ],
+              "glob": "**/*Composite.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".java",
+                ".kt",
+                ".cs",
+                ".cpp",
+                ".h",
+                ".hpp",
+                ".swift",
+                ".ts",
+                ".tsx",
+                ".py",
+                ".rb",
+                ".php"
+              ],
+              "glob": "**/*Decorator.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".java",
+                ".kt",
+                ".cs",
+                ".cpp",
+                ".h",
+                ".hpp",
+                ".swift",
+                ".ts",
+                ".tsx",
+                ".py",
+                ".rb",
+                ".php"
+              ],
+              "glob": "**/*Proxy.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".java",
+                ".kt",
+                ".cs",
+                ".cpp",
+                ".h",
+                ".hpp",
+                ".swift",
+                ".ts",
+                ".tsx",
+                ".py",
+                ".rb",
+                ".php"
+              ],
+              "glob": "**/*Flyweight.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*composite_pattern.py"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*decorator_pattern.py"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*proxy_pattern.py"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*flyweight_pattern.py"
+            }
+          }
+        ]
+      },
+      "capabilities": [
+        "object-composition-patterns"
+      ],
+      "companions": [],
+      "kind": "domain",
+      "label": "Composition Patterns",
+      "priority": 100,
+      "requiredWhenDetected": true,
+      "selection": "additive",
+      "skill": "composition-patterns"
+    },
+    {
+      "activation": {
+        "anyOf": [
+          {
             "allOf": [
               {
                 "anyOf": [
@@ -308,6 +502,146 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
       "activation": {
         "anyOf": [
           {
+            "fileMatch": {
+              "extensions": [
+                ".java",
+                ".kt",
+                ".cs",
+                ".cpp",
+                ".h",
+                ".hpp",
+                ".swift",
+                ".ts",
+                ".tsx",
+                ".py",
+                ".rb",
+                ".php"
+              ],
+              "glob": "**/*Adapter.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".java",
+                ".kt",
+                ".cs",
+                ".cpp",
+                ".h",
+                ".hpp",
+                ".swift",
+                ".ts",
+                ".tsx",
+                ".py",
+                ".rb",
+                ".php"
+              ],
+              "glob": "**/*Bridge.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".java",
+                ".kt",
+                ".cs",
+                ".cpp",
+                ".h",
+                ".hpp",
+                ".swift",
+                ".ts",
+                ".tsx",
+                ".py",
+                ".rb",
+                ".php"
+              ],
+              "glob": "**/*Facade.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*adapter_pattern.py"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*bridge_pattern.py"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*facade_pattern.py"
+            }
+          }
+        ]
+      },
+      "capabilities": [
+        "interface-boundary-patterns"
+      ],
+      "companions": [],
+      "kind": "domain",
+      "label": "Interface Patterns",
+      "priority": 100,
+      "requiredWhenDetected": true,
+      "selection": "additive",
+      "skill": "interface-patterns"
+    },
+    {
+      "activation": {
+        "anyOf": [
+          {
+            "fileMatch": {
+              "extensions": [
+                ".java",
+                ".kt",
+                ".cs",
+                ".cpp",
+                ".h",
+                ".hpp",
+                ".swift",
+                ".ts",
+                ".tsx",
+                ".py",
+                ".rb",
+                ".php"
+              ],
+              "glob": "**/*Interpreter.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*interpreter_pattern.py"
+            }
+          }
+        ]
+      },
+      "capabilities": [
+        "language-interpreter-pattern"
+      ],
+      "companions": [],
+      "kind": "domain",
+      "label": "Interpreter Pattern",
+      "priority": 100,
+      "requiredWhenDetected": true,
+      "selection": "additive",
+      "skill": "interpreter-pattern"
+    },
+    {
+      "activation": {
+        "anyOf": [
+          {
             "fileExtension": ".java"
           }
         ]
@@ -324,132 +658,6 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
       "requiredWhenDetected": true,
       "selection": "additive",
       "skill": "java"
-    },
-    {
-      "activation": {
-        "anyOf": [
-          {
-            "fileMatch": {
-              "extensions": [
-                ".java"
-              ],
-              "glob": "**/*Observer.java"
-            }
-          },
-          {
-            "fileMatch": {
-              "extensions": [
-                ".java"
-              ],
-              "glob": "**/*Mediator.java"
-            }
-          }
-        ]
-      },
-      "capabilities": [
-        "collaboration-patterns"
-      ],
-      "companions": [
-        "java-design"
-      ],
-      "kind": "technology",
-      "label": "Java Collaboration Patterns",
-      "priority": 100,
-      "requiredWhenDetected": true,
-      "selection": "additive",
-      "skill": "java-collaboration-patterns"
-    },
-    {
-      "activation": {
-        "anyOf": [
-          {
-            "fileMatch": {
-              "extensions": [
-                ".java"
-              ],
-              "glob": "**/*Composite.java"
-            }
-          },
-          {
-            "fileMatch": {
-              "extensions": [
-                ".java"
-              ],
-              "glob": "**/*Decorator.java"
-            }
-          },
-          {
-            "fileMatch": {
-              "extensions": [
-                ".java"
-              ],
-              "glob": "**/*Proxy.java"
-            }
-          }
-        ]
-      },
-      "capabilities": [
-        "object-composition-patterns"
-      ],
-      "companions": [
-        "java-design"
-      ],
-      "kind": "technology",
-      "label": "Java Composition Patterns",
-      "priority": 100,
-      "requiredWhenDetected": true,
-      "selection": "additive",
-      "skill": "java-composition-patterns"
-    },
-    {
-      "activation": {
-        "anyOf": [
-          {
-            "fileMatch": {
-              "extensions": [
-                ".java"
-              ],
-              "glob": "**/*Factory.java"
-            }
-          },
-          {
-            "fileMatch": {
-              "extensions": [
-                ".java"
-              ],
-              "glob": "**/*FactoryMethod.java"
-            }
-          },
-          {
-            "fileMatch": {
-              "extensions": [
-                ".java"
-              ],
-              "glob": "**/*Builder.java"
-            }
-          },
-          {
-            "fileMatch": {
-              "extensions": [
-                ".java"
-              ],
-              "glob": "**/*Prototype.java"
-            }
-          }
-        ]
-      },
-      "capabilities": [
-        "object-creation-patterns"
-      ],
-      "companions": [
-        "java-design"
-      ],
-      "kind": "technology",
-      "label": "Java Creation Patterns",
-      "priority": 100,
-      "requiredWhenDetected": true,
-      "selection": "additive",
-      "skill": "java-creation-patterns"
     },
     {
       "activation": {
@@ -480,6 +688,38 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
               "extensions": [
                 ".java"
               ],
+              "glob": "**/*Factory.java"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".java"
+              ],
+              "glob": "**/*Builder.java"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".java"
+              ],
+              "glob": "**/*Prototype.java"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".java"
+              ],
+              "glob": "**/*Singleton.java"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".java"
+              ],
               "glob": "**/*Adapter.java"
             }
           },
@@ -496,27 +736,49 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
               "extensions": [
                 ".java"
               ],
+              "glob": "**/*Composite.java"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".java"
+              ],
+              "glob": "**/*Decorator.java"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".java"
+              ],
               "glob": "**/*Facade.java"
             }
-          }
-        ]
-      },
-      "capabilities": [
-        "interface-boundary-patterns"
-      ],
-      "companions": [
-        "java-design"
-      ],
-      "kind": "technology",
-      "label": "Java Interface Patterns",
-      "priority": 100,
-      "requiredWhenDetected": true,
-      "selection": "additive",
-      "skill": "java-interface-patterns"
-    },
-    {
-      "activation": {
-        "anyOf": [
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".java"
+              ],
+              "glob": "**/*Flyweight.java"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".java"
+              ],
+              "glob": "**/*Proxy.java"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".java"
+              ],
+              "glob": "**/*ChainOfResponsibility.java"
+            }
+          },
           {
             "fileMatch": {
               "extensions": [
@@ -530,59 +792,39 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
               "extensions": [
                 ".java"
               ],
-              "glob": "**/*ChainOfResponsibility.java"
+              "glob": "**/*Interpreter.java"
             }
-          }
-        ]
-      },
-      "capabilities": [
-        "request-processing-patterns"
-      ],
-      "companions": [
-        "java-design"
-      ],
-      "kind": "technology",
-      "label": "Java Request Patterns",
-      "priority": 100,
-      "requiredWhenDetected": true,
-      "selection": "additive",
-      "skill": "java-request-patterns"
-    },
-    {
-      "activation": {
-        "anyOf": [
+          },
           {
             "fileMatch": {
               "extensions": [
                 ".java"
               ],
-              "glob": "**/*Singleton.java"
+              "glob": "**/*Iterator.java"
             }
-          }
-        ]
-      },
-      "capabilities": [
-        "singleton-pattern"
-      ],
-      "companions": [
-        "java-design"
-      ],
-      "kind": "technology",
-      "label": "Java Singleton Pattern",
-      "priority": 100,
-      "requiredWhenDetected": true,
-      "selection": "additive",
-      "skill": "java-singleton-pattern"
-    },
-    {
-      "activation": {
-        "anyOf": [
+          },
           {
             "fileMatch": {
               "extensions": [
                 ".java"
               ],
-              "glob": "**/*Strategy.java"
+              "glob": "**/*Mediator.java"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".java"
+              ],
+              "glob": "**/*Memento.java"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".java"
+              ],
+              "glob": "**/*Observer.java"
             }
           },
           {
@@ -598,33 +840,15 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
               "extensions": [
                 ".java"
               ],
-              "glob": "**/*TemplateMethod.java"
+              "glob": "**/*Strategy.java"
             }
-          }
-        ]
-      },
-      "capabilities": [
-        "behavior-selection-patterns"
-      ],
-      "companions": [
-        "java-design"
-      ],
-      "kind": "technology",
-      "label": "Java State And Strategy Patterns",
-      "priority": 100,
-      "requiredWhenDetected": true,
-      "selection": "additive",
-      "skill": "java-state-strategy-patterns"
-    },
-    {
-      "activation": {
-        "anyOf": [
+          },
           {
             "fileMatch": {
               "extensions": [
                 ".java"
               ],
-              "glob": "**/*Iterator.java"
+              "glob": "**/*TemplateMethod.java"
             }
           },
           {
@@ -638,17 +862,17 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
         ]
       },
       "capabilities": [
-        "traversal-operation-patterns"
+        "design-pattern-examples"
       ],
       "companions": [
         "java-design"
       ],
       "kind": "technology",
-      "label": "Java Traversal Patterns",
+      "label": "Java Design Pattern Examples",
       "priority": 100,
       "requiredWhenDetected": true,
       "selection": "additive",
-      "skill": "java-traversal-patterns"
+      "skill": "java-design-pattern-examples"
     },
     {
       "activation": {
@@ -1641,6 +1865,103 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
           {
             "fileMatch": {
               "extensions": [
+                ".java",
+                ".kt",
+                ".cs",
+                ".cpp",
+                ".h",
+                ".hpp",
+                ".swift",
+                ".ts",
+                ".tsx",
+                ".py",
+                ".rb",
+                ".php"
+              ],
+              "glob": "**/*Factory.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".java",
+                ".kt",
+                ".cs",
+                ".cpp",
+                ".h",
+                ".hpp",
+                ".swift",
+                ".ts",
+                ".tsx",
+                ".py",
+                ".rb",
+                ".php"
+              ],
+              "glob": "**/*Builder.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".java",
+                ".kt",
+                ".cs",
+                ".cpp",
+                ".h",
+                ".hpp",
+                ".swift",
+                ".ts",
+                ".tsx",
+                ".py",
+                ".rb",
+                ".php"
+              ],
+              "glob": "**/*Prototype.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*factory_pattern.py"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*builder_pattern.py"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*prototype_pattern.py"
+            }
+          }
+        ]
+      },
+      "capabilities": [
+        "object-creation-patterns"
+      ],
+      "companions": [],
+      "kind": "domain",
+      "label": "Object Creation Patterns",
+      "priority": 100,
+      "requiredWhenDetected": true,
+      "selection": "additive",
+      "skill": "object-creation-patterns"
+    },
+    {
+      "activation": {
+        "anyOf": [
+          {
+            "fileMatch": {
+              "extensions": [
                 ".js",
                 ".jsx",
                 ".ts",
@@ -1809,6 +2130,200 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
       "requiredWhenDetected": true,
       "selection": "additive",
       "skill": "python"
+    },
+    {
+      "activation": {
+        "anyOf": [
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*factory_pattern.py"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*builder_pattern.py"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*prototype_pattern.py"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*singleton_pattern.py"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*adapter_pattern.py"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*bridge_pattern.py"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*composite_pattern.py"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*decorator_pattern.py"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*facade_pattern.py"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*flyweight_pattern.py"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*proxy_pattern.py"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*command_pattern.py"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*chain_of_responsibility_pattern.py"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*interpreter_pattern.py"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*iterator_pattern.py"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*mediator_pattern.py"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*memento_pattern.py"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*observer_pattern.py"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*state_pattern*.py"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*strategy_pattern.py"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*template_method_pattern.py"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*visitor_pattern.py"
+            }
+          }
+        ]
+      },
+      "capabilities": [
+        "design-pattern-examples"
+      ],
+      "companions": [
+        "python"
+      ],
+      "kind": "technology",
+      "label": "Python Design Pattern Examples",
+      "priority": 100,
+      "requiredWhenDetected": true,
+      "selection": "additive",
+      "skill": "python-design-pattern-examples"
     },
     {
       "activation": {
@@ -2081,6 +2596,146 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
       "activation": {
         "anyOf": [
           {
+            "fileMatch": {
+              "extensions": [
+                ".java",
+                ".kt",
+                ".cs",
+                ".cpp",
+                ".h",
+                ".hpp",
+                ".swift",
+                ".ts",
+                ".tsx",
+                ".py",
+                ".rb",
+                ".php"
+              ],
+              "glob": "**/*Command.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".java",
+                ".kt",
+                ".cs",
+                ".cpp",
+                ".h",
+                ".hpp",
+                ".swift",
+                ".ts",
+                ".tsx",
+                ".py",
+                ".rb",
+                ".php"
+              ],
+              "glob": "**/*ChainOfResponsibility.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".java",
+                ".kt",
+                ".cs",
+                ".cpp",
+                ".h",
+                ".hpp",
+                ".swift",
+                ".ts",
+                ".tsx",
+                ".py",
+                ".rb",
+                ".php"
+              ],
+              "glob": "**/*Memento.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*command_pattern.py"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*chain_of_responsibility_pattern.py"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*memento_pattern.py"
+            }
+          }
+        ]
+      },
+      "capabilities": [
+        "request-processing-patterns"
+      ],
+      "companions": [],
+      "kind": "domain",
+      "label": "Request And History Patterns",
+      "priority": 100,
+      "requiredWhenDetected": true,
+      "selection": "additive",
+      "skill": "request-patterns"
+    },
+    {
+      "activation": {
+        "anyOf": [
+          {
+            "fileMatch": {
+              "extensions": [
+                ".java",
+                ".kt",
+                ".cs",
+                ".cpp",
+                ".h",
+                ".hpp",
+                ".swift",
+                ".ts",
+                ".tsx",
+                ".py",
+                ".rb",
+                ".php"
+              ],
+              "glob": "**/*Singleton.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*singleton_pattern.py"
+            }
+          }
+        ]
+      },
+      "capabilities": [
+        "singleton-pattern"
+      ],
+      "companions": [],
+      "kind": "domain",
+      "label": "Singleton Pattern",
+      "priority": 100,
+      "requiredWhenDetected": true,
+      "selection": "additive",
+      "skill": "singleton-pattern"
+    },
+    {
+      "activation": {
+        "anyOf": [
+          {
             "allOf": [
               {
                 "fileExtension": ".java"
@@ -2276,6 +2931,103 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
       "activation": {
         "anyOf": [
           {
+            "fileMatch": {
+              "extensions": [
+                ".java",
+                ".kt",
+                ".cs",
+                ".cpp",
+                ".h",
+                ".hpp",
+                ".swift",
+                ".ts",
+                ".tsx",
+                ".py",
+                ".rb",
+                ".php"
+              ],
+              "glob": "**/*Strategy.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".java",
+                ".kt",
+                ".cs",
+                ".cpp",
+                ".h",
+                ".hpp",
+                ".swift",
+                ".ts",
+                ".tsx",
+                ".py",
+                ".rb",
+                ".php"
+              ],
+              "glob": "**/*StatePattern.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".java",
+                ".kt",
+                ".cs",
+                ".cpp",
+                ".h",
+                ".hpp",
+                ".swift",
+                ".ts",
+                ".tsx",
+                ".py",
+                ".rb",
+                ".php"
+              ],
+              "glob": "**/*TemplateMethod.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*strategy_pattern.py"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*state_pattern.py"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*template_method_pattern.py"
+            }
+          }
+        ]
+      },
+      "capabilities": [
+        "behavior-selection-patterns"
+      ],
+      "companions": [],
+      "kind": "domain",
+      "label": "State And Strategy Patterns",
+      "priority": 100,
+      "requiredWhenDetected": true,
+      "selection": "additive",
+      "skill": "state-strategy-patterns"
+    },
+    {
+      "activation": {
+        "anyOf": [
+          {
             "allOf": [
               {
                 "anyOf": [
@@ -2407,6 +3159,76 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
       "activation": {
         "anyOf": [
           {
+            "fileMatch": {
+              "extensions": [
+                ".java",
+                ".kt",
+                ".cs",
+                ".cpp",
+                ".h",
+                ".hpp",
+                ".swift",
+                ".ts",
+                ".tsx",
+                ".py",
+                ".rb",
+                ".php"
+              ],
+              "glob": "**/*Iterator.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".java",
+                ".kt",
+                ".cs",
+                ".cpp",
+                ".h",
+                ".hpp",
+                ".swift",
+                ".ts",
+                ".tsx",
+                ".py",
+                ".rb",
+                ".php"
+              ],
+              "glob": "**/*Visitor.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*iterator_pattern.py"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".py"
+              ],
+              "glob": "**/*visitor_pattern.py"
+            }
+          }
+        ]
+      },
+      "capabilities": [
+        "traversal-operation-patterns"
+      ],
+      "companions": [],
+      "kind": "domain",
+      "label": "Traversal Patterns",
+      "priority": 100,
+      "requiredWhenDetected": true,
+      "selection": "additive",
+      "skill": "traversal-patterns"
+    },
+    {
+      "activation": {
+        "anyOf": [
+          {
             "fileExtension": ".ts"
           },
           {
@@ -2430,6 +3252,222 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
       "requiredWhenDetected": true,
       "selection": "additive",
       "skill": "typescript"
+    },
+    {
+      "activation": {
+        "anyOf": [
+          {
+            "fileMatch": {
+              "extensions": [
+                ".ts",
+                ".tsx"
+              ],
+              "glob": "**/*Factory.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".ts",
+                ".tsx"
+              ],
+              "glob": "**/*Builder.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".ts",
+                ".tsx"
+              ],
+              "glob": "**/*Prototype.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".ts",
+                ".tsx"
+              ],
+              "glob": "**/*Singleton.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".ts",
+                ".tsx"
+              ],
+              "glob": "**/*Adapter.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".ts",
+                ".tsx"
+              ],
+              "glob": "**/*Bridge.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".ts",
+                ".tsx"
+              ],
+              "glob": "**/*Composite.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".ts",
+                ".tsx"
+              ],
+              "glob": "**/*Decorator.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".ts",
+                ".tsx"
+              ],
+              "glob": "**/*Facade.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".ts",
+                ".tsx"
+              ],
+              "glob": "**/*Flyweight.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".ts",
+                ".tsx"
+              ],
+              "glob": "**/*Proxy.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".ts",
+                ".tsx"
+              ],
+              "glob": "**/*ChainOfResponsibility.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".ts",
+                ".tsx"
+              ],
+              "glob": "**/*Command.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".ts",
+                ".tsx"
+              ],
+              "glob": "**/*Interpreter.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".ts",
+                ".tsx"
+              ],
+              "glob": "**/*Iterator.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".ts",
+                ".tsx"
+              ],
+              "glob": "**/*Mediator.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".ts",
+                ".tsx"
+              ],
+              "glob": "**/*Memento.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".ts",
+                ".tsx"
+              ],
+              "glob": "**/*Observer.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".ts",
+                ".tsx"
+              ],
+              "glob": "**/*StatePattern.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".ts",
+                ".tsx"
+              ],
+              "glob": "**/*Strategy.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".ts",
+                ".tsx"
+              ],
+              "glob": "**/*TemplateMethod.*"
+            }
+          },
+          {
+            "fileMatch": {
+              "extensions": [
+                ".ts",
+                ".tsx"
+              ],
+              "glob": "**/*Visitor.*"
+            }
+          }
+        ]
+      },
+      "capabilities": [
+        "design-pattern-examples"
+      ],
+      "companions": [
+        "typescript"
+      ],
+      "kind": "technology",
+      "label": "TypeScript Design Pattern Examples",
+      "priority": 100,
+      "requiredWhenDetected": true,
+      "selection": "additive",
+      "skill": "typescript-design-pattern-examples"
     },
     {
       "activation": {

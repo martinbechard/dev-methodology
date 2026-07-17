@@ -1,0 +1,10 @@
+schema: dev-methodology-technology-detection
+version: 2
+skill: singleton-pattern
+kind: domain
+label: Singleton Pattern
+capabilities: [singleton-pattern]
+activation:
+  anyOf:
+  - fileMatch: {glob: "**/*Singleton.*", extensions: [.java, .kt, .cs, .cpp, .h, .hpp, .swift, .ts, .tsx, .py, .rb, .php]}
+  - fileMatch: {glob: "**/*singleton_pattern.py", extensions: [.py]}

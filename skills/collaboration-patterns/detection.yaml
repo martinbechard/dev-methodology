@@ -1,0 +1,12 @@
+schema: dev-methodology-technology-detection
+version: 2
+skill: collaboration-patterns
+kind: domain
+label: Collaboration Patterns
+capabilities: [collaboration-patterns]
+activation:
+  anyOf:
+  - fileMatch: {glob: "**/*Observer.*", extensions: [.java, .kt, .cs, .cpp, .h, .hpp, .swift, .ts, .tsx, .py, .rb, .php]}
+  - fileMatch: {glob: "**/*Mediator.*", extensions: [.java, .kt, .cs, .cpp, .h, .hpp, .swift, .ts, .tsx, .py, .rb, .php]}
+  - fileMatch: {glob: "**/*observer_pattern.py", extensions: [.py]}
+  - fileMatch: {glob: "**/*mediator_pattern.py", extensions: [.py]}

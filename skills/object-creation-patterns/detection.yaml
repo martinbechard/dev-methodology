@@ -1,0 +1,14 @@
+schema: dev-methodology-technology-detection
+version: 2
+skill: object-creation-patterns
+kind: domain
+label: Object Creation Patterns
+capabilities: [object-creation-patterns]
+activation:
+  anyOf:
+  - fileMatch: {glob: "**/*Factory.*", extensions: [.java, .kt, .cs, .cpp, .h, .hpp, .swift, .ts, .tsx, .py, .rb, .php]}
+  - fileMatch: {glob: "**/*Builder.*", extensions: [.java, .kt, .cs, .cpp, .h, .hpp, .swift, .ts, .tsx, .py, .rb, .php]}
+  - fileMatch: {glob: "**/*Prototype.*", extensions: [.java, .kt, .cs, .cpp, .h, .hpp, .swift, .ts, .tsx, .py, .rb, .php]}
+  - fileMatch: {glob: "**/*factory_pattern.py", extensions: [.py]}
+  - fileMatch: {glob: "**/*builder_pattern.py", extensions: [.py]}
+  - fileMatch: {glob: "**/*prototype_pattern.py", extensions: [.py]}

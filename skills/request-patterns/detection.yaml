@@ -1,0 +1,14 @@
+schema: dev-methodology-technology-detection
+version: 2
+skill: request-patterns
+kind: domain
+label: Request And History Patterns
+capabilities: [request-processing-patterns]
+activation:
+  anyOf:
+  - fileMatch: {glob: "**/*Command.*", extensions: [.java, .kt, .cs, .cpp, .h, .hpp, .swift, .ts, .tsx, .py, .rb, .php]}
+  - fileMatch: {glob: "**/*ChainOfResponsibility.*", extensions: [.java, .kt, .cs, .cpp, .h, .hpp, .swift, .ts, .tsx, .py, .rb, .php]}
+  - fileMatch: {glob: "**/*Memento.*", extensions: [.java, .kt, .cs, .cpp, .h, .hpp, .swift, .ts, .tsx, .py, .rb, .php]}
+  - fileMatch: {glob: "**/*command_pattern.py", extensions: [.py]}
+  - fileMatch: {glob: "**/*chain_of_responsibility_pattern.py", extensions: [.py]}
+  - fileMatch: {glob: "**/*memento_pattern.py", extensions: [.py]}

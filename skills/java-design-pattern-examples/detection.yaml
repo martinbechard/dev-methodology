@@ -1,0 +1,31 @@
+schema: dev-methodology-technology-detection
+version: 2
+skill: java-design-pattern-examples
+kind: technology
+label: Java Design Pattern Examples
+capabilities: [design-pattern-examples]
+activation:
+  anyOf:
+  - fileMatch: {glob: "**/*Factory.java", extensions: [.java]}
+  - fileMatch: {glob: "**/*Builder.java", extensions: [.java]}
+  - fileMatch: {glob: "**/*Prototype.java", extensions: [.java]}
+  - fileMatch: {glob: "**/*Singleton.java", extensions: [.java]}
+  - fileMatch: {glob: "**/*Adapter.java", extensions: [.java]}
+  - fileMatch: {glob: "**/*Bridge.java", extensions: [.java]}
+  - fileMatch: {glob: "**/*Composite.java", extensions: [.java]}
+  - fileMatch: {glob: "**/*Decorator.java", extensions: [.java]}
+  - fileMatch: {glob: "**/*Facade.java", extensions: [.java]}
+  - fileMatch: {glob: "**/*Flyweight.java", extensions: [.java]}
+  - fileMatch: {glob: "**/*Proxy.java", extensions: [.java]}
+  - fileMatch: {glob: "**/*ChainOfResponsibility.java", extensions: [.java]}
+  - fileMatch: {glob: "**/*Command.java", extensions: [.java]}
+  - fileMatch: {glob: "**/*Interpreter.java", extensions: [.java]}
+  - fileMatch: {glob: "**/*Iterator.java", extensions: [.java]}
+  - fileMatch: {glob: "**/*Mediator.java", extensions: [.java]}
+  - fileMatch: {glob: "**/*Memento.java", extensions: [.java]}
+  - fileMatch: {glob: "**/*Observer.java", extensions: [.java]}
+  - fileMatch: {glob: "**/*StatePattern.java", extensions: [.java]}
+  - fileMatch: {glob: "**/*Strategy.java", extensions: [.java]}
+  - fileMatch: {glob: "**/*TemplateMethod.java", extensions: [.java]}
+  - fileMatch: {glob: "**/*Visitor.java", extensions: [.java]}
+companions: [java-design]

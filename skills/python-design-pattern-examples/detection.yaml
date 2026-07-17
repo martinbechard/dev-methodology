@@ -1,0 +1,31 @@
+schema: dev-methodology-technology-detection
+version: 2
+skill: python-design-pattern-examples
+kind: technology
+label: Python Design Pattern Examples
+capabilities: [design-pattern-examples]
+activation:
+  anyOf:
+  - fileMatch: {glob: "**/*factory_pattern.py", extensions: [.py]}
+  - fileMatch: {glob: "**/*builder_pattern.py", extensions: [.py]}
+  - fileMatch: {glob: "**/*prototype_pattern.py", extensions: [.py]}
+  - fileMatch: {glob: "**/*singleton_pattern.py", extensions: [.py]}
+  - fileMatch: {glob: "**/*adapter_pattern.py", extensions: [.py]}
+  - fileMatch: {glob: "**/*bridge_pattern.py", extensions: [.py]}
+  - fileMatch: {glob: "**/*composite_pattern.py", extensions: [.py]}
+  - fileMatch: {glob: "**/*decorator_pattern.py", extensions: [.py]}
+  - fileMatch: {glob: "**/*facade_pattern.py", extensions: [.py]}
+  - fileMatch: {glob: "**/*flyweight_pattern.py", extensions: [.py]}
+  - fileMatch: {glob: "**/*proxy_pattern.py", extensions: [.py]}
+  - fileMatch: {glob: "**/*command_pattern.py", extensions: [.py]}
+  - fileMatch: {glob: "**/*chain_of_responsibility_pattern.py", extensions: [.py]}
+  - fileMatch: {glob: "**/*interpreter_pattern.py", extensions: [.py]}
+  - fileMatch: {glob: "**/*iterator_pattern.py", extensions: [.py]}
+  - fileMatch: {glob: "**/*mediator_pattern.py", extensions: [.py]}
+  - fileMatch: {glob: "**/*memento_pattern.py", extensions: [.py]}
+  - fileMatch: {glob: "**/*observer_pattern.py", extensions: [.py]}
+  - fileMatch: {glob: "**/*state_pattern*.py", extensions: [.py]}
+  - fileMatch: {glob: "**/*strategy_pattern.py", extensions: [.py]}
+  - fileMatch: {glob: "**/*template_method_pattern.py", extensions: [.py]}
+  - fileMatch: {glob: "**/*visitor_pattern.py", extensions: [.py]}
+companions: [python]

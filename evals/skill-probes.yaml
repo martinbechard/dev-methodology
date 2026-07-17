@@ -513,12 +513,12 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
-  - id: probe-java-creation-patterns
-    skill: java-creation-patterns
-    source: skills/java-creation-patterns/SKILL.md
+  - id: probe-object-creation-patterns
+    skill: object-creation-patterns
+    source: skills/object-creation-patterns/SKILL.md
     evaluationCategory: stack-and-domain
     evaluationKind: activation-and-behavior
-    activationCondition: Java construction varies through factories, staged builders, related product families, or prototype copying.
+    activationCondition: Object construction varies through factories, staged builders, related product families, or prototype copying.
     negativeCondition: A constructor or static factory that already enforces the contract does not justify a pattern hierarchy.
     expectedBehavior: Identify construction ownership and variation, compare Factory Method, Abstract Factory, Builder, and Prototype, preserve invariants and lifecycle, and prove supported construction cases.
     judgePlan: {deterministicChecks: [skill-read-trace, operation-coverage, contradiction-scan], modelRubric: artifact-contract}
@@ -527,26 +527,26 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: tailwind-design-system}
-  - id: probe-java-singleton-pattern
-    skill: java-singleton-pattern
-    source: skills/java-singleton-pattern/SKILL.md
+  - id: probe-singleton-pattern
+    skill: singleton-pattern
+    source: skills/singleton-pattern/SKILL.md
     evaluationCategory: stack-and-domain
     evaluationKind: activation-and-behavior
-    activationCondition: A Java design proposes or implements exactly one instance within a defined runtime boundary.
+    activationCondition: A design proposes or implements exactly one instance within a defined runtime boundary.
     negativeCondition: Convenient global access without a single-instance invariant does not justify Singleton.
-    expectedBehavior: Define the runtime boundary, compare explicit composition and dependency injection, control initialization and concurrency, account for class loaders and serialization, and preserve test isolation.
+    expectedBehavior: Define the runtime boundary, compare explicit composition and dependency injection, control initialization and concurrency, account for language runtime and serialization behavior, and preserve test isolation.
     judgePlan: {deterministicChecks: [skill-read-trace, operation-coverage, contradiction-scan], modelRubric: source-faithfulness}
     scenarioAssociations: [dev-coder-boundary, dev-code-reviewer-boundary]
     workflowAssociations: [code-delivery]
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: fastapi}
-  - id: probe-java-interface-patterns
-    skill: java-interface-patterns
-    source: skills/java-interface-patterns/SKILL.md
+  - id: probe-interface-patterns
+    skill: interface-patterns
+    source: skills/interface-patterns/SKILL.md
     evaluationCategory: stack-and-domain
     evaluationKind: activation-and-behavior
-    activationCondition: Java interfaces require contract adaptation, independently varying abstraction and implementation, or a subsystem facade.
+    activationCondition: Contracts require adaptation, independently varying abstraction and implementation, or a subsystem facade.
     negativeCondition: Ordinary delegation that already expresses one stable dependency does not justify Adapter, Bridge, or Facade terminology.
     expectedBehavior: Select the pattern from the boundary problem, preserve semantic and lifecycle contracts, keep responsibilities cohesive, and test public boundary behavior and failures.
     judgePlan: {deterministicChecks: [skill-read-trace, operation-coverage, contradiction-scan], modelRubric: artifact-contract}
@@ -555,26 +555,26 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: react-vite-renderer}
-  - id: probe-java-composition-patterns
-    skill: java-composition-patterns
-    source: skills/java-composition-patterns/SKILL.md
+  - id: probe-composition-patterns
+    skill: composition-patterns
+    source: skills/composition-patterns/SKILL.md
     evaluationCategory: stack-and-domain
     evaluationKind: activation-and-behavior
-    activationCondition: Java design needs uniform tree operations, stackable responsibilities, or controlled access preserving a subject contract.
+    activationCondition: A design needs uniform tree operations, stackable responsibilities, controlled access, or shared intrinsic state.
     negativeCondition: A simple owned object graph or direct access without recursive, wrapping, or access-policy variation does not require these patterns.
-    expectedBehavior: Compare Composite, Decorator, and Proxy by intent, preserve substitutability and lifecycle, define ordering or recursion, and verify wrapped and unwrapped behavior.
+    expectedBehavior: Compare Composite, Decorator, Proxy, and Flyweight by intent, preserve substitutability and lifecycle, define recursion or sharing, and verify direct and indirect behavior.
     judgePlan: {deterministicChecks: [skill-read-trace, operation-coverage, contradiction-scan], modelRubric: source-faithfulness}
     scenarioAssociations: [dev-coder-happy, dev-code-reviewer-boundary]
     workflowAssociations: [code-delivery]
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: postgres-drizzle}
-  - id: probe-java-state-strategy-patterns
-    skill: java-state-strategy-patterns
-    source: skills/java-state-strategy-patterns/SKILL.md
+  - id: probe-state-strategy-patterns
+    skill: state-strategy-patterns
+    source: skills/state-strategy-patterns/SKILL.md
     evaluationCategory: stack-and-domain
     evaluationKind: activation-and-behavior
-    activationCondition: Java algorithms vary, behavior depends on explicit states and transitions, or a stable workflow exposes constrained steps.
+    activationCondition: Algorithms vary, behavior depends on explicit states and transitions, or a stable workflow exposes constrained steps.
     negativeCondition: A small conditional, enum, table, or function that already expresses closed behavior does not justify a hierarchy.
     expectedBehavior: Select Strategy, State, or Template Method from the variation direction, preserve transitions and invariants, constrain inheritance, and prove all variants and invalid transitions.
     judgePlan: {deterministicChecks: [skill-read-trace, operation-coverage, contradiction-scan], modelRubric: artifact-contract}
@@ -583,26 +583,26 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: playwright}
-  - id: probe-java-request-patterns
-    skill: java-request-patterns
-    source: skills/java-request-patterns/SKILL.md
+  - id: probe-request-patterns
+    skill: request-patterns
+    source: skills/request-patterns/SKILL.md
     evaluationCategory: stack-and-domain
     evaluationKind: activation-and-behavior
-    activationCondition: Java requests need independent lifecycle or must traverse an ordered sequence of handlers.
+    activationCondition: Requests need independent lifecycle, must traverse ordered handlers, or object state needs encapsulated snapshots.
     negativeCondition: A direct call or explicit loop without scheduling, retry, history, transport, or handler lifecycle does not need the patterns.
-    expectedBehavior: Select Command or Chain of Responsibility, define execution ownership, ordering, termination, idempotency, failure and compensation, and test the assembled flow.
+    expectedBehavior: Select Command, Chain of Responsibility, or Memento, define execution and history ownership, ordering, termination, restoration and compensation, and test the assembled flow.
     judgePlan: {deterministicChecks: [skill-read-trace, operation-coverage, test-state-transition], modelRubric: workflow-quality}
     scenarioAssociations: [dev-coder-happy, dev-verifier-boundary]
     workflowAssociations: [code-delivery]
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: node-cli}
-  - id: probe-java-collaboration-patterns
-    skill: java-collaboration-patterns
-    source: skills/java-collaboration-patterns/SKILL.md
+  - id: probe-collaboration-patterns
+    skill: collaboration-patterns
+    source: skills/collaboration-patterns/SKILL.md
     evaluationCategory: stack-and-domain
     evaluationKind: activation-and-behavior
-    activationCondition: Java publishers need independent subscribers or many peers require centrally owned collaboration rules.
+    activationCondition: Publishers need independent subscribers or many peers require centrally owned collaboration rules.
     negativeCondition: One stable callback or a simple direct dependency does not justify Observer or Mediator.
     expectedBehavior: Select Observer or Mediator, define subscription and coordination ownership, preserve delivery and failure semantics, prevent lifecycle leaks, and verify collaboration through public contracts.
     judgePlan: {deterministicChecks: [skill-read-trace, operation-coverage, test-state-transition], modelRubric: workflow-quality}
@@ -611,20 +611,76 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: sql}
-  - id: probe-java-traversal-patterns
-    skill: java-traversal-patterns
-    source: skills/java-traversal-patterns/SKILL.md
+  - id: probe-traversal-patterns
+    skill: traversal-patterns
+    source: skills/traversal-patterns/SKILL.md
     evaluationCategory: stack-and-domain
     evaluationKind: activation-and-behavior
-    activationCondition: Java traversal must hide aggregate representation or a stable element hierarchy needs independently evolving operations.
+    activationCondition: Traversal must hide aggregate representation or a stable element hierarchy needs independently evolving operations.
     negativeCondition: Standard iteration, streams, or ordinary polymorphism that already expresses the contract does not justify custom Iterator or Visitor machinery.
-    expectedBehavior: Select Iterator or Visitor from the variation direction, define order, mutation, recursion and dispatch, prefer standard Java APIs where sufficient, and test every supported structure and element type.
+    expectedBehavior: Select Iterator or Visitor from the variation direction, define order, mutation, recursion and dispatch, prefer language-native iteration where sufficient, and test every supported structure and element type.
     judgePlan: {deterministicChecks: [skill-read-trace, operation-coverage, test-state-transition], modelRubric: source-faithfulness}
     scenarioAssociations: [dev-coder-happy, dev-artifact-reviewer-boundary]
     workflowAssociations: [code-delivery]
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: fastapi}
+  - id: probe-interpreter-pattern
+    skill: interpreter-pattern
+    source: skills/interpreter-pattern/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: A small domain language needs explicit grammar, syntax representation, and evaluation rules.
+    negativeCondition: Structured data, a direct API, or mature parser tooling already expresses the requirement more safely.
+    expectedBehavior: Define grammar, precedence, evaluation context, errors and limits, separate parsing from evaluation, and verify every production and invalid form.
+    judgePlan: {deterministicChecks: [skill-read-trace, operation-coverage, contradiction-scan], modelRubric: artifact-contract}
+    scenarioAssociations: [dev-coder-boundary, dev-artifact-reviewer-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: sql}
+  - id: probe-java-design-pattern-examples
+    skill: java-design-pattern-examples
+    source: skills/java-design-pattern-examples/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: A selected Gang of Four pattern is implemented or reviewed in Java.
+    negativeCondition: Pattern selection and tradeoffs remain with the generic pattern skill.
+    expectedBehavior: Use the matching Java category examples, prefer standard Java mechanisms, and preserve release, module, nullness, exception, concurrency and lifecycle contracts.
+    judgePlan: {deterministicChecks: [skill-read-trace, operation-coverage], modelRubric: source-faithfulness}
+    scenarioAssociations: [dev-coder-happy, dev-code-reviewer-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: python-design-pattern-examples}
+  - id: probe-typescript-design-pattern-examples
+    skill: typescript-design-pattern-examples
+    source: skills/typescript-design-pattern-examples/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: A selected Gang of Four pattern is implemented or reviewed in TypeScript.
+    negativeCondition: Pattern selection and tradeoffs remain with the generic pattern skill.
+    expectedBehavior: Use the matching TypeScript examples, prefer structural typing, functions, unions and generators where appropriate, and preserve strictness, runtime validation and async ownership.
+    judgePlan: {deterministicChecks: [skill-read-trace, operation-coverage], modelRubric: source-faithfulness}
+    scenarioAssociations: [dev-coder-happy, dev-code-reviewer-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: java-design-pattern-examples}
+  - id: probe-python-design-pattern-examples
+    skill: python-design-pattern-examples
+    source: skills/python-design-pattern-examples/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: A selected Gang of Four pattern is implemented or reviewed in Python.
+    negativeCondition: Pattern selection and tradeoffs remain with the generic pattern skill.
+    expectedBehavior: Use the matching Python examples, prefer functions, protocols, dataclasses, modules and generators where appropriate, and preserve typing, resources, exceptions and async boundaries.
+    judgePlan: {deterministicChecks: [skill-read-trace, operation-coverage], modelRubric: source-faithfulness}
+    scenarioAssociations: [dev-coder-happy, dev-code-reviewer-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: typescript-design-pattern-examples}
   - id: probe-junit
     skill: junit
     source: skills/junit/SKILL.md

@@ -1,0 +1,31 @@
+schema: dev-methodology-technology-detection
+version: 2
+skill: typescript-design-pattern-examples
+kind: technology
+label: TypeScript Design Pattern Examples
+capabilities: [design-pattern-examples]
+activation:
+  anyOf:
+  - fileMatch: {glob: "**/*Factory.*", extensions: [.ts, .tsx]}
+  - fileMatch: {glob: "**/*Builder.*", extensions: [.ts, .tsx]}
+  - fileMatch: {glob: "**/*Prototype.*", extensions: [.ts, .tsx]}
+  - fileMatch: {glob: "**/*Singleton.*", extensions: [.ts, .tsx]}
+  - fileMatch: {glob: "**/*Adapter.*", extensions: [.ts, .tsx]}
+  - fileMatch: {glob: "**/*Bridge.*", extensions: [.ts, .tsx]}
+  - fileMatch: {glob: "**/*Composite.*", extensions: [.ts, .tsx]}
+  - fileMatch: {glob: "**/*Decorator.*", extensions: [.ts, .tsx]}
+  - fileMatch: {glob: "**/*Facade.*", extensions: [.ts, .tsx]}
+  - fileMatch: {glob: "**/*Flyweight.*", extensions: [.ts, .tsx]}
+  - fileMatch: {glob: "**/*Proxy.*", extensions: [.ts, .tsx]}
+  - fileMatch: {glob: "**/*ChainOfResponsibility.*", extensions: [.ts, .tsx]}
+  - fileMatch: {glob: "**/*Command.*", extensions: [.ts, .tsx]}
+  - fileMatch: {glob: "**/*Interpreter.*", extensions: [.ts, .tsx]}
+  - fileMatch: {glob: "**/*Iterator.*", extensions: [.ts, .tsx]}
+  - fileMatch: {glob: "**/*Mediator.*", extensions: [.ts, .tsx]}
+  - fileMatch: {glob: "**/*Memento.*", extensions: [.ts, .tsx]}
+  - fileMatch: {glob: "**/*Observer.*", extensions: [.ts, .tsx]}
+  - fileMatch: {glob: "**/*StatePattern.*", extensions: [.ts, .tsx]}
+  - fileMatch: {glob: "**/*Strategy.*", extensions: [.ts, .tsx]}
+  - fileMatch: {glob: "**/*TemplateMethod.*", extensions: [.ts, .tsx]}
+  - fileMatch: {glob: "**/*Visitor.*", extensions: [.ts, .tsx]}
+companions: [typescript]

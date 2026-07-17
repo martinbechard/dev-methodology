@@ -20,7 +20,7 @@ Combine with Java when the design is implemented, refactored, tested, or reviewe
 1. Identify callers, observable behavior, lifecycle, compatibility constraints, and the code that currently owns the responsibility.
 2. Model valid states and invariants before selecting classes, records, interfaces, inheritance, or patterns.
 3. Keep dependencies directed toward stable contracts and keep related behavior and data cohesive.
-4. Choose the smallest public surface and extension mechanism that satisfies demonstrated variation. Use a matching Java pattern skill only when the variation or collaboration problem is explicit.
+4. Choose the smallest public surface and extension mechanism that satisfies demonstrated variation. Use the matching generic pattern skill with Java Design Pattern Examples only when the variation or collaboration problem is explicit.
 5. Verify the design through representative callers, dependency checks, focused tests, and compatibility evidence.
 
 Read [Java Design Principles](references/design-principles-java.md) when the task needs detailed decision criteria.

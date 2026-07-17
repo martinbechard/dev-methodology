@@ -551,7 +551,7 @@
 
   <section class="section" aria-labelledby="technology-examples-title">
     <h2 id="technology-examples-title">Technology Extension Skills</h2>
-    <p>The Java pattern family covers a practical cross-section of twenty classic Gang of Four object-oriented patterns: five creational, six structural, and nine behavioral. There is no canonical popularity ranking, so the selection starts from the <a href="https://www.pearson.com/en-us/subject-catalog/p/Gamma-Design-Patterns-Elements-of-Reusable-Object-Oriented-Software/P200000009480">original 23-pattern catalog</a>, then compares the accessible <a href="https://refactoring.guru/design-patterns/catalog">classic pattern catalog</a>, the Java-oriented emphasis in <a href="https://www.oreilly.com/library/view/head-first-design/9781492077992/">Head First Design Patterns</a>, and the maintained <a href="https://github.com/iluwatar/java-design-patterns">Java Design Patterns collection</a>. Interpreter, Memento, and Flyweight remain valid patterns but sit outside this focused set. Pattern skills load automatically only from explicit pattern-named Java types; prospective designs invoke the matching skill by intent.</p>
+    <p>The generic pattern family covers all 23 Gang of Four object-oriented patterns: five creational, seven structural, and eleven behavioral. The <a href="https://www.informit.com/store/design-patterns-elements-of-reusable-object-oriented-software-9780201633610">original catalog</a> describes reusable object-oriented designs and presents examples in C++ and Smalltalk rather than defining one implementation language. Pattern selection, tradeoffs, and review criteria therefore remain language-neutral. Separate Java, TypeScript, and Python example skills show idiomatic implementations without making any language shape canonical. Explicit pattern-named source files load the matching generic family and language example skill; prospective designs invoke both by intent.</p>
     <div class="matrix">
       <table>
         <thead>
@@ -583,44 +583,60 @@
             <td>Java implementation and review guidance load separately from Java API, domain, package, module, and ownership design principles.</td>
           </tr>
           <tr>
-            <td><span class="tag" data-skill-definition="java-creation-patterns">java-creation-patterns</span></td>
-            <td>Explicit Factory, Builder, or Prototype type names in Java source, or direct invocation during prospective design.</td>
-            <td>Factory Method, Abstract Factory, Builder, and Prototype selection, implementation, and review guidance.</td>
+            <td><span class="tag" data-skill-definition="object-creation-patterns">object-creation-patterns</span></td>
+            <td>Explicit Factory, Builder, or Prototype names, or direct invocation during creation design.</td>
+            <td>Factory Method, Abstract Factory, Builder, and Prototype selection and review guidance.</td>
           </tr>
           <tr>
-            <td><span class="tag" data-skill-definition="java-singleton-pattern">java-singleton-pattern</span></td>
-            <td>An explicit Singleton type name in Java source, or direct invocation when a single-instance requirement is proposed.</td>
-            <td>Singleton boundary, lifecycle, concurrency, class-loader, dependency-injection, and test-isolation guidance.</td>
+            <td><span class="tag" data-skill-definition="singleton-pattern">singleton-pattern</span></td>
+            <td>An explicit Singleton name or a proposed single-instance requirement.</td>
+            <td>Language-neutral uniqueness, boundary, lifecycle, concurrency, and test-isolation guidance.</td>
           </tr>
           <tr>
-            <td><span class="tag" data-skill-definition="java-interface-patterns">java-interface-patterns</span></td>
-            <td>Explicit Adapter, Bridge, or Facade type names in Java source, or direct invocation during boundary design.</td>
-            <td>Adapter, Bridge, and Facade contract translation, variation, and subsystem-boundary guidance.</td>
+            <td><span class="tag" data-skill-definition="interface-patterns">interface-patterns</span></td>
+            <td>Explicit Adapter, Bridge, or Facade names, or direct invocation during boundary design.</td>
+            <td>Contract translation, independent variation, and subsystem-boundary guidance.</td>
           </tr>
           <tr>
-            <td><span class="tag" data-skill-definition="java-composition-patterns">java-composition-patterns</span></td>
-            <td>Explicit Composite, Decorator, or Proxy type names in Java source, or direct invocation during composition design.</td>
-            <td>Composite, Decorator, and Proxy ownership, transparency, ordering, recursive structure, and access-control guidance.</td>
+            <td><span class="tag" data-skill-definition="composition-patterns">composition-patterns</span></td>
+            <td>Explicit Composite, Decorator, Proxy, or Flyweight names, or direct invocation during structural design.</td>
+            <td>Recursive composition, wrapping, access control, and shared intrinsic-state guidance.</td>
           </tr>
           <tr>
-            <td><span class="tag" data-skill-definition="java-state-strategy-patterns">java-state-strategy-patterns</span></td>
-            <td>Explicit Strategy, StatePattern, or TemplateMethod type names in Java source, or direct invocation during behavior design.</td>
-            <td>Strategy, State, and Template Method variation, transition, workflow, composition, and inheritance guidance.</td>
+            <td><span class="tag" data-skill-definition="state-strategy-patterns">state-strategy-patterns</span></td>
+            <td>Explicit Strategy, StatePattern, or TemplateMethod names, or direct invocation during behavior design.</td>
+            <td>Algorithm variation, state transition, stable workflow, composition, and inheritance guidance.</td>
           </tr>
           <tr>
-            <td><span class="tag" data-skill-definition="java-request-patterns">java-request-patterns</span></td>
-            <td>Explicit Command or ChainOfResponsibility type names in Java source, or direct invocation during request-flow design.</td>
-            <td>Command and Chain of Responsibility routing, ordering, retry, cancellation, idempotency, and compensation guidance.</td>
+            <td><span class="tag" data-skill-definition="request-patterns">request-patterns</span></td>
+            <td>Explicit Command, ChainOfResponsibility, or Memento names, or direct invocation during request and history design.</td>
+            <td>Request lifecycle, handler routing, undo, snapshot, retention, and compensation guidance.</td>
           </tr>
           <tr>
-            <td><span class="tag" data-skill-definition="java-collaboration-patterns">java-collaboration-patterns</span></td>
-            <td>Explicit Observer or Mediator type names in Java source, or direct invocation during collaboration design.</td>
-            <td>Observer and Mediator subscription, coordination, delivery, concurrency, lifecycle, and failure guidance.</td>
+            <td><span class="tag" data-skill-definition="collaboration-patterns">collaboration-patterns</span></td>
+            <td>Explicit Observer or Mediator names, or direct invocation during collaboration design.</td>
+            <td>Subscription, coordination, delivery, concurrency, lifecycle, and failure guidance.</td>
           </tr>
           <tr>
-            <td><span class="tag" data-skill-definition="java-traversal-patterns">java-traversal-patterns</span></td>
-            <td>Explicit Iterator or Visitor type names in Java source, or direct invocation during traversal or operation design.</td>
-            <td>Iterator and Visitor traversal, mutation, dispatch, recursion, variation-direction, and resource guidance.</td>
+            <td><span class="tag" data-skill-definition="traversal-patterns">traversal-patterns</span></td>
+            <td>Explicit Iterator or Visitor names, or direct invocation during traversal design.</td>
+            <td>Traversal, mutation, dispatch, recursion, variation-direction, and resource guidance.</td>
+          </tr>
+          <tr>
+            <td><span class="tag" data-skill-definition="interpreter-pattern">interpreter-pattern</span></td>
+            <td>An explicit Interpreter name or a proposed small domain language.</td>
+            <td>Grammar, syntax representation, evaluation context, diagnostics, and resource-limit guidance.</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="tag-row">
+                <span class="tag" data-skill-definition="java-design-pattern-examples">java-design-pattern-examples</span>
+                <span class="tag" data-skill-definition="typescript-design-pattern-examples">typescript-design-pattern-examples</span>
+                <span class="tag" data-skill-definition="python-design-pattern-examples">python-design-pattern-examples</span>
+              </div>
+            </td>
+            <td>Explicit pattern-named Java, TypeScript, or Python source, or direct invocation with a generic pattern skill.</td>
+            <td>Complete language-specific example sets for all 23 patterns, organized by creational, structural, and behavioral categories.</td>
           </tr>
           <tr>
             <td>

@@ -89,14 +89,18 @@ NEW_DEVELOPMENT_SKILLS = (
     "fastapi",
     "java",
     "java-design",
-    "java-creation-patterns",
-    "java-singleton-pattern",
-    "java-interface-patterns",
-    "java-composition-patterns",
-    "java-state-strategy-patterns",
-    "java-request-patterns",
-    "java-collaboration-patterns",
-    "java-traversal-patterns",
+    "object-creation-patterns",
+    "singleton-pattern",
+    "interface-patterns",
+    "composition-patterns",
+    "state-strategy-patterns",
+    "request-patterns",
+    "collaboration-patterns",
+    "traversal-patterns",
+    "interpreter-pattern",
+    "java-design-pattern-examples",
+    "typescript-design-pattern-examples",
+    "python-design-pattern-examples",
     "junit",
     "mockito",
     "spring-boot",
@@ -192,14 +196,18 @@ EXAMPLE_PROJECT_SKILL_PACKS = (
     "agent-harness",
     "java",
     "java-design",
-    "java-creation-patterns",
-    "java-singleton-pattern",
-    "java-interface-patterns",
-    "java-composition-patterns",
-    "java-state-strategy-patterns",
-    "java-request-patterns",
-    "java-collaboration-patterns",
-    "java-traversal-patterns",
+    "object-creation-patterns",
+    "singleton-pattern",
+    "interface-patterns",
+    "composition-patterns",
+    "state-strategy-patterns",
+    "request-patterns",
+    "collaboration-patterns",
+    "traversal-patterns",
+    "interpreter-pattern",
+    "java-design-pattern-examples",
+    "typescript-design-pattern-examples",
+    "python-design-pattern-examples",
     "junit",
     "mockito",
     "jest",
@@ -245,14 +253,18 @@ README_REQUIRED_PHRASES = (
     "detect-technology-skills",
     "- liquibase",
     "- java-design",
-    "- java-creation-patterns",
-    "- java-singleton-pattern",
-    "- java-interface-patterns",
-    "- java-composition-patterns",
-    "- java-state-strategy-patterns",
-    "- java-request-patterns",
-    "- java-collaboration-patterns",
-    "- java-traversal-patterns",
+    "- object-creation-patterns",
+    "- singleton-pattern",
+    "- interface-patterns",
+    "- composition-patterns",
+    "- state-strategy-patterns",
+    "- request-patterns",
+    "- collaboration-patterns",
+    "- traversal-patterns",
+    "- interpreter-pattern",
+    "- java-design-pattern-examples",
+    "- typescript-design-pattern-examples",
+    "- python-design-pattern-examples",
     "- junit",
     "- mockito",
     "- spring-boot-design",
@@ -358,7 +370,7 @@ MODULARIZATION_REQUIRED_PHRASES = (
     "edit PROJECT.yaml to force a correction",
     "Operational result — after setup",
     "Technology Extension Skills",
-    "practical cross-section of twenty classic Gang of Four object-oriented patterns",
+    "generic pattern family covers all 23 Gang of Four object-oriented patterns",
     "Changeset identity, include-chain, validation, update, rollback, and recovery guidance together with SQL.",
     "jhipster-domain-modeling",
     "How Setup-Time Technology Detection Works",
@@ -376,14 +388,18 @@ TECHNOLOGY_EXTENSION_SKILLS = (
     "fastapi",
     "java",
     "java-design",
-    "java-creation-patterns",
-    "java-singleton-pattern",
-    "java-interface-patterns",
-    "java-composition-patterns",
-    "java-state-strategy-patterns",
-    "java-request-patterns",
-    "java-collaboration-patterns",
-    "java-traversal-patterns",
+    "object-creation-patterns",
+    "singleton-pattern",
+    "interface-patterns",
+    "composition-patterns",
+    "state-strategy-patterns",
+    "request-patterns",
+    "collaboration-patterns",
+    "traversal-patterns",
+    "interpreter-pattern",
+    "java-design-pattern-examples",
+    "typescript-design-pattern-examples",
+    "python-design-pattern-examples",
     "junit",
     "mockito",
     "spring-boot",
@@ -1093,55 +1109,60 @@ class BundleContentTests(unittest.TestCase):
                 self.assertTrue((skill_root / reference_path).is_file())
                 self.assertTrue((skill_root / "detection.yaml").is_file())
 
-    def test_java_design_pattern_families_are_focused_and_detection_backed(self) -> None:
+    def test_gof_pattern_families_are_generic_complete_and_detection_backed(self) -> None:
         expected = {
-            "java-creation-patterns": (
+            "object-creation-patterns": (
                 "Factory Method",
-                "references/design-guidelines-java-creation-patterns.md",
+                "references/design-guidelines-object-creation-patterns.md",
             ),
-            "java-singleton-pattern": (
+            "singleton-pattern": (
                 "exactly one instance",
-                "references/design-guidelines-java-singleton-pattern.md",
+                "references/design-guidelines-singleton-pattern.md",
             ),
-            "java-interface-patterns": (
+            "interface-patterns": (
                 "Use Adapter",
-                "references/design-guidelines-java-interface-patterns.md",
+                "references/design-guidelines-interface-patterns.md",
             ),
-            "java-composition-patterns": (
+            "composition-patterns": (
                 "Use Composite",
-                "references/design-guidelines-java-composition-patterns.md",
+                "references/design-guidelines-composition-patterns.md",
             ),
-            "java-state-strategy-patterns": (
+            "state-strategy-patterns": (
                 "Use Strategy",
-                "references/design-guidelines-java-state-strategy-patterns.md",
+                "references/design-guidelines-state-strategy-patterns.md",
             ),
-            "java-request-patterns": (
+            "request-patterns": (
                 "Use Command",
-                "references/design-guidelines-java-request-patterns.md",
+                "references/design-guidelines-request-patterns.md",
             ),
-            "java-collaboration-patterns": (
+            "collaboration-patterns": (
                 "Use Observer",
-                "references/design-guidelines-java-collaboration-patterns.md",
+                "references/design-guidelines-collaboration-patterns.md",
             ),
-            "java-traversal-patterns": (
+            "traversal-patterns": (
                 "Use Iterator",
-                "references/design-guidelines-java-traversal-patterns.md",
+                "references/design-guidelines-traversal-patterns.md",
+            ),
+            "interpreter-pattern": (
+                "Use Interpreter",
+                "references/design-guidelines-interpreter-pattern.md",
             ),
         }
         covered_patterns = {
-            "java-creation-patterns": (
+            "object-creation-patterns": (
                 "Factory Method",
                 "Abstract Factory",
                 "Builder",
                 "Prototype",
             ),
-            "java-singleton-pattern": ("Singleton",),
-            "java-interface-patterns": ("Adapter", "Bridge", "Facade"),
-            "java-composition-patterns": ("Composite", "Decorator", "Proxy"),
-            "java-state-strategy-patterns": ("Strategy", "State", "Template Method"),
-            "java-request-patterns": ("Command", "Chain of Responsibility"),
-            "java-collaboration-patterns": ("Observer", "Mediator"),
-            "java-traversal-patterns": ("Iterator", "Visitor"),
+            "singleton-pattern": ("Singleton",),
+            "interface-patterns": ("Adapter", "Bridge", "Facade"),
+            "composition-patterns": ("Composite", "Decorator", "Proxy", "Flyweight"),
+            "state-strategy-patterns": ("Strategy", "State", "Template Method"),
+            "request-patterns": ("Command", "Chain of Responsibility", "Memento"),
+            "collaboration-patterns": ("Observer", "Mediator"),
+            "traversal-patterns": ("Iterator", "Visitor"),
+            "interpreter-pattern": ("Interpreter",),
         }
 
         flattened_patterns = {
@@ -1149,7 +1170,7 @@ class BundleContentTests(unittest.TestCase):
             for patterns in covered_patterns.values()
             for pattern in patterns
         }
-        self.assertEqual(20, len(flattened_patterns))
+        self.assertEqual(23, len(flattened_patterns))
 
         for skill_name, (boundary_phrase, reference_path) in expected.items():
             with self.subTest(skill_name=skill_name):
@@ -1162,6 +1183,16 @@ class BundleContentTests(unittest.TestCase):
                 self.assertTrue((skill_root / "detection.yaml").is_file())
                 for pattern in covered_patterns[skill_name]:
                     self.assertIn(pattern, skill_text + reference_text)
+
+        for language in ("java", "typescript", "python"):
+            skill_root = SKILLS_ROOT / f"{language}-design-pattern-examples"
+            example_text = "\n".join(
+                path.read_text(encoding="utf-8")
+                for path in sorted((skill_root / "references").glob("*-examples-*.md"))
+            )
+            self.assertTrue((skill_root / "detection.yaml").is_file())
+            for pattern in flattened_patterns:
+                self.assertIn(pattern, example_text)
 
     def test_quarkus_concerns_are_separate_and_detection_backed(self) -> None:
         expected = {

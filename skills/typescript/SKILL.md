@@ -18,6 +18,7 @@ metadata:
 - Preserve import, export, package, build, and test-runner compatibility.
 - Use existing logging first. When runtime evidence is unavailable, temporary console output is acceptable with an identifiable prefix, safe values, and mandatory cleanup.
 - Add focused behavior tests and run typecheck or build plus the relevant test command.
+- When a Gang of Four pattern is explicit, combine its generic pattern skill with TypeScript Design Pattern Examples instead of treating a class-heavy Java shape as canonical.
 
 ## Review Evidence
 
