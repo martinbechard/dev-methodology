@@ -210,17 +210,25 @@ class AgentSuiteRunnerTests(unittest.TestCase):
 
     def test_staged_agents_are_registered_as_codex_config_files(self) -> None:
         """A task name alone cannot replace the custom-agent config registration."""
-        staged = (
-            runner._StagedAgent(
-                "target_agent", Path("target.toml"), "instructions", "a" * 64, "binding-marker"
-            ),
-        )
+        with tempfile.TemporaryDirectory() as temporary:
+            codex_home = Path(temporary)
+            agent_root = codex_home / "agents"
+            agent_root.mkdir()
+            (agent_root / "target_agent.toml").write_text(
+                'name = "target_agent"\ndescription = "Target description."\n', encoding="utf-8"
+            )
+            staged = (
+                runner._StagedAgent(
+                    "target_agent", Path("target.toml"), "instructions", "a" * 64, "binding-marker"
+                ),
+            )
 
-        arguments = runner._agent_registration_arguments(staged, Path("/tmp/codex-home"))
+            arguments = runner._agent_registration_arguments(staged, codex_home)
 
         self.assertEqual("-c", arguments[0])
-        self.assertIn("agents.target_agent.config_file=", arguments[1])
-        self.assertIn("/tmp/codex-home/agents/target_agent.toml", arguments[1])
+        self.assertIn("agents.target_agent.description=", arguments[1])
+        self.assertIn("agents.target_agent.config_file=", arguments[3])
+        self.assertIn("/agents/target_agent.toml", arguments[3])
 
     def test_overlapping_supervisor_children_fail_runtime_audit(self) -> None:
         """Retained session intervals enforce one active child per supervisor."""

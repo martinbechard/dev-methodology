@@ -399,7 +399,16 @@ def _agent_registration_arguments(staged: Sequence[_StagedAgent], codex_home: Pa
     arguments: list[str] = []
     for agent in staged:
         config_path = codex_home / "agents" / f"{agent.invocation}.toml"
-        arguments.extend(("-c", f"agents.{agent.invocation}.config_file={json.dumps(str(config_path))}"))
+        loaded = tomllib.loads(config_path.read_text(encoding="utf-8"))
+        description = str(loaded.get("description", f"Governed {agent.invocation} evaluation agent."))
+        arguments.extend(
+            (
+                "-c",
+                f"agents.{agent.invocation}.description={json.dumps(description)}",
+                "-c",
+                f"agents.{agent.invocation}.config_file={json.dumps(str(config_path))}",
+            )
+        )
     return tuple(arguments)
 
 
