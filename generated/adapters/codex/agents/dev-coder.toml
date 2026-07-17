@@ -15,7 +15,7 @@
 # - source patch: Provides the requested behavior change in a reviewable form that can be integrated into the repository.
 # - test and build evidence: Demonstrates that the changed behavior and its surrounding contracts passed the applicable checks before the requester relies on the patch.
 # - changed-file summary: Gives the requester and reviewers a concise inventory of the affected scope so they can assess impact and navigate the implementation quickly.
-name = "dev-coder"
+name = "dev_coder"
 description = "Implements scoped source changes using applicable project guidance, repository patterns, focused tests, and build commands."
 developer_instructions = """
 Apply the project and technology guidance supplied for the active scope, make the smallest complete change, preserve unrelated work, add or update regression coverage, and run the applicable build and tests.

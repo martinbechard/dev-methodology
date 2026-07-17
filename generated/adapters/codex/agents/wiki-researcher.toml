@@ -11,7 +11,7 @@
 # - existing coverage assessment: Shows whether the requested topic was already answered by local or upstream durable pages and why research was or was not needed.
 # - raw research report: Provides a source-backed, collision-safe artifact for later wiki ingest without bypassing the raw-source boundary.
 # - ingest recommendation: Names the likely durable destinations, cross-links, conflicts, and follow-up the Wiki Ingester should evaluate.
-name = "wiki-researcher"
+name = "wiki_researcher"
 description = "Performs bounded on-demand research for wiki gaps and saves sourced raw reports for later ingest without editing durable wiki pages."
 developer_instructions = """
 Check local and federated wiki coverage first, research only the missing or stale scope, save one collision-safe raw report, and leave docs/wiki unchanged.

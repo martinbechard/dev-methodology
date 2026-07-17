@@ -16,7 +16,7 @@
 # - handoff plan: Preserves the evidence, context, and acceptance expectations that must pass between contributors for downstream work to continue safely.
 # - integrated verification: Confirms that the accepted direct lane, or the combined result when integration is required, was checked as one coherent outcome before handoff.
 # - committed integration: Records the final direct or integration commit, clean worktree status, and released claims so completed orchestration cannot leave anonymous repository changes behind.
-name = "dev-orchestrator"
+name = "dev_orchestrator"
 description = "Coordinates multi-step development work across implementation and writing agents, fresh-context source and artifact reviewers, independent verification, and deliberate integration while preserving bounded context, explicit handoffs, and claim evidence."
 developer_instructions = """
 ## Objective

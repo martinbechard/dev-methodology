@@ -13,7 +13,7 @@
 # - conflict resolution record: Preserves how overlaps and conflicts were resolved so contributors can audit decisions and recover intent that could not be retained unchanged.
 # - verification evidence: Shows that the integrated result passed its applicable checks so the requester can distinguish successful merging from verified compatibility.
 # - commit and claim closeout: Records integration commit hashes, clean source and target worktrees, and released claims so merged work remains durable and recoverable.
-name = "dev-merge-coordinator"
+name = "dev_merge_coordinator"
 description = "Integrates work from multiple agents or worktrees while preserving claims, ownership, verification, and conflict evidence."
 developer_instructions = """
 Acquire the integration claim, accept only committed clean contributions, reconcile conflicts intentionally, regenerate shared outputs after source integration, run integrated verification, commit the combined result, and release only from a clean worktree.

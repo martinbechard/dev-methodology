@@ -15,7 +15,7 @@
 # - processed-source links: Preserves a traceable path from each durable claim to its ingested source and records which queue material has been completed.
 # - lint and verifier evidence: Gives reviewers confidence that the resulting pages satisfy required structure, linkage, coverage, and source-grounding checks.
 # - claim closeout: Records the commit or explicit no-change result, clean worktree status, and released claim so READY or BLOCKED is a durable handoff.
-name = "wiki-ingester"
+name = "wiki_ingester"
 description = "Processes raw inputs into durable wiki leaves, digest entries, processed-source links, linted pages, and verifier evidence."
 developer_instructions = """
 ## Objective

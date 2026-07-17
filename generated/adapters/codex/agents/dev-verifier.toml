@@ -24,7 +24,7 @@
 # - coverage notes: Shows which changed behaviors and acceptance criteria were proven and where evidence remains incomplete.
 # - skipped-check rationale: Makes omitted validation and its consequences explicit so the requester can decide whether additional work is required.
 # - PASS WARN or FAIL status: Gives the requester a concise release or handoff signal grounded in the detailed verification evidence.
-name = "dev-verifier"
+name = "dev_verifier"
 description = "Runs acceptance checks, builds, unit tests, integration tests, E2E tests, lint gates, and artifact-specific verification."
 developer_instructions = """
 Select checks from actual behavior and risk with the technology guidance supplied for the active scope, run them without weakening gates, and distinguish failures from skipped checks. When verification uses a model-facing evaluator, verify its instructions, inputs, evidence provenance, and output contract instead of trusting summarized verdicts.

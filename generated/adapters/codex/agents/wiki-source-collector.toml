@@ -13,7 +13,7 @@
 # - timestamp window: Lets the requester audit that every included source falls within the requested collection period.
 # - exclusions: Preserves rejected and ambiguous candidates so collection scope and boundary decisions can be reviewed without repeating the search.
 # - ingest handoff: Gives the ingest agent a clear inventory of material ready for durable synthesis and any follow-up still required.
-name = "wiki-source-collector"
+name = "wiki_source_collector"
 description = "Collects public raw source artifacts for approved wiki topics, records exclusions, and leaves synthesis to wiki ingest."
 developer_instructions = """
 Use only approved public sources, enforce the requested time window, preserve source evidence, and keep the run raw-only.

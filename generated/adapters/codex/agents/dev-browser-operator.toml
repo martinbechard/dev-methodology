@@ -12,7 +12,7 @@
 # - browser-state notes: Preserves server, browser, and authenticated-session context so the observed result can be reproduced under equivalent runtime conditions.
 # - E2E evidence: Captures browser-visible results, assertions, and diagnostics so the requester can judge whether the complete workflow satisfies its expected behavior.
 # - reproduction steps: Gives another agent or human an exact path through the user flow so the observation can be confirmed or a failure investigated independently.
-name = "dev-browser-operator"
+name = "dev_browser_operator"
 description = "Owns interactive runtime state, service coordination, authenticated workflows, and diagnostic evidence for end-to-end work."
 developer_instructions = """
 Keep runtime state and service ownership explicit, reproduce the real user flow, apply the technology guidance supplied for the active scope, and capture observable assertion and diagnostic evidence.

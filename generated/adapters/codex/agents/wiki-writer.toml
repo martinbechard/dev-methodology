@@ -15,7 +15,7 @@
 # - source traceability: Connects material wiki claims to authoritative sources and records unresolved conflicts instead of allowing the synthesis layer to replace source truth.
 # - lint and verifier evidence: Demonstrates that changed pages satisfy wiki structure, source-link, leaf-granularity, and OKF expectations before handoff.
 # - claim closeout: Records the commit or explicit no-change result, clean worktree status, and released claim so READY or BLOCKED is a durable handoff.
-name = "wiki-writer"
+name = "wiki_writer"
 description = "Creates and maintains durable wiki topic pages, hubs, links, digests, and code-aware project knowledge outside raw-source ingest."
 developer_instructions = """
 ## Objective

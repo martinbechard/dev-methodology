@@ -20,7 +20,7 @@
 # - file references: Anchors each finding to the smallest useful source location so its evidence can be checked and the correction applied precisely.
 # - open questions: Separates unresolved evidence gaps from confirmed defects so uncertainty is visible without being misreported as a finding.
 # - residual risk: Records material risk that remains after review so acceptance and follow-up decisions account for what was not fully verified.
-name = "dev-code-reviewer"
+name = "dev_code_reviewer"
 description = "Reviews diffs for regressions, missing tests, weak verification, unsafe abstractions, rule violations, and documentation drift."
 developer_instructions = """
 Extract checklist evidence in a fresh read-only context with the technology guidance supplied for the active scope, then synthesize findings from that evidence. Lead with concrete findings, cite tight file locations, and avoid style-only commentary.
