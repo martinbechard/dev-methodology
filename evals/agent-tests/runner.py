@@ -167,6 +167,11 @@ def _validate_suite(suite: _Suite, require_executable: bool = True) -> None:
         path = _REPOSITORY_ROOT / str(target.get(path_field, ""))
         if not path.is_file():
             raise ValueError(f"{suite.suite_id} has no {path_field}: {path}")
+    native_agent_path = _REPOSITORY_ROOT / str(target.get("nativeAgent", ""))
+    native_instructions = str(tomllib.loads(native_agent_path.read_text(encoding="utf-8")).get("developer_instructions", ""))
+    for skill_name in target.get("requiredSkills", []):
+        if str(skill_name) not in native_instructions:
+            raise ValueError(f"{suite.suite_id} native agent does not include required skill {skill_name}")
     for path_field in ("supervisor", "judge"):
         relative = manifest.get("projectAgents", {}).get(path_field)
         path = suite.path / str(relative or "")
@@ -252,7 +257,8 @@ def _copy_agent(source: Path, invocation: str, agent_root: Path) -> _StagedAgent
     end = source_text.find('"""', start + len(assignment))
     if start < 0 or end < 0:
         raise ValueError(f"Cannot instrument staged agent instructions: {source}")
-    staged_text = source_text[:end] + binding_instruction + source_text[end:]
+    instruction_start = start + len(assignment)
+    staged_text = source_text[:instruction_start] + binding_instruction + source_text[instruction_start:]
     destination.write_text(staged_text, encoding="utf-8")
     return _StagedAgent(invocation, source, instructions, _sha256(destination), marker)
 
@@ -272,12 +278,7 @@ def _validate_target_skills(suite: _Suite, scenario_ids: Sequence[str], reposito
         if str(scenario["id"]) not in selected:
             continue
         declared_skills = {str(value) for value in scenario.get("targetSkills", [])}
-        omitted = required_skills - declared_skills
-        if omitted:
-            raise ValueError(
-                f"{suite.suite_id}:{scenario['id']} omits required target skills: {', '.join(sorted(omitted))}"
-            )
-        for skill_name in declared_skills:
+        for skill_name in required_skills | declared_skills:
             source = repository_root / "skills" / str(skill_name) / "SKILL.md"
             if not source.is_file():
                 raise ValueError(f"{suite.suite_id}:{scenario['id']} requires missing skill {skill_name}")
@@ -363,10 +364,20 @@ def _coordinator_schema() -> dict[str, Any]:
                             "items": {
                                 "type": "object",
                                 "additionalProperties": False,
-                                "required": ["scenario", "status", "identityEvidence", "cleanup", "evidence"],
+                                "required": [
+                                    "scenario",
+                                    "status",
+                                    "targetInvoked",
+                                    "judgeInvoked",
+                                    "identityEvidence",
+                                    "cleanup",
+                                    "evidence",
+                                ],
                                 "properties": {
                                     "scenario": {"type": "string"},
                                     "status": {"type": "string", "enum": sorted(_REPORT_STATUSES)},
+                                    "targetInvoked": {"type": "boolean"},
+                                    "judgeInvoked": {"type": "boolean"},
                                     "identityEvidence": {"type": "array", "items": {"type": "string"}},
                                     "cleanup": {"type": "string", "enum": ["clean", "failed"]},
                                     "evidence": {"type": "array", "items": {"type": "string"}},
@@ -384,7 +395,7 @@ def _coordinator_schema() -> dict[str, Any]:
     }
 
 
-def _coordinator_prompt(batch: Sequence[_RunSpec]) -> str:
+def _coordinator_prompt(batch: Sequence[_RunSpec], checkpoint_root: Path) -> str:
     assignments = []
     for run in batch:
         execution = run.suite.manifest["execution"]
@@ -396,6 +407,7 @@ def _coordinator_prompt(batch: Sequence[_RunSpec]) -> str:
                 "judge": execution["judgeInvocation"],
                 "scenarios": list(run.scenario_ids),
                 "nestedAgentLimit": int(execution.get("nestedAgentLimit", 0)),
+                "checkpointRoot": str(checkpoint_root),
             }
         )
     return (
@@ -404,8 +416,8 @@ def _coordinator_prompt(batch: Sequence[_RunSpec]) -> str:
         "an explicit instruction to pass task_name exactly equal to the listed target and judge for those child spawns. "
         "Each supervisor must run its selected scenarios sequentially, use exactly one active child at a time, invoke "
         "only those hardcoded agents, retain one independent result per scenario, "
-        "write the required .agent-suite-results/suite-id/scenario-id.json checkpoint immediately after each terminal "
-        "scenario and before starting later work, "
+        "write the required checkpointRoot/suite-id/scenario-id.json checkpoint immediately after each terminal "
+        "scenario and before starting later work; each result must state targetInvoked and judgeInvoked explicitly, "
         "and clean every fixture, claim, process, worktree, and credential it owns. One supervisor child may use one "
         "declared nested dependency at a time only where nestedAgentLimit is 1; serialize that temporary tenth-agent "
         "slot across the batch. Do not browse, install software, read outside this disposable repository, alter the "
@@ -443,8 +455,7 @@ def _extract_coordinator_report(stream: str) -> dict[str, Any]:
     return report
 
 
-def _load_checkpoint_report(workspace: Path, batch: Sequence[_RunSpec]) -> dict[str, Any] | None:
-    checkpoint_root = workspace / ".agent-suite-results"
+def _load_checkpoint_report(checkpoint_root: Path, batch: Sequence[_RunSpec]) -> dict[str, Any] | None:
     runs: list[dict[str, Any]] = []
     for run in batch:
         scenario_results: list[dict[str, Any]] = []
@@ -462,6 +473,8 @@ def _load_checkpoint_report(workspace: Path, batch: Sequence[_RunSpec]) -> dict[
                 {
                     "scenario": scenario_id,
                     "status": loaded.get("status"),
+                    "targetInvoked": loaded.get("targetInvoked"),
+                    "judgeInvoked": loaded.get("judgeInvoked"),
                     "identityEvidence": loaded.get("identityEvidence", []),
                     "cleanup": loaded.get("cleanup", "failed"),
                     "evidence": loaded.get("evidence", []),
@@ -488,6 +501,37 @@ def _load_checkpoint_report(workspace: Path, batch: Sequence[_RunSpec]) -> dict[
     }
 
 
+def _audit_checkpoint_agreement(
+    report: dict[str, Any],
+    checkpoint_report: dict[str, Any] | None,
+    batch: Sequence[_RunSpec],
+) -> None:
+    expected = {
+        (run.suite.suite_id, scenario_id)
+        for run in batch
+        for scenario_id in run.scenario_ids
+    }
+
+    def scenario_map(document: dict[str, Any] | None) -> dict[tuple[str, str], dict[str, Any]]:
+        mapped: dict[tuple[str, str], dict[str, Any]] = {}
+        for run_result in (document or {}).get("runs", []):
+            suite_id = str(run_result.get("suite", ""))
+            for scenario_result in run_result.get("scenarioResults", []):
+                mapped[(suite_id, str(scenario_result.get("scenario", "")))] = scenario_result
+        return mapped
+
+    final_results = scenario_map(report)
+    checkpoints = scenario_map(checkpoint_report)
+    if set(checkpoints) != expected:
+        raise RuntimeError(
+            f"Checkpoint coverage mismatch: expected {sorted(expected)}, observed {sorted(checkpoints)}"
+        )
+    compared_fields = ("status", "targetInvoked", "judgeInvoked", "identityEvidence", "cleanup", "evidence")
+    for identity in sorted(expected):
+        if any(final_results[identity].get(field) != checkpoints[identity].get(field) for field in compared_fields):
+            raise RuntimeError(f"Final report disagrees with checkpoint for {identity[0]}:{identity[1]}")
+
+
 def _audit_report(batch: Sequence[_RunSpec], report: dict[str, Any]) -> list[dict[str, Any]]:
     expected = {run.suite.suite_id: set(run.scenario_ids) for run in batch}
     observed: dict[str, set[str]] = {}
@@ -508,6 +552,16 @@ def _audit_report(batch: Sequence[_RunSpec], report: dict[str, Any]) -> list[dic
         for scenario_result in scenario_results:
             if scenario_result.get("status") not in _TERMINAL_STATUSES:
                 raise RuntimeError(f"Invalid terminal status for {suite_id}:{scenario_result.get('scenario')}")
+            if not isinstance(scenario_result.get("targetInvoked"), bool) or not isinstance(
+                scenario_result.get("judgeInvoked"), bool
+            ):
+                raise RuntimeError(f"Missing invocation disposition for {suite_id}:{scenario_result.get('scenario')}")
+            if scenario_result.get("judgeInvoked") and not scenario_result.get("targetInvoked"):
+                raise RuntimeError(f"Judge ran without target for {suite_id}:{scenario_result.get('scenario')}")
+            if scenario_result.get("status") in {"PASS", "FAIL"} and not (
+                scenario_result.get("targetInvoked") and scenario_result.get("judgeInvoked")
+            ):
+                raise RuntimeError(f"Terminal verdict lacks target and Judge for {suite_id}:{scenario_result.get('scenario')}")
             if not scenario_result.get("identityEvidence"):
                 raise RuntimeError(f"Missing identity evidence for {suite_id}:{scenario_result.get('scenario')}")
             if scenario_result.get("cleanup") != "clean":
@@ -546,6 +600,27 @@ def _load_sessions(codex_home: Path) -> tuple[_Session, ...]:
         spawn = source.get("subagent", {}).get("thread_spawn", {}) if isinstance(source, dict) else {}
         agent_path = metadata.get("agent_path") or spawn.get("agent_path")
         invocation = str(agent_path).rsplit("/", 1)[-1] if agent_path else None
+        first_tool_call: dict[str, Any] | None = None
+        tool_outputs: dict[str, str] = {}
+        for event in events:
+            payload = event.get("payload", {})
+            if not isinstance(payload, dict) or event.get("type") != "response_item":
+                continue
+            payload_type = payload.get("type")
+            if payload_type in {"custom_tool_call", "function_call"} and first_tool_call is None:
+                first_tool_call = payload
+            if payload_type in {"custom_tool_call_output", "function_call_output"}:
+                tool_outputs[str(payload.get("call_id", ""))] = json.dumps(payload.get("output", ""), sort_keys=True)
+        bound_markers: set[str] = set()
+        if first_tool_call is not None:
+            call_id = str(first_tool_call.get("call_id", ""))
+            call_input = str(first_tool_call.get("input", first_tool_call.get("arguments", "")))
+            normalized_call_input = call_input.replace('\\"', '"')
+            output_text = tool_outputs.get(call_id, "")
+            for marker in re.findall(r"AGENT_INSTRUCTION_BINDING_[a-z0-9_]+_[a-f0-9]{32}", call_input):
+                exact_command = f'python3 -c "print(\'{marker}\')"'
+                if exact_command in normalized_call_input and marker in output_text:
+                    bound_markers.add(marker)
         sessions.append(
             _Session(
                 session_id=str(metadata.get("id", rollout.stem)),
@@ -554,7 +629,7 @@ def _load_sessions(codex_home: Path) -> tuple[_Session, ...]:
                 depth=int(spawn.get("depth", 0)),
                 started_at=_timestamp_seconds(str(events[0]["timestamp"])),
                 finished_at=_timestamp_seconds(str(events[-1]["timestamp"])),
-                instruction_markers=frozenset(re.findall(r"AGENT_INSTRUCTION_BINDING_[a-z0-9_]+_[a-f0-9]{32}", rollout_text)),
+                instruction_markers=frozenset(bound_markers),
             )
         )
     return tuple(sessions)
@@ -565,6 +640,7 @@ def _audit_identity(
     codex_home: Path,
     expected_invocation_counts: dict[str, int],
     batch: Sequence[_RunSpec] | None = None,
+    report: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     sessions = _load_sessions(codex_home)
     sessions_by_invocation: dict[str, list[_Session]] = {}
@@ -591,13 +667,18 @@ def _audit_identity(
         )
         if matching_sessions and len(exact_sessions) != len(matching_sessions):
             raise RuntimeError(f"Missing runtime instruction binding for {agent.invocation}")
-        if len(exact_sessions) != required_count and required:
+        if agent.invocation in expected_invocation_counts and len(exact_sessions) != required_count:
             raise RuntimeError(
                 f"Custom-agent session count mismatch for {agent.invocation}: "
                 f"expected {required_count}, observed {len(exact_sessions)}"
             )
     scenario_bindings: list[dict[str, str]] = []
     if batch is not None:
+        reported_scenarios = {
+            (str(run_result.get("suite", "")), str(scenario_result.get("scenario", ""))): scenario_result
+            for run_result in (report or {}).get("runs", [])
+            for scenario_result in run_result.get("scenarioResults", [])
+        }
         for run in batch:
             execution = run.suite.manifest["execution"]
             supervisors = [
@@ -608,32 +689,35 @@ def _audit_identity(
             if len(supervisors) != 1:
                 raise RuntimeError(f"Cannot bind scenarios to supervisor for {run.suite.suite_id}")
             supervisor = supervisors[0]
-            for kind, invocation_key in (("target", "targetInvocation"), ("judge", "judgeInvocation")):
-                children = sorted(
-                    (
-                        session
-                        for session in sessions
-                        if session.parent_thread_id == supervisor.session_id
-                        and session.invocation == execution[invocation_key]
-                    ),
-                    key=lambda session: session.started_at,
+            children = sorted(
+                (session for session in sessions if session.parent_thread_id == supervisor.session_id),
+                key=lambda session: session.started_at,
+            )
+            expected_sequence: list[tuple[str, str, str]] = []
+            for scenario_id in run.scenario_ids:
+                scenario_result = reported_scenarios.get((run.suite.suite_id, scenario_id), {})
+                if scenario_result.get("targetInvoked"):
+                    expected_sequence.append((scenario_id, "target", str(execution["targetInvocation"])))
+                if scenario_result.get("judgeInvoked"):
+                    expected_sequence.append((scenario_id, "judge", str(execution["judgeInvocation"])))
+            observed_sequence = [str(session.invocation) for session in children]
+            expected_invocations = [invocation for _, _, invocation in expected_sequence]
+            if observed_sequence != expected_invocations:
+                raise RuntimeError(
+                    f"Scenario child sequence mismatch for {run.suite.suite_id}: "
+                    f"expected {expected_invocations}, observed {observed_sequence}"
                 )
-                if len(children) != len(run.scenario_ids):
-                    raise RuntimeError(
-                        f"Cannot bind {kind} sessions to scenarios for {run.suite.suite_id}: "
-                        f"expected {len(run.scenario_ids)}, observed {len(children)}"
-                    )
-                for scenario_id, session in zip(run.scenario_ids, children, strict=True):
-                    scenario_bindings.append(
-                        {
-                            "suite": run.suite.suite_id,
-                            "scenario": scenario_id,
-                            "kind": kind,
-                            "invocation": str(session.invocation),
-                            "sessionId": session.session_id,
-                            "parentSessionId": str(session.parent_thread_id),
-                        }
-                    )
+            for (scenario_id, kind, invocation), session in zip(expected_sequence, children, strict=True):
+                scenario_bindings.append(
+                    {
+                        "suite": run.suite.suite_id,
+                        "scenario": scenario_id,
+                        "kind": kind,
+                        "invocation": invocation,
+                        "sessionId": session.session_id,
+                        "parentSessionId": str(session.parent_thread_id),
+                    }
+                )
     return {"rolloutCount": len(sessions), "agents": agents, "scenarioBindings": scenario_bindings}
 
 
@@ -650,6 +734,9 @@ def _audit_session_concurrency(
     if len(supervisor_sessions) > 4:
         raise RuntimeError(f"Supervisor concurrency limit exceeded: {len(supervisor_sessions)} > 4")
     if batch is not None:
+        anonymous = [session.session_id for session in sessions if session.depth > 0 and not session.invocation]
+        if anonymous:
+            raise RuntimeError(f"Anonymous child sessions are not allowed: {', '.join(sorted(anonymous))}")
         expected_supervisors = sorted(
             str(run.suite.manifest["execution"]["supervisorInvocation"]) for run in batch
         )
@@ -739,14 +826,24 @@ def _audit_session_concurrency(
     return {"maximumActiveSessions": maximum_active, "maximumChildrenObserved": maximum_children}
 
 
-def _expected_invocation_counts(batch: Sequence[_RunSpec]) -> dict[str, int]:
+def _expected_invocation_counts(batch: Sequence[_RunSpec], report: dict[str, Any]) -> dict[str, int]:
     expected: dict[str, int] = {}
+    reported_scenarios = {
+        (str(run_result.get("suite", "")), str(scenario_result.get("scenario", ""))): scenario_result
+        for run_result in report.get("runs", [])
+        for scenario_result in run_result.get("scenarioResults", [])
+    }
     for run in batch:
         execution = run.suite.manifest["execution"]
         expected[str(execution["supervisorInvocation"])] = 1
-        scenario_count = len(run.scenario_ids)
-        expected[str(execution["targetInvocation"])] = scenario_count
-        expected[str(execution["judgeInvocation"])] = scenario_count
+        expected[str(execution["targetInvocation"])] = sum(
+            bool(reported_scenarios.get((run.suite.suite_id, scenario_id), {}).get("targetInvoked"))
+            for scenario_id in run.scenario_ids
+        )
+        expected[str(execution["judgeInvocation"])] = sum(
+            bool(reported_scenarios.get((run.suite.suite_id, scenario_id), {}).get("judgeInvoked"))
+            for scenario_id in run.scenario_ids
+        )
     return expected
 
 
@@ -821,8 +918,25 @@ def _pid_exists(pid: int) -> bool:
     return True
 
 
-def _stop_tracked_processes(root_pid: int, tracked: set[int]) -> str:
+def _pids_with_environment_token(token: str) -> set[int]:
+    completed = subprocess.run(
+        ["ps", "eww", "-axo", "pid=,command="],
+        check=False,
+        text=True,
+        capture_output=True,
+    )
+    needle = f"AGENT_SUITE_PROCESS_TOKEN={token}"
+    pids: set[int] = set()
+    for line in completed.stdout.splitlines():
+        pid_text, separator, command = line.strip().partition(" ")
+        if separator and pid_text.isdigit() and needle in command:
+            pids.add(int(pid_text))
+    return pids
+
+
+def _stop_tracked_processes(root_pid: int, tracked: set[int], process_token: str) -> str:
     _record_descendants(root_pid, tracked)
+    tracked.update(_pids_with_environment_token(process_token))
     retained = {pid for pid in tracked if pid != root_pid and _pid_exists(pid)}
     _kill_process_group(root_pid)
     for pid in retained:
@@ -845,10 +959,13 @@ def _run_process(
     environment: dict[str, str],
     timeout_seconds: float,
 ) -> dict[str, Any]:
+    process_token = secrets.token_hex(24)
+    child_environment = dict(environment)
+    child_environment["AGENT_SUITE_PROCESS_TOKEN"] = process_token
     process = subprocess.Popen(
         list(argv),
         cwd=cwd,
-        env=environment,
+        env=child_environment,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=False,
@@ -860,9 +977,12 @@ def _run_process(
     tracked_pids: set[int] = {process.pid}
 
     def track_descendants() -> None:
-        while not tracking_stop.wait(0.05):
+        while not tracking_stop.is_set():
             _record_descendants(process.pid, tracked_pids)
+            tracked_pids.update(_pids_with_environment_token(process_token))
+            tracking_stop.wait(0.005)
         _record_descendants(process.pid, tracked_pids)
+        tracked_pids.update(_pids_with_environment_token(process_token))
 
     def drain(name: str, stream: Any) -> None:
         while True:
@@ -894,7 +1014,7 @@ def _run_process(
     finally:
         tracking_stop.set()
         tracker.join()
-        cleanup = _stop_tracked_processes(process.pid, tracked_pids)
+        cleanup = _stop_tracked_processes(process.pid, tracked_pids, process_token)
     for thread in threads:
         thread.join()
     if process.stdout is not None:
@@ -929,6 +1049,8 @@ def _run_live_batch(
     label = f"batch-{batch_number:02d}"
     with _temporary_run_root(label) as run_root:
         workspace, codex_home, staged = _stage_batch(batch, run_root)
+        checkpoint_root = run_root / "checkpoints"
+        checkpoint_root.mkdir()
         schema_path = run_root / "coordinator-output-schema.json"
         schema_path.write_text(json.dumps(_coordinator_schema(), indent=2) + "\n", encoding="utf-8")
         temporary_home = run_root / "home"
@@ -958,7 +1080,7 @@ def _run_live_batch(
             str(schema_path),
             "-C",
             str(workspace),
-            _coordinator_prompt(batch),
+            _coordinator_prompt(batch, checkpoint_root),
         ]
         environment = _controlled_environment(temporary_home, codex_home, temporary_dir)
         completed = _run_process(
@@ -976,25 +1098,25 @@ def _run_live_batch(
         partial_report: dict[str, Any] | None = None
         report_error: str | None = None
         try:
+            checkpoint_report = _load_checkpoint_report(checkpoint_root, batch)
+        except (json.JSONDecodeError, RuntimeError) as checkpoint_error:
+            checkpoint_report = None
+            report_error = f"checkpoint error: {checkpoint_error}"
+        try:
             partial_report = _extract_coordinator_report(completed["stdout"])
             _audit_report(batch, partial_report)
+            _audit_checkpoint_agreement(partial_report, checkpoint_report, batch)
         except RuntimeError as error:
-            report_error = str(error)
-            try:
-                checkpoint_report = _load_checkpoint_report(workspace, batch)
-            except (json.JSONDecodeError, RuntimeError) as checkpoint_error:
-                checkpoint_report = None
-                report_error = f"{report_error}; checkpoint error: {checkpoint_error}"
+            report_error = f"{report_error}; {error}" if report_error else str(error)
             if checkpoint_report is not None:
                 partial_report = checkpoint_report
-        checkpoint_source = workspace / ".agent-suite-results"
         checkpoint_destination = result_root / f"{label}.checkpoints"
-        if checkpoint_source.is_dir():
-            shutil.copytree(checkpoint_source, checkpoint_destination, dirs_exist_ok=True)
-        expected_invocation_counts = _expected_invocation_counts(batch)
+        if checkpoint_root.is_dir():
+            shutil.copytree(checkpoint_root, checkpoint_destination, dirs_exist_ok=True)
+        expected_invocation_counts = _expected_invocation_counts(batch, partial_report or {})
         identity_error: str | None = None
         try:
-            identity = _audit_identity(staged, codex_home, expected_invocation_counts, batch)
+            identity = _audit_identity(staged, codex_home, expected_invocation_counts, batch, partial_report or {})
         except RuntimeError as error:
             identity_error = str(error)
             identity = {"rolloutCount": retained_session_count, "error": identity_error}

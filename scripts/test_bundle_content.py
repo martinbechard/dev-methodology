@@ -3711,7 +3711,7 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("authoritative scenarios.yaml catalog", supervision)
         self.assertIn("Send agent-definition", supervision)
         self.assertIn("Correct only test infrastructure", supervision)
-        self.assertIn(".agent-suite-results/suite-id/scenario-id.json", supervision)
+        self.assertIn("checkpointRoot at suite-id/scenario-id.json", supervision)
         self.assertTrue((AGENT_TEST_SUITES_ROOT / "runner.py").is_file())
         self.assertTrue((AGENT_TEST_SUITES_ROOT / "test_runner.py").is_file())
         legacy_case_ids = {

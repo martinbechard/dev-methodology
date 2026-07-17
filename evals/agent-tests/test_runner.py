@@ -155,6 +155,21 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "instruction binding"):
                 runner._audit_identity(staged, codex_home, {"target_agent": 1})
 
+    def test_arbitrary_canary_message_does_not_bind_instructions(self) -> None:
+        """The marker must be the first exact tool call with matching output."""
+        with tempfile.TemporaryDirectory() as temporary:
+            codex_home = Path(temporary)
+            sessions = codex_home / "sessions"
+            sessions.mkdir()
+            marker = "AGENT_INSTRUCTION_BINDING_target_agent_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+            self._write_rollout(
+                sessions / "rollout-target.jsonl", "target_agent", depth=2, marker=marker, arbitrary_message=True
+            )
+            staged = (runner._StagedAgent("target_agent", Path("target.toml"), "instructions", "b" * 64, marker),)
+
+            with self.assertRaisesRegex(RuntimeError, "instruction binding"):
+                runner._audit_identity(staged, codex_home, {"target_agent": 1})
+
     def test_staging_instruments_inline_closing_instruction_delimiter(self) -> None:
         """Generated adapters may close developer instructions after the final text on the same line."""
         with tempfile.TemporaryDirectory() as temporary:
@@ -203,6 +218,79 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "Nested dependency execution"):
             runner._audit_session_concurrency(sessions, maximum_threads=9)
 
+    def test_anonymous_child_fails_runtime_audit(self) -> None:
+        """Every non-root session must resolve to a declared custom invocation."""
+        batch = (self._run_spec("one", 1),)
+        sessions = (
+            runner._Session("supervisor", "root", "suite_supervisor", 1, 0.0, 5.0, frozenset()),
+            runner._Session("anonymous", "supervisor", None, 2, 1.0, 2.0, frozenset()),
+        )
+
+        with self.assertRaisesRegex(RuntimeError, "Anonymous child"):
+            runner._audit_session_concurrency(sessions, maximum_threads=9, batch=batch)
+
+    def test_target_target_judge_judge_order_fails_scenario_binding(self) -> None:
+        """Each target must be followed by its Judge before the next scenario target."""
+        with tempfile.TemporaryDirectory() as temporary:
+            codex_home = Path(temporary)
+            sessions = codex_home / "sessions"
+            sessions.mkdir()
+            markers = {
+                "suite_supervisor": "AGENT_INSTRUCTION_BINDING_suite_supervisor_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "target_agent": "AGENT_INSTRUCTION_BINDING_target_agent_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                "suite_judge": "AGENT_INSTRUCTION_BINDING_suite_judge_cccccccccccccccccccccccccccccccc",
+            }
+            self._write_rollout(
+                sessions / "rollout-supervisor.jsonl",
+                "suite_supervisor",
+                1,
+                markers["suite_supervisor"],
+            )
+            for name, invocation, second in (
+                ("target-one", "target_agent", 3),
+                ("target-two", "target_agent", 6),
+                ("judge-one", "suite_judge", 9),
+                ("judge-two", "suite_judge", 12),
+            ):
+                self._write_rollout(
+                    sessions / f"rollout-{name}.jsonl",
+                    invocation,
+                    2,
+                    markers[invocation],
+                    parent="rollout-supervisor",
+                    started_second=second,
+                )
+            suite = self._suite("one")
+            run = runner._RunSpec(suite=suite, scenario_ids=("happy", "later"))
+            report = {
+                "runs": [
+                    {
+                        "suite": "one",
+                        "scenarioResults": [
+                            {"scenario": scenario, "targetInvoked": True, "judgeInvoked": True}
+                            for scenario in run.scenario_ids
+                        ],
+                    }
+                ]
+            }
+            staged = tuple(
+                runner._StagedAgent(invocation, Path(f"{invocation}.toml"), "instructions", key * 64, marker)
+                for invocation, key, marker in (
+                    ("suite_supervisor", "a", markers["suite_supervisor"]),
+                    ("target_agent", "b", markers["target_agent"]),
+                    ("suite_judge", "c", markers["suite_judge"]),
+                )
+            )
+
+            with self.assertRaisesRegex(RuntimeError, "Scenario child sequence"):
+                runner._audit_identity(
+                    staged,
+                    codex_home,
+                    {"suite_supervisor": 1, "target_agent": 2, "suite_judge": 2},
+                    (run,),
+                    report,
+                )
+
     def test_missing_applicable_skill_is_a_preflight_error(self) -> None:
         """Target staging fails closed when an applicable skill package is absent."""
         suite = self._suite("missing-skill")
@@ -240,14 +328,14 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         program = (
             "import subprocess,sys,time; "
             "child=subprocess.Popen([sys.executable,'-c','import time; time.sleep(30)'],start_new_session=True); "
-            "print(child.pid,flush=True); time.sleep(30)"
+            "print(child.pid,flush=True)"
         )
 
         result = runner._run_process(
             (sys.executable, "-c", program),
             Path.cwd(),
             runner._controlled_environment(Path("/tmp/home"), Path("/tmp/codex"), Path("/tmp/work")),
-            timeout_seconds=0.3,
+            timeout_seconds=1.0,
         )
 
         detached_pid = int(result["stdout"].strip())
@@ -281,6 +369,8 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                         "suite": "one",
                         "scenario": "happy",
                         "status": "PASS",
+                        "targetInvoked": True,
+                        "judgeInvoked": True,
                         "identityEvidence": ["bound"],
                         "evidence": ["receipt"],
                         "cleanup": "clean",
@@ -290,10 +380,24 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                 encoding="utf-8",
             )
 
-            report = runner._load_checkpoint_report(workspace, batch)
+            report = runner._load_checkpoint_report(workspace / ".agent-suite-results", batch)
 
         assert report is not None
         self.assertEqual("PASS", report["runs"][0]["scenarioResults"][0]["status"])
+
+    def test_final_report_must_agree_with_external_checkpoint(self) -> None:
+        """A coordinator cannot omit or rewrite the supervisor's durable scenario result."""
+        batch = (self._run_spec("one", 1),)
+        final_report = {
+            "runs": [self._suite_report("one", "PASS")],
+            "batchCleanup": "clean",
+            "residualRisk": "none",
+        }
+        checkpoint_report = json.loads(json.dumps(final_report))
+        checkpoint_report["runs"][0]["scenarioResults"][0]["status"] = "FAIL"
+
+        with self.assertRaisesRegex(RuntimeError, "disagrees with checkpoint"):
+            runner._audit_checkpoint_agreement(final_report, checkpoint_report, batch)
 
     @staticmethod
     def _suite(suite_id: str, nested_limit: int = 0) -> object:
@@ -336,6 +440,8 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                 {
                     "scenario": "happy",
                     "status": status,
+                    "targetInvoked": True,
+                    "judgeInvoked": True,
                     "identityEvidence": ["thread-bound"],
                     "cleanup": "clean",
                     "evidence": ["synthetic"],
@@ -346,20 +452,42 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         }
 
     @staticmethod
-    def _write_rollout(path: Path, invocation: str, depth: int, marker: str | None = None) -> None:
+    def _write_rollout(
+        path: Path,
+        invocation: str,
+        depth: int,
+        marker: str | None = None,
+        arbitrary_message: bool = False,
+        parent: str | None = None,
+        started_second: int = 0,
+    ) -> None:
         session_id = path.stem
-        parent = "root" if depth == 1 else "rollout-supervisor"
-        events = (
-            {"timestamp": "2026-07-17T00:00:00Z", "type": "session_meta", "payload": {
+        parent = parent or ("root" if depth == 1 else "rollout-supervisor")
+        timestamp = lambda offset: f"2026-07-17T00:00:{started_second + offset:02d}Z"
+        events: tuple[dict[str, object], ...] = (
+            {"timestamp": timestamp(0), "type": "session_meta", "payload": {
                 "id": session_id,
                 "parent_thread_id": parent,
                 "agent_path": f"/root/{invocation}",
                 "source": {"subagent": {"thread_spawn": {"depth": depth, "agent_path": f"/root/{invocation}"}}},
             }},
-            {"timestamp": "2026-07-17T00:00:01Z", "type": "event_msg", "payload": {
-                "type": "agent_message", "message": marker or "no binding evidence"
-            }},
         )
+        if marker and not arbitrary_message:
+            command = f'python3 -c "print(\'{marker}\')"'
+            events += (
+                {"timestamp": timestamp(1), "type": "response_item", "payload": {
+                    "type": "custom_tool_call", "name": "exec", "call_id": "binding-call", "input": command
+                }},
+                {"timestamp": timestamp(2), "type": "response_item", "payload": {
+                    "type": "custom_tool_call_output", "call_id": "binding-call", "output": marker
+                }},
+            )
+        else:
+            events += (
+                {"timestamp": timestamp(1), "type": "event_msg", "payload": {
+                    "type": "agent_message", "message": marker or "no binding evidence"
+                }},
+            )
         path.write_text("\n".join(json.dumps(event) for event in events) + "\n", encoding="utf-8")
 
 
