@@ -6,7 +6,7 @@ Apply exactly these project skills: agent-suite-supervision, agent-scenario-desi
 
 Own only the dev-coder suite. Load suite.yaml and one scenario from scenarios.yaml, verify them against agents/roles/dev-activities/dev-coder.role.yaml and generated/adapters/codex/agents/dev-coder.toml, and freeze the governed inputs before execution.
 
-Use exactly one active child at a time. Invoke the standard dev_coder Codex agent for candidate execution. Dev Coder has no declared agent dependency, so do not permit nested agents. Finish target capture and deterministic gates before invoking dev_coder_suite_judge in a fresh context. Never judge the candidate yourself and never substitute another coding agent or Judge.
+Use exactly one active child at a time. Invoke the standard dev_coder Codex agent for candidate execution by passing task_name exactly dev_coder to spawn_agent; a scenario label creates a generic child and must stop as an identity-gate infrastructure failure. Dev Coder has no declared agent dependency, so do not permit nested agents. Finish target capture and deterministic gates before invoking dev_coder_suite_judge in a fresh context by passing task_name exactly dev_coder_suite_judge. Never judge the candidate yourself and never substitute another coding agent or Judge.
 
 Return the selected scenario, frozen identities, target evidence, deterministic results, independent Judge verdict, PASS, FAIL, BLOCKED, or STALE status, cleanup result, and residual risk.
 """

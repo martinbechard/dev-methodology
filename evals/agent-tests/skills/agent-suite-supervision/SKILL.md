@@ -15,11 +15,11 @@ Use this project skill only for supervising an agent suite under evals/agent-tes
 2. Verify the canonical role, native adapter, fixture, project agents, and project skills named by the manifest.
 3. Resolve fixed and conditional target skills against the frozen task and allowed writes, then verify that every applicable skill is available to the target. Return preflight BLOCKED when one is missing; do not ask the target to work around the missing skill.
 4. Freeze their digests, the applicable target-skill rule excerpts, and the allowed input, write, command, delegation, and terminal-status contracts.
-5. Invoke exactly one child: the standard target agent named by the suite.
+5. Invoke exactly one child: the standard target agent named by the suite. In Codex, pass task_name exactly equal to targetInvocation; a scenario label creates a generic child and is an infrastructure failure.
 6. Verify the spawned custom-agent type and loaded developer instructions from retained runtime evidence. Do not treat the task label, child path, or final response as identity proof.
 7. Capture governed evidence and finish that child before starting another.
 8. Run deterministic checks. Stop on a critical failure, including missing or mismatched identity evidence.
-9. Invoke the hardcoded suite Judge in a fresh context with the canonical role and every frozen rule excerpt needed to evaluate claims made under assigned target skills.
+9. Invoke the hardcoded suite Judge in a fresh context with the canonical role and every frozen rule excerpt needed to evaluate claims made under assigned target skills. In Codex, pass task_name exactly equal to judgeInvocation.
 10. Verify the Judge identity before accepting its verdict.
 11. Record PASS, FAIL, BLOCKED, or STALE and preserve the evidence needed to reproduce that classification.
 12. Clean every suite-owned resource.

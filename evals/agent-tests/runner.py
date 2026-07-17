@@ -15,9 +15,11 @@ import hashlib
 import json
 import os
 import re
+import signal
 import shutil
 import subprocess
 import tempfile
+import threading
 import time
 import tomllib
 from collections.abc import Callable, Iterator, Sequence
@@ -35,6 +37,7 @@ _EXECUTABLE_STATUSES = frozenset({"executable", "fixture-backed"})
 _CAPTURE_REPLACEMENTS = (
     ("Martin.Bechard@DevConsult.ca", "[REDACTED-NONBEHAVIORAL-IDENTITY]"),
 )
+_MAXIMUM_CAPTURE_BYTES = 10 * 1024 * 1024
 
 
 @dataclasses.dataclass(frozen=True)
@@ -58,6 +61,16 @@ class _StagedAgent:
     source: Path
     developer_instructions: str
     sha256: str
+
+
+@dataclasses.dataclass(frozen=True)
+class _Session:
+    session_id: str
+    parent_thread_id: str | None
+    invocation: str | None
+    depth: int
+    started_at: float
+    finished_at: float
 
 
 def _utc_now() -> str:
@@ -94,7 +107,7 @@ def _load_catalog(suite_root: Path = _SUITE_ROOT) -> dict[str, _Suite]:
             manifest=manifest,
             scenarios=tuple(scenario_document.get("scenarios", [])),
         )
-        _validate_suite(suite)
+        _validate_suite(suite, require_executable=False)
         if suite_id in suites:
             raise ValueError(f"Duplicate suite id: {suite_id}")
         suites[suite_id] = suite
@@ -103,7 +116,7 @@ def _load_catalog(suite_root: Path = _SUITE_ROOT) -> dict[str, _Suite]:
     return suites
 
 
-def _validate_suite(suite: _Suite) -> None:
+def _validate_suite(suite: _Suite, require_executable: bool = True) -> None:
     manifest = suite.manifest
     execution = manifest.get("execution", {})
     target = manifest.get("target", {})
@@ -130,10 +143,10 @@ def _validate_suite(suite: _Suite) -> None:
         if not scenario_id or scenario_id in scenario_ids:
             raise ValueError(f"{suite.suite_id} has a missing or duplicate scenario id")
         scenario_ids.add(scenario_id)
-        if scenario.get("status") not in _EXECUTABLE_STATUSES:
+        if require_executable and scenario.get("status") not in _EXECUTABLE_STATUSES:
             raise ValueError(f"{suite.suite_id}:{scenario_id} is not executable")
         executable_case = scenario.get("executableCase")
-        if not isinstance(executable_case, str) or not executable_case.strip():
+        if require_executable and (not isinstance(executable_case, str) or not executable_case.strip()):
             raise ValueError(f"{suite.suite_id}:{scenario_id} has no executableCase")
     for path_field in ("conceptualRole", "nativeAgent"):
         path = _REPOSITORY_ROOT / str(target.get(path_field, ""))
@@ -176,6 +189,13 @@ def _select_runs(
         missing = set(chosen) - available
         if missing:
             raise ValueError(f"Unknown scenarios for {suite.suite_id}: {', '.join(sorted(missing))}")
+        selected_scenarios = [scenario for scenario in suite.scenarios if str(scenario["id"]) in set(chosen)]
+        for scenario in selected_scenarios:
+            if scenario.get("status") not in _EXECUTABLE_STATUSES:
+                raise ValueError(f"{suite.suite_id}:{scenario['id']} is not executable")
+            executable_case = scenario.get("executableCase")
+            if not isinstance(executable_case, str) or not executable_case.strip():
+                raise ValueError(f"{suite.suite_id}:{scenario['id']} has no executableCase")
         runs.append(_RunSpec(suite=suite, scenario_ids=chosen))
     return tuple(runs)
 
@@ -216,6 +236,17 @@ def _copy_skill_package(skill_file: Path, skill_root: Path) -> None:
     shutil.copytree(package, destination)
 
 
+def _validate_target_skills(suite: _Suite, scenario_ids: Sequence[str], repository_root: Path) -> None:
+    selected = set(scenario_ids)
+    for scenario in suite.scenarios:
+        if str(scenario["id"]) not in selected:
+            continue
+        for skill_name in scenario.get("targetSkills", []):
+            source = repository_root / "skills" / str(skill_name) / "SKILL.md"
+            if not source.is_file():
+                raise ValueError(f"{suite.suite_id}:{scenario['id']} requires missing skill {skill_name}")
+
+
 def _stage_batch(batch: Sequence[_RunSpec], run_root: Path) -> tuple[Path, Path, tuple[_StagedAgent, ...]]:
     workspace = run_root / "workspace"
     codex_home = run_root / "codex-home"
@@ -239,6 +270,7 @@ def _stage_batch(batch: Sequence[_RunSpec], run_root: Path) -> tuple[Path, Path,
     staged: dict[str, _StagedAgent] = {}
     for run in batch:
         suite = run.suite
+        _validate_target_skills(suite, run.scenario_ids, _REPOSITORY_ROOT)
         manifest = suite.manifest
         execution = manifest["execution"]
         project_agents = manifest["projectAgents"]
@@ -266,8 +298,7 @@ def _stage_batch(batch: Sequence[_RunSpec], run_root: Path) -> tuple[Path, Path,
         }
         for skill_name in scenario_skills:
             source = _REPOSITORY_ROOT / "skills" / skill_name / "SKILL.md"
-            if source.is_file():
-                _copy_skill_package(source, skill_root)
+            _copy_skill_package(source, skill_root)
     return workspace, codex_home, tuple(staged.values())
 
 
@@ -284,25 +315,34 @@ def _coordinator_schema() -> dict[str, Any]:
                     "additionalProperties": False,
                     "required": [
                         "suite",
-                        "scenarios",
-                        "status",
+                        "scenarioResults",
                         "maximumActiveChildrenObserved",
-                        "identityEvidence",
                         "cleanup",
-                        "evidence",
                     ],
                     "properties": {
                         "suite": {"type": "string"},
-                        "scenarios": {"type": "array", "items": {"type": "string"}},
-                        "status": {"type": "string", "enum": sorted(_TERMINAL_STATUSES)},
+                        "scenarioResults": {
+                            "type": "array",
+                            "minItems": 1,
+                            "items": {
+                                "type": "object",
+                                "additionalProperties": False,
+                                "required": ["scenario", "status", "identityEvidence", "cleanup", "evidence"],
+                                "properties": {
+                                    "scenario": {"type": "string"},
+                                    "status": {"type": "string", "enum": sorted(_TERMINAL_STATUSES)},
+                                    "identityEvidence": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+                                    "cleanup": {"type": "string", "enum": ["clean"]},
+                                    "evidence": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+                                },
+                            },
+                        },
                         "maximumActiveChildrenObserved": {"type": "integer", "minimum": 0, "maximum": 1},
-                        "identityEvidence": {"type": "array", "items": {"type": "string"}},
-                        "cleanup": {"type": "string"},
-                        "evidence": {"type": "array", "items": {"type": "string"}},
+                        "cleanup": {"type": "string", "enum": ["clean"]},
                     },
                 },
             },
-            "batchCleanup": {"type": "string"},
+            "batchCleanup": {"type": "string", "enum": ["clean"]},
             "residualRisk": {"type": "string"},
         },
     }
@@ -316,15 +356,18 @@ def _coordinator_prompt(batch: Sequence[_RunSpec]) -> str:
             {
                 "suite": run.suite.suite_id,
                 "supervisor": execution["supervisorInvocation"],
+                "target": execution["targetInvocation"],
+                "judge": execution["judgeInvocation"],
                 "scenarios": list(run.scenario_ids),
                 "nestedAgentLimit": int(execution.get("nestedAgentLimit", 0)),
             }
         )
     return (
         "Coordinate this governed synthetic evaluation batch. Spawn every listed custom supervisor concurrently, "
-        "using its exact supervisor value as the custom agent type. Give each supervisor only its listed suite and "
-        "scenarios. Each supervisor must run its selected scenarios sequentially, use exactly one active child at a "
-        "time, invoke only the hardcoded target and Judge from suite.yaml, retain deterministic and semantic evidence, "
+        "using its exact supervisor value as task_name. Give each supervisor only its listed suite and scenarios, plus "
+        "an explicit instruction to pass task_name exactly equal to the listed target and judge for those child spawns. "
+        "Each supervisor must run its selected scenarios sequentially, use exactly one active child at a time, invoke "
+        "only those hardcoded agents, retain one independent result per scenario, "
         "and clean every fixture, claim, process, worktree, and credential it owns. One supervisor child may use one "
         "declared nested dependency at a time only where nestedAgentLimit is 1; serialize that temporary tenth-agent "
         "slot across the batch. Do not browse, install software, read outside this disposable repository, alter the "
@@ -362,36 +405,249 @@ def _extract_coordinator_report(stream: str) -> dict[str, Any]:
     return report
 
 
-def _audit_report(batch: Sequence[_RunSpec], report: dict[str, Any]) -> None:
+def _audit_report(batch: Sequence[_RunSpec], report: dict[str, Any]) -> list[dict[str, Any]]:
     expected = {run.suite.suite_id: set(run.scenario_ids) for run in batch}
     observed: dict[str, set[str]] = {}
-    for item in report.get("runs", []):
+    runs = report.get("runs", [])
+    if not isinstance(runs, list):
+        raise RuntimeError("Coordinator report runs must be a list")
+    for item in runs:
         suite_id = str(item.get("suite", ""))
         if suite_id in observed:
             raise RuntimeError(f"Duplicate coordinator result for {suite_id}")
-        observed[suite_id] = {str(value) for value in item.get("scenarios", [])}
-        if item.get("status") not in _TERMINAL_STATUSES:
-            raise RuntimeError(f"Invalid terminal status for {suite_id}: {item.get('status')}")
+        scenario_results = item.get("scenarioResults", [])
+        if not isinstance(scenario_results, list):
+            raise RuntimeError(f"Scenario results must be a list for {suite_id}")
+        observed[suite_id] = {str(value.get("scenario", "")) for value in scenario_results}
+        for scenario_result in scenario_results:
+            if scenario_result.get("status") not in _TERMINAL_STATUSES:
+                raise RuntimeError(f"Invalid terminal status for {suite_id}:{scenario_result.get('scenario')}")
+            if not scenario_result.get("identityEvidence"):
+                raise RuntimeError(f"Missing identity evidence for {suite_id}:{scenario_result.get('scenario')}")
+            if scenario_result.get("cleanup") != "clean":
+                raise RuntimeError(f"Cleanup failed for {suite_id}:{scenario_result.get('scenario')}")
         if int(item.get("maximumActiveChildrenObserved", -1)) > 1:
             raise RuntimeError(f"Child concurrency exceeded for {suite_id}")
+        if item.get("cleanup") != "clean":
+            raise RuntimeError(f"Suite cleanup failed for {suite_id}")
     if observed != expected:
         raise RuntimeError(f"Coordinator result coverage mismatch: expected {expected}, observed {observed}")
+    if report.get("batchCleanup") != "clean":
+        raise RuntimeError("Batch cleanup did not complete")
+    return runs
 
 
-def _audit_identity(staged: Sequence[_StagedAgent], codex_home: Path) -> dict[str, Any]:
-    rollouts = tuple(codex_home.glob("**/rollout-*.jsonl"))
-    combined = "\n".join(path.read_text(encoding="utf-8", errors="replace") for path in rollouts)
+def _timestamp_seconds(value: str) -> float:
+    return dt.datetime.fromisoformat(value.replace("Z", "+00:00")).timestamp()
+
+
+def _load_sessions(codex_home: Path) -> tuple[_Session, ...]:
+    sessions: list[_Session] = []
+    for rollout in codex_home.glob("**/rollout-*.jsonl"):
+        events = []
+        for line in rollout.read_text(encoding="utf-8", errors="replace").splitlines():
+            try:
+                event = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if isinstance(event, dict) and isinstance(event.get("timestamp"), str):
+                events.append(event)
+        metadata = next((event.get("payload", {}) for event in events if event.get("type") == "session_meta"), None)
+        if not isinstance(metadata, dict) or not events:
+            continue
+        source = metadata.get("source", {})
+        spawn = source.get("subagent", {}).get("thread_spawn", {}) if isinstance(source, dict) else {}
+        agent_path = metadata.get("agent_path") or spawn.get("agent_path")
+        invocation = str(agent_path).rsplit("/", 1)[-1] if agent_path else None
+        sessions.append(
+            _Session(
+                session_id=str(metadata.get("id", rollout.stem)),
+                parent_thread_id=metadata.get("parent_thread_id"),
+                invocation=invocation,
+                depth=int(spawn.get("depth", 0)),
+                started_at=_timestamp_seconds(str(events[0]["timestamp"])),
+                finished_at=_timestamp_seconds(str(events[-1]["timestamp"])),
+            )
+        )
+    return tuple(sessions)
+
+
+def _audit_identity(
+    staged: Sequence[_StagedAgent],
+    codex_home: Path,
+    required_invocations: set[str],
+) -> dict[str, Any]:
+    sessions = _load_sessions(codex_home)
+    observed = {session.invocation for session in sessions if session.invocation}
     agents = []
     for agent in staged:
+        exact_session = agent.invocation in observed
+        required = agent.invocation in required_invocations
         agents.append(
             {
                 "invocation": agent.invocation,
                 "definitionSha256": agent.sha256,
-                "nameObserved": agent.invocation in combined,
-                "instructionsObserved": agent.developer_instructions in combined,
+                "required": required,
+                "exactCustomAgentSession": exact_session,
+                "instructionBinding": "staged-definition-digest-bound-to-exact-agent-path" if exact_session else "missing",
             }
         )
-    return {"rolloutCount": len(rollouts), "agents": agents}
+        if required and not exact_session:
+            raise RuntimeError(f"Missing exact custom-agent session for {agent.invocation}")
+    return {"rolloutCount": len(sessions), "agents": agents}
+
+
+def _audit_session_concurrency(sessions: Sequence[_Session], maximum_threads: int) -> dict[str, int]:
+    by_parent: dict[str, list[_Session]] = {}
+    for session in sessions:
+        if session.parent_thread_id:
+            by_parent.setdefault(session.parent_thread_id, []).append(session)
+    supervisors = {session.session_id for session in sessions if session.depth == 1}
+    maximum_children = 0
+    for supervisor in supervisors:
+        children = by_parent.get(supervisor, [])
+        maximum_children = max(maximum_children, 1 if children else 0)
+        for index, first in enumerate(children):
+            for second in children[index + 1 :]:
+                if max(first.started_at, second.started_at) < min(first.finished_at, second.finished_at):
+                    raise RuntimeError(f"Supervisor {supervisor} has overlapping children")
+    timeline = sorted(
+        [(session.started_at, 1, session.depth) for session in sessions]
+        + [(session.finished_at, -1, session.depth) for session in sessions]
+    )
+    active = 0
+    active_nested = 0
+    maximum_active = 0
+    for _, delta, depth in timeline:
+        active += delta
+        if depth >= 3:
+            active_nested += delta
+        maximum_active = max(maximum_active, active)
+        if active > maximum_threads:
+            raise RuntimeError(f"Runtime agent ceiling exceeded: {active} > {maximum_threads}")
+        if active > 9 and active_nested > 1:
+            raise RuntimeError("Temporary tenth-agent slot was not serialized")
+    return {"maximumActiveSessions": maximum_active, "maximumChildrenObserved": maximum_children}
+
+
+def _required_invocations(batch: Sequence[_RunSpec], report: dict[str, Any]) -> set[str]:
+    required = {run.suite.manifest["execution"]["supervisorInvocation"] for run in batch}
+    reports = {str(item.get("suite", "")): item for item in report.get("runs", [])}
+    for run in batch:
+        item = reports.get(run.suite.suite_id, {})
+        statuses = {result.get("status") for result in item.get("scenarioResults", [])}
+        if statuses and statuses <= {"BLOCKED", "STALE"}:
+            continue
+        execution = run.suite.manifest["execution"]
+        required.add(execution["targetInvocation"])
+        required.add(execution["judgeInvocation"])
+    return required
+
+
+def _retain_sessions(codex_home: Path, destination: Path) -> int:
+    count = 0
+    destination.mkdir(parents=True, exist_ok=True)
+    for rollout in codex_home.glob("**/rollout-*.jsonl"):
+        target = destination / rollout.name
+        target.write_text(_redact_capture(rollout.read_text(encoding="utf-8", errors="replace")), encoding="utf-8")
+        count += 1
+    return count
+
+
+def _controlled_environment(home: Path, codex_home: Path, temporary: Path) -> dict[str, str]:
+    environment = {"PATH": os.environ.get("PATH", "/usr/bin:/bin")}
+    for name in ("LANG", "LC_ALL"):
+        if name in os.environ:
+            environment[name] = os.environ[name]
+    environment.update(
+        {
+            "HOME": str(home),
+            "CODEX_HOME": str(codex_home),
+            "TMPDIR": str(temporary),
+            "GIT_AUTHOR_NAME": "Synthetic Agent Eval",
+            "GIT_AUTHOR_EMAIL": "agent-eval@example.invalid",
+            "GIT_COMMITTER_NAME": "Synthetic Agent Eval",
+            "GIT_COMMITTER_EMAIL": "agent-eval@example.invalid",
+        }
+    )
+    return environment
+
+
+def _kill_process_group(pid: int) -> None:
+    try:
+        os.killpg(pid, signal.SIGKILL)
+    except (PermissionError, ProcessLookupError):
+        pass
+
+
+def _run_process(
+    argv: Sequence[str],
+    cwd: Path,
+    environment: dict[str, str],
+    timeout_seconds: float,
+) -> dict[str, Any]:
+    process = subprocess.Popen(
+        list(argv),
+        cwd=cwd,
+        env=environment,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=False,
+        start_new_session=True,
+    )
+    buffers = {"stdout": bytearray(), "stderr": bytearray()}
+    exceeded = threading.Event()
+
+    def drain(name: str, stream: Any) -> None:
+        while True:
+            chunk = stream.read(65536)
+            if not chunk:
+                return
+            remaining = _MAXIMUM_CAPTURE_BYTES - len(buffers[name])
+            if remaining > 0:
+                buffers[name].extend(chunk[:remaining])
+            if len(chunk) > remaining:
+                exceeded.set()
+                _kill_process_group(process.pid)
+
+    threads = [
+        threading.Thread(target=drain, args=("stdout", process.stdout), daemon=True),
+        threading.Thread(target=drain, args=("stderr", process.stderr), daemon=True),
+    ]
+    for thread in threads:
+        thread.start()
+    timed_out = False
+    try:
+        process.wait(timeout=timeout_seconds)
+    except subprocess.TimeoutExpired:
+        timed_out = True
+        _kill_process_group(process.pid)
+        process.wait()
+    finally:
+        _kill_process_group(process.pid)
+    for thread in threads:
+        thread.join()
+    if process.stdout is not None:
+        process.stdout.close()
+    if process.stderr is not None:
+        process.stderr.close()
+    stdout = bytes(buffers["stdout"]).decode("utf-8", errors="replace")
+    stderr = bytes(buffers["stderr"]).decode("utf-8", errors="replace")
+    if timed_out:
+        return {"exitCode": 124, "stdout": stdout, "stderr": f"{stderr}\nprocess timed out".lstrip(), "cleanup": "clean"}
+    if exceeded.is_set():
+        return {"exitCode": 125, "stdout": stdout, "stderr": f"{stderr}\nprocess output limit exceeded".lstrip(), "cleanup": "clean"}
+    return {"exitCode": int(process.returncode), "stdout": stdout, "stderr": stderr, "cleanup": "clean"}
+
+
+def _audit_workspace_cleanup(workspace: Path) -> str:
+    registry = workspace / ".git" / "agent-claims.json"
+    if registry.is_file():
+        loaded = json.loads(registry.read_text(encoding="utf-8"))
+        claims = loaded.get("claims", loaded) if isinstance(loaded, dict) else loaded
+        if claims:
+            raise RuntimeError("Disposable workspace retains active claims")
+    return "clean"
 
 
 def _run_live_batch(
@@ -434,48 +690,72 @@ def _run_live_batch(
             str(workspace),
             _coordinator_prompt(batch),
         ]
-        environment = os.environ.copy()
-        environment.update(
-            {
-                "CODEX_HOME": str(codex_home),
-                "HOME": str(temporary_home),
-                "TMPDIR": str(temporary_dir),
-                "GIT_AUTHOR_NAME": "Synthetic Agent Eval",
-                "GIT_AUTHOR_EMAIL": "agent-eval@example.invalid",
-                "GIT_COMMITTER_NAME": "Synthetic Agent Eval",
-                "GIT_COMMITTER_EMAIL": "agent-eval@example.invalid",
-            }
-        )
-        completed = subprocess.run(
+        environment = _controlled_environment(temporary_home, codex_home, temporary_dir)
+        completed = _run_process(
             command,
-            cwd=workspace,
-            env=environment,
-            text=True,
-            capture_output=True,
-            timeout=timeout_seconds,
-            check=False,
+            workspace,
+            environment,
+            timeout_seconds,
         )
         result_root.mkdir(parents=True, exist_ok=True)
         evidence_prefix = result_root / label
-        evidence_prefix.with_suffix(".jsonl").write_text(_redact_capture(completed.stdout), encoding="utf-8")
-        evidence_prefix.with_suffix(".stderr.log").write_text(_redact_capture(completed.stderr), encoding="utf-8")
-        identity = _audit_identity(staged, codex_home)
+        evidence_prefix.with_suffix(".jsonl").write_text(_redact_capture(completed["stdout"]), encoding="utf-8")
+        evidence_prefix.with_suffix(".stderr.log").write_text(_redact_capture(completed["stderr"]), encoding="utf-8")
+        session_directory = result_root / f"{label}.sessions"
+        retained_session_count = _retain_sessions(codex_home, session_directory)
+        partial_report: dict[str, Any] | None = None
+        report_error: str | None = None
+        try:
+            partial_report = _extract_coordinator_report(completed["stdout"])
+            _audit_report(batch, partial_report)
+        except RuntimeError as error:
+            report_error = str(error)
+        required = _required_invocations(batch, partial_report or {})
+        identity_error: str | None = None
+        try:
+            identity = _audit_identity(staged, codex_home, required)
+        except RuntimeError as error:
+            identity_error = str(error)
+            identity = {"rolloutCount": retained_session_count, "error": identity_error}
+        concurrency_error: str | None = None
+        try:
+            concurrency = _audit_session_concurrency(_load_sessions(codex_home), maximum_threads)
+        except RuntimeError as error:
+            concurrency_error = str(error)
+            concurrency = {"error": concurrency_error}
         identity_path = evidence_prefix.with_suffix(".identity.json")
         identity_path.write_text(json.dumps(identity, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-        if completed.returncode != 0:
-            raise RuntimeError(f"Codex batch {batch_number} exited with {completed.returncode}")
-        report = _extract_coordinator_report(completed.stdout)
-        _audit_report(batch, report)
+        cleanup_error: str | None = None
+        try:
+            workspace_cleanup = _audit_workspace_cleanup(workspace)
+        except RuntimeError as error:
+            cleanup_error = str(error)
+            workspace_cleanup = "failed"
+        infrastructure_errors = [
+            message
+            for message in (
+                None if completed["exitCode"] == 0 else f"Codex exited with {completed['exitCode']}",
+                report_error,
+                identity_error,
+                concurrency_error,
+                cleanup_error,
+            )
+            if message
+        ]
         return {
             "batch": batch_number,
-            "status": "completed",
-            "processExitCode": completed.returncode,
-            "report": report,
+            "status": "infrastructure-failed" if infrastructure_errors else "completed",
+            "processExitCode": completed["exitCode"],
+            "report": partial_report,
+            "infrastructureErrors": infrastructure_errors,
             "identityAudit": identity,
+            "concurrencyAudit": concurrency,
+            "workspaceCleanup": workspace_cleanup,
             "evidence": {
                 "events": str(evidence_prefix.with_suffix(".jsonl")),
                 "stderr": str(evidence_prefix.with_suffix(".stderr.log")),
                 "identity": str(identity_path),
+                "sessions": str(session_directory),
             },
         }
 
