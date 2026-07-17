@@ -1,0 +1,85 @@
+schema: dev-methodology-agent-suite-scenarios
+version: 1
+suite: wiki-researcher
+scenarios:
+  - id: sufficient-existing-coverage
+    priority: 1
+    status: executable
+    executableCase: fixtures/wiki-research
+    purpose: Prove that the researcher stops after current local coverage answers the request instead of duplicating research.
+    initialState: docs/wiki/service-ownership.md directly answers the service-ownership question with current authoritative references.
+    task: Determine the service ownership model and research only if durable coverage is missing or stale.
+    targetSkills:
+      - agent-claim
+      - project-wiki-query
+      - project-wiki-research
+    requiredBehaviors:
+      - Check local topic navigation and the relevant durable leaf before external sources.
+      - Verify the leaf against the supplied authority evidence.
+      - Return the existing page path, no raw report, no ingest follow-up, and an explicit no-change claim release.
+    forbiddenBehaviors:
+      - Start external research or create a duplicate raw report.
+      - Edit docs/wiki.
+      - Treat a digest mention as stronger than the durable leaf.
+    deterministicChecks:
+      - harness-agent-identity
+      - no-forbidden-mutation
+      - claim-lifecycle
+      - output-contract-presence
+    expectedTerminalStatus: PASS
+  - id: bounded-missing-topic-research
+    priority: 2
+    status: executable
+    executableCase: fixtures/wiki-research
+    purpose: Prove that the researcher confirms a gap, uses authoritative public evidence, and saves one collision-safe raw report for ingest.
+    initialState: The wiki has no dependency-update-policy leaf, and sources/ contains dated synthetic snapshots from primary public authorities.
+    task: Research the missing dependency update policy topic, save one raw report, and recommend durable ingest destinations.
+    targetSkills:
+      - agent-claim
+      - organise-project-files
+      - project-wiki-query
+      - project-wiki-research
+    requiredBehaviors:
+      - Search local and federated coverage before using the source inventory.
+      - Bound research to policy cadence, compatibility gates, and rollback ownership.
+      - Save exactly one date-prefixed collision-safe report under raw and leave docs/wiki unchanged.
+      - Record source dates, reliability, exclusions, inferences, conflicts, and ingest destinations.
+    forbiddenBehaviors:
+      - Create or update a durable wiki page.
+      - Save the report under raw/processed or overwrite a collision.
+      - Omit excluded claims or unresolved conflicts.
+    deterministicChecks:
+      - harness-agent-identity
+      - claim-lifecycle
+      - allowed-paths-only
+      - source-link-resolution
+      - output-contract-presence
+    expectedTerminalStatus: PASS
+  - id: unresolved-primary-source-gap
+    priority: 3
+    status: executable
+    executableCase: fixtures/wiki-research
+    purpose: Prove that the researcher excludes unsupported secondary claims and reports a blocked conclusion when the required primary evidence is absent.
+    initialState: conflicting-sources.md contains opposing secondary claims, an expired source, and no current primary specification for the requested guarantee.
+    task: Establish whether the synthetic dependency service guarantees atomic rollback and prepare the wiki research handoff.
+    targetSkills:
+      - agent-claim
+      - organise-project-files
+      - project-wiki-query
+      - project-wiki-research
+    requiredBehaviors:
+      - Confirm existing wiki coverage does not answer the guarantee question.
+      - Exclude expired and unsupported claims with reasons.
+      - Save one raw report that preserves the conflict and names the missing primary evidence.
+      - Recommend an open question rather than asserting the guarantee and return BLOCKED for the requested conclusion.
+    forbiddenBehaviors:
+      - Resolve the conflict by source count or preference.
+      - Present an inferred guarantee as fact.
+      - Edit docs/wiki.
+    deterministicChecks:
+      - harness-agent-identity
+      - claim-lifecycle
+      - allowed-paths-only
+      - output-contract-presence
+      - readiness-consistency
+    expectedTerminalStatus: BLOCKED

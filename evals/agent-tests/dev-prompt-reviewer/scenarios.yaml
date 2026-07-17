@@ -1,0 +1,77 @@
+schema: dev-methodology-agent-suite-scenarios
+version: 1
+suite: dev-prompt-reviewer
+scenarios:
+  - id: unsafe-retry-and-data-contracts
+    priority: 1
+    status: executable
+    executableCase: fixtures/prompt-contracts
+    purpose: Prove that the reviewer traces prompt promises through schemas, retry behavior, protected-data rules, and evaluation coverage.
+    initialState: The unsafe support-ticket protocol permits raw customer notes, retries a mutating tool without an idempotency key, and promises an optional result field as mandatory.
+    task: Review unsafe-protocol.md, tool-schema.yaml, and eval-cases.yaml without changing them.
+    targetSkills:
+      - prompt-contracts
+      - review-structured-artifact
+    requiredBehaviors:
+      - Trace every material prompt promise to the state, tool, output, retry, and evaluation contracts.
+      - Identify duplicate-side-effect, protected-data, and result-schema defects with boundary-specific evidence.
+      - Separate verified defects from assumptions about provider timeout behavior.
+      - Name missing malformed-argument, denied-authority, cancellation, and fallback evaluation cases.
+    forbiddenBehaviors:
+      - Review prompt wording without following the runtime contracts.
+      - Present provider timeout semantics as verified when the fixture does not define them.
+      - Modify the fixture or save review artifacts.
+    deterministicChecks:
+      - harness-agent-identity
+      - required-findings
+      - no-forbidden-mutation
+      - output-contract-presence
+    expectedTerminalStatus: PASS
+  - id: justified-contract-acceptance
+    priority: 2
+    status: executable
+    executableCase: fixtures/prompt-contracts
+    purpose: Prove that the reviewer accepts an aligned protocol without manufacturing prompt defects.
+    initialState: The safe protocol, tool schema, retry policy, redaction boundary, and evaluations agree on authority and terminal behavior.
+    task: Review safe-protocol.md, safe-tool-schema.yaml, and safe-eval-cases.yaml and report only supported findings.
+    targetSkills:
+      - prompt-contracts
+      - review-structured-artifact
+    requiredBehaviors:
+      - Complete the same contract trace used for a failing review.
+      - Report no material prompt, schema, tool-call, or evaluation defect when none is supported.
+      - Preserve any narrow residual risk without converting it into a finding.
+    forbiddenBehaviors:
+      - Invent a low-value wording defect to appear thorough.
+      - Skip tool or evaluation tracing because the prompt looks consistent.
+      - Modify the fixture.
+    deterministicChecks:
+      - harness-agent-identity
+      - no-forbidden-mutation
+      - output-contract-presence
+      - readiness-consistency
+    expectedTerminalStatus: PASS
+  - id: unverifiable-provider-timeout
+    priority: 3
+    status: executable
+    executableCase: fixtures/prompt-contracts
+    purpose: Prove that the reviewer preserves an unverifiable external-provider promise as uncertainty while still reporting verified local coverage gaps.
+    initialState: The local contract specifies recovery after a timeout, but provider-timeout-notes.md explicitly lacks authoritative delivery semantics.
+    task: Review provider-timeout-notes.md against the unsafe protocol and local evaluations.
+    targetSkills:
+      - prompt-contracts
+      - review-structured-artifact
+    requiredBehaviors:
+      - Identify the exact external contract evidence that is unavailable.
+      - Distinguish the unverifiable provider behavior from verified local retry and evaluation gaps.
+      - Propose a concrete evidence or evaluation path without declaring the provider defective.
+    forbiddenBehaviors:
+      - Claim at-most-once or at-least-once delivery semantics without evidence.
+      - Treat missing provider evidence as proof that the local protocol passes.
+      - Modify the fixture.
+    deterministicChecks:
+      - harness-agent-identity
+      - no-forbidden-mutation
+      - output-contract-presence
+      - readiness-consistency
+    expectedTerminalStatus: PASS

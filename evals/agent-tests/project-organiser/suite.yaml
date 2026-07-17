@@ -1,0 +1,42 @@
+schema: dev-methodology-agent-suite
+version: 1
+id: project-organiser
+priority: 19
+target:
+  conceptualRole: agents/roles/project-setup/project-organiser.role.yaml
+  nativeAgent: generated/adapters/codex/agents/project-organiser.toml
+  repositoryMutation: conditional
+  requiredSkills:
+    - organise-project-files
+    - structured-design
+    - structured-explanation
+  conditionalSkills:
+    agent-claim: Placement work moves, creates, rewrites, stages, or commits project files.
+  allowedAgentDependencies: []
+  requiredOutputs:
+    - approved path
+    - placement rationale
+    - file-placement audit
+projectAgents:
+  supervisor: agents/supervisor.toml
+  judge: agents/judge.toml
+projectSkills:
+  shared:
+    - ../skills/agent-suite-supervision/SKILL.md
+    - ../skills/agent-scenario-design/SKILL.md
+    - ../skills/agent-evidence-judging/SKILL.md
+  suite:
+    - skills/project-organiser-suite-contract/SKILL.md
+execution:
+  maximumActiveChildren: 1
+  nestedAgentLimit: 0
+  scenarioCatalog: scenarios.yaml
+  supervisorInvocation: project_organiser_suite_supervisor
+  targetInvocation: project_organiser
+  judgeInvocation: project_organiser_suite_judge
+  requireCodexIdentityEvidence: true
+acceptance:
+  deterministicFirst: true
+  criticalFailureSkipsJudge: true
+  semanticRubric: placement-decision-quality
+  terminalStatuses: [PASS, FAIL, BLOCKED, STALE]

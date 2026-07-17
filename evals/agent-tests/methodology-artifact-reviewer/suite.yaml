@@ -1,0 +1,46 @@
+schema: dev-methodology-agent-suite
+version: 1
+id: methodology-artifact-reviewer
+priority: 26
+target:
+  conceptualRole: agents/roles/methodology-maintenance/methodology-artifact-reviewer.role.yaml
+  nativeAgent: generated/adapters/codex/agents/methodology-artifact-reviewer.toml
+  repositoryMutation: conditional
+  requiredSkills:
+    - review-structured-artifact
+    - skill-authoring
+    - agent-role-authoring
+    - name-methodology-artifacts
+    - documentation-page-verify
+    - development-methodology
+  conditionalSkills:
+    agent-claim: The review creates or updates a methodology checklist, findings file, or other project artifact.
+    organise-project-files: The review creates a new project file or directory.
+  allowedAgentDependencies: []
+  requiredOutputs:
+    - finding-first review
+    - required corrections
+    - residual risk
+projectAgents:
+  supervisor: agents/supervisor.toml
+  judge: agents/judge.toml
+projectSkills:
+  shared:
+    - ../skills/agent-suite-supervision/SKILL.md
+    - ../skills/agent-scenario-design/SKILL.md
+    - ../skills/agent-evidence-judging/SKILL.md
+  suite:
+    - skills/methodology-artifact-reviewer-suite-contract/SKILL.md
+execution:
+  maximumActiveChildren: 1
+  nestedAgentLimit: 0
+  scenarioCatalog: scenarios.yaml
+  supervisorInvocation: methodology_artifact_reviewer_suite_supervisor
+  targetInvocation: methodology_artifact_reviewer
+  judgeInvocation: methodology_artifact_reviewer_suite_judge
+  requireCodexIdentityEvidence: true
+acceptance:
+  deterministicFirst: true
+  criticalFailureSkipsJudge: true
+  semanticRubric: methodology-artifact-review-quality
+  terminalStatuses: [PASS, FAIL, BLOCKED, STALE]

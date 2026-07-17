@@ -1,0 +1,74 @@
+schema: dev-methodology-agent-suite-scenarios
+version: 1
+suite: wiki-topic-verifier
+scenarios:
+  - id: accepted-durable-topic
+    priority: 1
+    status: executable
+    executableCase: fixtures/topic-verification
+    purpose: Prove that the verifier returns GOOD for a focused leaf with portable source links, navigational hub coverage, and passing checks.
+    initialState: accepted/docs/wiki/runtime/retry-policy.md, its index.md hub, and processed evidence satisfy the page, leaf, source, and navigation contracts.
+    task: Verify the accepted topic and hub against the processed evidence and accepted/checks.txt.
+    targetSkills:
+      - project-wiki-topic-verify
+    requiredBehaviors:
+      - Review only the supplied topic and hub with the source as evidence.
+      - Confirm leaf granularity, contextual relative source links, navigation, and required sections.
+      - Return VERDICT GOOD with the complete reviewed-page inventory and check results.
+    forbiddenBehaviors:
+      - Edit files or widen review to unrelated pages.
+      - Invent a correction when all applicable checks pass.
+      - Treat the raw evidence as the review target.
+    deterministicChecks:
+      - harness-agent-identity
+      - source-link-resolution
+      - no-forbidden-mutation
+      - output-contract-presence
+    expectedTerminalStatus: PASS
+  - id: actionable-topic-corrections
+    priority: 2
+    status: executable
+    executableCase: fixtures/topic-verification
+    purpose: Prove that the verifier finds over-bundled concepts, a missing contextual source link, and stale hub navigation.
+    initialState: correction/docs/wiki/runtime/resilience.md bundles retry and circuit-breaker policies, names evidence.md without linking it, and its index.md omits the durable topic.
+    task: Verify the correction topic and hub against its processed evidence.
+    targetSkills:
+      - project-wiki-topic-verify
+    requiredBehaviors:
+      - Return VERDICT NEEDS_CORRECTION.
+      - Name the exact topic split, contextual link, and hub navigation corrections.
+      - Report file-specific findings only and preserve read-only behavior.
+    forbiddenBehaviors:
+      - Accept coherent prose despite the leaf and link defects.
+      - Edit the topic or hub.
+      - Return vague best-practice advice without file paths.
+    deterministicChecks:
+      - harness-agent-identity
+      - required-findings
+      - no-forbidden-mutation
+      - output-contract-presence
+    expectedTerminalStatus: PASS
+  - id: stale-processed-source-evidence
+    priority: 3
+    status: executable
+    executableCase: fixtures/topic-verification
+    purpose: Prove that the verifier rejects a topic whose source link still targets the raw queue after evidence moved to processed storage.
+    initialState: stale/docs/wiki/runtime/operation-identity.md links raw/evidence.md, but only raw/processed/evidence.md exists and stale/lint-evidence.txt records the broken link.
+    task: Verify the stale topic against the processed evidence and supplied lint result.
+    targetSkills:
+      - project-wiki-topic-verify
+    requiredBehaviors:
+      - Return VERDICT NEEDS_CORRECTION and identify the exact stale source link.
+      - Require a portable page-relative link to the processed evidence.
+      - Preserve the lint failure as a terminal acceptance failure for the topic.
+    forbiddenBehaviors:
+      - Return GOOD because the content itself is accurate.
+      - Repair the link or run a mutating migration.
+      - Ignore the supplied lint evidence.
+    deterministicChecks:
+      - harness-agent-identity
+      - required-findings
+      - source-link-resolution
+      - no-forbidden-mutation
+      - output-contract-presence
+    expectedTerminalStatus: PASS

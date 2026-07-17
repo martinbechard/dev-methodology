@@ -1,0 +1,42 @@
+schema: dev-methodology-agent-suite
+version: 1
+id: wiki-artifact-reviewer
+priority: 22
+target:
+  conceptualRole: agents/roles/wiki-activities/wiki-artifact-reviewer.role.yaml
+  nativeAgent: generated/adapters/codex/agents/wiki-artifact-reviewer.toml
+  repositoryMutation: conditional
+  requiredSkills:
+    - project-wiki-review
+    - documentation-page-verify
+  conditionalSkills:
+    agent-claim: The review creates or updates a project-wiki checklist, findings file, or other project artifact.
+    organise-project-files: The review creates a new project file or directory.
+  allowedAgentDependencies: []
+  requiredOutputs:
+    - completed project-wiki checklist
+    - verifier assessment
+    - findings and corrections
+projectAgents:
+  supervisor: agents/supervisor.toml
+  judge: agents/judge.toml
+projectSkills:
+  shared:
+    - ../skills/agent-suite-supervision/SKILL.md
+    - ../skills/agent-scenario-design/SKILL.md
+    - ../skills/agent-evidence-judging/SKILL.md
+  suite:
+    - skills/wiki-artifact-reviewer-suite-contract/SKILL.md
+execution:
+  maximumActiveChildren: 1
+  nestedAgentLimit: 0
+  scenarioCatalog: scenarios.yaml
+  supervisorInvocation: wiki_artifact_reviewer_suite_supervisor
+  targetInvocation: wiki_artifact_reviewer
+  judgeInvocation: wiki_artifact_reviewer_suite_judge
+  requireCodexIdentityEvidence: true
+acceptance:
+  deterministicFirst: true
+  criticalFailureSkipsJudge: true
+  semanticRubric: wiki-artifact-review-quality
+  terminalStatuses: [PASS, FAIL, BLOCKED, STALE]

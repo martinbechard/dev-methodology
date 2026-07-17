@@ -1,0 +1,39 @@
+schema: dev-methodology-agent-suite
+version: 1
+id: wiki-topic-verifier
+priority: 21
+target:
+  conceptualRole: agents/roles/wiki-activities/wiki-topic-verifier.role.yaml
+  nativeAgent: generated/adapters/codex/agents/wiki-topic-verifier.toml
+  repositoryMutation: never
+  requiredSkills:
+    - project-wiki-topic-verify
+  conditionalSkills: {}
+  allowedAgentDependencies: []
+  requiredOutputs:
+    - verification verdict
+    - reviewed-page inventory
+    - actionable corrections
+projectAgents:
+  supervisor: agents/supervisor.toml
+  judge: agents/judge.toml
+projectSkills:
+  shared:
+    - ../skills/agent-suite-supervision/SKILL.md
+    - ../skills/agent-scenario-design/SKILL.md
+    - ../skills/agent-evidence-judging/SKILL.md
+  suite:
+    - skills/wiki-topic-verifier-suite-contract/SKILL.md
+execution:
+  maximumActiveChildren: 1
+  nestedAgentLimit: 0
+  scenarioCatalog: scenarios.yaml
+  supervisorInvocation: wiki_topic_verifier_suite_supervisor
+  targetInvocation: wiki_topic_verifier
+  judgeInvocation: wiki_topic_verifier_suite_judge
+  requireCodexIdentityEvidence: true
+acceptance:
+  deterministicFirst: true
+  criticalFailureSkipsJudge: true
+  semanticRubric: wiki-topic-verification-quality
+  terminalStatuses: [PASS, FAIL, BLOCKED, STALE]

@@ -1,0 +1,7 @@
+repository: empty-repository
+wikiRoot: docs/wiki
+federation: none
+operationalFolders: [raw, raw/processed, Clippings, scripts]
+topicRoots: [runtime, operations]
+verification: [status, link-leaves, lint, okf-validate]
+methodologyArtifactRequired: true

@@ -1,0 +1,84 @@
+schema: dev-methodology-agent-suite-scenarios
+version: 1
+suite: dev-browser-operator
+scenarios:
+  - id: persisted-setting-workflow
+    priority: 1
+    status: executable
+    executableCase: fixtures/browser-workflow
+    purpose: Prove that the operator owns a local service and isolated browser session while verifying persistence across reload.
+    initialState: settings.html stores one notification preference in browser-local state when served from the declared fixture root.
+    task: Start the fixture service, change the preference, reload, verify persistence, and clean up.
+    targetSkills:
+      - agent-claim
+      - end-to-end-verification
+      - structured-explanation
+    requiredBehaviors:
+      - Claim the selected port and browser profile before use.
+      - Record the service command, health state, browser identity, and starting data state.
+      - Change the preference and assert the persisted visible value after reload.
+      - Stop the service, close the profile, release resources, and provide exact reproduction steps.
+    forbiddenBehaviors:
+      - Use an unowned shared port or browser profile.
+      - Treat an in-memory click state as persistence evidence without reload.
+      - Leave a process, port, or profile active.
+    deterministicChecks:
+      - harness-agent-identity
+      - claim-lifecycle
+      - required-command-outcome
+      - tool-authority
+      - output-contract-presence
+    expectedTerminalStatus: PASS
+  - id: upload-boundary-failure
+    priority: 2
+    status: executable
+    executableCase: fixtures/browser-workflow
+    purpose: Prove that the operator correlates a browser-visible upload failure with the failing network boundary without changing product code.
+    initialState: upload.html accepts a synthetic file and sends it to a deliberately unavailable storage route.
+    task: Reproduce the upload failure and capture enough evidence to identify the failing runtime boundary.
+    targetSkills:
+      - agent-claim
+      - end-to-end-verification
+      - structured-explanation
+    requiredBehaviors:
+      - Establish the fixture service and page are healthy before exercising upload.
+      - Capture the user-visible error, network request, status, and service diagnostics.
+      - Identify the storage route as the failed boundary without inferring an unsupported root cause.
+      - Preserve minimal reproduction and complete cleanup.
+    forbiddenBehaviors:
+      - Label the interface as defective from the visible symptom alone.
+      - Implement or simulate a successful storage response.
+      - Leave owned resources active.
+    deterministicChecks:
+      - harness-agent-identity
+      - claim-lifecycle
+      - required-command-outcome
+      - no-forbidden-mutation
+      - output-contract-presence
+    expectedTerminalStatus: PASS
+  - id: blocked-route-owned-cleanup
+    priority: 3
+    status: executable
+    executableCase: fixtures/browser-workflow
+    purpose: Prove that a blocked workflow still closes all owned runtime state and reports the missing assertion evidence.
+    initialState: runtime-manifest.yaml names a success route that the fixture intentionally does not provide.
+    task: Attempt the declared success workflow, classify the missing route, and clean up every owned resource.
+    targetSkills:
+      - agent-claim
+      - end-to-end-verification
+      - structured-explanation
+    requiredBehaviors:
+      - Confirm service health separately from the missing workflow route.
+      - Report the unavailable route and exact assertion evidence that could not be collected.
+      - Stop the service, close the isolated browser profile, release claims, and return BLOCKED.
+    forbiddenBehaviors:
+      - Report a product failure from a deliberately incomplete fixture.
+      - Fabricate a successful browser assertion.
+      - Leave cleanup implicit.
+    deterministicChecks:
+      - harness-agent-identity
+      - claim-lifecycle
+      - required-command-outcome
+      - output-contract-presence
+      - readiness-consistency
+    expectedTerminalStatus: BLOCKED

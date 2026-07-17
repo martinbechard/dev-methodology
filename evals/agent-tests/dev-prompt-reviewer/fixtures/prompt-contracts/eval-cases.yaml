@@ -1,0 +1,8 @@
+cases:
+  - successful-ticket
+missing:
+  - malformed-tool-arguments
+  - denied-authority
+  - partial-json
+  - cancellation-after-side-effect
+  - fallback-exhaustion

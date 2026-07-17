@@ -1,0 +1,12 @@
+tool: create-ticket
+input:
+  summary: redacted-string
+  requestId: stable-string
+output:
+  ticketId:
+    type: string
+    required: true
+authority:
+  customerNotes: prohibited
+retry:
+  idempotencyKey: requestId

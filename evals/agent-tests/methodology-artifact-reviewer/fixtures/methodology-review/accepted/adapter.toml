@@ -1,0 +1,4 @@
+# Generated output for the synthetic fixture.
+name = "sample"
+description = "Report compact findings and residual risk."
+dependencies = ["evidence-reader"]

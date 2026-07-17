@@ -1,0 +1,42 @@
+schema: dev-methodology-agent-suite
+version: 1
+id: dev-browser-operator
+priority: 18
+target:
+  conceptualRole: agents/roles/dev-activities/dev-browser-operator.role.yaml
+  nativeAgent: generated/adapters/codex/agents/dev-browser-operator.toml
+  repositoryMutation: conditional
+  requiredSkills:
+    - end-to-end-verification
+    - structured-explanation
+  conditionalSkills:
+    agent-claim: The workflow mutates repository evidence or uses exclusive runtime resources.
+    organise-project-files: The workflow creates a new project file or directory.
+  allowedAgentDependencies: []
+  requiredOutputs:
+    - browser-state notes
+    - E2E evidence
+    - reproduction steps
+projectAgents:
+  supervisor: agents/supervisor.toml
+  judge: agents/judge.toml
+projectSkills:
+  shared:
+    - ../skills/agent-suite-supervision/SKILL.md
+    - ../skills/agent-scenario-design/SKILL.md
+    - ../skills/agent-evidence-judging/SKILL.md
+  suite:
+    - skills/dev-browser-operator-suite-contract/SKILL.md
+execution:
+  maximumActiveChildren: 1
+  nestedAgentLimit: 0
+  scenarioCatalog: scenarios.yaml
+  supervisorInvocation: dev_browser_operator_suite_supervisor
+  targetInvocation: dev_browser_operator
+  judgeInvocation: dev_browser_operator_suite_judge
+  requireCodexIdentityEvidence: true
+acceptance:
+  deterministicFirst: true
+  criticalFailureSkipsJudge: true
+  semanticRubric: browser-workflow-quality
+  terminalStatuses: [PASS, FAIL, BLOCKED, STALE]

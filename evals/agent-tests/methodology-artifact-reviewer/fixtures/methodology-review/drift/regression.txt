@@ -1,0 +1,1 @@
+No assertion covers the sample description across source, adapter, and catalog.

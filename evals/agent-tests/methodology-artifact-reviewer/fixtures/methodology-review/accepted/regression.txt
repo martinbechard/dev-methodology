@@ -1,0 +1,3 @@
+PASS skill description equals adapter and catalog description
+PASS dependency evidence-reader resolves
+PASS generated output check

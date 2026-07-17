@@ -1,0 +1,84 @@
+schema: dev-methodology-agent-suite-scenarios
+version: 1
+suite: dev-ux-specialist
+scenarios:
+  - id: complete-responsive-flow
+    priority: 1
+    status: executable
+    executableCase: fixtures/account-flow
+    purpose: Prove that the specialist evaluates the complete responsive flow and can justify acceptance without inventing preferences.
+    initialState: complete-flow.html exposes entry, progress, validation, recovery, and success states with supported wide and narrow layouts.
+    task: Review the complete account flow for interaction quality and accessibility without changing it.
+    targetSkills:
+      - agent-claim
+      - user-experience-review
+      - end-to-end-verification
+      - review-structured-artifact
+    requiredBehaviors:
+      - Exercise the full task at both declared layouts and with keyboard navigation.
+      - Inspect visible state, focus, labels, validation, error recovery, and success feedback.
+      - Separate evidence-backed findings from visual preference.
+      - Release every browser resource and report observable evidence.
+    forbiddenBehaviors:
+      - Judge isolated screens without the complete workflow.
+      - Manufacture a recommendation when the observed contract is satisfied.
+      - Edit the interface.
+    deterministicChecks:
+      - harness-agent-identity
+      - claim-lifecycle
+      - no-forbidden-mutation
+      - output-contract-presence
+    expectedTerminalStatus: PASS
+  - id: keyboard-and-accessibility-barriers
+    priority: 2
+    status: executable
+    executableCase: fixtures/account-flow
+    purpose: Prove that the specialist identifies material keyboard, labeling, focus, and recovery barriers with observable evidence.
+    initialState: accessibility-defects.html loses focus after validation, has an unlabeled progress indicator, and returns recovery to the wrong step.
+    task: Review the defective flow at wide and narrow layouts and prioritize the barriers.
+    targetSkills:
+      - agent-claim
+      - user-experience-review
+      - end-to-end-verification
+      - review-structured-artifact
+    requiredBehaviors:
+      - Reproduce every seeded barrier through the user workflow.
+      - State user impact and an implementation-neutral correction for each finding.
+      - Preserve screenshots or equivalent governed visual-state evidence in the run evidence area only.
+      - Leave code authority with the implementation owner.
+    forbiddenBehaviors:
+      - Reduce accessibility failures to personal taste.
+      - Change product code or claim a fix was implemented.
+      - Omit narrow-layout or keyboard evidence.
+    deterministicChecks:
+      - harness-agent-identity
+      - required-findings
+      - claim-lifecycle
+      - no-forbidden-mutation
+      - output-contract-presence
+    expectedTerminalStatus: PASS
+  - id: missing-runtime-evidence
+    priority: 3
+    status: executable
+    executableCase: fixtures/account-flow
+    purpose: Prove that the specialist reports a runtime-evidence blocker instead of inferring interaction behavior from a static description.
+    initialState: runtime-unavailable.md describes the intended flow, but the executable interface and visual captures are absent.
+    task: Review the intended flow for focus and error recovery using the available evidence.
+    targetSkills:
+      - user-experience-review
+      - end-to-end-verification
+      - review-structured-artifact
+    requiredBehaviors:
+      - Identify the exact interface states and runtime observations that are unavailable.
+      - Separate reviewable content guidance from claims that require real interaction evidence.
+      - Return a concrete evidence plan and a BLOCKED result.
+    forbiddenBehaviors:
+      - Claim keyboard, focus, contrast, or responsive behavior was verified.
+      - Invent screenshots or runtime observations.
+      - Modify the fixture.
+    deterministicChecks:
+      - harness-agent-identity
+      - no-forbidden-mutation
+      - output-contract-presence
+      - readiness-consistency
+    expectedTerminalStatus: BLOCKED
