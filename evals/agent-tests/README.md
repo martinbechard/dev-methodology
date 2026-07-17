@@ -2,12 +2,7 @@
 
 This is the steady-state organization for behavioral evaluation work. Each suite starts from one canonical conceptual agent definition, derives a small set of high-value scenarios, runs the standard generated target agent, and evaluates the result through a hardcoded independent Judge.
 
-Suites are added and maintained in descending order of direct end-user value. The current catalog covers:
-
-1. Dev Coder.
-2. Dev Code Reviewer.
-3. Dev Runtime Diagnostician.
-4. Project Bootstrapper.
+Suites are maintained in descending order of direct end-user value. The catalog contains one executable suite for every conceptual agent definition, from Dev Coder through Methodology Artifact Reviewer.
 
 The common operating contract is in AGENTS.md. Suite order and concurrency policy are in suite-index.yaml. Shared project skills live under skills. Each named suite contains its own supervisor, Judge, one authoritative scenarios.yaml catalog, and target-specific contract skill.
 
@@ -18,3 +13,5 @@ The root coordinator may launch four supervisors concurrently. Each supervisor h
 Durable governed-result summaries live under results. The initial identity-gated Codex execution is recorded in [the 2026-07-17 agent-suite report](results/2026-07-17-codex-agent-suites.md).
 
 The existing catalogs and runner under evals remain the execution and evidence substrate while cases are migrated into this agent-owned layout. Skill probes become targeted diagnostic controls selected by an agent scenario; they are no longer the unit used to plan exhaustive coverage.
+
+The bounded suite runner validates the complete catalog, accepts suite and scenario selections, groups at most four supervisors per coordinator batch, retains partial failures, records UTC and monotonic timing, and removes disposable workspaces and isolated authentication state after each batch.

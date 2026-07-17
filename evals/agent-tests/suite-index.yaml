@@ -28,3 +28,91 @@ suites:
     priority: 4
     path: project-bootstrapper
     rationale: Establishes the validated project context that makes later agent work reliable.
+  - id: dev-verifier
+    priority: 5
+    path: dev-verifier
+    rationale: Establishes final acceptance from independent command and artifact evidence.
+  - id: dev-orchestrator
+    priority: 6
+    path: dev-orchestrator
+    rationale: Controls bounded delegation, dependency routing, and terminal workflow state.
+  - id: project-configurator
+    priority: 7
+    path: project-configurator
+    rationale: Produces validated project routing and technology activation evidence.
+  - id: dev-security-reviewer
+    priority: 8
+    path: dev-security-reviewer
+    rationale: Identifies material trust, data, dependency, and exploitability risks.
+  - id: dev-backlog-steward
+    priority: 9
+    path: dev-backlog-steward
+    rationale: Keeps durable work state claimable, recoverable, and evidence-backed.
+  - id: dev-merge-coordinator
+    priority: 10
+    path: dev-merge-coordinator
+    rationale: Integrates independent contributions while preserving ownership and verification.
+  - id: dev-documentation-writer
+    priority: 11
+    path: dev-documentation-writer
+    rationale: Creates source-backed project documentation through the correct artifact route.
+  - id: wiki-ingester
+    priority: 12
+    path: wiki-ingester
+    rationale: Converts collected sources into durable verified wiki knowledge.
+  - id: wiki-writer
+    priority: 13
+    path: wiki-writer
+    rationale: Maintains durable topic pages, navigation, digests, and code-aware knowledge.
+  - id: wiki-query-responder
+    priority: 14
+    path: wiki-query-responder
+    rationale: Answers project questions from authoritative wiki and source evidence.
+  - id: dev-artifact-reviewer
+    priority: 15
+    path: dev-artifact-reviewer
+    rationale: Independently reviews completed non-wiki documentation artifacts.
+  - id: dev-prompt-reviewer
+    priority: 16
+    path: dev-prompt-reviewer
+    rationale: Reviews model-facing contracts, tool safety, schemas, and evaluation coverage.
+  - id: dev-ux-specialist
+    priority: 17
+    path: dev-ux-specialist
+    rationale: Evaluates interaction quality, accessibility, and usability evidence.
+  - id: dev-browser-operator
+    priority: 18
+    path: dev-browser-operator
+    rationale: Owns interactive runtime workflows and their cleanup evidence.
+  - id: project-organiser
+    priority: 19
+    path: project-organiser
+    rationale: Places artifacts from explicit project taxonomy and ownership evidence.
+  - id: wiki-architect
+    priority: 20
+    path: wiki-architect
+    rationale: Establishes safe wiki structure, ownership, navigation, and source workflow.
+  - id: wiki-topic-verifier
+    priority: 21
+    path: wiki-topic-verifier
+    rationale: Independently verifies topic coverage, source links, digests, lint, and status.
+  - id: wiki-artifact-reviewer
+    priority: 22
+    path: wiki-artifact-reviewer
+    rationale: Reviews wiki methodology artifacts for structural and authority defects.
+  - id: wiki-researcher
+    priority: 23
+    path: wiki-researcher
+    rationale: Produces bounded sourced research for durable knowledge gaps.
+  - id: wiki-source-collector
+    priority: 24
+    path: wiki-source-collector
+    rationale: Collects approved raw public sources while preserving ingest boundaries.
+  - id: methodology-maintainer
+    priority: 25
+    path: methodology-maintainer
+    rationale: Maintains the catalog, generated outputs, documentation, scripts, and tests coherently.
+  - id: methodology-artifact-reviewer
+    priority: 26
+    path: methodology-artifact-reviewer
+    rationale: Independently detects methodology catalog and generated-output drift.
