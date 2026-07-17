@@ -155,6 +155,23 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "instruction binding"):
                 runner._audit_identity(staged, codex_home, {"target_agent": 1})
 
+    def test_staging_instruments_inline_closing_instruction_delimiter(self) -> None:
+        """Generated adapters may close developer instructions after the final text on the same line."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            source = root / "source.toml"
+            agent_root = root / "agents"
+            agent_root.mkdir()
+            source.write_text(
+                'name = "target_agent"\ndeveloper_instructions = """governed instructions---"""\n',
+                encoding="utf-8",
+            )
+
+            staged = runner._copy_agent(source, "target_agent", agent_root)
+            loaded = runner.tomllib.loads((agent_root / "target_agent.toml").read_text(encoding="utf-8"))
+
+        self.assertIn(staged.instruction_marker, loaded["developer_instructions"])
+
     def test_overlapping_supervisor_children_fail_runtime_audit(self) -> None:
         """Retained session intervals enforce one active child per supervisor."""
         sessions = (

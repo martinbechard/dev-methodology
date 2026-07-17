@@ -249,7 +249,7 @@ def _copy_agent(source: Path, invocation: str, agent_root: Path) -> _StagedAgent
     )
     assignment = 'developer_instructions = """'
     start = source_text.find(assignment)
-    end = source_text.find('\n"""', start + len(assignment))
+    end = source_text.find('"""', start + len(assignment))
     if start < 0 or end < 0:
         raise ValueError(f"Cannot instrument staged agent instructions: {source}")
     staged_text = source_text[:end] + binding_instruction + source_text[end:]
