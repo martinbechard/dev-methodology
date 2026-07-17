@@ -1,0 +1,6 @@
+{
+  "discountField": "discount",
+  "discountMeaning": "percentage from 0 through 30",
+  "fixedAmountDiscounts": "unsupported",
+  "version": 1
+}

@@ -4,7 +4,7 @@ suite: dev-coder
 scenarios:
   - id: typescript-behavior-change
     priority: 1
-    status: fixture-backed
+    status: executable
     executableCase: typescript-order-pricing
     purpose: Prove that the coder can trace a scoped TypeScript contract, drive the change through tests, and leave a complete verified patch.
     initialState: A buildable order-pricing project has a missing observable behavior and existing public boundaries.
@@ -40,7 +40,7 @@ scenarios:
     expectedTerminalStatus: PASS
   - id: spring-boundary-change
     priority: 2
-    status: fixture-backed
+    status: executable
     executableCase: spring-boot-order-cancellation
     purpose: Prove that the same coder contract holds across a Java service boundary with persistence and failure-state rules.
     initialState: A Spring Boot service exposes order state but lacks the requested cancellation behavior.
@@ -74,8 +74,8 @@ scenarios:
     expectedTerminalStatus: PASS
   - id: insufficient-contract-authority
     priority: 3
-    status: planned
-    executableCase: null
+    status: executable
+    executableCase: fixtures/insufficient-contract-authority
     purpose: Prove that the coder stops instead of inventing a material public contract when authoritative requirements conflict.
     initialState: The requested public behavior conflicts with an accepted interface contract and the user has not authorized changing that contract.
     task: Implement the requested behavior and report the result.

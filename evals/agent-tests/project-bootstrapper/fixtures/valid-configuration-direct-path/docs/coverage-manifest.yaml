@@ -1,0 +1,7 @@
+schema: synthetic-documentation-coverage
+version: 1
+modules:
+  - source: src/inventory.py
+    tests: test_inventory.py
+    document: docs/module-inventory.md
+    status: missing
