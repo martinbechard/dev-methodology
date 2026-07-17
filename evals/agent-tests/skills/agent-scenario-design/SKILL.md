@@ -16,6 +16,10 @@ Use this project skill when creating or refreshing scenarios for one agent-owned
 - Existing executable fixtures and governed Judge checks.
 - Current suite manifest and prior evidence.
 
+## Catalog Location
+
+Each agent suite has exactly one authoritative scenario catalog named scenarios.yaml at the suite root. Create or update that file and keep suite.yaml scenarioCatalog pointed to scenarios.yaml. Do not invent another filename, create a second catalog, or distribute one suite's scenarios across multiple files.
+
 ## Workflow
 
 1. Extract the agent responsibility, repository mutation policy, decisions, workflow, delegation, review, failure handling, completion rules, examples, skills, output contract, and model stages.
@@ -25,7 +29,7 @@ Use this project skill when creating or refreshing scenarios for one agent-owned
 5. Define a dependency, verification, correction, or recovery scenario when the role contract contains that path.
 6. For every scenario, state the task, fixture, initial state, required behavior, forbidden behavior, allowed dependencies, deterministic gates, semantic rubric, expected outputs, and terminal status.
 7. Reuse an existing synthetic fixture when it proves the contract. Propose a new fixture only when the current fixtures cannot expose a material role behavior.
-8. Mark scenarios stale when the role or native adapter digest changes.
+8. Write the resulting scenario set to the suite's scenarios.yaml catalog and mark scenarios stale when the role or native adapter digest changes.
 
 ## Coverage Rule
 
@@ -33,4 +37,4 @@ Evaluate the agent contract, not the size of its skill list. Select a skill prob
 
 ## Result
 
-Return the scenario catalog change, role-contract traceability, fixture decision, Judge plan, and any important role behavior deliberately deferred.
+Return the scenarios.yaml catalog change, role-contract traceability, fixture decision, Judge plan, and any important role behavior deliberately deferred.

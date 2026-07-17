@@ -25,12 +25,14 @@ Keep every fixture synthetic. Do not place personal information, customer inform
 Each direct child folder named in suite-index.yaml represents one agent under test and must contain:
 
 - suite.yaml with hardcoded target, project-agent, project-skill, dependency, concurrency, and evidence contracts.
-- scenarios.yaml with scenarios derived from the target agent definition.
+- Exactly one authoritative scenario catalog named scenarios.yaml, with scenarios derived from the target agent definition.
 - agents/supervisor.toml.
 - agents/judge.toml.
 - One suite-specific skill package shared by the supervisor and Judge.
 
 The skills folder at this root contains methods shared by agents in more than one suite. Do not copy those methods into individual agent definitions.
+
+Do not invent per-suite scenario filenames or split one suite's scenario authority across multiple catalogs. The suite.yaml scenarioCatalog field must point to scenarios.yaml.
 
 ## Orchestration And Concurrency
 
@@ -73,6 +75,13 @@ Prioritize agent-level value:
 - Output-contract completeness and terminal-status integrity in every scenario.
 
 Do not create one scenario per skill. Include an assigned skill only when it materially affects the observable target-agent behavior in the selected scenario. Technology variants are representative coverage, not an exhaustive matrix.
+
+## Finding Disposition
+
+- During a governed run, keep the scenario, target, and acceptance contract frozen. Do not fix the agent under test or product behavior from inside the test workflow.
+- A supervisor may classify and preserve evidence for a defect in the fixture, runner, project-agent staging, identity gate, deterministic assertion, Judge packet, cleanup, or other test infrastructure. An authorized maintenance pass may correct only that infrastructure and rerun the same frozen check.
+- Route a finding about the canonical agent definition, distributed skill, generated target behavior, or product implementation to Dev Backlog Steward. Use the configured file-based or GitHub-issues backlog backend, link the governed evidence, and ask the user when the backend is unset.
+- Do not create a shadow backlog and do not convert a target finding into an unreviewed source fix merely to make the suite pass.
 
 ## Judge Protocol
 

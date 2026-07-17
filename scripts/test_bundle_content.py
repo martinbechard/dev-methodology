@@ -3619,7 +3619,7 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("code-review-evidence", review_case["requiredSkills"])
         self.assertEqual(3, len(review_case["requiredFindings"]))
 
-    def test_agent_owned_eval_suites_hardcode_first_wave_orchestration(self) -> None:
+    def test_agent_owned_eval_suites_hardcode_steady_state_orchestration(self) -> None:
         """Agent-first suites must keep target, supervisor, Judge, skill, and concurrency contracts explicit."""
         index = load_yaml_object(AGENT_TEST_SUITES_ROOT / "suite-index.yaml")
         execution = index["execution"]
@@ -3654,6 +3654,9 @@ class BundleContentTests(unittest.TestCase):
             "isolated CODEX_HOME agents directory",
             "matching task name alone does not satisfy the identity gate",
             "missing applicable skill is a critical preflight BLOCKED result",
+            "Exactly one authoritative scenario catalog named scenarios.yaml",
+            "Route a finding about the canonical agent definition",
+            "correct only that infrastructure",
         ):
             with self.subTest(protocol_phrase=phrase):
                 self.assertIn(phrase, protocol)
@@ -3663,6 +3666,29 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(shared_skill=skill_path):
                 frontmatter = load_yaml_object_from_frontmatter(skill_path)
                 self.assertEqual(skill_path.parent.name, frontmatter["name"])
+
+        readme_text = (AGENT_TEST_SUITES_ROOT / "README.md").read_text(encoding="utf-8")
+        self.assertNotRegex(readme_text, r"(?i)\bwave\b")
+        self.assertIn("one authoritative scenarios.yaml catalog", readme_text)
+        self.assertTrue(
+            (AGENT_TEST_SUITES_ROOT / "results" / "2026-07-17-codex-agent-suites.md").is_file()
+        )
+        scenario_design = (
+            AGENT_TEST_SUITES_ROOT
+            / "skills"
+            / "agent-scenario-design"
+            / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        supervision = (
+            AGENT_TEST_SUITES_ROOT
+            / "skills"
+            / "agent-suite-supervision"
+            / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("exactly one authoritative scenario catalog named scenarios.yaml", scenario_design)
+        self.assertIn("authoritative scenarios.yaml catalog", supervision)
+        self.assertIn("Send agent-definition", supervision)
+        self.assertIn("Correct only test infrastructure", supervision)
 
         for entry in suite_entries:
             suite_root = AGENT_TEST_SUITES_ROOT / entry["path"]

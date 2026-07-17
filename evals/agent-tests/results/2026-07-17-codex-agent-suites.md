@@ -1,4 +1,4 @@
-# Codex First-Wave Agent Suite Results
+# Codex Agent Suite Results
 
 Date: 2026-07-17
 

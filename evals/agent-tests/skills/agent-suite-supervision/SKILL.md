@@ -11,7 +11,7 @@ Use this project skill only for supervising an agent suite under evals/agent-tes
 
 ## Workflow
 
-1. Load the suite manifest and one selected scenario.
+1. Load the active suite's suite.yaml manifest and exactly one selected scenario from that suite's authoritative scenarios.yaml catalog. Treat suite.yaml scenarioCatalog as invalid when it names another file.
 2. Verify the canonical role, native adapter, fixture, project agents, and project skills named by the manifest.
 3. Resolve fixed and conditional target skills against the frozen task and allowed writes, then verify that every applicable skill is available to the target. Return preflight BLOCKED when one is missing; do not ask the target to work around the missing skill.
 4. Freeze their digests, the applicable target-skill rule excerpts, and the allowed input, write, command, delegation, and terminal-status contracts.
@@ -25,6 +25,13 @@ Use this project skill only for supervising an agent suite under evals/agent-tes
 12. Clean every suite-owned resource.
 
 When a supervisor-owned assertion command fails because of quoting, globbing, path construction, or another harness error, record the failed command as infrastructure evidence without classifying the target. Correct the command once, rerun the same frozen assertion, and preserve both outcomes. Do not weaken or replace the assertion after target execution.
+
+## Finding Disposition
+
+- During the run, record findings without editing the frozen scenario, target agent, distributed skill, generated adapter, or product implementation.
+- Correct only test infrastructure such as a fixture, runner, staged project-agent definition, identity gate, deterministic assertion, Judge packet, evidence capture, or cleanup contract, and only through an authorized maintenance pass. Rerun the same frozen check afterward.
+- Send agent-definition, distributed-skill, generated-target, and product-behavior findings to Dev Backlog Steward with the governed evidence reference. Use the configured backlog backend and ask the user when no backend is selected.
+- Do not create a second backlog representation and do not patch the subject under test to manufacture a passing result.
 
 ## Concurrency
 
