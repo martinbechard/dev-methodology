@@ -816,6 +816,28 @@
     </div>
   </section>
 
+  <section class="section" aria-labelledby="inlining-benefits-title">
+    <h2 id="inlining-benefits-title">Skill Inlining Benefits</h2>
+    <p class="lede">Inlining places skill instructions in agent context during generation or project configuration when the selection is already certain. The agent starts with the guidance it must use instead of spending context and output tokens constructing calls to retrieve known instructions.</p>
+    <div class="grid">
+      <article class="card skill">
+        <div class="tag-row"><span class="tag skill">Known instructions</span></div>
+        <h3>Avoiding known-skill retrieval tokens</h3>
+        <p>Unconditional core skills are already selected by the conceptual agent definition. Technology skills embedded in AGENTS.md are already selected from repository evidence for that folder. A later read call cannot improve either decision, so inlining avoids the tokens needed to choose a loading tool, construct its arguments, emit the call, and receive its response envelope.</p>
+      </article>
+      <article class="card agent">
+        <div class="tag-row"><span class="tag agent">Continuous work</span></div>
+        <h3>Reducing tool-call interruptions</h3>
+        <p>Every additional tool call interrupts the agent's reasoning turn and adds request serialization, result serialization, latency, and another failure or retry boundary. Inlining removes those avoidable pauses for instructions that are always needed and leaves more context and output budget for the actual task.</p>
+      </article>
+    </div>
+    <aside class="note">
+      <div class="tag-row"><span class="tag reference">Optional skills through the MCP server</span></div>
+      <p>Request-specific optional skills remain dynamic because their conditions can be evaluated only against the current request and evidence. When an optional skill is selected and its content is not already in context, the configured <a href="../README.md#preferred-mcp-operations-layer">mcp-agent-ops server</a> loads the complete selected set in one bounded <code>skill_load</code> call. The agent then uses <code>skill_resource_load</code> only for supporting resources that the selected instructions actually require.</p>
+      <p>This MCP path avoids building shell commands, starting subprocesses, quoting filesystem paths, parsing command output, or generating helper code merely to load optional skills into an agent. The bounded MCP request remains a tool call, but it supplies a structured catalog operation directly and consolidates exact optional-skill loading instead of creating a separate shell or code-generation workflow for each file.</p>
+    </aside>
+  </section>
+
   <section class="section" aria-labelledby="setup-title">
     <h2 id="setup-title">Technology Extensions Setup Process</h2>
     <p class="lede">Project Configurator owns the setup process. It inspects the target repository, selects technology extensions from source evidence, records the intended configuration in PROJECT.yaml, renders the operational folder guidance, and verifies that the result matches the recorded intent.</p>
