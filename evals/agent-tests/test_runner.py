@@ -51,6 +51,12 @@ class AgentSuiteRunnerTests(unittest.TestCase):
 
         self.assertEqual([4, 1], [len(batch) for batch in batches])
 
+    def test_coordinator_requires_fresh_custom_agent_forks(self) -> None:
+        """Full-history forks cannot silently discard registered custom-agent overrides."""
+        prompt = runner._coordinator_prompt((self._run_spec("one", 1),), Path("/tmp/checkpoints"))
+
+        self.assertIn("fork_turns exactly none", prompt)
+
     def test_nested_child_limit_rejects_more_than_temporary_tenth_agent(self) -> None:
         """A suite cannot declare more than one nested canonical dependency."""
         invalid = self._suite("invalid", nested_limit=2)

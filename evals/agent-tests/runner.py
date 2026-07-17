@@ -429,8 +429,10 @@ def _coordinator_prompt(batch: Sequence[_RunSpec], checkpoint_root: Path) -> str
         )
     return (
         "Coordinate this governed synthetic evaluation batch. Spawn every listed custom supervisor concurrently, "
-        "using its exact supervisor value as task_name. Give each supervisor only its listed suite and scenarios, plus "
+        "using its exact supervisor value as task_name and fork_turns exactly none so the registered custom config is "
+        "applied instead of inheriting coordinator model settings. Give each supervisor only its listed suite and scenarios, plus "
         "an explicit instruction to pass task_name exactly equal to the listed target and judge for those child spawns. "
+        "Those target and Judge spawns must also pass fork_turns exactly none. "
         "Each supervisor must run its selected scenarios sequentially, use exactly one active child at a time, invoke "
         "only those hardcoded agents, retain one independent result per scenario, "
         "write the required checkpointRoot/suite-id/scenario-id.json checkpoint immediately after each terminal "
