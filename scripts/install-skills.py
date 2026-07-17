@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Modified with AI assistance.
-# Summary: Installs or removes bundle-owned skills and agents at scoped or explicit destinations.
+# Summary: Deploys bundle-owned skills and agents and configures their MCP operations server.
 
 from __future__ import annotations
 
@@ -9,6 +9,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import shutil
 import sys
 import tempfile
@@ -16,6 +17,11 @@ from collections.abc import Sequence
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import NamedTuple, Optional
+
+try:
+    import tomllib
+except ModuleNotFoundError:
+    tomllib = None
 
 
 SUCCESS_EXIT_CODE = 0
@@ -61,6 +67,21 @@ AGENT_FILE_EXTENSIONS = {
 CLEANUP_SKIPPED_NO_MANIFEST_MESSAGE = "cleanup skipped; no ownership manifest"
 SHA256_HEXDIGEST_LENGTH = 64
 LOWERCASE_HEXADECIMAL_DIGITS = frozenset("0123456789abcdef")
+MCP_AGENT_OPS_SERVER_NAME = "mcp-agent-ops"
+MCP_CONFIG_ADAPTERS = frozenset((CODEX_ADAPTER_NAME, JUNIE_ADAPTER_NAME))
+MCP_CONFIG_FILE_NAMES = {
+    CODEX_ADAPTER_NAME: Path(".codex/config.toml"),
+    JUNIE_ADAPTER_NAME: Path(".junie/mcp.json"),
+}
+MCP_CONFIG_CANDIDATE_FILE_NAMES = {
+    CODEX_ADAPTER_NAME: "config.mcp-agent-ops.toml",
+    JUNIE_ADAPTER_NAME: "mcp-agent-ops.json",
+}
+MCP_STARTUP_TIMEOUT_SECONDS = 15.0
+MCP_TOOL_TIMEOUT_SECONDS = 60.0
+MCP_DETECTION_REGISTRY_RELATIVE_PATH = Path(
+    "detect-technology-skills/references/technology-skill-detection-registry.yaml"
+)
 
 
 class Adapter(NamedTuple):
@@ -97,6 +118,16 @@ class _StagedDestination(NamedTuple):
     backup: Path
     existed: bool
     created_parents: tuple[Path, ...]
+
+
+class _McpConfigPlan(NamedTuple):
+    active_path: Path
+    candidate_path: Path
+    backup_path: Path
+    rendered_content: str
+    active_exists: bool
+    configured_server_count: int
+    target_already_configured: bool
 
 
 class _InstallationRollbackError(OSError):
@@ -222,6 +253,35 @@ def parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
         action="store_true",
         help="Remove only artifacts recorded by this bundle's ownership manifest.",
     )
+    parser.add_argument(
+        "--configure-mcp",
+        type=parse_boolean,
+        default=True,
+        metavar="true|false",
+        help="Configure mcp-agent-ops for scoped Codex or Junie deployments. Defaults to true.",
+    )
+    parser.add_argument(
+        "--mcp-config",
+        type=Path,
+        default=None,
+        help="Explicit Codex config.toml or Junie mcp.json path for deployments without --scope.",
+    )
+    parser.add_argument(
+        "--mcp-agent-ops-executable",
+        type=Path,
+        default=None,
+        help="mcp-agent-ops executable path. Defaults to the command found on PATH.",
+    )
+    parser.add_argument(
+        "--mcp-workspace-root",
+        action="append",
+        type=Path,
+        default=None,
+        help=(
+            "Allowed MCP workspace root. Repeat for multiple roots; defaults to the scoped "
+            "project or current directory."
+        ),
+    )
     args = parser.parse_args(argv)
     if args.prune_owned:
         args.cleanup = True
@@ -263,6 +323,295 @@ def default_adapter_skills_source(adapter_name: str) -> Path:
         / adapter_name
         / DEFAULT_SKILLS_FOLDER_NAME
     )
+
+
+def _mcp_config_path(
+    adapter_name: str,
+    scope: str | None,
+    explicit_path: Path | None,
+) -> Path | None:
+    if explicit_path is not None:
+        return explicit_path.expanduser().resolve()
+    if scope is None:
+        return None
+    base = Path.home() if scope == USER_SCOPE else Path.cwd()
+    return (base / MCP_CONFIG_FILE_NAMES[adapter_name]).resolve()
+
+
+def _mcp_executable_path(explicit_path: Path | None) -> str:
+    if explicit_path is not None:
+        executable = explicit_path.expanduser().resolve()
+        if not executable.is_file():
+            raise ValueError(f"mcp-agent-ops executable is not a file: {executable}")
+        return str(executable)
+    discovered = shutil.which(MCP_AGENT_OPS_SERVER_NAME)
+    if discovered is None:
+        raise ValueError(
+            "mcp-agent-ops is not installed or is not on PATH; install the verified release "
+            "or provide --mcp-agent-ops-executable"
+        )
+    return str(Path(discovered).resolve())
+
+
+def _mcp_workspace_roots(
+    scope: str | None,
+    configured_roots: Sequence[Path] | None,
+) -> tuple[Path, ...]:
+    if configured_roots:
+        roots = tuple(path.expanduser().resolve() for path in configured_roots)
+    elif scope == PROJECT_SCOPE:
+        roots = (Path.cwd().resolve(),)
+    else:
+        roots = (Path.cwd().resolve(),)
+    for root in roots:
+        if not root.is_dir():
+            raise ValueError(f"MCP workspace root is not a directory: {root}")
+    return roots
+
+
+def _toml_string(value: str) -> str:
+    return json.dumps(value, ensure_ascii=False)
+
+
+def _codex_mcp_server_block(
+    executable: str,
+    skills_destination: Path,
+    workspace_roots: Sequence[Path],
+) -> str:
+    environment = {
+        "MCP_AGENT_OPS_SKILL_ROOTS": str(skills_destination.resolve()),
+        "MCP_AGENT_OPS_DETECTION_REGISTRY": str(
+            (skills_destination / MCP_DETECTION_REGISTRY_RELATIVE_PATH).resolve()
+        ),
+        "MCP_AGENT_OPS_WORKSPACE_ROOTS": os.pathsep.join(str(path) for path in workspace_roots),
+    }
+    lines = [
+        f"[mcp_servers.{MCP_AGENT_OPS_SERVER_NAME}]",
+        "enabled = true",
+        "required = false",
+        f"command = {_toml_string(executable)}",
+        f"startup_timeout_sec = {MCP_STARTUP_TIMEOUT_SECONDS}",
+        f"tool_timeout_sec = {MCP_TOOL_TIMEOUT_SECONDS}",
+        "",
+        f"[mcp_servers.{MCP_AGENT_OPS_SERVER_NAME}.env]",
+    ]
+    lines.extend(f"{key} = {_toml_string(value)}" for key, value in environment.items())
+    return "\n".join(lines) + "\n"
+
+
+def _codex_server_names(content: str) -> set[str]:
+    if not content:
+        return set()
+    if tomllib is not None:
+        try:
+            configuration = tomllib.loads(content)
+        except tomllib.TOMLDecodeError as error:
+            raise ValueError(f"invalid Codex MCP TOML: {error}") from error
+        servers = configuration.get("mcp_servers", {})
+        if not isinstance(servers, dict):
+            raise ValueError("Codex mcp_servers must contain a TOML table")
+        return set(servers)
+    table_pattern = re.compile(
+        r"(?m)^\s*\[\s*mcp_servers\s*\.\s*(?:\"([^\"]+)\"|'([^']+)'|([A-Za-z0-9_-]+))\s*\]"
+    )
+    return {
+        next(group for group in match.groups() if group is not None)
+        for match in table_pattern.finditer(content)
+    }
+
+
+def _render_codex_mcp_config(
+    active_content: str,
+    executable: str,
+    skills_destination: Path,
+    workspace_roots: Sequence[Path],
+) -> tuple[str, set[str]]:
+    server_names = _codex_server_names(active_content)
+    if MCP_AGENT_OPS_SERVER_NAME in server_names:
+        return active_content, server_names
+    separator = "" if not active_content or active_content.endswith("\n\n") else "\n"
+    return (
+        active_content
+        + separator
+        + _codex_mcp_server_block(executable, skills_destination, workspace_roots),
+        server_names,
+    )
+
+
+def _render_junie_mcp_config(
+    active_content: str,
+    executable: str,
+    skills_destination: Path,
+    workspace_roots: Sequence[Path],
+) -> tuple[str, set[str]]:
+    if active_content:
+        try:
+            configuration = json.loads(active_content)
+        except json.JSONDecodeError as error:
+            raise ValueError(f"invalid Junie MCP JSON: {error}") from error
+        if not isinstance(configuration, dict):
+            raise ValueError("Junie MCP config must contain a JSON object")
+    else:
+        configuration = {}
+    servers = configuration.setdefault("mcpServers", {})
+    if not isinstance(servers, dict):
+        raise ValueError("Junie mcpServers must contain a JSON object")
+    server_names = set(servers)
+    if MCP_AGENT_OPS_SERVER_NAME not in servers:
+        servers[MCP_AGENT_OPS_SERVER_NAME] = {
+            "command": executable,
+            "args": [],
+            "env": {
+                "MCP_AGENT_OPS_SKILL_ROOTS": str(skills_destination.resolve()),
+                "MCP_AGENT_OPS_DETECTION_REGISTRY": str(
+                    (skills_destination / MCP_DETECTION_REGISTRY_RELATIVE_PATH).resolve()
+                ),
+                "MCP_AGENT_OPS_WORKSPACE_ROOTS": os.pathsep.join(
+                    str(path) for path in workspace_roots
+                ),
+            },
+        }
+    return json.dumps(configuration, indent=2, ensure_ascii=False) + "\n", server_names
+
+
+def _junie_server_names(active_content: str) -> set[str]:
+    if not active_content:
+        return set()
+    try:
+        configuration = json.loads(active_content)
+    except json.JSONDecodeError as error:
+        raise ValueError(f"invalid Junie MCP JSON: {error}") from error
+    if not isinstance(configuration, dict):
+        raise ValueError("Junie MCP config must contain a JSON object")
+    servers = configuration.get("mcpServers", {})
+    if not isinstance(servers, dict):
+        raise ValueError("Junie mcpServers must contain a JSON object")
+    return set(servers)
+
+
+def _prepare_mcp_config(
+    adapter: Adapter,
+    scope: str | None,
+    explicit_config: Path | None,
+    executable_path: Path | None,
+    configured_workspace_roots: Sequence[Path] | None,
+    skills_destination: Path,
+) -> _McpConfigPlan | None:
+    if adapter.name not in MCP_CONFIG_ADAPTERS:
+        if explicit_config is not None or executable_path is not None or configured_workspace_roots:
+            raise ValueError("MCP configuration options require the codex or junie adapter")
+        return None
+    active_path = _mcp_config_path(adapter.name, scope, explicit_config)
+    if active_path is None:
+        return None
+    if active_path.exists() and not active_path.is_file():
+        raise ValueError(f"MCP config path must be a file: {active_path}")
+    active_content = active_path.read_text(encoding="utf-8") if active_path.exists() else ""
+    server_names = (
+        _codex_server_names(active_content)
+        if adapter.name == CODEX_ADAPTER_NAME
+        else _junie_server_names(active_content)
+    )
+    candidate_path = active_path.with_name(MCP_CONFIG_CANDIDATE_FILE_NAMES[adapter.name])
+    if MCP_AGENT_OPS_SERVER_NAME in server_names:
+        return _McpConfigPlan(
+            active_path=active_path,
+            candidate_path=candidate_path,
+            backup_path=active_path.with_suffix(active_path.suffix + ".bak"),
+            rendered_content=active_content,
+            active_exists=active_path.exists(),
+            configured_server_count=len(server_names),
+            target_already_configured=True,
+        )
+    executable = _mcp_executable_path(executable_path)
+    workspace_roots = _mcp_workspace_roots(scope, configured_workspace_roots)
+    if adapter.name == CODEX_ADAPTER_NAME:
+        rendered, server_names = _render_codex_mcp_config(
+            active_content,
+            executable,
+            skills_destination,
+            workspace_roots,
+        )
+    else:
+        rendered, server_names = _render_junie_mcp_config(
+            active_content,
+            executable,
+            skills_destination,
+            workspace_roots,
+        )
+    return _McpConfigPlan(
+        active_path=active_path,
+        candidate_path=candidate_path,
+        backup_path=active_path.with_suffix(active_path.suffix + ".bak"),
+        rendered_content=rendered,
+        active_exists=active_path.exists(),
+        configured_server_count=len(server_names),
+        target_already_configured=MCP_AGENT_OPS_SERVER_NAME in server_names,
+    )
+
+
+def _atomic_write_text(path: Path, content: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary_path: Path | None = None
+    try:
+        descriptor, temporary_name = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
+        temporary_path = Path(temporary_name)
+        with os.fdopen(descriptor, "w", encoding="utf-8") as stream:
+            stream.write(content)
+        os.replace(temporary_path, path)
+    finally:
+        if temporary_path is not None and temporary_path.exists():
+            temporary_path.unlink()
+
+
+def _backup_file(source: Path, backup: Path) -> None:
+    _atomic_write_text(backup, source.read_text(encoding="utf-8"))
+
+
+def _apply_mcp_config(plan: _McpConfigPlan, dry_run: bool) -> list[str]:
+    if plan.target_already_configured:
+        return [f"MCP server already configured in {plan.active_path}"]
+    if dry_run:
+        action = "update" if plan.active_exists else "create"
+        return [f"would {action} MCP config {plan.active_path}"]
+    if not plan.active_exists:
+        _atomic_write_text(plan.active_path, plan.rendered_content)
+        return [f"created MCP config {plan.active_path}"]
+    if plan.configured_server_count == 0:
+        _backup_file(plan.active_path, plan.backup_path)
+        _atomic_write_text(plan.active_path, plan.rendered_content)
+        return [
+            f"updated MCP config {plan.active_path}",
+            f"saved previous MCP config {plan.backup_path}",
+        ]
+
+    _atomic_write_text(plan.candidate_path, plan.rendered_content)
+    messages = [f"created MCP config candidate {plan.candidate_path}"]
+    if not sys.stdin.isatty():
+        messages.append(
+            f"kept active MCP config {plan.active_path}; review the candidate and rerun "
+            "interactively"
+        )
+        return messages
+    try:
+        accepted = input(
+            f"Use {plan.candidate_path} as the active MCP config and save {plan.active_path} "
+            f"as {plan.backup_path}? [y/N] "
+        ).strip().lower()
+    except EOFError:
+        accepted = ""
+    if accepted not in {"y", "yes"}:
+        messages.append(f"kept active MCP config {plan.active_path}")
+        return messages
+    _backup_file(plan.active_path, plan.backup_path)
+    os.replace(plan.candidate_path, plan.active_path)
+    messages.extend(
+        [
+            f"activated MCP config {plan.active_path}",
+            f"saved previous MCP config {plan.backup_path}",
+        ]
+    )
+    return messages
 
 
 def _paths_overlap(first: Path, second: Path) -> bool:
@@ -1366,6 +1715,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     adapter = ADAPTERS[args.adapter]
     destination = args.dest
     agents_destination: Optional[Path] = args.agents_dest
+    mcp_config_plan: _McpConfigPlan | None = None
     try:
         if args.scope is not None:
             scoped_destination, scoped_agents_destination = default_destinations(adapter, args.scope)
@@ -1381,6 +1731,15 @@ def main(argv: Sequence[str] | None = None) -> int:
             raise ValueError("--install-agents requires --agents-dest or --scope")
         if args.remove_owned and args.install_agents:
             raise ValueError("--remove-owned cannot be combined with --install-agents")
+        if not args.remove_owned and args.configure_mcp:
+            mcp_config_plan = _prepare_mcp_config(
+                adapter,
+                args.scope,
+                args.mcp_config,
+                args.mcp_agent_ops_executable,
+                args.mcp_workspace_root,
+                destination,
+            )
         if args.remove_owned:
             skill_manifest = _prevalidate_owned_removal(
                 destination,
@@ -1483,6 +1842,13 @@ def main(argv: Sequence[str] | None = None) -> int:
                     adapter=adapter,
                     cleanup=args.cleanup,
                     replace_customized=args.replace_customized,
+                )
+            if mcp_config_plan is not None:
+                results.extend(_apply_mcp_config(mcp_config_plan, args.dry_run))
+            elif args.configure_mcp and adapter.name in MCP_CONFIG_ADAPTERS:
+                results.append(
+                    "MCP configuration skipped; provide --scope or --mcp-config to select "
+                    "the active host configuration"
                 )
     except (OSError, ValueError) as error:
         print(error, file=sys.stderr)

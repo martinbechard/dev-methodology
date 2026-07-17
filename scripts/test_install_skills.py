@@ -1,6 +1,6 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Modified with AI assistance.
-# Summary: Verifies scoped bundle deployment, ownership protection, cleanup, and removal behavior.
+# Summary: Verifies bundle deployment, MCP configuration, ownership, cleanup, and removal.
 
 from __future__ import annotations
 
@@ -311,6 +311,8 @@ class InstallSkillsTests(unittest.TestCase):
                                 str(source),
                                 "--scope",
                                 scope,
+                                "--configure-mcp",
+                                "false",
                                 "--install-agents",
                                 "--agents-source",
                                 str(agents_source),
@@ -320,6 +322,242 @@ class InstallSkillsTests(unittest.TestCase):
                     self.assertEqual(installer.SUCCESS_EXIT_CODE, exit_code)
                     self.assertTrue((base / ".agents/skills/alpha/SKILL.md").is_file())
                     self.assertTrue((base / ".codex/agents/reviewer.toml").is_file())
+
+    def test_codex_project_deployment_creates_mcp_config_when_none_exists(self) -> None:
+        installer = load_installer()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            project = root / "project"
+            source = root / "source"
+            executable = root / "bin" / "mcp-agent-ops"
+            self.create_skill(source, "alpha")
+            project.mkdir()
+            executable.parent.mkdir()
+            executable.write_text("server", encoding="utf-8")
+
+            with patch.object(installer.Path, "cwd", return_value=project):
+                exit_code = installer.main(
+                    [
+                        "--adapter",
+                        "codex",
+                        "--source",
+                        str(source),
+                        "--scope",
+                        "project",
+                        "--mcp-agent-ops-executable",
+                        str(executable),
+                    ]
+                )
+
+            self.assertEqual(installer.SUCCESS_EXIT_CODE, exit_code)
+            config_path = project / ".codex/config.toml"
+            config = config_path.read_text(encoding="utf-8")
+            self.assertIn("[mcp_servers.mcp-agent-ops]", config)
+            self.assertIn(f'command = "{executable.resolve()}"', config)
+            self.assertIn(
+                f'MCP_AGENT_OPS_SKILL_ROOTS = "{(project / ".agents/skills").resolve()}"',
+                config,
+            )
+            self.assertIn(
+                f'MCP_AGENT_OPS_WORKSPACE_ROOTS = "{project.resolve()}"',
+                config,
+            )
+            self.assertFalse(config_path.with_suffix(".toml.bak").exists())
+
+    def test_codex_deployment_updates_config_without_mcp_servers_and_saves_backup(self) -> None:
+        installer = load_installer()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            project = root / "project"
+            source = root / "source"
+            executable = root / "mcp-agent-ops"
+            config_path = project / ".codex/config.toml"
+            self.create_skill(source, "alpha")
+            project.mkdir()
+            executable.write_text("server", encoding="utf-8")
+            config_path.parent.mkdir()
+            original = 'model = "gpt-5"\n'
+            config_path.write_text(original, encoding="utf-8")
+
+            with patch.object(installer.Path, "cwd", return_value=project):
+                exit_code = installer.main(
+                    [
+                        "--adapter",
+                        "codex",
+                        "--source",
+                        str(source),
+                        "--scope",
+                        "project",
+                        "--mcp-agent-ops-executable",
+                        str(executable),
+                    ]
+                )
+
+            self.assertEqual(installer.SUCCESS_EXIT_CODE, exit_code)
+            self.assertEqual(
+                original,
+                config_path.with_suffix(".toml.bak").read_text(encoding="utf-8"),
+            )
+            active_config = config_path.read_text(encoding="utf-8")
+            self.assertIn(original, active_config)
+            self.assertIn("[mcp_servers.mcp-agent-ops]", active_config)
+
+    def test_codex_deployment_keeps_existing_mcp_agent_ops_config_without_rediscovery(self) -> None:
+        installer = load_installer()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            project = root / "project"
+            source = root / "source"
+            config_path = project / ".codex/config.toml"
+            self.create_skill(source, "alpha")
+            project.mkdir()
+            config_path.parent.mkdir()
+            original = '[mcp_servers.mcp-agent-ops]\ncommand = "/installed/server"\n'
+            config_path.write_text(original, encoding="utf-8")
+
+            with (
+                patch.object(installer.Path, "cwd", return_value=project),
+                patch.object(installer.shutil, "which", return_value=None),
+                redirect_stdout(io.StringIO()),
+            ):
+                exit_code = installer.main(
+                    [
+                        "--adapter",
+                        "codex",
+                        "--source",
+                        str(source),
+                        "--scope",
+                        "project",
+                    ]
+                )
+
+            self.assertEqual(installer.SUCCESS_EXIT_CODE, exit_code)
+            self.assertEqual(original, config_path.read_text(encoding="utf-8"))
+            self.assertFalse(config_path.with_suffix(".toml.bak").exists())
+
+    def test_codex_deployment_preserves_other_servers_until_candidate_is_accepted(self) -> None:
+        installer = load_installer()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            project = root / "project"
+            source = root / "source"
+            executable = root / "mcp-agent-ops"
+            config_path = project / ".codex/config.toml"
+            self.create_skill(source, "alpha")
+            project.mkdir()
+            executable.write_text("server", encoding="utf-8")
+            config_path.parent.mkdir(parents=True)
+            original = '[mcp_servers.github]\ncommand = "github-mcp"\n'
+            config_path.write_text(original, encoding="utf-8")
+
+            output = io.StringIO()
+            with (
+                patch.object(installer.Path, "cwd", return_value=project),
+                patch.object(installer.sys.stdin, "isatty", return_value=True),
+                patch("builtins.input", return_value="n"),
+                redirect_stdout(output),
+            ):
+                declined_exit_code = installer.main(
+                    [
+                        "--adapter",
+                        "codex",
+                        "--source",
+                        str(source),
+                        "--scope",
+                        "project",
+                        "--mcp-agent-ops-executable",
+                        str(executable),
+                    ]
+                )
+
+            candidate_path = project / ".codex/config.mcp-agent-ops.toml"
+            self.assertEqual(installer.SUCCESS_EXIT_CODE, declined_exit_code)
+            self.assertEqual(original, config_path.read_text(encoding="utf-8"))
+            self.assertIn("[mcp_servers.github]", candidate_path.read_text(encoding="utf-8"))
+            self.assertIn(
+                "[mcp_servers.mcp-agent-ops]",
+                candidate_path.read_text(encoding="utf-8"),
+            )
+            self.assertFalse(config_path.with_suffix(".toml.bak").exists())
+            self.assertIn("kept active MCP config", output.getvalue())
+
+            with (
+                patch.object(installer.Path, "cwd", return_value=project),
+                patch.object(installer.sys.stdin, "isatty", return_value=True),
+                patch("builtins.input", return_value="y"),
+                redirect_stdout(io.StringIO()),
+            ):
+                accepted_exit_code = installer.main(
+                    [
+                        "--adapter",
+                        "codex",
+                        "--source",
+                        str(source),
+                        "--scope",
+                        "project",
+                        "--mcp-agent-ops-executable",
+                        str(executable),
+                    ]
+                )
+
+            self.assertEqual(installer.SUCCESS_EXIT_CODE, accepted_exit_code)
+            self.assertEqual(
+                original,
+                config_path.with_suffix(".toml.bak").read_text(encoding="utf-8"),
+            )
+            self.assertIn("[mcp_servers.github]", config_path.read_text(encoding="utf-8"))
+            self.assertIn("[mcp_servers.mcp-agent-ops]", config_path.read_text(encoding="utf-8"))
+            self.assertFalse(candidate_path.exists())
+
+    def test_junie_project_deployment_adds_server_to_empty_mcp_catalog(self) -> None:
+        installer = load_installer()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            project = root / "project"
+            source = root / "source"
+            executable = root / "mcp-agent-ops"
+            config_path = project / ".junie/mcp.json"
+            self.create_skill(source, "alpha")
+            project.mkdir()
+            executable.write_text("server", encoding="utf-8")
+            config_path.parent.mkdir(parents=True)
+            config_path.write_text('{"mcpServers": {}}\n', encoding="utf-8")
+
+            with patch.object(installer.Path, "cwd", return_value=project):
+                exit_code = installer.main(
+                    [
+                        "--adapter",
+                        "junie",
+                        "--source",
+                        str(source),
+                        "--scope",
+                        "project",
+                        "--mcp-agent-ops-executable",
+                        str(executable),
+                    ]
+                )
+
+            self.assertEqual(installer.SUCCESS_EXIT_CODE, exit_code)
+            config = json.loads(config_path.read_text(encoding="utf-8"))
+            self.assertEqual(
+                str(executable.resolve()),
+                config["mcpServers"]["mcp-agent-ops"]["command"],
+            )
+            self.assertEqual(
+                str(project.resolve()),
+                config["mcpServers"]["mcp-agent-ops"]["env"][
+                    "MCP_AGENT_OPS_WORKSPACE_ROOTS"
+                ],
+            )
+            self.assertEqual(
+                '{"mcpServers": {}}\n',
+                config_path.with_suffix(".json.bak").read_text(encoding="utf-8"),
+            )
 
     def test_explicit_destinations_override_scope_defaults_in_main(self) -> None:
         installer = load_installer()
@@ -347,6 +585,8 @@ class InstallSkillsTests(unittest.TestCase):
                         str(source),
                         "--scope",
                         "user",
+                        "--configure-mcp",
+                        "false",
                         "--dest",
                         str(skills_destination),
                         "--install-agents",

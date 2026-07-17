@@ -135,6 +135,10 @@ Dev Orchestrator owns the root task claim and child handoffs. Dev Merge Coordina
 
 The build and maintenance workflow does not install skills or agents automatically. The installer acts only when explicitly invoked. Use --scope user to select the adapter's standard user directories or --scope project to select its standard directories under the current project. Explicit --dest and --agents-dest values override the corresponding scoped defaults.
 
+Scoped Codex and Junie deployments configure mcp-agent-ops by default. The installer locates the installed executable, binds the server to the deployed skill catalog and technology registry, and uses the scoped project or current working directory as the least-privilege workspace root. Repeat --mcp-workspace-root for every broader project root that the server should accept. Use --mcp-agent-ops-executable when the executable is not discoverable on PATH. Deployments that use only explicit destinations must also supply --mcp-config because a custom skill destination does not identify the host configuration location. Use --configure-mcp false when the host should remain unchanged.
+
+When the active host configuration is absent, the installer creates it. When the file exists but has no configured MCP servers, the installer adds mcp-agent-ops and saves the previous file with a .bak extension. When other MCP servers are already configured, the installer writes config.mcp-agent-ops.toml for Codex or mcp-agent-ops.json for Junie and asks whether to activate the candidate. Acceptance moves the previous active file to its .bak path; rejection leaves the active file unchanged and preserves the candidate for review. A noninteractive deployment never replaces an active configuration that already contains other servers.
+
 Cleanup is enabled by default and removes obsolete bundle-owned artifacts recorded in the destination ownership manifest. Use --cleanup false to retain them. The earlier --prune-owned remains accepted as a deprecated compatibility alias for enabled cleanup. Cleanup never removes unowned skills or agents. Use --replace when refreshing existing bundle-owned files.
 
 A non-dry-run refresh stages complete destination trees and ownership manifests beside the live destinations before changing them. Skills and optional native agents commit as one in-process transaction. A handled staging or destination-swap failure restores every previously live destination when rollback succeeds. If rollback cannot fully restore the destinations, the installer retains the transaction backups and reports their locations for recovery. A successful commit removes the transaction backups.
@@ -195,9 +199,9 @@ python3 scripts/install-skills.py \
 
 Codex and Junie can use mcp-agent-ops as the preferred deterministic interface for claims, skill catalog reads, technology detection, skill validation, YAML verification, and Markdown link checks. The distributed scripts remain portability fallbacks only when the tool is absent or its server cannot initialize or connect before request dispatch. A valid structured result such as WAIT, BLOCKED, NO_VARIANT, a validation finding, or a path and authorization rejection is not a transport failure and must not be retried through a fallback.
 
-Install mcp-agent-ops 0.2.3 or newer from its verified release wheel before configuring either host. Follow the companion project's [verified release installation procedure](https://github.com/martinbechard/mcp-agent-ops#install-the-latest-release), including checksum verification and the installed identity checks. The bundle installer deploys only skills and generated agents; it never edits host MCP configuration or installs an external executable.
+Install mcp-agent-ops 0.2.3 or newer from its verified release wheel before deploying the Codex or Junie bundle. Follow the companion project's [verified release installation procedure](https://github.com/martinbechard/mcp-agent-ops#install-the-latest-release), including checksum verification and the installed identity checks. The bundle installer does not install an external executable; it configures the already installed server during scoped Codex and Junie skill deployment.
 
-Configure Codex at user or trusted-project scope in config.toml. Custom subagents inherit parent MCP configuration when they omit an agent-specific server table, so the generated conceptual agents do not duplicate this connection definition.
+The installer configures Codex at user or trusted-project scope in config.toml. Custom subagents inherit parent MCP configuration when they omit an agent-specific server table, so the generated conceptual agents do not duplicate this connection definition. The following block is the manual equivalent when installer-managed configuration is disabled.
 
 For a user-scope Codex deployment, the MCP skill root is the resolved absolute path to ~/.agents/skills. The detection registry must be below that same installed root. For a project-scope or explicit-destination deployment, use the resolved selected destination instead. Keeping the installer destination and MCP root identical prevents the host and the MCP catalog from loading different bundle versions.
 
@@ -226,7 +230,7 @@ python3 scripts/install-skills.py \
 
 The legacy cleanup preserves independent and customized unowned content in ~/.codex/skills.
 
-Configure Junie in the user or project mcp.json file. A generated Junie agent without an mcpServers allowlist can use the servers configured for its session.
+The installer configures Junie in the user or project mcp.json file. A generated Junie agent without an mcpServers allowlist can use the servers configured for its session. The following block is the manual equivalent when installer-managed configuration is disabled.
 
 ```json
 {

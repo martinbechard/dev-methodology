@@ -2548,7 +2548,10 @@ class BundleContentTests(unittest.TestCase):
             "MCP_AGENT_OPS_SKILL_ROOTS",
             "MCP_AGENT_OPS_DETECTION_REGISTRY",
             "MCP_AGENT_OPS_WORKSPACE_ROOTS",
-            "installer deploys only skills and generated agents",
+            "Scoped Codex and Junie deployments configure mcp-agent-ops by default.",
+            "config.mcp-agent-ops.toml",
+            "mcp-agent-ops.json",
+            "--configure-mcp false",
         ):
             self.assertIn(phrase, readme_text)
 
