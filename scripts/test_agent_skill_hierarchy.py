@@ -235,6 +235,7 @@ class AgentSkillHierarchyTests(unittest.TestCase):
                 "Documentation Methodology",
                 "Artifact Creation",
                 "Artifact Review",
+                "Design Patterns",
             ],
             skill_group_labels,
         )

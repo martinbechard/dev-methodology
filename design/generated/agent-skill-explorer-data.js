@@ -3612,7 +3612,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
-      "category": "development-practice",
+      "category": "design-patterns",
       "coverage": {
         "catalogFixtureBacked": false,
         "evaluationCategory": "development-practice",
@@ -3658,7 +3658,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
-      "category": "development-practice",
+      "category": "design-patterns",
       "coverage": {
         "catalogFixtureBacked": false,
         "evaluationCategory": "development-practice",
@@ -4618,7 +4618,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
-      "category": "development-practice",
+      "category": "design-patterns",
       "coverage": {
         "catalogFixtureBacked": false,
         "evaluationCategory": "development-practice",
@@ -4664,7 +4664,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
-      "category": "development-practice",
+      "category": "design-patterns",
       "coverage": {
         "catalogFixtureBacked": false,
         "evaluationCategory": "development-practice",
@@ -6801,7 +6801,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
-      "category": "development-practice",
+      "category": "design-patterns",
       "coverage": {
         "catalogFixtureBacked": false,
         "evaluationCategory": "development-practice",
@@ -8424,7 +8424,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
-      "category": "development-practice",
+      "category": "design-patterns",
       "coverage": {
         "catalogFixtureBacked": false,
         "evaluationCategory": "development-practice",
@@ -8845,7 +8845,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
-      "category": "development-practice",
+      "category": "design-patterns",
       "coverage": {
         "catalogFixtureBacked": false,
         "evaluationCategory": "development-practice",
@@ -9369,7 +9369,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
-      "category": "development-practice",
+      "category": "design-patterns",
       "coverage": {
         "catalogFixtureBacked": false,
         "evaluationCategory": "development-practice",
@@ -9827,7 +9827,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
-      "category": "development-practice",
+      "category": "design-patterns",
       "coverage": {
         "catalogFixtureBacked": false,
         "evaluationCategory": "development-practice",

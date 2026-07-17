@@ -145,29 +145,34 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | code-discovery | [x] | [x] probe-code-discovery | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | code-execution-tracing | [x] | [x] probe-code-execution-tracing | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | code-review-evidence | [x] | [x] probe-code-review-evidence | [x] typescript-code-review | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| collaboration-patterns | [x] | [x] probe-collaboration-patterns | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| composition-patterns | [x] | [x] probe-composition-patterns | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | create-backlog | [x] | [x] probe-create-backlog | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | detect-technology-skills | [x] | [x] probe-detect-technology-skills | [x] project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | end-to-end-verification | [x] | [x] probe-end-to-end-verification | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | fix-explanation | [x] | [x] probe-fix-explanation | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| interface-patterns | [x] | [x] probe-interface-patterns | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| interpreter-pattern | [x] | [x] probe-interpreter-pattern | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | manage-backlog | [x] | [x] probe-manage-backlog | [x] backlog-lifecycle | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| object-creation-patterns | [x] | [x] probe-object-creation-patterns | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | organise-project-files | [x] | [x] probe-organise-project-files | [x] project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | prompt-contracts | [x] | [x] probe-prompt-contracts | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| request-patterns | [x] | [x] probe-request-patterns | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | root-cause-analysis | [x] | [x] probe-root-cause-analysis | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | runtime-evidence-collection | [x] | [x] probe-runtime-evidence-collection | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| singleton-pattern | [x] | [x] probe-singleton-pattern | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| state-strategy-patterns | [x] | [x] probe-state-strategy-patterns | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | structured-design | [x] | [x] probe-structured-design | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | structured-explanation | [x] | [x] probe-structured-explanation | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | test-driven-development | [x] | [x] probe-test-driven-development | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | test-strategy | [x] | [x] probe-test-strategy | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| traversal-patterns | [x] | [x] probe-traversal-patterns | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | user-experience-review | [x] | [x] probe-user-experience-review | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+
+### Design pattern skills
+
+| Skill | Structural | Probe-declared | Positive case | Negative case | Paired controls | Full probe | Executable full fixture | Judge calibration | Executed | Judge-passed | Security-contained | Stale-by-digest |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| collaboration-patterns | [x] | [x] probe-collaboration-patterns | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| composition-patterns | [x] | [x] probe-composition-patterns | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| interface-patterns | [x] | [x] probe-interface-patterns | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| interpreter-pattern | [x] | [x] probe-interpreter-pattern | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| object-creation-patterns | [x] | [x] probe-object-creation-patterns | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| request-patterns | [x] | [x] probe-request-patterns | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| singleton-pattern | [x] | [x] probe-singleton-pattern | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| state-strategy-patterns | [x] | [x] probe-state-strategy-patterns | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| traversal-patterns | [x] | [x] probe-traversal-patterns | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 
 ### Stack and domain skills
 

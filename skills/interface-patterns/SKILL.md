@@ -2,7 +2,7 @@
 name: interface-patterns
 description: Design or review Adapter, Bridge, or Facade when integrating incompatible contracts, separating independently varying dimensions, or exposing a deliberate boundary over a complex subsystem.
 metadata:
-  category: development-practice
+  category: design-patterns
 ---
 
 # Interface Patterns

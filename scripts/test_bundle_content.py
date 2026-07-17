@@ -1830,6 +1830,31 @@ class BundleContentTests(unittest.TestCase):
                 category = metadata.get("category")
                 self.assertIn(category, category_ids)
 
+    def test_design_pattern_skills_have_dedicated_category(self) -> None:
+        category_data = load_yaml_object(SKILL_CATEGORIES_PATH)
+        categories = category_data.get("categories")
+        self.assertIsInstance(categories, list)
+        category_labels = {
+            category["id"]: category["label"]
+            for category in categories
+            if isinstance(category, dict)
+            and isinstance(category.get("id"), str)
+            and isinstance(category.get("label"), str)
+        }
+        self.assertEqual(
+            "Design pattern skills",
+            category_labels.get("design-patterns"),
+        )
+
+        grouped_skills = set()
+        for skill_path in sorted(SKILLS_ROOT.glob("*/SKILL.md")):
+            skill_text = skill_path.read_text(encoding="utf-8")
+            frontmatter = yaml.safe_load(skill_text.split("---", maxsplit=2)[1])
+            if frontmatter.get("metadata", {}).get("category") == "design-patterns":
+                grouped_skills.add(skill_path.parent.name)
+
+        self.assertEqual(set(CORE_PATTERN_SKILLS), grouped_skills)
+
     def test_methodology_naming_skill_separates_category_from_pattern(self) -> None:
         skill_text = (
             SKILLS_ROOT / "name-methodology-artifacts" / "SKILL.md"

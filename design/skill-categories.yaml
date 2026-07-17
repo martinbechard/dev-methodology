@@ -9,5 +9,7 @@ categories:
     label: Artifact review skills
   - id: development-practice
     label: Development practice skills
+  - id: design-patterns
+    label: Design pattern skills
   - id: stack-and-domain
     label: Stack and domain skills

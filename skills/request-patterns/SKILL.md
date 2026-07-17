@@ -2,7 +2,7 @@
 name: request-patterns
 description: Design or review Command, Chain of Responsibility, or Memento when requests need independent lifecycle, ordered handlers, undo, or controlled snapshots of object state.
 metadata:
-  category: development-practice
+  category: design-patterns
 ---
 
 # Request And History Patterns
