@@ -18,17 +18,10 @@ Output purposes:
 name: dev-merge-coordinator
 description: Integrates work from multiple agents or worktrees while preserving claims,
   ownership, verification, and conflict evidence.
-skills:
-- agent-work-merge
-- agent-claim
-- review-structured-artifact
-- fix-explanation
 model: opus-4.8
 ---
 
 Acquire the integration claim, accept only committed clean contributions, reconcile conflicts intentionally, regenerate shared outputs after source integration, run integrated verification, commit the combined result, and release only from a clean worktree.
-
-These definition-owned skills are preloaded and govern the work: agent-work-merge, agent-claim, review-structured-artifact, fix-explanation.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the organise-project-files skill when the requested integration creates or introduces a new project file or directory.
@@ -39,3 +32,1018 @@ Return:
 - conflict resolution record
 - verification evidence
 - commit and claim closeout
+
+## Inlined Core Skills
+
+Apply the following core skill instructions as part of this agent definition. Do not load these core skills dynamically.
+
+----- BEGIN INLINED CORE SKILL: agent-work-merge -----
+# Agent Work Merge
+
+Use this skill when multiple agents complete work in separate git worktrees or branches and their results need to be merged into the main integration checkout.
+
+## Goal
+
+Keep parallel work isolated during implementation, then merge only verified, committed, and claimed work into the integration lane. The merge agent owns coordination, conflict resolution, final verification, and cleanup.
+
+## Preconditions
+
+Before merging a worktree:
+
+- Use the agent-claim skill for files and runtime resources touched during integration.
+- Confirm the source worktree has no uncommitted task changes unless the handoff explicitly says how to handle them.
+- Confirm the source branch has a meaningful commit for the completed unit.
+- Read the source agent status, final notes, verification results, and known risks.
+- Confirm the integration checkout is the intended target lane.
+- Confirm the source claim was released after a clean commit or explicitly handed to the integration owner.
+- Reject anonymous dirty state. Route it through the recovery workflow in agent-claim before integration.
+
+## Merge Claim
+
+Claim the target-specific integration resource only for the shared target update, together with any files likely to be touched by conflict resolution. Separate worktrees may commit to their unique branches without a repository-global commit resource. Release the integration resource promptly after the merge, cherry-pick, rebase, or equivalent target update and its required verification complete.
+
+Example claim:
+
+```json
+{
+  "agent": "merge-agent",
+  "task": "Merge completed agent work",
+  "files": ["src/feature/file.ts", "test/feature/file.test.ts"],
+  "resources": ["merge:integration:main", "build:production"],
+  "claimed_at": "2026-06-10T20:30:00Z",
+  "heartbeat": "2026-06-10T20:30:00Z",
+  "worktree": "/absolute/path/to/integration-checkout"
+}
+```
+
+## Merge Workflow
+
+1. Inspect all source worktrees and branches.
+2. Order merges by dependency. Merge shared foundation changes before leaf UI or tests.
+3. For each source, inspect status, recent commits, and changed files.
+4. Merge one source at a time into the integration checkout.
+5. Resolve conflicts by preserving the intended steady-state behavior, not by blindly choosing either side.
+6. Run focused verification after each risky merge.
+7. Commit each coherent merged unit before starting the next source.
+8. Regenerate shared outputs only after the branches containing their source changes are integrated.
+9. Run final repository verification required by the project.
+10. Release claims only after verification, a clean integration commit, and cleanup are complete.
+
+## Commands
+
+Inspect source worktrees:
+
+```bash
+git worktree list
+git status --short
+git log --oneline --decorate -n 5
+git diff --stat main...HEAD
+```
+
+Merge a source branch into the integration checkout:
+
+```bash
+git merge --no-ff source-branch
+```
+
+If the project prefers rebased or squash integration, follow the repository instructions instead.
+
+## Conflict Handling
+
+- Read both sides before resolving a conflict.
+- Check specs, tests, and source agent notes when intent is unclear.
+- Do not delete functionality merely because it conflicts.
+- If two agents changed the same behavior differently, preserve the documented product intent and update tests to match it.
+- If intent cannot be determined safely, stop and report the exact conflicting files and decisions needed.
+
+## Verification
+
+Run the project-required checks for the merged surface. At minimum:
+
+- Syntax or build verification when code changed.
+- Focused unit tests for changed units.
+- E2E or smoke tests when routing, auth, UI workflows, middleware, server startup, generated output, or shared runtime behavior changed.
+- Diff hygiene before commit when broad or conflict-heavy changes were made.
+
+Never treat a clean merge as proof that the merged application works.
+
+## Cleanup
+
+After a source is merged and verified:
+
+- Record the merge commit or integration commit.
+- Remove only claims owned by the merge task.
+- Stop or hand off runtime resources.
+- Remove completed worktrees only when the repository policy allows it and the branch has been safely integrated.
+- Leave failed or blocked worktrees intact with a clear status note.
+- Never release the integration claim while newly created uncommitted work remains.
+
+## Final Report
+
+Report:
+
+- Source branches or worktrees merged.
+- Commit hashes created.
+- Verification commands and outcomes.
+- Claims released or remaining blockers.
+- Worktrees removed or intentionally kept.
+----- END INLINED CORE SKILL: agent-work-merge -----
+
+----- BEGIN INLINED CORE SKILL: agent-claim -----
+# Agent Claim
+
+Use this skill before editing files or taking exclusive runtime resources in a repository where more than one agent may be active.
+
+## Goal
+
+Claims make shared work explicit and keep completed work durable. The first independent writer may use a clean primary worktree. Later independent writers use isolated worktrees when their scopes do not overlap. Overlapping work waits. Dirty unclaimed state enters recovery rather than accepting another anonymous edit.
+
+Start with the narrow scope supported by current evidence. Extend the same claim atomically when another file or resource becomes necessary. Do not speculate about entire directories merely because future scope is unknown.
+
+## Operation Selection
+
+Use the mcp-agent-ops claim tools when the host exposes them. They are the preferred deterministic interface because they accept structured arguments and return a structured exit_code plus result object without shell construction or JSON parsing.
+
+Use the tool that matches the intended operation:
+
+| Operation | MCP tool | Fallback subcommand |
+|---|---|---|
+| Read live ownership | claim_status | status |
+| Acquire ownership | claim_acquire | acquire |
+| Extend scope | claim_extend | extend |
+| Refresh heartbeat | claim_heartbeat | heartbeat |
+| Release ownership | claim_release | release |
+| Maintain the journal | claim_maintain_journal | maintain-journal |
+| Report contention | claim_report | report |
+
+Always inspect result.outcome. PRIMARY, ISOLATE, RECOVER, WAIT, ISOLATE_REQUIRED, RECOVERY_REQUIRED, and structured rejections are valid coordination results. A valid result is not an MCP failure and must not be retried through a fallback command.
+
+Use a fallback only when the tool is absent or the MCP server cannot initialize or connect before request dispatch. Never use a fallback after a path, root, authorization, input-policy, or other structured rejection; those results enforce the active boundary. Prefer the installed mcp-agent-ops-claims command when available. Otherwise use the claim.py script inside the loaded agent-claim package. Resolve the script path once and reuse it for every fallback command in the task. Do not assume the target repository contains skills/agent-claim.
+
+When a transport interruption makes a mutating claim call ambiguous after dispatch, do not repeat the mutation or switch transports immediately. Reconcile with claim_status first. Reconnect and use the MCP status operation when possible; if the server remains unavailable, use only the read-only status fallback. Continue, retry, or release only from the observed registry state so a successful but unacknowledged acquisition cannot become a duplicate claim.
+
+## Fallback Command Path
+
+The distributed script fallback can be resolved with:
+
+```bash
+CLAIM_SCRIPT=/absolute/path/to/the-loaded-agent-claim-skill/scripts/claim.py
+```
+
+Inside the dev-methodology source checkout, the bundle-owned path is:
+
+```bash
+CLAIM_SCRIPT=skills/agent-claim/scripts/claim.py
+```
+
+For a normal Codex user-level installation, use:
+
+```bash
+CLAIM_SCRIPT="${CODEX_HOME:-$HOME/.codex}/skills/agent-claim/scripts/claim.py"
+```
+
+That default resolves to:
+
+```text
+~/.codex/skills/agent-claim/scripts/claim.py
+```
+
+Other runtimes use the scripts/claim.py file beside the loaded skill’s SKILL.md. The workflow examples below show the portable script fallback. The installed mcp-agent-ops-claims command accepts the same arguments without python3 and the script path. Use the help option only to diagnose an installed-version mismatch or an unsupported option, not to locate the command or discover the standard workflow.
+
+## Repository-Global State
+
+Use the Git common directory returned by:
+
+```bash
+git rev-parse --git-common-dir
+```
+
+The live agent-claims.json registry in that directory is the coordination authority. Linked worktrees therefore see the same claims. Use a configured repository-global path supplied by applicable project instructions when Git worktrees are not the coordination boundary. The agent-claim-events directory beside it contains diagnostic history:
+
+- hot contains today and yesterday as uncompressed UTC daily JSON Lines files under the default policy.
+- archive contains immutable compressed daily JSON Lines history.
+- journal contains compact daily summaries.
+
+External agent transcripts are not claim history. The journal contains coordination identifiers, normalized scopes, modes, outcomes, conflicts, worktree identifiers, and relevant commit identifiers. It does not contain prompts, reasoning, responses, arbitrary tool output, or task descriptions.
+
+## Claim Scope
+
+Use one scope form for each intended ownership kind:
+
+- file names one exact intended file. A future file that does not exist yet is valid.
+- tree names one directory subtree and overlaps its descendants.
+- all-files names the complete repository file tree.
+- resource names one exclusive repository-global runtime or integration resource.
+
+Tree and all-files scope require a short coordination-only scope reason. Do not put prompts, sensitive company information, or personal information in the reason.
+
+The command rejects repository root, wildcards, and existing directories passed through file. It also rejects an existing file passed through tree. A temporary compat-file-directories switch converts existing directories passed through file into warned tree scopes, but still requires a scope reason. New callers use the explicit forms.
+
+## When To Claim
+
+Claim before:
+
+- Editing, moving, deleting, formatting, staging, committing, or generating files.
+- Running commands that monopolize shared state such as production builds, browser-test servers, dev server ports, browser profiles, database resets, seed data, generated output refreshes, shared installations, or long-running test servers.
+
+Read-only inspection does not need a writer claim unless it mutates caches, generated files, databases, browser state, or server state.
+
+Use the smallest useful file and resource scope. A parent agent keeps the root task identity. Writing subagents use the same root task identity and their parent claim id, but still receive distinct ownership.
+
+## Stable Exit Codes
+
+The structured JSON outcome is the authoritative coordination result. Stable process exit codes support shell control flow:
+
+- 0 means the command succeeded. Acquisition success returns PRIMARY, ISOLATE, or RECOVER.
+- 1 means a general rejection or failure such as INVALID_SCOPE, CLAIM_NOT_FOUND, RELEASE_REJECTED, or worktree creation failure.
+- 3 means WAIT. Requested scope overlaps another active claim.
+- 4 means ISOLATE_REQUIRED. Another non-overlapping claim exists, but branch and worktree arguments were not supplied.
+- 5 means RECOVERY_REQUIRED. The unclaimed primary worktree is dirty and explicit recovery authorization was not supplied.
+
+Several successful and error outcomes share exit codes 0 and 1, so always inspect the JSON outcome. A malformed command line may be rejected by the Python argument parser with exit code 2 before claim coordination runs; that is not a claim outcome.
+
+## Acquisition Workflow
+
+The acquisition command uses an exclusive registry lock. Its result includes the claim mode, branch, and target worktree.
+
+### Primary Acquisition
+
+Request only the narrow scope currently supported by evidence. When no other claim exists and the primary worktree is clean, this returns PRIMARY with exit code 0:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . acquire \
+  --claim-id task-123 \
+  --agent agent-name \
+  --task claim-task-123 \
+  --root-task-id task-123 \
+  --file src/feature.py
+```
+
+Use an explicit broad form only when the operation truly owns that scope:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . acquire \
+  --claim-id migration-123 \
+  --agent agent-name \
+  --task migration-123 \
+  --root-task-id migration-123 \
+  --tree generated \
+  --scope-reason "regenerate the owned output tree"
+```
+
+For a true repository-wide migration, replace the tree argument with:
+
+```bash
+--all-files --scope-reason "repository-wide migration"
+```
+
+### Isolation Acquisition
+
+When another non-overlapping claim is active, the primary command without isolation arguments returns ISOLATE_REQUIRED with exit code 4 and does not create a claim. Retry the same claim identifier with a unique branch and worktree:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . acquire \
+  --claim-id task-123 \
+  --agent agent-name \
+  --task claim-task-123 \
+  --root-task-id task-123 \
+  --file src/feature.py \
+  --branch codex/task-123 \
+  --worktree-path ../project-task-123 \
+  --base main
+```
+
+This returns ISOLATE with exit code 0. The base option selects the Git commit or ref from which the isolated branch is created; it defaults to HEAD. Do not supply branch and worktree arguments to bypass overlap: conflicting scope still returns WAIT.
+
+### WAIT
+
+Given an active claim that already owns src/feature.py, this overlapping request returns WAIT with exit code 3, conflicting claim identifiers, and exact overlap pairs:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . acquire \
+  --claim-id blocked-task-456 \
+  --agent agent-name \
+  --task blocked-task-456 \
+  --root-task-id blocked-task-456 \
+  --file src/feature.py
+```
+
+Do not edit, create a competing worktree, or add isolation arguments. Wait, coordinate a handoff, or choose genuinely non-overlapping scope.
+
+### Recovery Acquisition
+
+When the unclaimed primary worktree is dirty, a normal acquisition returns RECOVERY_REQUIRED with exit code 5. After explicit authorization to preserve the complete dirty state, acquire recovery ownership with the allow-recovery option:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . acquire \
+  --claim-id recovery-123 \
+  --agent recovery-owner \
+  --task recovery-123 \
+  --root-task-id recovery-123 \
+  --all-files \
+  --scope-reason "recover anonymous dirty state" \
+  --allow-recovery
+```
+
+This returns RECOVER with exit code 0. Create the required checkpoint commit before cleanup or release.
+
+## Atomic Scope Extension
+
+Stop before touching newly discovered scope. Extend the existing claim while its original ownership remains active:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . extend \
+  --claim-id task-123 \
+  --file tests/test_feature.py \
+  --resource generated:codegen
+```
+
+Extension checks only net-new scope against every other active claim under the registry lock. All requested additions succeed together or WAIT leaves the live claim unchanged. Repeating scope the claim already owns succeeds idempotently and the structured result separates added scope from already-owned scope. Extension preserves the original worktree, branch, mode, baseline commit, and claim timestamp.
+
+Scope contraction is not supported. Relinquishing a path while it still has uncommitted changes requires a separate safety design.
+
+## Heartbeat
+
+Keep the heartbeat current during long work:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . heartbeat --claim-id task-123
+```
+
+## Runtime And Integration Resources
+
+Resource names are stable and descriptive. Common patterns include:
+
+```text
+port:3000
+build:production
+test:e2e
+browser-test:primary
+database:seed
+generated:codegen
+shared-install:skills
+merge:integration:main
+```
+
+Use repository-specific names when applicable. Separate linked worktrees have independent indexes, branches, and commits. An isolated writer may commit to its unique branch without a repository-global commit resource.
+
+The shared Git operation is integration into a target branch. Acquire a target-specific resource such as merge:integration:main only for the merge, cherry-pick, rebase, or equivalent update of that target, then release it promptly. Integrations into different target branches do not conflict unless another declared shared resource overlaps. Continue using dedicated resources for shared hooks, generators, databases, ports, installations, and output locations that cross worktree boundaries.
+
+## Overlap And Isolation
+
+- Any active writer claim causes a later non-overlapping independent writer to use an isolated branch and worktree.
+- Exact files overlap only the same exact file.
+- Trees overlap descendants and intersecting ancestor or descendant trees.
+- All-files overlaps every exact file and tree.
+- Identical exclusive resources overlap even when file scope differs.
+- Overlap returns WAIT. Worktree isolation does not make conflicting changes logically safe.
+- Never stage, commit, revert, or clean another claim owner’s files unless acting as the explicit integration owner.
+
+## Event Journal Safety
+
+Acquire, extension, heartbeat, recovery, wait, and release outcomes append one versioned event under the same Git common directory. Event identifiers are created at command execution, so replaying or forking an external task transcript cannot duplicate an event.
+
+The live registry remains authoritative. For a registry-changing operation, the command writes the registry first and then appends one fsynced JSON line while still holding the registry lock. A journal failure returns a structured journal_write_failed warning without reversing or weakening the live coordination result. A process crash after the registry write and before the append may therefore create an observable audit gap, but it cannot grant unsafe ownership. Reporting surfaces incomplete lifecycles and malformed or duplicate journal evidence as coverage gaps.
+
+Journal maintenance uses a separate narrow lock and processes only completed UTC days. Claim acquisition remains available while old files are compressed.
+
+## Journal Maintenance
+
+Keep today and the preceding UTC calendar day hot, and archive every older complete day:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . maintain-journal --hot-days 2
+```
+
+Maintenance writes a temporary compressed file, validates that decompression exactly matches the hot source, atomically renames the archive, writes a deterministic daily summary, and only then removes the hot file. Reruns are idempotent. An interruption before validation leaves the hot source intact. Compressed archives remain indefinitely by default; deletion requires a separate explicit policy.
+
+## Contention Report
+
+Use only the event journal and live registry for claim diagnostics:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . report --since 2d
+python3 "$CLAIM_SCRIPT" --repo . report --since 12h --format text
+```
+
+The versioned JSON report counts primary, isolated, and recovery acquisitions; waits and rejected transitions; correlated wait episodes; claim duration statistics; exact-file, tree, and resource hotspots; broad-scope reasons; open and incomplete claims; stale heartbeat evidence; integration-resource use; and journal coverage gaps. Repeated WAIT polling by the same claim and action becomes one wait episode while preserving the raw attempt count. Report is read-only and never parses agent harness transcripts.
+
+## Stale Claims
+
+A claim may be stale when its heartbeat is old and no matching task, process, or worktree activity exists. Do not remove it merely because it is inconvenient.
+
+Before removing a stale claim:
+
+1. Check task status, logs, running processes, worktrees, Git status, and recent commits.
+2. Treat a live process or dirty claimed worktree as active or interrupted work needing handoff.
+3. Preserve recovery evidence.
+4. Remove only the confirmed stale entry.
+
+If ownership is unclear, leave the claim and report the exact blocker.
+
+## Recovery
+
+Recovery is the one-time bridge from anonymous dirty state to normal coordination.
+
+1. Stop new mutation and obtain handoffs from active writers.
+2. Assign one recovery owner for the complete dirty scope.
+3. Run the Recovery Acquisition command with the allow-recovery option.
+4. Create a checkpoint commit on a recovery branch before attempting cleanup or historical separation.
+5. Validate and stabilize the committed recovery state.
+6. Release only after the recovery worktree is clean and its commit differs from the recorded baseline.
+
+Do not require perfect historical commit reconstruction before preserving accumulated work. Preserve first, then stabilize.
+
+## Completion And Release
+
+A modifying task is not complete merely because implementation or tests are complete. A clean finish includes:
+
+- Required verification passed or the blocker is documented.
+- Task changes are committed, or the task explicitly produced no changes.
+- The claimed worktree is clean.
+- Long-running resources are stopped or explicitly handed off.
+- The claim is released with the bundled command.
+- The final response reports the commit hash, verification, and final status.
+
+### Committed Release
+
+After the claimed worktree is clean and contains the verified task commit, release normally:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . release --claim-id task-123
+```
+
+### No-Change Release
+
+When the task legitimately produced no repository change, first confirm the claimed worktree is clean, then declare that result explicitly:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . release \
+  --claim-id task-123 \
+  --no-change
+```
+
+The no-change option is not permission to discard or ignore dirty files. Release rejects every dirty worktree. Without no-change, release also rejects a claim whose current commit still equals its recorded baseline. If a safe commit or truthful no-change result cannot be produced, the work remains incomplete and the claim remains active or is handed off explicitly.
+----- END INLINED CORE SKILL: agent-claim -----
+
+----- BEGIN INLINED CORE SKILL: review-structured-artifact -----
+# Structured Artifact Review
+
+This skill is for reviewing structured artifacts in a deterministic,
+inspectable way.
+
+The review happens in two stages:
+
+1. Complete a checklist from a predefined template.
+2. Review the completed checklist and extract the important findings.
+
+The completed checklist is the primary audit trail. The findings are a
+compressed interpretation of that checklist.
+
+Use a lower-cost model for evidence extraction when the conceptual agent definition assigns that stage to a simple model profile. Use the synthesis model for corrections, severity, and final judgment.
+
+## When this skill applies
+
+Use this skill when the task is one or more of:
+
+- Reviewing a structured design document.
+- Reviewing a structured plan or work breakdown structure.
+- Checking whether a document applied all structured input directives.
+- Checking whether requirements or claims are supported by the inputs.
+- Auditing whether a structured document is internally coherent.
+- Producing a disciplined review artifact rather than free-form comments.
+
+## Required inputs
+
+Do not start the checklist until you know:
+
+- the review target
+- the structured input documents or directives the target is supposed to
+  reflect
+- the intended review scope if the user constrained it
+
+If the inputs are not already structured, first normalize them enough that
+they can be traced during review.
+
+## Bundled references
+
+Always load the generic base checklist:
+
+- references/review-checklist-structured.md
+
+If a more specific checklist exists for the artifact type or technology,
+load it in addition to the generic base checklist, not instead of it.
+
+## Output artifacts
+
+By default, write two files next to the review target:
+
+- target-name.review-checklist-structured.md
+- target-name.review-findings.md
+
+If the user specifies different output paths, use those instead.
+
+The completed review checklist comes first. The findings file must be derived
+from the completed review checklist rather than written as an independent
+opinion.
+
+## Workflow
+
+### 1. Establish review trace
+
+Before scoring checklist items, record:
+
+- target artifact path
+- input artifact paths
+- review date
+- review scope
+- checklist set used
+
+If the target uses structured-design conventions, prefer citing root-level
+IDs such as REQ-1, ENTITY-3, or TASK-7. Otherwise cite the clearest
+available headings, section names, or file-relative references.
+
+### 2. Complete the checklist
+
+Complete every applicable checklist item with:
+
+- Status: pass, fail, question, or n/a
+- Question: the objective question being answered
+- Quoted evidence: exact quoted target or input text
+- Assessment: short judgment grounded in the quoted evidence
+- optional note if the item is blocked or uncertain
+
+For every failed or questionable item also record the expected correction, the authority for that expectation, and the practical impact if it remains unresolved.
+
+Do not skip failed items just because they will later appear in findings.
+The checklist is the full audit record.
+
+### 2A. Separate extraction from synthesis
+
+Evidence extraction records quotes, locations, status, and uncertainty without deciding final severity. Synthesis reconciles conflicting evidence, identifies the correction, and assigns severity from user, correctness, security, data, operability, or maintainability impact. Do not use writing preference alone as severity evidence.
+
+### 3. Review directive coverage
+
+For every structured input directive or requirement that the target was
+supposed to apply:
+
+- mark whether it is covered
+- cite where it is covered
+- mark it fail if it is missing or contradicted
+
+Do not silently forgive omitted directives.
+
+### 4. Review unsupported assertions
+
+Specifically check for:
+
+- requirements asserted by the target but not supported by the inputs
+- design decisions presented as requirements
+- claims that rely on implied inputs rather than actual inputs
+
+When one of these appears, record it in the checklist and then elevate it
+into findings if it materially affects correctness or reviewability.
+
+### 4A. Review workflow-versus-skill boundaries
+
+When the target is a component design or prompt-chain design, specifically
+check whether:
+
+- the component design explains the full workflow rather than only the final
+  artifact contract
+- skills are treated as compact operational artifacts rather than as the place
+  where the whole component workflow is explained
+- skills are nested with the prompts or processes that use them when that
+  structure is available
+- repeated skill usage is handled by reference rather than by duplicated full
+  definitions
+- a short summary section exists only when it adds real compression value
+
+Record boundary problems in the checklist and elevate them into findings when
+they weaken clarity, authority, or maintainability.
+
+### 4AA. Review architecture-versus-component-design scope
+
+When the target is an architecture or component design document, specifically
+check whether:
+
+- an architecture document stays focused on system shape, boundaries,
+  interactions, responsibilities, and major boundary-shaping technology choices
+- an architecture document avoids drifting into low-level implementation detail
+  unless that detail is needed to explain a boundary or major tradeoff
+- a component design document explains the chosen component or workflow in
+  detail rather than silently redesigning the system boundary
+- a component design document covers workflow, information flow, constraints,
+  definition of good, and test or review checks when those are relevant
+- the target does not mix architecture and component design concerns so
+  heavily that the reader cannot tell what decisions are already fixed and
+  what decisions are still local to the component or process
+
+Record scope-blur problems in the checklist and elevate them into findings when
+they weaken correctness, authority, or maintainability.
+
+### 4B. Review writing quality and document completeness
+
+Specifically check whether:
+
+- the document uses plain English, short sentences, and simple words
+- jargon, buzzwords, and abstract phrasing are avoided unless clearly needed
+- technical terms are defined once when first introduced
+- vague words such as robust, seamless, optimize, leverage, and enhance are
+  removed or made specific
+- the document stays concrete and actionable
+- the document includes finality, technical directives, constraints,
+  definition of good, and test cases when those sections are relevant to the
+  artifact
+
+### 4C. Review section model for component design docs
+
+When the target is a component design document, specifically check whether:
+
+- Finality is used for why the component exists
+- Technical Directives is used for implementation-shaping technical choices
+  and best-practice rules
+- Definition Of Good is used for pass-quality or success conditions
+- a top-level Requirements section is only present when it is genuinely the
+  right model for that artifact, rather than a default carry-over
+- the document does not blur finality, technical directives, and definition of
+  good into one mixed section
+
+Record writing-quality, completeness, and section-model problems in the
+checklist and elevate them into findings when they weaken clarity,
+reviewability, or execution.
+
+### 4CA. Review section model for architecture docs
+
+When the target is an architecture document, specifically check whether:
+
+- Finality is used for why the architecture exists
+- System Shape is used for the main parts of the system and their roles
+- Boundaries And Interactions is used for real boundaries and interaction
+  surfaces, or explicitly says there are none
+- Constraints is used for architecture-shaping limits and prohibitions
+- Definition Of Good is used for architecture pass conditions
+- Test Cases is used only when architecture-level checks are relevant
+- the document does not quietly fall back to an ordinary prose outline when it
+  claims to use the structured-design skill
+- if the target is YAML, the top-level keys stay:
+  - finality
+  - system_shape
+  - boundaries_and_interactions
+  - constraints
+  - definition_of_good
+  - test_cases when relevant
+- if the target is YAML, semantic substitutes such as architecture_scope,
+  boundary_decision, or technology_choices are treated as section-model
+  drift unless the prompt explicitly asked for a different schema
+
+Record architecture-section-model problems in the checklist and elevate them
+into findings when they weaken clarity, reviewability, or execution.
+
+### 4D. Review markdown-versus-YAML form
+
+When the target is a YAML structured-design document or a markdown/YAML pair,
+specifically check whether:
+
+- markdown remains the authority unless the user explicitly asked for YAML as
+  the primary form
+- the YAML preserves the markdown document's real section structure
+- section names stay as section keys rather than being converted into item
+  names
+- grouped items such as goals, rules, processes, files, or entities
+  remain grouped in YAML
+- stable IDs are preserved in the YAML entries
+- the YAML avoids generic type fields unless the task explicitly called for
+  that style
+- the YAML companion is not harder to understand than the markdown authority
+
+Record markdown/YAML mapping defects in the checklist and elevate them into
+findings when they distort the source structure or make the artifact harder to
+review.
+
+### 5. Extract findings
+
+After the checklist is complete, write the findings file.
+
+The findings file should:
+
+- include only important failures, risks, contradictions, and missing
+  directive applications
+- order findings by severity
+- cite the relevant checklist item IDs
+- cite the relevant target location
+- say what is wrong and why it matters
+
+If there are no material findings, say so explicitly and still keep the
+completed checklist file.
+
+## Checklist discipline
+
+The checklist is not a formality. It is the review method.
+
+- Do not write findings first and retrofit the checklist later.
+- Do not collapse several failures into one vague checklist note.
+- Do not mark an item pass without evidence.
+- Do not mark an item n/a unless the item truly does not apply.
+- Use question when the evidence is genuinely ambiguous.
+
+## Findings format
+
+Use this shape for the findings file:
+
+```markdown
+# Review Findings: <Target title or filename>
+
+## Scope
+
+- Target: <path>
+- Inputs:
+  - <path>
+  - <path>
+- Checklist:
+    - review-checklist-structured.md
+
+## Findings
+
+- **FINDING: FIND-1** <short title>
+  - **SEVERITY:** critical | high | medium | low
+  - **CHECKS:** <check-id>, <check-id>
+  - **TARGET:** <root-level id or heading>
+  - **SYNOPSIS:** <what is wrong>
+  - **BECAUSE:** <why it matters>
+```
+
+If there are no material findings:
+
+```markdown
+# Review Findings: <Target title or filename>
+
+## Scope
+
+...
+
+## Findings
+
+No material findings.
+```
+
+## Generic review priorities
+
+When deciding what becomes a finding, prioritize:
+
+1. missing or contradicted input directives
+2. internally inconsistent logic
+3. undefined or misordered concepts that create blind spots
+4. BECAUSE clauses that do not justify their parent
+5. CHAIN-OF-THOUGHT clauses that do not justify the BECAUSE
+6. requirements that are really solution choices
+7. unsupported requirements or claims
+8. stale or retired references mixed into active design
+9. skill definitions that are detached from the prompts or processes that use
+   them
+10. design sections that mix finality, technical directives, and definition of
+    good in a way that weakens the structure
+11. low-value summary sections that repeat the document without adding useful
+   compression
+12. vague, abstract, or buzzword-heavy wording that hides what the target
+   actually requires
+13. missing finality, technical directives, constraints, definition of good,
+    or test cases when they are needed for the artifact type
+14. architecture documents that drift into design-level detail without need
+15. component design documents that silently redesign architecture boundaries
+16. YAML companions that distort the markdown structure or force a generic
+    type schema without justification
+
+## Self-review before returning
+
+Check all of these:
+
+1. The generic checklist template was loaded.
+2. The completed checklist exists before findings are written.
+3. Every applicable checklist item has a status and evidence.
+4. Input directives were traced explicitly.
+5. Unsupported requirements or claims were checked explicitly.
+6. Workflow-versus-skill boundaries were checked when the target was a
+   component or prompt-execution design.
+7. Writing quality and document completeness were checked when relevant.
+8. The design-doc section model was checked when the target was a design.
+9. Findings were derived from failed or questionable checklist items.
+10. Findings cite checklist IDs and target locations.
+11. The review did not skip the checklist and jump straight to prose.
+12. The output artifacts are concise and inspectable.
+13. If there were no material findings, the checklist still exists.
+
+## Do not
+
+- Do not invent checklist items on the fly when the template already covers
+  the issue.
+- Do not treat the findings file as the primary artifact.
+- Do not silently ignore missing directive coverage.
+- Do not accept unsupported requirements just because they sound plausible.
+- Do not collapse evidence and judgment into one vague sentence.
+- Do not ignore vague wording just because the structure looks correct.
+----- END INLINED CORE SKILL: review-structured-artifact -----
+
+----- BEGIN INLINED CORE SKILL: fix-explanation -----
+# Fix Explanation
+
+Use structured-explanation to explain the fix.
+
+Do not explain fixes in loose prose by default. Structure the explanation so
+the reader can inspect:
+
+- what failed or needed change
+- what was changed
+- why that change solves the problem
+- whether the problem was a non-conformity with upstream requirements, design,
+  or prior artifacts
+- what kind of fix it is
+- how the explanation items relate to each other
+
+## Workflow
+
+1. Use structured-explanation.
+2. State the top-level question as the fix being explained.
+3. Ground the explanation in concrete evidence:
+   - changed files
+   - relevant APIs, types, or commands
+   - observed failures, errors, or incorrect behavior
+4. Explicitly assess conformance against previous steps when applicable:
+   - requirements vs design
+   - design vs code
+   - prior artifact contract vs current artifact behavior
+5. State clearly whether the fix addresses a non-conformity.
+6. If the artifact is conformant but still undesired, state that the upstream
+   specification or design is what must change.
+7. End with a direct classification of the fix type.
+8. If there is uncertainty about the category, state it as UNKNOWN or
+   HYPOTHESIS, then still give the best supported final classification.
+9. If the explanation is being used to guide ongoing implementation or the
+   user asks to preserve it, save it to a tracked file in the repository.
+
+## Required Output
+
+The explanation should end with a clear final answer that includes:
+
+- the main reason for the fix
+- the key mechanism of the fix
+- whether there are non-conformities and where they occur
+- exactly one fix-type classification from the taxonomy below
+
+Prefer naming the classification in a dedicated final ANSWER.
+
+When the explanation is also being used as a working artifact, prefer saving it
+as a plan or other tracked document in the repository rather than leaving it
+only in chat.
+
+## Non-Conformity Rule
+
+Always distinguish between these two cases:
+
+### Non-Conformity
+
+Use this when some downstream artifact does not conform to an upstream source
+that already required different behavior.
+
+Examples:
+- a design that does not respect requirements
+- code that does not implement the design
+- a phase artifact that violates the phase contract or prior-phase inputs
+
+### Conformant But Undesired
+
+Use this when the artifact behaves consistently with its upstream source, but
+the upstream source itself is undesirable.
+
+Examples:
+- code matches the design, but the design is wrong
+- a design matches the requirements, but the requirements are wrong
+
+In that case, say explicitly that there is no downstream non-conformity at the
+fix point, and that the upstream specification needs to change.
+
+## Fix-Type Taxonomy
+
+Choose exactly one of these unless the user explicitly asks for multiple
+angles.
+
+### New Functionality
+
+Use this when the change adds a new capability or new supported behavior that
+did not exist before.
+
+Tests:
+- A previously unsupported user case is now supported.
+- The main point of the change is addition, not repair.
+
+### Functional Improvement
+
+Use this when existing behavior still has the same broad purpose, but the
+change materially improves correctness, completeness, safety, or usability.
+
+Tests:
+- The system already did this job before.
+- The change improves how well it performs that job in functional terms.
+- The main benefit is better behavior, not merely faster or cleaner execution.
+
+### Optimization
+
+Use this when the intended functionality stays the same and the main change is
+improved operation such as performance, efficiency, resource usage, or reduced
+overhead.
+
+Tests:
+- The supported behavior is intentionally unchanged.
+- The value comes from operating better, not behaving differently.
+
+### Backwards-Compatibility
+
+Use this when the change adds support for a new case while still keeping older
+cases working.
+
+Tests:
+- The code now accepts or supports an additional case.
+- The old case is still intentionally supported.
+- The change preserves compatibility across multiple supported forms, paths, or
+  interfaces.
+
+### Migration
+
+Use this when the change is required to complete or support a refactoring,
+rename, interface shift, or modification of existing functionality.
+
+Tests:
+- The old form is no longer meant to remain supported.
+- The change aligns callers and callees after an internal change.
+- The purpose is convergence on the new shape, not simultaneous support for
+  both old and new shapes.
+
+## Decision Rule
+
+When deciding between backwards-compatibility and migration:
+
+- choose backwards-compatibility if the code is meant to support both the old
+  and new cases
+- choose migration if the code is being updated to the new case and the old
+  case is not intended to remain a supported path
+
+## Writing Rules
+
+- Use the item types from structured-explanation.
+- Keep FACT items concrete and tied to files, logs, commands, or observed
+  behavior.
+- When one item is a true child of another, nest it under that parent item
+  rather than flattening it.
+- When two items are siblings or an item has multiple non-tree relationships,
+  keep them as peers and use explicit references such as ADDRESSES,
+  RELATES-TO, SUPPORTS, or another short relation label.
+- Do not use a reference label as a substitute for a real parent-child
+  relationship.
+- Include a dedicated ANSWER that states whether there are non-conformities.
+- If there are non-conformities, identify:
+  - the upstream source
+  - the non-conforming artifact
+  - the nature of the mismatch
+- If there are no non-conformities, say that explicitly and state that the
+  upstream specification/design is what requires change.
+- Do not call something backwards-compatible unless the code really supports
+  both paths.
+- Do not call something an optimization if the behavior materially changed.
+- Do not call something new functionality when it is really repair or
+  migration work.
+- If the fix is small, keep the explanation short rather than expanding the
+  structure unnecessarily.
+
+## Relationship Rules
+
+Use these structure rules consistently:
+
+- Parent-child relationship:
+  - nest the child item under the parent item
+- Sibling relationship:
+  - keep both items at the same structural level
+- Multiple relations or cross-links:
+  - keep the item at the correct structural level and add one or more explicit
+    reference fields such as ADDRESSES, RELATES-TO, or DEPENDS-ON
+
+Examples:
+
+- A TEST that exists only to verify one FIX should be nested under that
+  FIX.
+- A FIX that addresses two separate PROBLEM items should remain one item
+  and reference both problems explicitly.
+- A BENEFIT that follows directly from one FIX should be nested under that
+  FIX.
+
+## Persistence Rule
+
+When the fix explanation will guide an active implementation, recovery after a
+crash, or progress tracking:
+
+- save the explanation to a tracked repository file
+- choose the file path using the repository's placement rules
+- keep the saved file updated as progress changes
+
+If the user only wants a one-off explanation, saving is optional unless they
+ask for it explicitly.
+----- END INLINED CORE SKILL: fix-explanation -----

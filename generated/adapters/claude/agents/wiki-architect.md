@@ -19,15 +19,10 @@ Output purposes:
 name: wiki-architect
 description: Establishes or substantially restructures a project wiki, its ownership
   boundaries, source workflow, navigation, and verification contract.
-skills:
-- agent-claim
-- project-wiki
 model: opus-4.8
 ---
 
 Inspect the repository, present the required setup recommendation pack, confirm wiki roots and federation boundaries, initialize the approved structure, and verify the resulting wiki contract.
-
-These definition-owned skills are preloaded and govern the work: agent-claim, project-wiki.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the organise-project-files skill when the requested wiki setup creates a new project file or directory.
@@ -39,3 +34,597 @@ Return:
 - setup recommendation pack
 - initialized wiki contract
 - setup verification evidence
+
+## Inlined Core Skills
+
+Apply the following core skill instructions as part of this agent definition. Do not load these core skills dynamically.
+
+----- BEGIN INLINED CORE SKILL: agent-claim -----
+# Agent Claim
+
+Use this skill before editing files or taking exclusive runtime resources in a repository where more than one agent may be active.
+
+## Goal
+
+Claims make shared work explicit and keep completed work durable. The first independent writer may use a clean primary worktree. Later independent writers use isolated worktrees when their scopes do not overlap. Overlapping work waits. Dirty unclaimed state enters recovery rather than accepting another anonymous edit.
+
+Start with the narrow scope supported by current evidence. Extend the same claim atomically when another file or resource becomes necessary. Do not speculate about entire directories merely because future scope is unknown.
+
+## Operation Selection
+
+Use the mcp-agent-ops claim tools when the host exposes them. They are the preferred deterministic interface because they accept structured arguments and return a structured exit_code plus result object without shell construction or JSON parsing.
+
+Use the tool that matches the intended operation:
+
+| Operation | MCP tool | Fallback subcommand |
+|---|---|---|
+| Read live ownership | claim_status | status |
+| Acquire ownership | claim_acquire | acquire |
+| Extend scope | claim_extend | extend |
+| Refresh heartbeat | claim_heartbeat | heartbeat |
+| Release ownership | claim_release | release |
+| Maintain the journal | claim_maintain_journal | maintain-journal |
+| Report contention | claim_report | report |
+
+Always inspect result.outcome. PRIMARY, ISOLATE, RECOVER, WAIT, ISOLATE_REQUIRED, RECOVERY_REQUIRED, and structured rejections are valid coordination results. A valid result is not an MCP failure and must not be retried through a fallback command.
+
+Use a fallback only when the tool is absent or the MCP server cannot initialize or connect before request dispatch. Never use a fallback after a path, root, authorization, input-policy, or other structured rejection; those results enforce the active boundary. Prefer the installed mcp-agent-ops-claims command when available. Otherwise use the claim.py script inside the loaded agent-claim package. Resolve the script path once and reuse it for every fallback command in the task. Do not assume the target repository contains skills/agent-claim.
+
+When a transport interruption makes a mutating claim call ambiguous after dispatch, do not repeat the mutation or switch transports immediately. Reconcile with claim_status first. Reconnect and use the MCP status operation when possible; if the server remains unavailable, use only the read-only status fallback. Continue, retry, or release only from the observed registry state so a successful but unacknowledged acquisition cannot become a duplicate claim.
+
+## Fallback Command Path
+
+The distributed script fallback can be resolved with:
+
+```bash
+CLAIM_SCRIPT=/absolute/path/to/the-loaded-agent-claim-skill/scripts/claim.py
+```
+
+Inside the dev-methodology source checkout, the bundle-owned path is:
+
+```bash
+CLAIM_SCRIPT=skills/agent-claim/scripts/claim.py
+```
+
+For a normal Codex user-level installation, use:
+
+```bash
+CLAIM_SCRIPT="${CODEX_HOME:-$HOME/.codex}/skills/agent-claim/scripts/claim.py"
+```
+
+That default resolves to:
+
+```text
+~/.codex/skills/agent-claim/scripts/claim.py
+```
+
+Other runtimes use the scripts/claim.py file beside the loaded skill’s SKILL.md. The workflow examples below show the portable script fallback. The installed mcp-agent-ops-claims command accepts the same arguments without python3 and the script path. Use the help option only to diagnose an installed-version mismatch or an unsupported option, not to locate the command or discover the standard workflow.
+
+## Repository-Global State
+
+Use the Git common directory returned by:
+
+```bash
+git rev-parse --git-common-dir
+```
+
+The live agent-claims.json registry in that directory is the coordination authority. Linked worktrees therefore see the same claims. Use a configured repository-global path supplied by applicable project instructions when Git worktrees are not the coordination boundary. The agent-claim-events directory beside it contains diagnostic history:
+
+- hot contains today and yesterday as uncompressed UTC daily JSON Lines files under the default policy.
+- archive contains immutable compressed daily JSON Lines history.
+- journal contains compact daily summaries.
+
+External agent transcripts are not claim history. The journal contains coordination identifiers, normalized scopes, modes, outcomes, conflicts, worktree identifiers, and relevant commit identifiers. It does not contain prompts, reasoning, responses, arbitrary tool output, or task descriptions.
+
+## Claim Scope
+
+Use one scope form for each intended ownership kind:
+
+- file names one exact intended file. A future file that does not exist yet is valid.
+- tree names one directory subtree and overlaps its descendants.
+- all-files names the complete repository file tree.
+- resource names one exclusive repository-global runtime or integration resource.
+
+Tree and all-files scope require a short coordination-only scope reason. Do not put prompts, sensitive company information, or personal information in the reason.
+
+The command rejects repository root, wildcards, and existing directories passed through file. It also rejects an existing file passed through tree. A temporary compat-file-directories switch converts existing directories passed through file into warned tree scopes, but still requires a scope reason. New callers use the explicit forms.
+
+## When To Claim
+
+Claim before:
+
+- Editing, moving, deleting, formatting, staging, committing, or generating files.
+- Running commands that monopolize shared state such as production builds, browser-test servers, dev server ports, browser profiles, database resets, seed data, generated output refreshes, shared installations, or long-running test servers.
+
+Read-only inspection does not need a writer claim unless it mutates caches, generated files, databases, browser state, or server state.
+
+Use the smallest useful file and resource scope. A parent agent keeps the root task identity. Writing subagents use the same root task identity and their parent claim id, but still receive distinct ownership.
+
+## Stable Exit Codes
+
+The structured JSON outcome is the authoritative coordination result. Stable process exit codes support shell control flow:
+
+- 0 means the command succeeded. Acquisition success returns PRIMARY, ISOLATE, or RECOVER.
+- 1 means a general rejection or failure such as INVALID_SCOPE, CLAIM_NOT_FOUND, RELEASE_REJECTED, or worktree creation failure.
+- 3 means WAIT. Requested scope overlaps another active claim.
+- 4 means ISOLATE_REQUIRED. Another non-overlapping claim exists, but branch and worktree arguments were not supplied.
+- 5 means RECOVERY_REQUIRED. The unclaimed primary worktree is dirty and explicit recovery authorization was not supplied.
+
+Several successful and error outcomes share exit codes 0 and 1, so always inspect the JSON outcome. A malformed command line may be rejected by the Python argument parser with exit code 2 before claim coordination runs; that is not a claim outcome.
+
+## Acquisition Workflow
+
+The acquisition command uses an exclusive registry lock. Its result includes the claim mode, branch, and target worktree.
+
+### Primary Acquisition
+
+Request only the narrow scope currently supported by evidence. When no other claim exists and the primary worktree is clean, this returns PRIMARY with exit code 0:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . acquire \
+  --claim-id task-123 \
+  --agent agent-name \
+  --task claim-task-123 \
+  --root-task-id task-123 \
+  --file src/feature.py
+```
+
+Use an explicit broad form only when the operation truly owns that scope:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . acquire \
+  --claim-id migration-123 \
+  --agent agent-name \
+  --task migration-123 \
+  --root-task-id migration-123 \
+  --tree generated \
+  --scope-reason "regenerate the owned output tree"
+```
+
+For a true repository-wide migration, replace the tree argument with:
+
+```bash
+--all-files --scope-reason "repository-wide migration"
+```
+
+### Isolation Acquisition
+
+When another non-overlapping claim is active, the primary command without isolation arguments returns ISOLATE_REQUIRED with exit code 4 and does not create a claim. Retry the same claim identifier with a unique branch and worktree:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . acquire \
+  --claim-id task-123 \
+  --agent agent-name \
+  --task claim-task-123 \
+  --root-task-id task-123 \
+  --file src/feature.py \
+  --branch codex/task-123 \
+  --worktree-path ../project-task-123 \
+  --base main
+```
+
+This returns ISOLATE with exit code 0. The base option selects the Git commit or ref from which the isolated branch is created; it defaults to HEAD. Do not supply branch and worktree arguments to bypass overlap: conflicting scope still returns WAIT.
+
+### WAIT
+
+Given an active claim that already owns src/feature.py, this overlapping request returns WAIT with exit code 3, conflicting claim identifiers, and exact overlap pairs:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . acquire \
+  --claim-id blocked-task-456 \
+  --agent agent-name \
+  --task blocked-task-456 \
+  --root-task-id blocked-task-456 \
+  --file src/feature.py
+```
+
+Do not edit, create a competing worktree, or add isolation arguments. Wait, coordinate a handoff, or choose genuinely non-overlapping scope.
+
+### Recovery Acquisition
+
+When the unclaimed primary worktree is dirty, a normal acquisition returns RECOVERY_REQUIRED with exit code 5. After explicit authorization to preserve the complete dirty state, acquire recovery ownership with the allow-recovery option:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . acquire \
+  --claim-id recovery-123 \
+  --agent recovery-owner \
+  --task recovery-123 \
+  --root-task-id recovery-123 \
+  --all-files \
+  --scope-reason "recover anonymous dirty state" \
+  --allow-recovery
+```
+
+This returns RECOVER with exit code 0. Create the required checkpoint commit before cleanup or release.
+
+## Atomic Scope Extension
+
+Stop before touching newly discovered scope. Extend the existing claim while its original ownership remains active:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . extend \
+  --claim-id task-123 \
+  --file tests/test_feature.py \
+  --resource generated:codegen
+```
+
+Extension checks only net-new scope against every other active claim under the registry lock. All requested additions succeed together or WAIT leaves the live claim unchanged. Repeating scope the claim already owns succeeds idempotently and the structured result separates added scope from already-owned scope. Extension preserves the original worktree, branch, mode, baseline commit, and claim timestamp.
+
+Scope contraction is not supported. Relinquishing a path while it still has uncommitted changes requires a separate safety design.
+
+## Heartbeat
+
+Keep the heartbeat current during long work:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . heartbeat --claim-id task-123
+```
+
+## Runtime And Integration Resources
+
+Resource names are stable and descriptive. Common patterns include:
+
+```text
+port:3000
+build:production
+test:e2e
+browser-test:primary
+database:seed
+generated:codegen
+shared-install:skills
+merge:integration:main
+```
+
+Use repository-specific names when applicable. Separate linked worktrees have independent indexes, branches, and commits. An isolated writer may commit to its unique branch without a repository-global commit resource.
+
+The shared Git operation is integration into a target branch. Acquire a target-specific resource such as merge:integration:main only for the merge, cherry-pick, rebase, or equivalent update of that target, then release it promptly. Integrations into different target branches do not conflict unless another declared shared resource overlaps. Continue using dedicated resources for shared hooks, generators, databases, ports, installations, and output locations that cross worktree boundaries.
+
+## Overlap And Isolation
+
+- Any active writer claim causes a later non-overlapping independent writer to use an isolated branch and worktree.
+- Exact files overlap only the same exact file.
+- Trees overlap descendants and intersecting ancestor or descendant trees.
+- All-files overlaps every exact file and tree.
+- Identical exclusive resources overlap even when file scope differs.
+- Overlap returns WAIT. Worktree isolation does not make conflicting changes logically safe.
+- Never stage, commit, revert, or clean another claim owner’s files unless acting as the explicit integration owner.
+
+## Event Journal Safety
+
+Acquire, extension, heartbeat, recovery, wait, and release outcomes append one versioned event under the same Git common directory. Event identifiers are created at command execution, so replaying or forking an external task transcript cannot duplicate an event.
+
+The live registry remains authoritative. For a registry-changing operation, the command writes the registry first and then appends one fsynced JSON line while still holding the registry lock. A journal failure returns a structured journal_write_failed warning without reversing or weakening the live coordination result. A process crash after the registry write and before the append may therefore create an observable audit gap, but it cannot grant unsafe ownership. Reporting surfaces incomplete lifecycles and malformed or duplicate journal evidence as coverage gaps.
+
+Journal maintenance uses a separate narrow lock and processes only completed UTC days. Claim acquisition remains available while old files are compressed.
+
+## Journal Maintenance
+
+Keep today and the preceding UTC calendar day hot, and archive every older complete day:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . maintain-journal --hot-days 2
+```
+
+Maintenance writes a temporary compressed file, validates that decompression exactly matches the hot source, atomically renames the archive, writes a deterministic daily summary, and only then removes the hot file. Reruns are idempotent. An interruption before validation leaves the hot source intact. Compressed archives remain indefinitely by default; deletion requires a separate explicit policy.
+
+## Contention Report
+
+Use only the event journal and live registry for claim diagnostics:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . report --since 2d
+python3 "$CLAIM_SCRIPT" --repo . report --since 12h --format text
+```
+
+The versioned JSON report counts primary, isolated, and recovery acquisitions; waits and rejected transitions; correlated wait episodes; claim duration statistics; exact-file, tree, and resource hotspots; broad-scope reasons; open and incomplete claims; stale heartbeat evidence; integration-resource use; and journal coverage gaps. Repeated WAIT polling by the same claim and action becomes one wait episode while preserving the raw attempt count. Report is read-only and never parses agent harness transcripts.
+
+## Stale Claims
+
+A claim may be stale when its heartbeat is old and no matching task, process, or worktree activity exists. Do not remove it merely because it is inconvenient.
+
+Before removing a stale claim:
+
+1. Check task status, logs, running processes, worktrees, Git status, and recent commits.
+2. Treat a live process or dirty claimed worktree as active or interrupted work needing handoff.
+3. Preserve recovery evidence.
+4. Remove only the confirmed stale entry.
+
+If ownership is unclear, leave the claim and report the exact blocker.
+
+## Recovery
+
+Recovery is the one-time bridge from anonymous dirty state to normal coordination.
+
+1. Stop new mutation and obtain handoffs from active writers.
+2. Assign one recovery owner for the complete dirty scope.
+3. Run the Recovery Acquisition command with the allow-recovery option.
+4. Create a checkpoint commit on a recovery branch before attempting cleanup or historical separation.
+5. Validate and stabilize the committed recovery state.
+6. Release only after the recovery worktree is clean and its commit differs from the recorded baseline.
+
+Do not require perfect historical commit reconstruction before preserving accumulated work. Preserve first, then stabilize.
+
+## Completion And Release
+
+A modifying task is not complete merely because implementation or tests are complete. A clean finish includes:
+
+- Required verification passed or the blocker is documented.
+- Task changes are committed, or the task explicitly produced no changes.
+- The claimed worktree is clean.
+- Long-running resources are stopped or explicitly handed off.
+- The claim is released with the bundled command.
+- The final response reports the commit hash, verification, and final status.
+
+### Committed Release
+
+After the claimed worktree is clean and contains the verified task commit, release normally:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . release --claim-id task-123
+```
+
+### No-Change Release
+
+When the task legitimately produced no repository change, first confirm the claimed worktree is clean, then declare that result explicitly:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . release \
+  --claim-id task-123 \
+  --no-change
+```
+
+The no-change option is not permission to discard or ignore dirty files. Release rejects every dirty worktree. Without no-change, release also rejects a claim whose current commit still equals its recorded baseline. If a safe commit or truthful no-change result cannot be produced, the work remains incomplete and the claim remains active or is handed off explicitly.
+----- END INLINED CORE SKILL: agent-claim -----
+
+----- BEGIN INLINED CORE SKILL: project-wiki -----
+# Project Wiki
+
+Use this skill when a repository has, needs, or should update a maintained wiki under docs/wiki.
+
+The wiki is compiled understanding, not the source of truth. If the wiki conflicts with code, tests, specifications, procedures, backlog files, architecture, plans, or other source documents, update the wiki from the authoritative source.
+
+## Standard Shape
+
+Use docs/wiki as the wiki location. Do not invent a different structure per project unless the user explicitly asks for that.
+
+Every project wiki should include:
+
+- README.md
+- schema.md
+- topic-index.md
+- glossary.md
+- open-decisions.md
+- known-defects.md
+- maintenance-log.md
+- digests folder when raw news or development sources are ingested
+- domain topic pages as needed
+- topic folders as needed, each with an index.md hub page
+- operational folders when external sources, clippings, or helper scripts are part of the wiki workflow
+
+Project wikis should be OKF-compatible. Non-reserved Markdown concept documents should have YAML frontmatter with a non-empty type field plus a useful title and description when available. Folder index.md and log.md files are OKF reserved files and should remain navigational without concept frontmatter. The normal project-wiki body sections remain required for topic pages.
+
+During setup, do not ask vague blank-slate questions. Present a setup recommendation pack before asking setup questions. The pack must include the inferred wiki purpose, topic roots that fit the repository purpose, operational folders, any upstream or sibling wiki candidates, recommended wiki-related skills, workflows, and automations, and recommended public update feed topics. Ask the human to accept, remove, or edit the recommendations before collecting mappings.
+
+Add AGENTS.md wiki workflow guidance during setup. The guidance should tell agents to use the project-wiki-query skill for wiki-backed questions and lightweight project knowledge lookups. It should tell agents to use the project-wiki-research skill for ad-hoc topic research when docs/wiki does not already answer the request. It should tell agents to check docs/wiki first when answering project questions, then verify against authoritative source files before replying because the wiki is a synthesis layer. It should also tell agents that when they extract durable project knowledge from project files, they save a raw wiki fragment under raw before synthesizing it into docs/wiki pages. It should tell agents to commit wiki changes with the source, test, or documentation changes that made them necessary after verification passes.
+
+For source-driven wikis, propose raw, raw/processed, Clippings, and scripts. Use raw for unprocessed source artifacts, raw/processed for sources fully synthesized into wiki pages and digests, Clippings for human-saved source notes before ingest, and scripts for repository-local helper scripts that collect, validate, or inspect wiki source material. If a repository does not need one of these folders, ask the human to remove it from the setup pack rather than silently omitting it.
+
+Useful wiki-related candidates to propose include page creation, raw-source ingest, entity leaf refresh, open-question review, source reconciliation, digest maintenance, public source collection, on-demand research, backlog or spec sync, and project-specific page creation workflows. Include the project-wiki-research skill when a repository needs ad-hoc topic research that checks docs/wiki first and saves missing coverage under raw. On-demand research: owns ad-hoc topic research when docs/wiki and any upstream wiki do not already answer the request; it saves a sourced synthesis report under raw for later ingest instead of editing docs/wiki directly. For each accepted skill, workflow, or automation, ask what wiki content it owns and which wiki root it should use. Ask one mapping at a time.
+
+Also ask whether the wiki needs automated public update feeds, but propose likely topics of interest first. Pick topics from the repository purpose and name the wiki root that would own the entity leaves. For an AI-assisted development wiki, useful topic candidates include coding agents, coding assistant products, agent frameworks and SDKs, MCP servers, coding model families, software engineering evals and benchmarks, prompt and context engineering patterns, AI code review, CI and testing workflows, security, privacy, licensing, and team adoption practices. If feeds are accepted, gather feed topics one at a time. For each topic, ask what public topic should be scanned, then ask for the wiki root that owns those entity leaves. Do not collect a long topic list in one question.
+
+## Federated Wikis
+
+Use federated wikis when a repository wiki should extend another maintained wiki instead of duplicating its durable entity analysis. Federation is a one-way reference unless the user explicitly asks for bidirectional synchronization.
+
+During setup, identify likely upstream wikis from user input, sibling repository names, local paths, and existing wiki roots. Include a federation recommendation in the setup pack when another wiki already owns broad ecosystem entities, product catalogs, model families, companies, frameworks, MCP servers, techniques, or other reusable background.
+
+Record accepted federation relationships in the downstream wiki, usually in docs/wiki/federation.md. Include the upstream wiki root, relationship direction, upstream-owned scopes, downstream-owned scopes, lookup rules, and feed boundaries.
+
+Before creating or updating a durable entity page, search upstream topic indexes before creating local entity leaves. If the upstream wiki already owns the entity, link to the upstream page and keep only the downstream-owned lens locally. A downstream-owned lens may explain project-specific usage, operating practice, evaluation criteria, implementation guidance, governance, or decisions. It must not restate broad upstream analysis as a parallel encyclopedia entry.
+
+Classify cross-wiki topics this way:
+
+- Upstream-owned entity: link upstream, summarize only what is needed for local navigation, and do not duplicate analysis.
+- downstream-owned lens: create or update the local page because it answers a local practice, workflow, design, adoption, or governance question.
+- Shared concept with local decision: keep ecosystem facts upstream and keep the downstream recommendation, decision, or operating rule locally.
+- Missing or conflicting upstream coverage: record an open question or create a local note only when the downstream wiki needs it; do not silently fork ownership.
+
+Do not schedule duplicate public feeds for topics an upstream wiki already collects. Downstream feeds should watch local practice sources, project-specific sources, or topics not owned upstream. If a downstream source produces an upstream-owned entity update, save it as raw source for the appropriate owner or record an open question about routing.
+
+Topic pages must include:
+
+```markdown
+---
+type: Topic
+title: Topic Name
+description: One sentence summary of the topic.
+tags: [topic-folder]
+---
+
+# Topic Name
+
+## Current Understanding
+
+## Authoritative Sources
+
+## Related Code
+
+## Related Tests
+
+## Related Backlog Items
+
+## Related Wiki Pages
+
+## Open Questions
+
+## Maintenance Notes
+```
+
+Additional topic-specific sections are allowed when they clarify the page. Useful examples include Reusable Implementations, Pattern Boundaries, Pattern Leaf Pages, Foundation Patterns, and Theme Layers.
+
+## Topic Granularity And Folder Structure
+
+Prefer granular, durable topics over monolithic omnibus pages. A broad domain such as agentic frameworks, payments, reporting, companies, authentication, deployment, data ingestion, or AI models should usually become a folder under docs/wiki with an index.md hub plus focused leaf pages.
+
+Use this structure when a topic has several related concepts, providers, components, snapshots, workflows, decisions, or implementation surfaces:
+
+```text
+docs/wiki/
+  topic-index.md
+  digests/
+    index.md
+    YYYY-MM.md
+  domain-name/
+    index.md
+    concept-a.md
+    concept-b.md
+    provider-or-component.md
+    research-snapshot-YYYY-MM-DD.md
+```
+
+Folder index pages are hubs. They explain the stable domain, link to the leaves, and name the questions that belong in that domain. They should not be dated news pages, release notes, or source dumps.
+
+Leaf pages are granular. Create separate leaf pages for specific frameworks, companies, model families, technologies, reusable patterns, product areas, workflows, source snapshots, evaluation questions, and decisions when those subjects can change independently.
+
+A concept should usually become a leaf when it has its own title-like phrase, distinct source evidence, independent maintenance path, likely inbound links from other wiki pages, or reusable guidance that future agents may need to load without the rest of the parent page. This includes reusable practice patterns, operating agreements, governance rules, decisions, evaluation questions, team structures, named methods, and adoption patterns. Do not leave several such concepts bundled inside one broad topic page unless each concept is linked to an existing leaf, linked to upstream-owned coverage, or explicitly deferred with a reason.
+
+Run the leaf-link pass after creating or updating a durable leaf page. Use repository grep to find existing wiki mentions of each leaf title before finishing. A page that mentions a durable leaf title should link the first unlinked mention to that leaf unless the mention is inside a heading, code fence, or existing link.
+
+Dated research, news, meeting notes, raw-source synthesis, or migration history should be leaf pages under the most relevant durable folder. The hub should summarize stable current understanding and point to dated leaves only as evidence or provenance.
+
+## Raw Source Ingest
+
+When processing raw source files, extract the granular entities first. Entities include products, companies, model families, specific models, frameworks, techniques, protocols, standards, workflows, notable features, security issues, and other named concepts that may recur independently.
+
+Use judgement when sources name overlapping concepts. Normalize synonyms and aliases into the best existing durable entity page when they refer to the same thing. When multiple sources express the same underlying pattern, factor common ideas into the durable hub or leaf that owns the shared concept. Keep source-specific ideas tied to their source in the relevant leaf, scan page, digest note, or Maintenance Notes so one source's framing does not become a universal claim. Preserve conflicting ideas as Open Questions or clearly attributed source-specific notes until the authoritative source order or human direction resolves them.
+
+When multiple sources inform the same paragraph, write the reader-facing synthesis. State the shared rule, the scope contrast, the tension, or the source-specific boundary instead of stacking source summaries. If the prose names a source artifact, deck, procedure, page, or external reference, link that source at the point of use. The Authoritative Sources section is required but is not enough for named source comparisons in prose.
+
+For each extracted entity, update an existing durable leaf page or create one under the most relevant topic folder. If the raw source names an entity but does not explain it enough for a useful leaf, do focused research from reliable current sources and record those sources in Authoritative Sources or Maintenance Notes as appropriate. Keep the leaf page as the home for background, implications, adoption context, caveats, and source detail.
+
+When linking raw or processed source artifacts from docs/wiki pages, use links relative to the wiki page, such as ../../../raw/processed/source-name.md from a topic folder leaf. Never use absolute filesystem paths for raw sources, including /Users/raw, /raw, or repository-absolute raw paths, because those links are machine-specific and not portable.
+
+Dated scan pages are allowed only as source-synthesis leaves when they preserve provenance or explain a time-bounded scan. They must not be the only wiki surface for entities that can change independently. Promote entity-specific facts from scans into the matching leaf pages when the facts affect current understanding, selection criteria, adoption caveats, governance, security, or implementation relevance.
+
+Create monthly development digests under docs/wiki/digests. Use docs/wiki/digests/index.md as the digest hub and docs/wiki/digests/YYYY-MM.md for each month. A digest entry may keep the date when the information was added or modified, but the text must summarize the content change rather than list page or file changes. Use one digest entry per independently changing item or closely coupled product family; do not bundle unrelated items into one dated paragraph. Monthly digest Current Understanding entries must appear in reverse chronological order by entry date, newest first; keep same-date entries in stable content order unless a clearer local grouping is needed. Each entry should give a short synopsis of the item, link to the relevant entity leaf page, stay at most three lines, and avoid carrying detailed background that belongs in the leaves.
+
+When repairing an existing digest, inspect the current month page for bundled dated paragraphs and rewrite the requested date range into item-level synopsis entries instead of only appending new entries. Reorder the affected Current Understanding entries into reverse chronological order by entry date before finishing. Use durable leaf pages as the content anchor for digest prose; keep source files in Authoritative Sources as provenance rather than repeating source-log wording. Do not create separate digest entries for duplicate raw captures or repeated source-window sightings unless they add distinct content; fold them into the existing item or closely coupled product-family entry.
+
+Raw-source ingest automation prompts must repeat the digest granularity and ordering rules directly: one digest entry per independently changing item or closely coupled product family; never group digest entries by raw source artifact, collector run, sweep category, or ingestion batch; keep monthly digest Current Understanding entries in reverse chronological order by entry date. When a digest page changes, the automation closeout must report that digest granularity and ordering were checked with the project-wiki-topic-verify checklist, or that the full verifier returned GOOD. High-volume raw sources may update many durable leaves without forcing every touched leaf into the digest; omit low-signal digest mentions rather than compress unrelated entities into a vague grouped bullet.
+
+After each raw source file is synthesized, run an independent topic-page verification loop before treating that source as complete. Spawn a fresh subagent without forking the main context, ask it to use $project-wiki-topic-verify, and pass only the repository root, the complete list of docs/wiki topic pages created or updated for that source, the raw or processed source path as evidence, and any lint output. The verifier must review the topic pages with its own context and return GOOD or NEEDS_CORRECTION about those pages. It must not verify the source material as the target artifact.
+
+An explicit caller or owning-agent correction-attempt cap governs each verification gate. When no cap is supplied, allow at most two corrected resubmissions after the initial verifier verdict at that gate; the initial verdict does not count as a correction attempt. If the verifier returns NEEDS_CORRECTION and correction attempts remain, the main ingest agent applies the in-scope corrections, reruns lint when files changed, and invokes a fresh verifier with the updated topic-page list. If the verifier still returns NEEDS_CORRECTION after the governing cap is exhausted, stop and report BLOCKED with the unresolved findings, completed correction-attempt count, and governing cap. Do not let the verifier edit files directly.
+
+Run the bounded loop before moving the raw source into raw/processed and require GOOD before the move. After the move and source-link updates, rerun lint and invoke a fresh verifier with the updated topic-page list and processed source path as evidence when any docs/wiki link changed. Apply the same governing cap, bounded default, and BLOCKED stop rule independently to this post-move verification gate.
+
+After a raw source file has been fully processed into the relevant entity leaves and monthly digest, move it under raw/processed so future ingest passes do not process it again. Preserve useful date or source subfolders when moving files. Update wiki source links to the processed raw path using links relative to each wiki page. Do not move raw files when ingest is incomplete, source links are stale, source links are absolute filesystem paths, or wiki lint has not passed.
+
+## Automated Update Feeds
+
+Use automated update feeds only when the user wants the wiki to keep watching public sources after initial setup.
+
+Set up feeds in two layers:
+
+- Topic source collectors search public web sources for user-approved topics, save dated raw artifacts under raw, and do not update docs/wiki directly.
+- A leaf refresher checks existing durable entity leaves under the approved wiki roots. It rebuilds the entity universe from leaf pages, keeps a local state ledger, checks new or oldest-unchecked leaves first, and saves qualifying public updates as raw artifacts for normal ingest.
+
+Each feed must preserve the source-first boundary. It should include source URLs, visible publication or update dates, factual summaries, relevance notes, named entities, excluded candidates with reasons, and follow-up notes. It must avoid private, proprietary, sensitive, PII, or company-internal local content.
+
+When the user approves a scheduled feed, use the target environment's approved automation facility instead of inventing a hand-written scheduler workaround. Keep update collectors raw-only; the ingest workflow owns docs/wiki changes.
+
+## Authority Order
+
+1. Code and tests describe actual behavior.
+2. Functional specifications and requirements describe intended behavior.
+3. AGENTS.md, README files, and procedure files describe workflow obligations.
+4. Defect and feature backlog files describe tracked work. Status headings or explicit status fields outrank file presence.
+5. Architecture and plan documents describe design intent.
+6. Help, RAG, or generated documentation describe the current documentation surface.
+7. Wiki pages summarize and navigate the above sources.
+
+## Workflow
+
+1. Run wiki status or initialize the wiki if it does not exist.
+2. Use wiki suggest to map changed or named source files to likely wiki pages.
+3. Read the authoritative source files before editing or answering from the wiki.
+4. For raw source ingest, identify named entities, update or create their durable leaf pages, update the monthly digest, run the independent $project-wiki-topic-verify loop for each ingested source file, then move fully processed raw files to raw/processed only after pre-move verification and lint pass. After processed-source links change, rerun lint and the verifier before completion.
+5. For new wiki setup, present a recommendation pack with likely wiki roots, upstream wiki candidates, candidate wiki-related workflows or automations, and public feed topics of interest before asking the human to choose mappings.
+6. If federation is accepted, record the upstream relationship and ownership boundaries before creating local topic folders.
+7. Ask whether automated update feeds are required after showing likely feed topics and excluding upstream-owned feed topics. If they are, collect each scan topic and its wiki root one at a time before proposing source collectors or a leaf refresher.
+8. Choose the smallest durable topic boundary: update an existing leaf, create a downstream lens, create a new leaf, or create a folder with an index.md hub when related pages are forming.
+9. Run the leaf-link pass when a durable leaf was created or updated.
+10. Preserve contradictions in Open Questions instead of inventing a resolution.
+11. Run wiki lint and OKF validation, then fix findings before finishing.
+12. When committing a task, include docs/wiki pages, raw fragments, raw/processed moves, wiki helper scripts, and related AGENTS.md guidance in the same coherent commit as the source, test, or documentation changes that made them necessary. If a task changes only wiki artifacts, commit that verified wiki-only slice on its own. Do not leave docs/wiki, raw fragments, or raw/processed moves unstaged after committing the related task. If repository or user instructions forbid committing, report the remaining wiki artifacts explicitly.
+
+## Open Questions Review
+
+Use the questions command when the user asks to review, close, answer, or list open wiki questions.
+
+1. Run questions from the repository root.
+2. Ask the human the first unresolved question only, including the file and line from the command output.
+3. Wait for the human answer before asking another question.
+4. Treat the human answer as authoritative for that question.
+5. Update the relevant wiki page in steady-state language.
+6. Remove or rewrite the answered Open Questions item so it no longer appears unresolved.
+7. If the answer creates a project decision, update open-decisions.md or the relevant durable topic page.
+8. Run questions again to confirm the answered question is gone.
+9. Repeat until no open wiki questions remain or the human stops the review.
+10. Run wiki lint before finishing.
+
+## Hub And Leaf Pages
+
+Use hub pages for broad navigation and leaf pages for reusable or independently changing concepts.
+
+A hub page should usually be named index.md inside a topic folder. Keep it short: define the domain, list the important leaves, cross-link related folders, and record domain-level open questions.
+
+A leaf page should describe a concept that can recur across surfaces, such as tables, dialogs, file references, error handling, deployment environments, provider pages, product areas, workflow families, source snapshots, or data import flows. A component or workflow used by only one page usually belongs in a domain topic page unless it establishes a reusable pattern.
+
+When reviewing a topic page, audit for bundled leaf concepts before accepting it. If the page contains multiple reusable practice patterns, decisions, workflows, operating agreements, team structures, governance rules, or evaluation questions, split them into leaves or record explicit deferrals. A broad page that is well written can still be the wrong granularity.
+
+For reusable UI, API, data, or operational patterns, classify by pattern first and by implementation second. Keep hubs short and put details in leaf pages.
+
+## Writing Rules
+
+- Write steady-state explanations. Avoid enhanced, revised, old, or new unless documenting history in Maintenance Notes.
+- Mention local files and wiki pages as Markdown links, not bare paths.
+- Prefer contextual links inside explanations. Use Related Wiki Pages only when the cross-reference adds navigation value.
+- Link named source artifacts, decks, procedures, pages, and external references at the point of use. Do not make the reader infer named sources from the Authoritative Sources section.
+- Link raw and raw/processed source artifacts with paths relative to the current wiki page. Do not use absolute filesystem paths for raw sources.
+- When a paragraph uses multiple sources, synthesize or contrast them. State the integrated rule, scope difference, tension, or source-specific boundary instead of listing what each source says.
+- If a source, test, or code path is missing, say Not yet identified.
+- If there are no unresolved questions, say No open wiki questions are recorded for this topic.
+- Do not invent source paths, tests, backlog status, behavior, fallbacks, or compatibility constraints.
+- Keep pages compact enough for agents to load together with the source documents.
+
+## Operations
+
+Run commands from the repository root. Use python3 unless the environment clearly provides python.
+
+```bash
+python3 project-wiki-skill-root/scripts/wiki_ops.py init
+python3 project-wiki-skill-root/scripts/wiki_ops.py status
+python3 project-wiki-skill-root/scripts/wiki_ops.py suggest --changed
+python3 project-wiki-skill-root/scripts/wiki_ops.py lint
+python3 project-wiki-skill-root/scripts/wiki_ops.py okf-migrate
+python3 project-wiki-skill-root/scripts/wiki_ops.py okf-validate
+python3 project-wiki-skill-root/scripts/wiki_ops.py link-leaves
+python3 project-wiki-skill-root/scripts/wiki_ops.py sources docs/wiki/topic-index.md
+python3 project-wiki-skill-root/scripts/wiki_ops.py questions
+python3 project-wiki-skill-root/scripts/wiki_ops.py questions --format json
+```
+
+Read references/page-schema.md before creating or substantially rewriting a wiki page.
+
+Read references/topic-page-verification-checklist.md when verifying topic page quality, raw-source leaf coverage, hub versus leaf granularity, digest updates, federation boundaries, or source links.
+
+Read references/source-priority.md when reconciling conflicts between wiki content and source documents.
+
+Read references/operations.md when deciding which operation fits the current task.
+
+## Output Expectations
+
+When reporting completion, mention which wiki pages changed, whether wiki lint and OKF validation passed, and whether the wiki artifacts were committed with the related task or intentionally left uncommitted because repository or user instructions required that.
+----- END INLINED CORE SKILL: project-wiki -----

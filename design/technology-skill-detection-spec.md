@@ -72,15 +72,16 @@ The detector returns one proposed skillset per analyzed scope:
 - Exclusive conflicts.
 - Explicit no-variant result when nothing bundled matches.
 
-Project Agent Setup records accepted skillsets in PROJECT.yaml with their source evidence. It then generates AGENTS.md routing so the harness supplies those technology skills to every agent working under the matching path.
+Project Agent Setup records accepted skillsets in PROJECT.yaml with their source evidence. It then generates AGENTS.md routing that statically embeds the complete detected skill instructions under each matching path by default. The renderer's inline-tech-skills false mode emits dynamic load-by-name guidance instead.
 
 ## Definition-Owned Skills
 
 Conceptual agent definitions remain technology-neutral and declare their definition-owned generic skills.
 
-- Adapters with a native skills property generate that property.
-- Adapters without a native skills property generate unconditional skill-loading instructions.
-- Definition-owned skill loading does not depend on detector output.
+- Generated adapters statically append unconditional definition-owned core skills to agent instructions by default and omit those skills from native skills properties.
+- The adapter generator's inline-core-skills false mode retains native core-skill properties or unconditional load instructions.
+- Conditional request-specific skills remain dynamically loaded when their conditions apply.
+- Definition-owned core-skill inlining does not depend on detector output.
 
 ## Script Ownership
 
@@ -95,7 +96,7 @@ The detector skill contains a generated runtime mirror only so a standalone inst
 3. It runs detection once for those scopes.
 4. It reviews conflicts, missing skills, and unsupported technologies.
 5. It writes source-backed skillsets into PROJECT.yaml.
-6. It generates root or nested AGENTS.md technology-loading instructions.
+6. It generates root or nested AGENTS.md files with detected technology skill instructions inlined under each applicable folder route by default.
 7. It verifies that every named skill is installed.
 8. It reruns detection only when project setup or technology boundaries change.
 
@@ -128,4 +129,4 @@ The detector skill contains a generated runtime mirror only so a standalone inst
 - A child package does not inherit unrelated root workspace dependencies.
 - Equal-priority exclusive matches block setup.
 - A detected but unavailable required skill blocks setup.
-- Generated AGENTS.md gives the harness the detected technology skills for every matching folder without rerunning detection.
+- Generated AGENTS.md contains the detected technology skill instructions for every matching folder without rerunning detection.

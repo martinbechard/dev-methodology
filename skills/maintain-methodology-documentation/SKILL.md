@@ -16,7 +16,7 @@ Keep source files, generated outputs, documentation, installers, and tests align
 3. Run the metadata synchronizer after skill name or description changes.
 4. Run the technology detection generator after specialized activation metadata changes.
 5. Run the documentation generator after any skill, category, or conceptual agent definition change.
-6. Inspect generated Codex, Claude Code, Gemini CLI, and Junie CLI native agent definitions and confirm that conceptual definitions distinguish definition-owned skills from request-specific skills with human-readable conditions, every skill ID resolves to a bundled skill, and every model profile resolves through each supported adapter.
+6. Inspect generated Codex, Claude Code, Gemini CLI, and Junie CLI native agent definitions and confirm that unconditional core skills are inlined by default, absent from native skills properties in that mode, and still available through native loading when inline-core-skills is false. Confirm request-specific skills retain human-readable conditions, every skill ID resolves to a bundled skill, and every model profile resolves through each supported adapter.
 7. Update hand-authored policy in README.md and the design HTML pages when the operating model changes.
 8. Run stale-output checks, repository regression tests, Agent Skill validation, and git diff checks.
 9. Keep maintenance repository-local. Do not populate user-home skill or agent folders to validate or use the bundle.
@@ -49,7 +49,7 @@ git diff --check
 
 - Treat skills, conceptual agent definition files, and the category catalog as sources.
 - Treat detection.yaml beside each specialized technology or domain skill as the setup-time activation source and the generated registry as derived output.
-- Keep conceptual agent definition skillsets generic. Skill entries without conditions are definition-owned skills. Skill entries with conditions are request-specific and generate judgment-based loading instructions. Project Agent Setup detects technology and domain variants once and records unconditional folder skillsets in PROJECT.yaml and AGENTS.md.
+- Keep conceptual agent definition skillsets generic. Skill entries without conditions are definition-owned core skills and are statically appended to generated agent instructions by default. Skill entries with conditions are request-specific and generate judgment-based dynamic loading instructions. Project Agent Setup detects technology and domain variants once, records unconditional folder skillsets in PROJECT.yaml, and statically embeds them in AGENTS.md by default.
 - Keep concise single-phase agent instructions as strings. Use the structured instruction mapping defined by the conceptual agent definition schema when an agent has state branches, delegation, review loops, failure handling, or several completion criteria.
 - Require every conceptual agent definition to declare repositoryMutation as required, conditional, or never. The generator validates that definitions requiring mutation load agent-claim as a definition-owned skill, conditional definitions load it conditionally, and read-only definitions do not load it.
 - Keep generic claim behavior in agent-claim and conceptual agent definitions. PROJECT.yaml and AGENTS.md may contain source-backed project-specific coordination overrides, but must not reproduce the generic procedure.

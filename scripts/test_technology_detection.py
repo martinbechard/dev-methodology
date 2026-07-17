@@ -903,11 +903,91 @@ class TechnologyDetectionTests(unittest.TestCase):
                 capture_output=True,
                 text=True,
             )
-            self.assertIn("api/**: load fastapi, python before acting", completed.stdout)
+            self.assertIn(
+                "api/**: apply the inlined fastapi, python skills instructions before acting",
+                completed.stdout,
+            )
+            self.assertIn("BEGIN INLINED TECHNOLOGY SKILL: fastapi", completed.stdout)
+            self.assertIn("BEGIN INLINED TECHNOLOGY SKILL: python", completed.stdout)
             self.assertIn("Do not rerun detection during ordinary work", completed.stdout)
             self.assertIn("most-specific matching pattern wins", completed.stdout)
             self.assertNotIn("Agent Claims And Worktrees", completed.stdout)
             self.assertNotIn("agent-claim", completed.stdout)
+
+    def test_agents_section_inlines_technology_skills_by_default_with_false_override(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            plan = Path(directory) / "PROJECT.yaml"
+            plan.write_text(yaml.safe_dump({
+                "technology_skill_loadouts": [{
+                    "pathPattern": "src/**",
+                    "skills": ["python"],
+                }],
+            }), encoding="utf-8")
+
+            inlined = subprocess.run(
+                [sys.executable, str(RENDER_SCRIPT), "--project", str(plan)],
+                cwd=ROOT,
+                check=True,
+                capture_output=True,
+                text=True,
+            ).stdout
+            self.assertIn("src/**: apply the inlined python skill instructions", inlined)
+            self.assertIn("BEGIN INLINED TECHNOLOGY SKILL: python", inlined)
+            self.assertIn("# Python", inlined)
+            self.assertNotIn("src/**: load python before acting", inlined)
+
+            dynamically_loaded = subprocess.run(
+                [
+                    sys.executable,
+                    str(RENDER_SCRIPT),
+                    "--project",
+                    str(plan),
+                    "--inline-tech-skills",
+                    "false",
+                ],
+                cwd=ROOT,
+                check=True,
+                capture_output=True,
+                text=True,
+            ).stdout
+            self.assertIn("src/**: load python before acting", dynamically_loaded)
+            self.assertNotIn("BEGIN INLINED TECHNOLOGY SKILL", dynamically_loaded)
+
+            invalid = subprocess.run(
+                [
+                    sys.executable,
+                    str(RENDER_SCRIPT),
+                    "--project",
+                    str(plan),
+                    "--inline-tech-skills",
+                    "yes",
+                ],
+                cwd=ROOT,
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(2, invalid.returncode)
+            self.assertIn("expected true or false", invalid.stderr)
+
+    def test_agents_section_rejects_invalid_inlined_skill_names(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            plan = Path(directory) / "PROJECT.yaml"
+            plan.write_text(yaml.safe_dump({
+                "technology_skill_loadouts": [{
+                    "pathPattern": "src/**",
+                    "skills": ["../../private"],
+                }],
+            }), encoding="utf-8")
+            completed = subprocess.run(
+                [sys.executable, str(RENDER_SCRIPT), "--project", str(plan)],
+                cwd=ROOT,
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(1, completed.returncode)
+            self.assertIn("Invalid technology skill name", completed.stderr)
 
     def test_agents_section_preserves_no_variant_general_training_fallback(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -934,7 +1014,10 @@ class TechnologyDetectionTests(unittest.TestCase):
                 capture_output=True,
                 text=True,
             )
-            self.assertIn("src/main/**: load python before acting", completed.stdout)
+            self.assertIn(
+                "src/main/**: apply the inlined python skill instructions before acting",
+                completed.stdout,
+            )
             self.assertIn(
                 "config/**: no pertinent specialized technology skill is available; use general model training and continue full scope coverage",
                 completed.stdout,

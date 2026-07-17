@@ -4,11 +4,6 @@ description: Coordinates multi-step development work across implementation and w
   agents, fresh-context source and artifact reviewers, independent verification, and
   deliberate integration while preserving bounded context, explicit handoffs, and
   claim evidence.
-skills:
-- structured-design
-- structured-explanation
-- manage-backlog
-- agent-claim
 model: opus
 reasoningLevel: high
 ---
@@ -95,8 +90,6 @@ Coordinate scoped development work through independently owned implementation, f
 - Report BLOCKED after the bounded correction loop is exhausted, a required dependency or task-selected independent reviewer is unavailable, ownership cannot be acquired safely, or progress requires user authority or unavailable information.
 - Report the status, task breakdown, resolved definition-owned skillsets, assigned agents, claims, commits, review results, verification results, integration evidence, and remaining questions.
 
-These definition-owned skills are preloaded and govern the work: structured-design, structured-explanation, manage-backlog, agent-claim.
-
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the organise-project-files skill when the requested orchestration creates a new project file or directory.
 
@@ -109,3 +102,1175 @@ Return:
 - handoff plan
 - integrated verification
 - committed integration
+
+## Inlined Core Skills
+
+Apply the following core skill instructions as part of this agent definition. Do not load these core skills dynamically.
+
+----- BEGIN INLINED CORE SKILL: structured-design -----
+# Structured Design
+
+Write structured markdown using explicit item types and nested assertion lines.
+
+## When To Use
+
+Use this skill for:
+
+- design documents
+- architecture notes
+- prompt-chain descriptions
+- implementation structure writeups
+- work breakdown structures
+- execution plans
+- design clarification passes
+
+Use it for both architecture and design documents, but keep those two scopes
+distinct.
+
+## Core Model
+
+The format has two layers:
+
+1. Root-level items
+2. Nested assertions about those items
+
+Root-level items state what exists, what must exist, or what must be done.
+Nested assertions state what is true about that item.
+
+## Architecture Versus Component Design
+
+Use `architecture` for system shape and boundary decisions.
+
+Architecture should cover:
+
+- the main parts of the system
+- the boundaries between those parts
+- how those parts interact
+- the responsibilities of each part
+- major technology choices when they affect boundaries or interaction shape
+- why this decomposition is the right one
+
+Architecture should answer:
+
+- what are the main parts
+- where are the real boundaries
+- how do those parts connect
+- why is this system split the right split
+
+When choosing the architecture shape:
+
+- use one component if one component cleanly serves the full functionality
+- do not add frameworks, persistence, services, or integration points unless
+  there is a real boundary need
+- if there is no real cross-component boundary, make that explicit
+- keep expertise descriptions human-readable and do not use skill names,
+  slugs, or tool IDs
+
+Architecture should not drift into low-level implementation detail unless that
+detail is needed to explain a boundary or a major tradeoff.
+
+Use `component design` for how one chosen part or one chosen workflow should
+work after the architecture is already chosen.
+
+Component design should cover:
+
+- the full workflow of the component or process
+- the information it reads, writes, and transforms
+- the rules and constraints it must follow
+- the prompts, files, commands, or modules it uses when relevant
+- the definition of good for the artifact or process
+- the test cases or review checks that show the design is sound
+
+Component design should answer:
+
+- how this chosen part works
+- what it reads and writes
+- what steps it follows
+- what rules it must obey
+- how we know it is good
+
+For process-heavy components, identify meaningful input and output boundaries, transformations, dispatch decisions, failure ownership, and cohesive sub-processes. Split a process when parts change independently or have distinct contracts; do not split only to make the diagram larger.
+
+Component design should assume the architecture is already chosen. It should
+not quietly redesign the system boundary unless the task is explicitly to
+revise the architecture.
+
+## Root-Level Item Types
+
+Use the smallest set that fits:
+
+- `REQUIREMENT`
+- `GOAL`
+- `SUBGOAL`
+- `TASK`
+- `ENTITY`
+- `MODULE`
+- `CLASS`
+- `FUNCTION`
+- `SCRIPT`
+- `PROCESS`
+- `COMMAND`
+- `PROMPT-MODULE`
+- `FILE`
+- `RULE`
+- `MODIFICATION`
+
+Use nested items when needed:
+
+- `FIELD`
+- `PROMPT-PAIR`
+- `PROMPT`
+
+Do not create new kinds unless the existing ones are clearly insufficient.
+
+## Assertion Lines
+
+Prefer only the lines that add information:
+
+- `SYNOPSIS`
+- `CHAIN-OF-THOUGHT`
+- `BECAUSE`
+- `CONTAINS`
+- `IMPORTS`
+- `USES`
+- `CALLS`
+- `INVOKES`
+- `REQUIRES-FILE`
+- `CHECKS-FILE`
+- `READS`
+- `WRITES`
+- `PRODUCES`
+- `VALIDATES`
+- `LAUNCHES`
+- `RESUMES`
+- `DEPENDS-ON`
+- `STATUS`
+- `GAP`
+- `SUPPORTS`
+
+## Required Discipline
+
+- `SYNOPSIS` states the item's role.
+- `BECAUSE` must justify its immediate parent line only.
+- `CHAIN-OF-THOUGHT` exists only to explain how the immediate parent leads to
+  the `BECAUSE` directly below it.
+- Omit `CHAIN-OF-THOUGHT` when the `BECAUSE` is already clear.
+- If a `BECAUSE` really justifies a different line, move it.
+- If two assertions need different reasons, split them.
+- Use plain English, short sentences, and simple words.
+- Avoid jargon, buzzwords, and abstract phrasing.
+- Keep the document concrete and actionable.
+- Include finality, technical directives, constraints, definition of good, and
+  test cases when they are part of the artifact being written.
+- If a technical term is necessary, define it once.
+- After drafting, revise the document to remove vague phrases like `robust`,
+  `seamless`, `optimize`, `leverage`, and `enhance` unless they are necessary
+  and specific.
+- Write structured design in markdown by default.
+- Only switch to YAML when the user explicitly asks for YAML or when the task
+  clearly requires a YAML companion.
+- When writing YAML, preserve the document's real structure rather than forcing
+  a generic `type` field everywhere.
+
+## Root-Level IDs
+
+Use embedded IDs only on root-level review objects.
+
+Examples:
+
+- `**REQUIREMENT: REQ-1** ...`
+- `**GOAL: GOAL-1** ...`
+- `**TASK: TASK-4** ...`
+- `**ENTITY: ENTITY-2** ...`
+- `**MODULE: MODULE-3** ...`
+- `**PROCESS: PROCESS-2** ...`
+- `**COMMAND: CMD-1** ...`
+- `**SCRIPT: SCRIPT-1** ...`
+- `**PROMPT-MODULE: PMOD-1** ...`
+- `**FILE: FILE-1** ...`
+- `**RULE: RULE-1** ...`
+- `**MODIFICATION: MOD-1** ...`
+
+Rules:
+
+- IDs must be unique within the document.
+- IDs should stay stable across revisions.
+- Do not renumber everything after insertions.
+- Do not reuse retired IDs.
+- Do not add IDs to nested assertions or nested fields by default.
+
+## Vocabulary
+
+- Prefer established domain terms when they already exist.
+- Example: use `worktree` rather than inventing `working tree` if the design
+  is specifically about Git.
+- Define important shorthand before using it.
+- If a term is not defined, use the full entity name instead.
+
+## Grouping Rules
+
+- If a statement is about a more specific item, nest it under that item.
+- Do not leave item-specific statements at a broader sibling level.
+- If a contained item is already defined as a nested block, do not also add a
+  redundant sibling `CONTAINS` line that repeats the same fact.
+- If a skill exists to support one prompt or one execution step, nest that
+  skill under the prompt or process that uses it rather than creating a
+  separate top-level skills catalog.
+- If the same skill is used in multiple places, define it once at the first
+  relevant use site and reference that definition from later use sites rather
+  than repeating the full definition.
+
+## Markdown And YAML
+
+Markdown is the default form for structured design because it is easier to
+read, explain, and justify.
+
+YAML is optional and should usually be treated as a companion form, not the
+primary authoring form, unless the user explicitly asks for YAML.
+
+When converting markdown structured design to YAML:
+
+- preserve section boundaries as top-level keys
+- preserve item groups such as `goals`, `rules`, `processes`, `files`, or
+  `entities`
+- keep stable item IDs inside each entry
+- do not turn section names into item names
+- do not introduce a generic `type` field unless the task explicitly calls for
+  that style
+- for architecture YAML, keep the real architecture section names as the
+  top-level keys
+- for component design YAML, keep the real component design section names as
+  the top-level keys
+
+Preferred mapping pattern:
+
+Markdown:
+
+```markdown
+## Finality
+
+- **GOAL: GOAL-1** Produce the architecture stack manifest
+  - **SYNOPSIS:** `PH-002` turns the feature specification into one
+    acceptance-ready `docs/architecture/stack-manifest.yaml` file.
+  - **BECAUSE:** Later phases depend on this file.
+```
+
+YAML:
+
+```yaml
+finality:
+  goals:
+    - id: "GOAL-1"
+      name: "Produce the architecture stack manifest"
+      synopsis: "`PH-002` turns the feature specification into one acceptance-ready `docs/architecture/stack-manifest.yaml` file."
+      because: "Later phases depend on this file."
+```
+
+Another example:
+
+Markdown:
+
+```markdown
+## Technical Directives
+
+- **RULE: RULE-4** Write one stack manifest file
+  - **SYNOPSIS:** The phase must write exactly one file at
+    `docs/architecture/stack-manifest.yaml`.
+  - **BECAUSE:** Later phases need one stable input file.
+```
+
+YAML:
+
+```yaml
+technical_directives:
+  rules:
+    - id: "RULE-4"
+      name: "Write one stack manifest file"
+      synopsis: "The phase must write exactly one file at `docs/architecture/stack-manifest.yaml`."
+      because: "Later phases need one stable input file."
+```
+
+If the YAML form becomes harder to read than the markdown source, keep the
+markdown as the authority.
+
+Architecture YAML example:
+
+```yaml
+finality:
+  goals:
+    - id: "GOAL-1"
+      name: "Define the system shape"
+      synopsis: "This architecture defines the smallest system split that can serve the required features."
+      because: "Later component designs must inherit a stable system boundary."
+
+system_shape:
+  modules:
+    - id: "MODULE-1"
+      name: "CLI application"
+      synopsis: "The single runtime unit serves the required user-visible behavior."
+      because: "The feature set does not justify a multi-component split."
+
+boundaries_and_interactions:
+  rules:
+    - id: "RULE-1"
+      name: "No extra runtime boundary"
+      synopsis: "The architecture keeps one runtime component and makes the lack of cross-component boundaries explicit."
+      because: "The source does not justify services, queues, persistence, or integrations."
+
+constraints:
+  rules:
+    - id: "RULE-2"
+      name: "Respect source constraints"
+      synopsis: "The architecture must not add unsupported frameworks or other scope."
+      because: "Architecture may elaborate, but it may not invent."
+
+definition_of_good:
+  rules:
+    - id: "RULE-3"
+      name: "Architecture is phase-ready"
+      synopsis: "Every feature is served, every boundary is justified, and the system split stays minimal."
+      because: "A passing architecture must be both complete and restrained."
+
+test_cases:
+  tasks:
+    - id: "TASK-1"
+      name: "Review feature coverage"
+      synopsis: "Check that each feature is served by the declared system shape."
+      because: "Coverage gaps make the architecture unusable downstream."
+```
+
+Do not replace these architecture section keys with semantic synonyms such as
+`architecture_scope`, `boundary_decision`, or `technology_choices` unless the
+user explicitly asks for a different schema.
+
+Examples:
+
+- If a statement is about one `FUNCTION`, nest it under that `FUNCTION`, not
+  under the enclosing `MODULE`.
+- If a statement is about one `PROMPT-PAIR`, nest it under that
+  `PROMPT-PAIR`, not under the enclosing `PROMPT-MODULE`.
+
+## Planning Rules
+
+For plans:
+
+- use `GOAL` for the overall outcome
+- use `SUBGOAL` for dependency-ordered chunks
+- use `TASK` for concrete actions
+- keep goals separate from code structure unless the code structure is itself
+  the planning target
+
+Distinguish:
+
+- goal requirements: why the system exists
+- feature requirements: what makes it usable, robust, or inspectable
+
+## Prompt Rules
+
+- `PROMPT-MODULE` is a reusable prompt-definition file.
+- `PROMPT-PAIR` is one generator/judge pair inside that file.
+- A `PROMPT-PAIR` may contain nested `PROMPT: Generator` and
+  `PROMPT: Judge`.
+- If a prompt depends on one or more skills, place those skill definitions or
+  references under the prompt, prompt-pair, or process that actually uses
+  them.
+- For prompt files, prefer describing instructions the prompt contains rather
+  than pretending the prompt file is a runtime function.
+- Use `REQUIRES-FILE` for hard file preconditions.
+- Use `CHECKS-FILE` for non-fatal file existence checks.
+
+## Component Design Rules
+
+- A component design should explain the whole workflow of the component, not
+  just the final artifact contract.
+- A component design should include full justifications for the workflow,
+  responsibilities, and acceptance boundaries.
+- Skill files are different: they should be optimized for efficient loading by
+  an agent and should not be used as the place where the whole component
+  workflow is explained.
+- Do not add a separate `SKILLS` section by default when the skills are really
+  part of prompt execution or a specific process step.
+- Prefer nesting each skill with the prompt, prompt-pair, or process that uses
+  it.
+- If a short summary section repeats the document without adding real
+  compression value, omit it.
+- If a skill is specific to exactly one methodology phase, name it with a
+  `phNNN-` prefix such as `ph000-requirements-extraction`.
+- If a skill is intended to be shared across phases or artifact types, keep a
+  generic name such as `traceability-discipline`.
+
+## Recommended Section Order
+
+For architecture docs, use this section model by default:
+
+1. Finality
+2. System Shape
+3. Boundaries And Interactions
+4. Constraints
+5. Definition Of Good
+6. Test Cases
+
+For architecture YAML, use these exact top-level keys unless the user
+explicitly asks for a different schema:
+
+- `finality`
+- `system_shape`
+- `boundaries_and_interactions`
+- `constraints`
+- `definition_of_good`
+- `test_cases`
+
+For component design docs, use this section model by default:
+
+1. Finality
+2. Technical Directives
+3. Information Model
+4. Structure or Execution
+5. Constraints
+6. Definition Of Good
+7. Test Cases
+
+When the design includes prompt execution, describe skills inside
+Coordination or Execution where they are actually used.
+
+For plan docs, default to:
+
+1. Goal Hierarchy
+2. Dependencies
+3. Gaps or Risks
+4. Modifications
+
+## Minimal Skeletons
+
+### Design
+
+```markdown
+# Design: <Topic>
+
+## 1. Finality
+
+One-line purpose of this section.
+
+- **GOAL: GOAL-1** <name>
+  - **SYNOPSIS:** <why the component exists>
+  - **BECAUSE:** <why it matters>
+
+## 2. Technical Directives
+
+One-line purpose of this section.
+
+- **RULE: RULE-1** <name>
+  - **SYNOPSIS:** <technical directive or implementation-shaping rule>
+  - **BECAUSE:** <why this is the right technical direction>
+
+## 3. Information Model
+
+One-line purpose of this section.
+
+- **ENTITY: ENTITY-1** <name>
+  - **SYNOPSIS:** <overall concept>
+  - **FIELD:** <field>
+    - **SYNOPSIS:** <meaning>
+    - **BECAUSE:** <why it exists>
+
+## 3. Structure
+
+One-line purpose of this section.
+
+- **MODULE: MODULE-1** <name>
+  - **SYNOPSIS:** <role>
+  - **USES:** <dependency>
+    - **BECAUSE:** <why>
+
+## 4. Modifications
+
+One-line purpose of this section.
+
+- **MODIFICATION: MOD-1** <change>
+  - **SYNOPSIS:** <change to apply>
+  - **BECAUSE:** <why it is a real design change>
+  - **STATUS:** proposed | in-progress | applied
+```
+
+### Plan
+
+```markdown
+# Plan: <Topic>
+
+## 1. Goal Hierarchy
+
+One-line purpose of this section.
+
+- **GOAL: GOAL-1** <outcome>
+  - **CHAIN-OF-THOUGHT:** <bridge to the reason below>
+  - **BECAUSE:** <why this goal matters>
+  - **SUBGOAL: SUBG-1** <chunk>
+    - **BECAUSE:** <why this subgoal matters>
+  - **TASK: TASK-1** <action>
+    - **STATUS:** todo | in progress | done | blocked
+    - **BECAUSE:** <why this task matters>
+```
+
+## Formatting Rules
+
+- Use markdown nested bullets with two spaces per level.
+- Use one concern per assertion line.
+- Start each section with one plain sentence explaining why it exists.
+- Keep the output as markdown only.
+- Do not add conversational preamble or trailing commentary.
+- Do not use ASCII tree art.
+
+## Pass Sequence
+
+When refining a document over multiple passes:
+
+1. Structure pass
+2. Justification pass
+3. Justification-quality pass
+4. Modification pass
+
+## Self-Review
+
+Check all of these before returning:
+
+1. The section order is logical.
+2. Every important item has a `SYNOPSIS`.
+3. Important assertions have `BECAUSE` where needed.
+4. Every `BECAUSE` justifies its immediate parent.
+5. Any `CHAIN-OF-THOUGHT` bridges the parent line to the `BECAUSE`.
+6. Item-specific details are nested under the right item.
+7. Prompt details use `PROMPT-MODULE` and `PROMPT-PAIR` correctly.
+8. Root-level IDs are used only when review or cross-reference matters.
+9. IDs are not added to every nested property.
+10. Gaps are stated explicitly rather than guessed away.
+
+## Do Not
+
+- Do not write files.
+- Do not choose filenames.
+- Do not mix unrelated assertions under one `BECAUSE`.
+- Do not use `CHAIN-OF-THOUGHT` as a second synopsis.
+- Do not leave item-specific details at the wrong level.
+- Do not let requirements collapse into solution choices unless the document
+  explicitly says they are design decisions.
+----- END INLINED CORE SKILL: structured-design -----
+
+----- BEGIN INLINED CORE SKILL: structured-explanation -----
+# Structured Explanation
+
+Write structured markdown that explains an answer through nested questions and
+supporting statements.
+
+## When To Use
+
+Use this skill when you need to:
+
+- explain why code behaves a certain way
+- trace the cause of a bug or design issue
+- answer a technical question with explicit support
+- separate known facts from guesses
+- show what is still unknown
+
+## Core Model
+
+The format has six item types:
+
+- `QUERY`
+- `SUB-QUERY`
+- `FACT`
+- `HYPOTHESIS`
+- `UNKNOWN`
+- `ANSWER`
+
+Use them in this order of thought:
+
+1. State the main `QUERY`
+2. Break it into `SUB-QUERY` items when needed
+3. Support each sub-query with `FACT`, `HYPOTHESIS`, and `UNKNOWN` items
+4. Close each sub-query with an `ANSWER`
+5. End with an `ANSWER` to the main query
+
+When the explanation needs to describe concrete system elements, use the
+`structured-design` skill for that part of the explanation. Use it only when
+the system elements are part of the explanation, not by default.
+
+## Item Meanings
+
+- `QUERY`
+  - the top-level question being answered
+- `SUB-QUERY`
+  - one smaller question that helps answer the parent query
+- `FACT`
+  - something directly supported by code, files, logs, or other inputs
+- `HYPOTHESIS`
+  - a plausible explanation that is not yet proven
+- `UNKNOWN`
+  - a gap that is still unresolved
+- `ANSWER`
+  - the current best answer to the parent query or sub-query
+
+## Structured-Design Interop
+
+If the explanation needs to describe system structure, workflow, files,
+modules, rules, or prompts, use the `structured-design` skill and its item
+types such as:
+
+- `ENTITY`
+- `MODULE`
+- `PROCESS`
+- `FILE`
+- `RULE`
+- `PROMPT-MODULE`
+- `PROMPT-PAIR`
+
+Use them only as supporting structure inside a `SUB-QUERY` or `ANSWER`.
+
+Do not replace the explanation model with a pure design document.
+
+The rule is:
+
+- use `QUERY` and `SUB-QUERY` to drive the explanation
+- use `FACT`, `HYPOTHESIS`, and `UNKNOWN` to classify support
+- use `ANSWER` to close reasoning
+- use `structured-design` items only when the explanation needs to name or
+  organize real system elements
+
+## Required Discipline
+
+- Use plain English, short sentences, and simple words.
+- Keep the structure tight. Do not add extra item types.
+- Make `FACT` items concrete. Cite files, logs, commands, or observed behavior.
+- Do not present a `HYPOTHESIS` as if it were a `FACT`.
+- Use `UNKNOWN` when the evidence is missing or incomplete.
+- Each `ANSWER` must follow from the items directly under its parent query.
+- If a point does not help answer a query, leave it out.
+- Prefer one clear `SUB-QUERY` over a mixed paragraph.
+- Use markdown by default.
+- If you use `structured-design` items, keep them subordinate to the
+  explanation structure.
+- Do not let `ENTITY`, `MODULE`, `PROCESS`, or `RULE` displace the main
+  `QUERY` / `SUB-QUERY` / `ANSWER` flow.
+
+## Formatting
+
+Write each item like this:
+
+```markdown
+**QUERY: Q-1**
+- **SYNOPSIS:** Main question.
+
+**SUB-QUERY: SQ-1**
+- **SYNOPSIS:** Smaller question.
+
+**FACT: F-1**
+- **SYNOPSIS:** Supported statement.
+- **FILE:** [runner.py](/path/to/runner.py:10)
+
+**HYPOTHESIS: H-1**
+- **SYNOPSIS:** Plausible but unproven explanation.
+
+**UNKNOWN: U-1**
+- **SYNOPSIS:** Missing information.
+
+**ANSWER: A-1**
+- **SYNOPSIS:** Best current answer.
+```
+
+## IDs
+
+- Use stable IDs when review or cross-reference matters.
+- Good defaults:
+  - `Q-1`
+  - `SQ-1`
+  - `F-1`
+  - `H-1`
+  - `U-1`
+  - `A-1`
+
+## Good Output Shape
+
+A good explanation should:
+
+- start from a clear top-level query
+- use sub-queries only when they help
+- separate evidence from conjecture
+- make unresolved gaps explicit
+- end with a direct answer
+- use `structured-design` items only where system structure needs to be named
+  explicitly
+
+## Do Not
+
+- Do not use `CLAUSE` for sub-questions.
+- Do not hide uncertainty inside a `FACT`.
+- Do not collapse the whole explanation into prose paragraphs.
+- Do not add conclusions that are not supported by the listed facts.
+- Do not turn the whole explanation into a design doc unless the user asked
+  for design rather than explanation.
+----- END INLINED CORE SKILL: structured-explanation -----
+
+----- BEGIN INLINED CORE SKILL: manage-backlog -----
+# Manage Backlog
+
+## Purpose
+
+Manage backlog work as a visible queue with explicit lifecycle state. The active folders are the human-facing source of work, archive folders are the durable outcome record, and hidden state is only supporting evidence for claims, recovery, logs, and results.
+
+## Folder Model
+
+Use these folders when present:
+
+- docs/defect-backlog for active defects.
+- docs/feature-backlog for active features.
+- docs/analysis-backlog for active analyses.
+- docs/investigation-backlog for active investigations.
+- docs/holding for visible work that should not be dispatched.
+- docs/completed-backlog grouped by item type for delivered work.
+- docs/failed-backlog grouped by item type for failed, incomplete, abandoned, or blocked terminal work.
+
+Active backlog folders should contain only work that can still be dispatched or that is blocked by an explicit dependency. Completed and failed archives should not be scanned as fresh work.
+
+## Series Folders
+
+When an active backlog folder contains a subfolder with an index.md file, treat it as one related item series. The index is the goal-level coordination artifact and should not be claimed or dispatched as a runnable item unless it explicitly says it is the work item.
+
+Use the index to understand purpose, non-goals, data or design anchors, implementation order, and links to child items. Treat the child markdown files in the same subfolder as the runnable backlog items.
+
+When managing a series:
+
+- Keep the index current as the map of the series.
+- Prefer child-item status and archive location for execution state.
+- Preserve links between index.md and child items.
+- Use dependencies between child item slugs when order matters.
+- Do not mark the whole series complete until every required child item is completed or intentionally abandoned.
+- Derive the series status from child evidence: active while required children remain runnable or running, blocked when every remaining required child is blocked, failed when a required terminal failure prevents the goal, and completed only when all required children have terminal successful or intentionally abandoned outcomes.
+- Archive child items according to their own outcomes. Move or mark the index according to project convention only when the series has reached a terminal state.
+
+## State Principles
+
+Use explicit states and do not infer success from silence:
+
+- queued means active and eligible for dispatch.
+- claimed means a specific agent or run owns the item.
+- running means work is in progress.
+- blocked means dependencies or prerequisites are unmet.
+- target merge pending means implementation evidence exists but delivery is not complete.
+- completed means delivery evidence exists and the item has been archived as completed.
+- failed means work ended in a non-success terminal state and has been archived as failed.
+- abandoned means the item is intentionally no longer being pursued.
+
+Missing result evidence, missing logs, a stopped process, or absence of errors is never completion.
+
+## Inventory Workflow
+
+When asked about backlog status:
+
+- Scan active folders, holding, completed archives, failed archives, and any runner state folders that exist.
+- Classify each markdown item by folder, slug, status header if present, dependencies, series membership, and archive location.
+- Treat holding items as visible but not dispatchable.
+- Treat series index files as coordination artifacts unless project guidance makes them runnable.
+- Treat completed and failed archive location as durable outcome evidence.
+- Report invalid or unreadable items instead of silently skipping them.
+- Separate backlog status from unrelated worktree or workspace status.
+
+If a repository keeps closed items in active folders, use explicit status headers as the open or closed signal. If the repository moves closed items to archives, use archive location as the outcome signal.
+
+## Dispatch Workflow
+
+When choosing work:
+
+- Reconcile existing claims and interrupted work before claiming new items.
+- Prefer unfinished claimed work over new work.
+- Apply folder priority from project guidance. If none exists, prefer defects, then features, then investigations, then analyses.
+- Do not dispatch holding items.
+- Do not dispatch items with unmet dependencies.
+- Do not create duplicate claims for the same item.
+- Keep each claimed item isolated so concurrent work does not share mutable workspace state.
+
+Claims should be durable and exclusive. A claimed item remains readable in its active folder; claiming should not move the item.
+
+## Completion Workflow
+
+Only mark an item completed when all of these are true:
+
+- The requested change, answer, or investigation result exists.
+- Required verification was run or a clear blocked reason is recorded.
+- Delivery evidence is recorded in the item, state, result, or related work artifact.
+- Any shared finalization step has completed without conflict.
+- The item is moved or marked according to the repository's completed outcome convention.
+
+If the work failed, crashed, was incomplete, hit an unresolved conflict, or lacks result evidence, do not mark it completed. Move or mark it according to the failed outcome convention and preserve enough evidence for repair.
+
+## Archive Rules
+
+Archive movement is explicit and serialized:
+
+- Move successfully delivered defects under docs/completed-backlog/defects.
+- Move successfully delivered features under docs/completed-backlog/features.
+- Move completed analyses under docs/completed-backlog/analyses.
+- Move completed investigations under docs/completed-backlog/investigations.
+- Move failed or incomplete items under the matching docs/failed-backlog type folder.
+- Preserve claims, logs, result summaries, and failure reasons until the user no longer needs recovery evidence.
+
+When the backlog and implementation live in the same repository, avoid mixing unrelated changes into archive commits or status updates. Archive movement should correspond to the item outcome being recorded.
+
+## Recovery Workflow
+
+When resuming interrupted backlog work:
+
+- Read visible active items first.
+- Reconcile claims, running state, result records, logs, and archive locations.
+- Detect stale running state and classify it as resumable, blocked, crashed, or failed based on evidence.
+- Resume recoverable claimed items before claiming new work.
+- Keep failed delivery evidence available for diagnosis.
+- Ask for human direction only when the next safe action cannot be inferred from state and evidence.
+
+## Reporting
+
+Report backlog state in operator terms:
+
+- Counts by queued, claimed, running, blocked, completed, failed, holding, and invalid.
+- The next runnable items and why they are runnable.
+- Blocked items and the dependency or prerequisite that blocks them.
+- Recent completed or failed outcomes with evidence.
+- Any stale claims, invalid filenames, unreadable files, or missing result evidence.
+
+Keep the report grounded in current files and state, not prior conversation memory.
+----- END INLINED CORE SKILL: manage-backlog -----
+
+----- BEGIN INLINED CORE SKILL: agent-claim -----
+# Agent Claim
+
+Use this skill before editing files or taking exclusive runtime resources in a repository where more than one agent may be active.
+
+## Goal
+
+Claims make shared work explicit and keep completed work durable. The first independent writer may use a clean primary worktree. Later independent writers use isolated worktrees when their scopes do not overlap. Overlapping work waits. Dirty unclaimed state enters recovery rather than accepting another anonymous edit.
+
+Start with the narrow scope supported by current evidence. Extend the same claim atomically when another file or resource becomes necessary. Do not speculate about entire directories merely because future scope is unknown.
+
+## Operation Selection
+
+Use the mcp-agent-ops claim tools when the host exposes them. They are the preferred deterministic interface because they accept structured arguments and return a structured exit_code plus result object without shell construction or JSON parsing.
+
+Use the tool that matches the intended operation:
+
+| Operation | MCP tool | Fallback subcommand |
+|---|---|---|
+| Read live ownership | claim_status | status |
+| Acquire ownership | claim_acquire | acquire |
+| Extend scope | claim_extend | extend |
+| Refresh heartbeat | claim_heartbeat | heartbeat |
+| Release ownership | claim_release | release |
+| Maintain the journal | claim_maintain_journal | maintain-journal |
+| Report contention | claim_report | report |
+
+Always inspect result.outcome. PRIMARY, ISOLATE, RECOVER, WAIT, ISOLATE_REQUIRED, RECOVERY_REQUIRED, and structured rejections are valid coordination results. A valid result is not an MCP failure and must not be retried through a fallback command.
+
+Use a fallback only when the tool is absent or the MCP server cannot initialize or connect before request dispatch. Never use a fallback after a path, root, authorization, input-policy, or other structured rejection; those results enforce the active boundary. Prefer the installed mcp-agent-ops-claims command when available. Otherwise use the claim.py script inside the loaded agent-claim package. Resolve the script path once and reuse it for every fallback command in the task. Do not assume the target repository contains skills/agent-claim.
+
+When a transport interruption makes a mutating claim call ambiguous after dispatch, do not repeat the mutation or switch transports immediately. Reconcile with claim_status first. Reconnect and use the MCP status operation when possible; if the server remains unavailable, use only the read-only status fallback. Continue, retry, or release only from the observed registry state so a successful but unacknowledged acquisition cannot become a duplicate claim.
+
+## Fallback Command Path
+
+The distributed script fallback can be resolved with:
+
+```bash
+CLAIM_SCRIPT=/absolute/path/to/the-loaded-agent-claim-skill/scripts/claim.py
+```
+
+Inside the dev-methodology source checkout, the bundle-owned path is:
+
+```bash
+CLAIM_SCRIPT=skills/agent-claim/scripts/claim.py
+```
+
+For a normal Codex user-level installation, use:
+
+```bash
+CLAIM_SCRIPT="${CODEX_HOME:-$HOME/.codex}/skills/agent-claim/scripts/claim.py"
+```
+
+That default resolves to:
+
+```text
+~/.codex/skills/agent-claim/scripts/claim.py
+```
+
+Other runtimes use the scripts/claim.py file beside the loaded skill’s SKILL.md. The workflow examples below show the portable script fallback. The installed mcp-agent-ops-claims command accepts the same arguments without python3 and the script path. Use the help option only to diagnose an installed-version mismatch or an unsupported option, not to locate the command or discover the standard workflow.
+
+## Repository-Global State
+
+Use the Git common directory returned by:
+
+```bash
+git rev-parse --git-common-dir
+```
+
+The live agent-claims.json registry in that directory is the coordination authority. Linked worktrees therefore see the same claims. Use a configured repository-global path supplied by applicable project instructions when Git worktrees are not the coordination boundary. The agent-claim-events directory beside it contains diagnostic history:
+
+- hot contains today and yesterday as uncompressed UTC daily JSON Lines files under the default policy.
+- archive contains immutable compressed daily JSON Lines history.
+- journal contains compact daily summaries.
+
+External agent transcripts are not claim history. The journal contains coordination identifiers, normalized scopes, modes, outcomes, conflicts, worktree identifiers, and relevant commit identifiers. It does not contain prompts, reasoning, responses, arbitrary tool output, or task descriptions.
+
+## Claim Scope
+
+Use one scope form for each intended ownership kind:
+
+- file names one exact intended file. A future file that does not exist yet is valid.
+- tree names one directory subtree and overlaps its descendants.
+- all-files names the complete repository file tree.
+- resource names one exclusive repository-global runtime or integration resource.
+
+Tree and all-files scope require a short coordination-only scope reason. Do not put prompts, sensitive company information, or personal information in the reason.
+
+The command rejects repository root, wildcards, and existing directories passed through file. It also rejects an existing file passed through tree. A temporary compat-file-directories switch converts existing directories passed through file into warned tree scopes, but still requires a scope reason. New callers use the explicit forms.
+
+## When To Claim
+
+Claim before:
+
+- Editing, moving, deleting, formatting, staging, committing, or generating files.
+- Running commands that monopolize shared state such as production builds, browser-test servers, dev server ports, browser profiles, database resets, seed data, generated output refreshes, shared installations, or long-running test servers.
+
+Read-only inspection does not need a writer claim unless it mutates caches, generated files, databases, browser state, or server state.
+
+Use the smallest useful file and resource scope. A parent agent keeps the root task identity. Writing subagents use the same root task identity and their parent claim id, but still receive distinct ownership.
+
+## Stable Exit Codes
+
+The structured JSON outcome is the authoritative coordination result. Stable process exit codes support shell control flow:
+
+- 0 means the command succeeded. Acquisition success returns PRIMARY, ISOLATE, or RECOVER.
+- 1 means a general rejection or failure such as INVALID_SCOPE, CLAIM_NOT_FOUND, RELEASE_REJECTED, or worktree creation failure.
+- 3 means WAIT. Requested scope overlaps another active claim.
+- 4 means ISOLATE_REQUIRED. Another non-overlapping claim exists, but branch and worktree arguments were not supplied.
+- 5 means RECOVERY_REQUIRED. The unclaimed primary worktree is dirty and explicit recovery authorization was not supplied.
+
+Several successful and error outcomes share exit codes 0 and 1, so always inspect the JSON outcome. A malformed command line may be rejected by the Python argument parser with exit code 2 before claim coordination runs; that is not a claim outcome.
+
+## Acquisition Workflow
+
+The acquisition command uses an exclusive registry lock. Its result includes the claim mode, branch, and target worktree.
+
+### Primary Acquisition
+
+Request only the narrow scope currently supported by evidence. When no other claim exists and the primary worktree is clean, this returns PRIMARY with exit code 0:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . acquire \
+  --claim-id task-123 \
+  --agent agent-name \
+  --task claim-task-123 \
+  --root-task-id task-123 \
+  --file src/feature.py
+```
+
+Use an explicit broad form only when the operation truly owns that scope:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . acquire \
+  --claim-id migration-123 \
+  --agent agent-name \
+  --task migration-123 \
+  --root-task-id migration-123 \
+  --tree generated \
+  --scope-reason "regenerate the owned output tree"
+```
+
+For a true repository-wide migration, replace the tree argument with:
+
+```bash
+--all-files --scope-reason "repository-wide migration"
+```
+
+### Isolation Acquisition
+
+When another non-overlapping claim is active, the primary command without isolation arguments returns ISOLATE_REQUIRED with exit code 4 and does not create a claim. Retry the same claim identifier with a unique branch and worktree:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . acquire \
+  --claim-id task-123 \
+  --agent agent-name \
+  --task claim-task-123 \
+  --root-task-id task-123 \
+  --file src/feature.py \
+  --branch codex/task-123 \
+  --worktree-path ../project-task-123 \
+  --base main
+```
+
+This returns ISOLATE with exit code 0. The base option selects the Git commit or ref from which the isolated branch is created; it defaults to HEAD. Do not supply branch and worktree arguments to bypass overlap: conflicting scope still returns WAIT.
+
+### WAIT
+
+Given an active claim that already owns src/feature.py, this overlapping request returns WAIT with exit code 3, conflicting claim identifiers, and exact overlap pairs:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . acquire \
+  --claim-id blocked-task-456 \
+  --agent agent-name \
+  --task blocked-task-456 \
+  --root-task-id blocked-task-456 \
+  --file src/feature.py
+```
+
+Do not edit, create a competing worktree, or add isolation arguments. Wait, coordinate a handoff, or choose genuinely non-overlapping scope.
+
+### Recovery Acquisition
+
+When the unclaimed primary worktree is dirty, a normal acquisition returns RECOVERY_REQUIRED with exit code 5. After explicit authorization to preserve the complete dirty state, acquire recovery ownership with the allow-recovery option:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . acquire \
+  --claim-id recovery-123 \
+  --agent recovery-owner \
+  --task recovery-123 \
+  --root-task-id recovery-123 \
+  --all-files \
+  --scope-reason "recover anonymous dirty state" \
+  --allow-recovery
+```
+
+This returns RECOVER with exit code 0. Create the required checkpoint commit before cleanup or release.
+
+## Atomic Scope Extension
+
+Stop before touching newly discovered scope. Extend the existing claim while its original ownership remains active:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . extend \
+  --claim-id task-123 \
+  --file tests/test_feature.py \
+  --resource generated:codegen
+```
+
+Extension checks only net-new scope against every other active claim under the registry lock. All requested additions succeed together or WAIT leaves the live claim unchanged. Repeating scope the claim already owns succeeds idempotently and the structured result separates added scope from already-owned scope. Extension preserves the original worktree, branch, mode, baseline commit, and claim timestamp.
+
+Scope contraction is not supported. Relinquishing a path while it still has uncommitted changes requires a separate safety design.
+
+## Heartbeat
+
+Keep the heartbeat current during long work:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . heartbeat --claim-id task-123
+```
+
+## Runtime And Integration Resources
+
+Resource names are stable and descriptive. Common patterns include:
+
+```text
+port:3000
+build:production
+test:e2e
+browser-test:primary
+database:seed
+generated:codegen
+shared-install:skills
+merge:integration:main
+```
+
+Use repository-specific names when applicable. Separate linked worktrees have independent indexes, branches, and commits. An isolated writer may commit to its unique branch without a repository-global commit resource.
+
+The shared Git operation is integration into a target branch. Acquire a target-specific resource such as merge:integration:main only for the merge, cherry-pick, rebase, or equivalent update of that target, then release it promptly. Integrations into different target branches do not conflict unless another declared shared resource overlaps. Continue using dedicated resources for shared hooks, generators, databases, ports, installations, and output locations that cross worktree boundaries.
+
+## Overlap And Isolation
+
+- Any active writer claim causes a later non-overlapping independent writer to use an isolated branch and worktree.
+- Exact files overlap only the same exact file.
+- Trees overlap descendants and intersecting ancestor or descendant trees.
+- All-files overlaps every exact file and tree.
+- Identical exclusive resources overlap even when file scope differs.
+- Overlap returns WAIT. Worktree isolation does not make conflicting changes logically safe.
+- Never stage, commit, revert, or clean another claim owner’s files unless acting as the explicit integration owner.
+
+## Event Journal Safety
+
+Acquire, extension, heartbeat, recovery, wait, and release outcomes append one versioned event under the same Git common directory. Event identifiers are created at command execution, so replaying or forking an external task transcript cannot duplicate an event.
+
+The live registry remains authoritative. For a registry-changing operation, the command writes the registry first and then appends one fsynced JSON line while still holding the registry lock. A journal failure returns a structured journal_write_failed warning without reversing or weakening the live coordination result. A process crash after the registry write and before the append may therefore create an observable audit gap, but it cannot grant unsafe ownership. Reporting surfaces incomplete lifecycles and malformed or duplicate journal evidence as coverage gaps.
+
+Journal maintenance uses a separate narrow lock and processes only completed UTC days. Claim acquisition remains available while old files are compressed.
+
+## Journal Maintenance
+
+Keep today and the preceding UTC calendar day hot, and archive every older complete day:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . maintain-journal --hot-days 2
+```
+
+Maintenance writes a temporary compressed file, validates that decompression exactly matches the hot source, atomically renames the archive, writes a deterministic daily summary, and only then removes the hot file. Reruns are idempotent. An interruption before validation leaves the hot source intact. Compressed archives remain indefinitely by default; deletion requires a separate explicit policy.
+
+## Contention Report
+
+Use only the event journal and live registry for claim diagnostics:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . report --since 2d
+python3 "$CLAIM_SCRIPT" --repo . report --since 12h --format text
+```
+
+The versioned JSON report counts primary, isolated, and recovery acquisitions; waits and rejected transitions; correlated wait episodes; claim duration statistics; exact-file, tree, and resource hotspots; broad-scope reasons; open and incomplete claims; stale heartbeat evidence; integration-resource use; and journal coverage gaps. Repeated WAIT polling by the same claim and action becomes one wait episode while preserving the raw attempt count. Report is read-only and never parses agent harness transcripts.
+
+## Stale Claims
+
+A claim may be stale when its heartbeat is old and no matching task, process, or worktree activity exists. Do not remove it merely because it is inconvenient.
+
+Before removing a stale claim:
+
+1. Check task status, logs, running processes, worktrees, Git status, and recent commits.
+2. Treat a live process or dirty claimed worktree as active or interrupted work needing handoff.
+3. Preserve recovery evidence.
+4. Remove only the confirmed stale entry.
+
+If ownership is unclear, leave the claim and report the exact blocker.
+
+## Recovery
+
+Recovery is the one-time bridge from anonymous dirty state to normal coordination.
+
+1. Stop new mutation and obtain handoffs from active writers.
+2. Assign one recovery owner for the complete dirty scope.
+3. Run the Recovery Acquisition command with the allow-recovery option.
+4. Create a checkpoint commit on a recovery branch before attempting cleanup or historical separation.
+5. Validate and stabilize the committed recovery state.
+6. Release only after the recovery worktree is clean and its commit differs from the recorded baseline.
+
+Do not require perfect historical commit reconstruction before preserving accumulated work. Preserve first, then stabilize.
+
+## Completion And Release
+
+A modifying task is not complete merely because implementation or tests are complete. A clean finish includes:
+
+- Required verification passed or the blocker is documented.
+- Task changes are committed, or the task explicitly produced no changes.
+- The claimed worktree is clean.
+- Long-running resources are stopped or explicitly handed off.
+- The claim is released with the bundled command.
+- The final response reports the commit hash, verification, and final status.
+
+### Committed Release
+
+After the claimed worktree is clean and contains the verified task commit, release normally:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . release --claim-id task-123
+```
+
+### No-Change Release
+
+When the task legitimately produced no repository change, first confirm the claimed worktree is clean, then declare that result explicitly:
+
+```bash
+python3 "$CLAIM_SCRIPT" --repo . release \
+  --claim-id task-123 \
+  --no-change
+```
+
+The no-change option is not permission to discard or ignore dirty files. Release rejects every dirty worktree. Without no-change, release also rejects a claim whose current commit still equals its recorded baseline. If a safe commit or truthful no-change result cannot be produced, the work remains incomplete and the claim remains active or is handed off explicitly.
+----- END INLINED CORE SKILL: agent-claim -----

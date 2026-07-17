@@ -8,6 +8,7 @@ import hashlib
 import importlib.util
 import json
 import re
+import subprocess
 import sys
 import tempfile
 import tomllib
@@ -492,7 +493,7 @@ GENERIC_AGENT_DEFINITIONS_REQUIRED_PHRASES = (
     "design/generated/role-definitions.js",
     "Harness-specific skill source",
     "adapters/&lt;harness-name&gt;/skills/&lt;skill-name&gt;/SKILL.md",
-    "Mutation-capable definitions enable <code>codex-harness-directives</code>",
+    "Mutation-capable definitions inline <code>codex-harness-directives</code> by default",
 )
 AGENTIC_CONFIGURATION_REQUIRED_PHRASES = (
     "Agentic Configuration",
@@ -549,7 +550,7 @@ AGENTIC_CONFIGURATION_REQUIRED_PHRASES = (
     "&lt;folder-path&gt;/AGENTS.md</code> with a colocated <code>&lt;folder-path&gt;/CLAUDE.md",
     "same portable folder guidance as other harnesses",
     "Adapter-owned skill definitions use the same <code>SKILL.md</code> format",
-    "Codex-generated agents that may mutate the repository enable it",
+    "Codex-generated agents that may mutate the repository inline its instructions by default",
     "Read-only Codex agents and non-Codex adapters do not receive it.",
     "The Codex MCP skill root must match the selected installer destination.",
     "same thirteen MCP operations",
@@ -1987,7 +1988,11 @@ class BundleContentTests(unittest.TestCase):
         generation_manifest = json.loads(
             AGENT_GENERATION_MANIFEST_PATH.read_text(encoding="utf-8")
         )
-        self.assertEqual(2, generation_manifest["version"])
+        self.assertEqual(3, generation_manifest["version"])
+        self.assertEqual(
+            {"inlineCoreSkills": True},
+            generation_manifest["generationOptions"],
+        )
         self.assertEqual(len(roles), generation_manifest["canonicalRoleCount"])
         for adapter_name, extension in (
             ("codex", ".toml"),
@@ -2133,10 +2138,12 @@ class BundleContentTests(unittest.TestCase):
                     build_skill_docs.codex_role_instruction_text(role),
                     tomllib.loads(codex_agent_text)["developer_instructions"],
                 )
-                self.assertIn(
+                self.assertNotIn(
                     "Before acting, load these definition-owned skills completely; they govern the work:",
                     codex_agent_text,
                 )
+                for skill in build_skill_docs.fixed_role_skills(role):
+                    self.assertIn(f"BEGIN INLINED CORE SKILL: {skill}", codex_agent_text)
                 codex_payload = tomllib.loads(codex_agent_text)
                 configured_skills = codex_payload.get("skills", {}).get("config", [])
                 if role.repository_mutation == "never":
@@ -2146,12 +2153,15 @@ class BundleContentTests(unittest.TestCase):
                         [item.get("name") for item in configured_skills],
                     )
                 else:
-                    self.assertIn(CODEX_HARNESS_SKILL_NAME, codex_agent_text)
                     self.assertIn(
-                        {"name": CODEX_HARNESS_SKILL_NAME, "enabled": True},
-                        configured_skills,
+                        f"BEGIN INLINED CORE SKILL: {CODEX_HARNESS_SKILL_NAME}",
+                        codex_agent_text,
                     )
-                if role.repository_mutation == "never" and "skillAvailability" not in role.optional_fields:
+                    self.assertNotIn(
+                        CODEX_HARNESS_SKILL_NAME,
+                        [item.get("name") for item in configured_skills],
+                    )
+                if "skillAvailability" not in role.optional_fields:
                     self.assertNotIn("[[skills.config]]", codex_agent_text)
                 self.assertTrue(
                     (GENERATED_ADAPTERS_ROOT / "claude" / "agents" / f"{role.filename}.md").is_file()
@@ -2163,13 +2173,11 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn("Skill justifications:", claude_agent_text)
                 self.assertIn("Output purposes:", claude_agent_text)
                 claude_frontmatter = yaml.safe_load(claude_agent_text.split("---", 2)[1])
-                self.assertEqual(
-                    list(build_skill_docs.fixed_role_skills(role)),
-                    claude_frontmatter["skills"],
-                )
-                self.assertIn("These definition-owned skills are preloaded and govern the work", claude_agent_text)
+                self.assertNotIn("skills", claude_frontmatter)
+                self.assertNotIn("These definition-owned skills are preloaded and govern the work", claude_agent_text)
+                for skill in build_skill_docs.fixed_role_skills(role):
+                    self.assertIn(f"BEGIN INLINED CORE SKILL: {skill}", claude_agent_text)
                 for skill, condition in role.skill_conditions.items():
-                    self.assertNotIn(skill, claude_frontmatter["skills"])
                     self.assertIn(f"Use the {skill} skill {condition}.", claude_agent_text)
 
                 gemini_agent_path = (
@@ -2183,7 +2191,9 @@ class BundleContentTests(unittest.TestCase):
                 self.assertEqual(role.description, gemini_frontmatter["description"])
                 self.assertEqual("local", gemini_frontmatter["kind"])
                 self.assertNotIn("skills", gemini_frontmatter)
-                self.assertIn("Before acting, load these definition-owned skills completely", gemini_agent_text)
+                self.assertNotIn("Before acting, load these definition-owned skills completely", gemini_agent_text)
+                for skill in build_skill_docs.fixed_role_skills(role):
+                    self.assertIn(f"BEGIN INLINED CORE SKILL: {skill}", gemini_agent_text)
                 for skill, condition in role.skill_conditions.items():
                     self.assertIn(f"Use the {skill} skill {condition}.", gemini_agent_text)
 
@@ -2196,14 +2206,12 @@ class BundleContentTests(unittest.TestCase):
                 junie_frontmatter = yaml.safe_load(junie_agent_text.split("---", 2)[1])
                 self.assertEqual(role.name, junie_frontmatter["name"])
                 self.assertEqual(role.description, junie_frontmatter["description"])
-                self.assertEqual(
-                    list(build_skill_docs.fixed_role_skills(role)),
-                    junie_frontmatter["skills"],
-                )
+                self.assertNotIn("skills", junie_frontmatter)
                 self.assertIn("reasoningLevel", junie_frontmatter)
-                self.assertIn("These definition-owned skills are preloaded and govern the work", junie_agent_text)
+                self.assertNotIn("These definition-owned skills are preloaded and govern the work", junie_agent_text)
+                for skill in build_skill_docs.fixed_role_skills(role):
+                    self.assertIn(f"BEGIN INLINED CORE SKILL: {skill}", junie_agent_text)
                 for skill, condition in role.skill_conditions.items():
-                    self.assertNotIn(skill, junie_frontmatter["skills"])
                     self.assertIn(f"Use the {skill} skill {condition}.", junie_agent_text)
 
         non_setup_roles = [
@@ -2213,6 +2221,144 @@ class BundleContentTests(unittest.TestCase):
         self.assertTrue(all("detect-technology-skills" not in role.skills for role in non_setup_roles))
         setup_role = next(role for role in roles if role.name == "project-configurator")
         self.assertIn("detect-technology-skills", setup_role.skills)
+
+    def test_core_skills_inline_by_default_and_can_use_native_loading(self) -> None:
+        build_skill_docs = load_build_skill_docs_module()
+        skill_payload = build_skill_docs.build_payload()
+        role = next(
+            role
+            for role in build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
+            if role.name == "dev-coder"
+        )
+        profile_ids = set(build_skill_docs.load_model_profiles())
+
+        claude_profiles = build_skill_docs.load_adapter_model_profiles("claude", profile_ids)
+        inlined = build_skill_docs.render_claude_agent(role, claude_profiles)
+        inlined_frontmatter = yaml.safe_load(inlined.split("---", 2)[1])
+        self.assertNotIn("skills", inlined_frontmatter)
+        self.assertNotIn(
+            "Before acting, load these definition-owned skills completely",
+            inlined,
+        )
+        for skill in build_skill_docs.fixed_role_skills(role):
+            self.assertIn(f"BEGIN INLINED CORE SKILL: {skill}", inlined)
+        for skill, condition in role.skill_conditions.items():
+            self.assertIn(f"Use the {skill} skill {condition}.", inlined)
+            self.assertNotIn(f"BEGIN INLINED CORE SKILL: {skill}", inlined)
+
+        dynamically_loaded = build_skill_docs.render_claude_agent(
+            role,
+            claude_profiles,
+            inline_core_skills=False,
+        )
+        dynamically_loaded_frontmatter = yaml.safe_load(
+            dynamically_loaded.split("---", 2)[1]
+        )
+        self.assertEqual(
+            list(build_skill_docs.fixed_role_skills(role)),
+            dynamically_loaded_frontmatter["skills"],
+        )
+        self.assertNotIn("BEGIN INLINED CORE SKILL", dynamically_loaded)
+        self.assertIn(
+            "These definition-owned skills are preloaded and govern the work",
+            dynamically_loaded,
+        )
+
+        codex_profiles = build_skill_docs.load_adapter_model_profiles("codex", profile_ids)
+        codex_inlined = tomllib.loads(
+            build_skill_docs.render_codex_agent(role, codex_profiles)
+        )
+        self.assertNotIn(
+            CODEX_HARNESS_SKILL_NAME,
+            [
+                item.get("name")
+                for item in codex_inlined.get("skills", {}).get("config", [])
+            ],
+        )
+        self.assertIn(
+            f"BEGIN INLINED CORE SKILL: {CODEX_HARNESS_SKILL_NAME}",
+            codex_inlined["developer_instructions"],
+        )
+
+        codex_dynamic = tomllib.loads(
+            build_skill_docs.render_codex_agent(
+                role,
+                codex_profiles,
+                inline_core_skills=False,
+            )
+        )
+        self.assertIn(
+            {"name": CODEX_HARNESS_SKILL_NAME, "enabled": True},
+            codex_dynamic["skills"]["config"],
+        )
+        self.assertNotIn("BEGIN INLINED CORE SKILL", codex_dynamic["developer_instructions"])
+
+        gemini_profiles = build_skill_docs.load_adapter_model_profiles("gemini", profile_ids)
+        gemini_dynamic = build_skill_docs.render_gemini_agent(
+            role,
+            gemini_profiles,
+            inline_core_skills=False,
+        )
+        self.assertIn(
+            "Before acting, load these definition-owned skills completely",
+            gemini_dynamic,
+        )
+        self.assertNotIn("BEGIN INLINED CORE SKILL", gemini_dynamic)
+
+        junie_profiles = build_skill_docs.load_adapter_model_profiles("junie", profile_ids)
+        junie_inlined = build_skill_docs.render_junie_agent(role, junie_profiles)
+        self.assertNotIn("skills", yaml.safe_load(junie_inlined.split("---", 2)[1]))
+        junie_dynamic = build_skill_docs.render_junie_agent(
+            role,
+            junie_profiles,
+            inline_core_skills=False,
+        )
+        self.assertEqual(
+            list(build_skill_docs.fixed_role_skills(role)),
+            yaml.safe_load(junie_dynamic.split("---", 2)[1])["skills"],
+        )
+        self.assertNotIn("BEGIN INLINED CORE SKILL", junie_dynamic)
+
+    def test_adapter_generator_cli_defaults_to_inlined_core_skills(self) -> None:
+        current = subprocess.run(
+            [sys.executable, str(BUILD_SKILL_DOCS_PATH), "--check"],
+            cwd=REPOSITORY_ROOT,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(0, current.returncode, current.stdout + current.stderr)
+
+        dynamic = subprocess.run(
+            [
+                sys.executable,
+                str(BUILD_SKILL_DOCS_PATH),
+                "--check",
+                "--inline-core-skills",
+                "false",
+            ],
+            cwd=REPOSITORY_ROOT,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(1, dynamic.returncode)
+        self.assertIn("stale", dynamic.stdout)
+
+        invalid = subprocess.run(
+            [
+                sys.executable,
+                str(BUILD_SKILL_DOCS_PATH),
+                "--inline-core-skills",
+                "yes",
+            ],
+            cwd=REPOSITORY_ROOT,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(2, invalid.returncode)
+        self.assertIn("expected true or false", invalid.stderr)
 
     def test_role_instructions_support_concise_and_structured_forms(self) -> None:
         build_skill_docs = load_build_skill_docs_module()
@@ -2428,7 +2574,12 @@ class BundleContentTests(unittest.TestCase):
                 if role.repository_mutation == "never":
                     self.assertNotIn(CODEX_HARNESS_SKILL_NAME, instructions)
                 else:
-                    self.assertEqual(1, instructions.count(CODEX_HARNESS_SKILL_NAME))
+                    self.assertEqual(
+                        1,
+                        instructions.count(
+                            f"BEGIN INLINED CORE SKILL: {CODEX_HARNESS_SKILL_NAME}"
+                        ),
+                    )
 
         for adapter_name, extension in (("claude", ".md"), ("gemini", ".md"), ("junie", ".md")):
             for path in (GENERATED_ADAPTERS_ROOT / adapter_name / "agents").glob(f"*{extension}"):
@@ -3319,7 +3470,6 @@ class BundleContentTests(unittest.TestCase):
         parsed = tomllib.loads(rendered)
         self.assertEqual(
             [
-                {"name": CODEX_HARNESS_SKILL_NAME, "enabled": True},
                 {"name": "python", "enabled": False},
                 {"path": "/opt/skills/fastapi", "enabled": True},
             ],

@@ -758,7 +758,7 @@
   <section class="section" aria-labelledby="technology-boundary-title">
     <h2 id="technology-boundary-title">Why Technology-Specific Skills Are Loaded Separately</h2>
     <p class="lede">Required versus optional is not the architectural split: both are valid forms of technology-agnostic skill references inside an agent definition. The actual boundary is technology dependence. No finite agent definition can list every language, framework, library, runtime, database, and tool that may exist now or be added later. Listing technology skills in generic agents would also require every relevant agent definition to be changed whenever the technology catalog grows.</p>
-    <p>The toolkit therefore uses two independent loading mechanisms. Agent definitions provide their own required and optional technology-agnostic skills. Project setup separately considers only technology and domain skills that actually exist in the available skill collection, detects which ones match each project or folder scope, and binds those skills through PROJECT.yaml and AGENTS.md. New technology skills can be added without editing every generic agent definition.</p>
+    <p>The toolkit therefore uses two independent skill-selection mechanisms. Agent definitions provide their own required and optional technology-agnostic skills. Generated adapters statically append the required core skill instructions by default, while optional request-specific skills remain dynamically loaded when their conditions apply. Project setup separately considers only technology and domain skills that actually exist in the available skill collection, detects which ones match each project or folder scope, and statically embeds those skills under the applicable AGENTS.md route by default. New technology skills can be added without editing every generic agent definition.</p>
     <div class="matrix">
       <table>
         <thead>
@@ -773,13 +773,13 @@
           <tr>
             <td><span class="name">Agent-definition loading</span></td>
             <td>Required and optional technology-agnostic skills declared directly in the conceptual agent definition.</td>
-            <td>A required entry loads every time. An optional entry loads when its human-readable condition applies to the request and available evidence.</td>
+            <td>A required entry is statically inlined into generated agent instructions by default. An optional entry loads dynamically when its human-readable condition applies to the request and available evidence. The inline-core-skills false mode retains native core-skill loading.</td>
             <td>These skills describe stable responsibilities and methods that remain useful regardless of the project's technology stack.</td>
           </tr>
           <tr>
             <td><span class="name">Folder technology loading</span></td>
             <td>Available technology and domain skills with detection metadata, such as python, fastapi, the separate Java, Spring Boot, and Quarkus coding and design skills, or the focused JHipster skills.</td>
-            <td>Project Configurator detects matching repository evidence for each scope, records the intended loadout in PROJECT.yaml, and renders it as unconditional folder guidance in AGENTS.md.</td>
+            <td>Project Configurator detects matching repository evidence for each scope, records the intended loadout in PROJECT.yaml, and renders the complete skill instructions under the applicable AGENTS.md route by default. The inline-tech-skills false mode emits dynamic load-by-name guidance.</td>
             <td>The project and folder determine the applicable technologies, and the available technology catalog can grow independently of the generic agents.</td>
           </tr>
         </tbody>
@@ -828,7 +828,7 @@
       <article class="flow-step"><div class="tag-row"><span class="tag orchestrator">Actor: Project Configurator</span></div><strong>2. Match technology evidence</strong><p>Run setup-time detection for representative folders. Accept a technology skill only when one complete evidence rule matches, and retain missing requirements, conflicts, and explicit no-variant results.</p></article>
       <article class="flow-step"><div class="tag-row"><span class="tag orchestrator">Actor: Project Configurator</span></div><strong>3. Write the intermediate configuration</strong><p>Create or update the root PROJECT.yaml before generating operational guidance. This reviewable intent log records the selected agent definitions, folder skillsets, source evidence, routing decisions, and planned AGENTS.md locations.</p></article>
       <article class="flow-step"><div class="tag-row"><span class="tag reference">Actors: Maintainer and Project Configurator</span></div><strong>4. Review or correct the intent</strong><p>The maintainer can edit PROJECT.yaml to force a correction to the intended configuration. Project Configurator then reconciles that edit with repository evidence and bundle constraints before continuing.</p></article>
-      <article class="flow-step"><div class="tag-row"><span class="tag orchestrator">Actor: Project Configurator</span></div><strong>5. Render folder guidance</strong><p>Generate root or nested AGENTS.md files with unconditional folder skillsets. For Claude Code, create a thin colocated CLAUDE.md bridge beside each applicable AGENTS.md.</p></article>
+      <article class="flow-step"><div class="tag-row"><span class="tag orchestrator">Actor: Project Configurator</span></div><strong>5. Render folder guidance</strong><p>Generate root or nested AGENTS.md files with each detected skill statically embedded under its applicable folder route by default. Use dynamic load-by-name guidance only when inline-tech-skills is false. For Claude Code, create a thin colocated CLAUDE.md bridge beside each applicable AGENTS.md.</p></article>
       <article class="flow-step"><div class="tag-row"><span class="tag orchestrator">Actor: Project Configurator</span></div><strong>6. Verify the setup</strong><p>Confirm that PROJECT.yaml, folder guidance, bridges, referenced agent definitions, skills, paths, and validation commands agree and that every required runtime capability is available.</p></article>
     </div>
     <aside class="note">
@@ -926,7 +926,7 @@
         </table>
       </div>
 
-      <p>After reviewing the result, Project Configurator writes the intended skillsets and their evidence to PROJECT.yaml. It then renders unconditional folder skillsets into root or nested AGENTS.md files. Ordinary coding, review, diagnosis, and verification agents consume that established guidance and never run the detector during normal work. Project Configurator reruns detection only when project setup or a technology boundary changes.</p>
+      <p>After reviewing the result, Project Configurator writes the intended skillsets and their evidence to PROJECT.yaml. It then renders the complete detected skill instructions under their matching routes in root or nested AGENTS.md files by default. Ordinary coding, review, diagnosis, and verification agents consume that established guidance and never run the detector during normal work. Project Configurator reruns detection only when project setup or a technology boundary changes.</p>
     </div>
   </section>
 </main>

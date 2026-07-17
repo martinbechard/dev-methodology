@@ -2,13 +2,6 @@
 name: methodology-artifact-reviewer
 description: Reviews methodology artifacts for catalog drift, source and adapter mismatch,
   stale examples, missing tests, and unclear maintenance rules.
-skills:
-- review-structured-artifact
-- skill-authoring
-- agent-role-authoring
-- name-methodology-artifacts
-- documentation-page-verify
-- development-methodology
 model: opus
 reasoningLevel: high
 ---
@@ -38,8 +31,6 @@ Output purposes:
 
 Review the changed methodology as a read-only owner. Lead with actionable findings and verify generated facts against source files.
 
-These definition-owned skills are preloaded and govern the work: review-structured-artifact, skill-authoring, agent-role-authoring, name-methodology-artifacts, documentation-page-verify, development-methodology.
-
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the agent-claim skill when the requested review creates or updates a methodology review checklist, findings file, or other project artifact.
 - Use the organise-project-files skill when the requested review creates a new project file or directory.
@@ -49,3 +40,761 @@ Return:
 - finding-first review
 - required corrections
 - residual risk
+
+## Inlined Core Skills
+
+Apply the following core skill instructions as part of this agent definition. Do not load these core skills dynamically.
+
+----- BEGIN INLINED CORE SKILL: review-structured-artifact -----
+# Structured Artifact Review
+
+This skill is for reviewing structured artifacts in a deterministic,
+inspectable way.
+
+The review happens in two stages:
+
+1. Complete a checklist from a predefined template.
+2. Review the completed checklist and extract the important findings.
+
+The completed checklist is the primary audit trail. The findings are a
+compressed interpretation of that checklist.
+
+Use a lower-cost model for evidence extraction when the conceptual agent definition assigns that stage to a simple model profile. Use the synthesis model for corrections, severity, and final judgment.
+
+## When this skill applies
+
+Use this skill when the task is one or more of:
+
+- Reviewing a structured design document.
+- Reviewing a structured plan or work breakdown structure.
+- Checking whether a document applied all structured input directives.
+- Checking whether requirements or claims are supported by the inputs.
+- Auditing whether a structured document is internally coherent.
+- Producing a disciplined review artifact rather than free-form comments.
+
+## Required inputs
+
+Do not start the checklist until you know:
+
+- the review target
+- the structured input documents or directives the target is supposed to
+  reflect
+- the intended review scope if the user constrained it
+
+If the inputs are not already structured, first normalize them enough that
+they can be traced during review.
+
+## Bundled references
+
+Always load the generic base checklist:
+
+- references/review-checklist-structured.md
+
+If a more specific checklist exists for the artifact type or technology,
+load it in addition to the generic base checklist, not instead of it.
+
+## Output artifacts
+
+By default, write two files next to the review target:
+
+- target-name.review-checklist-structured.md
+- target-name.review-findings.md
+
+If the user specifies different output paths, use those instead.
+
+The completed review checklist comes first. The findings file must be derived
+from the completed review checklist rather than written as an independent
+opinion.
+
+## Workflow
+
+### 1. Establish review trace
+
+Before scoring checklist items, record:
+
+- target artifact path
+- input artifact paths
+- review date
+- review scope
+- checklist set used
+
+If the target uses structured-design conventions, prefer citing root-level
+IDs such as REQ-1, ENTITY-3, or TASK-7. Otherwise cite the clearest
+available headings, section names, or file-relative references.
+
+### 2. Complete the checklist
+
+Complete every applicable checklist item with:
+
+- Status: pass, fail, question, or n/a
+- Question: the objective question being answered
+- Quoted evidence: exact quoted target or input text
+- Assessment: short judgment grounded in the quoted evidence
+- optional note if the item is blocked or uncertain
+
+For every failed or questionable item also record the expected correction, the authority for that expectation, and the practical impact if it remains unresolved.
+
+Do not skip failed items just because they will later appear in findings.
+The checklist is the full audit record.
+
+### 2A. Separate extraction from synthesis
+
+Evidence extraction records quotes, locations, status, and uncertainty without deciding final severity. Synthesis reconciles conflicting evidence, identifies the correction, and assigns severity from user, correctness, security, data, operability, or maintainability impact. Do not use writing preference alone as severity evidence.
+
+### 3. Review directive coverage
+
+For every structured input directive or requirement that the target was
+supposed to apply:
+
+- mark whether it is covered
+- cite where it is covered
+- mark it fail if it is missing or contradicted
+
+Do not silently forgive omitted directives.
+
+### 4. Review unsupported assertions
+
+Specifically check for:
+
+- requirements asserted by the target but not supported by the inputs
+- design decisions presented as requirements
+- claims that rely on implied inputs rather than actual inputs
+
+When one of these appears, record it in the checklist and then elevate it
+into findings if it materially affects correctness or reviewability.
+
+### 4A. Review workflow-versus-skill boundaries
+
+When the target is a component design or prompt-chain design, specifically
+check whether:
+
+- the component design explains the full workflow rather than only the final
+  artifact contract
+- skills are treated as compact operational artifacts rather than as the place
+  where the whole component workflow is explained
+- skills are nested with the prompts or processes that use them when that
+  structure is available
+- repeated skill usage is handled by reference rather than by duplicated full
+  definitions
+- a short summary section exists only when it adds real compression value
+
+Record boundary problems in the checklist and elevate them into findings when
+they weaken clarity, authority, or maintainability.
+
+### 4AA. Review architecture-versus-component-design scope
+
+When the target is an architecture or component design document, specifically
+check whether:
+
+- an architecture document stays focused on system shape, boundaries,
+  interactions, responsibilities, and major boundary-shaping technology choices
+- an architecture document avoids drifting into low-level implementation detail
+  unless that detail is needed to explain a boundary or major tradeoff
+- a component design document explains the chosen component or workflow in
+  detail rather than silently redesigning the system boundary
+- a component design document covers workflow, information flow, constraints,
+  definition of good, and test or review checks when those are relevant
+- the target does not mix architecture and component design concerns so
+  heavily that the reader cannot tell what decisions are already fixed and
+  what decisions are still local to the component or process
+
+Record scope-blur problems in the checklist and elevate them into findings when
+they weaken correctness, authority, or maintainability.
+
+### 4B. Review writing quality and document completeness
+
+Specifically check whether:
+
+- the document uses plain English, short sentences, and simple words
+- jargon, buzzwords, and abstract phrasing are avoided unless clearly needed
+- technical terms are defined once when first introduced
+- vague words such as robust, seamless, optimize, leverage, and enhance are
+  removed or made specific
+- the document stays concrete and actionable
+- the document includes finality, technical directives, constraints,
+  definition of good, and test cases when those sections are relevant to the
+  artifact
+
+### 4C. Review section model for component design docs
+
+When the target is a component design document, specifically check whether:
+
+- Finality is used for why the component exists
+- Technical Directives is used for implementation-shaping technical choices
+  and best-practice rules
+- Definition Of Good is used for pass-quality or success conditions
+- a top-level Requirements section is only present when it is genuinely the
+  right model for that artifact, rather than a default carry-over
+- the document does not blur finality, technical directives, and definition of
+  good into one mixed section
+
+Record writing-quality, completeness, and section-model problems in the
+checklist and elevate them into findings when they weaken clarity,
+reviewability, or execution.
+
+### 4CA. Review section model for architecture docs
+
+When the target is an architecture document, specifically check whether:
+
+- Finality is used for why the architecture exists
+- System Shape is used for the main parts of the system and their roles
+- Boundaries And Interactions is used for real boundaries and interaction
+  surfaces, or explicitly says there are none
+- Constraints is used for architecture-shaping limits and prohibitions
+- Definition Of Good is used for architecture pass conditions
+- Test Cases is used only when architecture-level checks are relevant
+- the document does not quietly fall back to an ordinary prose outline when it
+  claims to use the structured-design skill
+- if the target is YAML, the top-level keys stay:
+  - finality
+  - system_shape
+  - boundaries_and_interactions
+  - constraints
+  - definition_of_good
+  - test_cases when relevant
+- if the target is YAML, semantic substitutes such as architecture_scope,
+  boundary_decision, or technology_choices are treated as section-model
+  drift unless the prompt explicitly asked for a different schema
+
+Record architecture-section-model problems in the checklist and elevate them
+into findings when they weaken clarity, reviewability, or execution.
+
+### 4D. Review markdown-versus-YAML form
+
+When the target is a YAML structured-design document or a markdown/YAML pair,
+specifically check whether:
+
+- markdown remains the authority unless the user explicitly asked for YAML as
+  the primary form
+- the YAML preserves the markdown document's real section structure
+- section names stay as section keys rather than being converted into item
+  names
+- grouped items such as goals, rules, processes, files, or entities
+  remain grouped in YAML
+- stable IDs are preserved in the YAML entries
+- the YAML avoids generic type fields unless the task explicitly called for
+  that style
+- the YAML companion is not harder to understand than the markdown authority
+
+Record markdown/YAML mapping defects in the checklist and elevate them into
+findings when they distort the source structure or make the artifact harder to
+review.
+
+### 5. Extract findings
+
+After the checklist is complete, write the findings file.
+
+The findings file should:
+
+- include only important failures, risks, contradictions, and missing
+  directive applications
+- order findings by severity
+- cite the relevant checklist item IDs
+- cite the relevant target location
+- say what is wrong and why it matters
+
+If there are no material findings, say so explicitly and still keep the
+completed checklist file.
+
+## Checklist discipline
+
+The checklist is not a formality. It is the review method.
+
+- Do not write findings first and retrofit the checklist later.
+- Do not collapse several failures into one vague checklist note.
+- Do not mark an item pass without evidence.
+- Do not mark an item n/a unless the item truly does not apply.
+- Use question when the evidence is genuinely ambiguous.
+
+## Findings format
+
+Use this shape for the findings file:
+
+```markdown
+# Review Findings: <Target title or filename>
+
+## Scope
+
+- Target: <path>
+- Inputs:
+  - <path>
+  - <path>
+- Checklist:
+    - review-checklist-structured.md
+
+## Findings
+
+- **FINDING: FIND-1** <short title>
+  - **SEVERITY:** critical | high | medium | low
+  - **CHECKS:** <check-id>, <check-id>
+  - **TARGET:** <root-level id or heading>
+  - **SYNOPSIS:** <what is wrong>
+  - **BECAUSE:** <why it matters>
+```
+
+If there are no material findings:
+
+```markdown
+# Review Findings: <Target title or filename>
+
+## Scope
+
+...
+
+## Findings
+
+No material findings.
+```
+
+## Generic review priorities
+
+When deciding what becomes a finding, prioritize:
+
+1. missing or contradicted input directives
+2. internally inconsistent logic
+3. undefined or misordered concepts that create blind spots
+4. BECAUSE clauses that do not justify their parent
+5. CHAIN-OF-THOUGHT clauses that do not justify the BECAUSE
+6. requirements that are really solution choices
+7. unsupported requirements or claims
+8. stale or retired references mixed into active design
+9. skill definitions that are detached from the prompts or processes that use
+   them
+10. design sections that mix finality, technical directives, and definition of
+    good in a way that weakens the structure
+11. low-value summary sections that repeat the document without adding useful
+   compression
+12. vague, abstract, or buzzword-heavy wording that hides what the target
+   actually requires
+13. missing finality, technical directives, constraints, definition of good,
+    or test cases when they are needed for the artifact type
+14. architecture documents that drift into design-level detail without need
+15. component design documents that silently redesign architecture boundaries
+16. YAML companions that distort the markdown structure or force a generic
+    type schema without justification
+
+## Self-review before returning
+
+Check all of these:
+
+1. The generic checklist template was loaded.
+2. The completed checklist exists before findings are written.
+3. Every applicable checklist item has a status and evidence.
+4. Input directives were traced explicitly.
+5. Unsupported requirements or claims were checked explicitly.
+6. Workflow-versus-skill boundaries were checked when the target was a
+   component or prompt-execution design.
+7. Writing quality and document completeness were checked when relevant.
+8. The design-doc section model was checked when the target was a design.
+9. Findings were derived from failed or questionable checklist items.
+10. Findings cite checklist IDs and target locations.
+11. The review did not skip the checklist and jump straight to prose.
+12. The output artifacts are concise and inspectable.
+13. If there were no material findings, the checklist still exists.
+
+## Do not
+
+- Do not invent checklist items on the fly when the template already covers
+  the issue.
+- Do not treat the findings file as the primary artifact.
+- Do not silently ignore missing directive coverage.
+- Do not accept unsupported requirements just because they sound plausible.
+- Do not collapse evidence and judgment into one vague sentence.
+- Do not ignore vague wording just because the structure looks correct.
+----- END INLINED CORE SKILL: review-structured-artifact -----
+
+----- BEGIN INLINED CORE SKILL: skill-authoring -----
+# Skill Authoring
+
+Keep each skill focused on task-specific knowledge that the agent runtime does not already supply.
+
+## Harness Boundary
+
+- Treat applicable root and nested project instructions supplied by the harness as already loaded.
+- Do not tell ordinary task agents to locate, open, read, reread, or follow AGENTS.md, CLAUDE.md, or equivalent harness-managed instruction files.
+- Refer to applicable project instructions when policy precedence matters without adding a discovery or reading step.
+- Inspect an instruction file explicitly only when the task creates, updates, validates, renders, or reviews that file as an artifact, or when the task investigates instruction-loading behavior.
+- Read a task-relevant procedure or reference explicitly when the harness did not supply its contents and the skill needs that source to complete the work. Do not require blanket instruction-file scans.
+
+## Authoring Workflow
+
+1. Define the concrete task, trigger conditions, required inputs, outputs, and success evidence.
+2. Separate task-specific expertise from harness behavior, project instructions, conceptual agent definition behavior, and general model knowledge.
+3. Remove setup steps that repeat automatically supplied context, permissions, tool descriptions, or runtime routing.
+4. Keep the main workflow concise and move optional detail into directly referenced resources only when progressive disclosure reduces routine context.
+5. Name every explicit dependency that the agent must load or execute because the harness does not provide it automatically.
+6. Preserve legitimate instruction-file artifact work without presenting it as ordinary agent startup.
+7. Validate the complete skill package and test any bundled scripts or deterministic workflows. Prefer the mcp-agent-ops skill_validate tool when available. A returned finding is a validation result, not a transport failure. Fall back to the applicable repository validator only when the tool is absent or its server cannot initialize or connect before request dispatch. Never use the fallback to bypass a path, root, authorization, input-policy, or other structured rejection. In this bundle the fallback is scripts/validate-agent-skills.py.
+
+## Review Rules
+
+Flag a skill when it:
+
+- Directs an ordinary agent to rediscover or reread harness-loaded instruction files.
+- Duplicates project policy, conceptual agent definition behavior, tool instructions, or another skill instead of referencing the owning contract.
+- Uses a blanket repository or instruction scan where task-specific evidence would suffice.
+- Omits an explicit dependency that is not supplied automatically.
+- Claims an instruction-file exception without actually creating, updating, validating, rendering, reviewing, or investigating that artifact.
+
+Search the complete skill package for instruction-loading language before accepting it. Record the exact clause and whether it is redundant startup behavior, a legitimate artifact operation, or a required external dependency.
+
+## Result
+
+Return the skill changes or review findings, the harness-boundary decision, validation evidence, and any remaining dependency or portability risk.
+----- END INLINED CORE SKILL: skill-authoring -----
+
+----- BEGIN INLINED CORE SKILL: agent-role-authoring -----
+# Conceptual Agent Definition Authoring
+
+Keep each conceptual agent definition focused on one stable responsibility and make its executable contract easy for both agents and maintainers to inspect.
+
+## Workflow
+
+1. Read the owning conceptual agent definition schema, nearby definitions, assigned skills, generated native agent definitions, and relevant validation tests.
+2. Define the agent's routing purpose, mutation authority, required inputs, state transitions, dependencies, outputs, and terminal outcomes before writing instructions.
+3. Keep short single-phase behavior as a concise instruction string. Use structured instructions when the agent has branches, delegation, review loops, failure handling, or several completion conditions.
+4. Keep stable agent behavior in the conceptual definition. Reference assigned skills for detailed task methods instead of reproducing their procedures.
+5. Use the conceptual agent definition and skill identifiers anywhere the runtime must resolve a dependency.
+6. Write examples that demonstrate materially different starting states, workflow branches, authority boundaries, failures, or terminal outcomes.
+7. Regenerate every supported runtime definition and inspect the rendered instructions, skill loading, dependencies, outputs, and model settings.
+8. Add or update regression coverage for schema validation, rendered structure, important branches, and failure behavior.
+
+## Structured Instructions
+
+Use the owning schema's structured form when available. In this bundle, the supported subproperties are:
+
+- objective: One concise statement of the responsibility and intended outcome.
+- boundaries: Scope, authority, safety, idempotency, and prohibited behavior.
+- decisions: State-dependent branches whose conditions and outcomes must be unambiguous.
+- workflow: Ordered execution phases expressed as observable actions.
+- delegation: Agent dependencies, their conditions, and required handoff evidence.
+- review: Independent review routing and acceptance requirements.
+- failureHandling: Bounded retry, recovery, fallback, blocked, and unavailable-dependency behavior.
+- completion: READY, BLOCKED, or other terminal criteria together with required evidence.
+
+Structured instructions require objective, workflow, and completion. Omit optional sections that add no information. Keep each entry atomic enough to test and render it under one clear heading.
+
+## Contract Rules
+
+- Do not treat file presence as validity. Name the validation gate and the behavior for absent, valid, and invalid state when those states change execution.
+- Align the description with actual review, verification, and mutation behavior. Do not promise independent review when the workflow only performs same-owner validation.
+- Bound correction and verification loops. State who owns each failure, how many retries are allowed, and which condition ends in BLOCKED.
+- Include a terminal status in the output contract when instructions can return different terminal outcomes.
+- Keep repository mutation policy aligned with agent-claim loading.
+- Declare agent dependencies separately from skills. Skills provide methods; agent dependencies provide isolated responsibility or authority boundaries.
+- Keep provider model identifiers out of conceptual agent definitions and use semantic model profiles.
+- Keep customer-independent definitions free of personal, customer, company, or private operational data.
+
+## Examples
+
+Treat examples as behavioral evidence, not paraphrases of the description.
+
+- Give each example a specific purpose, supported runtime invocation, and plausible response.
+- Make the distinguishing state or outcome explicit in the purpose and response.
+- Do not label minor wording, framework, or document-set variations as materially different behavior.
+- Include blocked, partial, repeated, or unavailable-dependency behavior when those paths are important to the agent contract.
+- Model the output contract in plausible responses, including status and evidence when required.
+
+## Result
+
+Return the conceptual agent definition changes, the agent-definition-versus-skill boundary decision, generated runtime evidence, regression coverage, and any remaining portability or contract risk.
+----- END INLINED CORE SKILL: agent-role-authoring -----
+
+----- BEGIN INLINED CORE SKILL: name-methodology-artifacts -----
+# Name Methodology Artifacts
+
+Apply the naming rules before creating an identifier and during any catalog-wide rename.
+
+## Name Agent Categories
+
+- Start every category title with a short, distinctive word that is unique among agent categories.
+- Use that first word as the required prefix for every conceptual agent definition in the category.
+- Prefer a broad nickname that still describes the category. Use Dev for general development work because it covers more than code alone.
+- Keep category titles stable after their prefix is published.
+- Reject a proposed category when its first word duplicates or could be confused with another category prefix.
+
+Examples of aligned category prefixes include Methodology, Project, Wiki, and Dev.
+
+## Name Conceptual Agent Definitions
+
+- Start every conceptual agent definition name with its category prefix.
+- Describe an actor: a person or persona that performs the responsibility.
+- Use a singular role noun such as maintainer, organiser, researcher, writer, reviewer, verifier, collector, coder, diagnostician, steward, coordinator, or orchestrator.
+- Do not use agent anywhere in the conceptual definition name.
+- Do not end at an object or action noun when an actor form exists. Use wiki-researcher instead of wiki-research and wiki-verifier instead of wiki-verification.
+- Keep the distinctive part short enough to scan in dispatch lists.
+- Use or only when the conceptual agent definition intentionally owns both personas and splitting the responsibility would weaken the operating model.
+
+Examples include dev-coder, dev-code-reviewer, dev-backlog-steward, dev-orchestrator, methodology-maintainer, project-organiser, wiki-researcher, and wiki-topic-verifier.
+
+## Name Skills
+
+Choose category membership and naming pattern separately.
+
+- Determine category membership from the skill's subject area and responsibility.
+- Each skill category mostly follows one naming pattern, but this is not an absolute rule.
+- Use best judgment to choose the most appropriate category and keep a naming-pattern exception when it expresses the skill's purpose more clearly for a good reason.
+- Treat the naming pattern as a word-order convention, not as the definition of category membership.
+- For an object-centered naming pattern, put the shared object first and the operation last. Use a base verb for the operation. Examples include project-wiki-create, project-wiki-query, project-wiki-research, project-wiki-topic-write, and project-wiki-topic-verify.
+- For an action-centered naming pattern, put the shared verb first and the target object last. Examples include create-architecture, create-functional-spec, review-architecture, and review-functional-spec.
+- Use verbs for operations, not actor nouns. Reserve writer, reviewer, and verifier forms for conceptual agent definition names.
+- Keep a well-scoped domain exception when its leading words express a distinct subject rather than an operation. Code-project-wiki is the code-project variant of project-wiki and may remain an exception.
+- Do not rename a skill only to force superficial symmetry with the predominant pattern in its category.
+
+## Apply A Rename
+
+1. Inventory category titles and prefixes, conceptual agent definition names and filenames, skill directories and frontmatter names, definition-owned skillsets, companion-skill references, metadata, generated outputs, documentation, examples, tests, and explicit deployment manifests.
+2. Choose the complete old-to-new map before moving files.
+3. Rename source files first. Keep each conceptual agent definition name, filename field, source filename, skill directory, and skill frontmatter name aligned.
+4. Update every source reference to the new identifiers and sweep for stale names.
+5. Regenerate derived documentation and runtime adapters.
+6. Run catalog validation, regression tests, and stale-output checks.
+7. Sweep again for old identifiers and inspect generated adapter inventories for stale names.
+
+Do not leave compatibility aliases unless the owning project explicitly requires a migration period.
+----- END INLINED CORE SKILL: name-methodology-artifacts -----
+
+----- BEGIN INLINED CORE SKILL: documentation-page-verify -----
+# Documentation Page Verify
+
+Use this skill for shared methodology documentation checks when the artifact type is mixed, unknown, custom, or not covered by a clearer artifact-specific review skill. The verifier checks that a page is source-backed, format-appropriate, steady-state, and useful to future agents.
+
+## Prefer Artifact-Specific Review
+
+- Use project-wiki-review for project wiki pages and project-wiki-template artifacts.
+- Use review-functional-spec for functional specification artifacts.
+- Use review-architecture for architecture artifacts.
+- Use review-high-level-design for high-level design artifacts.
+- Use review-module-design for module design artifacts.
+
+## Verification Inputs
+
+- The page being verified.
+- The matching template from development-methodology assets.
+- The completed review checklist when an artifact-specific review skill produced one.
+- Related source files, tests, procedures, backlog items, wiki pages, and project metadata.
+- Project-specific documentation rules from AGENTS.md or procedures.
+
+## Format Selection
+
+Before checking sections, identify the selected structure from the user request, file type, runtime schema, existing document, surrounding documentation, or methodology template.
+
+When a specific structure or format is indicated, that structure is authoritative. Verify source support, links, steady-state prose, completeness, diagrams, and unresolved questions within the indicated format. Do not require shared page sections unless the selected artifact is a docs/wiki page, a project wiki methodology artifact, or another methodology template that explicitly uses the shared page contract.
+
+Examples of format-owned artifacts include design HTML pages, README files, runtime adapter profiles, generated data files, native agent definition files, package metadata, and vendor schema documents.
+
+## Completed Review Checklist Evidence
+
+When a completed review checklist is available, use it as the evidence record for verification.
+
+1. Read the completed review checklist before writing the assessment.
+2. Check that each applicable item has status, question, quoted evidence, and assessment.
+3. Use the quoted evidence to complete shared page contract, source authority, link, diagram, and steady-state verification.
+4. Re-read the cited source text when quoted evidence is unclear, incomplete, or contradicted.
+5. Do not complete verification from memory or from the checklist question text alone.
+6. Base the final assessment on the completed review checklist plus any source text rechecked during verification.
+
+## Shared Page Contract
+
+Apply this section only when the selected artifact type uses the shared page contract. When a specific non-wiki structure is indicated, skip this section and verify the indicated format instead.
+
+For shared-page-contract artifacts, confirm the page starts with these sections in this order:
+
+1. Current Understanding
+2. Authoritative Sources
+3. Related Code
+4. Related Tests
+5. Related Backlog Items
+6. Related Wiki Pages
+7. Open Questions
+8. Maintenance Notes
+
+Each section must contain source-backed content or a clear Not yet identified entry. Open Questions may state that no open questions are recorded only when the evidence supports that.
+
+## Source And Link Checks
+
+1. Confirm claims cite the strongest available source at the point where the prose depends on it.
+2. Prefer code and tests for actual behavior.
+3. Use functional specifications and requirements for intended behavior.
+4. Use procedures and agent instructions for workflow obligations.
+5. Use backlog files for tracked work and known status.
+6. Use architecture, high-level design, module design, and plans for design intent.
+7. Use wiki pages as synthesis and navigation, not as the highest authority.
+8. Check that Related Code and Related Tests are project-relative or explicitly marked as not yet identified.
+9. Check that source links resolve when the repository is available.
+10. When mcp-agent-ops is available, use verify_markdown_links for the applicable Markdown scope. Treat returned findings as verification failures, not transport failures. Use the repository-specific checker or direct resolution only when the tool is absent or its server cannot initialize or connect before request dispatch. Never use the fallback to bypass a path, root, authorization, input-policy, or other structured rejection.
+
+## Specialized Section Checks
+
+Functional specifications should describe actors, entry points, workflow steps, states, permissions, edge cases, acceptance behavior, and verification from the user's point of view.
+
+Architecture documents should describe system purpose, scope, context, technology stack, file organization, layers, dependency direction, major components, cross-cutting concerns, invariants, risks, trade-offs, and verification.
+
+High-level designs should describe a complete subsystem or feature family, constituent components, interaction model, lifecycle, data contracts, configuration ownership, implementation order, invariants, non-goals, definition of good, and verification.
+
+Module designs should describe one implementation unit, runtime path, parent context, responsibilities, callers, dependencies, public contracts, internal state, processing rules, invariants, configuration, external interfaces, UI behavior when applicable, error handling, and verification.
+
+Project wiki subclass pages should maintain durable synthesis and navigation without silently replacing the specialized source document when one exists.
+
+## Diagram Checks
+
+Diagrams are useful only when they clarify a real structure:
+
+- Sequence or handoff.
+- Association.
+- Aggregation or containment.
+- Dependency.
+- Lifecycle.
+- Data movement.
+- Ownership or responsibility.
+- Verification coverage.
+
+Confirm Mermaid or another editable source remains authoritative. Rendered SVG artifacts may be linked as companions, but they should not be the only maintained source.
+
+## Steady-State Checks
+
+1. Remove unresolved TODO markers unless the page intentionally remains a template.
+2. Avoid framing the page around a previous version unless the section is explicitly historical.
+3. Replace comparative terms such as enhanced, revised, old, and new when they imply unstated prior context.
+4. Keep implementation detail out of functional specifications unless the user needs it to understand behavior.
+5. Keep broad architecture pages from duplicating every module detail.
+6. Keep module pages focused on one coherent responsibility.
+
+## Output
+
+Return findings first, ordered by severity, when verification finds problems. Include file paths and section names. If no problems are found, say that the page passes verification and name any residual test or source gaps.
+----- END INLINED CORE SKILL: documentation-page-verify -----
+
+----- BEGIN INLINED CORE SKILL: development-methodology -----
+# Development Methodology
+
+Use this skill as the router for software project documentation work from this bundle. It keeps artifact selection, format selection, the shared page contract, and template asset policy in one place while delegating specialized workflows to focused skills.
+
+## Required Companion Skills
+
+- Use documentation-bootstrap for first-time setup in a target repository.
+- Use documentation-reverse-engineer when deriving documentation from an existing codebase.
+- Use code-project-wiki for code-aware docs/wiki maintenance, commit-range sync, Related Code upkeep, or Related Tests upkeep.
+- Use create-project-configuration when creating or substantially rewriting a PROJECT.yaml project agent and skill configuration.
+- Use maintain-methodology-documentation when changing this bundle's skills, conceptual agent definitions, generated adapters, generated documentation data, or design pages.
+- Use project-wiki-create when creating or substantially rewriting a project wiki methodology artifact from the project wiki template.
+- Use create-functional-spec when creating or substantially rewriting a functional specification artifact from the functional specification template.
+- Use create-architecture when creating or substantially rewriting an architecture artifact from the architecture template.
+- Use create-high-level-design when creating or substantially rewriting a high-level design artifact from the high-level design template.
+- Use create-module-design when creating or substantially rewriting a module design artifact from the module design template.
+- Use create-unit-test-plan when creating or substantially rewriting a durable unit test plan from the unit test plan template.
+- Use project-wiki-review before finishing project wiki pages or project-wiki-template artifacts.
+- Use review-functional-spec before finishing functional specification artifacts.
+- Use review-architecture before finishing architecture artifacts.
+- Use review-high-level-design before finishing high-level design artifacts.
+- Use review-module-design before finishing module design artifacts.
+- Use review-unit-test-plan before finishing unit test plan artifacts.
+- Use documentation-page-verify for shared checks on mixed, unknown, or custom documentation artifacts.
+- Use project-wiki before creating, maintaining, or validating docs/wiki content.
+- Use project-wiki-query for wiki-backed project questions.
+- Use project-wiki-research for sourced raw reports that should feed a wiki later.
+- Use project-wiki-topic-write and project-wiki-topic-verify when editing or validating topic pages.
+
+## Loading Discipline
+
+Load only the skills needed for the current job. Use this skill to choose the artifact type and route, then load the matching creation skill or review skill for that artifact. Do not load every creation or review skill just because the catalog contains them.
+
+Treat generated conceptual agent definition conditions as judgment guidance, not deterministic prompt keywords. Interpret the requested outcome, existing artifact, and source evidence together when wording is ambiguous. Ask for clarification only when different plausible routes would materially change the result and the intended route cannot be inferred.
+
+For a normal creation job, load this skill and exactly one artifact creation skill, plus source-domain skills that the repository evidence requires. Load the matching review skill only when the artifact is ready to review. Use documentation-page-verify for mixed, unknown, or custom artifacts, or when an artifact review skill calls for it.
+
+Harness-native preloading remains authoritative. Do not reread a skill through MCP when its complete content is already in context. When routing has selected several exact skill names but the harness has not inserted their content, use one skill_load call for the complete selected set instead of listing the catalog or loading each skill separately. Load required supporting resources in one skill_resource_load call after reading the selected skill instructions. Use harness-native loading or direct installed packages only when the MCP tools are absent or the server cannot initialize or connect before request dispatch. Never use direct loading to bypass a path, root, authorization, input-policy, or other structured rejection.
+
+The returned catalog revision and content digests identify the bytes supplied by the server; they do not prove that a model retained or followed those instructions. The harness or evaluator owns context insertion and digest-bound load evidence.
+
+## Shared Page Contract
+
+The shared page contract applies to docs/wiki topic pages and methodology artifacts created from this bundle's templates.
+
+When the user, target file type, runtime schema, existing document, or surrounding documentation indicates a specific structure or format, preserve that structure. Verify source support, links, steady-state prose, and completeness inside the indicated format instead of adding shared page sections. Do not impose the shared page contract on design HTML pages, README files, runtime adapter profiles, generated data files, or native agent definition files unless the user asks to convert them into a methodology artifact or wiki-compatible page.
+
+Pages that use the shared page contract start with these sections:
+
+- Current Understanding
+- Authoritative Sources
+- Related Code
+- Related Tests
+- Related Backlog Items
+- Related Wiki Pages
+- Open Questions
+- Maintenance Notes
+
+Functional specifications, architecture documents, high-level designs, and module designs are page subclasses. They keep the shared sections first, then append the specialized sections from their matching template.
+
+## Document Type Selection
+
+Use the smallest document type that fully explains the work:
+
+- Project wiki page: durable synthesis, navigation, code ownership, known defects, open decisions, glossary, or recurring topic knowledge.
+- PROJECT.yaml: project-wide agent and skill setup, root and nested AGENTS.md routing references, definition-owned skillsets, folder routing, validation evidence, proprietary validation notes, or customer-safe fictitious examples.
+- Functional specification: user-visible behavior, actor workflow, route behavior, acceptance criteria, permissions, status display, operational affordance, or error state.
+- Architecture: project-wide boundary, technology choice, shared rule, cross-cutting concern, layer relationship, persistence, security, privacy, observability, or UI composition.
+- High-level design: coherent subsystem, feature family, system slice, integration path, or multi-module implementation plan.
+- Module design: one module, service, class, task, utility, UI component, or tightly scoped feature unit.
+- Unit test plan: durable scenario, boundary-double, failure, and coverage planning for one unit before or alongside test implementation.
+
+## Artifact Creation Routes
+
+Use this route table when the task is to create or substantially rewrite a methodology artifact:
+
+- Project wiki methodology artifact: use project-wiki-create, template project-wiki-template.md, and project-wiki-review.
+- Agent and skill configuration: use create-project-configuration, template project-template.yaml, and documentation-page-verify.
+- Functional specification artifact: use create-functional-spec, template functional-spec-template.md, and review-functional-spec.
+- Architecture artifact: use create-architecture, template architecture-template.md, and review-architecture.
+- High-level design artifact: use create-high-level-design, template high-level-design-template.md, and review-high-level-design.
+- Module design artifact: use create-module-design, template module-design-template.md, and review-module-design.
+- Unit test plan artifact: use create-unit-test-plan, template unit-test-plan-template.md, and review-unit-test-plan.
+Use project-wiki-topic-write for ordinary docs/wiki topic pages that summarize or link source material without becoming one of the specialized methodology artifacts. Use documentation-reverse-engineer when the user asks for a source-derived documentation set rather than one artifact.
+
+## Template Assets
+
+Template assets live under skills/development-methodology/assets/templates. Read an already staged template directly. When the required template is not staged and mcp-agent-ops is available, retrieve it through skill_resource_load. Use the direct skill-relative asset as the fallback only when the tool is absent or its server cannot initialize or connect before dispatch; do not bypass a structured policy rejection.
+
+- project-wiki-template.md defines project wiki setup and code-aware maintenance rules.
+- project-template.yaml defines project conceptual agent definitions, folder technology skillsets, root and nested AGENTS.md operational guidance, proprietary validation notes, and customer-safe example boundaries in one project-root configuration.
+- functional-spec-template.md defines user-visible workflow and acceptance documentation.
+- architecture-template.md defines project-wide and cross-cutting architecture documentation.
+- high-level-design-template.md defines subsystem and feature-family documentation.
+- module-design-template.md defines one-module design documentation.
+- unit-test-plan-template.md defines one-unit scenario, boundary, failure, and traceability planning.
+
+When a target project needs a local editable document, copy only the matching template into that project's chosen documentation location and replace every TODO instruction with source-backed content. Do not create a second reusable template distribution in the target repository unless the user asks for local project-owned templates.
+
+## Workflow
+
+1. Inspect the target repository before writing documentation. Identify source roots, test roots, existing docs, wiki root, procedures, backlog files, build commands, and current worktree status.
+2. Choose the document type from the source evidence and the user's requested outcome.
+3. Choose the document structure from the user request, existing file, runtime schema, selected template, or docs/wiki contract before writing.
+4. Load the matching artifact creation skill from the route table when creating or substantially rewriting a methodology artifact.
+5. Copy the matching template asset only when a new or refreshed document is needed.
+6. Replace every TODO instruction with project-specific content backed by source links.
+7. Remove a section only when it is genuinely not applicable.
+8. Write steady-state documentation. Do not frame the page around old versus new behavior unless the section is explicitly historical.
+9. Link code, tests, procedures, backlog items, source documents, and wiki pages at the point where the prose depends on them.
+10. Add diagrams only where a real relationship is easier to inspect visually, such as sequence, ownership, dependency, lifecycle, data flow, or verification coverage.
+
+## Verification
+
+Before finishing documentation or wiki work:
+
+1. Use the artifact-specific review skill when the artifact type is project wiki, functional specification, architecture, high-level design, module design, or unit test plan.
+2. Use documentation-page-verify for mixed, unknown, or custom documentation artifacts.
+3. Confirm the document follows the selected structure or format. Use the shared page contract only when the selected artifact type requires it.
+4. Run project wiki status and lint when docs/wiki exists.
+5. Run OKF validation when topic pages changed.
+6. Run the repository agent-skill validator when skill files changed.
+7. When a bundled skill is renamed or deleted, sweep the source repository for the old skill id and update or remove references in skills, companion-skill lists, Codex metadata, conceptual agent definitions, dispatch profiles, aggregate workflow examples, design documents, scripts, and tests.
+8. Run scripts/openai_metadata.py skills after bundled skill name or description changes so Codex interface metadata stays aligned with SKILL.md while policy and dependencies remain hand-authored.
+9. Do not copy this bundle's skills or generated native agent definitions into user-home runtime folders as part of maintenance or ordinary use. Use the repository sources and generated adapters in place. Run the installer only for an explicitly requested deployment with caller-supplied target directories.
+10. Run the target project build when code, imports, generated artifacts, or project metadata changed.
+11. Search generated documents for unresolved TODO markers that are not intentional.
+12. Confirm every created document names related source, tests, or Not yet identified inside the selected format.
+13. Confirm wiki changes follow the project-wiki verifier checklist when topic pages changed.
+
+Do not send private, proprietary, sensitive, PII, or company-internal material to an external service unless the user explicitly authorizes it.
+----- END INLINED CORE SKILL: development-methodology -----

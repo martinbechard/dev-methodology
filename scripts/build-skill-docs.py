@@ -265,6 +265,17 @@ def split_frontmatter(text: str, source_path: Path) -> tuple[dict[str, object], 
     raise ValueError(f"Missing closing frontmatter delimiter: {source_path}")
 
 
+def parse_boolean(value: str) -> bool:
+    """Parse an explicit true-or-false command-line value."""
+
+    normalized = value.lower()
+    if normalized == "true":
+        return True
+    if normalized == "false":
+        return False
+    raise argparse.ArgumentTypeError("expected true or false")
+
+
 def read_yaml_object(path: Path) -> dict[str, object]:
     parsed = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(parsed, dict):
@@ -1155,11 +1166,12 @@ def conditional_role_skills(role: RoleDefinition) -> tuple[str, ...]:
 def role_loading_instruction_text(
     role: RoleDefinition,
     fixed_skills_preloaded: bool = False,
+    include_fixed_skills: bool = True,
 ) -> str:
     sections: list[str] = []
     fixed_skills = fixed_role_skills(role)
     conditional_skills = conditional_role_skills(role)
-    if fixed_skills:
+    if fixed_skills and include_fixed_skills:
         fixed_prefix = (
             "These definition-owned skills are preloaded and govern the work:"
             if fixed_skills_preloaded
@@ -1178,20 +1190,117 @@ def role_loading_instruction_text(
     return "\n\n".join(sections)
 
 
-def role_instruction_text(role: RoleDefinition) -> str:
-    output_text = "; ".join(role.output_contract)
-    return (
-        f"{role.instructions}\n\n"
-        f"{role_loading_instruction_text(role)}\n\n"
-        f"{ROLE_OUTPUT_INSTRUCTION_PREFIX} {output_text}."
+def inlined_skill_body(skill_name: str, adapter_name: str | None = None) -> str:
+    """Return one validated skill body for static adapter embedding."""
+
+    skill_directory = (
+        ADAPTERS_ROOT / adapter_name / ADAPTER_SKILLS_FOLDER_NAME / skill_name
+        if adapter_name is not None
+        else SKILLS_ROOT / skill_name
     )
+    skill_path = skill_directory / SKILL_FILE_NAME
+    frontmatter, body = split_frontmatter(
+        skill_path.read_text(encoding="utf-8"),
+        skill_path,
+    )
+    if frontmatter.get(NAME_FIELD_NAME) != skill_name:
+        raise ValueError(f"Skill name must match its directory: {skill_path}")
+    return body.rstrip()
 
 
-def codex_role_instruction_text(role: RoleDefinition) -> str:
+def render_inlined_core_skills(
+    role: RoleDefinition,
+    adapter_name: str,
+) -> str:
+    """Render the role's unconditional skills as static instruction content."""
+
+    skill_sources = [(skill, None) for skill in fixed_role_skills(role)]
+    if adapter_name == CODEX_ADAPTER_NAME and role.repository_mutation != "never":
+        skill_sources.append((CODEX_HARNESS_DIRECTIVES_SKILL_NAME, CODEX_ADAPTER_NAME))
+    if not skill_sources:
+        return ""
+    sections = [
+        "## Inlined Core Skills",
+        "",
+        "Apply the following core skill instructions as part of this agent definition. Do not load these core skills dynamically.",
+    ]
+    for skill_name, source_adapter in skill_sources:
+        sections.extend([
+            "",
+            f"----- BEGIN INLINED CORE SKILL: {skill_name} -----",
+            inlined_skill_body(skill_name, source_adapter),
+            f"----- END INLINED CORE SKILL: {skill_name} -----",
+        ])
+    return "\n".join(sections)
+
+
+def role_instruction_text(
+    role: RoleDefinition,
+    *,
+    adapter_name: str,
+    inline_core_skills: bool = True,
+) -> str:
+    output_text = "; ".join(role.output_contract)
+    sections = [role.instructions]
+    loading_instructions = role_loading_instruction_text(
+        role,
+        include_fixed_skills=not inline_core_skills,
+    )
+    if loading_instructions:
+        sections.append(loading_instructions)
+    sections.append(f"{ROLE_OUTPUT_INSTRUCTION_PREFIX} {output_text}.")
+    if inline_core_skills:
+        inlined_skills = render_inlined_core_skills(role, adapter_name)
+        if inlined_skills:
+            sections.append(inlined_skills)
+    return "\n\n".join(sections)
+
+
+def markdown_role_instruction_text(
+    role: RoleDefinition,
+    adapter_name: str,
+    inline_core_skills: bool,
+) -> str:
+    """Render one Markdown adapter instruction body without empty sections."""
+
+    sections = [role.instructions]
+    loading_instructions = role_loading_instruction_text(
+        role,
+        fixed_skills_preloaded=adapter_name in {
+            CLAUDE_ADAPTER_NAME,
+            JUNIE_ADAPTER_NAME,
+        },
+        include_fixed_skills=not inline_core_skills,
+    )
+    if loading_instructions:
+        sections.append(loading_instructions)
+    output_lines = "\n".join(f"- {item}" for item in role.output_contract)
+    sections.append(f"Return:\n\n{output_lines}")
+    if inline_core_skills:
+        inlined_skills = render_inlined_core_skills(role, adapter_name)
+        if inlined_skills:
+            sections.append(inlined_skills)
+    return "\n\n".join(sections) + "\n"
+
+
+def codex_role_instruction_text(
+    role: RoleDefinition,
+    inline_core_skills: bool = True,
+) -> str:
     """Add the Codex harness skill at generation time without changing portable roles."""
 
+    if inline_core_skills:
+        return role_instruction_text(
+            role,
+            adapter_name=CODEX_ADAPTER_NAME,
+            inline_core_skills=True,
+        )
     if role.repository_mutation == "never":
-        return role_instruction_text(role)
+        return role_instruction_text(
+            role,
+            adapter_name=CODEX_ADAPTER_NAME,
+            inline_core_skills=False,
+        )
     output_text = "; ".join(role.output_contract)
     harness_instruction = (
         f"Before acting, load the {CODEX_HARNESS_DIRECTIVES_SKILL_NAME} skill completely; "
@@ -1205,11 +1314,14 @@ def codex_role_instruction_text(role: RoleDefinition) -> str:
     )
 
 
-def codex_skill_availability(role: RoleDefinition) -> list[dict[str, object]]:
+def codex_skill_availability(
+    role: RoleDefinition,
+    inline_core_skills: bool = True,
+) -> list[dict[str, object]]:
     """Enable the Codex harness skill and retain explicit role-level overrides."""
 
     configured = [dict(item) for item in role.optional_fields.get(ROLE_SKILL_AVAILABILITY_FIELD_NAME, [])]
-    if role.repository_mutation == "never":
+    if inline_core_skills or role.repository_mutation == "never":
         return configured
     if any(item.get("name") == CODEX_HARNESS_DIRECTIVES_SKILL_NAME for item in configured):
         raise ValueError(
@@ -1260,6 +1372,7 @@ def render_toml_multiline_basic_string(value: str) -> str:
 def render_codex_agent(
     role: RoleDefinition,
     model_profiles: dict[str, AdapterModelProfile],
+    inline_core_skills: bool = True,
 ) -> str:
     profile_id = role.model_profile
     adapter_profile = model_profiles[profile_id]
@@ -1269,7 +1382,9 @@ def render_codex_agent(
         f"name = {json.dumps(role.name)}",
         f"description = {json.dumps(role.description)}",
         "developer_instructions = "
-        + render_toml_multiline_basic_string(codex_role_instruction_text(role)),
+        + render_toml_multiline_basic_string(
+            codex_role_instruction_text(role, inline_core_skills)
+        ),
     ]
     fields.append(f"model = {json.dumps(adapter_profile.model)}")
     if adapter_profile.effort is not None:
@@ -1277,7 +1392,7 @@ def render_codex_agent(
     isolation = role.optional_fields.get("isolation")
     if isolation == ROLE_READ_ONLY_ISOLATION:
         fields.append(f"{CODEX_SANDBOX_FIELD_NAME} = {json.dumps(isolation)}")
-    for item in codex_skill_availability(role):
+    for item in codex_skill_availability(role, inline_core_skills):
         fields.extend([
             "",
             "[[skills.config]]",
@@ -1290,15 +1405,17 @@ def render_codex_agent(
 def render_claude_agent(
     role: RoleDefinition,
     model_profiles: dict[str, AdapterModelProfile],
+    inline_core_skills: bool = True,
 ) -> str:
     profile_id = role.model_profile
     adapter_profile = model_profiles[profile_id]
     frontmatter: dict[str, object] = {
         ROLE_NAME_FIELD_NAME: role.name,
         ROLE_DESCRIPTION_FIELD_NAME: role.description,
-        ROLE_SKILLS_FIELD_NAME: list(fixed_role_skills(role)),
-        "model": adapter_profile.model,
     }
+    if not inline_core_skills:
+        frontmatter[ROLE_SKILLS_FIELD_NAME] = list(fixed_role_skills(role))
+    frontmatter["model"] = adapter_profile.model
     for field_name in (
         "tools",
         "disallowedTools",
@@ -1311,19 +1428,21 @@ def render_claude_agent(
         if field_name in role.optional_fields:
             frontmatter[field_name] = role.optional_fields[field_name]
     frontmatter_text = yaml.safe_dump(frontmatter, sort_keys=False).strip()
-    output_lines = "\n".join(f"- {item}" for item in role.output_contract)
     return (
         f"<!-- {GENERATED_FILE_HEADER}\n{role_adapter_comments(role, '', adapter_profile)}\n-->\n"
         f"---\n{frontmatter_text}\n---\n\n"
-        f"{role.instructions}\n\n"
-        f"{role_loading_instruction_text(role, fixed_skills_preloaded=True)}\n\n"
-        + f"Return:\n\n{output_lines}\n"
+        + markdown_role_instruction_text(
+            role,
+            CLAUDE_ADAPTER_NAME,
+            inline_core_skills,
+        )
     )
 
 
 def render_gemini_agent(
     role: RoleDefinition,
     model_profiles: dict[str, AdapterModelProfile],
+    inline_core_skills: bool = True,
 ) -> str:
     profile_id = role.model_profile
     adapter_profile = model_profiles[profile_id]
@@ -1341,28 +1460,31 @@ def render_gemini_agent(
         if source_field in role.optional_fields:
             frontmatter[native_field] = role.optional_fields[source_field]
     frontmatter_text = yaml.safe_dump(frontmatter, sort_keys=False).strip()
-    output_lines = "\n".join(f"- {item}" for item in role.output_contract)
     return (
         f"---\n{frontmatter_text}\n---\n\n"
         f"<!-- {GENERATED_FILE_HEADER}\n{role_adapter_comments(role, '', adapter_profile)}\n-->\n\n"
-        f"{role.instructions}\n\n"
-        f"{role_loading_instruction_text(role)}\n\n"
-        + f"Return:\n\n{output_lines}\n"
+        + markdown_role_instruction_text(
+            role,
+            GEMINI_ADAPTER_NAME,
+            inline_core_skills,
+        )
     )
 
 
 def render_junie_agent(
     role: RoleDefinition,
     model_profiles: dict[str, AdapterModelProfile],
+    inline_core_skills: bool = True,
 ) -> str:
     profile_id = role.model_profile
     adapter_profile = model_profiles[profile_id]
     frontmatter: dict[str, object] = {
         ROLE_NAME_FIELD_NAME: role.name,
         ROLE_DESCRIPTION_FIELD_NAME: role.description,
-        ROLE_SKILLS_FIELD_NAME: list(fixed_role_skills(role)),
-        "model": adapter_profile.model,
     }
+    if not inline_core_skills:
+        frontmatter[ROLE_SKILLS_FIELD_NAME] = list(fixed_role_skills(role))
+    frontmatter["model"] = adapter_profile.model
     if adapter_profile.effort is not None:
         frontmatter["reasoningLevel"] = adapter_profile.effort
     for field_name in (
@@ -1374,19 +1496,21 @@ def render_junie_agent(
         if field_name in role.optional_fields:
             frontmatter[field_name] = role.optional_fields[field_name]
     frontmatter_text = yaml.safe_dump(frontmatter, sort_keys=False).strip()
-    output_lines = "\n".join(f"- {item}" for item in role.output_contract)
     return (
         f"---\n{frontmatter_text}\n---\n\n"
         f"<!-- {GENERATED_FILE_HEADER}\n{role_adapter_comments(role, '', adapter_profile)}\n-->\n\n"
-        f"{role.instructions}\n\n"
-        f"{role_loading_instruction_text(role, fixed_skills_preloaded=True)}\n\n"
-        + f"Return:\n\n{output_lines}\n"
+        + markdown_role_instruction_text(
+            role,
+            JUNIE_ADAPTER_NAME,
+            inline_core_skills,
+        )
     )
 
 
 def render_agent_generation_manifest(
     roles: Sequence[RoleDefinition],
     outputs: dict[Path, str],
+    inline_core_skills: bool,
 ) -> str:
     """Return a deterministic conceptual-definition-to-adapter inventory with expected digests."""
     adapter_specs = {
@@ -1438,15 +1562,19 @@ def render_agent_generation_manifest(
 
     manifest = {
         "schema": "dev-methodology-agent-generation-manifest",
-        "version": 2,
+        "version": 3,
         "generator": GENERATOR_RELATIVE_PATH,
+        "generationOptions": {"inlineCoreSkills": inline_core_skills},
         "canonicalRoleCount": len(roles),
         "adapters": adapters,
     }
     return json.dumps(manifest, indent=2, sort_keys=True) + "\n"
 
 
-def expected_role_outputs(roles: Sequence[RoleDefinition]) -> dict[Path, str]:
+def expected_role_outputs(
+    roles: Sequence[RoleDefinition],
+    inline_core_skills: bool = True,
+) -> dict[Path, str]:
     codex_harness_skills = set(adapter_skill_names(CODEX_ADAPTER_NAME))
     if CODEX_HARNESS_DIRECTIVES_SKILL_NAME not in codex_harness_skills:
         raise ValueError(
@@ -1460,18 +1588,22 @@ def expected_role_outputs(roles: Sequence[RoleDefinition]) -> dict[Path, str]:
     outputs = {ROLE_OUTPUT_PATH: render_role_javascript(roles)}
     for role in roles:
         outputs[CODEX_AGENT_OUTPUT_ROOT / f"{role.filename}{CODEX_AGENT_EXTENSION}"] = render_codex_agent(
-            role, codex_profiles
+            role, codex_profiles, inline_core_skills
         )
         outputs[CLAUDE_AGENT_OUTPUT_ROOT / f"{role.filename}{CLAUDE_AGENT_EXTENSION}"] = render_claude_agent(
-            role, claude_profiles
+            role, claude_profiles, inline_core_skills
         )
         outputs[GEMINI_AGENT_OUTPUT_ROOT / f"{role.filename}{GEMINI_AGENT_EXTENSION}"] = render_gemini_agent(
-            role, gemini_profiles
+            role, gemini_profiles, inline_core_skills
         )
         outputs[JUNIE_AGENT_OUTPUT_ROOT / f"{role.filename}{JUNIE_AGENT_EXTENSION}"] = render_junie_agent(
-            role, junie_profiles
+            role, junie_profiles, inline_core_skills
         )
-    outputs[AGENT_GENERATION_MANIFEST_PATH] = render_agent_generation_manifest(roles, outputs)
+    outputs[AGENT_GENERATION_MANIFEST_PATH] = render_agent_generation_manifest(
+        roles,
+        outputs,
+        inline_core_skills,
+    )
     return outputs
 
 
@@ -1488,8 +1620,12 @@ def stale_generated_adapter_paths(expected_paths: set[Path]) -> list[Path]:
     return sorted(generated_paths - expected_paths)
 
 
-def write_role_outputs(roles: Sequence[RoleDefinition], check: bool) -> list[Path]:
-    expected_outputs = expected_role_outputs(roles)
+def write_role_outputs(
+    roles: Sequence[RoleDefinition],
+    check: bool,
+    inline_core_skills: bool = True,
+) -> list[Path]:
+    expected_outputs = expected_role_outputs(roles, inline_core_skills)
     changed_paths = [
         path
         for path, content in expected_outputs.items()
@@ -1542,6 +1678,13 @@ def main(arguments: Sequence[str] | None = None) -> int:
         description="Generate skill, template, conceptual agent definition, adapter, and HTML documentation data."
     )
     parser.add_argument("--check", action="store_true", help="Fail when generated methodology data is stale.")
+    parser.add_argument(
+        "--inline-core-skills",
+        type=parse_boolean,
+        default=True,
+        metavar="true|false",
+        help="Statically append core skills to agent instructions instead of native skill properties. Defaults to true.",
+    )
     args = parser.parse_args(arguments)
 
     try:
@@ -1549,7 +1692,11 @@ def main(arguments: Sequence[str] | None = None) -> int:
         changed = write_output(args.check)
         template_changed = write_template_output(args.check)
         roles = load_role_definitions(set(skill_payload["skills"]))
-        changed_role_paths = write_role_outputs(roles, args.check)
+        changed_role_paths = write_role_outputs(
+            roles,
+            args.check,
+            args.inline_core_skills,
+        )
     except (OSError, ValueError, yaml.YAMLError) as error:
         print(error, file=sys.stderr)
         return ERROR_EXIT_CODE

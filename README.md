@@ -61,9 +61,15 @@ Reusable templates live inside the development-methodology skill assets so there
 python3 scripts/build-skill-docs.py
 ```
 
-The script reads each bundled SKILL.md file, the distributed methodology templates, adjacent Codex openai.yaml metadata, the ordered design/skill-categories.yaml catalog, agents/role-schema.yaml, agents/model-profiles.yaml, adapter model mappings, adapter-owned skill sources, and conceptual agent definition sources. It writes design/generated/skill-definitions.js, design/generated/template-definitions.js, design/generated/role-definitions.js, native definitions under generated/adapters, and agent-generation-manifest.json. The [Generic Agent Definitions Source page](design/generic-agent-definitions-source.html) owns portable skill sources, conceptual agent definition properties, native packaging, and adapter mappings. The [Agentic Configuration page](design/agentic-configuration.html) explains how the resulting runtime files provide relevant context while an agentic coding tool generates code.
+The script reads each bundled SKILL.md file, the distributed methodology templates, adjacent Codex openai.yaml metadata, the ordered design/skill-categories.yaml catalog, agents/role-schema.yaml, agents/model-profiles.yaml, adapter model mappings, adapter-owned skill sources, and conceptual agent definition sources. It writes design/generated/skill-definitions.js, design/generated/template-definitions.js, design/generated/role-definitions.js, native definitions under generated/adapters, and agent-generation-manifest.json. By default, the generator statically appends every unconditional core skill to the end of each agent's instructions and omits core skills from native skills properties. Conditional request-specific skills remain available for dynamic loading. Pass the inline-core-skills option as false to retain native core-skill loading instead.
 
-The generation manifest is the deterministic build inventory: it records each conceptual agent definition source, every generated Codex, Claude Code, Gemini CLI, and Junie CLI path, each adapter-owned skill source and digest, and aggregate counts without timestamps. Codex generation enables and instructs every mutation-capable agent to load codex-harness-directives. Read-only Codex agents and every non-Codex adapter remain unchanged, so Codex-only directives do not leak into portable conceptual definitions.
+```bash
+python3 scripts/build-skill-docs.py --inline-core-skills false
+```
+
+The [Generic Agent Definitions Source page](design/generic-agent-definitions-source.html) owns portable skill sources, conceptual agent definition properties, native packaging, and adapter mappings. The [Agentic Configuration page](design/agentic-configuration.html) explains how the resulting runtime files provide relevant context while an agentic coding tool generates code.
+
+The generation manifest is the deterministic build inventory: it records the core-skill inlining mode, each conceptual agent definition source, every generated Codex, Claude Code, Gemini CLI, and Junie CLI path, each adapter-owned skill source and digest, and aggregate counts without timestamps. With core-skill inlining enabled, mutation-capable Codex agents receive codex-harness-directives as inlined adapter-owned instructions. With inlining disabled, Codex enables and instructs those agents to load the adapter skill dynamically. Read-only Codex agents and every non-Codex adapter remain free of Codex-only directives.
 
 Build the portable technology detection registry and installed detector mirror before generating conceptual agent definition and documentation views:
 
@@ -442,12 +448,16 @@ Artifact-specific review skills pass the artifact, source evidence, and complete
 Invoke Project Bootstrapper once and describe the desired steady state:
 
 1. Use the repository bundle sources and matching generated runtime adapter.
-2. Review the resulting PROJECT.yaml, root or nested AGENTS.md guidance, and verification commands. [Technology Skills](design/skills-modularization.html) explains setup-time detection and folder skillsets.
+2. Review the resulting PROJECT.yaml, root or nested AGENTS.md guidance, and verification commands. Detected technology skills are inlined into the applicable AGENTS.md guidance by default. Pass inline-tech-skills as false to scripts/render-agents-technology-skills.py only when the target runtime should load those skills dynamically. [Technology Skills](design/skills-modularization.html) explains setup-time detection and folder skillsets.
 3. Use documentation-bootstrap and documentation-reverse-engineer when the project needs a source-backed documentation baseline. Whole-project reverse engineering covers every meaningful module by default: inventory and review module designs first, group the complete set into high-level designs, derive architecture from those groups, cover all observable workflows, and expose the complete hierarchy through README and wiki hubs. Narrower coverage is valid only when the user explicitly names the boundary.
 4. For normal planned development, treat accepted functional specifications and architecture as the upstream authority. Create and review the HLD, create and review its module designs, then implement with the ordinary coding agent and project-routed technology skills. A missing high-impact contract blocks dependent work instead of being filled with an unsupported assumption.
 5. Follow the [orchestrated development lifecycle](design/orchestrated-development-lifecycle.html) for the owning execution, independent review, integrated verification, commit, and claim-release gates.
 
 Separately requested deployment uses the user or project defaults, or caller-supplied destination overrides, under Scoped Target Deployment.
+
+```bash
+python3 scripts/render-agents-technology-skills.py --project PROJECT.yaml --inline-tech-skills false
+```
 
 ## Neutral Target Project Layout
 

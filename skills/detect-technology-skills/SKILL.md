@@ -17,8 +17,8 @@ Run technology detection during project setup, not during ordinary coding, revie
 4. Review source evidence, missing required skills, exclusive conflicts, and explicit no-variant results. Reject a candidate when its evidence proves only that a dependency exists in an owning manifest but not that the analyzed folder owns the behavior or verification workflow covered by that skill.
 5. Record accepted skillsets and source evidence in PROJECT.yaml.
 6. Compare every detected candidate with the technology skills actually exposed by the target runtime, not only with skills present in the methodology source tree.
-7. Generate root or nested AGENTS.md sections with unconditional folder skill-loading instructions.
-8. Verify every listed skill is installed and exposed to the agents that will work in that folder.
+7. Generate root or nested AGENTS.md sections with each detected skill statically inlined under its applicable folder route. Use inline-tech-skills false only when the target runtime must load the listed technology skills dynamically.
+8. Verify every inlined or dynamically listed skill exists in the accepted runtime catalog and is exposed to the setup process.
 9. Rerun only when project setup, technology boundaries, or the runtime's available-skill catalog changes.
 
 ## Operation Selection

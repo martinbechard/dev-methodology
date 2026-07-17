@@ -407,7 +407,7 @@
         </div>
         <div class="flow-row">
           <div><span class="name">3. Render Each Harness Format</span></div>
-          <p><code>scripts/build-skill-docs.py</code> converts the conceptual values into native property names and file structures. For example, conceptual <code>instructions</code> becomes Codex <code>developer_instructions</code> or the Markdown body of a Claude Code, Gemini CLI, or Junie CLI agent. The Codex adapter also enables and adds a loading directive for <code>codex-harness-directives</code> when <code>repositoryMutation</code> is required or conditional.</p>
+          <p><code>scripts/build-skill-docs.py</code> converts the conceptual values into native property names and file structures. For example, conceptual <code>instructions</code> becomes Codex <code>developer_instructions</code> or the Markdown body of a Claude Code, Gemini CLI, or Junie CLI agent. The generator statically appends unconditional core skill bodies by default and leaves conditional request-specific skills for dynamic loading. The Codex adapter also inlines <code>codex-harness-directives</code> when <code>repositoryMutation</code> is required or conditional. Passing <code>--inline-core-skills false</code> retains native core-skill loading and the Codex harness loading directive.</p>
         </div>
         <div class="flow-row">
           <div><span class="name">4. Use Generated Native Agent Definition Files</span></div>
@@ -644,7 +644,7 @@
             <tr>
               <td><span class="name">Codex</span></td>
               <td>One standalone TOML file per custom agent.</td>
-              <td>Codex discovers project <code>.codex/agents/</code> and user <code>~/.codex/agents/</code>. This bundle generates <code>generated/adapters/codex/agents/*.toml</code>. Mutation-capable definitions enable <code>codex-harness-directives</code> through <code>[[skills.config]]</code> and instruct the agent to load it before acting; read-only definitions omit it.</td>
+              <td>Codex discovers project <code>.codex/agents/</code> and user <code>~/.codex/agents/</code>. This bundle generates <code>generated/adapters/codex/agents/*.toml</code>. Mutation-capable definitions inline <code>codex-harness-directives</code> by default; the false inlining mode enables it through <code>[[skills.config]]</code> and adds a loading directive. Read-only definitions omit it.</td>
             </tr>
             <tr>
               <td><span class="name">Claude Code</span></td>
@@ -711,11 +711,11 @@
           </tr>
           <tr>
             <td><span class="name">skills</span></td>
-            <td>Emit loading instructions in <code>developer_instructions</code>.</td>
-            <td><code>skills</code> preloads definition-owned skill content; request-specific conditions go in the body.</td>
-            <td>Emit definition-owned and request-specific loading instructions into the body and rely on the selected repository or explicit deployment skill source.</td>
-            <td>Map definition-owned skills to <code>skills</code> and keep request-specific conditions in instructions.</td>
-            <td>Emit definition-owned and request-specific loading instructions into the body and rely on Copilot-compatible skill folders.</td>
+            <td>Append unconditional core skill bodies to <code>developer_instructions</code> by default. Keep request-specific conditions in the instructions. The false inlining mode emits core loading instructions.</td>
+            <td>Append unconditional core skill bodies to the Markdown body by default and omit <code>skills</code>. Keep request-specific conditions in the body. The false inlining mode maps core skills to <code>skills</code>.</td>
+            <td>Append unconditional core skill bodies to the Markdown body by default. Keep request-specific conditions in the body. The false inlining mode emits core loading instructions.</td>
+            <td>Append unconditional core skill bodies to the Markdown body by default and omit <code>skills</code>. Keep request-specific conditions in the body. The false inlining mode maps core skills to <code>skills</code>.</td>
+            <td>Append unconditional core skill bodies to the Markdown body by default. Keep request-specific conditions in the body and rely on Copilot-compatible skill folders for dynamic loading.</td>
           </tr>
           <tr>
             <td><span class="name">skillAvailability</span></td>
@@ -767,7 +767,7 @@
           </tr>
           <tr>
             <td><span class="name">repositoryMutation</span></td>
-            <td>No native field. Generation validates <code>agent-claim</code> assignment and loads <code>codex-harness-directives</code> for required or conditional mutation.</td>
+            <td>No native field. Generation validates <code>agent-claim</code> assignment and inlines <code>codex-harness-directives</code> for required or conditional mutation by default.</td>
             <td>No native field. Generation validates the portable <code>agent-claim</code> assignment.</td>
             <td>No native field. Generation validates the portable <code>agent-claim</code> assignment.</td>
             <td>No native field. Generation validates the portable <code>agent-claim</code> assignment.</td>
