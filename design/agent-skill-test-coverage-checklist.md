@@ -145,19 +145,28 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | code-discovery | [x] | [x] probe-code-discovery | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | code-execution-tracing | [x] | [x] probe-code-execution-tracing | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | code-review-evidence | [x] | [x] probe-code-review-evidence | [x] typescript-code-review | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| collaboration-patterns | [x] | [x] probe-collaboration-patterns | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| composition-patterns | [x] | [x] probe-composition-patterns | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | create-backlog | [x] | [x] probe-create-backlog | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | detect-technology-skills | [x] | [x] probe-detect-technology-skills | [x] project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | end-to-end-verification | [x] | [x] probe-end-to-end-verification | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | fix-explanation | [x] | [x] probe-fix-explanation | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| interface-patterns | [x] | [x] probe-interface-patterns | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| interpreter-pattern | [x] | [x] probe-interpreter-pattern | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | manage-backlog | [x] | [x] probe-manage-backlog | [x] backlog-lifecycle | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| object-creation-patterns | [x] | [x] probe-object-creation-patterns | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | organise-project-files | [x] | [x] probe-organise-project-files | [x] project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | prompt-contracts | [x] | [x] probe-prompt-contracts | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| request-patterns | [x] | [x] probe-request-patterns | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | root-cause-analysis | [x] | [x] probe-root-cause-analysis | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | runtime-evidence-collection | [x] | [x] probe-runtime-evidence-collection | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| singleton-pattern | [x] | [x] probe-singleton-pattern | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| state-strategy-patterns | [x] | [x] probe-state-strategy-patterns | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | structured-design | [x] | [x] probe-structured-design | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | structured-explanation | [x] | [x] probe-structured-explanation | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | test-driven-development | [x] | [x] probe-test-driven-development | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | test-strategy | [x] | [x] probe-test-strategy | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| traversal-patterns | [x] | [x] probe-traversal-patterns | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | user-experience-review | [x] | [x] probe-user-experience-review | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 
 ### Stack and domain skills
@@ -167,13 +176,9 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | agent-harness | [x] | [x] probe-agent-harness | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | api-routes | [x] | [x] probe-api-routes | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | clerk-auth | [x] | [x] probe-clerk-auth | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
-| collaboration-patterns | [x] | [x] probe-collaboration-patterns | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| composition-patterns | [x] | [x] probe-composition-patterns | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | electron-main | [x] | [x] probe-electron-main | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | electron-preload | [x] | [x] probe-electron-preload | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | fastapi | [x] | [x] probe-fastapi | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
-| interface-patterns | [x] | [x] probe-interface-patterns | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| interpreter-pattern | [x] | [x] probe-interpreter-pattern | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | java | [x] | [x] probe-java | [x] spring-boot-order-cancellation | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | java-design | [x] | [x] probe-java-design | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | java-design-pattern-examples | [x] | [x] probe-java-design-pattern-examples | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
@@ -190,7 +195,6 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | mockito | [x] | [x] probe-mockito | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | nextjs-app-router | [x] | [x] probe-nextjs-app-router | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | node-cli | [x] | [x] probe-node-cli | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| object-creation-patterns | [x] | [x] probe-object-creation-patterns | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | plan-engine | [x] | [x] probe-plan-engine | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | playwright | [x] | [x] probe-playwright | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | postgres-drizzle | [x] | [x] probe-postgres-drizzle | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
@@ -202,17 +206,13 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | quarkus-testing | [x] | [x] probe-quarkus-testing | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | react-server-components | [x] | [x] probe-react-server-components | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | react-vite-renderer | [x] | [x] probe-react-vite-renderer | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| request-patterns | [x] | [x] probe-request-patterns | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| singleton-pattern | [x] | [x] probe-singleton-pattern | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | spring-boot | [x] | [x] probe-spring-boot | [x] spring-boot-order-cancellation | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | spring-boot-design | [x] | [x] probe-spring-boot-design | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | spring-boot-testing | [x] | [x] probe-spring-boot-testing | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | spring-data-jpa | [x] | [x] probe-spring-data-jpa | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | sql | [x] | [x] probe-sql | [x] spring-boot-order-cancellation | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| state-strategy-patterns | [x] | [x] probe-state-strategy-patterns | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | tailwind-design-system | [x] | [x] probe-tailwind-design-system | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | tool-runtime | [x] | [x] probe-tool-runtime | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
-| traversal-patterns | [x] | [x] probe-traversal-patterns | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | typescript | [x] | [x] probe-typescript | [x] typescript-code-review, typescript-order-pricing | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | typescript-design-pattern-examples | [x] | [x] probe-typescript-design-pattern-examples | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | typescript-esm | [x] | [x] probe-typescript-esm | [x] typescript-code-review, typescript-order-pricing | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
@@ -226,13 +226,9 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | agent-harness | domain | Agent harness | [x] | [ ] | [ ] | none | none | none | none |
 | api-routes | technology | Application route handlers | [x] | [ ] | [ ] | none | none | none | none |
 | clerk-auth | technology | Clerk identity integration | [x] | [ ] | [ ] | none | none | none | none |
-| collaboration-patterns | domain | Collaboration Patterns | [x] | [ ] | [ ] | none | none | none | none |
-| composition-patterns | domain | Composition Patterns | [x] | [ ] | [ ] | none | none | none | none |
 | electron-main | technology | Electron main process | [x] | [ ] | [ ] | none | none | none | none |
 | electron-preload | technology | Electron preload boundary | [x] | [ ] | [ ] | none | none | none | none |
 | fastapi | technology | FastAPI | [x] | [ ] | [ ] | none | none | none | none |
-| interface-patterns | domain | Interface Patterns | [x] | [ ] | [ ] | none | none | none | none |
-| interpreter-pattern | domain | Interpreter Pattern | [x] | [ ] | [ ] | none | none | none | none |
 | java | technology | Java | [x] | [x] | [ ] | none | none | none | none |
 | java-design | technology | Java Design | [x] | [ ] | [ ] | none | none | none | none |
 | java-design-pattern-examples | technology | Java Design Pattern Examples | [x] | [ ] | [ ] | none | none | none | none |
@@ -249,7 +245,6 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | mockito | technology | Mockito | [x] | [ ] | [ ] | none | none | none | none |
 | nextjs-app-router | technology | Next.js App Router | [x] | [ ] | [ ] | none | none | none | none |
 | node-cli | technology | Node command line application | [x] | [ ] | [ ] | none | none | none | none |
-| object-creation-patterns | domain | Object Creation Patterns | [x] | [ ] | [ ] | none | none | none | none |
 | plan-engine | domain | Plan engine | [x] | [ ] | [ ] | none | none | none | none |
 | playwright | technology | Playwright | [x] | [ ] | [ ] | none | none | none | none |
 | postgres-drizzle | technology | PostgreSQL with Drizzle | [x] | [ ] | [ ] | none | none | none | none |
@@ -261,17 +256,13 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | quarkus-testing | technology | Quarkus Testing | [x] | [ ] | [ ] | none | none | none | none |
 | react-server-components | technology | React Server Components | [x] | [ ] | [ ] | none | none | none | none |
 | react-vite-renderer | technology | React renderer with Vite | [x] | [ ] | [ ] | none | none | none | none |
-| request-patterns | domain | Request And History Patterns | [x] | [ ] | [ ] | none | none | none | none |
-| singleton-pattern | domain | Singleton Pattern | [x] | [ ] | [ ] | none | none | none | none |
 | spring-boot | technology | Spring Boot | [x] | [x] | [ ] | none | none | none | none |
 | spring-boot-design | technology | Spring Boot Design | [x] | [ ] | [ ] | none | none | none | none |
 | spring-boot-testing | technology | Spring Boot Testing | [x] | [ ] | [ ] | none | none | none | none |
 | spring-data-jpa | technology | Spring Data JPA | [x] | [ ] | [ ] | none | none | none | none |
 | sql | technology | SQL | [x] | [x] | [ ] | none | none | none | none |
-| state-strategy-patterns | domain | State And Strategy Patterns | [x] | [ ] | [ ] | none | none | none | none |
 | tailwind-design-system | technology | Tailwind design system | [x] | [ ] | [ ] | none | none | none | none |
 | tool-runtime | domain | Tool runtime | [x] | [ ] | [ ] | none | none | none | none |
-| traversal-patterns | domain | Traversal Patterns | [x] | [ ] | [ ] | none | none | none | none |
 | typescript | technology | TypeScript | [x] | [x] | [ ] | none | none | none | none |
 | typescript-design-pattern-examples | technology | TypeScript Design Pattern Examples | [x] | [ ] | [ ] | none | none | none | none |
 | typescript-esm | technology | TypeScript ECMAScript modules | [x] | [x] | [ ] | none | none | none | none |

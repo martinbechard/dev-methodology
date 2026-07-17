@@ -2,7 +2,7 @@
 name: state-strategy-patterns
 description: Design or review Strategy, State, or Template Method when algorithms vary, behavior depends on explicit states and transitions, or a stable workflow owns customizable steps.
 metadata:
-  category: stack-and-domain
+  category: development-practice
 ---
 
 # State And Strategy Patterns

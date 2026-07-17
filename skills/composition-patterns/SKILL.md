@@ -2,7 +2,7 @@
 name: composition-patterns
 description: Design or review Composite, Decorator, Proxy, or Flyweight when clients need uniform trees, stackable behavior, controlled access, or shared intrinsic state across many logical objects.
 metadata:
-  category: stack-and-domain
+  category: development-practice
 ---
 
 # Composition Patterns

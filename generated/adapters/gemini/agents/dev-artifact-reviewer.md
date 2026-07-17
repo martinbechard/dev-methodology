@@ -20,6 +20,15 @@ Skill justifications:
 - review-architecture: We need this when reviewing architecture so system boundaries, runtime assumptions, and decisions are supported by evidence before future work relies on them.
 - review-high-level-design: We need this when reviewing a high-level design so subsystem responsibilities and component collaboration are coherent enough to coordinate downstream design and implementation.
 - review-module-design: We need this when reviewing a module design so its responsibilities, interfaces, runtime paths, and test obligations provide an implementable contract.
+- object-creation-patterns: We need this when reviewing construction decisions so creation ownership, family compatibility, staged assembly, copying, and simpler alternatives are assessed consistently.
+- singleton-pattern: We need this when reviewing one-instance decisions so the uniqueness boundary, lifecycle, access, concurrency, and composition alternatives are supported by evidence.
+- interface-patterns: We need this when reviewing boundary decisions so contract adaptation, independent variation, and subsystem simplification preserve their intended semantics.
+- composition-patterns: We need this when reviewing structural indirection so recursive ownership, wrappers, access control, shared state, and substitutability are supported by evidence.
+- state-strategy-patterns: We need this when reviewing behavior variation so algorithm substitution, state transitions, workflow invariants, and simpler representations are assessed consistently.
+- request-patterns: We need this when reviewing request or snapshot lifecycles so routing, ordering, undo, restoration, retention, and compensation have explicit owners and evidence.
+- collaboration-patterns: We need this when reviewing publisher or peer coordination so delivery, subscription, failure, lifecycle, and mediator ownership are assessed consistently.
+- traversal-patterns: We need this when reviewing traversal or external operations so order, mutation, recursion, dispatch coverage, and variation direction are supported by evidence.
+- interpreter-pattern: We need this when reviewing a small domain language so grammar, parsing, evaluation, diagnostics, resource limits, and parser-tooling thresholds are supported by evidence.
 - review-unit-test-plan: We need this when reviewing a unit test plan so scenarios, boundaries, traceability, and coverage evidence are sufficient to protect the intended behavior.
 - documentation-page-verify: We need this to apply a shared independent quality gate after the artifact-specific review so acceptance does not depend solely on the focused reviewer.
 Request-specific skill conditions:
@@ -29,6 +38,15 @@ Request-specific skill conditions:
 - review-architecture: when reviewing system-wide boundaries, runtime assumptions, architectural decisions, or their supporting evidence
 - review-high-level-design: when reviewing subsystem responsibilities, component collaboration, or a high-level design that coordinates downstream work
 - review-module-design: when reviewing module responsibilities, interfaces, runtime paths, test obligations, or another focused implementation contract
+- object-creation-patterns: when reviewing an architecture, high-level design, or module design that uses or compares Factory Method, Abstract Factory, Builder, or Prototype
+- singleton-pattern: when reviewing an architecture, high-level design, or module design that proposes or uses Singleton
+- interface-patterns: when reviewing an architecture, high-level design, or module design that uses or compares Adapter, Bridge, or Facade
+- composition-patterns: when reviewing an architecture, high-level design, or module design that uses or compares Composite, Decorator, Proxy, or Flyweight
+- state-strategy-patterns: when reviewing an architecture, high-level design, or module design that uses or compares Strategy, State, or Template Method
+- request-patterns: when reviewing an architecture, high-level design, or module design that uses or compares Command, Chain of Responsibility, or Memento
+- collaboration-patterns: when reviewing an architecture, high-level design, or module design that uses or compares Observer or Mediator
+- traversal-patterns: when reviewing an architecture, high-level design, or module design that uses or compares Iterator or Visitor
+- interpreter-pattern: when reviewing an architecture, high-level design, or module design that uses or evaluates Interpreter
 - review-unit-test-plan: when reviewing planned unit-test scenarios, boundaries, traceability, or coverage evidence
 Output purposes:
 - completed review checklist: Preserves the artifact-specific evidence behind the assessment so reviewers can audit which requirements were checked and how each conclusion was reached.
@@ -47,6 +65,15 @@ Load request-specific skills only when their conditions apply. Use judgment when
 - Use the review-architecture skill when reviewing system-wide boundaries, runtime assumptions, architectural decisions, or their supporting evidence.
 - Use the review-high-level-design skill when reviewing subsystem responsibilities, component collaboration, or a high-level design that coordinates downstream work.
 - Use the review-module-design skill when reviewing module responsibilities, interfaces, runtime paths, test obligations, or another focused implementation contract.
+- Use the object-creation-patterns skill when reviewing an architecture, high-level design, or module design that uses or compares Factory Method, Abstract Factory, Builder, or Prototype.
+- Use the singleton-pattern skill when reviewing an architecture, high-level design, or module design that proposes or uses Singleton.
+- Use the interface-patterns skill when reviewing an architecture, high-level design, or module design that uses or compares Adapter, Bridge, or Facade.
+- Use the composition-patterns skill when reviewing an architecture, high-level design, or module design that uses or compares Composite, Decorator, Proxy, or Flyweight.
+- Use the state-strategy-patterns skill when reviewing an architecture, high-level design, or module design that uses or compares Strategy, State, or Template Method.
+- Use the request-patterns skill when reviewing an architecture, high-level design, or module design that uses or compares Command, Chain of Responsibility, or Memento.
+- Use the collaboration-patterns skill when reviewing an architecture, high-level design, or module design that uses or compares Observer or Mediator.
+- Use the traversal-patterns skill when reviewing an architecture, high-level design, or module design that uses or compares Iterator or Visitor.
+- Use the interpreter-pattern skill when reviewing an architecture, high-level design, or module design that uses or evaluates Interpreter.
 - Use the review-unit-test-plan skill when reviewing planned unit-test scenarios, boundaries, traceability, or coverage evidence.
 
 Return:

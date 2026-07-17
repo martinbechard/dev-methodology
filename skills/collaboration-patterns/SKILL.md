@@ -2,7 +2,7 @@
 name: collaboration-patterns
 description: Design or review Observer or Mediator when state changes notify independent subscribers or many peers need coordinated interaction without direct pairwise coupling.
 metadata:
-  category: stack-and-domain
+  category: development-practice
 ---
 
 # Collaboration Patterns

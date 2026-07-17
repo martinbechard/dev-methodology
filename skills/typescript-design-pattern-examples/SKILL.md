@@ -7,7 +7,7 @@ metadata:
 
 # TypeScript Design Pattern Examples
 
-Combine with TypeScript and the matching generic pattern skill.
+Combine with TypeScript. When pattern selection or design review is in scope, also use the matching generic pattern skill.
 
 ## Example Routing
 

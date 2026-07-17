@@ -2,7 +2,7 @@
 name: traversal-patterns
 description: Design or review Iterator or Visitor when aggregate traversal must be encapsulated or stable object structures need independently evolving operations.
 metadata:
-  category: stack-and-domain
+  category: development-practice
 ---
 
 # Traversal Patterns

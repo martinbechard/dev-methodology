@@ -276,6 +276,7 @@ README_REQUIRED_PHRASES = (
     "- quarkus-testing",
     "jhipster-domain-modeling",
     "[Technology Skills](design/skills-modularization.html) explains always-used and rule-selected agent skills",
+    "The generic Gang of Four pattern skills are request-specific assignments for design authoring and design review.",
     "project-wiki-create",
     "create-functional-spec",
     "create-architecture",
@@ -371,6 +372,8 @@ MODULARIZATION_REQUIRED_PHRASES = (
     "Operational result — after setup",
     "Technology Extension Skills",
     "generic pattern family covers all 23 Gang of Four object-oriented patterns",
+    "request-specific assignments for Dev Documentation Writer and Dev Artifact Reviewer",
+    "pattern examples remain setup-detected technology skills",
     "Changeset identity, include-chain, validation, update, rollback, and recovery guidance together with SQL.",
     "jhipster-domain-modeling",
     "How Setup-Time Technology Detection Works",
@@ -388,15 +391,6 @@ TECHNOLOGY_EXTENSION_SKILLS = (
     "fastapi",
     "java",
     "java-design",
-    "object-creation-patterns",
-    "singleton-pattern",
-    "interface-patterns",
-    "composition-patterns",
-    "state-strategy-patterns",
-    "request-patterns",
-    "collaboration-patterns",
-    "traversal-patterns",
-    "interpreter-pattern",
     "java-design-pattern-examples",
     "typescript-design-pattern-examples",
     "python-design-pattern-examples",
@@ -421,6 +415,17 @@ TECHNOLOGY_EXTENSION_SKILLS = (
     "jest",
     "vitest",
     "electron-main",
+)
+CORE_PATTERN_SKILLS = (
+    "object-creation-patterns",
+    "singleton-pattern",
+    "interface-patterns",
+    "composition-patterns",
+    "state-strategy-patterns",
+    "request-patterns",
+    "collaboration-patterns",
+    "traversal-patterns",
+    "interpreter-pattern",
 )
 AGENT_ROLE_MAP_REQUIRED_PHRASES = (
     "Agents for Methodology Maintenance",
@@ -1109,7 +1114,7 @@ class BundleContentTests(unittest.TestCase):
                 self.assertTrue((skill_root / reference_path).is_file())
                 self.assertTrue((skill_root / "detection.yaml").is_file())
 
-    def test_gof_pattern_families_are_generic_complete_and_detection_backed(self) -> None:
+    def test_gof_pattern_families_are_generic_complete_and_role_assignable(self) -> None:
         expected = {
             "object-creation-patterns": (
                 "Factory Method",
@@ -1180,7 +1185,7 @@ class BundleContentTests(unittest.TestCase):
                 self.assertLessEqual(len(skill_text.splitlines()), 40)
                 self.assertIn(boundary_phrase, skill_text)
                 self.assertTrue((skill_root / reference_path).is_file())
-                self.assertTrue((skill_root / "detection.yaml").is_file())
+                self.assertFalse((skill_root / "detection.yaml").exists())
                 for pattern in covered_patterns[skill_name]:
                     self.assertIn(pattern, skill_text + reference_text)
 
@@ -1193,6 +1198,38 @@ class BundleContentTests(unittest.TestCase):
             self.assertTrue((skill_root / "detection.yaml").is_file())
             for pattern in flattened_patterns:
                 self.assertIn(pattern, example_text)
+
+    def test_generic_patterns_are_assigned_to_design_agents_and_examples_remain_detected(self) -> None:
+        pattern_skills = {
+            "object-creation-patterns",
+            "singleton-pattern",
+            "interface-patterns",
+            "composition-patterns",
+            "state-strategy-patterns",
+            "request-patterns",
+            "collaboration-patterns",
+            "traversal-patterns",
+            "interpreter-pattern",
+        }
+        example_skills = {
+            "java-design-pattern-examples",
+            "typescript-design-pattern-examples",
+            "python-design-pattern-examples",
+        }
+        build_skill_docs = load_build_skill_docs_module()
+        skill_payload = build_skill_docs.build_payload()
+        roles = build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
+        roles_by_name = {role.name: role for role in roles}
+
+        for role_name in ("dev-documentation-writer", "dev-artifact-reviewer"):
+            role = roles_by_name[role_name]
+            self.assertTrue(pattern_skills.issubset(role.skill_conditions))
+            self.assertTrue(example_skills.isdisjoint(role.skills))
+
+        for role in roles:
+            self.assertTrue(example_skills.isdisjoint(role.skills))
+            if role.name not in {"dev-documentation-writer", "dev-artifact-reviewer"}:
+                self.assertTrue(pattern_skills.isdisjoint(role.skills))
 
     def test_quarkus_concerns_are_separate_and_detection_backed(self) -> None:
         expected = {
@@ -3151,7 +3188,7 @@ class BundleContentTests(unittest.TestCase):
                 "review-high-level-design",
                 "review-module-design",
                 "review-unit-test-plan",
-            },
+            } | set(CORE_PATTERN_SKILLS),
             set(role.skill_conditions),
         )
 
@@ -3515,6 +3552,16 @@ class BundleContentTests(unittest.TestCase):
                     technology_section.count(
                         f'data-skill-definition="{skill_name}"'
                     ),
+                )
+        core_section = modularization_text.split(
+            '<section class="section" aria-labelledby="agent-skills-title">',
+            maxsplit=1,
+        )[1].split("</section>", maxsplit=1)[0]
+        for skill_name in CORE_PATTERN_SKILLS:
+            with self.subTest(core_pattern_skill=skill_name):
+                self.assertEqual(
+                    1,
+                    core_section.count(f'data-skill-definition="{skill_name}"'),
                 )
         self.assertIn(
             '<script src="generated/skill-definitions.js"></script>',

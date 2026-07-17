@@ -6,7 +6,7 @@
         {
           "name": "dev-artifact-reviewer",
           "output": "generated/adapters/claude/agents/dev-artifact-reviewer.md",
-          "sha256": "da9798d4bcde2b4f3bfca3b46eb0612ac7c536594fb0858879c79e4ae284afa4",
+          "sha256": "f892d97bc189f0c364ae48a8f0926e2e7af4def1a613ecc44155670a168c77b3",
           "source": "agents/roles/dev-activities/dev-artifact-reviewer.role.yaml"
         },
         {
@@ -36,7 +36,7 @@
         {
           "name": "dev-documentation-writer",
           "output": "generated/adapters/claude/agents/dev-documentation-writer.md",
-          "sha256": "3910d7e0058e1738b1884854258a30d7411c5106beec9f029651791436a7ad9a",
+          "sha256": "30d40dc0b98bff51ae3d1fca8762304c74b6330fd9cad98664fda48e57517441",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -170,7 +170,7 @@
         {
           "name": "dev-artifact-reviewer",
           "output": "generated/adapters/codex/agents/dev-artifact-reviewer.toml",
-          "sha256": "5ff62a81701d4d33e3daf6024630183f3023fb830077e85735b8c6909ee3e575",
+          "sha256": "2934b83f1f96c0d3eea5530663cc7e8e2986486cc9d70c59ce325d15cea422a0",
           "source": "agents/roles/dev-activities/dev-artifact-reviewer.role.yaml"
         },
         {
@@ -200,7 +200,7 @@
         {
           "name": "dev-documentation-writer",
           "output": "generated/adapters/codex/agents/dev-documentation-writer.toml",
-          "sha256": "77488132c1a0b81636491379e41f393e167be4da37644d357aebc838b88181f1",
+          "sha256": "28ad244eb7335f93b50e542d6cb8e27add7a28a2bd5556a9dc1acf620781e080",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -340,7 +340,7 @@
         {
           "name": "dev-artifact-reviewer",
           "output": "generated/adapters/gemini/agents/dev-artifact-reviewer.md",
-          "sha256": "fa2d58a4aba816dab1e1b0bba1a4727224f2492c6b8efb86fe9f50d6c4941875",
+          "sha256": "76eb0ede4dd932dfc11da568bc46c51e192fcfa42ec11df87283995d8f07ebd4",
           "source": "agents/roles/dev-activities/dev-artifact-reviewer.role.yaml"
         },
         {
@@ -370,7 +370,7 @@
         {
           "name": "dev-documentation-writer",
           "output": "generated/adapters/gemini/agents/dev-documentation-writer.md",
-          "sha256": "310bfd2ae980aea75e7ca3a0fe82dfb9c7d82ceb479979705e40154da4ca0b60",
+          "sha256": "4640d33f6ce3df8039012662d3d63d7a90910fc0ca98d78760a41b2370b0f36d",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -504,7 +504,7 @@
         {
           "name": "dev-artifact-reviewer",
           "output": "generated/adapters/junie/agents/dev-artifact-reviewer.md",
-          "sha256": "6c3b0294c238a519e08a24c72aa316dc3531e99a9c3b4594b731a8de8afb7e68",
+          "sha256": "940dbf701f21506452f2102c1b5af0af1ec24564e545c370f9baeeb4fc74b6f6",
           "source": "agents/roles/dev-activities/dev-artifact-reviewer.role.yaml"
         },
         {
@@ -534,7 +534,7 @@
         {
           "name": "dev-documentation-writer",
           "output": "generated/adapters/junie/agents/dev-documentation-writer.md",
-          "sha256": "53fbeba36d23f2df8eedbb2eecafc541bd4c3bc0a5de5f634750fde37fcf84de",
+          "sha256": "90e54fc0437499e5f02fe748f5b3c3af5c37540ee830e366ff6a4d260dc16205",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {

@@ -11,10 +11,46 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "agent-claim"
     },
     {
+      "condition": "when reviewing an architecture, high-level design, or module design that uses or compares Observer or Mediator.",
+      "kind": "conditional",
+      "role": "dev-artifact-reviewer",
+      "skill": "collaboration-patterns"
+    },
+    {
+      "condition": "when reviewing an architecture, high-level design, or module design that uses or compares Composite, Decorator, Proxy, or Flyweight.",
+      "kind": "conditional",
+      "role": "dev-artifact-reviewer",
+      "skill": "composition-patterns"
+    },
+    {
+      "condition": "when reviewing an architecture, high-level design, or module design that uses or compares Adapter, Bridge, or Facade.",
+      "kind": "conditional",
+      "role": "dev-artifact-reviewer",
+      "skill": "interface-patterns"
+    },
+    {
+      "condition": "when reviewing an architecture, high-level design, or module design that uses or evaluates Interpreter.",
+      "kind": "conditional",
+      "role": "dev-artifact-reviewer",
+      "skill": "interpreter-pattern"
+    },
+    {
+      "condition": "when reviewing an architecture, high-level design, or module design that uses or compares Factory Method, Abstract Factory, Builder, or Prototype.",
+      "kind": "conditional",
+      "role": "dev-artifact-reviewer",
+      "skill": "object-creation-patterns"
+    },
+    {
       "condition": "when the requested review creates a checklist, findings file, or other project artifact.",
       "kind": "conditional",
       "role": "dev-artifact-reviewer",
       "skill": "organise-project-files"
+    },
+    {
+      "condition": "when reviewing an architecture, high-level design, or module design that uses or compares Command, Chain of Responsibility, or Memento.",
+      "kind": "conditional",
+      "role": "dev-artifact-reviewer",
+      "skill": "request-patterns"
     },
     {
       "condition": "when reviewing system-wide boundaries, runtime assumptions, architectural decisions, or their supporting evidence.",
@@ -45,6 +81,24 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "conditional",
       "role": "dev-artifact-reviewer",
       "skill": "review-unit-test-plan"
+    },
+    {
+      "condition": "when reviewing an architecture, high-level design, or module design that proposes or uses Singleton.",
+      "kind": "conditional",
+      "role": "dev-artifact-reviewer",
+      "skill": "singleton-pattern"
+    },
+    {
+      "condition": "when reviewing an architecture, high-level design, or module design that uses or compares Strategy, State, or Template Method.",
+      "kind": "conditional",
+      "role": "dev-artifact-reviewer",
+      "skill": "state-strategy-patterns"
+    },
+    {
+      "condition": "when reviewing an architecture, high-level design, or module design that uses or compares Iterator or Visitor.",
+      "kind": "conditional",
+      "role": "dev-artifact-reviewer",
+      "skill": "traversal-patterns"
     },
     {
       "kind": "fixed",
@@ -176,6 +230,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "fix-explanation"
     },
     {
+      "condition": "when an architecture, high-level design, or module design selects or compares Observer or Mediator.",
+      "kind": "conditional",
+      "role": "dev-documentation-writer",
+      "skill": "collaboration-patterns"
+    },
+    {
+      "condition": "when an architecture, high-level design, or module design selects or compares Composite, Decorator, Proxy, or Flyweight.",
+      "kind": "conditional",
+      "role": "dev-documentation-writer",
+      "skill": "composition-patterns"
+    },
+    {
       "condition": "when describing system-wide boundaries, architectural decisions, cross-cutting responsibilities, or enduring constraints.",
       "kind": "conditional",
       "role": "dev-documentation-writer",
@@ -224,10 +290,52 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "documentation-reverse-engineer"
     },
     {
+      "condition": "when an architecture, high-level design, or module design selects or compares Adapter, Bridge, or Facade.",
+      "kind": "conditional",
+      "role": "dev-documentation-writer",
+      "skill": "interface-patterns"
+    },
+    {
+      "condition": "when an architecture, high-level design, or module design selects or evaluates Interpreter.",
+      "kind": "conditional",
+      "role": "dev-documentation-writer",
+      "skill": "interpreter-pattern"
+    },
+    {
+      "condition": "when an architecture, high-level design, or module design selects or compares Factory Method, Abstract Factory, Builder, or Prototype.",
+      "kind": "conditional",
+      "role": "dev-documentation-writer",
+      "skill": "object-creation-patterns"
+    },
+    {
       "condition": "when the requested documentation work creates a new project file or directory.",
       "kind": "conditional",
       "role": "dev-documentation-writer",
       "skill": "organise-project-files"
+    },
+    {
+      "condition": "when an architecture, high-level design, or module design selects or compares Command, Chain of Responsibility, or Memento.",
+      "kind": "conditional",
+      "role": "dev-documentation-writer",
+      "skill": "request-patterns"
+    },
+    {
+      "condition": "when an architecture, high-level design, or module design proposes or challenges Singleton.",
+      "kind": "conditional",
+      "role": "dev-documentation-writer",
+      "skill": "singleton-pattern"
+    },
+    {
+      "condition": "when an architecture, high-level design, or module design selects or compares Strategy, State, or Template Method.",
+      "kind": "conditional",
+      "role": "dev-documentation-writer",
+      "skill": "state-strategy-patterns"
+    },
+    {
+      "condition": "when an architecture, high-level design, or module design selects or compares Iterator or Visitor.",
+      "kind": "conditional",
+      "role": "dev-documentation-writer",
+      "skill": "traversal-patterns"
     },
     {
       "kind": "fixed",
@@ -880,12 +988,21 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     {
       "conditionalSkills": {
         "agent-claim": "when the requested review creates or updates a checklist, findings file, or other project artifact.",
+        "collaboration-patterns": "when reviewing an architecture, high-level design, or module design that uses or compares Observer or Mediator.",
+        "composition-patterns": "when reviewing an architecture, high-level design, or module design that uses or compares Composite, Decorator, Proxy, or Flyweight.",
+        "interface-patterns": "when reviewing an architecture, high-level design, or module design that uses or compares Adapter, Bridge, or Facade.",
+        "interpreter-pattern": "when reviewing an architecture, high-level design, or module design that uses or evaluates Interpreter.",
+        "object-creation-patterns": "when reviewing an architecture, high-level design, or module design that uses or compares Factory Method, Abstract Factory, Builder, or Prototype.",
         "organise-project-files": "when the requested review creates a checklist, findings file, or other project artifact.",
+        "request-patterns": "when reviewing an architecture, high-level design, or module design that uses or compares Command, Chain of Responsibility, or Memento.",
         "review-architecture": "when reviewing system-wide boundaries, runtime assumptions, architectural decisions, or their supporting evidence.",
         "review-functional-spec": "when reviewing a functional specification for its actors, workflows, states, acceptance criteria, or verification obligations.",
         "review-high-level-design": "when reviewing subsystem responsibilities, component collaboration, or a high-level design that coordinates downstream work.",
         "review-module-design": "when reviewing module responsibilities, interfaces, runtime paths, test obligations, or another focused implementation contract.",
-        "review-unit-test-plan": "when reviewing planned unit-test scenarios, boundaries, traceability, or coverage evidence."
+        "review-unit-test-plan": "when reviewing planned unit-test scenarios, boundaries, traceability, or coverage evidence.",
+        "singleton-pattern": "when reviewing an architecture, high-level design, or module design that proposes or uses Singleton.",
+        "state-strategy-patterns": "when reviewing an architecture, high-level design, or module design that uses or compares Strategy, State, or Template Method.",
+        "traversal-patterns": "when reviewing an architecture, high-level design, or module design that uses or compares Iterator or Visitor."
       },
       "coverage": {
         "caseBacked": false,
@@ -1209,6 +1326,8 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     },
     {
       "conditionalSkills": {
+        "collaboration-patterns": "when an architecture, high-level design, or module design selects or compares Observer or Mediator.",
+        "composition-patterns": "when an architecture, high-level design, or module design selects or compares Composite, Decorator, Proxy, or Flyweight.",
         "create-architecture": "when describing system-wide boundaries, architectural decisions, cross-cutting responsibilities, or enduring constraints.",
         "create-functional-spec": "when describing user-visible functionality, actor workflows, acceptance criteria, permissions, states, or error behavior.",
         "create-high-level-design": "when coordinating a subsystem or feature family through component responsibilities and interactions at a high level of abstraction.",
@@ -1217,7 +1336,14 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "documentation-bootstrap": "when the target project lacks the documentation structure needed to place and maintain the requested artifact.",
         "documentation-page-verify": "when creating or updating a README or custom non-wiki entry document whose established format must be preserved.",
         "documentation-reverse-engineer": "when authoritative documentation is missing, stale, or insufficient and the artifact must be derived from current code, configuration, or tests.",
-        "organise-project-files": "when the requested documentation work creates a new project file or directory."
+        "interface-patterns": "when an architecture, high-level design, or module design selects or compares Adapter, Bridge, or Facade.",
+        "interpreter-pattern": "when an architecture, high-level design, or module design selects or evaluates Interpreter.",
+        "object-creation-patterns": "when an architecture, high-level design, or module design selects or compares Factory Method, Abstract Factory, Builder, or Prototype.",
+        "organise-project-files": "when the requested documentation work creates a new project file or directory.",
+        "request-patterns": "when an architecture, high-level design, or module design selects or compares Command, Chain of Responsibility, or Memento.",
+        "singleton-pattern": "when an architecture, high-level design, or module design proposes or challenges Singleton.",
+        "state-strategy-patterns": "when an architecture, high-level design, or module design selects or compares Strategy, State, or Template Method.",
+        "traversal-patterns": "when an architecture, high-level design, or module design selects or compares Iterator or Visitor."
       },
       "coverage": {
         "caseBacked": true,
@@ -3486,10 +3612,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
-      "category": "stack-and-domain",
+      "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": false,
-        "evaluationCategory": "stack-and-domain",
+        "evaluationCategory": "development-practice",
         "executableCases": [],
         "executableFixture": false,
         "executedCases": [],
@@ -3524,76 +3650,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         ]
       },
       "declaredCases": [],
-      "detection": {
-        "activation": {
-          "anyOf": [
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".java",
-                  ".kt",
-                  ".cs",
-                  ".cpp",
-                  ".h",
-                  ".hpp",
-                  ".swift",
-                  ".ts",
-                  ".tsx",
-                  ".py",
-                  ".rb",
-                  ".php"
-                ],
-                "glob": "**/*Observer.*"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".java",
-                  ".kt",
-                  ".cs",
-                  ".cpp",
-                  ".h",
-                  ".hpp",
-                  ".swift",
-                  ".ts",
-                  ".tsx",
-                  ".py",
-                  ".rb",
-                  ".php"
-                ],
-                "glob": "**/*Mediator.*"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".py"
-                ],
-                "glob": "**/*observer_pattern.py"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".py"
-                ],
-                "glob": "**/*mediator_pattern.py"
-              }
-            }
-          ]
-        },
-        "capabilities": [
-          "collaboration-patterns"
-        ],
-        "companions": [],
-        "kind": "domain",
-        "label": "Collaboration Patterns",
-        "priority": 100,
-        "requiredWhenDetected": true,
-        "selection": "additive",
-        "skill": "collaboration-patterns"
-      },
+      "detection": null,
       "executedCases": [],
       "id": "collaboration-patterns",
       "judgePassedCases": [],
@@ -3601,10 +3658,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
-      "category": "stack-and-domain",
+      "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": false,
-        "evaluationCategory": "stack-and-domain",
+        "evaluationCategory": "development-practice",
         "executableCases": [],
         "executableFixture": false,
         "executedCases": [],
@@ -3639,130 +3696,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         ]
       },
       "declaredCases": [],
-      "detection": {
-        "activation": {
-          "anyOf": [
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".java",
-                  ".kt",
-                  ".cs",
-                  ".cpp",
-                  ".h",
-                  ".hpp",
-                  ".swift",
-                  ".ts",
-                  ".tsx",
-                  ".py",
-                  ".rb",
-                  ".php"
-                ],
-                "glob": "**/*Composite.*"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".java",
-                  ".kt",
-                  ".cs",
-                  ".cpp",
-                  ".h",
-                  ".hpp",
-                  ".swift",
-                  ".ts",
-                  ".tsx",
-                  ".py",
-                  ".rb",
-                  ".php"
-                ],
-                "glob": "**/*Decorator.*"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".java",
-                  ".kt",
-                  ".cs",
-                  ".cpp",
-                  ".h",
-                  ".hpp",
-                  ".swift",
-                  ".ts",
-                  ".tsx",
-                  ".py",
-                  ".rb",
-                  ".php"
-                ],
-                "glob": "**/*Proxy.*"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".java",
-                  ".kt",
-                  ".cs",
-                  ".cpp",
-                  ".h",
-                  ".hpp",
-                  ".swift",
-                  ".ts",
-                  ".tsx",
-                  ".py",
-                  ".rb",
-                  ".php"
-                ],
-                "glob": "**/*Flyweight.*"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".py"
-                ],
-                "glob": "**/*composite_pattern.py"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".py"
-                ],
-                "glob": "**/*decorator_pattern.py"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".py"
-                ],
-                "glob": "**/*proxy_pattern.py"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".py"
-                ],
-                "glob": "**/*flyweight_pattern.py"
-              }
-            }
-          ]
-        },
-        "capabilities": [
-          "object-composition-patterns"
-        ],
-        "companions": [],
-        "kind": "domain",
-        "label": "Composition Patterns",
-        "priority": 100,
-        "requiredWhenDetected": true,
-        "selection": "additive",
-        "skill": "composition-patterns"
-      },
+      "detection": null,
       "executedCases": [],
       "id": "composition-patterns",
       "judgePassedCases": [],
@@ -4684,10 +4618,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
-      "category": "stack-and-domain",
+      "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": false,
-        "evaluationCategory": "stack-and-domain",
+        "evaluationCategory": "development-practice",
         "executableCases": [],
         "executableFixture": false,
         "executedCases": [],
@@ -4722,103 +4656,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         ]
       },
       "declaredCases": [],
-      "detection": {
-        "activation": {
-          "anyOf": [
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".java",
-                  ".kt",
-                  ".cs",
-                  ".cpp",
-                  ".h",
-                  ".hpp",
-                  ".swift",
-                  ".ts",
-                  ".tsx",
-                  ".py",
-                  ".rb",
-                  ".php"
-                ],
-                "glob": "**/*Adapter.*"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".java",
-                  ".kt",
-                  ".cs",
-                  ".cpp",
-                  ".h",
-                  ".hpp",
-                  ".swift",
-                  ".ts",
-                  ".tsx",
-                  ".py",
-                  ".rb",
-                  ".php"
-                ],
-                "glob": "**/*Bridge.*"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".java",
-                  ".kt",
-                  ".cs",
-                  ".cpp",
-                  ".h",
-                  ".hpp",
-                  ".swift",
-                  ".ts",
-                  ".tsx",
-                  ".py",
-                  ".rb",
-                  ".php"
-                ],
-                "glob": "**/*Facade.*"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".py"
-                ],
-                "glob": "**/*adapter_pattern.py"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".py"
-                ],
-                "glob": "**/*bridge_pattern.py"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".py"
-                ],
-                "glob": "**/*facade_pattern.py"
-              }
-            }
-          ]
-        },
-        "capabilities": [
-          "interface-boundary-patterns"
-        ],
-        "companions": [],
-        "kind": "domain",
-        "label": "Interface Patterns",
-        "priority": 100,
-        "requiredWhenDetected": true,
-        "selection": "additive",
-        "skill": "interface-patterns"
-      },
+      "detection": null,
       "executedCases": [],
       "id": "interface-patterns",
       "judgePassedCases": [],
@@ -4826,10 +4664,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
-      "category": "stack-and-domain",
+      "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": false,
-        "evaluationCategory": "stack-and-domain",
+        "evaluationCategory": "development-practice",
         "executableCases": [],
         "executableFixture": false,
         "executedCases": [],
@@ -4864,49 +4702,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         ]
       },
       "declaredCases": [],
-      "detection": {
-        "activation": {
-          "anyOf": [
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".java",
-                  ".kt",
-                  ".cs",
-                  ".cpp",
-                  ".h",
-                  ".hpp",
-                  ".swift",
-                  ".ts",
-                  ".tsx",
-                  ".py",
-                  ".rb",
-                  ".php"
-                ],
-                "glob": "**/*Interpreter.*"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".py"
-                ],
-                "glob": "**/*interpreter_pattern.py"
-              }
-            }
-          ]
-        },
-        "capabilities": [
-          "language-interpreter-pattern"
-        ],
-        "companions": [],
-        "kind": "domain",
-        "label": "Interpreter Pattern",
-        "priority": 100,
-        "requiredWhenDetected": true,
-        "selection": "additive",
-        "skill": "interpreter-pattern"
-      },
+      "detection": null,
       "executedCases": [],
       "id": "interpreter-pattern",
       "judgePassedCases": [],
@@ -7005,10 +6801,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
-      "category": "stack-and-domain",
+      "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": false,
-        "evaluationCategory": "stack-and-domain",
+        "evaluationCategory": "development-practice",
         "executableCases": [],
         "executableFixture": false,
         "executedCases": [],
@@ -7043,103 +6839,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         ]
       },
       "declaredCases": [],
-      "detection": {
-        "activation": {
-          "anyOf": [
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".java",
-                  ".kt",
-                  ".cs",
-                  ".cpp",
-                  ".h",
-                  ".hpp",
-                  ".swift",
-                  ".ts",
-                  ".tsx",
-                  ".py",
-                  ".rb",
-                  ".php"
-                ],
-                "glob": "**/*Factory.*"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".java",
-                  ".kt",
-                  ".cs",
-                  ".cpp",
-                  ".h",
-                  ".hpp",
-                  ".swift",
-                  ".ts",
-                  ".tsx",
-                  ".py",
-                  ".rb",
-                  ".php"
-                ],
-                "glob": "**/*Builder.*"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".java",
-                  ".kt",
-                  ".cs",
-                  ".cpp",
-                  ".h",
-                  ".hpp",
-                  ".swift",
-                  ".ts",
-                  ".tsx",
-                  ".py",
-                  ".rb",
-                  ".php"
-                ],
-                "glob": "**/*Prototype.*"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".py"
-                ],
-                "glob": "**/*factory_pattern.py"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".py"
-                ],
-                "glob": "**/*builder_pattern.py"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".py"
-                ],
-                "glob": "**/*prototype_pattern.py"
-              }
-            }
-          ]
-        },
-        "capabilities": [
-          "object-creation-patterns"
-        ],
-        "companions": [],
-        "kind": "domain",
-        "label": "Object Creation Patterns",
-        "priority": 100,
-        "requiredWhenDetected": true,
-        "selection": "additive",
-        "skill": "object-creation-patterns"
-      },
+      "detection": null,
       "executedCases": [],
       "id": "object-creation-patterns",
       "judgePassedCases": [],
@@ -8724,10 +8424,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
-      "category": "stack-and-domain",
+      "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": false,
-        "evaluationCategory": "stack-and-domain",
+        "evaluationCategory": "development-practice",
         "executableCases": [],
         "executableFixture": false,
         "executedCases": [],
@@ -8762,103 +8462,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         ]
       },
       "declaredCases": [],
-      "detection": {
-        "activation": {
-          "anyOf": [
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".java",
-                  ".kt",
-                  ".cs",
-                  ".cpp",
-                  ".h",
-                  ".hpp",
-                  ".swift",
-                  ".ts",
-                  ".tsx",
-                  ".py",
-                  ".rb",
-                  ".php"
-                ],
-                "glob": "**/*Command.*"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".java",
-                  ".kt",
-                  ".cs",
-                  ".cpp",
-                  ".h",
-                  ".hpp",
-                  ".swift",
-                  ".ts",
-                  ".tsx",
-                  ".py",
-                  ".rb",
-                  ".php"
-                ],
-                "glob": "**/*ChainOfResponsibility.*"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".java",
-                  ".kt",
-                  ".cs",
-                  ".cpp",
-                  ".h",
-                  ".hpp",
-                  ".swift",
-                  ".ts",
-                  ".tsx",
-                  ".py",
-                  ".rb",
-                  ".php"
-                ],
-                "glob": "**/*Memento.*"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".py"
-                ],
-                "glob": "**/*command_pattern.py"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".py"
-                ],
-                "glob": "**/*chain_of_responsibility_pattern.py"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".py"
-                ],
-                "glob": "**/*memento_pattern.py"
-              }
-            }
-          ]
-        },
-        "capabilities": [
-          "request-processing-patterns"
-        ],
-        "companions": [],
-        "kind": "domain",
-        "label": "Request And History Patterns",
-        "priority": 100,
-        "requiredWhenDetected": true,
-        "selection": "additive",
-        "skill": "request-patterns"
-      },
+      "detection": null,
       "executedCases": [],
       "id": "request-patterns",
       "judgePassedCases": [],
@@ -9241,10 +8845,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
-      "category": "stack-and-domain",
+      "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": false,
-        "evaluationCategory": "stack-and-domain",
+        "evaluationCategory": "development-practice",
         "executableCases": [],
         "executableFixture": false,
         "executedCases": [],
@@ -9279,49 +8883,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         ]
       },
       "declaredCases": [],
-      "detection": {
-        "activation": {
-          "anyOf": [
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".java",
-                  ".kt",
-                  ".cs",
-                  ".cpp",
-                  ".h",
-                  ".hpp",
-                  ".swift",
-                  ".ts",
-                  ".tsx",
-                  ".py",
-                  ".rb",
-                  ".php"
-                ],
-                "glob": "**/*Singleton.*"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".py"
-                ],
-                "glob": "**/*singleton_pattern.py"
-              }
-            }
-          ]
-        },
-        "capabilities": [
-          "singleton-pattern"
-        ],
-        "companions": [],
-        "kind": "domain",
-        "label": "Singleton Pattern",
-        "priority": 100,
-        "requiredWhenDetected": true,
-        "selection": "additive",
-        "skill": "singleton-pattern"
-      },
+      "detection": null,
       "executedCases": [],
       "id": "singleton-pattern",
       "judgePassedCases": [],
@@ -9807,10 +9369,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
-      "category": "stack-and-domain",
+      "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": false,
-        "evaluationCategory": "stack-and-domain",
+        "evaluationCategory": "development-practice",
         "executableCases": [],
         "executableFixture": false,
         "executedCases": [],
@@ -9845,103 +9407,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         ]
       },
       "declaredCases": [],
-      "detection": {
-        "activation": {
-          "anyOf": [
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".java",
-                  ".kt",
-                  ".cs",
-                  ".cpp",
-                  ".h",
-                  ".hpp",
-                  ".swift",
-                  ".ts",
-                  ".tsx",
-                  ".py",
-                  ".rb",
-                  ".php"
-                ],
-                "glob": "**/*Strategy.*"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".java",
-                  ".kt",
-                  ".cs",
-                  ".cpp",
-                  ".h",
-                  ".hpp",
-                  ".swift",
-                  ".ts",
-                  ".tsx",
-                  ".py",
-                  ".rb",
-                  ".php"
-                ],
-                "glob": "**/*StatePattern.*"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".java",
-                  ".kt",
-                  ".cs",
-                  ".cpp",
-                  ".h",
-                  ".hpp",
-                  ".swift",
-                  ".ts",
-                  ".tsx",
-                  ".py",
-                  ".rb",
-                  ".php"
-                ],
-                "glob": "**/*TemplateMethod.*"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".py"
-                ],
-                "glob": "**/*strategy_pattern.py"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".py"
-                ],
-                "glob": "**/*state_pattern.py"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".py"
-                ],
-                "glob": "**/*template_method_pattern.py"
-              }
-            }
-          ]
-        },
-        "capabilities": [
-          "behavior-selection-patterns"
-        ],
-        "companions": [],
-        "kind": "domain",
-        "label": "State And Strategy Patterns",
-        "priority": 100,
-        "requiredWhenDetected": true,
-        "selection": "additive",
-        "skill": "state-strategy-patterns"
-      },
+      "detection": null,
       "executedCases": [],
       "id": "state-strategy-patterns",
       "judgePassedCases": [],
@@ -10361,10 +9827,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
-      "category": "stack-and-domain",
+      "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": false,
-        "evaluationCategory": "stack-and-domain",
+        "evaluationCategory": "development-practice",
         "executableCases": [],
         "executableFixture": false,
         "executedCases": [],
@@ -10399,76 +9865,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         ]
       },
       "declaredCases": [],
-      "detection": {
-        "activation": {
-          "anyOf": [
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".java",
-                  ".kt",
-                  ".cs",
-                  ".cpp",
-                  ".h",
-                  ".hpp",
-                  ".swift",
-                  ".ts",
-                  ".tsx",
-                  ".py",
-                  ".rb",
-                  ".php"
-                ],
-                "glob": "**/*Iterator.*"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".java",
-                  ".kt",
-                  ".cs",
-                  ".cpp",
-                  ".h",
-                  ".hpp",
-                  ".swift",
-                  ".ts",
-                  ".tsx",
-                  ".py",
-                  ".rb",
-                  ".php"
-                ],
-                "glob": "**/*Visitor.*"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".py"
-                ],
-                "glob": "**/*iterator_pattern.py"
-              }
-            },
-            {
-              "fileMatch": {
-                "extensions": [
-                  ".py"
-                ],
-                "glob": "**/*visitor_pattern.py"
-              }
-            }
-          ]
-        },
-        "capabilities": [
-          "traversal-operation-patterns"
-        ],
-        "companions": [],
-        "kind": "domain",
-        "label": "Traversal Patterns",
-        "priority": 100,
-        "requiredWhenDetected": true,
-        "selection": "additive",
-        "skill": "traversal-patterns"
-      },
+      "detection": null,
       "executedCases": [],
       "id": "traversal-patterns",
       "judgePassedCases": [],

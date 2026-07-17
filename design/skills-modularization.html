@@ -542,6 +542,66 @@
         </tbody>
       </table>
     </div>
+    <h3 class="section-subheading">Generic Design Pattern Skills</h3>
+    <p>The generic pattern family covers all 23 Gang of Four object-oriented patterns: five creational, seven structural, and eleven behavioral. The <a href="https://www.informit.com/store/design-patterns-elements-of-reusable-object-oriented-software-9780201633610">original catalog</a> describes reusable object-oriented designs and presents examples in C++ and Smalltalk rather than defining one implementation language. The skills below are request-specific assignments for Dev Documentation Writer and Dev Artifact Reviewer when design authoring or review selects a matching pattern.</p>
+    <div class="matrix">
+      <table>
+        <thead>
+          <tr>
+            <th>Generic skill</th>
+            <th>Request-specific condition</th>
+            <th>What gets bound</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="tag" data-skill-definition="object-creation-patterns">object-creation-patterns</span></td>
+            <td>Design authoring or review selects Factory Method, Abstract Factory, Builder, or Prototype.</td>
+            <td>Creation ownership, compatible families, staged assembly, copying, alternatives, and verification.</td>
+          </tr>
+          <tr>
+            <td><span class="tag" data-skill-definition="singleton-pattern">singleton-pattern</span></td>
+            <td>Design authoring or review proposes or challenges a single-instance requirement.</td>
+            <td>Language-neutral uniqueness, boundary, lifecycle, concurrency, alternatives, and test isolation.</td>
+          </tr>
+          <tr>
+            <td><span class="tag" data-skill-definition="interface-patterns">interface-patterns</span></td>
+            <td>Design authoring or review selects Adapter, Bridge, or Facade.</td>
+            <td>Contract translation, independent variation, subsystem boundaries, and semantic preservation.</td>
+          </tr>
+          <tr>
+            <td><span class="tag" data-skill-definition="composition-patterns">composition-patterns</span></td>
+            <td>Design authoring or review selects Composite, Decorator, Proxy, or Flyweight.</td>
+            <td>Recursive composition, wrapping, access control, shared intrinsic state, and substitutability.</td>
+          </tr>
+          <tr>
+            <td><span class="tag" data-skill-definition="state-strategy-patterns">state-strategy-patterns</span></td>
+            <td>Design authoring or review selects Strategy, State, or Template Method.</td>
+            <td>Algorithm variation, transitions, workflow invariants, composition, inheritance, and alternatives.</td>
+          </tr>
+          <tr>
+            <td><span class="tag" data-skill-definition="request-patterns">request-patterns</span></td>
+            <td>Design authoring or review selects Command, Chain of Responsibility, or Memento.</td>
+            <td>Request lifecycle, routing, ordering, undo, snapshot ownership, retention, and compensation.</td>
+          </tr>
+          <tr>
+            <td><span class="tag" data-skill-definition="collaboration-patterns">collaboration-patterns</span></td>
+            <td>Design authoring or review selects Observer or Mediator.</td>
+            <td>Subscription, coordination, delivery, concurrency, lifecycle, and failure ownership.</td>
+          </tr>
+          <tr>
+            <td><span class="tag" data-skill-definition="traversal-patterns">traversal-patterns</span></td>
+            <td>Design authoring or review selects Iterator or Visitor.</td>
+            <td>Traversal, mutation, dispatch, recursion, variation direction, resources, and failures.</td>
+          </tr>
+          <tr>
+            <td><span class="tag" data-skill-definition="interpreter-pattern">interpreter-pattern</span></td>
+            <td>Design authoring or review evaluates Interpreter for a small domain language.</td>
+            <td>Grammar, parsing, syntax representation, evaluation, diagnostics, limits, and tooling thresholds.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     <aside class="note">
       <div class="tag-row"><span class="tag skill">Loading transport is separate from skill selection</span></div>
       <p>Codex or Junie remains responsible for inserting selected skill instructions into agent context. A skill already preloaded by the harness is not reread through MCP. When routing has selected several exact names but their content is not yet present, the optional mcp-agent-ops layer loads the complete set in one bounded <code>skill_load</code> call and loads only required supporting resources afterward. Catalog revisions and content digests identify supplied bytes; they do not prove that a model retained or followed them.</p>
@@ -551,7 +611,7 @@
 
   <section class="section" aria-labelledby="technology-examples-title">
     <h2 id="technology-examples-title">Technology Extension Skills</h2>
-    <p>The generic pattern family covers all 23 Gang of Four object-oriented patterns: five creational, seven structural, and eleven behavioral. The <a href="https://www.informit.com/store/design-patterns-elements-of-reusable-object-oriented-software-9780201633610">original catalog</a> describes reusable object-oriented designs and presents examples in C++ and Smalltalk rather than defining one implementation language. Pattern selection, tradeoffs, and review criteria therefore remain language-neutral. Separate Java, TypeScript, and Python example skills show idiomatic implementations without making any language shape canonical. Explicit pattern-named source files load the matching generic family and language example skill; prospective designs invoke both by intent.</p>
+    <p>Java, TypeScript, and Python pattern examples remain setup-detected technology skills, so any agent acting in a matching folder can use idiomatic implementations without making one language shape canonical. They provide implementation forms for all 23 patterns; selection, tradeoffs, and review criteria remain with the generic skills above.</p>
     <div class="matrix">
       <table>
         <thead>
@@ -583,60 +643,19 @@
             <td>Java implementation and review guidance load separately from Java API, domain, package, module, and ownership design principles.</td>
           </tr>
           <tr>
-            <td><span class="tag" data-skill-definition="object-creation-patterns">object-creation-patterns</span></td>
-            <td>Explicit Factory, Builder, or Prototype names, or direct invocation during creation design.</td>
-            <td>Factory Method, Abstract Factory, Builder, and Prototype selection and review guidance.</td>
+            <td><span class="tag" data-skill-definition="java-design-pattern-examples">java-design-pattern-examples</span></td>
+            <td>Explicit pattern-named Java source in the folder.</td>
+            <td>Java examples for all 23 patterns, organized by creational, structural, and behavioral categories.</td>
           </tr>
           <tr>
-            <td><span class="tag" data-skill-definition="singleton-pattern">singleton-pattern</span></td>
-            <td>An explicit Singleton name or a proposed single-instance requirement.</td>
-            <td>Language-neutral uniqueness, boundary, lifecycle, concurrency, and test-isolation guidance.</td>
+            <td><span class="tag" data-skill-definition="typescript-design-pattern-examples">typescript-design-pattern-examples</span></td>
+            <td>Explicit pattern-named TypeScript source in the folder.</td>
+            <td>TypeScript examples for all 23 patterns, including structural types, functions, unions, and generators.</td>
           </tr>
           <tr>
-            <td><span class="tag" data-skill-definition="interface-patterns">interface-patterns</span></td>
-            <td>Explicit Adapter, Bridge, or Facade names, or direct invocation during boundary design.</td>
-            <td>Contract translation, independent variation, and subsystem-boundary guidance.</td>
-          </tr>
-          <tr>
-            <td><span class="tag" data-skill-definition="composition-patterns">composition-patterns</span></td>
-            <td>Explicit Composite, Decorator, Proxy, or Flyweight names, or direct invocation during structural design.</td>
-            <td>Recursive composition, wrapping, access control, and shared intrinsic-state guidance.</td>
-          </tr>
-          <tr>
-            <td><span class="tag" data-skill-definition="state-strategy-patterns">state-strategy-patterns</span></td>
-            <td>Explicit Strategy, StatePattern, or TemplateMethod names, or direct invocation during behavior design.</td>
-            <td>Algorithm variation, state transition, stable workflow, composition, and inheritance guidance.</td>
-          </tr>
-          <tr>
-            <td><span class="tag" data-skill-definition="request-patterns">request-patterns</span></td>
-            <td>Explicit Command, ChainOfResponsibility, or Memento names, or direct invocation during request and history design.</td>
-            <td>Request lifecycle, handler routing, undo, snapshot, retention, and compensation guidance.</td>
-          </tr>
-          <tr>
-            <td><span class="tag" data-skill-definition="collaboration-patterns">collaboration-patterns</span></td>
-            <td>Explicit Observer or Mediator names, or direct invocation during collaboration design.</td>
-            <td>Subscription, coordination, delivery, concurrency, lifecycle, and failure guidance.</td>
-          </tr>
-          <tr>
-            <td><span class="tag" data-skill-definition="traversal-patterns">traversal-patterns</span></td>
-            <td>Explicit Iterator or Visitor names, or direct invocation during traversal design.</td>
-            <td>Traversal, mutation, dispatch, recursion, variation-direction, and resource guidance.</td>
-          </tr>
-          <tr>
-            <td><span class="tag" data-skill-definition="interpreter-pattern">interpreter-pattern</span></td>
-            <td>An explicit Interpreter name or a proposed small domain language.</td>
-            <td>Grammar, syntax representation, evaluation context, diagnostics, and resource-limit guidance.</td>
-          </tr>
-          <tr>
-            <td>
-              <div class="tag-row">
-                <span class="tag" data-skill-definition="java-design-pattern-examples">java-design-pattern-examples</span>
-                <span class="tag" data-skill-definition="typescript-design-pattern-examples">typescript-design-pattern-examples</span>
-                <span class="tag" data-skill-definition="python-design-pattern-examples">python-design-pattern-examples</span>
-              </div>
-            </td>
-            <td>Explicit pattern-named Java, TypeScript, or Python source, or direct invocation with a generic pattern skill.</td>
-            <td>Complete language-specific example sets for all 23 patterns, organized by creational, structural, and behavioral categories.</td>
+            <td><span class="tag" data-skill-definition="python-design-pattern-examples">python-design-pattern-examples</span></td>
+            <td>Explicit pattern-named Python modules in the folder.</td>
+            <td>Python examples for all 23 patterns, including protocols, dataclasses, callables, modules, and generators.</td>
           </tr>
           <tr>
             <td>

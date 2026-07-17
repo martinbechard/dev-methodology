@@ -77,6 +77,33 @@ skills:
     justification: We need this when the requested artifact guides focused implementation work so module responsibilities, interfaces, and behavior are explicit before coding.
     condition: when guiding focused implementation through explicit module responsibilities,
       interfaces, runtime behavior, or test obligations.
+- object-creation-patterns:
+    justification: We need this when a design selects construction responsibilities so product creation, family compatibility, staged assembly, and copying remain explicit and language-neutral.
+    condition: when an architecture, high-level design, or module design selects or compares Factory Method, Abstract Factory, Builder, or Prototype.
+- singleton-pattern:
+    justification: We need this when a design proposes one shared instance so the uniqueness boundary, lifecycle, access, concurrency, and simpler composition alternatives are explicit.
+    condition: when an architecture, high-level design, or module design proposes or challenges Singleton.
+- interface-patterns:
+    justification: We need this when a design changes a boundary so contract adaptation, independent variation, and subsystem simplification preserve their intended semantics.
+    condition: when an architecture, high-level design, or module design selects or compares Adapter, Bridge, or Facade.
+- composition-patterns:
+    justification: We need this when a design introduces recursive structures, wrappers, access indirection, or shared intrinsic state so ownership and substitutability remain explicit.
+    condition: when an architecture, high-level design, or module design selects or compares Composite, Decorator, Proxy, or Flyweight.
+- state-strategy-patterns:
+    justification: We need this when a design varies algorithms, state-dependent behavior, or stable workflows so transitions, extension points, and simpler representations are evaluated explicitly.
+    condition: when an architecture, high-level design, or module design selects or compares Strategy, State, or Template Method.
+- request-patterns:
+    justification: We need this when a design gives requests or snapshots an independent lifecycle so execution, routing, undo, restoration, and retained history have clear owners.
+    condition: when an architecture, high-level design, or module design selects or compares Command, Chain of Responsibility, or Memento.
+- collaboration-patterns:
+    justification: We need this when a design coordinates publishers, subscribers, or peers so delivery, lifecycle, failure, and collaboration ownership are explicit.
+    condition: when an architecture, high-level design, or module design selects or compares Observer or Mediator.
+- traversal-patterns:
+    justification: We need this when a design separates traversal or type-specific operations from object structure so mutation, dispatch, recursion, and variation direction are explicit.
+    condition: when an architecture, high-level design, or module design selects or compares Iterator or Visitor.
+- interpreter-pattern:
+    justification: We need this when a design introduces a small domain language so grammar, parsing, evaluation, diagnostics, and resource limits are explicit before implementation.
+    condition: when an architecture, high-level design, or module design selects or evaluates Interpreter.
 - create-unit-test-plan:
     justification: We need this when the requested artifact must define durable test coverage so implementation, review, and handoff use the same behavioral scenarios.
     condition: when defining durable unit-test scenarios, boundaries, traceability,

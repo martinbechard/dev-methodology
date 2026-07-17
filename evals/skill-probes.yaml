@@ -516,7 +516,7 @@ probes:
   - id: probe-object-creation-patterns
     skill: object-creation-patterns
     source: skills/object-creation-patterns/SKILL.md
-    evaluationCategory: stack-and-domain
+    evaluationCategory: development-practice
     evaluationKind: activation-and-behavior
     activationCondition: Object construction varies through factories, staged builders, related product families, or prototype copying.
     negativeCondition: A constructor or static factory that already enforces the contract does not justify a pattern hierarchy.
@@ -530,7 +530,7 @@ probes:
   - id: probe-singleton-pattern
     skill: singleton-pattern
     source: skills/singleton-pattern/SKILL.md
-    evaluationCategory: stack-and-domain
+    evaluationCategory: development-practice
     evaluationKind: activation-and-behavior
     activationCondition: A design proposes or implements exactly one instance within a defined runtime boundary.
     negativeCondition: Convenient global access without a single-instance invariant does not justify Singleton.
@@ -544,7 +544,7 @@ probes:
   - id: probe-interface-patterns
     skill: interface-patterns
     source: skills/interface-patterns/SKILL.md
-    evaluationCategory: stack-and-domain
+    evaluationCategory: development-practice
     evaluationKind: activation-and-behavior
     activationCondition: Contracts require adaptation, independently varying abstraction and implementation, or a subsystem facade.
     negativeCondition: Ordinary delegation that already expresses one stable dependency does not justify Adapter, Bridge, or Facade terminology.
@@ -558,7 +558,7 @@ probes:
   - id: probe-composition-patterns
     skill: composition-patterns
     source: skills/composition-patterns/SKILL.md
-    evaluationCategory: stack-and-domain
+    evaluationCategory: development-practice
     evaluationKind: activation-and-behavior
     activationCondition: A design needs uniform tree operations, stackable responsibilities, controlled access, or shared intrinsic state.
     negativeCondition: A simple owned object graph or direct access without recursive, wrapping, or access-policy variation does not require these patterns.
@@ -572,7 +572,7 @@ probes:
   - id: probe-state-strategy-patterns
     skill: state-strategy-patterns
     source: skills/state-strategy-patterns/SKILL.md
-    evaluationCategory: stack-and-domain
+    evaluationCategory: development-practice
     evaluationKind: activation-and-behavior
     activationCondition: Algorithms vary, behavior depends on explicit states and transitions, or a stable workflow exposes constrained steps.
     negativeCondition: A small conditional, enum, table, or function that already expresses closed behavior does not justify a hierarchy.
@@ -586,7 +586,7 @@ probes:
   - id: probe-request-patterns
     skill: request-patterns
     source: skills/request-patterns/SKILL.md
-    evaluationCategory: stack-and-domain
+    evaluationCategory: development-practice
     evaluationKind: activation-and-behavior
     activationCondition: Requests need independent lifecycle, must traverse ordered handlers, or object state needs encapsulated snapshots.
     negativeCondition: A direct call or explicit loop without scheduling, retry, history, transport, or handler lifecycle does not need the patterns.
@@ -600,7 +600,7 @@ probes:
   - id: probe-collaboration-patterns
     skill: collaboration-patterns
     source: skills/collaboration-patterns/SKILL.md
-    evaluationCategory: stack-and-domain
+    evaluationCategory: development-practice
     evaluationKind: activation-and-behavior
     activationCondition: Publishers need independent subscribers or many peers require centrally owned collaboration rules.
     negativeCondition: One stable callback or a simple direct dependency does not justify Observer or Mediator.
@@ -614,7 +614,7 @@ probes:
   - id: probe-traversal-patterns
     skill: traversal-patterns
     source: skills/traversal-patterns/SKILL.md
-    evaluationCategory: stack-and-domain
+    evaluationCategory: development-practice
     evaluationKind: activation-and-behavior
     activationCondition: Traversal must hide aggregate representation or a stable element hierarchy needs independently evolving operations.
     negativeCondition: Standard iteration, streams, or ordinary polymorphism that already expresses the contract does not justify custom Iterator or Visitor machinery.
@@ -628,7 +628,7 @@ probes:
   - id: probe-interpreter-pattern
     skill: interpreter-pattern
     source: skills/interpreter-pattern/SKILL.md
-    evaluationCategory: stack-and-domain
+    evaluationCategory: development-practice
     evaluationKind: activation-and-behavior
     activationCondition: A small domain language needs explicit grammar, syntax representation, and evaluation rules.
     negativeCondition: Structured data, a direct API, or mature parser tooling already expresses the requirement more safely.

@@ -2,7 +2,7 @@
 name: object-creation-patterns
 description: Design or review Factory Method, Abstract Factory, Builder, or Prototype when construction varies, product families must stay compatible, assembly is staged, or copying is the owned creation mechanism.
 metadata:
-  category: stack-and-domain
+  category: development-practice
 ---
 
 # Object Creation Patterns

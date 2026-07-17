@@ -20,6 +20,15 @@ Skill justifications:
 - create-architecture: We need this when the requested artifact describes system-wide boundaries and decisions so future changes preserve the intended responsibilities and constraints.
 - create-high-level-design: We need this when the requested artifact coordinates a subsystem or feature family so its components and interactions are documented at a consistent level of abstraction.
 - create-module-design: We need this when the requested artifact guides focused implementation work so module responsibilities, interfaces, and behavior are explicit before coding.
+- object-creation-patterns: We need this when a design selects construction responsibilities so product creation, family compatibility, staged assembly, and copying remain explicit and language-neutral.
+- singleton-pattern: We need this when a design proposes one shared instance so the uniqueness boundary, lifecycle, access, concurrency, and simpler composition alternatives are explicit.
+- interface-patterns: We need this when a design changes a boundary so contract adaptation, independent variation, and subsystem simplification preserve their intended semantics.
+- composition-patterns: We need this when a design introduces recursive structures, wrappers, access indirection, or shared intrinsic state so ownership and substitutability remain explicit.
+- state-strategy-patterns: We need this when a design varies algorithms, state-dependent behavior, or stable workflows so transitions, extension points, and simpler representations are evaluated explicitly.
+- request-patterns: We need this when a design gives requests or snapshots an independent lifecycle so execution, routing, undo, restoration, and retained history have clear owners.
+- collaboration-patterns: We need this when a design coordinates publishers, subscribers, or peers so delivery, lifecycle, failure, and collaboration ownership are explicit.
+- traversal-patterns: We need this when a design separates traversal or type-specific operations from object structure so mutation, dispatch, recursion, and variation direction are explicit.
+- interpreter-pattern: We need this when a design introduces a small domain language so grammar, parsing, evaluation, diagnostics, and resource limits are explicit before implementation.
 - create-unit-test-plan: We need this when the requested artifact must define durable test coverage so implementation, review, and handoff use the same behavioral scenarios.
 - documentation-bootstrap: We need this when the target project lacks the methodology structure required to place and maintain the requested documentation correctly.
 - documentation-reverse-engineer: We need this when authoritative documentation is missing or stale so claims can be derived from current code, configuration, and tests.
@@ -30,6 +39,15 @@ Request-specific skill conditions:
 - create-architecture: when describing system-wide boundaries, architectural decisions, cross-cutting responsibilities, or enduring constraints
 - create-high-level-design: when coordinating a subsystem or feature family through component responsibilities and interactions at a high level of abstraction
 - create-module-design: when guiding focused implementation through explicit module responsibilities, interfaces, runtime behavior, or test obligations
+- object-creation-patterns: when an architecture, high-level design, or module design selects or compares Factory Method, Abstract Factory, Builder, or Prototype
+- singleton-pattern: when an architecture, high-level design, or module design proposes or challenges Singleton
+- interface-patterns: when an architecture, high-level design, or module design selects or compares Adapter, Bridge, or Facade
+- composition-patterns: when an architecture, high-level design, or module design selects or compares Composite, Decorator, Proxy, or Flyweight
+- state-strategy-patterns: when an architecture, high-level design, or module design selects or compares Strategy, State, or Template Method
+- request-patterns: when an architecture, high-level design, or module design selects or compares Command, Chain of Responsibility, or Memento
+- collaboration-patterns: when an architecture, high-level design, or module design selects or compares Observer or Mediator
+- traversal-patterns: when an architecture, high-level design, or module design selects or compares Iterator or Visitor
+- interpreter-pattern: when an architecture, high-level design, or module design selects or evaluates Interpreter
 - create-unit-test-plan: when defining durable unit-test scenarios, boundaries, traceability, or coverage expectations before implementation or review
 - documentation-bootstrap: when the target project lacks the documentation structure needed to place and maintain the requested artifact
 - documentation-reverse-engineer: when authoritative documentation is missing, stale, or insufficient and the artifact must be derived from current code, configuration, or tests
@@ -50,6 +68,15 @@ Load request-specific skills only when their conditions apply. Use judgment when
 - Use the create-architecture skill when describing system-wide boundaries, architectural decisions, cross-cutting responsibilities, or enduring constraints.
 - Use the create-high-level-design skill when coordinating a subsystem or feature family through component responsibilities and interactions at a high level of abstraction.
 - Use the create-module-design skill when guiding focused implementation through explicit module responsibilities, interfaces, runtime behavior, or test obligations.
+- Use the object-creation-patterns skill when an architecture, high-level design, or module design selects or compares Factory Method, Abstract Factory, Builder, or Prototype.
+- Use the singleton-pattern skill when an architecture, high-level design, or module design proposes or challenges Singleton.
+- Use the interface-patterns skill when an architecture, high-level design, or module design selects or compares Adapter, Bridge, or Facade.
+- Use the composition-patterns skill when an architecture, high-level design, or module design selects or compares Composite, Decorator, Proxy, or Flyweight.
+- Use the state-strategy-patterns skill when an architecture, high-level design, or module design selects or compares Strategy, State, or Template Method.
+- Use the request-patterns skill when an architecture, high-level design, or module design selects or compares Command, Chain of Responsibility, or Memento.
+- Use the collaboration-patterns skill when an architecture, high-level design, or module design selects or compares Observer or Mediator.
+- Use the traversal-patterns skill when an architecture, high-level design, or module design selects or compares Iterator or Visitor.
+- Use the interpreter-pattern skill when an architecture, high-level design, or module design selects or evaluates Interpreter.
 - Use the create-unit-test-plan skill when defining durable unit-test scenarios, boundaries, traceability, or coverage expectations before implementation or review.
 - Use the documentation-bootstrap skill when the target project lacks the documentation structure needed to place and maintain the requested artifact.
 - Use the documentation-reverse-engineer skill when authoritative documentation is missing, stale, or insufficient and the artifact must be derived from current code, configuration, or tests.

@@ -312,7 +312,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                     result = run_detection(root, "src/test", detector=detector)
                     self.assertEqual(expected, result["loadouts"][0]["skills"])
 
-    def test_explicit_java_pattern_types_load_generic_patterns_and_java_examples(self) -> None:
+    def test_explicit_java_pattern_types_load_java_examples(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             source = root / "src" / "main" / "java" / "example"
@@ -333,18 +333,9 @@ class TechnologyDetectionTests(unittest.TestCase):
                 (source / filename).write_text("class Example {}\n", encoding="utf-8")
 
             expected = [
-                "collaboration-patterns",
-                "composition-patterns",
-                "interface-patterns",
-                "interpreter-pattern",
                 "java",
                 "java-design",
                 "java-design-pattern-examples",
-                "object-creation-patterns",
-                "request-patterns",
-                "singleton-pattern",
-                "state-strategy-patterns",
-                "traversal-patterns",
             ]
             for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
                 with self.subTest(detector=detector):
@@ -364,7 +355,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                     result = run_detection(root, "src/main", detector=detector)
                     self.assertEqual(expected, result["loadouts"][0]["skills"])
 
-    def test_explicit_typescript_pattern_types_load_generic_patterns_and_typescript_examples(self) -> None:
+    def test_explicit_typescript_pattern_types_load_typescript_examples(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             source = root / "src"
@@ -373,9 +364,6 @@ class TechnologyDetectionTests(unittest.TestCase):
                 (source / filename).write_text("export class Example {}\n", encoding="utf-8")
 
             expected = [
-                "composition-patterns",
-                "interpreter-pattern",
-                "state-strategy-patterns",
                 "typescript",
                 "typescript-design-pattern-examples",
             ]
@@ -384,7 +372,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                     result = run_detection(root, "src", detector=detector)
                     self.assertEqual(expected, result["loadouts"][0]["skills"])
 
-    def test_explicit_python_pattern_modules_load_generic_patterns_and_python_examples(self) -> None:
+    def test_explicit_python_pattern_modules_load_python_examples(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             source = root / "src"
@@ -393,11 +381,8 @@ class TechnologyDetectionTests(unittest.TestCase):
                 (source / filename).write_text("class Example:\n    pass\n", encoding="utf-8")
 
             expected = [
-                "composition-patterns",
-                "interpreter-pattern",
                 "python",
                 "python-design-pattern-examples",
-                "state-strategy-patterns",
             ]
             for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
                 with self.subTest(detector=detector):

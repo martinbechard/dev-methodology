@@ -7,7 +7,7 @@ metadata:
 
 # Python Design Pattern Examples
 
-Combine with Python and the matching generic pattern skill.
+Combine with Python. When pattern selection or design review is in scope, also use the matching generic pattern skill.
 
 ## Example Routing
 

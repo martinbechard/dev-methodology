@@ -2,7 +2,7 @@
 name: interpreter-pattern
 description: Design or review Interpreter when a small, stable language or grammar needs an explicit syntax representation and evaluation rules.
 metadata:
-  category: stack-and-domain
+  category: development-practice
 ---
 
 # Interpreter Pattern

@@ -2,7 +2,7 @@
 name: singleton-pattern
 description: Design, challenge, or review Singleton when exactly one instance within a defined runtime boundary and controlled access are explicit requirements.
 metadata:
-  category: stack-and-domain
+  category: development-practice
 ---
 
 # Singleton Pattern

@@ -72,6 +72,33 @@ skills:
       interfaces, runtime paths, and test obligations provide an implementable contract.
     condition: when reviewing module responsibilities, interfaces, runtime paths,
       test obligations, or another focused implementation contract.
+- object-creation-patterns:
+    justification: We need this when reviewing construction decisions so creation ownership, family compatibility, staged assembly, copying, and simpler alternatives are assessed consistently.
+    condition: when reviewing an architecture, high-level design, or module design that uses or compares Factory Method, Abstract Factory, Builder, or Prototype.
+- singleton-pattern:
+    justification: We need this when reviewing one-instance decisions so the uniqueness boundary, lifecycle, access, concurrency, and composition alternatives are supported by evidence.
+    condition: when reviewing an architecture, high-level design, or module design that proposes or uses Singleton.
+- interface-patterns:
+    justification: We need this when reviewing boundary decisions so contract adaptation, independent variation, and subsystem simplification preserve their intended semantics.
+    condition: when reviewing an architecture, high-level design, or module design that uses or compares Adapter, Bridge, or Facade.
+- composition-patterns:
+    justification: We need this when reviewing structural indirection so recursive ownership, wrappers, access control, shared state, and substitutability are supported by evidence.
+    condition: when reviewing an architecture, high-level design, or module design that uses or compares Composite, Decorator, Proxy, or Flyweight.
+- state-strategy-patterns:
+    justification: We need this when reviewing behavior variation so algorithm substitution, state transitions, workflow invariants, and simpler representations are assessed consistently.
+    condition: when reviewing an architecture, high-level design, or module design that uses or compares Strategy, State, or Template Method.
+- request-patterns:
+    justification: We need this when reviewing request or snapshot lifecycles so routing, ordering, undo, restoration, retention, and compensation have explicit owners and evidence.
+    condition: when reviewing an architecture, high-level design, or module design that uses or compares Command, Chain of Responsibility, or Memento.
+- collaboration-patterns:
+    justification: We need this when reviewing publisher or peer coordination so delivery, subscription, failure, lifecycle, and mediator ownership are assessed consistently.
+    condition: when reviewing an architecture, high-level design, or module design that uses or compares Observer or Mediator.
+- traversal-patterns:
+    justification: We need this when reviewing traversal or external operations so order, mutation, recursion, dispatch coverage, and variation direction are supported by evidence.
+    condition: when reviewing an architecture, high-level design, or module design that uses or compares Iterator or Visitor.
+- interpreter-pattern:
+    justification: We need this when reviewing a small domain language so grammar, parsing, evaluation, diagnostics, resource limits, and parser-tooling thresholds are supported by evidence.
+    condition: when reviewing an architecture, high-level design, or module design that uses or evaluates Interpreter.
 - review-unit-test-plan:
     justification: We need this when reviewing a unit test plan so scenarios, boundaries,
       traceability, and coverage evidence are sufficient to protect the intended behavior.

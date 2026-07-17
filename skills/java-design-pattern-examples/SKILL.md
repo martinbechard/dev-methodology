@@ -7,7 +7,7 @@ metadata:
 
 # Java Design Pattern Examples
 
-Combine with Java, Java Design, and the matching generic pattern skill.
+Combine with Java and Java Design. When pattern selection or design review is in scope, also use the matching generic pattern skill.
 
 ## Example Routing
 

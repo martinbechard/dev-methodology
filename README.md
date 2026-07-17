@@ -287,6 +287,8 @@ After that analysis and explicit user approval, --replace-customized may be comb
 
 Wiki work remains separate from general documentation, coding, review, backlog, and project setup. The generated [Core Agent and Skills](design/agent-and-skill-definitions.html) page owns catalog views of current conceptual agent definitions and skill definitions, including responsibilities, assigned skills, output contracts, examples, model profiles, repository mutation policies, and agent-skill relationships. [Technology Skills](design/skills-modularization.html) explains technology-agnostic agent skills and setup-bound technology extensions. The [orchestrated development lifecycle](design/orchestrated-development-lifecycle.html) owns bootstrap, normal planned design progression, complete source-backed documentation, execution, review, verification, integration, claim release, and execution evidence.
 
+The generic Gang of Four pattern skills are request-specific assignments for design authoring and design review. Java, TypeScript, and Python pattern examples remain setup-detected technology skills available to every agent acting under the matching folder guidance.
+
 Whole-project reverse engineering finishes after project configuration and exact path coverage, one reviewed module design per meaningful responsibility, complete reviewed HLD grouping, reviewed architecture, reviewed functional workflow coverage, and verified README/wiki navigation. Sampling may be useful for later project-owned experiments, but it never reduces the shared documentation coverage contract.
 
 ## Bundled Skill Inventory
@@ -357,6 +359,15 @@ The development practice skills are:
 - code-execution-tracing
 - root-cause-analysis
 - runtime-evidence-collection
+- object-creation-patterns
+- singleton-pattern
+- interface-patterns
+- composition-patterns
+- state-strategy-patterns
+- request-patterns
+- collaboration-patterns
+- traversal-patterns
+- interpreter-pattern
 
 The stack and project-domain skill packs are:
 
@@ -367,15 +378,6 @@ The stack and project-domain skill packs are:
 - fastapi
 - java
 - java-design
-- object-creation-patterns
-- singleton-pattern
-- interface-patterns
-- composition-patterns
-- state-strategy-patterns
-- request-patterns
-- collaboration-patterns
-- traversal-patterns
-- interpreter-pattern
 - java-design-pattern-examples
 - typescript-design-pattern-examples
 - python-design-pattern-examples
