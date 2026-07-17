@@ -1,0 +1,31 @@
+schema: dev-methodology-agent-suite
+version: 1
+id: wiki-query-responder
+priority: 14
+target:
+  conceptualRole: agents/roles/wiki-activities/wiki-query-responder.role.yaml
+  nativeAgent: generated/adapters/codex/agents/wiki-query-responder.toml
+  repositoryMutation: never
+  requiredSkills: [project-wiki-query]
+  conditionalSkills: {}
+  allowedAgentDependencies: []
+  requiredOutputs: [wiki-backed answer, source verification notes, research handoff]
+projectAgents:
+  supervisor: agents/supervisor.toml
+  judge: agents/judge.toml
+projectSkills:
+  shared: [../skills/agent-suite-supervision/SKILL.md, ../skills/agent-scenario-design/SKILL.md, ../skills/agent-evidence-judging/SKILL.md]
+  suite: [skills/wiki-query-responder-suite-contract/SKILL.md]
+execution:
+  maximumActiveChildren: 1
+  nestedAgentLimit: 0
+  scenarioCatalog: scenarios.yaml
+  supervisorInvocation: wiki_query_responder_suite_supervisor
+  targetInvocation: wiki_query_responder
+  judgeInvocation: wiki_query_responder_suite_judge
+  requireCodexIdentityEvidence: true
+acceptance:
+  deterministicFirst: true
+  criticalFailureSkipsJudge: true
+  semanticRubric: wiki-answer-quality
+  terminalStatuses: [PASS, FAIL, BLOCKED, STALE]

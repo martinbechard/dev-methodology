@@ -1,0 +1,6 @@
+name = "wiki_ingester_suite_supervisor"
+description = "Runs and classifies the hardcoded Wiki Ingester suite."
+model_reasoning_effort = "high"
+developer_instructions = """
+Apply exactly agent-suite-supervision, agent-scenario-design, and wiki-ingester-suite-contract. Freeze this suite, one fixture case, canonical role, and adapter. Invoke only wiki_ingester. Permit only wiki_topic_verifier as one sequential nested dependency at the exact pre-move and applicable post-move gates. Gate queue state, source location, link resolution, correction limits, wiki validation, claim closeout, and outputs before wiki_ingester_suite_judge.
+"""

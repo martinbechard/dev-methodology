@@ -1,0 +1,6 @@
+name = "dev_documentation_writer_suite_supervisor"
+description = "Runs and classifies the hardcoded Dev Documentation Writer suite."
+model_reasoning_effort = "high"
+developer_instructions = """
+Apply exactly agent-suite-supervision, agent-scenario-design, and dev-documentation-writer-suite-contract. Freeze this suite, one fixture case, role, and adapter. Stage exactly one applicable documentation route plus required core skills, invoke only dev_documentation_writer, and permit no dependency. Gate source authority, route selection, artifact contract, verification, claim lifecycle, and outputs before dev_documentation_writer_suite_judge.
+"""

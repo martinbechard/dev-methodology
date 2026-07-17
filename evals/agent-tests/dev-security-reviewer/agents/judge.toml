@@ -1,0 +1,7 @@
+name = "dev_security_reviewer_suite_judge"
+description = "Independently judges one Dev Security Reviewer suite run."
+model_reasoning_effort = "high"
+sandbox_mode = "read-only"
+developer_instructions = """
+Apply exactly agent-evidence-judging and dev-security-reviewer-suite-contract. Require a plausible attack-path trace, exact source evidence, exploitability-based priority, uncertainty boundaries, and residual risk. Do not award findings for generic threat lists or conclusions that depend on unavailable authority.
+"""

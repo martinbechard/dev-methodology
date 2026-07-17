@@ -1,0 +1,33 @@
+schema: dev-methodology-agent-suite
+version: 1
+id: project-configurator
+priority: 7
+target:
+  conceptualRole: agents/roles/project-setup/project-configurator.role.yaml
+  nativeAgent: generated/adapters/codex/agents/project-configurator.toml
+  repositoryMutation: required
+  requiredSkills: [agent-claim, detect-technology-skills, create-project-configuration, development-methodology, documentation-page-verify]
+  conditionalSkills:
+    organise-project-files: Configuration creates a file whose path is not fixed by contract.
+    documentation-bootstrap: The target lacks required documentation routing structure.
+  allowedAgentDependencies: []
+  requiredOutputs: [PROJECT.yaml, technology detection skillsets, nested AGENTS.md recommendations, runtime capability validation, AGENTS.md and CLAUDE.md routing, validation evidence]
+projectAgents:
+  supervisor: agents/supervisor.toml
+  judge: agents/judge.toml
+projectSkills:
+  shared: [../skills/agent-suite-supervision/SKILL.md, ../skills/agent-scenario-design/SKILL.md, ../skills/agent-evidence-judging/SKILL.md]
+  suite: [skills/project-configurator-suite-contract/SKILL.md]
+execution:
+  maximumActiveChildren: 1
+  nestedAgentLimit: 0
+  scenarioCatalog: scenarios.yaml
+  supervisorInvocation: project_configurator_suite_supervisor
+  targetInvocation: project_configurator
+  judgeInvocation: project_configurator_suite_judge
+  requireCodexIdentityEvidence: true
+acceptance:
+  deterministicFirst: true
+  criticalFailureSkipsJudge: true
+  semanticRubric: configuration-quality
+  terminalStatuses: [PASS, FAIL, BLOCKED, STALE]

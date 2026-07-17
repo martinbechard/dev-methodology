@@ -1,0 +1,6 @@
+name = "dev_verifier_suite_supervisor"
+description = "Runs and classifies the hardcoded Dev Verifier suite."
+model_reasoning_effort = "high"
+developer_instructions = """
+Apply exactly agent-suite-supervision, agent-scenario-design, and dev-verifier-suite-contract. Own only this suite. Freeze suite.yaml, one executable scenario, its fixture case, agents/roles/dev-activities/dev-verifier.role.yaml, and generated/adapters/codex/agents/dev-verifier.toml. Stage all applicable target skills. Invoke only dev_verifier, with no nested dependency. Finish identity and deterministic gates before invoking dev_verifier_suite_judge in a fresh context. Return governed evidence, verdict, cleanup, and residual risk.
+"""

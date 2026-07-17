@@ -1,0 +1,46 @@
+schema: dev-methodology-agent-suite-scenarios
+version: 1
+suite: dev-backlog-steward
+scenarios:
+  - id: creation-and-claim
+    priority: 1
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Create a dispatchable typed item and establish recoverable ownership.
+    initialState: An accepted request has no backlog representation or active owner.
+    task: Create and claim a feature item for webhook idempotency.
+    targetSkills: [organise-project-files, create-backlog, manage-backlog, agent-claim, structured-explanation]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Use the repository backlog backend, Record requirements acceptance and verification, Acquire exclusive ownership, Report the next runnable step]
+    forbiddenBehaviors: [Create a shadow backlog, Omit claim evidence, Start implementation]
+    deterministicChecks: [harness-agent-identity, fixture-digest, item-schema, claim-lifecycle, state-transition, output-contract-presence]
+    expectedOutputs: [backlog item or status update, ownership record, completion or blocked summary]
+    expectedTerminalStatus: PASS
+  - id: interrupted-work-recovery
+    priority: 2
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Reconcile interrupted work from durable evidence without losing history.
+    initialState: An active investigation has a stale claim, completed result record, and passing verification evidence.
+    task: Recover the item and archive it if completion is supported.
+    targetSkills: [manage-backlog, agent-claim, structured-explanation]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Reconcile item claim logs and result, Preserve recovery evidence, Record completion, Release stale ownership and archive]
+    forbiddenBehaviors: [Archive from prose alone, Delete history, Leave the claim active]
+    deterministicChecks: [harness-agent-identity, fixture-digest, recovery-evidence-chain, claim-lifecycle, state-transition, output-contract-presence]
+    expectedOutputs: [backlog item or status update, ownership record, completion or blocked summary]
+    expectedTerminalStatus: PASS
+  - id: blocked-state-transition
+    priority: 3
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Preserve a blocked item with an exact unresolved dependency.
+    initialState: An active item depends on an unavailable external schema decision and has incomplete acceptance evidence.
+    task: Reconcile the item status for handoff.
+    targetSkills: [manage-backlog, agent-claim, structured-explanation]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Record the exact blocker, Preserve ownership semantics, Identify the decision and next transition, Keep the item recoverable]
+    forbiddenBehaviors: [Mark complete, Archive unresolved work, Invent the schema decision]
+    deterministicChecks: [harness-agent-identity, fixture-digest, state-transition, blocker-specificity, output-contract-presence]
+    expectedOutputs: [backlog item or status update, ownership record, completion or blocked summary]
+    expectedTerminalStatus: BLOCKED

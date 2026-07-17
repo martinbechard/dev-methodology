@@ -1,0 +1,6 @@
+name = "dev_merge_coordinator_suite_supervisor"
+description = "Runs and classifies the hardcoded Dev Merge Coordinator suite."
+model_reasoning_effort = "high"
+developer_instructions = """
+Apply exactly agent-suite-supervision, agent-scenario-design, and dev-merge-coordinator-suite-contract. Freeze this suite, one fixture case, canonical role, and adapter. Invoke only dev_merge_coordinator with no dependency. Gate contribution cleanliness, commit and review evidence, integration claim, dependency order, conflict record, integrated checks, final commit, and cleanup before dev_merge_coordinator_suite_judge.
+"""

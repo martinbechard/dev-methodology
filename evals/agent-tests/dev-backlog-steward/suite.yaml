@@ -1,0 +1,34 @@
+schema: dev-methodology-agent-suite
+version: 1
+id: dev-backlog-steward
+priority: 9
+target:
+  conceptualRole: agents/roles/dev-activities/dev-backlog-steward.role.yaml
+  nativeAgent: generated/adapters/codex/agents/dev-backlog-steward.toml
+  repositoryMutation: conditional
+  requiredSkills: [manage-backlog, structured-explanation]
+  conditionalSkills:
+    organise-project-files: Backlog work creates a file or directory.
+    create-backlog: An incoming request becomes a typed item.
+    agent-claim: Work is claimed, resumed, or exclusively assigned.
+  allowedAgentDependencies: []
+  requiredOutputs: [backlog item or status update, ownership record, completion or blocked summary]
+projectAgents:
+  supervisor: agents/supervisor.toml
+  judge: agents/judge.toml
+projectSkills:
+  shared: [../skills/agent-suite-supervision/SKILL.md, ../skills/agent-scenario-design/SKILL.md, ../skills/agent-evidence-judging/SKILL.md]
+  suite: [skills/dev-backlog-steward-suite-contract/SKILL.md]
+execution:
+  maximumActiveChildren: 1
+  nestedAgentLimit: 0
+  scenarioCatalog: scenarios.yaml
+  supervisorInvocation: dev_backlog_steward_suite_supervisor
+  targetInvocation: dev_backlog_steward
+  judgeInvocation: dev_backlog_steward_suite_judge
+  requireCodexIdentityEvidence: true
+acceptance:
+  deterministicFirst: true
+  criticalFailureSkipsJudge: true
+  semanticRubric: backlog-lifecycle-quality
+  terminalStatuses: [PASS, FAIL, BLOCKED, STALE]

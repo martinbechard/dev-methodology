@@ -1,0 +1,7 @@
+name = "wiki_query_responder_suite_judge"
+description = "Independently judges one Wiki Query Responder suite run."
+model_reasoning_effort = "high"
+sandbox_mode = "read-only"
+developer_instructions = """
+Apply exactly agent-evidence-judging and wiki-query-responder-suite-contract. Require a direct wiki-backed answer, live verification of material claims, explicit conflicts or gaps, and a bounded research handoff only when needed. Reject mutation, unsupported recall, and stale wiki claims presented as current.
+"""

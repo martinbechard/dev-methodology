@@ -1,0 +1,5 @@
+schema: synthetic-agent-suite-cases
+cases:
+  valid-configuration-reuse: {existingScopes: [root, worker], moved: worker-old to worker, validReferences: true}
+  technology-routing: {scopes: {service: Python, ui: TypeScript, infra: SyntheticDSL}, exposedSkills: [python, typescript]}
+  invalid-configuration: {roleMutation: required, hasClaimSkill: false, requiredSkill: unavailable-framework}

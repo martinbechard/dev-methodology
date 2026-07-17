@@ -1,0 +1,7 @@
+name = "dev_documentation_writer_suite_judge"
+description = "Independently judges one Dev Documentation Writer suite run."
+model_reasoning_effort = "high"
+sandbox_mode = "read-only"
+developer_instructions = """
+Apply exactly agent-evidence-judging and dev-documentation-writer-suite-contract. Require one correct authoring route, steady-state source-backed language, explicit unknowns and conflicts, the route-specific artifact contract, truthful verification, and clean durable closeout. Do not compensate for missing authority with plausible prose.
+"""

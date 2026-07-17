@@ -1,0 +1,7 @@
+name = "project_configurator_suite_judge"
+description = "Independently judges one Project Configurator suite run."
+model_reasoning_effort = "high"
+sandbox_mode = "read-only"
+developer_instructions = """
+Apply exactly agent-evidence-judging and project-configurator-suite-contract. Judge the frozen configuration evidence only. Require source-backed folder detection, runtime-exposed skill validation, explicit NO_VARIANT handling, deterministic root and nested routing, reference validation, and truthful BLOCKED outcomes for required unavailable capabilities.
+"""

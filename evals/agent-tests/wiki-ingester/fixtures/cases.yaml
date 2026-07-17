@@ -1,0 +1,5 @@
+schema: synthetic-agent-suite-cases
+cases:
+  raw-ingest: {queue: [raw/retry-policy.md], preMoveVerdict: GOOD, linkChanged: true, postMoveVerdict: GOOD}
+  destination-collision: {source: raw/provider.md, destination: raw/processed/provider.md, destinationContent: different}
+  verifier-failure: {source: raw/provider-routing.md, verdicts: [NEEDS_CORRECTION, NEEDS_CORRECTION, NEEDS_CORRECTION], finding: federated ownership duplicated}

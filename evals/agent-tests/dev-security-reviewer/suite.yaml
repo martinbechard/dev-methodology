@@ -1,0 +1,33 @@
+schema: dev-methodology-agent-suite
+version: 1
+id: dev-security-reviewer
+priority: 8
+target:
+  conceptualRole: agents/roles/dev-activities/dev-security-reviewer.role.yaml
+  nativeAgent: generated/adapters/codex/agents/dev-security-reviewer.toml
+  repositoryMutation: conditional
+  requiredSkills: [application-security, review-structured-artifact, structured-explanation]
+  conditionalSkills:
+    agent-claim: Review evidence is saved.
+    organise-project-files: Review creates a project file or directory.
+  allowedAgentDependencies: []
+  requiredOutputs: [prioritized security findings, affected files and evidence, residual risk]
+projectAgents:
+  supervisor: agents/supervisor.toml
+  judge: agents/judge.toml
+projectSkills:
+  shared: [../skills/agent-suite-supervision/SKILL.md, ../skills/agent-scenario-design/SKILL.md, ../skills/agent-evidence-judging/SKILL.md]
+  suite: [skills/dev-security-reviewer-suite-contract/SKILL.md]
+execution:
+  maximumActiveChildren: 1
+  nestedAgentLimit: 0
+  scenarioCatalog: scenarios.yaml
+  supervisorInvocation: dev_security_reviewer_suite_supervisor
+  targetInvocation: dev_security_reviewer
+  judgeInvocation: dev_security_reviewer_suite_judge
+  requireCodexIdentityEvidence: true
+acceptance:
+  deterministicFirst: true
+  criticalFailureSkipsJudge: true
+  semanticRubric: security-review-quality
+  terminalStatuses: [PASS, FAIL, BLOCKED, STALE]

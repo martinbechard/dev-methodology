@@ -1,0 +1,5 @@
+schema: synthetic-agent-suite-cases
+cases:
+  material-findings: {route: "accounts/{tenantId}", identitySource: session tenant, queryScope: path tenant, negativeTest: absent}
+  justified-clean-review: {identitySource: session tenant, queryScope: verified identity, negativeTests: [cross-tenant read, cross-tenant export]}
+  missing-authority: {route: account export, policyClient: external, deployedPolicy: unavailable}

@@ -1,0 +1,7 @@
+name = "dev_merge_coordinator_suite_judge"
+description = "Independently judges one Dev Merge Coordinator suite run."
+model_reasoning_effort = "high"
+sandbox_mode = "read-only"
+developer_instructions = """
+Apply exactly agent-evidence-judging and dev-merge-coordinator-suite-contract. Require clean committed reviewed contributions, intentional conflict decisions grounded in authority, integrated verification, a durable final commit, and clean claim release. Reject mechanical conflict choice and anonymous dirty handoffs.
+"""
