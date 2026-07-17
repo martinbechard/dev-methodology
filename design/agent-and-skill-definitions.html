@@ -161,6 +161,12 @@
       gap: var(--space-4);
     }
 
+    .skill-catalog__stack {
+      display: grid;
+      align-content: start;
+      gap: var(--space-4);
+    }
+
     .panel,
     .card {
       border: 1px solid var(--color-line);
@@ -766,8 +772,18 @@
           ? technologyData.skills.map((entry) => entry.skill)
           : [],
       );
+      const categoriesById = new Map(
+        skillData.categories.map((category) => [category.id, category]),
+      );
+      const developmentPracticeCategory = categoriesById.get(
+        "development-practice",
+      );
+      const designPatternCategory = categoriesById.get("design-patterns");
+      const stackDesignPatterns = Boolean(
+        developmentPracticeCategory && designPatternCategory,
+      );
 
-      skillData.categories.forEach((category) => {
+      const createCategoryPanel = (category) => {
         const panel = document.createElement("article");
         panel.className = "panel";
 
@@ -785,7 +801,20 @@
             technologySkills.has(skill.name) ? "technology-skill" : "skill",
           )));
         panel.appendChild(row);
-        catalog.appendChild(panel);
+        return panel;
+      };
+
+      skillData.categories.forEach((category) => {
+        if (stackDesignPatterns && category.id === "design-patterns") return;
+        if (stackDesignPatterns && category.id === "development-practice") {
+          const stack = document.createElement("div");
+          stack.className = "skill-catalog__stack";
+          stack.appendChild(createCategoryPanel(developmentPracticeCategory));
+          stack.appendChild(createCategoryPanel(designPatternCategory));
+          catalog.appendChild(stack);
+          return;
+        }
+        catalog.appendChild(createCategoryPanel(category));
       });
     }
 
