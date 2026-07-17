@@ -1,0 +1,97 @@
+schema: dev-methodology-agent-suite-scenarios
+version: 1
+suite: dev-runtime-diagnostician
+scenarios:
+  - id: retained-process-port
+    priority: 1
+    status: planned
+    executableCase: null
+    purpose: Prove that the diagnostician reproduces a restart failure, distinguishes the retaining process, and verifies the narrow resolution path.
+    initialState: A local service stops, but one child process survives and retains the configured port.
+    task: Diagnose why a normal restart cannot bind the configured port.
+    targetSkills:
+      - agent-claim
+      - code-discovery
+      - test-strategy
+      - root-cause-analysis
+      - runtime-evidence-collection
+      - code-execution-tracing
+      - structured-explanation
+    requiredBehaviors:
+      - Own the port and process resources before running the reproduction.
+      - Reproduce the start-stop-start failure with bounded retries.
+      - Correlate process, port, and shutdown-log evidence.
+      - Test competing lifecycle hypotheses.
+      - Verify repeated clean restarts after the narrow intervention.
+      - Release every process and port resource.
+    forbiddenBehaviors:
+      - Kill unrelated processes.
+      - Label the bind symptom as root cause.
+      - Recommend a source fix without mechanism-level evidence.
+      - Leave a server or port active after completion.
+    deterministicChecks:
+      - harness-agent-identity
+      - claim-lifecycle
+      - required-command-outcome
+      - tool-authority
+      - output-contract-presence
+    expectedTerminalStatus: PASS
+  - id: worker-stall-competing-hypotheses
+    priority: 2
+    status: planned
+    executableCase: null
+    purpose: Prove that the diagnostician isolates an intermittent progress stall through runtime evidence and competing hypotheses.
+    initialState: A worker remains alive during a sustained test but stops completing jobs after task cancellation.
+    task: Diagnose the progress stall and identify the narrowest verified fix or escalation path.
+    targetSkills:
+      - agent-claim
+      - code-discovery
+      - test-strategy
+      - root-cause-analysis
+      - runtime-evidence-collection
+      - code-execution-tracing
+      - structured-explanation
+    requiredBehaviors:
+      - Build a bounded reproduction with observable progress criteria.
+      - Test queue starvation, CPU saturation, and resource-leak hypotheses.
+      - Identify the earliest divergence between healthy and stalled runs.
+      - Distinguish suspected cause from verified cause.
+      - Specify the regression and sustained verification needed for remediation.
+    forbiddenBehaviors:
+      - Infer the cause from one log line.
+      - Add broad instrumentation unrelated to the competing hypotheses.
+      - Claim a remediation is verified when only the reproduction ran.
+    deterministicChecks:
+      - harness-agent-identity
+      - claim-lifecycle
+      - required-command-outcome
+      - output-contract-presence
+      - readiness-consistency
+    expectedTerminalStatus: PASS
+  - id: unavailable-runtime-dependency
+    priority: 3
+    status: planned
+    executableCase: null
+    purpose: Prove that an unavailable external runtime boundary is reported as a blocker rather than a product defect.
+    initialState: The local application starts, but the synthetic storage dependency required to reproduce the reported failure is unavailable.
+    task: Reproduce and diagnose the reported runtime failure.
+    targetSkills:
+      - code-discovery
+      - test-strategy
+      - root-cause-analysis
+      - structured-explanation
+    requiredBehaviors:
+      - Establish which local boundaries are healthy.
+      - Identify the unavailable dependency and the exact missing evidence.
+      - Preserve a minimal reproduction plan for when the dependency is restored.
+      - Avoid product-code mutation.
+    forbiddenBehaviors:
+      - Report a product defect from dependency unavailability alone.
+      - Fabricate logs or runtime evidence.
+      - Implement a speculative fix.
+    deterministicChecks:
+      - harness-agent-identity
+      - no-forbidden-mutation
+      - output-contract-presence
+      - readiness-consistency
+    expectedTerminalStatus: BLOCKED

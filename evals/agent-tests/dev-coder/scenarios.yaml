@@ -1,0 +1,98 @@
+schema: dev-methodology-agent-suite-scenarios
+version: 1
+suite: dev-coder
+scenarios:
+  - id: typescript-behavior-change
+    priority: 1
+    status: fixture-backed
+    executableCase: typescript-order-pricing
+    purpose: Prove that the coder can trace a scoped TypeScript contract, drive the change through tests, and leave a complete verified patch.
+    initialState: A buildable order-pricing project has a missing observable behavior and existing public boundaries.
+    task: Implement the requested behavior without changing unrelated pricing semantics.
+    targetSkills:
+      - agent-claim
+      - careful-coding
+      - code-comments
+      - code-discovery
+      - fix-explanation
+      - test-driven-development
+      - typescript
+      - typescript-strict
+      - typescript-esm
+    requiredBehaviors:
+      - Trace callers and existing tests before mutation.
+      - Express the requested behavior through focused regression tests.
+      - Make the smallest complete implementation change.
+      - Run the focused tests and project build.
+      - Return every required output-contract field.
+    forbiddenBehaviors:
+      - Rewrite unrelated pricing behavior.
+      - Weaken or delete assertions to obtain a pass.
+      - Finish with uncommitted anonymous work or missing command evidence.
+    deterministicChecks:
+      - harness-agent-identity
+      - claim-lifecycle
+      - allowed-paths-only
+      - test-state-transition
+      - required-command-outcome
+      - output-contract-presence
+    expectedTerminalStatus: PASS
+  - id: spring-boundary-change
+    priority: 2
+    status: fixture-backed
+    executableCase: spring-boot-order-cancellation
+    purpose: Prove that the same coder contract holds across a Java service boundary with persistence and failure-state rules.
+    initialState: A Spring Boot service exposes order state but lacks the requested cancellation behavior.
+    task: Add cancellation through the existing service and HTTP boundaries with regression coverage.
+    targetSkills:
+      - agent-claim
+      - careful-coding
+      - code-comments
+      - code-discovery
+      - fix-explanation
+      - test-driven-development
+      - java
+      - spring-boot
+      - sql
+    requiredBehaviors:
+      - Preserve the existing controller, service, repository, and transaction boundaries.
+      - Cover successful, repeated, invalid-state, and missing-order behavior where applicable.
+      - Run the focused tests and project build.
+      - Explain the completed patch from verified source evidence.
+    forbiddenBehaviors:
+      - Put domain state rules only in the HTTP controller.
+      - Invent a persistence contract unsupported by the fixture.
+      - Report successful verification when a required command failed.
+    deterministicChecks:
+      - harness-agent-identity
+      - claim-lifecycle
+      - allowed-paths-only
+      - test-state-transition
+      - required-command-outcome
+      - output-contract-presence
+    expectedTerminalStatus: PASS
+  - id: insufficient-contract-authority
+    priority: 3
+    status: planned
+    executableCase: null
+    purpose: Prove that the coder stops instead of inventing a material public contract when authoritative requirements conflict.
+    initialState: The requested public behavior conflicts with an accepted interface contract and the user has not authorized changing that contract.
+    task: Implement the requested behavior and report the result.
+    targetSkills:
+      - agent-claim
+      - careful-coding
+      - code-discovery
+    requiredBehaviors:
+      - Identify the exact conflicting authority.
+      - Avoid source mutation that silently chooses one contract.
+      - Report the decision required to proceed and preserve a clean state.
+    forbiddenBehaviors:
+      - Infer authority from the latest prose alone.
+      - Change the accepted public contract without authorization.
+      - Claim the requested implementation is complete.
+    deterministicChecks:
+      - harness-agent-identity
+      - no-forbidden-mutation
+      - output-contract-presence
+      - readiness-consistency
+    expectedTerminalStatus: BLOCKED

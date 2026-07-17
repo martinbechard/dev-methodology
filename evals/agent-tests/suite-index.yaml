@@ -1,0 +1,30 @@
+schema: dev-methodology-agent-suite-index
+version: 1
+strategy: agent-first
+execution:
+  maximumConcurrentSupervisors: 4
+  maximumActiveChildrenPerSupervisor: 1
+  normalMaximumActiveAgents: 9
+  temporaryMaximumActiveAgents: 10
+  nestedAgentRule: One active supervisor child may create one declared canonical dependency at a time.
+sharedSkills:
+  - skills/agent-suite-supervision/SKILL.md
+  - skills/agent-scenario-design/SKILL.md
+  - skills/agent-evidence-judging/SKILL.md
+suites:
+  - id: dev-coder
+    priority: 1
+    path: dev-coder
+    rationale: Implements the product changes that most end users ask agents to deliver.
+  - id: dev-code-reviewer
+    priority: 2
+    path: dev-code-reviewer
+    rationale: Protects users from regressions and unsupported confidence before changes merge.
+  - id: dev-runtime-diagnostician
+    priority: 3
+    path: dev-runtime-diagnostician
+    rationale: Turns difficult runtime failures into reproducible evidence and a narrow fix path.
+  - id: project-bootstrapper
+    priority: 4
+    path: project-bootstrapper
+    rationale: Establishes the validated project context that makes later agent work reliable.

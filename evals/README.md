@@ -1,13 +1,23 @@
-# Agent And Skill Evaluations
+# Agent Evaluations
 
-The evaluation system exercises the distributed agents and skills with synthetic projects and supports Codex and Junie. Ordinary cases run locally in disposable workspaces. This local tier isolates reproducibility and host state; it is not a sandbox for hostile code. A fixture pass, captured execution, Judge pass, Model Judge calibration status, security containment, and digest freshness are separate claims. External containment is reserved for cases explicitly classified as high risk.
+The evaluation system exercises the distributed agents with synthetic projects and supports Codex and Junie. Agent-owned suites under agent-tests are the primary planning and orchestration unit. Each suite derives a compact scenario set from one canonical conceptual agent definition, hardcodes its supervisor, Judge, target agent, project skills, dependencies, and acceptance gates, and uses the common protocol in agent-tests/AGENTS.md.
+
+Skill probes remain available as targeted diagnostic controls inside an agent scenario. They are not an exhaustive test-planning unit and do not require one test per assigned skill.
+
+Ordinary cases run locally in disposable workspaces. This local tier isolates reproducibility and host state; it is not a sandbox for hostile code. A fixture pass, captured execution, Judge pass, Model Judge calibration status, security containment, and digest freshness are separate claims. External containment is reserved for cases explicitly classified as high risk.
+
+## Agent-Owned Suites
+
+The first-wave suite index prioritizes Dev Coder, Dev Code Reviewer, Dev Runtime Diagnostician, and Project Bootstrapper. The root coordinator may run at most four suite supervisors concurrently. Each supervisor uses exactly one child at a time. One target child may temporarily create one additional nested agent only when its canonical workflow and suite manifest declare that dependency. This produces a normal ceiling of nine active agents and an exceptional ceiling of ten.
+
+Every suite contains suite.yaml, scenarios.yaml, a hardcoded supervisor, a hardcoded read-only Judge, and a target-specific contract skill shared by those project agents. Cross-suite scenario, supervision, and judging methods live once under agent-tests/skills.
 
 ## Evaluation Layers
 
-- Structural validation checks catalogs, source references, harness policy, executable-case links, and current digests.
-- Skill probes check activation, negative activation, expected behavior, and ablation results.
-- Agent scenarios check responsibility, output contracts, mutation policy, and failure handling.
-- Workflow packs check delegation, handoffs, claims, integration, and terminal status across agents.
+- Structural validation checks suite structure, catalogs, source references, harness policy, executable-case links, and current digests.
+- Agent suites check responsibility, output contracts, mutation policy, decisions, delegation, failure handling, and terminal outcomes.
+- Skill probes diagnose scenario behavior through activation, negative activation, expected behavior, and ablation controls when a selected scenario needs that evidence.
+- Workflow evidence checks delegation, handoffs, claims, integration, verification, and terminal status across the dependencies allowed by the target agent definition.
 
 Deterministic Judges evaluate exact conditions such as tests, schemas, findings, hashes, allowed writes, and state transitions. Model Judges evaluate semantic qualities only after the Deterministic Judges finish. A critical Deterministic Judge failure skips Model Judge execution. Human Judges create and adjudicate calibration labels and resolve ambiguous high-risk results.
 
@@ -19,7 +29,7 @@ Validate executable cases and every present framework catalog with:
 python3 scripts/run-agent-skill-evals.py --validate-catalogs
 ```
 
-The operational catalogs are cases.yaml, skill-probes.yaml, agent-scenarios.yaml, workflow-packs.yaml, judges.yaml, and sandbox-profiles.yaml. Skill-probe, agent-scenario, and workflow-pack selection resolves their linked executable cases rather than treating catalog declarations as execution evidence.
+The operational catalogs are cases.yaml, skill-probes.yaml, agent-scenarios.yaml, workflow-packs.yaml, judges.yaml, and sandbox-profiles.yaml. They remain the runner and evidence substrate while cases move into agent-owned suites. Skill-probe, agent-scenario, and workflow-pack selection resolves linked executable cases rather than treating catalog declarations as execution evidence.
 
 ## Prepared Fixtures And Workspaces
 

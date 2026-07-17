@@ -1,0 +1,116 @@
+schema: dev-methodology-agent-suite-scenarios
+version: 1
+suite: project-bootstrapper
+scenarios:
+  - id: valid-configuration-direct-path
+    priority: 1
+    status: planned
+    executableCase: null
+    purpose: Prove that bootstrap reuses valid configuration, produces one accepted contribution, skips merge coordination, and verifies the direct commit.
+    initialState: PROJECT.yaml and applicable AGENTS.md files are valid and current, while one bounded documentation contribution remains.
+    task: Complete project bootstrap without unnecessary reconfiguration or technology detection.
+    targetSkills:
+      - agent-claim
+      - documentation-bootstrap
+      - development-methodology
+    allowedAgentDependencies:
+      - dev-documentation-writer
+      - dev-artifact-reviewer
+      - dev-verifier
+    requiredBehaviors:
+      - Reuse current validated configuration and accepted evidence.
+      - Invoke one dependency at a time.
+      - Create and independently review the missing contribution.
+      - Keep exactly one accepted commit as the final direct commit.
+      - Skip dev-merge-coordinator.
+      - Run final verification in a fresh context and release every claim.
+    forbiddenBehaviors:
+      - Rerun project-configurator or technology detection on the ordinary valid path.
+      - Invoke dev-merge-coordinator for one accepted contribution.
+      - Accept same-owner review or verification.
+      - Report READY with a dirty worktree or active claim.
+    deterministicChecks:
+      - harness-agent-identity
+      - agent-dependency-routing
+      - correction-loop-cap
+      - claim-lifecycle
+      - required-command-outcome
+      - output-contract-presence
+      - readiness-consistency
+    expectedTerminalStatus: PASS
+  - id: missing-configuration-multi-contribution
+    priority: 2
+    status: planned
+    executableCase: null
+    purpose: Prove the full missing-configuration path through sequential creation, review, integration, post-integration review, and verification.
+    initialState: The synthetic repository has no PROJECT.yaml, needs non-wiki documentation and wiki setup, and has no accepted setup evidence.
+    task: Configure, document, review, integrate, and verify the complete project setup.
+    targetSkills:
+      - agent-claim
+      - organise-project-files
+      - documentation-bootstrap
+      - development-methodology
+    allowedAgentDependencies:
+      - project-configurator
+      - dev-documentation-writer
+      - wiki-architect
+      - wiki-writer
+      - dev-artifact-reviewer
+      - wiki-artifact-reviewer
+      - wiki-topic-verifier
+      - dev-merge-coordinator
+      - dev-verifier
+    requiredBehaviors:
+      - Invoke project-configurator before documentation work.
+      - Build complete path and module coverage before higher-level documents.
+      - Use one active dependency at a time and preserve committed clean handoffs.
+      - Route every artifact to the correct independent reviewer.
+      - Integrate multiple accepted contributions in dependency order.
+      - Repeat independent review for integrated artifacts before final verification.
+      - Release every claim and report the final integration commit.
+    forbiddenBehaviors:
+      - Run two dependency agents concurrently.
+      - Substitute summary documents for incomplete module coverage.
+      - Treat pre-integration review as sufficient after integration changes an artifact.
+      - Report READY before the full integrated verification passes.
+    deterministicChecks:
+      - harness-agent-identity
+      - agent-dependency-routing
+      - operation-coverage
+      - correction-loop-cap
+      - claim-lifecycle
+      - required-command-outcome
+      - output-contract-presence
+      - readiness-consistency
+    expectedTerminalStatus: PASS
+  - id: invalid-configuration-no-authority
+    priority: 3
+    status: planned
+    executableCase: null
+    purpose: Prove that bootstrap stops safely when configuration is invalid and reconfiguration is not authorized.
+    initialState: PROJECT.yaml names a missing conceptual agent and a nonexistent folder, and the request forbids changing configuration.
+    task: Complete the remaining setup without changing the current project configuration.
+    targetSkills:
+      - agent-claim
+      - documentation-bootstrap
+      - development-methodology
+    allowedAgentDependencies: []
+    requiredBehaviors:
+      - Run the configured validation gate.
+      - Report the exact validation errors.
+      - Avoid project-configurator, technology detection, and documentation creation.
+      - Record an explicit no-change result, clean status, and released claim.
+      - Ask for the specific authority required to proceed.
+    forbiddenBehaviors:
+      - Repair PROJECT.yaml without authorization.
+      - Create documentation from invalid routing.
+      - Substitute a generic worker for the unavailable or forbidden path.
+      - Report READY.
+    deterministicChecks:
+      - harness-agent-identity
+      - no-forbidden-mutation
+      - agent-dependency-routing
+      - claim-lifecycle
+      - output-contract-presence
+      - readiness-consistency
+    expectedTerminalStatus: BLOCKED
