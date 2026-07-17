@@ -2155,7 +2155,7 @@ class BundleContentTests(unittest.TestCase):
                     )
                     for example in role_payload["roles"][role.name]["examples"]:
                         self.assertTrue(
-                            example["runtimeInvocations"]["codex"].startswith("$dev-documentation-writer ")
+                            example["runtimeInvocations"]["codex"].startswith("$dev_documentation_writer ")
                         )
                 codex_agent_path = (
                     GENERATED_ADAPTERS_ROOT / "codex" / "agents" / f"{role.filename}.toml"
@@ -3332,7 +3332,7 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("invalid", role.examples[2]["purpose"])
         self.assertIn("authorized", role.examples[3]["purpose"])
         for example in role.examples:
-            self.assertTrue(example["runtimeInvocations"]["codex"].startswith("$project-bootstrapper "))
+            self.assertTrue(example["runtimeInvocations"]["codex"].startswith("$project_bootstrapper "))
             self.assertTrue(
                 example["runtimeInvocations"]["claude-code"].startswith(
                     "@agent-project-bootstrapper "

@@ -11,7 +11,7 @@ examples:
 - purpose: Verify that a methodology catalog change remains aligned across its source
     source, generated runtime adapters, and regression coverage before release.
   runtimeInvocations:
-    codex: "$methodology-artifact-reviewer Review this skill catalog change against
+    codex: "$methodology_artifact_reviewer Review this skill catalog change against
       the source files, generated adapters, and regression tests."
     claude-code: "@agent-methodology-artifact-reviewer Review this skill catalog change
       against the source files, generated adapters, and regression tests."
@@ -22,7 +22,7 @@ examples:
 - purpose: Assess methodology maintenance guidance for stale examples, ambiguous ownership
     rules, and gaps in its documented verification contract.
   runtimeInvocations:
-    codex: "$methodology-artifact-reviewer Review this maintenance guide and its examples
+    codex: "$methodology_artifact_reviewer Review this maintenance guide and its examples
       against the repository's authoritative workflow and artifact contracts."
     claude-code: "@agent-methodology-artifact-reviewer Review this maintenance guide
       and its examples against the repository's authoritative workflow and artifact

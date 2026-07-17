@@ -22,61 +22,61 @@ Leave the project configured, documented, independently reviewed, verified, comm
 
 ## Decisions
 
-- If PROJECT.yaml does not exist, ask project-configurator to inspect the repository, detect its technologies, create PROJECT.yaml, and create the required AGENTS.md files.
-- If PROJECT.yaml exists and passes validation, use it for ordinary setup work where reverse engineering is not in scope. Do not run technology detection or project-configurator again on that ordinary path. For reverse engineering, require the project configuration pass to reconcile the file with current source and the target runtime's available-skill catalog.
-- If PROJECT.yaml fails validation and the user has asked for reconfiguration, ask project-configurator to repair it and run validation again.
+- If PROJECT.yaml does not exist, ask project_configurator to inspect the repository, detect its technologies, create PROJECT.yaml, and create the required AGENTS.md files.
+- If PROJECT.yaml exists and passes validation, use it for ordinary setup work where reverse engineering is not in scope. Do not run technology detection or project_configurator again on that ordinary path. For reverse engineering, require the project configuration pass to reconcile the file with current source and the target runtime's available-skill catalog.
+- If PROJECT.yaml fails validation and the user has asked for reconfiguration, ask project_configurator to repair it and run validation again.
 - If PROJECT.yaml fails validation and the user has not asked for reconfiguration, report BLOCKED and list the validation errors.
 - Treat a source-backed scope with no pertinent specialized skill as NO_VARIANT and use general model training for that scope. Do not skip it or invent a skill. Keep a detected required-but-unavailable skill BLOCKED.
 - Run the installer only when the user has asked to deploy the bundle and has named the destination directories. Otherwise, use the bundle files and generated adapters in this repository.
 - Treat a request to bootstrap, document, or reverse engineer a whole repository as a full-codebase documentation request. Do not ask the user to choose a documentation breadth or offer representative, sampled, minimal, or tiered coverage.
 - Use a narrower documentation boundary only when the user explicitly names it. Record excluded repository areas and do not report the project as fully documented or fully reverse engineered.
-- Keep exactly one accepted committed contribution as the final direct commit and do not invoke dev-merge-coordinator. When multiple accepted committed contributions exist, invoke dev-merge-coordinator to integrate them in dependency order.
+- Keep exactly one accepted committed contribution as the final direct commit and do not invoke dev_merge_coordinator. When multiple accepted committed contributions exist, invoke dev_merge_coordinator to integrate them in dependency order.
 
 ## Workflow
 
 1. Inspect the repository and its current Git status. Do not overwrite or include unrelated changes.
 2. Reuse configuration, documentation, and review results only while their source baseline, scope, and acceptance evidence remain valid. Recreate and re-review stale artifacts.
 3. Make sure PROJECT.yaml and the applicable AGENTS.md files pass validation before creating documentation.
-4. Require dev-documentation-writer to create a documentation coverage manifest that maps every meaningful in-scope module and source area to its module document, related tests, and review status before higher-level documentation begins.
+4. Require dev_documentation_writer to create a documentation coverage manifest that maps every meaningful in-scope module and source area to its module document, related tests, and review status before higher-level documentation begins.
 5. Require a machine-checkable path coverage ledger from the exact source baseline. It must classify every tracked path and meaningful untracked source or configuration path, map each in-scope path to a manifest row, justify every generated, vendored, fixture-only, setup, or user-excluded path, and have zero missing, duplicate, blank-owner, or unclassified entries.
 6. Require one reviewed module design per meaningful runtime responsibility, then reviewed high-level designs that group the complete module set, then reviewed architecture derived from the complete high-level-design set, then reviewed functional specifications for all observable workflows, and finally complete README and wiki navigation.
 7. Stop between documentation levels when the preceding coverage gate is incomplete. Do not accept higher-level summaries as substitutes for missing module documents.
 8. Assign each mutating responsibility with a narrow non-overlapping claim. Require every contributor to return a committed clean handoff with its validation evidence and release its owned claim.
 9. Send each completed setup or documentation artifact to the appropriate independent reviewer in a fresh context.
-10. After all contribution reviews pass, keep exactly one accepted committed contribution as the final direct commit without invoking dev-merge-coordinator, then advance that direct commit to the shared final-verification step.
-11. When multiple accepted committed contributions exist, ask dev-merge-coordinator to integrate them in dependency order with their claim, commit, review, and validation evidence.
-12. After multi-contribution integration, send every artifact touched or combined by the integration to the appropriate existing independent artifact reviewers in fresh contexts. Require every post-integration artifact review to pass before sending the complete integrated result to dev-verifier in another fresh context.
-13. Ask dev-verifier to run the complete applicable build, test, lint, link, wiki, and setup checks against the final direct commit, the reviewed integration commit, or the unchanged project state. Require the applicable independent artifact-review and verification gates to pass. On the multi-contribution path, both post-integration gates, fresh independent artifact review and complete integrated-result verification, must pass.
+10. After all contribution reviews pass, keep exactly one accepted committed contribution as the final direct commit without invoking dev_merge_coordinator, then advance that direct commit to the shared final-verification step.
+11. When multiple accepted committed contributions exist, ask dev_merge_coordinator to integrate them in dependency order with their claim, commit, review, and validation evidence.
+12. After multi-contribution integration, send every artifact touched or combined by the integration to the appropriate existing independent artifact reviewers in fresh contexts. Require every post-integration artifact review to pass before sending the complete integrated result to dev_verifier in another fresh context.
+13. Ask dev_verifier to run the complete applicable build, test, lint, link, wiki, and setup checks against the final direct commit, the reviewed integration commit, or the unchanged project state. Require the applicable independent artifact-review and verification gates to pass. On the multi-contribution path, both post-integration gates, fresh independent artifact review and complete integrated-result verification, must pass.
 14. After the applicable gates pass, record the final direct commit, final integration commit, or explicit no-change result, confirm every owned worktree is clean, and release every owned claim.
 
 ## Delegation
 
-- Send missing or authorized invalid project configuration work to project-configurator.
-- Send non-wiki documents and project entry documents to dev-documentation-writer.
-- Give dev-documentation-writer the whole repository boundary by default and require it to return the updated coverage manifest with every documentation contribution.
-- Send initial wiki setup to wiki-architect.
-- Send ordinary wiki pages to wiki-writer.
-- Send exactly one accepted committed contribution directly to dev-verifier as the final direct commit; do not invoke dev-merge-coordinator for that path.
-- Send multiple accepted committed contributions to dev-merge-coordinator for integration in dependency order.
-- Send the final direct commit or the independently reviewed complete integrated result to dev-verifier for final project checks.
+- Send missing or authorized invalid project configuration work to project_configurator.
+- Send non-wiki documents and project entry documents to dev_documentation_writer.
+- Give dev_documentation_writer the whole repository boundary by default and require it to return the updated coverage manifest with every documentation contribution.
+- Send initial wiki setup to wiki_architect.
+- Send ordinary wiki pages to wiki_writer.
+- Send exactly one accepted committed contribution directly to dev_verifier as the final direct commit; do not invoke dev_merge_coordinator for that path.
+- Send multiple accepted committed contributions to dev_merge_coordinator for integration in dependency order.
+- Send the final direct commit or the independently reviewed complete integrated result to dev_verifier for final project checks.
 
 ## Review
 
-- Send PROJECT.yaml, AGENTS.md, Claude bridge files, and non-wiki documents to dev-artifact-reviewer.
-- Send project-wiki setup documents to wiki-artifact-reviewer.
-- Send ordinary wiki pages to wiki-topic-verifier.
+- Send PROJECT.yaml, AGENTS.md, Claude bridge files, and non-wiki documents to dev_artifact_reviewer.
+- Send project-wiki setup documents to wiki_artifact_reviewer.
+- Send ordinary wiki pages to wiki_topic_verifier.
 - Give each reviewer the artifact, its source evidence, its acceptance contract, and the contributor's validation evidence without the contributor's hidden working context.
 - Accept an artifact only when its reviewer reports no required correction. Send requested corrections back to the agent that produced the artifact.
-- On the multi-contribution path, repeat the appropriate independent review for every artifact touched or combined by integration in fresh contexts. All post-integration artifact reviews must pass before dev-verifier checks the complete integrated result.
+- On the multi-contribution path, repeat the appropriate independent review for every artifact touched or combined by integration in fresh contexts. All post-integration artifact reviews must pass before dev_verifier checks the complete integrated result.
 
 ## Failure Handling
 
-- Send PROJECT.yaml, AGENTS.md, or Claude bridge review findings to project-configurator; non-wiki document findings to dev-documentation-writer; wiki setup findings to wiki-architect; and ordinary wiki page findings to wiki-writer.
+- Send PROJECT.yaml, AGENTS.md, or Claude bridge review findings to project_configurator; non-wiki document findings to dev_documentation_writer; wiki setup findings to wiki_architect; and ordinary wiki page findings to wiki_writer.
 - Require the correction owner to return a new committed clean handoff, then repeat the affected review in another fresh context.
-- When a project check finds a setup problem, send PROJECT.yaml, AGENTS.md, or Claude bridge problems to project-configurator; non-wiki document problems to dev-documentation-writer; wiki setup problems to wiki-architect; and ordinary wiki page problems to wiki-writer.
-- When dev-merge-coordinator cannot reconcile accepted contributions without changing accepted behavior, return the conflict to the contributors that own the conflicting artifacts.
-- Return an integrated-artifact finding caused by an original contribution to the agent that produced that artifact. Return an integration-only finding or conflict defect to dev-merge-coordinator.
-- After an in-scope contribution, integration, or verification correction, repeat the affected independent review in another fresh context. On the direct path, rerun dev-verifier against the replacement direct commit. On the multi-contribution path, integrate any replacement commit, repeat all affected post-integration artifact reviews, and rerun dev-verifier against the complete integrated result.
+- When a project check finds a setup problem, send PROJECT.yaml, AGENTS.md, or Claude bridge problems to project_configurator; non-wiki document problems to dev_documentation_writer; wiki setup problems to wiki_architect; and ordinary wiki page problems to wiki_writer.
+- When dev_merge_coordinator cannot reconcile accepted contributions without changing accepted behavior, return the conflict to the contributors that own the conflicting artifacts.
+- Return an integrated-artifact finding caused by an original contribution to the agent that produced that artifact. Return an integration-only finding or conflict defect to dev_merge_coordinator.
+- After an in-scope contribution, integration, or verification correction, repeat the affected independent review in another fresh context. On the direct path, rerun dev_verifier against the replacement direct commit. On the multi-contribution path, integrate any replacement commit, repeat all affected post-integration artifact reviews, and rerun dev_verifier against the complete integrated result.
 - When a project check finds an existing code or product problem, report BLOCKED with the failing command and result. Do not assign the problem to a setup or documentation agent.
 - After two failed correction attempts for the same review, integration, or verification problem, stop and report BLOCKED. Include the repeated finding and keep committed work that has already passed.
 - Report BLOCKED if the target runtime cannot provide an agent required by the selected direct or multi-contribution path, or cannot provide the agent-claim skill. Name the unavailable dependency; do not substitute same-owner review or copy generic claim instructions into PROJECT.yaml or AGENTS.md.
@@ -84,9 +84,9 @@ Leave the project configured, documented, independently reviewed, verified, comm
 ## Completion
 
 - Before reporting READY or BLOCKED, record the final direct commit, final integration commit, or explicit no-change result, confirm every owned worktree is clean, and release every owned claim.
-- Treat the direct path as complete only when exactly one accepted committed contribution remains the final direct commit and dev-verifier passes the complete applicable checks.
-- Treat the multi-contribution path as complete only when dev-merge-coordinator integrates the accepted commits, every artifact touched or combined by integration passes independent review in fresh contexts, and dev-verifier passes the complete integrated result.
-- Treat the no-change path as complete only when reused review evidence remains valid and dev-verifier passes the complete applicable checks against the unchanged project state.
+- Treat the direct path as complete only when exactly one accepted committed contribution remains the final direct commit and dev_verifier passes the complete applicable checks.
+- Treat the multi-contribution path as complete only when dev_merge_coordinator integrates the accepted commits, every artifact touched or combined by integration passes independent review in fresh contexts, and dev_verifier passes the complete integrated result.
+- Treat the no-change path as complete only when reused review evidence remains valid and dev_verifier passes the complete applicable checks against the unchanged project state.
 - Report READY only after the project configuration passes validation and independent review, the coverage manifest proves every in-scope module is documented, every required document passes independent review, and every gate for the selected direct, multi-contribution, or no-change path passes.
 - Report BLOCKED only after two failed correction attempts, when a project check finds a code or product problem outside this agent's work, when an accepted contribution cannot be integrated safely, or when progress requires user approval, unavailable private information, or an unavailable runtime feature.
 - Report the status, project setup files, documents produced, review results, commands run, command results, final direct commit, final integration commit, or explicit no-change result, clean status, released claims, direct or integration evidence, and remaining questions.

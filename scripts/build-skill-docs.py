@@ -1286,28 +1286,46 @@ def markdown_role_instruction_text(
 def codex_role_instruction_text(
     role: RoleDefinition,
     inline_core_skills: bool = True,
+    known_role_names: Sequence[str] = (),
 ) -> str:
-    """Add the Codex harness skill at generation time without changing portable roles."""
+    """Adapt role-owned instructions to Codex without changing portable sources."""
+
+    role_names = known_role_names or (role.name, *role.agent_dependencies)
+    role_instructions = codex_role_reference_text(role.instructions, role_names)
+    output_text = codex_role_reference_text(
+        "; ".join(role.output_contract),
+        role_names,
+    )
 
     if inline_core_skills:
-        return role_instruction_text(
+        sections = [role_instructions]
+        loading_instructions = role_loading_instruction_text(
             role,
-            adapter_name=CODEX_ADAPTER_NAME,
-            inline_core_skills=True,
+            include_fixed_skills=False,
         )
+        if loading_instructions:
+            sections.append(loading_instructions)
+        sections.append(f"{ROLE_OUTPUT_INSTRUCTION_PREFIX} {output_text}.")
+        inlined_skills = render_inlined_core_skills(role, CODEX_ADAPTER_NAME)
+        if inlined_skills:
+            sections.append(inlined_skills)
+        return "\n\n".join(sections)
     if role.repository_mutation == "never":
-        return role_instruction_text(
+        loading_instructions = role_loading_instruction_text(
             role,
-            adapter_name=CODEX_ADAPTER_NAME,
-            inline_core_skills=False,
+            include_fixed_skills=True,
         )
-    output_text = "; ".join(role.output_contract)
+        sections = [role_instructions]
+        if loading_instructions:
+            sections.append(loading_instructions)
+        sections.append(f"{ROLE_OUTPUT_INSTRUCTION_PREFIX} {output_text}.")
+        return "\n\n".join(sections)
     harness_instruction = (
         f"Before acting, load the {CODEX_HARNESS_DIRECTIVES_SKILL_NAME} skill completely; "
         "it governs Codex-specific directives for this mutation-capable agent."
     )
     return (
-        f"{role.instructions}\n\n"
+        f"{role_instructions}\n\n"
         f"{harness_instruction}\n\n"
         f"{role_loading_instruction_text(role)}\n\n"
         f"{ROLE_OUTPUT_INSTRUCTION_PREFIX} {output_text}."
@@ -1375,10 +1393,26 @@ def codex_agent_name(role_name: str) -> str:
     return role_name.replace("-", "_")
 
 
+def codex_role_reference_text(text: str, role_names: Sequence[str]) -> str:
+    """Convert complete portable role references to Codex runtime selectors."""
+
+    for role_name in sorted(set(role_names), key=len, reverse=True):
+        runtime_name = codex_agent_name(role_name)
+        if runtime_name == role_name:
+            continue
+        text = re.sub(
+            rf"(?<![a-z0-9_-]){re.escape(role_name)}(?![a-z0-9_-])",
+            runtime_name,
+            text,
+        )
+    return text
+
+
 def render_codex_agent(
     role: RoleDefinition,
     model_profiles: dict[str, AdapterModelProfile],
     inline_core_skills: bool = True,
+    known_role_names: Sequence[str] = (),
 ) -> str:
     profile_id = role.model_profile
     adapter_profile = model_profiles[profile_id]
@@ -1389,7 +1423,11 @@ def render_codex_agent(
         f"description = {json.dumps(role.description)}",
         "developer_instructions = "
         + render_toml_multiline_basic_string(
-            codex_role_instruction_text(role, inline_core_skills)
+            codex_role_instruction_text(
+                role,
+                inline_core_skills,
+                known_role_names,
+            )
         ),
     ]
     fields.append(f"model = {json.dumps(adapter_profile.model)}")
@@ -1592,9 +1630,13 @@ def expected_role_outputs(
     gemini_profiles = load_adapter_model_profiles(GEMINI_ADAPTER_NAME, source_profile_ids)
     junie_profiles = load_adapter_model_profiles(JUNIE_ADAPTER_NAME, source_profile_ids)
     outputs = {ROLE_OUTPUT_PATH: render_role_javascript(roles)}
+    known_role_names = tuple(role.name for role in roles)
     for role in roles:
         outputs[CODEX_AGENT_OUTPUT_ROOT / f"{role.filename}{CODEX_AGENT_EXTENSION}"] = render_codex_agent(
-            role, codex_profiles, inline_core_skills
+            role,
+            codex_profiles,
+            inline_core_skills,
+            known_role_names,
         )
         outputs[CLAUDE_AGENT_OUTPUT_ROOT / f"{role.filename}{CLAUDE_AGENT_EXTENSION}"] = render_claude_agent(
             role, claude_profiles, inline_core_skills

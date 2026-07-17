@@ -54,7 +54,7 @@ examples:
 - purpose: Turn an approved raw research report into granular durable topic coverage,
     item-level digest entries, and traceable processed-source links.
   runtimeInvocations:
-    codex: "$wiki-ingester Ingest the queued research report about service retry
+    codex: "$wiki_ingester Ingest the queued research report about service retry
       policies into the project wiki, preserving provenance and the raw-to-processed
       boundary."
     claude-code: "@agent-wiki-ingester Ingest the queued research report about
@@ -70,7 +70,7 @@ examples:
 - purpose: Reconcile code-dependent raw material with live implementation and tests
     while updating existing wiki coverage and preserving unresolved source conflicts.
   runtimeInvocations:
-    codex: "$wiki-ingester Process the queued commit-scan fragment for configuration
+    codex: "$wiki_ingester Process the queued commit-scan fragment for configuration
       reload behavior, verify its claims against the current code and tests, and update
       the existing wiki topic."
     claude-code: "@agent-wiki-ingester Process the queued commit-scan fragment
@@ -86,7 +86,7 @@ examples:
 - purpose: Preserve the raw queue boundary when the independent pre-move review remains
     unresolved after the bounded correction loop.
   runtimeInvocations:
-    codex: "$wiki-ingester Ingest the queued provider-routing report, obtain independent
+    codex: "$wiki_ingester Ingest the queued provider-routing report, obtain independent
       topic verification before moving it, and stop safely if the verifier findings remain
       after the allowed correction attempts."
     claude-code: "@agent-wiki-ingester Ingest the queued provider-routing report, obtain

@@ -126,7 +126,7 @@ examples:
     dependencies and handoffs so contributors can work in bounded contexts without
     overlapping edits.
   runtimeInvocations:
-    codex: "$dev-orchestrator Coordinate implementation of an audit-log export
+    codex: "$dev_orchestrator Coordinate implementation of an audit-log export
       across the API, background worker, and administration UI, including agent assignments,
       ownership boundaries, handoffs, and integrated verification."
     claude-code: "@agent-dev-orchestrator Coordinate implementation of an audit-log
@@ -142,7 +142,7 @@ examples:
 - purpose: Reconcile completed parallel contributions into one coherent result while preserving
     conflict evidence and verifying cross-contribution behavior before handoff.
   runtimeInvocations:
-    codex: "$dev-orchestrator Reconcile the completed client, API, and worker
+    codex: "$dev_orchestrator Reconcile the completed client, API, and worker
       contributions for a file-upload retry change, resolve integration conflicts, and
       verify the combined outcome."
     claude-code: "@agent-dev-orchestrator Reconcile the completed client, API,
@@ -157,7 +157,7 @@ examples:
 - purpose: Stop safely when a fixed independent reviewer is unavailable instead of
     accepting implementation through same-context self-review.
   runtimeInvocations:
-    codex: "$dev-orchestrator Coordinate the completed session-expiry implementation,
+    codex: "$dev_orchestrator Coordinate the completed session-expiry implementation,
       including independent review and release verification."
     claude-code: "@agent-dev-orchestrator Coordinate the completed session-expiry
       implementation, including independent review and release verification."
@@ -169,7 +169,7 @@ examples:
 - purpose: Complete one reviewed and verified source lane directly when there is no second
     contribution to integrate.
   runtimeInvocations:
-    codex: "$dev-orchestrator Coordinate a focused correction to the request timeout
+    codex: "$dev_orchestrator Coordinate a focused correction to the request timeout
       default through implementation, independent review, verification, commit, and claim
       release. Do not create an integration lane unless another contribution must be combined."
     claude-code: "@agent-dev-orchestrator Coordinate a focused correction to the request
@@ -186,7 +186,7 @@ examples:
 - purpose: Coordinate mixed source and non-source contributions through task-selected
     independent reviewers before complete integrated verification.
   runtimeInvocations:
-    codex: "$dev-orchestrator Coordinate an API behavior change and its operator runbook
+    codex: "$dev_orchestrator Coordinate an API behavior change and its operator runbook
       update through implementation, independent review, integration, complete verification,
       commits, and claim release."
     claude-code: "@agent-dev-orchestrator Coordinate an API behavior change and its operator

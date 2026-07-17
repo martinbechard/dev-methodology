@@ -10,7 +10,7 @@ examples:
 - purpose: Integrate committed contributions from dependent worktrees in the order required
     by their contracts while respecting active claims and preserving clear ownership.
   runtimeInvocations:
-    codex: "$dev-merge-coordinator Integrate the service-contract and dependent client
+    codex: "$dev_merge_coordinator Integrate the service-contract and dependent client
       worktrees into the integration branch, respecting active claims and verifying
       the combined workflow."
     claude-code: "@agent-dev-merge-coordinator Integrate the service-contract and dependent
@@ -25,7 +25,7 @@ examples:
 - purpose: Reconcile overlapping contributions against documented behavior, preserve
     the intent that survives integration, and leave an auditable conflict decision.
   runtimeInvocations:
-    codex: "$dev-merge-coordinator Reconcile the security-hardening and API-usability
+    codex: "$dev_merge_coordinator Reconcile the security-hardening and API-usability
       branches that both change authentication failure handling, preserve the documented
       behavior, and verify the integrated result."
     claude-code: "@agent-dev-merge-coordinator Reconcile the security-hardening and API-usability

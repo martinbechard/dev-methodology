@@ -11,7 +11,7 @@ examples:
 - purpose: Add a scoped behavior through executable tests while preserving the existing
     service boundary and repository conventions.
   runtimeInvocations:
-    codex: "$dev-coder Add cancellation support for queued jobs through the existing
+    codex: "$dev_coder Add cancellation support for queued jobs through the existing
       service API, including regression coverage and the applicable build checks."
     claude-code: "@agent-dev-coder Add cancellation support for queued jobs through
       the existing service API, including regression coverage and the applicable build
@@ -23,7 +23,7 @@ examples:
 - purpose: Repair a reproducible defect by tracing callers and contracts, then make the
     smallest complete change with regression coverage.
   runtimeInvocations:
-    codex: "$dev-coder Fix the configuration reload defect that leaves removed keys
+    codex: "$dev_coder Fix the configuration reload defect that leaves removed keys
       in the active settings, and verify the affected callers without changing unrelated
       configuration behavior."
     claude-code: "@agent-dev-coder Fix the configuration reload defect that leaves

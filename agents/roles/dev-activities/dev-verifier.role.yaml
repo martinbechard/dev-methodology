@@ -13,7 +13,7 @@ examples:
 - purpose: Verify a scoped retry-policy change with risk-based unit, integration, lint,
     and build checks while making coverage and omitted checks explicit.
   runtimeInvocations:
-    codex: "$dev-verifier Verify the current retry-policy change. Select
+    codex: "$dev_verifier Verify the current retry-policy change. Select
       checks from the affected behavior, run the applicable unit and integration tests,
       lint, and build, and report any skipped checks without changing the implementation
       or weakening gates."
@@ -30,7 +30,7 @@ examples:
     notification, and session boundaries, then classify an observed failure with runtime
     and source-path evidence.
   runtimeInvocations:
-    codex: "$dev-verifier Run the account-recovery workflow end to end,
+    codex: "$dev_verifier Run the account-recovery workflow end to end,
       including reset delivery, password change, and prior-session invalidation. Capture
       runtime evidence and distinguish product defects from test or environment failures."
     claude-code: "@agent-dev-verifier Run the account-recovery workflow

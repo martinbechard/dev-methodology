@@ -66,7 +66,7 @@ examples:
 - purpose: Keep a distributed skill workflow, its catalog surfaces, and regression
     expectations aligned when the methodology gains an artifact-specific review route.
   runtimeInvocations:
-    codex: "$methodology-maintainer Add an accessibility-review skill and route artifact
+    codex: "$methodology_maintainer Add an accessibility-review skill and route artifact
       reviews to it when accessibility evidence is required. Regenerate and verify the
       bundle."
     claude-code: "@agent-methodology-maintainer Add an accessibility-review skill and
@@ -82,7 +82,7 @@ examples:
 - purpose: Keep conceptual agent definition policy and runtime outputs synchronized when an agent's skill
     boundary and execution profile change.
   runtimeInvocations:
-    codex: "$methodology-maintainer Update the dev-documentation-writer conceptual agent definition so unit-test
+    codex: "$methodology_maintainer Update the dev-documentation-writer conceptual agent definition so unit-test
       planning is request-specific and uses staged evidence extraction before synthesis.
       Regenerate the supported runtime definitions and verify the result."
     claude-code: "@agent-methodology-maintainer Update the dev-documentation-writer conceptual agent definition
@@ -98,7 +98,7 @@ examples:
 - purpose: Stop after the bounded correction loop cannot resolve the same source-to-adapter
     mismatch without expanding the authorized maintenance scope.
   runtimeInvocations:
-    codex: "$methodology-maintainer Align this conceptual agent definition policy with its generated runtime
+    codex: "$methodology_maintainer Align this conceptual agent definition policy with its generated runtime
       definitions, review the result independently, and run the complete validation workflow."
     claude-code: "@agent-methodology-maintainer Align this conceptual agent definition policy with its generated
       runtime definitions, review the result independently, and run the complete validation

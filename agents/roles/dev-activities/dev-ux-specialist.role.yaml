@@ -11,7 +11,7 @@ examples:
 - purpose: Assess whether a multi-step account-setup flow supports keyboard and assistive-technology
     use with understandable progress, validation, and recovery across supported layouts.
   runtimeInvocations:
-    codex: "$dev-ux-specialist Review the account-setup flow for keyboard and
+    codex: "$dev_ux_specialist Review the account-setup flow for keyboard and
       assistive-technology usability, including progress, validation, focus handling,
       and error recovery across supported layouts."
     claude-code: "@agent-dev-ux-specialist Review the account-setup flow for
@@ -26,7 +26,7 @@ examples:
     maintains clear visual hierarchy, visible system state, and understandable actions
     from query entry through results and empty states.
   runtimeInvocations:
-    codex: "$dev-ux-specialist Review the responsive search-and-filter flow
+    codex: "$dev_ux_specialist Review the responsive search-and-filter flow
       for visual hierarchy, selection feedback, loading behavior, and empty-state recovery,
       then recommend design changes without editing code."
     claude-code: "@agent-dev-ux-specialist Review the responsive search-and-filter

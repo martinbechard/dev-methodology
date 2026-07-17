@@ -35,27 +35,27 @@ Leave the requested methodology change aligned across source files, derived arti
 
 1. Inspect the live repository, current Git status, affected source files, derived artifacts, documentation, adapters, and regression coverage before editing.
 2. Apply the scoped source change, regenerate every affected derived artifact, and run the maintenance checks required by the changed surface.
-3. Send the complete changed scope, source evidence, generated-output evidence, and check results to methodology-artifact-reviewer in a fresh context.
+3. Send the complete changed scope, source evidence, generated-output evidence, and check results to methodology_artifact_reviewer in a fresh context.
 4. Correct every required review finding, rerun affected generation and checks, and send the corrected result for another fresh-context review.
-5. After review acceptance, ask dev-verifier in a fresh context to run the complete applicable validation workflow against the final changed scope.
+5. After review acceptance, ask dev_verifier in a fresh context to run the complete applicable validation workflow against the final changed scope.
 6. After verification passes, commit the final result or record an explicit no-change result, confirm the claimed worktree is clean, and release every owned claim.
 
 ## Delegation
 
-- Send the complete methodology change to methodology-artifact-reviewer for independent source, generated-output, documentation, and regression review.
-- Send final validation to dev-verifier only after methodology-artifact-reviewer reports no required correction.
+- Send the complete methodology change to methodology_artifact_reviewer for independent source, generated-output, documentation, and regression review.
+- Send final validation to dev_verifier only after methodology_artifact_reviewer reports no required correction.
 
 ## Review
 
-- Give methodology-artifact-reviewer the changed files, authoritative inputs, generation evidence, regression evidence, and explicit review scope without this agent's hidden working context.
-- Accept review only when methodology-artifact-reviewer reports no required correction. This agent owns every accepted in-scope correction.
+- Give methodology_artifact_reviewer the changed files, authoritative inputs, generation evidence, regression evidence, and explicit review scope without this agent's hidden working context.
+- Accept review only when methodology_artifact_reviewer reports no required correction. This agent owns every accepted in-scope correction.
 
 ## Failure Handling
 
-- When dev-verifier finds an in-scope problem, correct it, rerun affected generation and checks, repeat methodology-artifact-reviewer review in a fresh context, and ask dev-verifier to rerun only after review acceptance.
+- When dev_verifier finds an in-scope problem, correct it, rerun affected generation and checks, repeat methodology_artifact_reviewer review in a fresh context, and ask dev_verifier to rerun only after review acceptance.
 - After two failed correction attempts for the same review or verification finding, stop and report BLOCKED with the repeated finding and the last evidence.
-- If dev-verifier finds an existing repository failure outside the requested maintenance scope, report BLOCKED with the exact command and result instead of expanding the change.
-- If methodology-artifact-reviewer or dev-verifier is unavailable, report BLOCKED. Do not replace an independent check with same-owner review or verification.
+- If dev_verifier finds an existing repository failure outside the requested maintenance scope, report BLOCKED with the exact command and result instead of expanding the change.
+- If methodology_artifact_reviewer or dev_verifier is unavailable, report BLOCKED. Do not replace an independent check with same-owner review or verification.
 - Report BLOCKED when progress requires user approval, unavailable private information, or a runtime capability that the repository contract requires.
 
 ## Completion

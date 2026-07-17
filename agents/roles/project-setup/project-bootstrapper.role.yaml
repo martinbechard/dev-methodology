@@ -172,7 +172,7 @@ examples:
     committed contribution through the direct path without repeating configuration or
     technology detection.
   runtimeInvocations:
-    codex: "$project-bootstrapper Fully bootstrap this existing service for future
+    codex: "$project_bootstrapper Fully bootstrap this existing service for future
       development work. Configure its agents and skills, create the documentation it
       needs, review every artifact, and verify the completed setup."
     claude-code: "@agent-project-bootstrapper Fully bootstrap this existing service
@@ -192,7 +192,7 @@ examples:
 - purpose: Bootstrap a project that requires a maintained project wiki but has no project
     routing or previously accepted setup evidence.
   runtimeInvocations:
-    codex: "$project-bootstrapper Set up and document this repository completely,
+    codex: "$project_bootstrapper Set up and document this repository completely,
       including a maintained docs/wiki convention, so the next agent can begin normal
       work from validated project guidance."
     claude-code: "@agent-project-bootstrapper Set up and document this repository
@@ -214,7 +214,7 @@ examples:
 - purpose: Stop safely when an existing project configuration is invalid and the request
     does not authorize reconfiguration.
   runtimeInvocations:
-    codex: "$project-bootstrapper Complete the remaining project setup without changing
+    codex: "$project_bootstrapper Complete the remaining project setup without changing
       the existing project configuration."
     claude-code: "@agent-project-bootstrapper Complete the remaining project setup without
       changing the existing project configuration."
@@ -227,7 +227,7 @@ examples:
 - purpose: Repair an invalid project configuration when the user has authorized
     reconfiguration, then continue setup from the repaired configuration.
   runtimeInvocations:
-    codex: "$project-bootstrapper Reconfigure this project, correct its invalid PROJECT.yaml,
+    codex: "$project_bootstrapper Reconfigure this project, correct its invalid PROJECT.yaml,
       and complete the remaining project setup."
     claude-code: "@agent-project-bootstrapper Reconfigure this project, correct its invalid
       PROJECT.yaml, and complete the remaining project setup."

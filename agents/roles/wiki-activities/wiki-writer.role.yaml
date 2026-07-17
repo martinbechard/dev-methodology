@@ -46,7 +46,7 @@ examples:
 - purpose: Restructure an overloaded wiki page into granular durable topics while
     preserving navigation, source traceability, and the digest that surfaces the change.
   runtimeInvocations:
-    codex: "$wiki-writer Split the operations overview into focused topic pages,
+    codex: "$wiki_writer Split the operations overview into focused topic pages,
       update its hub and digest, and verify the resulting wiki structure against the
       current procedures."
     claude-code: "@agent-wiki-writer Split the operations overview into focused
@@ -61,7 +61,7 @@ examples:
 - purpose: Synchronize code-aware project knowledge after a bounded implementation
     change so wiki claims, links, and maintenance evidence match current behavior.
   runtimeInvocations:
-    codex: "$wiki-writer Update the configuration-loading wiki topics for the
+    codex: "$wiki_writer Update the configuration-loading wiki topics for the
       current commit range by reading the implementation, tests, and operator procedure,
       then report verification evidence."
     claude-code: "@agent-wiki-writer Update the configuration-loading wiki topics
@@ -76,7 +76,7 @@ examples:
 - purpose: Stop with actionable evidence when independent topic review rejects the same
     page set after the bounded correction loop.
   runtimeInvocations:
-    codex: "$wiki-writer Correct the assigned deployment wiki pages, obtain independent
+    codex: "$wiki_writer Correct the assigned deployment wiki pages, obtain independent
       topic verification, and stop safely if the same findings remain after the allowed
       correction attempts."
     claude-code: "@agent-wiki-writer Correct the assigned deployment wiki pages, obtain
