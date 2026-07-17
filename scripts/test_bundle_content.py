@@ -44,6 +44,7 @@ CODEX_HARNESS_SKILL_ROOT = (
 )
 ROLE_DEFINITIONS_PATH = REPOSITORY_ROOT / "design" / "generated" / "role-definitions.js"
 SUPPORT_CHECKLIST_PATH = REPOSITORY_ROOT / "design" / "agent-skill-test-coverage-checklist.md"
+AGENT_TEST_SUITES_ROOT = REPOSITORY_ROOT / "evals" / "agent-tests"
 AGENT_BROWSER_PATH = REPOSITORY_ROOT / "design" / "agent-browser.js"
 TEMPLATE_BROWSER_PATH = REPOSITORY_ROOT / "design" / "template-browser.js"
 GENERATED_ADAPTERS_ROOT = REPOSITORY_ROOT / "generated" / "adapters"
@@ -3617,6 +3618,148 @@ class BundleContentTests(unittest.TestCase):
         self.assertTrue(review_case["expectVerifyFailure"])
         self.assertIn("code-review-evidence", review_case["requiredSkills"])
         self.assertEqual(3, len(review_case["requiredFindings"]))
+
+    def test_agent_owned_eval_suites_hardcode_steady_state_orchestration(self) -> None:
+        """Agent-first suites must keep target, supervisor, Judge, skill, and concurrency contracts explicit."""
+        index = load_yaml_object(AGENT_TEST_SUITES_ROOT / "suite-index.yaml")
+        execution = index["execution"]
+        self.assertEqual(4, execution["maximumConcurrentSupervisors"])
+        self.assertEqual(1, execution["maximumActiveChildrenPerSupervisor"])
+        self.assertEqual(9, execution["normalMaximumActiveAgents"])
+        self.assertEqual(10, execution["temporaryMaximumActiveAgents"])
+
+        expected_suites = [
+            "dev-coder",
+            "dev-code-reviewer",
+            "dev-runtime-diagnostician",
+            "project-bootstrapper",
+        ]
+        suite_entries = index["suites"]
+        self.assertEqual(expected_suites, [entry["id"] for entry in suite_entries])
+        self.assertEqual([1, 2, 3, 4], [entry["priority"] for entry in suite_entries])
+        suite_directories = {
+            path.name
+            for path in AGENT_TEST_SUITES_ROOT.iterdir()
+            if path.is_dir() and path.name not in {"results", "skills"}
+        }
+        self.assertEqual(set(expected_suites), suite_directories)
+
+        protocol = (AGENT_TEST_SUITES_ROOT / "AGENTS.md").read_text(encoding="utf-8")
+        for phrase in (
+            "at most four suite supervisors concurrently",
+            "exactly one active child agent at a time",
+            "normal ceiling is nine active agents",
+            "temporary tenth agent",
+            "The Judge is read-only and independent",
+            "isolated CODEX_HOME agents directory",
+            "matching task name alone does not satisfy the identity gate",
+            "missing applicable skill is a critical preflight BLOCKED result",
+            "Exactly one authoritative scenario catalog named scenarios.yaml",
+            "Route a finding about the canonical agent definition",
+            "correct only that infrastructure",
+        ):
+            with self.subTest(protocol_phrase=phrase):
+                self.assertIn(phrase, protocol)
+
+        shared_skill_paths = [AGENT_TEST_SUITES_ROOT / path for path in index["sharedSkills"]]
+        for skill_path in shared_skill_paths:
+            with self.subTest(shared_skill=skill_path):
+                frontmatter = load_yaml_object_from_frontmatter(skill_path)
+                self.assertEqual(skill_path.parent.name, frontmatter["name"])
+
+        readme_text = (AGENT_TEST_SUITES_ROOT / "README.md").read_text(encoding="utf-8")
+        self.assertNotRegex(readme_text, r"(?i)\bwave\b")
+        self.assertIn("one authoritative scenarios.yaml catalog", readme_text)
+        self.assertTrue(
+            (AGENT_TEST_SUITES_ROOT / "results" / "2026-07-17-codex-agent-suites.md").is_file()
+        )
+        scenario_design = (
+            AGENT_TEST_SUITES_ROOT
+            / "skills"
+            / "agent-scenario-design"
+            / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        supervision = (
+            AGENT_TEST_SUITES_ROOT
+            / "skills"
+            / "agent-suite-supervision"
+            / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("exactly one authoritative scenario catalog named scenarios.yaml", scenario_design)
+        self.assertIn("authoritative scenarios.yaml catalog", supervision)
+        self.assertIn("Send agent-definition", supervision)
+        self.assertIn("Correct only test infrastructure", supervision)
+
+        for entry in suite_entries:
+            suite_root = AGENT_TEST_SUITES_ROOT / entry["path"]
+            suite = load_yaml_object(suite_root / "suite.yaml")
+            scenarios = load_yaml_object(suite_root / "scenarios.yaml")
+            target = suite["target"]
+            role = load_yaml_object(REPOSITORY_ROOT / target["conceptualRole"])
+
+            with self.subTest(suite=entry["id"]):
+                self.assertEqual(entry["id"], suite["id"])
+                self.assertEqual(entry["id"], role["filename"])
+                self.assertTrue((REPOSITORY_ROOT / target["nativeAgent"]).is_file())
+                self.assertEqual(1, suite["execution"]["maximumActiveChildren"])
+                self.assertTrue(suite["execution"]["requireCodexIdentityEvidence"])
+                self.assertEqual(
+                    role.get("agentDependencies", []),
+                    target["allowedAgentDependencies"],
+                )
+                self.assertEqual(entry["id"], scenarios["suite"])
+                self.assertEqual(3, len(scenarios["scenarios"]))
+
+            for scenario in scenarios["scenarios"]:
+                executable_case = scenario.get("executableCase")
+                if scenario["status"] == "executable":
+                    with self.subTest(
+                        suite=entry["id"],
+                        executable_scenario=scenario["id"],
+                    ):
+                        self.assertIsInstance(executable_case, str)
+                        self.assertTrue((suite_root / executable_case).exists())
+
+            for agent_kind, relative_path in suite["projectAgents"].items():
+                agent_path = suite_root / relative_path
+                with self.subTest(suite=entry["id"], agent=agent_kind):
+                    agent = tomllib.loads(agent_path.read_text(encoding="utf-8"))
+                    self.assertEqual(
+                        f"{entry['id']}-suite-{agent_kind}".replace("-", "_"),
+                        agent["name"],
+                    )
+                    self.assertRegex(agent["name"], r"^[a-z0-9_]+$")
+                    self.assertIn("developer_instructions", agent)
+                    if agent_kind == "judge":
+                        self.assertEqual("read-only", agent["sandbox_mode"])
+
+            execution = suite["execution"]
+            self.assertEqual(
+                f"{entry['id']}-suite-supervisor".replace("-", "_"),
+                execution["supervisorInvocation"],
+            )
+            self.assertEqual(
+                entry["id"].replace("-", "_"),
+                execution["targetInvocation"],
+            )
+            self.assertEqual(
+                f"{entry['id']}-suite-judge".replace("-", "_"),
+                execution["judgeInvocation"],
+            )
+
+            if entry["id"] == "dev-coder":
+                first_scenario = scenarios["scenarios"][0]
+                self.assertIn("organise-project-files", first_scenario["targetSkills"])
+
+            configured_skills = [
+                *suite["projectSkills"]["shared"],
+                *suite["projectSkills"]["suite"],
+            ]
+            for relative_path in configured_skills:
+                skill_path = suite_root / relative_path
+                with self.subTest(suite=entry["id"], project_skill=relative_path):
+                    frontmatter = load_yaml_object_from_frontmatter(skill_path)
+                    self.assertEqual(skill_path.parent.name, frontmatter["name"])
 
     def test_support_checklist_covers_every_agent_and_skill(self) -> None:
         """The generated report must expose every live declaration without inflating evidence."""

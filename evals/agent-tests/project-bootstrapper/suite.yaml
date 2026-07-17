@@ -1,0 +1,54 @@
+schema: dev-methodology-agent-suite
+version: 1
+id: project-bootstrapper
+priority: 4
+target:
+  conceptualRole: agents/roles/project-setup/project-bootstrapper.role.yaml
+  nativeAgent: generated/adapters/codex/agents/project-bootstrapper.toml
+  repositoryMutation: required
+  requiredSkills:
+    - agent-claim
+    - documentation-bootstrap
+    - development-methodology
+  conditionalSkills:
+    organise-project-files: Bootstrap creates a project file or directory whose path is not fixed by the bootstrap contract.
+  allowedAgentDependencies:
+    - project-configurator
+    - dev-documentation-writer
+    - wiki-architect
+    - wiki-writer
+    - dev-artifact-reviewer
+    - wiki-artifact-reviewer
+    - wiki-topic-verifier
+    - dev-merge-coordinator
+    - dev-verifier
+  requiredOutputs:
+    - status
+    - project setup files
+    - documentation
+    - checks
+    - remaining questions
+projectAgents:
+  supervisor: agents/supervisor.toml
+  judge: agents/judge.toml
+projectSkills:
+  shared:
+    - ../skills/agent-suite-supervision/SKILL.md
+    - ../skills/agent-scenario-design/SKILL.md
+    - ../skills/agent-evidence-judging/SKILL.md
+  suite:
+    - skills/project-bootstrapper-suite-contract/SKILL.md
+execution:
+  maximumActiveChildren: 1
+  nestedAgentLimit: 1
+  nestedAgentConcurrency: 1
+  scenarioCatalog: scenarios.yaml
+  supervisorInvocation: project_bootstrapper_suite_supervisor
+  targetInvocation: project_bootstrapper
+  judgeInvocation: project_bootstrapper_suite_judge
+  requireCodexIdentityEvidence: true
+acceptance:
+  deterministicFirst: true
+  criticalFailureSkipsJudge: true
+  semanticRubric: workflow-quality
+  terminalStatuses: [PASS, FAIL, BLOCKED, STALE]

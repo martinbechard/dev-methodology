@@ -484,16 +484,18 @@ The project wiki should live at docs/wiki. It is a synthesized navigation and un
 
 ## Agent And Skill Evaluations
 
-The evals directory owns synthetic fixtures, complete agent and skill coverage declarations, workflow packs, Judge definitions, sandbox profiles, evidence receipts, and concise results. Evaluation support targets Codex and Junie. Other generated adapters remain part of the distributable bundle but are outside this evaluation harness.
+The evals directory owns agent-first behavioral suites, synthetic fixtures, runner catalogs, Judge definitions, sandbox profiles, evidence receipts, and concise results. Evaluation support targets Codex and Junie. Other generated adapters remain part of the distributable bundle but are outside this evaluation harness.
 
-Operational commands and receipt requirements are documented in [evals/README.md](evals/README.md). The generated [agent and skill coverage checklist](design/agent-skill-test-coverage-checklist.md) reports declarations, fixtures, execution, Judge outcome, Judge calibration, security containment, and stale evidence separately.
+The [agent-owned suite strategy](evals/agent-tests/README.md) is the primary organization for future evaluation work. Its common [suite protocol](evals/agent-tests/AGENTS.md) limits the root coordinator to four concurrent supervisors, each with exactly one active child. The normal ceiling is nine active agents; one declared nested dependency may temporarily raise it to ten. The first wave covers Dev Coder, Dev Code Reviewer, Dev Runtime Diagnostician, and Project Bootstrapper.
+
+Operational runner commands and receipt requirements are documented in [evals/README.md](evals/README.md). The generated [agent and skill coverage checklist](design/agent-skill-test-coverage-checklist.md) reports declarations, fixtures, execution, Judge outcome, Judge calibration, security containment, and stale evidence separately.
 
 Evaluation coverage has four distinct layers:
 
-1. Structural checks validate every skill, conceptual agent definition, generated adapter, detection rule, and catalog reference.
-2. Skill probes declare the applicable trigger, negative trigger, observable behavior, Judge plan, workflow associations, and matched skill-omission and wrong-skill controls for every bundled skill.
-3. Agent scenarios declare happy-path and boundary behavior, repository mutation authority, output-contract fields, supported harnesses, and Judge plans for every conceptual agent definition.
-4. Workflow packs evaluate code delivery, documentation and methodology, project setup, wiki lifecycle, and backlog work across their required independent handoffs.
+1. Structural checks validate every agent suite, conceptual agent definition, generated adapter, relevant skill, detection rule, and runner catalog reference.
+2. Agent suites derive representative success, material boundary, and dependency or recovery scenarios from the complete canonical agent definition.
+3. Skill probes provide targeted activation and ablation evidence only when an agent scenario depends materially on that skill behavior.
+4. Workflow evidence evaluates the target agent's allowed delegation, handoffs, claims, integration, verification, and terminal outcomes.
 
 Deterministic Judges run before semantic judgment and own executable checks, schemas, trace identity, skill reads, mutation boundaries, command results, state transitions, and source or fixture hashes. A Model Judge is used only when exact checks cannot decide semantic quality. Calibration metrics can be computed now, but promotion to a calibrated Model Judge is disabled until every sample has provenance-bound Model and Human Judge artifacts for the exact harness, prompt, model, reasoning profile, rubric, and calibration set. Raw Judge outcome and calibration status remain separate. A deterministic critical failure skips Model Judge execution.
 

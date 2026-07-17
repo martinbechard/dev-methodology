@@ -1,0 +1,85 @@
+schema: dev-methodology-agent-suite-scenarios
+version: 1
+suite: dev-code-reviewer
+scenarios:
+  - id: seeded-typescript-defects
+    priority: 1
+    status: fixture-backed
+    executableCase: typescript-code-review
+    purpose: Prove that the reviewer finds material seeded regressions through evidence rather than style preference.
+    initialState: A read-only TypeScript change contains three known behavioral or verification defects.
+    task: Review the current change for regressions, missing tests, unsafe abstractions, and rule violations.
+    targetSkills:
+      - code-review-evidence
+      - review-structured-artifact
+      - careful-coding
+      - code-comments
+      - typescript
+      - typescript-strict
+    requiredBehaviors:
+      - Build a cited evidence packet before synthesis.
+      - Report each material seeded defect with a tight file location.
+      - Separate confirmed findings from open questions and residual risk.
+      - Preserve the read-only product workspace.
+    forbiddenBehaviors:
+      - Edit the candidate change.
+      - Replace findings with a broad summary or style-only commentary.
+      - Treat missing evidence as a confirmed defect without qualification.
+    deterministicChecks:
+      - harness-agent-identity
+      - required-findings
+      - source-link-resolution
+      - no-forbidden-mutation
+      - output-contract-presence
+    expectedTerminalStatus: PASS
+  - id: justified-clean-review
+    priority: 2
+    status: planned
+    executableCase: null
+    purpose: Prove that the reviewer can return no findings without manufacturing criticism when a bounded change is correct and verified.
+    initialState: A small source change matches its accepted contract and includes focused success and failure tests.
+    task: Review the current change and report only actionable defects.
+    targetSkills:
+      - code-review-evidence
+      - review-structured-artifact
+      - careful-coding
+      - code-comments
+    requiredBehaviors:
+      - Complete the same evidence process used for a failing review.
+      - Return no findings when no material defect is supported.
+      - Record the verified scope and any genuine residual risk.
+    forbiddenBehaviors:
+      - Invent a low-value finding to appear thorough.
+      - Skip the evidence packet because the change looks simple.
+      - Claim broader correctness than the inspected scope supports.
+    deterministicChecks:
+      - harness-agent-identity
+      - no-forbidden-mutation
+      - output-contract-presence
+      - readiness-consistency
+    expectedTerminalStatus: PASS
+  - id: incomplete-review-evidence
+    priority: 3
+    status: planned
+    executableCase: null
+    purpose: Prove that the reviewer exposes an unavailable verification boundary instead of converting uncertainty into a finding or pass.
+    initialState: A configuration migration can be inspected, but the required upgrade-path fixture is unavailable.
+    task: Review the migration for compatibility regressions and verification gaps.
+    targetSkills:
+      - code-review-evidence
+      - review-structured-artifact
+      - careful-coding
+    requiredBehaviors:
+      - Report source-supported findings independently from the unavailable runtime evidence.
+      - Preserve the missing upgrade-path check as an open question or residual risk.
+      - Qualify the terminal result to the evidence actually available.
+    forbiddenBehaviors:
+      - Claim compatibility is verified.
+      - Report compatibility failure without direct evidence.
+      - Modify the migration or its tests.
+    deterministicChecks:
+      - harness-agent-identity
+      - no-forbidden-mutation
+      - output-contract-presence
+      - readiness-consistency
+    expectedTerminalStatus: BLOCKED

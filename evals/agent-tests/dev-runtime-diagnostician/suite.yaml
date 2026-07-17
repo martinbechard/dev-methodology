@@ -1,0 +1,48 @@
+schema: dev-methodology-agent-suite
+version: 1
+id: dev-runtime-diagnostician
+priority: 3
+target:
+  conceptualRole: agents/roles/dev-activities/dev-runtime-diagnostician.role.yaml
+  nativeAgent: generated/adapters/codex/agents/dev-runtime-diagnostician.toml
+  repositoryMutation: conditional
+  requiredSkills:
+    - code-discovery
+    - test-strategy
+    - root-cause-analysis
+    - code-execution-tracing
+    - structured-explanation
+  conditionalSkills:
+    agent-claim: The diagnosis mutates files or owns exclusive runtime resources.
+    organise-project-files: The diagnosis creates a new project file or directory.
+    runtime-evidence-collection: The failure mechanism depends on runtime state that source inspection cannot establish.
+    careful-coding: The diagnosis adds instrumentation or implements a verified remediation.
+  allowedAgentDependencies: []
+  requiredOutputs:
+    - reproduction
+    - logs and suspected boundary
+    - fix or escalation path
+    - verification result
+projectAgents:
+  supervisor: agents/supervisor.toml
+  judge: agents/judge.toml
+projectSkills:
+  shared:
+    - ../skills/agent-suite-supervision/SKILL.md
+    - ../skills/agent-scenario-design/SKILL.md
+    - ../skills/agent-evidence-judging/SKILL.md
+  suite:
+    - skills/dev-runtime-diagnostician-suite-contract/SKILL.md
+execution:
+  maximumActiveChildren: 1
+  nestedAgentLimit: 0
+  scenarioCatalog: scenarios.yaml
+  supervisorInvocation: dev_runtime_diagnostician_suite_supervisor
+  targetInvocation: dev_runtime_diagnostician
+  judgeInvocation: dev_runtime_diagnostician_suite_judge
+  requireCodexIdentityEvidence: true
+acceptance:
+  deterministicFirst: true
+  criticalFailureSkipsJudge: true
+  semanticRubric: diagnosis-quality
+  terminalStatuses: [PASS, FAIL, BLOCKED, STALE]

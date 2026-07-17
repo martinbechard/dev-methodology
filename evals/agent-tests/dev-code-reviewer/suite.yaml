@@ -1,0 +1,46 @@
+schema: dev-methodology-agent-suite
+version: 1
+id: dev-code-reviewer
+priority: 2
+target:
+  conceptualRole: agents/roles/dev-activities/dev-code-reviewer.role.yaml
+  nativeAgent: generated/adapters/codex/agents/dev-code-reviewer.toml
+  repositoryMutation: conditional
+  requiredSkills:
+    - code-review-evidence
+    - review-structured-artifact
+    - careful-coding
+    - code-comments
+  conditionalSkills:
+    agent-claim: The review saves an evidence packet, checklist, findings file, or other project artifact.
+    organise-project-files: The review creates a new evidence artifact whose destination is not already fixed.
+  allowedAgentDependencies: []
+  requiredOutputs:
+    - completed code evidence packet
+    - prioritized findings
+    - file references
+    - open questions
+    - residual risk
+projectAgents:
+  supervisor: agents/supervisor.toml
+  judge: agents/judge.toml
+projectSkills:
+  shared:
+    - ../skills/agent-suite-supervision/SKILL.md
+    - ../skills/agent-scenario-design/SKILL.md
+    - ../skills/agent-evidence-judging/SKILL.md
+  suite:
+    - skills/dev-code-reviewer-suite-contract/SKILL.md
+execution:
+  maximumActiveChildren: 1
+  nestedAgentLimit: 0
+  scenarioCatalog: scenarios.yaml
+  supervisorInvocation: dev_code_reviewer_suite_supervisor
+  targetInvocation: dev_code_reviewer
+  judgeInvocation: dev_code_reviewer_suite_judge
+  requireCodexIdentityEvidence: true
+acceptance:
+  deterministicFirst: true
+  criticalFailureSkipsJudge: true
+  semanticRubric: review-quality
+  terminalStatuses: [PASS, FAIL, BLOCKED, STALE]
