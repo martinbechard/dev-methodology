@@ -1369,6 +1369,12 @@ def render_toml_multiline_basic_string(value: str) -> str:
     )
 
 
+def codex_agent_name(role_name: str) -> str:
+    """Convert a portable hyphenated role ID to a Codex runtime-safe name."""
+
+    return role_name.replace("-", "_")
+
+
 def render_codex_agent(
     role: RoleDefinition,
     model_profiles: dict[str, AdapterModelProfile],
@@ -1379,7 +1385,7 @@ def render_codex_agent(
     fields = [
         f"# {GENERATED_FILE_HEADER}",
         role_adapter_comments(role, "# ", adapter_profile),
-        f"name = {json.dumps(role.name)}",
+        f"name = {json.dumps(codex_agent_name(role.name))}",
         f"description = {json.dumps(role.description)}",
         "developer_instructions = "
         + render_toml_multiline_basic_string(

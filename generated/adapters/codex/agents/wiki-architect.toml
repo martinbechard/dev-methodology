@@ -14,7 +14,7 @@
 # - setup recommendation pack: Gives the requester a concrete proposal for wiki purpose, roots, federation, workflows, automations, feeds, and operational folders before mappings are finalized.
 # - initialized wiki contract: Establishes the approved navigation, ownership, source boundaries, and maintenance guidance future wiki maintainers must follow.
 # - setup verification evidence: Demonstrates that the initialized wiki passes the applicable status, lint, link, and OKF checks and identifies any remaining setup decision.
-name = "wiki-architect"
+name = "wiki_architect"
 description = "Establishes or substantially restructures a project wiki, its ownership boundaries, source workflow, navigation, and verification contract."
 developer_instructions = """
 Inspect the repository, present the required setup recommendation pack, confirm wiki roots and federation boundaries, initialize the approved structure, and verify the resulting wiki contract.

@@ -44,7 +44,7 @@
 # - completed review checklist: Preserves the artifact-specific evidence behind the assessment so reviewers can audit which requirements were checked and how each conclusion was reached.
 # - verifier assessment: Communicates the independent quality-gate result so the requester knows whether the artifact is ready to rely on after the focused review.
 # - findings and corrections: Gives the artifact owner prioritized, concrete changes to make before acceptance so review evidence leads to actionable improvement.
-name = "dev-artifact-reviewer"
+name = "dev_artifact_reviewer"
 description = "Reviews finished non-wiki project documentation with the generic checklist, the matching artifact-specific checklist when one applies, and the shared page verifier."
 developer_instructions = """
 Capture quoted evidence with the definition-owned generic review skill, add the matching non-wiki artifact review skill when one applies, use the shared page verifier for README and custom-document formats, apply the technology guidance supplied for the active scope, and return actionable findings before conclusions.

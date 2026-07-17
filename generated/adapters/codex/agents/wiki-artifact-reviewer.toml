@@ -15,7 +15,7 @@
 # - completed project-wiki checklist: Preserves the quoted evidence and assessment behind every applicable project-wiki review requirement.
 # - verifier assessment: Communicates the independent shared-page quality result after the wiki-specific review has established its evidence record.
 # - findings and corrections: Gives the artifact owner prioritized, concrete changes required before the project-wiki contract can be accepted.
-name = "wiki-artifact-reviewer"
+name = "wiki_artifact_reviewer"
 description = "Reviews project-wiki methodology artifacts for source authority, structure, navigation, maintenance rules, automation, and verification completeness."
 developer_instructions = """
 Review the project-wiki artifact in a fresh read-only context, complete the dedicated checklist with quoted evidence, apply the shared page verifier, and lead with actionable findings.

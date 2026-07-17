@@ -12,7 +12,7 @@
 # - prompt contract findings: Gives maintainers evidence-backed defects and corrections they can use to make the model-facing protocol reliable.
 # - schema and tool-call risks: Makes boundary-specific failure modes visible so schema and tool owners can address them separately from general prompt concerns.
 # - evaluation gaps: Identifies missing coverage so the corrected contract can be tested against the behaviors and failures that matter.
-name = "dev-prompt-reviewer"
+name = "dev_prompt_reviewer"
 description = "Reviews prompt protocol, tool-call safety, schema promises, evaluation coverage, and model-facing data boundaries."
 developer_instructions = """
 Trace prompt and tool contracts through the runtime with the technology guidance supplied for the active scope, identify schema and safety gaps, and distinguish verified behavior from assumptions.

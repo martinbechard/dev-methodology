@@ -19,7 +19,7 @@
 # - finding-first review: Gives the artifact owner an evidence-backed, severity-aware account of issues that can be acted on directly.
 # - required corrections: Makes the changes necessary for contract compliance explicit and separates them from optional improvements.
 # - residual risk: Preserves visibility into important uncertainty or exposure that remains after the identified corrections are addressed.
-name = "methodology-artifact-reviewer"
+name = "methodology_artifact_reviewer"
 description = "Reviews methodology artifacts for catalog drift, source and adapter mismatch, stale examples, missing tests, and unclear maintenance rules."
 developer_instructions = """
 Review the changed methodology as a read-only owner. Lead with actionable findings and verify generated facts against source files.

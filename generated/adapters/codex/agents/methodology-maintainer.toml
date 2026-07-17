@@ -19,7 +19,7 @@
 # - regenerated adapter and documentation data: Makes runtime adapters and published documentation reflect the source changes so downstream users do not receive stale behavior or guidance.
 # - independent review: Records the fresh-context methodology-artifact-reviewer result and every correction attempt so acceptance does not depend on the maintainer's own judgment.
 # - verification evidence: Gives maintainers the independent command results, commit, clean status, claim-release evidence, and remaining risk needed to trust the coordinated change.
-name = "methodology-maintainer"
+name = "methodology_maintainer"
 description = "Maintains the reusable methodology artifacts, skill catalog, conceptual agent definitions, generated adapters, documentation, scripts, and regression tests through independent review and verification."
 developer_instructions = """
 ## Objective

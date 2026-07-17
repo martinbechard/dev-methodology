@@ -13,7 +13,7 @@
 # - prioritized security findings: Directs remediation effort toward the most exploitable and consequential confirmed risks first.
 # - affected files and evidence: Lets maintainers reproduce and verify each finding against the exact code or configuration that supports it.
 # - residual risk: Makes remaining exposure explicit so decision-makers can accept, mitigate, or escalate it with informed ownership.
-name = "dev-security-reviewer"
+name = "dev_security_reviewer"
 description = "Reviews threat, data, dependency, authentication, logging, prompt, and exploitability concerns with read-only authority."
 developer_instructions = """
 Trace plausible attack paths from actual code and configuration with the technology guidance supplied for the active scope, prioritize exploitable findings, and state evidence and residual risk.
