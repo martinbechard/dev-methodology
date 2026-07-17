@@ -15,6 +15,7 @@ import hashlib
 import json
 import os
 import re
+import secrets
 import signal
 import shutil
 import subprocess
@@ -33,6 +34,7 @@ _SUITE_ROOT = Path(__file__).resolve().parent
 _REPOSITORY_ROOT = _SUITE_ROOT.parents[1]
 _RUNTIME_NAME = re.compile(r"^[a-z][a-z0-9_]*$")
 _TERMINAL_STATUSES = frozenset({"PASS", "FAIL", "BLOCKED", "STALE"})
+_REPORT_STATUSES = frozenset((*_TERMINAL_STATUSES, "INFRASTRUCTURE_FAILED"))
 _EXECUTABLE_STATUSES = frozenset({"executable", "fixture-backed"})
 _CAPTURE_REPLACEMENTS = (
     ("Martin.Bechard@DevConsult.ca", "[REDACTED-NONBEHAVIORAL-IDENTITY]"),
@@ -61,6 +63,7 @@ class _StagedAgent:
     source: Path
     developer_instructions: str
     sha256: str
+    instruction_marker: str
 
 
 @dataclasses.dataclass(frozen=True)
@@ -71,6 +74,7 @@ class _Session:
     depth: int
     started_at: float
     finished_at: float
+    instruction_markers: frozenset[str]
 
 
 def _utc_now() -> str:
@@ -228,15 +232,29 @@ def _copy_agent(source: Path, invocation: str, agent_root: Path) -> _StagedAgent
     if not _RUNTIME_NAME.fullmatch(invocation):
         raise ValueError(f"Invalid staged agent invocation: {invocation}")
     destination = agent_root / f"{invocation}.toml"
-    shutil.copy2(source, destination)
-    loaded = tomllib.loads(source.read_text(encoding="utf-8"))
+    source_text = source.read_text(encoding="utf-8")
+    loaded = tomllib.loads(source_text)
     actual_name = loaded.get("name")
     if actual_name != invocation:
         raise ValueError(f"Staged agent name mismatch: expected {invocation}, found {actual_name}")
     instructions = str(loaded.get("developer_instructions", ""))
     if not instructions:
         raise ValueError(f"Staged agent has no developer instructions: {source}")
-    return _StagedAgent(invocation, source, instructions, _sha256(source))
+    marker = f"AGENT_INSTRUCTION_BINDING_{invocation}_{secrets.token_hex(16)}"
+    binding_instruction = (
+        "\n\nBefore any other task action, run this exact command through exec_command and retain its output as "
+        "runtime identity evidence:\n"
+        f"python3 -c \"print('{marker}')\"\n"
+        "If that command cannot run, stop and report an infrastructure identity failure."
+    )
+    assignment = 'developer_instructions = """'
+    start = source_text.find(assignment)
+    end = source_text.find('\n"""', start + len(assignment))
+    if start < 0 or end < 0:
+        raise ValueError(f"Cannot instrument staged agent instructions: {source}")
+    staged_text = source_text[:end] + binding_instruction + source_text[end:]
+    destination.write_text(staged_text, encoding="utf-8")
+    return _StagedAgent(invocation, source, instructions, _sha256(destination), marker)
 
 
 def _copy_skill_package(skill_file: Path, skill_root: Path) -> None:
@@ -249,10 +267,17 @@ def _copy_skill_package(skill_file: Path, skill_root: Path) -> None:
 
 def _validate_target_skills(suite: _Suite, scenario_ids: Sequence[str], repository_root: Path) -> None:
     selected = set(scenario_ids)
+    required_skills = {str(value) for value in suite.manifest["target"].get("requiredSkills", [])}
     for scenario in suite.scenarios:
         if str(scenario["id"]) not in selected:
             continue
-        for skill_name in scenario.get("targetSkills", []):
+        declared_skills = {str(value) for value in scenario.get("targetSkills", [])}
+        omitted = required_skills - declared_skills
+        if omitted:
+            raise ValueError(
+                f"{suite.suite_id}:{scenario['id']} omits required target skills: {', '.join(sorted(omitted))}"
+            )
+        for skill_name in declared_skills:
             source = repository_root / "skills" / str(skill_name) / "SKILL.md"
             if not source.is_file():
                 raise ValueError(f"{suite.suite_id}:{scenario['id']} requires missing skill {skill_name}")
@@ -341,19 +366,19 @@ def _coordinator_schema() -> dict[str, Any]:
                                 "required": ["scenario", "status", "identityEvidence", "cleanup", "evidence"],
                                 "properties": {
                                     "scenario": {"type": "string"},
-                                    "status": {"type": "string", "enum": sorted(_TERMINAL_STATUSES)},
-                                    "identityEvidence": {"type": "array", "minItems": 1, "items": {"type": "string"}},
-                                    "cleanup": {"type": "string", "enum": ["clean"]},
-                                    "evidence": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+                                    "status": {"type": "string", "enum": sorted(_REPORT_STATUSES)},
+                                    "identityEvidence": {"type": "array", "items": {"type": "string"}},
+                                    "cleanup": {"type": "string", "enum": ["clean", "failed"]},
+                                    "evidence": {"type": "array", "items": {"type": "string"}},
                                 },
                             },
                         },
                         "maximumActiveChildrenObserved": {"type": "integer", "minimum": 0, "maximum": 1},
-                        "cleanup": {"type": "string", "enum": ["clean"]},
+                        "cleanup": {"type": "string", "enum": ["clean", "failed"]},
                     },
                 },
             },
-            "batchCleanup": {"type": "string", "enum": ["clean"]},
+            "batchCleanup": {"type": "string", "enum": ["clean", "failed"]},
             "residualRisk": {"type": "string"},
         },
     }
@@ -379,6 +404,8 @@ def _coordinator_prompt(batch: Sequence[_RunSpec]) -> str:
         "an explicit instruction to pass task_name exactly equal to the listed target and judge for those child spawns. "
         "Each supervisor must run its selected scenarios sequentially, use exactly one active child at a time, invoke "
         "only those hardcoded agents, retain one independent result per scenario, "
+        "write the required .agent-suite-results/suite-id/scenario-id.json checkpoint immediately after each terminal "
+        "scenario and before starting later work, "
         "and clean every fixture, claim, process, worktree, and credential it owns. One supervisor child may use one "
         "declared nested dependency at a time only where nestedAgentLimit is 1; serialize that temporary tenth-agent "
         "slot across the batch. Do not browse, install software, read outside this disposable repository, alter the "
@@ -416,6 +443,51 @@ def _extract_coordinator_report(stream: str) -> dict[str, Any]:
     return report
 
 
+def _load_checkpoint_report(workspace: Path, batch: Sequence[_RunSpec]) -> dict[str, Any] | None:
+    checkpoint_root = workspace / ".agent-suite-results"
+    runs: list[dict[str, Any]] = []
+    for run in batch:
+        scenario_results: list[dict[str, Any]] = []
+        residual_risks: list[str] = []
+        for scenario_id in run.scenario_ids:
+            path = checkpoint_root / run.suite.suite_id / f"{scenario_id}.json"
+            if not path.is_file():
+                continue
+            loaded = json.loads(path.read_text(encoding="utf-8"))
+            if not isinstance(loaded, dict):
+                raise RuntimeError(f"Scenario checkpoint must be an object: {path}")
+            if loaded.get("suite") != run.suite.suite_id or loaded.get("scenario") != scenario_id:
+                raise RuntimeError(f"Scenario checkpoint identity mismatch: {path}")
+            scenario_results.append(
+                {
+                    "scenario": scenario_id,
+                    "status": loaded.get("status"),
+                    "identityEvidence": loaded.get("identityEvidence", []),
+                    "cleanup": loaded.get("cleanup", "failed"),
+                    "evidence": loaded.get("evidence", []),
+                }
+            )
+            if loaded.get("residualRisk"):
+                residual_risks.append(str(loaded["residualRisk"]))
+        if scenario_results:
+            runs.append(
+                {
+                    "suite": run.suite.suite_id,
+                    "scenarioResults": scenario_results,
+                    "maximumActiveChildrenObserved": 1,
+                    "cleanup": "clean" if all(item["cleanup"] == "clean" for item in scenario_results) else "failed",
+                    "checkpointResidualRisk": "; ".join(residual_risks),
+                }
+            )
+    if not runs:
+        return None
+    return {
+        "runs": runs,
+        "batchCleanup": "unknown",
+        "residualRisk": "Partial supervisor checkpoints retained before coordinator completion.",
+    }
+
+
 def _audit_report(batch: Sequence[_RunSpec], report: dict[str, Any]) -> list[dict[str, Any]]:
     expected = {run.suite.suite_id: set(run.scenario_ids) for run in batch}
     observed: dict[str, set[str]] = {}
@@ -429,7 +501,10 @@ def _audit_report(batch: Sequence[_RunSpec], report: dict[str, Any]) -> list[dic
         scenario_results = item.get("scenarioResults", [])
         if not isinstance(scenario_results, list):
             raise RuntimeError(f"Scenario results must be a list for {suite_id}")
-        observed[suite_id] = {str(value.get("scenario", "")) for value in scenario_results}
+        scenario_names = [str(value.get("scenario", "")) for value in scenario_results]
+        if len(scenario_names) != len(set(scenario_names)):
+            raise RuntimeError(f"Duplicate scenario result for {suite_id}")
+        observed[suite_id] = set(scenario_names)
         for scenario_result in scenario_results:
             if scenario_result.get("status") not in _TERMINAL_STATUSES:
                 raise RuntimeError(f"Invalid terminal status for {suite_id}:{scenario_result.get('scenario')}")
@@ -455,8 +530,9 @@ def _timestamp_seconds(value: str) -> float:
 def _load_sessions(codex_home: Path) -> tuple[_Session, ...]:
     sessions: list[_Session] = []
     for rollout in codex_home.glob("**/rollout-*.jsonl"):
+        rollout_text = rollout.read_text(encoding="utf-8", errors="replace")
         events = []
-        for line in rollout.read_text(encoding="utf-8", errors="replace").splitlines():
+        for line in rollout_text.splitlines():
             try:
                 event = json.loads(line)
             except json.JSONDecodeError:
@@ -478,6 +554,7 @@ def _load_sessions(codex_home: Path) -> tuple[_Session, ...]:
                 depth=int(spawn.get("depth", 0)),
                 started_at=_timestamp_seconds(str(events[0]["timestamp"])),
                 finished_at=_timestamp_seconds(str(events[-1]["timestamp"])),
+                instruction_markers=frozenset(re.findall(r"AGENT_INSTRUCTION_BINDING_[a-z0-9_]+_[a-f0-9]{32}", rollout_text)),
             )
         )
     return tuple(sessions)
@@ -486,34 +563,102 @@ def _load_sessions(codex_home: Path) -> tuple[_Session, ...]:
 def _audit_identity(
     staged: Sequence[_StagedAgent],
     codex_home: Path,
-    required_invocations: set[str],
+    expected_invocation_counts: dict[str, int],
+    batch: Sequence[_RunSpec] | None = None,
 ) -> dict[str, Any]:
     sessions = _load_sessions(codex_home)
-    observed = {session.invocation for session in sessions if session.invocation}
+    sessions_by_invocation: dict[str, list[_Session]] = {}
+    for session in sessions:
+        if session.invocation:
+            sessions_by_invocation.setdefault(session.invocation, []).append(session)
     agents = []
     for agent in staged:
-        exact_session = agent.invocation in observed
-        required = agent.invocation in required_invocations
+        matching_sessions = sessions_by_invocation.get(agent.invocation, [])
+        exact_sessions = [session for session in matching_sessions if agent.instruction_marker in session.instruction_markers]
+        exact_session = bool(exact_sessions)
+        required_count = expected_invocation_counts.get(agent.invocation, 0)
+        required = required_count > 0
         agents.append(
             {
                 "invocation": agent.invocation,
                 "definitionSha256": agent.sha256,
                 "required": required,
+                "requiredSessionCount": required_count,
                 "exactCustomAgentSession": exact_session,
-                "instructionBinding": "staged-definition-digest-bound-to-exact-agent-path" if exact_session else "missing",
+                "instructionBinding": "runtime-canary-bound-to-staged-definition" if exact_session else "missing",
+                "boundSessionIds": [session.session_id for session in exact_sessions],
             }
         )
-        if required and not exact_session:
-            raise RuntimeError(f"Missing exact custom-agent session for {agent.invocation}")
-    return {"rolloutCount": len(sessions), "agents": agents}
+        if matching_sessions and len(exact_sessions) != len(matching_sessions):
+            raise RuntimeError(f"Missing runtime instruction binding for {agent.invocation}")
+        if len(exact_sessions) != required_count and required:
+            raise RuntimeError(
+                f"Custom-agent session count mismatch for {agent.invocation}: "
+                f"expected {required_count}, observed {len(exact_sessions)}"
+            )
+    scenario_bindings: list[dict[str, str]] = []
+    if batch is not None:
+        for run in batch:
+            execution = run.suite.manifest["execution"]
+            supervisors = [
+                session
+                for session in sessions
+                if session.depth == 1 and session.invocation == execution["supervisorInvocation"]
+            ]
+            if len(supervisors) != 1:
+                raise RuntimeError(f"Cannot bind scenarios to supervisor for {run.suite.suite_id}")
+            supervisor = supervisors[0]
+            for kind, invocation_key in (("target", "targetInvocation"), ("judge", "judgeInvocation")):
+                children = sorted(
+                    (
+                        session
+                        for session in sessions
+                        if session.parent_thread_id == supervisor.session_id
+                        and session.invocation == execution[invocation_key]
+                    ),
+                    key=lambda session: session.started_at,
+                )
+                if len(children) != len(run.scenario_ids):
+                    raise RuntimeError(
+                        f"Cannot bind {kind} sessions to scenarios for {run.suite.suite_id}: "
+                        f"expected {len(run.scenario_ids)}, observed {len(children)}"
+                    )
+                for scenario_id, session in zip(run.scenario_ids, children, strict=True):
+                    scenario_bindings.append(
+                        {
+                            "suite": run.suite.suite_id,
+                            "scenario": scenario_id,
+                            "kind": kind,
+                            "invocation": str(session.invocation),
+                            "sessionId": session.session_id,
+                            "parentSessionId": str(session.parent_thread_id),
+                        }
+                    )
+    return {"rolloutCount": len(sessions), "agents": agents, "scenarioBindings": scenario_bindings}
 
 
-def _audit_session_concurrency(sessions: Sequence[_Session], maximum_threads: int) -> dict[str, int]:
+def _audit_session_concurrency(
+    sessions: Sequence[_Session],
+    maximum_threads: int,
+    batch: Sequence[_RunSpec] | None = None,
+) -> dict[str, int]:
     by_parent: dict[str, list[_Session]] = {}
     for session in sessions:
         if session.parent_thread_id:
             by_parent.setdefault(session.parent_thread_id, []).append(session)
-    supervisors = {session.session_id for session in sessions if session.depth == 1}
+    supervisor_sessions = [session for session in sessions if session.depth == 1]
+    if len(supervisor_sessions) > 4:
+        raise RuntimeError(f"Supervisor concurrency limit exceeded: {len(supervisor_sessions)} > 4")
+    if batch is not None:
+        expected_supervisors = sorted(
+            str(run.suite.manifest["execution"]["supervisorInvocation"]) for run in batch
+        )
+        observed_supervisors = sorted(str(session.invocation) for session in supervisor_sessions)
+        if observed_supervisors != expected_supervisors:
+            raise RuntimeError(
+                f"Supervisor identity mismatch: expected {expected_supervisors}, observed {observed_supervisors}"
+            )
+    supervisors = {session.session_id for session in supervisor_sessions}
     maximum_children = 0
     for supervisor in supervisors:
         children = by_parent.get(supervisor, [])
@@ -536,23 +681,73 @@ def _audit_session_concurrency(sessions: Sequence[_Session], maximum_threads: in
         maximum_active = max(maximum_active, active)
         if active > maximum_threads:
             raise RuntimeError(f"Runtime agent ceiling exceeded: {active} > {maximum_threads}")
-        if active > 9 and active_nested > 1:
-            raise RuntimeError("Temporary tenth-agent slot was not serialized")
+        if active_nested > 1:
+            raise RuntimeError("Nested dependency execution was not serialized")
+    if batch is not None:
+        allowed_dependencies = {
+            str(dependency).replace("-", "_")
+            for run in batch
+            for dependency in run.suite.manifest["target"].get("allowedAgentDependencies", [])
+        }
+        known_invocations = {
+            str(run.suite.manifest["execution"][key])
+            for run in batch
+            for key in ("supervisorInvocation", "targetInvocation", "judgeInvocation")
+        } | allowed_dependencies
+        unexpected = sorted(
+            {str(session.invocation) for session in sessions if session.depth > 0 and session.invocation}
+            - known_invocations
+        )
+        if unexpected:
+            raise RuntimeError(f"Unexpected custom-agent sessions: {', '.join(unexpected)}")
+        for session in sessions:
+            if session.depth >= 3 and session.invocation not in allowed_dependencies:
+                raise RuntimeError(f"Undeclared nested dependency session: {session.invocation}")
+        session_by_id = {session.session_id: session for session in sessions}
+        suite_by_supervisor = {
+            str(run.suite.manifest["execution"]["supervisorInvocation"]): run.suite for run in batch
+        }
+        suite_by_target = {
+            str(run.suite.manifest["execution"]["targetInvocation"]): run.suite for run in batch
+        }
+        for supervisor in supervisor_sessions:
+            suite = suite_by_supervisor.get(str(supervisor.invocation))
+            if suite is None:
+                continue
+            execution = suite.manifest["execution"]
+            allowed_children = {str(execution["targetInvocation"]), str(execution["judgeInvocation"])}
+            child_invocations = {
+                str(child.invocation) for child in by_parent.get(supervisor.session_id, []) if child.invocation
+            }
+            invalid_children = sorted(child_invocations - allowed_children)
+            if invalid_children:
+                raise RuntimeError(
+                    f"Supervisor {supervisor.invocation} spawned undeclared children: {', '.join(invalid_children)}"
+                )
+        for nested in (session for session in sessions if session.depth >= 3):
+            parent = session_by_id.get(str(nested.parent_thread_id))
+            suite = suite_by_target.get(str(parent.invocation)) if parent else None
+            suite_dependencies = {
+                str(value).replace("-", "_")
+                for value in suite.manifest["target"].get("allowedAgentDependencies", [])
+            } if suite else set()
+            if nested.invocation not in suite_dependencies:
+                raise RuntimeError(
+                    f"Nested dependency {nested.invocation} is not allowed for parent "
+                    f"{parent.invocation if parent else nested.parent_thread_id}"
+                )
     return {"maximumActiveSessions": maximum_active, "maximumChildrenObserved": maximum_children}
 
 
-def _required_invocations(batch: Sequence[_RunSpec], report: dict[str, Any]) -> set[str]:
-    required = {run.suite.manifest["execution"]["supervisorInvocation"] for run in batch}
-    reports = {str(item.get("suite", "")): item for item in report.get("runs", [])}
+def _expected_invocation_counts(batch: Sequence[_RunSpec]) -> dict[str, int]:
+    expected: dict[str, int] = {}
     for run in batch:
-        item = reports.get(run.suite.suite_id, {})
-        statuses = {result.get("status") for result in item.get("scenarioResults", [])}
-        if statuses and statuses <= {"BLOCKED", "STALE"}:
-            continue
         execution = run.suite.manifest["execution"]
-        required.add(execution["targetInvocation"])
-        required.add(execution["judgeInvocation"])
-    return required
+        expected[str(execution["supervisorInvocation"])] = 1
+        scenario_count = len(run.scenario_ids)
+        expected[str(execution["targetInvocation"])] = scenario_count
+        expected[str(execution["judgeInvocation"])] = scenario_count
+    return expected
 
 
 def _retain_sessions(codex_home: Path, destination: Path) -> int:
@@ -591,6 +786,59 @@ def _kill_process_group(pid: int) -> None:
         pass
 
 
+def _process_parent_map() -> dict[int, int]:
+    completed = subprocess.run(
+        ["ps", "-axo", "pid=,ppid="],
+        check=False,
+        text=True,
+        capture_output=True,
+    )
+    relationships: dict[int, int] = {}
+    for line in completed.stdout.splitlines():
+        fields = line.split()
+        if len(fields) == 2 and all(field.isdigit() for field in fields):
+            relationships[int(fields[0])] = int(fields[1])
+    return relationships
+
+
+def _record_descendants(root_pid: int, tracked: set[int]) -> None:
+    relationships = _process_parent_map()
+    changed = True
+    tracked.add(root_pid)
+    while changed:
+        changed = False
+        for pid, parent_pid in relationships.items():
+            if parent_pid in tracked and pid not in tracked:
+                tracked.add(pid)
+                changed = True
+
+
+def _pid_exists(pid: int) -> bool:
+    try:
+        os.kill(pid, 0)
+    except (PermissionError, ProcessLookupError):
+        return False
+    return True
+
+
+def _stop_tracked_processes(root_pid: int, tracked: set[int]) -> str:
+    _record_descendants(root_pid, tracked)
+    retained = {pid for pid in tracked if pid != root_pid and _pid_exists(pid)}
+    _kill_process_group(root_pid)
+    for pid in retained:
+        try:
+            os.kill(pid, signal.SIGKILL)
+        except (PermissionError, ProcessLookupError):
+            pass
+    deadline = time.monotonic() + 2.0
+    while time.monotonic() < deadline and any(_pid_exists(pid) for pid in retained):
+        time.sleep(0.02)
+    survivors = {pid for pid in retained if _pid_exists(pid)}
+    if survivors:
+        return f"failed-surviving-pids:{','.join(str(pid) for pid in sorted(survivors))}"
+    return "failed-retained-processes-recovered" if retained else "clean"
+
+
 def _run_process(
     argv: Sequence[str],
     cwd: Path,
@@ -608,6 +856,13 @@ def _run_process(
     )
     buffers = {"stdout": bytearray(), "stderr": bytearray()}
     exceeded = threading.Event()
+    tracking_stop = threading.Event()
+    tracked_pids: set[int] = {process.pid}
+
+    def track_descendants() -> None:
+        while not tracking_stop.wait(0.05):
+            _record_descendants(process.pid, tracked_pids)
+        _record_descendants(process.pid, tracked_pids)
 
     def drain(name: str, stream: Any) -> None:
         while True:
@@ -625,6 +880,8 @@ def _run_process(
         threading.Thread(target=drain, args=("stdout", process.stdout), daemon=True),
         threading.Thread(target=drain, args=("stderr", process.stderr), daemon=True),
     ]
+    tracker = threading.Thread(target=track_descendants, daemon=True)
+    tracker.start()
     for thread in threads:
         thread.start()
     timed_out = False
@@ -635,7 +892,9 @@ def _run_process(
         _kill_process_group(process.pid)
         process.wait()
     finally:
-        _kill_process_group(process.pid)
+        tracking_stop.set()
+        tracker.join()
+        cleanup = _stop_tracked_processes(process.pid, tracked_pids)
     for thread in threads:
         thread.join()
     if process.stdout is not None:
@@ -645,10 +904,10 @@ def _run_process(
     stdout = bytes(buffers["stdout"]).decode("utf-8", errors="replace")
     stderr = bytes(buffers["stderr"]).decode("utf-8", errors="replace")
     if timed_out:
-        return {"exitCode": 124, "stdout": stdout, "stderr": f"{stderr}\nprocess timed out".lstrip(), "cleanup": "clean"}
+        return {"exitCode": 124, "stdout": stdout, "stderr": f"{stderr}\nprocess timed out".lstrip(), "cleanup": cleanup}
     if exceeded.is_set():
-        return {"exitCode": 125, "stdout": stdout, "stderr": f"{stderr}\nprocess output limit exceeded".lstrip(), "cleanup": "clean"}
-    return {"exitCode": int(process.returncode), "stdout": stdout, "stderr": stderr, "cleanup": "clean"}
+        return {"exitCode": 125, "stdout": stdout, "stderr": f"{stderr}\nprocess output limit exceeded".lstrip(), "cleanup": cleanup}
+    return {"exitCode": int(process.returncode), "stdout": stdout, "stderr": stderr, "cleanup": cleanup}
 
 
 def _audit_workspace_cleanup(workspace: Path) -> str:
@@ -721,16 +980,27 @@ def _run_live_batch(
             _audit_report(batch, partial_report)
         except RuntimeError as error:
             report_error = str(error)
-        required = _required_invocations(batch, partial_report or {})
+            try:
+                checkpoint_report = _load_checkpoint_report(workspace, batch)
+            except (json.JSONDecodeError, RuntimeError) as checkpoint_error:
+                checkpoint_report = None
+                report_error = f"{report_error}; checkpoint error: {checkpoint_error}"
+            if checkpoint_report is not None:
+                partial_report = checkpoint_report
+        checkpoint_source = workspace / ".agent-suite-results"
+        checkpoint_destination = result_root / f"{label}.checkpoints"
+        if checkpoint_source.is_dir():
+            shutil.copytree(checkpoint_source, checkpoint_destination, dirs_exist_ok=True)
+        expected_invocation_counts = _expected_invocation_counts(batch)
         identity_error: str | None = None
         try:
-            identity = _audit_identity(staged, codex_home, required)
+            identity = _audit_identity(staged, codex_home, expected_invocation_counts, batch)
         except RuntimeError as error:
             identity_error = str(error)
             identity = {"rolloutCount": retained_session_count, "error": identity_error}
         concurrency_error: str | None = None
         try:
-            concurrency = _audit_session_concurrency(_load_sessions(codex_home), maximum_threads)
+            concurrency = _audit_session_concurrency(_load_sessions(codex_home), maximum_threads, batch)
         except RuntimeError as error:
             concurrency_error = str(error)
             concurrency = {"error": concurrency_error}
@@ -746,6 +1016,7 @@ def _run_live_batch(
             message
             for message in (
                 None if completed["exitCode"] == 0 else f"Codex exited with {completed['exitCode']}",
+                None if completed["cleanup"] == "clean" else f"Process cleanup: {completed['cleanup']}",
                 report_error,
                 identity_error,
                 concurrency_error,
@@ -767,6 +1038,7 @@ def _run_live_batch(
                 "stderr": str(evidence_prefix.with_suffix(".stderr.log")),
                 "identity": str(identity_path),
                 "sessions": str(session_directory),
+                "checkpoints": str(checkpoint_destination),
             },
         }
 
@@ -836,6 +1108,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     result_root = arguments.result_dir.resolve()
     if arguments.validate_only:
         def validate(batch: tuple[_RunSpec, ...], batch_number: int) -> dict[str, Any]:
+            for run in batch:
+                _validate_target_skills(run.suite, run.scenario_ids, _REPOSITORY_ROOT)
             return {"batch": batch_number, "status": "validated", "supervisorCount": len(batch)}
 
         results = _execute_batches(batches, validate)

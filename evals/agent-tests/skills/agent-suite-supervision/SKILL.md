@@ -22,7 +22,8 @@ Use this project skill only for supervising an agent suite under evals/agent-tes
 9. Invoke the hardcoded suite Judge in a fresh context with the canonical role and every frozen rule excerpt needed to evaluate claims made under assigned target skills. In Codex, pass task_name exactly equal to judgeInvocation.
 10. Verify the Judge identity before accepting its verdict.
 11. Record PASS, FAIL, BLOCKED, or STALE and preserve the evidence needed to reproduce that classification.
-12. Clean every suite-owned resource.
+12. Before starting another scenario or returning, write the terminal scenario result as JSON to .agent-suite-results/suite-id/scenario-id.json in the disposable workspace. Include suite, scenario, status, identityEvidence, evidence, cleanup, and residualRisk. This runner-owned checkpoint is required even when later work may fail.
+13. Clean every suite-owned resource.
 
 When a supervisor-owned assertion command fails because of quoting, globbing, path construction, or another harness error, record the failed command as infrastructure evidence without classifying the target. Correct the command once, rerun the same frozen assertion, and preserve both outcomes. Do not weaken or replace the assertion after target execution.
 
@@ -52,4 +53,4 @@ When a supervisor-owned assertion command fails because of quoting, globbing, pa
 
 ## Result
 
-Return the suite, scenario, frozen digests, target and dependency identities, deterministic results, Judge verdict, terminal status, evidence locations, cleanup result, and residual risk.
+Return the suite, scenario, frozen digests, target and dependency identities, deterministic results, Judge verdict, terminal status, evidence locations, cleanup result, and residual risk. The terminal response and the runner-owned checkpoint must agree.

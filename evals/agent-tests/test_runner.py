@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import os
 import sys
 import tempfile
 import time
@@ -123,25 +124,66 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             codex_home = Path(temporary)
             sessions = codex_home / "sessions"
             sessions.mkdir()
-            self._write_rollout(sessions / "rollout-supervisor.jsonl", "suite_supervisor", depth=1)
+            supervisor_marker = "AGENT_INSTRUCTION_BINDING_suite_supervisor_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            target_marker = "AGENT_INSTRUCTION_BINDING_target_agent_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+            self._write_rollout(
+                sessions / "rollout-supervisor.jsonl", "suite_supervisor", depth=1, marker=supervisor_marker
+            )
             self._write_rollout(sessions / "rollout-generic.jsonl", "scenario_target", depth=2)
             staged = (
-                runner._StagedAgent("suite_supervisor", Path("supervisor.toml"), "instructions", "a" * 64),
-                runner._StagedAgent("target_agent", Path("target.toml"), "instructions", "b" * 64),
+                runner._StagedAgent(
+                    "suite_supervisor", Path("supervisor.toml"), "instructions", "a" * 64, supervisor_marker
+                ),
+                runner._StagedAgent("target_agent", Path("target.toml"), "instructions", "b" * 64, target_marker),
             )
 
             with self.assertRaisesRegex(RuntimeError, "target_agent"):
-                runner._audit_identity(staged, codex_home, {"suite_supervisor", "target_agent"})
+                runner._audit_identity(staged, codex_home, {"suite_supervisor": 1, "target_agent": 1})
+
+    def test_agent_path_without_instruction_canary_fails_identity_audit(self) -> None:
+        """A custom-looking path cannot substitute for observed staged instructions."""
+        with tempfile.TemporaryDirectory() as temporary:
+            codex_home = Path(temporary)
+            sessions = codex_home / "sessions"
+            sessions.mkdir()
+            self._write_rollout(sessions / "rollout-target.jsonl", "target_agent", depth=2)
+            target_marker = "AGENT_INSTRUCTION_BINDING_target_agent_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+            staged = (
+                runner._StagedAgent("target_agent", Path("target.toml"), "instructions", "b" * 64, target_marker),
+            )
+
+            with self.assertRaisesRegex(RuntimeError, "instruction binding"):
+                runner._audit_identity(staged, codex_home, {"target_agent": 1})
 
     def test_overlapping_supervisor_children_fail_runtime_audit(self) -> None:
         """Retained session intervals enforce one active child per supervisor."""
         sessions = (
-            runner._Session("supervisor", None, "suite_supervisor", 1, 0.0, 10.0),
-            runner._Session("target", "supervisor", "target_agent", 2, 1.0, 6.0),
-            runner._Session("judge", "supervisor", "suite_judge", 2, 5.0, 9.0),
+            runner._Session("supervisor", None, "suite_supervisor", 1, 0.0, 10.0, frozenset()),
+            runner._Session("target", "supervisor", "target_agent", 2, 1.0, 6.0, frozenset()),
+            runner._Session("judge", "supervisor", "suite_judge", 2, 5.0, 9.0, frozenset()),
         )
 
         with self.assertRaisesRegex(RuntimeError, "overlapping children"):
+            runner._audit_session_concurrency(sessions, maximum_threads=9)
+
+    def test_more_than_four_supervisors_fail_runtime_audit(self) -> None:
+        """Retained runtime evidence enforces the repository supervisor ceiling."""
+        sessions = tuple(
+            runner._Session(f"supervisor-{index}", "root", f"suite_{index}", 1, 0.0, 2.0, frozenset())
+            for index in range(5)
+        )
+
+        with self.assertRaisesRegex(RuntimeError, "Supervisor concurrency limit"):
+            runner._audit_session_concurrency(sessions, maximum_threads=9)
+
+    def test_overlapping_nested_dependencies_fail_runtime_audit(self) -> None:
+        """Only one depth-three dependency may run anywhere in a batch."""
+        sessions = (
+            runner._Session("nested-one", "target-one", "dependency", 3, 1.0, 5.0, frozenset()),
+            runner._Session("nested-two", "target-two", "dependency", 3, 2.0, 4.0, frozenset()),
+        )
+
+        with self.assertRaisesRegex(RuntimeError, "Nested dependency execution"):
             runner._audit_session_concurrency(sessions, maximum_threads=9)
 
     def test_missing_applicable_skill_is_a_preflight_error(self) -> None:
@@ -175,6 +217,66 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         self.assertEqual(124, result["exitCode"])
         self.assertIn("started", result["stdout"])
         self.assertLess(time.monotonic() - started, 2.0)
+
+    def test_timeout_stops_detached_descendant(self) -> None:
+        """A child that starts a new session cannot escape runner cleanup."""
+        program = (
+            "import subprocess,sys,time; "
+            "child=subprocess.Popen([sys.executable,'-c','import time; time.sleep(30)'],start_new_session=True); "
+            "print(child.pid,flush=True); time.sleep(30)"
+        )
+
+        result = runner._run_process(
+            (sys.executable, "-c", program),
+            Path.cwd(),
+            runner._controlled_environment(Path("/tmp/home"), Path("/tmp/codex"), Path("/tmp/work")),
+            timeout_seconds=0.3,
+        )
+
+        detached_pid = int(result["stdout"].strip())
+        with self.assertRaises(ProcessLookupError):
+            os.kill(detached_pid, 0)
+        self.assertNotEqual("clean", result["cleanup"])
+
+    def test_duplicate_scenario_results_fail_report_audit(self) -> None:
+        """Set equality cannot hide multiple verdicts for one scenario."""
+        batch = (self._run_spec("one", 1),)
+        report = {
+            "runs": [self._suite_report("one", "PASS")],
+            "batchCleanup": "clean",
+            "residualRisk": "none",
+        }
+        report["runs"][0]["scenarioResults"].append(dict(report["runs"][0]["scenarioResults"][0]))
+
+        with self.assertRaisesRegex(RuntimeError, "Duplicate scenario"):
+            runner._audit_report(batch, report)
+
+    def test_checkpoint_retains_completed_scenario_without_final_report(self) -> None:
+        """A terminal supervisor checkpoint survives a later coordinator interruption."""
+        batch = (self._run_spec("one", 1),)
+        with tempfile.TemporaryDirectory() as temporary:
+            workspace = Path(temporary)
+            checkpoint = workspace / ".agent-suite-results" / "one" / "happy.json"
+            checkpoint.parent.mkdir(parents=True)
+            checkpoint.write_text(
+                json.dumps(
+                    {
+                        "suite": "one",
+                        "scenario": "happy",
+                        "status": "PASS",
+                        "identityEvidence": ["bound"],
+                        "evidence": ["receipt"],
+                        "cleanup": "clean",
+                        "residualRisk": "none",
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            report = runner._load_checkpoint_report(workspace, batch)
+
+        assert report is not None
+        self.assertEqual("PASS", report["runs"][0]["scenarioResults"][0]["status"])
 
     @staticmethod
     def _suite(suite_id: str, nested_limit: int = 0) -> object:
@@ -227,7 +329,7 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         }
 
     @staticmethod
-    def _write_rollout(path: Path, invocation: str, depth: int) -> None:
+    def _write_rollout(path: Path, invocation: str, depth: int, marker: str | None = None) -> None:
         session_id = path.stem
         parent = "root" if depth == 1 else "rollout-supervisor"
         events = (
@@ -237,7 +339,9 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                 "agent_path": f"/root/{invocation}",
                 "source": {"subagent": {"thread_spawn": {"depth": depth, "agent_path": f"/root/{invocation}"}}},
             }},
-            {"timestamp": "2026-07-17T00:00:01Z", "type": "event_msg", "payload": {"type": "turn_complete"}},
+            {"timestamp": "2026-07-17T00:00:01Z", "type": "event_msg", "payload": {
+                "type": "agent_message", "message": marker or "no binding evidence"
+            }},
         )
         path.write_text("\n".join(json.dumps(event) for event in events) + "\n", encoding="utf-8")
 

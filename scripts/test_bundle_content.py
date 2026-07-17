@@ -3633,14 +3633,36 @@ class BundleContentTests(unittest.TestCase):
             "dev-code-reviewer",
             "dev-runtime-diagnostician",
             "project-bootstrapper",
+            "dev-verifier",
+            "dev-orchestrator",
+            "project-configurator",
+            "dev-security-reviewer",
+            "dev-backlog-steward",
+            "dev-merge-coordinator",
+            "dev-documentation-writer",
+            "wiki-ingester",
+            "wiki-writer",
+            "wiki-query-responder",
+            "dev-artifact-reviewer",
+            "dev-prompt-reviewer",
+            "dev-ux-specialist",
+            "dev-browser-operator",
+            "project-organiser",
+            "wiki-architect",
+            "wiki-topic-verifier",
+            "wiki-artifact-reviewer",
+            "wiki-researcher",
+            "wiki-source-collector",
+            "methodology-maintainer",
+            "methodology-artifact-reviewer",
         ]
         suite_entries = index["suites"]
         self.assertEqual(expected_suites, [entry["id"] for entry in suite_entries])
-        self.assertEqual([1, 2, 3, 4], [entry["priority"] for entry in suite_entries])
+        self.assertEqual(list(range(1, 27)), [entry["priority"] for entry in suite_entries])
         suite_directories = {
             path.name
             for path in AGENT_TEST_SUITES_ROOT.iterdir()
-            if path.is_dir() and path.name not in {"results", "skills"}
+            if path.is_dir() and path.name not in {"results", "skills"} and not path.name.startswith("__")
         }
         self.assertEqual(set(expected_suites), suite_directories)
 
@@ -3689,6 +3711,13 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("authoritative scenarios.yaml catalog", supervision)
         self.assertIn("Send agent-definition", supervision)
         self.assertIn("Correct only test infrastructure", supervision)
+        self.assertIn(".agent-suite-results/suite-id/scenario-id.json", supervision)
+        self.assertTrue((AGENT_TEST_SUITES_ROOT / "runner.py").is_file())
+        self.assertTrue((AGENT_TEST_SUITES_ROOT / "test_runner.py").is_file())
+        legacy_case_ids = {
+            str(case["id"])
+            for case in load_yaml_object(REPOSITORY_ROOT / "evals" / "cases.yaml")["cases"]
+        }
 
         for entry in suite_entries:
             suite_root = AGENT_TEST_SUITES_ROOT / entry["path"]
@@ -3712,13 +3741,15 @@ class BundleContentTests(unittest.TestCase):
 
             for scenario in scenarios["scenarios"]:
                 executable_case = scenario.get("executableCase")
-                if scenario["status"] == "executable":
-                    with self.subTest(
-                        suite=entry["id"],
-                        executable_scenario=scenario["id"],
-                    ):
-                        self.assertIsInstance(executable_case, str)
-                        self.assertTrue((suite_root / executable_case).exists())
+                with self.subTest(
+                    suite=entry["id"],
+                    executable_scenario=scenario["id"],
+                ):
+                    self.assertIn(scenario["status"], {"executable", "fixture-backed"})
+                    self.assertIsInstance(executable_case, str)
+                    self.assertTrue(
+                        (suite_root / executable_case).exists() or executable_case in legacy_case_ids
+                    )
 
             for agent_kind, relative_path in suite["projectAgents"].items():
                 agent_path = suite_root / relative_path
