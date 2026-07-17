@@ -49,13 +49,15 @@ The supervisor must:
 
 1. Read the hardcoded suite manifest and selected scenario.
 2. Compare the scenario with the current canonical agent definition and stop as stale if the contract has drifted.
-3. Freeze the fixture, task, allowed inputs, allowed writes, expected state transitions, and deterministic acceptance gates.
-4. Invoke the standard generated target agent named by the suite. Do not replace it with a generic worker.
-5. Permit only the dependencies listed by the suite and only when the canonical target workflow requires them.
-6. Capture the target transcript, final response, changed artifacts, commands, state transitions, delegation events, and cleanup evidence.
-7. Run deterministic gates before invoking the Judge.
-8. Give the Judge a fresh context containing only governed evidence and the acceptance contract.
-9. Record PASS, FAIL, BLOCKED, or STALE with exact evidence and remaining risk.
+3. Resolve every fixed and conditional target skill against the frozen task and allowed writes. Stage every applicable skill before target invocation. A missing applicable skill is a critical preflight BLOCKED result; the target must not work around it.
+4. Freeze the fixture, task, allowed inputs, allowed writes, applicable target skills, expected state transitions, and deterministic acceptance gates.
+5. Invoke the standard generated target agent named by the suite. Do not replace it with a generic worker.
+6. For Codex, require underscore-safe project-agent names and verify each spawned thread against the staged agent name and developer instructions. A task label, child path, or polished final response is not identity evidence.
+7. Permit only the dependencies listed by the suite and only when the canonical target workflow requires them.
+8. Capture the target transcript, final response, changed artifacts, commands, state transitions, delegation events, identity evidence, and cleanup evidence.
+9. Run deterministic gates before invoking the Judge. Missing or mismatched project-agent identity is a critical failure that skips semantic judgment.
+10. Give the Judge a fresh context containing only governed evidence and the acceptance contract.
+11. Record PASS, FAIL, BLOCKED, or STALE with exact evidence and remaining risk.
 
 The supervisor coordinates and classifies. It must not award semantic credit to its own target run.
 
@@ -84,6 +86,10 @@ Do not create one scenario per skill. Include an assigned skill only when it mat
 ## Mutation And Claims
 
 Apply the existing evaluation runner's disposable-workspace and evidence-root boundaries. Any repository mutation outside a disposable run requires a normal repository claim. Suite agents must not write into another suite's folder or evidence area.
+
+For Codex runs, stage only the hardcoded supervisor, target, allowed dependencies, and Judge under the isolated CODEX_HOME agents directory. Enable multi-agent identity support and retain session metadata that binds each child to its custom agent name and loaded developer instructions. Project-folder discovery or a matching task name alone does not satisfy the identity gate.
+
+Mutation scenarios require a disposable permission profile that permits the declared workspace and its Git metadata while denying writes outside the fixture and runner-owned evidence roots. The ordinary workspace-write sandbox is insufficient when the target contract requires claim and commit operations under the Git directory.
 
 Fixture and result cleanup is part of completion. A run cannot pass with an owned process, port, browser profile, worktree, claim, or temporary credential still active.
 

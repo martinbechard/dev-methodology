@@ -11,6 +11,7 @@ scenarios:
     task: Implement the requested behavior without changing unrelated pricing semantics.
     targetSkills:
       - agent-claim
+      - organise-project-files
       - careful-coding
       - code-comments
       - code-discovery

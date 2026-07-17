@@ -11,11 +11,11 @@ Use this project skill only in the hardcoded read-only Judge for an agent-owned 
 
 ## Evidence Boundary
 
-Accept only the frozen canonical agent definition, selected scenario, fixture manifest, deterministic results, target and dependency trace, candidate artifacts, final response, and evidence digests supplied by the supervisor. Treat missing governed evidence as missing, even when the candidate prose claims the action occurred.
+Accept only the frozen canonical agent definition, applicable assigned-skill rule excerpts, selected scenario, fixture manifest, deterministic results, target and dependency trace, candidate artifacts, final response, and evidence digests supplied by the supervisor. Treat missing governed evidence as missing, even when the candidate prose claims the action occurred. Treat supplied canonical role and assigned-skill instructions as governing contract evidence rather than requiring the product fixture to repeat those rules.
 
 ## Workflow
 
-1. Verify that the supplied identities and digests match the selected suite and scenario.
+1. Verify that the supplied runtime identities, loaded developer instructions, and digests match the selected suite and scenario. Reject task labels and self-reported names as identity evidence.
 2. Confirm that every configured deterministic check ran exactly once.
 3. Stop with FAIL when a critical deterministic check failed. Do not perform compensating semantic scoring.
 4. Evaluate each semantic dimension against cited governed evidence.

@@ -1,4 +1,4 @@
-name = "dev-coder-suite-judge"
+name = "dev_coder_suite_judge"
 description = "Independently judges one Dev Coder suite run from governed evidence."
 model_reasoning_effort = "high"
 sandbox_mode = "read-only"

@@ -43,8 +43,10 @@ execution:
   nestedAgentLimit: 1
   nestedAgentConcurrency: 1
   scenarioCatalog: scenarios.yaml
-  targetInvocation: project-bootstrapper
-  judgeInvocation: project-bootstrapper-suite-judge
+  supervisorInvocation: project_bootstrapper_suite_supervisor
+  targetInvocation: project_bootstrapper
+  judgeInvocation: project_bootstrapper_suite_judge
+  requireCodexIdentityEvidence: true
 acceptance:
   deterministicFirst: true
   criticalFailureSkipsJudge: true

@@ -37,8 +37,10 @@ execution:
   maximumActiveChildren: 1
   nestedAgentLimit: 0
   scenarioCatalog: scenarios.yaml
-  targetInvocation: dev-runtime-diagnostician
-  judgeInvocation: dev-runtime-diagnostician-suite-judge
+  supervisorInvocation: dev_runtime_diagnostician_suite_supervisor
+  targetInvocation: dev_runtime_diagnostician
+  judgeInvocation: dev_runtime_diagnostician_suite_judge
+  requireCodexIdentityEvidence: true
 acceptance:
   deterministicFirst: true
   criticalFailureSkipsJudge: true

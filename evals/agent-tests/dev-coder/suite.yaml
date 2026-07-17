@@ -34,8 +34,10 @@ execution:
   maximumActiveChildren: 1
   nestedAgentLimit: 0
   scenarioCatalog: scenarios.yaml
-  targetInvocation: dev-coder
-  judgeInvocation: dev-coder-suite-judge
+  supervisorInvocation: dev_coder_suite_supervisor
+  targetInvocation: dev_coder
+  judgeInvocation: dev_coder_suite_judge
+  requireCodexIdentityEvidence: true
 acceptance:
   deterministicFirst: true
   criticalFailureSkipsJudge: true

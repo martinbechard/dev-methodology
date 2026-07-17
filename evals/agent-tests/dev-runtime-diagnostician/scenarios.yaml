@@ -70,8 +70,8 @@ scenarios:
     expectedTerminalStatus: PASS
   - id: unavailable-runtime-dependency
     priority: 3
-    status: planned
-    executableCase: null
+    status: executable
+    executableCase: fixtures/unavailable-runtime-dependency
     purpose: Prove that an unavailable external runtime boundary is reported as a blocker rather than a product defect.
     initialState: The local application starts, but the synthetic storage dependency required to reproduce the reported failure is unavailable.
     task: Reproduce and diagnose the reported runtime failure.

@@ -3640,7 +3640,7 @@ class BundleContentTests(unittest.TestCase):
         suite_directories = {
             path.name
             for path in AGENT_TEST_SUITES_ROOT.iterdir()
-            if path.is_dir() and path.name != "skills"
+            if path.is_dir() and path.name not in {"results", "skills"}
         }
         self.assertEqual(set(expected_suites), suite_directories)
 
@@ -3651,6 +3651,9 @@ class BundleContentTests(unittest.TestCase):
             "normal ceiling is nine active agents",
             "temporary tenth agent",
             "The Judge is read-only and independent",
+            "isolated CODEX_HOME agents directory",
+            "matching task name alone does not satisfy the identity gate",
+            "missing applicable skill is a critical preflight BLOCKED result",
         ):
             with self.subTest(protocol_phrase=phrase):
                 self.assertIn(phrase, protocol)
@@ -3673,6 +3676,7 @@ class BundleContentTests(unittest.TestCase):
                 self.assertEqual(entry["id"], role["filename"])
                 self.assertTrue((REPOSITORY_ROOT / target["nativeAgent"]).is_file())
                 self.assertEqual(1, suite["execution"]["maximumActiveChildren"])
+                self.assertTrue(suite["execution"]["requireCodexIdentityEvidence"])
                 self.assertEqual(
                     role.get("agentDependencies", []),
                     target["allowedAgentDependencies"],
@@ -3680,17 +3684,46 @@ class BundleContentTests(unittest.TestCase):
                 self.assertEqual(entry["id"], scenarios["suite"])
                 self.assertEqual(3, len(scenarios["scenarios"]))
 
+            for scenario in scenarios["scenarios"]:
+                executable_case = scenario.get("executableCase")
+                if scenario["status"] == "executable":
+                    with self.subTest(
+                        suite=entry["id"],
+                        executable_scenario=scenario["id"],
+                    ):
+                        self.assertIsInstance(executable_case, str)
+                        self.assertTrue((suite_root / executable_case).exists())
+
             for agent_kind, relative_path in suite["projectAgents"].items():
                 agent_path = suite_root / relative_path
                 with self.subTest(suite=entry["id"], agent=agent_kind):
                     agent = tomllib.loads(agent_path.read_text(encoding="utf-8"))
                     self.assertEqual(
-                        f"{entry['id']}-suite-{agent_kind}",
+                        f"{entry['id']}-suite-{agent_kind}".replace("-", "_"),
                         agent["name"],
                     )
+                    self.assertRegex(agent["name"], r"^[a-z0-9_]+$")
                     self.assertIn("developer_instructions", agent)
                     if agent_kind == "judge":
                         self.assertEqual("read-only", agent["sandbox_mode"])
+
+            execution = suite["execution"]
+            self.assertEqual(
+                f"{entry['id']}-suite-supervisor".replace("-", "_"),
+                execution["supervisorInvocation"],
+            )
+            self.assertEqual(
+                entry["id"].replace("-", "_"),
+                execution["targetInvocation"],
+            )
+            self.assertEqual(
+                f"{entry['id']}-suite-judge".replace("-", "_"),
+                execution["judgeInvocation"],
+            )
+
+            if entry["id"] == "dev-coder":
+                first_scenario = scenarios["scenarios"][0]
+                self.assertIn("organise-project-files", first_scenario["targetSkills"])
 
             configured_skills = [
                 *suite["projectSkills"]["shared"],

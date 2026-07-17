@@ -15,6 +15,7 @@ Evaluate the Dev Code Reviewer as an evidence-first defect detector with a read-
 - Each finding identifies a material defect, its impact, and the smallest useful file location.
 - Confirmed defects, missing evidence, open questions, and residual risk remain separate.
 - The review checks regressions, tests, verification, abstraction safety, applicable rules, comments, and documentation drift without adding style-only noise.
+- Applicable rules include the frozen instructions of skills assigned by the canonical reviewer definition; the Judge packet must include the excerpts governing any rule-based finding.
 - The product change remains unmodified unless the request explicitly asks to save a separate review artifact.
 - The result includes the completed evidence packet, prioritized findings, file references, open questions, and residual risk.
 
