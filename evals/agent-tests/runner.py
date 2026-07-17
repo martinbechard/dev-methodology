@@ -92,11 +92,22 @@ def _load_yaml(path: Path) -> dict[str, Any]:
     return loaded
 
 
-def _load_catalog(suite_root: Path = _SUITE_ROOT) -> dict[str, _Suite]:
+def _load_catalog(
+    suite_root: Path = _SUITE_ROOT,
+    include_ids: set[str] | None = None,
+) -> dict[str, _Suite]:
     index = _load_yaml(suite_root / "suite-index.yaml")
+    entries = index.get("suites", [])
+    available_ids = {str(entry["id"]) for entry in entries}
+    if include_ids is not None:
+        unknown = include_ids - available_ids
+        if unknown:
+            raise ValueError(f"Unknown suites: {', '.join(sorted(unknown))}")
     suites: dict[str, _Suite] = {}
-    for entry in index.get("suites", []):
+    for entry in entries:
         suite_id = str(entry["id"])
+        if include_ids is not None and suite_id not in include_ids:
+            continue
         suite_path = suite_root / str(entry["path"])
         manifest = _load_yaml(suite_path / "suite.yaml")
         scenario_document = _load_yaml(suite_path / "scenarios.yaml")
@@ -813,7 +824,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     only when every requested batch validates or completes without an infrastructure failure.
     """
     arguments = _argument_parser().parse_args(argv)
-    catalog = _load_catalog()
+    selected_suite_ids = set(arguments.suite)
+    selected_suite_ids.update(value.partition(":")[0] for value in arguments.scenario if ":" in value)
+    catalog = _load_catalog(include_ids=selected_suite_ids or None)
     if arguments.list:
         for suite in sorted(catalog.values(), key=lambda item: item.priority):
             print(f"{suite.suite_id}: {', '.join(str(item['id']) for item in suite.scenarios)}")
