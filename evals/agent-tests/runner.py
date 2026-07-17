@@ -395,6 +395,14 @@ def _coordinator_schema() -> dict[str, Any]:
     }
 
 
+def _agent_registration_arguments(staged: Sequence[_StagedAgent], codex_home: Path) -> tuple[str, ...]:
+    arguments: list[str] = []
+    for agent in staged:
+        config_path = codex_home / "agents" / f"{agent.invocation}.toml"
+        arguments.extend(("-c", f"agents.{agent.invocation}.config_file={json.dumps(str(config_path))}"))
+    return tuple(arguments)
+
+
 def _coordinator_prompt(batch: Sequence[_RunSpec], checkpoint_root: Path) -> str:
     assignments = []
     for run in batch:
@@ -581,6 +589,27 @@ def _timestamp_seconds(value: str) -> float:
     return dt.datetime.fromisoformat(value.replace("Z", "+00:00")).timestamp()
 
 
+def _exact_exec_command(payload: dict[str, Any]) -> str | None:
+    payload_type = payload.get("type")
+    tool_name = payload.get("name")
+    if payload_type == "custom_tool_call" and tool_name == "exec":
+        tool_input = str(payload.get("input", ""))
+        match = re.search(r"tools\.exec_command\(\{\s*cmd\s*:\s*(\"(?:\\.|[^\"])*\")", tool_input)
+        if match:
+            try:
+                return str(json.loads(match.group(1)))
+            except json.JSONDecodeError:
+                return None
+    if payload_type == "function_call" and tool_name == "exec_command":
+        try:
+            arguments = json.loads(str(payload.get("arguments", "{}")))
+        except json.JSONDecodeError:
+            return None
+        if isinstance(arguments, dict) and isinstance(arguments.get("cmd"), str):
+            return arguments["cmd"]
+    return None
+
+
 def _load_sessions(codex_home: Path) -> tuple[_Session, ...]:
     sessions: list[_Session] = []
     for rollout in codex_home.glob("**/rollout-*.jsonl"):
@@ -614,12 +643,13 @@ def _load_sessions(codex_home: Path) -> tuple[_Session, ...]:
         bound_markers: set[str] = set()
         if first_tool_call is not None:
             call_id = str(first_tool_call.get("call_id", ""))
-            call_input = str(first_tool_call.get("input", first_tool_call.get("arguments", "")))
-            normalized_call_input = call_input.replace('\\"', '"')
+            command = _exact_exec_command(first_tool_call)
             output_text = tool_outputs.get(call_id, "")
-            for marker in re.findall(r"AGENT_INSTRUCTION_BINDING_[a-z0-9_]+_[a-f0-9]{32}", call_input):
+            for marker in re.findall(
+                r"AGENT_INSTRUCTION_BINDING_[a-z0-9_]+_[a-f0-9]{32}", command or ""
+            ):
                 exact_command = f'python3 -c "print(\'{marker}\')"'
-                if exact_command in normalized_call_input and marker in output_text:
+                if command == exact_command and marker in output_text:
                     bound_markers.add(marker)
         sessions.append(
             _Session(
@@ -934,9 +964,38 @@ def _pids_with_environment_token(token: str) -> set[int]:
     return pids
 
 
-def _stop_tracked_processes(root_pid: int, tracked: set[int], process_token: str) -> str:
+def _pids_with_cwd_under(root: Path) -> set[int]:
+    completed = subprocess.run(
+        ["/usr/sbin/lsof", "-n", "-P", "-Fpn", "-a", "-d", "cwd"],
+        check=False,
+        text=True,
+        capture_output=True,
+    )
+    current_pid: int | None = None
+    pids: set[int] = set()
+    resolved_root = root.resolve()
+    for line in completed.stdout.splitlines():
+        if line.startswith("p") and line[1:].isdigit():
+            current_pid = int(line[1:])
+        elif line.startswith("n") and current_pid is not None:
+            try:
+                Path(line[1:]).resolve().relative_to(resolved_root)
+            except ValueError:
+                continue
+            pids.add(current_pid)
+    return pids
+
+
+def _stop_tracked_processes(
+    root_pid: int,
+    tracked: set[int],
+    process_token: str,
+    containment_root: Path | None,
+) -> str:
     _record_descendants(root_pid, tracked)
     tracked.update(_pids_with_environment_token(process_token))
+    if containment_root is not None:
+        tracked.update(_pids_with_cwd_under(containment_root))
     retained = {pid for pid in tracked if pid != root_pid and _pid_exists(pid)}
     _kill_process_group(root_pid)
     for pid in retained:
@@ -958,6 +1017,7 @@ def _run_process(
     cwd: Path,
     environment: dict[str, str],
     timeout_seconds: float,
+    containment_root: Path | None = None,
 ) -> dict[str, Any]:
     process_token = secrets.token_hex(24)
     child_environment = dict(environment)
@@ -980,7 +1040,7 @@ def _run_process(
         while not tracking_stop.is_set():
             _record_descendants(process.pid, tracked_pids)
             tracked_pids.update(_pids_with_environment_token(process_token))
-            tracking_stop.wait(0.005)
+            tracking_stop.wait(0.05)
         _record_descendants(process.pid, tracked_pids)
         tracked_pids.update(_pids_with_environment_token(process_token))
 
@@ -1014,7 +1074,7 @@ def _run_process(
     finally:
         tracking_stop.set()
         tracker.join()
-        cleanup = _stop_tracked_processes(process.pid, tracked_pids, process_token)
+        cleanup = _stop_tracked_processes(process.pid, tracked_pids, process_token, containment_root)
     for thread in threads:
         thread.join()
     if process.stdout is not None:
@@ -1072,6 +1132,10 @@ def _run_live_batch(
             "workspace-write",
             "--add-dir",
             str(workspace / ".git"),
+            "--add-dir",
+            str(checkpoint_root),
+            "--strict-config",
+            *_agent_registration_arguments(staged, codex_home),
             "exec",
             "--json",
             "--ignore-user-config",
@@ -1088,6 +1152,7 @@ def _run_live_batch(
             workspace,
             environment,
             timeout_seconds,
+            containment_root=run_root,
         )
         result_root.mkdir(parents=True, exist_ok=True)
         evidence_prefix = result_root / label

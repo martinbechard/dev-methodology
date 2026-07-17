@@ -170,6 +170,27 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "instruction binding"):
                 runner._audit_identity(staged, codex_home, {"target_agent": 1})
 
+    def test_canary_parser_rejects_wrong_tool_and_command_superset(self) -> None:
+        """Only the execution tool's exact command can become binding evidence."""
+        command = 'python3 -c "print(\'AGENT_INSTRUCTION_BINDING_target_agent_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\')"'
+        wrong_tool = {
+            "type": "custom_tool_call",
+            "name": "not_exec",
+            "input": f"const r = await tools.exec_command({{cmd:{json.dumps(command)}}}); text(r.output);",
+        }
+        command_superset = {
+            "type": "custom_tool_call",
+            "name": "exec",
+            "input": (
+                "const r = await tools.exec_command({cmd:"
+                f"{json.dumps(command + ' extra')}"
+                "}); text(r.output);"
+            ),
+        }
+
+        self.assertIsNone(runner._exact_exec_command(wrong_tool))
+        self.assertNotEqual(command, runner._exact_exec_command(command_superset))
+
     def test_staging_instruments_inline_closing_instruction_delimiter(self) -> None:
         """Generated adapters may close developer instructions after the final text on the same line."""
         with tempfile.TemporaryDirectory() as temporary:
@@ -186,6 +207,20 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             loaded = runner.tomllib.loads((agent_root / "target_agent.toml").read_text(encoding="utf-8"))
 
         self.assertIn(staged.instruction_marker, loaded["developer_instructions"])
+
+    def test_staged_agents_are_registered_as_codex_config_files(self) -> None:
+        """A task name alone cannot replace the custom-agent config registration."""
+        staged = (
+            runner._StagedAgent(
+                "target_agent", Path("target.toml"), "instructions", "a" * 64, "binding-marker"
+            ),
+        )
+
+        arguments = runner._agent_registration_arguments(staged, Path("/tmp/codex-home"))
+
+        self.assertEqual("-c", arguments[0])
+        self.assertIn("agents.target_agent.config_file=", arguments[1])
+        self.assertIn("/tmp/codex-home/agents/target_agent.toml", arguments[1])
 
     def test_overlapping_supervisor_children_fail_runtime_audit(self) -> None:
         """Retained session intervals enforce one active child per supervisor."""
@@ -343,6 +378,30 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             os.kill(detached_pid, 0)
         self.assertNotEqual("clean", result["cleanup"])
 
+    def test_containment_stops_fast_detached_descendant_with_sanitized_environment(self) -> None:
+        """Containment also finds a reparented process that removed the cooperative token."""
+        program = (
+            "import subprocess,sys; "
+            "child=subprocess.Popen([sys.executable,'-c','import time; time.sleep(30)'],"
+            "start_new_session=True,env={}); print(child.pid,flush=True)"
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            run_root = Path(temporary)
+            workspace = run_root / "workspace"
+            workspace.mkdir()
+            result = runner._run_process(
+                (sys.executable, "-c", program),
+                workspace,
+                runner._controlled_environment(run_root / "home", run_root / "codex", run_root / "tmp"),
+                timeout_seconds=1.0,
+                containment_root=run_root,
+            )
+
+        detached_pid = int(result["stdout"].strip())
+        with self.assertRaises(ProcessLookupError):
+            os.kill(detached_pid, 0)
+        self.assertNotEqual("clean", result["cleanup"])
+
     def test_duplicate_scenario_results_fail_report_audit(self) -> None:
         """Set equality cannot hide multiple verdicts for one scenario."""
         batch = (self._run_spec("one", 1),)
@@ -476,7 +535,10 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             command = f'python3 -c "print(\'{marker}\')"'
             events += (
                 {"timestamp": timestamp(1), "type": "response_item", "payload": {
-                    "type": "custom_tool_call", "name": "exec", "call_id": "binding-call", "input": command
+                    "type": "custom_tool_call",
+                    "name": "exec",
+                    "call_id": "binding-call",
+                    "input": f"const r = await tools.exec_command({{cmd:{json.dumps(command)}}}); text(r.output);",
                 }},
                 {"timestamp": timestamp(2), "type": "response_item", "payload": {
                     "type": "custom_tool_call_output", "call_id": "binding-call", "output": marker
