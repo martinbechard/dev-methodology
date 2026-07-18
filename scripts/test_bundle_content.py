@@ -3714,6 +3714,7 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("checkpointRoot at suite-id/scenario-id.json", supervision)
         self.assertIn("exactly 64 lowercase hexadecimal characters", supervision)
         self.assertIn("repository-global status as the sole mutation gate", supervision)
+        self.assertIn("ordered target tool-call trace", supervision)
         self.assertTrue((AGENT_TEST_SUITES_ROOT / "runner.py").is_file())
         self.assertTrue((AGENT_TEST_SUITES_ROOT / "test_runner.py").is_file())
         legacy_case_ids = {
