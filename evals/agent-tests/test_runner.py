@@ -262,6 +262,19 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             self.assertIn("planned claim closeout in eval-result.md", raw_task)
             self.assertIn("actual release receipt plus final queue state", raw_task)
             self.assertIn("Do not mutate the repository after releasing the claim", raw_task)
+            for scenario in ("destination-collision", "verifier-failure"):
+                with self.subTest(closeout_contract=scenario):
+                    task = (
+                        _RUNNER_PATH.parent
+                        / "wiki-ingester"
+                        / "fixtures"
+                        / "scenario-files"
+                        / scenario
+                        / "TASK.md"
+                    ).read_text(encoding="utf-8")
+                    self.assertIn("planned claim closeout in eval-result.md", task)
+                    self.assertIn("actual release receipt", task)
+                    self.assertIn("Do not mutate the repository after releasing the claim", task)
 
     def test_offline_maven_dependencies_are_checksum_staged_into_isolated_home(self) -> None:
         """A Maven fixture receives only its declared immutable host-cache files."""
