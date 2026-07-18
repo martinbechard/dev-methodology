@@ -330,8 +330,17 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             for relative in ("cua_node/bin/node_repl", "cua_node/bin/node", "codex"):
                 executable = app_resources / relative
                 executable.write_text("fixture", encoding="utf-8")
+            computer_use_service = root / "plugin-cache" / "Codex Computer Use.app"
+            computer_use_service.mkdir(parents=True)
+            (computer_use_service / "fixture").write_text("service", encoding="utf-8")
 
-            runtime = runner._stage_browser_runtime(plugin, codex_home, skill_root, app_resources)
+            runtime = runner._stage_browser_runtime(
+                plugin,
+                codex_home,
+                skill_root,
+                app_resources,
+                computer_use_service,
+            )
             staged_skill = skill_root / "control-in-app-browser" / "SKILL.md"
             config = (codex_home / "config.toml").read_text(encoding="utf-8")
 
@@ -343,6 +352,8 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             self.assertIn(f'CODEX_HOME = "{codex_home}"', config)
             self.assertIn(f'NODE_REPL_TRUSTED_CODE_PATHS = "{codex_home}"', config)
             self.assertIn(runner._sha256(runtime / "scripts" / "browser-client.mjs"), config)
+            self.assertIn(f'SKY_CUA_SERVICE_PATH = "{codex_home / "computer-use-service.app"}"', config)
+            self.assertTrue((codex_home / "computer-use-service.app" / "fixture").is_file())
             self.assertNotIn("extension", config)
             self.assertNotIn(str(Path.home()), config)
 
@@ -358,15 +369,14 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                     "timestamp": "2026-07-17T00:00:01Z",
                     "type": "response_item",
                     "payload": {
-                        "type": "function_call",
-                        "name": "mcp__node_repl__js",
-                        "arguments": json.dumps(
-                            {
-                                "code": "globalThis.iab = await agent.browsers.get('iab'); "
-                                "globalThis.tab = await iab.tabs.new(); "
-                                "await tab.goto('http://127.0.0.1:43117/'); "
-                                "await tab.playwright.domSnapshot(); await tab.close();"
-                            }
+                        "type": "custom_tool_call",
+                        "name": "exec",
+                        "input": (
+                            "await tools.mcp__node_repl__js({code: `"
+                            "globalThis.iab = await agent.browsers.get('iab'); "
+                            "globalThis.tab = await iab.tabs.new(); "
+                            "await tab.goto('http://127.0.0.1:43117/'); "
+                            "await tab.playwright.domSnapshot(); await tab.close();`});"
                         ),
                     },
                 },

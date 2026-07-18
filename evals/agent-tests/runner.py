@@ -334,11 +334,28 @@ def _bundled_browser_plugin_root() -> Path:
     raise RuntimeError("The bundled in-app Browser runtime is unavailable")
 
 
+def _bundled_computer_use_service() -> Path:
+    configured = os.environ.get("CODEX_BUNDLED_COMPUTER_USE_SERVICE")
+    if configured:
+        candidates = [Path(configured)]
+    else:
+        cache_root = Path.home() / ".codex" / "plugins" / "cache" / "openai-bundled" / "computer-use"
+        candidates = sorted(
+            (path / "Codex Computer Use.app" for path in cache_root.glob("*") if path.is_dir()),
+            reverse=True,
+        )
+    for candidate in candidates:
+        if (candidate / "Contents" / "MacOS" / "SkyComputerUseService").is_file():
+            return candidate
+    raise RuntimeError("The bundled in-app Browser computer-use service is unavailable")
+
+
 def _stage_browser_runtime(
     plugin_root: Path,
     codex_home: Path,
     skill_root: Path,
     app_resources: Path | None = None,
+    computer_use_service: Path | None = None,
 ) -> Path:
     runtime_root = codex_home / "browser-runtime"
     shutil.copytree(plugin_root, runtime_root)
@@ -359,6 +376,9 @@ def _stage_browser_runtime(
     unavailable = [str(path) for path in executables.values() if not path.is_file()]
     if unavailable:
         raise RuntimeError(f"The in-app Browser runtime lacks required executables: {', '.join(unavailable)}")
+    service_source = computer_use_service or _bundled_computer_use_service()
+    service_destination = codex_home / "computer-use-service.app"
+    shutil.copytree(service_source, service_destination)
     browser_client = runtime_root / "scripts" / "browser-client.mjs"
     config = {
         "BROWSER_USE_AVAILABLE_BACKENDS": "iab",
@@ -374,6 +394,7 @@ def _stage_browser_runtime(
         "NODE_REPL_NODE_PATH": str(executables["node"]),
         "NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S": _sha256(browser_client),
         "NODE_REPL_TRUSTED_CODE_PATHS": str(codex_home),
+        "SKY_CUA_SERVICE_PATH": str(service_destination),
     }
     config_lines = [
         "[mcp_servers.node_repl]",
@@ -1338,10 +1359,14 @@ def _audit_browser_activity(
             if event.get("type") != "response_item":
                 continue
             payload = event.get("payload", {})
-            if not isinstance(payload, dict) or payload.get("name") != "mcp__node_repl__js":
+            if not isinstance(payload, dict):
                 continue
             raw_arguments = payload.get("arguments", payload.get("input", ""))
-            arguments.append(raw_arguments if isinstance(raw_arguments, str) else json.dumps(raw_arguments))
+            serialized = raw_arguments if isinstance(raw_arguments, str) else json.dumps(raw_arguments)
+            direct_call = payload.get("name") == "mcp__node_repl__js"
+            nested_call = payload.get("name") == "exec" and "tools.mcp__node_repl__js" in serialized
+            if direct_call or nested_call:
+                arguments.append(serialized)
         if not arguments:
             raise RuntimeError(f"Browser target did not invoke Node REPL for {suite_scenario[0]}:{suite_scenario[1]}")
         call_count += len(arguments)
