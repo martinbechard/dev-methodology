@@ -103,6 +103,13 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             arguments,
         )
 
+    def test_runtime_uses_current_app_bundled_codex(self) -> None:
+        """The runner cannot resolve an older PATH CLI that rejects staged agent models."""
+        executable = runner._bundled_codex_executable()
+
+        self.assertEqual(Path("/Applications/ChatGPT.app/Contents/Resources/codex"), executable)
+        self.assertTrue(executable.is_file())
+
     def test_runtime_capabilities_are_collected_only_from_selected_scenarios(self) -> None:
         """A batch receives only the local facilities declared by its selected cases."""
         suite = self._suite("capability-suite")

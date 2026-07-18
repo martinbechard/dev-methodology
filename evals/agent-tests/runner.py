@@ -384,6 +384,18 @@ def _bundled_python_executable() -> Path:
     raise RuntimeError("The required Python 3.11 runtime is unavailable")
 
 
+def _bundled_codex_executable() -> Path:
+    configured = os.environ.get("CODEX_BUNDLED_CLI")
+    candidates = [
+        *([Path(configured)] if configured else []),
+        Path("/Applications/ChatGPT.app/Contents/Resources/codex"),
+    ]
+    for candidate in candidates:
+        if candidate.is_file() and os.access(candidate, os.X_OK):
+            return candidate
+    raise RuntimeError("The app-bundled Codex CLI is unavailable")
+
+
 def _stage_browser_runtime(
     plugin_root: Path,
     codex_home: Path,
@@ -702,7 +714,7 @@ def _sandbox_profile_arguments(codex_home: Path, workspace: Path) -> tuple[str, 
     if not (codex_home / f"{profile_name}.config.toml").is_file():
         _write_local_runtime_profile(codex_home)
     return (
-        "codex",
+        str(_bundled_codex_executable()),
         "sandbox",
         "-C",
         str(workspace),
@@ -1719,7 +1731,7 @@ def _run_live_batch(
         temporary_dir = run_root / "tmp"
         maximum_threads = 10 if any(int(run.suite.manifest["execution"].get("nestedAgentLimit", 0)) == 1 for run in batch) else 9
         command = [
-            "codex",
+            str(_bundled_codex_executable()),
             *_multi_agent_runtime_arguments(maximum_threads),
             *_capability_runtime_arguments(capabilities, codex_home),
             "-c",
