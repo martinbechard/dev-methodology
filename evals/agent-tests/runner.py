@@ -1554,12 +1554,15 @@ def _audit_browser_activity(
         session_id = bindings[suite_scenario]
         events = events_by_session.get(session_id, [])
         arguments: list[str] = []
+        tool_results: list[str] = []
         for event in events:
-            if event.get("type") != "response_item":
+            if event.get("type") not in {"response_item", "event_msg"}:
                 continue
             payload = event.get("payload", {})
             if not isinstance(payload, dict):
                 continue
+            if payload.get("type") in {"custom_tool_call_output", "mcp_tool_call_end"}:
+                tool_results.append(json.dumps(payload, sort_keys=True))
             raw_arguments = payload.get("arguments", payload.get("input", ""))
             serialized = raw_arguments if isinstance(raw_arguments, str) else json.dumps(raw_arguments)
             direct_call = payload.get("name") == "mcp__node_repl__js"
@@ -1584,7 +1587,7 @@ def _audit_browser_activity(
         backend_unavailable_block = (
             statuses.get(suite_scenario) == "BLOCKED"
             and bool(re.search(r"browsers\.get\(\s*['\"]iab['\"]\s*\)", activity))
-            and bool(re.search(r"browsers\.list\(", activity))
+            and bool(re.search(r"Browser is not available:\s*iab", "\n".join(tool_results)))
             and not re.search(r"\.tabs\.new\(", activity)
         )
         if backend_unavailable_block:

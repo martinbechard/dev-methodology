@@ -582,7 +582,7 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             self.assertEqual(0, audit["blockedTargetSessions"])
 
     def test_browser_activity_audit_preserves_verified_unavailable_backend_block(self) -> None:
-        """A detached CLI can report BLOCKED only after checking the in-app backend and inventory."""
+        """A detached CLI can report BLOCKED from the retained unavailable-backend result."""
         with tempfile.TemporaryDirectory() as temporary:
             codex_home = Path(temporary)
             session_id = "target-session"
@@ -597,8 +597,16 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                         "name": "exec",
                         "input": (
                             "await tools.mcp__node_repl__js({code: `"
-                            "await agent.browsers.get('iab'); await agent.browsers.list();`});"
+                            "await agent.browsers.get('iab');`});"
                         ),
+                    },
+                },
+                {
+                    "timestamp": "2026-07-17T00:00:02Z",
+                    "type": "response_item",
+                    "payload": {
+                        "type": "custom_tool_call_output",
+                        "output": "Browser is not available: iab",
                     },
                 },
             ]
