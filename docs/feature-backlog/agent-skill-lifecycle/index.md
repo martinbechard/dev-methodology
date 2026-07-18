@@ -36,6 +36,7 @@ Conceptual agent definitions declare their generic definition-owned skills. Proj
 6. [Enforce behavioral regression assertions](enforce-behavioral-regression-assertions.md).
 7. [Prevent unsupported review findings](prevent-unsupported-review-findings.md).
 8. [Prevent unauthorized contract narrowing](prevent-unauthorized-contract-narrowing.md).
+9. [Preserve authoritative configuration evidence](preserve-authoritative-configuration-evidence.md).
 
 The detector is the foundation. Codex verification must run against the stable generated definitions and project guidance. Documentation must distinguish designed behavior from behavior proven by the CLI suite. The mind map should consume the final detection and evidence data rather than adapting to an obsolete routing schema.
 
