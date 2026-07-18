@@ -1316,6 +1316,7 @@ def _audit_browser_activity(
     codex_home: Path,
     batch: Sequence[_RunSpec],
     identity: dict[str, Any],
+    report: dict[str, Any],
 ) -> dict[str, int]:
     browser_scenarios = {
         (run.suite.suite_id, scenario_id)
@@ -1325,7 +1326,14 @@ def _audit_browser_activity(
         if str(scenario["id"]) == scenario_id and "browser-automation" in scenario.get("runtimeCapabilities", [])
     }
     if not browser_scenarios:
-        return {"targetSessions": 0, "nodeReplCalls": 0}
+        return {"targetSessions": 0, "nodeReplCalls": 0, "blockedTargetSessions": 0}
+    statuses = {
+        (str(run_result.get("suite", "")), str(scenario_result.get("scenario", ""))): str(
+            scenario_result.get("status", "")
+        )
+        for run_result in report.get("runs", [])
+        for scenario_result in run_result.get("scenarioResults", [])
+    }
     bindings = {
         (str(binding.get("suite", "")), str(binding.get("scenario", ""))): str(binding.get("sessionId", ""))
         for binding in identity.get("scenarioBindings", [])
@@ -1351,6 +1359,7 @@ def _audit_browser_activity(
         if isinstance(metadata, dict) and metadata.get("id"):
             events_by_session[str(metadata["id"])] = events
     call_count = 0
+    blocked_count = 0
     for suite_scenario in sorted(browser_scenarios):
         session_id = bindings[suite_scenario]
         events = events_by_session.get(session_id, [])
@@ -1382,6 +1391,15 @@ def _audit_browser_activity(
                 f"Browser target selected an external browser or destination for {suite_scenario[0]}:"
                 f"{suite_scenario[1]}"
             )
+        backend_unavailable_block = (
+            statuses.get(suite_scenario) == "BLOCKED"
+            and bool(re.search(r"browsers\.get\(\s*['\"]iab['\"]\s*\)", activity))
+            and bool(re.search(r"browsers\.list\(", activity))
+            and not re.search(r"\.tabs\.new\(", activity)
+        )
+        if backend_unavailable_block:
+            blocked_count += 1
+            continue
         required_activity = {
             "in-app browser selection": bool(
                 re.search(r"browsers\.get\(\s*['\"]iab['\"]\s*\)|browsers\.getForUrl\(", activity)
@@ -1396,7 +1414,11 @@ def _audit_browser_activity(
                 f"Browser target activity is incomplete for {suite_scenario[0]}:{suite_scenario[1]}: "
                 f"missing {', '.join(absent)}"
             )
-    return {"targetSessions": len(browser_scenarios), "nodeReplCalls": call_count}
+    return {
+        "targetSessions": len(browser_scenarios),
+        "nodeReplCalls": call_count,
+        "blockedTargetSessions": blocked_count,
+    }
 
 
 def _controlled_environment(home: Path, codex_home: Path, temporary: Path) -> dict[str, str]:
@@ -1694,7 +1716,7 @@ def _run_live_batch(
             identity = {"rolloutCount": retained_session_count, "error": identity_error}
         browser_error: str | None = None
         try:
-            browser_audit = _audit_browser_activity(codex_home, batch, identity)
+            browser_audit = _audit_browser_activity(codex_home, batch, identity, partial_report or {})
         except RuntimeError as error:
             browser_error = str(error)
             browser_audit = {"error": browser_error}

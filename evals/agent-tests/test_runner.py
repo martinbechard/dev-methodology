@@ -394,10 +394,57 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                 ]
             }
 
-            audit = runner._audit_browser_activity(codex_home, batch, identity)
+            audit = runner._audit_browser_activity(
+                codex_home,
+                batch,
+                identity,
+                {"runs": [self._suite_report("browser-suite", "PASS")]},
+            )
 
             self.assertEqual(1, audit["targetSessions"])
             self.assertEqual(1, audit["nodeReplCalls"])
+            self.assertEqual(0, audit["blockedTargetSessions"])
+
+    def test_browser_activity_audit_preserves_verified_unavailable_backend_block(self) -> None:
+        """A detached CLI can report BLOCKED only after checking the in-app backend and inventory."""
+        with tempfile.TemporaryDirectory() as temporary:
+            codex_home = Path(temporary)
+            session_id = "target-session"
+            rollout = codex_home / f"rollout-{session_id}.jsonl"
+            events = [
+                {"timestamp": "2026-07-17T00:00:00Z", "type": "session_meta", "payload": {"id": session_id}},
+                {
+                    "timestamp": "2026-07-17T00:00:01Z",
+                    "type": "response_item",
+                    "payload": {
+                        "type": "custom_tool_call",
+                        "name": "exec",
+                        "input": (
+                            "await tools.mcp__node_repl__js({code: `"
+                            "await agent.browsers.get('iab'); await agent.browsers.list();`});"
+                        ),
+                    },
+                },
+            ]
+            rollout.write_text("\n".join(json.dumps(event) for event in events) + "\n", encoding="utf-8")
+
+            audit = runner._audit_browser_activity(
+                codex_home,
+                (self._browser_run_spec("browser-suite"),),
+                {
+                    "scenarioBindings": [
+                        {
+                            "suite": "browser-suite",
+                            "scenario": "happy",
+                            "kind": "target",
+                            "sessionId": session_id,
+                        }
+                    ]
+                },
+                {"runs": [self._suite_report("browser-suite", "BLOCKED")]},
+            )
+
+            self.assertEqual(1, audit["blockedTargetSessions"])
 
     def test_browser_activity_audit_rejects_external_browser_selection(self) -> None:
         """Browser evidence cannot select Chrome or an external destination."""
@@ -435,6 +482,7 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                             }
                         ]
                     },
+                    {"runs": [self._suite_report("browser-suite", "BLOCKED")]},
                 )
 
     def test_nested_child_limit_rejects_more_than_temporary_tenth_agent(self) -> None:
