@@ -1,0 +1,1514 @@
+{
+  "schema": "dev-methodology-offline-maven-repository",
+  "version": 1,
+  "files": [
+    {
+      "path": "ch/qos/logback/logback-classic/1.5.34/logback-classic-1.5.34.jar",
+      "sha256": "b65e05076a5c1aadb659b4fe4bc5fee31cb26cd70390292eb03e4a7a24cff10f"
+    },
+    {
+      "path": "ch/qos/logback/logback-classic/1.5.34/logback-classic-1.5.34.pom",
+      "sha256": "66303dea733ea9f2e70d1b7687f36f954ac03bac6ee047396f760fa4e059f611"
+    },
+    {
+      "path": "ch/qos/logback/logback-core/1.5.34/logback-core-1.5.34.jar",
+      "sha256": "42eda264c0c650c2bec59e66151a88b708a8663dc1b49d788202d53e78b8caae"
+    },
+    {
+      "path": "ch/qos/logback/logback-core/1.5.34/logback-core-1.5.34.pom",
+      "sha256": "5230a2f36dcfe19d310351c7c372edf57cdfde78527fa39ac45f6e7aa8602f95"
+    },
+    {
+      "path": "ch/qos/logback/logback-parent/1.5.34/logback-parent-1.5.34.pom",
+      "sha256": "db4effc33ccbc645873e47aa66a837be29c963ff7e6571728c73d72fbcc3def7"
+    },
+    {
+      "path": "com/fasterxml/jackson/core/jackson-annotations/2.21/jackson-annotations-2.21-sources.jar",
+      "sha256": "71fe6323d91b16d5d1007fd1e1533fa06bb369abde74f68a42a68c0f8f061a8b"
+    },
+    {
+      "path": "com/fasterxml/jackson/core/jackson-annotations/2.21/jackson-annotations-2.21.jar",
+      "sha256": "53ca085f4a150f703f49e1aabd935bd03b43e1ea3d55d135438292af22cef56b"
+    },
+    {
+      "path": "com/fasterxml/jackson/core/jackson-annotations/2.21/jackson-annotations-2.21.pom",
+      "sha256": "71cac5392151e2a528cc9a09179f0a334179f05c52f8e596cf58ddf12bb27f2b"
+    },
+    {
+      "path": "com/fasterxml/jackson/jackson-bom/2.19.1/jackson-bom-2.19.1.pom",
+      "sha256": "ba6d68eeab3a1cc13a77a8ade2197ff9a32aa1cffeac72847d49badd82e1b9ce"
+    },
+    {
+      "path": "com/fasterxml/jackson/jackson-parent/2.19.2/jackson-parent-2.19.2.pom",
+      "sha256": "639a2b63dd05da4e381081303985caadfbb7ad9f85b1d2320638f6b11f208365"
+    },
+    {
+      "path": "com/fasterxml/jackson/jackson-parent/2.21/jackson-parent-2.21.pom",
+      "sha256": "3851df627faeb46887b956104630b74a8bbb5f7de22e974cf15982e20e0373de"
+    },
+    {
+      "path": "com/fasterxml/oss-parent/68/oss-parent-68.pom",
+      "sha256": "25eafd96dae242b6b5a7108f55b2c14015b828daa5abe234289fd6e774a1ce57"
+    },
+    {
+      "path": "com/fasterxml/oss-parent/75/oss-parent-75.pom",
+      "sha256": "fcbbf1c18c9047e6917d384f2064e21b42a58fc85fb0523a9e2e015eff7c619d"
+    },
+    {
+      "path": "com/fasterxml/oss-parent/79/oss-parent-79.pom",
+      "sha256": "9206b7dd67fb138036576c3dfca947a2a8f3e2c4d2d9c1f2d1dea519b3a4dae1"
+    },
+    {
+      "path": "com/github/luben/zstd-jni/1.5.7-6/zstd-jni-1.5.7-6.jar",
+      "sha256": "8d6feb1da335f3ab13c584c613e23c7b3c61b392e37956872057baf8f0ca1d6f"
+    },
+    {
+      "path": "com/github/luben/zstd-jni/1.5.7-6/zstd-jni-1.5.7-6.pom",
+      "sha256": "794d9b995ed59165c54243dcc73fe9483d7fe1af7fb80fcd89a5ae5b693f3eb7"
+    },
+    {
+      "path": "com/h2database/h2/2.4.240/h2-2.4.240-sources.jar",
+      "sha256": "a853be74b3f6d63438c53d19e2c368f158ee622499422ba586d1f8bc17b843e2"
+    },
+    {
+      "path": "com/h2database/h2/2.4.240/h2-2.4.240.jar",
+      "sha256": "29b70e427cc1c40cdc376283adbb0cc62853073797bb5fe5761f81fe73d57ce0"
+    },
+    {
+      "path": "com/h2database/h2/2.4.240/h2-2.4.240.pom",
+      "sha256": "27af4b7805856b3170d587e0a02caac93d421f875cfc9497dbf5ffd7f3247a4a"
+    },
+    {
+      "path": "com/jayway/jsonpath/json-path/2.10.0/json-path-2.10.0-sources.jar",
+      "sha256": "357f1c52217497c4251fae715ba8ef76ae310b1aae77ea319260bf4c6ad61440"
+    },
+    {
+      "path": "com/jayway/jsonpath/json-path/2.10.0/json-path-2.10.0.jar",
+      "sha256": "890daa95dd3892d34d9fabc27cd5153656e6f369358625c88f4dc7b79cbd6c5a"
+    },
+    {
+      "path": "com/jayway/jsonpath/json-path/2.10.0/json-path-2.10.0.pom",
+      "sha256": "68caa1e4610b9657ca9a3cb8ee6a6f92be3223197dfa1aa4f2a98c2f4f5f04e5"
+    },
+    {
+      "path": "com/thoughtworks/qdox/qdox/2.2.0/qdox-2.2.0.jar",
+      "sha256": "c260c3230b2340af97d54bf01f7f67ebc57c901922736c881bb11cb981302be2"
+    },
+    {
+      "path": "com/thoughtworks/qdox/qdox/2.2.0/qdox-2.2.0.pom",
+      "sha256": "c850fbad0b05eada85ca1bce22409a75f758aea0ca1e47a828c6a505ad361fab"
+    },
+    {
+      "path": "com/vaadin/external/google/android-json/0.0.20131108.vaadin1/android-json-0.0.20131108.vaadin1-sources.jar",
+      "sha256": "54c781eea645c450cbbc4a5a1b5a474745465452cec1354cb567b781ea6622c3"
+    },
+    {
+      "path": "com/vaadin/external/google/android-json/0.0.20131108.vaadin1/android-json-0.0.20131108.vaadin1.jar",
+      "sha256": "dfb7bae2f404cfe0b72b4d23944698cb716b7665171812a0a4d0f5926c0fac79"
+    },
+    {
+      "path": "com/vaadin/external/google/android-json/0.0.20131108.vaadin1/android-json-0.0.20131108.vaadin1.pom",
+      "sha256": "2ff6c17d9c060b89cd7ef18fa480ae2446eba86855a633f3892837fc3b848fef"
+    },
+    {
+      "path": "com/zaxxer/HikariCP/7.0.2/HikariCP-7.0.2-sources.jar",
+      "sha256": "9dfb6005ee47bde701c05481b76a56b6eb0abcabc1c46a602eec4ca7b100c99c"
+    },
+    {
+      "path": "com/zaxxer/HikariCP/7.0.2/HikariCP-7.0.2.jar",
+      "sha256": "f1e612fa27345be3107a85431e8a8aeb205c15364ab2f2d411e40a9d7bb08095"
+    },
+    {
+      "path": "com/zaxxer/HikariCP/7.0.2/HikariCP-7.0.2.pom",
+      "sha256": "662a87f80487be89bd77296213e91108ff9f01ed0d9a90f9a4e21263cc49e73e"
+    },
+    {
+      "path": "commons-codec/commons-codec/1.19.0/commons-codec-1.19.0-sources.jar",
+      "sha256": "b0462142585d45fc15bc8091b7b02f1e3a85c83595068659548c82cac9cdc7a2"
+    },
+    {
+      "path": "commons-codec/commons-codec/1.19.0/commons-codec-1.19.0.jar",
+      "sha256": "5c3881e4f556855e9c532927ee0c9dfde94cc66760d5805c031a59887070af5f"
+    },
+    {
+      "path": "commons-codec/commons-codec/1.19.0/commons-codec-1.19.0.pom",
+      "sha256": "e0f3269fa23de0c83130c5659f5f9514cc5422c0bcdf45f2eae004a78b9fca34"
+    },
+    {
+      "path": "commons-io/commons-io/2.11.0/commons-io-2.11.0.jar",
+      "sha256": "961b2f6d87dbacc5d54abf45ab7a6e2495f89b75598962d8c723cea9bc210908"
+    },
+    {
+      "path": "commons-io/commons-io/2.11.0/commons-io-2.11.0.pom",
+      "sha256": "2e016fd7e3244b5f2c20acad834d93aa4790486ee1e4564641361a3e831eef59"
+    },
+    {
+      "path": "commons-io/commons-io/2.21.0/commons-io-2.21.0-sources.jar",
+      "sha256": "5fd4d4493dd1eee5c6f314159dbac7fda1988a4ab037feacbeb2ecb3033c43b4"
+    },
+    {
+      "path": "commons-io/commons-io/2.21.0/commons-io-2.21.0.jar",
+      "sha256": "7d643a2afea8b058b762aa6fb90e5b256f6c729739f8b3784c3370ddc609e88d"
+    },
+    {
+      "path": "commons-io/commons-io/2.21.0/commons-io-2.21.0.pom",
+      "sha256": "ae47795e721803ec8ff1deed74be28a811a02713bd5a3ab0ac67c2b58cb635ab"
+    },
+    {
+      "path": "commons-logging/commons-logging/1.3.5/commons-logging-1.3.5.jar",
+      "sha256": "6d7a744e4027649fbb50895df9497d109f98c766a637062fe8d2eabbb3140ba4"
+    },
+    {
+      "path": "commons-logging/commons-logging/1.3.5/commons-logging-1.3.5.pom",
+      "sha256": "ccf4a30346f5027b9496abd56290ac26d159abf2be64df1265611dc9400b9d68"
+    },
+    {
+      "path": "io/airlift/airbase/112/airbase-112.pom",
+      "sha256": "18ccd104cbd97eb44bd57b68c047ab7ff81fbc800987f82d815c68ac4c2304ce"
+    },
+    {
+      "path": "io/airlift/aircompressor/0.27/aircompressor-0.27.jar",
+      "sha256": "fdbef3137a28f63bb0cb93487803080ede746a4ec3d421e36c6f0c305c35e5e4"
+    },
+    {
+      "path": "io/airlift/aircompressor/0.27/aircompressor-0.27.pom",
+      "sha256": "5aacda89be38563bdf3bfac79333616c0802ca617070dea66ba649507c994441"
+    },
+    {
+      "path": "io/micrometer/micrometer-commons/1.16.6/micrometer-commons-1.16.6.jar",
+      "sha256": "45aff76226830db257f4bc39a5bcff83d633e572fee9dc4e45cfa12af9a0a49a"
+    },
+    {
+      "path": "io/micrometer/micrometer-commons/1.16.6/micrometer-commons-1.16.6.pom",
+      "sha256": "305e66eed0820af4824df27034ca67bc9bee9f5ff4262b470cc381b041b87832"
+    },
+    {
+      "path": "io/micrometer/micrometer-observation/1.16.6/micrometer-observation-1.16.6.jar",
+      "sha256": "4c0826d5e7c8522a8e111470b4e77f77b0a10f520eb5502ddd143fdbcedb2340"
+    },
+    {
+      "path": "io/micrometer/micrometer-observation/1.16.6/micrometer-observation-1.16.6.pom",
+      "sha256": "60ae47986b829c6a7bbbd1f34e1fd0c5e62f735a03951e1c8d84e372c3eaa132"
+    },
+    {
+      "path": "jakarta/activation/jakarta.activation-api/2.1.4/jakarta.activation-api-2.1.4-sources.jar",
+      "sha256": "2aa5a3ba55059b778a3b467269404d7ac3b9485ed4a23ad26d2e63aa769ec35f"
+    },
+    {
+      "path": "jakarta/activation/jakarta.activation-api/2.1.4/jakarta.activation-api-2.1.4.jar",
+      "sha256": "c9db52100ce6c8aac95cc39075f95720d2e561b11f8051b81c121ad4effd7004"
+    },
+    {
+      "path": "jakarta/activation/jakarta.activation-api/2.1.4/jakarta.activation-api-2.1.4.pom",
+      "sha256": "7577970dc09f1131a4a42769e1771ed062f08d22f40da3041ff3e16d5b2fdea8"
+    },
+    {
+      "path": "jakarta/annotation/jakarta.annotation-api/3.0.0/jakarta.annotation-api-3.0.0-sources.jar",
+      "sha256": "142dfd2343429df2aac3e1cfacfacc21c8393112c0e0280d3628648d9b612470"
+    },
+    {
+      "path": "jakarta/annotation/jakarta.annotation-api/3.0.0/jakarta.annotation-api-3.0.0.jar",
+      "sha256": "b01f55552284cfb149411e64eabca75e942d26d2e1786b32914250e4330afaa2"
+    },
+    {
+      "path": "jakarta/annotation/jakarta.annotation-api/3.0.0/jakarta.annotation-api-3.0.0.pom",
+      "sha256": "9fc66a87375df8443aba6bdcc1d4ff07f126542583785a482a9262a19bfe8eae"
+    },
+    {
+      "path": "jakarta/platform/jakarta.jakartaee-bom/9.1.0/jakarta.jakartaee-bom-9.1.0.pom",
+      "sha256": "df98e0266219fdbb82562826d79a3a20776a8ba02aa787f0f0765a538654c8a4"
+    },
+    {
+      "path": "jakarta/platform/jakartaee-api-parent/9.1.0/jakartaee-api-parent-9.1.0.pom",
+      "sha256": "a7702c487026802784b5797b62330a8b8d6592bf0f4737b25c67a5eac82659c0"
+    },
+    {
+      "path": "jakarta/xml/bind/jakarta.xml.bind-api/4.0.5/jakarta.xml.bind-api-4.0.5.jar",
+      "sha256": "5e489b6c874c4119e003ff1403db523ee3a8959ec499f3de29e77245efccf216"
+    },
+    {
+      "path": "jakarta/xml/bind/jakarta.xml.bind-api/4.0.5/jakarta.xml.bind-api-4.0.5.pom",
+      "sha256": "596f65494651b79eb589b2f579a5686fabcd5cbb68f2c928c1cf360341d68c16"
+    },
+    {
+      "path": "jakarta/xml/bind/jakarta.xml.bind-api-parent/4.0.5/jakarta.xml.bind-api-parent-4.0.5.pom",
+      "sha256": "68e78c21a934cd37ab48c07a95aa7f8cbb98cafcfa2bb9ef92d54399accdbf15"
+    },
+    {
+      "path": "javax/inject/javax.inject/1/javax.inject-1.jar",
+      "sha256": "91c77044a50c481636c32d916fd89c9118a72195390452c81065080f957de7ff"
+    },
+    {
+      "path": "javax/inject/javax.inject/1/javax.inject-1.pom",
+      "sha256": "943e12b100627804638fa285805a0ab788a680266531e650921ebfe4621a8bfa"
+    },
+    {
+      "path": "net/bytebuddy/byte-buddy/1.18.10/byte-buddy-1.18.10.jar",
+      "sha256": "8b31f4ea806afaa900b67bffd8498760d1f65464f4c2ea78cdbda2f3e633898b"
+    },
+    {
+      "path": "net/bytebuddy/byte-buddy/1.18.10/byte-buddy-1.18.10.pom",
+      "sha256": "231c83b488c965be565a74fa0f8dd2bc70cff7cb847cc97ddd56b2a700a0cf62"
+    },
+    {
+      "path": "net/bytebuddy/byte-buddy-agent/1.18.10/byte-buddy-agent-1.18.10.jar",
+      "sha256": "9cfa3c71c8f07bfb5f4c3c68db7715940d792801eba82d346fc343f7bd7c2401"
+    },
+    {
+      "path": "net/bytebuddy/byte-buddy-agent/1.18.10/byte-buddy-agent-1.18.10.pom",
+      "sha256": "7b872b70ec16061eb2c0ec965daef94ebd9dd1c2ed6cbc0115cadb87ffc321dc"
+    },
+    {
+      "path": "net/bytebuddy/byte-buddy-parent/1.18.10/byte-buddy-parent-1.18.10.pom",
+      "sha256": "8c05963c93a290c6d6566994386544d5c7d1f4567ab4070ea905520e1fde77bc"
+    },
+    {
+      "path": "net/minidev/accessors-smart/2.6.0/accessors-smart-2.6.0-sources.jar",
+      "sha256": "10880e44ed732de27ae424a9698a041c398102098b5b1bae3cc597ec62dac43e"
+    },
+    {
+      "path": "net/minidev/accessors-smart/2.6.0/accessors-smart-2.6.0.jar",
+      "sha256": "222c9f547bb20a99fc486403a398352d1306fb671b38abd7ecab6401df170e61"
+    },
+    {
+      "path": "net/minidev/accessors-smart/2.6.0/accessors-smart-2.6.0.pom",
+      "sha256": "268315791ec661e28614f461212c06181c06a042733428d8ba711f0aad56e9f9"
+    },
+    {
+      "path": "net/minidev/json-smart/2.6.0/json-smart-2.6.0-sources.jar",
+      "sha256": "a4af3f3773286fe3f76f94d38d977611fd2493685f589466b76dd25cf70b400c"
+    },
+    {
+      "path": "net/minidev/json-smart/2.6.0/json-smart-2.6.0.jar",
+      "sha256": "1ae4b561458afb540be8ec5c6dbb4f2e715a319a7ae64854998aaf924770d61b"
+    },
+    {
+      "path": "net/minidev/json-smart/2.6.0/json-smart-2.6.0.pom",
+      "sha256": "83f193cfaef334ee79a249453042ed5f084db8cd9c916a2387b436e9a8fb73a7"
+    },
+    {
+      "path": "org/apache/apache/13/apache-13.pom",
+      "sha256": "ff513db0361fd41237bef4784968bc15aae478d4ec0a9496f811072ccaf3841d"
+    },
+    {
+      "path": "org/apache/apache/21/apache-21.pom",
+      "sha256": "af10c108da014f17cafac7b52b2b4b5a3a1c18265fa2af97a325d9143537b380"
+    },
+    {
+      "path": "org/apache/apache/23/apache-23.pom",
+      "sha256": "bc10624e0623f36577fac5639ca2936d3240ed152fb6d8d533ab4d270543491c"
+    },
+    {
+      "path": "org/apache/apache/29/apache-29.pom",
+      "sha256": "3e49037174820bbd0df63420a977255886398954c2a06291fa61f727ac35b377"
+    },
+    {
+      "path": "org/apache/apache/32/apache-32.pom",
+      "sha256": "cfd872c0ec27f53ae68f43dbc0fecded8add773079a53afbd390e407b42ce72f"
+    },
+    {
+      "path": "org/apache/apache/33/apache-33.pom",
+      "sha256": "d78bd8524c5f8380a190a6525686629a95dfe512df21111383a6d8c0923a4415"
+    },
+    {
+      "path": "org/apache/apache/34/apache-34.pom",
+      "sha256": "3671ae9d4d062ae3bb985731c76088bb2f6f7d7254e2d304ee9f690b97651328"
+    },
+    {
+      "path": "org/apache/apache/35/apache-35.pom",
+      "sha256": "ea297dcd114136e8b8e8b630230d52a76c2fc69f6c5db25d672b1857000728b8"
+    },
+    {
+      "path": "org/apache/apache/37/apache-37.pom",
+      "sha256": "524ec4787aff73af6b3a9fafa154c7f1881b648299b663fdbfcadda1286f2353"
+    },
+    {
+      "path": "org/apache/commons/commons-compress/1.28.0/commons-compress-1.28.0-sources.jar",
+      "sha256": "6de9de4559f12bba6d41789c72f6a2a424514f2d2a3f7f49e2a3c52414db9632"
+    },
+    {
+      "path": "org/apache/commons/commons-compress/1.28.0/commons-compress-1.28.0.jar",
+      "sha256": "e1522945218456f3649a39bc4afd70ce4bd466221519dba7d378f2141a4642ca"
+    },
+    {
+      "path": "org/apache/commons/commons-compress/1.28.0/commons-compress-1.28.0.pom",
+      "sha256": "033f4c78d632da88d0eb8ead974fc14a264392cebf12ab6c68d6cea7adf0c64a"
+    },
+    {
+      "path": "org/apache/commons/commons-lang3/3.18.0/commons-lang3-3.18.0.jar",
+      "sha256": "4eeeae8d20c078abb64b015ec158add383ac581571cddc45c68f0c9ae0230720"
+    },
+    {
+      "path": "org/apache/commons/commons-lang3/3.18.0/commons-lang3-3.18.0.pom",
+      "sha256": "aa254b373b6f6d46bc9dca86331b072a8ab86eb25ea9921fd439618392e98a16"
+    },
+    {
+      "path": "org/apache/commons/commons-parent/52/commons-parent-52.pom",
+      "sha256": "75dbe8f34e98e4c3ff42daae4a2f9eb4cbcd3b5f1047d54460ace906dbb4502e"
+    },
+    {
+      "path": "org/apache/commons/commons-parent/81/commons-parent-81.pom",
+      "sha256": "348d4e7c131be6114c854a719ce7a44307a7c39bd366084977b24fd29ad0edb4"
+    },
+    {
+      "path": "org/apache/commons/commons-parent/85/commons-parent-85.pom",
+      "sha256": "d189ff2c0027e96bb65d31e6f227ed2af966169b36af1e973dd5ba08926dc7b5"
+    },
+    {
+      "path": "org/apache/commons/commons-parent/91/commons-parent-91.pom",
+      "sha256": "d2f8b6fd4800b6aaf120f5a38226d5f9d5fc6db837af99e2f9b33067868b9872"
+    },
+    {
+      "path": "org/apache/groovy/groovy-bom/4.0.27/groovy-bom-4.0.27.pom",
+      "sha256": "aa44eb52bfdfe61d27b3e450d2b348d88deaa3437ab4d9d49a84095348f9f6fb"
+    },
+    {
+      "path": "org/apache/logging/log4j/log4j/2.25.4/log4j-2.25.4.pom",
+      "sha256": "f8ae8904a28e34fa04c35d3740619dae83632401ba1e313bafd7ccf5a3000dec"
+    },
+    {
+      "path": "org/apache/logging/log4j/log4j-api/2.25.4/log4j-api-2.25.4-sources.jar",
+      "sha256": "b86680bcf8ffa25897b6114cae508bb8e6ecac8081a0fc8985e0c00e27d4f4ec"
+    },
+    {
+      "path": "org/apache/logging/log4j/log4j-api/2.25.4/log4j-api-2.25.4.jar",
+      "sha256": "c4b642a7f047275215de117e0e3847eb2c7711d84a0aa7433e7b3c096daf341d"
+    },
+    {
+      "path": "org/apache/logging/log4j/log4j-api/2.25.4/log4j-api-2.25.4.pom",
+      "sha256": "943a43da1430dbeb501abd08972f283ea89f3b1dbfc4252ec3059543b4e06b55"
+    },
+    {
+      "path": "org/apache/logging/log4j/log4j-bom/2.25.4/log4j-bom-2.25.4.pom",
+      "sha256": "7313d339fb632a8610e1140b3290fc24d63743b9aa625e2a0bd59ded40a3ae54"
+    },
+    {
+      "path": "org/apache/logging/log4j/log4j-to-slf4j/2.25.4/log4j-to-slf4j-2.25.4-sources.jar",
+      "sha256": "ca9159da173bf88fb621adf745fe1d313ba4074f4c66576ae70f5dd99eab89c9"
+    },
+    {
+      "path": "org/apache/logging/log4j/log4j-to-slf4j/2.25.4/log4j-to-slf4j-2.25.4.jar",
+      "sha256": "d7b78fc0aaaa5e8ada388b29d718b0ab187e512965bed0b259bb4ab299f13db2"
+    },
+    {
+      "path": "org/apache/logging/log4j/log4j-to-slf4j/2.25.4/log4j-to-slf4j-2.25.4.pom",
+      "sha256": "b4f3dd27c6e62623dd1a257452f44bbd49e1c6110c0c7785cdeaad7db0e143c3"
+    },
+    {
+      "path": "org/apache/maven/maven-archiver/3.6.5/maven-archiver-3.6.5.jar",
+      "sha256": "cea5dd2b7c6be818fa8d6b73cff4edacaecefec5842d361a791b7f47974fe156"
+    },
+    {
+      "path": "org/apache/maven/maven-archiver/3.6.5/maven-archiver-3.6.5.pom",
+      "sha256": "87b2c403256b17c3903a3ba35320ac32a79b3838b62ab9eda010a0976ca49ba3"
+    },
+    {
+      "path": "org/apache/maven/maven-parent/23/maven-parent-23.pom",
+      "sha256": "5425501edd9e0bd7b01eca53cc92e06836d24851151304f9c6759e1713541685"
+    },
+    {
+      "path": "org/apache/maven/maven-parent/33/maven-parent-33.pom",
+      "sha256": "3856e3fcd169502d5f12fe2452604ebf6c7c025f15656bfa558ea99ed29d73ea"
+    },
+    {
+      "path": "org/apache/maven/maven-parent/39/maven-parent-39.pom",
+      "sha256": "cfe4820aa1d96ae51d1dc5b0e2a9dc582c42478c24c95ca8238f547e60bef721"
+    },
+    {
+      "path": "org/apache/maven/maven-parent/42/maven-parent-42.pom",
+      "sha256": "04534dea350a2187970a5b74444338bcf78ba8e537d44f262acfba16ebb33056"
+    },
+    {
+      "path": "org/apache/maven/maven-parent/44/maven-parent-44.pom",
+      "sha256": "1c0a088d7352d52ea8f3581d05778c0c4a679613fff2c58737fba55f1007fe24"
+    },
+    {
+      "path": "org/apache/maven/maven-parent/45/maven-parent-45.pom",
+      "sha256": "94fe869eb9b4ce9fce3995d05ea86b168c85d927f9d17beb814a1960c76d7e6f"
+    },
+    {
+      "path": "org/apache/maven/maven-parent/47/maven-parent-47.pom",
+      "sha256": "82d0112ba1907ff5fd13a2485829c97df66c6a81e075359a561a422f7d1582d3"
+    },
+    {
+      "path": "org/apache/maven/plugins/maven-clean-plugin/3.5.0/maven-clean-plugin-3.5.0.jar",
+      "sha256": "a15977e3457ff8cd803c1a37e1e53aad76e4609cd23bbca8e8f783e5c78e5fa8"
+    },
+    {
+      "path": "org/apache/maven/plugins/maven-clean-plugin/3.5.0/maven-clean-plugin-3.5.0.pom",
+      "sha256": "9dc0a3f49b582aa36d2617c69034a66cdf5b1ec789f7e6ff506df962551fde89"
+    },
+    {
+      "path": "org/apache/maven/plugins/maven-compiler-plugin/3.15.0/maven-compiler-plugin-3.15.0.jar",
+      "sha256": "6ea0ca0558ccf248c514aa94908d1f895a92e9b4e4604c1bb29f7a4ab1b833f0"
+    },
+    {
+      "path": "org/apache/maven/plugins/maven-compiler-plugin/3.15.0/maven-compiler-plugin-3.15.0.pom",
+      "sha256": "2d2f7a7073c1def3b1473fbedad7dbfc559ed6fb0dc5a94edc347fd4905e7651"
+    },
+    {
+      "path": "org/apache/maven/plugins/maven-jar-plugin/3.5.0/maven-jar-plugin-3.5.0.jar",
+      "sha256": "7562657fc3492649dee836ffdda07990aaf46f4133cad048c4dcd7330bfd3917"
+    },
+    {
+      "path": "org/apache/maven/plugins/maven-jar-plugin/3.5.0/maven-jar-plugin-3.5.0.pom",
+      "sha256": "571d9446537993c3a7226cecb3169ee3df75710bcae8daeefb0d80768ec35917"
+    },
+    {
+      "path": "org/apache/maven/plugins/maven-plugins/44/maven-plugins-44.pom",
+      "sha256": "d7801d725de2abb706efb931e22eac5df4d0c7fc8c9ea9a4d9986782407aaff7"
+    },
+    {
+      "path": "org/apache/maven/plugins/maven-plugins/45/maven-plugins-45.pom",
+      "sha256": "c0f58b12039f152641e3e53a07acc12887012ef149fac83065a9785aac51de0e"
+    },
+    {
+      "path": "org/apache/maven/plugins/maven-plugins/47/maven-plugins-47.pom",
+      "sha256": "58ddbb8e429cb5e9054c2f5f7b7cdfeb7adbcdfda21d92b67f67fa2b94edf982"
+    },
+    {
+      "path": "org/apache/maven/plugins/maven-resources-plugin/3.5.0/maven-resources-plugin-3.5.0.jar",
+      "sha256": "2c923c63a197565a3e78f2b16d762d0f49bb83250dd2b1e6286704ea0f447060"
+    },
+    {
+      "path": "org/apache/maven/plugins/maven-resources-plugin/3.5.0/maven-resources-plugin-3.5.0.pom",
+      "sha256": "9f2275ca2ba3a3ab38caf6c2bc21be787c7305ea5333d1c33f52a530afc0bc7f"
+    },
+    {
+      "path": "org/apache/maven/plugins/maven-surefire-plugin/3.5.6/maven-surefire-plugin-3.5.6.jar",
+      "sha256": "5fea3d2f0ad1d790717d66aa31d995c22ca528612316f8380d67c40367af3464"
+    },
+    {
+      "path": "org/apache/maven/plugins/maven-surefire-plugin/3.5.6/maven-surefire-plugin-3.5.6.pom",
+      "sha256": "a9fe60995e2bf4146e3bdd4e4a12737bdafd23cffa52626af57e2162cb077ee1"
+    },
+    {
+      "path": "org/apache/maven/resolver/maven-resolver/1.4.1/maven-resolver-1.4.1.pom",
+      "sha256": "831c3849751101226495acfe9119582feb734a4539b070e0fbd9e85b03b501ce"
+    },
+    {
+      "path": "org/apache/maven/resolver/maven-resolver-api/1.4.1/maven-resolver-api-1.4.1.jar",
+      "sha256": "33dc67306cc95da14e5444e8b494d967924abf1d01bae1894676164cbd3f6112"
+    },
+    {
+      "path": "org/apache/maven/resolver/maven-resolver-api/1.4.1/maven-resolver-api-1.4.1.pom",
+      "sha256": "335513ce1dd2cf4c7d1dbfa1b8aa14656d9be5f9f3f0d0875ac528893c9f0f06"
+    },
+    {
+      "path": "org/apache/maven/resolver/maven-resolver-util/1.4.1/maven-resolver-util-1.4.1.jar",
+      "sha256": "6b2184872fa7cc2ef5a90481b56af9711c15b371e69ab52f0f31bf24e910dd82"
+    },
+    {
+      "path": "org/apache/maven/resolver/maven-resolver-util/1.4.1/maven-resolver-util-1.4.1.pom",
+      "sha256": "a58c932e967e85e7bcb8d4adaedd14a5221a1750a1d089c5086c4d73df505155"
+    },
+    {
+      "path": "org/apache/maven/shared/file-management/3.2.0/file-management-3.2.0.jar",
+      "sha256": "32ac469785dd1547ac71437e4c3916c4a56a3d69303cb08d789ecdd0bfd1d6de"
+    },
+    {
+      "path": "org/apache/maven/shared/file-management/3.2.0/file-management-3.2.0.pom",
+      "sha256": "04e3bdd6d1920d1cdba206bc35dd3c6e0646c5730969f8b5d5397e5f1c7b5edd"
+    },
+    {
+      "path": "org/apache/maven/shared/maven-common-artifact-filters/3.4.0/maven-common-artifact-filters-3.4.0.jar",
+      "sha256": "931a77aa9dad6c91f10fcfafa70adc7608c004576b4924c74ecbffb27568a880"
+    },
+    {
+      "path": "org/apache/maven/shared/maven-common-artifact-filters/3.4.0/maven-common-artifact-filters-3.4.0.pom",
+      "sha256": "c93581d69b337c1fcc0957c727c430180b6387276ef1d3c2976c175e93765eb1"
+    },
+    {
+      "path": "org/apache/maven/shared/maven-filtering/3.5.0/maven-filtering-3.5.0.jar",
+      "sha256": "7adb0e46b5fff4fc03aab4baafbdee0b29e444cffe4478858c63082d497220bf"
+    },
+    {
+      "path": "org/apache/maven/shared/maven-filtering/3.5.0/maven-filtering-3.5.0.pom",
+      "sha256": "06b492b0244a82434470161f851b247271ec8fdaeea1c29de98abde066f80c64"
+    },
+    {
+      "path": "org/apache/maven/shared/maven-shared-components/19/maven-shared-components-19.pom",
+      "sha256": "d82408269aada2eb1521ee8ff17f7c67333684f8ed2a09a9e35badd2e7575957"
+    },
+    {
+      "path": "org/apache/maven/shared/maven-shared-components/39/maven-shared-components-39.pom",
+      "sha256": "17e81388d88ba61c4055450ec90a32ee30acd07f46dc6e31e096b8e53735f4b2"
+    },
+    {
+      "path": "org/apache/maven/shared/maven-shared-components/42/maven-shared-components-42.pom",
+      "sha256": "aa66faa11c11b900d099bfef0ee9fe8485d7e7fc74e87193e1f74572ed9587c5"
+    },
+    {
+      "path": "org/apache/maven/shared/maven-shared-components/44/maven-shared-components-44.pom",
+      "sha256": "41fbab97912beb3a061b1e3845d2e06d2bb214cc71f92fa7f396480dc765a14e"
+    },
+    {
+      "path": "org/apache/maven/shared/maven-shared-components/45/maven-shared-components-45.pom",
+      "sha256": "5879e023d9bcafda006d28b42b2495c6f3db587d3e71eefa0a3cedeeea36d987"
+    },
+    {
+      "path": "org/apache/maven/shared/maven-shared-components/47/maven-shared-components-47.pom",
+      "sha256": "3bd3d07c910477091bb9602f931f696c4aa115c86a322bff6a604ec7543afc07"
+    },
+    {
+      "path": "org/apache/maven/shared/maven-shared-incremental/1.1/maven-shared-incremental-1.1.jar",
+      "sha256": "61988e54486a5dc38f06c70fdae5b108556c63bd433697b9f4305fcdb30fa40e"
+    },
+    {
+      "path": "org/apache/maven/shared/maven-shared-incremental/1.1/maven-shared-incremental-1.1.pom",
+      "sha256": "f21d19eb49b4a66cd85354a9ee7335439ea92a368173760a202766008cc19924"
+    },
+    {
+      "path": "org/apache/maven/shared/maven-shared-utils/3.4.2/maven-shared-utils-3.4.2.jar",
+      "sha256": "b613357e1bad4dfc1dead801691c9460f9585fe7c6b466bc25186212d7d18487"
+    },
+    {
+      "path": "org/apache/maven/shared/maven-shared-utils/3.4.2/maven-shared-utils-3.4.2.pom",
+      "sha256": "a941745d7faeb8dc9a75edc2c330c994b7440b9a44d21142716b6053967a41c1"
+    },
+    {
+      "path": "org/apache/maven/surefire/common-java5/3.5.6/common-java5-3.5.6.jar",
+      "sha256": "250fc362ca832d09b266336c0aaf7f2e9c65edbf672cd1b962519bf113f4b802"
+    },
+    {
+      "path": "org/apache/maven/surefire/common-java5/3.5.6/common-java5-3.5.6.pom",
+      "sha256": "4e38b61fdd279dbf09759012364049b7f45b0131fc305eac13ed2e061643c574"
+    },
+    {
+      "path": "org/apache/maven/surefire/maven-surefire-common/3.5.6/maven-surefire-common-3.5.6.jar",
+      "sha256": "30c9e2bb7f1bb800482e42c208c144124132ec3c3b4b87ab5abda8b60c9f29b9"
+    },
+    {
+      "path": "org/apache/maven/surefire/maven-surefire-common/3.5.6/maven-surefire-common-3.5.6.pom",
+      "sha256": "cf9b4bb72eeb22554fc9afb463d5ee04f1f2786da4101c70ab9985a482858622"
+    },
+    {
+      "path": "org/apache/maven/surefire/surefire/3.5.6/surefire-3.5.6.pom",
+      "sha256": "419678335ab6c41d3eee332ade9bf1274c284b226c3b4d8ac1aa407961561ce7"
+    },
+    {
+      "path": "org/apache/maven/surefire/surefire-api/3.5.6/surefire-api-3.5.6.jar",
+      "sha256": "331defab7586a785e541a476f08112881b07068981ece3239676e1b3aa58ca14"
+    },
+    {
+      "path": "org/apache/maven/surefire/surefire-api/3.5.6/surefire-api-3.5.6.pom",
+      "sha256": "bccac2ece4fe005abc8cb50f696187aa70be27536dc39cb72abea2009acbecfa"
+    },
+    {
+      "path": "org/apache/maven/surefire/surefire-booter/3.5.6/surefire-booter-3.5.6.jar",
+      "sha256": "5b1c75591b42467926b22ba0e80e2e68cb4779024097694f34a53321ba5acf9d"
+    },
+    {
+      "path": "org/apache/maven/surefire/surefire-booter/3.5.6/surefire-booter-3.5.6.pom",
+      "sha256": "4dbe8cf4d6d563cb9bca0fc23ffde92fe4055efe29c37f2590633b62efbef6f9"
+    },
+    {
+      "path": "org/apache/maven/surefire/surefire-extensions-api/3.5.6/surefire-extensions-api-3.5.6.jar",
+      "sha256": "57ce1a7a9eb87f8ba2eda7f7449877d8c03da8e541e9036cd9c5cdfb1b7a1c08"
+    },
+    {
+      "path": "org/apache/maven/surefire/surefire-extensions-api/3.5.6/surefire-extensions-api-3.5.6.pom",
+      "sha256": "658c4269c47f464de7a7d7dd07031661a4b008ef87592de05c85719ef3bfc3b1"
+    },
+    {
+      "path": "org/apache/maven/surefire/surefire-extensions-spi/3.5.6/surefire-extensions-spi-3.5.6.jar",
+      "sha256": "ae22348985e0acdf223f11615846290704899f12aeec8ad82b4d1db38a0767db"
+    },
+    {
+      "path": "org/apache/maven/surefire/surefire-extensions-spi/3.5.6/surefire-extensions-spi-3.5.6.pom",
+      "sha256": "800dbbb51f836d77f58696614377052b4551cfe8349ce097a24505742e78eff8"
+    },
+    {
+      "path": "org/apache/maven/surefire/surefire-junit-platform/3.5.6/surefire-junit-platform-3.5.6.jar",
+      "sha256": "ed116a2be618e0d4f69b0d463a1f45e4a8561a17300722c662c3e746931a6553"
+    },
+    {
+      "path": "org/apache/maven/surefire/surefire-junit-platform/3.5.6/surefire-junit-platform-3.5.6.pom",
+      "sha256": "812c61d340a31b191df5ff6d38dde5ad2c4976dd1499e712c32ea1cdd4979130"
+    },
+    {
+      "path": "org/apache/maven/surefire/surefire-logger-api/3.5.6/surefire-logger-api-3.5.6.jar",
+      "sha256": "ac67f08b58d5e490272f3f41ed511ea0ee8ef177d515b93d392e144251ad856c"
+    },
+    {
+      "path": "org/apache/maven/surefire/surefire-logger-api/3.5.6/surefire-logger-api-3.5.6.pom",
+      "sha256": "a50b35f10aa31e69ba52755c31aaaef98be0b630ff6570d7cb081c34fadaefe8"
+    },
+    {
+      "path": "org/apache/maven/surefire/surefire-providers/3.5.6/surefire-providers-3.5.6.pom",
+      "sha256": "ace931f0c935745cbf3f06c408c863ed931946cc401ecc4b95000d96762df4d1"
+    },
+    {
+      "path": "org/apache/maven/surefire/surefire-shared-utils/3.5.6/surefire-shared-utils-3.5.6.jar",
+      "sha256": "b21563bce49411d872bd48a402af06dfc07670464bfdaa2ef7918f216c42758a"
+    },
+    {
+      "path": "org/apache/maven/surefire/surefire-shared-utils/3.5.6/surefire-shared-utils-3.5.6.pom",
+      "sha256": "0f5d83342185ba129aa9137bcd776fa9d859caa29ae199241effbbe515341335"
+    },
+    {
+      "path": "org/apache/tomcat/embed/tomcat-embed-core/11.0.22/tomcat-embed-core-11.0.22.jar",
+      "sha256": "78cd7cd7c104b6b87142c1b0bd902e1ce005b0245c3cefa8a06759148947200b"
+    },
+    {
+      "path": "org/apache/tomcat/embed/tomcat-embed-core/11.0.22/tomcat-embed-core-11.0.22.pom",
+      "sha256": "2ac5e1423dd4e1f36edba3f4654baf94bcd307739dd2c8b1c82e6a37204dc7d1"
+    },
+    {
+      "path": "org/apache/tomcat/embed/tomcat-embed-el/11.0.22/tomcat-embed-el-11.0.22.jar",
+      "sha256": "1b34c33b858c141df36c501b4d809e68036c406bca3671a86facae297917c7de"
+    },
+    {
+      "path": "org/apache/tomcat/embed/tomcat-embed-el/11.0.22/tomcat-embed-el-11.0.22.pom",
+      "sha256": "a1bd22a2f58dc8fadab92c1d4d673a5490afbc171450c3d73747f8518bf798f3"
+    },
+    {
+      "path": "org/apache/tomcat/embed/tomcat-embed-websocket/11.0.22/tomcat-embed-websocket-11.0.22.jar",
+      "sha256": "210e0c7ab194a76cc7283df0be365276091b042369dae125fb477828ba67e922"
+    },
+    {
+      "path": "org/apache/tomcat/embed/tomcat-embed-websocket/11.0.22/tomcat-embed-websocket-11.0.22.pom",
+      "sha256": "5d1b21636e90de2ae4783f53eb5e2e2f4d2de2a5517b78b5ae388b49a81ba416"
+    },
+    {
+      "path": "org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2-sources.jar",
+      "sha256": "277a7a4315412817beb6655b324dc7276621e95ebff00b8bf65e17a27b685e2d"
+    },
+    {
+      "path": "org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar",
+      "sha256": "b509448ac506d607319f182537f0b35d71007582ec741832a1f111e5b5b70b38"
+    },
+    {
+      "path": "org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.pom",
+      "sha256": "32355081d109095c3d5d374d5a43b4f4c1b75d549e983ef50723e2772e5302a0"
+    },
+    {
+      "path": "org/assertj/assertj-core/3.27.7/assertj-core-3.27.7-sources.jar",
+      "sha256": "5ba6de05730cf76021001f8437f35db4cb5b513465d4ace8c3a6fcd68d9a19ee"
+    },
+    {
+      "path": "org/assertj/assertj-core/3.27.7/assertj-core-3.27.7.jar",
+      "sha256": "c4a445426c3c2861666863b842cc4ec7bbb1c4226fefd370b6d2fe83d6c4ff0f"
+    },
+    {
+      "path": "org/assertj/assertj-core/3.27.7/assertj-core-3.27.7.pom",
+      "sha256": "95a10dcfb3ba9aad4d0b5e9c523a8d583377bee5ecd4ba37e19e55a34667f079"
+    },
+    {
+      "path": "org/awaitility/awaitility/4.3.0/awaitility-4.3.0-sources.jar",
+      "sha256": "92d209bd0135b04ca6bb7689c6b921819896ec2d517a5357760f598faafee46c"
+    },
+    {
+      "path": "org/awaitility/awaitility/4.3.0/awaitility-4.3.0.jar",
+      "sha256": "ee58568ea5945dcf988551501655183dc184e23e45a8e013fdfd9036194e6f7b"
+    },
+    {
+      "path": "org/awaitility/awaitility/4.3.0/awaitility-4.3.0.pom",
+      "sha256": "ec817516c83141a33f695ff8f4d73ca6df3af268c3ab377e5cee7effccca8140"
+    },
+    {
+      "path": "org/awaitility/awaitility-parent/4.3.0/awaitility-parent-4.3.0.pom",
+      "sha256": "7af9ce8a09581211557e6cc8e2909bd80666b34e922a28587c773096c1022093"
+    },
+    {
+      "path": "org/codehaus/plexus/plexus/13/plexus-13.pom",
+      "sha256": "575945dc08966c66eb03d5bae9135bd22ca3920a1865bb99d3ecd93bef55abd3"
+    },
+    {
+      "path": "org/codehaus/plexus/plexus/18/plexus-18.pom",
+      "sha256": "b43ee89c8890b9e5bc48d079fcb4c44f082b5139253356dc455806a33c3dd8fd"
+    },
+    {
+      "path": "org/codehaus/plexus/plexus/19/plexus-19.pom",
+      "sha256": "8d3e51c3902fd7596e548eab121ebf6b0d4aa73857077f26a24fc86f9b8455b4"
+    },
+    {
+      "path": "org/codehaus/plexus/plexus/20/plexus-20.pom",
+      "sha256": "a7b594b002fc791733c8e94470d09045f4fd69a93ad5c375752f2057f84633b4"
+    },
+    {
+      "path": "org/codehaus/plexus/plexus/24/plexus-24.pom",
+      "sha256": "89a1bc79e46c35ab108b7e215bb2c5c215ff8f3af1ae3cfef82d9a2b33b06c51"
+    },
+    {
+      "path": "org/codehaus/plexus/plexus/25/plexus-25.pom",
+      "sha256": "faa7947c2020967ad0c92b259ee9fa361d05e90cd036d17c37098bb1edaea3a3"
+    },
+    {
+      "path": "org/codehaus/plexus/plexus-archiver/4.10.4/plexus-archiver-4.10.4.jar",
+      "sha256": "1f39d4f2906a04f501567cd1211cef3fd95fea4cb979e1eba1d8dd84e4b67098"
+    },
+    {
+      "path": "org/codehaus/plexus/plexus-archiver/4.10.4/plexus-archiver-4.10.4.pom",
+      "sha256": "53a2103d9257c801a8fc9c211d9fedea7e3ee1bf516bbbc28021ef45c1a219c5"
+    },
+    {
+      "path": "org/codehaus/plexus/plexus-build-api/1.2.0/plexus-build-api-1.2.0.jar",
+      "sha256": "570ae55a95e1887c3004882d30dc4e9035d2a46ba8d58b991de04175f141d88f"
+    },
+    {
+      "path": "org/codehaus/plexus/plexus-build-api/1.2.0/plexus-build-api-1.2.0.pom",
+      "sha256": "47c7b0e65718ca89df6fdf5cb3f24a49e076cacd9499236c7e18ad78e993cddb"
+    },
+    {
+      "path": "org/codehaus/plexus/plexus-compiler/2.16.2/plexus-compiler-2.16.2.pom",
+      "sha256": "53124330e5e1b45d1ef6eff5e41c4d4defe04403e5c894795b44269515b6611e"
+    },
+    {
+      "path": "org/codehaus/plexus/plexus-compiler-api/2.16.2/plexus-compiler-api-2.16.2.jar",
+      "sha256": "db34d13c8d688063a946922f4de448c909ba43fec355ea15514495f33072b031"
+    },
+    {
+      "path": "org/codehaus/plexus/plexus-compiler-api/2.16.2/plexus-compiler-api-2.16.2.pom",
+      "sha256": "ae7ca19e5a3bafdf92a403edf8af5876c746024424059c719b1544de48384ff8"
+    },
+    {
+      "path": "org/codehaus/plexus/plexus-compiler-javac/2.16.2/plexus-compiler-javac-2.16.2.jar",
+      "sha256": "e48141c146d6cb96619aafb07b2e10e1ac08f339e96ae4067ddd9c2d0f626672"
+    },
+    {
+      "path": "org/codehaus/plexus/plexus-compiler-javac/2.16.2/plexus-compiler-javac-2.16.2.pom",
+      "sha256": "b648754e6d99b381f7fc40328849c6f24d454263c03cf89c737d7c29831eb208"
+    },
+    {
+      "path": "org/codehaus/plexus/plexus-compiler-manager/2.16.2/plexus-compiler-manager-2.16.2.jar",
+      "sha256": "99630ac196571a2754baa143a12723795b13020631902a6dff18dfb997e59b0e"
+    },
+    {
+      "path": "org/codehaus/plexus/plexus-compiler-manager/2.16.2/plexus-compiler-manager-2.16.2.pom",
+      "sha256": "ba8d233dd73fc97c10f84bf23ef8f632cd19ced0f85dc335be2bdcb8e28e7bd0"
+    },
+    {
+      "path": "org/codehaus/plexus/plexus-compilers/2.16.2/plexus-compilers-2.16.2.pom",
+      "sha256": "835e6a3f53ed9f39d14a0fd2b367a47fde78698115464eddba4b5c5d9fd1250f"
+    },
+    {
+      "path": "org/codehaus/plexus/plexus-interpolation/1.28/plexus-interpolation-1.28.jar",
+      "sha256": "ab2a8715570438a2e4164d85ad3e8d489eabc38ea5093c2eb8ab7f58403535b5"
+    },
+    {
+      "path": "org/codehaus/plexus/plexus-interpolation/1.28/plexus-interpolation-1.28.pom",
+      "sha256": "0f4665c943df2692d75e28b6b24923ab18ff00369b8c7f5eba4bedef07e4ecd4"
+    },
+    {
+      "path": "org/codehaus/plexus/plexus-interpolation/1.29/plexus-interpolation-1.29.jar",
+      "sha256": "088d444dbcedfb384630d8686697ece3c401d6f33c8f8b3aa7259ea1c6996878"
+    },
+    {
+      "path": "org/codehaus/plexus/plexus-interpolation/1.29/plexus-interpolation-1.29.pom",
+      "sha256": "ce0d5634297bb1e065dddfdc8a2a5675717c08e8f4783edcf581543711516938"
+    },
+    {
+      "path": "org/codehaus/plexus/plexus-io/3.6.0/plexus-io-3.6.0.jar",
+      "sha256": "fc0f3effea7514e4f214df1afb672f54c982e78e5ca3b32b34196c7d056a1aa4"
+    },
+    {
+      "path": "org/codehaus/plexus/plexus-io/3.6.0/plexus-io-3.6.0.pom",
+      "sha256": "653432ed213573b6b209deb7346dc2ed89f20e647dbdb6fc868051b334b31d27"
+    },
+    {
+      "path": "org/codehaus/plexus/plexus-java/1.5.2/plexus-java-1.5.2.jar",
+      "sha256": "1e6a4298e145c1e23af430b04ac53d76dc11077e0f3d36ef9c027ce790d96505"
+    },
+    {
+      "path": "org/codehaus/plexus/plexus-java/1.5.2/plexus-java-1.5.2.pom",
+      "sha256": "9617b619010dbb95c237e35bff7ee1d336cbcfd9ff5c229a935a9e3587ff0c37"
+    },
+    {
+      "path": "org/codehaus/plexus/plexus-languages/1.5.2/plexus-languages-1.5.2.pom",
+      "sha256": "9e7d29fc65089d69e75b559efaa5db8117dab3c579d0ef19759776d5643a492b"
+    },
+    {
+      "path": "org/codehaus/plexus/plexus-utils/3.6.0/plexus-utils-3.6.0.jar",
+      "sha256": "27ef130e32c236090e408fb5498d94cb9ea26d14070fb1c8985d607b62d098d1"
+    },
+    {
+      "path": "org/codehaus/plexus/plexus-utils/3.6.0/plexus-utils-3.6.0.pom",
+      "sha256": "6138300481471c7fe6aeb115f912961f886e1a46ee9c2bd2841b65184824da28"
+    },
+    {
+      "path": "org/codehaus/plexus/plexus-utils/4.0.2/plexus-utils-4.0.2.jar",
+      "sha256": "8957274e75fe2c278b1428dd16a0daeee1dd38152cb6eff816177ac28fccb697"
+    },
+    {
+      "path": "org/codehaus/plexus/plexus-utils/4.0.2/plexus-utils-4.0.2.pom",
+      "sha256": "5151c13bdd7cc3a5569583a7f4267392f013ffd3115eab8db5f86de420a366af"
+    },
+    {
+      "path": "org/codehaus/plexus/plexus-xml/3.0.1/plexus-xml-3.0.1.jar",
+      "sha256": "c1a510a87a62bd2d74ac1472dd31c3f9e9b0b8b8568f37d77c0f135415bebd05"
+    },
+    {
+      "path": "org/codehaus/plexus/plexus-xml/3.0.1/plexus-xml-3.0.1.pom",
+      "sha256": "3242ddc20873f71b381c333b22afb9cf3596d6a63b6683036a16bd51bc8721a4"
+    },
+    {
+      "path": "org/eclipse/ee4j/project/1.0.7/project-1.0.7.pom",
+      "sha256": "205c039a42cbae3556efbeb04a483eb3a3cf9550bd75bf84260dc8f28218f105"
+    },
+    {
+      "path": "org/eclipse/ee4j/project/1.0.9/project-1.0.9.pom",
+      "sha256": "825379934a1cf29249f349f2d18adaf79a7b2cb2dbe231518974e1ee70941c17"
+    },
+    {
+      "path": "org/eclipse/sisu/org.eclipse.sisu.plexus/0.9.0.M4/org.eclipse.sisu.plexus-0.9.0.M4.jar",
+      "sha256": "b90579bc652eac7331436e0a25533fce14130b9c6e015f2dd3a3d4bb07e942b7"
+    },
+    {
+      "path": "org/eclipse/sisu/org.eclipse.sisu.plexus/0.9.0.M4/org.eclipse.sisu.plexus-0.9.0.M4.pom",
+      "sha256": "90b4be7a71c979d0c4dea20c20a28eb9e76a29df68ab9018cf011019a3e4f562"
+    },
+    {
+      "path": "org/eclipse/sisu/sisu-inject/0.9.0.M4/sisu-inject-0.9.0.M4.pom",
+      "sha256": "0c829c9641ccac870d7d7ff012cbbad8447e912eb9a26d0d7283f09cba44c0d9"
+    },
+    {
+      "path": "org/hamcrest/hamcrest/3.0/hamcrest-3.0-sources.jar",
+      "sha256": "7a4050b1898f7e1aa395cf2be78fb6683f9e2766fcb8e1507926b204fa24d1bf"
+    },
+    {
+      "path": "org/hamcrest/hamcrest/3.0/hamcrest-3.0.jar",
+      "sha256": "5d66b6a4a680755cb6ed7cb104fa7835ef644667586ff0737adeb977c39ecdbc"
+    },
+    {
+      "path": "org/hamcrest/hamcrest/3.0/hamcrest-3.0.pom",
+      "sha256": "4a04a68133bf32461f47b8a53c8ee9df4ce2f49a0dad9794bce8717bee5bac31"
+    },
+    {
+      "path": "org/jspecify/jspecify/1.0.0/jspecify-1.0.0-sources.jar",
+      "sha256": "adf0898191d55937fb3192ba971826f4f294292c4a960740f3c27310e7b70296"
+    },
+    {
+      "path": "org/jspecify/jspecify/1.0.0/jspecify-1.0.0.jar",
+      "sha256": "1fad6e6be7557781e4d33729d49ae1cdc8fdda6fe477bb0cc68ce351eafdfbab"
+    },
+    {
+      "path": "org/jspecify/jspecify/1.0.0/jspecify-1.0.0.pom",
+      "sha256": "cdab929a3b95211f43d2090c5e2d0dfe8465960e378bc32b35841dab324433a6"
+    },
+    {
+      "path": "org/junit/junit-bom/5.10.2/junit-bom-5.10.2.pom",
+      "sha256": "169dd904a4b0f6520cffe658cc62292bfe9f3c14a989fa92120724cde43a9968"
+    },
+    {
+      "path": "org/junit/junit-bom/5.11.1/junit-bom-5.11.1.pom",
+      "sha256": "c72124a9c9a79910c1858766b72c350e1a39244cbfb4b076348fbfe078281965"
+    },
+    {
+      "path": "org/junit/junit-bom/5.11.4/junit-bom-5.11.4.pom",
+      "sha256": "19d4b747b204805325b6334553296f986562277a4ac1cb5e593a5e4c4f5e4115"
+    },
+    {
+      "path": "org/junit/junit-bom/5.12.1/junit-bom-5.12.1.pom",
+      "sha256": "7c826bc72beddc817dad9263027f9012a0f55a377d38df89c42932a2501c2bf0"
+    },
+    {
+      "path": "org/junit/junit-bom/5.12.2/junit-bom-5.12.2.pom",
+      "sha256": "cef80fec86454f6806bfb0df24669b5c6f32e2cb728539ea859f47dfdc9bbc17"
+    },
+    {
+      "path": "org/junit/junit-bom/5.13.1/junit-bom-5.13.1.pom",
+      "sha256": "fa68451ea830572ed43ffe51d75b6a05f7a5e665a602a51f49d6be02063a65f3"
+    },
+    {
+      "path": "org/junit/junit-bom/5.13.2/junit-bom-5.13.2.pom",
+      "sha256": "43b1104fb3fd4ef4b72a9751d41e09c29f001c8be00ff3972238dc169a734b49"
+    },
+    {
+      "path": "org/junit/junit-bom/5.13.4/junit-bom-5.13.4.pom",
+      "sha256": "d7a08a99b2502f0bb68cd4e1f984f0bf69324aaa208bd0f73366c03fc3548a42"
+    },
+    {
+      "path": "org/junit/junit-bom/5.14.1/junit-bom-5.14.1.pom",
+      "sha256": "01b01dfa366550b40ac5760548a7d728b6109d17c451e83864d1e5e0ce862c94"
+    },
+    {
+      "path": "org/junit/junit-bom/5.14.2/junit-bom-5.14.2.pom",
+      "sha256": "ed2dcc7855bd460bccc93a1bf0c962e63b566ff7d8f1ded0f1f2593ba8183aaf"
+    },
+    {
+      "path": "org/junit/junit-bom/5.7.2/junit-bom-5.7.2.pom",
+      "sha256": "cd14aaa869991f82021c585d570d31ff342bcba58bb44233b70193771b96487b"
+    },
+    {
+      "path": "org/junit/junit-bom/5.8.0-M1/junit-bom-5.8.0-M1.pom",
+      "sha256": "77144432ffc68bd98a790ab1069619d91032cfc0e4e13c08163aa03da36fd6e2"
+    },
+    {
+      "path": "org/junit/junit-bom/5.9.3/junit-bom-5.9.3.pom",
+      "sha256": "4d0329cd9e72f2420e5ca15724cbfe6ffa6e5fd2888361516271190fdc342ed7"
+    },
+    {
+      "path": "org/junit/junit-bom/6.0.3/junit-bom-6.0.3.pom",
+      "sha256": "a655b6a5dc00d1bebc91fb2b15c0c7e8aeac9d6bdcf879595505370e27530287"
+    },
+    {
+      "path": "org/junit/jupiter/junit-jupiter/6.0.3/junit-jupiter-6.0.3-sources.jar",
+      "sha256": "402f86a4fdce930bb68b592f2ed5a9d57dc4d1b2747aa2d66c0b3cb7a2adceeb"
+    },
+    {
+      "path": "org/junit/jupiter/junit-jupiter/6.0.3/junit-jupiter-6.0.3.jar",
+      "sha256": "784b65815f479a0c99a9d3a573b142e2a525efb6025d97f751b19e72f90aeda3"
+    },
+    {
+      "path": "org/junit/jupiter/junit-jupiter/6.0.3/junit-jupiter-6.0.3.pom",
+      "sha256": "bced20e91aaa5677f1ba96fa6f718100ab83e894a52e9961b6004c056a1845ec"
+    },
+    {
+      "path": "org/junit/jupiter/junit-jupiter-api/6.0.3/junit-jupiter-api-6.0.3-sources.jar",
+      "sha256": "8266d8da51d0c7d6a2ed4895a3cb76e0ec22194907f24364f2a4f3efd05f00a5"
+    },
+    {
+      "path": "org/junit/jupiter/junit-jupiter-api/6.0.3/junit-jupiter-api-6.0.3.jar",
+      "sha256": "d655d7e6f0c7ae07f10a2f3bbaaebb6d30e9b26204a068ad9e9b3950aa28792c"
+    },
+    {
+      "path": "org/junit/jupiter/junit-jupiter-api/6.0.3/junit-jupiter-api-6.0.3.pom",
+      "sha256": "766c80fb318e1600ebf6c9a921de801887b1548aa282d6ad69188b7608d56d47"
+    },
+    {
+      "path": "org/junit/jupiter/junit-jupiter-engine/6.0.3/junit-jupiter-engine-6.0.3-sources.jar",
+      "sha256": "35706a9edf1b580bf22d6eca9d6a9165f478f75b0108840ad6f31481cd662d6c"
+    },
+    {
+      "path": "org/junit/jupiter/junit-jupiter-engine/6.0.3/junit-jupiter-engine-6.0.3.jar",
+      "sha256": "1e2fab61ad27ea08fc7c70dd9677cf8c6d1ae5434d42dcfdd633b12c7e7c04d0"
+    },
+    {
+      "path": "org/junit/jupiter/junit-jupiter-engine/6.0.3/junit-jupiter-engine-6.0.3.pom",
+      "sha256": "bafbc099326c1883f0ee1cb056d31b4222e26165f9f9aa9b896f3d3f78a31538"
+    },
+    {
+      "path": "org/junit/jupiter/junit-jupiter-params/6.0.3/junit-jupiter-params-6.0.3-sources.jar",
+      "sha256": "f0dcf217100b06b98cd36c2e74fb919c74e3024faad868bac9eba6ff00c7c263"
+    },
+    {
+      "path": "org/junit/jupiter/junit-jupiter-params/6.0.3/junit-jupiter-params-6.0.3.jar",
+      "sha256": "cf2947e2302b9f8c8a059259a277881c1cadae8fbc2514c16a925cfeb7beb2e5"
+    },
+    {
+      "path": "org/junit/jupiter/junit-jupiter-params/6.0.3/junit-jupiter-params-6.0.3.pom",
+      "sha256": "995b64ecaa2227c4b55f3eb8e77735f544434a2ec2cfeed0605e8baf108263de"
+    },
+    {
+      "path": "org/junit/platform/junit-platform-commons/1.12.2/junit-platform-commons-1.12.2.jar",
+      "sha256": "e683a01e85dfabea520c056ac6015a6162756e602ec653c0da85e233f0afbc18"
+    },
+    {
+      "path": "org/junit/platform/junit-platform-commons/1.12.2/junit-platform-commons-1.12.2.pom",
+      "sha256": "4f2b8a9065c909c6892d8622d553b6ab0a70321624499e3b69c1289f59ecc077"
+    },
+    {
+      "path": "org/junit/platform/junit-platform-commons/6.0.3/junit-platform-commons-6.0.3-sources.jar",
+      "sha256": "06cbe4a4bbd79339c3817983510cf3adc3d6a88a8a556c80c5b84eeb1ebd13dc"
+    },
+    {
+      "path": "org/junit/platform/junit-platform-commons/6.0.3/junit-platform-commons-6.0.3.jar",
+      "sha256": "39f262d09c3d52719fe0b77f080e90a3695e285d779a41b232e17963ae5da200"
+    },
+    {
+      "path": "org/junit/platform/junit-platform-commons/6.0.3/junit-platform-commons-6.0.3.pom",
+      "sha256": "bdb8e24be97e0e59769f2164b5361f55227958df4103d68682f8779ad2ca8d7d"
+    },
+    {
+      "path": "org/junit/platform/junit-platform-engine/1.12.2/junit-platform-engine-1.12.2.jar",
+      "sha256": "cef0efcb5bd2e05e2b808d38bab5c655089c0c3001527376e74cb606a7911ec8"
+    },
+    {
+      "path": "org/junit/platform/junit-platform-engine/1.12.2/junit-platform-engine-1.12.2.pom",
+      "sha256": "9480b18a7965769d0083c2cb71105423f5302a8f046bb2047e6dbff09f383490"
+    },
+    {
+      "path": "org/junit/platform/junit-platform-engine/6.0.3/junit-platform-engine-6.0.3-sources.jar",
+      "sha256": "89a893566a97557dbbcb0706d9b5565c4e7a402050841753dc527f3e9139c9ac"
+    },
+    {
+      "path": "org/junit/platform/junit-platform-engine/6.0.3/junit-platform-engine-6.0.3.jar",
+      "sha256": "491e9e4f745f161b8a8e4186a1a7c6a450ea12c70930c9aedae427215301d947"
+    },
+    {
+      "path": "org/junit/platform/junit-platform-engine/6.0.3/junit-platform-engine-6.0.3.pom",
+      "sha256": "7a87d8c6a0a7db0260b00ce303180f6f41d040562895d6804619d5db6ee232be"
+    },
+    {
+      "path": "org/junit/platform/junit-platform-launcher/1.12.2/junit-platform-launcher-1.12.2.jar",
+      "sha256": "dccf2c1fa0a977c53ad094ad859bfdddd524d97594b76307ad787de71985757f"
+    },
+    {
+      "path": "org/junit/platform/junit-platform-launcher/1.12.2/junit-platform-launcher-1.12.2.pom",
+      "sha256": "619145cd215d32225372be625bba28683d74142fee1a5dfdb1c64b52fe9c0b51"
+    },
+    {
+      "path": "org/junit/platform/junit-platform-launcher/6.0.3/junit-platform-launcher-6.0.3.jar",
+      "sha256": "315608372e4dc44bca0ccb3ae8a07ecc206b3367033fa05748a03ccd563f1301"
+    },
+    {
+      "path": "org/junit/platform/junit-platform-launcher/6.0.3/junit-platform-launcher-6.0.3.pom",
+      "sha256": "4d39e03f2093776f4193071c8cdf198136b96166c7b43b5e37e7d6156b9d98ed"
+    },
+    {
+      "path": "org/mockito/mockito-bom/4.11.0/mockito-bom-4.11.0.pom",
+      "sha256": "d8531a746c988f7f68ed5f188cdea945006aea993ec5df9e524e0d27d61491da"
+    },
+    {
+      "path": "org/mockito/mockito-core/5.23.0/mockito-core-5.23.0.jar",
+      "sha256": "ae295bebd5d11fab97ab297815dc7617188b86003cbce3dfd5c0d5c3a6cc4a0c"
+    },
+    {
+      "path": "org/mockito/mockito-core/5.23.0/mockito-core-5.23.0.pom",
+      "sha256": "c02e2900b9277adbfe12756d7d0b9472e6b9e5972ae1f28d19a41aa6513777e3"
+    },
+    {
+      "path": "org/mockito/mockito-junit-jupiter/5.23.0/mockito-junit-jupiter-5.23.0.jar",
+      "sha256": "65938526fdc311bb3a1c0015eb1c8a0be81515aa998f22b9f4e92f1b668e4f63"
+    },
+    {
+      "path": "org/mockito/mockito-junit-jupiter/5.23.0/mockito-junit-jupiter-5.23.0.pom",
+      "sha256": "b66d0df81aab2ed2fa53c990ea90c2f1f915031bc85e418602de4cfb8d2ad7e8"
+    },
+    {
+      "path": "org/objenesis/objenesis/3.3/objenesis-3.3-sources.jar",
+      "sha256": "d06164f8ca002c8ef193cef2d682822014dd330505616af93a3fb64226fc131d"
+    },
+    {
+      "path": "org/objenesis/objenesis/3.3/objenesis-3.3.jar",
+      "sha256": "02dfd0b0439a5591e35b708ed2f5474eb0948f53abf74637e959b8e4ef69bfeb"
+    },
+    {
+      "path": "org/objenesis/objenesis/3.3/objenesis-3.3.pom",
+      "sha256": "ba0c40da2669a048b6e24ef7066a471f0fbcbfcc509e6a3e856ca4ddfa614ad3"
+    },
+    {
+      "path": "org/objenesis/objenesis-parent/3.3/objenesis-parent-3.3.pom",
+      "sha256": "305c384aa2f1e1c7fe53a96da41c3ec35243b97d428d24a8f779818cc10be4ff"
+    },
+    {
+      "path": "org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0-sources.jar",
+      "sha256": "724a24e3a68267d5ebac9411389a15638a71e50c62448ffa58f59c34d5c1ebb2"
+    },
+    {
+      "path": "org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar",
+      "sha256": "48e2df636cab6563ced64dcdff8abb2355627cb236ef0bf37598682ddf742f1b"
+    },
+    {
+      "path": "org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.pom",
+      "sha256": "9bf7cffc410f3e8372c2522578df9ca56d9d43bd937e30948706c232a943b355"
+    },
+    {
+      "path": "org/ow2/asm/asm/9.7.1/asm-9.7.1-sources.jar",
+      "sha256": "22e9507b0c494daaedb33b8148c30cd618c6dacc3992be8b50eaaafeb6a8ba8d"
+    },
+    {
+      "path": "org/ow2/asm/asm/9.7.1/asm-9.7.1.jar",
+      "sha256": "8cadd43ac5eb6d09de05faecca38b917a040bb9139c7edeb4cc81c740b713281"
+    },
+    {
+      "path": "org/ow2/asm/asm/9.7.1/asm-9.7.1.pom",
+      "sha256": "7229b03b30a73ee91008072d9e4569a51d8547fae8c50f527841aef4c1b0baa8"
+    },
+    {
+      "path": "org/ow2/asm/asm/9.9.1/asm-9.9.1.jar",
+      "sha256": "6f3828a215c920059a5efa2fb55c233d6c54ec5cadca99ce1b1bdd10077c7ddd"
+    },
+    {
+      "path": "org/ow2/asm/asm/9.9.1/asm-9.9.1.pom",
+      "sha256": "aca68dee9ba2f6cd90ffde728efdc7e3ebfcf59f3f41fbfe248d2d01d5b866af"
+    },
+    {
+      "path": "org/ow2/ow2/1.5.1/ow2-1.5.1.pom",
+      "sha256": "321ddbb7ee6fe4f53dea6b4cd6db74154d6bfa42391c1f763b361b9f485acf05"
+    },
+    {
+      "path": "org/skyscreamer/jsonassert/1.5.3/jsonassert-1.5.3-sources.jar",
+      "sha256": "a825c29f8cc40f85ea4e7a431a55d4278a785c34acdeef4cd1be7367f70ea6bb"
+    },
+    {
+      "path": "org/skyscreamer/jsonassert/1.5.3/jsonassert-1.5.3.jar",
+      "sha256": "719095c07d4203961320da593441d8b3b643c18eb1d81aa98ea933bb7eb351ba"
+    },
+    {
+      "path": "org/skyscreamer/jsonassert/1.5.3/jsonassert-1.5.3.pom",
+      "sha256": "c6a880737b6b3c8a27d9a05c6048536a7a70bb350cb91dce2336b6710a2ba628"
+    },
+    {
+      "path": "org/slf4j/jul-to-slf4j/2.0.18/jul-to-slf4j-2.0.18.jar",
+      "sha256": "cbb7d1aaaa9e871eb1a06594abd911bf97027152976edf1edc315be75239204e"
+    },
+    {
+      "path": "org/slf4j/jul-to-slf4j/2.0.18/jul-to-slf4j-2.0.18.pom",
+      "sha256": "eae8e0ffbd8b31fa8f8a610d62d387b4e10295ba74d0e14d66404560b74d8295"
+    },
+    {
+      "path": "org/slf4j/slf4j-api/1.7.36/slf4j-api-1.7.36.jar",
+      "sha256": "d3ef575e3e4979678dc01bf1dcce51021493b4d11fb7f1be8ad982877c16a1c0"
+    },
+    {
+      "path": "org/slf4j/slf4j-api/1.7.36/slf4j-api-1.7.36.pom",
+      "sha256": "fb046a9c229437928bb11c2d27c8b5d773eb8a25e60cbd253d985210dedc2684"
+    },
+    {
+      "path": "org/slf4j/slf4j-api/2.0.17/slf4j-api-2.0.17-sources.jar",
+      "sha256": "db0d08d8efa05ad19d174d747bd9d8e68dbb02b596812fe7b3a681656e346694"
+    },
+    {
+      "path": "org/slf4j/slf4j-api/2.0.17/slf4j-api-2.0.17.jar",
+      "sha256": "7b751d952061954d5abfed7181c1f645d336091b679891591d63329c622eb832"
+    },
+    {
+      "path": "org/slf4j/slf4j-api/2.0.17/slf4j-api-2.0.17.pom",
+      "sha256": "150c40287f7cecdc21b9380caac98e928c4f33c023db6b348df1c5ac977026bf"
+    },
+    {
+      "path": "org/slf4j/slf4j-bom/2.0.17/slf4j-bom-2.0.17.pom",
+      "sha256": "f78d27b642b4b886eb839fc102b5cd9fe7f30f37599ffe68185be4e1609031e9"
+    },
+    {
+      "path": "org/slf4j/slf4j-bom/2.0.18/slf4j-bom-2.0.18.pom",
+      "sha256": "9219aab601575126c4e66e1331eb2b0c6c17a330ac4d5a07e3cd11d580a0c12d"
+    },
+    {
+      "path": "org/slf4j/slf4j-parent/1.7.36/slf4j-parent-1.7.36.pom",
+      "sha256": "bb388d37fbcdd3cde64c3cede21838693218dc451f04040c5df360a78ed7e812"
+    },
+    {
+      "path": "org/slf4j/slf4j-parent/2.0.17/slf4j-parent-2.0.17.pom",
+      "sha256": "95cd71e852dfdb29126e58b7b939d57ec2b2e6024391852e0b545dee082bbf3b"
+    },
+    {
+      "path": "org/slf4j/slf4j-parent/2.0.18/slf4j-parent-2.0.18.pom",
+      "sha256": "0b3896bedad2c9ed9697edcbea1da0c54cd238a723583a81358a83bfb782e9fa"
+    },
+    {
+      "path": "org/sonatype/forge/forge-parent/5/forge-parent-5.pom",
+      "sha256": "e56188aa8ce51278006aa90bc7e0f304a81e2f1219f462e7d21f262535cd2795"
+    },
+    {
+      "path": "org/sonatype/oss/oss-parent/9/oss-parent-9.pom",
+      "sha256": "fb40265f982548212ff82e362e59732b2187ec6f0d80182885c14ef1f982827a"
+    },
+    {
+      "path": "org/sonatype/plexus/plexus-build-api/0.0.7/plexus-build-api-0.0.7.jar",
+      "sha256": "934171640fbd3d2495c50b79b0d9adb11e2c83e65bad157df8fe34bcac0ff798"
+    },
+    {
+      "path": "org/sonatype/plexus/plexus-build-api/0.0.7/plexus-build-api-0.0.7.pom",
+      "sha256": "e067317a47ed9e84b2ba85a76d3cf72980e2b0dc873a90b9cbfe74fe80c37c17"
+    },
+    {
+      "path": "org/sonatype/spice/spice-parent/15/spice-parent-15.pom",
+      "sha256": "13d15ddfe9946b8427bb7b4b081ab63962285eed0bf6fa5142aea25a46e15814"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot/4.1.0/spring-boot-4.1.0.jar",
+      "sha256": "b23951a3a7f867e38db4729b8594e1b72374516f386b1dd9cf4d5317d6d3f91f"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot/4.1.0/spring-boot-4.1.0.pom",
+      "sha256": "840df1c89d214631374a53280e42fabb774f3cb88eb6f9d9358c7534585fbba1"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-autoconfigure/4.1.0/spring-boot-autoconfigure-4.1.0.jar",
+      "sha256": "0fcaa3050ba835ca6b3879f81cd48dc590a6262f53bbf10d2a95c70bf7c048ac"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-autoconfigure/4.1.0/spring-boot-autoconfigure-4.1.0.pom",
+      "sha256": "be22dd2e7afa15a400bc501dd780d86f16b963192093b76a275b3f6dc4aa62f1"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-http-converter/4.1.0/spring-boot-http-converter-4.1.0.jar",
+      "sha256": "f82c8913ea17a60630a5d26fa006cf79f28c7d920dbbef8760f5bc7053706fea"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-http-converter/4.1.0/spring-boot-http-converter-4.1.0.pom",
+      "sha256": "b6e1d0b5c268deacc56f38386114176b5b29c9192159b74081468f4dc813340f"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-jackson/4.1.0/spring-boot-jackson-4.1.0.jar",
+      "sha256": "10b6e63a40b257168854093f413eaab8b8a9afb7e989fcc7f6732b42c3f173d1"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-jackson/4.1.0/spring-boot-jackson-4.1.0.pom",
+      "sha256": "4bff1a28cfaf5e39d84bd9a7f2e5ef0e39941bd2dd00d9ed9a29e28ba66616b5"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-jdbc/4.1.0/spring-boot-jdbc-4.1.0.jar",
+      "sha256": "3b5aab97e72d8a15a40546c31365ed2090cf25451e18762add8ed22cbb4ead43"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-jdbc/4.1.0/spring-boot-jdbc-4.1.0.pom",
+      "sha256": "eb8430fa92f8319e64187474b3c144b8987eda13d6a19c4341fe45c5670b7fa8"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-persistence/4.1.0/spring-boot-persistence-4.1.0.jar",
+      "sha256": "d9d926224c738bd6152718c078134e3aea1057db4d6a452c37ad120893e0e4d6"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-persistence/4.1.0/spring-boot-persistence-4.1.0.pom",
+      "sha256": "412bfffaa20eb0dff6f4124595439db846cda2785df928d4e8ff803c5b8527c5"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-servlet/4.1.0/spring-boot-servlet-4.1.0.jar",
+      "sha256": "5f694a7c6c357a87032bc92db0e7e0e03b64010f77892e5992c86b10f568a5ae"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-servlet/4.1.0/spring-boot-servlet-4.1.0.pom",
+      "sha256": "ad1b87a8315d732371ed4d49e6054ae0be4a6e37b39c228b09e67b53e732bc87"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-sql/4.1.0/spring-boot-sql-4.1.0.jar",
+      "sha256": "2826a5380675337f4c5b3e90db02279e68a2c9a7eb2b2ac312828c05fb827a9a"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-sql/4.1.0/spring-boot-sql-4.1.0.pom",
+      "sha256": "cf1259738ac80ceea96fb5b9982a03845e7b59e2f0533841c095fbb19993b7f5"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-starter/4.1.0/spring-boot-starter-4.1.0.jar",
+      "sha256": "40352b3fc0834d5830f66d40100fc8afa8ac73e24a134c7779bd42b72f2d6506"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-starter/4.1.0/spring-boot-starter-4.1.0.pom",
+      "sha256": "52a1b11f978c9433484644b26d3154c8a19444027e9d46a2f038126a18805d33"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-starter-jackson/4.1.0/spring-boot-starter-jackson-4.1.0.jar",
+      "sha256": "4214c534cca5c7c7e1cf92db90f178a3dffdede503fb68ac3c0dd905f331431f"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-starter-jackson/4.1.0/spring-boot-starter-jackson-4.1.0.pom",
+      "sha256": "5a5691c14316a00cbf6c5faaa8f3b263d5cc03f5c239230eec45dcf2b8100cfe"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-starter-jdbc/4.1.0/spring-boot-starter-jdbc-4.1.0.jar",
+      "sha256": "ce3e3dfdde267f11d21960715967b59713575cab8e5e8b3b00fba6a3bb022c99"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-starter-jdbc/4.1.0/spring-boot-starter-jdbc-4.1.0.pom",
+      "sha256": "eaff73e3b7d11cf0263755f255f50c7dffc687ae983220ac869758b146353462"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-starter-logging/4.1.0/spring-boot-starter-logging-4.1.0.jar",
+      "sha256": "73a6a42d2b6a589bd722aa107800829d0b20b731d94135f53c4b744db8beafbf"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-starter-logging/4.1.0/spring-boot-starter-logging-4.1.0.pom",
+      "sha256": "1e026ddfbb9e25a2380df6c71b26f2dd1c6c7ee2235d05e43c9ff6f9d3c3137f"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-starter-test/4.1.0/spring-boot-starter-test-4.1.0.jar",
+      "sha256": "03ceed4690ac787c2aa22e72c767c395c446d83f2e581282cf2e6a3a11cbc2d8"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-starter-test/4.1.0/spring-boot-starter-test-4.1.0.pom",
+      "sha256": "d623d9cc1920a899fd4febe5c085701152b2efb2f4f04552c324049f25f6c18c"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-starter-tomcat/4.1.0/spring-boot-starter-tomcat-4.1.0.jar",
+      "sha256": "3e8cbd141ee6f4f2acfaf6320f1951307816f086de426d08eac19ef4a57d7e90"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-starter-tomcat/4.1.0/spring-boot-starter-tomcat-4.1.0.pom",
+      "sha256": "0e80b650ab36fd589520b6802a250eeea141fe2aa9ee2ee010e274421cada79d"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-starter-tomcat-runtime/4.1.0/spring-boot-starter-tomcat-runtime-4.1.0.jar",
+      "sha256": "135fa0b7a4232c64b975f348cab39e2259d36a18e14768f5f213147a4febf68d"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-starter-tomcat-runtime/4.1.0/spring-boot-starter-tomcat-runtime-4.1.0.pom",
+      "sha256": "5f637059ebb1d740120670b0135d152f316cda9e50b9850729cd40e38626f8c5"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-starter-web/4.1.0/spring-boot-starter-web-4.1.0.jar",
+      "sha256": "d2732bdc307d3628d680d32758b300972109f499ec8e023bd663cdad002c67c6"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-starter-web/4.1.0/spring-boot-starter-web-4.1.0.pom",
+      "sha256": "0f9220472f54d46982d6a09cdbe64c528b733eec31f62fa8fdb3746d0a53b18c"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-test/4.1.0/spring-boot-test-4.1.0.jar",
+      "sha256": "3421dbe658d32e9e0165c118b031e4585f8c55710b1b6b9368453c6d8daaeb58"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-test/4.1.0/spring-boot-test-4.1.0.pom",
+      "sha256": "99b26b95f307d6e21b6aed530d6067a007cc4d79e996330bb65d9035975de217"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-test-autoconfigure/4.1.0/spring-boot-test-autoconfigure-4.1.0.jar",
+      "sha256": "ceebd04f58fd51f037ade92cac4ac14af36ffa5eb2f273c17f886041fe32d0cc"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-test-autoconfigure/4.1.0/spring-boot-test-autoconfigure-4.1.0.pom",
+      "sha256": "a0e0f586f96680563ef8e61fd230384eef2e11017851fc1fb4ee8fdbc60adb9c"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-tomcat/4.1.0/spring-boot-tomcat-4.1.0.jar",
+      "sha256": "011e662eb6f9f4a80c5dacf914cfca8a25a33fcd753736ec453dcf701337dd24"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-tomcat/4.1.0/spring-boot-tomcat-4.1.0.pom",
+      "sha256": "bd74a9934fe7ace977442b1970e2afa699bbb098caaff15eac2cc036ebfcb2ae"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-transaction/4.1.0/spring-boot-transaction-4.1.0.jar",
+      "sha256": "5402dfeef5d6633b485d6ce8d1cfb2116c7a55e70f8f5dbd31b69ca43e006f13"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-transaction/4.1.0/spring-boot-transaction-4.1.0.pom",
+      "sha256": "ef64da528f06b672a9cc064c1a3bfc9bb533e017325dc70a72b0c674943bfa88"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-web-server/4.1.0/spring-boot-web-server-4.1.0.jar",
+      "sha256": "a8541ccbd29f5a8db7e6092fa83463aa4d1c002fac07b8b5babe118ad6c4a3d3"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-web-server/4.1.0/spring-boot-web-server-4.1.0.pom",
+      "sha256": "47e96f2504cb622ae5976388458fddbc2a91fa42a675086d369e5f7257a8bc8b"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-webmvc/4.1.0/spring-boot-webmvc-4.1.0.jar",
+      "sha256": "ab21735a550cbfefaa4ad6ffbb1a891592580ef05ad729cd2025bc0245862b55"
+    },
+    {
+      "path": "org/springframework/boot/spring-boot-webmvc/4.1.0/spring-boot-webmvc-4.1.0.pom",
+      "sha256": "4af883288656ad84cadd6f1084c4c10bc2c15145dab0599d41749c1f67a807ce"
+    },
+    {
+      "path": "org/springframework/spring-aop/7.0.8/spring-aop-7.0.8.jar",
+      "sha256": "1178f039e087884174e2affc46e484f4a8bd7f2a4e011d33dd9137709f740f80"
+    },
+    {
+      "path": "org/springframework/spring-aop/7.0.8/spring-aop-7.0.8.pom",
+      "sha256": "5d302a5690e104f868496d2ba9670718812d88cb297645f6baa2c26defb156b3"
+    },
+    {
+      "path": "org/springframework/spring-beans/7.0.8/spring-beans-7.0.8.jar",
+      "sha256": "6ec2e361a8872a71d8b1ff66f1bcb8cfa29fcc437931998919da7cecfb59b45b"
+    },
+    {
+      "path": "org/springframework/spring-beans/7.0.8/spring-beans-7.0.8.pom",
+      "sha256": "1563720d19eee3d0d14082719ca05e13f0cf857cc2bc6fec98650683552ec9a7"
+    },
+    {
+      "path": "org/springframework/spring-context/7.0.8/spring-context-7.0.8.jar",
+      "sha256": "1eb7d552414ebac00e30ab3e809138d810785f6d2c4271db77cdf0181f308f19"
+    },
+    {
+      "path": "org/springframework/spring-context/7.0.8/spring-context-7.0.8.pom",
+      "sha256": "aeeccaa073bb364d62a62bcd11e8c8e2c9461dd7ef34b019317da88b5e6c7a86"
+    },
+    {
+      "path": "org/springframework/spring-core/7.0.8/spring-core-7.0.8.jar",
+      "sha256": "726ba2a5130833644bdf267a55ff26e1f52e8dcc9aa1ffa06904ca9c14619f25"
+    },
+    {
+      "path": "org/springframework/spring-core/7.0.8/spring-core-7.0.8.pom",
+      "sha256": "ae68a959f378b7fd52aef379d33d386195d71f052b7cf6b7afb9a243a5bd90bb"
+    },
+    {
+      "path": "org/springframework/spring-expression/7.0.8/spring-expression-7.0.8.jar",
+      "sha256": "3c97c38ab59c77ee886e08ccf8096f6bb58a1245f68dfed7a40e93f41c435f9a"
+    },
+    {
+      "path": "org/springframework/spring-expression/7.0.8/spring-expression-7.0.8.pom",
+      "sha256": "425543228821d5f60da2837e4d78e21d76517f7fad326aece01c0b3c48eeff1d"
+    },
+    {
+      "path": "org/springframework/spring-framework-bom/5.3.39/spring-framework-bom-5.3.39.pom",
+      "sha256": "f6d481093e75767cba1ac7e1db38f8f692cbe3e38744693371a75aeb21c6148b"
+    },
+    {
+      "path": "org/springframework/spring-jdbc/7.0.8/spring-jdbc-7.0.8.jar",
+      "sha256": "7d6bbf130ed919d5f4f01ec0ea771ab59ac3936ab29f50fd3a705c0119871e32"
+    },
+    {
+      "path": "org/springframework/spring-jdbc/7.0.8/spring-jdbc-7.0.8.pom",
+      "sha256": "28ce94a1d0744c5092d3546f53437a0db2c49a62535e913e838ed5e1d3d98950"
+    },
+    {
+      "path": "org/springframework/spring-test/7.0.8/spring-test-7.0.8.jar",
+      "sha256": "6ffb7796075a204915edc4bb9e54dc420183cecb520d753004f660f153763c8e"
+    },
+    {
+      "path": "org/springframework/spring-test/7.0.8/spring-test-7.0.8.pom",
+      "sha256": "56067a36e80565a899578c3cf852446d280ddb890e953c9739be225f7fd449cc"
+    },
+    {
+      "path": "org/springframework/spring-tx/7.0.8/spring-tx-7.0.8.jar",
+      "sha256": "57e8fdb6de949e7ec2617683fec03af0253bdbdf4bf3d2651a926a94413df283"
+    },
+    {
+      "path": "org/springframework/spring-tx/7.0.8/spring-tx-7.0.8.pom",
+      "sha256": "ac6aab40788c4c4635dbfc87ced41c7eadef92241b51f9f586988c199eb27f9a"
+    },
+    {
+      "path": "org/springframework/spring-web/7.0.8/spring-web-7.0.8.jar",
+      "sha256": "4d4ed7ecb0453d25d735ea27d025ea36b003c3d29cb7d006bedd6d5188a2f5c0"
+    },
+    {
+      "path": "org/springframework/spring-web/7.0.8/spring-web-7.0.8.pom",
+      "sha256": "8df8950b894176dbeaa76da6a63212785e093427750b7c1e5aac8ec9fe266309"
+    },
+    {
+      "path": "org/springframework/spring-webmvc/7.0.8/spring-webmvc-7.0.8.jar",
+      "sha256": "48f7e1e2d0d46e98ed3fa30d5a64cb1f7ed2aa339a82edcd87289ed8ff216f04"
+    },
+    {
+      "path": "org/springframework/spring-webmvc/7.0.8/spring-webmvc-7.0.8.pom",
+      "sha256": "8e24bb2017fd68e677d3202cf32658054c9d93eb0a45ca5c043cbe5b8339fdb7"
+    },
+    {
+      "path": "org/tukaani/xz/1.10/xz-1.10.jar",
+      "sha256": "95c63c1a55b22dd6453890a419cc1a640f790bbf7d8ae82db1e30aefefb08888"
+    },
+    {
+      "path": "org/tukaani/xz/1.10/xz-1.10.pom",
+      "sha256": "ef608b83c3bb6c8e3e6b3beaa38842ba15963b46495e4af91b0746c8b750f3b9"
+    },
+    {
+      "path": "org/xmlunit/xmlunit-core/2.11.0/xmlunit-core-2.11.0.jar",
+      "sha256": "50970e6069c21182689eb44ae9f8193970e080b6f37fc13f22aa4201cca2dfe4"
+    },
+    {
+      "path": "org/xmlunit/xmlunit-core/2.11.0/xmlunit-core-2.11.0.pom",
+      "sha256": "b6ba473c8f8e98baee71963949ec47538f696fdd206289e4962f5eb4ecfe7640"
+    },
+    {
+      "path": "org/xmlunit/xmlunit-parent/2.11.0/xmlunit-parent-2.11.0.pom",
+      "sha256": "2effb33e41b5b0899bf4b7c8889ae20810f80c8aebee1844935758842527a4c2"
+    },
+    {
+      "path": "org/yaml/snakeyaml/2.6/snakeyaml-2.6.jar",
+      "sha256": "c8f7a98e7394adda02f6317249710e4d1b4c7a25aa8c7eace0c2eea52eb8bf85"
+    },
+    {
+      "path": "org/yaml/snakeyaml/2.6/snakeyaml-2.6.pom",
+      "sha256": "2773b0e948964d21e37b0e1dcf39025e627b873e0ce6aa2a47e23c374303e0c4"
+    },
+    {
+      "path": "tools/jackson/core/jackson-core/3.1.4/jackson-core-3.1.4.jar",
+      "sha256": "3bda1cd6eff0a8d47bdfcaeae7c2bd5311d6c8ed494ef5f3e51029bb44aa9bdf"
+    },
+    {
+      "path": "tools/jackson/core/jackson-core/3.1.4/jackson-core-3.1.4.pom",
+      "sha256": "d86a63a4ec4f7af952c18bade5d5cc20f487303d0665b3ed4bc6c0073c734571"
+    },
+    {
+      "path": "tools/jackson/core/jackson-databind/3.1.4/jackson-databind-3.1.4.jar",
+      "sha256": "14034bfdf392b6ebec1b4bb6c1de29d604f0aa97251259a19d5f19af8719bb20"
+    },
+    {
+      "path": "tools/jackson/core/jackson-databind/3.1.4/jackson-databind-3.1.4.pom",
+      "sha256": "057227a07cd44ad153fa87dbbd822a589cc06f5f5d22fb89218901d64b8ceca4"
+    },
+    {
+      "path": "tools/jackson/jackson-base/3.1.4/jackson-base-3.1.4.pom",
+      "sha256": "7d91ab741bc84ec8ea4612308113a404f45dd71b91433985dd2c4c784af05479"
+    },
+    {
+      "path": "tools/jackson/jackson-bom/3.1.4/jackson-bom-3.1.4.pom",
+      "sha256": "2c3b8467259514f24941ec1bd43863c6129045f653ad06a670025aa8481e904e"
+    }
+  ]
+}

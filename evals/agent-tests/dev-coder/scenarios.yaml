@@ -44,6 +44,8 @@ scenarios:
     priority: 2
     status: executable
     executableCase: spring-boot-order-cancellation
+    runtimeCapabilities:
+      - offline-maven-repository
     purpose: Prove that the same coder contract holds across a Java service boundary with persistence and failure-state rules.
     initialState: A Spring Boot service exposes order state but lacks the requested cancellation behavior.
     task: Add cancellation through the existing service and HTTP boundaries with regression coverage.

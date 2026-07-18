@@ -45,6 +45,7 @@ _RUNTIME_CAPABILITIES = frozenset(
         "browser-automation",
         "child-process-inspection",
         "loopback",
+        "offline-maven-repository",
         "offline-node-modules",
     }
 )
@@ -532,6 +533,96 @@ def _stage_offline_project_dependencies(
     return tuple(staged)
 
 
+def _stage_offline_maven_dependencies(
+    batch: Sequence[_RunSpec],
+    repository_root: Path,
+    workspace: Path,
+    home_root: Path,
+    maven_repository: Path | None = None,
+) -> tuple[str, ...]:
+    source_repository = (maven_repository or Path.home() / ".m2" / "repository").resolve()
+    destination_repository = (home_root / ".m2" / "repository").resolve()
+    project_root = (repository_root / "evals" / "projects").resolve()
+    workspace_project_root = (workspace / "evals" / "projects").resolve()
+    staged: list[str] = []
+    for run in batch:
+        selected = set(run.scenario_ids)
+        for scenario in run.suite.scenarios:
+            if str(scenario["id"]) not in selected:
+                continue
+            if "offline-maven-repository" not in scenario.get("runtimeCapabilities", []):
+                continue
+            executable_case = str(scenario["executableCase"])
+            case_path = Path(executable_case)
+            if case_path.is_absolute() or len(case_path.parts) != 1 or case_path.name != executable_case:
+                raise RuntimeError(
+                    f"Offline Maven fixture must be one project directory name: {run.suite.suite_id}:"
+                    f"{scenario['id']}"
+                )
+            relative_manifest = (
+                Path("evals") / "projects" / executable_case / "offline-maven-repository.json"
+            )
+            source_manifest = (repository_root / relative_manifest).resolve()
+            workspace_manifest = (workspace / relative_manifest).resolve()
+            if not source_manifest.is_relative_to(project_root) or not workspace_manifest.is_relative_to(
+                workspace_project_root
+            ):
+                raise RuntimeError(
+                    f"Offline Maven fixture escapes its project root: {run.suite.suite_id}:{scenario['id']}"
+                )
+            if not source_manifest.is_file() or not workspace_manifest.is_file():
+                raise RuntimeError(f"Offline Maven fixture lacks lock evidence: {source_manifest}")
+            if _sha256(source_manifest) != _sha256(workspace_manifest):
+                raise RuntimeError(f"Offline Maven fixture lock evidence changed during staging: {source_manifest}")
+            manifest = json.loads(source_manifest.read_text(encoding="utf-8"))
+            if (
+                manifest.get("schema") != "dev-methodology-offline-maven-repository"
+                or manifest.get("version") != 1
+                or not isinstance(manifest.get("files"), list)
+                or not manifest["files"]
+            ):
+                raise RuntimeError(f"Offline Maven fixture lock evidence is invalid: {source_manifest}")
+            for entry in manifest["files"]:
+                if not isinstance(entry, dict):
+                    raise RuntimeError(f"Offline Maven fixture lock entry is invalid: {source_manifest}")
+                relative_text = str(entry.get("path", ""))
+                relative = Path(relative_text)
+                expected_sha256 = str(entry.get("sha256", ""))
+                if (
+                    relative.is_absolute()
+                    or not relative_text
+                    or relative.as_posix() != relative_text
+                    or ".." in relative.parts
+                    or not re.fullmatch(r"[0-9a-f]{64}", expected_sha256)
+                ):
+                    raise RuntimeError(f"Offline Maven fixture lock entry is unsafe: {source_manifest}")
+                source = (source_repository / relative).resolve()
+                destination = (destination_repository / relative).resolve()
+                if not source.is_relative_to(source_repository) or not destination.is_relative_to(
+                    destination_repository
+                ):
+                    raise RuntimeError(f"Offline Maven fixture lock entry escapes its repository: {relative_text}")
+                if not source.is_file() or source.is_symlink():
+                    raise RuntimeError(f"Pinned offline Maven artifact is unavailable: {source}")
+                observed_sha256 = _sha256(source)
+                if observed_sha256 != expected_sha256:
+                    raise RuntimeError(
+                        f"Pinned offline Maven artifact checksum drift for {relative_text}: "
+                        f"expected {expected_sha256}, observed {observed_sha256}"
+                    )
+                if destination.exists():
+                    if not destination.is_file() or _sha256(destination) != expected_sha256:
+                        raise RuntimeError(f"Conflicting offline Maven artifact destination: {destination}")
+                    continue
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(source, destination)
+            staged.append(relative_manifest.as_posix())
+    if staged:
+        destination_repository.mkdir(parents=True, exist_ok=True)
+        (destination_repository / ".agent-suite-offline").write_text("governed\n", encoding="utf-8")
+    return tuple(staged)
+
+
 def _stage_batch(batch: Sequence[_RunSpec], run_root: Path) -> tuple[Path, Path, tuple[_StagedAgent, ...]]:
     workspace = run_root / "workspace"
     codex_home = run_root / "codex-home"
@@ -547,6 +638,7 @@ def _stage_batch(batch: Sequence[_RunSpec], run_root: Path) -> tuple[Path, Path,
         capture_output=True,
     )
     _stage_offline_project_dependencies(batch, _REPOSITORY_ROOT, workspace)
+    _stage_offline_maven_dependencies(batch, _REPOSITORY_ROOT, workspace, home_root)
     if "browser-automation" in _runtime_capabilities(batch):
         _stage_browser_runtime(_bundled_browser_plugin_root(), codex_home, skill_root)
     auth_source = Path(os.environ.get("CODEX_AUTH_FILE", str(Path.home() / ".codex" / "auth.json")))
@@ -831,6 +923,36 @@ def _preflight_runtime_capabilities(
                 evidence.append(
                     f"{run.suite.suite_id}:{scenario['id']} "
                     f"Node {node_version.stdout.strip()} {completed.stdout.strip()}"
+                )
+    if "offline-maven-repository" in capabilities:
+        for run in batch:
+            selected = set(run.scenario_ids)
+            for scenario in run.suite.scenarios:
+                if str(scenario["id"]) not in selected or "offline-maven-repository" not in scenario.get(
+                    "runtimeCapabilities", []
+                ):
+                    continue
+                project = workspace / "evals" / "projects" / str(scenario["executableCase"])
+                version = subprocess.run(
+                    ["mvn", "--version"],
+                    cwd=project,
+                    env=environment,
+                    check=True,
+                    text=True,
+                    capture_output=True,
+                )
+                completed = subprocess.run(
+                    ["mvn", "-q", "test"],
+                    cwd=project,
+                    env=environment,
+                    check=True,
+                    text=True,
+                    capture_output=True,
+                )
+                version_line = version.stdout.splitlines()[0] if version.stdout else "Maven version unavailable"
+                evidence.append(
+                    f"{run.suite.suite_id}:{scenario['id']} {version_line} offline-test=pass "
+                    f"stdout-bytes={len(completed.stdout.encode('utf-8'))}"
                 )
     if capabilities & {"loopback", "child-process-inspection"}:
         profile = _sandbox_profile_arguments(codex_home, workspace)
@@ -1516,6 +1638,9 @@ def _controlled_environment(
             "GIT_COMMITTER_EMAIL": "agent-eval@example.invalid",
         }
     )
+    offline_maven_repository = home / ".m2" / "repository"
+    if (offline_maven_repository / ".agent-suite-offline").is_file():
+        environment["MAVEN_ARGS"] = f"--offline -Dmaven.repo.local={offline_maven_repository}"
     return environment
 
 

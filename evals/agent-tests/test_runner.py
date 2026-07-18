@@ -207,6 +207,127 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                 ),
             )
 
+    def test_offline_maven_dependencies_are_checksum_staged_into_isolated_home(self) -> None:
+        """A Maven fixture receives only its declared immutable host-cache files."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            repository = root / "repository"
+            workspace = root / "workspace"
+            home = root / "home"
+            maven_repository = root / "host-maven-repository"
+            project = repository / "evals" / "projects" / "fixture"
+            project.mkdir(parents=True)
+            workspace.mkdir()
+            artifact = maven_repository / "example" / "fixture" / "1.0" / "fixture-1.0.jar"
+            artifact.parent.mkdir(parents=True)
+            artifact.write_bytes(b"pinned-maven-artifact")
+            manifest = project / "offline-maven-repository.json"
+            manifest.write_text(
+                json.dumps(
+                    {
+                        "schema": "dev-methodology-offline-maven-repository",
+                        "version": 1,
+                        "files": [
+                            {
+                                "path": "example/fixture/1.0/fixture-1.0.jar",
+                                "sha256": runner._sha256(artifact),
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            workspace_manifest = workspace / "evals" / "projects" / "fixture" / manifest.name
+            workspace_manifest.parent.mkdir(parents=True)
+            workspace_manifest.write_bytes(manifest.read_bytes())
+            suite = self._suite("offline-maven-suite")
+            suite = runner._Suite(
+                suite_id=suite.suite_id,
+                priority=suite.priority,
+                path=suite.path,
+                manifest=suite.manifest,
+                scenarios=(
+                    {
+                        "id": "happy",
+                        "status": "executable",
+                        "executableCase": "fixture",
+                        "runtimeCapabilities": ["offline-maven-repository"],
+                    },
+                ),
+            )
+            batch = (runner._RunSpec(suite=suite, scenario_ids=("happy",)),)
+
+            staged = runner._stage_offline_maven_dependencies(
+                batch,
+                repository,
+                workspace,
+                home,
+                maven_repository,
+            )
+
+            destination = home / ".m2" / "repository" / "example" / "fixture" / "1.0" / "fixture-1.0.jar"
+            self.assertEqual(("evals/projects/fixture/offline-maven-repository.json",), staged)
+            self.assertEqual(b"pinned-maven-artifact", destination.read_bytes())
+            self.assertTrue((home / ".m2" / "repository" / ".agent-suite-offline").is_file())
+
+    def test_offline_maven_staging_rejects_host_cache_drift(self) -> None:
+        """A changed cache file cannot silently enter a governed fixture."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            repository = root / "repository"
+            workspace = root / "workspace"
+            home = root / "home"
+            maven_repository = root / "host-maven-repository"
+            project = repository / "evals" / "projects" / "fixture"
+            project.mkdir(parents=True)
+            workspace.mkdir()
+            artifact = maven_repository / "example" / "fixture" / "1.0" / "fixture-1.0.jar"
+            artifact.parent.mkdir(parents=True)
+            artifact.write_bytes(b"drifted")
+            manifest = project / "offline-maven-repository.json"
+            manifest.write_text(
+                json.dumps(
+                    {
+                        "schema": "dev-methodology-offline-maven-repository",
+                        "version": 1,
+                        "files": [
+                            {
+                                "path": "example/fixture/1.0/fixture-1.0.jar",
+                                "sha256": "0" * 64,
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            workspace_manifest = workspace / "evals" / "projects" / "fixture" / manifest.name
+            workspace_manifest.parent.mkdir(parents=True)
+            workspace_manifest.write_bytes(manifest.read_bytes())
+            suite = self._suite("offline-maven-suite")
+            suite = runner._Suite(
+                suite_id=suite.suite_id,
+                priority=suite.priority,
+                path=suite.path,
+                manifest=suite.manifest,
+                scenarios=(
+                    {
+                        "id": "happy",
+                        "status": "executable",
+                        "executableCase": "fixture",
+                        "runtimeCapabilities": ["offline-maven-repository"],
+                    },
+                ),
+            )
+
+            with self.assertRaisesRegex(RuntimeError, "checksum drift"):
+                runner._stage_offline_maven_dependencies(
+                    (runner._RunSpec(suite=suite, scenario_ids=("happy",)),),
+                    repository,
+                    workspace,
+                    home,
+                    maven_repository,
+                )
+
     def test_capability_arguments_use_local_only_profile_and_in_app_browser(self) -> None:
         """Local capabilities use the managed proxy and never select an external browser."""
         with tempfile.TemporaryDirectory() as temporary:
@@ -851,6 +972,28 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         self.assertEqual(
             ["/tmp/python/bin", "/tmp/runtime/bin"],
             environment["PATH"].split(os.pathsep)[:2],
+        )
+
+    def test_controlled_environment_forces_staged_maven_repository_offline(self) -> None:
+        """Targets cannot bypass the isolated repository or reach Maven Central."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            home = root / "home"
+            repository = home / ".m2" / "repository"
+            repository.mkdir(parents=True)
+            (repository / ".agent-suite-offline").write_text("governed\n", encoding="utf-8")
+
+            environment = runner._controlled_environment(
+                home,
+                root / "codex",
+                root / "tmp",
+                Path("/tmp/runtime/bin/node"),
+                Path("/tmp/python/bin/python3.11"),
+            )
+
+        self.assertEqual(
+            f"--offline -Dmaven.repo.local={repository}",
+            environment["MAVEN_ARGS"],
         )
 
     def test_timeout_retains_output_and_stops_the_process_group(self) -> None:
