@@ -1,0 +1,106 @@
+schema: project
+schema_version: 1
+current_understanding:
+  summary: Invalid synthetic configuration.
+  development_stage: Proposed.
+  setup_need: Validate required capabilities.
+authoritative_sources:
+  readme_files:
+    - path: README.md
+      evidence: The proposal is intentionally invalid.
+  agents_files: []
+  package_and_build_files:
+    - path: proposed-role.yaml
+      evidence: The mutating role lacks agent-claim.
+  source_roots: []
+  test_roots: []
+  documentation:
+    - path: TASK.md
+      evidence: Validation authority.
+project_scope_and_boundaries:
+  repository_boundary: This synthetic fixture.
+  product_or_service_boundary: Configuration validation only.
+  private_data_boundary: Synthetic data only.
+  sibling_repositories: []
+project_taxonomy:
+  family: Configuration fixture.
+  primary_runtime: SyntheticFramework.
+  application_tiers:
+    - name: Service
+      paths: [service/**]
+      stacks: [SyntheticFramework]
+      notes: Requires unavailable support.
+  documentation_surfaces: []
+root_agents_reference:
+  file: AGENTS.md
+  purpose: Proposed routing.
+  required_content: [SyntheticFramework routing]
+technology_skill_detection:
+  owner: Project Agent Setup.
+  registry: Installed detect-technology-skills registry.
+  runtime_catalog_source: available-skills.txt
+  selection_policy: Source-backed setup-time detection.
+  required_load_failure: BLOCKED
+  missing_variant_policy: Record NO_VARIANT only when no required skill exists.
+  required_but_unavailable_policy: BLOCKED
+  runtime_policy: Ordinary agents use configured folder skills.
+claude_bridge_files:
+  enabled: false
+  root_file: Not applicable.
+  import_target: Not applicable.
+  nested_files: []
+  rule: No bridge is proposed.
+role_agent_set:
+  - role: Synthetic Mutator
+    purpose: Mutate the synthetic service.
+    owns: [service/**]
+    hands_off: []
+    skills: [careful-coding]
+    conditional_skills: []
+    completion_checks: [Not yet identified]
+technology_skill_loadouts:
+  - scope: Service
+    pathPattern: service/**
+    skills: [unavailable-framework]
+    sourceEvidence:
+      - skill: unavailable-framework
+        runtimeAvailability: UNAVAILABLE
+        evidence: [proposed-role.yaml]
+    missingRequiredSkills: []
+    exclusiveConflicts: []
+    rejectedCandidates: []
+    status: READY
+    required_load_failure: BLOCKED
+    fallback: Not applicable.
+    local_rules_source: Not yet identified.
+    notes: The required skill is absent from available-skills.txt.
+folder_route_precedence: Most-specific matching path pattern wins.
+folder_routing:
+  - pattern: service/**
+    tier_or_workflow: Service
+    primary_role: Synthetic Mutator
+    required_skills: [unavailable-framework]
+    source_evidence:
+      - path: proposed-role.yaml
+        fact: Proposed mutating role and required framework.
+    verification_commands: [Not yet identified]
+    nested_agents_file_needed: false
+    nested_agents_file_path: Not applicable.
+nested_agents_files: []
+documentation_and_file_contracts:
+  - path: PROJECT.yaml
+    purpose: Proposed configuration.
+validation_plan:
+  commands: []
+  technology_detection_checks: [Confirm required unavailable skills remain BLOCKED.]
+  privacy_checks: [Confirm the fixture remains synthetic.]
+  customer_safe_example_checks: [Confirm no private material exists.]
+customer_safe_example_shape:
+  required: true
+  guidance: Keep the fixture fictitious.
+  forbidden_material: [Private data, Customer data, Secrets]
+proprietary_validation_notes:
+  allowed_only_inside_private_project: true
+  notes: [No proprietary notes exist.]
+open_questions: []
+maintenance_notes: [Do not accept invalid routing.]

@@ -1,0 +1,8 @@
+schema: conceptual-agent-definition
+filename: synthetic-mutator.role.yaml
+name: Synthetic Mutator
+description: Mutates a synthetic service.
+repositoryMutation: required
+skills:
+  - careful-coding
+conditionalSkills: []

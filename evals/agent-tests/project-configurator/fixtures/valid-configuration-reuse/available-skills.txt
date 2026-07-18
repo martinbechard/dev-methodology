@@ -1,0 +1,6 @@
+agent-claim
+create-project-configuration
+detect-technology-skills
+development-methodology
+documentation-page-verify
+python

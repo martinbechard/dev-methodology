@@ -1,0 +1,128 @@
+schema: project
+schema_version: 1
+current_understanding:
+  summary: Parcel Worker processes synthetic parcel events.
+  development_stage: Maintained fixture.
+  setup_need: Preserve deterministic Python routing after a folder move.
+authoritative_sources:
+  readme_files:
+    - path: README.md
+      evidence: The worker source directory moved from worker-old to worker.
+  agents_files:
+    - path: AGENTS.md
+      evidence: Root guidance routes the worker subtree.
+  package_and_build_files:
+    - path: worker/main.py
+      evidence: Python source owns the worker behavior.
+  source_roots:
+    - path: worker
+      evidence: Current worker source root.
+  test_roots:
+    - path: worker/test_main.py
+      evidence: Worker verification coverage.
+  documentation:
+    - path: TASK.md
+      evidence: Reconciliation authority and allowed outputs.
+project_scope_and_boundaries:
+  repository_boundary: This synthetic Git repository.
+  product_or_service_boundary: One Python event worker.
+  private_data_boundary: Synthetic data only.
+  sibling_repositories: []
+project_taxonomy:
+  family: Worker service.
+  primary_runtime: Python 3.11.
+  application_tiers:
+    - name: Worker
+      paths: [worker/**]
+      stacks: [Python]
+      notes: Owns event processing.
+  documentation_surfaces:
+    - path: AGENTS.md
+      purpose: Root operational routing.
+root_agents_reference:
+  file: AGENTS.md
+  purpose: Route root and worker activity.
+  required_content: [Repository scope, Python worker routing, verification command]
+technology_skill_detection:
+  owner: Project Agent Setup.
+  registry: Installed detect-technology-skills registry.
+  runtime_catalog_source: available-skills.txt
+  selection_policy: Source-backed setup-time detection.
+  required_load_failure: BLOCKED
+  missing_variant_policy: Record NO_VARIANT with general model training.
+  required_but_unavailable_policy: BLOCKED
+  runtime_policy: Ordinary agents use configured folder skills.
+claude_bridge_files:
+  enabled: true
+  root_file: CLAUDE.md
+  import_target: AGENTS.md
+  nested_files:
+    - path: worker-old/CLAUDE.md
+      import_target: worker-old/AGENTS.md
+  rule: Keep bridges thin.
+role_agent_set:
+  - role: Project Configurator
+    purpose: Maintain project configuration and routing.
+    owns: [PROJECT.yaml, AGENTS.md routing]
+    hands_off: [Product code changes]
+    skills: [agent-claim, detect-technology-skills, create-project-configuration, development-methodology, documentation-page-verify]
+    conditional_skills: []
+    completion_checks: [python3 -m unittest worker/test_main.py]
+technology_skill_loadouts:
+  - scope: Worker
+    pathPattern: worker-old/**
+    skills: [python]
+    sourceEvidence:
+      - skill: python
+        runtimeAvailability: AVAILABLE
+        evidence: [worker/main.py]
+    missingRequiredSkills: []
+    exclusiveConflicts: []
+    rejectedCandidates: []
+    status: READY
+    required_load_failure: BLOCKED
+    fallback: Not applicable.
+    local_rules_source: worker-old/AGENTS.md
+    notes: Python source and tests remain authoritative.
+folder_route_precedence: Most-specific matching path pattern wins.
+folder_routing:
+  - pattern: worker-old/**
+    tier_or_workflow: Worker
+    primary_role: Development Agent
+    required_skills: [python]
+    source_evidence:
+      - path: worker/main.py
+        fact: Python worker source.
+    verification_commands: [python3 -m unittest worker/test_main.py]
+    nested_agents_file_needed: true
+    nested_agents_file_path: worker-old/AGENTS.md
+nested_agents_files:
+  - path: worker-old/AGENTS.md
+    needed: true
+    reason: Worker-specific Python guidance and tests.
+    claude_bridge_path: worker-old/CLAUDE.md
+documentation_and_file_contracts:
+  - path: AGENTS.md
+    purpose: Root operational routing.
+  - path: PROJECT.yaml
+    purpose: Project-wide setup and validation artifact.
+  - path: CLAUDE.md
+    purpose: Thin root Claude bridge.
+  - path: worker-old/AGENTS.md
+    purpose: Worker operational guidance.
+validation_plan:
+  commands:
+    - command: python3 -m unittest worker/test_main.py
+      proves: Worker behavior remains unchanged.
+  technology_detection_checks: [Confirm worker selects the available python skill.]
+  privacy_checks: [Confirm all fixture data remains synthetic.]
+  customer_safe_example_checks: [Confirm names and behavior remain fictitious.]
+customer_safe_example_shape:
+  required: true
+  guidance: Keep the fixture fictitious.
+  forbidden_material: [Private project names, Customer names, Secrets]
+proprietary_validation_notes:
+  allowed_only_inside_private_project: true
+  notes: [No proprietary notes exist.]
+open_questions: []
+maintenance_notes: [Keep PROJECT.yaml and harness guidance paths aligned with worker moves.]
