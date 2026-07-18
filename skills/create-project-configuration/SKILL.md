@@ -27,6 +27,8 @@ Treat PROJECT.yaml as an intermediate, reviewable intent log between repository 
 
 Generic repository-mutation behavior belongs to conceptual agent definitions and the agent-claim skill. Do not reproduce that procedure in PROJECT.yaml or AGENTS.md. Record a coordination_overrides mapping only when the target repository has source-backed nondefault claim-registry, branch, worktree, exclusive-resource, or integration requirements; omit it when the bundle defaults apply.
 
+Default project initialization still owns one operational-state prerequisite. Add the exact anchored /.worktrees/ entry to the root .gitignore before parallel writers begin. Describe .worktrees in the root AGENTS.md as ignored linked-checkout state directly beneath the primary worktree, and state that agents must never derive it from another linked checkout. This is a project source-boundary invariant rather than a copy of the claim procedure. Do not record a machine-specific absolute worktree path in PROJECT.yaml or AGENTS.md; agent-claim derives and enforces the absolute target from Git metadata.
+
 ## Workflow
 
 1. Inspect the target repository before writing. Inspect existing AGENTS.md artifacts, then read README files, package metadata, build configuration, source roots, tests, docs, wiki pages, task-relevant procedures, backlog files, and current worktree status.
@@ -39,14 +41,15 @@ Generic repository-mutation behavior belongs to conceptual agent definitions and
 8. Decide which subfolders need nested AGENTS.md guidance and record every decision in the root PROJECT.yaml. Use only real repository-relative paths or valid globs in loadouts and folder routes, never prose labels. Prefer non-overlapping routes. When overlap is unavoidable, record a deterministic most-specific-pattern-wins rule and verify that generated AGENTS.md guidance preserves it.
 9. Verify that every selected conceptual agent definition declares repositoryMutation and that the installed or bundled native definition can load agent-claim whenever that policy is required or conditional. Treat a missing conceptual agent definition, skill, or command as BLOCKED instead of compensating with copied project instructions.
 10. Record only source-backed project-specific coordination_overrides. Omit the mapping when the bundle defaults apply.
-11. Copy the template once to the project root and replace every TODO with source-backed project content.
-12. When an existing PROJECT.yaml contains maintainer edits, treat them as requested configuration intent. Reconcile each edit with current source evidence and bundle constraints, preserve valid corrections, and record a blocking conflict or open question instead of silently replacing an unsupported edit.
-13. Keep proprietary project validation notes inside the target project repository. Do not copy private project names, internal implementation details, customer data, secrets, or non-public workflows into distributable examples.
-14. Use fictitious names, synthetic paths, and generic behavior for customer-safe examples.
-15. After the configuration is validated, run scripts/render-agents-technology-skills.py with PROJECT.yaml and create or update root and nested AGENTS.md files. Keep inline-tech-skills at its true default so each detected technology skill is statically embedded under its applicable folder route. Use false only when the target runtime must load technology skills dynamically.
-16. When Claude Code is used, create thin CLAUDE.md bridge files that import the colocated AGENTS.md without copying its rules.
-17. Say Not yet identified for related sources, tests, commands, or conceptual agent definitions that do not exist yet.
-18. Keep the artifact steady-state. Do not describe it as new, revised, or enhanced unless the document is explicitly a change plan.
+11. Ensure the root .gitignore contains the exact anchored /.worktrees/ entry before rendering project guidance.
+12. Copy the template once to the project root and replace every TODO with source-backed project content.
+13. When an existing PROJECT.yaml contains maintainer edits, treat them as requested configuration intent. Reconcile each edit with current source evidence and bundle constraints, preserve valid corrections, and record a blocking conflict or open question instead of silently replacing an unsupported edit.
+14. Keep proprietary project validation notes inside the target project repository. Do not copy private project names, internal implementation details, customer data, secrets, or non-public workflows into distributable examples.
+15. Use fictitious names, synthetic paths, and generic behavior for customer-safe examples.
+16. After the configuration is validated, run scripts/render-agents-technology-skills.py with PROJECT.yaml and create or update root and nested AGENTS.md files. Keep inline-tech-skills at its true default so each detected technology skill is statically embedded under its applicable folder route. Use false only when the target runtime must load technology skills dynamically. Include the concise .worktrees operational-state boundary in the root guidance without copying the agent-claim procedure.
+17. When Claude Code is used, create thin CLAUDE.md bridge files that import the colocated AGENTS.md without copying its rules.
+18. Say Not yet identified for related sources, tests, commands, or conceptual agent definitions that do not exist yet.
+19. Keep the artifact steady-state. Do not describe it as new, revised, or enhanced unless the document is explicitly a change plan.
 
 ## Verification
 
@@ -59,12 +62,14 @@ Before finishing:
 5. Run setup-time detection for representative folders in every declared tier. Confirm each result matches the planned skillset, every selected skill is exposed by the target runtime, every required skill is available, and every no-variant scope explicitly falls back to general model training.
 6. Confirm AGENTS.md contains the complete inlined skill content for each detected folder skillset by default, or unconditional folder skill-loading instructions when inline-tech-skills is false, or an explicit general-model-training fallback. Confirm it does not tell ordinary agents to rerun detection and matches PROJECT.yaml. Confirm every route is a real path or valid glob, conflicting broad fallbacks were split into non-overlapping scopes where possible, and any remaining overlap uses the same documented precedence in PROJECT.yaml and generated guidance.
 7. Confirm every selected conceptual agent definition's repositoryMutation declaration agrees with its definition-owned, conditional, or absent agent-claim skillset. Confirm the required conceptual definitions, skill, and atomic command are available to the target runtime, and confirm generic claim procedure text was not copied into PROJECT.yaml or AGENTS.md.
-8. Confirm the project contains exactly one PROJECT.yaml at its root and that it records every nested AGENTS.md placement decision.
-9. Confirm every planned AGENTS.md exists and matches the validated routing plan.
-10. When Claude Code is used, confirm every applicable AGENTS.md has a thin colocated CLAUDE.md import and that no guidance is duplicated between them.
-11. Confirm maintainer edits to PROJECT.yaml were preserved when valid or reported with the evidence and constraint that blocks them.
-12. Confirm customer-shareable examples are fictitious and proprietary examples remain only inside their target repositories.
-13. Run project wiki status and lint when docs/wiki exists and the plan references wiki pages.
-14. Run the target project build when code, imports, generated artifacts, or project metadata changed.
+8. Confirm the root .gitignore contains the exact /.worktrees/ line and Git reports a .worktrees probe as ignored.
+9. Confirm the root AGENTS.md identifies .worktrees as ignored primary-root operational state, prohibits deriving it from a linked checkout, and contains no machine-specific absolute worktree path.
+10. Confirm the project contains exactly one PROJECT.yaml at its root and that it records every nested AGENTS.md placement decision.
+11. Confirm every planned AGENTS.md exists and matches the validated routing plan.
+12. When Claude Code is used, confirm every applicable AGENTS.md has a thin colocated CLAUDE.md import and that no guidance is duplicated between them.
+13. Confirm maintainer edits to PROJECT.yaml were preserved when valid or reported with the evidence and constraint that blocks them.
+14. Confirm customer-shareable examples are fictitious and proprietary examples remain only inside their target repositories.
+15. Run project wiki status and lint when docs/wiki exists and the plan references wiki pages.
+16. Run the target project build when code, imports, generated artifacts, or project metadata changed.
 
 Do not send private, proprietary, sensitive, PII, or company-internal material to an external service unless the user explicitly authorizes it.

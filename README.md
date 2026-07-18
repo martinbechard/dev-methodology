@@ -49,6 +49,7 @@ Project-specific evaluation skills may freeze inputs and compare completed candi
 - agents/roles contains conceptual agent definition sources grouped by Dev Activities, Wiki Activities, Project Setup, and Methodology Maintenance.
 - generated/adapters contains ready-to-copy native agent definitions and agent-generation-manifest.json. Codex, Claude Code, Gemini CLI, and Junie CLI definitions are generated from the same conceptual sources.
 - backlog contains the repository's typed active work, user-review queue, holding state, and outcome archives. It is available only from the primary worktree.
+- .worktrees contains ignored linked agent checkouts beneath the primary worktree. It is operational state rather than distributable project source.
 - design/generated/technology-skill-detection-registry.js exposes the same detection registry for documentation and the future interactive agent-skill explorer.
 - scripts/openai_metadata.py refreshes derived Codex interface fields from SKILL.md while preserving hand-authored policy and dependencies.
 - scripts contains regression tests for installer behavior and bundle content.
@@ -113,7 +114,8 @@ python3 scripts/build-skill-docs.py --check
 Every modifying agent uses agent-claim before changing repository files or exclusive runtime state. Claim acquisition is atomic and repository-global across linked Git worktrees.
 
 - The first independent writer may claim a clean primary worktree.
-- A later non-overlapping writer receives a dedicated branch and linked worktree.
+- A later non-overlapping writer receives a dedicated branch and a linked checkout under the primary worktree's .worktrees directory, using the claim id as its single directory name.
+- The claim tool derives the primary worktree from Git metadata, rejects recursive or caller-selected locations, and refuses isolation until the canonical directory is ignored.
 - Every linked agent worktree uses worktree-specific sparse checkout to omit the repository-root backlog directory; backlog claims wait for the primary worktree.
 - Exact files, directory trees, repository-wide ownership, and exclusive resources use distinct scope forms.
 - A claim can atomically extend its narrow scope as new files or resources become necessary.
@@ -122,6 +124,14 @@ Every modifying agent uses agent-claim before changing repository files or exclu
 - A modifying claim is released only after verification, commit or explicit no-change, clean worktree status, and runtime-resource cleanup or handoff.
 
 Separate worktrees may commit to their unique branches without a global commit resource. Integration uses a target-specific resource such as merge:integration:main only while updating that shared target branch.
+
+Project setup keeps the canonical checkout root out of repository status with this anchored ignore entry:
+
+```gitignore
+/.worktrees/
+```
+
+After a released isolated contribution is preserved on its branch or integrated into its target, the orchestration owner removes the clean linked checkout from the primary worktree and prunes stale Git worktree metadata. Double-force Git clean is prohibited while linked checkouts exist because it can remove ignored nested repositories.
 
 The live registry remains authoritative. Coordination outcomes also append to a repository-global event journal under the Git common directory. The default maintenance policy keeps today and yesterday as hot UTC JSON Lines files, archives older complete days losslessly, and writes compact daily summaries. Native reports use only that journal and the live registry; they do not parse agent transcripts.
 

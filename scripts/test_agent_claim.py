@@ -29,6 +29,7 @@ class AgentClaimTests(unittest.TestCase):
         (self.repository / "src").mkdir()
         (self.repository / "docs").mkdir()
         (self.repository / "backlog" / "feature-backlog").mkdir(parents=True)
+        (self.repository / ".gitignore").write_text("/.worktrees/\n", encoding="utf-8")
         (self.repository / "README.md").write_text("baseline\n", encoding="utf-8")
         (self.repository / "src" / "one.py").write_text("one\n", encoding="utf-8")
         (self.repository / "docs" / "guide.md").write_text("guide\n", encoding="utf-8")
@@ -88,12 +89,9 @@ class AgentClaimTests(unittest.TestCase):
         ]
 
     def isolated_arguments(self, claim_id: str, path_name: str | None = None) -> tuple[list[str], Path]:
-        """Build unique branch and worktree arguments for a later independent writer."""
-        isolated_path = Path(self.temporary_directory.name) / (path_name or f"worktree-{claim_id}")
-        return (
-            ["--branch", f"codex/{claim_id}", "--worktree-path", str(isolated_path)],
-            isolated_path,
-        )
+        """Build a unique branch and the canonical worktree expected for a later writer."""
+        isolated_path = (self.repository / ".worktrees" / (path_name or claim_id)).resolve()
+        return ["--branch", f"codex/{claim_id}"], isolated_path
 
     def output(self, completed: subprocess.CompletedProcess[str]) -> dict[str, object]:
         """Decode one structured command result."""
@@ -169,11 +167,105 @@ class AgentClaimTests(unittest.TestCase):
 
         self.assertEqual(0, first.returncode, first.stderr)
         self.assertEqual(0, second.returncode, second.stderr)
-        self.assertEqual("ISOLATE", self.output(second)["outcome"])
+        result = self.output(second)
+        self.assertEqual("ISOLATE", result["outcome"])
+        self.assertEqual(str(isolated_path), result["target"]["worktree"])
         self.assertTrue((isolated_path / ".git").is_file())
         self.assertTrue((isolated_path / "src" / "one.py").is_file())
         self.assertFalse((isolated_path / "backlog").exists())
         self.assertTrue((self.repository / "backlog" / "feature-backlog" / "queued.md").is_file())
+        self.assertEqual("", self.git("status", "--porcelain").stdout)
+
+    def test_isolation_required_reports_the_canonical_worktree_target(self) -> None:
+        self.claim(*self.acquire_arguments("first"), "--file", "README.md")
+
+        completed = self.claim(*self.acquire_arguments("second"), "--file", "src/one.py")
+
+        self.assertEqual(4, completed.returncode)
+        result = self.output(completed)
+        self.assertEqual("ISOLATE_REQUIRED", result["outcome"])
+        self.assertEqual(str((self.repository / ".worktrees").resolve()), result["worktree_root"])
+        self.assertEqual(
+            str((self.repository / ".worktrees" / "second").resolve()),
+            result["suggested_worktree"],
+        )
+
+    def test_explicit_worktree_path_must_match_the_canonical_target(self) -> None:
+        self.claim(*self.acquire_arguments("first"), "--file", "README.md")
+        outside_path = Path(self.temporary_directory.name) / "outside"
+
+        completed = self.claim(
+            *self.acquire_arguments("second"),
+            "--file",
+            "src/one.py",
+            "--branch",
+            "codex/second",
+            "--worktree-path",
+            str(outside_path),
+        )
+
+        self.assertEqual(1, completed.returncode)
+        result = self.output(completed)
+        self.assertEqual("INVALID_WORKTREE_PATH", result["outcome"])
+        self.assertEqual(
+            str((self.repository / ".worktrees" / "second").resolve()),
+            result["expected_worktree"],
+        )
+        self.assertFalse(outside_path.exists())
+
+    def test_compatible_caller_may_supply_the_exact_canonical_worktree_path(self) -> None:
+        self.claim(*self.acquire_arguments("first"), "--file", "README.md")
+        canonical_path = (self.repository / ".worktrees" / "second").resolve()
+
+        completed = self.claim(
+            *self.acquire_arguments("second"),
+            "--file",
+            "src/one.py",
+            "--branch",
+            "codex/second",
+            "--worktree-path",
+            str(canonical_path),
+        )
+
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        self.assertEqual(str(canonical_path), self.output(completed)["target"]["worktree"])
+
+    def test_isolation_requires_the_canonical_root_to_be_ignored(self) -> None:
+        (self.repository / ".gitignore").write_text("", encoding="utf-8")
+        self.git("add", ".gitignore")
+        self.git("commit", "-m", "remove worktree ignore")
+        self.claim(*self.acquire_arguments("first"), "--file", "README.md")
+
+        completed = self.claim(
+            *self.acquire_arguments("second"),
+            "--file",
+            "src/one.py",
+            "--branch",
+            "codex/second",
+        )
+
+        self.assertEqual(1, completed.returncode)
+        result = self.output(completed)
+        self.assertEqual("WORKTREE_ROOT_NOT_IGNORED", result["outcome"])
+        self.assertEqual("/.worktrees/", result["required_ignore_pattern"])
+        self.assertFalse((self.repository / ".worktrees").exists())
+
+    def test_claim_id_cannot_create_a_recursive_worktree_path(self) -> None:
+        self.claim(*self.acquire_arguments("first"), "--file", "README.md")
+
+        completed = self.claim(
+            *self.acquire_arguments("../recursive"),
+            "--file",
+            "src/one.py",
+            "--branch",
+            "codex/recursive",
+        )
+
+        self.assertEqual(1, completed.returncode)
+        result = self.output(completed)
+        self.assertEqual("INVALID_IDENTIFIER", result["outcome"])
+        self.assertEqual("claim_id", result["field"])
+        self.assertFalse((self.repository / "recursive").exists())
 
     def test_backlog_scope_waits_for_primary_instead_of_creating_worktree(self) -> None:
         self.claim(*self.acquire_arguments("first"), "--file", "README.md")
@@ -387,7 +479,7 @@ class AgentClaimTests(unittest.TestCase):
         self.claim(*self.acquire_arguments("first"), "--file", "README.md")
         isolated, isolated_path = self.isolated_arguments("second")
         self.claim(*self.acquire_arguments("second"), "--file", "src/one.py", *isolated)
-        third_arguments, _third_path = self.isolated_arguments("third")
+        third_arguments, third_path = self.isolated_arguments("third")
         third = self.claim(
             *self.acquire_arguments("third"),
             "--file",
@@ -399,6 +491,8 @@ class AgentClaimTests(unittest.TestCase):
 
         self.assertEqual(0, third.returncode, third.stderr)
         self.assertEqual(0, heartbeat.returncode, heartbeat.stderr)
+        self.assertTrue(third_path.is_dir())
+        self.assertFalse((isolated_path / ".worktrees" / "third").exists())
         events = self.journal_events()
         self.assertEqual(["first", "second", "third", "second"], [event["claim_id"] for event in events])
         self.assertEqual(1, len(list(self.hot_directory().glob("*.jsonl"))))
