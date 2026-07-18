@@ -3724,6 +3724,7 @@ class BundleContentTests(unittest.TestCase):
             / "agent-suite-supervision"
             / "SKILL.md"
         ).read_text(encoding="utf-8")
+        self.assertIn("conditionally pending the runner post-audit", supervision)
         self.assertIn("exactly one authoritative scenario catalog named scenarios.yaml", scenario_design)
         self.assertIn("authoritative scenarios.yaml catalog", supervision)
         self.assertIn("Send agent-definition", supervision)
