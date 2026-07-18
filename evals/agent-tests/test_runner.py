@@ -596,8 +596,8 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                         "type": "custom_tool_call",
                         "name": "exec",
                         "input": (
-                            "await tools.mcp__node_repl__js({code: `"
-                            "await agent.browsers.get('iab');`});"
+                            "const r = await tools.mcp__node_repl__js({\"code\":\""
+                            "await agent.browsers.get(\\\"iab\\\");\"});"
                         ),
                     },
                 },

@@ -1572,7 +1572,7 @@ def _audit_browser_activity(
         if not arguments:
             raise RuntimeError(f"Browser target did not invoke Node REPL for {suite_scenario[0]}:{suite_scenario[1]}")
         call_count += len(arguments)
-        activity = "\n".join(arguments)
+        activity = "\n".join(arguments).replace('\\"', '"').replace("\\'", "'")
         external_backend = re.search(r"browsers\.get\(\s*['\"]extension['\"]\s*\)|globalThis\.chrome", activity)
         destinations = re.findall(r"https?://[^\s'\"\\]+", activity)
         external_destination = any(
