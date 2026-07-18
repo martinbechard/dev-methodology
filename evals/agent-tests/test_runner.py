@@ -105,6 +105,18 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         self.assertIn('"fixtureRoot": "/workspace/.agent-suite-fixtures/one"', prompt)
         self.assertIn("never under /tmp or /private/tmp", prompt)
 
+    def test_project_bootstrapper_judge_defers_runner_owned_audits(self) -> None:
+        """Bootstrapper semantic judgment cannot fail only on evidence owned by the outer runner."""
+        contract = (
+            _RUNNER_PATH.parent
+            / "project-bootstrapper"
+            / "skills"
+            / "project-bootstrapper-suite-contract"
+            / "SKILL.md"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn("Do not return BLOCKED solely because runner-owned", contract)
+
     def test_runtime_uses_role_aware_v1_and_bounds_concurrency(self) -> None:
         """The live runtime must expose role selection and use the declared batch ceiling."""
         arguments = runner._multi_agent_runtime_arguments(10)
