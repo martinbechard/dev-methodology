@@ -28,6 +28,7 @@ import tomllib
 from collections.abc import Callable, Iterator, Sequence
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit
 
 import yaml
 
@@ -333,7 +334,12 @@ def _bundled_browser_plugin_root() -> Path:
     raise RuntimeError("The bundled in-app Browser runtime is unavailable")
 
 
-def _stage_browser_runtime(plugin_root: Path, codex_home: Path, skill_root: Path) -> Path:
+def _stage_browser_runtime(
+    plugin_root: Path,
+    codex_home: Path,
+    skill_root: Path,
+    app_resources: Path | None = None,
+) -> Path:
     runtime_root = codex_home / "browser-runtime"
     shutil.copytree(plugin_root, runtime_root)
     source_skill = runtime_root / "skills" / "control-in-app-browser"
@@ -344,6 +350,40 @@ def _stage_browser_runtime(plugin_root: Path, codex_home: Path, skill_root: Path
         skill_path.read_text(encoding="utf-8").replace("<plugin root>", str(runtime_root)),
         encoding="utf-8",
     )
+    resources = app_resources or Path("/Applications/ChatGPT.app/Contents/Resources")
+    executables = {
+        "node_repl": resources / "cua_node" / "bin" / "node_repl",
+        "node": resources / "cua_node" / "bin" / "node",
+        "codex": resources / "codex",
+    }
+    unavailable = [str(path) for path in executables.values() if not path.is_file()]
+    if unavailable:
+        raise RuntimeError(f"The in-app Browser runtime lacks required executables: {', '.join(unavailable)}")
+    browser_client = runtime_root / "scripts" / "browser-client.mjs"
+    config = {
+        "BROWSER_USE_AVAILABLE_BACKENDS": "iab",
+        "BROWSER_USE_CODEX_APP_BUILD_FLAVOR": "prod",
+        "BROWSER_USE_CODEX_APP_VERSION": plugin_root.name,
+        "CODEX_CLI_PATH": str(executables["codex"]),
+        "CODEX_HOME": str(codex_home),
+        "NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER": (
+            "Control only the isolated in-app browser for the current local synthetic evaluation."
+        ),
+        "NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS": "1000",
+        "NODE_REPL_NODE_MODULE_DIRS": str(resources / "cua_node" / "lib" / "node_modules"),
+        "NODE_REPL_NODE_PATH": str(executables["node"]),
+        "NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S": _sha256(browser_client),
+        "NODE_REPL_TRUSTED_CODE_PATHS": str(codex_home),
+    }
+    config_lines = [
+        "[mcp_servers.node_repl]",
+        f"command = {json.dumps(str(executables['node_repl']))}",
+        "",
+        "[mcp_servers.node_repl.env]",
+        *(f"{name} = {json.dumps(value)}" for name, value in config.items()),
+        "",
+    ]
+    (codex_home / "config.toml").write_text("\n".join(config_lines), encoding="utf-8")
     return runtime_root
 
 
@@ -1251,6 +1291,89 @@ def _retain_sessions(codex_home: Path, destination: Path) -> int:
     return count
 
 
+def _audit_browser_activity(
+    codex_home: Path,
+    batch: Sequence[_RunSpec],
+    identity: dict[str, Any],
+) -> dict[str, int]:
+    browser_scenarios = {
+        (run.suite.suite_id, scenario_id)
+        for run in batch
+        for scenario_id in run.scenario_ids
+        for scenario in run.suite.scenarios
+        if str(scenario["id"]) == scenario_id and "browser-automation" in scenario.get("runtimeCapabilities", [])
+    }
+    if not browser_scenarios:
+        return {"targetSessions": 0, "nodeReplCalls": 0}
+    bindings = {
+        (str(binding.get("suite", "")), str(binding.get("scenario", ""))): str(binding.get("sessionId", ""))
+        for binding in identity.get("scenarioBindings", [])
+        if binding.get("kind") == "target"
+    }
+    missing = sorted(browser_scenarios - set(bindings))
+    if missing:
+        raise RuntimeError(f"Browser target session binding is missing for {missing}")
+    events_by_session: dict[str, list[dict[str, Any]]] = {}
+    for rollout in codex_home.glob("**/rollout-*.jsonl"):
+        events: list[dict[str, Any]] = []
+        for line in rollout.read_text(encoding="utf-8", errors="replace").splitlines():
+            try:
+                event = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if isinstance(event, dict):
+                events.append(event)
+        metadata = next(
+            (event.get("payload", {}) for event in events if event.get("type") == "session_meta"),
+            {},
+        )
+        if isinstance(metadata, dict) and metadata.get("id"):
+            events_by_session[str(metadata["id"])] = events
+    call_count = 0
+    for suite_scenario in sorted(browser_scenarios):
+        session_id = bindings[suite_scenario]
+        events = events_by_session.get(session_id, [])
+        arguments: list[str] = []
+        for event in events:
+            if event.get("type") != "response_item":
+                continue
+            payload = event.get("payload", {})
+            if not isinstance(payload, dict) or payload.get("name") != "mcp__node_repl__js":
+                continue
+            raw_arguments = payload.get("arguments", payload.get("input", ""))
+            arguments.append(raw_arguments if isinstance(raw_arguments, str) else json.dumps(raw_arguments))
+        if not arguments:
+            raise RuntimeError(f"Browser target did not invoke Node REPL for {suite_scenario[0]}:{suite_scenario[1]}")
+        call_count += len(arguments)
+        activity = "\n".join(arguments)
+        external_backend = re.search(r"browsers\.get\(\s*['\"]extension['\"]\s*\)|globalThis\.chrome", activity)
+        destinations = re.findall(r"https?://[^\s'\"\\]+", activity)
+        external_destination = any(
+            (urlsplit(destination).hostname or "").lower() not in {"localhost", "127.0.0.1"}
+            for destination in destinations
+        )
+        if external_backend or external_destination:
+            raise RuntimeError(
+                f"Browser target selected an external browser or destination for {suite_scenario[0]}:"
+                f"{suite_scenario[1]}"
+            )
+        required_activity = {
+            "in-app browser selection": bool(
+                re.search(r"browsers\.get\(\s*['\"]iab['\"]\s*\)|browsers\.getForUrl\(", activity)
+            ),
+            "fresh tab": bool(re.search(r"\.tabs\.new\(", activity)),
+            "browser interaction": ".playwright" in activity or ".cua" in activity,
+            "tab cleanup": bool(re.search(r"\.close\(", activity)),
+        }
+        absent = [name for name, observed in required_activity.items() if not observed]
+        if absent:
+            raise RuntimeError(
+                f"Browser target activity is incomplete for {suite_scenario[0]}:{suite_scenario[1]}: "
+                f"missing {', '.join(absent)}"
+            )
+    return {"targetSessions": len(browser_scenarios), "nodeReplCalls": call_count}
+
+
 def _controlled_environment(home: Path, codex_home: Path, temporary: Path) -> dict[str, str]:
     environment = {"PATH": os.environ.get("PATH", "/usr/bin:/bin")}
     for name in ("LANG", "LC_ALL"):
@@ -1544,6 +1667,12 @@ def _run_live_batch(
         except RuntimeError as error:
             identity_error = str(error)
             identity = {"rolloutCount": retained_session_count, "error": identity_error}
+        browser_error: str | None = None
+        try:
+            browser_audit = _audit_browser_activity(codex_home, batch, identity)
+        except RuntimeError as error:
+            browser_error = str(error)
+            browser_audit = {"error": browser_error}
         concurrency_error: str | None = None
         try:
             concurrency = _audit_session_concurrency(_load_sessions(codex_home), maximum_threads, batch)
@@ -1565,6 +1694,7 @@ def _run_live_batch(
                 None if completed["cleanup"] == "clean" else f"Process cleanup: {completed['cleanup']}",
                 report_error,
                 identity_error,
+                browser_error,
                 concurrency_error,
                 cleanup_error,
             )
@@ -1577,6 +1707,7 @@ def _run_live_batch(
             "report": partial_report,
             "infrastructureErrors": infrastructure_errors,
             "identityAudit": identity,
+            "browserAudit": browser_audit,
             "concurrencyAudit": concurrency,
             "workspaceCleanup": workspace_cleanup,
             "capabilityPreflight": list(preflight_evidence),

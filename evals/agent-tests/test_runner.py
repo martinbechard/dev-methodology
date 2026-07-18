@@ -311,7 +311,7 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                 runner._stage_offline_project_dependencies(batch, repository, workspace)
 
     def test_browser_runtime_is_copied_and_bound_to_isolated_home(self) -> None:
-        """Browser instructions cannot resolve through a user-home plugin path."""
+        """Browser instructions and Node REPL trust stay inside the isolated home."""
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             plugin = root / "plugin"
@@ -325,13 +325,107 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             codex_home = root / "codex-home"
             skill_root = codex_home / "skills"
             skill_root.mkdir(parents=True)
+            app_resources = root / "ChatGPT.app" / "Contents" / "Resources"
+            (app_resources / "cua_node" / "bin").mkdir(parents=True)
+            for relative in ("cua_node/bin/node_repl", "cua_node/bin/node", "codex"):
+                executable = app_resources / relative
+                executable.write_text("fixture", encoding="utf-8")
 
-            runtime = runner._stage_browser_runtime(plugin, codex_home, skill_root)
+            runtime = runner._stage_browser_runtime(plugin, codex_home, skill_root, app_resources)
             staged_skill = skill_root / "control-in-app-browser" / "SKILL.md"
+            config = (codex_home / "config.toml").read_text(encoding="utf-8")
 
             self.assertEqual(codex_home / "browser-runtime", runtime)
             self.assertIn(str(runtime), staged_skill.read_text(encoding="utf-8"))
             self.assertNotIn("<plugin root>", staged_skill.read_text(encoding="utf-8"))
+            self.assertIn('[mcp_servers.node_repl]', config)
+            self.assertIn('BROWSER_USE_AVAILABLE_BACKENDS = "iab"', config)
+            self.assertIn(f'CODEX_HOME = "{codex_home}"', config)
+            self.assertIn(f'NODE_REPL_TRUSTED_CODE_PATHS = "{codex_home}"', config)
+            self.assertIn(runner._sha256(runtime / "scripts" / "browser-client.mjs"), config)
+            self.assertNotIn("extension", config)
+            self.assertNotIn(str(Path.home()), config)
+
+    def test_browser_activity_audit_requires_iab_interaction_and_cleanup(self) -> None:
+        """A browser verdict needs an observed in-app tab interaction and close."""
+        with tempfile.TemporaryDirectory() as temporary:
+            codex_home = Path(temporary)
+            session_id = "target-session"
+            rollout = codex_home / f"rollout-{session_id}.jsonl"
+            events = [
+                {"timestamp": "2026-07-17T00:00:00Z", "type": "session_meta", "payload": {"id": session_id}},
+                {
+                    "timestamp": "2026-07-17T00:00:01Z",
+                    "type": "response_item",
+                    "payload": {
+                        "type": "function_call",
+                        "name": "mcp__node_repl__js",
+                        "arguments": json.dumps(
+                            {
+                                "code": "globalThis.iab = await agent.browsers.get('iab'); "
+                                "globalThis.tab = await iab.tabs.new(); "
+                                "await tab.goto('http://127.0.0.1:43117/'); "
+                                "await tab.playwright.domSnapshot(); await tab.close();"
+                            }
+                        ),
+                    },
+                },
+            ]
+            rollout.write_text("\n".join(json.dumps(event) for event in events) + "\n", encoding="utf-8")
+            batch = (self._browser_run_spec("browser-suite"),)
+            identity = {
+                "scenarioBindings": [
+                    {
+                        "suite": "browser-suite",
+                        "scenario": "happy",
+                        "kind": "target",
+                        "sessionId": session_id,
+                    }
+                ]
+            }
+
+            audit = runner._audit_browser_activity(codex_home, batch, identity)
+
+            self.assertEqual(1, audit["targetSessions"])
+            self.assertEqual(1, audit["nodeReplCalls"])
+
+    def test_browser_activity_audit_rejects_external_browser_selection(self) -> None:
+        """Browser evidence cannot select Chrome or an external destination."""
+        with tempfile.TemporaryDirectory() as temporary:
+            codex_home = Path(temporary)
+            session_id = "target-session"
+            rollout = codex_home / f"rollout-{session_id}.jsonl"
+            events = [
+                {"timestamp": "2026-07-17T00:00:00Z", "type": "session_meta", "payload": {"id": session_id}},
+                {
+                    "timestamp": "2026-07-17T00:00:01Z",
+                    "type": "response_item",
+                    "payload": {
+                        "type": "function_call",
+                        "name": "mcp__node_repl__js",
+                        "arguments": json.dumps(
+                            {"code": "await agent.browsers.get('extension'); await tab.goto('https://example.com')"}
+                        ),
+                    },
+                },
+            ]
+            rollout.write_text("\n".join(json.dumps(event) for event in events) + "\n", encoding="utf-8")
+
+            with self.assertRaisesRegex(RuntimeError, "external browser or destination"):
+                runner._audit_browser_activity(
+                    codex_home,
+                    (self._browser_run_spec("browser-suite"),),
+                    {
+                        "scenarioBindings": [
+                            {
+                                "suite": "browser-suite",
+                                "scenario": "happy",
+                                "kind": "target",
+                                "sessionId": session_id,
+                            }
+                        ]
+                    },
+                )
 
     def test_nested_child_limit_rejects_more_than_temporary_tenth_agent(self) -> None:
         """A suite cannot declare more than one nested canonical dependency."""
@@ -842,6 +936,25 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             path=suite.path,
             manifest=suite.manifest,
             scenarios=suite.scenarios,
+        )
+        return runner._RunSpec(suite=suite, scenario_ids=("happy",))
+
+    @classmethod
+    def _browser_run_spec(cls, suite_id: str) -> object:
+        suite = cls._suite(suite_id)
+        suite = runner._Suite(
+            suite_id=suite.suite_id,
+            priority=suite.priority,
+            path=suite.path,
+            manifest=suite.manifest,
+            scenarios=(
+                {
+                    "id": "happy",
+                    "status": "executable",
+                    "executableCase": "fixture",
+                    "runtimeCapabilities": ["browser-automation"],
+                },
+            ),
         )
         return runner._RunSpec(suite=suite, scenario_ids=("happy",))
 
