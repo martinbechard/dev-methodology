@@ -84,13 +84,13 @@ def inspect_retaining_process(port: int, child_pid: int) -> dict[str, object]:
     if lsof is None:
         raise RuntimeError("lsof is required for retained-process inspection")
     listener = subprocess.run(
-        [lsof, "-nP", f"-iTCP:{port}", "-sTCP:LISTEN"],
+        [lsof, "-nP", "-a", "-p", str(child_pid), f"-iTCP:{port}", "-sTCP:LISTEN", "-FpcnT"],
         check=True,
         text=True,
         capture_output=True,
     ).stdout.strip()
-    process = next((line for line in listener.splitlines() if str(child_pid) in line), "")
-    verified = bool(process) and "LISTEN" in listener
+    process = next((line for line in listener.splitlines() if line == f"p{child_pid}"), "")
+    verified = bool(process) and "TST=LISTEN" in listener
     return {
         "inspectedPid": child_pid,
         "listenerEvidence": listener,
