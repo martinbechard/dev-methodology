@@ -3712,6 +3712,17 @@ class BundleContentTests(unittest.TestCase):
         self.assertTrue(
             (AGENT_TEST_SUITES_ROOT / "results" / "2026-07-17-codex-agent-suites.md").is_file()
         )
+        completion_report = (
+            AGENT_TEST_SUITES_ROOT
+            / "results"
+            / "2026-07-17-complete-agent-suites.md"
+        )
+        self.assertTrue(completion_report.is_file())
+        implementation_plan = (
+            AGENT_TEST_SUITES_ROOT / "implementation-plan.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("26 of 26 suites complete", implementation_plan)
+        self.assertIn("78 of 78 scenarios executed", implementation_plan)
         scenario_design = (
             AGENT_TEST_SUITES_ROOT
             / "skills"
