@@ -94,10 +94,16 @@ class AgentSuiteRunnerTests(unittest.TestCase):
 
     def test_coordinator_requires_registered_agent_types_and_fresh_contexts(self) -> None:
         """A task label cannot substitute for a registered role with a fresh fork."""
-        prompt = runner._coordinator_prompt((self._run_spec("one", 1),), Path("/tmp/checkpoints"))
+        prompt = runner._coordinator_prompt(
+            (self._run_spec("one", 1),),
+            Path("/tmp/checkpoints"),
+            Path("/workspace/.agent-suite-fixtures"),
+        )
 
         self.assertIn("agent_type exactly equal", prompt)
         self.assertIn("fork_context exactly false", prompt)
+        self.assertIn('"fixtureRoot": "/workspace/.agent-suite-fixtures/one"', prompt)
+        self.assertIn("never under /tmp or /private/tmp", prompt)
 
     def test_runtime_uses_role_aware_v1_and_bounds_concurrency(self) -> None:
         """The live runtime must expose role selection and use the declared batch ceiling."""

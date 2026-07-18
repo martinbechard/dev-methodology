@@ -1028,7 +1028,7 @@ def _preflight_runtime_capabilities(
     return tuple(evidence)
 
 
-def _coordinator_prompt(batch: Sequence[_RunSpec], checkpoint_root: Path) -> str:
+def _coordinator_prompt(batch: Sequence[_RunSpec], checkpoint_root: Path, fixture_root: Path) -> str:
     assignments = []
     for run in batch:
         execution = run.suite.manifest["execution"]
@@ -1042,6 +1042,7 @@ def _coordinator_prompt(batch: Sequence[_RunSpec], checkpoint_root: Path) -> str
                 "nestedAgentLimit": int(execution.get("nestedAgentLimit", 0)),
                 "runtimeCapabilities": sorted(_runtime_capabilities((run,))),
                 "checkpointRoot": str(checkpoint_root),
+                "fixtureRoot": str(fixture_root / run.suite.suite_id),
             }
         )
     return (
@@ -1053,6 +1054,9 @@ def _coordinator_prompt(batch: Sequence[_RunSpec], checkpoint_root: Path) -> str
         "false for those child spawns. "
         "Each supervisor must run its selected scenarios sequentially, use exactly one active child at a time, invoke "
         "only those hardcoded agents, retain one independent result per scenario, "
+        "and create every suite-owned candidate repository, worktree, or fixture beneath its listed fixtureRoot, "
+        "never under /tmp or /private/tmp. The fixtureRoot is inside the coordinator workspace so target and dependency "
+        "patch operations remain within the approved write boundary. "
         "write the required checkpointRoot/suite-id/scenario-id.json checkpoint immediately after each terminal "
         "scenario and before starting later work. Each checkpoint must contain suite, scenario, status, targetInvoked, "
         "judgeInvoked, identityEvidence as an array of strings, evidence as an array of strings, cleanup as clean or "
@@ -1904,6 +1908,8 @@ def _run_live_batch(
         capabilities = _runtime_capabilities(batch)
         checkpoint_root = run_root / "checkpoints"
         checkpoint_root.mkdir()
+        fixture_root = workspace / ".agent-suite-fixtures"
+        fixture_root.mkdir()
         schema_path = run_root / "coordinator-output-schema.json"
         schema_path.write_text(json.dumps(_coordinator_schema(), indent=2) + "\n", encoding="utf-8")
         temporary_home = run_root / "home"
@@ -1930,7 +1936,7 @@ def _run_live_batch(
             str(schema_path),
             "-C",
             str(workspace),
-            _coordinator_prompt(batch, checkpoint_root),
+            _coordinator_prompt(batch, checkpoint_root, fixture_root),
         ]
         environment = _controlled_environment(temporary_home, codex_home, temporary_dir)
         preflight_evidence = _preflight_runtime_capabilities(batch, workspace, codex_home, environment)
