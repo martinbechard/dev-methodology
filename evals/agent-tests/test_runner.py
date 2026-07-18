@@ -1075,6 +1075,46 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "Duplicate scenario"):
             runner._audit_report(batch, report)
 
+    def test_critical_deterministic_failure_may_skip_judge(self) -> None:
+        """A manifest-authorized critical gate failure remains a governed FAIL without semantic judging."""
+        run = self._run_spec("one", 1)
+        manifest = dict(run.suite.manifest)
+        manifest["acceptance"] = {"criticalFailureSkipsJudge": True}
+        suite = runner._Suite(
+            suite_id=run.suite.suite_id,
+            priority=run.suite.priority,
+            path=run.suite.path,
+            manifest=manifest,
+            scenarios=run.suite.scenarios,
+        )
+        batch = (runner._RunSpec(suite=suite, scenario_ids=run.scenario_ids),)
+        report = {
+            "runs": [self._suite_report("one", "FAIL")],
+            "batchCleanup": "clean",
+            "residualRisk": "none",
+        }
+        result = report["runs"][0]["scenarioResults"][0]
+        result["judgeInvoked"] = False
+        result["evidence"] = [
+            "A critical deterministic gate failed.",
+            "criticalFailureSkipsJudge applied, so no semantic Judge scoring was performed.",
+        ]
+
+        runner._audit_report(batch, report)
+
+    def test_unproved_critical_failure_skip_does_not_bypass_judge_requirement(self) -> None:
+        """A missing Judge is rejected unless both manifest authority and explicit skip evidence are present."""
+        batch = (self._run_spec("one", 1),)
+        report = {
+            "runs": [self._suite_report("one", "FAIL")],
+            "batchCleanup": "clean",
+            "residualRisk": "none",
+        }
+        report["runs"][0]["scenarioResults"][0]["judgeInvoked"] = False
+
+        with self.assertRaisesRegex(RuntimeError, "Terminal verdict lacks target and Judge"):
+            runner._audit_report(batch, report)
+
     def test_checkpoint_retains_completed_scenario_without_final_report(self) -> None:
         """A terminal supervisor checkpoint survives a later coordinator interruption."""
         batch = (self._run_spec("one", 1),)

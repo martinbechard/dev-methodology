@@ -1186,6 +1186,7 @@ def _audit_checkpoint_agreement(
 
 def _audit_report(batch: Sequence[_RunSpec], report: dict[str, Any]) -> list[dict[str, Any]]:
     expected = {run.suite.suite_id: set(run.scenario_ids) for run in batch}
+    suites = {run.suite.suite_id: run.suite for run in batch}
     observed: dict[str, set[str]] = {}
     runs = report.get("runs", [])
     if not isinstance(runs, list):
@@ -1210,8 +1211,21 @@ def _audit_report(batch: Sequence[_RunSpec], report: dict[str, Any]) -> list[dic
                 raise RuntimeError(f"Missing invocation disposition for {suite_id}:{scenario_result.get('scenario')}")
             if scenario_result.get("judgeInvoked") and not scenario_result.get("targetInvoked"):
                 raise RuntimeError(f"Judge ran without target for {suite_id}:{scenario_result.get('scenario')}")
+            evidence = scenario_result.get("evidence", [])
+            critical_failure_skipped_judge = (
+                scenario_result.get("status") == "FAIL"
+                and scenario_result.get("targetInvoked")
+                and not scenario_result.get("judgeInvoked")
+                and suites[suite_id].manifest.get("acceptance", {}).get("criticalFailureSkipsJudge") is True
+                and isinstance(evidence, list)
+                and any(
+                    isinstance(value, str) and "criticalFailureSkipsJudge" in value
+                    for value in evidence
+                )
+            )
             if scenario_result.get("status") in {"PASS", "FAIL"} and not (
-                scenario_result.get("targetInvoked") and scenario_result.get("judgeInvoked")
+                scenario_result.get("targetInvoked")
+                and (scenario_result.get("judgeInvoked") or critical_failure_skipped_judge)
             ):
                 raise RuntimeError(f"Terminal verdict lacks target and Judge for {suite_id}:{scenario_result.get('scenario')}")
             if not scenario_result.get("identityEvidence"):
