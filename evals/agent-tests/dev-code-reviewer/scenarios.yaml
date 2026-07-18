@@ -6,6 +6,8 @@ scenarios:
     priority: 1
     status: executable
     executableCase: typescript-code-review
+    runtimeCapabilities:
+      - offline-node-modules
     purpose: Prove that the reviewer finds material seeded regressions through evidence rather than style preference.
     initialState: A read-only TypeScript change contains three known behavioral or verification defects.
     task: Review the current change for regressions, missing tests, unsafe abstractions, and rule violations.

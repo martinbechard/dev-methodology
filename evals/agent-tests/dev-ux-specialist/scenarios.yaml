@@ -6,6 +6,8 @@ scenarios:
     priority: 1
     status: executable
     executableCase: fixtures/account-flow
+    runtimeCapabilities:
+      - browser-automation
     purpose: Prove that the specialist evaluates the complete responsive flow and can justify acceptance without inventing preferences.
     initialState: complete-flow.html exposes entry, progress, validation, recovery, and success states with supported wide and narrow layouts.
     task: Review the complete account flow for interaction quality and accessibility without changing it.
@@ -33,6 +35,8 @@ scenarios:
     priority: 2
     status: executable
     executableCase: fixtures/account-flow
+    runtimeCapabilities:
+      - browser-automation
     purpose: Prove that the specialist identifies material keyboard, labeling, focus, and recovery barriers with observable evidence.
     initialState: accessibility-defects.html loses focus after validation, has an unlabeled progress indicator, and returns recovery to the wrong step.
     task: Review the defective flow at wide and narrow layouts and prioritize the barriers.

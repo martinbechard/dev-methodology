@@ -12,6 +12,8 @@ The suite index covers all twenty-six conceptual agents in end-user value order.
 
 Every suite contains suite.yaml, scenarios.yaml, a hardcoded supervisor, a hardcoded read-only Judge, and a target-specific contract skill shared by those project agents. Cross-suite scenario, supervision, and judging methods live once under agent-tests/skills.
 
+Ordinary suites may share a four-supervisor batch. A suite that needs loopback, descendant-process inspection, or browser automation runs alone with an explicit local-runtime permission profile. That profile allows local binding through a localhost-only managed proxy and denies non-local destinations. Offline ignored dependencies are copied into the disposable clone only after the installed package matches tracked lock evidence.
+
 Validate the complete agent-owned catalog and bounded schedule without starting a model session with:
 
 ```bash

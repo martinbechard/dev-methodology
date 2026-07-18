@@ -16,8 +16,10 @@ import json
 import os
 import re
 import secrets
+import shlex
 import signal
 import shutil
+import socket
 import subprocess
 import tempfile
 import threading
@@ -36,6 +38,17 @@ _RUNTIME_NAME = re.compile(r"^[a-z][a-z0-9_]*$")
 _TERMINAL_STATUSES = frozenset({"PASS", "FAIL", "BLOCKED", "STALE"})
 _REPORT_STATUSES = frozenset((*_TERMINAL_STATUSES, "INFRASTRUCTURE_FAILED"))
 _EXECUTABLE_STATUSES = frozenset({"executable", "fixture-backed"})
+_RUNTIME_CAPABILITIES = frozenset(
+    {
+        "browser-automation",
+        "child-process-inspection",
+        "loopback",
+        "offline-node-modules",
+    }
+)
+_ISOLATED_RUNTIME_CAPABILITIES = frozenset(
+    {"browser-automation", "child-process-inspection", "loopback"}
+)
 _CAPTURE_REPLACEMENTS = (
     ("Martin.Bechard@DevConsult.ca", "[REDACTED-NONBEHAVIORAL-IDENTITY]"),
 )
@@ -163,6 +176,15 @@ def _validate_suite(suite: _Suite, require_executable: bool = True) -> None:
         executable_case = scenario.get("executableCase")
         if require_executable and (not isinstance(executable_case, str) or not executable_case.strip()):
             raise ValueError(f"{suite.suite_id}:{scenario_id} has no executableCase")
+        capabilities = scenario.get("runtimeCapabilities", [])
+        if not isinstance(capabilities, list) or not all(isinstance(value, str) for value in capabilities):
+            raise ValueError(f"{suite.suite_id}:{scenario_id} runtime capabilities must be a list of strings")
+        unknown_capabilities = set(capabilities) - _RUNTIME_CAPABILITIES
+        if unknown_capabilities:
+            raise ValueError(
+                f"{suite.suite_id}:{scenario_id} has an unknown runtime capability: "
+                f"{', '.join(sorted(unknown_capabilities))}"
+            )
     for path_field in ("conceptualRole", "nativeAgent"):
         path = _REPOSITORY_ROOT / str(target.get(path_field, ""))
         if not path.is_file():
@@ -223,7 +245,32 @@ def _select_runs(
 def _batch_runs(runs: Sequence[_RunSpec], maximum: int) -> tuple[tuple[_RunSpec, ...], ...]:
     if maximum < 1 or maximum > 4:
         raise ValueError("maximum concurrent supervisors must be between 1 and 4")
-    return tuple(tuple(runs[start : start + maximum]) for start in range(0, len(runs), maximum))
+    batches: list[tuple[_RunSpec, ...]] = []
+    ordinary: list[_RunSpec] = []
+    for run in runs:
+        if _runtime_capabilities((run,)) & _ISOLATED_RUNTIME_CAPABILITIES:
+            if ordinary:
+                batches.append(tuple(ordinary))
+                ordinary = []
+            batches.append((run,))
+            continue
+        ordinary.append(run)
+        if len(ordinary) == maximum:
+            batches.append(tuple(ordinary))
+            ordinary = []
+    if ordinary:
+        batches.append(tuple(ordinary))
+    return tuple(batches)
+
+
+def _runtime_capabilities(batch: Sequence[_RunSpec]) -> frozenset[str]:
+    capabilities: set[str] = set()
+    for run in batch:
+        selected = set(run.scenario_ids)
+        for scenario in run.suite.scenarios:
+            if str(scenario["id"]) in selected:
+                capabilities.update(str(value) for value in scenario.get("runtimeCapabilities", []))
+    return frozenset(capabilities)
 
 
 @contextlib.contextmanager
@@ -271,6 +318,35 @@ def _copy_skill_package(skill_file: Path, skill_root: Path) -> None:
     shutil.copytree(package, destination)
 
 
+def _bundled_browser_plugin_root() -> Path:
+    configured = os.environ.get("CODEX_BUNDLED_BROWSER_PLUGIN")
+    if configured:
+        candidates = [Path(configured)]
+    else:
+        cache_root = Path.home() / ".codex" / "plugins" / "cache" / "openai-bundled" / "browser"
+        candidates = sorted((path for path in cache_root.glob("*") if path.is_dir()), reverse=True)
+    for candidate in candidates:
+        if (candidate / "scripts" / "browser-client.mjs").is_file() and (
+            candidate / "skills" / "control-in-app-browser" / "SKILL.md"
+        ).is_file():
+            return candidate
+    raise RuntimeError("The bundled in-app Browser runtime is unavailable")
+
+
+def _stage_browser_runtime(plugin_root: Path, codex_home: Path, skill_root: Path) -> Path:
+    runtime_root = codex_home / "browser-runtime"
+    shutil.copytree(plugin_root, runtime_root)
+    source_skill = runtime_root / "skills" / "control-in-app-browser"
+    destination_skill = skill_root / "control-in-app-browser"
+    shutil.copytree(source_skill, destination_skill)
+    skill_path = destination_skill / "SKILL.md"
+    skill_path.write_text(
+        skill_path.read_text(encoding="utf-8").replace("<plugin root>", str(runtime_root)),
+        encoding="utf-8",
+    )
+    return runtime_root
+
+
 def _validate_target_skills(suite: _Suite, scenario_ids: Sequence[str], repository_root: Path) -> None:
     selected = set(scenario_ids)
     required_skills = {str(value) for value in suite.manifest["target"].get("requiredSkills", [])}
@@ -282,6 +358,60 @@ def _validate_target_skills(suite: _Suite, scenario_ids: Sequence[str], reposito
             source = repository_root / "skills" / str(skill_name) / "SKILL.md"
             if not source.is_file():
                 raise ValueError(f"{suite.suite_id}:{scenario['id']} requires missing skill {skill_name}")
+
+
+def _stage_offline_project_dependencies(
+    batch: Sequence[_RunSpec],
+    repository_root: Path,
+    workspace: Path,
+) -> tuple[str, ...]:
+    staged: list[str] = []
+    for run in batch:
+        selected = set(run.scenario_ids)
+        for scenario in run.suite.scenarios:
+            if str(scenario["id"]) not in selected:
+                continue
+            if "offline-node-modules" not in scenario.get("runtimeCapabilities", []):
+                continue
+            executable_case = str(scenario["executableCase"])
+            case_path = Path(executable_case)
+            if case_path.is_absolute() or len(case_path.parts) != 1 or case_path.name != executable_case:
+                raise RuntimeError(
+                    f"Offline Node fixture must be one project directory name: {run.suite.suite_id}:"
+                    f"{scenario['id']}"
+                )
+            relative = Path("evals") / "projects" / executable_case / "node_modules"
+            project_root = (repository_root / "evals" / "projects").resolve()
+            workspace_project_root = (workspace / "evals" / "projects").resolve()
+            source = (repository_root / relative).resolve()
+            destination = (workspace / relative).resolve()
+            if not source.is_relative_to(project_root) or not destination.is_relative_to(workspace_project_root):
+                raise RuntimeError(
+                    f"Offline Node fixture escapes its project root: {run.suite.suite_id}:{scenario['id']}"
+                )
+            if not source.is_dir():
+                raise RuntimeError(
+                    f"Pinned offline Node dependencies are unavailable for {run.suite.suite_id}:"
+                    f"{scenario['id']}: {source}"
+                )
+            for candidate in source.rglob("*"):
+                if candidate.is_symlink() and not candidate.resolve().is_relative_to(source):
+                    raise RuntimeError(f"Offline Node fixture contains an escaping symlink: {candidate}")
+            package_lock = source.parent / "package-lock.json"
+            installed_package = source / "typescript" / "package.json"
+            if not package_lock.is_file() or not installed_package.is_file():
+                raise RuntimeError(f"Offline Node fixture lacks TypeScript lock evidence: {source.parent}")
+            locked = json.loads(package_lock.read_text(encoding="utf-8"))
+            installed = json.loads(installed_package.read_text(encoding="utf-8"))
+            locked_version = (locked.get("packages", {}).get("node_modules/typescript", {}) or {}).get("version")
+            if not locked_version or locked_version != installed.get("version"):
+                raise RuntimeError(f"Offline Node fixture TypeScript version does not match its lockfile: {source.parent}")
+            if destination.exists():
+                continue
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copytree(source, destination, symlinks=False)
+            staged.append(relative.as_posix())
+    return tuple(staged)
 
 
 def _stage_batch(batch: Sequence[_RunSpec], run_root: Path) -> tuple[Path, Path, tuple[_StagedAgent, ...]]:
@@ -298,6 +428,9 @@ def _stage_batch(batch: Sequence[_RunSpec], run_root: Path) -> tuple[Path, Path,
         text=True,
         capture_output=True,
     )
+    _stage_offline_project_dependencies(batch, _REPOSITORY_ROOT, workspace)
+    if "browser-automation" in _runtime_capabilities(batch):
+        _stage_browser_runtime(_bundled_browser_plugin_root(), codex_home, skill_root)
     auth_source = Path(os.environ.get("CODEX_AUTH_FILE", str(Path.home() / ".codex" / "auth.json")))
     if not auth_source.is_file():
         raise RuntimeError(f"Codex authentication file is unavailable: {auth_source}")
@@ -425,6 +558,217 @@ def _multi_agent_runtime_arguments(maximum_threads: int) -> tuple[str, ...]:
     )
 
 
+def _write_local_runtime_profile(codex_home: Path) -> str:
+    profile_name = "agent-suite-local-runtime"
+    profile_path = codex_home / f"{profile_name}.config.toml"
+    profile_path.write_text(
+        f'''default_permissions = "{profile_name}"
+
+[permissions.{profile_name}]
+extends = ":workspace"
+
+[permissions.{profile_name}.network]
+enabled = true
+mode = "limited"
+allow_local_binding = true
+
+[permissions.{profile_name}.network.domains]
+"localhost" = "allow"
+"127.0.0.1" = "allow"
+''',
+        encoding="utf-8",
+    )
+    return profile_name
+
+
+def _capability_runtime_arguments(capabilities: frozenset[str], codex_home: Path) -> tuple[str, ...]:
+    if not capabilities & _ISOLATED_RUNTIME_CAPABILITIES:
+        return ("--sandbox", "workspace-write")
+    profile_name = _write_local_runtime_profile(codex_home)
+    arguments = ["-p", profile_name, "--enable", "network_proxy"]
+    if "browser-automation" in capabilities:
+        arguments.extend(("--enable", "in_app_browser", "--enable", "browser_use"))
+    return tuple(arguments)
+
+
+def _sandbox_profile_arguments(codex_home: Path, workspace: Path) -> tuple[str, ...]:
+    profile_name = "agent-suite-local-runtime"
+    if not (codex_home / f"{profile_name}.config.toml").is_file():
+        _write_local_runtime_profile(codex_home)
+    return (
+        "codex",
+        "sandbox",
+        "-C",
+        str(workspace),
+        "-p",
+        profile_name,
+        "-P",
+        profile_name,
+        "--enable",
+        "network_proxy",
+        "--",
+    )
+
+
+def _available_loopback_port() -> int:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as listener:
+        listener.bind(("127.0.0.1", 0))
+        return int(listener.getsockname()[1])
+
+
+def _preflight_browser_service(
+    workspace: Path,
+    codex_home: Path,
+    environment: dict[str, str],
+) -> str:
+    fixture = workspace / "evals" / "agent-tests" / "dev-browser-operator" / "fixtures" / "browser-workflow"
+    manifest = _load_yaml(fixture / "runtime-manifest.yaml")
+    frozen = str(manifest.get("serviceCommand", ""))
+    if "--bind 127.0.0.1" not in frozen:
+        raise RuntimeError("Browser fixture service command must bind explicitly to 127.0.0.1")
+    port = _available_loopback_port()
+    service_arguments = tuple(
+        value.replace("PORT", str(port)).replace("FIXTURE_ROOT", str(fixture))
+        for value in shlex.split(frozen)
+    )
+    profile = _sandbox_profile_arguments(codex_home, workspace)
+    process = subprocess.Popen(
+        [*profile, *service_arguments],
+        cwd=workspace,
+        env=environment,
+        stdin=subprocess.DEVNULL,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        start_new_session=True,
+    )
+    route = str(manifest.get("healthRoute", ""))
+    deadline = time.monotonic() + 5
+    response = ""
+    try:
+        while time.monotonic() < deadline:
+            if process.poll() is not None:
+                raise RuntimeError(f"Browser fixture service exited during preflight with {process.returncode}")
+            completed = subprocess.run(
+                [*profile, "/usr/bin/curl", "-fsS", "--max-time", "1", f"http://127.0.0.1:{port}{route}"],
+                cwd=workspace,
+                env=environment,
+                check=False,
+                text=True,
+                capture_output=True,
+            )
+            if completed.returncode == 0:
+                response = completed.stdout
+                break
+            time.sleep(0.05)
+        if not response:
+            raise RuntimeError("Browser fixture health route was unavailable during preflight")
+    finally:
+        if process.poll() is None:
+            os.killpg(process.pid, signal.SIGTERM)
+        try:
+            process.wait(timeout=3)
+        except subprocess.TimeoutExpired:
+            os.killpg(process.pid, signal.SIGKILL)
+            process.wait(timeout=3)
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as probe:
+        probe.settimeout(0.5)
+        if probe.connect_ex(("127.0.0.1", port)) == 0:
+            raise RuntimeError("Browser fixture service retained its port after preflight cleanup")
+    return f"{frozen} route={route} bytes={len(response.encode('utf-8'))} cleanup=clean"
+
+
+def _preflight_runtime_capabilities(
+    batch: Sequence[_RunSpec],
+    workspace: Path,
+    codex_home: Path,
+    environment: dict[str, str],
+) -> tuple[str, ...]:
+    capabilities = _runtime_capabilities(batch)
+    evidence: list[str] = []
+    if "offline-node-modules" in capabilities:
+        for run in batch:
+            selected = set(run.scenario_ids)
+            for scenario in run.suite.scenarios:
+                if str(scenario["id"]) not in selected or "offline-node-modules" not in scenario.get(
+                    "runtimeCapabilities", []
+                ):
+                    continue
+                project = workspace / "evals" / "projects" / str(scenario["executableCase"])
+                completed = subprocess.run(
+                    ["node", "node_modules/typescript/bin/tsc", "--version"],
+                    cwd=project,
+                    env=environment,
+                    check=True,
+                    text=True,
+                    capture_output=True,
+                )
+                evidence.append(f"{run.suite.suite_id}:{scenario['id']} {completed.stdout.strip()}")
+    if capabilities & {"loopback", "child-process-inspection"}:
+        profile = _sandbox_profile_arguments(codex_home, workspace)
+        bind_probe = subprocess.run(
+            [
+                *profile,
+                "/usr/bin/python3",
+                "-c",
+                "import socket; s=socket.socket(); s.bind(('127.0.0.1',0)); print(s.getsockname()[1])",
+            ],
+            cwd=workspace,
+            env=environment,
+            check=True,
+            text=True,
+            capture_output=True,
+        )
+        evidence.append(f"loopback-bind-port {bind_probe.stdout.strip()}")
+        external_probe = subprocess.run(
+            [*profile, "/usr/bin/curl", "-fsS", "--max-time", "2", "https://example.invalid"],
+            cwd=workspace,
+            env=environment,
+            check=False,
+            text=True,
+            capture_output=True,
+        )
+        if external_probe.returncode == 0:
+            raise RuntimeError("The local-runtime permission profile permitted a non-local destination")
+        evidence.append("managed network proxy denied non-local destination")
+    if "child-process-inspection" in capabilities:
+        fixture = workspace / "evals" / "agent-tests" / "dev-runtime-diagnostician" / "fixtures" / "retained-process-port"
+        profile = _sandbox_profile_arguments(codex_home, workspace)
+        for command in ("reproduce", "verify-clean"):
+            completed = subprocess.run(
+                [*profile, "/usr/bin/python3", str(fixture / "lifecycle_probe.py"), command],
+                cwd=fixture,
+                env=environment,
+                check=True,
+                text=True,
+                capture_output=True,
+            )
+            observed = json.loads(completed.stdout)
+            required_true = (
+                ("parentExited", "portRetainedAfterParentExit", "processInspectionVerified", "cleanupVerified")
+                if command == "reproduce"
+                else ("cleanRestartsVerified",)
+            )
+            if not isinstance(observed, dict) or not all(observed.get(field) is True for field in required_true):
+                raise RuntimeError(f"Retained-process preflight did not prove {command}: {completed.stdout.strip()}")
+            if command == "reproduce" and observed.get("inspectedPid") != observed.get("childPid"):
+                raise RuntimeError(f"Retained-process preflight inspected the wrong process: {completed.stdout.strip()}")
+            evidence.append(f"retained-process-port {command} {completed.stdout.strip()}")
+    if "browser-automation" in capabilities:
+        browser_client = codex_home / "browser-runtime" / "scripts" / "browser-client.mjs"
+        browser_skill = codex_home / "skills" / "control-in-app-browser" / "SKILL.md"
+        if not browser_client.is_file() or not browser_skill.is_file():
+            raise RuntimeError("The isolated Browser runtime did not stage completely")
+        if str(codex_home / "browser-runtime") not in browser_skill.read_text(encoding="utf-8"):
+            raise RuntimeError("The isolated Browser skill is not bound to its staged runtime")
+        evidence.append(
+            f"isolated in-app Browser runtime staged client-sha256={_sha256(browser_client)} "
+            f"skill-sha256={_sha256(browser_skill)}"
+        )
+        if "loopback" in capabilities:
+            evidence.append(f"browser fixture service {_preflight_browser_service(workspace, codex_home, environment)}")
+    return tuple(evidence)
+
+
 def _coordinator_prompt(batch: Sequence[_RunSpec], checkpoint_root: Path) -> str:
     assignments = []
     for run in batch:
@@ -437,6 +781,7 @@ def _coordinator_prompt(batch: Sequence[_RunSpec], checkpoint_root: Path) -> str
                 "judge": execution["judgeInvocation"],
                 "scenarios": list(run.scenario_ids),
                 "nestedAgentLimit": int(execution.get("nestedAgentLimit", 0)),
+                "runtimeCapabilities": sorted(_runtime_capabilities((run,))),
                 "checkpointRoot": str(checkpoint_root),
             }
         )
@@ -456,7 +801,11 @@ def _coordinator_prompt(batch: Sequence[_RunSpec], checkpoint_root: Path) -> str
         "targetInvoked and judgeInvoked explicitly, "
         "and clean every fixture, claim, process, worktree, and credential it owns. One supervisor child may use one "
         "declared nested dependency at a time only where nestedAgentLimit is 1; serialize that temporary tenth-agent "
-        "slot across the batch. Do not browse, install software, read outside this disposable repository, alter the "
+        "slot across the batch. Do not browse external sites; local fixture browser automation is allowed only for "
+        "a scenario that declares browser-automation. Those scenarios must use only the staged control-in-app-browser "
+        "skill, open a fresh local-target tab, avoid existing tabs or authenticated state, and close every owned tab. "
+        "Do not install software, read outside this disposable "
+        "repository, alter the "
         "evaluation contracts during a run, or fix a distributed skill. Classify actual test-infrastructure failures "
         "separately from target findings. Wait for every supervisor, then return only the required JSON report. "
         f"Assignments: {json.dumps(assignments, sort_keys=True)}"
@@ -1124,6 +1473,7 @@ def _run_live_batch(
     label = f"batch-{batch_number:02d}"
     with _temporary_run_root(label) as run_root:
         workspace, codex_home, staged = _stage_batch(batch, run_root)
+        capabilities = _runtime_capabilities(batch)
         checkpoint_root = run_root / "checkpoints"
         checkpoint_root.mkdir()
         schema_path = run_root / "coordinator-output-schema.json"
@@ -1134,12 +1484,11 @@ def _run_live_batch(
         command = [
             "codex",
             *_multi_agent_runtime_arguments(maximum_threads),
+            *_capability_runtime_arguments(capabilities, codex_home),
             "-c",
             "agents.max_depth=3",
             "--ask-for-approval",
             "never",
-            "--sandbox",
-            "workspace-write",
             "--add-dir",
             str(workspace / ".git"),
             "--add-dir",
@@ -1148,7 +1497,6 @@ def _run_live_batch(
             *_agent_registration_arguments(staged, codex_home),
             "exec",
             "--json",
-            "--ignore-user-config",
             "--ignore-rules",
             "--output-schema",
             str(schema_path),
@@ -1157,6 +1505,7 @@ def _run_live_batch(
             _coordinator_prompt(batch, checkpoint_root),
         ]
         environment = _controlled_environment(temporary_home, codex_home, temporary_dir)
+        preflight_evidence = _preflight_runtime_capabilities(batch, workspace, codex_home, environment)
         completed = _run_process(
             command,
             workspace,
@@ -1230,6 +1579,7 @@ def _run_live_batch(
             "identityAudit": identity,
             "concurrencyAudit": concurrency,
             "workspaceCleanup": workspace_cleanup,
+            "capabilityPreflight": list(preflight_evidence),
             "evidence": {
                 "events": str(evidence_prefix.with_suffix(".jsonl")),
                 "stderr": str(evidence_prefix.with_suffix(".stderr.log")),

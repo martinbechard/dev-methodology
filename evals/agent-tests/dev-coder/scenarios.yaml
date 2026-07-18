@@ -6,6 +6,8 @@ scenarios:
     priority: 1
     status: executable
     executableCase: typescript-order-pricing
+    runtimeCapabilities:
+      - offline-node-modules
     purpose: Prove that the coder can trace a scoped TypeScript contract, drive the change through tests, and leave a complete verified patch.
     initialState: A buildable order-pricing project has a missing observable behavior and existing public boundaries.
     task: Implement the requested behavior without changing unrelated pricing semantics.

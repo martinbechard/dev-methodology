@@ -38,6 +38,10 @@ class DevRuntimeDiagnosticianFixtureTests(unittest.TestCase):
 
         self.assertTrue(evidence["parentExited"])
         self.assertTrue(evidence["portRetainedAfterParentExit"])
+        self.assertTrue(evidence["processInspectionVerified"])
+        self.assertEqual(evidence["childPid"], evidence["inspectedPid"])
+        self.assertIn(str(evidence["childPid"]), evidence["listenerEvidence"])
+        self.assertIn(str(evidence["childPid"]), evidence["processEvidence"])
         self.assertTrue(evidence["cleanupVerified"])
 
     def test_clean_shutdown_supports_repeated_restarts(self) -> None:

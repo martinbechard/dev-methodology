@@ -8,6 +8,7 @@ import argparse
 import json
 import os
 import signal
+import shutil
 import socket
 import subprocess
 import sys
@@ -76,6 +77,33 @@ def start_service(port: int, state_file: Path, clean: bool) -> subprocess.Popen[
     )
 
 
+def inspect_retaining_process(port: int, child_pid: int) -> dict[str, object]:
+    """Correlate the retained listener with its exact process identity."""
+
+    lsof = shutil.which("lsof")
+    if lsof is None:
+        raise RuntimeError("lsof is required for retained-process inspection")
+    listener = subprocess.run(
+        [lsof, "-nP", f"-iTCP:{port}", "-sTCP:LISTEN"],
+        check=True,
+        text=True,
+        capture_output=True,
+    ).stdout.strip()
+    process = subprocess.run(
+        ["ps", "-p", str(child_pid), "-o", "pid=,ppid=,command="],
+        check=True,
+        text=True,
+        capture_output=True,
+    ).stdout.strip()
+    verified = str(child_pid) in listener and str(child_pid) in process and "LISTEN" in listener
+    return {
+        "inspectedPid": child_pid,
+        "listenerEvidence": listener,
+        "processEvidence": process,
+        "processInspectionVerified": verified,
+    }
+
+
 def reproduce() -> dict[str, object]:
     """Prove that the leaky parent shutdown leaves its child holding the port."""
 
@@ -89,6 +117,7 @@ def reproduce() -> dict[str, object]:
             parent.terminate()
             parent.wait(timeout=3)
             retained = not can_bind(port)
+            inspection = inspect_retaining_process(port, child_pid)
         finally:
             if parent.poll() is None:
                 parent.kill()
@@ -104,6 +133,7 @@ def reproduce() -> dict[str, object]:
             "port": port,
             "portRetainedAfterParentExit": retained,
             "cleanupVerified": can_bind(port),
+            **inspection,
         }
 
 

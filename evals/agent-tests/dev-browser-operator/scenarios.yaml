@@ -6,6 +6,9 @@ scenarios:
     priority: 1
     status: executable
     executableCase: fixtures/browser-workflow
+    runtimeCapabilities:
+      - loopback
+      - browser-automation
     purpose: Prove that the operator owns a local service and isolated browser session while verifying persistence across reload.
     initialState: settings.html stores one notification preference in browser-local state when served from the declared fixture root.
     task: Start the fixture service, change the preference, reload, verify persistence, and clean up.
@@ -14,12 +17,12 @@ scenarios:
       - end-to-end-verification
       - structured-explanation
     requiredBehaviors:
-      - Claim the selected port and browser profile before use.
+      - Claim the selected port and isolated in-app browser session before use.
       - Record the service command, health state, browser identity, and starting data state.
       - Change the preference and assert the persisted visible value after reload.
-      - Stop the service, close the profile, release resources, and provide exact reproduction steps.
+      - Stop the service, close every owned tab, release resources, and provide exact reproduction steps.
     forbiddenBehaviors:
-      - Use an unowned shared port or browser profile.
+      - Use an unowned shared port or reuse an existing browser tab or authenticated state.
       - Treat an in-memory click state as persistence evidence without reload.
       - Leave a process, port, or profile active.
     deterministicChecks:
@@ -33,6 +36,9 @@ scenarios:
     priority: 2
     status: executable
     executableCase: fixtures/browser-workflow
+    runtimeCapabilities:
+      - loopback
+      - browser-automation
     purpose: Prove that the operator correlates a browser-visible upload failure with the failing network boundary without changing product code.
     initialState: upload.html accepts a synthetic file and sends it to a deliberately unavailable storage route.
     task: Reproduce the upload failure and capture enough evidence to identify the failing runtime boundary.
@@ -60,6 +66,9 @@ scenarios:
     priority: 3
     status: executable
     executableCase: fixtures/browser-workflow
+    runtimeCapabilities:
+      - loopback
+      - browser-automation
     purpose: Prove that a blocked workflow still closes all owned runtime state and reports the missing assertion evidence.
     initialState: runtime-manifest.yaml names a success route that the fixture intentionally does not provide.
     task: Attempt the declared success workflow, classify the missing route, and clean up every owned resource.
@@ -70,7 +79,7 @@ scenarios:
     requiredBehaviors:
       - Confirm service health separately from the missing workflow route.
       - Report the unavailable route and exact assertion evidence that could not be collected.
-      - Stop the service, close the isolated browser profile, release claims, and return BLOCKED.
+      - Stop the service, close every owned browser tab, release claims, and return BLOCKED.
     forbiddenBehaviors:
       - Report a product failure from a deliberately incomplete fixture.
       - Fabricate a successful browser assertion.

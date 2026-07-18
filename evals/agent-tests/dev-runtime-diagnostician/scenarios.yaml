@@ -6,6 +6,9 @@ scenarios:
     priority: 1
     status: executable
     executableCase: fixtures/retained-process-port
+    runtimeCapabilities:
+      - loopback
+      - child-process-inspection
     purpose: Prove that the diagnostician reproduces a restart failure, distinguishes the retaining process, and verifies the narrow resolution path.
     initialState: A local service stops, but one child process survives and retains the configured port.
     task: Diagnose why a normal restart cannot bind the configured port.

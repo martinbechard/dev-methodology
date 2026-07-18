@@ -51,6 +51,33 @@ class AgentSuiteRunnerTests(unittest.TestCase):
 
         self.assertEqual([4, 1], [len(batch) for batch in batches])
 
+    def test_local_runtime_suite_is_isolated_from_ordinary_batches(self) -> None:
+        """Network and browser facilities cannot leak to unrelated supervisors."""
+        first = self._run_spec("one", 1)
+        privileged_suite = self._suite("local-runtime")
+        privileged_suite = runner._Suite(
+            suite_id=privileged_suite.suite_id,
+            priority=2,
+            path=privileged_suite.path,
+            manifest=privileged_suite.manifest,
+            scenarios=(
+                {
+                    "id": "happy",
+                    "status": "executable",
+                    "executableCase": "fixture",
+                    "runtimeCapabilities": ["loopback"],
+                },
+            ),
+        )
+        privileged = runner._RunSpec(suite=privileged_suite, scenario_ids=("happy",))
+        third = self._run_spec("three", 3)
+
+        batches = runner._batch_runs((first, privileged, third), maximum=4)
+
+        self.assertEqual([["one"], ["local-runtime"], ["three"]], [
+            [run.suite.suite_id for run in batch] for batch in batches
+        ])
+
     def test_coordinator_requires_registered_agent_types_and_fresh_contexts(self) -> None:
         """A task label cannot substitute for a registered role with a fresh fork."""
         prompt = runner._coordinator_prompt((self._run_spec("one", 1),), Path("/tmp/checkpoints"))
@@ -75,6 +102,201 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             ),
             arguments,
         )
+
+    def test_runtime_capabilities_are_collected_only_from_selected_scenarios(self) -> None:
+        """A batch receives only the local facilities declared by its selected cases."""
+        suite = self._suite("capability-suite")
+        suite = runner._Suite(
+            suite_id=suite.suite_id,
+            priority=suite.priority,
+            path=suite.path,
+            manifest=suite.manifest,
+            scenarios=(
+                {
+                    "id": "selected",
+                    "status": "executable",
+                    "executableCase": "fixture",
+                    "runtimeCapabilities": ["loopback", "browser-automation"],
+                },
+                {
+                    "id": "excluded",
+                    "status": "executable",
+                    "executableCase": "fixture",
+                    "runtimeCapabilities": ["offline-node-modules"],
+                },
+                {"id": "third", "status": "executable", "executableCase": "fixture"},
+            ),
+        )
+        batch = (runner._RunSpec(suite=suite, scenario_ids=("selected",)),)
+
+        self.assertEqual(
+            frozenset({"loopback", "browser-automation"}),
+            runner._runtime_capabilities(batch),
+        )
+
+    def test_unknown_runtime_capability_is_rejected(self) -> None:
+        """Suite authors cannot silently grant an unreviewed runtime facility."""
+        suite = self._suite("invalid-capability")
+        suite = runner._Suite(
+            suite_id=suite.suite_id,
+            priority=suite.priority,
+            path=suite.path,
+            manifest=suite.manifest,
+            scenarios=(
+                {
+                    "id": "happy",
+                    "status": "executable",
+                    "executableCase": "fixture",
+                    "runtimeCapabilities": ["unbounded-network"],
+                },
+                {"id": "second", "status": "executable", "executableCase": "fixture"},
+                {"id": "third", "status": "executable", "executableCase": "fixture"},
+            ),
+        )
+
+        with self.assertRaisesRegex(ValueError, "runtime capability"):
+            runner._validate_suite(suite, require_executable=False)
+
+    def test_offline_node_dependencies_are_staged_for_selected_fixture(self) -> None:
+        """A clean clone receives the fixture's pinned ignored dependency tree without network use."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            repository = root / "repository"
+            workspace = root / "workspace"
+            source = repository / "evals" / "projects" / "fixture" / "node_modules"
+            source.mkdir(parents=True)
+            (source / "version.txt").write_text("pinned", encoding="utf-8")
+            typescript = source / "typescript"
+            typescript.mkdir()
+            (typescript / "package.json").write_text('{"version":"7.0.2"}', encoding="utf-8")
+            (source.parent / "package-lock.json").write_text(
+                '{"packages":{"node_modules/typescript":{"version":"7.0.2"}}}', encoding="utf-8"
+            )
+            workspace.mkdir()
+            suite = self._suite("offline-suite")
+            suite = runner._Suite(
+                suite_id=suite.suite_id,
+                priority=suite.priority,
+                path=suite.path,
+                manifest=suite.manifest,
+                scenarios=(
+                    {
+                        "id": "happy",
+                        "status": "executable",
+                        "executableCase": "fixture",
+                        "runtimeCapabilities": ["offline-node-modules"],
+                    },
+                ),
+            )
+            batch = (runner._RunSpec(suite=suite, scenario_ids=("happy",)),)
+
+            staged = runner._stage_offline_project_dependencies(batch, repository, workspace)
+
+            self.assertEqual(("evals/projects/fixture/node_modules",), staged)
+            self.assertEqual(
+                "pinned",
+                (workspace / "evals" / "projects" / "fixture" / "node_modules" / "version.txt").read_text(
+                    encoding="utf-8"
+                ),
+            )
+
+    def test_capability_arguments_use_local_only_profile_and_in_app_browser(self) -> None:
+        """Local capabilities use the managed proxy and never select an external browser."""
+        with tempfile.TemporaryDirectory() as temporary:
+            codex_home = Path(temporary)
+            arguments = runner._capability_runtime_arguments(
+                frozenset({"loopback", "browser-automation"}), codex_home
+            )
+            profile = (codex_home / "agent-suite-local-runtime.config.toml").read_text(encoding="utf-8")
+
+        self.assertIn("network_proxy", arguments)
+        self.assertIn("in_app_browser", arguments)
+        self.assertIn("browser_use", arguments)
+        self.assertNotIn("browser_use_external", arguments)
+        self.assertNotIn("sandbox_workspace_write.network_access=true", arguments)
+        self.assertIn('mode = "limited"', profile)
+        self.assertIn('"localhost" = "allow"', profile)
+        self.assertNotIn("example.com", profile)
+
+    def test_offline_fixture_rejects_parent_path_traversal(self) -> None:
+        """Executable-case metadata cannot copy host content outside the project root."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            repository = root / "repository"
+            workspace = root / "workspace"
+            repository.mkdir()
+            workspace.mkdir()
+            suite = self._suite("offline-suite")
+            suite = runner._Suite(
+                suite_id=suite.suite_id,
+                priority=suite.priority,
+                path=suite.path,
+                manifest=suite.manifest,
+                scenarios=({
+                    "id": "happy",
+                    "status": "executable",
+                    "executableCase": "../escape",
+                    "runtimeCapabilities": ["offline-node-modules"],
+                },),
+            )
+            batch = (runner._RunSpec(suite=suite, scenario_ids=("happy",)),)
+
+            with self.assertRaisesRegex(RuntimeError, "one project directory name"):
+                runner._stage_offline_project_dependencies(batch, repository, workspace)
+
+    def test_offline_fixture_rejects_lockfile_version_drift(self) -> None:
+        """Mutable ignored dependencies must match the tracked lock evidence."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            repository = root / "repository"
+            workspace = root / "workspace"
+            source = repository / "evals" / "projects" / "fixture" / "node_modules" / "typescript"
+            source.mkdir(parents=True)
+            (source / "package.json").write_text('{"version":"7.0.1"}', encoding="utf-8")
+            (source.parent.parent / "package-lock.json").write_text(
+                '{"packages":{"node_modules/typescript":{"version":"7.0.2"}}}', encoding="utf-8"
+            )
+            workspace.mkdir()
+            suite = self._suite("offline-suite")
+            suite = runner._Suite(
+                suite_id=suite.suite_id,
+                priority=suite.priority,
+                path=suite.path,
+                manifest=suite.manifest,
+                scenarios=({
+                    "id": "happy",
+                    "status": "executable",
+                    "executableCase": "fixture",
+                    "runtimeCapabilities": ["offline-node-modules"],
+                },),
+            )
+            batch = (runner._RunSpec(suite=suite, scenario_ids=("happy",)),)
+
+            with self.assertRaisesRegex(RuntimeError, "does not match its lockfile"):
+                runner._stage_offline_project_dependencies(batch, repository, workspace)
+
+    def test_browser_runtime_is_copied_and_bound_to_isolated_home(self) -> None:
+        """Browser instructions cannot resolve through a user-home plugin path."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            plugin = root / "plugin"
+            (plugin / "scripts").mkdir(parents=True)
+            (plugin / "scripts" / "browser-client.mjs").write_text("export {};", encoding="utf-8")
+            source_skill = plugin / "skills" / "control-in-app-browser"
+            source_skill.mkdir(parents=True)
+            (source_skill / "SKILL.md").write_text(
+                "Use <plugin root>/scripts/browser-client.mjs", encoding="utf-8"
+            )
+            codex_home = root / "codex-home"
+            skill_root = codex_home / "skills"
+            skill_root.mkdir(parents=True)
+
+            runtime = runner._stage_browser_runtime(plugin, codex_home, skill_root)
+            staged_skill = skill_root / "control-in-app-browser" / "SKILL.md"
+
+            self.assertEqual(codex_home / "browser-runtime", runtime)
+            self.assertIn(str(runtime), staged_skill.read_text(encoding="utf-8"))
+            self.assertNotIn("<plugin root>", staged_skill.read_text(encoding="utf-8"))
 
     def test_nested_child_limit_rejects_more_than_temporary_tenth_agent(self) -> None:
         """A suite cannot declare more than one nested canonical dependency."""
