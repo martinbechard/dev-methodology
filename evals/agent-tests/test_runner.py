@@ -664,10 +664,13 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                 encoding="utf-8",
             )
 
-            staged = runner._copy_agent(source, "target_agent", agent_root)
+            python_executable = Path("/runtime/python3.11")
+            staged = runner._copy_agent(source, "target_agent", agent_root, python_executable)
             loaded = runner.tomllib.loads((agent_root / "target_agent.toml").read_text(encoding="utf-8"))
 
         self.assertIn(staged.instruction_marker, loaded["developer_instructions"])
+        self.assertIn(str(python_executable), loaded["developer_instructions"])
+        self.assertIn("instead of python or python3", loaded["developer_instructions"])
         self.assertEqual("gpt-5.6-sol", loaded["model"])
 
     def test_staging_preserves_an_explicit_agent_model(self) -> None:
@@ -826,17 +829,22 @@ class AgentSuiteRunnerTests(unittest.TestCase):
     def test_controlled_environment_does_not_inherit_host_credentials(self) -> None:
         """Only process-location and locale values cross the host boundary."""
         bundled_node = Path("/tmp/runtime/bin/node")
+        bundled_python = Path("/tmp/python/bin/python3.11")
         environment = runner._controlled_environment(
             Path("/tmp/home"),
             Path("/tmp/codex"),
             Path("/tmp/work"),
             bundled_node,
+            bundled_python,
         )
 
         self.assertNotIn("CODEX_AUTH_FILE", environment)
         self.assertNotIn("OPENAI_API_KEY", environment)
         self.assertEqual("/tmp/codex", environment["CODEX_HOME"])
-        self.assertEqual("/tmp/runtime/bin", environment["PATH"].split(os.pathsep)[0])
+        self.assertEqual(
+            ["/tmp/python/bin", "/tmp/runtime/bin"],
+            environment["PATH"].split(os.pathsep)[:2],
+        )
 
     def test_timeout_retains_output_and_stops_the_process_group(self) -> None:
         """A timed-out harness returns bounded evidence instead of raising before retention."""

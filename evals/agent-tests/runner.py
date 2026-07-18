@@ -21,6 +21,7 @@ import signal
 import shutil
 import socket
 import subprocess
+import sys
 import tempfile
 import threading
 import time
@@ -281,7 +282,12 @@ def _temporary_run_root(label: str) -> Iterator[Path]:
         yield Path(temporary)
 
 
-def _copy_agent(source: Path, invocation: str, agent_root: Path) -> _StagedAgent:
+def _copy_agent(
+    source: Path,
+    invocation: str,
+    agent_root: Path,
+    python_executable: Path | None = None,
+) -> _StagedAgent:
     if not _RUNTIME_NAME.fullmatch(invocation):
         raise ValueError(f"Invalid staged agent invocation: {invocation}")
     destination = agent_root / f"{invocation}.toml"
@@ -294,9 +300,12 @@ def _copy_agent(source: Path, invocation: str, agent_root: Path) -> _StagedAgent
     if not instructions:
         raise ValueError(f"Staged agent has no developer instructions: {source}")
     marker = f"AGENT_INSTRUCTION_BINDING_{invocation}_{secrets.token_hex(16)}"
+    runtime_python = python_executable or _bundled_python_executable()
     binding_instruction = (
         "\n\nRuntime instruction binding marker retained by the harness: "
-        f"{marker}."
+        f"{marker}. "
+        f"For every repository Python command, invoke {runtime_python} exactly instead of python or python3 so "
+        "the required Python 3.11 standard library is available."
     )
     assignment = 'developer_instructions = """'
     start = source_text.find(assignment)
@@ -360,6 +369,19 @@ def _bundled_node_executable() -> Path:
         if candidate.is_file() and os.access(candidate, os.X_OK):
             return candidate
     raise RuntimeError("The bundled Node runtime is unavailable")
+
+
+def _bundled_python_executable() -> Path:
+    configured = os.environ.get("CODEX_BUNDLED_PYTHON")
+    candidates = [
+        *([Path(configured)] if configured else []),
+        Path("/opt/homebrew/bin/python3.11"),
+        Path(sys.executable),
+    ]
+    for candidate in candidates:
+        if candidate.is_file() and os.access(candidate, os.X_OK):
+            return candidate
+    raise RuntimeError("The required Python 3.11 runtime is unavailable")
 
 
 def _stage_browser_runtime(
@@ -1460,10 +1482,14 @@ def _controlled_environment(
     codex_home: Path,
     temporary: Path,
     node_executable: Path | None = None,
+    python_executable: Path | None = None,
 ) -> dict[str, str]:
     bundled_node = node_executable or _bundled_node_executable()
+    bundled_python = python_executable or _bundled_python_executable()
     inherited_path = os.environ.get("PATH", "/usr/bin:/bin")
-    environment = {"PATH": f"{bundled_node.parent}{os.pathsep}{inherited_path}"}
+    environment = {
+        "PATH": f"{bundled_python.parent}{os.pathsep}{bundled_node.parent}{os.pathsep}{inherited_path}"
+    }
     for name in ("LANG", "LC_ALL"):
         if name in os.environ:
             environment[name] = os.environ[name]
