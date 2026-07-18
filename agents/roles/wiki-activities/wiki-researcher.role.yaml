@@ -8,7 +8,7 @@ examples:
 - purpose: Determine whether maintained local or federated wiki coverage already answers
     a project question before starting duplicate external research.
   runtimeInvocations:
-    codex: "$wiki-researcher Check whether the local or federated wiki already
+    codex: "$wiki_researcher Check whether the local or federated wiki already
       explains the service ownership model, and research only if the coverage is missing
       or stale."
     claude-code: "@agent-wiki-researcher Check whether the local or federated wiki
@@ -21,7 +21,7 @@ examples:
 - purpose: Research a confirmed wiki coverage gap and preserve source provenance, exclusions,
     and ingest guidance without editing durable wiki pages.
   runtimeInvocations:
-    codex: "$wiki-researcher Research current approaches to dependency update policies
+    codex: "$wiki_researcher Research current approaches to dependency update policies
       for the missing wiki topic, save one sourced raw report, and recommend the durable
       ingest destinations."
     claude-code: "@agent-wiki-researcher Research current approaches to dependency

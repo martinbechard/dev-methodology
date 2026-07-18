@@ -9,7 +9,7 @@ examples:
     roots, ownership, source workflow, navigation, automation, and verification contract
     before initialization.
   runtimeInvocations:
-    codex: "$wiki-architect Propose and initialize a project wiki for this repository.
+    codex: "$wiki_architect Propose and initialize a project wiki for this repository.
       Inspect the live structure, confirm the wiki roots and federation boundaries with
       me, then verify the approved setup."
     claude-code: "@agent-wiki-architect Propose and initialize a project wiki for
@@ -24,7 +24,7 @@ examples:
 - purpose: Restructure an established wiki whose mixed ownership, duplicate coverage,
     and inconsistent source handling prevent reliable maintenance and verification.
   runtimeInvocations:
-    codex: "$wiki-architect Restructure the existing project wiki. Preserve valid
+    codex: "$wiki_architect Restructure the existing project wiki. Preserve valid
       content, clarify local and federated ownership, separate raw collection from ingest,
       repair navigation, and verify the approved contract."
     claude-code: "@agent-wiki-architect Restructure the existing project wiki. Preserve

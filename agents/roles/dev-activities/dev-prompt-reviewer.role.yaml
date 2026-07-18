@@ -12,7 +12,7 @@ examples:
     authority, retry handling, and protected-data boundaries before an assistant can
     create duplicate or unsafe side effects.
   runtimeInvocations:
-    codex: "$dev-prompt-reviewer Review the support-ticket assistant's prompt,
+    codex: "$dev_prompt_reviewer Review the support-ticket assistant's prompt,
       state schema, create-ticket tool, retry path, and redaction rules for contract
       and safety defects."
     claude-code: "@agent-dev-prompt-reviewer Review the support-ticket assistant's
@@ -29,7 +29,7 @@ examples:
     failures, recovery, cancellation, and fallback behavior promised by a model-facing
     planning protocol.
   runtimeInvocations:
-    codex: "$dev-prompt-reviewer Review the deployment-plan agent's release
+    codex: "$dev_prompt_reviewer Review the deployment-plan agent's release
       readiness by mapping its prompt, output schema, tool-failure handling, and fallback
       promises to the existing evaluations."
     claude-code: "@agent-dev-prompt-reviewer Review the deployment-plan agent's

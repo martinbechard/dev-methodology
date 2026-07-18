@@ -8,7 +8,7 @@ examples:
 - purpose: Answer a project behavior question from maintained wiki coverage and verify
     the material claims against the current implementation and tests.
   runtimeInvocations:
-    codex: "$wiki-query-responder Explain how queued job cancellation works, including
+    codex: "$wiki_query_responder Explain how queued job cancellation works, including
       the allowed states and the API response for a repeated request."
     claude-code: "@agent-wiki-query-responder Explain how queued job cancellation works,
       including the allowed states and the API response for a repeated request."
@@ -21,7 +21,7 @@ examples:
     question and produce a bounded research handoff when the maintained answer is missing
     or stale.
   runtimeInvocations:
-    codex: "$wiki-query-responder What happens to outbound notifications when the primary
+    codex: "$wiki_query_responder What happens to outbound notifications when the primary
       delivery provider is unavailable, and is that behavior documented accurately?"
     claude-code: "@agent-wiki-query-responder What happens to outbound notifications when
       the primary delivery provider is unavailable, and is that behavior documented

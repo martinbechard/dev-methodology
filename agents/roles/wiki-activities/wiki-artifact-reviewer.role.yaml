@@ -12,7 +12,7 @@ examples:
     rules, automation, and verification workflow before maintainers rely on it as a durable
     operating surface.
   runtimeInvocations:
-    codex: "$wiki-artifact-reviewer Review the project wiki index and maintenance procedure
+    codex: "$wiki_artifact_reviewer Review the project wiki index and maintenance procedure
       for source authority, page subclasses, navigation, update rules, automation, and
       verification completeness."
     claude-code: "@agent-wiki-artifact-reviewer Review the project wiki index and maintenance
@@ -28,7 +28,7 @@ examples:
     checklist support their claims with authoritative sources, valid links, editable diagrams,
     and steady-state maintenance guidance.
   runtimeInvocations:
-    codex: "$wiki-artifact-reviewer Independently review the service-lifecycle topic page
+    codex: "$wiki_artifact_reviewer Independently review the service-lifecycle topic page
       and its completed project-wiki checklist against the linked code, tests, procedures,
       and neighboring wiki pages."
     claude-code: "@agent-wiki-artifact-reviewer Independently review the service-lifecycle

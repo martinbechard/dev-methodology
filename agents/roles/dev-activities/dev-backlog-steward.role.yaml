@@ -8,7 +8,7 @@ examples:
 - purpose: Turn an accepted request into a typed, dispatchable backlog item and establish
     exclusive ownership before implementation begins.
   runtimeInvocations:
-    codex: "$dev-backlog-steward Create and claim a feature backlog item for adding idempotency
+    codex: "$dev_backlog_steward Create and claim a feature backlog item for adding idempotency
       keys to webhook processing, using the repository's current backlog and claim conventions."
     claude-code: "@agent-dev-backlog-steward Create and claim a feature backlog item for
       adding idempotency keys to webhook processing, using the repository's current
@@ -20,7 +20,7 @@ examples:
 - purpose: Recover interrupted claimed work from durable evidence, complete its lifecycle
     transition, and preserve an auditable outcome for later contributors.
   runtimeInvocations:
-    codex: "$dev-backlog-steward Reconcile the interrupted cache-invalidation investigation,
+    codex: "$dev_backlog_steward Reconcile the interrupted cache-invalidation investigation,
       determine its state from the item, claim, logs, and result evidence, and archive
       it if completion is supported."
     claude-code: "@agent-dev-backlog-steward Reconcile the interrupted cache-invalidation

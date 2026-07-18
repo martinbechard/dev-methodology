@@ -70,6 +70,53 @@ class CodexAgentNameTests(unittest.TestCase):
             f"{role.filename}{build_skill_docs.CODEX_AGENT_EXTENSION}",
         )
 
+    def test_codex_runtime_invocations_use_runtime_safe_agent_names(self) -> None:
+        """Require adapter-specific examples to invoke the declared Codex agent name."""
+
+        build_skill_docs = _load_build_skill_docs()
+        skill_payload = build_skill_docs.build_payload()
+        roles = build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
+
+        for role in roles:
+            expected_prefix = f"${build_skill_docs.codex_agent_name(role.name)} "
+            for index, example in enumerate(role.examples):
+                with self.subTest(role=role.name, example=index):
+                    self.assertTrue(
+                        example["runtimeInvocations"]["codex"].startswith(expected_prefix),
+                        example["runtimeInvocations"]["codex"],
+                    )
+
+    def test_generated_codex_instructions_use_runtime_safe_dependency_names(self) -> None:
+        """Keep model-facing delegation selectors aligned with generated name fields."""
+
+        build_skill_docs = _load_build_skill_docs()
+        skill_payload = build_skill_docs.build_payload()
+        roles = build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
+        outputs = build_skill_docs.expected_role_outputs(roles)
+        role_by_name = {role.name: role for role in roles}
+
+        for role in roles:
+            if not role.agent_dependencies:
+                continue
+            output_path = (
+                build_skill_docs.CODEX_AGENT_OUTPUT_ROOT
+                / f"{role.filename}{build_skill_docs.CODEX_AGENT_EXTENSION}"
+            )
+            payload = tomllib.loads(outputs[output_path])
+            instructions = payload["developer_instructions"]
+            for dependency in role.agent_dependencies:
+                with self.subTest(role=role.name, dependency=dependency):
+                    runtime_name = build_skill_docs.codex_agent_name(dependency)
+                    self.assertIn(runtime_name, instructions)
+                    self.assertIsNotNone(role_by_name.get(dependency))
+                    self.assertIsNone(
+                        re.search(
+                            rf"(?<![a-z0-9_-]){re.escape(dependency)}(?![a-z0-9_-])",
+                            instructions,
+                        ),
+                        instructions,
+                    )
+
 
 if __name__ == "__main__":
     unittest.main()

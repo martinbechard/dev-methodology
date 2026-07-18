@@ -10,7 +10,7 @@ examples:
 - purpose: Choose the durable location for a new project artifact by classifying its
     purpose against the live repository taxonomy and nearest placement guidance.
   runtimeInvocations:
-    codex: "$project-organiser Choose the path for a deployment rollback runbook in
+    codex: "$project_organiser Choose the path for a deployment rollback runbook in
       this repository. Inspect the current structure and nearest guidance, then report
       the approved path, rationale, and placement audit."
     claude-code: "@agent-project-organiser Choose the path for a deployment rollback
@@ -24,7 +24,7 @@ examples:
 - purpose: Audit generated files against declared source and generated-output boundaries
     so misplaced artifacts can be corrected without obscuring their ownership or lifecycle.
   runtimeInvocations:
-    codex: "$project-organiser Audit the files produced by the client-code generator
+    codex: "$project_organiser Audit the files produced by the client-code generator
       and identify any outputs that do not follow this repository's source, fixture,
       and generated-artifact boundaries."
     claude-code: "@agent-project-organiser Audit the files produced by the client-code

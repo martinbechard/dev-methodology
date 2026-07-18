@@ -598,7 +598,7 @@
           <tr>
             <td><span class="name">Examples</span></td>
             <td><code>examples</code></td>
-            <td>Stores customer-safe runtime invocations and plausible responses for generated catalog views and regression checks.</td>
+            <td>Stores customer-safe runtime invocations and plausible responses for generated catalog views and regression checks. Adapter-specific invocations use that harness's native selector, including underscore-normalized Codex agent names.</td>
           </tr>
         </tbody>
       </table>
@@ -687,7 +687,7 @@
         <tbody>
           <tr>
             <td><span class="name">name</span></td>
-            <td><code>name</code>, with portable hyphens converted to underscores because Codex runtime names accept lowercase letters, digits, and underscores.</td>
+            <td><code>name</code>, with portable hyphens converted to underscores because Codex runtime names accept lowercase letters, digits, and underscores. The same conversion applies to complete role references in Codex-facing instructions and invocation examples.</td>
             <td><code>name</code></td>
             <td><code>name</code></td>
             <td><code>name</code>, or filename when omitted</td>
@@ -703,7 +703,7 @@
           </tr>
           <tr>
             <td><span class="name">instructions</span></td>
-            <td><code>developer_instructions</code></td>
+            <td><code>developer_instructions</code>, with complete conceptual role references converted to their Codex runtime names while portable source identifiers remain unchanged.</td>
             <td>Markdown body</td>
             <td>Markdown body</td>
             <td>Markdown body</td>

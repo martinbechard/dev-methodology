@@ -12,7 +12,7 @@ examples:
     contract, durable leaf granularity, source linkage, and leaf-link coverage before
     acceptance.
   runtimeInvocations:
-    codex: "$wiki-topic-verifier Verify docs/wiki/runtime/retry-policy.md and docs/wiki/runtime/index.md
+    codex: "$wiki_topic_verifier Verify docs/wiki/runtime/retry-policy.md and docs/wiki/runtime/index.md
       against raw/processed/retry-guidance.md, including leaf granularity, source
       links, leaf-link evidence, lint, and OKF validation."
     claude-code: "@agent-wiki-topic-verifier Verify docs/wiki/runtime/retry-policy.md
@@ -29,7 +29,7 @@ examples:
     across a durable leaf, monthly digest, and federation boundary while repository
     checks pass.
   runtimeInvocations:
-    codex: "$wiki-topic-verifier Verify docs/wiki/integrations/provider-routing.md,
+    codex: "$wiki_topic_verifier Verify docs/wiki/integrations/provider-routing.md,
       docs/wiki/digests/2026-07.md, and docs/wiki/federation.md against raw/processed/provider-routing-review.md,
       including source links, digest structure, federation ownership, lint, and OKF
       validation."

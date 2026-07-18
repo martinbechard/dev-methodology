@@ -8,7 +8,7 @@ examples:
 - purpose: Collect a time-bounded set of public evidence for an approved topic while
     making publication-boundary decisions auditable for later wiki ingest.
   runtimeInvocations:
-    codex: "$wiki-source-collector Collect public advisories published during the
+    codex: "$wiki_source_collector Collect public advisories published during the
       specified UTC window for the approved dependency-security topic. Save one raw-only
       source artifact and record excluded or ambiguously dated candidates."
     claude-code: "@agent-wiki-source-collector Collect public advisories published
@@ -21,7 +21,7 @@ examples:
 - purpose: Monitor an approved set of public entities for relevant source changes while
     preserving provenance and separating collection from durable synthesis.
   runtimeInvocations:
-    codex: "$wiki-source-collector Check the approved ecosystem-watch entities for
+    codex: "$wiki_source_collector Check the approved ecosystem-watch entities for
       public release notes and announcements in the requested weekly window. Consolidate
       relevant evidence into a raw-only handoff without editing the wiki."
     claude-code: "@agent-wiki-source-collector Check the approved ecosystem-watch

@@ -11,7 +11,7 @@ examples:
 - purpose: Assess authentication and authorization paths around tenant-scoped data
     so maintainers can remediate an exploitable cross-tenant access path before release.
   runtimeInvocations:
-    codex: "$dev-security-reviewer Review the account-management API for authentication
+    codex: "$dev_security_reviewer Review the account-management API for authentication
       bypasses and cross-tenant data access using the current routes, middleware,
       persistence queries, and tests."
     claude-code: "@agent-dev-security-reviewer Review the account-management API for
@@ -26,7 +26,7 @@ examples:
 - purpose: Evaluate prompt, tool, and logging boundaries in an AI-assisted workflow
     so untrusted content cannot trigger unauthorized actions or expose sensitive data.
   runtimeInvocations:
-    codex: "$dev-security-reviewer Review the support-assistant workflow for indirect prompt
+    codex: "$dev_security_reviewer Review the support-assistant workflow for indirect prompt
       injection, over-privileged tool calls, dependency risk, and sensitive-data logging
       using the current prompts, tool schemas, configuration, and tests."
     claude-code: "@agent-dev-security-reviewer Review the support-assistant workflow for

@@ -21,7 +21,7 @@ examples:
 - purpose: Turn an agreed product behavior into a functional specification that product,
     design, engineering, and QA can use to build and verify the same workflow.
   runtimeInvocations:
-    codex: "$dev-documentation-writer Document the password-reset workflow as a functional
+    codex: "$dev_documentation_writer Document the password-reset workflow as a functional
       specification from the current product notes, routes, and tests."
     claude-code: "@agent-dev-documentation-writer Document the password-reset workflow
       as a functional specification from the current product notes, routes, and tests."
@@ -33,7 +33,7 @@ examples:
 - purpose: Explain an existing cross-cutting system decision so future changes preserve
     the boundary, rationale, responsibilities, and verification obligations.
   runtimeInvocations:
-    codex: "$dev-documentation-writer Derive an architecture document for tenant isolation
+    codex: "$dev_documentation_writer Derive an architecture document for tenant isolation
       by reading the live code, configuration, and tests."
     claude-code: "@agent-dev-documentation-writer Derive an architecture document for
       tenant isolation by reading the live code, configuration, and tests."
@@ -44,7 +44,7 @@ examples:
 - purpose: Reverse engineer a whole application into a complete documentation hierarchy
     that can guide future maintenance and implementation.
   runtimeInvocations:
-    codex: "$dev-documentation-writer Reverse engineer this entire application from its
+    codex: "$dev_documentation_writer Reverse engineer this entire application from its
       code, configuration, migrations, UI, and tests."
     claude-code: "@agent-dev-documentation-writer Reverse engineer this entire application
       from its code, configuration, migrations, UI, and tests."

@@ -24,21 +24,21 @@ Turn each approved raw input into traceable durable wiki coverage without closin
 
 ## Boundaries
 
-- Own durable wiki edits, queue moves, source-link corrections, and the ingest state for the assigned inputs. Keep wiki-topic-verifier read-only.
+- Own durable wiki edits, queue moves, source-link corrections, and the ingest state for the assigned inputs. Keep wiki_topic_verifier read-only.
 - Preserve the raw-to-processed boundary. Do not move a source or describe it as complete before its pre-move verification gate passes.
 
 ## Workflow
 
 1. Inspect the live ingest queues, read each assigned unprocessed source, and reconcile its claims with the applicable authoritative project evidence.
 2. Synthesize granular durable leaves, hubs, links, and item-level digest entries while preserving provenance and federation ownership.
-3. Run leaf linking, wiki lint, and applicable OKF validation, then request a fresh wiki-topic-verifier verdict before moving the source.
+3. Run leaf linking, wiki lint, and applicable OKF validation, then request a fresh wiki_topic_verifier verdict before moving the source.
 4. After a GOOD pre-move verdict, move the completed source under raw/processed and update every affected page to the processed relative link.
-5. Rerun lint and applicable OKF validation after the move. When any topic-page link changed, request a fresh post-move wiki-topic-verifier verdict.
+5. Rerun lint and applicable OKF validation after the move. When any topic-page link changed, request a fresh post-move wiki_topic_verifier verdict.
 6. Recheck every applicable ingest queue and report its final state before completion.
 
 ## Delegation
 
-- Invoke wiki-topic-verifier in a fresh context for each source's complete changed-page set before the source move and again after processed-source link changes. Provide the repository root, page inventory, source evidence path, and current validation output.
+- Invoke wiki_topic_verifier in a fresh context for each source's complete changed-page set before the source move and again after processed-source link changes. Provide the repository root, page inventory, source evidence path, and current validation output.
 
 ## Review
 
@@ -48,7 +48,7 @@ Turn each approved raw input into traceable durable wiki coverage without closin
 
 - After the initial verdict at each pre-move or post-move gate, allow at most two ingester correction attempts for that gate. Report BLOCKED when the second corrected submission still returns NEEDS_CORRECTION.
 - If post-move acceptance cannot be reached, restore the source and its page links to the pre-move raw state when that can be done without overwriting unrelated work, and keep the source eligible for later ingest.
-- Report BLOCKED without moving the source when wiki-topic-verifier is unavailable at the pre-move gate or required authoritative evidence cannot be obtained.
+- Report BLOCKED without moving the source when wiki_topic_verifier is unavailable at the pre-move gate or required authoritative evidence cannot be obtained.
 
 ## Completion
 

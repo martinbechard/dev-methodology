@@ -212,7 +212,7 @@
         {
           "name": "dev-orchestrator",
           "output": "generated/adapters/codex/agents/dev-orchestrator.toml",
-          "sha256": "1db97a57f5e8a6192ff3ff46a1c0d7782cb639151dcc6be70dc4872ffe91786b",
+          "sha256": "ec33f435c84e9a6b5ce34f52e70cae41b55d171521a19270612fd1e68d664bdc",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -254,13 +254,13 @@
         {
           "name": "methodology-maintainer",
           "output": "generated/adapters/codex/agents/methodology-maintainer.toml",
-          "sha256": "8ceef36c6676fa2e605bb13cbcfd8189fa56a151f83ae8188d0d7c8e52d2ffb3",
+          "sha256": "ae7f719bc61110e7fbf2d8188b764b3d4c2c03e0124797d6ce4662f7183d1b7a",
           "source": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml"
         },
         {
           "name": "project-bootstrapper",
           "output": "generated/adapters/codex/agents/project-bootstrapper.toml",
-          "sha256": "a42561f182214a9849c4f3086d82e913eb70ca683a843ff2bdcf1bb24eaf8656",
+          "sha256": "08842260625dba7f8509a5fe1821355745f9fbec8d1cce9a1030026b8c93d6e1",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
@@ -290,7 +290,7 @@
         {
           "name": "wiki-ingester",
           "output": "generated/adapters/codex/agents/wiki-ingester.toml",
-          "sha256": "45e3af619882e33f23a25dd6d26b6bbb21207951624b996f4b97257a46d34347",
+          "sha256": "41b0a904c000b21c4d7a201b8482b3513d9b43a17dd70a9a33636db63ef38fe3",
           "source": "agents/roles/wiki-activities/wiki-ingester.role.yaml"
         },
         {
@@ -320,7 +320,7 @@
         {
           "name": "wiki-writer",
           "output": "generated/adapters/codex/agents/wiki-writer.toml",
-          "sha256": "28d8c0f479439d99e2a952fd23daa882676ee9f8d08a2c65e77a6359ad4dc8ff",
+          "sha256": "2e86586b22def3695fce63658c5e440aa9360ab4c6546d74283bd8031bbf276e",
           "source": "agents/roles/wiki-activities/wiki-writer.role.yaml"
         }
       ],

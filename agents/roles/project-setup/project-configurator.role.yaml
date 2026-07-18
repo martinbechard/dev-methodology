@@ -19,7 +19,7 @@ examples:
 - purpose: Establish evidence-backed agent and technology routing for a mixed repository
     whose application, service, and infrastructure folders need distinct agent guidance.
   runtimeInvocations:
-    codex: "$project-configurator Inspect this repository, create PROJECT.yaml,
+    codex: "$project_configurator Inspect this repository, create PROJECT.yaml,
       and generate root and nested agent guidance for its application, service, and
       infrastructure scopes."
     claude-code: "@agent-project-configurator Inspect this repository, create
@@ -33,7 +33,7 @@ examples:
 - purpose: Reconcile an existing project configuration after project boundaries change so stale
     skillsets and routing do not remain in operational guidance.
   runtimeInvocations:
-    codex: "$project-configurator Update the existing project configuration after the background
+    codex: "$project_configurator Update the existing project configuration after the background
       worker moved into its own package, and verify all conceptual agent definition, skill, nested-guidance, and
       runtime-routing references."
     claude-code: "@agent-project-configurator Update the existing project configuration after

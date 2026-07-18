@@ -11,7 +11,7 @@ examples:
 - purpose: Verify an authenticated workflow across running application services while
     preserving the browser and service state needed to reproduce the result.
   runtimeInvocations:
-    codex: "$dev-browser-operator Start the application services, sign in with the seeded
+    codex: "$dev_browser_operator Start the application services, sign in with the seeded
       test account, and verify that a notification preference persists after a browser
       reload."
     claude-code: "@agent-dev-browser-operator Start the application services, sign in
@@ -26,7 +26,7 @@ examples:
 - purpose: Diagnose a browser-visible failure at the boundary between the interface,
     API, and supporting service without changing product code.
   runtimeInvocations:
-    codex: "$dev-browser-operator Reproduce the reported attachment-upload failure for
+    codex: "$dev_browser_operator Reproduce the reported attachment-upload failure for
       an authenticated user and capture enough evidence to identify the failing runtime
       boundary."
     claude-code: "@agent-dev-browser-operator Reproduce the reported attachment-upload
