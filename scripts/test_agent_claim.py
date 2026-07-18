@@ -28,9 +28,14 @@ class AgentClaimTests(unittest.TestCase):
         self.repository.mkdir()
         (self.repository / "src").mkdir()
         (self.repository / "docs").mkdir()
+        (self.repository / "backlog" / "feature-backlog").mkdir(parents=True)
         (self.repository / "README.md").write_text("baseline\n", encoding="utf-8")
         (self.repository / "src" / "one.py").write_text("one\n", encoding="utf-8")
         (self.repository / "docs" / "guide.md").write_text("guide\n", encoding="utf-8")
+        (self.repository / "backlog" / "feature-backlog" / "queued.md").write_text(
+            "queued\n",
+            encoding="utf-8",
+        )
         self.git("init")
         self.git("config", "user.email", "test@example.invalid")
         self.git("config", "user.name", "Claim Test")
@@ -166,6 +171,26 @@ class AgentClaimTests(unittest.TestCase):
         self.assertEqual(0, second.returncode, second.stderr)
         self.assertEqual("ISOLATE", self.output(second)["outcome"])
         self.assertTrue((isolated_path / ".git").is_file())
+        self.assertTrue((isolated_path / "src" / "one.py").is_file())
+        self.assertFalse((isolated_path / "backlog").exists())
+        self.assertTrue((self.repository / "backlog" / "feature-backlog" / "queued.md").is_file())
+
+    def test_backlog_scope_waits_for_primary_instead_of_creating_worktree(self) -> None:
+        self.claim(*self.acquire_arguments("first"), "--file", "README.md")
+        isolated, isolated_path = self.isolated_arguments("backlog")
+
+        completed = self.claim(
+            *self.acquire_arguments("backlog"),
+            "--file",
+            "backlog/feature-backlog/queued.md",
+            *isolated,
+        )
+
+        self.assertEqual(3, completed.returncode)
+        result = self.output(completed)
+        self.assertEqual("PRIMARY_REQUIRED", result["outcome"])
+        self.assertEqual("backlog_requires_primary_worktree", result["reason"])
+        self.assertFalse(isolated_path.exists())
 
     def test_simultaneous_writers_cannot_both_claim_primary(self) -> None:
         commands = [self.claim_command(*self.acquire_arguments(claim_id)) for claim_id in ("first", "second")]
@@ -339,6 +364,24 @@ class AgentClaimTests(unittest.TestCase):
 
         for field in ("worktree", "branch", "baseline_commit", "claimed_at", "mode"):
             self.assertEqual(before[field], after[field])
+
+    def test_isolated_claim_cannot_extend_into_backlog_scope(self) -> None:
+        self.claim(*self.acquire_arguments("first"), "--file", "README.md")
+        isolated, _isolated_path = self.isolated_arguments("second")
+        self.claim(*self.acquire_arguments("second"), "--file", "src/one.py", *isolated)
+        before = self.registry_path().read_bytes()
+
+        completed = self.claim(
+            "extend",
+            "--claim-id",
+            "second",
+            "--file",
+            "backlog/feature-backlog/queued.md",
+        )
+
+        self.assertEqual(3, completed.returncode)
+        self.assertEqual("PRIMARY_REQUIRED", self.output(completed)["outcome"])
+        self.assertEqual(before, self.registry_path().read_bytes())
 
     def test_linked_worktrees_share_one_journal(self) -> None:
         self.claim(*self.acquire_arguments("first"), "--file", "README.md")

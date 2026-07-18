@@ -34,7 +34,7 @@ WORKFLOW_FIXTURES = {
         "docs/wiki/digests/2026-07.md",
     ),
     "backlog-lifecycle": (
-        "docs/feature-backlog/retry-policy.md",
+        "backlog/feature-backlog/retry-policy.md",
         ".backlog-state/claims/retry-policy.yaml",
         ".backlog-state/logs/retry-policy.log",
     ),
@@ -139,10 +139,10 @@ class WorkflowFixtureTests(unittest.TestCase):
         """The interrupted item remains active and cannot be inferred complete."""
 
         fixture_root = PROJECTS_ROOT / "backlog-lifecycle"
-        self.assertTrue((fixture_root / "docs/feature-backlog/retry-policy.md").is_file())
+        self.assertTrue((fixture_root / "backlog/feature-backlog/retry-policy.md").is_file())
         self.assertFalse((fixture_root / ".backlog-state/results/retry-policy.yaml").exists())
         self.assertFalse(
-            (fixture_root / "docs/completed-backlog/features/retry-policy.md").exists()
+            (fixture_root / "backlog/completed-backlog/features/retry-policy.md").exists()
         )
 
 

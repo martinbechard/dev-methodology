@@ -20,7 +20,7 @@ Each item keeps its underlying work Type and uses Status: User Review. It contai
 ## Lifecycle
 
 - An approved or answered item moves to its typed active backlog folder with the user decision preserved as authority evidence.
-- A deferred item moves to docs/holding.
+- A deferred item moves to backlog/holding.
 - A rejected or abandoned item moves to the matching failed-backlog type when the user clearly ends the work.
 - A partially answered item stays here with a narrower question.
 

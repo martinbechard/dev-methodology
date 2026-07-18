@@ -51,7 +51,7 @@ Do not create implementation tasks, grant authority, select product behavior, or
 - Resolution records a clear user answer.
 - Every resulting backlog item has an evidence-backed reason to exist outside the synthetic evaluation.
 - Expected safe-blocking scenarios are not presented as product defects without user authority.
-- The item moves to docs/analysis-backlog if follow-up analysis remains, docs/holding if deferred, or the appropriate archive if no work remains.
+- The item moves to backlog/analysis-backlog if follow-up analysis remains, backlog/holding if deferred, or the appropriate archive if no work remains.
 
 ## Dependencies
 
@@ -60,8 +60,8 @@ None.
 ## Verification
 
 - Compare the recorded resolution with the resulting backlog files.
-- Confirm agent-actionable work is outside docs/user-review.
-- Confirm unresolved user-owned decisions remain inside docs/user-review with exact questions.
+- Confirm agent-actionable work is outside backlog/user-review.
+- Confirm unresolved user-owned decisions remain inside backlog/user-review with exact questions.
 
 ## Notes
 

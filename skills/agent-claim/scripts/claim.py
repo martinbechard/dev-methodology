@@ -28,6 +28,8 @@ ERROR = 1
 WAIT = 3
 ISOLATE_REQUIRED = 4
 RECOVERY_REQUIRED = 5
+BACKLOG_ROOT_DIRECTORY = "backlog"
+ISOLATED_SPARSE_CHECKOUT_PATTERNS = ("/*", "!/backlog/")
 REGISTRY_FILE_NAME = "agent-claims.json"
 LOCK_FILE_NAME = "agent-claims.lock"
 EVENT_DIRECTORY_NAME = "agent-claim-events"
@@ -150,6 +152,45 @@ def _head(worktree: Path) -> str:
 
 def _branch(worktree: Path) -> str:
     return _git(worktree, "branch", "--show-current").stdout.strip()
+
+
+def _discard_incomplete_worktree(repository: Path, worktree: Path, branch: str) -> None:
+    _git(repository, "worktree", "remove", "--force", str(worktree), check=False)
+    _git(repository, "branch", "-D", branch, check=False)
+
+
+def _create_isolated_worktree(repository: Path, worktree: Path, branch: str, base: str) -> str | None:
+    created = _git(
+        repository,
+        "worktree",
+        "add",
+        "--no-checkout",
+        "-b",
+        branch,
+        str(worktree),
+        base,
+        check=False,
+    )
+    if created.returncode != SUCCESS:
+        return "git_worktree_create_failed"
+
+    sparse_checkout = _git(
+        worktree,
+        "sparse-checkout",
+        "set",
+        "--no-cone",
+        *ISOLATED_SPARSE_CHECKOUT_PATTERNS,
+        check=False,
+    )
+    if sparse_checkout.returncode != SUCCESS:
+        _discard_incomplete_worktree(repository, worktree, branch)
+        return "sparse_checkout_configure_failed"
+
+    populated = _git(worktree, "reset", "--hard", "HEAD", check=False)
+    if populated.returncode != SUCCESS:
+        _discard_incomplete_worktree(repository, worktree, branch)
+        return "sparse_checkout_populate_failed"
+    return None
 
 
 def _bounded_identifier(value: str | None) -> str | None:
@@ -311,6 +352,15 @@ def _path_scopes(scope: dict[str, Any]) -> list[tuple[str, str]]:
     if scope.get("all_files"):
         values.append(("all_files", "."))
     return values
+
+
+def _scope_requires_primary_worktree(scope: dict[str, Any]) -> bool:
+    if scope.get("all_files"):
+        return True
+    return any(
+        kind in {"file", "tree"} and _path_is_within(path, BACKLOG_ROOT_DIRECTORY)
+        for kind, path in _path_scopes(scope)
+    )
 
 
 def _overlap_details(requested: dict[str, Any], claimed: dict[str, Any]) -> list[dict[str, str]]:
@@ -529,6 +579,37 @@ def _invalid_scope_result(
     )
 
 
+def _primary_required_result(
+    common_directory: Path,
+    action: str,
+    args: argparse.Namespace,
+    requested_scope: dict[str, Any],
+    scope_warnings: list[dict[str, str]],
+    claim: dict[str, Any] | None = None,
+    **details: Any,
+) -> int:
+    reason = "backlog_requires_primary_worktree"
+    event = _event(
+        action,
+        "PRIMARY_REQUIRED",
+        args,
+        claim=claim,
+        requested_scope=requested_scope,
+        reason=reason,
+        command_warnings=scope_warnings,
+        **details,
+    )
+    return _journaled_result(
+        WAIT,
+        common_directory,
+        event,
+        scope_warnings,
+        reason=reason,
+        message="Backlog scope is available only from the primary worktree.",
+        **details,
+    )
+
+
 def _acquire(args: argparse.Namespace) -> int:
     repository = _repository_root(Path(args.repo).resolve())
     with _locked_registry(repository) as (registry_path, data):
@@ -563,6 +644,15 @@ def _acquire(args: argparse.Namespace) -> int:
             )
 
         if claims:
+            if _scope_requires_primary_worktree(requested_scope):
+                return _primary_required_result(
+                    common_directory,
+                    "acquire",
+                    args,
+                    requested_scope,
+                    scope_warnings,
+                    active_claim_count=len(claims),
+                )
             if not args.branch or not args.worktree_path:
                 event = _event(
                     "acquire",
@@ -580,23 +670,19 @@ def _acquire(args: argparse.Namespace) -> int:
                     active_claim_count=len(claims),
                 )
             target_worktree = Path(args.worktree_path).resolve()
-            completed = _git(
+            failure_reason = _create_isolated_worktree(
                 repository,
-                "worktree",
-                "add",
-                "-b",
+                target_worktree,
                 args.branch,
-                str(target_worktree),
                 args.base,
-                check=False,
             )
-            if completed.returncode != SUCCESS:
+            if failure_reason is not None:
                 event = _event(
                     "acquire",
                     "WORKTREE_CREATE_FAILED",
                     args,
                     requested_scope=requested_scope,
-                    reason="git_worktree_create_failed",
+                    reason=failure_reason,
                 )
                 return _journaled_result(ERROR, common_directory, event, message="Git worktree creation failed.")
             mode = "isolated"
@@ -699,6 +785,18 @@ def _extend(args: argparse.Namespace) -> int:
                 scope_warnings,
                 conflicting_claim_ids=[item["claim_id"] for item in conflicts],
                 overlaps=event["overlaps"],
+                added_scope=added,
+                already_owned_scope=already_owned,
+            )
+
+        if claim.get("mode") == "isolated" and _scope_requires_primary_worktree(added):
+            return _primary_required_result(
+                common_directory,
+                "extend",
+                args,
+                requested_scope,
+                scope_warnings,
+                claim=claim,
                 added_scope=added,
                 already_owned_scope=already_owned,
             )

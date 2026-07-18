@@ -48,6 +48,7 @@ Project-specific evaluation skills may freeze inputs and compare completed candi
 - adapters/[runtime]/skills/[skill-name]/SKILL.md contains directives that belong only to that runtime. The installer includes these skills only with the matching adapter.
 - agents/roles contains conceptual agent definition sources grouped by Dev Activities, Wiki Activities, Project Setup, and Methodology Maintenance.
 - generated/adapters contains ready-to-copy native agent definitions and agent-generation-manifest.json. Codex, Claude Code, Gemini CLI, and Junie CLI definitions are generated from the same conceptual sources.
+- backlog contains the repository's typed active work, user-review queue, holding state, and outcome archives. It is available only from the primary worktree.
 - design/generated/technology-skill-detection-registry.js exposes the same detection registry for documentation and the future interactive agent-skill explorer.
 - scripts/openai_metadata.py refreshes derived Codex interface fields from SKILL.md while preserving hand-authored policy and dependencies.
 - scripts contains regression tests for installer behavior and bundle content.
@@ -113,6 +114,7 @@ Every modifying agent uses agent-claim before changing repository files or exclu
 
 - The first independent writer may claim a clean primary worktree.
 - A later non-overlapping writer receives a dedicated branch and linked worktree.
+- Every linked agent worktree uses worktree-specific sparse checkout to omit the repository-root backlog directory; backlog claims wait for the primary worktree.
 - Exact files, directory trees, repository-wide ownership, and exclusive resources use distinct scope forms.
 - A claim can atomically extend its narrow scope as new files or resources become necessary.
 - Overlap returns exact conflict pairs; a blocked extension leaves the live claim unchanged.
@@ -297,7 +299,7 @@ After that analysis and explicit user approval, --replace-customized may be comb
 
 Wiki work remains separate from general documentation, coding, review, backlog, and project setup. The generated [Core Agent and Skills](design/agent-and-skill-definitions.html) page owns catalog views of current conceptual agent definitions and skill definitions, including responsibilities, assigned skills, output contracts, examples, model profiles, repository mutation policies, and agent-skill relationships. [Technology Skills](design/skills-modularization.html) explains technology-agnostic agent skills and setup-bound technology extensions. The [orchestrated development lifecycle](design/orchestrated-development-lifecycle.html) owns bootstrap, normal planned design progression, complete source-backed documentation, execution, review, verification, integration, claim release, and execution evidence.
 
-Backlog work that an agent can execute unattended remains in the typed active backlog folders. Work whose next safe step requires a user decision, approval, authority grant, value judgment, or user-held information belongs in [docs/user-review](docs/user-review/README.md). Agents report its exact pending question but do not claim or dispatch the work until the user answers. Intentionally deferred work with no immediate question remains in docs/holding.
+Backlog work that an agent can execute unattended remains in the typed active folders under backlog. Work whose next safe step requires a user decision, approval, authority grant, value judgment, or user-held information belongs in [backlog/user-review](backlog/user-review/README.md). Agents report its exact pending question but do not claim or dispatch the work until the user answers. Intentionally deferred work with no immediate question remains in backlog/holding.
 
 The generic Gang of Four pattern skills are request-specific assignments for design authoring and design review. Java, TypeScript, and Python pattern examples remain setup-detected technology skills available to every agent acting under the matching folder guidance.
 

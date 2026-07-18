@@ -15,19 +15,19 @@ Create backlog items that are clear, typed, and safe to manage later. Ordinary a
 
 Place new backlog items by work type:
 
-- Defects go in docs/defect-backlog.
-- Features go in docs/feature-backlog.
-- Analyses go in docs/analysis-backlog.
-- Investigations go in docs/investigation-backlog.
-- Items whose next safe step requires a user decision, approval, authority grant, value judgment, or user-held information go in docs/user-review.
-- Items that should remain visible but not automatically worked go in docs/holding.
+- Defects go in backlog/defect-backlog.
+- Features go in backlog/feature-backlog.
+- Analyses go in backlog/analysis-backlog.
+- Investigations go in backlog/investigation-backlog.
+- Items whose next safe step requires a user decision, approval, authority grant, value judgment, or user-held information go in backlog/user-review.
+- Items that should remain visible but not automatically worked go in backlog/holding.
 - Do not create items directly in completed or failed archive folders.
 
 If a repository has a documented taxonomy or placement rule, follow it before creating files. If the expected backlog folder does not exist, create the most specific standard folder that matches the item type unless project guidance says otherwise.
 
-User review is a queue state, not a work type. Preserve the underlying Type as Defect, Feature, Analysis, or Investigation so an answered item has a deterministic active destination. Use Status: User Review while the item remains in docs/user-review.
+User review is a queue state, not a work type. Preserve the underlying Type as Defect, Feature, Analysis, or Investigation so an answered item has a deterministic active destination. Use Status: User Review while the item remains in backlog/user-review.
 
-docs/holding and docs/user-review are different. Holding contains work intentionally deferred without an immediate question. User review contains work that cannot safely advance until the user answers a concrete question.
+backlog/holding and backlog/user-review are different. Holding contains work intentionally deferred without an immediate question. User review contains work that cannot safely advance until the user answers a concrete question.
 
 ## Related Item Series
 
@@ -60,13 +60,13 @@ When a request mixes types, split it into separate backlog items only when the p
 
 ## User Review Classification
 
-Place an item in docs/user-review only when all of these are true:
+Place an item in backlog/user-review only when all of these are true:
 
 - The next safe action depends on a decision, approval, authority grant, value judgment, or information that belongs to the user.
 - The item can state one concrete question whose answer changes what happens next.
 - Proceeding without that answer would invent authority, product intent, risk acceptance, ownership, or source truth.
 
-Do not place an item in docs/user-review merely because the task is difficult, an ordinary dependency is unavailable, an agent lacks a tool, implementation failed, or more technical investigation is possible. Keep agent-actionable work in its typed active backlog and record ordinary dependencies there.
+Do not place an item in backlog/user-review merely because the task is difficult, an ordinary dependency is unavailable, an agent lacks a tool, implementation failed, or more technical investigation is possible. Keep agent-actionable work in its typed active backlog and record ordinary dependencies there.
 
 Do not turn a synthetic evaluation boundary into user-review work unless it represents a genuine unresolved project decision. A scenario designed to prove safe blocking is test evidence, not automatically a user obligation.
 
@@ -95,7 +95,7 @@ Write each backlog item as a self-contained work package with these sections:
 
 Use imperative, steady-state language. Do not describe the item as revised, enhanced, or updated unless the work itself is specifically about revision history.
 
-For an item in docs/user-review, also include this structure:
+For an item in backlog/user-review, also include this structure:
 
 - User Review Required: the section that owns the review request.
 - Question for the User: one direct question that can be answered without reconstructing the original task.

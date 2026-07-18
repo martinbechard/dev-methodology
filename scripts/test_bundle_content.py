@@ -1909,14 +1909,15 @@ class BundleContentTests(unittest.TestCase):
             ("manage-backlog", manage_text),
         ):
             with self.subTest(skill=skill_name):
-                self.assertIn("docs/user-review", skill_text)
+                self.assertIn("backlog/user-review", skill_text)
+                self.assertNotIn("docs/user-review", skill_text)
                 self.assertIn("user review", skill_text.lower())
 
         for required_guidance in (
             "User Review Required",
             "Question for the User",
             "Why User Input Is Required",
-            "Do not place an item in docs/user-review merely because",
+            "Do not place an item in backlog/user-review merely because",
             "synthetic evaluation boundary",
         ):
             with self.subTest(create_guidance=required_guidance):
@@ -1926,12 +1927,12 @@ class BundleContentTests(unittest.TestCase):
             "Do not claim, dispatch, implement, or resolve user-review work",
             "Ask the user the exact question recorded in the item",
             "Move an approved or answered item into its typed active backlog folder",
-            "docs/holding is for intentionally deferred work",
+            "backlog/holding is for intentionally deferred work",
         ):
             with self.subTest(manage_guidance=required_guidance):
                 self.assertIn(required_guidance, manage_text)
 
-        user_review_root = REPOSITORY_ROOT / "docs" / "user-review"
+        user_review_root = REPOSITORY_ROOT / "backlog" / "user-review"
         queue_readme = user_review_root / "README.md"
         classification_item = user_review_root / "classify-agent-suite-blocking-resources.md"
         self.assertTrue(queue_readme.is_file())
@@ -2522,6 +2523,7 @@ class BundleContentTests(unittest.TestCase):
         ):
             self.assertIn(tool_name, claim_skill)
         self.assertIn("A valid result is not an MCP failure", claim_skill)
+        self.assertIn("explicitly advertises PRIMARY_REQUIRED and backlog sparse-checkout behavior", claim_skill)
         self.assertIn("cannot initialize or connect before request dispatch", claim_skill)
         self.assertIn("Never use a fallback after a path", claim_skill)
         self.assertIn("Reconcile with claim_status first", claim_skill)
@@ -2533,9 +2535,12 @@ class BundleContentTests(unittest.TestCase):
         self.assertNotIn("python3 skills/agent-claim/scripts/claim.py", claim_skill)
         self.assertIn("## Stable Exit Codes", claim_skill)
         self.assertIn("ISOLATE_REQUIRED with exit code 4", claim_skill)
+        self.assertIn("PRIMARY_REQUIRED with exit code 3", claim_skill)
         self.assertIn("RECOVERY_REQUIRED with exit code 5", claim_skill)
         self.assertIn("### Primary Acquisition", claim_skill)
         self.assertIn("### Isolation Acquisition", claim_skill)
+        self.assertIn("backlog/ directory", claim_skill)
+        self.assertIn("worktree-specific sparse checkout", claim_skill)
         self.assertIn("### WAIT", claim_skill)
         self.assertIn("### Recovery Acquisition", claim_skill)
         self.assertIn("--base main", claim_skill)

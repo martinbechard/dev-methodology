@@ -37,7 +37,7 @@ authoritative_sources:
   documentation:
     - path: design
       evidence: "Contains the generated and hand-maintained explanations of the skill, agent, adapter, and operating models."
-    - path: docs/feature-backlog
+    - path: backlog/feature-backlog
       evidence: "Contains tracked methodology lifecycle backlog material."
 
 project_scope_and_boundaries:
@@ -94,6 +94,7 @@ project_taxonomy:
     - name: "Documentation and generated views"
       paths:
         - README.md
+        - backlog/**
         - design/**
         - docs/**
         - generated/**
@@ -110,7 +111,7 @@ project_taxonomy:
       purpose: "Operational maintenance contract and folder technology-skill routing loaded by agents."
     - path: design
       purpose: "Maintained and generated explanations of the methodology operating model."
-    - path: docs/feature-backlog
+    - path: backlog/feature-backlog
       purpose: "Tracked methodology lifecycle backlog."
 
 root_agents_reference:

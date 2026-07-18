@@ -16,6 +16,7 @@ OPERATIONS_REFERENCE = SKILL_ROOT / "references" / "operations.md"
 PAGE_SCHEMA_REFERENCE = SKILL_ROOT / "references" / "page-schema.md"
 VERIFICATION_CHECKLIST = SKILL_ROOT / "references" / "topic-page-verification-checklist.md"
 CORE_IMPLEMENTATION = SKILL_ROOT / "scripts" / "project_wiki_ops" / "core.py"
+CONSTANTS_IMPLEMENTATION = SKILL_ROOT / "scripts" / "project_wiki_ops" / "constants.py"
 TOPIC_WRITER_SKILL = SKILL_ROOT.parent / "project-wiki-topic-write" / "SKILL.md"
 TOPIC_VERIFIER_SKILL = SKILL_ROOT.parent / "project-wiki-topic-verify" / "SKILL.md"
 WIKI_OPS_COMMAND_PREFIX = "python3 project-wiki-skill-root/scripts/wiki_ops.py"
@@ -126,6 +127,17 @@ REQUIRED_OPERATIONS_PHRASES = [
 
 
 class SetupGuidanceTest(unittest.TestCase):
+    def test_backlog_sources_use_the_repository_root_backlog_directory(self) -> None:
+        constants_text = CONSTANTS_IMPLEMENTATION.read_text(encoding="utf-8")
+        core_text = CORE_IMPLEMENTATION.read_text(encoding="utf-8")
+
+        self.assertIn('(\"backlog/defect-backlog/\", \"docs/wiki/known-defects.md\")', constants_text)
+        self.assertIn('(\"backlog/feature-backlog/\", \"docs/wiki/topic-index.md\")', constants_text)
+        self.assertIn('\"backlog/\",', constants_text)
+        self.assertIn("backlog/defect-backlog holds tracked defects", core_text)
+        self.assertIn("backlog/feature-backlog holds tracked feature requests", core_text)
+        self.assertNotIn("docs/feature-backlog", constants_text + core_text)
+
     def test_skill_setup_guidance_requires_concrete_recommendations(self) -> None:
         skill_text = SKILL_DOCUMENT.read_text(encoding="utf-8")
 
