@@ -251,6 +251,18 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                     ).read_text(encoding="utf-8")
                     self.assertIn("raw/processed/2026-07-15-order-cancellation.md", order_lifecycle)
 
+            raw_task = (
+                _RUNNER_PATH.parent
+                / "wiki-ingester"
+                / "fixtures"
+                / "scenario-files"
+                / "raw-ingest"
+                / "TASK.md"
+            ).read_text(encoding="utf-8")
+            self.assertIn("planned claim closeout in eval-result.md", raw_task)
+            self.assertIn("actual release receipt plus final queue state", raw_task)
+            self.assertIn("Do not mutate the repository after releasing the claim", raw_task)
+
     def test_offline_maven_dependencies_are_checksum_staged_into_isolated_home(self) -> None:
         """A Maven fixture receives only its declared immutable host-cache files."""
         with tempfile.TemporaryDirectory() as temporary:
