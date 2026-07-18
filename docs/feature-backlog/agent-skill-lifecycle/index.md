@@ -38,6 +38,7 @@ Conceptual agent definitions declare their generic definition-owned skills. Proj
 8. [Prevent unauthorized contract narrowing](prevent-unauthorized-contract-narrowing.md).
 9. [Preserve authoritative configuration evidence](preserve-authoritative-configuration-evidence.md).
 10. [Prevent read-only review side effects](prevent-read-only-review-side-effects.md).
+11. [Require exact review quotation traceability](require-exact-review-quotation-traceability.md).
 
 The detector is the foundation. Codex verification must run against the stable generated definitions and project guidance. Documentation must distinguish designed behavior from behavior proven by the CLI suite. The mind map should consume the final detection and evidence data rather than adapting to an obsolete routing schema.
 
