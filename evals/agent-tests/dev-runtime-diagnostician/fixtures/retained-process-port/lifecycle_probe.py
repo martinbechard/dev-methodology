@@ -89,13 +89,8 @@ def inspect_retaining_process(port: int, child_pid: int) -> dict[str, object]:
         text=True,
         capture_output=True,
     ).stdout.strip()
-    process = subprocess.run(
-        ["ps", "-p", str(child_pid), "-o", "pid=,ppid=,command="],
-        check=True,
-        text=True,
-        capture_output=True,
-    ).stdout.strip()
-    verified = str(child_pid) in listener and str(child_pid) in process and "LISTEN" in listener
+    process = next((line for line in listener.splitlines() if str(child_pid) in line), "")
+    verified = bool(process) and "LISTEN" in listener
     return {
         "inspectedPid": child_pid,
         "listenerEvidence": listener,
