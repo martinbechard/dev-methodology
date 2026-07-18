@@ -33,6 +33,7 @@ Conceptual agent definitions declare their generic definition-owned skills. Proj
 3. [Document the cross-harness skill lifecycle](document-cross-harness-skill-lifecycle.md).
 4. [Build the agent and skill mind map](build-agent-skill-mind-map.md).
 5. [Align Project Organiser filename selection](align-project-organiser-filename-selection.md).
+6. [Enforce behavioral regression assertions](enforce-behavioral-regression-assertions.md).
 
 The detector is the foundation. Codex verification must run against the stable generated definitions and project guidance. Documentation must distinguish designed behavior from behavior proven by the CLI suite. The mind map should consume the final detection and evidence data rather than adapting to an obsolete routing schema.
 
