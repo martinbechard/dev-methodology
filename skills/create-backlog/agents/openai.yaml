@@ -4,7 +4,7 @@ interface:
   # User-facing name shown in Codex skill surfaces.
   display_name: Create Backlog
   # User-facing summary shown in Codex skill surfaces.
-  short_description: Create structured markdown backlog items from requests, notes, bug reports, feature ideas...
+  short_description: Create structured markdown backlog items and user-review requests from notes, defects, features...
   # Prompt Codex can use when launching this skill directly.
   default_prompt: Use $create-backlog to turn these notes into backlog items.
 

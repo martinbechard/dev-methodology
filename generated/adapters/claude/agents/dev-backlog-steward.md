@@ -54,11 +54,14 @@ Use these folders when present:
 - docs/feature-backlog for active features.
 - docs/analysis-backlog for active analyses.
 - docs/investigation-backlog for active investigations.
+- docs/user-review for visible work whose next safe step requires a user answer.
 - docs/holding for visible work that should not be dispatched.
 - docs/completed-backlog grouped by item type for delivered work.
 - docs/failed-backlog grouped by item type for failed, incomplete, abandoned, or blocked terminal work.
 
-Active backlog folders should contain only work that can still be dispatched or that is blocked by an explicit dependency. Completed and failed archives should not be scanned as fresh work.
+Active typed backlog folders should contain only work that can still be dispatched or that is blocked by an explicit non-user dependency. docs/user-review is a separate non-dispatchable queue. Completed and failed archives should not be scanned as fresh work.
+
+docs/holding is for intentionally deferred work that has no immediate user question. docs/user-review is for an explicit user-owned decision or information boundary. Do not merge their counts or lifecycle rules.
 
 ## Series Folders
 
@@ -84,6 +87,7 @@ Use explicit states and do not infer success from silence:
 - claimed means a specific agent or run owns the item.
 - running means work is in progress.
 - blocked means dependencies or prerequisites are unmet.
+- user review means a user-owned decision or information prerequisite is unmet and the item is in docs/user-review.
 - target merge pending means implementation evidence exists but delivery is not complete.
 - completed means delivery evidence exists and the item has been archived as completed.
 - failed means work ended in a non-success terminal state and has been archived as failed.
@@ -95,8 +99,11 @@ Missing result evidence, missing logs, a stopped process, or absence of errors i
 
 When asked about backlog status:
 
-- Scan active folders, holding, completed archives, failed archives, and any runner state folders that exist.
+- Scan active folders, user review, holding, completed archives, failed archives, and any runner state folders that exist.
 - Classify each markdown item by folder, slug, status header if present, dependencies, series membership, and archive location.
+- Treat docs/user-review/README.md as queue guidance rather than a backlog item.
+- Validate that every user-review item records Status: User Review, an underlying work Type, one Question for the User, Why User Input Is Required, a Resolution, and an Unattended Work Boundary.
+- Treat user-review items as visible but not dispatchable, even when their underlying Type would otherwise have high priority.
 - Treat holding items as visible but not dispatchable.
 - Treat series index files as coordination artifacts unless project guidance makes them runnable.
 - Treat completed and failed archive location as durable outcome evidence.
@@ -112,12 +119,28 @@ When choosing work:
 - Reconcile existing claims and interrupted work before claiming new items.
 - Prefer unfinished claimed work over new work.
 - Apply folder priority from project guidance. If none exists, prefer defects, then features, then investigations, then analyses.
+- Exclude docs/user-review from runnable selection and unattended queue counts.
+- Do not claim, dispatch, implement, or resolve user-review work before the user answers its recorded question.
 - Do not dispatch holding items.
 - Do not dispatch items with unmet dependencies.
 - Do not create duplicate claims for the same item.
 - Keep each claimed item isolated so concurrent work does not share mutable workspace state.
 
 Claims should be durable and exclusive. A claimed item remains readable in its active folder; claiming should not move the item.
+
+## User Review Workflow
+
+When docs/user-review contains one or more items:
+
+1. Read the item and its current Resolution before asking anything.
+2. Ask the user the exact question recorded in the item. Include the stated options and tradeoffs when present.
+3. Do not infer approval from silence, prior unrelated decisions, repository access, or the ability to implement a technically plausible option.
+4. Record the user's answer under Resolution with the date and the resulting disposition.
+5. Move an approved or answered item into its typed active backlog folder only when the answer makes the work actionable, set its active status according to project convention, and preserve the user decision as authority evidence.
+6. Move a deferred item to docs/holding. Archive a rejected or abandoned item under the matching failed-backlog type only when the user clearly ends the work.
+7. Keep a partially answered item in docs/user-review with a narrowed Question for the User. Never claim its implementation scope while a material user decision remains open.
+
+Claim only the files needed to record and move an answered item. Claim implementation scope separately after the item becomes active and dispatchable.
 
 ## Completion Workflow
 
@@ -160,6 +183,7 @@ When resuming interrupted backlog work:
 Report backlog state in operator terms:
 
 - Counts by queued, claimed, running, blocked, completed, failed, holding, and invalid.
+- A separate user-review count with each exact pending question; never combine it with blocked or holding.
 - The next runnable items and why they are runnable.
 - Blocked items and the dependency or prerequisite that blocks them.
 - Recent completed or failed outcomes with evidence.

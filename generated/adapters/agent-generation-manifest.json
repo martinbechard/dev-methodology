@@ -12,7 +12,7 @@
         {
           "name": "dev-backlog-steward",
           "output": "generated/adapters/claude/agents/dev-backlog-steward.md",
-          "sha256": "50e002f72089bcedfb70a019b5f89d616f72bea3be91e5f1da36fa3acca46caa",
+          "sha256": "49135954e3e7f39a0922b59de78723dc03d2d2cf03c2f44ec612cf5b922b4d1d",
           "source": "agents/roles/dev-activities/dev-backlog-steward.role.yaml"
         },
         {
@@ -48,7 +48,7 @@
         {
           "name": "dev-orchestrator",
           "output": "generated/adapters/claude/agents/dev-orchestrator.md",
-          "sha256": "776f5c27bdc262f9f9cc2f2e8ae045efedd13851e5bbb8869bc9b27f4edc6c6b",
+          "sha256": "5f756b209d13797db957b876625831ae4dbce6a3ec0ea4048546990f08991b56",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -176,7 +176,7 @@
         {
           "name": "dev-backlog-steward",
           "output": "generated/adapters/codex/agents/dev-backlog-steward.toml",
-          "sha256": "6e2094f3c3a2e34aa285e874dd6d1364ed805190c373e07407ac2f490975c821",
+          "sha256": "58df79eda92e5c21d80adb8342fe5a53acc82b85dda7c036e9ef0981ab26f2ea",
           "source": "agents/roles/dev-activities/dev-backlog-steward.role.yaml"
         },
         {
@@ -212,7 +212,7 @@
         {
           "name": "dev-orchestrator",
           "output": "generated/adapters/codex/agents/dev-orchestrator.toml",
-          "sha256": "ec33f435c84e9a6b5ce34f52e70cae41b55d171521a19270612fd1e68d664bdc",
+          "sha256": "1a5d6624a7db4e933f090fcd5359508b2bc9bbc0c697ac4fc5a0ba87913843a9",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -346,7 +346,7 @@
         {
           "name": "dev-backlog-steward",
           "output": "generated/adapters/gemini/agents/dev-backlog-steward.md",
-          "sha256": "634e6628be803ef062cb035dc57ba87deeb725e21bb46be03c882ddc6bece59e",
+          "sha256": "499b7eeef18ed2d8d652c10d37835bea00bdfd299cd36cc2041ff310689d77f8",
           "source": "agents/roles/dev-activities/dev-backlog-steward.role.yaml"
         },
         {
@@ -382,7 +382,7 @@
         {
           "name": "dev-orchestrator",
           "output": "generated/adapters/gemini/agents/dev-orchestrator.md",
-          "sha256": "359d8518e92af02f54c67396e2bc6c48c7c1d061297f9951fcdc8cf1275509b1",
+          "sha256": "7dfc9e6e4f96ec562182192507957f9fb15069434ae739b185cc34c6cdd80c3f",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -510,7 +510,7 @@
         {
           "name": "dev-backlog-steward",
           "output": "generated/adapters/junie/agents/dev-backlog-steward.md",
-          "sha256": "7335038b091e78a549d847f787c86f84ba8928f2734c72e2f53eda2af99130bf",
+          "sha256": "8a99f6f5540e156ad74a3d83dc791081d8ac07d157b2dd3c9d7b7f1d4a8262c7",
           "source": "agents/roles/dev-activities/dev-backlog-steward.role.yaml"
         },
         {
@@ -546,7 +546,7 @@
         {
           "name": "dev-orchestrator",
           "output": "generated/adapters/junie/agents/dev-orchestrator.md",
-          "sha256": "a7f09c12ff2ae61ea2335d5171aaffc73dd3753f8b7c6cf2f7a3de52d733d597",
+          "sha256": "350af41be16e4d3781b126559960be976290b7ea2578e0319f03caf3a9b6270b",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {

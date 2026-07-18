@@ -1896,6 +1896,58 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(guidance=guidance):
                 self.assertIn(guidance, skill_text)
 
+    def test_backlog_skills_separate_user_review_from_dispatchable_work(self) -> None:
+        create_text = (SKILLS_ROOT / "create-backlog" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        manage_text = (SKILLS_ROOT / "manage-backlog" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+
+        for skill_name, skill_text in (
+            ("create-backlog", create_text),
+            ("manage-backlog", manage_text),
+        ):
+            with self.subTest(skill=skill_name):
+                self.assertIn("docs/user-review", skill_text)
+                self.assertIn("user review", skill_text.lower())
+
+        for required_guidance in (
+            "User Review Required",
+            "Question for the User",
+            "Why User Input Is Required",
+            "Do not place an item in docs/user-review merely because",
+            "synthetic evaluation boundary",
+        ):
+            with self.subTest(create_guidance=required_guidance):
+                self.assertIn(required_guidance, create_text)
+
+        for required_guidance in (
+            "Do not claim, dispatch, implement, or resolve user-review work",
+            "Ask the user the exact question recorded in the item",
+            "Move an approved or answered item into its typed active backlog folder",
+            "docs/holding is for intentionally deferred work",
+        ):
+            with self.subTest(manage_guidance=required_guidance):
+                self.assertIn(required_guidance, manage_text)
+
+        user_review_root = REPOSITORY_ROOT / "docs" / "user-review"
+        queue_readme = user_review_root / "README.md"
+        classification_item = user_review_root / "classify-agent-suite-blocking-resources.md"
+        self.assertTrue(queue_readme.is_file())
+        self.assertTrue(classification_item.is_file())
+        classification_text = classification_item.read_text(encoding="utf-8")
+        for required_item_contract in (
+            "Status: User Review",
+            "Type: Analysis",
+            "## User Review Required",
+            "### Question for the User",
+            "### Why User Input Is Required",
+            "### Resolution",
+        ):
+            with self.subTest(item_contract=required_item_contract):
+                self.assertIn(required_item_contract, classification_text)
+
     def test_skill_names_follow_category_naming_rules(self) -> None:
         build_skill_docs = load_build_skill_docs_module()
         payload = build_skill_docs.build_payload()
