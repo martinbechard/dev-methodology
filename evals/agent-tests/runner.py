@@ -257,6 +257,14 @@ def _batch_runs(runs: Sequence[_RunSpec], maximum: int) -> tuple[tuple[_RunSpec,
                 ordinary = []
             batches.append((run,))
             continue
+        nested_enabled = int(run.suite.manifest["execution"].get("nestedAgentLimit", 0)) > 0
+        nested_already_enabled = any(
+            int(value.suite.manifest["execution"].get("nestedAgentLimit", 0)) > 0
+            for value in ordinary
+        )
+        if nested_enabled and nested_already_enabled:
+            batches.append(tuple(ordinary))
+            ordinary = []
         ordinary.append(run)
         if len(ordinary) == maximum:
             batches.append(tuple(ordinary))
@@ -1184,11 +1192,20 @@ def _audit_checkpoint_agreement(
             raise RuntimeError(f"Final report disagrees with checkpoint for {identity[0]}:{identity[1]}")
 
 
-def _audit_report(batch: Sequence[_RunSpec], report: dict[str, Any]) -> list[dict[str, Any]]:
+def _audit_report(
+    batch: Sequence[_RunSpec],
+    report: dict[str, Any],
+    checkpoint_report: dict[str, Any] | None = None,
+) -> list[dict[str, Any]]:
     expected = {run.suite.suite_id: set(run.scenario_ids) for run in batch}
     suites = {run.suite.suite_id: run.suite for run in batch}
     observed: dict[str, set[str]] = {}
     runs = report.get("runs", [])
+    checkpoint_results = {
+        (str(run_result.get("suite", "")), str(scenario_result.get("scenario", ""))): scenario_result
+        for run_result in (checkpoint_report or {}).get("runs", [])
+        for scenario_result in run_result.get("scenarioResults", [])
+    }
     if not isinstance(runs, list):
         raise RuntimeError("Coordinator report runs must be a list")
     for item in runs:
@@ -1212,15 +1229,32 @@ def _audit_report(batch: Sequence[_RunSpec], report: dict[str, Any]) -> list[dic
             if scenario_result.get("judgeInvoked") and not scenario_result.get("targetInvoked"):
                 raise RuntimeError(f"Judge ran without target for {suite_id}:{scenario_result.get('scenario')}")
             evidence = scenario_result.get("evidence", [])
+            checkpoint_result = checkpoint_results.get(
+                (suite_id, str(scenario_result.get("scenario", ""))), {}
+            )
+            checkpoint_evidence = checkpoint_result.get("evidence", [])
+            checkpoint_proves_skip = (
+                checkpoint_result.get("status") == scenario_result.get("status")
+                and checkpoint_result.get("targetInvoked") == scenario_result.get("targetInvoked")
+                and checkpoint_result.get("judgeInvoked") == scenario_result.get("judgeInvoked")
+                and isinstance(checkpoint_evidence, list)
+                and any(
+                    isinstance(value, str) and "criticalFailureSkipsJudge" in value
+                    for value in checkpoint_evidence
+                )
+            )
             critical_failure_skipped_judge = (
                 scenario_result.get("status") == "FAIL"
                 and scenario_result.get("targetInvoked")
                 and not scenario_result.get("judgeInvoked")
                 and suites[suite_id].manifest.get("acceptance", {}).get("criticalFailureSkipsJudge") is True
-                and isinstance(evidence, list)
-                and any(
-                    isinstance(value, str) and "criticalFailureSkipsJudge" in value
-                    for value in evidence
+                and (
+                    isinstance(evidence, list)
+                    and any(
+                        isinstance(value, str) and "criticalFailureSkipsJudge" in value
+                        for value in evidence
+                    )
+                    or checkpoint_proves_skip
                 )
             )
             if scenario_result.get("status") in {"PASS", "FAIL"} and not (
@@ -1310,6 +1344,7 @@ def _audit_identity(
     for agent in staged:
         matching_sessions = sessions_by_invocation.get(agent.invocation, [])
         exact_sessions = [session for session in matching_sessions if agent.instruction_marker in session.instruction_markers]
+        exact_direct_sessions = [session for session in exact_sessions if session.depth < 3]
         exact_session = bool(exact_sessions)
         required_count = expected_invocation_counts.get(agent.invocation, 0)
         required = required_count > 0
@@ -1322,14 +1357,15 @@ def _audit_identity(
                 "exactCustomAgentSession": exact_session,
                 "instructionBinding": "runtime-developer-input-bound-to-staged-definition" if exact_session else "missing",
                 "boundSessionIds": [session.session_id for session in exact_sessions],
+                "directBoundSessionIds": [session.session_id for session in exact_direct_sessions],
             }
         )
         if matching_sessions and len(exact_sessions) != len(matching_sessions):
             raise RuntimeError(f"Missing runtime instruction binding for {agent.invocation}")
-        if agent.invocation in expected_invocation_counts and len(exact_sessions) != required_count:
+        if agent.invocation in expected_invocation_counts and len(exact_direct_sessions) != required_count:
             raise RuntimeError(
                 f"Custom-agent session count mismatch for {agent.invocation}: "
-                f"expected {required_count}, observed {len(exact_sessions)}"
+                f"expected {required_count}, observed {len(exact_direct_sessions)}"
             )
     scenario_bindings: list[dict[str, str]] = []
     if batch is not None:
@@ -1919,7 +1955,7 @@ def _run_live_batch(
             report_error = f"checkpoint error: {checkpoint_error}"
         try:
             partial_report = _extract_coordinator_report(completed["stdout"])
-            _audit_report(batch, partial_report)
+            _audit_report(batch, partial_report, checkpoint_report)
             _audit_checkpoint_agreement(partial_report, checkpoint_report, batch)
         except RuntimeError as error:
             report_error = f"{report_error}; {error}" if report_error else str(error)

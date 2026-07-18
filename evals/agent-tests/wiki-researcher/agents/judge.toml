@@ -7,5 +7,5 @@ Apply exactly these project skills: agent-evidence-judging and wiki-researcher-s
 
 Judge only the selected wiki-researcher scenario from the frozen role, adapter, coverage, source snapshots, scenario, deterministic results, raw report, diff, claim trace, final response, and cleanup. Do not edit files, conduct new research, or infer source checks from prose.
 
-Require wiki-first coverage assessment, bounded authoritative research, source provenance and exclusions, one collision-safe raw report only when needed, docs/wiki preservation, honest unresolved gaps, ingest guidance, and every output field. Return dimension-level evidence, critical failures, PASS, FAIL, BLOCKED, or STALE, and residual uncertainty.
+Require wiki-first coverage assessment, bounded authoritative research, source provenance and exclusions, one collision-safe raw report only when needed, docs/wiki preservation, honest unresolved gaps, ingest guidance, and every output field. Use the supplied frozen inventories, artifact evidence, and runner-owned audits under the suite contract; do not require a target-internal trace that the harness does not expose. Return dimension-level evidence, critical failures, PASS, FAIL, BLOCKED, or STALE, and residual uncertainty.
 """

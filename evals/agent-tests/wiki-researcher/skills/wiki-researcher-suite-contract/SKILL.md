@@ -29,3 +29,5 @@ Evaluate the target as a bounded source researcher that feeds, but never bypasse
 ## Semantic Dimensions
 
 Judge coverage discipline, research scope, source quality, uncertainty handling, raw-boundary compliance, handoff usefulness, and claim hygiene.
+
+Use the frozen coverage inventory, source inventory, report provenance, artifact diff, claim trace, and runner audits to judge those dimensions. Do not require an unavailable target-internal tool trace when the supplied evidence proves the coverage decision and source boundary. A missing runner-owned trace is evaluation-infrastructure uncertainty and must not be converted into a Wiki Researcher contract failure.

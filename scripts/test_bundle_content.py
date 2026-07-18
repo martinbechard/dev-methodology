@@ -3689,6 +3689,23 @@ class BundleContentTests(unittest.TestCase):
                 frontmatter = load_yaml_object_from_frontmatter(skill_path)
                 self.assertEqual(skill_path.parent.name, frontmatter["name"])
 
+        evidence_judging = (
+            AGENT_TEST_SUITES_ROOT
+            / "skills"
+            / "agent-evidence-judging"
+            / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("The runner owns ordered runtime traces", evidence_judging)
+        self.assertIn("corrected harness-only retry", evidence_judging)
+        wiki_research_contract = (
+            AGENT_TEST_SUITES_ROOT
+            / "wiki-researcher"
+            / "skills"
+            / "wiki-researcher-suite-contract"
+            / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("Do not require an unavailable target-internal tool trace", wiki_research_contract)
+
         readme_text = (AGENT_TEST_SUITES_ROOT / "README.md").read_text(encoding="utf-8")
         self.assertNotRegex(readme_text, r"(?i)\bwave\b")
         self.assertIn("one authoritative scenarios.yaml catalog", readme_text)

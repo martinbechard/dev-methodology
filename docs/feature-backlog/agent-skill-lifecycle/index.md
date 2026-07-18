@@ -42,6 +42,9 @@ Conceptual agent definitions declare their generic definition-owned skills. Proj
 12. [Preserve canonical review checklists](preserve-canonical-review-checklists.md).
 13. [Require claimed backlog resumption](require-claimed-backlog-resumption.md).
 14. [Preserve Configurator runtime bridges](preserve-configurator-runtime-bridges.md).
+15. [Enforce documentation template conformance](enforce-documentation-template-conformance.md).
+16. [Preserve integrated documentation steady state](preserve-integrated-documentation-steady-state.md).
+17. [Restore Wiki Ingester on verifier interruption](restore-wiki-ingester-on-verifier-interruption.md).
 
 The detector is the foundation. Codex verification must run against the stable generated definitions and project guidance. Documentation must distinguish designed behavior from behavior proven by the CLI suite. The mind map should consume the final detection and evidence data rather than adapting to an obsolete routing schema.
 

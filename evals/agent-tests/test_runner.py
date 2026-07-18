@@ -78,6 +78,19 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             [run.suite.suite_id for run in batch] for batch in batches
         ])
 
+    def test_nested_enabled_suites_are_queued_in_separate_batches(self) -> None:
+        """Two supervisors that may delegate cannot contend for the one nested-agent slot."""
+        first = self._run_spec("one", 1)
+        nested_one = runner._RunSpec(suite=self._suite("nested-one", nested_limit=1), scenario_ids=("happy",))
+        third = self._run_spec("three", 3)
+        nested_two = runner._RunSpec(suite=self._suite("nested-two", nested_limit=1), scenario_ids=("happy",))
+
+        batches = runner._batch_runs((first, nested_one, third, nested_two), maximum=4)
+
+        self.assertEqual([["one", "nested-one", "three"], ["nested-two"]], [
+            [run.suite.suite_id for run in batch] for batch in batches
+        ])
+
     def test_coordinator_requires_registered_agent_types_and_fresh_contexts(self) -> None:
         """A task label cannot substitute for a registered role with a fresh fork."""
         prompt = runner._coordinator_prompt((self._run_spec("one", 1),), Path("/tmp/checkpoints"))
@@ -788,6 +801,39 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "instruction binding"):
                 runner._audit_identity(staged, codex_home, {"target_agent": 1})
 
+    def test_nested_use_of_a_direct_role_does_not_inflate_direct_identity_count(self) -> None:
+        """A validated depth-three dependency may share an invocation with direct suite targets."""
+        with tempfile.TemporaryDirectory() as temporary:
+            codex_home = Path(temporary)
+            sessions = codex_home / "sessions"
+            sessions.mkdir()
+            marker = "AGENT_INSTRUCTION_BINDING_dev_merge_coordinator_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            for index in range(3):
+                self._write_rollout(
+                    sessions / f"rollout-direct-{index}.jsonl",
+                    "dev_merge_coordinator",
+                    depth=2,
+                    marker=marker,
+                    started_second=index * 3,
+                )
+            self._write_rollout(
+                sessions / "rollout-nested.jsonl",
+                "dev_merge_coordinator",
+                depth=3,
+                marker=marker,
+                started_second=12,
+            )
+            staged = (
+                runner._StagedAgent(
+                    "dev_merge_coordinator", Path("merge.toml"), "instructions", "a" * 64, marker
+                ),
+            )
+
+            identity = runner._audit_identity(staged, codex_home, {"dev_merge_coordinator": 3})
+
+        self.assertEqual(3, identity["agents"][0]["requiredSessionCount"])
+        self.assertEqual(4, len(identity["agents"][0]["boundSessionIds"]))
+
     def test_staging_instruments_inline_closing_instruction_delimiter(self) -> None:
         """Generated adapters may close developer instructions after the final text on the same line."""
         with tempfile.TemporaryDirectory() as temporary:
@@ -1101,6 +1147,28 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         ]
 
         runner._audit_report(batch, report)
+
+    def test_checkpoint_may_prove_critical_skip_when_final_evidence_is_summarized(self) -> None:
+        """Coordinator compression cannot erase a supervisor checkpoint's authorized Judge skip."""
+        run = self._run_spec("one", 1)
+        manifest = dict(run.suite.manifest)
+        manifest["acceptance"] = {"criticalFailureSkipsJudge": True}
+        suite = runner._Suite(run.suite.suite_id, run.suite.priority, run.suite.path, manifest, run.suite.scenarios)
+        batch = (runner._RunSpec(suite=suite, scenario_ids=run.scenario_ids),)
+        report = {
+            "runs": [self._suite_report("one", "FAIL")],
+            "batchCleanup": "clean",
+            "residualRisk": "none",
+        }
+        result = report["runs"][0]["scenarioResults"][0]
+        result["judgeInvoked"] = False
+        result["evidence"] = ["The deterministic gate failed before semantic scoring."]
+        checkpoint_report = json.loads(json.dumps(report))
+        checkpoint_report["runs"][0]["scenarioResults"][0]["evidence"] = [
+            "criticalFailureSkipsJudge applied after the proved critical deterministic failure."
+        ]
+
+        runner._audit_report(batch, report, checkpoint_report)
 
     def test_unproved_critical_failure_skip_does_not_bypass_judge_requirement(self) -> None:
         """A missing Judge is rejected unless both manifest authority and explicit skip evidence are present."""
