@@ -27,6 +27,8 @@ Use this project skill only for supervising an agent suite under evals/agent-tes
 
 When a supervisor-owned assertion command fails because of quoting, globbing, path construction, or another harness error, record the failed command as infrastructure evidence without classifying the target. Correct the command once, rerun the same frozen assertion, and preserve both outcomes. Do not weaken or replace the assertion after target execution.
 
+Concurrent supervisors share one disposable batch workspace. Scope mutation assertions to the frozen scenario inputs, declared write boundary, task-owned resources, and retained session provenance. Do not use repository-global status as the sole mutation gate. Record concurrent out-of-suite changes as infrastructure evidence, preserve them, and never attribute or clean them without ownership proof.
+
 ## Finding Disposition
 
 - During the run, record findings without editing the frozen scenario, target agent, distributed skill, generated adapter, or product implementation.
