@@ -247,10 +247,8 @@ def _copy_agent(source: Path, invocation: str, agent_root: Path) -> _StagedAgent
         raise ValueError(f"Staged agent has no developer instructions: {source}")
     marker = f"AGENT_INSTRUCTION_BINDING_{invocation}_{secrets.token_hex(16)}"
     binding_instruction = (
-        "\n\nBefore any other task action, run this exact command through exec_command and retain its output as "
-        "runtime identity evidence:\n"
-        f"python3 -c \"print('{marker}')\"\n"
-        "If that command cannot run, stop and report an infrastructure identity failure."
+        "\n\nRuntime instruction binding marker retained by the harness: "
+        f"{marker}."
     )
     assignment = 'developer_instructions = """'
     start = source_text.find(assignment)
@@ -259,6 +257,8 @@ def _copy_agent(source: Path, invocation: str, agent_root: Path) -> _StagedAgent
         raise ValueError(f"Cannot instrument staged agent instructions: {source}")
     instruction_start = start + len(assignment)
     staged_text = source_text[:instruction_start] + binding_instruction + source_text[instruction_start:]
+    if "model" not in loaded:
+        staged_text = 'model = "gpt-5.6-sol"\n' + staged_text
     destination.write_text(staged_text, encoding="utf-8")
     return _StagedAgent(invocation, source, instructions, _sha256(destination), marker)
 
@@ -412,6 +412,19 @@ def _agent_registration_arguments(staged: Sequence[_StagedAgent], codex_home: Pa
     return tuple(arguments)
 
 
+def _multi_agent_runtime_arguments(maximum_threads: int) -> tuple[str, ...]:
+    return (
+        "--model",
+        "gpt-5.5",
+        "--enable",
+        "multi_agent",
+        "--disable",
+        "multi_agent_v2",
+        "-c",
+        f"agents.max_threads={maximum_threads}",
+    )
+
+
 def _coordinator_prompt(batch: Sequence[_RunSpec], checkpoint_root: Path) -> str:
     assignments = []
     for run in batch:
@@ -429,14 +442,18 @@ def _coordinator_prompt(batch: Sequence[_RunSpec], checkpoint_root: Path) -> str
         )
     return (
         "Coordinate this governed synthetic evaluation batch. Spawn every listed custom supervisor concurrently, "
-        "using its exact supervisor value as task_name and fork_turns exactly none so the registered custom config is "
+        "using agent_type exactly equal to its supervisor value and fork_context exactly false so the registered "
+        "custom config is "
         "applied instead of inheriting coordinator model settings. Give each supervisor only its listed suite and scenarios, plus "
-        "an explicit instruction to pass task_name exactly equal to the listed target and judge for those child spawns. "
-        "Those target and Judge spawns must also pass fork_turns exactly none. "
+        "an explicit instruction to pass agent_type exactly equal to the listed target or judge and fork_context exactly "
+        "false for those child spawns. "
         "Each supervisor must run its selected scenarios sequentially, use exactly one active child at a time, invoke "
         "only those hardcoded agents, retain one independent result per scenario, "
         "write the required checkpointRoot/suite-id/scenario-id.json checkpoint immediately after each terminal "
-        "scenario and before starting later work; each result must state targetInvoked and judgeInvoked explicitly, "
+        "scenario and before starting later work. Each checkpoint must contain suite, scenario, status, targetInvoked, "
+        "judgeInvoked, identityEvidence as an array of strings, evidence as an array of strings, cleanup as clean or "
+        "failed, and residualRisk as a string; nested objects are forbidden for those fields. Each result must state "
+        "targetInvoked and judgeInvoked explicitly, "
         "and clean every fixture, claim, process, worktree, and credential it owns. One supervisor child may use one "
         "declared nested dependency at a time only where nestedAgentLimit is 1; serialize that temporary tenth-agent "
         "slot across the batch. Do not browse, install software, read outside this disposable repository, alter the "
@@ -488,15 +505,31 @@ def _load_checkpoint_report(checkpoint_root: Path, batch: Sequence[_RunSpec]) ->
                 raise RuntimeError(f"Scenario checkpoint must be an object: {path}")
             if loaded.get("suite") != run.suite.suite_id or loaded.get("scenario") != scenario_id:
                 raise RuntimeError(f"Scenario checkpoint identity mismatch: {path}")
+            identity_evidence = loaded.get("identityEvidence")
+            evidence = loaded.get("evidence")
+            if not isinstance(identity_evidence, list) or not all(
+                isinstance(value, str) for value in identity_evidence
+            ):
+                raise RuntimeError(f"Scenario checkpoint identityEvidence must be an array of strings: {path}")
+            if not isinstance(evidence, list) or not all(isinstance(value, str) for value in evidence):
+                raise RuntimeError(f"Scenario checkpoint evidence must be an array of strings: {path}")
+            if loaded.get("status") not in _TERMINAL_STATUSES:
+                raise RuntimeError(f"Scenario checkpoint status must be terminal: {path}")
+            if type(loaded.get("targetInvoked")) is not bool or type(loaded.get("judgeInvoked")) is not bool:
+                raise RuntimeError(f"Scenario checkpoint invocation flags must be booleans: {path}")
+            if loaded.get("cleanup") not in {"clean", "failed"}:
+                raise RuntimeError(f"Scenario checkpoint cleanup must be clean or failed: {path}")
+            if not isinstance(loaded.get("residualRisk"), str):
+                raise RuntimeError(f"Scenario checkpoint residualRisk must be a string: {path}")
             scenario_results.append(
                 {
                     "scenario": scenario_id,
                     "status": loaded.get("status"),
                     "targetInvoked": loaded.get("targetInvoked"),
                     "judgeInvoked": loaded.get("judgeInvoked"),
-                    "identityEvidence": loaded.get("identityEvidence", []),
-                    "cleanup": loaded.get("cleanup", "failed"),
-                    "evidence": loaded.get("evidence", []),
+                    "identityEvidence": identity_evidence,
+                    "cleanup": loaded["cleanup"],
+                    "evidence": evidence,
                 }
             )
             if loaded.get("residualRisk"):
@@ -600,27 +633,6 @@ def _timestamp_seconds(value: str) -> float:
     return dt.datetime.fromisoformat(value.replace("Z", "+00:00")).timestamp()
 
 
-def _exact_exec_command(payload: dict[str, Any]) -> str | None:
-    payload_type = payload.get("type")
-    tool_name = payload.get("name")
-    if payload_type == "custom_tool_call" and tool_name == "exec":
-        tool_input = str(payload.get("input", ""))
-        match = re.search(r"tools\.exec_command\(\{\s*cmd\s*:\s*(\"(?:\\.|[^\"])*\")", tool_input)
-        if match:
-            try:
-                return str(json.loads(match.group(1)))
-            except json.JSONDecodeError:
-                return None
-    if payload_type == "function_call" and tool_name == "exec_command":
-        try:
-            arguments = json.loads(str(payload.get("arguments", "{}")))
-        except json.JSONDecodeError:
-            return None
-        if isinstance(arguments, dict) and isinstance(arguments.get("cmd"), str):
-            return arguments["cmd"]
-    return None
-
-
 def _load_sessions(codex_home: Path) -> tuple[_Session, ...]:
     sessions: list[_Session] = []
     for rollout in codex_home.glob("**/rollout-*.jsonl"):
@@ -638,35 +650,27 @@ def _load_sessions(codex_home: Path) -> tuple[_Session, ...]:
             continue
         source = metadata.get("source", {})
         spawn = source.get("subagent", {}).get("thread_spawn", {}) if isinstance(source, dict) else {}
-        agent_path = metadata.get("agent_path") or spawn.get("agent_path")
-        invocation = str(agent_path).rsplit("/", 1)[-1] if agent_path else None
-        first_tool_call: dict[str, Any] | None = None
-        tool_outputs: dict[str, str] = {}
+        invocation = metadata.get("agent_role") or spawn.get("agent_role")
+        bound_markers: set[str] = set()
         for event in events:
             payload = event.get("payload", {})
             if not isinstance(payload, dict) or event.get("type") != "response_item":
                 continue
-            payload_type = payload.get("type")
-            if payload_type in {"custom_tool_call", "function_call"} and first_tool_call is None:
-                first_tool_call = payload
-            if payload_type in {"custom_tool_call_output", "function_call_output"}:
-                tool_outputs[str(payload.get("call_id", ""))] = json.dumps(payload.get("output", ""), sort_keys=True)
-        bound_markers: set[str] = set()
-        if first_tool_call is not None:
-            call_id = str(first_tool_call.get("call_id", ""))
-            command = _exact_exec_command(first_tool_call)
-            output_text = tool_outputs.get(call_id, "")
-            for marker in re.findall(
-                r"AGENT_INSTRUCTION_BINDING_[a-z0-9_]+_[a-f0-9]{32}", command or ""
-            ):
-                exact_command = f'python3 -c "print(\'{marker}\')"'
-                if command == exact_command and marker in output_text:
-                    bound_markers.add(marker)
+            if payload.get("type") != "message" or payload.get("role") != "developer":
+                continue
+            developer_text = "\n".join(
+                str(item.get("text", ""))
+                for item in payload.get("content", [])
+                if isinstance(item, dict) and item.get("type") == "input_text"
+            )
+            bound_markers.update(
+                re.findall(r"AGENT_INSTRUCTION_BINDING_[a-z0-9_]+_[a-f0-9]{32}", developer_text)
+            )
         sessions.append(
             _Session(
                 session_id=str(metadata.get("id", rollout.stem)),
                 parent_thread_id=metadata.get("parent_thread_id"),
-                invocation=invocation,
+                invocation=str(invocation) if invocation else None,
                 depth=int(spawn.get("depth", 0)),
                 started_at=_timestamp_seconds(str(events[0]["timestamp"])),
                 finished_at=_timestamp_seconds(str(events[-1]["timestamp"])),
@@ -702,7 +706,7 @@ def _audit_identity(
                 "required": required,
                 "requiredSessionCount": required_count,
                 "exactCustomAgentSession": exact_session,
-                "instructionBinding": "runtime-canary-bound-to-staged-definition" if exact_session else "missing",
+                "instructionBinding": "runtime-developer-input-bound-to-staged-definition" if exact_session else "missing",
                 "boundSessionIds": [session.session_id for session in exact_sessions],
             }
         )
@@ -1129,12 +1133,7 @@ def _run_live_batch(
         maximum_threads = 10 if any(int(run.suite.manifest["execution"].get("nestedAgentLimit", 0)) == 1 for run in batch) else 9
         command = [
             "codex",
-            "--enable",
-            "multi_agent",
-            "--enable",
-            "use_agent_identity",
-            "-c",
-            f"agents.max_threads={maximum_threads}",
+            *_multi_agent_runtime_arguments(maximum_threads),
             "-c",
             "agents.max_depth=3",
             "--ask-for-approval",

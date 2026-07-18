@@ -51,11 +51,30 @@ class AgentSuiteRunnerTests(unittest.TestCase):
 
         self.assertEqual([4, 1], [len(batch) for batch in batches])
 
-    def test_coordinator_requires_fresh_custom_agent_forks(self) -> None:
-        """Full-history forks cannot silently discard registered custom-agent overrides."""
+    def test_coordinator_requires_registered_agent_types_and_fresh_contexts(self) -> None:
+        """A task label cannot substitute for a registered role with a fresh fork."""
         prompt = runner._coordinator_prompt((self._run_spec("one", 1),), Path("/tmp/checkpoints"))
 
-        self.assertIn("fork_turns exactly none", prompt)
+        self.assertIn("agent_type exactly equal", prompt)
+        self.assertIn("fork_context exactly false", prompt)
+
+    def test_runtime_uses_role_aware_v1_and_bounds_concurrency(self) -> None:
+        """The live runtime must expose role selection and use the declared batch ceiling."""
+        arguments = runner._multi_agent_runtime_arguments(10)
+
+        self.assertEqual(
+            (
+                "--model",
+                "gpt-5.5",
+                "--enable",
+                "multi_agent",
+                "--disable",
+                "multi_agent_v2",
+                "-c",
+                "agents.max_threads=10",
+            ),
+            arguments,
+        )
 
     def test_nested_child_limit_rejects_more_than_temporary_tenth_agent(self) -> None:
         """A suite cannot declare more than one nested canonical dependency."""
@@ -146,7 +165,7 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "target_agent"):
                 runner._audit_identity(staged, codex_home, {"suite_supervisor": 1, "target_agent": 1})
 
-    def test_agent_path_without_instruction_canary_fails_identity_audit(self) -> None:
+    def test_agent_path_without_runtime_developer_binding_fails_identity_audit(self) -> None:
         """A custom-looking path cannot substitute for observed staged instructions."""
         with tempfile.TemporaryDirectory() as temporary:
             codex_home = Path(temporary)
@@ -161,8 +180,8 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "instruction binding"):
                 runner._audit_identity(staged, codex_home, {"target_agent": 1})
 
-    def test_arbitrary_canary_message_does_not_bind_instructions(self) -> None:
-        """The marker must be the first exact tool call with matching output."""
+    def test_arbitrary_agent_message_does_not_bind_instructions(self) -> None:
+        """A marker outside the runtime developer input cannot bind a definition."""
         with tempfile.TemporaryDirectory() as temporary:
             codex_home = Path(temporary)
             sessions = codex_home / "sessions"
@@ -175,27 +194,6 @@ class AgentSuiteRunnerTests(unittest.TestCase):
 
             with self.assertRaisesRegex(RuntimeError, "instruction binding"):
                 runner._audit_identity(staged, codex_home, {"target_agent": 1})
-
-    def test_canary_parser_rejects_wrong_tool_and_command_superset(self) -> None:
-        """Only the execution tool's exact command can become binding evidence."""
-        command = 'python3 -c "print(\'AGENT_INSTRUCTION_BINDING_target_agent_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\')"'
-        wrong_tool = {
-            "type": "custom_tool_call",
-            "name": "not_exec",
-            "input": f"const r = await tools.exec_command({{cmd:{json.dumps(command)}}}); text(r.output);",
-        }
-        command_superset = {
-            "type": "custom_tool_call",
-            "name": "exec",
-            "input": (
-                "const r = await tools.exec_command({cmd:"
-                f"{json.dumps(command + ' extra')}"
-                "}); text(r.output);"
-            ),
-        }
-
-        self.assertIsNone(runner._exact_exec_command(wrong_tool))
-        self.assertNotEqual(command, runner._exact_exec_command(command_superset))
 
     def test_staging_instruments_inline_closing_instruction_delimiter(self) -> None:
         """Generated adapters may close developer instructions after the final text on the same line."""
@@ -213,6 +211,24 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             loaded = runner.tomllib.loads((agent_root / "target_agent.toml").read_text(encoding="utf-8"))
 
         self.assertIn(staged.instruction_marker, loaded["developer_instructions"])
+        self.assertEqual("gpt-5.6-sol", loaded["model"])
+
+    def test_staging_preserves_an_explicit_agent_model(self) -> None:
+        """A generated target profile keeps its declared model during instrumentation."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            source = root / "source.toml"
+            agent_root = root / "agents"
+            agent_root.mkdir()
+            source.write_text(
+                'name = "target_agent"\nmodel = "gpt-5.6-terra"\ndeveloper_instructions = """governed"""\n',
+                encoding="utf-8",
+            )
+
+            runner._copy_agent(source, "target_agent", agent_root)
+            loaded = runner.tomllib.loads((agent_root / "target_agent.toml").read_text(encoding="utf-8"))
+
+        self.assertEqual("gpt-5.6-terra", loaded["model"])
 
     def test_staged_agents_are_registered_as_codex_config_files(self) -> None:
         """A task name alone cannot replace the custom-agent config registration."""
@@ -472,6 +488,58 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "disagrees with checkpoint"):
             runner._audit_checkpoint_agreement(final_report, checkpoint_report, batch)
 
+    def test_checkpoint_rejects_nested_evidence_objects(self) -> None:
+        """Durable checkpoints use the same compact scalar contract as the coordinator report."""
+        batch = (self._run_spec("one", 1),)
+        with tempfile.TemporaryDirectory() as temporary:
+            checkpoint = Path(temporary) / "one" / "happy.json"
+            checkpoint.parent.mkdir()
+            checkpoint.write_text(
+                json.dumps(
+                    {
+                        "suite": "one",
+                        "scenario": "happy",
+                        "status": "PASS",
+                        "targetInvoked": True,
+                        "judgeInvoked": True,
+                        "identityEvidence": {"target": "bound"},
+                        "evidence": ["receipt"],
+                        "cleanup": "clean",
+                        "residualRisk": "none",
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            with self.assertRaisesRegex(RuntimeError, "array of strings"):
+                runner._load_checkpoint_report(Path(temporary), batch)
+
+    def test_checkpoint_rejects_non_boolean_invocation_flags(self) -> None:
+        """Truth-like strings cannot become invocation evidence after coordinator failure."""
+        batch = (self._run_spec("one", 1),)
+        with tempfile.TemporaryDirectory() as temporary:
+            checkpoint = Path(temporary) / "one" / "happy.json"
+            checkpoint.parent.mkdir()
+            checkpoint.write_text(
+                json.dumps(
+                    {
+                        "suite": "one",
+                        "scenario": "happy",
+                        "status": "PASS",
+                        "targetInvoked": "false",
+                        "judgeInvoked": True,
+                        "identityEvidence": ["bound"],
+                        "evidence": ["receipt"],
+                        "cleanup": "clean",
+                        "residualRisk": "none",
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            with self.assertRaisesRegex(RuntimeError, "must be booleans"):
+                runner._load_checkpoint_report(Path(temporary), batch)
+
     @staticmethod
     def _suite(suite_id: str, nested_limit: int = 0) -> object:
         return runner._Suite(
@@ -542,20 +610,20 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                 "id": session_id,
                 "parent_thread_id": parent,
                 "agent_path": f"/root/{invocation}",
-                "source": {"subagent": {"thread_spawn": {"depth": depth, "agent_path": f"/root/{invocation}"}}},
+                "agent_role": invocation,
+                "source": {"subagent": {"thread_spawn": {
+                    "depth": depth,
+                    "agent_path": f"/root/{invocation}",
+                    "agent_role": invocation,
+                }}},
             }},
         )
         if marker and not arbitrary_message:
-            command = f'python3 -c "print(\'{marker}\')"'
             events += (
                 {"timestamp": timestamp(1), "type": "response_item", "payload": {
-                    "type": "custom_tool_call",
-                    "name": "exec",
-                    "call_id": "binding-call",
-                    "input": f"const r = await tools.exec_command({{cmd:{json.dumps(command)}}}); text(r.output);",
-                }},
-                {"timestamp": timestamp(2), "type": "response_item", "payload": {
-                    "type": "custom_tool_call_output", "call_id": "binding-call", "output": marker
+                    "type": "message",
+                    "role": "developer",
+                    "content": [{"type": "input_text", "text": f"Runtime instruction binding marker: {marker}."}],
                 }},
             )
         else:
