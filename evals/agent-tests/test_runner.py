@@ -8,6 +8,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import os
+import subprocess
 import sys
 import tempfile
 import time
@@ -219,6 +220,36 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                     encoding="utf-8"
                 ),
             )
+
+    def test_wiki_ingester_builder_stages_every_scenario_source(self) -> None:
+        """Wiki Ingester cases cannot depend on files created by another concurrent suite."""
+        builder = _RUNNER_PATH.parent / "wiki-ingester" / "fixtures" / "stage_fixture.py"
+        expected = {
+            "raw-ingest": ("raw/retry-policy.md",),
+            "destination-collision": ("raw/provider.md", "raw/processed/provider.md"),
+            "verifier-failure": ("raw/provider-routing.md",),
+        }
+        with tempfile.TemporaryDirectory() as temporary:
+            for scenario, paths in expected.items():
+                with self.subTest(scenario=scenario):
+                    destination = Path(temporary) / scenario
+                    completed = subprocess.run(
+                        (sys.executable, str(builder), "--scenario", scenario, "--destination", str(destination)),
+                        check=False,
+                        capture_output=True,
+                        text=True,
+                    )
+                    self.assertEqual(0, completed.returncode, completed.stderr)
+                    self.assertFalse((destination / "raw" / "2026-07-15-order-cancellation.md").exists())
+                    self.assertTrue(
+                        (destination / "raw" / "processed" / "2026-07-15-order-cancellation.md").is_file()
+                    )
+                    for path in paths:
+                        self.assertTrue((destination / path).is_file(), path)
+                    order_lifecycle = (
+                        destination / "docs" / "wiki" / "orders" / "order-lifecycle.md"
+                    ).read_text(encoding="utf-8")
+                    self.assertIn("raw/processed/2026-07-15-order-cancellation.md", order_lifecycle)
 
     def test_offline_maven_dependencies_are_checksum_staged_into_isolated_home(self) -> None:
         """A Maven fixture receives only its declared immutable host-cache files."""

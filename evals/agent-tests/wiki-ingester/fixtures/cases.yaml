@@ -1,5 +1,24 @@
 schema: synthetic-agent-suite-cases
 cases:
-  raw-ingest: {queue: [raw/retry-policy.md], preMoveVerdict: GOOD, linkChanged: true, postMoveVerdict: GOOD}
-  destination-collision: {source: raw/provider.md, destination: raw/processed/provider.md, destinationContent: different}
-  verifier-failure: {source: raw/provider-routing.md, verdicts: [NEEDS_CORRECTION, NEEDS_CORRECTION, NEEDS_CORRECTION], finding: federated ownership duplicated}
+  raw-ingest:
+    fixtureBuilder: fixtures/stage_fixture.py
+    fixtureBase: ../../../projects/wiki-raw-ingest
+    scenarioFiles: fixtures/scenario-files/raw-ingest
+    queue: [raw/retry-policy.md]
+    preMoveVerdict: GOOD
+    linkChanged: true
+    postMoveVerdict: GOOD
+  destination-collision:
+    fixtureBuilder: fixtures/stage_fixture.py
+    fixtureBase: ../../../projects/wiki-raw-ingest
+    scenarioFiles: fixtures/scenario-files/destination-collision
+    source: raw/provider.md
+    destination: raw/processed/provider.md
+    destinationContent: different
+  verifier-failure:
+    fixtureBuilder: fixtures/stage_fixture.py
+    fixtureBase: ../../../projects/wiki-raw-ingest
+    scenarioFiles: fixtures/scenario-files/verifier-failure
+    source: raw/provider-routing.md
+    verdicts: [NEEDS_CORRECTION, NEEDS_CORRECTION, NEEDS_CORRECTION]
+    finding: federated ownership duplicated
