@@ -1685,6 +1685,7 @@ def _controlled_environment(
             "HOME": str(home),
             "CODEX_HOME": str(codex_home),
             "TMPDIR": str(temporary),
+            "PYTHONDONTWRITEBYTECODE": "1",
             "GIT_AUTHOR_NAME": "Synthetic Agent Eval",
             "GIT_AUTHOR_EMAIL": "agent-eval@example.invalid",
             "GIT_COMMITTER_NAME": "Synthetic Agent Eval",

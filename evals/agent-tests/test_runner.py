@@ -1079,6 +1079,7 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         self.assertNotIn("CODEX_AUTH_FILE", environment)
         self.assertNotIn("OPENAI_API_KEY", environment)
         self.assertEqual("/tmp/codex", environment["CODEX_HOME"])
+        self.assertEqual("1", environment["PYTHONDONTWRITEBYTECODE"])
         self.assertEqual(
             ["/tmp/python/bin", "/tmp/runtime/bin"],
             environment["PATH"].split(os.pathsep)[:2],
