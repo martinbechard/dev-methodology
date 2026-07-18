@@ -350,6 +350,18 @@ def _bundled_computer_use_service() -> Path:
     raise RuntimeError("The bundled in-app Browser computer-use service is unavailable")
 
 
+def _bundled_node_executable() -> Path:
+    configured = os.environ.get("CODEX_BUNDLED_NODE")
+    candidates = [
+        *([Path(configured)] if configured else []),
+        Path("/Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node"),
+    ]
+    for candidate in candidates:
+        if candidate.is_file() and os.access(candidate, os.X_OK):
+            return candidate
+    raise RuntimeError("The bundled Node runtime is unavailable")
+
+
 def _stage_browser_runtime(
     plugin_root: Path,
     codex_home: Path,
@@ -425,6 +437,7 @@ def _stage_offline_project_dependencies(
     batch: Sequence[_RunSpec],
     repository_root: Path,
     workspace: Path,
+    node_executable: Path | None = None,
 ) -> tuple[str, ...]:
     staged: list[str] = []
     for run in batch:
@@ -471,6 +484,16 @@ def _stage_offline_project_dependencies(
                 continue
             destination.parent.mkdir(parents=True, exist_ok=True)
             shutil.copytree(source, destination, symlinks=True)
+            typescript_launcher = destination / ".bin" / "tsc"
+            if typescript_launcher.exists() or typescript_launcher.is_symlink():
+                bundled_node = node_executable or _bundled_node_executable()
+                typescript_launcher.unlink()
+                typescript_launcher.write_text(
+                    f"#!/bin/sh\nexec {shlex.quote(str(bundled_node))} "
+                    '"$(dirname "$0")/../typescript/bin/tsc" "$@"\n',
+                    encoding="utf-8",
+                )
+                typescript_launcher.chmod(0o755)
             staged.append(relative.as_posix())
     return tuple(staged)
 
@@ -755,15 +778,26 @@ def _preflight_runtime_capabilities(
                 ):
                     continue
                 project = workspace / "evals" / "projects" / str(scenario["executableCase"])
-                completed = subprocess.run(
-                    ["node", "node_modules/typescript/bin/tsc", "--version"],
+                node_version = subprocess.run(
+                    [str(_bundled_node_executable()), "--version"],
                     cwd=project,
                     env=environment,
                     check=True,
                     text=True,
                     capture_output=True,
                 )
-                evidence.append(f"{run.suite.suite_id}:{scenario['id']} {completed.stdout.strip()}")
+                completed = subprocess.run(
+                    [str(project / "node_modules" / ".bin" / "tsc"), "--version"],
+                    cwd=project,
+                    env=environment,
+                    check=True,
+                    text=True,
+                    capture_output=True,
+                )
+                evidence.append(
+                    f"{run.suite.suite_id}:{scenario['id']} "
+                    f"Node {node_version.stdout.strip()} {completed.stdout.strip()}"
+                )
     if capabilities & {"loopback", "child-process-inspection"}:
         profile = _sandbox_profile_arguments(codex_home, workspace)
         bind_probe = subprocess.run(
@@ -1421,8 +1455,15 @@ def _audit_browser_activity(
     }
 
 
-def _controlled_environment(home: Path, codex_home: Path, temporary: Path) -> dict[str, str]:
-    environment = {"PATH": os.environ.get("PATH", "/usr/bin:/bin")}
+def _controlled_environment(
+    home: Path,
+    codex_home: Path,
+    temporary: Path,
+    node_executable: Path | None = None,
+) -> dict[str, str]:
+    bundled_node = node_executable or _bundled_node_executable()
+    inherited_path = os.environ.get("PATH", "/usr/bin:/bin")
+    environment = {"PATH": f"{bundled_node.parent}{os.pathsep}{inherited_path}"}
     for name in ("LANG", "LC_ALL"):
         if name in os.environ:
             environment[name] = os.environ[name]

@@ -218,6 +218,54 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         self.assertIn('"localhost" = "allow"', profile)
         self.assertNotIn("example.com", profile)
 
+    def test_offline_typescript_launcher_uses_bundled_node(self) -> None:
+        """The staged compiler cannot fall back to an older Node from a target login shell."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            repository = root / "repository"
+            workspace = root / "workspace"
+            modules = repository / "evals" / "projects" / "fixture" / "node_modules"
+            typescript = modules / "typescript"
+            (typescript / "bin").mkdir(parents=True)
+            (typescript / "bin" / "tsc").write_text("fixture", encoding="utf-8")
+            (typescript / "package.json").write_text('{"version":"7.0.2"}', encoding="utf-8")
+            (modules / ".bin").mkdir()
+            (modules / ".bin" / "tsc").symlink_to("../typescript/bin/tsc")
+            (modules.parent / "package-lock.json").write_text(
+                '{"packages":{"node_modules/typescript":{"version":"7.0.2"}}}', encoding="utf-8"
+            )
+            bundled_node = root / "runtime" / "bin" / "node"
+            bundled_node.parent.mkdir(parents=True)
+            bundled_node.write_text("fixture", encoding="utf-8")
+            workspace.mkdir()
+            suite = self._suite("offline-suite")
+            suite = runner._Suite(
+                suite_id=suite.suite_id,
+                priority=suite.priority,
+                path=suite.path,
+                manifest=suite.manifest,
+                scenarios=(
+                    {
+                        "id": "happy",
+                        "status": "executable",
+                        "executableCase": "fixture",
+                        "runtimeCapabilities": ["offline-node-modules"],
+                    },
+                ),
+            )
+
+            runner._stage_offline_project_dependencies(
+                (runner._RunSpec(suite=suite, scenario_ids=("happy",)),),
+                repository,
+                workspace,
+                bundled_node,
+            )
+
+            launcher = workspace / "evals" / "projects" / "fixture" / "node_modules" / ".bin" / "tsc"
+            self.assertFalse(launcher.is_symlink())
+            self.assertIn(str(bundled_node), launcher.read_text(encoding="utf-8"))
+            self.assertTrue(launcher.stat().st_mode & 0o100)
+
     def test_offline_fixture_rejects_parent_path_traversal(self) -> None:
         """Executable-case metadata cannot copy host content outside the project root."""
         with tempfile.TemporaryDirectory() as temporary:
@@ -777,11 +825,18 @@ class AgentSuiteRunnerTests(unittest.TestCase):
 
     def test_controlled_environment_does_not_inherit_host_credentials(self) -> None:
         """Only process-location and locale values cross the host boundary."""
-        environment = runner._controlled_environment(Path("/tmp/home"), Path("/tmp/codex"), Path("/tmp/work"))
+        bundled_node = Path("/tmp/runtime/bin/node")
+        environment = runner._controlled_environment(
+            Path("/tmp/home"),
+            Path("/tmp/codex"),
+            Path("/tmp/work"),
+            bundled_node,
+        )
 
         self.assertNotIn("CODEX_AUTH_FILE", environment)
         self.assertNotIn("OPENAI_API_KEY", environment)
         self.assertEqual("/tmp/codex", environment["CODEX_HOME"])
+        self.assertEqual("/tmp/runtime/bin", environment["PATH"].split(os.pathsep)[0])
 
     def test_timeout_retains_output_and_stops_the_process_group(self) -> None:
         """A timed-out harness returns bounded evidence instead of raising before retention."""
