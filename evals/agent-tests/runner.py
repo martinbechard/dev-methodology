@@ -409,7 +409,7 @@ def _stage_offline_project_dependencies(
             if destination.exists():
                 continue
             destination.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copytree(source, destination, symlinks=False)
+            shutil.copytree(source, destination, symlinks=True)
             staged.append(relative.as_posix())
     return tuple(staged)
 
@@ -927,7 +927,7 @@ def _audit_checkpoint_agreement(
         raise RuntimeError(
             f"Checkpoint coverage mismatch: expected {sorted(expected)}, observed {sorted(checkpoints)}"
         )
-    compared_fields = ("status", "targetInvoked", "judgeInvoked", "identityEvidence", "cleanup", "evidence")
+    compared_fields = ("status", "targetInvoked", "judgeInvoked", "cleanup")
     for identity in sorted(expected):
         if any(final_results[identity].get(field) != checkpoints[identity].get(field) for field in compared_fields):
             raise RuntimeError(f"Final report disagrees with checkpoint for {identity[0]}:{identity[1]}")

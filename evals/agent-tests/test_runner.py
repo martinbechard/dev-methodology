@@ -275,6 +275,41 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "does not match its lockfile"):
                 runner._stage_offline_project_dependencies(batch, repository, workspace)
 
+    def test_offline_fixture_rejects_escaping_dependency_symlink(self) -> None:
+        """Only package-internal relative links survive offline dependency staging."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            repository = root / "repository"
+            workspace = root / "workspace"
+            modules = repository / "evals" / "projects" / "fixture" / "node_modules"
+            typescript = modules / "typescript"
+            typescript.mkdir(parents=True)
+            (typescript / "package.json").write_text('{"version":"7.0.2"}', encoding="utf-8")
+            (modules.parent / "package-lock.json").write_text(
+                '{"packages":{"node_modules/typescript":{"version":"7.0.2"}}}', encoding="utf-8"
+            )
+            outside = root / "outside.txt"
+            outside.write_text("host", encoding="utf-8")
+            (modules / "escape").symlink_to(outside)
+            workspace.mkdir()
+            suite = self._suite("offline-suite")
+            suite = runner._Suite(
+                suite_id=suite.suite_id,
+                priority=suite.priority,
+                path=suite.path,
+                manifest=suite.manifest,
+                scenarios=({
+                    "id": "happy",
+                    "status": "executable",
+                    "executableCase": "fixture",
+                    "runtimeCapabilities": ["offline-node-modules"],
+                },),
+            )
+            batch = (runner._RunSpec(suite=suite, scenario_ids=("happy",)),)
+
+            with self.assertRaisesRegex(RuntimeError, "escaping symlink"):
+                runner._stage_offline_project_dependencies(batch, repository, workspace)
+
     def test_browser_runtime_is_copied_and_bound_to_isolated_home(self) -> None:
         """Browser instructions cannot resolve through a user-home plugin path."""
         with tempfile.TemporaryDirectory() as temporary:
@@ -709,6 +744,21 @@ class AgentSuiteRunnerTests(unittest.TestCase):
 
         with self.assertRaisesRegex(RuntimeError, "disagrees with checkpoint"):
             runner._audit_checkpoint_agreement(final_report, checkpoint_report, batch)
+
+    def test_final_report_may_summarize_checkpoint_evidence_without_rewriting_verdict(self) -> None:
+        """The durable supervisor record stays primary while the coordinator may compress its evidence prose."""
+        batch = (self._run_spec("one", 1),)
+        final_report = {
+            "runs": [self._suite_report("one", "PASS")],
+            "batchCleanup": "clean",
+            "residualRisk": "none",
+        }
+        checkpoint_report = json.loads(json.dumps(final_report))
+        checkpoint_result = checkpoint_report["runs"][0]["scenarioResults"][0]
+        checkpoint_result["identityEvidence"] = ["exact target receipt", "exact Judge receipt"]
+        checkpoint_result["evidence"] = ["complete governed packet"]
+
+        runner._audit_checkpoint_agreement(final_report, checkpoint_report, batch)
 
     def test_checkpoint_rejects_nested_evidence_objects(self) -> None:
         """Durable checkpoints use the same compact scalar contract as the coordinator report."""
