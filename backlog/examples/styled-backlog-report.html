@@ -1,0 +1,760 @@
+<!doctype html>
+<!--
+Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+AI attribution: Generated with AI assistance.
+Responsibility: Demonstrate the complete visual contract for the styled backlog report and its user-action queue.
+Governing backlog item: backlog/feature-backlog/add-styled-backlog-report-with-user-input.md
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Styled Backlog Report Example</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --page: #f7f7f5;
+      --surface: #ffffff;
+      --surface-soft: #ededeb;
+      --text: #202124;
+      --muted: #62666d;
+      --line: #d6d7d4;
+      --accent: #e8f2ff;
+      --accent-text: #164f86;
+      --ready: #2788df;
+      --proposed: #d35aa6;
+      --blocked: #e47b35;
+      --completed: #45a36a;
+      --user-action: #7857c6;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --page: #171819;
+        --surface: #222426;
+        --surface-soft: #303235;
+        --text: #f4f5f6;
+        --muted: #b4b7bc;
+        --line: #414449;
+        --accent: #173653;
+        --accent-text: #b9dcff;
+        --ready: #67b4f8;
+        --proposed: #eb87c8;
+        --blocked: #f0a26b;
+        --completed: #73c890;
+        --user-action: #aa8ee8;
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--page);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+    }
+
+    main {
+      width: min(100%, 1120px);
+      margin: 0 auto;
+      padding: clamp(1rem, 3vw, 2.5rem);
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1,
+    h2,
+    h3,
+    strong {
+      font-weight: 500;
+    }
+
+    h1 {
+      max-width: 20ch;
+      margin-bottom: 0.75rem;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      line-height: 1.04;
+      letter-spacing: -0.035em;
+    }
+
+    h2 {
+      margin-bottom: 0;
+      font-size: clamp(1.35rem, 3vw, 1.75rem);
+      line-height: 1.2;
+    }
+
+    h3 {
+      margin-bottom: 0.25rem;
+      font-size: 1rem;
+    }
+
+    a {
+      color: inherit;
+      text-underline-offset: 0.18em;
+    }
+
+    a:hover {
+      color: var(--accent-text);
+    }
+
+    a:focus-visible {
+      outline: 2px solid var(--accent-text);
+      outline-offset: 3px;
+    }
+
+    .kicker {
+      margin-bottom: 0.65rem;
+      color: var(--accent-text);
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .lede {
+      max-width: 72ch;
+      margin-bottom: 0.75rem;
+      color: var(--muted);
+    }
+
+    .meta,
+    .small,
+    .item-note,
+    .source-note {
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
+      gap: 0.75rem;
+      margin: 2rem 0;
+    }
+
+    .metric {
+      min-width: 0;
+      padding: 1rem;
+      border: 1px solid var(--line);
+      border-radius: 0.9rem;
+      background: var(--surface);
+    }
+
+    .metric-label,
+    .metric-context,
+    .metric-value {
+      display: block;
+    }
+
+    .metric-label,
+    .metric-context {
+      color: var(--muted);
+    }
+
+    .metric-value {
+      margin: 0.25rem 0 0.1rem;
+      font-size: 2rem;
+      font-weight: 500;
+      line-height: 1;
+    }
+
+    .section {
+      margin-top: 2.5rem;
+    }
+
+    .section-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.5rem 1rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1rem;
+      margin-bottom: 1rem;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .swatch {
+      width: 0.72rem;
+      height: 0.72rem;
+      background: var(--swatch);
+    }
+
+    .status-chart {
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .status-row {
+      display: grid;
+      grid-template-columns: minmax(8rem, 0.28fr) minmax(0, 1fr) minmax(10rem, 0.42fr);
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .status-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+      font-weight: 500;
+    }
+
+    .status-track {
+      display: flex;
+      height: 0.9rem;
+      overflow: hidden;
+      background: var(--surface-soft);
+    }
+
+    .segment {
+      display: block;
+      height: 100%;
+    }
+
+    .ready { background: var(--ready); }
+    .proposed { background: var(--proposed); }
+    .blocked { background: var(--blocked); }
+    .completed { background: var(--completed); }
+    .user-action { background: var(--user-action); }
+
+    .needs-input {
+      padding: 1.15rem 0;
+      border-top: 2px solid var(--user-action);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .needs-input-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 0.42fr) minmax(0, 1fr);
+      gap: 1rem 2rem;
+    }
+
+    .needs-input p:last-child {
+      margin-bottom: 0;
+    }
+
+    .question {
+      font-size: clamp(1.05rem, 2.5vw, 1.3rem);
+      font-weight: 500;
+    }
+
+    .badge {
+      align-self: start;
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      background: var(--accent);
+      color: var(--accent-text);
+      font-size: 0.78rem;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .item-list,
+    .issue-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .item {
+      display: grid;
+      grid-template-columns: 3.25rem minmax(0, 1fr) auto;
+      gap: 0.45rem 0.85rem;
+      padding: 0.9rem 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .item:last-child {
+      border-bottom: 1px solid var(--line);
+    }
+
+    .item-index {
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 500;
+    }
+
+    .item-copy {
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .item-copy p {
+      margin: 0.2rem 0;
+    }
+
+    .item-note {
+      display: block;
+    }
+
+    .series-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.35rem 1rem;
+      margin: 1.25rem 0 0.5rem;
+    }
+
+    .issue-list {
+      border-top: 1px solid var(--line);
+    }
+
+    .issue-list li {
+      padding: 0.8rem 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .source-note {
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--line);
+    }
+
+    @media (max-width: 640px) {
+      .status-row,
+      .needs-input-layout {
+        grid-template-columns: 1fr;
+        gap: 0.4rem;
+      }
+
+      .item {
+        grid-template-columns: 2.5rem minmax(0, 1fr);
+      }
+
+      .item > .badge {
+        grid-column: 2;
+        justify-self: start;
+      }
+    }
+
+    @media print {
+      :root {
+        color-scheme: light;
+        --page: #ffffff;
+        --surface: #ffffff;
+        --text: #000000;
+        --muted: #444444;
+        --line: #bbbbbb;
+      }
+
+      body {
+        background: var(--page);
+      }
+
+      a {
+        text-decoration: none;
+      }
+
+      .metric,
+      .item,
+      .needs-input {
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="kicker">Backlog snapshot</p>
+      <h1>Current feature, defect, and user-action backlog</h1>
+      <p class="lede">A formatted reference for a generated operator report. It separates dependency-ready work from proposed and blocked items, and makes user interaction explicit without treating it as ordinary review.</p>
+      <p class="meta">Illustrative target-state snapshot · main · 2026-07-18 · includes the report enhancement and terminology defect</p>
+    </header>
+
+    <section class="metric-grid" aria-label="Backlog summary">
+      <div class="metric">
+        <span class="metric-label">Typed backlog items</span>
+        <span class="metric-value">27</span>
+        <span class="metric-context">16 defects · 11 features</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Runnable now</span>
+        <span class="metric-value">14</span>
+        <span class="metric-context">Declared ready with satisfied dependencies</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Proposed</span>
+        <span class="metric-value">8</span>
+        <span class="metric-context">Awaiting queue-state promotion</span>
+      </div>
+      <div class="metric">
+        <span class="metric-label">Needs your input</span>
+        <span class="metric-value">1</span>
+        <span class="metric-context">Excluded from unattended work</span>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="status-heading">
+      <div class="section-head">
+        <h2 id="status-heading">Declared status by queue</h2>
+        <span class="small">Scale maximum: 16 items</span>
+      </div>
+      <div class="legend" aria-label="Status legend">
+        <span class="legend-item"><span class="swatch" style="--swatch: var(--ready)" aria-hidden="true"></span>Ready</span>
+        <span class="legend-item"><span class="swatch" style="--swatch: var(--proposed)" aria-hidden="true"></span>Proposed</span>
+        <span class="legend-item"><span class="swatch" style="--swatch: var(--blocked)" aria-hidden="true"></span>Blocked</span>
+        <span class="legend-item"><span class="swatch" style="--swatch: var(--completed)" aria-hidden="true"></span>Completed</span>
+        <span class="legend-item"><span class="swatch" style="--swatch: var(--user-action)" aria-hidden="true"></span>User Action Required</span>
+      </div>
+      <div class="status-chart" role="img" aria-label="Defects: 15 ready and 1 proposed. Features: 7 proposed, 3 blocked, and 1 completed. User Action Required: 1 analysis item.">
+        <div class="status-row">
+          <div class="status-label"><span>Defects</span><span>16</span></div>
+          <div class="status-track" aria-hidden="true">
+            <span class="segment ready" style="width: 93.75%"></span>
+            <span class="segment proposed" style="width: 6.25%"></span>
+          </div>
+          <div class="small">15 ready · 1 proposed</div>
+        </div>
+        <div class="status-row">
+          <div class="status-label"><span>Features</span><span>11</span></div>
+          <div class="status-track" aria-hidden="true">
+            <span class="segment proposed" style="width: 43.75%"></span>
+            <span class="segment blocked" style="width: 18.75%"></span>
+            <span class="segment completed" style="width: 6.25%"></span>
+          </div>
+          <div class="small">7 proposed · 3 blocked · 1 completed</div>
+        </div>
+        <div class="status-row">
+          <div class="status-label"><span>Needs Your Input</span><span>1</span></div>
+          <div class="status-track" aria-hidden="true">
+            <span class="segment user-action" style="width: 6.25%"></span>
+          </div>
+          <div class="small">1 User Action Required · underlying Type: Analysis</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section needs-input" aria-labelledby="needs-input-heading">
+      <div class="needs-input-layout">
+        <div>
+          <p class="kicker">User Action Required</p>
+          <h2 id="needs-input-heading">Needs Your Input</h2>
+          <p class="lede">Waiting for a decision, approval, action, or information from you. These items are visible but excluded from unattended dispatch.</p>
+        </div>
+        <div>
+          <span class="badge">User Action Required · Analysis</span>
+          <h3><a href="../user-review/classify-agent-suite-blocking-resources.md">Classify Agent Suite Blocking Resources</a></h3>
+          <p class="question">Which blocked categories should become real follow-up backlog work: test infrastructure limitations only, selected authority or evidence gaps, all categories, or none?</p>
+          <p class="small">Resolution: Pending · Source currently uses the pre-migration user-review path.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="defects-heading">
+      <div class="section-head">
+        <h2 id="defects-heading">Defect backlog</h2>
+        <span class="small">16 items · 14 dependency-ready</span>
+      </div>
+      <ol class="item-list">
+        <li class="item">
+          <span class="item-index">D01</span>
+          <div class="item-copy">
+            <h3><a href="../defect-backlog/rename-user-review-state-for-clarity.md">Rename User Review To User Action Required</a></h3>
+            <p>Replace an ambiguous queue name with terminology that makes the required user interaction obvious.</p>
+            <span class="item-note">No dependencies · canonical terminology defect.</span>
+          </div>
+          <span class="badge">Proposed</span>
+        </li>
+        <li class="item">
+          <span class="item-index">A05</span>
+          <div class="item-copy">
+            <h3><a href="../feature-backlog/agent-skill-lifecycle/align-project-organiser-filename-selection.md">Align Project Organiser Filename Selection</a></h3>
+            <p>Remove the conflict between choosing an approved artifact path and the prohibition on choosing filenames.</p>
+            <span class="item-note">No dependencies · runnable.</span>
+          </div>
+          <span class="badge">Ready</span>
+        </li>
+        <li class="item">
+          <span class="item-index">A06</span>
+          <div class="item-copy">
+            <h3><a href="../feature-backlog/agent-skill-lifecycle/enforce-behavioral-regression-assertions.md">Enforce Behavioral Regression Assertions</a></h3>
+            <p>Require focused tests to prove they detect removal of the requested behavior.</p>
+            <span class="item-note">No dependencies · runnable.</span>
+          </div>
+          <span class="badge">Ready</span>
+        </li>
+        <li class="item">
+          <span class="item-index">A07</span>
+          <div class="item-copy">
+            <h3><a href="../feature-backlog/agent-skill-lifecycle/prevent-unsupported-review-findings.md">Prevent Unsupported Review Findings</a></h3>
+            <p>Stop review synthesis from converting an unknown policy requirement into a confirmed finding.</p>
+            <span class="item-note">No dependencies · runnable.</span>
+          </div>
+          <span class="badge">Ready</span>
+        </li>
+        <li class="item">
+          <span class="item-index">A08</span>
+          <div class="item-copy">
+            <h3><a href="../feature-backlog/agent-skill-lifecycle/prevent-unauthorized-contract-narrowing.md">Prevent Unauthorized Contract Narrowing</a></h3>
+            <p>Prevent implementation agents from rejecting inputs allowed by the authoritative contract.</p>
+            <span class="item-note">No dependencies · runnable.</span>
+          </div>
+          <span class="badge">Ready</span>
+        </li>
+        <li class="item">
+          <span class="item-index">A09</span>
+          <div class="item-copy">
+            <h3><a href="../feature-backlog/agent-skill-lifecycle/preserve-authoritative-configuration-evidence.md">Preserve Authoritative Configuration Evidence</a></h3>
+            <p>Protect valid source evidence during path reconciliation and generated guidance.</p>
+            <span class="item-note">No dependencies · runnable.</span>
+          </div>
+          <span class="badge">Ready</span>
+        </li>
+        <li class="item">
+          <span class="item-index">A10</span>
+          <div class="item-copy">
+            <h3><a href="../feature-backlog/agent-skill-lifecycle/prevent-read-only-review-side-effects.md">Prevent Read-Only Review Side Effects</a></h3>
+            <p>Prevent review agents from leaving interpreter artifacts or making false cleanup claims.</p>
+            <span class="item-note">No dependencies · runnable.</span>
+          </div>
+          <span class="badge">Ready</span>
+        </li>
+        <li class="item">
+          <span class="item-index">A11</span>
+          <div class="item-copy">
+            <h3><a href="../feature-backlog/agent-skill-lifecycle/require-exact-review-quotation-traceability.md">Require Exact Review Quotation Traceability</a></h3>
+            <p>Require exact quotations to occur verbatim in their cited evidence source.</p>
+            <span class="item-note">No dependencies · runnable.</span>
+          </div>
+          <span class="badge">Ready</span>
+        </li>
+        <li class="item">
+          <span class="item-index">A12</span>
+          <div class="item-copy">
+            <h3><a href="../feature-backlog/agent-skill-lifecycle/preserve-canonical-review-checklists.md">Preserve Canonical Review Checklists</a></h3>
+            <p>Require reviewers to complete every canonical checklist question.</p>
+            <span class="item-note">No dependencies · runnable.</span>
+          </div>
+          <span class="badge">Ready</span>
+        </li>
+        <li class="item">
+          <span class="item-index">A13</span>
+          <div class="item-copy">
+            <h3><a href="../feature-backlog/agent-skill-lifecycle/require-claimed-backlog-resumption.md">Require Claimed Backlog Resumption</a></h3>
+            <p>Prevent blocked work from moving to running without a claim and valid transition.</p>
+            <span class="item-note">No dependencies · runnable.</span>
+          </div>
+          <span class="badge">Ready</span>
+        </li>
+        <li class="item">
+          <span class="item-index">A14</span>
+          <div class="item-copy">
+            <h3><a href="../feature-backlog/agent-skill-lifecycle/preserve-configurator-runtime-bridges.md">Preserve Configurator Runtime Bridges</a></h3>
+            <p>Keep generated harness bridges functional and preserve skill ownership.</p>
+            <span class="item-note">No dependencies · runnable.</span>
+          </div>
+          <span class="badge">Ready</span>
+        </li>
+        <li class="item">
+          <span class="item-index">A15</span>
+          <div class="item-copy">
+            <h3><a href="../feature-backlog/agent-skill-lifecycle/enforce-documentation-template-conformance.md">Enforce Documentation Template Conformance</a></h3>
+            <p>Require complete canonical artifacts on the first bounded documentation attempt.</p>
+            <span class="item-note">No dependencies · runnable; unlocks A16.</span>
+          </div>
+          <span class="badge">Ready</span>
+        </li>
+        <li class="item">
+          <span class="item-index">A16</span>
+          <div class="item-copy">
+            <h3><a href="../feature-backlog/agent-skill-lifecycle/preserve-integrated-documentation-steady-state.md">Preserve Integrated Documentation Steady State</a></h3>
+            <p>Remove contribution-phase wording after referenced artifacts are integrated.</p>
+            <span class="item-note">Declared ready, but waits on A15.</span>
+          </div>
+          <span class="badge">Ready</span>
+        </li>
+        <li class="item">
+          <span class="item-index">A17</span>
+          <div class="item-copy">
+            <h3><a href="../feature-backlog/agent-skill-lifecycle/restore-wiki-ingester-on-verifier-interruption.md">Restore Wiki Ingester On Verifier Interruption</a></h3>
+            <p>Restore unaccepted drafts and close claims when verification cannot finish.</p>
+            <span class="item-note">No dependencies · runnable.</span>
+          </div>
+          <span class="badge">Ready</span>
+        </li>
+        <li class="item">
+          <span class="item-index">A18</span>
+          <div class="item-copy">
+            <h3><a href="../feature-backlog/agent-skill-lifecycle/preserve-wiki-research-source-links.md">Preserve Wiki Research Source Links</a></h3>
+            <p>Require every local source link to resolve from the saved research report.</p>
+            <span class="item-note">No dependencies · runnable.</span>
+          </div>
+          <span class="badge">Ready</span>
+        </li>
+        <li class="item">
+          <span class="item-index">A19</span>
+          <div class="item-copy">
+            <h3><a href="../feature-backlog/agent-skill-lifecycle/replace-bootstrapper-marathon-with-isolated-test-doubles.md">Replace Bootstrapper Marathon With Isolated Test Doubles</a></h3>
+            <p>Replace the multi-contribution marathon with deterministic isolated doubles.</p>
+            <span class="item-note">No dependencies · runnable.</span>
+          </div>
+          <span class="badge">Ready</span>
+        </li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="features-heading">
+      <div class="section-head">
+        <h2 id="features-heading">Feature backlog</h2>
+        <span class="small">11 items across flat work and two series</span>
+      </div>
+      <ol class="item-list">
+        <li class="item">
+          <span class="item-index">F01</span>
+          <div class="item-copy">
+            <h3><a href="../feature-backlog/add-styled-backlog-report-with-user-input.md">Add A Styled Backlog Report With User Input</a></h3>
+            <p>Generate this source-backed report with responsive styling and a clear user-action queue.</p>
+            <span class="item-note">Depends on rename-user-review-state-for-clarity.</span>
+          </div>
+          <span class="badge">Proposed</span>
+        </li>
+        <li class="item">
+          <span class="item-index">F02</span>
+          <div class="item-copy">
+            <h3><a href="../feature-backlog/add-wiki-skills-and-project-context-page.md">Add The Wiki Skills And Project Context Page</a></h3>
+            <p>Explain the wiki skill family, source authority, durable context, and code-aware synchronization model.</p>
+            <span class="item-note">No dependencies.</span>
+          </div>
+          <span class="badge">Proposed</span>
+        </li>
+        <li class="item">
+          <span class="item-index">F03</span>
+          <div class="item-copy">
+            <h3><a href="../feature-backlog/default-pull-requests-to-ready-for-review.md">Default Completed Pull Requests To Ready For Review</a></h3>
+            <p>Use completion evidence to choose ready-for-review or draft pull-request state.</p>
+            <span class="item-note">No dependencies.</span>
+          </div>
+          <span class="badge">Proposed</span>
+        </li>
+      </ol>
+
+      <div class="series-head">
+        <h3>Agent skill lifecycle</h3>
+        <span class="small">A01–A04</span>
+      </div>
+      <ol class="item-list">
+        <li class="item">
+          <span class="item-index">A01</span>
+          <div class="item-copy">
+            <h3><a href="../feature-backlog/agent-skill-lifecycle/replace-router-with-setup-detector.md">Replace Task-Time Routing With Setup-Time Technology Detection</a></h3>
+            <p>Establish source-backed setup-time folder skillsets and generated guidance.</p>
+            <span class="item-note">Delivery evidence recorded; remains in active folder.</span>
+          </div>
+          <span class="badge">Completed</span>
+        </li>
+        <li class="item">
+          <span class="item-index">A02</span>
+          <div class="item-copy">
+            <h3><a href="../feature-backlog/agent-skill-lifecycle/verify-codex-skill-activation.md">Verify Codex CLI Skill Activation</a></h3>
+            <p>Capture proof that generated agents load and apply required skills.</p>
+            <span class="item-note">Only dependency A01 is complete; declared status needs reconciliation.</span>
+          </div>
+          <span class="badge">Blocked</span>
+        </li>
+        <li class="item">
+          <span class="item-index">A03</span>
+          <div class="item-copy">
+            <h3><a href="../feature-backlog/agent-skill-lifecycle/document-cross-harness-skill-lifecycle.md">Document The Cross-Harness Skill Lifecycle</a></h3>
+            <p>Explain discovery, preload, dynamic loading, generated guidance, and evidence.</p>
+            <span class="item-note">Waits on A02.</span>
+          </div>
+          <span class="badge">Blocked</span>
+        </li>
+        <li class="item">
+          <span class="item-index">A04</span>
+          <div class="item-copy">
+            <h3><a href="../feature-backlog/agent-skill-lifecycle/build-agent-skill-mind-map.md">Build The Agent And Skill Mind Map</a></h3>
+            <p>Join agents, skills, loading modes, models, adapters, and verification evidence.</p>
+            <span class="item-note">Waits on A02.</span>
+          </div>
+          <span class="badge">Blocked</span>
+        </li>
+      </ol>
+
+      <div class="series-head">
+        <h3>Technology skill expansion</h3>
+        <span class="small">T01 first, then T02–T04 independently</span>
+      </div>
+      <ol class="item-list">
+        <li class="item">
+          <span class="item-index">T01</span>
+          <div class="item-copy">
+            <h3><a href="../feature-backlog/technology-skill-expansion/split-hibernate-orm-panache-technology-skill.md">Split Hibernate ORM With Panache From Quarkus Persistence</a></h3>
+            <p>Create a focused blocking Panache skill and slim shared Quarkus persistence guidance.</p>
+            <span class="item-note">No dependencies · first in series.</span>
+          </div>
+          <span class="badge">Proposed</span>
+        </li>
+        <li class="item">
+          <span class="item-index">T02</span>
+          <div class="item-copy">
+            <h3><a href="../feature-backlog/technology-skill-expansion/add-mysql-technology-skill.md">Add The MySQL Technology Skill</a></h3>
+            <p>Add MySQL and InnoDB behavior, detection, verification, and catalog coverage.</p>
+            <span class="item-note">No dependencies · independent after T01.</span>
+          </div>
+          <span class="badge">Proposed</span>
+        </li>
+        <li class="item">
+          <span class="item-index">T03</span>
+          <div class="item-copy">
+            <h3><a href="../feature-backlog/technology-skill-expansion/add-quartz-scheduler-technology-skill.md">Add The Quartz Scheduler Technology Skill</a></h3>
+            <p>Add Quartz jobs, triggers, misfires, concurrency, storage, recovery, and verification.</p>
+            <span class="item-note">No dependencies · independent after T01.</span>
+          </div>
+          <span class="badge">Proposed</span>
+        </li>
+        <li class="item">
+          <span class="item-index">T04</span>
+          <div class="item-copy">
+            <h3><a href="../feature-backlog/technology-skill-expansion/add-mapstruct-technology-skill.md">Add The MapStruct Technology Skill</a></h3>
+            <p>Add compile-time mapper semantics, processor setup, and generated implementation evidence.</p>
+            <span class="item-note">No dependencies · independent after T01.</span>
+          </div>
+          <span class="badge">Proposed</span>
+        </li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="issues-heading">
+      <div class="section-head">
+        <h2 id="issues-heading">Lifecycle reconciliation</h2>
+        <span class="small">Read-only findings</span>
+      </div>
+      <ul class="issue-list">
+        <li><strong>Terminology defect:</strong> the live queue still uses User Review while D01 defines the clearer User Action Required contract.</li>
+        <li><strong>Folder and Type mismatch:</strong> fifteen Defect items remain inside the agent-skill-lifecycle feature series and must still be counted from their explicit Type.</li>
+        <li><strong>Completed item in active backlog:</strong> A01 has completion evidence but remains in an active folder.</li>
+        <li><strong>Stale blocked status:</strong> A02 is blocked only by the completed A01 dependency.</li>
+        <li><strong>Dependency mismatch:</strong> A16 is declared Ready while its A15 dependency is unfinished and written as a punctuated title instead of a slug.</li>
+      </ul>
+    </section>
+
+    <p class="source-note">Example scope: typed active backlog, user-action queue, series indexes, and queue guidance. Series indexes and queue README files are excluded from item counts. This committed example is a visual reference, not live generated status.</p>
+  </main>
+</body>
+</html>
