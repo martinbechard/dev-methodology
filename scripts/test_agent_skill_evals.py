@@ -2479,6 +2479,22 @@ class HarnessAndJudgeTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "allowlist omits workspace file"):
                 self.module.build_input_manifest(root, ["TASK.md"])
 
+    def test_backlog_lifecycle_context_selects_the_current_fixture_paths(self) -> None:
+        case = self.module.load_cases()["backlog-lifecycle"]
+        fixture_root = ROOT / case["project"]
+        expected_paths = ["TASK.md", "backlog", ".backlog-state"]
+
+        self.assertEqual(expected_paths, case["contextPack"]["include"])
+        self.assertEqual(expected_paths, case["modelVisiblePaths"])
+        manifest = self.module.build_input_manifest(
+            fixture_root,
+            case["modelVisiblePaths"],
+        )
+        self.assertIn(
+            "backlog/feature-backlog/retry-policy.md",
+            {item.source_path for item in manifest.files},
+        )
+
     def test_model_visible_inventory_rejects_file_and_directory_symlinks(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             base = Path(directory)

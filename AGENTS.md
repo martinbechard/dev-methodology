@@ -17,6 +17,8 @@ Keep these instructions simple. If a maintenance rule needs a long explanation, 
 - detection.yaml beside a specialized technology or domain skill is the source for setup-time detection metadata and activation evidence.
 - adapters contains runtime-specific metadata for those distributed skills.
 - generated/adapters contains generated native agent definitions and must be regenerated from conceptual agent definition sources rather than edited manually.
+- backlog contains this repository's primary-worktree-only typed work queue and user-review state; isolated agent worktrees omit it.
+- .worktrees contains ignored linked agent checkouts rooted at the primary worktree. It is operational state rather than project source, and agents must never resolve it from another linked worktree.
 - design contains the HTML explanations of the skill and agent model.
 - scripts contains installer, refresh, validation, and regression-test support.
 

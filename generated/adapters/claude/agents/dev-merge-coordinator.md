@@ -156,7 +156,7 @@ Use this skill before editing files or taking exclusive runtime resources in a r
 
 ## Goal
 
-Claims make shared work explicit and keep completed work durable. The first independent writer may use a clean primary worktree. Later independent writers use isolated worktrees when their scopes do not overlap. Overlapping work waits. Dirty unclaimed state enters recovery rather than accepting another anonymous edit.
+Claims make shared work explicit and keep completed work durable. The first independent writer may use a clean primary worktree. Later independent writers use isolated worktrees when their scopes do not overlap. Every isolated checkout lives in the canonical .worktrees directory beneath the primary worktree, with the claim id as one portable directory component. Each isolated worktree uses worktree-specific sparse checkout so the repository-root backlog/ directory remains available only from the primary worktree. Overlapping work waits. Dirty unclaimed state enters recovery rather than accepting another anonymous edit.
 
 Start with the narrow scope supported by current evidence. Extend the same claim atomically when another file or resource becomes necessary. Do not speculate about entire directories merely because future scope is unknown.
 
@@ -176,9 +176,11 @@ Use the tool that matches the intended operation:
 | Maintain the journal | claim_maintain_journal | maintain-journal |
 | Report contention | claim_report | report |
 
-Always inspect result.outcome. PRIMARY, ISOLATE, RECOVER, WAIT, ISOLATE_REQUIRED, RECOVERY_REQUIRED, and structured rejections are valid coordination results. A valid result is not an MCP failure and must not be retried through a fallback command.
+For an acquisition or extension that includes backlog scope, and for an isolation acquisition that supplies branch or worktree arguments, use the MCP operation only when its exposed contract explicitly advertises PRIMARY_REQUIRED and backlog sparse-checkout behavior, plus canonical primary-root worktree placement. Otherwise resolve and run the loaded agent-claim skill's claim.py script before dispatch. Following ISOLATE_REQUIRED with the required isolation arguments is the documented state transition, not a retry of a failed mutation.
 
-Use a fallback only when the tool is absent or the MCP server cannot initialize or connect before request dispatch. Never use a fallback after a path, root, authorization, input-policy, or other structured rejection; those results enforce the active boundary. Prefer the installed mcp-agent-ops-claims command when available. Otherwise use the claim.py script inside the loaded agent-claim package. Resolve the script path once and reuse it for every fallback command in the task. Do not assume the target repository contains skills/agent-claim.
+Always inspect result.outcome. PRIMARY, ISOLATE, RECOVER, WAIT, PRIMARY_REQUIRED, ISOLATE_REQUIRED, RECOVERY_REQUIRED, and structured rejections are valid coordination results. A valid result is not an MCP failure and must not be retried through a fallback command.
+
+Outside that explicit capability route, use a fallback only when the tool is absent or the MCP server cannot initialize or connect before request dispatch. Never use a fallback after a path, root, authorization, input-policy, or other structured rejection; those results enforce the active boundary. Prefer the installed mcp-agent-ops-claims command when available. For the capability-routed sparse or backlog flows, use the claim.py script inside the loaded agent-claim package when the copied command does not advertise the required behavior. Resolve the script path once and reuse it for every fallback command in the task. Do not assume the target repository contains skills/agent-claim.
 
 When a transport interruption makes a mutating claim call ambiguous after dispatch, do not repeat the mutation or switch transports immediately. Reconcile with claim_status first. Reconnect and use the MCP status operation when possible; if the server remains unavailable, use only the read-only status fallback. Continue, retry, or release only from the observed registry state so a successful but unacknowledged acquisition cannot become a duplicate claim.
 
@@ -226,6 +228,8 @@ The live agent-claims.json registry in that directory is the coordination author
 
 External agent transcripts are not claim history. The journal contains coordination identifiers, normalized scopes, modes, outcomes, conflicts, worktree identifiers, and relevant commit identifiers. It does not contain prompts, reasoning, responses, arbitrary tool output, or task descriptions.
 
+Resolve the primary worktree from Git worktree metadata, even when the command runs from a linked checkout. The canonical linked-checkout root is the .worktrees directory immediately beneath that primary worktree. Never derive it from the current linked worktree, never create it below another linked checkout, and never embed its machine-specific absolute path in portable project guidance. Applicable root project instructions may declare .worktrees as ignored operational state, but the command owns absolute path calculation and enforcement.
+
 ## Claim Scope
 
 Use one scope form for each intended ownership kind:
@@ -238,6 +242,10 @@ Use one scope form for each intended ownership kind:
 Tree and all-files scope require a short coordination-only scope reason. Do not put prompts, sensitive company information, or personal information in the reason.
 
 The command rejects repository root, wildcards, and existing directories passed through file. It also rejects an existing file passed through tree. A temporary compat-file-directories switch converts existing directories passed through file into warned tree scopes, but still requires a scope reason. New callers use the explicit forms.
+
+The repository-root backlog directory is primary-worktree-only. Claim backlog paths from the primary worktree. When another claim already owns the primary worktree, a backlog acquisition or an isolated claim extension into backlog returns PRIMARY_REQUIRED and preserves the live registry unchanged.
+
+The claim id also names the canonical isolated checkout directory. It must be one portable path component containing only letters, digits, dots, underscores, or hyphens. Invalid identifiers return INVALID_IDENTIFIER before any worktree is created.
 
 ## When To Claim
 
@@ -255,8 +263,9 @@ Use the smallest useful file and resource scope. A parent agent keeps the root t
 The structured JSON outcome is the authoritative coordination result. Stable process exit codes support shell control flow:
 
 - 0 means the command succeeded. Acquisition success returns PRIMARY, ISOLATE, or RECOVER.
-- 1 means a general rejection or failure such as INVALID_SCOPE, CLAIM_NOT_FOUND, RELEASE_REJECTED, or worktree creation failure.
+- 1 means a general rejection or failure such as INVALID_SCOPE, INVALID_IDENTIFIER, INVALID_WORKTREE_PATH, WORKTREE_ROOT_NOT_IGNORED, CLAIM_NOT_FOUND, RELEASE_REJECTED, or worktree creation failure.
 - 3 means WAIT. Requested scope overlaps another active claim.
+- PRIMARY_REQUIRED with exit code 3 means backlog scope must wait until it can run from the primary worktree.
 - 4 means ISOLATE_REQUIRED. Another non-overlapping claim exists, but branch and worktree arguments were not supplied.
 - 5 means RECOVERY_REQUIRED. The unclaimed primary worktree is dirty and explicit recovery authorization was not supplied.
 
@@ -299,7 +308,7 @@ For a true repository-wide migration, replace the tree argument with:
 
 ### Isolation Acquisition
 
-When another non-overlapping claim is active, the primary command without isolation arguments returns ISOLATE_REQUIRED with exit code 4 and does not create a claim. Retry the same claim identifier with a unique branch and worktree:
+When another non-overlapping claim is active, the primary command without a branch returns ISOLATE_REQUIRED with exit code 4 and does not create a claim. The structured result reports the canonical worktree root and suggested checkout. Retry the same claim identifier with a unique branch:
 
 ```bash
 python3 "$CLAIM_SCRIPT" --repo . acquire \
@@ -309,11 +318,14 @@ python3 "$CLAIM_SCRIPT" --repo . acquire \
   --root-task-id task-123 \
   --file src/feature.py \
   --branch codex/task-123 \
-  --worktree-path ../project-task-123 \
   --base main
 ```
 
-This returns ISOLATE with exit code 0. The base option selects the Git commit or ref from which the isolated branch is created; it defaults to HEAD. Do not supply branch and worktree arguments to bypass overlap: conflicting scope still returns WAIT.
+This returns ISOLATE with exit code 0. The base option selects the Git commit or ref from which the isolated branch is created; it defaults to HEAD. The command derives the target as the primary worktree's .worktrees/task-123 directory, creates the linked checkout with worktree-specific sparse checkout, and omits the backlog/ directory without changing primary-worktree status. The worktree-path compatibility option is accepted only when it resolves exactly to that derived target; any other value returns INVALID_WORKTREE_PATH. Before creation, .worktrees must match the anchored /.worktrees/ pattern in the project .gitignore or another Git ignore source; otherwise the command returns WORKTREE_ROOT_NOT_IGNORED. Do not supply isolation arguments to bypass overlap: conflicting scope still returns WAIT.
+
+### Primary-Only Backlog Acquisition
+
+Backlog creation, lifecycle changes, and archive movements run from the primary worktree. When another claim already exists, a non-overlapping request for a file or tree under backlog returns PRIMARY_REQUIRED with exit code 3 instead of creating an isolated checkout. Wait for the primary claim to finish, then retry without branch or worktree arguments.
 
 ### WAIT
 
@@ -360,6 +372,8 @@ python3 "$CLAIM_SCRIPT" --repo . extend \
 
 Extension checks only net-new scope against every other active claim under the registry lock. All requested additions succeed together or WAIT leaves the live claim unchanged. Repeating scope the claim already owns succeeds idempotently and the structured result separates added scope from already-owned scope. Extension preserves the original worktree, branch, mode, baseline commit, and claim timestamp.
 
+An isolated claim cannot extend into backlog scope. That request returns PRIMARY_REQUIRED and leaves the claim unchanged so backlog work can be retried from the primary worktree.
+
 Scope contraction is not supported. Relinquishing a path while it still has uncommitted changes requires a separate safety design.
 
 ## Heartbeat
@@ -392,10 +406,13 @@ The shared Git operation is integration into a target branch. Acquire a target-s
 ## Overlap And Isolation
 
 - Any active writer claim causes a later non-overlapping independent writer to use an isolated branch and worktree.
+- Every isolated checkout is derived beneath the primary worktree's .worktrees directory, never beneath the caller's current linked worktree.
+- The canonical worktree root must be ignored, and double-force Git clean is prohibited while linked checkouts exist.
 - Exact files overlap only the same exact file.
 - Trees overlap descendants and intersecting ancestor or descendant trees.
 - All-files overlaps every exact file and tree.
 - Identical exclusive resources overlap even when file scope differs.
+- Backlog paths are never materialized in isolated worktrees and may only be claimed from the primary worktree.
 - Overlap returns WAIT. Worktree isolation does not make conflicting changes logically safe.
 - Never stage, commit, revert, or clean another claim owner’s files unless acting as the explicit integration owner.
 
@@ -463,6 +480,7 @@ A modifying task is not complete merely because implementation or tests are comp
 - The claimed worktree is clean.
 - Long-running resources are stopped or explicitly handed off.
 - The claim is released with the bundled command.
+- A clean released isolated checkout is removed by the orchestration owner only after its verified commit is preserved on a branch or integrated into the target.
 - The final response reports the commit hash, verification, and final status.
 
 ### Committed Release
@@ -472,6 +490,15 @@ After the claimed worktree is clean and contains the verified task commit, relea
 ```bash
 python3 "$CLAIM_SCRIPT" --repo . release --claim-id task-123
 ```
+
+After the verified commit is preserved and the claim is released, run cleanup from the primary worktree:
+
+```bash
+git worktree remove .worktrees/task-123
+git worktree prune
+```
+
+Never remove a dirty, active, uncommitted, or unpreserved checkout.
 
 ### No-Change Release
 

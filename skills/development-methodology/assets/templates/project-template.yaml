@@ -54,6 +54,7 @@ root_agents_reference:
   required_content:
     - "Repository-wide rules, privacy constraints, build and test commands, documentation locations, and taxonomy terms used during project setup."
     - "Unconditional folder technology skillsets generated from this plan and their required-load failure policy."
+    - "The .worktrees directory is ignored operational state immediately beneath the primary worktree; agent-claim derives its absolute location and agents never nest it below a linked checkout."
 
 technology_skill_detection:
   owner: "Project Agent Setup."
@@ -133,6 +134,8 @@ nested_agents_files:
 documentation_and_file_contracts:
   - path: AGENTS.md
     purpose: "Operational routing artifact supplied by the harness."
+  - path: .gitignore
+    purpose: "Contains the anchored /.worktrees/ entry that keeps linked agent checkouts out of project source and normal status."
   - path: PROJECT.yaml
     purpose: "Single project-wide setup and validation artifact for conceptual agent definitions, skillsets, folder routing, nested AGENTS.md placement, and evidence."
   - path: "TODO: CLAUDE.md or Not applicable."

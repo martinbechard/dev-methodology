@@ -25,6 +25,7 @@ import yaml
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 README_PATH = REPOSITORY_ROOT / "README.md"
 AGENTS_PATH = REPOSITORY_ROOT / "AGENTS.md"
+GITIGNORE_PATH = REPOSITORY_ROOT / ".gitignore"
 SKILLS_ROOT = REPOSITORY_ROOT / "skills"
 ROLES_ROOT = REPOSITORY_ROOT / "agents" / "roles"
 SKILL_CATEGORIES_PATH = REPOSITORY_ROOT / "design" / "skill-categories.yaml"
@@ -1654,6 +1655,15 @@ class BundleContentTests(unittest.TestCase):
             skill_text,
         )
         self.assertIn("agent-claim", skill_text)
+        self.assertIn("exact anchored /.worktrees/ entry", skill_text)
+        self.assertIn("must never derive it from another linked checkout", skill_text)
+        self.assertIn("Do not record a machine-specific absolute worktree path", skill_text)
+        self.assertIn(
+            "The .worktrees directory is ignored operational state immediately beneath the primary worktree",
+            template_text,
+        )
+        self.assertIn("Contains the anchored /.worktrees/ entry", template_text)
+        self.assertIn("worktree ignore behavior", modularization_text)
         self.assertIn("thin CLAUDE.md", skill_text)
         self.assertIn(PROJECT_CONFIGURATION_SKILL, development_methodology_text)
         self.assertIn(PROJECT_TEMPLATE, development_methodology_text)
@@ -1895,6 +1905,59 @@ class BundleContentTests(unittest.TestCase):
         for guidance in required_guidance:
             with self.subTest(guidance=guidance):
                 self.assertIn(guidance, skill_text)
+
+    def test_backlog_skills_separate_user_review_from_dispatchable_work(self) -> None:
+        create_text = (SKILLS_ROOT / "create-backlog" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        manage_text = (SKILLS_ROOT / "manage-backlog" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+
+        for skill_name, skill_text in (
+            ("create-backlog", create_text),
+            ("manage-backlog", manage_text),
+        ):
+            with self.subTest(skill=skill_name):
+                self.assertIn("backlog/user-review", skill_text)
+                self.assertNotIn("docs/user-review", skill_text)
+                self.assertIn("user review", skill_text.lower())
+
+        for required_guidance in (
+            "User Review Required",
+            "Question for the User",
+            "Why User Input Is Required",
+            "Do not place an item in backlog/user-review merely because",
+            "synthetic evaluation boundary",
+        ):
+            with self.subTest(create_guidance=required_guidance):
+                self.assertIn(required_guidance, create_text)
+
+        for required_guidance in (
+            "Do not claim, dispatch, implement, or resolve user-review work",
+            "Ask the user the exact question recorded in the item",
+            "Move an approved or answered item into its typed active backlog folder",
+            "backlog/holding is for intentionally deferred work",
+        ):
+            with self.subTest(manage_guidance=required_guidance):
+                self.assertIn(required_guidance, manage_text)
+
+        user_review_root = REPOSITORY_ROOT / "backlog" / "user-review"
+        queue_readme = user_review_root / "README.md"
+        classification_item = user_review_root / "classify-agent-suite-blocking-resources.md"
+        self.assertTrue(queue_readme.is_file())
+        self.assertTrue(classification_item.is_file())
+        classification_text = classification_item.read_text(encoding="utf-8")
+        for required_item_contract in (
+            "Status: User Review",
+            "Type: Analysis",
+            "## User Review Required",
+            "### Question for the User",
+            "### Why User Input Is Required",
+            "### Resolution",
+        ):
+            with self.subTest(item_contract=required_item_contract):
+                self.assertIn(required_item_contract, classification_text)
 
     def test_skill_names_follow_category_naming_rules(self) -> None:
         build_skill_docs = load_build_skill_docs_module()
@@ -2470,6 +2533,8 @@ class BundleContentTests(unittest.TestCase):
         ):
             self.assertIn(tool_name, claim_skill)
         self.assertIn("A valid result is not an MCP failure", claim_skill)
+        self.assertIn("explicitly advertises PRIMARY_REQUIRED and backlog sparse-checkout behavior", claim_skill)
+        self.assertIn("canonical primary-root worktree placement", claim_skill)
         self.assertIn("cannot initialize or connect before request dispatch", claim_skill)
         self.assertIn("Never use a fallback after a path", claim_skill)
         self.assertIn("Reconcile with claim_status first", claim_skill)
@@ -2481,9 +2546,16 @@ class BundleContentTests(unittest.TestCase):
         self.assertNotIn("python3 skills/agent-claim/scripts/claim.py", claim_skill)
         self.assertIn("## Stable Exit Codes", claim_skill)
         self.assertIn("ISOLATE_REQUIRED with exit code 4", claim_skill)
+        self.assertIn("PRIMARY_REQUIRED with exit code 3", claim_skill)
         self.assertIn("RECOVERY_REQUIRED with exit code 5", claim_skill)
         self.assertIn("### Primary Acquisition", claim_skill)
         self.assertIn("### Isolation Acquisition", claim_skill)
+        self.assertIn("primary worktree's .worktrees/task-123 directory", claim_skill)
+        self.assertIn("INVALID_WORKTREE_PATH", claim_skill)
+        self.assertIn("WORKTREE_ROOT_NOT_IGNORED", claim_skill)
+        self.assertNotIn("--worktree-path ../project-task-123", claim_skill)
+        self.assertIn("backlog/ directory", claim_skill)
+        self.assertIn("worktree-specific sparse checkout", claim_skill)
         self.assertIn("### WAIT", claim_skill)
         self.assertIn("### Recovery Acquisition", claim_skill)
         self.assertIn("--base main", claim_skill)
@@ -2504,7 +2576,14 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("Agent Claims And Worktrees", readme_text)
         self.assertIn("repository-global event journal", readme_text)
         self.assertIn("target-specific integration resource", readme_text)
+        self.assertIn("primary worktree's .worktrees directory", readme_text)
+        self.assertIn("Double-force Git clean is prohibited", readme_text)
         self.assertNotIn("Agent Claims And Worktrees", AGENTS_PATH.read_text(encoding="utf-8"))
+        self.assertIn(
+            ".worktrees contains ignored linked agent checkouts rooted at the primary worktree",
+            AGENTS_PATH.read_text(encoding="utf-8"),
+        )
+        self.assertIn("/.worktrees/", GITIGNORE_PATH.read_text(encoding="utf-8").splitlines())
 
     def test_codex_read_only_sandbox_is_reserved_for_never_mutating_roles(self) -> None:
         """Keep evidence-writing reviewers writable while preserving true read-only agents."""

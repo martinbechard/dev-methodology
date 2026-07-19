@@ -41,7 +41,7 @@ from .models import LeafLinkChange, LeafPage, LintResult, OpenQuestion
 MARKDOWN_LINK_PATTERN = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
 MARKDOWN_LINK_SPAN_PATTERN = re.compile(r"\[[^\]]+\]\([^)]+\)")
 PLAIN_LOCAL_PATH_PATTERN = re.compile(
-    r"(?P<path>(?:docs|src|tests|\.agents)/[A-Za-z0-9_./()[\]-]+|procedure-[A-Za-z0-9_.-]+\.md|AGENTS\.md|README\.md)"
+    r"(?P<path>(?:backlog|docs|src|tests|\.agents)/[A-Za-z0-9_./()[\]-]+|procedure-[A-Za-z0-9_.-]+\.md|AGENTS\.md|README\.md)"
 )
 PAGE_TEMPLATES = {
     "README.md": """# Project Wiki
@@ -153,8 +153,8 @@ Topic pages should include:
 
 - docs/architecture holds design intent when present.
 - docs/plans holds implementation plans when present.
-- docs/defect-backlog holds tracked defects when present.
-- docs/feature-backlog holds tracked feature requests when present.
+- backlog/defect-backlog holds tracked defects when present.
+- backlog/feature-backlog holds tracked feature requests when present.
 - AGENTS.md, README files, and procedure files hold workflow obligations.
 """,
     "glossary.md": """# Glossary

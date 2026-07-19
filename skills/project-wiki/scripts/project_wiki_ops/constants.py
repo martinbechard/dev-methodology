@@ -1,3 +1,7 @@
+# Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+# AI attribution: Modified with AI assistance.
+# Summary: Defines paths, templates, and command constants for project-wiki operations.
+
 """Constants for opinionated project wiki operations."""
 
 from __future__ import annotations
@@ -40,9 +44,9 @@ EXEMPT_SCHEMA_FILES = {
     "maintenance-log.md",
 }
 SOURCE_TO_WIKI_PATTERNS = (
-    ("docs/defect-backlog/", "docs/wiki/known-defects.md"),
-    ("docs/feature-backlog/", "docs/wiki/topic-index.md"),
-    ("docs/backlog/", "docs/wiki/topic-index.md"),
+    ("backlog/defect-backlog/", "docs/wiki/known-defects.md"),
+    ("backlog/feature-backlog/", "docs/wiki/topic-index.md"),
+    ("backlog/", "docs/wiki/topic-index.md"),
     ("docs/architecture/", "docs/wiki/topic-index.md"),
     ("docs/plans/", "docs/wiki/topic-index.md"),
     ("docs/requirements/", "docs/wiki/topic-index.md"),
@@ -57,6 +61,7 @@ ROOT_RELATIVE_PREFIXES = (
     ".agents/",
     "AGENTS.md",
     "README.md",
+    "backlog/",
     "docs/",
     "procedure-",
     "src/",
