@@ -1,8 +1,39 @@
 # Align Project Organiser Filename Selection
 
-Status: Blocked
+Status: User Action Required
 
 Type: Defect
+
+## User Action Required
+
+The independently accepted regression is integrated, but the remaining behavioral correction changes a governed conceptual agent definition. Repository policy requires explicit, scope-specific user approval before that definition can be changed.
+
+## Question for the User
+
+Do you approve changing only agents/roles/project-setup/project-organiser.role.yaml so Project Organiser must explicitly state purpose, owner, lifecycle, consumers, mutability, and artifact kind in every placement rationale or blocker, with only supported generated role mirrors and regression coverage updated?
+
+## Why User Input Is Required
+
+AGENTS.md requires explicit, scope-specific approval before any governed agent or skill definition change. A failing test, general repository authority, review work, verification work, and the desire to make validation pass are not sufficient authority.
+
+## Resolution
+
+Pending.
+
+## Unattended Work Boundary
+
+Until the user answers yes, unattended work must not create an approval record, change an agent or skill definition, regenerate definition mirrors, tailor tests or evaluations to the finding, rerun the Project Organiser scenarios, or perform terminal closeout for this item.
+
+A yes answer authorizes only the exact Project Organiser role-instruction scope stated in the question, together with its supported generated role mirrors and regression coverage. It does not authorize a distributed skill expansion. A no answer preserves the integrated filename-selection regression but leaves this item blocked from satisfying the remaining governed scenario.
+
+## Current Delivery And Verification Evidence
+
+- Accepted integrated commit: 6426a15c01c63dc7554c045618cd8a9a329c02d2.
+- Fresh post-integration review: PASS.
+- Project Organiser scenario known-runbook-placement: PASS.
+- Project Organiser scenario authorized-taxonomy-extension: PASS.
+- Project Organiser scenario ambiguous-ownership-boundary: independent Judge FAIL because the filename-selection classification omitted consumers and mutability and left purpose and lifecycle implicit.
+- External technical blocker: [Correct agent-suite classification archive references](../defect-backlog/correct-agent-suite-classification-archive-references.md). This separate defect is not part of the approval question.
 
 ## Running Ownership
 
