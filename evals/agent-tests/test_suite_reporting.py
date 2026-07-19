@@ -276,6 +276,108 @@ class AgentSuiteReportingTests(unittest.TestCase):
                 any("digest mismatch" in value for value in published["evidenceBundle"]["diagnostics"])
             )
 
+    def test_publication_rejects_duplicate_terminal_judge_response_with_current_digest(
+        self,
+    ) -> None:
+        """A current rollout digest cannot legitimize two eligible Judge finals."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            metadata = self._metadata(
+                "codex", "dev-coder", "PASS", root / "runner-result"
+            )
+            self._duplicate_terminal_judge_response(metadata)
+
+            _, metadata_path = reporting.write_suite_report(root, metadata)
+            published = json.loads(metadata_path.read_text(encoding="utf-8"))
+
+        self.assertEqual("INFRASTRUCTURE_FAILED", published["status"])
+        self.assertEqual("invalid", published["evidenceBundle"]["status"])
+        self.assertTrue(
+            any(
+                "exactly one eligible terminal" in value
+                for value in published["evidenceBundle"]["diagnostics"]
+            )
+        )
+
+    def test_aggregate_independently_rejects_published_duplicate_judge_terminal(
+        self,
+    ) -> None:
+        """Aggregation re-enumerates Judge finals instead of trusting publication state."""
+        with (
+            tempfile.TemporaryDirectory() as directory,
+            mock.patch.object(reporting, "_suite_digest", return_value="digest"),
+        ):
+            root = Path(directory)
+            metadata = self._metadata(
+                "codex", "dev-coder", "PASS", root / "runner-result"
+            )
+            self._duplicate_terminal_judge_response(metadata)
+            with mock.patch.object(
+                reporting,
+                "_judge_rollout_binding_error",
+                return_value=None,
+                create=True,
+            ):
+                reporting.write_suite_report(root, metadata)
+
+            entries = reporting.aggregate_entries(
+                root, ("dev-coder",), "codex", "revision"
+            )
+
+        states = {entry["inputState"] for entry in entries}
+        self.assertNotIn("CURRENT", states)
+        self.assertTrue({"MISSING", "MALFORMED"} <= states)
+        self.assertFalse(
+            any(
+                entry.get("status") == "PASS"
+                and entry.get("inputState") == "CURRENT"
+                for entry in entries
+            )
+        )
+
+    def test_publication_requires_response_index_to_name_the_sole_judge_terminal(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            metadata = self._metadata(
+                "codex", "dev-coder", "PASS", root / "runner-result"
+            )
+            metadata["scenarioResults"][0]["receiptAudit"]["judgeProvenance"][
+                "responseEventIndex"
+            ] = 0
+
+            _, metadata_path = reporting.write_suite_report(root, metadata)
+            published = json.loads(metadata_path.read_text(encoding="utf-8"))
+
+        self.assertEqual("INFRASTRUCTURE_FAILED", published["status"])
+        self.assertTrue(
+            any(
+                "responseEventIndex" in value
+                for value in published["evidenceBundle"]["diagnostics"]
+            )
+        )
+
+    def test_junie_blocked_remains_a_truthful_current_terminal_result(self) -> None:
+        with (
+            tempfile.TemporaryDirectory() as directory,
+            mock.patch.object(reporting, "_suite_digest", return_value="digest"),
+        ):
+            root = Path(directory)
+            reporting.write_suite_report(
+                root,
+                self._metadata(
+                    "junie", "dev-coder", "BLOCKED", root / "runner-result"
+                ),
+            )
+
+            entries = reporting.aggregate_entries(
+                root, ("dev-coder",), "junie", "revision"
+            )
+
+        self.assertEqual("CURRENT", entries[0]["inputState"])
+        self.assertEqual("BLOCKED", entries[0]["status"])
+
     def test_aggregate_revalidates_bundle_objects_before_counting_current_pass(
         self,
     ) -> None:
@@ -866,6 +968,28 @@ class AgentSuiteReportingTests(unittest.TestCase):
                 "python": "3.11",
             },
         }
+
+    @staticmethod
+    def _duplicate_terminal_judge_response(metadata: dict[str, object]) -> None:
+        scenario = metadata["scenarioResults"][0]
+        provenance = scenario["receiptAudit"]["judgeProvenance"]
+        rollout = Path(str(metadata["evidenceRoot"])) / provenance["rolloutPath"]
+        events = [
+            json.loads(line)
+            for line in rollout.read_text(encoding="utf-8").splitlines()
+        ]
+        duplicate = json.loads(
+            json.dumps(events[provenance["responseEventIndex"]])
+        )
+        duplicate["timestamp"] = "2026-07-19T00:00:02Z"
+        events.append(duplicate)
+        rollout.write_text(
+            "\n".join(json.dumps(event) for event in events) + "\n",
+            encoding="utf-8",
+        )
+        provenance["rolloutSha256"] = hashlib.sha256(
+            rollout.read_bytes()
+        ).hexdigest()
 
     @staticmethod
     def _embedded_json(rendered: str) -> dict[str, object]:

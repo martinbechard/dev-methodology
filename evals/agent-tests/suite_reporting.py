@@ -58,6 +58,11 @@ _EVIDENCE_BUNDLE_SCHEMA = "dev-methodology-agent-suite-evidence-bundle"
 _EVIDENCE_RECEIPT_SCHEMA = "dev-methodology-agent-suite-evidence-receipt"
 _JUDGE_OUTPUT_SCHEMA = "dev-methodology-agent-suite-judge-output"
 _SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
+_JUDGE_PROVENANCE_FIELDS = {
+    "status", "sessionId", "parentSessionId", "invocation", "runIdentity",
+    "suite", "scenario", "rolloutPath", "rolloutSha256", "responseEventIndex",
+    "responsePath", "responseSha256", "outputPath", "outputSha256", "disposition",
+}
 
 
 @dataclasses.dataclass(frozen=True)
@@ -536,6 +541,71 @@ def _safe_relative(value: object) -> PurePosixPath | None:
     return PurePosixPath(value)
 
 
+def _judge_rollout_binding_error(
+    rollout_bytes: bytes,
+    response_bytes: bytes,
+    provenance: Mapping[str, Any],
+) -> str | None:
+    """Independently bind one retained Judge final response to its child rollout."""
+
+    try:
+        rollout_events = [
+            json.loads(line) for line in rollout_bytes.decode("utf-8").splitlines()
+        ]
+    except (UnicodeError, json.JSONDecodeError):
+        return "Judge rollout is malformed"
+    eligible_responses: list[tuple[int, str]] = []
+    for index, event in enumerate(rollout_events):
+        payload = event.get("payload") if isinstance(event, Mapping) else None
+        content = payload.get("content") if isinstance(payload, Mapping) else None
+        item = (
+            content[0]
+            if isinstance(content, list)
+            and len(content) == 1
+            and isinstance(content[0], Mapping)
+            else None
+        )
+        if (
+            isinstance(payload, Mapping)
+            and event.get("type") == "response_item"
+            and payload.get("type") == "message"
+            and payload.get("role") == "assistant"
+            and payload.get("phase") == "final_answer"
+            and isinstance(item, Mapping)
+            and item.get("type") == "output_text"
+            and isinstance(item.get("text"), str)
+        ):
+            eligible_responses.append((index, str(item["text"])))
+    if len(eligible_responses) != 1:
+        return (
+            "Judge rollout must contain exactly one eligible terminal assistant "
+            "final_answer"
+        )
+    response_index, response_text = eligible_responses[0]
+    if type(provenance.get("responseEventIndex")) is not int or provenance.get(
+        "responseEventIndex"
+    ) != response_index:
+        return "Judge responseEventIndex does not identify the sole eligible terminal response"
+    if response_text.encode("utf-8") != response_bytes:
+        return "Judge rollout response bytes mismatch"
+    session_payloads = [
+        event.get("payload")
+        for event in rollout_events
+        if isinstance(event, Mapping)
+        and event.get("type") == "session_meta"
+        and isinstance(event.get("payload"), Mapping)
+    ]
+    if (
+        len(session_payloads) != 1
+        or session_payloads[0].get("id") != provenance.get("sessionId")
+        or session_payloads[0].get("parent_thread_id")
+        != provenance.get("parentSessionId")
+        or session_payloads[0].get("agent_role") != provenance.get("invocation")
+    ):
+        return "Judge rollout session binding mismatch"
+    return None
+
+
 def _bundle_evidence(
     metadata: Mapping[str, Any],
 ) -> tuple[dict[str, Any], dict[str, bytes], dict[str, Any]]:
@@ -811,12 +881,7 @@ def _bundle_evidence(
             if judge_dispositions != [audit.get("judgeDisposition")]:
                 diagnostics.append(f"{scenario_id}: Judge receipt audit mismatch")
             provenance = audit.get("judgeProvenance")
-            expected_provenance_fields = {
-                "status", "sessionId", "parentSessionId", "invocation", "runIdentity",
-                "suite", "scenario", "rolloutPath", "rolloutSha256", "responseEventIndex",
-                "responsePath", "responseSha256", "outputPath", "outputSha256", "disposition",
-            }
-            if not isinstance(provenance, Mapping) or set(provenance) != expected_provenance_fields:
+            if not isinstance(provenance, Mapping) or set(provenance) != _JUDGE_PROVENANCE_FIELDS:
                 diagnostics.append(f"{scenario_id}: exact Judge child provenance is missing")
                 provenance = {}
             expected_identity = {
@@ -929,53 +994,11 @@ def _bundle_evidence(
             if response_document != expected_response:
                 diagnostics.append(f"{scenario_id}: Judge response contract mismatch")
             if rollout_bytes is not None and response_bytes is not None:
-                rollout_events: list[object] = []
-                try:
-                    rollout_events = [
-                        json.loads(line)
-                        for line in rollout_bytes.decode("utf-8").splitlines()
-                    ]
-                except (UnicodeError, json.JSONDecodeError):
-                    diagnostics.append(f"{scenario_id}: Judge rollout is malformed")
-                event_index = provenance.get("responseEventIndex")
-                event = (
-                    rollout_events[event_index]
-                    if isinstance(event_index, int)
-                    and not isinstance(event_index, bool)
-                    and 0 <= event_index < len(rollout_events)
-                    else None
+                rollout_error = _judge_rollout_binding_error(
+                    rollout_bytes, response_bytes, provenance
                 )
-                payload = event.get("payload") if isinstance(event, Mapping) else None
-                content = payload.get("content") if isinstance(payload, Mapping) else None
-                text_value = (
-                    content[0].get("text")
-                    if isinstance(content, list)
-                    and len(content) == 1
-                    and isinstance(content[0], Mapping)
-                    else None
-                )
-                session_meta = next(
-                    (
-                        value.get("payload")
-                        for value in rollout_events
-                        if isinstance(value, Mapping) and value.get("type") == "session_meta"
-                    ),
-                    None,
-                )
-                if (
-                    not isinstance(payload, Mapping)
-                    or event.get("type") != "response_item"
-                    or payload.get("type") != "message"
-                    or payload.get("role") != "assistant"
-                    or payload.get("phase") != "final_answer"
-                    or not isinstance(text_value, str)
-                    or text_value.encode("utf-8") != response_bytes
-                    or not isinstance(session_meta, Mapping)
-                    or session_meta.get("id") != provenance.get("sessionId")
-                    or session_meta.get("parent_thread_id") != provenance.get("parentSessionId")
-                    or session_meta.get("agent_role") != provenance.get("invocation")
-                ):
-                    diagnostics.append(f"{scenario_id}: Judge rollout session binding mismatch")
+                if rollout_error is not None:
+                    diagnostics.append(f"{scenario_id}: {rollout_error}")
         elif judge_invoked is False:
             skip = skip_rows[0] if len(skip_rows) == 1 else {}
             matching_deterministic = deterministic_receipts.get(str(skip.get("checkId")))
@@ -1055,8 +1078,10 @@ def _validate_evidence_bundle(generation_root: Path, metadata: Mapping[str, Any]
         or not isinstance(manifest.get("diagnostics"), list)
     ):
         raise ValueError("suite report evidence bundle manifest is malformed")
+    manifest_entries = manifest["entries"]
     object_digests: set[str] = set()
-    for entry in manifest["entries"]:
+    object_contents: dict[str, bytes] = {}
+    for entry in manifest_entries:
         if not isinstance(entry, Mapping):
             raise ValueError("suite report evidence bundle entry is malformed")
         bundle_path = entry.get("bundlePath")
@@ -1074,13 +1099,132 @@ def _validate_evidence_bundle(generation_root: Path, metadata: Mapping[str, Any]
         object_path = generation_root / str(bundle_path)
         if object_path.is_symlink() or not object_path.is_file():
             raise ValueError("suite report evidence bundle object is missing or unsafe")
-        if hashlib.sha256(object_path.read_bytes()).hexdigest() != digest:
+        content = object_path.read_bytes()
+        if hashlib.sha256(content).hexdigest() != digest:
             raise ValueError("suite report evidence bundle object digest mismatch")
         object_digests.add(digest)
+        object_contents[digest] = content
     if len(object_digests) != bundle.get("objectCount"):
         raise ValueError("suite report evidence bundle object count mismatch")
-    if metadata.get("status") in {"PASS", "FAIL"} and bundle.get("status") != "verified":
-        raise ValueError("terminal suite verdict lacks a verified evidence bundle")
+    if bundle.get("status") != "verified":
+        if metadata.get("status") in {"PASS", "FAIL"}:
+            raise ValueError("terminal suite verdict lacks a verified evidence bundle")
+        return manifest_digest
+
+    def bound_object(
+        provenance: Mapping[str, Any],
+        kind: str,
+        path_field: str,
+        digest_field: str,
+    ) -> bytes:
+        path_value = provenance.get(path_field)
+        digest_value = provenance.get(digest_field)
+        matches = [
+            entry
+            for entry in manifest_entries
+            if isinstance(entry, Mapping)
+            and entry.get("kind") == kind
+            and entry.get("status") == "verified"
+            and entry.get("sourcePath") == path_value
+            and entry.get("sha256") == digest_value
+            and entry.get("bundlePath") == f"evidence/objects/{digest_value}"
+        ]
+        if len(matches) != 1 or not isinstance(digest_value, str):
+            raise ValueError(f"suite report {kind} provenance binding is invalid")
+        content = object_contents.get(digest_value)
+        if content is None:
+            raise ValueError(f"suite report {kind} object is unavailable")
+        return content
+
+    for scenario in metadata.get("scenarioResults", []):
+        if not isinstance(scenario, Mapping) or scenario.get("judgeInvoked") is not True:
+            continue
+        scenario_id = scenario.get("scenario")
+        audit = scenario.get("receiptAudit")
+        provenance = audit.get("judgeProvenance") if isinstance(audit, Mapping) else None
+        if (
+            not isinstance(audit, Mapping)
+            or not isinstance(provenance, Mapping)
+            or set(provenance) != _JUDGE_PROVENANCE_FIELDS
+            or provenance.get("status") != "verified"
+            or provenance.get("runIdentity") != audit.get("runIdentity")
+            or provenance.get("suite") != metadata.get("suite")
+            or provenance.get("scenario") != scenario_id
+            or provenance.get("disposition") != audit.get("judgeDisposition")
+        ):
+            raise ValueError("suite report Judge provenance identity binding is invalid")
+        rollout_bytes = bound_object(
+            provenance, "judge-rollout", "rolloutPath", "rolloutSha256"
+        )
+        response_bytes = bound_object(
+            provenance, "judge-response", "responsePath", "responseSha256"
+        )
+        output_bytes = bound_object(
+            provenance, "judge-output", "outputPath", "outputSha256"
+        )
+        if response_bytes != output_bytes:
+            raise ValueError("suite report Judge response and output bytes mismatch")
+        try:
+            response_document = json.loads(response_bytes.decode("utf-8"))
+        except (UnicodeError, json.JSONDecodeError) as error:
+            raise ValueError("suite report Judge response is malformed") from error
+        expected_response = {
+            "schema": _JUDGE_OUTPUT_SCHEMA,
+            "version": 1,
+            "runIdentity": audit.get("runIdentity"),
+            "suite": metadata.get("suite"),
+            "scenario": scenario_id,
+            "judgeInvocation": provenance.get("invocation"),
+            "disposition": audit.get("judgeDisposition"),
+        }
+        if response_document != expected_response:
+            raise ValueError("suite report Judge response contract mismatch")
+        rollout_error = _judge_rollout_binding_error(
+            rollout_bytes, response_bytes, provenance
+        )
+        if rollout_error is not None:
+            raise ValueError(f"suite report {rollout_error}")
+        matching_identity_bindings = []
+        seen_identity_objects: set[str] = set()
+        for entry in manifest_entries:
+            if (
+                not isinstance(entry, Mapping)
+                or entry.get("kind") != "identity-audit"
+                or entry.get("status") != "verified"
+                or not isinstance(entry.get("sha256"), str)
+                or entry["sha256"] in seen_identity_objects
+            ):
+                continue
+            seen_identity_objects.add(str(entry["sha256"]))
+            identity_bytes = object_contents.get(str(entry["sha256"]))
+            if identity_bytes is None:
+                continue
+            try:
+                identity_document = json.loads(identity_bytes.decode("utf-8"))
+            except (UnicodeError, json.JSONDecodeError):
+                continue
+            bindings = (
+                identity_document.get("scenarioBindings")
+                if isinstance(identity_document, Mapping)
+                else None
+            )
+            if isinstance(bindings, list):
+                matching_identity_bindings.extend(
+                    binding
+                    for binding in bindings
+                    if isinstance(binding, Mapping)
+                    and binding.get("suite") == metadata.get("suite")
+                    and binding.get("scenario") == scenario_id
+                    and binding.get("kind") == "judge"
+                    and binding.get("invocation") == provenance.get("invocation")
+                    and binding.get("sessionId") == provenance.get("sessionId")
+                    and binding.get("parentSessionId")
+                    == provenance.get("parentSessionId")
+                )
+        if len(matching_identity_bindings) != 1:
+            raise ValueError(
+                "suite report Judge session lacks unique identity/order binding"
+            )
     return manifest_digest
 
 
