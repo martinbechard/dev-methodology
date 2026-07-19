@@ -4466,10 +4466,11 @@ class BundleContentTests(unittest.TestCase):
             "wiki-source-collector",
             "methodology-maintainer",
             "methodology-artifact-reviewer",
+            "dev-backlog-coordinator",
         ]
         suite_entries = index["suites"]
         self.assertEqual(expected_suites, [entry["id"] for entry in suite_entries])
-        self.assertEqual(list(range(1, 27)), [entry["priority"] for entry in suite_entries])
+        self.assertEqual(list(range(1, 28)), [entry["priority"] for entry in suite_entries])
         suite_directories = {
             path.name
             for path in AGENT_TEST_SUITES_ROOT.iterdir()
