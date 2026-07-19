@@ -4,6 +4,15 @@ Status: Ready
 
 Type: Feature
 
+## Approval Resolution
+
+- Decision: Approved on 2026-07-19.
+- User-message provenance: after receiving the exact MapStruct definition-scope question, the user answered “Approved” in parent coordination thread 019f77f4-c4bd-7c91-b197-c987a7beb838.
+- Approved governed scope: create only skills/mapstruct/SKILL.md and skills/mapstruct/agents/openai.yaml.
+- Associated ordinary scope: the detection metadata, tests, documentation, and supported generated catalog mirrors already specified by this item and its read-only preflight.
+- Exclusions: no agent-role definition change or change to another governed skill definition is authorized.
+- Lifecycle boundary: this transaction records the decision while keeping the item Ready. Running ownership and project-artifact work require separate lifecycle and ARTIFACT GO authority.
+
 ## Summary
 
 Add a focused MapStruct skill for compile-time Java mapping contracts, annotation-processor configuration, generated implementation evidence, update mappings, null behavior, cycles, qualifiers, inheritance, and framework component models.
