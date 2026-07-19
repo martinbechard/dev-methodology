@@ -626,6 +626,7 @@ DOCUMENT_INFORMATION_OWNERS = {
     ),
     "orchestrated-development-lifecycle.html": (
         "Orchestrated Development Loop",
+        "Claims, Worktrees, And Communication",
         "Planned Design Progression",
         "Execution Evidence",
     ),
@@ -686,6 +687,13 @@ DOCUMENT_REQUIRED_CONTENT_LINKS = {
     ),
     "generic-agent-definitions-source.html": (
         "../README.md#explicit-target-deployment",
+    ),
+    "orchestrated-development-lifecycle.html": (
+        "../skills/agent-claim/SKILL.md",
+        "../skills/agent-claim/scripts/claim.py",
+        "../scripts/test_agent_claim.py",
+        "../README.md#agent-claims-and-worktrees",
+        "agent-and-skill-definitions.html#dev-activities-title",
     ),
     "documentation-templates.html": (
         "../skills/development-methodology/assets/templates/project-template.yaml",
@@ -3534,6 +3542,83 @@ class BundleContentTests(unittest.TestCase):
                     r"(?:the verifier|it) returns GOOD",
                 )
 
+    def test_lifecycle_documents_claim_topology_and_communication_sequences(self) -> None:
+        """The lifecycle should make claim ownership and wake-up communication explicit."""
+        lifecycle_path = (
+            REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
+        )
+        lifecycle_text = lifecycle_path.read_text(encoding="utf-8")
+        lifecycle_prose = " ".join(visible_prose_blocks(lifecycle_path))
+
+        self.assertEqual(
+            1,
+            lifecycle_text.count(">Claims, Worktrees, And Communication<"),
+        )
+        self.assertEqual(1, lifecycle_text.count('class="protocol-figure"'))
+        self.assertEqual(3, lifecycle_text.count('class="sequence-figure"'))
+        self.assertEqual(3, lifecycle_text.count('class="sequence-messages"'))
+        for sequence_title in (
+            "Sequence 1: normal lifecycle and artifact delivery",
+            "Sequence 2: WAIT or PRIMARY_REQUIRED without polling",
+            "Sequence 3: serialized backlog batons, then concurrent artifact lanes",
+        ):
+            with self.subTest(sequence_title=sequence_title):
+                self.assertEqual(1, lifecycle_text.count(sequence_title))
+
+        for structural_label in (
+            "Portable policy",
+            "Execution interface",
+            "Authoritative state",
+            "Primary-only backlog domain",
+            "Project artifact domains",
+            "Canonical isolation",
+            "Target-specific integration",
+            "Codex task worktree is not claim ownership",
+        ):
+            with self.subTest(structural_label=structural_label):
+                self.assertEqual(1, lifecycle_text.count(f">{structural_label}<"))
+
+        for phrase in (
+            "project-files",
+            "all-files",
+            "PRIMARY_REQUIRED",
+            "ISOLATE_REQUIRED",
+            "RECOVERY_REQUIRED",
+            "READ-ONLY PREFLIGHT",
+            "LIFECYCLE START",
+            "ARTIFACT GO",
+            "ARTIFACT WAIT",
+            "ARTIFACT RESUME",
+            "stop without polling",
+            "Parent Backlog Coordinator",
+            "Dev Backlog Steward",
+            "Dev Orchestrator task",
+            "Artifact producer",
+            "Independent reviewer",
+            "Dev Verifier",
+            "Dev Merge Coordinator",
+            "Claim MCP server and registry",
+            "Codex task wake-up messaging",
+            "A task status or message acknowledges coordination only",
+            "remove only their clean released worktrees",
+        ):
+            with self.subTest(lifecycle_phrase=phrase):
+                self.assertIn(phrase, lifecycle_prose)
+
+        normal_index = lifecycle_text.index(
+            "Sequence 1: normal lifecycle and artifact delivery"
+        )
+        wait_index = lifecycle_text.index(
+            "Sequence 2: WAIT or PRIMARY_REQUIRED without polling"
+        )
+        parallel_index = lifecycle_text.index(
+            "Sequence 3: serialized backlog batons, then concurrent artifact lanes"
+        )
+        self.assertLess(normal_index, wait_index)
+        self.assertLess(wait_index, parallel_index)
+        self.assertIn("@media (prefers-reduced-motion: reduce)", lifecycle_text)
+        self.assertIn("@media (prefers-color-scheme: dark)", lifecycle_text)
+
     def test_lifecycle_routes_direct_and_integrated_completion_paths(self) -> None:
         """The lifecycle should route one accepted lane differently from integrated work."""
         lifecycle_path = (
@@ -3609,7 +3694,7 @@ class BundleContentTests(unittest.TestCase):
             "final direct commit",
             "final integration commit",
             "clean status",
-            "Release ownership",
+            "Release artifact and integration ownership",
         ):
             with self.subTest(completion_phrase=phrase):
                 self.assertIn(phrase, completion_row)
