@@ -522,9 +522,9 @@ def render(value: dict[str, object], inline_tech_skills: bool = True) -> str:
 
     The return value is the complete generated Markdown text and ends with a newline.
     Rendering does not write an output file, but inlined rendering reads bundled SKILL.md
-    files. Invalid authority or workflow configuration, unsafe skill names, and invalid
-    skill frontmatter raise ValueError. Missing or unreadable skill files raise OSError,
-    and malformed YAML may raise yaml.YAMLError.
+    files. Invalid authority, workflow, or source-evidence configuration, unsafe skill
+    names, and invalid skill frontmatter raise ValueError. Missing or unreadable skill
+    files raise OSError, and malformed YAML may raise yaml.YAMLError.
     """
     lines: list[str] = definition_change_authority_lines(value)
     lines.extend(workflow_lines(value))
@@ -546,7 +546,7 @@ def render(value: dict[str, object], inline_tech_skills: bool = True) -> str:
     ])
     inlined_loadouts: list[tuple[str, list[str]]] = []
     rendered = 0
-    for item in loadouts(value):
+    for loadout_index, item in enumerate(loadouts(value)):
         pattern = item.get("pathPattern", item.get("pattern"))
         skills = item.get("skills", item.get("required_skills", []))
         if not isinstance(pattern, str) or not isinstance(skills, list):
@@ -570,11 +570,21 @@ def render(value: dict[str, object], inline_tech_skills: bool = True) -> str:
             inlined_loadouts.append((pattern, names))
         else:
             lines.append(f"- {pattern}: load {', '.join(names)} before acting.")
-        for evidence in item.get("sourceEvidence", item.get("source_evidence", [])):
+        evidence_key = "sourceEvidence" if "sourceEvidence" in item else "source_evidence"
+        for evidence_index, evidence in enumerate(item.get(evidence_key, [])):
             if isinstance(evidence, dict) and isinstance(evidence.get("skill"), str):
-                facts = evidence.get("evidence", [])
-                if isinstance(facts, list) and facts:
-                    lines.append(f"  - {evidence['skill']} evidence: {'; '.join(str(fact) for fact in facts)}")
+                facts = evidence.get("evidence")
+                prefix = (
+                    f"technology_skill_loadouts[{loadout_index}]."
+                    f"{evidence_key}[{evidence_index}].evidence"
+                )
+                if not isinstance(facts, list):
+                    raise ValueError(f"{prefix} must be a list of strings")
+                for fact_index, fact in enumerate(facts):
+                    if not isinstance(fact, str):
+                        raise ValueError(f"{prefix}[{fact_index}] must be a string")
+                if facts:
+                    lines.append(f"  - {evidence['skill']} evidence: {'; '.join(facts)}")
         rendered += 1
     if rendered == 0:
         lines.append("- No bundled technology variant was detected for the analyzed folders.")

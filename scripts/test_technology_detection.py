@@ -1004,6 +1004,72 @@ class TechnologyDetectionTests(unittest.TestCase):
             self.assertNotIn("Agent Claims And Worktrees", completed.stdout)
             self.assertNotIn("agent-claim", completed.stdout)
 
+    def test_agents_section_preserves_scalar_source_evidence_verbatim(self) -> None:
+        renderer = load_renderer_module()
+        project = {
+            "technology_skill_loadouts": [{
+                "pathPattern": "worker/**",
+                "skills": ["python"],
+                "sourceEvidence": [{
+                    "skill": "python",
+                    "evidence": ["  Python source evidence: worker/main.py  "],
+                }],
+            }],
+        }
+
+        rendered = renderer.render(project, inline_tech_skills=False)
+
+        self.assertIn(
+            "  - python evidence:   Python source evidence: worker/main.py  \n",
+            rendered,
+        )
+
+    def test_agents_section_rejects_non_string_source_evidence_facts(self) -> None:
+        renderer = load_renderer_module()
+        invalid_facts = (
+            {"path": "worker/main.py"},
+            ["worker/main.py"],
+            42,
+        )
+
+        for invalid_fact in invalid_facts:
+            with self.subTest(invalid_fact=invalid_fact):
+                project = {
+                    "technology_skill_loadouts": [{
+                        "pathPattern": "worker/**",
+                        "skills": ["python"],
+                        "sourceEvidence": [{
+                            "skill": "python",
+                            "evidence": [invalid_fact],
+                        }],
+                    }],
+                }
+
+                with self.assertRaisesRegex(
+                    ValueError,
+                    r"^technology_skill_loadouts\[0\]\.sourceEvidence\[0\]\.evidence\[0\] must be a string$",
+                ):
+                    renderer.render(project, inline_tech_skills=False)
+
+    def test_agents_section_rejects_non_list_source_evidence(self) -> None:
+        renderer = load_renderer_module()
+        project = {
+            "technology_skill_loadouts": [{
+                "pathPattern": "worker/**",
+                "skills": ["python"],
+                "sourceEvidence": [{
+                    "skill": "python",
+                    "evidence": {"path": "worker/main.py"},
+                }],
+            }],
+        }
+
+        with self.assertRaisesRegex(
+            ValueError,
+            r"^technology_skill_loadouts\[0\]\.sourceEvidence\[0\]\.evidence must be a list of strings$",
+        ):
+            renderer.render(project, inline_tech_skills=False)
+
     def test_agents_section_renders_selector_only_workitem_and_backlog_workflows(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             plan = Path(directory) / "PROJECT.yaml"
