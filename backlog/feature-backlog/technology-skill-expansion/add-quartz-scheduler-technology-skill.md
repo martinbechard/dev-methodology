@@ -1,6 +1,6 @@
 # Add The Quartz Scheduler Technology Skill
 
-Status: Ready
+Status: Running
 
 Type: Feature
 
@@ -12,6 +12,15 @@ Type: Feature
 - Associated ordinary scope: the detection metadata, tests, documentation, and supported generated catalog mirrors already specified by this item and its read-only preflight.
 - Exclusions: no agent-role definition change or change to another governed skill definition is authorized.
 - Lifecycle boundary: this transaction records the decision while keeping the item Ready. Running ownership and project-artifact work require separate lifecycle and ARTIFACT GO authority.
+
+## Running Ownership
+
+- Owner: Parent Backlog Coordinator root task 019f77f4-c4bd-7c91-b197-c987a7beb838.
+- Lifecycle agent: Dev Backlog Steward.
+- Lifecycle claim: add-quartz-technology-skill-start.
+- Claim evidence: PRIMARY exact-file backlog ownership acquired at 2026-07-19T21:56:21.320859Z from clean baseline commit 0fd9ee91d1ab17ff459de0810a88927aa9633005.
+- Task anomaly: archived preflight task 019f7a78-6b0d-7cd3-836e-818e4d495c3f could not be resumed because its archived rollout file was missing, so the parent retained lifecycle ownership rather than creating a duplicate task.
+- Scope boundary: this claim owns only the Running transition and is released after its clean commit. Governed definitions, approval-record files, detection metadata, tests, documentation, generated catalog mirrors, verification, integration, installation, and completion remain gated on a later parent-issued ARTIFACT GO.
 
 ## Summary
 
