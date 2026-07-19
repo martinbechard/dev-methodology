@@ -3847,9 +3847,9 @@ class HarnessAndJudgeTests(unittest.TestCase):
             "verify_markdown_links",
         ]
         self.assertEqual(expected_tools, contract["enabledTools"])
-        self.assertEqual("0.2.3", contract["requiredVersion"])
+        self.assertEqual("0.3.0", contract["requiredVersion"])
         self.assertEqual(
-            "86e8d2b0af7fe421e88e3aec18e035b005c33474c4351332c9d31830908e5193",
+            "314a780796740e8e31c375af7e5a3b1f8446d7566b2732846f266fe1cca13aeb",
             contract["requiredRuntimeDigest"],
         )
         self.assertEqual(
