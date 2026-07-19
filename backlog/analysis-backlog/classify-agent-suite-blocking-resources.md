@@ -1,8 +1,15 @@
 # Classify Agent Suite Blocking Resources
 
-Status: Ready
+Status: Running
 
 Type: Analysis
+
+## Running Ownership
+
+- Owner: Dev Orchestrator root task 019f77f4-c4bd-7c91-b197-c987a7beb838.
+- Lifecycle claim: classify-agent-suite-blocking-resources-start.
+- Claim evidence: dev-backlog-steward acquired PRIMARY ownership of this exact backlog item at 2026-07-19T04:39:17.807611Z before recording the Running transition.
+- Scope boundary: the lifecycle claim is released after this committed transition; analysis evidence and any resulting backlog mutations require separate narrow claims.
 
 ## Summary
 
