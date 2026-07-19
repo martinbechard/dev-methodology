@@ -1,8 +1,18 @@
 # Rename User Review To User Action Required
 
-Status: Running
+Status: Completed
 
 Type: Defect
+
+## Completion Evidence
+
+- Running transition: 0611437.
+- Reviewed implementation: 349b27d with accepted correction 11c0fae.
+- Integrated artifact contract: b7ec746 after fresh contribution review, pre-integration verification, fresh post-integration review, and complete post-integration verification.
+- Active-state migration: 893c5f8 changed all 19 live Status: Proposed items to Status: Ready in a status-only primary commit.
+- Queue migration: 5bc5cec moved the canonical guidance to backlog/user-action-required, updated remaining backlog-local references, and preserved the resolved analysis question and Resolution exactly.
+- Installed bundle: refreshed transactionally to the user-scoped Codex skills and agents, verified byte-for-byte against the integrated sources, and refreshed the MCP catalog to revision edc027b489a9bab62971f17c4ffac90a4dcf53e087bee5e77068e50230327f53.
+- Final verification: all 401 repository script tests, all 17 project-wiki script tests, focused migration tests, skill validation, generated-output freshness checks, OpenAI metadata alignment, OKF validation, and git diff checks passed; no active Proposed status or stale canonical queue reference remains.
 
 ## Running Ownership
 
@@ -19,11 +29,11 @@ Replace the ambiguous User Review queue name with User Action Required so reader
 
 The current queue uses backlog/user-review and Status: User Review. That wording can be mistaken for ordinary code review, document review, pull-request review, or a passive request to inspect something. The actual contract is narrower and more operational: the item is non-dispatchable because the next safe step requires user interaction.
 
-[User Action Required queue guidance](../user-action-required/README.md), [Create Backlog](../../skills/create-backlog/SKILL.md), and [Manage Backlog](../../skills/manage-backlog/SKILL.md) implement the intended boundary.
+[User Action Required queue guidance](../../user-action-required/README.md), [Create Backlog](../../../skills/create-backlog/SKILL.md), and [Manage Backlog](../../../skills/manage-backlog/SKILL.md) implement the intended boundary.
 
 Use User Action Required as the canonical replacement. It covers the full interaction boundary more accurately than User Needed while remaining short enough for folder guidance, status fields, reports, badges, and operator summaries.
 
-The [styled backlog report enhancement](../feature-backlog/add-styled-backlog-report-with-user-input.md) depends on this terminology correction so it does not make the ambiguous name part of a new reporting contract.
+The [styled backlog report enhancement](../../feature-backlog/add-styled-backlog-report-with-user-input.md) depends on this terminology correction so it does not make the ambiguous name part of a new reporting contract.
 
 ## Requirements
 
