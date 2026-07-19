@@ -1,8 +1,16 @@
 # Specify Deterministic Dev Orchestrator Dependency Routing Fixtures
 
-Status: Ready
+Status: Running
 
 Type: Feature
+
+## Running Ownership
+
+- Owner: Dev Orchestrator root task 019f77f4-c4bd-7c91-b197-c987a7beb838.
+- Lifecycle agent: Dev Backlog Steward.
+- Lifecycle claim: deterministic-dev-orchestrator-routing-start.
+- Claim evidence: PRIMARY exact-file backlog ownership acquired at 2026-07-19T11:51:35.871715Z from clean baseline commit ee278e2f7e17f8f8c6b22bd44531111edaab859a.
+- Scope boundary: this claim owns only the Running transition and is released after its clean commit. Evaluation fixtures, runner source, tests, generated outputs, verification, and integration remain gated on a later ARTIFACT GO.
 
 ## Summary
 
