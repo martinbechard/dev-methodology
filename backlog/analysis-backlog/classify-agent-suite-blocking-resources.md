@@ -21,7 +21,7 @@ The completed agent-suite ledger contains seventeen BLOCKED scenarios. Several d
 
 Converting every synthetic blocker into product work would create false obligations. Ignoring every blocker could hide genuine infrastructure work. Test evidence alone cannot decide which outcomes the user wants pursued.
 
-## User Review Required
+## User Action Required
 
 ### Question for the User
 
@@ -52,7 +52,7 @@ This policy applies across all blocked categories. Classification must be based 
 
 ## Analysis Result
 
-Six of the seventeen recorded BLOCKED outcomes are purely agent-actionable technical blockers, one outcome combines a technical browser blocker with an intentional synthetic boundary, and ten outcomes are synthetic-only safe-blocking evidence. The seven outcomes with a technical component roll up into three ordinary feature work streams. No recorded outcome establishes a genuine unresolved project decision or missing project information that belongs in User Review.
+Six of the seventeen recorded BLOCKED outcomes are purely agent-actionable technical blockers, one outcome combines a technical browser blocker with an intentional synthetic boundary, and ten outcomes are synthetic-only safe-blocking evidence. The seven outcomes with a technical component roll up into three ordinary feature work streams. No recorded outcome establishes a genuine unresolved project decision or missing project information that belongs in User Action Required.
 
 The complete suite report is the durable result authority: [Complete Agent Suite Results](../../evals/agent-tests/results/2026-07-17-complete-agent-suites.md). The classification also inspected the retained summaries named by that report, including the focused Project Bootstrapper and Dev Merge Coordinator recovery evidence.
 
@@ -78,13 +78,13 @@ The complete suite report is the durable result authority: [Complete Agent Suite
 
 ## Resulting Work
 
-The active, blocked, holding, and User Review queues contain no matching item for these three technical work streams. The analysis therefore authorizes these ordinary feature items:
+The active, blocked, holding, and User Action Required queues contain no matching item for these three technical work streams. The analysis therefore authorizes these ordinary feature items:
 
 - Specify deterministic Dev Orchestrator dependency-routing fixtures.
 - Enable isolated browser attachment for agent suites.
 - Enable policy-compatible security-review agent suites.
 
-No User Review item is justified. Every missing-information, permission, authority, ownership, or persistent-decision outcome in this ledger is confined to a deliberately synthetic fixture rather than an unresolved decision in this repository.
+No User Action Required item is justified. Every missing-information, permission, authority, ownership, or persistent-decision outcome in this ledger is confined to a deliberately synthetic fixture rather than an unresolved decision in this repository.
 
 ## Evidence Notes
 
@@ -102,7 +102,7 @@ Do not create implementation tasks, grant authority, select product behavior, or
 
 - Record the user's selected option and any named exceptions under Resolution.
 - Create ordinary typed backlog items only for approved agent-actionable work.
-- Create additional user-review items only for concrete unresolved user-owned decisions.
+- Create additional User Action Required items only for concrete unresolved user-owned decisions.
 - Preserve links from resulting items to the complete agent-suite report.
 
 ## Acceptance Criteria
@@ -119,8 +119,8 @@ None.
 ## Verification
 
 - Compare the recorded resolution with the resulting backlog files.
-- Confirm agent-actionable work is outside backlog/user-review.
-- Confirm unresolved user-owned decisions remain inside backlog/user-review with exact questions.
+- Confirm agent-actionable work is outside backlog/user-action-required.
+- Confirm unresolved user-owned decisions remain inside backlog/user-action-required with exact questions.
 
 ## Notes
 

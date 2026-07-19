@@ -19,7 +19,7 @@ Replace the ambiguous User Review queue name with User Action Required so reader
 
 The current queue uses backlog/user-review and Status: User Review. That wording can be mistaken for ordinary code review, document review, pull-request review, or a passive request to inspect something. The actual contract is narrower and more operational: the item is non-dispatchable because the next safe step requires user interaction.
 
-[User Review queue guidance](../user-review/README.md), [Create Backlog](../../skills/create-backlog/SKILL.md), and [Manage Backlog](../../skills/manage-backlog/SKILL.md) consistently implement the intended boundary, but the name does not make the boundary obvious without reading those documents.
+[User Action Required queue guidance](../user-action-required/README.md), [Create Backlog](../../skills/create-backlog/SKILL.md), and [Manage Backlog](../../skills/manage-backlog/SKILL.md) implement the intended boundary.
 
 Use User Action Required as the canonical replacement. It covers the full interaction boundary more accurately than User Needed while remaining short enough for folder guidance, status fields, reports, badges, and operator summaries.
 

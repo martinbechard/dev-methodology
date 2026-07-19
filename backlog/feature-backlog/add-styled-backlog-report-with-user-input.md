@@ -14,7 +14,7 @@ The current backlog is a primary-worktree-only queue under backlog. Work may be 
 
 The initial manually assembled report demonstrated summary metrics, status distribution, feature gates, ordered work lists, and lifecycle reconciliation. It also exposed the need for a repeatable source-backed report: repository state can advance while the report is being prepared, completed items can remain in an active folder, declared status can drift from dependency state, and current claims are separate from backlog eligibility.
 
-[User Review queue guidance](../user-review/README.md) currently defines a separate non-dispatchable queue for work that needs a user decision, approval, action, authority grant, or information. [Rename User Review To User Action Required](../defect-backlog/rename-user-review-state-for-clarity.md) owns the canonical terminology correction. The report uses the resulting User Action Required state while the underlying Type remains Feature, Defect, Analysis, or Investigation. Present it with the display heading Needs Your Input and a short explanation so it is not mistaken for ordinary code or document review.
+[User Action Required queue guidance](../user-action-required/README.md) defines a separate non-dispatchable queue for work that needs a user decision, approval, action, authority grant, or information. [Rename User Review To User Action Required](../defect-backlog/rename-user-review-state-for-clarity.md) owns the canonical terminology correction. The report uses User Action Required while the underlying Type remains Feature, Defect, Analysis, or Investigation. Present it with the display heading Needs Your Input and a short explanation so it is not mistaken for ordinary code or document review.
 
 [Styled backlog report example](../examples/styled-backlog-report.html) is the committed visual and formatting reference for this feature. It includes the complete responsive styling and a formatted snapshot with the Needs Your Input section.
 
@@ -43,11 +43,11 @@ The initial manually assembled report demonstrated summary metrics, status distr
 ## Acceptance Criteria
 
 - One documented command produces a standalone report from the current primary-worktree backlog.
-- Report counts match an independent inventory of active typed items, User Review items, holding items, and archived outcomes.
+- Report counts match an independent inventory of active typed items, User Action Required items, holding items, and archived outcomes.
 - A User Action Required item appears under Needs Your Input, retains its underlying Type, displays its exact question and resolution, and is absent from runnable and blocked totals.
 - The user-action-required README and every series index are excluded from work-item counts.
 - A Defect stored inside a feature series is counted as a Defect and is visibly flagged as a folder and Type mismatch when the queue contract requires separate typed placement.
-- Runnable totals include only dispatchable states with satisfied dependencies and exclude claim-only, holding, completed, failed, abandoned, and User Review work.
+- Runnable totals include only dispatchable states with satisfied dependencies and exclude claim-only, holding, completed, failed, abandoned, and User Action Required work.
 - Lifecycle reconciliation identifies stale status, dependency, placement, and archive anomalies without rewriting source files.
 - Every displayed item can be traced to its backlog source path.
 - The report remains readable and unclipped at 320 pixels, 736 pixels, and a desktop viewport, in both light and dark color schemes.

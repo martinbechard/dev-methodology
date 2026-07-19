@@ -1,4 +1,4 @@
-# User Review Queue
+# User Action Required Queue
 
 ## Purpose
 
@@ -8,9 +8,9 @@ Items here are visible but not dispatchable. An agent reading this queue asks th
 
 ## Item Contract
 
-Each item keeps its underlying work Type and uses Status: User Review. It contains the normal backlog sections plus:
+Each item keeps its underlying work Type and uses Status: User Action Required. It contains the normal backlog sections plus:
 
-- User Review Required.
+- User Action Required.
 - Question for the User.
 - Why User Input Is Required.
 - Options and Tradeoffs when choices are known.
@@ -19,7 +19,7 @@ Each item keeps its underlying work Type and uses Status: User Review. It contai
 
 ## Lifecycle
 
-- An approved or answered item moves to its typed active backlog folder with the user decision preserved as authority evidence.
+- An approved or answered item moves to its typed active backlog folder with Status: Ready and the user decision preserved as authority evidence before any separate claim or Running transition.
 - A deferred item moves to backlog/holding.
 - A rejected or abandoned item moves to the matching failed-backlog type when the user clearly ends the work.
 - A partially answered item stays here with a narrower question.
