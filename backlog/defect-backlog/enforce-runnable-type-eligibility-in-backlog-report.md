@@ -1,6 +1,6 @@
 # Enforce Runnable Type Eligibility In Backlog Report
 
-Status: Running
+Status: Blocked
 
 Type: Defect
 
@@ -10,6 +10,23 @@ Type: Defect
 - Lifecycle claim: backlog-runnable-type-defect-start.
 - Claim evidence: dev-backlog-steward acquired PRIMARY ownership of this exact backlog item at 2026-07-19T07:22:27.751764Z before recording the Running transition.
 - Scope boundary: this lifecycle claim is released after the committed transition; project-artifact ownership must be acquired separately after ARTIFACT GO.
+
+## Blocked Evidence
+
+- Outcome: The bounded two-attempt post-integration correction authority ended with a failed fresh review. No third correction attempt was opened.
+- Accepted source integration: commits 0c5f4022dcd7e31fed505226b5e67ebc83bc8833, 461cd758110a03da31951486d1d613f622e548ec, ef1cb76f30748f9c465dd160b4edd89feb3f312f, and 82bde3ec0557fb04015f8801bf4640ae7f5a1792 integrated the preserved source chain and exact runnable-Type correction on main.
+- Accepted documentation integration: commit ebe0dc09a00364281002b73806c216dfa13cf1e3 integrated the independently reviewed README contribution.
+- Post-integration correction one: source commit 3daa41db0ce7225fc0363f3c18335c75702c3619 passed fresh review and verification and was integrated on main as 634d7f6942b6b73c01436f7d21e37c213c3944e3.
+- Example integration: commits 0abe77ba8dbea4f682e42fc934e9c7fbea1c7b29 and 07f2e5a8c99fa28398050e9a6ad923eab6f0ea01 refreshed and then curated the committed visual reference. Main remains at 07f2e5a8c99fa28398050e9a6ad923eab6f0ea01 before this lifecycle-only transition.
+- Preserved failed correction: commit 792371d803a483cf7c6ce3239aad498be542a69a remains clean and unintegrated on branch codex/enforce-runnable-type-eligibility-post-integration-correction2. Its producer claim released under event 6674c4b1-ae6e-4b9c-ac27-acd9e2b1509d.
+- Final fresh-review failure: an external prerequisite containing a local Markdown link inside larger prose can still be reduced to the local slug and falsely satisfied by a completed item. A query-bearing Markdown URL can still lose its original text and be reported as an invalid identifier instead of remaining a complete manual prerequisite.
+- Missing regression boundary: the failed correction does not prove whole-declaration Markdown-link matching or preservation and manual classification of query-bearing Markdown URLs.
+- Unrun gates: correction attempt two was not integrated, the example was not refreshed against it, browser and accessibility checks were not run, complete final primary-worktree verification was not accepted, and neither this defect nor the parent feature was archived as Completed.
+- Lifecycle boundary: [Add A Styled Backlog Report With User Input](../feature-backlog/add-styled-backlog-report-with-user-input.md) was already Blocked and was not changed by this terminal transition.
+
+## Unblock Condition
+
+Re-entry requires explicit fresh correction authority after this exhausted loop. The authorized correction must require a whole-declaration canonical Markdown-link match before a local backlog link can normalize to a slug, parse complete Markdown targets including query and fragment components, preserve every embedded-link prose declaration and external URI verbatim as a manual unmet prerequisite, and add adversarial tests proving neither case can become runnable through a completed same-stem local item. The corrected contribution must then pass new fresh source review and independent verification before deliberate integration, followed by a synchronized example refresh, fresh post-integration source, artifact, and UX reviews, complete primary verification, and the required browser and accessibility matrix. Until all of that evidence passes, this item remains Blocked and must not move to a Completed archive.
 
 ## Summary
 
