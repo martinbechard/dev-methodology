@@ -104,7 +104,7 @@ When backlog/user-action-required contains one or more items:
 2. Ask the user the exact question recorded in the item. Include the stated options and tradeoffs when present.
 3. Do not infer approval from silence, prior unrelated decisions, repository access, or the ability to implement a technically plausible option.
 4. Record the user's answer under Resolution with the date and the resulting disposition.
-5. Move an approved or answered item into its typed active backlog folder only when the answer makes the work actionable, set its active status according to project convention, and preserve the user decision as authority evidence.
+5. Move an approved or answered item into its typed active backlog folder only when the answer makes the work actionable, set Status: Ready before any separately requested claim or running transition, and preserve the user decision as authority evidence.
 6. Move a deferred item to backlog/holding. Archive a rejected or abandoned item under the matching failed-backlog type only when the user clearly ends the work.
 7. Keep a partially answered item in backlog/user-action-required with a narrowed Question for the User. Never claim its implementation scope while a material user decision remains open.
 

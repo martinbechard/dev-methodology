@@ -126,6 +126,28 @@ NEW_DEVELOPMENT_SKILLS = (
     "jhipster-security",
     "sql",
 )
+
+
+def resolve_primary_repository_root() -> Path:
+    common_dir_text = subprocess.run(
+        ["git", "rev-parse", "--git-common-dir"],
+        cwd=REPOSITORY_ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+    common_dir = Path(common_dir_text)
+    if not common_dir.is_absolute():
+        common_dir = (REPOSITORY_ROOT / common_dir).resolve()
+    primary_root = common_dir.parent
+    backlog_root = primary_root / "backlog"
+    if not backlog_root.is_dir():
+        raise AssertionError(
+            f"Canonical primary backlog is inaccessible: {backlog_root}"
+        )
+    return primary_root
+
+
 PROJECT_CONFIGURATION_SKILL = "create-project-configuration"
 PROJECT_TEMPLATE = "project-template.yaml"
 PROJECT_ARTIFACT = "PROJECT.yaml"
@@ -2147,6 +2169,7 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(guidance, skill_text)
 
     def test_backlog_skills_separate_user_action_required_from_dispatchable_work(self) -> None:
+        primary_root = resolve_primary_repository_root()
         create_text = (SKILLS_ROOT / "create-backlog" / "SKILL.md").read_text(
             encoding="utf-8"
         )
@@ -2177,15 +2200,17 @@ class BundleContentTests(unittest.TestCase):
             "Do not claim, dispatch, implement, or resolve user-action-required work",
             "Ask the user the exact question recorded in the item",
             "Move an approved or answered item into its typed active backlog folder",
+            "set Status: Ready before any separately requested claim or running transition",
             "backlog/holding is for intentionally deferred work",
         ):
             with self.subTest(manage_guidance=required_guidance):
                 self.assertIn(required_guidance, manage_text)
+        self.assertNotIn("set its active status according to project convention", manage_text)
 
-        user_action_required_root = REPOSITORY_ROOT / "backlog" / "user-action-required"
+        user_action_required_root = primary_root / "backlog" / "user-action-required"
         queue_readme = user_action_required_root / "README.md"
         classification_item = (
-            REPOSITORY_ROOT
+            primary_root
             / "backlog"
             / "analysis-backlog"
             / "classify-agent-suite-blocking-resources.md"
@@ -2215,9 +2240,10 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(required_item_contract, classification_text)
 
     def test_user_action_required_migration_has_no_stale_canonical_references(self) -> None:
+        primary_root = resolve_primary_repository_root()
         tracked = subprocess.run(
             ["git", "ls-files", "-z"],
-            cwd=REPOSITORY_ROOT,
+            cwd=primary_root,
             check=True,
             capture_output=True,
         ).stdout.decode("utf-8").split("\0")
@@ -2227,7 +2253,7 @@ class BundleContentTests(unittest.TestCase):
         stale_references: list[str] = []
 
         for relative_path in filter(None, tracked):
-            path = REPOSITORY_ROOT / relative_path
+            path = primary_root / relative_path
             if not path.is_file():
                 continue
             if relative_path.startswith("legacy_procedures/") or path.name == historical_name:
@@ -2242,22 +2268,52 @@ class BundleContentTests(unittest.TestCase):
         self.assertEqual([], stale_references)
 
     def test_active_typed_backlog_has_no_proposed_status(self) -> None:
+        primary_root = resolve_primary_repository_root()
         active_roots = (
-            REPOSITORY_ROOT / "backlog" / "defect-backlog",
-            REPOSITORY_ROOT / "backlog" / "feature-backlog",
-            REPOSITORY_ROOT / "backlog" / "analysis-backlog",
-            REPOSITORY_ROOT / "backlog" / "investigation-backlog",
+            primary_root / "backlog" / "defect-backlog",
+            primary_root / "backlog" / "feature-backlog",
+            primary_root / "backlog" / "analysis-backlog",
+            primary_root / "backlog" / "investigation-backlog",
         )
+        existing_roots = tuple(root for root in active_roots if root.is_dir())
+        self.assertTrue(existing_roots, "No canonical active typed backlog is accessible")
         stale_status = "Status: " + "Proposed"
         proposed_items = [
-            str(path.relative_to(REPOSITORY_ROOT))
-            for root in active_roots
+            str(path.relative_to(primary_root))
+            for root in existing_roots
             for path in root.rglob("*.md")
             if path.name != "index.md"
             and stale_status in path.read_text(encoding="utf-8")
         ]
 
         self.assertEqual([], proposed_items)
+
+    def test_backlog_regressions_resolve_the_canonical_primary_worktree(self) -> None:
+        primary_root = resolve_primary_repository_root()
+        tracked_backlog = subprocess.run(
+            ["git", "ls-files", "backlog"],
+            cwd=primary_root,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.splitlines()
+
+        self.assertTrue(tracked_backlog, "Canonical primary backlog has no tracked inputs")
+        self.assertTrue(all((primary_root / path).is_file() for path in tracked_backlog))
+
+    def test_answered_user_action_enters_ready_before_claiming(self) -> None:
+        manage_text = (SKILLS_ROOT / "manage-backlog" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn(
+            "set Status: Ready before any separately requested claim or running transition",
+            manage_text,
+        )
+        self.assertNotIn(
+            "set its active status according to project convention",
+            manage_text,
+        )
 
     def test_skill_names_follow_category_naming_rules(self) -> None:
         build_skill_docs = load_build_skill_docs_module()
