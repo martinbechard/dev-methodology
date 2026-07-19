@@ -1,6 +1,6 @@
 # Align Project Organiser Filename Selection
 
-Status: Running
+Status: Blocked
 
 Type: Defect
 
@@ -40,6 +40,24 @@ The approval boundary remains exact: unattended work may change only the named P
 - Claim evidence: dev-backlog-steward acquired PRIMARY ownership of this exact backlog item on 2026-07-19 before recording the current Running transition.
 - Approval provenance: on 2026-07-19 the user said, "I already approved this one so yes," authorizing only agents/roles/project-setup/project-organiser.role.yaml together with supported generated role mirrors and regression coverage; no skill definition change is authorized.
 - Scope boundary: this lifecycle claim is released after the committed transition; project-artifact ownership must be acquired separately before implementation.
+
+## Current Blocked Outcome
+
+This section records the current terminal lifecycle result and supersedes stale next-action text in the historical sections below.
+
+- Preserved initial contribution: 2dfbe08f31b130bc0d682a11ca00743a0e022e77.
+- Preserved correction attempt 1: 242aca4922cda9e2a89ddfb0d299a3004df16e7b.
+- Preserved correction attempt 2 and final contribution: 914872c0c91602c954f2cd640615eaa6e09ff033 on branch codex/align-project-organiser-approved-correction-2.
+- Approval enforcement: every governed mutation passed ALLOWED_APPROVED_DEFINITION_CHANGE and stayed within the exact approved eight-file scope: the Project Organiser role, its supported generated role mirrors, and regression coverage. No skill definition, evaluation, backlog, or other project-artifact scope was included.
+- Correction limit: both authorized correction attempts were used, so the correction loop is exhausted.
+- Material result: the final Project Organiser role and generated adapters are materially correct.
+- Remaining fresh-review finding: the regression assertions can false-pass because the examples are classified independently, allowing one hybrid output to satisfy both success and blocker counts.
+- Success-example gap: the regression does not assert that the success example is free of Blocker, Exact decision, Approved path omitted, and BLOCKED markers.
+- Native-adapter gap: the regression rejects only one narrow stale Return string and does not reject standalone decision-output renderings in each native adapter format.
+- Unperformed gates: no independent verifier, integration, post-integration review, post-integration verification, Project Organiser scenario rerun, or terminal completion was started for the preserved final contribution.
+- Delivery state: the final contribution remains off main on its preserved commit and branch.
+- Exact unblock condition: receive fresh explicit parent or user ARTIFACT GO authorizing a new bounded correction lane beyond the exhausted loop, limited to regression-assertion strengthening from 914872c0c91602c954f2cd640615eaa6e09ff033 and the already-approved role and supported mirrors, with no skill or evaluation widening, followed by fresh review before verifier or integration work.
+- Authority boundary: this unblock supplies technical and process authority only; it does not expand the approved governed-definition scope.
 
 ## Target Merge Pending
 
