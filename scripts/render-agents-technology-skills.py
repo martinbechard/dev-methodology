@@ -10,7 +10,7 @@ import fnmatch
 import json
 import re
 import sys
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from pathlib import Path
 
 import yaml
@@ -547,6 +547,28 @@ def render(value: dict[str, object], inline_tech_skills: bool = True) -> str:
     inlined_loadouts: list[tuple[str, list[str]]] = []
     rendered = 0
     for loadout_index, item in enumerate(loadouts(value)):
+        evidence_key = "sourceEvidence" if "sourceEvidence" in item else "source_evidence"
+        source_evidence = item.get(evidence_key, [])
+        evidence_prefix = f"technology_skill_loadouts[{loadout_index}].{evidence_key}"
+        if not isinstance(source_evidence, list):
+            raise ValueError(f"{evidence_prefix} must be a list")
+        evidence_lines: list[str] = []
+        for evidence_index, evidence in enumerate(source_evidence):
+            row_prefix = f"{evidence_prefix}[{evidence_index}]"
+            if not isinstance(evidence, Mapping):
+                raise ValueError(f"{row_prefix} must be a mapping")
+            skill = evidence.get("skill")
+            if not isinstance(skill, str):
+                raise ValueError(f"{row_prefix}.skill must be a string")
+            facts = evidence.get("evidence")
+            facts_prefix = f"{row_prefix}.evidence"
+            if not isinstance(facts, list):
+                raise ValueError(f"{facts_prefix} must be a list of strings")
+            for fact_index, fact in enumerate(facts):
+                if not isinstance(fact, str):
+                    raise ValueError(f"{facts_prefix}[{fact_index}] must be a string")
+            if facts:
+                evidence_lines.append(f"  - {skill} evidence: {'; '.join(facts)}")
         pattern = item.get("pathPattern", item.get("pattern"))
         skills = item.get("skills", item.get("required_skills", []))
         if not isinstance(pattern, str) or not isinstance(skills, list):
@@ -570,21 +592,7 @@ def render(value: dict[str, object], inline_tech_skills: bool = True) -> str:
             inlined_loadouts.append((pattern, names))
         else:
             lines.append(f"- {pattern}: load {', '.join(names)} before acting.")
-        evidence_key = "sourceEvidence" if "sourceEvidence" in item else "source_evidence"
-        for evidence_index, evidence in enumerate(item.get(evidence_key, [])):
-            if isinstance(evidence, dict) and isinstance(evidence.get("skill"), str):
-                facts = evidence.get("evidence")
-                prefix = (
-                    f"technology_skill_loadouts[{loadout_index}]."
-                    f"{evidence_key}[{evidence_index}].evidence"
-                )
-                if not isinstance(facts, list):
-                    raise ValueError(f"{prefix} must be a list of strings")
-                for fact_index, fact in enumerate(facts):
-                    if not isinstance(fact, str):
-                        raise ValueError(f"{prefix}[{fact_index}] must be a string")
-                if facts:
-                    lines.append(f"  - {evidence['skill']} evidence: {'; '.join(facts)}")
+        lines.extend(evidence_lines)
         rendered += 1
     if rendered == 0:
         lines.append("- No bundled technology variant was detected for the analyzed folders.")

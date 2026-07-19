@@ -1006,22 +1006,108 @@ class TechnologyDetectionTests(unittest.TestCase):
 
     def test_agents_section_preserves_scalar_source_evidence_verbatim(self) -> None:
         renderer = load_renderer_module()
+        for evidence_key in ("sourceEvidence", "source_evidence"):
+            with self.subTest(evidence_key=evidence_key):
+                project = {
+                    "technology_skill_loadouts": [{
+                        "pathPattern": "worker/**",
+                        "skills": ["python"],
+                        evidence_key: [{
+                            "skill": "python",
+                            "evidence": ["  Python source evidence: worker/main.py  "],
+                        }],
+                    }],
+                }
+
+                rendered = renderer.render(project, inline_tech_skills=False)
+
+                self.assertIn(
+                    "  - python evidence:   Python source evidence: worker/main.py  \n",
+                    rendered,
+                )
+
+    def test_agents_section_rejects_invalid_source_evidence_structure(self) -> None:
+        renderer = load_renderer_module()
+        invalid_values = (
+            ({"sourceEvidence": {}}, "technology_skill_loadouts[0].sourceEvidence must be a list"),
+            ({"sourceEvidence": ["python"]}, "technology_skill_loadouts[0].sourceEvidence[0] must be a mapping"),
+            (
+                {"sourceEvidence": [{"evidence": ["worker/main.py"]}]},
+                "technology_skill_loadouts[0].sourceEvidence[0].skill must be a string",
+            ),
+            (
+                {"source_evidence": [{"skill": 42, "evidence": ["worker/main.py"]}]},
+                "technology_skill_loadouts[0].source_evidence[0].skill must be a string",
+            ),
+        )
+
+        for evidence_value, expected in invalid_values:
+            with self.subTest(evidence_value=evidence_value):
+                project = {
+                    "technology_skill_loadouts": [{
+                        "pathPattern": "worker/**",
+                        "skills": ["python"],
+                        **evidence_value,
+                    }],
+                }
+
+                with self.assertRaises(ValueError) as raised:
+                    renderer.render(project, inline_tech_skills=False)
+                self.assertEqual(expected, str(raised.exception))
+
+    def test_agents_section_cli_rejects_invalid_source_evidence_structure(self) -> None:
+        invalid_values = (
+            ({"sourceEvidence": {}}, "technology_skill_loadouts[0].sourceEvidence must be a list"),
+            ({"sourceEvidence": ["python"]}, "technology_skill_loadouts[0].sourceEvidence[0] must be a mapping"),
+            (
+                {"sourceEvidence": [{"evidence": ["worker/main.py"]}]},
+                "technology_skill_loadouts[0].sourceEvidence[0].skill must be a string",
+            ),
+            (
+                {"source_evidence": [{"skill": 42, "evidence": ["worker/main.py"]}]},
+                "technology_skill_loadouts[0].source_evidence[0].skill must be a string",
+            ),
+        )
+
+        with tempfile.TemporaryDirectory() as directory:
+            plan = Path(directory) / "PROJECT.yaml"
+            for evidence_value, expected in invalid_values:
+                with self.subTest(evidence_value=evidence_value):
+                    plan.write_text(yaml.safe_dump({
+                        "technology_skill_loadouts": [{
+                            "pathPattern": "worker/**",
+                            "skills": ["python"],
+                            **evidence_value,
+                        }],
+                    }), encoding="utf-8")
+
+                    completed = subprocess.run(
+                        [sys.executable, str(RENDER_SCRIPT), "--project", str(plan)],
+                        cwd=ROOT,
+                        check=False,
+                        capture_output=True,
+                        text=True,
+                    )
+
+                    self.assertEqual(1, completed.returncode)
+                    self.assertEqual(expected, completed.stderr.strip())
+
+    def test_agents_section_validates_source_evidence_before_skipping_empty_loadout(self) -> None:
+        renderer = load_renderer_module()
         project = {
             "technology_skill_loadouts": [{
                 "pathPattern": "worker/**",
-                "skills": ["python"],
-                "sourceEvidence": [{
-                    "skill": "python",
-                    "evidence": ["  Python source evidence: worker/main.py  "],
-                }],
+                "skills": [],
+                "sourceEvidence": ["python"],
+                "status": "NO_VARIANT",
             }],
         }
 
-        rendered = renderer.render(project, inline_tech_skills=False)
-
-        self.assertIn(
-            "  - python evidence:   Python source evidence: worker/main.py  \n",
-            rendered,
+        with self.assertRaises(ValueError) as raised:
+            renderer.render(project, inline_tech_skills=False)
+        self.assertEqual(
+            "technology_skill_loadouts[0].sourceEvidence[0] must be a mapping",
+            str(raised.exception),
         )
 
     def test_agents_section_rejects_non_string_source_evidence_facts(self) -> None:
