@@ -1,6 +1,6 @@
 # Restore Wiki Ingester On Verifier Interruption
 
-Status: Ready
+Status: Running
 
 Type: Defect
 
