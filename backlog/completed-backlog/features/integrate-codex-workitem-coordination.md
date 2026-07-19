@@ -1,6 +1,6 @@
 # Integrate Codex Work-Item Coordination
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
@@ -104,3 +104,11 @@ Do not create or change the approved definitions or their supported generated mi
 - Keep design/orchestrated-development-lifecycle.html as the integrated communication-flow owner.
 - Treat the preserved commit as source evidence, not as a safe current-main integration unit.
 - Generated mirrors are regenerated through supported generators and are never edited directly.
+
+## Completion Evidence
+
+- Delivery: the supported Codex work-item coordination skill, metadata, Dev Backlog Coordinator role, deterministic evaluations, documentation, and generated mirrors are integrated on main at commit 8ec020659bc4d8530ce7088426eabdc605500e11.
+- Review and verification: fresh independent methodology and code reviews accepted the integrated delivery, and the integrated verification gates passed.
+- Deployment: the repository-supported user-scope bundle installation and refresh completed at revision 4b56ea1b96371905e605052342e3a8f86ef89f63329652e69cf3efa7ee765f09. The deployment claim released normally at event 02cfc814-1f26-4b27-96a0-e9fcf331f5b7.
+- Finalization: the dependent Project Organiser lifecycle completed on main at commit 28dcbda120cdf56747aea432ae4c9b5765fede1c, and its terminal claim released normally at event ed1bc5e0-3278-49d6-af40-9e008218edff.
+- Terminal lifecycle: Dev Backlog Steward acquired the exact active and completed item paths under PRIMARY claim codex-workitem-coordination-terminal at event 096a860a-523b-4208-a8a7-687e3ada95ae after confirming clean main at 28dcbda120cdf56747aea432ae4c9b5765fede1c and an empty authoritative registry.
