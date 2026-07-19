@@ -1,6 +1,6 @@
 # Align Project Organiser Filename Selection
 
-Status: Running
+Status: Target Merge Pending
 
 Type: Defect
 
@@ -10,6 +10,13 @@ Type: Defect
 - Lifecycle claim: align-project-organiser-filename-selection-start.
 - Claim evidence: dev-backlog-steward acquired PRIMARY ownership of this exact backlog item at 2026-07-19T03:15:20.949615Z before recording the Running transition.
 - Scope boundary: the lifecycle claim is released after this committed transition; project-artifact ownership must be acquired separately before implementation.
+
+## Target Merge Pending
+
+- Delivery contribution: commit 2d636dd0f240793820778031ab9d38db6c11ee60 on branch codex/align-project-organiser-filename-selection-impl, based on sibling commit 4a31b337e6baf241de5ec81eb3a3c924096f3c82.
+- Review: fresh independent review passed with no findings.
+- Verification: focused tests passed 3 of 3; repository validation and freshness checks passed; project-wiki tests passed 17 of 17; all three Project Organiser scenarios retained deterministic and independent Judge PASS evidence.
+- Integration boundary: the contribution is not present on main and must be deliberately integrated without overwriting its sibling base change before completion.
 
 ## Summary
 
