@@ -1,8 +1,17 @@
 # Document Claims And Worktrees In The Orchestrated Development Lifecycle
 
-Status: Ready
+Status: Running
 
 Type: Feature
+
+## Running Ownership
+
+- Owner: Dev Orchestrator root task 019f77f4-c4bd-7c91-b197-c987a7beb838.
+- Lifecycle agent: Dev Backlog Steward.
+- Lifecycle claim: claims-worktrees-lifecycle-docs-start.
+- Claim evidence: PRIMARY backlog-domain ownership acquired at event 2219ef6c-3d26-4861-a753-d5dacd76b6c5 from clean baseline commit 8a791b095e569dc82aa445ee0c6e5929a862439e.
+- Resume evidence: the earlier WAIT event f22d7daa-3980-47b1-a47d-d9cc603cb1bb was resolved by direct release event 2f64856c-f22e-4da2-a1fd-6c65a6db494b and an evidence-bearing wake-up from the parent coordinator.
+- Scope boundary: this claim owns only the Running transition and is released after its clean commit. Documentation, tests, browser resources, review, verification, integration, and terminal backlog archival require separate ownership.
 
 ## Summary
 
