@@ -281,6 +281,28 @@ def _terminal_status(
     return "PASS" if statuses else "INFRASTRUCTURE_FAILED"
 
 
+def _governed_evidence_error(scenario: Mapping[str, Any]) -> str | None:
+    if str(scenario.get("status", "")).upper() not in {"PASS", "FAIL"}:
+        return None
+    deterministic = scenario.get("deterministicEvidence")
+    model_judge = scenario.get("modelJudgeEvidence")
+    judge_invoked = scenario.get("judgeInvoked")
+    if not isinstance(deterministic, list) or not any(
+        isinstance(value, str) and value.strip() for value in deterministic
+    ):
+        return "non-empty deterministic evidence was not retained"
+    if judge_invoked is True and (
+        not isinstance(model_judge, list)
+        or not any(isinstance(value, str) and value.strip() for value in model_judge)
+    ):
+        return "the invoked Judge has no retained model-Judge evidence"
+    if judge_invoked is False and model_judge:
+        return "model-Judge evidence was retained although the Judge was not invoked"
+    if not isinstance(judge_invoked, bool):
+        return "the Judge invocation disposition was not retained"
+    return None
+
+
 def suite_metadata(
     harness: str,
     suite_id: str,
@@ -296,21 +318,37 @@ def suite_metadata(
     """Normalize one runner result into the stable machine-readable report contract."""
 
     scenarios = _scenario_rows(execution)
+    evidence_errors: list[str] = []
+    for scenario in scenarios:
+        error = _governed_evidence_error(scenario)
+        if error is None:
+            continue
+        scenario_id = str(scenario.get("scenario", "unknown"))
+        evidence_errors.append(f"{scenario_id}: {error}")
+        scenario["status"] = "INFRASTRUCTURE_FAILED"
+        scenario.setdefault("evidence", []).append(f"Governed evidence rejection: {error}.")
     status = _terminal_status(execution, scenarios)
     omissions: list[str] = []
     if execution.summary is None:
         omissions.append("runner summary unavailable or malformed")
     if not scenarios:
         omissions.append("no governed scenario results were retained")
+    if evidence_errors:
+        omissions.append("unsupported terminal verdicts demoted: " + "; ".join(evidence_errors))
     missing_deterministic = [
         str(scenario.get("scenario", "unknown"))
         for scenario in scenarios
         if not isinstance(scenario.get("deterministicEvidence"), list)
+        or not scenario.get("deterministicEvidence")
     ]
     missing_judge = [
         str(scenario.get("scenario", "unknown"))
         for scenario in scenarios
-        if not isinstance(scenario.get("modelJudgeEvidence"), list)
+        if scenario.get("judgeInvoked") is True
+        and (
+            not isinstance(scenario.get("modelJudgeEvidence"), list)
+            or not scenario.get("modelJudgeEvidence")
+        )
     ]
     if missing_deterministic:
         omissions.append(

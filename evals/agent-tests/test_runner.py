@@ -88,6 +88,7 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         """Complete lifecycle evidence proves the governed Junie execution topology."""
         run = runner._RunSpec(suite=self._suite("one", nested_limit=1), scenario_ids=("happy",))
         report = {"runs": [self._suite_report("one", "PASS")]}
+        staged = self._staged_junie_agents()
         with tempfile.TemporaryDirectory() as directory:
             junie_home = Path(directory)
             self._write_junie_lifecycles(
@@ -97,10 +98,13 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                     ("target-agent", "suite-supervisor", 1, 2),
                     ("suite-judge", "suite-supervisor", 3, 4),
                 ),
+                staged,
             )
 
-            audit = runner._audit_junie_agent_lifecycles(junie_home, (run,), report)
+            audit = runner._audit_junie_agent_lifecycles(junie_home, (run,), report, staged)
 
+        self.assertTrue(audit["definitionDigestBound"])
+        self.assertEqual(3, len(audit["boundLifecycles"]))
         self.assertTrue(audit["parentChildVerified"])
         self.assertTrue(audit["targetJudgeOrderVerified"])
         self.assertTrue(audit["childConcurrencyVerified"])
@@ -110,6 +114,7 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         """An undeclared agent or concurrent supervisor children invalidates Junie evidence."""
         run = runner._RunSpec(suite=self._suite("one", nested_limit=1), scenario_ids=("happy",))
         report = {"runs": [self._suite_report("one", "PASS")]}
+        staged = self._staged_junie_agents()
         with tempfile.TemporaryDirectory() as directory:
             junie_home = Path(directory)
             self._write_junie_lifecycles(
@@ -120,9 +125,10 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                     ("suite-judge", "suite-supervisor", 3, 5),
                     ("rogue-agent", "root", 1, 2),
                 ),
+                staged,
             )
             with self.assertRaisesRegex(RuntimeError, "unexpected custom agent"):
-                runner._audit_junie_agent_lifecycles(junie_home, (run,), report)
+                runner._audit_junie_agent_lifecycles(junie_home, (run,), report, staged)
 
             self._write_junie_lifecycles(
                 junie_home,
@@ -131,14 +137,41 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                     ("target-agent", "suite-supervisor", 1, 4),
                     ("suite-judge", "suite-supervisor", 3, 5),
                 ),
+                staged,
             )
             with self.assertRaisesRegex(RuntimeError, "overlapping active children"):
-                runner._audit_junie_agent_lifecycles(junie_home, (run,), report)
+                runner._audit_junie_agent_lifecycles(junie_home, (run,), report, staged)
+
+    def test_name_only_junie_lifecycle_evidence_blocks_definition_attribution(self) -> None:
+        """Lifecycle names without runtime marker/digest receipts cannot support a governed verdict."""
+        run = runner._RunSpec(suite=self._suite("one", nested_limit=1), scenario_ids=("happy",))
+        report = {"runs": [self._suite_report("one", "PASS")], "residualRisk": "none"}
+        staged = self._staged_junie_agents()
+        with tempfile.TemporaryDirectory() as directory:
+            junie_home = Path(directory)
+            self._write_junie_lifecycles(
+                junie_home,
+                (
+                    ("suite-supervisor", "root", 0, 5),
+                    ("target-agent", "suite-supervisor", 1, 2),
+                    ("suite-judge", "suite-supervisor", 3, 4),
+                ),
+            )
+            with self.assertRaisesRegex(
+                runner._JunieEvidenceInsufficient, "staged definition marker/digest"
+            ) as raised:
+                runner._audit_junie_agent_lifecycles(junie_home, (run,), report, staged)
+            retained = runner._junie_lifecycle_evidence(junie_home)
+
+        self.assertEqual(6, len(retained))
+        blocked = runner._blocked_junie_report(report, str(raised.exception))
+        self.assertEqual("BLOCKED", blocked["runs"][0]["scenarioResults"][0]["status"])
 
     def test_insufficient_junie_topology_evidence_blocks_governed_result(self) -> None:
         """Missing relationship evidence becomes BLOCKED rather than an attributed PASS."""
         run = runner._RunSpec(suite=self._suite("one", nested_limit=1), scenario_ids=("happy",))
         report = {"runs": [self._suite_report("one", "PASS")], "residualRisk": "none"}
+        staged = self._staged_junie_agents()
         with tempfile.TemporaryDirectory() as directory:
             junie_home = Path(directory)
             session = junie_home / "sessions" / "session"
@@ -161,7 +194,7 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                 encoding="utf-8",
             )
             with self.assertRaises(runner._JunieEvidenceInsufficient) as raised:
-                runner._audit_junie_agent_lifecycles(junie_home, (run,), report)
+                runner._audit_junie_agent_lifecycles(junie_home, (run,), report, staged)
 
         blocked = runner._blocked_junie_report(report, str(raised.exception))
         self.assertEqual("BLOCKED", blocked["runs"][0]["scenarioResults"][0]["status"])
@@ -1396,6 +1429,7 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         }
         result = report["runs"][0]["scenarioResults"][0]
         result["judgeInvoked"] = False
+        result["modelJudgeEvidence"] = []
         result["evidence"] = [
             "A critical deterministic gate failed.",
             "criticalFailureSkipsJudge applied, so no semantic Judge scoring was performed.",
@@ -1417,6 +1451,7 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         }
         result = report["runs"][0]["scenarioResults"][0]
         result["judgeInvoked"] = False
+        result["modelJudgeEvidence"] = []
         result["evidence"] = ["The deterministic gate failed before semantic scoring."]
         checkpoint_report = json.loads(json.dumps(report))
         checkpoint_report["runs"][0]["scenarioResults"][0]["evidence"] = [
@@ -1434,9 +1469,63 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             "residualRisk": "none",
         }
         report["runs"][0]["scenarioResults"][0]["judgeInvoked"] = False
+        report["runs"][0]["scenarioResults"][0]["modelJudgeEvidence"] = []
 
         with self.assertRaisesRegex(RuntimeError, "Terminal verdict lacks target and Judge"):
             runner._audit_report(batch, report)
+
+    def test_terminal_verdict_requires_governed_evidence(self) -> None:
+        """Empty deterministic or invoked-Judge evidence cannot support PASS or FAIL."""
+        batch = (self._run_spec("one", 1),)
+        report = {
+            "runs": [self._suite_report("one", "PASS")],
+            "batchCleanup": "clean",
+            "residualRisk": "none",
+        }
+        result = report["runs"][0]["scenarioResults"][0]
+        result["deterministicEvidence"] = []
+        with self.assertRaisesRegex(RuntimeError, "Missing deterministic evidence"):
+            runner._audit_report(batch, report)
+
+        result["deterministicEvidence"] = ["gates"]
+        result["modelJudgeEvidence"] = []
+        with self.assertRaisesRegex(RuntimeError, "Missing model-Judge evidence"):
+            runner._audit_report(batch, report)
+
+    def test_judge_skip_rejects_model_judge_evidence(self) -> None:
+        """A critical skip cannot retain evidence attributed to a Judge that did not run."""
+        run = self._run_spec("one", 1)
+        manifest = dict(run.suite.manifest)
+        manifest["acceptance"] = {"criticalFailureSkipsJudge": True}
+        suite = runner._Suite(run.suite.suite_id, run.suite.priority, run.suite.path, manifest, run.suite.scenarios)
+        batch = (runner._RunSpec(suite=suite, scenario_ids=run.scenario_ids),)
+        report = {
+            "runs": [self._suite_report("one", "FAIL")],
+            "batchCleanup": "clean",
+            "residualRisk": "none",
+        }
+        result = report["runs"][0]["scenarioResults"][0]
+        result["judgeInvoked"] = False
+        result["evidence"] = ["criticalFailureSkipsJudge"]
+
+        with self.assertRaisesRegex(RuntimeError, "Unexpected model-Judge evidence"):
+            runner._audit_report(batch, report)
+
+    def test_final_governed_evidence_must_match_checkpoint(self) -> None:
+        """Coordinator evidence cannot replace deterministic or Judge supervisor receipts."""
+        batch = (self._run_spec("one", 1),)
+        report = {
+            "runs": [self._suite_report("one", "PASS")],
+            "batchCleanup": "clean",
+            "residualRisk": "none",
+        }
+        checkpoint_report = json.loads(json.dumps(report))
+        checkpoint_report["runs"][0]["scenarioResults"][0]["modelJudgeEvidence"] = [
+            "different Judge receipt"
+        ]
+
+        with self.assertRaisesRegex(RuntimeError, "modelJudgeEvidence disagrees with checkpoint"):
+            runner._audit_report(batch, report, checkpoint_report)
 
     def test_checkpoint_retains_completed_scenario_without_final_report(self) -> None:
         """A terminal supervisor checkpoint survives a later coordinator interruption."""
@@ -1631,20 +1720,26 @@ class AgentSuiteRunnerTests(unittest.TestCase):
     def _write_junie_lifecycles(
         junie_home: Path,
         lifecycles: tuple[tuple[str, str, int, int], ...],
+        staged: tuple[object, ...] = (),
     ) -> None:
         session = junie_home / "sessions" / "session"
         session.mkdir(parents=True, exist_ok=True)
         events: list[dict[str, object]] = []
+        definitions = {agent.invocation: agent for agent in staged}
         for index, (name, parent, started, finished) in enumerate(lifecycles):
             step_id = f"step-{index:08d}"
             for status, second in (("STARTED", started), ("FINISHED", finished)):
+                agent: dict[str, object] = {"kind": "CustomAgent", "name": name}
+                if name in definitions:
+                    agent["definitionMarker"] = definitions[name].instruction_marker
+                    agent["definitionSha256"] = definitions[name].sha256
                 events.append(
                     {
                         "timestamp": f"2026-07-19T00:00:{second:02d}Z",
                         "event": {
                             "agentEvent": {
                                 "kind": "CustomAgentBlockUpdatedEvent",
-                                "agent": {"kind": "CustomAgent", "name": name},
+                                "agent": agent,
                                 "name": name,
                                 "parentAgent": parent,
                                 "status": status,
@@ -1657,6 +1752,24 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         (session / "events.jsonl").write_text(
             "\n".join(json.dumps(event) for event in events) + "\n",
             encoding="utf-8",
+        )
+
+    @staticmethod
+    def _staged_junie_agents() -> tuple[object, ...]:
+        return tuple(
+            runner._StagedAgent(
+                name,
+                Path(f"{name}.md"),
+                "instructions",
+                character * 64,
+                f"AGENT-INSTRUCTION-BINDING-{name}-{character * 32}",
+            )
+            for name, character in (
+                ("suite-supervisor", "a"),
+                ("target-agent", "b"),
+                ("suite-judge", "c"),
+                ("dependency", "d"),
+            )
         )
 
     @staticmethod

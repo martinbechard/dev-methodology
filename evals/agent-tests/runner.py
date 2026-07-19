@@ -1383,7 +1383,10 @@ def _audit_checkpoint_agreement(
         raise RuntimeError(
             f"Checkpoint coverage mismatch: expected {sorted(expected)}, observed {sorted(checkpoints)}"
         )
-    compared_fields = ("status", "targetInvoked", "judgeInvoked", "cleanup")
+    compared_fields = (
+        "status", "targetInvoked", "judgeInvoked",
+        "deterministicEvidence", "modelJudgeEvidence", "cleanup",
+    )
     for identity in sorted(expected):
         if any(final_results[identity].get(field) != checkpoints[identity].get(field) for field in compared_fields):
             raise RuntimeError(f"Final report disagrees with checkpoint for {identity[0]}:{identity[1]}")
@@ -1440,9 +1443,25 @@ def _audit_report(
                         f"{suite_id}:{scenario_result.get('scenario')}"
                     )
             evidence = scenario_result.get("evidence", [])
+            deterministic_evidence = scenario_result.get("deterministicEvidence", [])
+            model_judge_evidence = scenario_result.get("modelJudgeEvidence", [])
+            if scenario_result.get("status") in {"PASS", "FAIL"} and not any(
+                value.strip() for value in deterministic_evidence
+            ):
+                raise RuntimeError(f"Missing deterministic evidence for {suite_id}:{scenario_result.get('scenario')}")
+            if scenario_result.get("judgeInvoked") and not any(value.strip() for value in model_judge_evidence):
+                raise RuntimeError(f"Missing model-Judge evidence for {suite_id}:{scenario_result.get('scenario')}")
+            if not scenario_result.get("judgeInvoked") and model_judge_evidence:
+                raise RuntimeError(f"Unexpected model-Judge evidence for {suite_id}:{scenario_result.get('scenario')}")
             checkpoint_result = checkpoint_results.get(
                 (suite_id, str(scenario_result.get("scenario", ""))), {}
             )
+            for evidence_field in ("deterministicEvidence", "modelJudgeEvidence"):
+                if checkpoint_result and scenario_result.get(evidence_field) != checkpoint_result.get(evidence_field):
+                    raise RuntimeError(
+                        f"Final report {evidence_field} disagrees with checkpoint for "
+                        f"{suite_id}:{scenario_result.get('scenario')}"
+                    )
             checkpoint_evidence = checkpoint_result.get("evidence", [])
             checkpoint_proves_skip = (
                 checkpoint_result.get("status") == scenario_result.get("status")
@@ -2142,10 +2161,41 @@ def _extract_junie_report(event_path: Path) -> dict[str, Any]:
     return report
 
 
+def _junie_lifecycle_evidence(junie_home: Path) -> list[dict[str, Any]]:
+    evidence: list[dict[str, Any]] = []
+    for event_path in sorted((junie_home / "sessions").glob("**/events.jsonl")):
+        if event_path.is_symlink() or not event_path.is_file():
+            continue
+        for line in event_path.read_text(encoding="utf-8").splitlines():
+            try:
+                value = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            event = value.get("event") if isinstance(value, dict) else None
+            agent_event = event.get("agentEvent") if isinstance(event, dict) else None
+            agent = agent_event.get("agent") if isinstance(agent_event, dict) else None
+            if isinstance(agent_event, dict) and agent_event.get("kind") == "CustomAgentBlockUpdatedEvent":
+                evidence.append(
+                    {
+                        "timestamp": value.get("timestamp"),
+                        "agent": {
+                            "name": agent.get("name") if isinstance(agent, dict) else None,
+                            "definitionMarker": agent.get("definitionMarker") if isinstance(agent, dict) else None,
+                            "definitionSha256": agent.get("definitionSha256") if isinstance(agent, dict) else None,
+                        },
+                        "parentAgent": agent_event.get("parentAgent"),
+                        "status": agent_event.get("status"),
+                        "stepId": agent_event.get("stepId"),
+                    }
+                )
+    return evidence
+
+
 def _audit_junie_agent_lifecycles(
     junie_home: Path,
     batch: Sequence[_RunSpec],
     report: Mapping[str, Any],
+    staged: Sequence[_StagedAgent],
 ) -> dict[str, Any]:
     expected_counts = {
         invocation.replace("_", "-"): count
@@ -2186,6 +2236,10 @@ def _audit_junie_agent_lifecycles(
             dependency_parents[dependency_name] = target
 
     allowed_agents = set(expected_parents) | set(dependency_parents)
+    staged_by_invocation = {agent.invocation: agent for agent in staged}
+    missing_definitions = sorted(allowed_agents - set(staged_by_invocation))
+    if missing_definitions:
+        raise RuntimeError(f"Junie lifecycle agents lack staged definitions: {', '.join(missing_definitions)}")
     observed: dict[tuple[str, str], dict[str, Any]] = {}
     for event_path in sorted((junie_home / "sessions").glob("**/events.jsonl")):
         if event_path.is_symlink() or not event_path.is_file():
@@ -2210,6 +2264,8 @@ def _audit_junie_agent_lifecycles(
             status = agent_event.get("status")
             parent_agent = agent_event.get("parentAgent")
             timestamp = value.get("timestamp") if isinstance(value, dict) else None
+            definition_marker = agent.get("definitionMarker") if isinstance(agent, dict) else None
+            definition_sha256 = agent.get("definitionSha256") if isinstance(agent, dict) else None
             if (
                 not isinstance(step_id, str)
                 or status not in {"STARTED", "FINISHED"}
@@ -2227,10 +2283,15 @@ def _audit_junie_agent_lifecycles(
                 ) from error
             record = observed.setdefault(
                 (str(name), step_id),
-                {"name": str(name), "parent": parent_agent, "start": None, "finish": None},
+                {
+                    "name": str(name), "parent": parent_agent, "start": None, "finish": None,
+                    "definitionMarker": definition_marker, "definitionSha256": definition_sha256,
+                },
             )
             if record["parent"] != parent_agent:
                 raise RuntimeError(f"Junie lifecycle parent changed for {name}:{step_id}")
+            if record["definitionMarker"] != definition_marker or record["definitionSha256"] != definition_sha256:
+                raise RuntimeError(f"Junie lifecycle definition binding changed for {name}:{step_id}")
             field = "start" if status == "STARTED" else "finish"
             prior = record[field]
             if prior is not None and prior != timestamp_value:
@@ -2245,6 +2306,11 @@ def _audit_junie_agent_lifecycles(
             )
         if record["finish"] < record["start"]:
             raise RuntimeError(f"Junie lifecycle finishes before it starts for {record['name']}")
+        staged_agent = staged_by_invocation[record["name"]]
+        if record["definitionMarker"] != staged_agent.instruction_marker or record["definitionSha256"] != staged_agent.sha256:
+            raise _JunieEvidenceInsufficient(
+                f"Junie lifecycle for {record['name']} lacks the staged definition marker/digest binding"
+            )
         expected_parent = expected_parents.get(record["name"], dependency_parents.get(record["name"]))
         if record["parent"] != expected_parent:
             raise RuntimeError(
@@ -2300,14 +2366,21 @@ def _audit_junie_agent_lifecycles(
                 f"expected {expected_sequence}, observed {observed_sequence}"
             )
     return {
-        "status": "name-verified",
-        "definitionDigestBound": False,
+        "status": "definition-bound",
+        "definitionDigestBound": True,
         "agents": dict(sorted(expected_counts.items())),
+        "boundLifecycles": [
+            {
+                "agent": str(record["name"]), "stepId": str(step_id),
+                "definitionMarker": str(record["definitionMarker"]),
+                "definitionSha256": str(record["definitionSha256"]),
+            }
+            for (_, step_id), record in sorted(observed.items())
+        ],
         "parentChildVerified": True,
         "targetJudgeOrderVerified": True,
         "childConcurrencyVerified": True,
         "nestedDependencyConstraintsVerified": True,
-        "limitation": "Junie session ledgers prove custom-agent names but do not bind adapter digests.",
     }
 
 
@@ -2369,15 +2442,23 @@ def _run_live_junie_batch(
         retained_events = evidence_prefix.with_suffix(".jsonl")
         if event_path.is_file():
             retained_events.write_text(_redact_capture(event_path.read_text(encoding="utf-8")), encoding="utf-8")
+        retained_lifecycles = evidence_prefix.with_suffix(".lifecycles.jsonl")
+        retained_lifecycles.write_text(
+            "".join(f"{json.dumps(value, sort_keys=True)}\n" for value in _junie_lifecycle_evidence(junie_home)),
+            encoding="utf-8",
+        )
         report: dict[str, Any] | None = None
+        checkpoint_report: dict[str, Any] | None = None
         errors: list[str] = []
         try:
+            checkpoint_report = _load_checkpoint_report(checkpoint_root, batch)
             report = _extract_junie_report(event_path)
-            _audit_report(batch, report)
-        except RuntimeError as error:
+            _audit_report(batch, report, checkpoint_report)
+            _audit_checkpoint_agreement(report, checkpoint_report, batch)
+        except (json.JSONDecodeError, RuntimeError) as error:
             errors.append(str(error))
         try:
-            identity = _audit_junie_agent_lifecycles(junie_home, batch, report or {})
+            identity = _audit_junie_agent_lifecycles(junie_home, batch, report or {}, staged)
         except _JunieEvidenceInsufficient as error:
             identity = {
                 "status": "unverified",
@@ -2391,6 +2472,9 @@ def _run_live_junie_batch(
         except RuntimeError as error:
             errors.append(str(error))
             identity = {"status": "unverified", "error": str(error)}
+        checkpoint_destination = result_root / f"{label}.checkpoints"
+        if checkpoint_root.is_dir():
+            shutil.copytree(checkpoint_root, checkpoint_destination, dirs_exist_ok=True)
         try:
             cleanup = _audit_workspace_cleanup(workspace)
         except RuntimeError as error:
@@ -2409,7 +2493,12 @@ def _run_live_junie_batch(
             "infrastructureErrors": errors,
             "identityAudit": identity,
             "workspaceCleanup": cleanup,
-            "evidence": {"events": str(retained_events), "stderr": str(evidence_prefix.with_suffix('.stderr.log'))},
+            "evidence": {
+                "events": str(retained_events),
+                "lifecycles": str(retained_lifecycles),
+                "checkpoints": str(checkpoint_destination),
+                "stderr": str(evidence_prefix.with_suffix('.stderr.log')),
+            },
         }
 
 

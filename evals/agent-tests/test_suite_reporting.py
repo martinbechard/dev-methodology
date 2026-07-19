@@ -420,6 +420,8 @@ class AgentSuiteReportingTests(unittest.TestCase):
                                         {
                                             "scenario": "happy",
                                             "status": "PASS",
+                                            "targetInvoked": True,
+                                            "judgeInvoked": True,
                                             "identityEvidence": ["identity-only"],
                                             "evidence": ["general"],
                                         }
@@ -468,6 +470,8 @@ class AgentSuiteReportingTests(unittest.TestCase):
                                         {
                                             "scenario": "happy",
                                             "status": "PASS",
+                                            "targetInvoked": True,
+                                            "judgeInvoked": True,
                                             "evidence": ["deterministic"],
                                             "identityEvidence": ["judge"],
                                             "deterministicEvidence": ["gates"],
@@ -481,6 +485,36 @@ class AgentSuiteReportingTests(unittest.TestCase):
                 ]
             },
         )
+
+    def test_suite_metadata_demotes_unsupported_pass_and_preserves_critical_skip(self) -> None:
+        """Aggregate reporting cannot turn missing governed receipts into a PASS."""
+        unsupported = self._execution("dev-coder")
+        unsupported.summary["results"][0]["report"]["runs"][0]["scenarioResults"][0][
+            "deterministicEvidence"
+        ] = []
+        metadata = reporting.suite_metadata(
+            "codex", "dev-coder", unsupported,
+            source_revision="revision", suite_digest="digest",
+            started_at="2026-07-19T00:00:00Z", finished_at="2026-07-19T00:00:01Z",
+            elapsed_seconds=1, evidence_root=Path("/synthetic"),
+        )
+        self.assertEqual("INFRASTRUCTURE_FAILED", metadata["status"])
+        self.assertEqual("INFRASTRUCTURE_FAILED", metadata["scenarioResults"][0]["status"])
+        self.assertTrue(any("unsupported terminal verdicts demoted" in value for value in metadata["omissions"]))
+
+        critical_skip = self._execution("dev-coder")
+        scenario = critical_skip.summary["results"][0]["report"]["runs"][0]["scenarioResults"][0]
+        scenario["status"] = "FAIL"
+        scenario["judgeInvoked"] = False
+        scenario["modelJudgeEvidence"] = []
+        metadata = reporting.suite_metadata(
+            "codex", "dev-coder", critical_skip,
+            source_revision="revision", suite_digest="digest",
+            started_at="2026-07-19T00:00:00Z", finished_at="2026-07-19T00:00:01Z",
+            elapsed_seconds=1, evidence_root=Path("/synthetic"),
+        )
+        self.assertEqual("FAIL", metadata["status"])
+        self.assertFalse(any("unsupported terminal verdicts" in value for value in metadata["omissions"]))
 
     @staticmethod
     def _metadata(harness: str, suite_id: str, status: str) -> dict[str, object]:
