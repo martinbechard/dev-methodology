@@ -92,7 +92,7 @@ def _readiness_valid(text: str) -> bool:
     """Accept plain or canonically emphasized READY and BLOCKED readiness leads."""
 
     first = _first_section_content(text, "## Implementation Readiness")
-    return re.match(r"^(?:READY\.|BLOCKED\.|\*\*(?:READY\.|BLOCKED\.)\*\*)", first) is not None
+    return re.match(r"^(?:READY\.|BLOCKED\.|\*\*(?:READY\.|BLOCKED\.)\*\*)(?=\s|$)", first) is not None
 
 
 def _references_valid(referenced_paths: list[str], required_paths: set[str]) -> bool:

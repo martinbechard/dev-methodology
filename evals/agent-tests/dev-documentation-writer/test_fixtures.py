@@ -145,6 +145,17 @@ class DocumentationWriterFixtureTests(unittest.TestCase):
         self.assertEqual(3, completed.returncode)
         self.assertFalse(json.loads(completed.stdout)["readinessValid"])
 
+    def test_final_validator_rejects_dangling_closing_readiness_emphasis(self) -> None:
+        artifact_text = _complete_artifact_text(readiness="READY.** Evidence is incomplete.")
+
+        with tempfile.TemporaryDirectory() as directory:
+            artifact = Path(directory) / "module-design.md"
+            artifact.write_text(artifact_text, encoding="utf-8")
+            completed = _run_validator("final", artifact=artifact)
+
+        self.assertEqual(3, completed.returncode)
+        self.assertFalse(json.loads(completed.stdout)["readinessValid"])
+
     def test_final_validator_accepts_canonical_bold_readiness_markers(self) -> None:
         for marker in ("**READY.**", "**BLOCKED.**"):
             with self.subTest(marker=marker), tempfile.TemporaryDirectory() as directory:
