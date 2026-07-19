@@ -6,6 +6,7 @@
 
 from __future__ import annotations
 
+import subprocess
 import unittest
 from pathlib import Path
 from typing import Any
@@ -16,14 +17,9 @@ import yaml
 SUITE_ROOT = Path(__file__).resolve().parent
 
 
-def _all_detection_evidence(project: dict[str, Any]) -> list[Any]:
-    """Return every detector evidence element without coercing its type."""
-    return [
-        evidence
-        for loadout in project["technology_skill_loadouts"]
-        for source in loadout["sourceEvidence"]
-        for evidence in source["evidence"]
-    ]
+def _detection_evidence_rows(project: dict[str, Any]) -> list[Any]:
+    """Return every detector evidence row without coercing its structure."""
+    return [row for loadout in project["technology_skill_loadouts"] for row in loadout["sourceEvidence"]]
 
 
 class ProjectConfiguratorFixtureTests(unittest.TestCase):
@@ -62,14 +58,19 @@ class ProjectConfiguratorFixtureTests(unittest.TestCase):
         self.assertIn("Preserve the existing project summary", task)
         self.assertIn("without replacing the configuration wholesale", readme)
 
-    def test_reuse_fixture_detection_evidence_elements_are_scalar_strings(self) -> None:
-        """The baseline models the detector's portable scalar evidence contract."""
+    def test_reuse_fixture_preserves_structured_detection_evidence_rows(self) -> None:
+        """The baseline separates structured rows from their scalar evidence values."""
         fixture = SUITE_ROOT / "fixtures" / "valid-configuration-reuse"
         project = yaml.safe_load((fixture / "PROJECT.yaml").read_text(encoding="utf-8"))
-        evidence = _all_detection_evidence(project)
+        rows = _detection_evidence_rows(project)
 
-        self.assertTrue(evidence)
-        self.assertTrue(all(isinstance(value, str) for value in evidence))
+        self.assertTrue(rows)
+        for row in rows:
+            self.assertIsInstance(row, dict)
+            self.assertEqual({"skill", "runtimeAvailability", "evidence"}, set(row))
+            self.assertIsInstance(row["evidence"], list)
+            self.assertTrue(row["evidence"])
+            self.assertTrue(all(isinstance(value, str) for value in row["evidence"]))
 
     def test_reuse_scenario_names_each_authoritative_evidence_gate(self) -> None:
         """The executable scenario cannot silently drop source-integrity checks."""
@@ -78,8 +79,16 @@ class ProjectConfiguratorFixtureTests(unittest.TestCase):
 
         self.assertIn("authoritative-move-provenance", scenario["deterministicChecks"])
         self.assertIn("protected-input-digests", scenario["deterministicChecks"])
+        self.assertIn("structured-source-evidence-fidelity", scenario["deterministicChecks"])
         self.assertIn("scalar-detection-evidence", scenario["deterministicChecks"])
         self.assertIn("source-faithful-guidance", scenario["deterministicChecks"])
+
+        routing = next(item for item in scenarios if item["id"] == "technology-routing")
+        invalid = next(item for item in scenarios if item["id"] == "invalid-configuration")
+        for unrelated in (routing, invalid):
+            self.assertNotIn("authoritative-move-provenance", unrelated["deterministicChecks"])
+            self.assertNotIn("structured-source-evidence-fidelity", unrelated["deterministicChecks"])
+            self.assertNotIn("source-faithful-guidance", unrelated["deterministicChecks"])
 
     def test_reuse_supervisor_and_judge_share_the_authority_contract(self) -> None:
         """Both evaluation roles receive the same comparison obligations."""
@@ -87,10 +96,26 @@ class ProjectConfiguratorFixtureTests(unittest.TestCase):
         judge = (SUITE_ROOT / "agents" / "judge.toml").read_text(encoding="utf-8")
 
         for contract in (supervisor, judge):
-            self.assertIn("frozen TASK.md and README.md", contract)
+            self.assertIn("selected scenario id is valid-configuration-reuse", contract)
             self.assertIn("protected-input", contract)
-            self.assertIn("scalar string", contract)
+            self.assertIn("list of mapping rows", contract)
+            self.assertIn("list containing only scalar strings", contract)
             self.assertIn("changed PROJECT.yaml evidence or fact statement", contract)
+            self.assertIn("valid-reuse-only", contract)
+
+        self.assertIn("only with evidence and deterministic results applicable to the selected scenario", supervisor)
+
+    def test_suite_contract_scopes_reuse_fidelity_away_from_other_scenarios(self) -> None:
+        """The shared skill cannot flatten rows or leak reuse gates across cases."""
+        contract = (
+            SUITE_ROOT / "skills" / "project-configurator-suite-contract" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn("Apply this section only when the selected scenario id is valid-configuration-reuse", contract)
+        self.assertIn("sourceEvidence value remains a list of mapping rows", contract)
+        self.assertIn("evidence field remains a list whose elements are scalar strings", contract)
+        self.assertIn("complete subtree to remain semantically equal", contract)
+        self.assertIn("Do not apply valid-configuration-reuse", contract)
 
     def test_routing_fixture_exposes_two_supported_and_one_unknown_scope(self) -> None:
         """Detection can distinguish Python, TypeScript, and NO_VARIANT."""
@@ -103,6 +128,21 @@ class ProjectConfiguratorFixtureTests(unittest.TestCase):
         self.assertIn("python", available)
         self.assertIn("typescript", available)
         self.assertNotIn("syntheticdsl", available)
+
+    def test_routing_fixture_freezes_the_required_worktree_ignore_prerequisite(self) -> None:
+        """Generated guidance can state the worktree boundary from fixture evidence."""
+        fixture = SUITE_ROOT / "fixtures" / "technology-routing"
+        ignore_file = fixture / ".gitignore"
+
+        self.assertEqual("/.worktrees/\n", ignore_file.read_text(encoding="utf-8"))
+        result = subprocess.run(
+            ["git", "check-ignore", "--no-index", ".worktrees/probe"],
+            cwd=fixture,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(0, result.returncode, result.stderr)
 
     def test_invalid_fixture_contains_both_independent_contract_failures(self) -> None:
         """The invalid scenario proves claim and runtime-capability validation."""

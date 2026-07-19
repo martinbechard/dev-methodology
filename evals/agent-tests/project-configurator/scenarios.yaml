@@ -16,13 +16,14 @@ scenarios:
       - Preserve valid routing
       - Prove the worker-old to worker move from frozen TASK.md and README.md
       - Keep protected evidence inputs unchanged
-      - Keep detector evidence as scalar strings
+      - Preserve each structured detector sourceEvidence row and its scalar-string evidence list
       - Keep generated AGENTS.md evidence plain and source-faithful
       - Validate every definition skill and bridge
     forbiddenBehaviors:
       - Replace the configuration wholesale
       - Change TASK.md, README.md, available-skills.txt, worker/main.py, or worker/test_main.py
-      - Use mappings or other structured values as detector evidence elements
+      - Flatten a structured sourceEvidence row to a scalar path
+      - Use a non-string value inside a sourceEvidence row evidence list
       - Add generated guidance claims that are absent from authoritative fixture sources
       - Copy generic claim procedure
       - Invent unavailable skills
@@ -33,6 +34,7 @@ scenarios:
       - authoritative-move-provenance
       - protected-input-digests
       - configuration-schema
+      - structured-source-evidence-fidelity
       - scalar-detection-evidence
       - source-faithful-guidance
       - reference-validation
@@ -44,7 +46,7 @@ scenarios:
     status: executable
     executableCase: fixtures/technology-routing
     purpose: Route distinct folder technologies from source evidence and record no-variant explicitly.
-    initialState: The fixture contains Python service, TypeScript UI, and an unsupported infrastructure dialect.
+    initialState: The fixture contains Python service, TypeScript UI, an unsupported infrastructure dialect, and the required ignored-worktree prerequisite.
     task: Create folder-specific skillsets and deterministic nested guidance.
     targetSkills: [agent-claim, detect-technology-skills, create-project-configuration, development-methodology, documentation-bootstrap, documentation-page-verify, python, typescript]
     allowedAgentDependencies: []
