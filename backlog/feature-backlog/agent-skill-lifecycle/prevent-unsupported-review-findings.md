@@ -1,15 +1,17 @@
 # Prevent Unsupported Review Findings
 
-Status: Running
+Status: Blocked
 
 Type: Defect
 
-## Running Ownership
+## Blocked Summary
 
-- Owner: Dev Orchestrator root task 019f77f4-c4bd-7c91-b197-c987a7beb838.
-- Lifecycle claim: prevent-unsupported-review-findings-start.
-- Claim evidence: dev-backlog-steward acquired PRIMARY ownership of this exact backlog item at 2026-07-19T03:14:53.491380Z before recording the Running transition.
-- Scope boundary: the lifecycle claim is released after this committed transition; project-artifact ownership must be acquired separately before implementation.
+- Preserved implementation commit: 4a31b337e6baf241de5ec81eb3a3c924096f3c82.
+- Preserved correction commits: 68ea9d4d3d493c554dc128476fbc4fb6a2324b4c and 13217749a72467a4379e89ad2dbe9a433ef11ed4.
+- Review loop: the bounded two-correction loop is exhausted. The first fresh review failed phrase-only structural coverage. The second fresh review failed visible prewritten and unregistered coverage plus the bundle scenario invariant. The final fresh review failed because evaluate_synthesis.py compares exact copied authority, target, and impact prose, rejects semantic paraphrase, and accepts expected strings without an explicit contradictory observation.
+- Integration: no integration occurred.
+- Unblock condition: a replacement correction must represent and independently evaluate structured semantic fields for the applicable authority source and location, target source and location, explicit observed contradiction, impact category and meaning, and uncertainty classification. It must accept semantically equivalent wording, reject copied-looking evidence that lacks the contradiction, pass fresh independent review, and then pass governed live target and Judge verification before integration.
+- Ordering boundary: prevent-read-only-review-side-effects remains later in the series and untouched.
 
 ## Summary
 
