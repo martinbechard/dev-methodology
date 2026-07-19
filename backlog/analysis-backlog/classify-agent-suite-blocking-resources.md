@@ -52,7 +52,7 @@ This policy applies across all blocked categories. Classification must be based 
 
 ## Analysis Result
 
-The seventeen recorded BLOCKED outcomes divide into three genuine agent-actionable test-harness blockers and fourteen synthetic safe-blocking outcomes. No recorded outcome establishes a genuine unresolved project decision or missing project information that belongs in User Review.
+Six of the seventeen recorded BLOCKED outcomes are purely agent-actionable technical blockers, one outcome combines a technical browser blocker with an intentional synthetic boundary, and ten outcomes are synthetic-only safe-blocking evidence. The seven outcomes with a technical component roll up into three ordinary feature work streams. No recorded outcome establishes a genuine unresolved project decision or missing project information that belongs in User Review.
 
 The complete suite report is the durable result authority: [Complete Agent Suite Results](../../evals/agent-tests/results/2026-07-17-complete-agent-suites.md). The classification also inspected the retained summaries named by that report, including the focused Project Bootstrapper and Dev Merge Coordinator recovery evidence.
 
@@ -78,7 +78,7 @@ The complete suite report is the durable result authority: [Complete Agent Suite
 
 ## Resulting Work
 
-The active, blocked, holding, and User Review queues contain no matching item for these three technical outcomes. The analysis therefore authorizes these ordinary feature items:
+The active, blocked, holding, and User Review queues contain no matching item for these three technical work streams. The analysis therefore authorizes these ordinary feature items:
 
 - Specify deterministic Dev Orchestrator dependency-routing fixtures.
 - Enable isolated browser attachment for agent suites.
