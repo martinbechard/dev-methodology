@@ -422,7 +422,20 @@ def inlined_skill_body(skill_name: str) -> str:
 
 
 def render(value: dict[str, object], inline_tech_skills: bool = True) -> str:
-    """Render root AGENTS.md workflow and technology sections."""
+    """Render configured root AGENTS.md authority, workflow, and technology sections.
+
+    value is the mapping loaded from PROJECT.yaml. Optional authority and workflow
+    configuration produce their corresponding sections; technology guidance is always
+    produced from the configured loadouts. When inline_tech_skills is true, the return
+    value embeds each referenced bundled skill body. When false, it emits dynamic loading
+    instructions instead.
+
+    The return value is the complete generated Markdown text and ends with a newline.
+    Rendering does not write an output file, but inlined rendering reads bundled SKILL.md
+    files. Invalid authority or workflow configuration, unsafe skill names, and invalid
+    skill frontmatter raise ValueError. Missing or unreadable skill files raise OSError,
+    and malformed YAML may raise yaml.YAMLError.
+    """
     lines: list[str] = definition_change_authority_lines(value)
     lines.extend(workflow_lines(value))
     lines.extend([
@@ -499,7 +512,20 @@ def render(value: dict[str, object], inline_tech_skills: bool = True) -> str:
 
 
 def main(arguments: Sequence[str] | None = None) -> int:
-    """Render configured AGENTS.md sections without replacing an output file implicitly."""
+    """Run the renderer or definition-change preflight command-line interface.
+
+    arguments is an explicit CLI argument sequence for programmatic callers, or None to
+    parse the process arguments. Preflight mode prints one JSON policy result: allowed
+    outcomes return 0 and blocked outcomes return 3. Render mode prints generated
+    authority, workflow, and technology Markdown to standard output and returns 0 unless
+    an output path is supplied. Output mode creates a missing file, replaces one only
+    with the replace option, or updates only the authority section with the dedicated
+    update option.
+
+    File creation and updates are the only repository side effects. Handled OSError,
+    ValueError, and yaml.YAMLError failures are printed to standard error and return 1.
+    Argument-parser usage failures raise SystemExit with argparse's exit code, normally 2.
+    """
     parser = argparse.ArgumentParser(description="Render AGENTS.md workflow selectors and unconditional technology skill guidance.")
     parser.add_argument("--project", type=Path, required=True)
     parser.add_argument("--output", type=Path)
