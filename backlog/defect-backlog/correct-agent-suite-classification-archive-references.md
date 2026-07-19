@@ -1,8 +1,16 @@
 # Correct Agent Suite Classification Archive References
 
-Status: Ready
+Status: Running
 
 Type: Defect
+
+## Running Ownership
+
+- Owner: Dev Orchestrator root task 019f77f4-c4bd-7c91-b197-c987a7beb838.
+- Lifecycle agent: Dev Backlog Steward.
+- Lifecycle claim: correct-agent-suite-classification-archive-references-start.
+- Claim evidence: PRIMARY exact-file backlog ownership acquired at 2026-07-19T10:07:47.899884Z from clean baseline commit 979a0bc0771132195b33fbf559c2f9c9c2e981e9.
+- Scope boundary: this claim owns only the Running transition and is released after its clean commit. Project artifacts, feature-link corrections, generated outputs, verification, and integration remain gated on a later ARTIFACT GO.
 
 ## Summary
 
