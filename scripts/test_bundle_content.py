@@ -2168,6 +2168,76 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(guidance=guidance):
                 self.assertIn(guidance, skill_text)
 
+    def test_project_organiser_retains_filename_selection_authority(self) -> None:
+        """Project Organiser adapters retain authority without response-only conflicts."""
+        role = load_yaml_object(
+            ROLES_ROOT / "project-setup" / "project-organiser.role.yaml"
+        )
+        role_skill_names = [next(iter(entry)) for entry in role["skills"]]
+        role_output_names = [next(iter(entry)) for entry in role["outputContract"]]
+
+        self.assertIn("organise-project-files", role_skill_names)
+        self.assertIn("approved path", role_output_names)
+        self.assertIn("file-placement audit", role_output_names)
+        self.assertIn("Return the selected path", role["instructions"])
+
+        filename_instruction = "Choose the filename from local conventions."
+        response_only_instruction = (
+            "Do not invent a filename or path for response-only design content."
+        )
+        forbidden_blanket_rules = (
+            "- Do not choose filenames.",
+            "- Do not write files.",
+        )
+        skill_texts = {
+            "organise-project-files": (
+                SKILLS_ROOT / "organise-project-files" / "SKILL.md"
+            ).read_text(encoding="utf-8"),
+            "structured-design": (
+                SKILLS_ROOT / "structured-design" / "SKILL.md"
+            ).read_text(encoding="utf-8"),
+        }
+        self.assertIn(filename_instruction, skill_texts["organise-project-files"])
+        self.assertIn(response_only_instruction, skill_texts["structured-design"])
+        self.assertIn(
+            "Do not create a design file merely because design content was requested.",
+            skill_texts["structured-design"],
+        )
+
+        adapter_paths = {
+            "codex": GENERATED_ADAPTERS_ROOT
+            / "codex"
+            / "agents"
+            / "project-organiser.toml",
+            "claude": GENERATED_ADAPTERS_ROOT
+            / "claude"
+            / "agents"
+            / "project-organiser.md",
+            "gemini": GENERATED_ADAPTERS_ROOT
+            / "gemini"
+            / "agents"
+            / "project-organiser.md",
+            "junie": GENERATED_ADAPTERS_ROOT
+            / "junie"
+            / "agents"
+            / "project-organiser.md",
+        }
+        for adapter, adapter_path in adapter_paths.items():
+            adapter_text = adapter_path.read_text(encoding="utf-8")
+            with self.subTest(adapter=adapter):
+                self.assertIn(
+                    "BEGIN INLINED CORE SKILL: organise-project-files",
+                    adapter_text,
+                )
+                self.assertIn(filename_instruction, adapter_text)
+                self.assertIn(
+                    "BEGIN INLINED CORE SKILL: structured-design",
+                    adapter_text,
+                )
+                self.assertIn(response_only_instruction, adapter_text)
+                for forbidden_rule in forbidden_blanket_rules:
+                    self.assertNotIn(forbidden_rule, adapter_text)
+
     def test_backlog_skills_separate_user_action_required_from_dispatchable_work(self) -> None:
         primary_root = resolve_primary_repository_root()
         create_text = (SKILLS_ROOT / "create-backlog" / "SKILL.md").read_text(
