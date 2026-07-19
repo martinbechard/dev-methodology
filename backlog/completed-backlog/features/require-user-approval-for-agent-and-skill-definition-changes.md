@@ -1,8 +1,22 @@
 # Require User Approval For Agent And Skill Definition Changes
 
-Status: Running
+Status: Completed
 
 Type: Feature
+
+## Completion Evidence
+
+- Ready lifecycle: commit 816b0ee3c14d0dec88c35f3750913e45805b89aa; claim backlog-ready-definition-approval-20260719 released at event 54c3ded8-a3a1-49f2-bbbb-737d2c3eeaab.
+- Running lifecycle: commit 466000890254631d49659e58fa8a3576f7c7ddae; claim backlog-running-definition-approval-20260719 released at event fd1c53df-6c3a-4338-8998-1b1ffeeaad31.
+- Integrated main commit: c4911e4fb256343b6ba93623f4c4a468abe05874.
+- Integration ownership: claim approval-definition-directive-integration released at event fee39f9c-c3c0-4b2b-98fe-a46a2299443d with resulting commit c4911e4fb256343b6ba93623f4c4a468abe05874.
+- Post-integration review: ACCEPT with no findings.
+- Final verification recommendation: GO/WARN. All 15 focused tests and 18 policy probes passed, along with five generator and validation gates, all 17 project-wiki tests, compileall, OKF validation, diff checks, and clean-worktree verification.
+- Pre-existing warning: scripts/test_bundle_content.py:2219 retains a stale assertion. The failure reproduced at pre-feature commit 501b5e1, where 408 of 409 full scripts tests passed, so it is not caused by this feature.
+- Pre-existing warning: docs/wiki is absent at both the baseline and integrated HEAD, so project-wiki status and lint are not applicable to this feature.
+- Definition boundary: no governed agent definition or skill definition was changed while delivering this project-local authority directive.
+- Deployment: no distributable skill or agent artifact changed, so user-scope installation and MCP skill-catalog refresh were not required.
+- Terminal lifecycle ownership: Dev Backlog Steward acquired PRIMARY claim approval-directive-final-lifecycle for only this active item and its completed-feature archive destination at event 58c2c194-157f-4d6b-9077-5ff38c76be32. The claim is released immediately after this archive commit is clean.
 
 ## Summary
 
