@@ -1182,6 +1182,9 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                                 "targetInvoked": True,
                                 "judgeInvoked": True,
                                 "identityEvidence": ["bound"],
+                                "deterministicEvidence": [],
+                                "modelJudgeEvidence": ["judge-bound"],
+                                "evidenceReceipts": [],
                                 "evidence": ["receipt"],
                                 "cleanup": "clean",
                                 "residualRisk": "none",
@@ -1223,7 +1226,9 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                 self.assertNotIn("error", result)
                 self.assertIn("checkpoint", " ".join(result["infrastructureErrors"]))
                 self.assertIn("handoff receipt", " ".join(result["infrastructureErrors"]))
-                for evidence_path in result["evidence"].values():
+                for evidence_name, evidence_path in result["evidence"].items():
+                    if evidence_name.endswith("Sha256"):
+                        continue
                     self.assertTrue(Path(evidence_path).exists(), evidence_path)
 
     def test_partial_results_inside_one_batch_remain_addressable(self) -> None:
@@ -2298,6 +2303,7 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             "batchCleanup": "clean",
             "residualRisk": "",
         }
+        report["runs"][0]["scenarioResults"][0]["status"] = "BLOCKED"
         report["runs"][0]["scenarioResults"][0]["handoffReceipts"] = [
             {
                 "lane": "source",

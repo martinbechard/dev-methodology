@@ -2692,7 +2692,11 @@ def _audit_handoff_evidence(
     for run in batch:
         scenarios = {str(value["id"]): value for value in run.suite.scenarios}
         for scenario_id in run.scenario_ids:
-            scenario = scenarios[scenario_id]
+            scenario = scenarios.get(scenario_id)
+            if scenario is None:
+                raise RuntimeError(
+                    f"{run.suite.suite_id}:{scenario_id} is absent from the selected scenario contract"
+                )
             if not scenario.get("requiredHandoffReceiptFields"):
                 continue
             identity = f"{run.suite.suite_id}:{scenario_id}"
@@ -2706,9 +2710,10 @@ def _audit_handoff_evidence(
             sessions_by_role: dict[str, list[_Session]] = {}
             for session in nested:
                 sessions_by_role.setdefault(str(session.invocation), []).append(session)
-            reported_receipts = report_results[(run.suite.suite_id, scenario_id)].get(
-                "handoffReceipts", []
-            )
+            reported_result = report_results.get((run.suite.suite_id, scenario_id))
+            if not isinstance(reported_result, Mapping):
+                raise RuntimeError(f"{identity} has no retained scenario result for handoff evidence")
+            reported_receipts = reported_result.get("handoffReceipts", [])
             if not isinstance(reported_receipts, list) or not all(
                 isinstance(receipt, dict) for receipt in reported_receipts
             ):

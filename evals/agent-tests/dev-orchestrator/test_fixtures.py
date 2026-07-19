@@ -234,10 +234,13 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
                     "scenarioResults": [
                         {
                             "scenario": "dependency-routing",
-                            "status": "PASS",
+                            "status": "BLOCKED",
                             "targetInvoked": True,
                             "judgeInvoked": True,
                             "identityEvidence": ["thread-bound"],
+                            "deterministicEvidence": [],
+                            "modelJudgeEvidence": ["judge-bound"],
+                            "evidenceReceipts": [],
                             "cleanup": "clean",
                             "evidence": ["synthetic"],
                             "handoffReceipts": receipts,
