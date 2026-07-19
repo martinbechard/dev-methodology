@@ -1,8 +1,10 @@
 # Separate Project And Backlog Claim Scopes
 
-Status: Ready
+Status: Running
 
 Type: Feature
+
+Lifecycle ownership: Dev Backlog Steward acquired PRIMARY claim separate-project-backlog-scopes-start for root task 019f77f4-c4bd-7c91-b197-c987a7beb838 under LIFECYCLE START authority from starting commit cc74356b7f16071ae8f41e1b28952f4eaafe81ae.
 
 ## Summary
 
