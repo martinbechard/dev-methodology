@@ -117,6 +117,9 @@ Every modifying agent uses agent-claim before changing repository files or exclu
 - A later non-overlapping writer receives a dedicated branch and a linked checkout under the primary worktree's .worktrees directory, using the claim id as its single directory name.
 - The claim tool derives the primary worktree from Git metadata, rejects recursive or caller-selected locations, and refuses isolation until the canonical directory is ignored.
 - Every linked agent worktree uses worktree-specific sparse checkout to omit the repository-root backlog directory; backlog claims wait for the primary worktree.
+- Project-files owns the repository file tree except backlog and ignored operational state. Backlog owns only the complete primary-worktree backlog subtree. All-files is their deliberate union for recovery and true repository-wide work.
+- Exact files and trees inherit their project or backlog domain. One claim cannot mix domains, while exclusive resources may accompany the selected domain.
+- Acquisition and release compare owned and out-of-domain status separately. Unchanged pre-existing out-of-domain dirtiness remains outside the claim; a new staged, unstaged, untracked, or committed out-of-domain path rejects release with structured evidence.
 - Exact files, directory trees, repository-wide ownership, and exclusive resources use distinct scope forms.
 - A claim can atomically extend its narrow scope as new files or resources become necessary.
 - Overlap returns exact conflict pairs; a blocked extension leaves the live claim unchanged.
@@ -140,6 +143,8 @@ The bundled command implements primary, isolation, wait, recovery, extension, he
 ```bash
 python3 skills/agent-claim/scripts/claim.py --help
 ```
+
+Use project-files for an ordinary broad implementation claim, backlog for a short queue-state transition, and all-files only when both domains truly belong to one recovery or migration. Keep backlog lifecycle commits separate from long-running implementation claims.
 
 Dev Orchestrator owns the root task claim and child handoffs. Dev Merge Coordinator accepts committed clean contributions, acquires the target-specific integration resource, owns shared regeneration and integration verification, commits the combined result, and releases the integration claim only from a clean worktree.
 

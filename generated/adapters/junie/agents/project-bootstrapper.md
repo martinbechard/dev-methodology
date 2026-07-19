@@ -203,14 +203,22 @@ Use one scope form for each intended ownership kind:
 
 - file names one exact intended file. A future file that does not exist yet is valid.
 - tree names one directory subtree and overlaps its descendants.
-- all-files names the complete repository file tree.
+- project-files names every project file except backlog and ignored operational worktree state.
+- backlog names the complete repository-root backlog subtree.
+- all-files names the explicit union of project-files and backlog.
 - resource names one exclusive repository-global runtime or integration resource.
 
-Tree and all-files scope require a short coordination-only scope reason. Do not put prompts, sensitive company information, or personal information in the reason.
+Tree, project-files, and all-files scope require a short coordination-only scope reason. Do not put prompts, sensitive company information, or personal information in the reason.
+
+Select at most one broad file domain. Exact files and trees are classified into project-files or backlog ownership. A request that mixes project and backlog paths is rejected atomically with INVALID_SCOPE and mixed_file_domains. Explicit backlog paths remain compatible and produce the compat_backlog_path warning so status, journal events, and diagnostics make the normalization visible. Resources may accompany any one selected file domain.
 
 The command rejects repository root, wildcards, and existing directories passed through file. It also rejects an existing file passed through tree. A temporary compat-file-directories switch converts existing directories passed through file into warned tree scopes, but still requires a scope reason. New callers use the explicit forms.
 
-The repository-root backlog directory is primary-worktree-only. Claim backlog paths from the primary worktree. When another claim already owns the primary worktree, a backlog acquisition or an isolated claim extension into backlog returns PRIMARY_REQUIRED and preserves the live registry unchanged.
+The repository-root backlog directory and all-files ownership are primary-worktree-only. Claim backlog paths from the primary worktree. When another claim already owns the primary worktree, a backlog acquisition or an isolated claim extension into backlog returns PRIMARY_REQUIRED and preserves the live registry unchanged. Project-files claims remain eligible for canonical isolated worktrees.
+
+Every claim and scope result records file_domain as project_files, backlog, all_files, or none and records the matching broad booleans. The none value is used when no file scope was selected. Existing no-file-scope callers retain complete-worktree clean-release compatibility.
+
+Status normalizes active claims written by an earlier registry schema for display without silently rewriting the registry. A legacy claim with paths in both domains is reported as legacy_mixed, cannot extend into another file scope, and retains complete-worktree release rules. A claim that lacks a trustworthy out-of-domain baseline also retains complete-worktree release rules. This compatibility boundary prevents old ownership from being relabeled or from gaining permission through missing evidence.
 
 The claim id also names the canonical isolated checkout directory. It must be one portable path component containing only letters, digits, dots, underscores, or hyphens. Invalid identifiers return INVALID_IDENTIFIER before any worktree is created.
 
@@ -273,6 +281,18 @@ For a true repository-wide migration, replace the tree argument with:
 --all-files --scope-reason "repository-wide migration"
 ```
 
+For broad ordinary implementation work, use:
+
+```bash
+--project-files --scope-reason "project implementation"
+```
+
+For a short serialized queue transition from the primary worktree, use:
+
+```bash
+--backlog
+```
+
 ### Isolation Acquisition
 
 When another non-overlapping claim is active, the primary command without a branch returns ISOLATE_REQUIRED with exit code 4 and does not create a claim. The structured result reports the canonical worktree root and suggested checkout. Retry the same claim identifier with a unique branch:
@@ -292,7 +312,7 @@ This returns ISOLATE with exit code 0. The base option selects the Git commit or
 
 ### Primary-Only Backlog Acquisition
 
-Backlog creation, lifecycle changes, and archive movements run from the primary worktree. When another claim already exists, a non-overlapping request for a file or tree under backlog returns PRIMARY_REQUIRED with exit code 3 instead of creating an isolated checkout. Wait for the primary claim to finish, then retry without branch or worktree arguments.
+Backlog creation, lifecycle changes, and archive movements run under a short backlog claim from the primary worktree. When another claim owns the primary worktree, a backlog request returns PRIMARY_REQUIRED with exit code 3 instead of creating an isolated checkout. Wait for a direct baton handoff or completion notification, then retry without branch or worktree arguments. Do not poll.
 
 ### WAIT
 
@@ -449,6 +469,10 @@ A modifying task is not complete merely because implementation or tests are comp
 - The claim is released with the bundled command.
 - A clean released isolated checkout is removed by the orchestration owner only after its verified commit is preserved on a branch or integrated into the target.
 - The final response reports the commit hash, verification, and final status.
+
+Release checks only owned-domain cleanliness while comparing out-of-domain status with its acquisition baseline. Git status and committed-path inspection use NUL-delimited records so spaces, quotes, non-ASCII text, newlines, rename records, and text resembling a rename arrow remain exact paths. Unchanged pre-existing out-of-domain dirtiness does not become owned work and does not block release. A changed staged, unstaged, or untracked out-of-domain path returns RELEASE_REJECTED with reason out_of_domain_changes and reports only paths whose current state differs from their baseline state. Every commit between baseline_commit and the resulting commit is inspected, so committing and later reverting an out-of-domain path remains a rejected out_of_domain_commit. A non-ancestor resulting history is rejected as baseline_not_ancestor. These outcomes preserve the claim and registry. The command never stages, commits, reverts, or cleans those paths.
+
+Contention reports count broad events by project_files, backlog, and all_files domain in addition to total broad events and reasons. This keeps ordinary project ownership, serialized backlog transitions, and exceptional repository-wide work distinguishable in historical diagnostics.
 
 ### Committed Release
 

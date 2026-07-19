@@ -96,6 +96,10 @@ Do not move an independently identified idea into a typed active folder until th
 
 Claims should be durable and exclusive. A claimed item remains readable in its active folder; claiming should not move the item.
 
+Serialize queue mutations with short backlog-domain claims from the primary worktree. Use one claim to record Status: Running and ownership evidence, commit that transition, and release immediately. Delivery then uses a separate exact, tree, or project-files claim without backlog ownership. After delivery, review, verification, and integration complete, acquire a later backlog claim to record result evidence and archive the item, then commit and release it.
+
+When another owner holds the primary baton, PRIMARY_REQUIRED is a coordination outcome rather than a failed mutation. Arrange a direct handoff or completion notification and suspend without polling. Resume only after that notification, then reconcile live status before acquiring backlog ownership.
+
 ## User Action Required Workflow
 
 When backlog/user-action-required contains one or more items:

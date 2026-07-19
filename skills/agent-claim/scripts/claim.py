@@ -48,10 +48,17 @@ WORKTREE_COMPONENT_PATTERN = re.compile(r"^[A-Za-z0-9](?:[A-Za-z0-9._-]{0,198}[A
 
 
 class _ScopeError(ValueError):
-    def __init__(self, message: str, offending_scope: str, replacement: str) -> None:
+    def __init__(
+        self,
+        message: str,
+        offending_scope: str,
+        replacement: str,
+        reason: str = "invalid_scope",
+    ) -> None:
         super().__init__(message)
         self.offending_scope = offending_scope
         self.replacement = replacement
+        self.reason = reason
 
 
 def _git(worktree: Path, *arguments: str, check: bool = True) -> subprocess.CompletedProcess[str]:
@@ -187,8 +194,135 @@ def _parse_timestamp(value: str) -> datetime:
     return parsed.astimezone(timezone.utc)
 
 
-def _status(worktree: Path) -> str:
-    return _git(worktree, "status", "--porcelain").stdout
+def _path_domain(path: str) -> str:
+    return "backlog" if _path_is_within(path, BACKLOG_ROOT_DIRECTORY) else "project_files"
+
+
+def _status_snapshot(worktree: Path) -> dict[str, dict[str, str]]:
+    raw_entries = _git(
+        worktree,
+        "status",
+        "--porcelain=v1",
+        "-z",
+        "--untracked-files=all",
+    ).stdout.split("\0")
+    snapshot: dict[str, dict[str, str]] = {"project_files": {}, "backlog": {}}
+    index = 0
+    while index < len(raw_entries):
+        entry = raw_entries[index]
+        index += 1
+        if not entry:
+            continue
+        status = entry[:2]
+        paths = [entry[3:]]
+        if "R" in status or "C" in status:
+            if index >= len(raw_entries) or not raw_entries[index]:
+                raise ValueError("Incomplete NUL-terminated Git rename status record.")
+            paths.append(raw_entries[index])
+            index += 1
+        for path in paths:
+            snapshot[_path_domain(path)][path] = status
+    return snapshot
+
+
+def _status_entries(paths: dict[str, str]) -> list[dict[str, str]]:
+    return [
+        {"path": path, "status": status}
+        for path, status in sorted(paths.items())
+    ]
+
+
+def _status_state(worktree: Path, snapshot: dict[str, dict[str, str]]) -> dict[str, dict[str, str]]:
+    state: dict[str, dict[str, str]] = {}
+    for paths in snapshot.values():
+        for path, status in paths.items():
+            candidate = worktree / path
+            if candidate.is_symlink():
+                worktree_digest = hashlib.sha256(os.readlink(candidate).encode("utf-8")).hexdigest()
+            elif candidate.is_file():
+                worktree_digest = hashlib.sha256(candidate.read_bytes()).hexdigest()
+            else:
+                worktree_digest = "missing"
+            index_entry = _git(worktree, "ls-files", "--stage", "--", path).stdout.strip()
+            state[path] = {
+                "status": status,
+                "worktree_sha256": worktree_digest,
+                "index_entry": index_entry,
+            }
+    return state
+
+
+def _state_outside_domain(
+    state: dict[str, dict[str, str]],
+    file_domain: str,
+) -> dict[str, dict[str, str]]:
+    return {
+        path: details
+        for path, details in state.items()
+        if not _path_belongs_to_domain(path, file_domain)
+    }
+
+
+def _status_paths(entries: Sequence[dict[str, str]]) -> list[str]:
+    return sorted({entry["path"] for entry in entries})
+
+
+def _status_for_domain(
+    snapshot: dict[str, dict[str, str]],
+    file_domain: str,
+) -> list[dict[str, str]]:
+    if file_domain in {"all_files", "none"}:
+        return _status_entries({**snapshot["project_files"], **snapshot["backlog"]})
+    if file_domain in snapshot:
+        return _status_entries(snapshot[file_domain])
+    return []
+
+
+def _status_outside_domain(
+    snapshot: dict[str, dict[str, str]],
+    file_domain: str,
+) -> list[dict[str, str]]:
+    if file_domain == "project_files":
+        return _status_entries(snapshot["backlog"])
+    if file_domain == "backlog":
+        return _status_entries(snapshot["project_files"])
+    return []
+
+
+def _path_belongs_to_domain(path: str, file_domain: str) -> bool:
+    return file_domain in {"all_files", "none"} or _path_domain(path) == file_domain
+
+
+def _committed_paths(worktree: Path, baseline_commit: str, resulting_commit: str) -> list[str]:
+    if baseline_commit == resulting_commit:
+        return []
+    ancestry = _git(
+        worktree,
+        "merge-base",
+        "--is-ancestor",
+        baseline_commit,
+        resulting_commit,
+        check=False,
+    )
+    if ancestry.returncode != SUCCESS:
+        raise ValueError("baseline_not_ancestor")
+    commits = _git(worktree, "rev-list", "--reverse", f"{baseline_commit}..{resulting_commit}").stdout.splitlines()
+    paths: set[str] = set()
+    for commit in commits:
+        raw_paths = _git(
+            worktree,
+            "diff-tree",
+            "--no-commit-id",
+            "--name-only",
+            "--diff-filter=ACDMRTUXB",
+            "--no-renames",
+            "-r",
+            "-m",
+            "-z",
+            commit,
+        ).stdout
+        paths.update(path for path in raw_paths.split("\0") if path)
+    return sorted(paths)
 
 
 def _head(worktree: Path) -> str:
@@ -275,6 +409,13 @@ def _normalize_repository_path(repository: Path, value: str) -> str:
             stripped,
             "provide a repository-relative path",
         )
+    if _path_is_within(normalized, WORKTREE_ROOT_DIRECTORY):
+        raise _ScopeError(
+            "Ignored operational worktree state is outside file ownership domains.",
+            normalized,
+            "claim the project source path or an exclusive resource instead",
+            "operational_path_not_claimable",
+        )
     return normalized.rstrip("/") or "."
 
 
@@ -282,7 +423,10 @@ def _empty_scope() -> dict[str, Any]:
     return {
         "files": [],
         "trees": [],
+        "project_files": False,
+        "backlog": False,
         "all_files": False,
+        "file_domain": "none",
         "resources": [],
         "scope_reason": None,
     }
@@ -339,7 +483,48 @@ def _scope_from_args(args: argparse.Namespace, repository: Path) -> tuple[dict[s
     scope["resources"] = _deduplicate(
         value.strip() for value in getattr(args, "resource", []) if value.strip()
     )
+    scope["project_files"] = bool(getattr(args, "project_files", False))
+    scope["backlog"] = bool(getattr(args, "backlog", False))
     scope["all_files"] = bool(getattr(args, "all_files", False))
+
+    selected_broad_domains = [
+        domain
+        for domain in ("project_files", "backlog", "all_files")
+        if scope[domain]
+    ]
+    if len(selected_broad_domains) > 1:
+        raise _ScopeError(
+            "Broad file domains are mutually exclusive.",
+            ", ".join(selected_broad_domains),
+            "select exactly one of --project-files, --backlog, or --all-files",
+            "multiple_broad_file_domains",
+        )
+
+    path_domains = {_path_domain(path) for _kind, path in _path_scopes(scope, include_broad=False)}
+    if len(path_domains) > 1:
+        raise _ScopeError(
+            "One claim cannot mix project and backlog paths.",
+            ", ".join(sorted(path_domains)),
+            "use separate project and backlog claims",
+            "mixed_file_domains",
+        )
+    broad_domain = selected_broad_domains[0] if selected_broad_domains else None
+    path_domain = next(iter(path_domains), None)
+    if broad_domain in {"project_files", "backlog"} and path_domain and broad_domain != path_domain:
+        raise _ScopeError(
+            "Explicit paths must belong to the selected broad file domain.",
+            path_domain,
+            f"use only {broad_domain.replace('_', '-')} paths or a separate claim",
+            "mixed_file_domains",
+        )
+    scope["file_domain"] = broad_domain or path_domain or "none"
+    if path_domain == "backlog" and not scope["backlog"]:
+        warnings.append(
+            {
+                "code": "compat_backlog_path",
+                "message": "Classified explicit backlog paths as backlog-domain ownership.",
+            }
+        )
 
     reason = getattr(args, "scope_reason", None)
     if reason is not None:
@@ -350,7 +535,7 @@ def _scope_from_args(args: argparse.Namespace, repository: Path) -> tuple[dict[s
                 reason,
                 "provide a short coordination-only --scope-reason",
             )
-    if (scope["trees"] or scope["all_files"]) and not reason:
+    if (scope["trees"] or scope["project_files"] or scope["all_files"]) and not reason:
         raise _ScopeError(
             "Broad tree and repository-wide scopes require a reason.",
             ", ".join(scope["trees"]) or ".",
@@ -364,10 +549,45 @@ def _claim_scope(claim: dict[str, Any]) -> dict[str, Any]:
     return {
         "files": [str(value) for value in claim.get("files", [])],
         "trees": [str(value) for value in claim.get("trees", [])],
+        "project_files": bool(claim.get("project_files", False)),
+        "backlog": bool(claim.get("backlog", False)),
         "all_files": bool(claim.get("all_files", False)),
+        "file_domain": str(claim.get("file_domain") or _legacy_file_domain(claim)),
         "resources": [str(value) for value in claim.get("resources", [])],
         "scope_reasons": dict(claim.get("scope_reasons", {})),
     }
+
+
+def _legacy_file_domain(claim: dict[str, Any]) -> str:
+    if claim.get("all_files"):
+        return "all_files"
+    domains = {
+        _path_domain(str(path))
+        for path in [*claim.get("files", []), *claim.get("trees", [])]
+    }
+    if len(domains) == 1:
+        return next(iter(domains))
+    if len(domains) > 1:
+        return "legacy_mixed"
+    return "none"
+
+
+def _claim_for_output(claim: dict[str, Any]) -> dict[str, Any]:
+    rendered = dict(claim)
+    if "file_domain" not in claim:
+        rendered["file_domain"] = _legacy_file_domain(claim)
+        rendered["project_files"] = False
+        rendered["backlog"] = False
+        rendered["compatibility"] = {
+            "legacy_registry_claim": True,
+            "release_policy": "complete_worktree",
+        }
+    elif not isinstance(claim.get("baseline_out_of_domain_state"), dict):
+        rendered["compatibility"] = {
+            "missing_out_of_domain_baseline": True,
+            "release_policy": "complete_worktree",
+        }
+    return rendered
 
 
 def _path_is_within(path: str, tree: str) -> bool:
@@ -382,6 +602,14 @@ def _path_scope_overlap(
 ) -> bool:
     if "all_files" in {requested_kind, claimed_kind}:
         return True
+    if requested_kind == "project_files":
+        return claimed_kind == "project_files" or _path_domain(claimed_path) == "project_files"
+    if claimed_kind == "project_files":
+        return requested_kind == "project_files" or _path_domain(requested_path) == "project_files"
+    if requested_kind == "backlog":
+        return claimed_kind == "backlog" or _path_domain(claimed_path) == "backlog"
+    if claimed_kind == "backlog":
+        return requested_kind == "backlog" or _path_domain(requested_path) == "backlog"
     if requested_kind == "file" and claimed_kind == "file":
         return requested_path == claimed_path
     if requested_kind == "tree" and claimed_kind == "tree":
@@ -391,21 +619,40 @@ def _path_scope_overlap(
     return _path_is_within(requested_path, claimed_path)
 
 
-def _path_scopes(scope: dict[str, Any]) -> list[tuple[str, str]]:
+def _path_scopes(scope: dict[str, Any], include_broad: bool = True) -> list[tuple[str, str]]:
     values = [("file", value) for value in scope.get("files", [])]
     values.extend(("tree", value) for value in scope.get("trees", []))
-    if scope.get("all_files"):
-        values.append(("all_files", "."))
+    if include_broad:
+        if scope.get("project_files"):
+            values.append(("project_files", "."))
+        if scope.get("backlog"):
+            values.append(("backlog", BACKLOG_ROOT_DIRECTORY))
+        if scope.get("all_files"):
+            values.append(("all_files", "."))
     return values
 
 
 def _scope_requires_primary_worktree(scope: dict[str, Any]) -> bool:
+    return scope.get("file_domain") in {"backlog", "all_files"}
+
+
+def _scope_file_domain(scope: dict[str, Any]) -> str:
+    explicit = str(scope.get("file_domain") or "")
+    if explicit:
+        return explicit
     if scope.get("all_files"):
-        return True
-    return any(
-        kind in {"file", "tree"} and _path_is_within(path, BACKLOG_ROOT_DIRECTORY)
-        for kind, path in _path_scopes(scope)
-    )
+        return "all_files"
+    if scope.get("project_files"):
+        return "project_files"
+    if scope.get("backlog"):
+        return "backlog"
+    domains = {
+        _path_domain(str(path))
+        for path in [*scope.get("files", []), *scope.get("trees", [])]
+    }
+    if len(domains) == 1:
+        return next(iter(domains))
+    return "legacy_mixed" if domains else "none"
 
 
 def _overlap_details(requested: dict[str, Any], claimed: dict[str, Any]) -> list[dict[str, str]]:
@@ -457,6 +704,10 @@ def _scope_reasons(scope: dict[str, Any]) -> dict[str, str]:
     if not reason:
         return {}
     reasons = {f"tree:{path}": reason for path in scope.get("trees", [])}
+    if scope.get("project_files"):
+        reasons["project_files:."] = reason
+    if scope.get("backlog"):
+        reasons["backlog:backlog"] = reason
     if scope.get("all_files"):
         reasons["all_files:."] = reason
     return reasons
@@ -467,9 +718,28 @@ def _owned_and_added_scope(claim: dict[str, Any], requested: dict[str, Any]) -> 
     added = _empty_scope()
     owned = _empty_scope()
 
+    current_domain = current["file_domain"]
+    requested_domain = requested["file_domain"]
+    if current_domain == "legacy_mixed" and requested_domain != "none":
+        raise _ScopeError(
+            "An active legacy claim with mixed paths cannot be extended with file scope.",
+            "legacy_mixed",
+            "finish or hand off the legacy claim before acquiring one explicit file domain",
+            "legacy_mixed_file_domains",
+        )
+    if current_domain != "none" and requested_domain != "none" and current_domain != requested_domain:
+        raise _ScopeError(
+            "An active claim cannot cross file domains.",
+            f"{current_domain}, {requested_domain}",
+            "use a separate claim for the other file domain",
+            "mixed_file_domains",
+        )
+
     for file_path in requested["files"]:
         target = owned if (
             current["all_files"]
+            or current["project_files"] and _path_domain(file_path) == "project_files"
+            or current["backlog"] and _path_domain(file_path) == "backlog"
             or file_path in current["files"]
             or any(_path_is_within(file_path, tree) for tree in current["trees"])
         ) else added
@@ -477,9 +747,15 @@ def _owned_and_added_scope(claim: dict[str, Any], requested: dict[str, Any]) -> 
     for tree_path in requested["trees"]:
         target = owned if (
             current["all_files"]
+            or current["project_files"] and _path_domain(tree_path) == "project_files"
+            or current["backlog"] and _path_domain(tree_path) == "backlog"
             or any(_path_is_within(tree_path, tree) for tree in current["trees"])
         ) else added
         target["trees"].append(tree_path)
+    if requested["project_files"]:
+        (owned if current["project_files"] or current["all_files"] else added)["project_files"] = True
+    if requested["backlog"]:
+        (owned if current["backlog"] or current["all_files"] else added)["backlog"] = True
     if requested["all_files"]:
         (owned if current["all_files"] else added)["all_files"] = True
     current_resources = set(current["resources"])
@@ -488,17 +764,40 @@ def _owned_and_added_scope(claim: dict[str, Any], requested: dict[str, Any]) -> 
 
     added["scope_reason"] = requested.get("scope_reason")
     owned["scope_reason"] = requested.get("scope_reason")
+    added["file_domain"] = requested_domain if _scope_has_file_values(added) else "none"
+    owned["file_domain"] = requested_domain if _scope_has_file_values(owned) else "none"
     return owned, added
 
 
+def _scope_has_file_values(scope: dict[str, Any]) -> bool:
+    return bool(
+        scope["files"]
+        or scope["trees"]
+        or scope["project_files"]
+        or scope["backlog"]
+        or scope["all_files"]
+    )
+
+
 def _scope_has_values(scope: dict[str, Any]) -> bool:
-    return bool(scope["files"] or scope["trees"] or scope["all_files"] or scope["resources"])
+    return bool(_scope_has_file_values(scope) or scope["resources"])
 
 
 def _apply_scope(claim: dict[str, Any], added: dict[str, Any]) -> None:
+    assign_file_domain = (
+        added["file_domain"] != "none"
+        and (
+            claim.get("file_domain") == "none"
+            or "file_domain" not in claim and _legacy_file_domain(claim) == "none"
+        )
+    )
     claim["files"] = _deduplicate([*claim.get("files", []), *added["files"]])
     claim["trees"] = _deduplicate([*claim.get("trees", []), *added["trees"]])
+    claim["project_files"] = bool(claim.get("project_files", False) or added["project_files"])
+    claim["backlog"] = bool(claim.get("backlog", False) or added["backlog"])
     claim["all_files"] = bool(claim.get("all_files", False) or added["all_files"])
+    if assign_file_domain:
+        claim["file_domain"] = added["file_domain"]
     claim["resources"] = _deduplicate([*claim.get("resources", []), *added["resources"]])
     reasons = dict(claim.get("scope_reasons", {}))
     reasons.update(_scope_reasons(added))
@@ -612,6 +911,7 @@ def _invalid_scope_result(
             "message": str(error),
             "offending_scope": error.offending_scope,
             "replacement": error.replacement,
+            "reason": error.reason,
         },
     )
     return _journaled_result(
@@ -621,6 +921,7 @@ def _invalid_scope_result(
         message=str(error),
         offending_scope=error.offending_scope,
         replacement=error.replacement,
+        rejection=event["rejection"],
     )
 
 
@@ -651,6 +952,7 @@ def _primary_required_result(
         scope_warnings,
         reason=reason,
         message="Backlog scope is available only from the primary worktree.",
+        requested_scopes=requested_scope,
         **details,
     )
 
@@ -821,14 +1123,15 @@ def _acquire(args: argparse.Namespace) -> int:
             outcome = "ISOLATE"
         else:
             target_worktree = repository
-            initial_status = _status(target_worktree)
+            initial_snapshot = _status_snapshot(target_worktree)
+            initial_status = _status_for_domain(initial_snapshot, requested_scope["file_domain"])
             if initial_status and not args.allow_recovery:
                 event = _event(
                     "acquire",
                     "RECOVERY_REQUIRED",
                     args,
                     requested_scope=requested_scope,
-                    dirty_paths=[line[3:] for line in initial_status.splitlines()],
+                    dirty_paths=_status_paths(initial_status),
                     command_warnings=scope_warnings,
                 )
                 return _journaled_result(
@@ -836,24 +1139,37 @@ def _acquire(args: argparse.Namespace) -> int:
                     common_directory,
                     event,
                     scope_warnings,
-                    dirty_status=initial_status.splitlines(),
+                    dirty_status=initial_status,
                 )
             mode = "recovery" if initial_status else "primary"
             outcome = "RECOVER" if initial_status else "PRIMARY"
 
         now = _timestamp()
+        baseline_snapshot = _status_snapshot(target_worktree)
+        baseline_state = _status_state(target_worktree, baseline_snapshot)
         claim = {
             "agent": args.agent,
+            "backlog": requested_scope["backlog"],
             "all_files": requested_scope["all_files"],
             "baseline_commit": _head(target_worktree),
-            "baseline_status": _status(target_worktree).splitlines(),
+            "baseline_status": _status_for_domain(baseline_snapshot, requested_scope["file_domain"]),
+            "baseline_out_of_domain_status": _status_outside_domain(
+                baseline_snapshot,
+                requested_scope["file_domain"],
+            ),
+            "baseline_out_of_domain_state": _state_outside_domain(
+                baseline_state,
+                requested_scope["file_domain"],
+            ),
             "branch": _branch(target_worktree),
             "claim_id": args.claim_id,
             "claimed_at": now,
             "files": requested_scope["files"],
+            "file_domain": requested_scope["file_domain"],
             "heartbeat": now,
             "mode": mode,
             "parent_claim_id": args.parent_claim_id,
+            "project_files": requested_scope["project_files"],
             "resources": requested_scope["resources"],
             "root_task_id": args.root_task_id,
             "scope_reasons": _scope_reasons(requested_scope),
@@ -896,7 +1212,20 @@ def _extend(args: argparse.Namespace) -> int:
             event = _event("extend", "CLAIM_NOT_FOUND", args, requested_scope=requested_scope)
             return _journaled_result(ERROR, common_directory, event, claim_id=args.claim_id)
 
-        already_owned, added = _owned_and_added_scope(claim, requested_scope)
+        if claim.get("mode") == "isolated" and _scope_requires_primary_worktree(requested_scope):
+            return _primary_required_result(
+                common_directory,
+                "extend",
+                args,
+                requested_scope,
+                scope_warnings,
+                claim=claim,
+            )
+
+        try:
+            already_owned, added = _owned_and_added_scope(claim, requested_scope)
+        except _ScopeError as error:
+            return _invalid_scope_result(common_directory, "extend", args, error)
         conflicts = _conflicts(claims, added, excluded_claim_id=args.claim_id) if _scope_has_values(added) else []
         if conflicts:
             event = _event(
@@ -980,10 +1309,122 @@ def _release(args: argparse.Namespace) -> int:
             if claim.get("claim_id") != args.claim_id:
                 continue
             worktree = Path(claim["worktree"])
-            if _status(worktree):
-                event = _event("release", "RELEASE_REJECTED", args, claim=claim, reason="worktree_not_clean")
-                return _journaled_result(ERROR, common_directory, event, reason="worktree_not_clean")
+            current_snapshot = _status_snapshot(worktree)
+            file_domain = str(claim.get("file_domain") or _legacy_file_domain(claim))
+            compatibility: dict[str, Any] | None = None
+            complete_worktree_release = (
+                "file_domain" not in claim
+                or not isinstance(claim.get("baseline_out_of_domain_state"), dict)
+            )
+            if complete_worktree_release:
+                compatibility = {
+                    "release_policy": "complete_worktree",
+                    "legacy_registry_claim": "file_domain" not in claim,
+                    "missing_out_of_domain_baseline": not isinstance(
+                        claim.get("baseline_out_of_domain_state"),
+                        dict,
+                    ),
+                }
+            owned_status = _status_for_domain(
+                current_snapshot,
+                "all_files" if complete_worktree_release else file_domain,
+            )
+            if owned_status:
+                event = _event(
+                    "release",
+                    "RELEASE_REJECTED",
+                    args,
+                    claim=claim,
+                    reason="worktree_not_clean",
+                    compatibility=compatibility,
+                )
+                return _journaled_result(
+                    ERROR,
+                    common_directory,
+                    event,
+                    reason="worktree_not_clean",
+                    dirty_status=owned_status,
+                    compatibility=compatibility,
+                )
+            if not complete_worktree_release:
+                outside_status = _status_outside_domain(current_snapshot, file_domain)
+                baseline_outside_status = sorted(
+                    claim.get("baseline_out_of_domain_status", []),
+                    key=lambda entry: entry["path"] if isinstance(entry, dict) else str(entry),
+                )
+                current_outside_state = _state_outside_domain(
+                    _status_state(worktree, current_snapshot),
+                    file_domain,
+                )
+                baseline_outside_state = claim["baseline_out_of_domain_state"]
+                changed_paths = sorted(
+                    path
+                    for path in set(current_outside_state) | set(baseline_outside_state)
+                    if current_outside_state.get(path) != baseline_outside_state.get(path)
+                )
+            else:
+                outside_status = []
+                baseline_outside_status = []
+                changed_paths = []
+            if changed_paths:
+                event = _event(
+                    "release",
+                    "RELEASE_REJECTED",
+                    args,
+                    claim=claim,
+                    reason="out_of_domain_changes",
+                    out_of_domain_paths=changed_paths,
+                )
+                return _journaled_result(
+                    ERROR,
+                    common_directory,
+                    event,
+                    reason="out_of_domain_changes",
+                    out_of_domain_paths=changed_paths,
+                    baseline_out_of_domain_status=baseline_outside_status,
+                    current_out_of_domain_status=outside_status,
+                )
             resulting_commit = _head(worktree)
+            try:
+                committed_paths = _committed_paths(
+                    worktree,
+                    str(claim["baseline_commit"]),
+                    resulting_commit,
+                )
+            except ValueError as error:
+                event = _event(
+                    "release",
+                    "RELEASE_REJECTED",
+                    args,
+                    claim=claim,
+                    resulting_commit=resulting_commit,
+                    reason=str(error),
+                )
+                return _journaled_result(ERROR, common_directory, event, reason=str(error))
+            outside_commit_paths = (
+                []
+                if complete_worktree_release
+                else [
+                    path for path in committed_paths if not _path_belongs_to_domain(path, file_domain)
+                ]
+            )
+            if outside_commit_paths:
+                event = _event(
+                    "release",
+                    "RELEASE_REJECTED",
+                    args,
+                    claim=claim,
+                    resulting_commit=resulting_commit,
+                    reason="out_of_domain_commit",
+                    out_of_domain_paths=outside_commit_paths,
+                )
+                return _journaled_result(
+                    ERROR,
+                    common_directory,
+                    event,
+                    reason="out_of_domain_commit",
+                    out_of_domain_paths=outside_commit_paths,
+                )
             if resulting_commit == claim.get("baseline_commit") and not args.no_change:
                 event = _event(
                     "release",
@@ -1012,7 +1453,11 @@ def _release(args: argparse.Namespace) -> int:
 def _status_command(args: argparse.Namespace) -> int:
     repository = _repository_root(Path(args.repo).resolve())
     with _locked_registry(repository) as (registry_path, data):
-        _print_result("STATUS", registry=str(registry_path), claims=data["claims"])
+        _print_result(
+            "STATUS",
+            registry=str(registry_path),
+            claims=[_claim_for_output(claim) for claim in data["claims"]],
+        )
     return SUCCESS
 
 
@@ -1093,6 +1538,7 @@ def _aggregate(events: list[dict[str, Any]], now: datetime, live_claims: list[di
     resources: Counter[str] = Counter()
     broad_reasons: Counter[str] = Counter()
     broad_scope_count = 0
+    broad_file_domains: Counter[str] = Counter()
     integration_resources: Counter[str] = Counter()
     journal_warning_count = 0
 
@@ -1146,10 +1592,18 @@ def _aggregate(events: list[dict[str, Any]], now: datetime, live_claims: list[di
 
         requested = event.get("requested_scopes") or {}
         if outcome in {"PRIMARY", "ISOLATE", "RECOVER", "EXTENDED"}:
-            if requested.get("trees") or requested.get("all_files"):
+            if (
+                requested.get("trees")
+                or requested.get("project_files")
+                or requested.get("backlog")
+                or requested.get("all_files")
+            ):
                 broad_scope_count += 1
                 if requested.get("scope_reason"):
                     broad_reasons[str(requested["scope_reason"])] += 1
+                requested_domain = _scope_file_domain(requested)
+                if requested_domain in {"project_files", "backlog", "all_files"}:
+                    broad_file_domains[requested_domain] += 1
             for resource in requested.get("resources", []):
                 if str(resource).startswith("merge:integration:"):
                     integration_resources[str(resource)] += 1
@@ -1193,6 +1647,10 @@ def _aggregate(events: list[dict[str, Any]], now: datetime, live_claims: list[di
         },
         "broad_scopes": {
             "event_count": broad_scope_count,
+            "file_domains": {
+                domain: broad_file_domains.get(domain, 0)
+                for domain in ("all_files", "backlog", "project_files")
+            },
             "reasons": _top_counts(broad_reasons),
         },
         "open_claim_ids": sorted(live_by_id),
@@ -1387,9 +1845,26 @@ def _report(args: argparse.Namespace) -> int:
 def _add_scope_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--file", action="append", default=[], help="Exact intended file; future nonexistent files are allowed.")
     parser.add_argument("--tree", action="append", default=[], help="Intended directory subtree.")
-    parser.add_argument("--all-files", action="store_true", help="Claim the complete repository file tree.")
+    parser.add_argument(
+        "--project-files",
+        action="store_true",
+        help="Claim every project file except the primary-only backlog and ignored operational state.",
+    )
+    parser.add_argument(
+        "--backlog",
+        action="store_true",
+        help="Claim the complete primary-worktree-only backlog subtree.",
+    )
+    parser.add_argument(
+        "--all-files",
+        action="store_true",
+        help="Claim the explicit union of project files and backlog.",
+    )
     parser.add_argument("--resource", action="append", default=[], help="Exclusive repository-global runtime resource.")
-    parser.add_argument("--scope-reason", help="Bounded coordination-only reason required for tree or all-files scope.")
+    parser.add_argument(
+        "--scope-reason",
+        help="Bounded coordination-only reason required for tree, project-files, or all-files scope.",
+    )
     parser.add_argument(
         "--compat-file-directories",
         action="store_true",

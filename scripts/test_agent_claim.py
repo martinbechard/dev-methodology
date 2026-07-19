@@ -370,6 +370,435 @@ class AgentClaimTests(unittest.TestCase):
         self.assertEqual(4, blocked.returncode)
         self.assertEqual(3, exact.returncode)
 
+    def test_project_files_and_backlog_are_separate_broad_domains(self) -> None:
+        project = self.claim(
+            *self.acquire_arguments("project"),
+            "--project-files",
+            "--scope-reason",
+            "project delivery",
+        )
+        isolated, isolated_path = self.isolated_arguments("other-project")
+        other_project = self.claim(
+            *self.acquire_arguments("other-project"),
+            "--file",
+            "src/one.py",
+            *isolated,
+        )
+        backlog = self.claim(
+            *self.acquire_arguments("backlog"),
+            "--backlog",
+        )
+
+        self.assertEqual(0, project.returncode, project.stderr)
+        self.assertEqual("project_files", self.output(project)["claim"]["file_domain"])
+        self.assertEqual(3, other_project.returncode)
+        self.assertFalse(isolated_path.exists())
+        self.assertEqual(3, backlog.returncode)
+        self.assertEqual("PRIMARY_REQUIRED", self.output(backlog)["outcome"])
+        self.assertEqual(["project"], [item["claim_id"] for item in self.output(self.claim("status"))["claims"]])
+
+    def test_backlog_broad_scope_does_not_overlap_project_paths(self) -> None:
+        backlog = self.claim(*self.acquire_arguments("backlog"), "--backlog")
+        self.assertEqual(0, backlog.returncode, backlog.stderr)
+        self.assertEqual("backlog", self.output(backlog)["claim"]["file_domain"])
+        self.claim("release", "--claim-id", "backlog", "--no-change")
+
+        project = self.claim(*self.acquire_arguments("project"), "--file", "src/one.py")
+        self.assertEqual(0, project.returncode, project.stderr)
+
+    def test_mixed_project_and_backlog_paths_are_rejected_atomically(self) -> None:
+        completed = self.claim(
+            *self.acquire_arguments("mixed"),
+            "--file",
+            "src/one.py",
+            "--file",
+            "backlog/feature-backlog/queued.md",
+        )
+
+        self.assertEqual(1, completed.returncode)
+        result = self.output(completed)
+        self.assertEqual("INVALID_SCOPE", result["outcome"])
+        self.assertEqual("mixed_file_domains", result["rejection"]["reason"])
+        self.assertEqual([], self.output(self.claim("status"))["claims"])
+
+    def test_broad_file_domains_are_mutually_exclusive(self) -> None:
+        for index, arguments in enumerate(
+            (
+                ("--project-files", "--backlog"),
+                ("--project-files", "--all-files"),
+                ("--backlog", "--all-files"),
+            )
+        ):
+            with self.subTest(arguments=arguments):
+                completed = self.claim(
+                    *self.acquire_arguments(f"mixed-{index}"),
+                    *arguments,
+                    "--scope-reason",
+                    "invalid broad combination",
+                )
+                self.assertEqual(1, completed.returncode)
+                self.assertEqual("INVALID_SCOPE", self.output(completed)["outcome"])
+
+    def test_compatibility_backlog_file_uses_backlog_domain_and_primary_rules(self) -> None:
+        self.claim(*self.acquire_arguments("first"), "--file", "README.md")
+        completed = self.claim(
+            *self.acquire_arguments("backlog"),
+            "--file",
+            "backlog/feature-backlog/queued.md",
+        )
+
+        self.assertEqual(3, completed.returncode)
+        result = self.output(completed)
+        self.assertEqual("PRIMARY_REQUIRED", result["outcome"])
+        self.assertEqual("backlog", result["requested_scopes"]["file_domain"])
+        self.assertEqual("compat_backlog_path", result["warnings"][0]["code"])
+
+    def test_project_claim_ignores_unchanged_preexisting_backlog_dirtiness(self) -> None:
+        backlog_path = self.repository / "backlog" / "feature-backlog" / "queued.md"
+        backlog_path.write_text("preexisting\n", encoding="utf-8")
+
+        acquired = self.claim(*self.acquire_arguments("project"), "--project-files", "--scope-reason", "project work")
+        released = self.claim("release", "--claim-id", "project", "--no-change")
+
+        self.assertEqual(0, acquired.returncode, acquired.stderr)
+        self.assertEqual("PRIMARY", self.output(acquired)["outcome"])
+        self.assertEqual(0, released.returncode, released.stderr)
+
+    def test_project_claim_detects_content_change_to_preexisting_dirty_backlog_path(self) -> None:
+        backlog_path = self.repository / "backlog" / "feature-backlog" / "queued.md"
+        backlog_path.write_text("preexisting\n", encoding="utf-8")
+        acquired = self.claim(
+            *self.acquire_arguments("project"),
+            "--project-files",
+            "--scope-reason",
+            "project work",
+        )
+        backlog_path.write_text("changed again\n", encoding="utf-8")
+
+        released = self.claim("release", "--claim-id", "project", "--no-change")
+
+        self.assertEqual(0, acquired.returncode, acquired.stderr)
+        self.assertEqual(1, released.returncode)
+        self.assertEqual("out_of_domain_changes", self.output(released)["reason"])
+
+    def test_nul_status_tracks_special_backlog_paths_and_reports_only_changed_entries(self) -> None:
+        changed_path = self.repository / "backlog" / "feature-backlog" / 'quoted " café space.md'
+        unchanged_path = self.repository / "backlog" / "feature-backlog" / "line\nbreak.md"
+        arrow_path = self.repository / "backlog" / "feature-backlog" / "before -> after.md"
+        changed_path.write_text("before\n", encoding="utf-8")
+        unchanged_path.write_text("unchanged\n", encoding="utf-8")
+        arrow_path.write_text("unchanged\n", encoding="utf-8")
+        acquired = self.claim(
+            *self.acquire_arguments("project"),
+            "--project-files",
+            "--scope-reason",
+            "project work",
+        )
+        changed_path.write_text("after\n", encoding="utf-8")
+
+        released = self.claim("release", "--claim-id", "project", "--no-change")
+
+        self.assertEqual(0, acquired.returncode, acquired.stderr)
+        self.assertEqual(1, released.returncode)
+        self.assertEqual(
+            ['backlog/feature-backlog/quoted " café space.md'],
+            self.output(released)["out_of_domain_paths"],
+        )
+
+    def test_nul_status_preserves_unchanged_backlog_rename_records(self) -> None:
+        renamed_path = "backlog/feature-backlog/renamed café item.md"
+        self.git("mv", "backlog/feature-backlog/queued.md", renamed_path)
+        acquired = self.claim(
+            *self.acquire_arguments("project"),
+            "--project-files",
+            "--scope-reason",
+            "project work",
+        )
+
+        released = self.claim("release", "--claim-id", "project", "--no-change")
+
+        self.assertEqual(0, acquired.returncode, acquired.stderr)
+        self.assertEqual(0, released.returncode, released.stderr)
+
+    def test_project_claim_release_rejects_new_backlog_change(self) -> None:
+        acquired = self.claim(*self.acquire_arguments("project"), "--project-files", "--scope-reason", "project work")
+        self.assertEqual(0, acquired.returncode, acquired.stderr)
+        backlog_path = self.repository / "backlog" / "feature-backlog" / "queued.md"
+        backlog_path.write_text("changed\n", encoding="utf-8")
+
+        released = self.claim("release", "--claim-id", "project", "--no-change")
+
+        self.assertEqual(1, released.returncode)
+        result = self.output(released)
+        self.assertEqual("out_of_domain_changes", result["reason"])
+        self.assertEqual(["backlog/feature-backlog/queued.md"], result["out_of_domain_paths"])
+
+    def test_project_claim_release_rejects_committed_backlog_change(self) -> None:
+        acquired = self.claim(*self.acquire_arguments("project"), "--project-files", "--scope-reason", "project work")
+        self.assertEqual(0, acquired.returncode, acquired.stderr)
+        backlog_path = self.repository / "backlog" / "feature-backlog" / "queued.md"
+        backlog_path.write_text("committed\n", encoding="utf-8")
+        self.git("add", str(backlog_path))
+        self.git("commit", "-m", "wrong domain")
+
+        released = self.claim("release", "--claim-id", "project")
+
+        self.assertEqual(1, released.returncode)
+        result = self.output(released)
+        self.assertEqual("out_of_domain_commit", result["reason"])
+        self.assertEqual(["backlog/feature-backlog/queued.md"], result["out_of_domain_paths"])
+
+    def test_project_claim_rejects_backlog_commit_reverted_later_in_history(self) -> None:
+        acquired = self.claim(*self.acquire_arguments("project"), "--project-files", "--scope-reason", "project work")
+        self.assertEqual(0, acquired.returncode, acquired.stderr)
+        backlog_path = self.repository / "backlog" / "feature-backlog" / "queued.md"
+        backlog_path.write_text("temporary commit\n", encoding="utf-8")
+        self.git("add", str(backlog_path))
+        self.git("commit", "-m", "temporary wrong domain")
+        backlog_path.write_text("queued\n", encoding="utf-8")
+        self.git("add", str(backlog_path))
+        self.git("commit", "-m", "restore backlog")
+
+        released = self.claim("release", "--claim-id", "project")
+
+        self.assertEqual(1, released.returncode)
+        result = self.output(released)
+        self.assertEqual("out_of_domain_commit", result["reason"])
+        self.assertEqual(["backlog/feature-backlog/queued.md"], result["out_of_domain_paths"])
+
+    def test_committed_path_scan_is_nul_safe_for_odd_backlog_names(self) -> None:
+        acquired = self.claim(*self.acquire_arguments("project"), "--project-files", "--scope-reason", "project work")
+        self.assertEqual(0, acquired.returncode, acquired.stderr)
+        odd_path = self.repository / "backlog" / "feature-backlog" / 'odd\n" café -> name.md'
+        odd_path.write_text("committed\n", encoding="utf-8")
+        self.git("add", str(odd_path))
+        self.git("commit", "-m", "wrong odd domain")
+
+        released = self.claim("release", "--claim-id", "project")
+
+        self.assertEqual(1, released.returncode)
+        result = self.output(released)
+        self.assertEqual("out_of_domain_commit", result["reason"])
+        self.assertEqual(['backlog/feature-backlog/odd\n" café -> name.md'], result["out_of_domain_paths"])
+
+    def test_release_rejects_history_that_diverged_from_claim_baseline(self) -> None:
+        acquired = self.claim(*self.acquire_arguments("project"), "--project-files", "--scope-reason", "project work")
+        self.assertEqual(0, acquired.returncode, acquired.stderr)
+        self.git("checkout", "--orphan", "divergent")
+        self.git("commit", "--allow-empty", "-m", "divergent root")
+
+        released = self.claim("release", "--claim-id", "project")
+
+        self.assertEqual(1, released.returncode)
+        self.assertEqual("baseline_not_ancestor", self.output(released)["reason"])
+
+    def test_status_and_extend_preserve_active_legacy_mixed_claim(self) -> None:
+        legacy_claim = {
+            "agent": "legacy",
+            "all_files": False,
+            "baseline_commit": self.git("rev-parse", "HEAD").stdout.strip(),
+            "baseline_status": [],
+            "branch": "main",
+            "claim_id": "legacy-mixed",
+            "claimed_at": "2026-07-12T10:00:00Z",
+            "files": ["src/one.py", "backlog/feature-backlog/queued.md"],
+            "heartbeat": "2026-07-12T10:00:00Z",
+            "mode": "primary",
+            "parent_claim_id": None,
+            "resources": [],
+            "root_task_id": "legacy-root",
+            "scope_reasons": {},
+            "task": "legacy mixed claim",
+            "trees": [],
+            "worktree": str(self.repository),
+        }
+        self.registry_path().write_text(json.dumps({"claims": [legacy_claim]}), encoding="utf-8")
+
+        status = self.output(self.claim("status"))["claims"][0]
+        extended = self.claim("extend", "--claim-id", "legacy-mixed", "--file", "docs/guide.md")
+        stored = json.loads(self.registry_path().read_text(encoding="utf-8"))["claims"][0]
+
+        self.assertEqual("legacy_mixed", status["file_domain"])
+        self.assertEqual("complete_worktree", status["compatibility"]["release_policy"])
+        self.assertEqual(1, extended.returncode)
+        self.assertEqual("legacy_mixed_file_domains", self.output(extended)["rejection"]["reason"])
+        self.assertNotIn("file_domain", stored)
+        self.assertEqual(legacy_claim["files"], stored["files"])
+
+    def test_legacy_claim_without_out_of_domain_baseline_keeps_complete_worktree_release(self) -> None:
+        acquired = self.claim(*self.acquire_arguments("project"), "--file", "src/one.py")
+        self.assertEqual(0, acquired.returncode, acquired.stderr)
+        registry = json.loads(self.registry_path().read_text(encoding="utf-8"))
+        claim = registry["claims"][0]
+        claim.pop("baseline_out_of_domain_state")
+        claim.pop("baseline_out_of_domain_status")
+        self.registry_path().write_text(json.dumps(registry), encoding="utf-8")
+        (self.repository / "backlog" / "feature-backlog" / "queued.md").write_text(
+            "changed\n",
+            encoding="utf-8",
+        )
+
+        released = self.claim("release", "--claim-id", "project", "--no-change")
+
+        self.assertEqual(1, released.returncode)
+        result = self.output(released)
+        self.assertEqual("worktree_not_clean", result["reason"])
+        self.assertEqual("complete_worktree", result["compatibility"]["release_policy"])
+
+    def test_legacy_resource_only_claim_reports_none_and_accepts_project_domain(self) -> None:
+        legacy_claim = {
+            "agent": "legacy",
+            "all_files": False,
+            "baseline_commit": self.git("rev-parse", "HEAD").stdout.strip(),
+            "baseline_status": [],
+            "branch": "main",
+            "claim_id": "legacy-resource",
+            "claimed_at": "2026-07-12T10:00:00Z",
+            "files": [],
+            "heartbeat": "2026-07-12T10:00:00Z",
+            "mode": "primary",
+            "parent_claim_id": None,
+            "resources": ["port:3000"],
+            "root_task_id": "legacy-root",
+            "scope_reasons": {},
+            "task": "legacy resource claim",
+            "trees": [],
+            "worktree": str(self.repository),
+        }
+        self.registry_path().write_text(json.dumps({"claims": [legacy_claim]}), encoding="utf-8")
+
+        status = self.output(self.claim("status"))["claims"][0]
+        extended = self.claim(
+            "extend",
+            "--claim-id",
+            "legacy-resource",
+            "--file",
+            "src/one.py",
+        )
+
+        self.assertEqual("none", status["file_domain"])
+        self.assertEqual("complete_worktree", status["compatibility"]["release_policy"])
+        self.assertEqual(0, extended.returncode, extended.stderr)
+        claim = self.output(extended)["claim"]
+        self.assertEqual("project_files", claim["file_domain"])
+        self.assertEqual(["src/one.py"], claim["files"])
+        self.assertEqual(["port:3000"], claim["resources"])
+
+    def test_legacy_resource_only_claim_accepts_backlog_domain(self) -> None:
+        legacy_claim = {
+            "agent": "legacy",
+            "all_files": False,
+            "baseline_commit": self.git("rev-parse", "HEAD").stdout.strip(),
+            "baseline_status": [],
+            "branch": "main",
+            "claim_id": "legacy-resource",
+            "claimed_at": "2026-07-12T10:00:00Z",
+            "files": [],
+            "heartbeat": "2026-07-12T10:00:00Z",
+            "mode": "primary",
+            "parent_claim_id": None,
+            "resources": ["database:seed"],
+            "root_task_id": "legacy-root",
+            "scope_reasons": {},
+            "task": "legacy resource claim",
+            "trees": [],
+            "worktree": str(self.repository),
+        }
+        self.registry_path().write_text(json.dumps({"claims": [legacy_claim]}), encoding="utf-8")
+
+        extended = self.claim("extend", "--claim-id", "legacy-resource", "--backlog")
+
+        self.assertEqual(0, extended.returncode, extended.stderr)
+        claim = self.output(extended)["claim"]
+        self.assertEqual("backlog", claim["file_domain"])
+        self.assertTrue(claim["backlog"])
+        self.assertEqual(["database:seed"], claim["resources"])
+
+    def test_legacy_complete_worktree_release_allows_opposite_domain_commit_after_extension(self) -> None:
+        legacy_claim = {
+            "agent": "legacy",
+            "all_files": False,
+            "baseline_commit": self.git("rev-parse", "HEAD").stdout.strip(),
+            "baseline_status": [],
+            "branch": "main",
+            "claim_id": "legacy-resource",
+            "claimed_at": "2026-07-12T10:00:00Z",
+            "files": [],
+            "heartbeat": "2026-07-12T10:00:00Z",
+            "mode": "primary",
+            "parent_claim_id": None,
+            "resources": ["port:3000"],
+            "root_task_id": "legacy-root",
+            "scope_reasons": {},
+            "task": "legacy resource claim",
+            "trees": [],
+            "worktree": str(self.repository),
+        }
+        self.registry_path().write_text(json.dumps({"claims": [legacy_claim]}), encoding="utf-8")
+        extended = self.claim("extend", "--claim-id", "legacy-resource", "--file", "src/one.py")
+        self.assertEqual(0, extended.returncode, extended.stderr)
+        backlog_path = self.repository / "backlog" / "feature-backlog" / "queued.md"
+        backlog_path.write_text("legacy committed\n", encoding="utf-8")
+        self.git("add", str(backlog_path))
+        self.git("commit", "-m", "legacy complete worktree commit")
+
+        released = self.claim("release", "--claim-id", "legacy-resource")
+
+        self.assertEqual(0, released.returncode, released.stderr)
+        self.assertEqual("RELEASED", self.output(released)["outcome"])
+
+    def test_backlog_claim_release_rejects_project_change(self) -> None:
+        acquired = self.claim(*self.acquire_arguments("backlog"), "--backlog")
+        self.assertEqual(0, acquired.returncode, acquired.stderr)
+        (self.repository / "src" / "one.py").write_text("changed\n", encoding="utf-8")
+
+        released = self.claim("release", "--claim-id", "backlog", "--no-change")
+
+        self.assertEqual(1, released.returncode)
+        result = self.output(released)
+        self.assertEqual("out_of_domain_changes", result["reason"])
+        self.assertEqual(["src/one.py"], result["out_of_domain_paths"])
+
+    def test_backlog_claim_ignores_unchanged_preexisting_project_dirtiness(self) -> None:
+        project_path = self.repository / "src" / "one.py"
+        project_path.write_text("preexisting\n", encoding="utf-8")
+
+        acquired = self.claim(*self.acquire_arguments("backlog"), "--backlog")
+        released = self.claim("release", "--claim-id", "backlog", "--no-change")
+
+        self.assertEqual(0, acquired.returncode, acquired.stderr)
+        self.assertEqual("PRIMARY", self.output(acquired)["outcome"])
+        self.assertEqual(0, released.returncode, released.stderr)
+
+    def test_operational_worktree_paths_are_not_claimable_as_project_files(self) -> None:
+        completed = self.claim(
+            *self.acquire_arguments("operational"),
+            "--file",
+            ".worktrees/internal-state",
+        )
+
+        self.assertEqual(1, completed.returncode)
+        result = self.output(completed)
+        self.assertEqual("INVALID_SCOPE", result["outcome"])
+        self.assertEqual("operational_path_not_claimable", result["rejection"]["reason"])
+
+    def test_extend_cannot_cross_from_project_into_backlog_domain(self) -> None:
+        acquired = self.claim(*self.acquire_arguments("project"), "--file", "src/one.py")
+        extended = self.claim(
+            "extend",
+            "--claim-id",
+            "project",
+            "--file",
+            "backlog/feature-backlog/queued.md",
+        )
+
+        self.assertEqual(0, acquired.returncode, acquired.stderr)
+        self.assertEqual(1, extended.returncode)
+        self.assertEqual("INVALID_SCOPE", self.output(extended)["outcome"])
+        claim = self.output(self.claim("status"))["claims"][0]
+        self.assertEqual("project_files", claim["file_domain"])
+        self.assertEqual(["src/one.py"], claim["files"])
+
     def test_broad_scope_guardrails_and_future_file_behavior(self) -> None:
         invalid_commands = (
             (["--file", "."], "use --all-files"),
@@ -760,8 +1189,45 @@ class AgentClaimTests(unittest.TestCase):
                 requested_scopes={
                     "files": [],
                     "trees": ["src"],
+                    "project_files": False,
+                    "backlog": False,
                     "all_files": False,
+                    "file_domain": "project_files",
                     "resources": ["merge:integration:main"],
+                    "scope_reason": "source migration",
+                },
+            ),
+            self.synthetic_event(
+                "backlog-domain",
+                "2026-07-12T10:05:10Z",
+                "extend",
+                "EXTENDED",
+                "backlog-domain",
+                requested_scopes={
+                    "files": [],
+                    "trees": [],
+                    "project_files": False,
+                    "backlog": True,
+                    "all_files": False,
+                    "file_domain": "backlog",
+                    "resources": [],
+                    "scope_reason": None,
+                },
+            ),
+            self.synthetic_event(
+                "all-domain",
+                "2026-07-12T10:05:20Z",
+                "extend",
+                "EXTENDED",
+                "all-domain",
+                requested_scopes={
+                    "files": [],
+                    "trees": [],
+                    "project_files": False,
+                    "backlog": False,
+                    "all_files": True,
+                    "file_domain": "all_files",
+                    "resources": [],
                     "scope_reason": "source migration",
                 },
             ),
@@ -793,6 +1259,10 @@ class AgentClaimTests(unittest.TestCase):
         self.assertEqual("port:3000", metrics["top_contention"]["resources"][0]["scope"])
         self.assertEqual(60.0, metrics["claim_duration_seconds"]["median"])
         self.assertEqual("source migration", metrics["broad_scopes"]["reasons"][0]["scope"])
+        self.assertEqual(
+            {"all_files": 1, "backlog": 1, "project_files": 1},
+            metrics["broad_scopes"]["file_domains"],
+        )
         self.assertEqual("merge:integration:main", metrics["integration_resources"][0]["scope"])
         self.assertEqual(1, metrics["journal_warning_count"])
         self.assertEqual(registry_before, self.registry_path().read_bytes() if self.registry_path().exists() else None)

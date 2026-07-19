@@ -137,3 +137,9 @@ Before reporting completion:
 - Confirm the underlying Type maps to one typed active folder after resolution.
 - Confirm an ordinary dependency or synthetic evaluation boundary was not misclassified as User Action Required.
 - Confirm the item can be understood without the chat history.
+
+## Claim Boundary
+
+Create and update backlog items from the primary worktree under a short backlog-domain claim. Commit the queue mutation and release that claim immediately. Do not combine backlog creation with a project-files implementation claim, and do not hold backlog ownership while delivery proceeds in an isolated worktree.
+
+When creation immediately authorizes delivery, record the ready item first, release the backlog claim, and then acquire a separate exact, tree, or project-files implementation claim. A later backlog claim records terminal evidence and archive movement after the delivery commit and verification exist.
