@@ -2260,16 +2260,79 @@ class BundleContentTests(unittest.TestCase):
             "Rationale:",
             "Placement audit:",
         )
-        successful_forbidden_markers = (
-            "Blocker:",
-            "Exact decision needed:",
-            "Approved path omitted.",
-            "Status: BLOCKED",
+        structured_field_prefix = (
+            r"(?:\A|[\r\n]+\s*|(?<=[.!?;])\s+)(?:[-*+]\s+)?"
         )
+        standalone_marker_suffix = r"(?=\s*(?:[.!;](?:\s|$)|$))"
+        chosen_path_label_pattern = (
+            r"(?:(?:approved|selected|chosen)[\s-]+"
+            r"(?:path|destination)|destination)"
+        )
+        recognized_structured_field_pattern = (
+            rf"(?:purpose|owner|lifecycle|consumers|mutability|"
+            rf"artifact[\s-]+kind|{chosen_path_label_pattern}|blocker|"
+            rf"exact[\s-]+decision(?:[\s-]+(?:needed|required))?|"
+            rf"rationale|placement[\s-]+audit|status)"
+        )
+        omission_value_pattern = (
+            r"(?:omitted|absent|unavailable|none|n/a|not[\s-]+"
+            r"(?:applicable|approved|selected|provided))"
+        )
+        complete_field_boundary_pattern = (
+            r"(?=(?:[ \t]*(?:[.;])?[ \t]*(?:[\r\n]|$)|"
+            r"(?:[ \t]*[.;][ \t]*|[ \t]+)(?:[-*+][ \t]+)?"
+            rf"{recognized_structured_field_pattern}[ \t]*:))"
+        )
+        complete_omission_pattern = (
+            rf"{omission_value_pattern}{complete_field_boundary_pattern}"
+        )
+        successful_forbidden_marker_patterns = (
+            (
+                "blocked",
+                re.compile(
+                    rf"(?:{structured_field_prefix}status\s*:\s*blocked\b|"
+                    rf"{structured_field_prefix}blocked"
+                    rf"{standalone_marker_suffix})",
+                    re.IGNORECASE,
+                ),
+            ),
+            (
+                "blocker",
+                re.compile(
+                    rf"{structured_field_prefix}blocker(?:\s*:|"
+                    rf"{standalone_marker_suffix})",
+                    re.IGNORECASE,
+                ),
+            ),
+            (
+                "exact decision",
+                re.compile(
+                    rf"{structured_field_prefix}exact[\s-]+decision[\s-]+"
+                    rf"(?:needed|required)(?:\s*:|{standalone_marker_suffix})",
+                    re.IGNORECASE,
+                ),
+            ),
+            (
+                "path omission",
+                re.compile(
+                    rf"{structured_field_prefix}{chosen_path_label_pattern}"
+                    rf"\s*(?::|-)?\s*(?:is\s+)?"
+                    rf"{complete_omission_pattern}",
+                    re.IGNORECASE,
+                ),
+            ),
+        )
+
+        def forbidden_success_marker_families(response: str) -> tuple[str, ...]:
+            return tuple(
+                marker_family
+                for marker_family, pattern in successful_forbidden_marker_patterns
+                if pattern.search(response)
+            )
+
         for marker in successful_required_markers:
             self.assertIn(marker, successful_response)
-        for marker in successful_forbidden_markers:
-            self.assertNotIn(marker, successful_response)
+        self.assertEqual((), forbidden_success_marker_families(successful_response))
 
         blocked_response = example_responses[1]
         blocked_required_markers = (
@@ -2281,9 +2344,366 @@ class BundleContentTests(unittest.TestCase):
             "Approved path omitted.",
             "Status: BLOCKED",
         )
+        selected_path_pattern = re.compile(
+            rf"\b{chosen_path_label_pattern}\s*:\s*"
+            rf"(?!{complete_omission_pattern})\S",
+            re.IGNORECASE,
+        )
+
         for marker in blocked_required_markers:
             self.assertIn(marker, blocked_response)
-        self.assertNotIn("Approved path:", blocked_response)
+        self.assertIsNone(selected_path_pattern.search(blocked_response))
+
+        successful_response_mutations = (
+            ("bare blocked", "\nBLOCKED"),
+            ("exact decision required", "\nExact decision required"),
+            (
+                "combined blocker markers",
+                "\nBLOCKED\nExact decision required",
+            ),
+            ("case-insensitive blocker", "\nblocker"),
+            ("exact decision needed", "\nEXACT DECISION NEEDED"),
+            ("approved path omission", "\napproved path: omitted"),
+            ("selected-path omission", "\nSelected-path omitted"),
+        )
+        for mutation, addition in successful_response_mutations:
+            with self.subTest(success_mutation=mutation):
+                self.assertNotEqual(
+                    (),
+                    forbidden_success_marker_families(
+                        successful_response + addition
+                    ),
+                )
+
+        structured_success_marker_mutations = (
+            ("start bare blocked", f"BLOCKED. {successful_response}"),
+            (
+                "folded blocker field",
+                f"{successful_response} Blocker: unresolved ownership.",
+            ),
+            (
+                "folded blocked status field",
+                f"{successful_response} Status: BLOCKED.",
+            ),
+            (
+                "markdown exact-decision field",
+                f"{successful_response}\n- Exact decision required",
+            ),
+            (
+                "folded path-omission field",
+                f"{successful_response} Selected path omitted.",
+            ),
+        )
+        for mutation, mutated_response in structured_success_marker_mutations:
+            with self.subTest(structured_success_mutation=mutation):
+                self.assertNotEqual(
+                    (),
+                    forbidden_success_marker_families(mutated_response),
+                )
+
+        benign_success_rationale_additions = (
+            ("resolved blocker", " The prior blocker was resolved."),
+            (
+                "completed exact decision",
+                " The exact decision required by the taxonomy has been made.",
+            ),
+        )
+        for rationale, addition in benign_success_rationale_additions:
+            with self.subTest(benign_success_rationale=rationale):
+                self.assertEqual(
+                    (),
+                    forbidden_success_marker_families(
+                        successful_response + addition
+                    ),
+                )
+
+        blocked_response_mutations = (
+            (
+                "approved path",
+                "\nApproved path: fixtures/client/compatibility.json",
+            ),
+            (
+                "selected path",
+                "\nSelected path: fixtures/client/compatibility.json",
+            ),
+            (
+                "destination",
+                "\nDestination: fixtures/client/compatibility.json",
+            ),
+            (
+                "approved destination",
+                "\nApproved destination: fixtures/client/compatibility.json",
+            ),
+            (
+                "selected destination",
+                "\nSelected destination: fixtures/client/compatibility.json",
+            ),
+        )
+        for mutation, addition in blocked_response_mutations:
+            with self.subTest(blocker_mutation=mutation):
+                self.assertIsNotNone(
+                    selected_path_pattern.search(blocked_response + addition)
+                )
+
+        chosen_path_aliases = (
+            "Approved path",
+            "Selected path",
+            "Chosen path",
+            "Destination",
+            "Approved destination",
+            "Selected destination",
+            "Chosen destination",
+        )
+        path_presentations = (
+            ("line", "\n"),
+            ("folded", " "),
+            ("markdown", "\n- "),
+        )
+        successful_path_field = (
+            "Approved path: docs/operations/deployment-rollback.md."
+        )
+        successful_path_replacement_formats = {
+            "line": "\n{label}: {value}.\n",
+            "folded": "{label}: {value}.",
+            "markdown": "\n- {label}: {value}\n",
+        }
+        self.assertEqual(1, successful_response.count(successful_path_field))
+
+        def replace_successful_path_field(
+            response: str,
+            presentation: str,
+            label: str,
+            value: str,
+        ) -> str:
+            replacement = successful_path_replacement_formats[
+                presentation
+            ].format(label=label, value=value)
+            return response.replace(successful_path_field, replacement, 1)
+
+        for presentation, prefix in path_presentations:
+            for chosen_path_alias in chosen_path_aliases:
+                with self.subTest(
+                    chosen_path_presentation=presentation,
+                    chosen_path_alias=chosen_path_alias,
+                ):
+                    self.assertIsNotNone(
+                        selected_path_pattern.search(
+                            f"{blocked_response}{prefix}{chosen_path_alias}: "
+                            "fixtures/client/compatibility.json"
+                        )
+                    )
+
+        sentinel_prefixed_paths = (
+            "none.md",
+            "unavailable/report.md",
+            "not-provided.json",
+            "omitted.md",
+            "absent/report.md",
+            "not-selected/result.md",
+            "na",
+            "n/a.md",
+        )
+        punctuation_continued_paths = (
+            "none. report.md",
+            "none. /report.md",
+            "unavailable; report.md",
+            "not provided; reports/output.md",
+            "not-provided. json",
+        )
+        recognized_name_continued_paths = (
+            "none. status-report.md",
+            "none. owner-report.md",
+            "none. rationale-report.md",
+            "none. placement-audit-report.md",
+            "none. purpose-report.md",
+            "none. artifact-kind-report.md",
+        )
+        real_path_values = (
+            sentinel_prefixed_paths
+            + punctuation_continued_paths
+            + recognized_name_continued_paths
+        )
+        for presentation, prefix in path_presentations:
+            for chosen_path_alias in chosen_path_aliases:
+                for real_path_value in real_path_values:
+                    with self.subTest(
+                        real_path_presentation=presentation,
+                        chosen_path_alias=chosen_path_alias,
+                        real_path_value=real_path_value,
+                    ):
+                        self.assertIsNotNone(
+                            selected_path_pattern.search(
+                                f"{blocked_response}{prefix}{chosen_path_alias}: "
+                                f"{real_path_value}"
+                            )
+                        )
+                        self.assertEqual(
+                            (),
+                            forbidden_success_marker_families(
+                                f"{successful_response}{prefix}"
+                                f"{chosen_path_alias}: {real_path_value}"
+                            ),
+                        )
+
+        omission_values = (
+            "omitted",
+            "absent",
+            "unavailable",
+            "none",
+            "n/a",
+            "not applicable",
+            "not approved",
+            "not selected",
+            "not provided",
+            "not-provided",
+        )
+        actual_success_real_paths = (
+            "na",
+            "n/a.md",
+            "omitted.md",
+            "none. report.md",
+            "none. status-report.md",
+        )
+        for presentation, _prefix in path_presentations:
+            for chosen_path_alias in chosen_path_aliases:
+                for actual_success_real_path in actual_success_real_paths:
+                    with self.subTest(
+                        actual_success_presentation=presentation,
+                        chosen_path_alias=chosen_path_alias,
+                        actual_success_real_path=actual_success_real_path,
+                    ):
+                        mutated_success = replace_successful_path_field(
+                            successful_response,
+                            presentation,
+                            chosen_path_alias,
+                            actual_success_real_path,
+                        )
+                        self.assertIsNotNone(
+                            selected_path_pattern.search(mutated_success)
+                        )
+                        self.assertEqual(
+                            (),
+                            forbidden_success_marker_families(mutated_success),
+                        )
+
+                for actual_success_omission in omission_values:
+                    with self.subTest(
+                        actual_success_presentation=presentation,
+                        chosen_path_alias=chosen_path_alias,
+                        actual_success_omission=actual_success_omission,
+                    ):
+                        mutated_success = replace_successful_path_field(
+                            successful_response,
+                            presentation,
+                            chosen_path_alias,
+                            actual_success_omission,
+                        )
+                        self.assertIsNone(
+                            selected_path_pattern.search(mutated_success)
+                        )
+                        self.assertIn(
+                            "path omission",
+                            forbidden_success_marker_families(mutated_success),
+                        )
+
+        for presentation, prefix in path_presentations:
+            for chosen_path_alias in chosen_path_aliases:
+                for omission_value in omission_values:
+                    for terminal_punctuation in ("", ".", ";"):
+                        with self.subTest(
+                            omission_presentation=presentation,
+                            chosen_path_alias=chosen_path_alias,
+                            omission_value=omission_value,
+                            terminal_punctuation=terminal_punctuation,
+                        ):
+                            omission_field = (
+                                f"{prefix}{chosen_path_alias}: {omission_value}"
+                                f"{terminal_punctuation}"
+                            )
+                            self.assertIsNone(
+                                selected_path_pattern.search(
+                                    blocked_response + omission_field
+                                )
+                            )
+                            self.assertIn(
+                                "path omission",
+                                forbidden_success_marker_families(
+                                    successful_response + omission_field
+                                ),
+                            )
+
+        recognized_folded_fields = (
+            "Purpose: test fixture",
+            "Owner: repository maintainers",
+            "Lifecycle: maintained",
+            "Consumers: bundle tests",
+            "Mutability: source-controlled",
+            "Artifact kind: test fixture",
+            "Approved path: omitted",
+            "Selected path: not applicable",
+            "Chosen path: not approved",
+            "Destination: unavailable",
+            "Approved destination: none",
+            "Selected destination: not selected",
+            "Chosen destination: not provided",
+            "Blocker: unresolved ownership",
+            "Exact decision needed: select one owner",
+            "Rationale: taxonomy is ambiguous",
+            "Placement audit: no file created",
+            "Status: BLOCKED",
+        )
+        for omission_value in omission_values:
+            for folded_field in recognized_folded_fields:
+                for folded_separator in (" ", ". ", "; "):
+                    for markdown_marker in ("", "- "):
+                        with self.subTest(
+                            folded_omission_value=omission_value,
+                            recognized_folded_field=folded_field,
+                            folded_separator=folded_separator,
+                            markdown_marker=markdown_marker,
+                        ):
+                            folded_omission = (
+                                f" Selected path: {omission_value}"
+                                f"{folded_separator}{markdown_marker}"
+                                f"{folded_field}"
+                            )
+                            self.assertIsNone(
+                                selected_path_pattern.search(
+                                    blocked_response + folded_omission
+                                )
+                            )
+                            self.assertIn(
+                                "path omission",
+                                forbidden_success_marker_families(
+                                    successful_response + folded_omission
+                                ),
+                            )
+
+        unknown_folded_field_continuations = (
+            "none. Notes: report.md",
+            "none. Status report: report.md",
+        )
+        for presentation, prefix in path_presentations:
+            for chosen_path_alias in chosen_path_aliases:
+                for unknown_continuation in unknown_folded_field_continuations:
+                    with self.subTest(
+                        unknown_field_presentation=presentation,
+                        chosen_path_alias=chosen_path_alias,
+                        unknown_continuation=unknown_continuation,
+                    ):
+                        self.assertIsNotNone(
+                            selected_path_pattern.search(
+                                f"{blocked_response}{prefix}"
+                                f"{chosen_path_alias}: {unknown_continuation}"
+                            )
+                        )
+                        self.assertEqual(
+                            (),
+                            forbidden_success_marker_families(
+                                f"{successful_response}{prefix}"
+                                f"{chosen_path_alias}: {unknown_continuation}"
+                            ),
+                        )
 
         classification_instruction = (
             "Explicitly state the artifact purpose, owner, lifecycle, consumers, "
