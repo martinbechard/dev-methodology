@@ -12,7 +12,7 @@
         {
           "name": "dev-backlog-steward",
           "output": "generated/adapters/claude/agents/dev-backlog-steward.md",
-          "sha256": "d1182076d5493200ee3dfcaf01f47f2384b7dc7d7a674465f7c2d6db892d6fb9",
+          "sha256": "b31f3444dff04e4589ee6e8704d4aeb1f9228392b16d5faf94ea69573e016152",
           "source": "agents/roles/dev-activities/dev-backlog-steward.role.yaml"
         },
         {
@@ -176,7 +176,7 @@
         {
           "name": "dev-backlog-steward",
           "output": "generated/adapters/codex/agents/dev-backlog-steward.toml",
-          "sha256": "9a51fbcc26950616d05b8e5790447886de751572a93b588a3821c0cbb86f2a73",
+          "sha256": "2532d6c3f9d1be133f2bffa2accdc72cd4970932c153fafdd375f3feb6905f81",
           "source": "agents/roles/dev-activities/dev-backlog-steward.role.yaml"
         },
         {
@@ -346,7 +346,7 @@
         {
           "name": "dev-backlog-steward",
           "output": "generated/adapters/gemini/agents/dev-backlog-steward.md",
-          "sha256": "eb8abc814ea59b0564e09ff7ea11b521ff3ac8fd9ce15e39bc0961ae08e0a5b7",
+          "sha256": "d32bf6c295a73b44551a2c329f79bb63a119498e9c7084689e82bf86a958492f",
           "source": "agents/roles/dev-activities/dev-backlog-steward.role.yaml"
         },
         {
@@ -510,7 +510,7 @@
         {
           "name": "dev-backlog-steward",
           "output": "generated/adapters/junie/agents/dev-backlog-steward.md",
-          "sha256": "9eb32109860b57f3b7c268ed5e59243bf3b5d29c19b9c35cc442b414c19b8ec1",
+          "sha256": "09c14c26e45abcb2a3ad8905df5e9068164a2854d170cd2a4d86a0549fd218a0",
           "source": "agents/roles/dev-activities/dev-backlog-steward.role.yaml"
         },
         {

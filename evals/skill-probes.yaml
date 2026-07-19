@@ -266,9 +266,9 @@ probes:
     source: skills/create-backlog/SKILL.md
     evaluationCategory: development-practice
     evaluationKind: artifact-contract
-    activationCondition: A request, defect, feature, analysis, or investigation must become a durable dispatchable backlog item.
-    negativeCondition: Completed or failed archive folders never receive newly proposed work, and one coherent outcome is not split needlessly.
-    expectedBehavior: Classify the outcome, choose the typed folder and stable slug, avoid duplicates, and write self-contained context, requirements, acceptance criteria, dependencies, and verification.
+    activationCondition: A requested or independently identified defect, feature, analysis, or investigation must become a durable backlog item.
+    negativeCondition: Completed or failed archive folders never receive newly created work, independently identified unauthorized ideas never enter a dispatchable typed queue, and one coherent outcome is not split needlessly.
+    expectedBehavior: Classify the outcome and authority, create directly authorized work as Ready in its typed folder, route independently identified unauthorized ideas to User Action Required with one approval question, avoid duplicates, and preserve context, requirements, acceptance criteria, dependencies, and verification.
     judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, queue-state-transition], modelRubric: null}
     scenarioAssociations: [dev-backlog-steward-happy, dev-backlog-steward-boundary]
     workflowAssociations: [backlog]

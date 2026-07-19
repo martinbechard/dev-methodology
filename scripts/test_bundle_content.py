@@ -126,6 +126,28 @@ NEW_DEVELOPMENT_SKILLS = (
     "jhipster-security",
     "sql",
 )
+
+
+def resolve_primary_repository_root() -> Path:
+    common_dir_text = subprocess.run(
+        ["git", "rev-parse", "--git-common-dir"],
+        cwd=REPOSITORY_ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+    common_dir = Path(common_dir_text)
+    if not common_dir.is_absolute():
+        common_dir = (REPOSITORY_ROOT / common_dir).resolve()
+    primary_root = common_dir.parent
+    backlog_root = primary_root / "backlog"
+    if not backlog_root.is_dir():
+        raise AssertionError(
+            f"Canonical primary backlog is inaccessible: {backlog_root}"
+        )
+    return primary_root
+
+
 PROJECT_CONFIGURATION_SKILL = "create-project-configuration"
 PROJECT_TEMPLATE = "project-template.yaml"
 PROJECT_ARTIFACT = "PROJECT.yaml"
@@ -2146,7 +2168,8 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(guidance=guidance):
                 self.assertIn(guidance, skill_text)
 
-    def test_backlog_skills_separate_user_review_from_dispatchable_work(self) -> None:
+    def test_backlog_skills_separate_user_action_required_from_dispatchable_work(self) -> None:
+        primary_root = resolve_primary_repository_root()
         create_text = (SKILLS_ROOT / "create-backlog" / "SKILL.md").read_text(
             encoding="utf-8"
         )
@@ -2159,45 +2182,138 @@ class BundleContentTests(unittest.TestCase):
             ("manage-backlog", manage_text),
         ):
             with self.subTest(skill=skill_name):
-                self.assertIn("backlog/user-review", skill_text)
-                self.assertNotIn("docs/user-review", skill_text)
-                self.assertIn("user review", skill_text.lower())
+                self.assertIn("backlog/user-action-required", skill_text)
+                self.assertNotIn("docs/user-action-required", skill_text)
+                self.assertIn("user action required", skill_text.lower())
 
         for required_guidance in (
-            "User Review Required",
+            "User Action Required",
             "Question for the User",
             "Why User Input Is Required",
-            "Do not place an item in backlog/user-review merely because",
+            "Do not place an item in backlog/user-action-required merely because",
             "synthetic evaluation boundary",
         ):
             with self.subTest(create_guidance=required_guidance):
                 self.assertIn(required_guidance, create_text)
 
         for required_guidance in (
-            "Do not claim, dispatch, implement, or resolve user-review work",
+            "Do not claim, dispatch, implement, or resolve user-action-required work",
             "Ask the user the exact question recorded in the item",
             "Move an approved or answered item into its typed active backlog folder",
+            "set Status: Ready before any separately requested claim or running transition",
             "backlog/holding is for intentionally deferred work",
         ):
             with self.subTest(manage_guidance=required_guidance):
                 self.assertIn(required_guidance, manage_text)
+        self.assertNotIn("set its active status according to project convention", manage_text)
 
-        user_review_root = REPOSITORY_ROOT / "backlog" / "user-review"
-        queue_readme = user_review_root / "README.md"
-        classification_item = user_review_root / "classify-agent-suite-blocking-resources.md"
+        user_action_required_root = primary_root / "backlog" / "user-action-required"
+        queue_readme = user_action_required_root / "README.md"
+        classification_item = (
+            primary_root
+            / "backlog"
+            / "analysis-backlog"
+            / "classify-agent-suite-blocking-resources.md"
+        )
         self.assertTrue(queue_readme.is_file())
         self.assertTrue(classification_item.is_file())
+        queue_text = queue_readme.read_text(encoding="utf-8")
+        for required_queue_contract in (
+            "# User Action Required Queue",
+            "Status: User Action Required",
+            "README.md is queue guidance and is not a backlog item.",
+        ):
+            with self.subTest(queue_contract=required_queue_contract):
+                self.assertIn(required_queue_contract, queue_text)
         classification_text = classification_item.read_text(encoding="utf-8")
         for required_item_contract in (
-            "Status: User Review",
+            "Status: Running",
             "Type: Analysis",
-            "## User Review Required",
+            "## User Action Required",
             "### Question for the User",
             "### Why User Input Is Required",
             "### Resolution",
+            "Resolved 2026-07-19.",
+            "Which blocked categories should become real follow-up backlog work: test infrastructure limitations only, selected authority or evidence gaps, all categories, or none?",
         ):
             with self.subTest(item_contract=required_item_contract):
                 self.assertIn(required_item_contract, classification_text)
+
+    def test_user_action_required_migration_has_no_stale_canonical_references(self) -> None:
+        primary_root = resolve_primary_repository_root()
+        tracked = subprocess.run(
+            ["git", "ls-files", "-z"],
+            cwd=primary_root,
+            check=True,
+            capture_output=True,
+        ).stdout.decode("utf-8").split("\0")
+        historical_name = "rename-user-review-state-for-clarity.md"
+        stale_path = "backlog/" + "user-review"
+        stale_status = "Status: User" + " Review"
+        stale_references: list[str] = []
+
+        for relative_path in filter(None, tracked):
+            path = primary_root / relative_path
+            if not path.is_file():
+                continue
+            if relative_path.startswith("legacy_procedures/") or path.name == historical_name:
+                continue
+            try:
+                text = path.read_text(encoding="utf-8")
+            except UnicodeDecodeError:
+                continue
+            if stale_path in text or stale_status in text:
+                stale_references.append(relative_path)
+
+        self.assertEqual([], stale_references)
+
+    def test_active_typed_backlog_has_no_proposed_status(self) -> None:
+        primary_root = resolve_primary_repository_root()
+        active_roots = (
+            primary_root / "backlog" / "defect-backlog",
+            primary_root / "backlog" / "feature-backlog",
+            primary_root / "backlog" / "analysis-backlog",
+            primary_root / "backlog" / "investigation-backlog",
+        )
+        existing_roots = tuple(root for root in active_roots if root.is_dir())
+        self.assertTrue(existing_roots, "No canonical active typed backlog is accessible")
+        stale_status = "Status: " + "Proposed"
+        proposed_items = [
+            str(path.relative_to(primary_root))
+            for root in existing_roots
+            for path in root.rglob("*.md")
+            if path.name != "index.md"
+            and stale_status in path.read_text(encoding="utf-8")
+        ]
+
+        self.assertEqual([], proposed_items)
+
+    def test_backlog_regressions_resolve_the_canonical_primary_worktree(self) -> None:
+        primary_root = resolve_primary_repository_root()
+        tracked_backlog = subprocess.run(
+            ["git", "ls-files", "backlog"],
+            cwd=primary_root,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.splitlines()
+
+        self.assertTrue(tracked_backlog, "Canonical primary backlog has no tracked inputs")
+        self.assertTrue(all((primary_root / path).is_file() for path in tracked_backlog))
+
+    def test_answered_user_action_enters_ready_before_claiming(self) -> None:
+        manage_text = (SKILLS_ROOT / "manage-backlog" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn(
+            "set Status: Ready before any separately requested claim or running transition",
+            manage_text,
+        )
+        self.assertNotIn(
+            "set its active status according to project convention",
+            manage_text,
+        )
 
     def test_skill_names_follow_category_naming_rules(self) -> None:
         build_skill_docs = load_build_skill_docs_module()
