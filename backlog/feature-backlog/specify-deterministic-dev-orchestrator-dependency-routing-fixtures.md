@@ -1,6 +1,6 @@
 # Specify Deterministic Dev Orchestrator Dependency Routing Fixtures
 
-Status: Running
+Status: Blocked
 
 Type: Feature
 
@@ -11,6 +11,18 @@ Type: Feature
 - Lifecycle claim: deterministic-dev-orchestrator-routing-start.
 - Claim evidence: PRIMARY exact-file backlog ownership acquired at 2026-07-19T11:51:35.871715Z from clean baseline commit ee278e2f7e17f8f8c6b22bd44531111edaab859a.
 - Scope boundary: this claim owns only the Running transition and is released after its clean commit. Evaluation fixtures, runner source, tests, generated outputs, verification, and integration remain gated on a later ARTIFACT GO.
+
+## Blocked Evidence
+
+- The accepted runbook contribution is preserved at commit 0e82042c4a9111cbd0ab4e33613bb00d39ef6326.
+- The source contribution and its two bounded correction attempts are preserved at commits 7535a9b9c0ab42c1e78ef0c8cfb16f7e24e6e4dd, 78a0ce5ab5dfefde118d37691a80ba446fef5ac1, and 118939e52f2d68081eba5be091357fa244a2ec37.
+- The bounded two-correction loop is exhausted.
+- The terminal fresh review found that linked-worktree Git common-directory and claim-journal containment remains incomplete, malformed checkpoint receipts can escape bounded diagnostics, and producer invocation aliases are normalized instead of matched literally.
+- No contribution integration, live suite, Judge evaluation, or terminal success occurred.
+
+## Unblock Condition
+
+Resume only after the parent Dev Orchestrator issues a fresh ARTIFACT RESUME or ARTIFACT GO that names this item and explicitly authorizes a new evaluation/test-only correction cycle for all three terminal review findings. Resource availability, the preserved branches, general repository authority, or the prior exhausted correction loop do not authorize resumption.
 
 ## Summary
 
