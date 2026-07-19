@@ -147,7 +147,13 @@ def _local_backlog_dependency_slug(
         parsed = urlsplit(target)
     except ValueError:
         return None
-    if parsed.scheme or parsed.netloc or any(character.isspace() for character in target):
+    if (
+        parsed.scheme
+        or parsed.netloc
+        or parsed.query
+        or parsed.fragment
+        or any(character.isspace() for character in target)
+    ):
         return None
     target_path = Path(parsed.path)
     if target_path.is_absolute() or target_path.suffix != ".md":

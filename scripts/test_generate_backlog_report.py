@@ -323,9 +323,7 @@ Do not implement.
             status="Completed",
             item_type="Feature",
         )
-        dependency = (
-            "[Base](../completed-backlog/features/base.md?view=full#approval)"
-        )
+        dependency = "[Base](../completed-backlog/features/base.md)"
         self.write_item(
             "backlog/feature-backlog/local-link.md",
             title="Local Link",
@@ -341,6 +339,41 @@ Do not implement.
         runnable = rendered[rendered.index("Runnable Work"):rendered.index("Blocked Work")]
         self.assertIn("Local Link", runnable)
         self.assertNotIn(dependency, rendered)
+
+    def test_local_markdown_links_with_query_or_fragment_remain_manual(self) -> None:
+        """Qualified local links remain complete manual prerequisites despite matching stems."""
+        self.write_item(
+            "backlog/completed-backlog/features/base.md",
+            title="Base",
+            status="Completed",
+            item_type="Feature",
+        )
+        dependencies = {
+            "Query Link": "[Base](../completed-backlog/features/base.md?view=full)",
+            "Fragment Link": "[Base](../completed-backlog/features/base.md#approval)",
+        }
+        for title, dependency in dependencies.items():
+            self.write_item(
+                f"backlog/feature-backlog/{title.lower().replace(' ', '-')}.md",
+                title=title,
+                status="Ready",
+                item_type="Feature",
+                dependencies=f"- {dependency}",
+            )
+
+        rendered = self.generate()
+
+        self.assertIn("<span>Runnable now</span><strong>0</strong>", rendered)
+        runnable = rendered[rendered.index("Runnable Work"):rendered.index("Blocked Work")]
+        for title, dependency in dependencies.items():
+            with self.subTest(dependency=dependency):
+                self.assertIn(f"{dependency} (unmet)", rendered)
+                self.assertIn(
+                    f"External prerequisite requires manual satisfaction: {dependency}",
+                    rendered,
+                )
+                self.assertNotIn(title, runnable)
+        self.assertNotIn("base (satisfied)", rendered)
 
     def test_lifecycle_and_metadata_anomalies_are_visible(self) -> None:
         """Invalid states and archive or dependency drift remain visible without source mutation."""
