@@ -1,6 +1,6 @@
 # Automate Bounded-Parallel Agent Test Reporting
 
-Status: Proposed
+Status: Running
 
 Type: Feature
 
