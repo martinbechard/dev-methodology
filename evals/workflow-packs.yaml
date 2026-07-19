@@ -415,6 +415,9 @@ packs:
         - task-identity-fields
         - delayed-visibility-settlement
         - duplicate-containment
+        - suite-simulator-tests
+        - continuous-lane-routing
+        - fifteen-minute-wake-audit
       modelRubric: workflow-quality
     sandboxProfiles:
       codex:

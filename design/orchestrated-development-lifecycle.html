@@ -851,6 +851,13 @@
           <p>Archive only after the terminal backlog disposition, required commit or no-change evidence, review and verification or truthful blocker evidence, clean released claims and worktrees, and every wake obligation are durable. <code>Inactive thread archive did not persist</code> is an ambiguous no-persist result: reconcile once, record it, and do not claim archival or retry blindly.</p>
         </div>
       </div>
+
+      <div class="protocol-boundary">
+        <strong>Fifteen-minute parent wake-obligation audit</strong>
+        <p>The parent ledger persists the predecessor or source task id, successor task id, required baton evidence, notification state, and acknowledgement state. Every fifteen minutes while coordination is active, the parent checks for a released predecessor whose evidence was not delivered or whose successor did not acknowledge it. The successor never polls. The parent repairs the evidence-bearing baton, sends <code>ARTIFACT RESUME</code> to the canonical successor, and records acknowledgement.</p>
+        <p>The deterministic coordination fixture preserves this successor chain: Codex coordination <code>019f77f4-c4bd-7c91-b197-c987a7beb838</code> <span aria-hidden="true">&rarr;</span> review quotation traceability <code>019f7a45-a697-7d80-9744-a06c8d22d69a</code> <span aria-hidden="true">&rarr;</span> Wiki Research <code>019f7a45-9c77-79c1-9c68-35cf6cb9f710</code> <span aria-hidden="true">&rarr;</span> Hibernate/Panache <code>019f7a73-53f1-7b12-9f66-c4aebe6bab2e</code> <span aria-hidden="true">&rarr;</span> MySQL <code>019f79e6-25ef-7b51-ab3c-39fce2656db4</code>. The Wiki Research obligation proves release detection, missing delivery and acknowledgement, parent repair, and zero successor polling.</p>
+        <p>After every terminal gate is durable, <code>Done — X</code> is the exact successful display title. It still does not replace delivery, lifecycle, claim-release, or archival evidence.</p>
+      </div>
     </figure>
 
     <div class="sequence-stack" aria-label="Claim and worktree communication sequences">
@@ -912,7 +919,7 @@
       </figure>
     </div>
 
-    <p class="source-note">Implementation sources: <a href="../skills/codex-workitem-coordination/SKILL.md">Codex Work-Item Coordination</a>, <a href="../skills/agent-claim/SKILL.md">Agent Claim workflow</a>, <a href="../skills/agent-claim/scripts/claim.py">claim engine</a>, <a href="../scripts/test_agent_claim.py">focused claim tests</a>, <a href="../README.md#agent-claims-and-worktrees">operator guidance</a>, and the <a href="agent-and-skill-definitions.html#dev-activities-title">generated development-agent catalog</a>.</p>
+    <p class="source-note">Implementation sources: <a href="../skills/codex-workitem-coordination/SKILL.md">Codex Work-Item Coordination</a>, <a href="../skills/agent-claim/SKILL.md">Agent Claim workflow</a>, <a href="../skills/agent-claim/scripts/claim.py">claim engine</a>, <a href="../scripts/test_agent_claim.py">focused claim tests</a>, the <a href="../evals/agent-tests/dev-backlog-coordinator/coordination_simulator.py">deterministic coordination simulator</a> and <a href="../evals/agent-tests/dev-backlog-coordinator/test_coordination_simulator.py">focused simulator tests</a>, <a href="../README.md#agent-claims-and-worktrees">operator guidance</a>, and the <a href="agent-and-skill-definitions.html#dev-activities-title">generated development-agent catalog</a>.</p>
   </section>
 
   <section class="section" aria-labelledby="planned-design-title">

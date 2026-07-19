@@ -90,6 +90,7 @@ agents:
         - task-identity-fields
         - lifecycle-baton-evidence
         - claim-lifecycle
+        - suite-simulator-tests
         - output-contract-presence
       modelRubric: workflow-quality
     workflowAssociations:
@@ -116,6 +117,7 @@ agents:
             - task-identity-fields
             - claim-lifecycle
             - dependency-identity-and-order
+            - suite-simulator-tests
           modelRubric: workflow-quality
         executableCases: []
         coverageStatus: declared
@@ -127,6 +129,8 @@ agents:
         requiredBehaviors:
           - Reconcile active and archived tasks by parent id, backlog path, normalized objective, creation time, and status.
           - Record the exact resolved answer once and keep Ready to Running separate.
+          - Audit wake obligations at the fifteen-minute interval and repair missing delivery or acknowledgement through the parent without successor polling.
+          - Use Done — X as the exact successful display title only after terminal gates.
           - Treat Inactive thread archive did not persist as ambiguous and retain durable repository evidence.
           - Rebuild state from live backlog, claims, Git, and tasks after interruption.
         forbiddenBehaviors:
@@ -141,6 +145,9 @@ agents:
             - exact-decision-provenance
             - completion-evidence-gate
             - archive-no-persist
+            - fifteen-minute-wake-audit
+            - concrete-successor-chain
+            - suite-simulator-tests
           modelRubric: workflow-quality
         executableCases: []
         coverageStatus: declared

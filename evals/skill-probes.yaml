@@ -73,7 +73,7 @@ probes:
     activationCondition: A parent Codex coordinator is explicitly asked to coordinate multiple user-visible backlog tasks through lifecycle batons, claims, wakes, and terminal housekeeping.
     negativeCondition: One self-contained task or a parked preflight that cannot enter its current lifecycle or artifact window does not start a coordination campaign.
     expectedBehavior: Reconcile canonical task identities and live repository state, serialize primary backlog mutations, coordinate just-in-time non-overlapping artifact campaigns with parent-only wakes and adaptive backoff, and close only from durable review verification integration release lifecycle and housekeeping evidence.
-    judgePlan: {deterministicChecks: [skill-read-trace, phase-order, lifecycle-baton-evidence, task-identity-fields, delayed-visibility-settlement, retry-limit, duplicate-containment, canonical-id-persistence, just-in-time-dispatch, completion-evidence-gate, archive-eligibility], modelRubric: workflow-quality}
+    judgePlan: {deterministicChecks: [skill-read-trace, suite-simulator-tests, phase-order, lifecycle-baton-evidence, task-identity-fields, delayed-visibility-settlement, settled-zero-retry, retry-limit, duplicate-containment, canonical-id-persistence, done-success-title, just-in-time-dispatch, fifteen-minute-wake-audit, concrete-successor-chain, completion-evidence-gate, archive-eligibility], modelRubric: workflow-quality}
     scenarioAssociations: [dev-backlog-coordinator-happy, dev-backlog-coordinator-boundary]
     workflowAssociations: [backlog]
     executableCases: []

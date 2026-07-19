@@ -7,6 +7,9 @@ cases:
     healthyScaling: {startingFloor: 3, increment: 1}
     namedResources: [generator, browser, verification, integration, claim contention]
     finalCatalogRun: after-accepted-fixes-integrate
+    expectedInitialActiveCampaigns: 3
+    expectedHealthyIncrement: 1
+    finishedLaneDestination: independent review
   ambiguous-dispatch-and-just-in-time-resume:
     parentTaskId: parent-123
     canonicalBacklogPath: backlog/feature-backlog/example.md
@@ -18,6 +21,8 @@ cases:
     titles: [Preflight work item, Generic old title]
     archivedMatchPresent: true
     maximumRetryCount: 1
+    expectedRetryCount: 0
+    duplicateContainment: [stop, verify stopped and no mutation, archive when supported]
   decision-resolution-and-terminal-integrity:
     userAnswer: approved
     provenance: thread:synthetic/message:approval
@@ -29,3 +34,11 @@ cases:
     releasedClaims: false
     terminalBacklogEvidence: false
     archiveOutcome: Inactive thread archive did not persist
+    successTitle: Done — Codex work-item coordination
+    wakeAuditIntervalMinutes: 15
+    successorChain:
+      - {label: Codex coordination, id: 019f77f4-c4bd-7c91-b197-c987a7beb838}
+      - {label: review quotation traceability, id: 019f7a45-a697-7d80-9744-a06c8d22d69a}
+      - {label: Wiki Research, id: 019f7a45-9c77-79c1-9c68-35cf6cb9f710}
+      - {label: Hibernate/Panache, id: 019f7a73-53f1-7b12-9f66-c4aebe6bab2e}
+      - {label: MySQL, id: 019f79e6-25ef-7b51-ab3c-39fce2656db4}

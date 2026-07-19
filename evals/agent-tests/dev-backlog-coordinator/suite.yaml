@@ -23,6 +23,8 @@ execution:
   nestedAgentLimit: 1
   nestedAgentConcurrency: 1
   scenarioCatalog: scenarios.yaml
+  deterministicSimulator: coordination_simulator.py
+  deterministicTests: test_coordination_simulator.py
   supervisorInvocation: dev_backlog_coordinator_suite_supervisor
   targetInvocation: dev_backlog_coordinator
   judgeInvocation: dev_backlog_coordinator_suite_judge
