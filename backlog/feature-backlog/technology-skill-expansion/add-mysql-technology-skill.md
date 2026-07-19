@@ -1,6 +1,6 @@
 # Add The MySQL Technology Skill
 
-Status: Ready
+Status: Running
 
 Type: Feature
 
@@ -11,7 +11,16 @@ Type: Feature
 - Approved governed scope: create only skills/mysql/SKILL.md and skills/mysql/agents/openai.yaml.
 - Associated ordinary scope: the detection metadata, tests, documentation, and supported generated catalog mirrors already specified by this item and its read-only preflight.
 - Exclusions: no agent-role definition change, replacement of the general SQL skill, installation, or expansion to another governed definition is authorized.
-- Lifecycle boundary: this approval record keeps the item Ready. Running ownership and later project-artifact work require their own separate lifecycle and ARTIFACT GO authority.
+- Lifecycle boundary: the approval-record transaction kept the item Ready. Running ownership and later project-artifact work require their own separate lifecycle and ARTIFACT GO authority.
+
+## Running Ownership
+
+- Owner: Dev Orchestrator root task 019f77f4-c4bd-7c91-b197-c987a7beb838.
+- Canonical task: 019f79e6-25ef-7b51-ab3c-39fce2656db4.
+- Lifecycle agent: Dev Backlog Steward.
+- Lifecycle claim: add-mysql-technology-skill-start.
+- Claim evidence: PRIMARY exact-file backlog ownership acquired at 2026-07-19T18:50:56.342798Z from clean baseline commit f8b9ee0c870bb2afc312b64ba0741633b0d0ea4b.
+- Scope boundary: this claim owns only the Running transition and is released after its clean commit. Skill definitions, detection metadata, tests, documentation, generated catalog mirrors, verification, integration, installation, and backlog completion remain gated on a later parent-issued ARTIFACT GO.
 
 ## Summary
 
