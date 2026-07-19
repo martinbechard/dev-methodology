@@ -2630,21 +2630,51 @@ def _behavior_regression_evidence_for_reference(
         value = json.loads(target.read_text(encoding="utf-8"))
     except (UnicodeDecodeError, json.JSONDecodeError) as error:
         raise ValueError("behavior regression evidence reference must contain JSON") from error
+    matches: list[Mapping[str, object]] = []
     if isinstance(value, Mapping) and value.get("id") == marker:
-        return value
+        matches.append(value)
     cases = value.get("cases") if isinstance(value, Mapping) else None
     if isinstance(cases, list):
         for item in cases:
             if isinstance(item, Mapping) and item.get("id") == marker:
-                return item
-    raise ValueError(f"behavior regression evidence marker does not identify a case: {marker}")
+                matches.append(item)
+    if not matches:
+        raise ValueError(f"behavior regression evidence marker does not identify a case: {marker}")
+    if len(matches) != 1:
+        raise ValueError(f"behavior regression evidence marker identifies multiple cases: {marker}")
+    return matches[0]
+
+
+def _behavior_command_records_by_phase(
+    commands: object,
+    evidence_path: Path,
+    findings: list[str],
+) -> dict[str, list[Mapping[str, object]]]:
+    """Index every contained structured command record by its evidence marker."""
+
+    records_by_phase: dict[str, list[Mapping[str, object]]] = {
+        phase: [] for phase in _BEHAVIOR_REGRESSION_PHASES
+    }
+    if not isinstance(commands, list) or not commands:
+        findings.append("behavior regression command records must be a non-empty list")
+        return records_by_phase
+    for record in commands:
+        if not isinstance(record, Mapping):
+            continue
+        try:
+            _target, marker = _resolve_evidence_reference(record.get("evidence"), evidence_path)
+        except ValueError:
+            continue
+        if marker in records_by_phase:
+            records_by_phase[marker].append(record)
+    return records_by_phase
 
 
 def _behavior_command_exit_code(
     reference: object,
     phase: str,
     expected_green: bool,
-    commands: Sequence[object],
+    records_by_phase: Mapping[str, Sequence[Mapping[str, object]]],
     evidence_path: Path,
     findings: list[str],
 ) -> int | None:
@@ -2664,18 +2694,21 @@ def _behavior_command_exit_code(
         return None
     if marker != phase:
         findings.append(f"behavior regression command evidence marker must match phase: {phase}")
-    matches = [
-        item
-        for item in commands
-        if isinstance(item, Mapping) and item.get("evidence") == reference
-    ]
+    matches = list(records_by_phase.get(phase, ()))
     if not matches:
         findings.append(f"behavior regression command record is unresolved: {phase}")
         return None
     if len(matches) != 1:
-        findings.append(f"behavior regression command record is duplicated: {phase}")
+        references = {item.get("evidence") for item in matches}
+        if len(references) == 1:
+            findings.append(f"behavior regression command record is duplicated: {phase}")
+        else:
+            findings.append(f"behavior regression command record is ambiguous for phase: {phase}")
         return None
     record = matches[0]
+    if record.get("evidence") != reference:
+        findings.append(f"behavior regression command record is unresolved: {phase}")
+        return None
     try:
         command_spec(record.get("argv", record.get("command")))
     except ValueError as error:
@@ -2725,11 +2758,11 @@ def _classify_behavior_regression_evidence(
         findings.append(f"behavior regression transitions are missing phases: {', '.join(missing)}")
     if unexpected:
         findings.append(f"behavior regression transitions contain unexpected phases: {', '.join(unexpected)}")
-    if not isinstance(commands, list) or not commands:
-        findings.append("behavior regression command records must be a non-empty list")
-        command_records: Sequence[object] = ()
-    else:
-        command_records = commands
+    records_by_phase = _behavior_command_records_by_phase(
+        commands,
+        evidence_path,
+        findings,
+    )
     for phase, expected_green in _BEHAVIOR_REGRESSION_PHASES.items():
         transition = by_phase.get(phase)
         if transition is None:
@@ -2738,13 +2771,11 @@ def _classify_behavior_regression_evidence(
         if not isinstance(transition_exit_code, int) or isinstance(transition_exit_code, bool):
             findings.append(f"behavior regression transition exitCode must be an integer: {phase}")
             transition_exit_code = None
-        if not command_records:
-            continue
         command_exit_code = _behavior_command_exit_code(
             transition.get("evidence"),
             phase,
             expected_green,
-            command_records,
+            records_by_phase,
             evidence_path,
             findings,
         )

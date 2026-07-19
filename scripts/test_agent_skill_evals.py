@@ -1002,6 +1002,11 @@ class EvidenceVersionTwoTests(unittest.TestCase):
             "behavior-removed-red",
             "restored-green",
         )
+        if (
+            len(transition_exit_codes) != len(phases)
+            or len(command_exit_codes) != len(phases)
+        ):
+            raise ValueError("behavior regression fixtures require one exit code per phase")
         case = dict(self.case)
         case["judgePlan"] = {
             "deterministicChecks": [
@@ -1028,7 +1033,7 @@ class EvidenceVersionTwoTests(unittest.TestCase):
                     "exitCode": exit_code,
                     "evidence": f"behavior-commands.log#{phase}",
                 }
-                for phase, exit_code in zip(phases, transition_exit_codes, strict=True)
+                for phase, exit_code in zip(phases, transition_exit_codes)
             ],
         }
         receipt["commands"].extend(
@@ -1038,7 +1043,7 @@ class EvidenceVersionTwoTests(unittest.TestCase):
                 "expectation": "success" if exit_code == 0 else "expected-failure",
                 "evidence": f"behavior-commands.log#{phase}",
             }
-            for phase, exit_code in zip(phases, command_exit_codes, strict=True)
+            for phase, exit_code in zip(phases, command_exit_codes)
         )
         files = {
             "behavior.json": json.dumps(behavior),
@@ -1096,6 +1101,46 @@ class EvidenceVersionTwoTests(unittest.TestCase):
 
         self.assertTrue(any(
             "exitCode conflicts with retained command record" in error
+            for error in classification.errors
+        ))
+        self.assertFalse(classification.judge_passed)
+
+    def test_behavior_regression_rejects_alternate_command_record_for_same_phase(self) -> None:
+        case, receipt, _behavior, files = self._behavior_regression_fixture()
+        receipt["commands"].append({
+            "argv": ["node", "--test", "alternate-observed-red"],
+            "exitCode": 0,
+            "expectation": "success",
+            "evidence": "alternate-commands.log#observed-red",
+        })
+        files["alternate-commands.log"] = "observed-red\n"
+
+        classification = self._classify_behavior_regression(case, receipt, files)
+
+        self.assertTrue(any(
+            "command record is ambiguous for phase: observed-red" in error
+            for error in classification.errors
+        ))
+        self.assertFalse(classification.judge_passed)
+
+    def test_behavior_regression_rejects_duplicate_behavior_case_marker(self) -> None:
+        case, receipt, behavior, files = self._behavior_regression_fixture()
+        contradictory = {
+            **behavior,
+            "transitions": [
+                {
+                    **transition,
+                    "exitCode": 0 if transition["exitCode"] else 1,
+                }
+                for transition in behavior["transitions"]
+            ],
+        }
+        files["behavior.json"] = json.dumps({"cases": [behavior, contradictory]})
+
+        classification = self._classify_behavior_regression(case, receipt, files)
+
+        self.assertTrue(any(
+            "marker identifies multiple cases: strong" in error
             for error in classification.errors
         ))
         self.assertFalse(classification.judge_passed)
