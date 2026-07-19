@@ -389,6 +389,14 @@
       color: var(--color-ink);
     }
 
+    .protocol-boundary p {
+      color: var(--color-ink);
+    }
+
+    .protocol-boundary p + p {
+      margin-top: var(--space-3);
+    }
+
     .protocol-arrow {
       color: var(--color-muted);
       font-size: 1.35rem;
@@ -811,7 +819,7 @@
         </div>
         <div class="protocol-node workspace">
           <strong>Canonical isolation</strong>
-          <p>A later non-overlapping writer follows <code>ISOLATE_REQUIRED</code> with a unique branch and base. The engine derives <code>.worktrees/&lt;claim-id&gt;</code> beneath the primary worktree and omits backlog by sparse checkout.</p>
+          <p>A later non-overlapping writer follows <code>ISOLATE_REQUIRED</code> with a unique branch and, when coordination fixes it, an explicit accepted base; otherwise the base defaults to <code>HEAD</code>. The engine derives <code>.worktrees/&lt;claim-id&gt;</code> beneath the primary worktree and omits backlog by sparse checkout.</p>
         </div>
         <div class="protocol-node workspace">
           <strong>Target-specific integration</strong>
@@ -821,7 +829,8 @@
 
       <div class="protocol-boundary">
         <strong>Codex task worktree is not claim ownership</strong>
-        A task may be created or moved into a runtime worktree before any repository claim exists. Task placement, task status, and wake-up messaging do not authorize mutation; the task must still obtain <code>PRIMARY</code>, <code>ISOLATE</code>, or <code>RECOVER</code> for its intended file and resource scope. <code>WAIT</code>, <code>PRIMARY_REQUIRED</code>, <code>ISOLATE_REQUIRED</code>, and <code>RECOVERY_REQUIRED</code> are coordination states, not generic transport failures.
+        <p>A task may be created or moved into a runtime worktree before any repository claim exists. Task placement, task status, and wake-up messaging do not authorize mutation; the task must still obtain <code>PRIMARY</code>, <code>ISOLATE</code>, or <code>RECOVER</code> for its intended file and resource scope. <code>WAIT</code>, <code>PRIMARY_REQUIRED</code>, <code>ISOLATE_REQUIRED</code>, and <code>RECOVERY_REQUIRED</code> are coordination states, not generic transport failures.</p>
+        <p>When an unclaimed primary worktree is dirty, <code>RECOVERY_REQUIRED</code> stops acquisition. Only explicit authorization to preserve the complete dirty state permits an <code>all-files</code> recovery claim with <code>allow-recovery</code>; a successful <code>RECOVER</code> owner creates a checkpoint commit before cleanup or release. Every active owner keeps the heartbeat current during long work.</p>
       </div>
     </figure>
 
@@ -873,8 +882,8 @@
           <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Parent Backlog Coordinator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Dev Backlog Steward</span><span class="sequence-payload">Only after release, send the next queue transition. Repeat the same short primary claim, commit, and release sequence.</span></li>
           <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Parent Backlog Coordinator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Dev Orchestrator task</span><span class="sequence-payload">After the relevant lifecycle commits are durable, dispatch adaptive <strong>ARTIFACT GO</strong> messages with non-overlapping scopes, dependency order, resource requirements, and accepted bases.</span></li>
           <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Orchestrator task</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Artifact producers</span><span class="sequence-payload">Assign distinct files, trees, or resources. Producers do not inherit ownership from the parent task or from their runtime worktree.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Producer A</span><span class="sequence-direction" role="img" aria-label="exchanges with">&harr;</span><span class="sequence-receiver">Claim MCP server and registry</span><span class="sequence-payload">Acquire the first clean project lane as <code>PRIMARY</code>, or use an already established parent coordination claim while child lanes isolate.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Producer B and later producers</span><span class="sequence-direction" role="img" aria-label="exchanges with">&harr;</span><span class="sequence-receiver">Claim MCP server and registry</span><span class="sequence-payload">For non-overlapping scopes, receive <code>ISOLATE_REQUIRED</code>, resubmit the same claim id with branch and base, and receive <code>ISOLATE</code> at canonical <code>.worktrees/&lt;claim-id&gt;</code> checkouts without backlog.</span></li>
+          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Producer A</span><span class="sequence-direction" role="img" aria-label="exchanges with">&harr;</span><span class="sequence-receiver">Claim MCP server and registry</span><span class="sequence-payload">Acquire a distinct child claim with the shared <code>root_task_id</code> and the orchestrator's <code>parent_claim_id</code>. Lineage never transfers file ownership; when the parent coordination claim occupies primary, an eligible child project lane isolates.</span></li>
+          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Producer B and later producers</span><span class="sequence-direction" role="img" aria-label="exchanges with">&harr;</span><span class="sequence-receiver">Claim MCP server and registry</span><span class="sequence-payload">For non-overlapping scopes, receive <code>ISOLATE_REQUIRED</code>, resubmit the same claim id with a unique branch and an optional accepted base, and receive <code>ISOLATE</code> at canonical <code>.worktrees/&lt;claim-id&gt;</code> checkouts without backlog.</span></li>
           <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Artifact producers</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Independent reviewers</span><span class="sequence-payload">Work concurrently only within owned scopes. Exclusive generators, browsers, ports, databases, and other shared state remain serialized through explicit resource claims.</span></li>
           <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Independent reviewers</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Dev Verifier</span><span class="sequence-payload">Review every contribution in a fresh read-only context, then verify each accepted lane without weakening or sharing its gates.</span></li>
           <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Verifier</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Dev Merge Coordinator</span><span class="sequence-payload">For multiple accepted commits, provide dependency order and verification evidence. The coordinator acquires the target integration resource and preserves each contribution distinctly.</span></li>

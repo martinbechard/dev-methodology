@@ -3590,6 +3590,7 @@ class BundleContentTests(unittest.TestCase):
             "PRIMARY_REQUIRED",
             "ISOLATE_REQUIRED",
             "RECOVERY_REQUIRED",
+            "RECOVER",
             "READ-ONLY PREFLIGHT",
             "LIFECYCLE START",
             "ARTIFACT GO",
@@ -3606,6 +3607,10 @@ class BundleContentTests(unittest.TestCase):
             "Claim MCP server and registry",
             "Codex task wake-up messaging",
             "A task status or message acknowledges coordination only",
+            "Lineage never transfers file ownership",
+            "explicit authorization to preserve the complete dirty state",
+            "checkpoint commit before cleanup or release",
+            "keeps the heartbeat current during long work",
             "remove only their clean released worktrees",
         ):
             with self.subTest(lifecycle_phrase=phrase):
@@ -3622,6 +3627,17 @@ class BundleContentTests(unittest.TestCase):
         )
         self.assertLess(normal_index, wait_index)
         self.assertLess(wait_index, parallel_index)
+        recovery_required_index = lifecycle_prose.index(
+            "When an unclaimed primary worktree is dirty, RECOVERY_REQUIRED"
+        )
+        recovery_authorization_index = lifecycle_prose.index(
+            "explicit authorization to preserve the complete dirty state"
+        )
+        recover_index = lifecycle_prose.index(
+            "a successful RECOVER owner creates a checkpoint commit"
+        )
+        self.assertLess(recovery_required_index, recovery_authorization_index)
+        self.assertLess(recovery_authorization_index, recover_index)
         self.assertIn("@media (prefers-reduced-motion: reduce)", lifecycle_text)
         self.assertIn("@media (prefers-color-scheme: dark)", lifecycle_text)
 
