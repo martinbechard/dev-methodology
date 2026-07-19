@@ -38,6 +38,14 @@ Every change to an agent definition or skill definition requires explicit, scope
 
 Repository access, a failing test, a repair assignment, general write authority, review work, verification work, and a desire to make validation pass do not authorize a definition change.
 
+The harness-loaded directive is the project authority boundary. Before mutating a governed canonical source, run the supported pre-mutation check with an approval record that cites existing explicit user direction:
+
+```bash
+python3 scripts/render-agents-technology-skills.py --project PROJECT.yaml --check-definition-change path/to/definition --approval-record path/to/approval-record.yaml
+```
+
+The check validates the configured path boundary, exact scope, basis, and provenance record. It does not enforce filesystem permissions, create approval, or let an agent manufacture user-direction provenance.
+
 Governed canonical definition surfaces:
 
 - Conceptual agent definitions: agents/roles/**/*.role.yaml.

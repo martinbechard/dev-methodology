@@ -485,6 +485,20 @@ python3 scripts/render-agents-technology-skills.py --project PROJECT.yaml --inli
 python3 scripts/render-agents-technology-skills.py --project PROJECT.yaml --output AGENTS.md --update-authority-directive
 ```
 
+Before a governed agent or skill definition change, record the existing explicit user direction with its exact definition scope and auditable provenance, then run the renderer's operational pre-mutation check. The check validates the project policy and returns a JSON outcome with exit code 0 for an allowed change or 3 for a blocked change. It does not create approval or enforce filesystem permissions.
+
+```yaml
+basis: explicit-user-direction
+definition_scope: skills/example/SKILL.md
+provenance:
+  source: user-message
+  reference: thread:example/message:user-approval
+```
+
+```bash
+python3 scripts/render-agents-technology-skills.py --project PROJECT.yaml --check-definition-change skills/example/SKILL.md --approval-record approval-record.yaml
+```
+
 ## Neutral Target Project Layout
 
 - [documentation-root]/functional

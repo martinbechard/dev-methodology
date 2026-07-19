@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import argparse
 import fnmatch
+import json
 import re
 import sys
 from collections.abc import Sequence
@@ -22,6 +23,10 @@ FRONTMATTER_DELIMITER = "---"
 SKILL_NAME_PATTERN = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 PROCESS_NAME_PATTERN = re.compile(r"^(?:[a-z0-9][a-z0-9-]*|UNSET)$")
 AUTHORITY_HEADING = "## Agent And Skill Definition Approval"
+PROVENANCE_REFERENCE_PATTERNS = {
+    "user-message": re.compile(r"^thread:[^/\s]+/message:[^/\s]+$"),
+    "delegated-user-direction": re.compile(r"^thread:[^/\s]+/delegation:[^/\s]+$"),
+}
 
 
 def parse_boolean(value: str) -> bool:
@@ -81,6 +86,21 @@ def definition_change_authority(value: dict[str, object]) -> dict[str, object] |
         raise ValueError("definition_change_authority.approval_evidence must be a mapping")
     for key in ("user_direction_required", "exact_scope_required", "audit_record_required"):
         _required_boolean(evidence, key, True, "definition_change_authority.approval_evidence")
+    if evidence.get("required_basis") != "explicit-user-direction":
+        raise ValueError("definition_change_authority.approval_evidence.required_basis must be explicit-user-direction")
+    allowed_sources = evidence.get("allowed_provenance_sources")
+    if not isinstance(allowed_sources, list) or not allowed_sources or not all(
+        isinstance(source, str) and source for source in allowed_sources
+    ):
+        raise ValueError("definition_change_authority.approval_evidence.allowed_provenance_sources must be a non-empty list")
+    if set(allowed_sources) != set(PROVENANCE_REFERENCE_PATTERNS):
+        raise ValueError("definition_change_authority.approval_evidence.allowed_provenance_sources must contain only the supported explicit-user-direction sources")
+    _required_boolean(
+        evidence,
+        "provenance_reference_required",
+        True,
+        "definition_change_authority.approval_evidence",
+    )
 
     sources = policy.get("governed_sources")
     if not isinstance(sources, dict):
@@ -92,6 +112,8 @@ def definition_change_authority(value: dict[str, object]) -> dict[str, object] |
     required_bases = {"repository access", "failing test", "repair assignment", "general write authority"}
     if not required_bases.issubset(non_approval):
         raise ValueError("definition_change_authority.non_approval_bases must reject repository access, failing test, repair assignment, and general write authority")
+    if evidence["required_basis"] in non_approval:
+        raise ValueError("definition_change_authority.approval_evidence.required_basis must not be a non-approval basis")
 
     test_repair = policy.get("test_repair")
     if not isinstance(test_repair, dict):
@@ -119,6 +141,14 @@ def definition_change_authority_lines(value: dict[str, object]) -> list[str]:
         "",
         "Repository access, a failing test, a repair assignment, general write authority, review work, verification work, and a desire to make validation pass do not authorize a definition change.",
         "",
+        "The harness-loaded directive is the project authority boundary. Before mutating a governed canonical source, run the supported pre-mutation check with an approval record that cites existing explicit user direction:",
+        "",
+        "```bash",
+        "python3 scripts/render-agents-technology-skills.py --project PROJECT.yaml --check-definition-change path/to/definition --approval-record path/to/approval-record.yaml",
+        "```",
+        "",
+        "The check validates the configured path boundary, exact scope, basis, and provenance record. It does not enforce filesystem permissions, create approval, or let an agent manufacture user-direction provenance.",
+        "",
         "Governed canonical definition surfaces:",
         "",
     ]
@@ -145,11 +175,47 @@ def definition_change_authority_lines(value: dict[str, object]) -> list[str]:
     return lines
 
 
-def _matches(path: str, patterns: list[str]) -> bool:
-    """Return whether a normalized project-relative path matches any configured pattern."""
+def _normalize_project_path(path: str) -> str:
+    """Normalize one relative project path without resolving parent traversal."""
 
-    normalized = path.removeprefix("./")
-    return any(fnmatch.fnmatchcase(normalized, pattern) for pattern in patterns)
+    portable = path.replace("\\", "/")
+    if portable.startswith("/"):
+        raise ValueError(f"definition path must be project-relative: {path}")
+    segments: list[str] = []
+    for segment in portable.split("/"):
+        if segment in {"", "."}:
+            continue
+        if segment == "..":
+            raise ValueError(f"definition path must not contain parent traversal: {path}")
+        segments.append(segment)
+    if not segments:
+        raise ValueError("definition path must not be empty")
+    return "/".join(segments)
+
+
+def _segment_glob_matches(path: tuple[str, ...], pattern: tuple[str, ...]) -> bool:
+    """Match path segments while allowing a double-star segment to cross directories."""
+
+    if not pattern:
+        return not path
+    if pattern[0] == "**":
+        return _segment_glob_matches(path, pattern[1:]) or (
+            bool(path) and _segment_glob_matches(path[1:], pattern)
+        )
+    return bool(path) and fnmatch.fnmatchcase(path[0], pattern[0]) and _segment_glob_matches(
+        path[1:],
+        pattern[1:],
+    )
+
+
+def _matches(path: str, patterns: list[str]) -> bool:
+    """Return whether a normalized project-relative path matches a segment-aware pattern."""
+
+    path_segments = tuple(_normalize_project_path(path).split("/"))
+    return any(
+        _segment_glob_matches(path_segments, tuple(_normalize_project_path(pattern).split("/")))
+        for pattern in patterns
+    )
 
 
 def evaluate_definition_change(
@@ -169,30 +235,64 @@ def evaluate_definition_change(
     assert isinstance(sources, dict)
     assert isinstance(generated, list)
     source_patterns = [pattern for patterns in sources.values() for pattern in patterns]
-    normalized = path.removeprefix("./")
+    normalized = _normalize_project_path(path)
 
     if _matches(normalized, generated):
-        if regenerated_from and _matches(regenerated_from, source_patterns) and _has_matching_approval(approval, regenerated_from):
-            return {"outcome": "ALLOWED_APPROVED_REGENERATION", "classification": "generated-mirror"}
+        if regenerated_from and _matches(regenerated_from, source_patterns):
+            approval_outcome = _approval_outcome(policy, approval, regenerated_from)
+            if approval_outcome == "MATCHED":
+                return {"outcome": "ALLOWED_APPROVED_REGENERATION", "classification": "generated-mirror"}
+            return {"outcome": approval_outcome, "classification": "generated-mirror"}
         return {"outcome": "BLOCKED_DIRECT_GENERATED_EDIT", "classification": "generated-mirror"}
     if _matches(normalized, source_patterns):
-        if _has_matching_approval(approval, normalized):
+        approval_outcome = _approval_outcome(policy, approval, normalized)
+        if approval_outcome == "MATCHED":
             return {"outcome": "ALLOWED_APPROVED_DEFINITION_CHANGE", "classification": "governed-definition"}
-        return {"outcome": "BLOCKED_APPROVAL_REQUIRED", "classification": "governed-definition"}
+        return {"outcome": approval_outcome, "classification": "governed-definition"}
     return {"outcome": "ALLOWED_ORDINARY_CHANGE", "classification": "ordinary"}
 
 
-def _has_matching_approval(approval: dict[str, object] | None, path: str) -> bool:
-    """Return whether approval is user-directed, auditable, and exact for one definition path."""
+def _approval_outcome(
+    policy: dict[str, object],
+    approval: dict[str, object] | None,
+    path: str,
+) -> str:
+    """Return MATCHED or the blocking outcome for one proposed approval record."""
 
+    if approval is None:
+        return "BLOCKED_APPROVAL_REQUIRED"
     if not isinstance(approval, dict):
-        return False
-    return (
-        approval.get("user_approved") is True
-        and approval.get("definition_scope") == path
-        and isinstance(approval.get("evidence"), str)
-        and bool(str(approval["evidence"]).strip())
-    )
+        return "BLOCKED_INVALID_APPROVAL"
+    evidence = policy["approval_evidence"]
+    non_approval_bases = policy["non_approval_bases"]
+    assert isinstance(evidence, dict)
+    assert isinstance(non_approval_bases, list)
+    basis = approval.get("basis")
+    if basis in non_approval_bases or basis != evidence["required_basis"]:
+        return "BLOCKED_INVALID_APPROVAL"
+    scope = approval.get("definition_scope")
+    if not isinstance(scope, str):
+        return "BLOCKED_INVALID_APPROVAL"
+    try:
+        normalized_scope = _normalize_project_path(scope)
+    except ValueError:
+        return "BLOCKED_INVALID_APPROVAL"
+    if normalized_scope != _normalize_project_path(path):
+        return "BLOCKED_APPROVAL_REQUIRED"
+    provenance = approval.get("provenance")
+    if not isinstance(provenance, dict):
+        return "BLOCKED_INVALID_APPROVAL"
+    allowed_sources = evidence["allowed_provenance_sources"]
+    assert isinstance(allowed_sources, list)
+    if provenance.get("source") not in allowed_sources:
+        return "BLOCKED_INVALID_APPROVAL"
+    reference = provenance.get("reference")
+    source = provenance["source"]
+    assert isinstance(source, str)
+    reference_pattern = PROVENANCE_REFERENCE_PATTERNS[source]
+    if not isinstance(reference, str) or not reference_pattern.fullmatch(reference):
+        return "BLOCKED_INVALID_APPROVAL"
+    return "MATCHED"
 
 
 def update_authority_directive(existing: str, section_lines: list[str]) -> str:
@@ -383,11 +483,42 @@ def main(arguments: Sequence[str] | None = None) -> int:
         metavar="true|false",
         help="Statically embed discovered technology skills in AGENTS.md. Defaults to true.",
     )
+    parser.add_argument(
+        "--check-definition-change",
+        metavar="PATH",
+        help="Evaluate one proposed project-relative path before mutation and print a JSON outcome.",
+    )
+    parser.add_argument(
+        "--approval-record",
+        type=Path,
+        help="YAML approval record containing basis, exact definition_scope, and user-direction provenance.",
+    )
+    parser.add_argument(
+        "--regenerated-from",
+        metavar="PATH",
+        help="Approved canonical definition source for a generated-mirror check.",
+    )
     args = parser.parse_args(arguments)
     try:
         if args.replace and args.update_authority_directive:
             raise ValueError("--replace and --update-authority-directive cannot be combined")
         project = load_yaml(args.project)
+        if args.check_definition_change is not None:
+            if args.output or args.replace or args.update_authority_directive:
+                raise ValueError("--check-definition-change cannot be combined with output mutation options")
+            if definition_change_authority(project) is None:
+                raise ValueError("--check-definition-change requires definition_change_authority in PROJECT.yaml")
+            approval = load_yaml(args.approval_record) if args.approval_record else None
+            result = evaluate_definition_change(
+                project,
+                args.check_definition_change,
+                approval,
+                regenerated_from=args.regenerated_from,
+            )
+            print(json.dumps(result, sort_keys=True))
+            return 0 if result["outcome"].startswith("ALLOWED_") else 3
+        if args.approval_record or args.regenerated_from:
+            raise ValueError("--approval-record and --regenerated-from require --check-definition-change")
         content = render(project, args.inline_tech_skills)
         if args.output:
             if args.update_authority_directive:

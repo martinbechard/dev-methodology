@@ -128,6 +128,11 @@ definition_change_authority:
     user_direction_required: true
     exact_scope_required: true
     audit_record_required: true
+    required_basis: explicit-user-direction
+    allowed_provenance_sources:
+      - user-message
+      - delegated-user-direction
+    provenance_reference_required: true
   governed_sources:
     conceptual_agents:
       - agents/roles/**/*.role.yaml
