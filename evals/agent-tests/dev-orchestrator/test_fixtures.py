@@ -156,7 +156,7 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
 
         cases = {
             "fabricated": (
-                {"invocation": "dev-coder", "sessionIds": ["fabricated-producer"]},
+                {"invocation": "dev_coder", "sessionIds": ["fabricated-producer"]},
                 "producer sessions are not retained evidence",
             ),
             "wrong-role": (
@@ -170,6 +170,19 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
                 report["runs"][0]["scenarioResults"][0]["handoffReceipts"][0]["role"] = role
                 with self.assertRaisesRegex(RuntimeError, diagnostic):
                     runner._audit_handoff_evidence((run,), report, sessions, fixture_root)
+
+    def test_hyphenated_producer_alias_does_not_match_registered_invocation(self) -> None:
+        """Receipt and release aliases cannot substitute for the literal retained runtime invocation."""
+        with tempfile.TemporaryDirectory() as directory:
+            run, report, sessions, fixture_root = self._evidence_fixture(Path(directory))
+            receipt = report["runs"][0]["scenarioResults"][0]["handoffReceipts"][0]
+            receipt["role"]["invocation"] = "dev-coder"
+
+            with self.assertRaisesRegex(
+                RuntimeError,
+                "role invocation does not match lane producer",
+            ):
+                runner._audit_handoff_evidence((run,), report, sessions, fixture_root)
 
     def test_dirty_receipt_repository_matrix_is_rejected(self) -> None:
         """Tracked and untracked post-commit drift invalidate every receipt for that candidate."""
@@ -287,20 +300,20 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
             for receipt in report["runs"][0]["scenarioResults"][0]["handoffReceipts"]
         }
         evidence = {
-            "source": ("dev-coder", ["code-review-1"], ["verifier-1"]),
-            "documentation": ("dev-documentation-writer", ["artifact-review-1"], ["verifier-1"]),
+            "source": ("dev_coder", ["code-review-1"], ["verifier-1"]),
+            "documentation": ("dev_documentation_writer", ["artifact-review-1"], ["verifier-1"]),
             "integration": (
-                "dev-merge-coordinator",
+                "dev_merge_coordinator",
                 ["code-review-2", "artifact-review-2"],
                 ["verifier-2"],
             ),
             "closeout": (
-                "dev-backlog-steward",
+                "dev_backlog_steward",
                 ["code-review-2", "artifact-review-2"],
                 ["verifier-2"],
             ),
         }
-        producer_session_ids = {role.replace("_", "-"): session_id for session_id, role in roles}
+        producer_session_ids = {role: session_id for session_id, role in roles}
         event_root = candidate / ".git" / "agent-claim-events" / "hot"
         event_root.mkdir(parents=True)
         events = []

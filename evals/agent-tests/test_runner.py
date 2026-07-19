@@ -13,6 +13,7 @@ import sys
 import tempfile
 import time
 import unittest
+from unittest import mock
 from pathlib import Path
 from unittest import mock
 
@@ -337,6 +338,97 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                 "Fixture repository retains active claims",
             ):
                 runner._audit_workspace_cleanup(workspace)
+
+    def test_cleanup_audit_rejects_fixture_git_common_directory_escape(self) -> None:
+        """A linked fixture worktree cannot hide its claim registry outside runner containment."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            workspace = root / "workspace"
+            fixture = workspace / ".agent-suite-fixtures" / "dev-orchestrator"
+            source = root / "external-source"
+            candidate = fixture / "candidate"
+            workspace.mkdir()
+            source.mkdir()
+            subprocess.run(["git", "init", "--quiet"], cwd=source, check=True)
+            subprocess.run(["git", "config", "user.name", "Fixture"], cwd=source, check=True)
+            subprocess.run(
+                ["git", "config", "user.email", "fixture@example.invalid"],
+                cwd=source,
+                check=True,
+            )
+            (source / "evidence.txt").write_text("synthetic\n", encoding="utf-8")
+            subprocess.run(["git", "add", "evidence.txt"], cwd=source, check=True)
+            subprocess.run(["git", "commit", "--quiet", "-m", "fixture"], cwd=source, check=True)
+            fixture.mkdir(parents=True)
+            subprocess.run(
+                ["git", "worktree", "add", "--quiet", "--detach", str(candidate)],
+                cwd=source,
+                check=True,
+            )
+
+            with self.assertRaisesRegex(RuntimeError, "Git common directory escapes cleanup containment"):
+                runner._audit_workspace_cleanup(workspace)
+
+    def test_cleanup_audit_reads_active_claim_from_contained_common_directory(self) -> None:
+        """A .git indirection cannot hide active claims in a contained common directory."""
+        with tempfile.TemporaryDirectory() as directory:
+            workspace = Path(directory) / "workspace"
+            fixture = workspace / ".agent-suite-fixtures" / "dev-orchestrator"
+            candidate = fixture / "candidate"
+            common = fixture / "candidate.git"
+            candidate.mkdir(parents=True)
+            subprocess.run(
+                ["git", "init", "--quiet", "--separate-git-dir", str(common), str(candidate)],
+                check=True,
+            )
+            (common / "agent-claims.json").write_text(
+                json.dumps({"claims": [{"claim_id": "retained"}]}) + "\n",
+                encoding="utf-8",
+            )
+
+            with self.assertRaisesRegex(RuntimeError, "Fixture repository retains active claims"):
+                runner._audit_workspace_cleanup(workspace)
+
+    def test_release_journal_cannot_escape_fixture_containment(self) -> None:
+        """An external linked-worktree journal cannot substantiate a fixture release receipt."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            fixture = root / "fixtures" / "dev-orchestrator"
+            source = root / "external-source"
+            candidate = fixture / "candidate"
+            source.mkdir(parents=True)
+            subprocess.run(["git", "init", "--quiet"], cwd=source, check=True)
+            subprocess.run(["git", "config", "user.name", "Fixture"], cwd=source, check=True)
+            subprocess.run(
+                ["git", "config", "user.email", "fixture@example.invalid"],
+                cwd=source,
+                check=True,
+            )
+            (source / "evidence.txt").write_text("synthetic\n", encoding="utf-8")
+            subprocess.run(["git", "add", "evidence.txt"], cwd=source, check=True)
+            subprocess.run(["git", "commit", "--quiet", "-m", "fixture"], cwd=source, check=True)
+            fixture.mkdir(parents=True)
+            subprocess.run(
+                ["git", "worktree", "add", "--quiet", "--detach", str(candidate)],
+                cwd=source,
+                check=True,
+            )
+            journal = source / ".git" / "agent-claim-events" / "hot" / "2026-07-19.jsonl"
+            journal.parent.mkdir(parents=True)
+            journal.write_text(
+                json.dumps(
+                    {
+                        "action": "release",
+                        "outcome": "RELEASED",
+                        "event_id": "external-release",
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+            with self.assertRaisesRegex(RuntimeError, "Git common directory escapes fixture containment"):
+                runner._release_events(candidate, fixture)
 
     def test_project_bootstrapper_judge_defers_runner_owned_audits(self) -> None:
         """Bootstrapper semantic judgment cannot fail only on evidence owned by the outer runner."""
@@ -1016,6 +1108,94 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         self.assertTrue(all(str(result["startedAtUtc"]).endswith("Z") for result in results))
         self.assertTrue(all(float(result["elapsedSeconds"]) >= 0 for result in results))
 
+    def test_malformed_checkpoint_receipts_retain_bounded_live_batch_evidence(self) -> None:
+        """Checkpoint fallback reports malformed receipts without losing retained evidence paths."""
+        malformed_receipts = {
+            "missing-role": {"lane": "source"},
+            "wrong-type-role": {"lane": "source", "role": []},
+            "missing-commit": {
+                "lane": "source",
+                "role": {"invocation": "dev_coder", "sessionIds": ["producer"]},
+            },
+        }
+        for name, receipt in malformed_receipts.items():
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                result_root = root / "results"
+                run = self._checkpoint_handoff_run_spec()
+                target = runner._Session(
+                    "target", "supervisor", "target_agent", 2, 1.0, 8.0, frozenset()
+                )
+                producer = runner._Session(
+                    "producer", "target", "dev_coder", 3, 2.0, 3.0, frozenset()
+                )
+
+                def stage_batch(batch: object, run_root: Path) -> tuple[Path, Path, tuple[object, ...]]:
+                    workspace = run_root / "workspace"
+                    codex_home = run_root / "codex-home"
+                    (workspace / ".git").mkdir(parents=True)
+                    codex_home.mkdir()
+                    return workspace, codex_home, ()
+
+                def run_process(command: object, *arguments: object, **keywords: object) -> dict[str, object]:
+                    values = list(command)
+                    add_dirs = [Path(values[index + 1]) for index, value in enumerate(values) if value == "--add-dir"]
+                    checkpoint_root = add_dirs[-1]
+                    checkpoint = checkpoint_root / "checkpoint-suite" / "happy.json"
+                    checkpoint.parent.mkdir()
+                    checkpoint.write_text(
+                        json.dumps(
+                            {
+                                "suite": "checkpoint-suite",
+                                "scenario": "happy",
+                                "status": "PASS",
+                                "targetInvoked": True,
+                                "judgeInvoked": True,
+                                "identityEvidence": ["bound"],
+                                "evidence": ["receipt"],
+                                "cleanup": "clean",
+                                "residualRisk": "none",
+                                "handoffReceipts": [receipt],
+                            }
+                        ),
+                        encoding="utf-8",
+                    )
+                    return {"exitCode": 1, "stdout": "", "stderr": "coordinator failed", "cleanup": "clean"}
+
+                with (
+                    mock.patch.object(runner, "_stage_batch", side_effect=stage_batch),
+                    mock.patch.object(runner, "_bundled_codex_executable", return_value=Path("/bin/false")),
+                    mock.patch.object(runner, "_controlled_environment", return_value={}),
+                    mock.patch.object(runner, "_preflight_runtime_capabilities", return_value=()),
+                    mock.patch.object(runner, "_run_process", side_effect=run_process),
+                    mock.patch.object(runner, "_audit_identity", return_value={"scenarioBindings": []}),
+                    mock.patch.object(runner, "_audit_browser_activity", return_value={}),
+                    mock.patch.object(runner, "_load_sessions", return_value=(target, producer)),
+                    mock.patch.object(runner, "_audit_session_concurrency", return_value={}),
+                    mock.patch.object(
+                        runner,
+                        "_bind_target_sessions",
+                        return_value={("checkpoint-suite", "happy"): target},
+                    ),
+                ):
+                    results = runner._execute_batches(
+                        ((run,),),
+                        lambda batch, batch_number: runner._run_live_batch(
+                            batch,
+                            batch_number,
+                            result_root,
+                            timeout_seconds=1,
+                        ),
+                    )
+
+                result = results[0]
+                self.assertEqual("infrastructure-failed", result["status"])
+                self.assertNotIn("error", result)
+                self.assertIn("checkpoint", " ".join(result["infrastructureErrors"]))
+                self.assertIn("handoff receipt", " ".join(result["infrastructureErrors"]))
+                for evidence_path in result["evidence"].values():
+                    self.assertTrue(Path(evidence_path).exists(), evidence_path)
+
     def test_partial_results_inside_one_batch_remain_addressable(self) -> None:
         """A failed scenario does not erase completed scenario results from the same batch."""
         batch = (self._run_spec("one", 1), self._run_spec("two", 2))
@@ -1055,6 +1235,29 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         audited = runner._audit_report(batch, report, checkpoint_report)
 
         self.assertEqual(["PASS", "FAIL"], [item["scenarioResults"][0]["status"] for item in audited])
+
+    @classmethod
+    def _checkpoint_handoff_run_spec(cls) -> object:
+        """Build one scenario whose checkpoint requires a structured source receipt."""
+        suite = cls._suite("checkpoint-suite")
+        scenario = dict(suite.scenarios[0])
+        scenario["requiredHandoffReceiptLanes"] = ["source"]
+        scenario["requiredHandoffReceiptFields"] = [
+            "lane",
+            "role",
+            "commit",
+            "review",
+            "verification",
+            "claimRelease",
+        ]
+        suite = runner._Suite(
+            suite.suite_id,
+            suite.priority,
+            suite.path,
+            suite.manifest,
+            (scenario,),
+        )
+        return runner._RunSpec(suite, ("happy",))
 
     def test_temporary_run_directory_is_removed_after_failure(self) -> None:
         """Disposable authentication, agents, and workspace state do not survive a run."""

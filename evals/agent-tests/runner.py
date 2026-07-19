@@ -2611,8 +2611,12 @@ def _bind_target_sessions(
     return bindings
 
 
-def _git_common_directory(repository: Path) -> Path:
-    """Return the resolved common Git directory for one disposable candidate repository."""
+def _git_common_directory(
+    repository: Path,
+    containment_root: Path | None = None,
+    containment_name: str = "fixture",
+) -> Path:
+    """Return a candidate's common Git directory and enforce an optional runner-owned boundary."""
     completed = subprocess.run(
         ["git", "rev-parse", "--git-common-dir"],
         cwd=repository,
@@ -2623,12 +2627,21 @@ def _git_common_directory(repository: Path) -> Path:
     if completed.returncode != 0:
         raise RuntimeError(f"Receipt repository is not a Git worktree: {repository}")
     common = Path(completed.stdout.strip())
-    return common.resolve() if common.is_absolute() else (repository / common).resolve()
+    resolved = common.resolve() if common.is_absolute() else (repository / common).resolve()
+    if containment_root is not None:
+        boundary = containment_root.resolve()
+        if resolved != boundary and boundary not in resolved.parents:
+            raise RuntimeError(f"Git common directory escapes {containment_name} containment: {repository}")
+    return resolved
 
 
-def _release_events(repository: Path) -> dict[str, dict[str, Any]]:
+def _release_events(repository: Path, fixture_root: Path) -> dict[str, dict[str, Any]]:
     """Load successful release events retained by one disposable fixture repository."""
-    event_root = _git_common_directory(repository) / "agent-claim-events" / "hot"
+    event_root = (
+        _git_common_directory(repository, fixture_root, "fixture")
+        / "agent-claim-events"
+        / "hot"
+    )
     events: dict[str, dict[str, Any]] = {}
     for journal in sorted(event_root.glob("*.jsonl")):
         for line in journal.read_text(encoding="utf-8").splitlines():
@@ -2700,8 +2713,58 @@ def _audit_handoff_evidence(
                 if lane not in lane_roles:
                     raise RuntimeError(f"{identity} has no evidence binding for handoff lane {lane}")
                 producer_role, review_spec, verification_spec = lane_roles[lane]
-                receipt_role = receipt["role"]
-                if str(receipt_role["invocation"]).replace("-", "_") != producer_role:
+                required_receipt_fields = (
+                    "role",
+                    "commit",
+                    "review",
+                    "verification",
+                    "claimRelease",
+                )
+                missing_fields = [field for field in required_receipt_fields if field not in receipt]
+                if missing_fields:
+                    raise RuntimeError(
+                        f"{identity} malformed handoff receipt {lane}: missing {missing_fields[0]}"
+                    )
+                receipt_role = receipt.get("role")
+                commit = receipt.get("commit")
+                review = receipt.get("review")
+                verification = receipt.get("verification")
+                claim_release = receipt.get("claimRelease")
+                if not isinstance(receipt_role, dict):
+                    raise RuntimeError(f"{identity} malformed handoff receipt {lane}: role must be an object")
+                if not isinstance(commit, dict):
+                    raise RuntimeError(f"{identity} malformed handoff receipt {lane}: commit must be an object")
+                if not isinstance(review, dict):
+                    raise RuntimeError(f"{identity} malformed handoff receipt {lane}: review must be an object")
+                if not isinstance(verification, dict):
+                    raise RuntimeError(
+                        f"{identity} malformed handoff receipt {lane}: verification must be an object"
+                    )
+                if not isinstance(claim_release, dict):
+                    raise RuntimeError(
+                        f"{identity} malformed handoff receipt {lane}: claimRelease must be an object"
+                    )
+                structured_fields = (
+                    ("role.sessionIds", receipt_role.get("sessionIds")),
+                    ("review.sessionIds", review.get("sessionIds")),
+                    ("verification.sessionIds", verification.get("sessionIds")),
+                    ("claimRelease.eventIds", claim_release.get("eventIds")),
+                )
+                for field, values in structured_fields:
+                    if not isinstance(values, list) or not values or not all(
+                        isinstance(value, str) and value for value in values
+                    ):
+                        raise RuntimeError(
+                            f"{identity} malformed handoff receipt {lane}: {field} must be a non-empty string array"
+                        )
+                if not all(
+                    isinstance(commit.get(field), str) and commit[field]
+                    for field in ("repository", "sha")
+                ):
+                    raise RuntimeError(
+                        f"{identity} malformed handoff receipt {lane}: commit fields must be strings"
+                    )
+                if receipt_role.get("invocation") != producer_role:
                     raise RuntimeError(
                         f"{identity} handoff receipt {lane} role invocation does not match lane producer"
                     )
@@ -2713,7 +2776,6 @@ def _audit_handoff_evidence(
                         f"{identity} handoff receipt {lane} producer sessions are not retained evidence"
                     )
 
-                commit = receipt["commit"]
                 repository = (suite_fixture_root / str(commit["repository"])).resolve()
                 if repository != suite_fixture_root and suite_fixture_root not in repository.parents:
                     raise RuntimeError(f"{identity} handoff receipt {lane} repository escapes fixture root")
@@ -2753,7 +2815,7 @@ def _audit_handoff_evidence(
                     if len(role_sessions) <= index:
                         raise RuntimeError(f"{identity} handoff receipt {lane} lacks retained review session")
                     expected_review_ids.append(role_sessions[index].session_id)
-                if receipt["review"]["sessionIds"] != expected_review_ids:
+                if review["sessionIds"] != expected_review_ids:
                     raise RuntimeError(f"{identity} handoff receipt {lane} review sessions are not retained evidence")
 
                 expected_verification_ids = []
@@ -2762,18 +2824,18 @@ def _audit_handoff_evidence(
                     if len(role_sessions) <= index:
                         raise RuntimeError(f"{identity} handoff receipt {lane} lacks retained verification session")
                     expected_verification_ids.append(role_sessions[index].session_id)
-                if receipt["verification"]["sessionIds"] != expected_verification_ids:
+                if verification["sessionIds"] != expected_verification_ids:
                     raise RuntimeError(
                         f"{identity} handoff receipt {lane} verification sessions are not retained evidence"
                     )
 
-                release_events = _release_events(repository)
-                for event_id in receipt["claimRelease"]["eventIds"]:
+                release_events = _release_events(repository, suite_fixture_root)
+                for event_id in claim_release["eventIds"]:
                     event = release_events.get(event_id)
                     if (
                         event is None
                         or event.get("resulting_commit") != sha
-                        or str(event.get("agent", "")).replace("-", "_") != producer_role
+                        or event.get("agent") != producer_role
                     ):
                         raise RuntimeError(
                             f"{identity} handoff receipt {lane} claim release lacks fixture lifecycle evidence"
@@ -3293,23 +3355,41 @@ def _run_process(
 
 
 def _audit_workspace_cleanup(workspace: Path) -> str:
-    workspace_registry = workspace / ".git" / "agent-claims.json"
     fixture_root = workspace / ".agent-suite-fixtures"
-    fixture_registries = (
-        sorted(fixture_root.glob("**/.git/agent-claims.json"))
-        if fixture_root.is_dir()
-        else []
-    )
-    for registry in (workspace_registry, *fixture_registries):
+    repositories: list[tuple[Path, Path, str]] = []
+    if (workspace / ".git").exists():
+        repositories.append((workspace, workspace, "cleanup"))
+    if fixture_root.is_dir():
+        repositories.extend(
+            (git_entry.parent, fixture_root, "cleanup")
+            for git_entry in sorted(fixture_root.glob("**/.git"))
+        )
+    registries: dict[Path, tuple[Path, bool]] = {}
+    for repository, containment_root, containment_name in repositories:
+        git_entry = repository / ".git"
+        if git_entry.is_dir():
+            common = git_entry.resolve()
+            boundary = containment_root.resolve()
+            if common != boundary and boundary not in common.parents:
+                raise RuntimeError(
+                    f"Git common directory escapes {containment_name} containment: {repository}"
+                )
+        else:
+            common = _git_common_directory(repository, containment_root, containment_name)
+        registries.setdefault(
+            common / "agent-claims.json",
+            (repository, repository == workspace),
+        )
+    for registry, (repository, is_workspace) in registries.items():
         if not registry.is_file():
             continue
         loaded = json.loads(registry.read_text(encoding="utf-8"))
         claims = loaded.get("claims", loaded) if isinstance(loaded, dict) else loaded
         if claims:
-            if registry == workspace_registry:
+            if is_workspace:
                 raise RuntimeError("Disposable workspace retains active claims")
             raise RuntimeError(
-                f"Fixture repository retains active claims: {registry.parent.parent}"
+                f"Fixture repository retains active claims: {repository}"
             )
     return "clean"
 
