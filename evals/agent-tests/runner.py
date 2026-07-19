@@ -1887,12 +1887,24 @@ def _run_process(
 
 
 def _audit_workspace_cleanup(workspace: Path) -> str:
-    registry = workspace / ".git" / "agent-claims.json"
-    if registry.is_file():
+    workspace_registry = workspace / ".git" / "agent-claims.json"
+    fixture_root = workspace / ".agent-suite-fixtures"
+    fixture_registries = (
+        sorted(fixture_root.glob("**/.git/agent-claims.json"))
+        if fixture_root.is_dir()
+        else []
+    )
+    for registry in (workspace_registry, *fixture_registries):
+        if not registry.is_file():
+            continue
         loaded = json.loads(registry.read_text(encoding="utf-8"))
         claims = loaded.get("claims", loaded) if isinstance(loaded, dict) else loaded
         if claims:
-            raise RuntimeError("Disposable workspace retains active claims")
+            if registry == workspace_registry:
+                raise RuntimeError("Disposable workspace retains active claims")
+            raise RuntimeError(
+                f"Fixture repository retains active claims: {registry.parent.parent}"
+            )
     return "clean"
 
 

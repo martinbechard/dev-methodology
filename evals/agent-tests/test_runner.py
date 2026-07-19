@@ -105,6 +105,30 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         self.assertIn('"fixtureRoot": "/workspace/.agent-suite-fixtures/one"', prompt)
         self.assertIn("never under /tmp or /private/tmp", prompt)
 
+    def test_cleanup_audit_rejects_active_claim_in_nested_fixture_repository(self) -> None:
+        """A candidate repository cannot retain a claim outside the workspace registry."""
+        with tempfile.TemporaryDirectory() as directory:
+            workspace = Path(directory)
+            registry = (
+                workspace
+                / ".agent-suite-fixtures"
+                / "dev-coder"
+                / "candidate"
+                / ".git"
+                / "agent-claims.json"
+            )
+            registry.parent.mkdir(parents=True)
+            registry.write_text(
+                json.dumps({"claims": [{"claim_id": "retained"}]}) + "\n",
+                encoding="utf-8",
+            )
+
+            with self.assertRaisesRegex(
+                RuntimeError,
+                "Fixture repository retains active claims",
+            ):
+                runner._audit_workspace_cleanup(workspace)
+
     def test_project_bootstrapper_judge_defers_runner_owned_audits(self) -> None:
         """Bootstrapper semantic judgment cannot fail only on evidence owned by the outer runner."""
         contract = (
