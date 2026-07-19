@@ -4,6 +4,15 @@ Status: Ready
 
 Type: Feature
 
+## Approval Resolution
+
+- Decision: Approved on 2026-07-19.
+- User-message provenance: the user said, “MySQL skill is approved,” in parent coordination thread 019f77f4-c4bd-7c91-b197-c987a7beb838.
+- Approved governed scope: create only skills/mysql/SKILL.md and skills/mysql/agents/openai.yaml.
+- Associated ordinary scope: the detection metadata, tests, documentation, and supported generated catalog mirrors already specified by this item and its read-only preflight.
+- Exclusions: no agent-role definition change, replacement of the general SQL skill, installation, or expansion to another governed definition is authorized.
+- Lifecycle boundary: this approval record keeps the item Ready. Running ownership and later project-artifact work require their own separate lifecycle and ARTIFACT GO authority.
+
 ## Summary
 
 Add a focused MySQL skill that complements vendor-neutral SQL guidance with MySQL and InnoDB behavior for schema design, query plans, transactions, locking, indexes, migrations, and production verification.
