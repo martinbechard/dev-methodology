@@ -68,6 +68,83 @@ fixtureProfiles:
     executableCases: []
     coverageStatus: declared
 agents:
+  - id: dev-backlog-coordinator
+    source: agents/roles/dev-activities/dev-backlog-coordinator.role.yaml
+    scenarioFamily: backlog
+    repositoryMutation: conditional
+    harnesses:
+      - codex
+      - junie
+    outputContractFields:
+      - status
+      - queue and phase ledger
+      - canonical task registry
+      - primary baton and wake obligations
+      - adaptive campaign state
+      - delivery and lifecycle evidence
+      - task housekeeping outcome
+    judgePlan:
+      deterministicChecks:
+        - harness-agent-identity
+        - phase-order
+        - task-identity-fields
+        - lifecycle-baton-evidence
+        - claim-lifecycle
+        - output-contract-presence
+      modelRubric: workflow-quality
+    workflowAssociations:
+      - backlog
+    scenarios:
+      - id: dev-backlog-coordinator-happy
+        kind: happy-path
+        fixtureProfile: backlog-state-machine
+        promptIntent: Reconcile several approved backlog items, serialize their short primary lifecycle batons, and coordinate three non-overlapping Codex artifact campaigns through review verification integration and terminal housekeeping.
+        expectedOutcome: A live-state queue ledger, stable canonical task ids, exact baton and wake evidence, three healthy active campaigns with bounded scaling, and terminal lifecycle evidence without parent implementation or direct backlog mutation.
+        requiredBehaviors:
+          - Use Dev Backlog Steward for each separate primary lifecycle mutation.
+          - Use Dev Orchestrator for each active artifact campaign and maintain one immediate parent successor obligation.
+          - Start at three active artifact campaigns and add one only after healthy completion and resource evidence.
+          - Audit task-list anomalies after each measured dispatch batch.
+        forbiddenBehaviors:
+          - Treat task title, task status, or messages as backlog or delivery authority.
+          - Keep dormant preflight-only tasks active as concurrency.
+          - Poll claims or create predecessor chains between independent items.
+        judgePlan:
+          deterministicChecks:
+            - phase-order
+            - lifecycle-baton-evidence
+            - task-identity-fields
+            - claim-lifecycle
+            - dependency-identity-and-order
+          modelRubric: workflow-quality
+        executableCases: []
+        coverageStatus: declared
+      - id: dev-backlog-coordinator-boundary
+        kind: boundary-failure
+        fixtureProfile: backlog-state-machine
+        promptIntent: Recover an ambiguous timed-out dispatch whose task is delayed in the list, preserve an already resolved approval during primary contention, and decide whether an inactive terminal task was archived.
+        expectedOutcome: Bounded settlement and reconciliation before at most one retry, canonical duplicate containment, one stable-id phase title, a parent-owned wake obligation, no repeated user question, completion refusal without delivery evidence, and an explicit no-persist archival limitation.
+        requiredBehaviors:
+          - Reconcile active and archived tasks by parent id, backlog path, normalized objective, creation time, and status.
+          - Record the exact resolved answer once and keep Ready to Running separate.
+          - Treat Inactive thread archive did not persist as ambiguous and retain durable repository evidence.
+          - Rebuild state from live backlog, claims, Git, and tasks after interruption.
+        forbiddenBehaviors:
+          - Infer task absence from one immediate list read.
+          - Match, rename, contain, or archive by title alone.
+          - Report Completed or archived from approval or UI inactivity.
+        judgePlan:
+          deterministicChecks:
+            - delayed-visibility-settlement
+            - retry-limit
+            - duplicate-containment
+            - exact-decision-provenance
+            - completion-evidence-gate
+            - archive-no-persist
+          modelRubric: workflow-quality
+        executableCases: []
+        coverageStatus: declared
+    coverageStatus: declared
   - id: dev-artifact-reviewer
     source: agents/roles/dev-activities/dev-artifact-reviewer.role.yaml
     scenarioFamily: documentation-methodology

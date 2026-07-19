@@ -1,0 +1,31 @@
+schema: synthetic-agent-suite-cases
+cases:
+  lifecycle-batons-and-artifact-scaling:
+    readyItems: [item-a, item-b, item-c]
+    primaryState: {clean: true, registry: empty}
+    artifactScopes: [skill source, role source, evaluation documentation]
+    healthyScaling: {startingFloor: 3, increment: 1}
+    namedResources: [generator, browser, verification, integration, claim contention]
+    finalCatalogRun: after-accepted-fixes-integrate
+  ambiguous-dispatch-and-just-in-time-resume:
+    parentTaskId: parent-123
+    canonicalBacklogPath: backlog/feature-backlog/example.md
+    normalizedObjective: coordinate example delivery
+    initialListMatches: 0
+    settlementListMatches: 2
+    creationTimes: [2026-07-19T10:00:00Z, 2026-07-19T10:00:02Z]
+    statuses: [waiting, waiting]
+    titles: [Preflight work item, Generic old title]
+    archivedMatchPresent: true
+    maximumRetryCount: 1
+  decision-resolution-and-terminal-integrity:
+    userAnswer: approved
+    provenance: thread:synthetic/message:approval
+    readyTransition: PRIMARY_REQUIRED
+    delivery: incomplete
+    review: pending
+    verification: pending
+    integration: pending
+    releasedClaims: false
+    terminalBacklogEvidence: false
+    archiveOutcome: Inactive thread archive did not persist

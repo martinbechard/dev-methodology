@@ -8,6 +8,10 @@ Do not move these directives into a distributed skill unless the rule is reusabl
 
 Keep these instructions simple. If a maintenance rule needs a long explanation, prefer a root procedure file whose name starts with procedure- and link it from here.
 
+## Codex Multi-Item Coordination
+
+When the user explicitly asks one parent task to coordinate multiple user-visible Codex backlog tasks, use the [codex-workitem-coordination skill](skills/codex-workitem-coordination/SKILL.md) through Dev Backlog Coordinator. Keep backlog mutations with Dev Backlog Steward and per-item artifact delivery with Dev Orchestrator. The [orchestrated development lifecycle](design/orchestrated-development-lifecycle.html) owns the communication sequences; do not copy that procedure into repository-local guidance.
+
 ## Source Boundaries
 
 - README.md is the human-facing entry point for the bundle.

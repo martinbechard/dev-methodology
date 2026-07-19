@@ -116,3 +116,7 @@ suites:
     priority: 26
     path: methodology-artifact-reviewer
     rationale: Independently detects methodology catalog and generated-output drift.
+  - id: dev-backlog-coordinator
+    priority: 27
+    path: dev-backlog-coordinator
+    rationale: Coordinates just-in-time Codex backlog tasks, serialized lifecycle batons, and bounded artifact campaigns.

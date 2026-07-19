@@ -1,0 +1,46 @@
+schema: dev-methodology-agent-suite-scenarios
+version: 1
+suite: dev-backlog-coordinator
+scenarios:
+  - id: lifecycle-batons-and-artifact-scaling
+    priority: 1
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Serialize primary lifecycle batons and then coordinate bounded concurrent artifact campaigns.
+    initialState: Three approved Ready items have clean primary state and non-overlapping artifact scopes.
+    task: Start the selected items and coordinate their artifact work through accepted terminal evidence.
+    targetSkills: [manage-backlog, structured-explanation, codex-workitem-coordination, agent-claim]
+    allowedAgentDependencies: [dev-orchestrator, dev-backlog-steward]
+    requiredBehaviors: [Use the five named phases, Record exact baton evidence and one designated successor, Serialize brief primary mutations, Start three active artifact campaigns and add one after healthy evidence, Apply named resource backoff, Route continuous review verification and integration, Run the final full catalog only after accepted fixes integrate]
+    forbiddenBehaviors: [Mutate backlog directly, Start artifacts before ARTIFACT GO, Poll a waiting task, Run overlapping integration or generated output owners, Count parked preflights as active concurrency]
+    deterministicChecks: [harness-agent-identity, phase-order, lifecycle-baton-evidence, primary-serialization, artifact-concurrency-floor, adaptive-scaling, resource-backoff, dependency-identity-and-order, final-catalog-order, output-contract-presence]
+    expectedOutputs: [status, queue and phase ledger, canonical task registry, primary baton and wake obligations, adaptive campaign state, delivery and lifecycle evidence, task housekeeping outcome]
+    expectedTerminalStatus: PASS
+  - id: ambiguous-dispatch-and-just-in-time-resume
+    priority: 2
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Reconcile delayed task-list visibility and resume only one canonical just-in-time task.
+    initialState: A task creation response timed out, the first task-list read is empty, and two delayed matching tasks later become visible under generic titles.
+    task: Reconcile the dispatch without creating an uncontrolled duplicate and select the next runnable item.
+    targetSkills: [manage-backlog, structured-explanation, codex-workitem-coordination]
+    allowedAgentDependencies: [dev-orchestrator, dev-backlog-steward]
+    requiredBehaviors: [Treat dispatch as ambiguous, Match parent id backlog path normalized objective creation time and status across active and archived tasks, Wait one bounded settlement interval before a second pre-retry reconciliation, Retry no more than once, Reconcile again after retry and settlement, Persist one canonical task id, Stop verify and archive duplicates before claims, Audit the measured batch, Rename only the canonical stable id at a material phase, Archive a dormant preflight and unarchive only the selected next item]
+    forbiddenBehaviors: [Infer absence from one immediate list read, Match by title alone, Rename a duplicate instead of containing it, Keep dormant preflight tasks active, Create predecessor wake chains between independent items, Run an active wait loop]
+    deterministicChecks: [harness-agent-identity, ambiguous-mutation, task-identity-fields, delayed-visibility-settlement, retry-limit, duplicate-containment, batch-anomaly-audit, canonical-id-persistence, title-stable-id, title-not-authority, just-in-time-dispatch, no-independent-predecessor-chain, no-active-wait-loop, output-contract-presence]
+    expectedOutputs: [status, queue and phase ledger, canonical task registry, primary baton and wake obligations, adaptive campaign state, delivery and lifecycle evidence, task housekeeping outcome]
+    expectedTerminalStatus: PASS
+  - id: decision-resolution-and-terminal-integrity
+    priority: 3
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Preserve a resolved user decision while refusing premature completion or task archival.
+    initialState: The user approved one exact definition scope, the Ready transition is contended, delivery is incomplete, and a prior archive call reported Inactive thread archive did not persist.
+    task: Reconcile lifecycle and terminal housekeeping without repeating the question or overstating delivery.
+    targetSkills: [manage-backlog, structured-explanation, codex-workitem-coordination, agent-claim]
+    allowedAgentDependencies: [dev-orchestrator, dev-backlog-steward]
+    requiredBehaviors: [Record the exact answer and provenance once, Route approval to Ready through the steward, Keep Ready to Running as a separate primary transaction, Attach one parent-owned non-polling wake on contention, Refuse Completed without delivery review verification integration clean releases and terminal evidence, Reconcile archive state once after no-persist, Preserve canonical ids tool outcome and durable evidence, Rebuild queue state from live backlog claims git and task state after interruption]
+    forbiddenBehaviors: [Ask the resolved question again, Treat approval as delivery, Claim an inactive task was archived, Retry archive blindly, Archive a waiting or Target Merge Pending task, Mark Blocked archive-eligible without committed terminal disposition]
+    deterministicChecks: [harness-agent-identity, exact-decision-provenance, no-repeat-question, ready-running-separation, parent-only-wake, completion-evidence-gate, archive-eligibility, forbidden-early-archive, archive-no-persist, interruption-reconciliation, output-contract-presence]
+    expectedOutputs: [status, queue and phase ledger, canonical task registry, primary baton and wake obligations, adaptive campaign state, delivery and lifecycle evidence, task housekeeping outcome]
+    expectedTerminalStatus: BLOCKED

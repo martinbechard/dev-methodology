@@ -326,6 +326,8 @@ After that analysis and explicit user approval, --replace-customized may be comb
 
 Wiki work remains separate from general documentation, coding, review, backlog, and project setup. The generated [Core Agent and Skills](design/agent-and-skill-definitions.html) page owns catalog views of current conceptual agent definitions and skill definitions, including responsibilities, assigned skills, output contracts, examples, model profiles, repository mutation policies, and agent-skill relationships. [Technology Skills](design/skills-modularization.html) explains technology-agnostic agent skills and setup-bound technology extensions. The [orchestrated development lifecycle](design/orchestrated-development-lifecycle.html) owns bootstrap, normal planned design progression, complete source-backed documentation, execution, review, verification, integration, claim release, and execution evidence.
 
+Dev Backlog Coordinator owns parent-level, just-in-time coordination only when a user explicitly requests several user-visible Codex backlog tasks. It reconciles active and archived task identities, delegates brief lifecycle mutations to Dev Backlog Steward, delegates each active delivery campaign to Dev Orchestrator, and retains the one immediate successor and terminal housekeeping obligations. The portable [codex-workitem-coordination skill](skills/codex-workitem-coordination/SKILL.md) is the procedure source of truth; task titles, task status, and messages are coordination state rather than backlog or delivery evidence.
+
 Backlog work that the user directly requests or explicitly authorizes starts with Status: Ready in the typed active folders under backlog unless the user defers it or a separate genuine user-owned question remains. Independently identified potentially valuable ideas, and other work whose next safe step requires a user decision, approval, authority grant, value judgment, or user-held information, belong in [backlog/user-action-required](backlog/user-action-required/README.md) with their underlying Type and one concrete question. Agents report that question but do not claim or dispatch the work until the user answers. Evidence-backed ordinary dependencies remain with typed active work. Intentionally deferred work with no immediate question remains in backlog/holding. Status: Proposed is not an operational backlog state.
 
 The generic Gang of Four pattern skills are request-specific assignments for design authoring and design review. Java, TypeScript, and Python pattern examples remain setup-detected technology skills available to every agent acting under the matching folder guidance.
@@ -398,6 +400,7 @@ The development practice skills are:
 - review-structured-artifact
 - agent-claim
 - agent-work-merge
+- codex-workitem-coordination
 - create-pull-request
 - code-review-evidence
 - test-driven-development

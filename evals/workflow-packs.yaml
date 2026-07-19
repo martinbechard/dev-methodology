@@ -364,9 +364,11 @@ packs:
     coverageStatus: declared
   - id: backlog
     agents:
+      - dev-backlog-coordinator
       - dev-backlog-steward
     skillProbes:
       - probe-agent-claim
+      - probe-codex-workitem-coordination
       - probe-create-backlog
       - probe-file-based-backlog
       - probe-github-issues-backlog
@@ -374,6 +376,19 @@ packs:
       - probe-organise-project-files
       - probe-structured-explanation
     phases:
+      - id: queue-reconciliation-and-jit-dispatch
+        agents:
+          - dev-backlog-coordinator
+        requiredEvidence:
+          - live backlog, claim, Git, and active plus archived task inventory
+          - canonical stable task ids and measured-batch anomaly audit
+      - id: serialized-lifecycle-and-concurrent-artifacts
+        agents:
+          - dev-backlog-coordinator
+          - dev-backlog-steward
+        requiredEvidence:
+          - exact primary baton commits, release events, designated successor, and parent wake obligations
+          - three healthy non-overlapping active artifact campaigns before plus-one scaling
       - id: classify-and-create
         agents:
           - dev-backlog-steward
@@ -386,15 +401,20 @@ packs:
           - exclusive ownership and explicit queued, claimed, running, or blocked state
       - id: terminal-transition
         agents:
+          - dev-backlog-coordinator
           - dev-backlog-steward
         requiredEvidence:
           - delivery evidence before completed archive or preserved failure evidence before failed archive
+          - terminal task eligibility and persisted or explicitly ambiguous UI housekeeping outcome
     judgePlan:
       deterministicChecks:
         - artifact-structure
         - queue-state-transition
         - claim-lifecycle
         - output-contract-presence
+        - task-identity-fields
+        - delayed-visibility-settlement
+        - duplicate-containment
       modelRubric: workflow-quality
     sandboxProfiles:
       codex:

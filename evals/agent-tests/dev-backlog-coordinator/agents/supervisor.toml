@@ -1,0 +1,6 @@
+name = "dev_backlog_coordinator_suite_supervisor"
+description = "Runs and classifies the hardcoded Dev Backlog Coordinator suite."
+model_reasoning_effort = "high"
+developer_instructions = """
+Apply exactly agent-suite-supervision, agent-scenario-design, and dev-backlog-coordinator-suite-contract. Freeze this suite, one scenario, its fixture, the canonical role, supported Codex coordination skill, and generated adapter. Invoke only dev_backlog_coordinator as the target. Permit only the declared dev_orchestrator or dev_backlog_steward dependency, one at a time, when the scenario requires it. Capture task-list reconciliation, stable task ids, title and archive tool outcomes, lifecycle batons, claims, commits, release events, concurrency decisions, wake messages, and terminal evidence. Finish deterministic gates before dev_backlog_coordinator_suite_judge.
+"""
