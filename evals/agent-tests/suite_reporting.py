@@ -52,6 +52,7 @@ _VISIBLE_INPUT_STATES = frozenset(
 _ABSOLUTE_WORKER_LIMIT = 4
 _MEMORY_BYTES_PER_WORKER = 2 * 1024**3
 _SCHEMA = "dev-methodology-agent-suite-report"
+_POINTER_SCHEMA = "dev-methodology-agent-suite-report-pointer"
 
 
 @dataclasses.dataclass(frozen=True)
@@ -156,20 +157,7 @@ def discover_resources() -> HostResources:
             available = page_size * pages
         except (OSError, ValueError, subprocess.TimeoutExpired):
             available = 0
-    if available <= 0:
-        try:
-            completed = subprocess.run(
-                ("sysctl", "-n", "hw.memsize"),
-                capture_output=True,
-                text=True,
-                check=False,
-                timeout=2,
-            )
-            if completed.returncode == 0:
-                available = int(completed.stdout.strip())
-        except (OSError, ValueError, subprocess.TimeoutExpired):
-            available = 0
-    return HostResources(processors, max(available, _MEMORY_BYTES_PER_WORKER))
+    return HostResources(processors, max(0, available))
 
 
 def resolve_workers(
@@ -183,8 +171,14 @@ def resolve_workers(
         raise ValueError(
             f"maximum workers must be between 1 and {_ABSOLUTE_WORKER_LIMIT}"
         )
+    if resources.available_memory_bytes <= 0:
+        raise ValueError("available memory could not be measured safely")
+    memory_bound = resources.available_memory_bytes // _MEMORY_BYTES_PER_WORKER
+    if memory_bound < 1:
+        raise ValueError(
+            f"available memory is below the {_MEMORY_BYTES_PER_WORKER}-byte per-worker safety bound"
+        )
     processor_bound = max(1, resources.processor_count // 2)
-    memory_bound = max(1, resources.available_memory_bytes // _MEMORY_BYTES_PER_WORKER)
     safe = min(selected_count, processor_bound, memory_bound, _ABSOLUTE_WORKER_LIMIT)
     return min(safe, override) if override is not None else safe
 
@@ -308,6 +302,25 @@ def suite_metadata(
         omissions.append("runner summary unavailable or malformed")
     if not scenarios:
         omissions.append("no governed scenario results were retained")
+    missing_deterministic = [
+        str(scenario.get("scenario", "unknown"))
+        for scenario in scenarios
+        if not isinstance(scenario.get("deterministicEvidence"), list)
+    ]
+    missing_judge = [
+        str(scenario.get("scenario", "unknown"))
+        for scenario in scenarios
+        if not isinstance(scenario.get("modelJudgeEvidence"), list)
+    ]
+    if missing_deterministic:
+        omissions.append(
+            "explicit deterministic evidence unavailable for "
+            + ", ".join(missing_deterministic)
+        )
+    if missing_judge:
+        omissions.append(
+            "explicit model-Judge evidence unavailable for " + ", ".join(missing_judge)
+        )
     return {
         "schema": _SCHEMA,
         "version": 1,
@@ -324,13 +337,13 @@ def suite_metadata(
         "deterministicEvidence": [
             value
             for scenario in scenarios
-            for value in scenario.get("evidence", [])
+            for value in scenario.get("deterministicEvidence", [])
             if isinstance(value, str)
         ],
         "modelJudgeEvidence": [
             value
             for scenario in scenarios
-            for value in scenario.get("identityEvidence", [])
+            for value in scenario.get("modelJudgeEvidence", [])
             if isinstance(value, str)
         ],
         "omissions": omissions,
@@ -358,11 +371,22 @@ def render_suite_html(metadata: Mapping[str, Any]) -> str:
     rows = []
     for scenario in metadata.get("scenarioResults", []):
         rows.append(
-            '<tr><th scope="row">{}</th><td>{}</td><td>{}</td></tr>'.format(
+            '<tr><th scope="row">{}</th><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>'.format(
                 html.escape(str(scenario.get("scenario", "unknown"))),
                 html.escape(str(scenario.get("status", "unknown"))),
                 html.escape(
                     "; ".join(str(value) for value in scenario.get("evidence", []))
+                ),
+                html.escape(
+                    "; ".join(
+                        str(value)
+                        for value in scenario.get("deterministicEvidence", [])
+                    )
+                ),
+                html.escape(
+                    "; ".join(
+                        str(value) for value in scenario.get("modelJudgeEvidence", [])
+                    )
                 ),
             )
         )
@@ -379,27 +403,114 @@ def render_suite_html(metadata: Mapping[str, Any]) -> str:
 <style>body{{font:16px system-ui,sans-serif;line-height:1.5;margin:auto;max-width:72rem;padding:1rem;color:#18212b;background:#fff}}a{{color:#0645ad}}table{{border-collapse:collapse;width:100%}}th,td{{border:1px solid #667;padding:.55rem;text-align:left;vertical-align:top}}.status{{font-weight:700}}@media(max-width:40rem){{table{{display:block;overflow-x:auto}}}}</style></head>
 <body><main><h1>{html.escape(str(metadata["suite"]))}</h1><p class="status">{html.escape(str(metadata["status"]))} · {html.escape(str(metadata["harness"]))}</p>
 <h2>Run identity</h2><dl><dt>Source revision</dt><dd>{html.escape(str(metadata["sourceRevision"]))}</dd><dt>Suite digest</dt><dd>{html.escape(str(metadata["suiteDigest"]))}</dd><dt>Elapsed</dt><dd>{metadata["elapsedSeconds"]} seconds</dd></dl>
-<h2>Scenario results</h2><table><thead><tr><th scope="col">Scenario</th><th scope="col">Status</th><th scope="col">Evidence</th></tr></thead><tbody>{"".join(rows) or '<tr><td colspan="3">No scenario results retained.</td></tr>'}</tbody></table>
+<h2>Scenario results</h2><table><thead><tr><th scope="col">Scenario</th><th scope="col">Status</th><th scope="col">Evidence</th><th scope="col">Deterministic evidence</th><th scope="col">Model-Judge evidence</th></tr></thead><tbody>{"".join(rows) or '<tr><td colspan="5">No scenario results retained.</td></tr>'}</tbody></table>
 <h2>Omissions</h2><ul>{omissions}</ul><h2>Retained evidence</h2><p>{html.escape(str(metadata["evidenceRoot"]))}</p></main>{_embedded_metadata(metadata)}</body></html>\n"""
 
 
 def write_suite_report(
     report_root: Path, metadata: Mapping[str, Any]
 ) -> tuple[Path, Path]:
-    """Atomically replace one suite HTML report and its machine metadata sidecar."""
+    """Publish one immutable generation through a single atomic pointer replacement."""
 
     harness = str(metadata["harness"])
     suite_id = str(metadata["suite"])
-    directory = report_root / "suites" / harness
-    html_path = directory / f"{suite_id}.html"
-    metadata_path = directory / f"{suite_id}.metadata.json"
-    _atomic_write(metadata_path, json.dumps(metadata, indent=2, sort_keys=True) + "\n")
-    _atomic_write(html_path, render_suite_html(metadata))
+    metadata_content = json.dumps(metadata, indent=2, sort_keys=True) + "\n"
+    html_content = render_suite_html(metadata)
+    generation = hashlib.sha256(
+        metadata_content.encode("utf-8") + html_content.encode("utf-8")
+    ).hexdigest()
+    generation_root = report_root / "generations" / harness / suite_id / generation
+    metadata_path = generation_root / "metadata.json"
+    html_path = generation_root / "report.html"
+    _atomic_write(metadata_path, metadata_content)
+    _atomic_write(html_path, html_content)
+    pointer = {
+        "schema": _POINTER_SCHEMA,
+        "version": 1,
+        "identity": f"{harness}:{suite_id}",
+        "harness": harness,
+        "suite": suite_id,
+        "generation": generation,
+        "metadata": metadata_path.relative_to(report_root).as_posix(),
+        "metadataSha256": hashlib.sha256(metadata_content.encode("utf-8")).hexdigest(),
+        "html": html_path.relative_to(report_root).as_posix(),
+        "htmlSha256": hashlib.sha256(html_content.encode("utf-8")).hexdigest(),
+    }
+    pointer_path = report_root / "suites" / harness / f"{suite_id}.manifest.json"
+    _atomic_write(pointer_path, json.dumps(pointer, indent=2, sort_keys=True) + "\n")
     return html_path, metadata_path
 
 
 def _metadata_candidates(report_root: Path) -> tuple[Path, ...]:
-    return tuple(sorted(report_root.glob("suites/**/*.metadata.json")))
+    return tuple(sorted(report_root.glob("suites/**/*.manifest.json")))
+
+
+def _load_generation_pointer(
+    report_root: Path, pointer_path: Path
+) -> tuple[Mapping[str, Any], Path]:
+    if pointer_path.is_symlink() or not pointer_path.is_file():
+        raise ValueError("suite report pointer is missing or unsafe")
+    pointer = json.loads(pointer_path.read_text(encoding="utf-8"))
+    if (
+        not isinstance(pointer, dict)
+        or pointer.get("schema") != _POINTER_SCHEMA
+        or pointer.get("version") != 1
+        or pointer.get("harness") not in _HARNESSES
+        or not isinstance(pointer.get("suite"), str)
+        or not isinstance(pointer.get("generation"), str)
+    ):
+        raise ValueError("invalid suite report pointer")
+
+    def governed_path(field: str) -> Path:
+        relative_text = pointer.get(field)
+        if not isinstance(relative_text, str):
+            raise ValueError(f"suite report pointer lacks {field}")
+        relative = Path(relative_text)
+        if relative.is_absolute() or ".." in relative.parts:
+            raise ValueError(f"suite report pointer {field} escapes the report root")
+        resolved = (report_root / relative).resolve()
+        if (
+            not resolved.is_relative_to(report_root.resolve())
+            or resolved.is_symlink()
+            or not resolved.is_file()
+        ):
+            raise ValueError(f"suite report pointer {field} is missing or unsafe")
+        return resolved
+
+    metadata_path = governed_path("metadata")
+    html_path = governed_path("html")
+    metadata_content = metadata_path.read_text(encoding="utf-8")
+    html_content = html_path.read_text(encoding="utf-8")
+    if hashlib.sha256(metadata_content.encode("utf-8")).hexdigest() != pointer.get(
+        "metadataSha256"
+    ):
+        raise ValueError("suite report metadata digest mismatch")
+    if hashlib.sha256(html_content.encode("utf-8")).hexdigest() != pointer.get(
+        "htmlSha256"
+    ):
+        raise ValueError("suite report HTML digest mismatch")
+    generation = hashlib.sha256(
+        metadata_content.encode("utf-8") + html_content.encode("utf-8")
+    ).hexdigest()
+    if generation != pointer.get("generation"):
+        raise ValueError("suite report generation digest mismatch")
+    if (
+        metadata_path.parent != html_path.parent
+        or metadata_path.parent.name != generation
+    ):
+        raise ValueError(
+            "suite report files do not share their governed generation directory"
+        )
+    metadata = json.loads(metadata_content)
+    if (
+        not isinstance(metadata, dict)
+        or metadata.get("identity") != pointer.get("identity")
+        or metadata.get("harness") != pointer.get("harness")
+        or metadata.get("suite") != pointer.get("suite")
+        or _embedded_metadata(metadata) not in html_content
+    ):
+        raise ValueError("suite report generation identity mismatch")
+    return metadata, html_path
 
 
 def _valid_metadata(value: Mapping[str, Any]) -> bool:
@@ -427,19 +538,19 @@ def aggregate_entries(
 ) -> tuple[dict[str, Any], ...]:
     """Classify report metadata, keeping missing and every non-passing input state visible."""
 
-    parsed: dict[tuple[str, str], list[tuple[Path, Mapping[str, Any]]]] = {}
+    parsed: dict[tuple[str, str], list[tuple[Path, Mapping[str, Any], Path]]] = {}
     malformed: list[Path] = []
     for path in _metadata_candidates(report_root):
         try:
-            value = json.loads(path.read_text(encoding="utf-8"))
-        except (OSError, UnicodeError, json.JSONDecodeError):
+            value, html_path = _load_generation_pointer(report_root, path)
+        except (OSError, UnicodeError, json.JSONDecodeError, ValueError):
             malformed.append(path)
             continue
         if not isinstance(value, dict) or not _valid_metadata(value):
             malformed.append(path)
             continue
         key = (str(value.get("harness", "")), str(value.get("suite", "")))
-        parsed.setdefault(key, []).append((path, value))
+        parsed.setdefault(key, []).append((path, value, html_path))
     entries: list[dict[str, Any]] = []
     for suite_id in catalog:
         candidates = parsed.get((harness, suite_id), [])
@@ -454,11 +565,8 @@ def aggregate_entries(
                 }
             )
             continue
-        path, value = candidates[0]
+        path, value, html_path = candidates[0]
         state = "DUPLICATE" if len(candidates) > 1 else "CURRENT"
-        html_path = path.with_name(path.name.replace(".metadata.json", ".html"))
-        if state == "CURRENT" and not html_path.is_file():
-            state = "MISSING"
         if state == "CURRENT" and value.get("sourceRevision") != current_revision:
             state = "STALE"
         if state == "CURRENT" and value.get("suiteDigest") != _suite_digest(
@@ -472,26 +580,26 @@ def aggregate_entries(
         entries.append(entry)
     for (candidate_harness, suite_id), candidates in sorted(parsed.items()):
         if candidate_harness != harness:
-            path, value = candidates[0]
+            path, value, html_path = candidates[0]
             entry = dict(value)
             entry.update(
                 {
                     "inputState": "MIXED_HARNESS",
                     "reportLink": os.path.relpath(
-                        path.with_name(path.name.replace(".metadata.json", ".html")),
+                        html_path,
                         report_root,
                     ),
                 }
             )
             entries.append(entry)
         elif suite_id not in catalog:
-            path, value = candidates[0]
+            path, value, html_path = candidates[0]
             entry = dict(value)
             entry.update(
                 {
                     "inputState": "INCOMPATIBLE_REVISION",
                     "reportLink": os.path.relpath(
-                        path.with_name(path.name.replace(".metadata.json", ".html")),
+                        html_path,
                         report_root,
                     ),
                 }
@@ -525,11 +633,15 @@ def render_global_html(
             str(value.get("identity")),
         ),
     )
-    counts: dict[str, int] = {}
+    input_state_counts: dict[str, int] = {}
+    terminal_status_counts = {status: 0 for status in sorted(_TERMINAL_STATUSES)}
     rows = []
     for entry in ordered:
         state = str(entry.get("inputState", "MALFORMED"))
-        counts[state] = counts.get(state, 0) + 1
+        input_state_counts[state] = input_state_counts.get(state, 0) + 1
+        status = str(entry.get("status", ""))
+        if state == "CURRENT" and status in terminal_status_counts:
+            terminal_status_counts[status] += 1
         label = html.escape(str(entry.get("suite", "unknown")))
         link = entry.get("reportLink")
         suite_cell = (
@@ -543,10 +655,12 @@ def render_global_html(
         "version": 1,
         "harness": harness,
         "sourceRevision": revision,
-        "counts": counts,
+        "counts": input_state_counts,
+        "inputStateCounts": input_state_counts,
+        "terminalStatusCounts": terminal_status_counts,
         "entries": ordered,
     }
-    return f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Agent suite reports</title><style>body{{font:16px system-ui,sans-serif;line-height:1.5;margin:auto;max-width:80rem;padding:1rem;color:#18212b;background:#fff}}a{{color:#0645ad}}table{{border-collapse:collapse;width:100%}}th,td{{border:1px solid #667;padding:.5rem;text-align:left}}@media(max-width:40rem){{table{{display:block;overflow-x:auto}}}}</style></head><body><main><h1>Agent suite reports</h1><p>Harness: {html.escape(harness)} · Revision: {html.escape(revision)}</p><h2>Summary</h2><p>{html.escape(json.dumps(counts, sort_keys=True))}</p><h2>Suites</h2><table><thead><tr><th scope="col">Suite</th><th scope="col">Harness</th><th scope="col">Status</th><th scope="col">Input state</th><th scope="col">Finished</th></tr></thead><tbody>{"".join(rows)}</tbody></table></main>{_embedded_metadata(aggregate)}</body></html>\n"""
+    return f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Agent suite reports</title><style>body{{font:16px system-ui,sans-serif;line-height:1.5;margin:auto;max-width:80rem;padding:1rem;color:#18212b;background:#fff}}a{{color:#0645ad}}table{{border-collapse:collapse;width:100%}}th,td{{border:1px solid #667;padding:.5rem;text-align:left}}@media(max-width:40rem){{table{{display:block;overflow-x:auto}}}}</style></head><body><main><h1>Agent suite reports</h1><p>Harness: {html.escape(harness)} · Revision: {html.escape(revision)}</p><h2>Input states</h2><p>{html.escape(json.dumps(input_state_counts, sort_keys=True))}</p><h2>Terminal statuses</h2><p>{html.escape(json.dumps(terminal_status_counts, sort_keys=True))}</p><h2>Suites</h2><table><thead><tr><th scope="col">Suite</th><th scope="col">Harness</th><th scope="col">Status</th><th scope="col">Input state</th><th scope="col">Finished</th></tr></thead><tbody>{"".join(rows)}</tbody></table></main>{_embedded_metadata(aggregate)}</body></html>\n"""
 
 
 def rebuild_global(
@@ -578,7 +692,7 @@ def run_suites(
         raise ValueError("harness must be codex or junie")
     catalog = catalog_suite_ids()
     selected = select_suites(catalog, requested)
-    if harness == "junie" and not requested and not allow_full_junie:
+    if harness == "junie" and selected == catalog and not allow_full_junie:
         raise ValueError("a full Junie selection requires --allow-full-junie")
     measured = resources or discover_resources()
     workers = resolve_workers(len(selected), measured, maximum_workers)
@@ -586,7 +700,10 @@ def run_suites(
     if active_safety_probe is None and resources is None:
 
         def resource_boundary_is_safe(current: HostResources) -> bool:
-            return resolve_workers(len(selected), current) >= workers
+            try:
+                return resolve_workers(len(selected), current) >= workers
+            except ValueError:
+                return False
 
         active_safety_probe = resource_boundary_is_safe
     revision = _source_revision()
@@ -596,11 +713,14 @@ def run_suites(
     def execute(suite_id: str) -> dict[str, Any]:
         if stop.is_set():
             return {"suite": suite_id, "status": "NOT_SCHEDULED"}
-        if active_safety_probe is not None and not active_safety_probe(
-            discover_resources()
-        ):
-            stop.set()
-            return {"suite": suite_id, "status": "NOT_SCHEDULED"}
+        if active_safety_probe is not None:
+            try:
+                safe_to_continue = active_safety_probe(discover_resources())
+            except Exception:
+                safe_to_continue = False
+            if not safe_to_continue:
+                stop.set()
+                return {"suite": suite_id, "status": "NOT_SCHEDULED"}
         result_dir = report_root / "runs" / harness / suite_id / run_id
         started = _utc_now()
         monotonic = time.monotonic()

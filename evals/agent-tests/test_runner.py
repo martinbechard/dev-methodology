@@ -40,26 +40,32 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             runner._argument_parser().parse_args(["--harness", "junie", "--validate-only"]).harness,
         )
 
-    def test_junie_agent_conversion_uses_native_name_and_binding_marker(self) -> None:
-        """Junie receives isolated Markdown subagents rather than Codex TOML files."""
+    def test_real_junie_supervisor_binds_native_authority_and_runtime_names(self) -> None:
+        """A real suite supervisor contains only Junie authority and hyphen runtime invocations."""
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            source = root / "source.toml"
             destination = root / "agents"
             destination.mkdir()
-            source.write_text(
-                'name = "suite_supervisor"\n'
-                'description = "Govern one suite."\n'
-                'developer_instructions = """Invoke the Codex agent using agent_type exactly target_agent '
-                'and fork_context exactly false."""\n',
-                encoding="utf-8",
+            source = _RUNNER_PATH.parent / "dev-coder" / "agents" / "supervisor.toml"
+            bindings = {
+                "dev_coder_suite_supervisor": "dev-coder-suite-supervisor",
+                "dev_coder": "dev-coder",
+                "dev_coder_suite_judge": "dev-coder-suite-judge",
+            }
+
+            staged = runner._copy_junie_agent(
+                source,
+                "dev_coder_suite_supervisor",
+                destination,
+                bindings,
             )
+            rendered = (destination / "dev-coder-suite-supervisor.md").read_text(encoding="utf-8")
 
-            staged = runner._copy_junie_agent(source, "suite_supervisor", destination)
-            rendered = (destination / "suite-supervisor.md").read_text(encoding="utf-8")
-
-        self.assertEqual("suite-supervisor", staged.invocation)
-        self.assertIn("name: suite-supervisor", rendered)
+        self.assertEqual("dev-coder-suite-supervisor", staged.invocation)
+        self.assertIn("name: dev-coder-suite-supervisor", rendered)
+        self.assertIn("generated/adapters/junie/agents/dev-coder.md", rendered)
+        self.assertNotIn("generated/adapters/codex", rendered)
+        self.assertNotIn("dev_coder", rendered)
         self.assertIn("Junie custom agent", rendered)
         self.assertIn(staged.instruction_marker, rendered)
 
@@ -77,6 +83,89 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             )
 
             self.assertEqual(report, runner._extract_junie_report(events))
+
+    def test_junie_ledger_proves_parent_order_concurrency_and_nested_contract(self) -> None:
+        """Complete lifecycle evidence proves the governed Junie execution topology."""
+        run = runner._RunSpec(suite=self._suite("one", nested_limit=1), scenario_ids=("happy",))
+        report = {"runs": [self._suite_report("one", "PASS")]}
+        with tempfile.TemporaryDirectory() as directory:
+            junie_home = Path(directory)
+            self._write_junie_lifecycles(
+                junie_home,
+                (
+                    ("suite-supervisor", "root", 0, 5),
+                    ("target-agent", "suite-supervisor", 1, 2),
+                    ("suite-judge", "suite-supervisor", 3, 4),
+                ),
+            )
+
+            audit = runner._audit_junie_agent_lifecycles(junie_home, (run,), report)
+
+        self.assertTrue(audit["parentChildVerified"])
+        self.assertTrue(audit["targetJudgeOrderVerified"])
+        self.assertTrue(audit["childConcurrencyVerified"])
+        self.assertTrue(audit["nestedDependencyConstraintsVerified"])
+
+    def test_junie_ledger_rejects_unexpected_agent_and_overlapping_children(self) -> None:
+        """An undeclared agent or concurrent supervisor children invalidates Junie evidence."""
+        run = runner._RunSpec(suite=self._suite("one", nested_limit=1), scenario_ids=("happy",))
+        report = {"runs": [self._suite_report("one", "PASS")]}
+        with tempfile.TemporaryDirectory() as directory:
+            junie_home = Path(directory)
+            self._write_junie_lifecycles(
+                junie_home,
+                (
+                    ("suite-supervisor", "root", 0, 6),
+                    ("target-agent", "suite-supervisor", 1, 4),
+                    ("suite-judge", "suite-supervisor", 3, 5),
+                    ("rogue-agent", "root", 1, 2),
+                ),
+            )
+            with self.assertRaisesRegex(RuntimeError, "unexpected custom agent"):
+                runner._audit_junie_agent_lifecycles(junie_home, (run,), report)
+
+            self._write_junie_lifecycles(
+                junie_home,
+                (
+                    ("suite-supervisor", "root", 0, 6),
+                    ("target-agent", "suite-supervisor", 1, 4),
+                    ("suite-judge", "suite-supervisor", 3, 5),
+                ),
+            )
+            with self.assertRaisesRegex(RuntimeError, "overlapping active children"):
+                runner._audit_junie_agent_lifecycles(junie_home, (run,), report)
+
+    def test_insufficient_junie_topology_evidence_blocks_governed_result(self) -> None:
+        """Missing relationship evidence becomes BLOCKED rather than an attributed PASS."""
+        run = runner._RunSpec(suite=self._suite("one", nested_limit=1), scenario_ids=("happy",))
+        report = {"runs": [self._suite_report("one", "PASS")], "residualRisk": "none"}
+        with tempfile.TemporaryDirectory() as directory:
+            junie_home = Path(directory)
+            session = junie_home / "sessions" / "session"
+            session.mkdir(parents=True)
+            (session / "events.jsonl").write_text(
+                json.dumps(
+                    {
+                        "event": {
+                            "agentEvent": {
+                                "kind": "CustomAgentBlockUpdatedEvent",
+                                "agent": {"name": "suite-supervisor"},
+                                "name": "suite-supervisor",
+                                "status": "STARTED",
+                                "stepId": "supervisor-step",
+                            }
+                        }
+                    }
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaises(runner._JunieEvidenceInsufficient) as raised:
+                runner._audit_junie_agent_lifecycles(junie_home, (run,), report)
+
+        blocked = runner._blocked_junie_report(report, str(raised.exception))
+        self.assertEqual("BLOCKED", blocked["runs"][0]["scenarioResults"][0]["status"])
+        self.assertIn("parent-agent", blocked["residualRisk"])
 
     def test_selects_one_suite_and_one_scenario(self) -> None:
         """A caller can narrow execution to one declared scenario."""
@@ -155,6 +244,22 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         self.assertIn("fork_context exactly false", prompt)
         self.assertIn('"fixtureRoot": "/workspace/.agent-suite-fixtures/one"', prompt)
         self.assertIn("never under /tmp or /private/tmp", prompt)
+
+    def test_governed_result_contract_separates_identity_deterministic_and_judge_evidence(self) -> None:
+        """Coordinator output cannot substitute identity strings for Judge or deterministic evidence."""
+        scenario_schema = runner._coordinator_schema()["properties"]["runs"]["items"][
+            "properties"
+        ]["scenarioResults"]["items"]
+
+        self.assertTrue(
+            {
+                "identityEvidence",
+                "deterministicEvidence",
+                "modelJudgeEvidence",
+                "evidence",
+            }
+            <= set(scenario_schema["required"])
+        )
 
     def test_cleanup_audit_rejects_active_claim_in_nested_fixture_repository(self) -> None:
         """A candidate repository cannot retain a claim outside the workspace registry."""
@@ -1349,6 +1454,8 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                         "targetInvoked": True,
                         "judgeInvoked": True,
                         "identityEvidence": ["bound"],
+                        "deterministicEvidence": ["gates"],
+                        "modelJudgeEvidence": ["verdict"],
                         "evidence": ["receipt"],
                         "cleanup": "clean",
                         "residualRisk": "none",
@@ -1406,6 +1513,8 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                         "targetInvoked": True,
                         "judgeInvoked": True,
                         "identityEvidence": {"target": "bound"},
+                        "deterministicEvidence": ["gates"],
+                        "modelJudgeEvidence": ["verdict"],
                         "evidence": ["receipt"],
                         "cleanup": "clean",
                         "residualRisk": "none",
@@ -1432,6 +1541,8 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                         "targetInvoked": "false",
                         "judgeInvoked": True,
                         "identityEvidence": ["bound"],
+                        "deterministicEvidence": ["gates"],
+                        "modelJudgeEvidence": ["verdict"],
                         "evidence": ["receipt"],
                         "cleanup": "clean",
                         "residualRisk": "none",
@@ -1506,6 +1617,8 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                     "targetInvoked": True,
                     "judgeInvoked": True,
                     "identityEvidence": ["thread-bound"],
+                    "deterministicEvidence": ["deterministic-gates"],
+                    "modelJudgeEvidence": ["judge-verdict"],
                     "cleanup": "clean",
                     "evidence": ["synthetic"],
                 }
@@ -1513,6 +1626,38 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             "maximumActiveChildrenObserved": 1,
             "cleanup": "clean",
         }
+
+    @staticmethod
+    def _write_junie_lifecycles(
+        junie_home: Path,
+        lifecycles: tuple[tuple[str, str, int, int], ...],
+    ) -> None:
+        session = junie_home / "sessions" / "session"
+        session.mkdir(parents=True, exist_ok=True)
+        events: list[dict[str, object]] = []
+        for index, (name, parent, started, finished) in enumerate(lifecycles):
+            step_id = f"step-{index:08d}"
+            for status, second in (("STARTED", started), ("FINISHED", finished)):
+                events.append(
+                    {
+                        "timestamp": f"2026-07-19T00:00:{second:02d}Z",
+                        "event": {
+                            "agentEvent": {
+                                "kind": "CustomAgentBlockUpdatedEvent",
+                                "agent": {"kind": "CustomAgent", "name": name},
+                                "name": name,
+                                "parentAgent": parent,
+                                "status": status,
+                                "stepId": step_id,
+                            }
+                        },
+                    }
+                )
+        events.sort(key=lambda event: str(event["timestamp"]))
+        (session / "events.jsonl").write_text(
+            "\n".join(json.dumps(event) for event in events) + "\n",
+            encoding="utf-8",
+        )
 
     @staticmethod
     def _write_rollout(

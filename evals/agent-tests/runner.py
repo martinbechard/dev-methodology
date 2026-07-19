@@ -58,6 +58,10 @@ _CAPTURE_REPLACEMENTS = (
 _MAXIMUM_CAPTURE_BYTES = 10 * 1024 * 1024
 
 
+class _JunieEvidenceInsufficient(RuntimeError):
+    """Signal that a Junie run must be BLOCKED because its ledger cannot prove topology."""
+
+
 @dataclasses.dataclass(frozen=True)
 class _Suite:
     suite_id: str
@@ -416,7 +420,12 @@ def _bundled_junie_executable() -> Path:
     raise RuntimeError("The managed Junie CLI is unavailable")
 
 
-def _copy_junie_agent(source: Path, invocation: str, agent_root: Path) -> _StagedAgent:
+def _copy_junie_agent(
+    source: Path,
+    invocation: str,
+    agent_root: Path,
+    invocation_bindings: Mapping[str, str],
+) -> _StagedAgent:
     junie_name = invocation.replace("_", "-")
     if not re.fullmatch(r"[a-z][a-z0-9-]*", junie_name):
         raise ValueError(f"Invalid staged Junie agent invocation: {junie_name}")
@@ -427,10 +436,45 @@ def _copy_junie_agent(source: Path, invocation: str, agent_root: Path) -> _Stage
         description = str(loaded.get("description", f"Governed {junie_name} evaluation agent."))
         if not instructions:
             raise ValueError(f"Staged Junie agent has no instructions: {source}")
-        instructions = instructions.replace(" Codex agent", " Junie custom agent")
+        instructions = re.sub(
+            r"generated/adapters/codex/agents/([a-z0-9-]+)\.toml",
+            r"generated/adapters/junie/agents/\1.md",
+            instructions,
+        )
+        instructions = instructions.replace("Codex adapter", "Junie native adapter")
         instructions = instructions.replace("Codex agent", "Junie custom agent")
-        instructions = instructions.replace("fork_context exactly false", "a fresh independent subagent context")
-        instructions = instructions.replace("agent_type exactly ", "the custom agent named ")
+        instructions = re.sub(
+            r"by passing agent_type exactly ([a-z0-9_]+) and fork_context exactly false to spawn_agent",
+            lambda match: (
+                "by delegating only to the Junie custom agent named "
+                f"{invocation_bindings.get(match.group(1), match.group(1).replace('_', '-'))} "
+                "in a fresh independent context"
+            ),
+            instructions,
+        )
+        instructions = re.sub(
+            r"by passing agent_type exactly ([a-z0-9_]+) and fork_context exactly false",
+            lambda match: (
+                "by delegating only to the Junie custom agent named "
+                f"{invocation_bindings.get(match.group(1), match.group(1).replace('_', '-'))} "
+                "in a fresh independent context"
+            ),
+            instructions,
+        )
+        for codex_name, bound_name in sorted(
+            invocation_bindings.items(), key=lambda item: len(item[0]), reverse=True
+        ):
+            instructions = re.sub(
+                rf"(?<![A-Za-z0-9_]){re.escape(codex_name)}(?![A-Za-z0-9_])",
+                bound_name,
+                instructions,
+            )
+        binding_summary = ", ".join(sorted(set(invocation_bindings.values())))
+        instructions += (
+            "\n\nJunie runtime authority: use the generated native definitions under "
+            "generated/adapters/junie/agents, never the Codex adapter tree. "
+            f"The complete governed runtime-name allowlist is: {binding_summary}."
+        )
         frontmatter = yaml.safe_dump(
             {"name": junie_name, "description": description, "model": "opus", "reasoningLevel": "high"},
             sort_keys=False,
@@ -444,7 +488,7 @@ def _copy_junie_agent(source: Path, invocation: str, agent_root: Path) -> _Stage
         instructions = rendered.split("---", 2)[2].strip()
         loaded_frontmatter["name"] = junie_name
         rendered = f"---\n{yaml.safe_dump(loaded_frontmatter, sort_keys=False).strip()}\n---\n{instructions}\n"
-    marker = f"AGENT_INSTRUCTION_BINDING_{invocation}_{secrets.token_hex(16)}"
+    marker = f"AGENT-INSTRUCTION-BINDING-{junie_name}-{secrets.token_hex(16)}"
     rendered += f"\nRuntime instruction binding marker retained by the harness: {marker}.\n"
     destination = agent_root / f"{junie_name}.md"
     destination.write_text(rendered, encoding="utf-8")
@@ -754,6 +798,15 @@ def _stage_junie_batch(batch: Sequence[_RunSpec], run_root: Path) -> tuple[Path,
     _stage_offline_maven_dependencies(batch, _REPOSITORY_ROOT, workspace, home_root)
     if _runtime_capabilities(batch) & frozenset({"browser-automation"}):
         raise RuntimeError("Junie browser-automation agent suites require an externally approved browser adapter")
+    invocation_bindings: dict[str, str] = {}
+    for run in batch:
+        execution = run.suite.manifest["execution"]
+        for field in ("supervisorInvocation", "targetInvocation", "judgeInvocation"):
+            value = str(execution[field])
+            invocation_bindings[value] = value.replace("_", "-")
+        for dependency in run.suite.manifest["target"].get("allowedAgentDependencies", []):
+            value = str(dependency).replace("-", "_")
+            invocation_bindings[value] = value.replace("_", "-")
     staged: dict[str, _StagedAgent] = {}
     for run in batch:
         suite = run.suite
@@ -773,12 +826,16 @@ def _stage_junie_batch(batch: Sequence[_RunSpec], run_root: Path) -> tuple[Path,
         for source, invocation in sources:
             junie_invocation = str(invocation).replace("_", "-")
             if junie_invocation not in staged:
-                staged[junie_invocation] = _copy_junie_agent(source, str(invocation), agent_root)
+                staged[junie_invocation] = _copy_junie_agent(
+                    source, str(invocation), agent_root, invocation_bindings
+                )
         for dependency in manifest["target"].get("allowedAgentDependencies", []):
             invocation = str(dependency).replace("_", "-")
             source = _REPOSITORY_ROOT / "generated" / "adapters" / "junie" / "agents" / f"{dependency}.md"
             if invocation not in staged:
-                staged[invocation] = _copy_junie_agent(source, str(dependency), agent_root)
+                staged[invocation] = _copy_junie_agent(
+                    source, str(dependency), agent_root, invocation_bindings
+                )
         for skill_path in manifest.get("projectSkills", {}).get("shared", []) + manifest.get("projectSkills", {}).get("suite", []):
             _copy_skill_package(suite.path / skill_path, skill_root)
         selected = set(run.scenario_ids)
@@ -824,6 +881,8 @@ def _coordinator_schema() -> dict[str, Any]:
                                     "targetInvoked",
                                     "judgeInvoked",
                                     "identityEvidence",
+                                    "deterministicEvidence",
+                                    "modelJudgeEvidence",
                                     "cleanup",
                                     "evidence",
                                 ],
@@ -833,6 +892,8 @@ def _coordinator_schema() -> dict[str, Any]:
                                     "targetInvoked": {"type": "boolean"},
                                     "judgeInvoked": {"type": "boolean"},
                                     "identityEvidence": {"type": "array", "items": {"type": "string"}},
+                                    "deterministicEvidence": {"type": "array", "items": {"type": "string"}},
+                                    "modelJudgeEvidence": {"type": "array", "items": {"type": "string"}},
                                     "cleanup": {"type": "string", "enum": ["clean", "failed"]},
                                     "evidence": {"type": "array", "items": {"type": "string"}},
                                 },
@@ -1162,7 +1223,8 @@ def _coordinator_prompt(batch: Sequence[_RunSpec], checkpoint_root: Path, fixtur
         "patch operations remain within the approved write boundary. "
         "write the required checkpointRoot/suite-id/scenario-id.json checkpoint immediately after each terminal "
         "scenario and before starting later work. Each checkpoint must contain suite, scenario, status, targetInvoked, "
-        "judgeInvoked, identityEvidence as an array of strings, evidence as an array of strings, cleanup as clean or "
+        "judgeInvoked, identityEvidence, deterministicEvidence, modelJudgeEvidence, and evidence as arrays of "
+        "strings, cleanup as clean or "
         "failed, and residualRisk as a string; nested objects are forbidden for those fields. Each result must state "
         "targetInvoked and judgeInvoked explicitly, "
         "and clean every fixture, claim, process, worktree, and credential it owns. One supervisor child may use one "
@@ -1237,11 +1299,21 @@ def _load_checkpoint_report(checkpoint_root: Path, batch: Sequence[_RunSpec]) ->
             if loaded.get("suite") != run.suite.suite_id or loaded.get("scenario") != scenario_id:
                 raise RuntimeError(f"Scenario checkpoint identity mismatch: {path}")
             identity_evidence = loaded.get("identityEvidence")
+            deterministic_evidence = loaded.get("deterministicEvidence")
+            model_judge_evidence = loaded.get("modelJudgeEvidence")
             evidence = loaded.get("evidence")
             if not isinstance(identity_evidence, list) or not all(
                 isinstance(value, str) for value in identity_evidence
             ):
                 raise RuntimeError(f"Scenario checkpoint identityEvidence must be an array of strings: {path}")
+            if not isinstance(deterministic_evidence, list) or not all(
+                isinstance(value, str) for value in deterministic_evidence
+            ):
+                raise RuntimeError(f"Scenario checkpoint deterministicEvidence must be an array of strings: {path}")
+            if not isinstance(model_judge_evidence, list) or not all(
+                isinstance(value, str) for value in model_judge_evidence
+            ):
+                raise RuntimeError(f"Scenario checkpoint modelJudgeEvidence must be an array of strings: {path}")
             if not isinstance(evidence, list) or not all(isinstance(value, str) for value in evidence):
                 raise RuntimeError(f"Scenario checkpoint evidence must be an array of strings: {path}")
             if loaded.get("status") not in _TERMINAL_STATUSES:
@@ -1259,6 +1331,8 @@ def _load_checkpoint_report(checkpoint_root: Path, batch: Sequence[_RunSpec]) ->
                     "targetInvoked": loaded.get("targetInvoked"),
                     "judgeInvoked": loaded.get("judgeInvoked"),
                     "identityEvidence": identity_evidence,
+                    "deterministicEvidence": deterministic_evidence,
+                    "modelJudgeEvidence": model_judge_evidence,
                     "cleanup": loaded["cleanup"],
                     "evidence": evidence,
                 }
@@ -1351,6 +1425,20 @@ def _audit_report(
                 raise RuntimeError(f"Missing invocation disposition for {suite_id}:{scenario_result.get('scenario')}")
             if scenario_result.get("judgeInvoked") and not scenario_result.get("targetInvoked"):
                 raise RuntimeError(f"Judge ran without target for {suite_id}:{scenario_result.get('scenario')}")
+            for evidence_field in (
+                "identityEvidence",
+                "deterministicEvidence",
+                "modelJudgeEvidence",
+                "evidence",
+            ):
+                field_value = scenario_result.get(evidence_field)
+                if not isinstance(field_value, list) or not all(
+                    isinstance(value, str) for value in field_value
+                ):
+                    raise RuntimeError(
+                        f"{evidence_field} must be an array of strings for "
+                        f"{suite_id}:{scenario_result.get('scenario')}"
+                    )
             evidence = scenario_result.get("evidence", [])
             checkpoint_result = checkpoint_results.get(
                 (suite_id, str(scenario_result.get("scenario", ""))), {}
@@ -2054,8 +2142,51 @@ def _extract_junie_report(event_path: Path) -> dict[str, Any]:
     return report
 
 
-def _audit_junie_agent_lifecycles(junie_home: Path, expected: Mapping[str, int]) -> dict[str, Any]:
-    observed: dict[str, dict[str, set[str]]] = {name: {} for name in expected}
+def _audit_junie_agent_lifecycles(
+    junie_home: Path,
+    batch: Sequence[_RunSpec],
+    report: Mapping[str, Any],
+) -> dict[str, Any]:
+    expected_counts = {
+        invocation.replace("_", "-"): count
+        for invocation, count in _expected_invocation_counts(batch, dict(report)).items()
+    }
+    expected_parents: dict[str, str] = {}
+    dependency_parents: dict[str, str] = {}
+    supervisor_sequences: dict[str, list[str]] = {}
+    for run in batch:
+        execution = run.suite.manifest["execution"]
+        supervisor = str(execution["supervisorInvocation"]).replace("_", "-")
+        target = str(execution["targetInvocation"]).replace("_", "-")
+        judge = str(execution["judgeInvocation"]).replace("_", "-")
+        expected_parents[supervisor] = "root"
+        expected_parents[target] = supervisor
+        expected_parents[judge] = supervisor
+        reported = {
+            str(scenario.get("scenario")): scenario
+            for run_result in report.get("runs", [])
+            if run_result.get("suite") == run.suite.suite_id
+            for scenario in run_result.get("scenarioResults", [])
+        }
+        sequence: list[str] = []
+        for scenario_id in run.scenario_ids:
+            scenario = reported.get(scenario_id, {})
+            if scenario.get("targetInvoked"):
+                sequence.append(target)
+            if scenario.get("judgeInvoked"):
+                sequence.append(judge)
+        supervisor_sequences[supervisor] = sequence
+        nested_limit = int(execution.get("nestedAgentLimit", 0))
+        for dependency in run.suite.manifest["target"].get("allowedAgentDependencies", []):
+            dependency_name = str(dependency).replace("_", "-")
+            if nested_limit != 1:
+                raise RuntimeError(
+                    f"Junie suite declares dependency {dependency_name} without nestedAgentLimit 1"
+                )
+            dependency_parents[dependency_name] = target
+
+    allowed_agents = set(expected_parents) | set(dependency_parents)
+    observed: dict[tuple[str, str], dict[str, Any]] = {}
     for event_path in sorted((junie_home / "sessions").glob("**/events.jsonl")):
         if event_path.is_symlink() or not event_path.is_file():
             continue
@@ -2068,27 +2199,127 @@ def _audit_junie_agent_lifecycles(junie_home: Path, expected: Mapping[str, int])
             agent_event = event.get("agentEvent") if isinstance(event, dict) else None
             agent = agent_event.get("agent") if isinstance(agent_event, dict) else None
             name = agent.get("name") if isinstance(agent, dict) else None
-            if name not in observed or agent_event.get("kind") != "CustomAgentBlockUpdatedEvent":
+            if (
+                not isinstance(agent_event, dict)
+                or agent_event.get("kind") != "CustomAgentBlockUpdatedEvent"
+            ):
                 continue
+            if name not in allowed_agents:
+                raise RuntimeError(f"Junie session ledger contains unexpected custom agent: {name}")
             step_id = agent_event.get("stepId")
             status = agent_event.get("status")
-            if isinstance(step_id, str) and status in {"STARTED", "FINISHED"}:
-                observed[name].setdefault(step_id, set()).add(str(status))
+            parent_agent = agent_event.get("parentAgent")
+            timestamp = value.get("timestamp") if isinstance(value, dict) else None
+            if (
+                not isinstance(step_id, str)
+                or status not in {"STARTED", "FINISHED"}
+                or not isinstance(parent_agent, str)
+                or not isinstance(timestamp, str)
+            ):
+                raise _JunieEvidenceInsufficient(
+                    "Junie ledger lacks step, parent-agent, or timestamp evidence"
+                )
+            try:
+                timestamp_value = _timestamp_seconds(timestamp)
+            except ValueError as error:
+                raise _JunieEvidenceInsufficient(
+                    "Junie ledger timestamp evidence is invalid"
+                ) from error
+            record = observed.setdefault(
+                (str(name), step_id),
+                {"name": str(name), "parent": parent_agent, "start": None, "finish": None},
+            )
+            if record["parent"] != parent_agent:
+                raise RuntimeError(f"Junie lifecycle parent changed for {name}:{step_id}")
+            field = "start" if status == "STARTED" else "finish"
+            prior = record[field]
+            if prior is not None and prior != timestamp_value:
+                raise RuntimeError(f"Junie lifecycle has conflicting {status} events for {name}:{step_id}")
+            record[field] = timestamp_value
+
+    complete: list[dict[str, Any]] = []
+    for record in observed.values():
+        if record["start"] is None or record["finish"] is None:
+            raise _JunieEvidenceInsufficient(
+                f"Junie ledger has an incomplete lifecycle for {record['name']}"
+            )
+        if record["finish"] < record["start"]:
+            raise RuntimeError(f"Junie lifecycle finishes before it starts for {record['name']}")
+        expected_parent = expected_parents.get(record["name"], dependency_parents.get(record["name"]))
+        if record["parent"] != expected_parent:
+            raise RuntimeError(
+                f"Junie lifecycle parent mismatch for {record['name']}: "
+                f"expected {expected_parent}, observed {record['parent']}"
+            )
+        complete.append(record)
+
+    for record in complete:
+        if record["parent"] == "root":
+            continue
+        parent_lifecycles = [
+            parent
+            for parent in complete
+            if parent["name"] == record["parent"]
+            and float(parent["start"]) <= float(record["start"])
+            and float(record["finish"]) <= float(parent["finish"])
+        ]
+        if not parent_lifecycles:
+            raise RuntimeError(
+                f"Junie child lifecycle for {record['name']} is not contained by "
+                f"its parent {record['parent']}"
+            )
+
     mismatches = []
-    for name, expected_count in expected.items():
-        actual_count = sum(
-            statuses == {"STARTED", "FINISHED"} for statuses in observed[name].values()
-        )
+    for name, expected_count in expected_counts.items():
+        actual_count = sum(record["name"] == name for record in complete)
         if actual_count != expected_count:
             mismatches.append(f"{name} expected {expected_count}, observed {actual_count}")
     if mismatches:
-        raise RuntimeError(f"Junie session ledger custom-agent lifecycle mismatch: {'; '.join(mismatches)}")
+        raise _JunieEvidenceInsufficient(
+            f"Junie session ledger custom-agent lifecycle mismatch: {'; '.join(mismatches)}"
+        )
+
+    by_parent: dict[str, list[dict[str, Any]]] = {}
+    for record in complete:
+        by_parent.setdefault(str(record["parent"]), []).append(record)
+    for parent, children in by_parent.items():
+        if parent == "root":
+            continue
+        ordered = sorted(children, key=lambda record: (float(record["start"]), str(record["name"])))
+        for previous, current in zip(ordered, ordered[1:]):
+            if float(current["start"]) < float(previous["finish"]):
+                raise RuntimeError(f"Junie parent {parent} has overlapping active children")
+    for supervisor, expected_sequence in supervisor_sequences.items():
+        observed_sequence = [
+            str(record["name"])
+            for record in sorted(by_parent.get(supervisor, []), key=lambda value: float(value["start"]))
+        ]
+        if observed_sequence != expected_sequence:
+            raise RuntimeError(
+                f"Junie target/Judge order mismatch for {supervisor}: "
+                f"expected {expected_sequence}, observed {observed_sequence}"
+            )
     return {
         "status": "name-verified",
         "definitionDigestBound": False,
-        "agents": dict(sorted(expected.items())),
+        "agents": dict(sorted(expected_counts.items())),
+        "parentChildVerified": True,
+        "targetJudgeOrderVerified": True,
+        "childConcurrencyVerified": True,
+        "nestedDependencyConstraintsVerified": True,
         "limitation": "Junie session ledgers prove custom-agent names but do not bind adapter digests.",
     }
+
+
+def _blocked_junie_report(report: Mapping[str, Any], reason: str) -> dict[str, Any]:
+    blocked = json.loads(json.dumps(report))
+    for run_result in blocked.get("runs", []):
+        for scenario in run_result.get("scenarioResults", []):
+            scenario["status"] = "BLOCKED"
+            scenario.setdefault("evidence", []).append(reason)
+            scenario.setdefault("deterministicEvidence", []).append(reason)
+    blocked["residualRisk"] = reason
+    return blocked
 
 
 def _run_live_junie_batch(
@@ -2146,11 +2377,17 @@ def _run_live_junie_batch(
         except RuntimeError as error:
             errors.append(str(error))
         try:
-            expected_counts = {
-                invocation.replace("_", "-"): count
-                for invocation, count in _expected_invocation_counts(batch, report or {}).items()
+            identity = _audit_junie_agent_lifecycles(junie_home, batch, report or {})
+        except _JunieEvidenceInsufficient as error:
+            identity = {
+                "status": "unverified",
+                "definitionDigestBound": False,
+                "blockedReason": str(error),
             }
-            identity = _audit_junie_agent_lifecycles(junie_home, expected_counts)
+            if report is not None:
+                report = _blocked_junie_report(report, str(error))
+            else:
+                errors.append(str(error))
         except RuntimeError as error:
             errors.append(str(error))
             identity = {"status": "unverified", "error": str(error)}

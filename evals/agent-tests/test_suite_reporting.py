@@ -52,17 +52,42 @@ class AgentSuiteReportingTests(unittest.TestCase):
 
         self.assertEqual(3, reporting.resolve_workers(3, resources))
         self.assertEqual(2, reporting.resolve_workers(10, resources, override=2))
-        self.assertEqual(
-            1,
+        with self.assertRaisesRegex(ValueError, "below the .* per-worker safety bound"):
             reporting.resolve_workers(
                 10,
                 reporting.HostResources(
                     processor_count=2, available_memory_bytes=1024**3
                 ),
-            ),
-        )
+            )
+        with self.assertRaisesRegex(ValueError, "could not be measured"):
+            reporting.resolve_workers(
+                10,
+                reporting.HostResources(processor_count=2, available_memory_bytes=0),
+            )
         with self.assertRaisesRegex(ValueError, "between 1 and 4"):
             reporting.resolve_workers(2, resources, override=5)
+
+    def test_unknown_or_insufficient_memory_stops_before_suite_execution(self) -> None:
+        executor = mock.Mock()
+        with (
+            tempfile.TemporaryDirectory() as directory,
+            self._stable_sources(),
+            mock.patch.object(
+                reporting,
+                "discover_resources",
+                return_value=reporting.HostResources(8, 0),
+            ),
+        ):
+            with self.assertRaisesRegex(ValueError, "could not be measured"):
+                reporting.run_suites(
+                    "codex", ("dev-coder",), Path(directory), executor=executor
+                )
+        executor.assert_not_called()
+
+        with self.assertRaisesRegex(ValueError, "below the .* per-worker safety bound"):
+            reporting.resolve_workers(
+                1, reporting.HostResources(8, reporting._MEMORY_BYTES_PER_WORKER - 1)
+            )
 
     def test_parallel_execution_is_bounded_and_destinations_are_disjoint(self) -> None:
         active = 0
@@ -130,7 +155,9 @@ class AgentSuiteReportingTests(unittest.TestCase):
             )
 
             self.assertTrue(
-                (Path(directory) / "suites" / "codex" / "dev-coder.html").is_file()
+                (
+                    Path(directory) / "suites" / "codex" / "dev-coder.manifest.json"
+                ).is_file()
             )
         self.assertEqual(["dev-coder"], executed)
         self.assertEqual(
@@ -157,11 +184,10 @@ class AgentSuiteReportingTests(unittest.TestCase):
                 resources=reporting.HostResources(8, 16 * 1024**3),
             )
 
-            failed = json.loads(
-                (
-                    root / "suites" / "codex" / "dev-code-reviewer.metadata.json"
-                ).read_text(encoding="utf-8")
+            _, failed_path = self._current_generation(
+                root, "codex", "dev-code-reviewer"
             )
+            failed = json.loads(failed_path.read_text(encoding="utf-8"))
         self.assertEqual(
             ["PASS", "INFRASTRUCTURE_FAILED"], [value["status"] for value in results]
         )
@@ -181,10 +207,10 @@ class AgentSuiteReportingTests(unittest.TestCase):
     def test_atomic_report_replacement_does_not_leave_temporary_files(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            html_path, metadata_path = reporting.write_suite_report(
+            reporting.write_suite_report(
                 root, self._metadata("codex", "dev-coder", "PASS")
             )
-            reporting.write_suite_report(
+            html_path, metadata_path = reporting.write_suite_report(
                 root, self._metadata("codex", "dev-coder", "FAIL")
             )
 
@@ -192,7 +218,36 @@ class AgentSuiteReportingTests(unittest.TestCase):
             self.assertEqual(
                 "FAIL", json.loads(metadata_path.read_text(encoding="utf-8"))["status"]
             )
-            self.assertEqual([], list(metadata_path.parent.glob(".*.metadata.json.*")))
+            self.assertEqual([], list(root.rglob(".*.tmp")))
+
+    def test_interrupted_generation_keeps_previous_pointer_and_report_consistent(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            reporting.write_suite_report(
+                root, self._metadata("codex", "dev-coder", "PASS")
+            )
+            pointer = root / "suites" / "codex" / "dev-coder.manifest.json"
+            before = pointer.read_bytes()
+            real_atomic_write = reporting._atomic_write
+
+            def fail_new_html(path: Path, content: str) -> None:
+                if path.name == "report.html" and "FAIL" in content:
+                    raise OSError("synthetic interruption")
+                real_atomic_write(path, content)
+
+            with mock.patch.object(
+                reporting, "_atomic_write", side_effect=fail_new_html
+            ):
+                with self.assertRaisesRegex(OSError, "synthetic interruption"):
+                    reporting.write_suite_report(
+                        root, self._metadata("codex", "dev-coder", "FAIL")
+                    )
+
+            self.assertEqual(before, pointer.read_bytes())
+            current, _ = self._current_generation(root, "codex", "dev-coder")
+            self.assertIn("PASS", current.read_text(encoding="utf-8"))
 
     def test_aggregation_displays_missing_stale_malformed_and_mixed_harness(
         self,
@@ -205,7 +260,7 @@ class AgentSuiteReportingTests(unittest.TestCase):
             reporting.write_suite_report(
                 root, self._metadata("junie", "dev-coder", "PASS")
             )
-            malformed = root / "suites" / "codex" / "broken.metadata.json"
+            malformed = root / "suites" / "codex" / "broken.manifest.json"
             malformed.write_text("not-json", encoding="utf-8")
 
             entries = reporting.aggregate_entries(
@@ -221,10 +276,10 @@ class AgentSuiteReportingTests(unittest.TestCase):
             mock.patch.object(reporting, "_suite_digest", return_value="digest"),
         ):
             root = Path(directory)
-            _, metadata = reporting.write_suite_report(
+            html_path, _ = reporting.write_suite_report(
                 root, self._metadata("codex", "dev-coder", "PASS")
             )
-            metadata.with_name("dev-coder.html").unlink()
+            html_path.unlink()
 
             entries = reporting.aggregate_entries(
                 root, ("dev-coder",), "codex", "revision"
@@ -243,9 +298,10 @@ class AgentSuiteReportingTests(unittest.TestCase):
             incompatible = self._metadata("codex", "dev-coder", "PASS")
             incompatible["suiteDigest"] = "other-digest"
             reporting.write_suite_report(root, incompatible)
-            duplicate = root / "suites" / "archive" / "dev-coder.metadata.json"
+            source_pointer = root / "suites" / "codex" / "dev-coder.manifest.json"
+            duplicate = root / "suites" / "archive" / "dev-coder.manifest.json"
             duplicate.parent.mkdir(parents=True)
-            duplicate.write_text(json.dumps(incompatible), encoding="utf-8")
+            duplicate.write_bytes(source_pointer.read_bytes())
 
             entries = reporting.aggregate_entries(
                 root, ("dev-coder",), "codex", "revision"
@@ -296,6 +352,29 @@ class AgentSuiteReportingTests(unittest.TestCase):
                 (root / "index.html").read_text(encoding="utf-8")
             )
             self.assertEqual({"CURRENT": 2}, aggregate["counts"])
+            self.assertEqual(1, aggregate["terminalStatusCounts"]["PASS"])
+            self.assertEqual(1, aggregate["terminalStatusCounts"]["FAIL"])
+
+    def test_incremental_terminal_totals_follow_fail_blocked_and_stale(self) -> None:
+        with (
+            tempfile.TemporaryDirectory() as directory,
+            mock.patch.object(reporting, "_suite_digest", return_value="digest"),
+        ):
+            root = Path(directory)
+            for status in ("PASS", "FAIL", "BLOCKED", "STALE"):
+                reporting.write_suite_report(
+                    root, self._metadata("codex", "dev-coder", status)
+                )
+                reporting.rebuild_global(root, ("dev-coder",), "codex", "revision")
+                aggregate = self._embedded_json(
+                    (root / "index.html").read_text(encoding="utf-8")
+                )
+                with self.subTest(status=status):
+                    self.assertEqual(1, aggregate["terminalStatusCounts"][status])
+                    self.assertEqual(
+                        1,
+                        sum(aggregate["terminalStatusCounts"].values()),
+                    )
 
     def test_report_only_rebuild_never_executes_a_harness(self) -> None:
         with (
@@ -319,6 +398,60 @@ class AgentSuiteReportingTests(unittest.TestCase):
                 reporting.run_suites(
                     "junie", (), Path(directory), executor=lambda *args: None
                 )
+            with self.assertRaisesRegex(ValueError, "requires --allow-full-junie"):
+                reporting.run_suites(
+                    "junie",
+                    reporting.catalog_suite_ids(),
+                    Path(directory),
+                    executor=lambda *args: None,
+                )
+
+    def test_identity_evidence_is_not_reported_as_model_judge_evidence(self) -> None:
+        execution = reporting.SuiteExecution(
+            0,
+            {
+                "results": [
+                    {
+                        "report": {
+                            "runs": [
+                                {
+                                    "suite": "dev-coder",
+                                    "scenarioResults": [
+                                        {
+                                            "scenario": "happy",
+                                            "status": "PASS",
+                                            "identityEvidence": ["identity-only"],
+                                            "evidence": ["general"],
+                                        }
+                                    ],
+                                }
+                            ]
+                        }
+                    }
+                ]
+            },
+        )
+
+        metadata = reporting.suite_metadata(
+            "codex",
+            "dev-coder",
+            execution,
+            source_revision="revision",
+            suite_digest="digest",
+            started_at="2026-07-19T00:00:00Z",
+            finished_at="2026-07-19T00:00:01Z",
+            elapsed_seconds=1,
+            evidence_root=Path("/synthetic"),
+        )
+
+        self.assertEqual([], metadata["modelJudgeEvidence"])
+        self.assertNotIn("identity-only", metadata["modelJudgeEvidence"])
+        self.assertTrue(
+            any(
+                "model-Judge evidence unavailable" in value
+                for value in metadata["omissions"]
+            )
+        )
 
     @staticmethod
     def _execution(suite_id: str) -> object:
@@ -337,6 +470,8 @@ class AgentSuiteReportingTests(unittest.TestCase):
                                             "status": "PASS",
                                             "evidence": ["deterministic"],
                                             "identityEvidence": ["judge"],
+                                            "deterministicEvidence": ["gates"],
+                                            "modelJudgeEvidence": ["judge-verdict"],
                                         }
                                     ],
                                 }
@@ -362,7 +497,13 @@ class AgentSuiteReportingTests(unittest.TestCase):
             "elapsedSeconds": 1.0,
             "status": status,
             "scenarioResults": [
-                {"scenario": "happy", "status": status, "evidence": ["proof"]}
+                {
+                    "scenario": "happy",
+                    "status": status,
+                    "evidence": ["proof"],
+                    "deterministicEvidence": ["gates"],
+                    "modelJudgeEvidence": ["judge-verdict"],
+                }
             ],
             "deterministicEvidence": ["proof"],
             "modelJudgeEvidence": ["judge"],
@@ -381,6 +522,17 @@ class AgentSuiteReportingTests(unittest.TestCase):
     def _embedded_json(rendered: str) -> dict[str, object]:
         prefix = '<script id="report-metadata" type="application/json">'
         return json.loads(rendered.split(prefix, 1)[1].split("</script>", 1)[0])
+
+    @staticmethod
+    def _current_generation(
+        root: Path, harness: str, suite_id: str
+    ) -> tuple[Path, Path]:
+        pointer = json.loads(
+            (root / "suites" / harness / f"{suite_id}.manifest.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        return root / pointer["html"], root / pointer["metadata"]
 
     @staticmethod
     @contextlib.contextmanager
