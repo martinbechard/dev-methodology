@@ -47,7 +47,7 @@ USER_SECTIONS = (
     "Unattended Work Boundary",
 )
 ALLOWED_TYPES = {"Defect", "Feature", "Analysis", "Investigation", "Holding"}
-USER_ACTION_TYPES = {"Defect", "Feature", "Analysis", "Investigation"}
+DISPATCHABLE_TYPES = {"Defect", "Feature", "Analysis", "Investigation"}
 ALLOWED_STATUSES = {
     "Ready",
     "Claimed",
@@ -284,7 +284,7 @@ def _read_items(
                 absent = [name for name in USER_SECTIONS if not sections.get(name)]
                 if item.status != "User Action Required":
                     item.anomalies.append("User Action Required queue item has a non-canonical status.")
-                if item.declared_type and item.declared_type not in USER_ACTION_TYPES:
+                if item.declared_type and item.declared_type not in DISPATCHABLE_TYPES:
                     item.anomalies.append(
                         "User Action Required item has no dispatchable underlying Type: "
                         f"{item.declared_type}."
@@ -329,6 +329,7 @@ def _reconcile(items: list[_Item]) -> None:
         item.eligible = (
             item.queue == "active"
             and item.status == "Ready"
+            and item.declared_type in DISPATCHABLE_TYPES
             and not item.unmet_dependencies
             and not item.missing
             and item.status != "Proposed"

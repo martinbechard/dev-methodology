@@ -234,6 +234,37 @@ Do not implement.
         self.assertIn("Unreadable item: UnicodeDecodeError", rendered)
         self.assertIn("<span>Runnable now</span><strong>0</strong>", rendered)
 
+    def test_active_ready_non_dispatchable_types_are_anomalies_not_runnable(self) -> None:
+        """Holding and invalid Types remain visible but cannot become runnable work."""
+        self.write_item(
+            "backlog/feature-backlog/holding-ready.md",
+            title="Holding Ready",
+            status="Ready",
+            item_type="Holding",
+        )
+        self.write_item(
+            "backlog/feature-backlog/epic-ready.md",
+            title="Epic Ready",
+            status="Ready",
+            item_type="Epic",
+        )
+
+        rendered = self.generate()
+
+        self.assertIn("<span>Active typed items</span><strong>2</strong>", rendered)
+        self.assertIn("<span>Runnable now</span><strong>0</strong>", rendered)
+        self.assertIn(
+            "Folder and Type mismatch: feature-backlog expects Feature, item declares Holding.",
+            rendered,
+        )
+        self.assertIn("Invalid Type value: Epic.", rendered)
+        runnable = rendered[rendered.index("Runnable Work"):rendered.index("Blocked Work")]
+        active = rendered[rendered.index("Active Typed Work"):rendered.index("Completed Archive")]
+        self.assertNotIn("Holding Ready", runnable)
+        self.assertNotIn("Epic Ready", runnable)
+        self.assertIn("Holding Ready", active)
+        self.assertIn("Epic Ready", active)
+
     def test_user_action_required_rejects_non_dispatchable_underlying_type(self) -> None:
         """User-action work requires a Type that maps to a typed active destination."""
         user_sections = """## User Action Required
