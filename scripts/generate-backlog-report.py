@@ -18,6 +18,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Iterable, Sequence
+from urllib.parse import urlsplit
 
 
 ACTIVE_FOLDERS = {
@@ -64,6 +65,7 @@ ALLOWED_STATUSES = {
 }
 DEPENDENCY_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 MARKDOWN_LINK_PATTERN = re.compile(r"\[[^]]+\]\(([^)#?]+\.md)(?:#[^)]*)?\)")
+DEPENDENCY_LINK_PATTERN = re.compile(r"\[[^]\r\n]+\]\(([^)\r\n]+)\)")
 INLINE_MARKDOWN_PATTERN = re.compile(r"(`[^`]*`|\*\*([^*]+)\*\*|\*([^*]+)\*|\[([^]]+)\]\([^)]+\))")
 
 
@@ -128,7 +130,37 @@ def _parse_document(path: Path) -> tuple[str, dict[str, str], dict[str, str]]:
     return title, fields, {name: "\n".join(lines).strip() for name, lines in sections.items()}
 
 
-def _dependencies(section: str) -> list[str]:
+def _external_uri(value: str) -> bool:
+    """Return whether a complete dependency value identifies a non-local URI."""
+    try:
+        parsed = urlsplit(value)
+    except ValueError:
+        return False
+    return bool(parsed.scheme or parsed.netloc)
+
+
+def _local_backlog_dependency_slug(
+    target: str, item_path: Path, backlog_root: Path
+) -> str | None:
+    """Return the slug for a relative Markdown target contained by the backlog."""
+    try:
+        parsed = urlsplit(target)
+    except ValueError:
+        return None
+    if parsed.scheme or parsed.netloc or any(character.isspace() for character in target):
+        return None
+    target_path = Path(parsed.path)
+    if target_path.is_absolute() or target_path.suffix != ".md":
+        return None
+    try:
+        resolved_target = (item_path.parent / target_path).resolve()
+        resolved_target.relative_to(backlog_root.resolve())
+    except (OSError, RuntimeError, ValueError):
+        return None
+    return resolved_target.stem
+
+
+def _dependencies(section: str, item_path: Path, backlog_root: Path) -> list[str]:
     """Extract dependency declarations while preserving their declared order."""
     if not section or section.strip().lower() == "none":
         return []
@@ -138,10 +170,16 @@ def _dependencies(section: str) -> list[str]:
         normalized = candidate.strip("`.,;:()[]")
         if not candidate or normalized.lower() == "none":
             continue
-        link_match = MARKDOWN_LINK_PATTERN.search(candidate)
+        link_match = DEPENDENCY_LINK_PATTERN.fullmatch(candidate)
         if link_match:
-            candidate = Path(link_match.group(1)).stem
-        elif not any(character.isspace() for character in candidate):
+            local_slug = _local_backlog_dependency_slug(
+                link_match.group(1), item_path, backlog_root
+            )
+            if local_slug:
+                candidate = local_slug
+        elif not any(character.isspace() for character in candidate) and not _external_uri(
+            candidate
+        ):
             candidate = normalized
         values.append(candidate)
     return values
@@ -256,7 +294,9 @@ def _read_items(
                 declared_type=fields.get("Type", ""),
                 status=fields.get("Status", ""),
                 summary=_plain_text(sections.get("Summary", "")),
-                dependencies=_dependencies(sections.get("Dependencies", "")),
+                dependencies=_dependencies(
+                    sections.get("Dependencies", ""), path, backlog_root
+                ),
                 series=series,
                 series_order=series_order,
                 priority=priority,
@@ -312,7 +352,11 @@ def _reconcile(items: list[_Item]) -> None:
         for dependency in item.dependencies:
             if not DEPENDENCY_PATTERN.fullmatch(dependency):
                 item.unmet_dependencies.append(dependency)
-                if any(character.isspace() for character in dependency):
+                if (
+                    any(character.isspace() for character in dependency)
+                    or DEPENDENCY_LINK_PATTERN.search(dependency)
+                    or _external_uri(dependency)
+                ):
                     item.anomalies.append(
                         "External prerequisite requires manual satisfaction: "
                         f"{dependency}"

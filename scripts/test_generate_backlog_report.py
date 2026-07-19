@@ -116,7 +116,7 @@ Summary for {title}.
             title="Second",
             status="Ready",
             item_type="Defect",
-            dependencies="- [Base](../../../completed-backlog/features/base.md)",
+            dependencies="- [Base](../../completed-backlog/features/base.md)",
         )
         user_extra = """## User Action Required
 
@@ -218,6 +218,129 @@ Do not implement.
         self.assertNotIn("Template Conformance", runnable)
         self.assertIn("Python Runtime", blocked)
         self.assertIn("Template Conformance", blocked)
+
+    def test_embedded_local_markdown_link_remains_a_manual_prerequisite(self) -> None:
+        """A local link embedded in prose cannot borrow same-stem completion evidence."""
+        self.write_item(
+            "backlog/completed-backlog/features/base.md",
+            title="Base",
+            status="Completed",
+            item_type="Feature",
+        )
+        dependency = (
+            "Complete [Base](../completed-backlog/features/base.md) before release"
+        )
+        self.write_item(
+            "backlog/feature-backlog/embedded-link.md",
+            title="Embedded Link",
+            status="Ready",
+            item_type="Feature",
+            dependencies=f"- {dependency}",
+        )
+
+        rendered = self.generate()
+
+        self.assertIn("<span>Runnable now</span><strong>0</strong>", rendered)
+        self.assertIn(f"{dependency} (unmet)", rendered)
+        self.assertIn(
+            f"External prerequisite requires manual satisfaction: {dependency}",
+            rendered,
+        )
+        runnable = rendered[rendered.index("Runnable Work"):rendered.index("Blocked Work")]
+        self.assertNotIn("Embedded Link", runnable)
+        self.assertNotIn("base (satisfied)", runnable)
+
+    def test_external_markdown_uri_with_query_and_fragment_remains_manual(self) -> None:
+        """An external link remains verbatim and cannot borrow same-stem completion evidence."""
+        self.write_item(
+            "backlog/completed-backlog/features/base.md",
+            title="Base",
+            status="Completed",
+            item_type="Feature",
+        )
+        dependency = "[Base](https://example.invalid/base.md?view=full#approval)"
+        self.write_item(
+            "backlog/feature-backlog/external-link.md",
+            title="External Link",
+            status="Ready",
+            item_type="Feature",
+            dependencies=f"- {dependency}",
+        )
+
+        rendered = self.generate()
+
+        self.assertIn("<span>Runnable now</span><strong>0</strong>", rendered)
+        self.assertIn(f"{dependency} (unmet)", rendered)
+        self.assertIn(
+            f"External prerequisite requires manual satisfaction: {dependency}",
+            rendered,
+        )
+        runnable = rendered[rendered.index("Runnable Work"):rendered.index("Blocked Work")]
+        self.assertNotIn("External Link", runnable)
+        self.assertNotIn("base (satisfied)", runnable)
+
+    def test_nonlocal_markdown_paths_cannot_match_completed_local_slugs(self) -> None:
+        """Absolute and backlog-escaping links remain manual despite matching stems."""
+        self.write_item(
+            "backlog/completed-backlog/features/base.md",
+            title="Base",
+            status="Completed",
+            item_type="Feature",
+        )
+        dependencies = {
+            "Absolute Link": "[Base](/tmp/base.md)",
+            "Escaping Link": "[Base](../../outside/base.md)",
+            "Plain External URI": "https://example.invalid/base.md?view=full#approval",
+        }
+        for title, dependency in dependencies.items():
+            self.write_item(
+                f"backlog/feature-backlog/{title.lower().replace(' ', '-')}.md",
+                title=title,
+                status="Ready",
+                item_type="Feature",
+                dependencies=f"- {dependency}",
+            )
+
+        rendered = self.generate()
+
+        self.assertIn("<span>Runnable now</span><strong>0</strong>", rendered)
+        runnable = rendered[rendered.index("Runnable Work"):rendered.index("Blocked Work")]
+        for title, dependency in dependencies.items():
+            with self.subTest(dependency=dependency):
+                self.assertIn(f"{dependency} (unmet)", rendered)
+                self.assertIn(
+                    f"External prerequisite requires manual satisfaction: {dependency}",
+                    rendered,
+                )
+                self.assertNotIn(title, runnable)
+        self.assertNotIn("base (satisfied)", rendered)
+
+    def test_whole_local_markdown_link_normalizes_to_completed_slug(self) -> None:
+        """A complete relative backlog link can use same-stem completion evidence."""
+        self.write_item(
+            "backlog/completed-backlog/features/base.md",
+            title="Base",
+            status="Completed",
+            item_type="Feature",
+        )
+        dependency = (
+            "[Base](../completed-backlog/features/base.md?view=full#approval)"
+        )
+        self.write_item(
+            "backlog/feature-backlog/local-link.md",
+            title="Local Link",
+            status="Ready",
+            item_type="Feature",
+            dependencies=f"- {dependency}",
+        )
+
+        rendered = self.generate()
+
+        self.assertIn("<span>Runnable now</span><strong>1</strong>", rendered)
+        self.assertIn("base (satisfied)", rendered)
+        runnable = rendered[rendered.index("Runnable Work"):rendered.index("Blocked Work")]
+        self.assertIn("Local Link", runnable)
+        self.assertNotIn(dependency, rendered)
 
     def test_lifecycle_and_metadata_anomalies_are_visible(self) -> None:
         """Invalid states and archive or dependency drift remain visible without source mutation."""
@@ -321,9 +444,13 @@ Do not implement.
         )
         self.assertIn("Invalid Type value: Epic.", rendered)
         runnable = rendered[rendered.index("Runnable Work"):rendered.index("Blocked Work")]
+        blocked_start = rendered.index("Blocked Work")
+        blocked = rendered[blocked_start:rendered.index("<h2>Holding</h2>", blocked_start)]
         active = rendered[rendered.index("Active Typed Work"):rendered.index("Completed Archive")]
         self.assertNotIn("Holding Ready", runnable)
         self.assertNotIn("Epic Ready", runnable)
+        self.assertNotIn("Holding Ready", blocked)
+        self.assertNotIn("Epic Ready", blocked)
         self.assertIn("Holding Ready", active)
         self.assertIn("Epic Ready", active)
 
