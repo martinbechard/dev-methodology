@@ -1,6 +1,6 @@
 # Enforce Documentation Template Conformance
 
-Status: Running
+Status: Blocked
 
 Type: Defect
 
@@ -11,6 +11,20 @@ Type: Defect
 - Lifecycle claim: enforce-documentation-template-conformance-start.
 - Claim evidence: PRIMARY exact-file backlog ownership acquired at 2026-07-19T11:50:25.523351Z from clean baseline commit 1ee72be549619d0eb3fe3e0a769d1d97865d6ba4.
 - Scope boundary: this claim owns only the Running transition and is released after its clean commit. Project source, evaluation artifacts, generated outputs, verification, and integration remain gated on a later ARTIFACT GO.
+
+## Blocked Evidence
+
+- Outcome: the bounded two-attempt post-integration correction authority ended with two failed fresh reviews. No third correction attempt is authorized.
+- Accepted contribution chain: commits 503a787decb68a8f575338835509d31c3a4a5191, 1e5642eb78b8652629be3a68db820a9ce096031d, 57e906985eed0cad9d1075a9fede69a5b0930ac7, and 3ae73817974fd23db90d911691a451443d1af910 were deliberately integrated on main through commits 1eac75f504c728295e475117ae271e1aa532219f, c72b35ff92c6333c9f611d0ccaf295785565b1c3, eaf148d472ee2a0ea6d282ecbaf8e966a459066f, and c1b551f0874dae1a6bda0b3d306880f634af2d6c.
+- Preserved correction chain: correction attempts are preserved in commits 12edbbcab5a683c69f6817a1e5272a5f9f11a41d and e2f80255dab559de87aaea7538a38a896f98c60e on branch codex/enforce-documentation-template-conformance-postintegration-correction-1. The correction claim released normally under event de47203b-dd7e-42a7-8d63-159d295dc217.
+- Final Methodology Artifact Review failure: the contribution references deterministic check IDs that are not defined in evals/judges.yaml; command detection still misses executable forms such as node tools/check.js; reference-style external Markdown destinations bypass evidence validation; and contradictory coverage claims remain incompletely detected through anaphora, HTML comments, and nested blockquotes.
+- Final Dev Code Review failure: command inventory still both accepts prose as commands and rejects valid prefixed or wrapped commands; coverage synonyms and anaphora remain incomplete; Markdown reference destinations can bypass validation while unrelated URI forms are over-rejected; and HTML-comment and nested-blockquote visibility remains misclassified.
+- Verification boundary: 36 focused tests, the fixture-source test, selected and full suite validate-only checks, and diff, scope, and bytecode-cache audits passed. Those deterministic results do not override the two failed fresh reviews or authorize integration.
+- Authority boundary: the original producers used both authorized attempts for the same finding set. Correction, review, integration, live-suite execution, and terminal completion remain stopped.
+
+## Unblock Condition
+
+A fresh parent message beginning ARTIFACT RESUME must explicitly reopen a bounded correction budget after the exhausted two-attempt loop, name a clean current-main baseline and released non-overlapping claims, and authorize the exact remaining surfaces. That authority must cover either defining every referenced deterministic check ID in evals/judges.yaml or replacing those references with defined scenario IDs, together with the five preserved Dev Documentation Writer fixture and suite files needed to correct command grammar, reference-style Markdown destinations, contradictory coverage and anaphora, HTML-comment and nested-blockquote visibility, and mutation-sensitive regression coverage. The corrected result must receive entirely fresh Methodology Artifact and Dev Code acceptance and deterministic verification before integration or live-suite work can resume. Until that exact ARTIFACT RESUME arrives, this item remains Blocked.
 
 ## Summary
 
