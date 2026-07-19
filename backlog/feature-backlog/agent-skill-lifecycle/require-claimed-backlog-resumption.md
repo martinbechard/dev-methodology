@@ -1,15 +1,17 @@
 # Require Claimed Backlog Resumption
 
-Status: Running
+Status: Blocked
 
 Type: Defect
 
-## Running Ownership
+## Blocked Outcome
 
-- Owner: Dev Orchestrator root task 019f77f4-c4bd-7c91-b197-c987a7beb838.
-- Lifecycle claim: require-claimed-backlog-resumption-start.
-- Claim evidence: dev-backlog-steward acquired PRIMARY ownership of this exact backlog item at 2026-07-19T01:46:12.534961Z before recording the Running transition.
-- Scope boundary: the lifecycle claim is released after this committed transition; project-artifact ownership must be acquired separately before implementation.
+- Preserved implementation commits: 25b93ba, 58b502b, and eb9826f.
+- Independent review: fresh final review passed.
+- Static verification: focused tests passed 5 of 5; repository scripts passed 399 of 399; project-wiki passed 17 of 17; bundle, skill, generated-output freshness, and diff checks passed.
+- Integration: no implementation commit was integrated.
+- Governed acceptance: incomplete. The original blocked-state run produced one clean target and Judge pass. The unowned and failed-claim runs produced standalone Judge passes, but runner timeout and cleanup prevented governed passes. The claimed path produced a correct target result but no Judge result and retained an active-claim cleanup conflict. The repeated original path produced no Judge result. Every standalone runner exited 124 and was classified as infrastructure-failed.
+- Unblock condition: obtain Judge-complete, checkpoint-and-final-consistent, cleanup-clean governed passes for unowned, claimed, and failed-claim resumption, plus a second clean blocked-state pass with an empty claim registry after handoff.
 
 ## Summary
 
