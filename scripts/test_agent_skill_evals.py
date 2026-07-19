@@ -991,6 +991,148 @@ class EvidenceVersionTwoTests(unittest.TestCase):
             path.write_text(yaml.safe_dump(receipt), encoding="utf-8")
             return self.module.classify_evidence(selected_case, path)
 
+    def _behavior_regression_fixture(
+        self,
+        transition_exit_codes: tuple[int, int, int, int] = (1, 0, 1, 0),
+        command_exit_codes: tuple[int, int, int, int] = (1, 0, 1, 0),
+    ) -> tuple[dict[str, object], dict[str, object], dict[str, object], dict[str, str]]:
+        phases = (
+            "observed-red",
+            "implemented-green",
+            "behavior-removed-red",
+            "restored-green",
+        )
+        case = dict(self.case)
+        case["judgePlan"] = {
+            "deterministicChecks": [
+                "required-command-outcome",
+                "behavior-regression-sensitivity",
+            ],
+            "modelRubric": None,
+        }
+        receipt = self.receipt()
+        receipt["run"]["caseDefinitionDigest"] = self.module.case_definition_digest(case)
+        receipt["judges"]["deterministic"]["records"].append({
+            "checkId": "behavior-regression-sensitivity",
+            "critical": True,
+            "verdict": "passed",
+            "evidence": "behavior.json#strong",
+        })
+        behavior = {
+            "id": "strong",
+            "behaviorId": "non-negative-total",
+            "assertionId": "clamps-negative-total-to-zero",
+            "transitions": [
+                {
+                    "phase": phase,
+                    "exitCode": exit_code,
+                    "evidence": f"behavior-commands.log#{phase}",
+                }
+                for phase, exit_code in zip(phases, transition_exit_codes, strict=True)
+            ],
+        }
+        receipt["commands"].extend(
+            {
+                "argv": ["node", "--test", phase],
+                "exitCode": exit_code,
+                "expectation": "success" if exit_code == 0 else "expected-failure",
+                "evidence": f"behavior-commands.log#{phase}",
+            }
+            for phase, exit_code in zip(phases, command_exit_codes, strict=True)
+        )
+        files = {
+            "behavior.json": json.dumps(behavior),
+            "behavior-commands.log": "\n".join(phases) + "\n",
+            "judges.json": (
+                "required-command-outcome\nbehavior-regression-sensitivity\n"
+                "independent\njudge-invocation\njudge-context\n"
+            ),
+        }
+        return case, receipt, behavior, files
+
+    def _behavior_regression_catalogs(self) -> dict[str, dict[str, object]]:
+        catalogs = self.module.load_framework_catalogs()
+        judges = dict(catalogs["judges.yaml"])
+        judges["checks"] = [
+            *judges["checks"],
+            {
+                "id": "behavior-regression-sensitivity",
+                "type": "deterministic",
+                "critical": True,
+                "description": "Retained command outcomes prove behavior-sensitive transitions.",
+            },
+        ]
+        return {**catalogs, "judges.yaml": judges}
+
+    def _classify_behavior_regression(
+        self,
+        case: dict[str, object],
+        receipt: dict[str, object],
+        files: dict[str, str],
+    ) -> object:
+        validation_module = sys.modules[self.module.validate_evidence.__module__]
+        with mock.patch.object(
+            validation_module,
+            "load_framework_catalogs",
+            return_value=self._behavior_regression_catalogs(),
+        ):
+            return self.classify(receipt, case=case, extra_files=files)
+
+    def test_behavior_regression_accepts_matching_structured_command_records(self) -> None:
+        case, receipt, _behavior, files = self._behavior_regression_fixture()
+
+        classification = self._classify_behavior_regression(case, receipt, files)
+
+        self.assertEqual((), classification.errors)
+        self.assertTrue(classification.judge_passed)
+
+    def test_behavior_regression_rejects_conflicting_supervisor_exit_codes(self) -> None:
+        case, receipt, _behavior, files = self._behavior_regression_fixture(
+            transition_exit_codes=(1, 0, 1, 0),
+            command_exit_codes=(0, 1, 0, 1),
+        )
+
+        classification = self._classify_behavior_regression(case, receipt, files)
+
+        self.assertTrue(any(
+            "exitCode conflicts with retained command record" in error
+            for error in classification.errors
+        ))
+        self.assertFalse(classification.judge_passed)
+
+    def test_behavior_regression_rejects_invalid_command_record_provenance(self) -> None:
+        for scenario, expected in (
+            ("missing", "command records must be a non-empty list"),
+            ("malformed", "command record exitCode must be an integer: observed-red"),
+            ("duplicate", "command record is duplicated: observed-red"),
+            ("wrong-phase", "command evidence marker must match phase: observed-red"),
+            ("unresolved", "command record is unresolved: observed-red"),
+        ):
+            with self.subTest(scenario=scenario):
+                case, receipt, behavior, files = self._behavior_regression_fixture()
+                if scenario == "missing":
+                    receipt["commands"] = None
+                elif scenario == "malformed":
+                    receipt["commands"][1]["exitCode"] = "1"
+                elif scenario == "duplicate":
+                    receipt["commands"].append(dict(receipt["commands"][1]))
+                elif scenario == "wrong-phase":
+                    behavior["transitions"][0]["evidence"] = (
+                        "behavior-commands.log#implemented-green"
+                    )
+                    files["behavior.json"] = json.dumps(behavior)
+                else:
+                    behavior["transitions"][0]["evidence"] = (
+                        "unresolved-commands.log#observed-red"
+                    )
+                    files["behavior.json"] = json.dumps(behavior)
+                    files["unresolved-commands.log"] = "observed-red\n"
+
+                classification = self._classify_behavior_regression(case, receipt, files)
+
+                self.assertTrue(any(expected in error for error in classification.errors))
+                self.assertFalse(classification.judge_passed)
+
     def test_local_receipt_reports_execution_judge_and_security_claims_independently(self) -> None:
         classification = self.classify(self.receipt())
         self.assertTrue(classification.executed)

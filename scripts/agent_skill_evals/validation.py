@@ -1008,6 +1008,7 @@ def _classify_judge_claim(
         judge_errors,
         judge_stale,
         run=run if isinstance(run, Mapping) else None,
+        commands=evidence.get("commands"),
         calibration_errors=calibration_errors,
     )
     _validate_assertions_findings_commands(
@@ -1422,6 +1423,7 @@ def _validate_version_two(
         errors,
         stale_reasons,
         run=run,
+        commands=evidence.get("commands"),
         calibration_errors=calibration_diagnostics,
     )
     _validate_assertions_findings_commands(case, evidence, evidence_path, errors)
@@ -2609,6 +2611,182 @@ def _validate_isolation(
                 external_errors.append("Junie external containment status must match the containment status")
 
 
+_BEHAVIOR_REGRESSION_PHASES = {
+    "observed-red": False,
+    "implemented-green": True,
+    "behavior-removed-red": False,
+    "restored-green": True,
+}
+
+
+def _behavior_regression_evidence_for_reference(
+    reference: object,
+    evidence_path: Path,
+) -> Mapping[str, object]:
+    """Resolve one behavior case from a contained JSON evidence artifact."""
+
+    target, marker = _resolve_evidence_reference(reference, evidence_path)
+    try:
+        value = json.loads(target.read_text(encoding="utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise ValueError("behavior regression evidence reference must contain JSON") from error
+    if isinstance(value, Mapping) and value.get("id") == marker:
+        return value
+    cases = value.get("cases") if isinstance(value, Mapping) else None
+    if isinstance(cases, list):
+        for item in cases:
+            if isinstance(item, Mapping) and item.get("id") == marker:
+                return item
+    raise ValueError(f"behavior regression evidence marker does not identify a case: {marker}")
+
+
+def _behavior_command_exit_code(
+    reference: object,
+    phase: str,
+    expected_green: bool,
+    commands: Sequence[object],
+    evidence_path: Path,
+    findings: list[str],
+) -> int | None:
+    """Resolve one phase outcome from the retained structured command records."""
+
+    reference_errors: list[str] = []
+    validate_reference(
+        reference,
+        f"behavior regression command evidence ({phase})",
+        evidence_path,
+        reference_errors,
+    )
+    findings.extend(reference_errors)
+    try:
+        _target, marker = _resolve_evidence_reference(reference, evidence_path)
+    except ValueError:
+        return None
+    if marker != phase:
+        findings.append(f"behavior regression command evidence marker must match phase: {phase}")
+    matches = [
+        item
+        for item in commands
+        if isinstance(item, Mapping) and item.get("evidence") == reference
+    ]
+    if not matches:
+        findings.append(f"behavior regression command record is unresolved: {phase}")
+        return None
+    if len(matches) != 1:
+        findings.append(f"behavior regression command record is duplicated: {phase}")
+        return None
+    record = matches[0]
+    try:
+        command_spec(record.get("argv", record.get("command")))
+    except ValueError as error:
+        findings.append(f"behavior regression command record is invalid for {phase}: {error}")
+    exit_code = record.get("exitCode")
+    if not isinstance(exit_code, int) or isinstance(exit_code, bool):
+        findings.append(f"behavior regression command record exitCode must be an integer: {phase}")
+        return None
+    expected = "success" if expected_green else "expected-failure"
+    if record.get("expectation") != expected:
+        findings.append(f"behavior regression command record expectation must be {expected}: {phase}")
+    return exit_code
+
+
+def _classify_behavior_regression_evidence(
+    value: object,
+    commands: object,
+    evidence_path: Path,
+) -> tuple[str, tuple[str, ...]]:
+    """Derive a behavior-regression verdict from evaluator-owned command outcomes."""
+
+    if not isinstance(value, Mapping):
+        return "failed", ("behavior regression evidence must be a mapping",)
+    findings: list[str] = []
+    for field in ("id", "behaviorId", "assertionId"):
+        if not isinstance(value.get(field), str) or not str(value.get(field)).strip():
+            findings.append(f"behavior regression evidence {field} must be a non-empty string")
+    transitions = value.get("transitions")
+    if not isinstance(transitions, list):
+        return "failed", (*findings, "behavior regression evidence transitions must be a list")
+    by_phase: dict[str, Mapping[str, object]] = {}
+    for index, transition in enumerate(transitions):
+        if not isinstance(transition, Mapping):
+            findings.append(f"behavior regression transition {index} must be a mapping")
+            continue
+        phase = transition.get("phase")
+        if not isinstance(phase, str) or not phase:
+            findings.append(f"behavior regression transition {index} must identify a phase")
+            continue
+        if phase in by_phase:
+            findings.append(f"behavior regression transition phase is duplicated: {phase}")
+            continue
+        by_phase[phase] = transition
+    missing = sorted(set(_BEHAVIOR_REGRESSION_PHASES) - set(by_phase))
+    unexpected = sorted(set(by_phase) - set(_BEHAVIOR_REGRESSION_PHASES))
+    if missing:
+        findings.append(f"behavior regression transitions are missing phases: {', '.join(missing)}")
+    if unexpected:
+        findings.append(f"behavior regression transitions contain unexpected phases: {', '.join(unexpected)}")
+    if not isinstance(commands, list) or not commands:
+        findings.append("behavior regression command records must be a non-empty list")
+        command_records: Sequence[object] = ()
+    else:
+        command_records = commands
+    for phase, expected_green in _BEHAVIOR_REGRESSION_PHASES.items():
+        transition = by_phase.get(phase)
+        if transition is None:
+            continue
+        transition_exit_code = transition.get("exitCode")
+        if not isinstance(transition_exit_code, int) or isinstance(transition_exit_code, bool):
+            findings.append(f"behavior regression transition exitCode must be an integer: {phase}")
+            transition_exit_code = None
+        if not command_records:
+            continue
+        command_exit_code = _behavior_command_exit_code(
+            transition.get("evidence"),
+            phase,
+            expected_green,
+            command_records,
+            evidence_path,
+            findings,
+        )
+        if command_exit_code is None:
+            continue
+        if transition_exit_code is not None and transition_exit_code != command_exit_code:
+            findings.append(
+                "behavior regression transition exitCode conflicts with retained command "
+                f"record: {phase} ({transition_exit_code} != {command_exit_code})"
+            )
+        if (command_exit_code == 0) != expected_green:
+            expected = "pass" if expected_green else "fail"
+            findings.append(f"behavior regression retained command must {expected}: {phase}")
+    return ("passed" if not findings else "failed"), tuple(findings)
+
+
+def _validate_behavior_regression_record(
+    record: Mapping[str, object],
+    commands: object,
+    evidence_path: Path,
+    errors: list[str],
+) -> str:
+    """Validate one deterministic behavior-regression record and return its derived verdict."""
+
+    try:
+        evidence = _behavior_regression_evidence_for_reference(record.get("evidence"), evidence_path)
+    except ValueError as error:
+        errors.append(f"behavior-regression-sensitivity {error}")
+        return "failed"
+    derived_verdict, findings = _classify_behavior_regression_evidence(
+        evidence,
+        commands,
+        evidence_path,
+    )
+    if record.get("verdict") != derived_verdict:
+        errors.append(
+            "behavior-regression-sensitivity record verdict does not match retained command outcomes"
+        )
+    errors.extend(f"behavior-regression-sensitivity: {finding}" for finding in findings)
+    return derived_verdict
+
+
 def _validate_judges(
     case: Mapping[str, object],
     value: object,
@@ -2617,6 +2795,7 @@ def _validate_judges(
     stale_reasons: list[str],
     *,
     run: Mapping[str, object] | None = None,
+    commands: object = None,
     calibration_errors: list[str] | None = None,
 ) -> None:
     if not isinstance(value, Mapping):
@@ -2662,16 +2841,24 @@ def _validate_judges(
                     verdict = record.get("verdict")
                     if verdict not in {"passed", "failed"}:
                         errors.append(f"Deterministic Judge record verdict is invalid: {check_id}")
-                    else:
-                        observed_verdicts.append(str(verdict))
-                    if record.get("critical") is True and record.get("verdict") != "passed":
-                        critical_deterministic_failed = True
+                    effective_verdict = str(verdict) if verdict in {"passed", "failed"} else "failed"
                     validate_reference(
                         record.get("evidence"),
                         f"judges.deterministic.records[{index}].evidence",
                         evidence_path,
                         errors,
                     )
+                    if check_id == "behavior-regression-sensitivity":
+                        effective_verdict = _validate_behavior_regression_record(
+                            record,
+                            commands,
+                            evidence_path,
+                            errors,
+                        )
+                    if verdict in {"passed", "failed"}:
+                        observed_verdicts.append(effective_verdict)
+                    if record.get("critical") is True and effective_verdict != "passed":
+                        critical_deterministic_failed = True
             duplicates = sorted({check_id for check_id in observed_ids if observed_ids.count(check_id) > 1})
             for check_id in duplicates:
                 errors.append(f"Deterministic Judge record is duplicated: {check_id}")
