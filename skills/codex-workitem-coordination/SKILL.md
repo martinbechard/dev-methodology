@@ -22,9 +22,11 @@ Coordinate a queue from one Parent Backlog Coordinator while separate Dev Orches
 Maintain one compact parent-side record for each work item:
 
 - canonical backlog path, normalized objective, dependencies, and queue priority
-- source parent task identifier, canonical child task identifier, creation time, status, current phase, and display title
+- source task identifier, parent task identifier, canonical child task identifier, creation time, status, current phase, and display title
 - exact user answer and provenance when a decision gate was resolved
-- lifecycle commit, release event, and designated next owner
+- current primary owner task identifier, role, claim, lifecycle commit, and release event
+- designated successor task identifier, role, required release evidence, and precise next mutation
+- predecessor release-notification state, parent receipt and acknowledgement, and successor notification and acknowledgement state
 - active claims, isolated worktree, named resources, implementation and correction commits
 - review, verification, integration, deployment, and refresh evidence as applicable
 - current blocker, wake obligation, precise next mutation, and responsible owner
@@ -93,7 +95,7 @@ When a claim or named resource returns WAIT or PRIMARY_REQUIRED, make no conflic
 
 ### ARTIFACT RESUME
 
-Only the parent wakes the selected canonical task. Resume after reconciling live state and receiving the blocker’s exact commit, release event, clean primary state and HEAD, released claim or resource, designated successor, and precise next mutation. Return to the applicable claim, correction, review, verification, or integration step rather than replaying completed phases.
+Only the parent wakes the selected canonical task. The current primary owner or predecessor has release-notification duty to the parent only and never wakes the successor. The parent reconciles the notification, then sends the successor the exact commit, release event, clean primary state and HEAD, released claim or resource, designated successor, and precise next mutation. Resume at the applicable claim, correction, review, verification, or integration step rather than replaying completed phases.
 
 ## Primary Baton
 
@@ -101,14 +103,27 @@ Serialize every short primary-only backlog mutation. The current owner commits a
 
 - exact commit identifier
 - exact claim release event and released scope
+- exact current-owner task identifier, role, and claim identifier
 - clean primary worktree status and primary HEAD
 - live registry state relevant to primary availability
-- canonical successor task identifier and designated next owner
+- canonical successor task identifier, role, and designated next owner
 - precise next mutation and any preserved user-decision provenance
 
-The current owner reports release to the parent. The parent verifies the evidence and wakes exactly the designated successor. Waiting children do not poll, wake each other, or ask for early release.
+The current owner reports release to the parent and has no successor-wake authority. The parent alone verifies the evidence, acknowledges the predecessor notification, records the baton state, and wakes exactly the designated successor. Waiting children do not poll, wake each other, or ask for early release.
 
 After the serialized lifecycle mutation releases, run concurrent non-overlapping artifact campaigns in isolated worktrees. Never hold a backlog claim while acquiring project artifacts, generators, verification resources, or integration ownership.
+
+## Parent Baton Scheduler Audit
+
+While a baton is pending in an active queue, run a parent-side scheduler audit every 15 minutes. Compare the predecessor’s active or terminal task state and claim-release state with the ledger’s required evidence, release notification, parent acknowledgement, successor notification, and successor acknowledgement.
+
+- If the predecessor is still active or still owns the claim, contact only that predecessor for the required release notification. Do not contact or poll the waiting successor.
+- If the predecessor is terminal and the claim is released but its notification is missing, have the parent reconstruct the exact commit, release event, owner task identifier, role, claim, clean primary state, and next mutation from live evidence. Record the missed notification duty before continuing.
+- If release evidence is complete but the successor notification is missing, have the parent reconcile the canonical successor identifier and send one evidence-bearing wake directly.
+- If a successor acknowledgement is absent, inspect already recorded task state and messages at the scheduled parent audit. Do not send readiness probes or instruct the successor to poll.
+- Record every repair and acknowledgement so a later audit does not duplicate a wake or create a cross-task baton chain.
+
+The scheduler repairs missing notifications and baton deadlocks through the parent. It never transfers wake authority to the predecessor and never turns a waiting successor into a polling task.
 
 ## Claims, Isolation, And Shared Resources
 
@@ -175,7 +190,7 @@ Finish repository lifecycle before terminal UI cleanup:
 
 Completed, Failed, Abandoned, and durably Blocked tasks become terminal-archive eligible only after the corresponding backlog disposition is committed. Blocked without terminal backlog evidence is not archive eligible.
 
-Do not terminally archive a task parked for user approval, waiting for a claim or baton, preserving corrections for authorized resumption, in Target Merge Pending, or still responsible for a downstream notification. Before terminal archival, reconcile the canonical identifier and live task list, contain duplicates, and record terminal commit and release evidence in the parent ledger. A final bounded title such as Completed — X, Blocked — X, Failed — X, or Abandoned — X may expose the durable outcome but does not replace the gates.
+Do not terminally archive a task parked for user approval, waiting for a claim or baton, preserving corrections for authorized resumption, in Target Merge Pending, or still responsible for a downstream notification. Before terminal archival, reconcile the canonical identifier and live task list, contain duplicates, and record terminal commit and release evidence in the parent ledger. For a successful terminal outcome, set the final title to exactly Done — <concise item>; never use Completed —. Waiting —, Blocked —, Failed —, and Abandoned — remain valid material state titles. A title may expose the durable outcome but does not replace the gates.
 
 Archive eligible terminal tasks promptly and run periodic housekeeping audits so the visible task list reflects current work. UI archival is lifecycle cleanup; it does not delete commits, branches, backlog evidence, claims journals, or the stable task identifier.
 
