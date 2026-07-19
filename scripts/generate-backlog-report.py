@@ -47,6 +47,7 @@ USER_SECTIONS = (
     "Unattended Work Boundary",
 )
 ALLOWED_TYPES = {"Defect", "Feature", "Analysis", "Investigation", "Holding"}
+USER_ACTION_TYPES = {"Defect", "Feature", "Analysis", "Investigation"}
 ALLOWED_STATUSES = {
     "Ready",
     "Claimed",
@@ -283,6 +284,11 @@ def _read_items(
                 absent = [name for name in USER_SECTIONS if not sections.get(name)]
                 if item.status != "User Action Required":
                     item.anomalies.append("User Action Required queue item has a non-canonical status.")
+                if item.declared_type and item.declared_type not in USER_ACTION_TYPES:
+                    item.anomalies.append(
+                        "User Action Required item has no dispatchable underlying Type: "
+                        f"{item.declared_type}."
+                    )
                 if absent:
                     item.anomalies.append("Missing user-action fields: " + ", ".join(absent) + ".")
             if queue == "holding" and item.status != "Holding":
@@ -514,7 +520,7 @@ def _render_report(
 {_section("Active Typed Work", "All items found in typed active queues, including running and non-runnable states.", active, "No active typed items.")}
 {_section("Completed Archive", "Successful outcomes found in the completed archive.", completed, "No completed archive items.")}
 {_section("Failed Archive", "Failed or abandoned outcomes found in the failed archive.", failed, "No failed archive items.")}
-<section class="section" aria-labelledby="findings-title"><div class="section-head"><div><h2 id="findings-title">Lifecycle Reconciliation</h2><p>Read-only findings about metadata, dependencies, status, placement, and archives. Status: Proposed appears only here as migration debt.</p></div></div><div class="panel"><ul class="findings">{anomaly_rows}</ul></div></section>
+<section class="section" aria-labelledby="findings-title"><div class="section-head"><div><h2 id="findings-title">Lifecycle Reconciliation</h2><p>Read-only findings about metadata, dependencies, status, placement, and archives. Status: Proposed is treated as migration debt and never as an operational bucket.</p></div></div><div class="panel"><ul class="findings">{anomaly_rows}</ul></div></section>
 <section class="section" aria-labelledby="claims-title"><div class="section-head"><div><h2 id="claims-title">Workspace Claim Snapshot</h2><p>Captured {_escape(snapshot.claim_captured_at)}. Claims and worktrees are workspace coordination evidence, not backlog lifecycle status or dispatch eligibility.</p></div></div><div class="panel snapshot"><ul>{claims_html}</ul></div></section>
 <section class="section" aria-labelledby="scope-title"><div class="section-head"><div><h2 id="scope-title">Report Scope</h2><p>Freshness and inventory boundaries for this generated snapshot.</p></div></div><div class="count-grid"><div class="panel"><h3>Scanned folders</h3><ul>{scope_rows}</ul></div><div class="panel"><h3>Ignored guidance files</h3><ul>{ignored_rows}</ul></div></div></section>
 </main></body></html>"""

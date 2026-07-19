@@ -159,6 +159,7 @@ Do not implement.
         self.assertIn("May we use the exact option &amp; preserve wording?", rendered)
         self.assertIn("Pending — no answer inferred.", rendered)
         self.assertIn("Status: User Action Required", rendered)
+        self.assertNotIn("no dispatchable underlying Type: Analysis", rendered)
         self.assertIn("Folder and Type mismatch", rendered)
         self.assertIn("Holding item has a non-Holding declared status.", rendered)
         self.assertIn("Unresolved dependency: missing-base.", rendered)
@@ -216,6 +217,13 @@ Do not implement.
         rendered = self.generate()
 
         self.assertIn("Migration anomaly: Status Proposed is not an operational state.", rendered)
+        self.assertIn('<th scope="row">Proposed</th><td>1</td>', rendered)
+        self.assertIn('<span class="badge badge-status">Proposed</span>', rendered)
+        self.assertIn(
+            "Status: Proposed is treated as migration debt and never as an operational bucket.",
+            rendered,
+        )
+        self.assertNotIn("Status: Proposed appears only here", rendered)
         self.assertIn("Invalid dependency identifier: bad_slug.", rendered)
         self.assertIn("Stale blocked status: all declared dependencies are satisfied.", rendered)
         self.assertIn("Completed item remains in an active folder.", rendered)
@@ -225,6 +233,45 @@ Do not implement.
         self.assertIn("Missing required fields: Summary, Requirements, Acceptance Criteria, Dependencies, Verification.", rendered)
         self.assertIn("Unreadable item: UnicodeDecodeError", rendered)
         self.assertIn("<span>Runnable now</span><strong>0</strong>", rendered)
+
+    def test_user_action_required_rejects_non_dispatchable_underlying_type(self) -> None:
+        """User-action work requires a Type that maps to a typed active destination."""
+        user_sections = """## User Action Required
+
+Decision required.
+
+## Question for the User
+
+Should this proceed?
+
+## Why User Input Is Required
+
+The user owns the decision.
+
+## Resolution
+
+Pending.
+
+## Unattended Work Boundary
+
+Do not proceed.
+"""
+        self.write_item(
+            "backlog/user-action-required/invalid-destination.md",
+            title="Invalid Destination",
+            status="User Action Required",
+            item_type="Holding",
+            extra=user_sections,
+        )
+
+        rendered = self.generate()
+
+        self.assertIn(
+            "User Action Required item has no dispatchable underlying Type: Holding.",
+            rendered,
+        )
+        self.assertIn("<span>Needs your input</span><strong>1</strong>", rendered)
+        self.assertIn("backlog/user-action-required/invalid-destination.md", rendered)
 
     def test_unreadable_series_index_is_ignored_and_reported(self) -> None:
         """An invalid UTF-8 series index cannot abort or become a counted work item."""
