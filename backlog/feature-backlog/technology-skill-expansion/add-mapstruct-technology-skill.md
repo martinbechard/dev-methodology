@@ -1,6 +1,6 @@
 # Add The MapStruct Technology Skill
 
-Status: Ready
+Status: Running
 
 Type: Feature
 
@@ -12,6 +12,15 @@ Type: Feature
 - Associated ordinary scope: the detection metadata, tests, documentation, and supported generated catalog mirrors already specified by this item and its read-only preflight.
 - Exclusions: no agent-role definition change or change to another governed skill definition is authorized.
 - Lifecycle boundary: this transaction records the decision while keeping the item Ready. Running ownership and project-artifact work require separate lifecycle and ARTIFACT GO authority.
+
+## Running Ownership
+
+- Owner: Parent Backlog Coordinator root task 019f77f4-c4bd-7c91-b197-c987a7beb838.
+- Lifecycle agent: Dev Backlog Steward.
+- Lifecycle claim: add-mapstruct-technology-skill-start.
+- Claim evidence: PRIMARY exact-file backlog ownership acquired at 2026-07-19T21:57:34.438526Z from clean baseline commit 9bfd57280164a7648c45b189837d289413d1e89e.
+- Task anomaly: archived preflight task 019f7a7e-6fce-7bc2-826b-c613c51ee7a1 remains evidence only; the parent retained lifecycle ownership to avoid another parked or duplicate task.
+- Scope boundary: this claim owns only the Running transition and is released after its clean commit. Governed definitions, approval-record files, detection metadata, tests, documentation, generated catalog mirrors, verification, integration, installation, and completion remain gated on a later parent-issued ARTIFACT GO.
 
 ## Summary
 
