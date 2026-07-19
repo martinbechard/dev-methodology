@@ -1,0 +1,5 @@
+schema: synthetic-agent-suite-cases
+cases:
+  clean-integration: {contributions: [service-contract, dependent-client], clean: true, reviewed: true, dependencyOrder: [service-contract, dependent-client]}
+  conflict-handling: {branches: [security-hardening, api-usability], conflict: auth failure handler, authority: authentication contract}
+  incomplete-contribution-evidence: {accepted: clean committed reviewed, rejected: dirty unreviewed}

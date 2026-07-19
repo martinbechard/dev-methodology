@@ -4,8 +4,8 @@ suite: project-bootstrapper
 scenarios:
   - id: valid-configuration-direct-path
     priority: 1
-    status: planned
-    executableCase: null
+    status: executable
+    executableCase: fixtures/valid-configuration-direct-path
     purpose: Prove that bootstrap reuses valid configuration, produces one accepted contribution, skips merge coordination, and verifies the direct commit.
     initialState: PROJECT.yaml and applicable AGENTS.md files are valid and current, while one bounded documentation contribution remains.
     task: Complete project bootstrap without unnecessary reconfiguration or technology detection.
@@ -40,8 +40,8 @@ scenarios:
     expectedTerminalStatus: PASS
   - id: missing-configuration-multi-contribution
     priority: 2
-    status: planned
-    executableCase: null
+    status: executable
+    executableCase: fixtures/missing-configuration-multi-contribution
     purpose: Prove the full missing-configuration path through sequential creation, review, integration, post-integration review, and verification.
     initialState: The synthetic repository has no PROJECT.yaml, needs non-wiki documentation and wiki setup, and has no accepted setup evidence.
     task: Configure, document, review, integrate, and verify the complete project setup.
@@ -85,8 +85,8 @@ scenarios:
     expectedTerminalStatus: PASS
   - id: invalid-configuration-no-authority
     priority: 3
-    status: planned
-    executableCase: null
+    status: executable
+    executableCase: fixtures/invalid-configuration-no-authority
     purpose: Prove that bootstrap stops safely when configuration is invalid and reconfiguration is not authorized.
     initialState: PROJECT.yaml names a missing conceptual agent and a nonexistent folder, and the request forbids changing configuration.
     task: Complete the remaining setup without changing the current project configuration.

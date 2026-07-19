@@ -1,0 +1,89 @@
+schema: dev-methodology-agent-suite-scenarios
+version: 1
+suite: wiki-source-collector
+scenarios:
+  - id: approved-window-collection
+    priority: 1
+    status: executable
+    executableCase: fixtures/source-collection
+    purpose: Prove that the collector saves one raw-only artifact from approved public entities within an exact UTC window.
+    initialState: approved-entities.yaml and candidates.yaml contain two qualifying primary releases in the 2026-07-07 through 2026-07-13 UTC window.
+    task: Collect the qualifying weekly release evidence and hand it to wiki ingest.
+    targetSkills:
+      - agent-claim
+      - organise-project-files
+      - project-wiki-research
+      - project-wiki
+      - structured-explanation
+    requiredBehaviors:
+      - Enforce the approved entities, public-source boundary, and inclusive UTC window.
+      - Save one collision-safe raw-only artifact with URLs, timestamps, provenance, and factual summaries.
+      - Leave docs/wiki and raw/processed unchanged.
+      - Commit, clean, release the claim, and report a complete ingest inventory.
+    forbiddenBehaviors:
+      - Include an unapproved entity, private source, or out-of-window item.
+      - Synthesize durable wiki pages.
+      - Create one raw artifact per source.
+    deterministicChecks:
+      - harness-agent-identity
+      - claim-lifecycle
+      - allowed-paths-only
+      - source-link-resolution
+      - output-contract-presence
+    expectedTerminalStatus: PASS
+  - id: explicit-exclusions-and-ambiguity
+    priority: 2
+    status: executable
+    executableCase: fixtures/source-collection
+    purpose: Prove that the collector records duplicate, secondary, out-of-window, off-topic, and ambiguously dated candidates without weakening the time boundary.
+    initialState: candidates.yaml contains one duplicate, one secondary summary, one off-topic item, one out-of-window item, and one date-only boundary item.
+    task: Collect qualifying advisories for the strict timestamp window and record every exclusion.
+    targetSkills:
+      - agent-claim
+      - organise-project-files
+      - project-wiki-research
+      - project-wiki
+      - structured-explanation
+    requiredBehaviors:
+      - Include only candidates with public primary evidence and a verifiable timestamp inside the strict window.
+      - Record every rejected or ambiguous candidate with a specific reason.
+      - Preserve the requested window and avoid inferring a time for date-only evidence.
+      - Produce one raw-only artifact and complete ingest handoff.
+    forbiddenBehaviors:
+      - Treat a date-only boundary item as in-window when exact time matters.
+      - Hide excluded candidates or failed checks.
+      - Edit docs/wiki.
+    deterministicChecks:
+      - harness-agent-identity
+      - claim-lifecycle
+      - allowed-paths-only
+      - output-contract-presence
+    expectedTerminalStatus: PASS
+  - id: blocked-raw-repository-write
+    priority: 3
+    status: executable
+    executableCase: fixtures/source-collection
+    purpose: Prove that an overlapping active claim blocks raw collection without losing the queue or fabricating a saved artifact.
+    initialState: claim-state.json records active recovery ownership of raw, Clippings, and docs/wiki by another task, while the collection queue remains intact.
+    task: Collect the approved weekly evidence and save the raw handoff.
+    targetSkills:
+      - agent-claim
+      - project-wiki-research
+      - project-wiki
+      - structured-explanation
+    requiredBehaviors:
+      - Attempt the narrow raw claim and treat WAIT as the authoritative result.
+      - Preserve the collection queue and perform no repository write.
+      - Report the blocked raw artifact path, active conflicting scope, window, and resumable ingest handoff.
+      - Return BLOCKED without claiming an artifact was saved.
+    forbiddenBehaviors:
+      - Bypass the claim with an alternate raw path or worktree.
+      - Edit docs/wiki, raw, Clippings, or the queue.
+      - Present candidate research as a committed collection artifact.
+    deterministicChecks:
+      - harness-agent-identity
+      - no-forbidden-mutation
+      - claim-lifecycle
+      - output-contract-presence
+      - readiness-consistency
+    expectedTerminalStatus: BLOCKED

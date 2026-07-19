@@ -1,0 +1,32 @@
+schema: dev-methodology-agent-suite
+version: 1
+id: dev-merge-coordinator
+priority: 10
+target:
+  conceptualRole: agents/roles/dev-activities/dev-merge-coordinator.role.yaml
+  nativeAgent: generated/adapters/codex/agents/dev-merge-coordinator.toml
+  repositoryMutation: required
+  requiredSkills: [agent-work-merge, agent-claim, review-structured-artifact, fix-explanation]
+  conditionalSkills:
+    organise-project-files: Integration introduces a project file or directory.
+  allowedAgentDependencies: []
+  requiredOutputs: [integrated changes, conflict resolution record, verification evidence, commit and claim closeout]
+projectAgents:
+  supervisor: agents/supervisor.toml
+  judge: agents/judge.toml
+projectSkills:
+  shared: [../skills/agent-suite-supervision/SKILL.md, ../skills/agent-scenario-design/SKILL.md, ../skills/agent-evidence-judging/SKILL.md]
+  suite: [skills/dev-merge-coordinator-suite-contract/SKILL.md]
+execution:
+  maximumActiveChildren: 1
+  nestedAgentLimit: 0
+  scenarioCatalog: scenarios.yaml
+  supervisorInvocation: dev_merge_coordinator_suite_supervisor
+  targetInvocation: dev_merge_coordinator
+  judgeInvocation: dev_merge_coordinator_suite_judge
+  requireCodexIdentityEvidence: true
+acceptance:
+  deterministicFirst: true
+  criticalFailureSkipsJudge: true
+  semanticRubric: integration-quality
+  terminalStatuses: [PASS, FAIL, BLOCKED, STALE]

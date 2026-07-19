@@ -1,0 +1,49 @@
+schema: dev-methodology-agent-suite
+version: 1
+id: dev-documentation-writer
+priority: 11
+target:
+  conceptualRole: agents/roles/dev-activities/dev-documentation-writer.role.yaml
+  nativeAgent: generated/adapters/codex/agents/dev-documentation-writer.toml
+  repositoryMutation: required
+  requiredSkills: [agent-claim, development-methodology]
+  conditionalSkills:
+    organise-project-files: Documentation creates a project file or directory.
+    create-functional-spec: The artifact specifies user-visible behavior.
+    create-architecture: The artifact documents system-wide boundaries.
+    create-high-level-design: The artifact coordinates subsystem responsibilities.
+    create-module-design: The artifact guides focused implementation.
+    object-creation-patterns: A design evaluates object creation patterns.
+    singleton-pattern: A design evaluates Singleton.
+    interface-patterns: A design evaluates Adapter, Bridge, or Facade.
+    composition-patterns: A design evaluates Composite, Decorator, Proxy, or Flyweight.
+    state-strategy-patterns: A design evaluates Strategy, State, or Template Method.
+    request-patterns: A design evaluates Command, Chain of Responsibility, or Memento.
+    collaboration-patterns: A design evaluates Observer or Mediator.
+    traversal-patterns: A design evaluates Iterator or Visitor.
+    interpreter-pattern: A design evaluates Interpreter.
+    create-unit-test-plan: The artifact defines durable unit-test coverage.
+    documentation-bootstrap: The project lacks required documentation structure.
+    documentation-reverse-engineer: Authoritative documentation is missing or stale.
+    documentation-page-verify: Reverse-engineering integration updates a README or custom entry document.
+  allowedAgentDependencies: []
+  requiredOutputs: [selected documentation route, source-backed artifact, verification evidence]
+projectAgents:
+  supervisor: agents/supervisor.toml
+  judge: agents/judge.toml
+projectSkills:
+  shared: [../skills/agent-suite-supervision/SKILL.md, ../skills/agent-scenario-design/SKILL.md, ../skills/agent-evidence-judging/SKILL.md]
+  suite: [skills/dev-documentation-writer-suite-contract/SKILL.md]
+execution:
+  maximumActiveChildren: 1
+  nestedAgentLimit: 0
+  scenarioCatalog: scenarios.yaml
+  supervisorInvocation: dev_documentation_writer_suite_supervisor
+  targetInvocation: dev_documentation_writer
+  judgeInvocation: dev_documentation_writer_suite_judge
+  requireCodexIdentityEvidence: true
+acceptance:
+  deterministicFirst: true
+  criticalFailureSkipsJudge: true
+  semanticRubric: documentation-quality
+  terminalStatuses: [PASS, FAIL, BLOCKED, STALE]

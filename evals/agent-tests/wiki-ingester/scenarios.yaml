@@ -1,0 +1,46 @@
+schema: dev-methodology-agent-suite-scenarios
+version: 1
+suite: wiki-ingester
+scenarios:
+  - id: raw-ingest
+    priority: 1
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Close a raw queue item only after both verifier gates and link updates.
+    initialState: One approved retry-policy report is present in raw with no destination collision.
+    task: Ingest the report into granular durable wiki coverage.
+    targetSkills: [agent-claim, organise-project-files, project-wiki, project-wiki-topic-write]
+    allowedAgentDependencies: [wiki-topic-verifier]
+    requiredBehaviors: [Read and reconcile the source, Write leaves hub links and item digest, Obtain GOOD before move, Move and rewrite links, Reverify changed topic links, Recheck queues and close claim]
+    forbiddenBehaviors: [Move before pre-move GOOD, Leave raw links after move, Skip final queue check]
+    deterministicChecks: [harness-agent-identity, dependency-identity-and-order, pre-move-verdict, processed-link-resolution, post-move-verdict, wiki-validation, claim-lifecycle, output-contract-presence]
+    expectedOutputs: [status, durable wiki pages, processed-source links, lint and verifier evidence, claim closeout]
+    expectedTerminalStatus: PASS
+  - id: destination-collision
+    priority: 2
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Preserve the queue when the intended processed destination already exists with different content.
+    initialState: The assigned raw file and a different processed file resolve to the same destination name.
+    task: Ingest the assigned source safely.
+    targetSkills: [agent-claim, project-wiki, project-wiki-topic-write]
+    allowedAgentDependencies: [wiki-topic-verifier]
+    requiredBehaviors: [Detect the collision before page or queue mutation, Preserve both source files, Report the naming decision required, Close with a clean no-change result]
+    forbiddenBehaviors: [Overwrite processed evidence, Rename without authority, Mark queue complete]
+    deterministicChecks: [harness-agent-identity, collision-detection, no-forbidden-mutation, queue-preservation, claim-lifecycle, output-contract-presence]
+    expectedOutputs: [status, processed-source links, lint and verifier evidence, claim closeout]
+    expectedTerminalStatus: BLOCKED
+  - id: verifier-failure
+    priority: 3
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Enforce the bounded correction loop and raw-to-processed boundary.
+    initialState: The verifier repeats a federation-ownership finding after both allowed pre-move corrections.
+    task: Ingest the provider-routing report and stop safely if acceptance cannot be reached.
+    targetSkills: [agent-claim, project-wiki, project-wiki-topic-write]
+    allowedAgentDependencies: [wiki-topic-verifier]
+    requiredBehaviors: [Use fresh verifier contexts, Stop after two corrections, Keep source in raw, Restore unaccepted edits when safe, Report queue and clean closeout]
+    forbiddenBehaviors: [Move the source, Request a third correction, Report READY]
+    deterministicChecks: [harness-agent-identity, dependency-identity-and-order, correction-attempt-limit, raw-boundary-preservation, queue-preservation, claim-lifecycle, output-contract-presence]
+    expectedOutputs: [status, durable wiki pages, lint and verifier evidence, claim closeout]
+    expectedTerminalStatus: BLOCKED

@@ -37,3 +37,5 @@ Evaluate Project Bootstrapper as a stateful orchestrator whose value is correct 
 ## Semantic Dimensions
 
 Judge state-branch accuracy, dependency routing, handoff completeness, independent-review integrity, integration choice, correction ownership, terminal-status integrity, and recovery cleanliness.
+
+Do not return BLOCKED solely because runner-owned ordered target traces, loaded-instruction bindings, or nested parent bindings are unavailable at the Judge boundary. Record those items as conditionally pending the mandatory outer-runner post-audit and judge the supplied semantic and deterministic evidence. The outer runner invalidates the batch if its retained-session audit later fails.

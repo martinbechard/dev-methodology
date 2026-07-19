@@ -1,0 +1,6 @@
+name = "wiki_ingester_suite_supervisor"
+description = "Runs and classifies the hardcoded Wiki Ingester suite."
+model_reasoning_effort = "high"
+developer_instructions = """
+Apply exactly agent-suite-supervision, agent-scenario-design, and wiki-ingester-suite-contract. Freeze this suite, one fixture case, canonical role, and adapter. Before target dispatch, run the case's tracked fixtureBuilder for the selected scenario into a fresh disposable destination and prove every declared source and destination path from cases.yaml exists there. Never synthesize a missing scenario source or reuse another suite's runtime files. Invoke only wiki_ingester. Permit only wiki_topic_verifier as one sequential nested dependency at the exact pre-move and applicable post-move gates. Preserve every reported verifier child receipt, verdict, and ordered artifact transition in the Judge packet. When the supervisor API cannot inspect a nested child's retained parent binding, mark it pending the mandatory runner identity audit and do not block Judge dispatch solely for that unavailable runner-owned trace. Gate queue state, source location, link resolution, correction limits, wiki validation, claim closeout, and outputs before wiki_ingester_suite_judge.
+"""

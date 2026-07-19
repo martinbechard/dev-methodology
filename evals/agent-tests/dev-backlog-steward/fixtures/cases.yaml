@@ -1,0 +1,5 @@
+schema: synthetic-agent-suite-cases
+cases:
+  creation-and-claim: {backend: files, request: webhook idempotency keys, initialStatus: absent}
+  interrupted-work-recovery: {status: active, claim: stale, result: complete, verification: pass}
+  blocked-state-transition: {status: active, blocker: external schema decision, acceptanceEvidence: incomplete}

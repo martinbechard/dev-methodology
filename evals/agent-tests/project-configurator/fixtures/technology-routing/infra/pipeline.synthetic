@@ -1,0 +1,4 @@
+pipeline verify {
+  step service-tests
+  step ui-tests
+}

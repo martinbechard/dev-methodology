@@ -1,0 +1,33 @@
+candidates:
+  - entity: Atlas Toolkit
+    url: https://example.invalid/atlas/releases/4.2
+    publishedUtc: 2026-07-09T14:00:00Z
+    sourceType: primary
+    relevance: runtime release
+  - entity: Nova Runtime
+    url: https://example.invalid/nova/releases/8.1
+    publishedUtc: 2026-07-12T09:30:00Z
+    sourceType: primary
+    relevance: runtime release
+  - entity: Atlas Toolkit
+    url: https://example.invalid/atlas/releases/4.2
+    publishedUtc: 2026-07-09T14:00:00Z
+    sourceType: duplicate
+  - entity: Nova Runtime
+    url: https://example.invalid/blog/nova-summary
+    publishedUtc: 2026-07-12T12:00:00Z
+    sourceType: secondary
+  - entity: Atlas Toolkit
+    url: https://example.invalid/atlas/community-event
+    publishedUtc: 2026-07-10T08:00:00Z
+    sourceType: primary
+    relevance: off-topic event
+  - entity: Nova Runtime
+    url: https://example.invalid/nova/releases/8.0
+    publishedUtc: 2026-07-06T23:59:59Z
+    sourceType: primary
+  - entity: Atlas Toolkit
+    url: https://example.invalid/atlas/advisory-boundary
+    publishedDate: 2026-07-07
+    sourceType: primary
+    timestampPrecision: date-only

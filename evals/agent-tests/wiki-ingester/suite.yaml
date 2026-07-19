@@ -1,0 +1,34 @@
+schema: dev-methodology-agent-suite
+version: 1
+id: wiki-ingester
+priority: 12
+target:
+  conceptualRole: agents/roles/wiki-activities/wiki-ingester.role.yaml
+  nativeAgent: generated/adapters/codex/agents/wiki-ingester.toml
+  repositoryMutation: required
+  requiredSkills: [agent-claim, project-wiki, project-wiki-topic-write]
+  conditionalSkills:
+    organise-project-files: Ingest creates a project file or directory.
+    code-project-wiki: Durable claims depend on implementation behavior.
+  allowedAgentDependencies: [wiki-topic-verifier]
+  requiredOutputs: [status, durable wiki pages, processed-source links, lint and verifier evidence, claim closeout]
+projectAgents:
+  supervisor: agents/supervisor.toml
+  judge: agents/judge.toml
+projectSkills:
+  shared: [../skills/agent-suite-supervision/SKILL.md, ../skills/agent-scenario-design/SKILL.md, ../skills/agent-evidence-judging/SKILL.md]
+  suite: [skills/wiki-ingester-suite-contract/SKILL.md]
+execution:
+  maximumActiveChildren: 1
+  nestedAgentLimit: 1
+  nestedAgentConcurrency: 1
+  scenarioCatalog: scenarios.yaml
+  supervisorInvocation: wiki_ingester_suite_supervisor
+  targetInvocation: wiki_ingester
+  judgeInvocation: wiki_ingester_suite_judge
+  requireCodexIdentityEvidence: true
+acceptance:
+  deterministicFirst: true
+  criticalFailureSkipsJudge: true
+  semanticRubric: wiki-ingest-quality
+  terminalStatuses: [PASS, FAIL, BLOCKED, STALE]

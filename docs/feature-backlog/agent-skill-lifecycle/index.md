@@ -32,6 +32,21 @@ Conceptual agent definitions declare their generic definition-owned skills. Proj
 2. [Verify Codex CLI skill activation](verify-codex-skill-activation.md).
 3. [Document the cross-harness skill lifecycle](document-cross-harness-skill-lifecycle.md).
 4. [Build the agent and skill mind map](build-agent-skill-mind-map.md).
+5. [Align Project Organiser filename selection](align-project-organiser-filename-selection.md).
+6. [Enforce behavioral regression assertions](enforce-behavioral-regression-assertions.md).
+7. [Prevent unsupported review findings](prevent-unsupported-review-findings.md).
+8. [Prevent unauthorized contract narrowing](prevent-unauthorized-contract-narrowing.md).
+9. [Preserve authoritative configuration evidence](preserve-authoritative-configuration-evidence.md).
+10. [Prevent read-only review side effects](prevent-read-only-review-side-effects.md).
+11. [Require exact review quotation traceability](require-exact-review-quotation-traceability.md).
+12. [Preserve canonical review checklists](preserve-canonical-review-checklists.md).
+13. [Require claimed backlog resumption](require-claimed-backlog-resumption.md).
+14. [Preserve Configurator runtime bridges](preserve-configurator-runtime-bridges.md).
+15. [Enforce documentation template conformance](enforce-documentation-template-conformance.md).
+16. [Preserve integrated documentation steady state](preserve-integrated-documentation-steady-state.md).
+17. [Restore Wiki Ingester on verifier interruption](restore-wiki-ingester-on-verifier-interruption.md).
+18. [Preserve Wiki Research source links](preserve-wiki-research-source-links.md).
+19. [Replace Bootstrapper marathon with isolated test doubles](replace-bootstrapper-marathon-with-isolated-test-doubles.md).
 
 The detector is the foundation. Codex verification must run against the stable generated definitions and project guidance. Documentation must distinguish designed behavior from behavior proven by the CLI suite. The mind map should consume the final detection and evidence data rather than adapting to an obsolete routing schema.
 

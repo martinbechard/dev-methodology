@@ -1,0 +1,3 @@
+commands:
+  - python3 -m unittest
+  - npm test

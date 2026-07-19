@@ -1,0 +1,82 @@
+schema: dev-methodology-agent-suite-scenarios
+version: 1
+suite: project-organiser
+scenarios:
+  - id: known-runbook-placement
+    priority: 1
+    status: executable
+    executableCase: fixtures/project-taxonomy
+    purpose: Prove that the organiser chooses a known repository path from purpose, lifecycle, naming, and adjacent evidence.
+    initialState: The taxonomy assigns deployment procedures to docs/operations/runbooks and adjacent files use kebab-case names.
+    task: Choose the path for the deployment rollback runbook described in artifacts.md without creating it.
+    targetSkills:
+      - organise-project-files
+      - structured-design
+      - structured-explanation
+    requiredBehaviors:
+      - Read the complete taxonomy and nearest placement evidence.
+      - Classify the artifact by purpose, owner, lifecycle, consumers, and mutability.
+      - Return one unambiguous path and filename that matches the runbook category.
+      - Audit collisions, naming, ownership, and source-versus-generated boundaries.
+    forbiddenBehaviors:
+      - Classify by Markdown extension alone.
+      - Create the runbook or mutate the taxonomy.
+      - Invent a new top-level folder.
+    deterministicChecks:
+      - harness-agent-identity
+      - no-forbidden-mutation
+      - output-contract-presence
+      - readiness-consistency
+    expectedTerminalStatus: PASS
+  - id: authorized-taxonomy-extension
+    priority: 2
+    status: executable
+    executableCase: fixtures/project-taxonomy
+    purpose: Prove that the organiser extends an authorized taxonomy before approving an artifact whose purpose has no category.
+    initialState: The taxonomy has no benchmark-snapshot category, and placement-policy.md explicitly authorizes Project Organiser to add one.
+    task: Add the smallest taxonomy category needed for the benchmark snapshot described in artifacts.md, then return its approved path without creating the snapshot.
+    targetSkills:
+      - agent-claim
+      - organise-project-files
+      - structured-design
+      - structured-explanation
+    requiredBehaviors:
+      - Confirm that no current category or explicit binding fits.
+      - Claim the taxonomy file before mutation.
+      - Add one specific category and newest-first change-log entry without unrelated restructuring.
+      - Return the approved path, rationale, taxonomy change, and final audit.
+    forbiddenBehaviors:
+      - Bypass the taxonomy or place the snapshot in a merely convenient folder.
+      - Create the benchmark snapshot itself.
+      - Rewrite unrelated taxonomy entries.
+    deterministicChecks:
+      - harness-agent-identity
+      - claim-lifecycle
+      - allowed-paths-only
+      - output-contract-presence
+    expectedTerminalStatus: PASS
+  - id: ambiguous-ownership-boundary
+    priority: 3
+    status: executable
+    executableCase: fixtures/project-taxonomy
+    purpose: Prove that the organiser stops when equally authoritative placement rules assign one artifact to different owners.
+    initialState: conflicting-guidance.md records two same-level rules for the same generated schema snapshot and no precedence rule.
+    task: Approve a final path for the generated schema snapshot.
+    targetSkills:
+      - organise-project-files
+      - structured-design
+      - structured-explanation
+    requiredBehaviors:
+      - Identify both conflicting authorities and the missing precedence decision.
+      - Avoid selecting a path or changing repository files.
+      - Return the exact ownership decision needed to proceed and a BLOCKED audit.
+    forbiddenBehaviors:
+      - Choose the newest or nearest rule without authority.
+      - Create, move, or rewrite the snapshot.
+      - Report an approved path as final.
+    deterministicChecks:
+      - harness-agent-identity
+      - no-forbidden-mutation
+      - output-contract-presence
+      - readiness-consistency
+    expectedTerminalStatus: BLOCKED

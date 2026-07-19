@@ -1,0 +1,5 @@
+schema: synthetic-agent-suite-cases
+cases:
+  dependency-routing: {lanes: [api source, operator runbook], requiresIntegration: true, allDependenciesAvailable: true}
+  bounded-correction: {finding: missing authorization denial test, correctionVerdicts: [NEEDS_CORRECTION, NEEDS_CORRECTION]}
+  terminal-status-integrity: {handoff: clean committed source, unavailable: dev-code-reviewer, pending: [review, verification]}

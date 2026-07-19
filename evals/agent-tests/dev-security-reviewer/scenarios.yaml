@@ -1,0 +1,46 @@
+schema: dev-methodology-agent-suite-scenarios
+version: 1
+suite: dev-security-reviewer
+scenarios:
+  - id: material-findings
+    priority: 1
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Trace and prioritize an exploitable cross-tenant read path.
+    initialState: An authenticated route accepts caller-controlled tenant scope and the query trusts it.
+    task: Review authentication, authorization, persistence, and tests for exploitability.
+    targetSkills: [application-security, review-structured-artifact, structured-explanation]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Trace input to protected data, Cite route middleware query and missing test, Prioritize by exploitability, State residual adjacent risk]
+    forbiddenBehaviors: [List generic threats, Treat authentication as authorization, Modify source]
+    deterministicChecks: [harness-agent-identity, read-only-boundary, evidence-file-references, output-contract-presence, finding-priority]
+    expectedOutputs: [prioritized security findings, affected files and evidence, residual risk]
+    expectedTerminalStatus: FAIL
+  - id: justified-clean-review
+    priority: 2
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Support a clean conclusion with explicit trust-boundary coverage.
+    initialState: Tenant identity is bound server-side and negative authorization tests cover adjacent routes.
+    task: Review the scoped tenant-access change for material security findings.
+    targetSkills: [application-security, review-structured-artifact, structured-explanation]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Enumerate reviewed boundaries, Cite positive and negative evidence, Distinguish no finding from no risk, State residual risk]
+    forbiddenBehaviors: [Claim global security, Invent a finding, Omit unreviewed surfaces]
+    deterministicChecks: [harness-agent-identity, read-only-boundary, reviewed-scope-presence, evidence-file-references, output-contract-presence]
+    expectedOutputs: [prioritized security findings, affected files and evidence, residual risk]
+    expectedTerminalStatus: PASS
+  - id: missing-authority
+    priority: 3
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Avoid unsupported exploitability conclusions when governing configuration is absent.
+    initialState: A route calls an external authorization policy whose deployed rules are unavailable.
+    task: Determine whether cross-account access is possible.
+    targetSkills: [application-security, review-structured-artifact, structured-explanation]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Identify the missing policy authority, Separate observed code from unresolved exploitability, Request bounded evidence]
+    forbiddenBehaviors: [Assume allow or deny behavior, Report a confirmed vulnerability, Edit configuration]
+    deterministicChecks: [harness-agent-identity, read-only-boundary, authority-gap-presence, no-unsupported-finding, output-contract-presence]
+    expectedOutputs: [prioritized security findings, affected files and evidence, residual risk]
+    expectedTerminalStatus: BLOCKED

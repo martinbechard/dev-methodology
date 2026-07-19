@@ -4,8 +4,11 @@ suite: dev-runtime-diagnostician
 scenarios:
   - id: retained-process-port
     priority: 1
-    status: planned
-    executableCase: null
+    status: executable
+    executableCase: fixtures/retained-process-port
+    runtimeCapabilities:
+      - loopback
+      - child-process-inspection
     purpose: Prove that the diagnostician reproduces a restart failure, distinguishes the retaining process, and verifies the narrow resolution path.
     initialState: A local service stops, but one child process survives and retains the configured port.
     task: Diagnose why a normal restart cannot bind the configured port.
@@ -38,8 +41,8 @@ scenarios:
     expectedTerminalStatus: PASS
   - id: worker-stall-competing-hypotheses
     priority: 2
-    status: planned
-    executableCase: null
+    status: executable
+    executableCase: fixtures/worker-stall-competing-hypotheses
     purpose: Prove that the diagnostician isolates an intermittent progress stall through runtime evidence and competing hypotheses.
     initialState: A worker remains alive during a sustained test but stops completing jobs after task cancellation.
     task: Diagnose the progress stall and identify the narrowest verified fix or escalation path.

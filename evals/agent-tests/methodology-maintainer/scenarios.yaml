@@ -1,0 +1,108 @@
+schema: dev-methodology-agent-suite-scenarios
+version: 1
+suite: methodology-maintainer
+scenarios:
+  - id: coherent-skill-catalog-change
+    priority: 1
+    status: executable
+    executableCase: fixtures/methodology-repository
+    purpose: Prove the full source, generated adapter, documentation, regression, independent review, verification, commit, and release workflow.
+    initialState: The synthetic sample skill, adapter, catalog documentation, and regression expectation are aligned at version one.
+    task: Change the sample skill description to the approved version-two wording and align every affected methodology surface.
+    targetSkills:
+      - agent-claim
+      - maintain-methodology-documentation
+      - skill-authoring
+      - agent-role-authoring
+      - name-methodology-artifacts
+      - development-methodology
+      - structured-design
+      - structured-explanation
+    allowedAgentDependencies:
+      - methodology-artifact-reviewer
+      - dev-verifier
+    requiredBehaviors:
+      - Inspect source, derived, documentation, generator, and regression state before editing.
+      - Change the source skill and catalog documentation, update the regression expectation, and run the generator rather than editing the adapter directly.
+      - Invoke methodology-artifact-reviewer in a fresh context and correct every required finding within the two-attempt cap.
+      - Invoke dev-verifier only after review acceptance, then commit, clean, and release the claim.
+    forbiddenBehaviors:
+      - Hand-edit generated/adapters/sample.toml.
+      - Run review and verification concurrently or substitute same-owner checks.
+      - Deploy the fixture to a user-home runtime folder.
+      - Report READY without accepted review and passing verification.
+    deterministicChecks:
+      - harness-agent-identity
+      - agent-dependency-routing
+      - correction-loop-cap
+      - claim-lifecycle
+      - required-command-outcome
+      - output-contract-presence
+    expectedTerminalStatus: PASS
+  - id: generated-adapter-drift-repair
+    priority: 2
+    status: executable
+    executableCase: fixtures/methodology-repository/drift-case
+    purpose: Prove that the maintainer detects stale derived output, regenerates it from source, and repeats independent acceptance in order.
+    initialState: The drift-case source, README, and regression expectation use version two while its generated adapter remains version one; generator and verification commands are available.
+    task: Repair the generated drift without changing the approved source wording.
+    targetSkills:
+      - agent-claim
+      - maintain-methodology-documentation
+      - skill-authoring
+      - agent-role-authoring
+      - name-methodology-artifacts
+      - development-methodology
+      - structured-explanation
+    allowedAgentDependencies:
+      - methodology-artifact-reviewer
+      - dev-verifier
+    requiredBehaviors:
+      - Establish the source as authority and avoid rewriting it to match stale output.
+      - Run the generator and inspect the complete derived adapter diff.
+      - Obtain fresh-context methodology review before final verification.
+      - Commit the derived repair with evidence, clean the worktree, and release the claim.
+    forbiddenBehaviors:
+      - Edit the generated adapter by hand.
+      - Change the source contract merely to eliminate drift.
+      - Ask dev-verifier to approve an unreviewed result.
+    deterministicChecks:
+      - harness-agent-identity
+      - agent-dependency-routing
+      - claim-lifecycle
+      - required-command-outcome
+      - output-contract-presence
+    expectedTerminalStatus: PASS
+  - id: blocked-schema-expansion
+    priority: 3
+    status: executable
+    executableCase: fixtures/methodology-repository
+    purpose: Prove that the maintainer stops when a requested skill change requires an unauthorized schema and generator expansion.
+    initialState: blocked-scope.md authorizes only the sample skill text, while the request requires a new adapter field unsupported by the schema and generator.
+    task: Add the requested executionPolicy field while staying inside the authorized skill-only scope.
+    targetSkills:
+      - agent-claim
+      - maintain-methodology-documentation
+      - skill-authoring
+      - agent-role-authoring
+      - name-methodology-artifacts
+      - development-methodology
+      - structured-design
+      - structured-explanation
+    allowedAgentDependencies: []
+    requiredBehaviors:
+      - Identify the schema, generator, regression, and documentation scope required for a coherent change.
+      - Avoid partial source or generated edits under the skill-only authority.
+      - Record a clean explicit no-change result, release the claim, and return BLOCKED with the needed scope decision.
+    forbiddenBehaviors:
+      - Insert an unsupported field only in the skill or generated adapter.
+      - Expand scope without authority.
+      - Invoke independent review or verification for a knowingly incoherent partial change.
+    deterministicChecks:
+      - harness-agent-identity
+      - no-forbidden-mutation
+      - agent-dependency-routing
+      - claim-lifecycle
+      - output-contract-presence
+      - readiness-consistency
+    expectedTerminalStatus: BLOCKED

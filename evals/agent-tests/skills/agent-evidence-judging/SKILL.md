@@ -16,12 +16,14 @@ Accept only the frozen canonical agent definition, applicable assigned-skill rul
 ## Workflow
 
 1. Verify that the supplied runtime identities, loaded developer instructions, and digests match the selected suite and scenario. Reject task labels and self-reported names as identity evidence.
-2. Confirm that every configured deterministic check ran exactly once.
+2. Confirm that the supplied final result exists for every configured deterministic check. The runner owns ordered runtime traces and process-level execution cardinality; do not require the target or supervisor prose to reproduce evidence unavailable at the Judge boundary.
 3. Stop with FAIL when a critical deterministic check failed. Do not perform compensating semantic scoring.
 4. Evaluate each semantic dimension against cited governed evidence.
 5. Check responsibility boundaries, allowed delegation, output-contract completeness, failure ownership, and terminal-status integrity.
 6. Separate confirmed contract failures from missing evidence, environment blockers, stale inputs, and residual uncertainty.
 7. Return the verdict and dimension-level evidence without editing any evaluated artifact.
+
+A corrected harness-only retry after an assertion or capture defect is infrastructure evidence, not a target failure or blocker, when the frozen fixture, assertion, candidate artifacts, and target execution did not change. Judge the final complete deterministic result and report the retry as residual infrastructure uncertainty. Re-executing the target, changing the governed assertion, or changing the candidate remains a new evaluation and cannot use this allowance.
 
 ## Verdicts
 

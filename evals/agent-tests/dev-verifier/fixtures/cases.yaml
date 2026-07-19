@@ -1,0 +1,5 @@
+schema: synthetic-agent-suite-cases
+cases:
+  final-acceptance: {changedBehavior: retry exhaustion, commands: [unit, integration, lint, build], outcomes: [pass, pass, pass, pass]}
+  failed-verification: {workflow: prior-session invalidation, commands: [unit, integration], outcomes: [pass, fail], trace: invalidation branch not reached}
+  incomplete-evidence: {artifact: evaluator-summary.json, present: [verdict], missing: [instructions, case inputs, provenance receipt]}

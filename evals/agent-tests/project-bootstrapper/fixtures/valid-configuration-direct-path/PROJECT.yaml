@@ -1,0 +1,10 @@
+schema: synthetic-project-configuration
+version: 1
+folders:
+  - path: src
+    agents:
+      - dev-documentation-writer
+      - dev-artifact-reviewer
+      - dev-verifier
+documentation:
+  coverageManifest: docs/coverage-manifest.yaml

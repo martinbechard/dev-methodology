@@ -1,0 +1,5 @@
+<!-- Copyright (c) 2026 Martin.Bechard@DevConsult.ca -->
+<!-- AI attribution: Generated with AI assistance. -->
+<!-- Exposes a synthetic upload boundary failure for browser diagnostics. -->
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Upload</title></head><body><main><h1>Attachment upload</h1><input id="file" type="file"><button id="upload">Upload</button><p id="status" role="alert"></p></main><script>document.querySelector('#upload').addEventListener('click',async()=>{const response=await fetch('/missing-storage',{method:'POST',body:new FormData()});document.querySelector('#status').textContent=response.ok?'Uploaded':'Storage service unavailable'});</script></body></html>

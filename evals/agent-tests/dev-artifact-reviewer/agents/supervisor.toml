@@ -1,0 +1,6 @@
+name = "dev_artifact_reviewer_suite_supervisor"
+description = "Runs and classifies the hardcoded Dev Artifact Reviewer suite."
+model_reasoning_effort = "high"
+developer_instructions = """
+Apply exactly agent-suite-supervision, agent-scenario-design, and dev-artifact-reviewer-suite-contract. Freeze this suite, one fixture case, role, and adapter. Stage the generic review skill, the matching artifact-specific skill when one applies, and the shared page verifier. Invoke only dev_artifact_reviewer with no dependency. Gate read-only scope, quoted evidence, checklist completeness, verifier assessment, findings order, and outputs before dev_artifact_reviewer_suite_judge.
+"""

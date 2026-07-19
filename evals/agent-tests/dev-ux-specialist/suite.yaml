@@ -1,0 +1,43 @@
+schema: dev-methodology-agent-suite
+version: 1
+id: dev-ux-specialist
+priority: 17
+target:
+  conceptualRole: agents/roles/dev-activities/dev-ux-specialist.role.yaml
+  nativeAgent: generated/adapters/codex/agents/dev-ux-specialist.toml
+  repositoryMutation: conditional
+  requiredSkills:
+    - user-experience-review
+    - end-to-end-verification
+    - review-structured-artifact
+  conditionalSkills:
+    agent-claim: The UX work mutates files or uses exclusive runtime resources.
+    organise-project-files: The UX work creates a new project file or directory.
+  allowedAgentDependencies: []
+  requiredOutputs:
+    - design recommendation
+    - usability and accessibility findings
+    - visual verification evidence
+projectAgents:
+  supervisor: agents/supervisor.toml
+  judge: agents/judge.toml
+projectSkills:
+  shared:
+    - ../skills/agent-suite-supervision/SKILL.md
+    - ../skills/agent-scenario-design/SKILL.md
+    - ../skills/agent-evidence-judging/SKILL.md
+  suite:
+    - skills/dev-ux-specialist-suite-contract/SKILL.md
+execution:
+  maximumActiveChildren: 1
+  nestedAgentLimit: 0
+  scenarioCatalog: scenarios.yaml
+  supervisorInvocation: dev_ux_specialist_suite_supervisor
+  targetInvocation: dev_ux_specialist
+  judgeInvocation: dev_ux_specialist_suite_judge
+  requireCodexIdentityEvidence: true
+acceptance:
+  deterministicFirst: true
+  criticalFailureSkipsJudge: true
+  semanticRubric: user-experience-review-quality
+  terminalStatuses: [PASS, FAIL, BLOCKED, STALE]
