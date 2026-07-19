@@ -89,6 +89,23 @@ class CoordinationSimulatorTests(unittest.TestCase):
             successor_id=wiki_to_hibernate.successor_id,
             delivered_evidence=required,
         )
+        pending_ack = simulator.audit_wake_obligations(elapsed_minutes=15)
+        self.assertEqual(1, len(pending_ack))
+        self.assertFalse(pending_ack[0].notification_missing)
+        self.assertTrue(pending_ack[0].acknowledgement_missing)
+        repeated = simulator.parent_repair_baton(
+            source_id=wiki_to_hibernate.source_id,
+            successor_id=wiki_to_hibernate.successor_id,
+            delivered_evidence=required,
+        )
+        self.assertIs(repaired, repeated)
+        self.assertEqual(
+            1,
+            sum(
+                event["event"] == "parent-baton-repaired"
+                for event in simulator.events
+            ),
+        )
         simulator.acknowledge_resume(
             source_id=wiki_to_hibernate.source_id,
             successor_id=wiki_to_hibernate.successor_id,
@@ -99,6 +116,17 @@ class CoordinationSimulatorTests(unittest.TestCase):
         self.assertEqual(0, repaired.successor_poll_count)
         self.assertEqual(15, repaired.last_audit_minutes)
         self.assertEqual((), simulator.audit_wake_obligations(elapsed_minutes=15))
+
+        unreleased = CoordinationSimulator()
+        blocked = unreleased.seed_successor_chain(required)[0]
+        with self.assertRaisesRegex(ValueError, "must release"):
+            unreleased.parent_repair_baton(
+                source_id=blocked.source_id,
+                successor_id=blocked.successor_id,
+                delivered_evidence=required,
+            )
+        self.assertEqual("ARTIFACT WAIT", blocked.phase)
+        self.assertFalse(blocked.notified)
 
     def test_concrete_successor_chain_and_wiki_research_obligation(self) -> None:
         """Keep the approved concrete chain confined to executable evaluation."""

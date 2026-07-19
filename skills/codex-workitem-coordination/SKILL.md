@@ -187,7 +187,7 @@ Read and record the exact answer and provenance once. Never ask the resolved que
 - deferred becomes Holding
 - declined or ended becomes the applicable terminal archive
 
-Ready to Running is a separate brief primary-only transaction. If WAIT or PRIMARY_REQUIRED prevents either transition, preserve the answer and provenance in the ledger, mark the question resolved there, attach exactly one non-polling wake obligation to the current primary owner, and resume after its commit and release. Contention does not make the answer missing and never authorizes re-asking.
+Ready to Running is a separate brief primary-only transaction. If WAIT or PRIMARY_REQUIRED prevents either transition, preserve the answer and provenance in the ledger, mark the question resolved there, retain exactly one parent-owned non-polling wake obligation, and require the current primary owner only to return its commit and release notification to the parent. Resume after the parent verifies that evidence and wakes the successor. Contention does not make the answer missing and never authorizes re-asking.
 
 Completed is permitted only after implementation or delivery, required independent review, verification, integration or shared finalization, clean released claims and worktrees, and terminal backlog evidence. Approval alone satisfies none of those gates.
 

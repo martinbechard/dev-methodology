@@ -439,13 +439,19 @@ class CoordinationSimulator:
         """Deliver one complete evidence-bearing repair wake as the parent.
 
         The source and successor ids select an existing obligation.
-        ``delivered_evidence`` is merged into its evidence set. Missing required
-        evidence raises ``ValueError``; success records notification, changes
-        the phase to ``ARTIFACT RESUME``, appends an event, and returns the
-        mutated obligation.
+        The predecessor must already be released. ``delivered_evidence`` is
+        merged into the evidence set for the first delivery. Missing required
+        evidence raises ``ValueError``; success records exactly one
+        notification, changes the phase to ``ARTIFACT RESUME``, appends one
+        event, and returns the mutated obligation. Later repair attempts are
+        idempotent while acknowledgement remains pending.
         """
 
         obligation = self.wake_obligations[(source_id, successor_id)]
+        if not obligation.predecessor_released:
+            raise ValueError("the predecessor must release before ARTIFACT RESUME")
+        if obligation.notified:
+            return obligation
         obligation.delivered_evidence.update(delivered_evidence)
         missing = set(obligation.required_evidence) - obligation.delivered_evidence
         if missing:
