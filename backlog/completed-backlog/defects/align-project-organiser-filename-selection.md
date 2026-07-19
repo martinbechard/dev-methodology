@@ -1,18 +1,27 @@
 # Align Project Organiser Filename Selection
 
-Status: Blocked
+Status: Completed
 
 Type: Defect
 
-## User Action Required
+## Completion Evidence
 
-The independently accepted regression is integrated, but the remaining behavioral correction changes a governed conceptual agent definition. Repository policy requires explicit, scope-specific user approval before that definition can be changed.
+- The accepted test-only integration commit is a28b0681723d22ff9f8512a21d296d7022f1fe1c, and its sole changed artifact is scripts/test_bundle_content.py. The accepted Project Organiser method is equal to 06d40324614a2be9b8d19404ea7f227d8a5c1ada, with current-main coordination bytes preserved.
+- Integration ownership was acquired in event f0ef189d-3dd6-47a9-a550-2c41437520cc and released normally in event 353ddec9-6f5e-4630-9147-28b877940d9a.
+- Fresh post-integration Dev Code Reviewer result: ACCEPTED with zero material findings.
+- Fresh verifier ownership was acquired in event 26869cee-15f0-4755-b1fe-8391ca739895 and released with a no-change outcome in event 3ef7d9fd-6294-4608-ac37-6e1e6fc303f9.
+- Focused Project Organiser verification passed 1 of 1; coordination assertions passed 3 of 3; full bundle-content verification passed 86 of 86; the independent boundary matrix covered 5,270 observations with zero failures; syntax, diff, and protected-surface checks passed; and both the verifier checkout and main were clean at a28b0681723d22ff9f8512a21d296d7022f1fe1c.
+- External baseline catalog WARN exactly: agent-scenarios.yaml:project-organiser outputContractFields must exactly match its conceptual source. The same single exit-1 mismatch occurs on untouched baseline 8ec020659bc4d8530ce7088426eabdc605500e11 and integration a28b0681723d22ff9f8512a21d296d7022f1fe1c. The audit proves scripts/test_bundle_content.py has an open/import count of 0, so this is a pre-existing external defect and not an in-scope completion failure.
 
-## Question for the User
+## Historical User Action Requirement (Resolved)
+
+At that stage, the independently accepted regression was integrated, but the remaining behavioral correction changed a governed conceptual agent definition. Repository policy required explicit, scope-specific user approval before that definition could be changed. The approval was subsequently recorded in the resolution below.
+
+## Historical Question for the User (Answered)
 
 Do you approve changing only agents/roles/project-setup/project-organiser.role.yaml so Project Organiser must explicitly state purpose, owner, lifecycle, consumers, mutability, and artifact kind in every placement rationale or blocker, with only supported generated role mirrors and regression coverage updated?
 
-## Why User Input Is Required
+## Historical Reason User Input Was Required
 
 AGENTS.md requires explicit, scope-specific approval before any governed agent or skill definition change. A failing test, general repository authority, review work, verification work, and the desire to make validation pass are not sufficient authority.
 
@@ -20,60 +29,60 @@ AGENTS.md requires explicit, scope-specific approval before any governed agent o
 
 Approved on 2026-07-19. The user confirmed, "I already approved this one so yes," in the parent coordination thread. This authorizes only the exact Project Organiser role-instruction change stated above, together with its supported generated role mirrors and regression coverage, including reconciling that regression coverage with current main without weakening the approved behavior.
 
-## Unattended Work Boundary
+## Historical Unattended Work Boundary
 
 The approval boundary remains exact: unattended work may change only the named Project Organiser role definition, its supported generated role mirrors, and regression coverage needed to prove the approved behavior. It must not change a distributed skill definition or weaken the scenario or Judge contract to obtain a pass.
 
-## Current Delivery And Verification Evidence
+## Historical Delivery And Verification Evidence
 
 - Accepted integrated commit: 6426a15c01c63dc7554c045618cd8a9a329c02d2.
 - Fresh post-integration review: PASS.
 - Project Organiser scenario known-runbook-placement: PASS.
 - Project Organiser scenario authorized-taxonomy-extension: PASS.
 - Project Organiser scenario ambiguous-ownership-boundary: independent Judge FAIL because the filename-selection classification omitted consumers and mutability and left purpose and lifecycle implicit.
-- Resolved external technical blocker: [Correct agent-suite classification archive references](../completed-backlog/defects/correct-agent-suite-classification-archive-references.md). This separate defect is not part of the approval scope.
+- Resolved external technical blocker: [Correct agent-suite classification archive references](correct-agent-suite-classification-archive-references.md). This separate defect is not part of the approval scope.
 
-## Running Ownership
+## Historical Running Ownership
 
 - Owner: Dev Orchestrator root task 019f77f4-c4bd-7c91-b197-c987a7beb838.
 - Lifecycle claim: align-project-organiser-filename-selection-running-approved.
-- Claim evidence: dev-backlog-steward acquired PRIMARY ownership of this exact backlog item on 2026-07-19 before recording the current Running transition.
+- Claim evidence: dev-backlog-steward acquired PRIMARY ownership of this exact backlog item on 2026-07-19 before recording the then-current Running transition.
 - Approval provenance: on 2026-07-19 the user said, "I already approved this one so yes," authorizing only agents/roles/project-setup/project-organiser.role.yaml together with supported generated role mirrors and regression coverage; no skill definition change is authorized.
-- Scope boundary: this lifecycle claim is released after the committed transition; project-artifact ownership must be acquired separately before implementation.
+- Scope boundary: that lifecycle claim was released after the committed transition; separate project-artifact ownership was required before implementation.
 
-## Current Blocked Outcome
+## Historical Blocked Outcome (Superseded)
 
-This section records the current terminal lifecycle result and supersedes stale next-action text in the historical sections below.
+This section records a superseded blocked lifecycle result. The completion evidence above records the later accepted integration and terminal verification.
 
 - Preserved initial contribution: 2dfbe08f31b130bc0d682a11ca00743a0e022e77.
 - Preserved correction attempt 1: 242aca4922cda9e2a89ddfb0d299a3004df16e7b.
 - Preserved correction attempt 2 and final contribution: 914872c0c91602c954f2cd640615eaa6e09ff033 on branch codex/align-project-organiser-approved-correction-2.
 - Approval enforcement: every governed mutation passed ALLOWED_APPROVED_DEFINITION_CHANGE and stayed within the exact approved eight-file scope: the Project Organiser role, its supported generated role mirrors, and regression coverage. No skill definition, evaluation, backlog, or other project-artifact scope was included.
-- Correction limit: both authorized correction attempts were used, so the correction loop is exhausted.
-- Material result: the final Project Organiser role and generated adapters are materially correct.
-- Remaining fresh-review finding: the regression assertions can false-pass because the examples are classified independently, allowing one hybrid output to satisfy both success and blocker counts.
-- Success-example gap: the regression does not assert that the success example is free of Blocker, Exact decision, Approved path omitted, and BLOCKED markers.
-- Native-adapter gap: the regression rejects only one narrow stale Return string and does not reject standalone decision-output renderings in each native adapter format.
-- Unperformed gates: no independent verifier, integration, post-integration review, post-integration verification, Project Organiser scenario rerun, or terminal completion was started for the preserved final contribution.
-- Delivery state: the final contribution remains off main on its preserved commit and branch.
-- Exact unblock condition: receive fresh explicit parent or user ARTIFACT GO authorizing a new bounded correction lane beyond the exhausted loop, limited to regression-assertion strengthening from 914872c0c91602c954f2cd640615eaa6e09ff033 and the already-approved role and supported mirrors, with no skill or evaluation widening, followed by fresh review before verifier or integration work.
-- Authority boundary: this unblock supplies technical and process authority only; it does not expand the approved governed-definition scope.
+- Correction limit at that stage: both authorized correction attempts were used, so the correction loop was exhausted.
+- Material result at that stage: the final Project Organiser role and generated adapters were judged materially correct.
+- Fresh-review finding at that stage: the regression assertions could false-pass because the examples were classified independently, allowing one hybrid output to satisfy both success and blocker counts.
+- Success-example gap at that stage: the regression did not assert that the success example was free of Blocker, Exact decision, Approved path omitted, and BLOCKED markers.
+- Native-adapter gap at that stage: the regression rejected only one narrow stale Return string and did not reject standalone decision-output renderings in each native adapter format.
+- Gates unperformed at that stage: no independent verifier, integration, post-integration review, post-integration verification, Project Organiser scenario rerun, or terminal completion had been started for the preserved final contribution.
+- Delivery state at that stage: the final contribution remained off main on its preserved commit and branch.
+- Historical unblock condition: fresh explicit parent or user ARTIFACT GO authorizing a new bounded correction lane beyond the exhausted loop, limited to regression-assertion strengthening from 914872c0c91602c954f2cd640615eaa6e09ff033 and the already-approved role and supported mirrors, with no skill or evaluation widening, followed by fresh review before verifier or integration work. That condition was later satisfied by the accepted correction and integration recorded above.
+- Authority boundary: that unblock supplied technical and process authority only; it did not expand the approved governed-definition scope.
 
-## Target Merge Pending
+## Historical Target Merge Pending (Superseded)
 
 - Delivery contribution: commit 2d636dd0f240793820778031ab9d38db6c11ee60 on branch codex/align-project-organiser-filename-selection-impl, based on sibling commit 4a31b337e6baf241de5ec81eb3a3c924096f3c82.
 - Review: fresh independent review passed with no findings.
 - Verification: focused tests passed 3 of 3; repository validation and freshness checks passed; project-wiki tests passed 17 of 17; all three Project Organiser scenarios retained deterministic and independent Judge PASS evidence.
-- Integration boundary: the contribution is not present on main and must be deliberately integrated without overwriting its sibling base change before completion.
+- Integration boundary at that stage: the contribution was not present on main and required deliberate integration without overwriting its sibling base change before completion.
 
-## Integration Blocker
+## Historical Integration Blocker (Resolved)
 
 - Attempted integration: dev-merge-coordinator acquired PRIMARY ownership of the exact integration file scripts/test_bundle_content.py plus merge:integration:main in event 0143a4da-7519-4e61-aabe-1c5409f56840 and attempted accepted commit 2d636dd0f240793820778031ab9d38db6c11ee60, stable patch id cd87d184bb55153bb0b3a27033fe915adb89c00b, against clean main baseline b0410174ce8127686ce89b3d1e1faefde8b6b112.
 - Conflict evidence: cherry-pick produced a content conflict in scripts/test_bundle_content.py, and an independent git apply --check failed at the accepted patch's old line-2203 context.
 - Scope boundary: the explicit user direction required stopping on applicability ambiguity rather than adapting the accepted test or absorbing sibling content.
 - Restoration evidence: the coordinator aborted the cherry-pick, restored the exact clean baseline, created no integration commit, ran no post-integration tests, and released ownership with no change in event 6082defa-4b29-4cdf-80c8-a87548ac4ec6.
 - Excluded content: rejected commits 4a31b337e6baf241de5ec81eb3a3c924096f3c82, 68ea9d4, and 13217749 remain non-ancestors of main; none of their content was integrated by this attempt.
-- Next action: a fresh explicit user decision must authorize adapting the accepted regression test to current main, or provide a replacement accepted commit. That authority is not inferred from the failed integration assignment.
+- Historical next action: a fresh explicit user decision had to authorize adapting the accepted regression test to current main, or provide a replacement accepted commit. That authority was not inferred from the failed integration assignment; the later accepted integration is recorded in the completion evidence above.
 
 ## Summary
 
