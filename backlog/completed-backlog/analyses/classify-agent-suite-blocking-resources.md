@@ -1,6 +1,6 @@
 # Classify Agent Suite Blocking Resources
 
-Status: Running
+Status: Completed
 
 Type: Analysis
 
@@ -54,7 +54,7 @@ This policy applies across all blocked categories. Classification must be based 
 
 Six of the seventeen recorded BLOCKED outcomes are purely agent-actionable technical blockers, one outcome combines a technical browser blocker with an intentional synthetic boundary, and ten outcomes are synthetic-only safe-blocking evidence. The seven outcomes with a technical component roll up into three ordinary feature work streams. No recorded outcome establishes a genuine unresolved project decision or missing project information that belongs in User Action Required.
 
-The complete suite report is the durable result authority: [Complete Agent Suite Results](../../evals/agent-tests/results/2026-07-17-complete-agent-suites.md). The classification also inspected the retained summaries named by that report, including the focused Project Bootstrapper and Dev Merge Coordinator recovery evidence.
+The complete suite report is the durable result authority: [Complete Agent Suite Results](../../../evals/agent-tests/results/2026-07-17-complete-agent-suites.md). The classification also inspected the retained summaries named by that report, including the focused Project Bootstrapper and Dev Merge Coordinator recovery evidence.
 
 | Suite and scenario | Concrete next authority | Classification | Disposition |
 | --- | --- | --- | --- |
@@ -93,6 +93,19 @@ No User Action Required item is justified. Every missing-information, permission
 - The retained security-review evidence identifies a direct conflict between the generated agent's cybersecurity prohibition and its selected model-backed execution path.
 - Five browser-dependent scenarios report the same unavailable isolated in-app-browser attachment; the blocked-route scenario also contains one intentional missing-route boundary that must remain closed.
 - The Project Bootstrapper recovery proves the invalid-configuration target returned BLOCKED exactly as expected with no mutation, and the Dev Merge Coordinator recovery proves the incomplete handoff was preserved without partial integration.
+
+## Completion Evidence
+
+- Analysis commits: a42f1df43aeffdf6e837ff2adade53a0d8c91b1b and correction 5a6e8ce1f4e84083b187c9a5fc8bfb72f31d4c81.
+- Follow-up backlog commit: cff5d9277a6b4186281b70299b4ab1301ba0e49d.
+- Created Ready feature items:
+  - [Specify Deterministic Dev Orchestrator Dependency Routing Fixtures](../../feature-backlog/specify-deterministic-dev-orchestrator-dependency-routing-fixtures.md).
+  - [Enable Isolated Browser Attachment For Agent Suites](../../feature-backlog/enable-isolated-browser-attachment-for-agent-suites.md).
+  - [Enable Policy Compatible Security Review Agent Suites](../../feature-backlog/enable-policy-compatible-security-review-agent-suites.md).
+- Independent artifact review passed with no material findings after the classification-count correction.
+- Independent verification passed for all seventeen ledger identities, the six technical-only, one mixed, and ten synthetic-only classifications, all three Ready feature item contracts, all six item links, duplicate prevention, synthetic-boundary closure, Markdown structure, and Git diff validation.
+- No User Action Required item was created because every user-authority-like outcome is intentionally synthetic and no genuine repository decision remains open.
+- Every analysis and backlog-creation claim was committed and released from a clean primary checkout before this archive transition.
 
 ## Unattended Work Boundary
 
