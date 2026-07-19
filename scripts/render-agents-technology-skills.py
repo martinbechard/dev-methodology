@@ -27,6 +27,13 @@ PROVENANCE_REFERENCE_PATTERNS = {
     "user-message": re.compile(r"^thread:[^/\s]+/message:[^/\s]+$"),
     "delegated-user-direction": re.compile(r"^thread:[^/\s]+/delegation:[^/\s]+$"),
 }
+GOVERNED_SOURCE_CATEGORIES = (
+    "conceptual_agents",
+    "agent_definition_inputs",
+    "distributed_skills",
+    "adapter_skills",
+    "skill_metadata",
+)
 
 
 def parse_boolean(value: str) -> bool:
@@ -71,6 +78,29 @@ def _required_patterns(mapping: dict[str, object], key: str, prefix: str) -> lis
     return patterns
 
 
+def _validated_path_patterns(mapping: dict[str, object], key: str, prefix: str) -> list[str]:
+    """Return canonical, project-relative path patterns from one policy field."""
+
+    patterns = _required_patterns(mapping, key, prefix)
+    for pattern in patterns:
+        field = f"{prefix}.{key} path pattern"
+        try:
+            normalized = _normalize_project_path(pattern)
+        except ValueError as error:
+            detail = str(error).removeprefix("definition path ")
+            raise ValueError(f"{field} {detail}") from error
+        if normalized != pattern:
+            raise ValueError(f"{field} must be normalized: {pattern}")
+    return patterns
+
+
+def _require_exact_keys(mapping: dict[str, object], expected: tuple[str, ...], prefix: str) -> None:
+    """Require a category mapping to contain exactly the supported keys."""
+
+    if set(mapping) != set(expected):
+        raise ValueError(f"{prefix} keys must be exactly: {', '.join(expected)}")
+
+
 def definition_change_authority(value: dict[str, object]) -> dict[str, object] | None:
     """Validate and return the project-level definition-change authority mapping.
 
@@ -113,9 +143,33 @@ def definition_change_authority(value: dict[str, object]) -> dict[str, object] |
     sources = policy.get("governed_sources")
     if not isinstance(sources, dict):
         raise ValueError("definition_change_authority.governed_sources must be a mapping")
-    for key in ("conceptual_agents", "distributed_skills", "adapter_skills", "definition_metadata"):
-        _required_patterns(sources, key, "definition_change_authority.governed_sources")
-    _required_patterns(policy, "generated_mirrors", "definition_change_authority")
+    _require_exact_keys(
+        sources,
+        GOVERNED_SOURCE_CATEGORIES,
+        "definition_change_authority.governed_sources",
+    )
+    for key in GOVERNED_SOURCE_CATEGORIES:
+        _validated_path_patterns(sources, key, "definition_change_authority.governed_sources")
+    generated = _validated_path_patterns(policy, "generated_mirrors", "definition_change_authority")
+    relationships = policy.get("regeneration_relationships")
+    if not isinstance(relationships, dict):
+        raise ValueError("definition_change_authority.regeneration_relationships must be a mapping")
+    _require_exact_keys(
+        relationships,
+        GOVERNED_SOURCE_CATEGORIES,
+        "definition_change_authority.regeneration_relationships",
+    )
+    for key in GOVERNED_SOURCE_CATEGORIES:
+        allowed_mirrors = _validated_path_patterns(
+            relationships,
+            key,
+            "definition_change_authority.regeneration_relationships",
+        )
+        if not set(allowed_mirrors).issubset(generated):
+            raise ValueError(
+                "definition_change_authority.regeneration_relationships."
+                f"{key} must contain only configured generated_mirrors"
+            )
     non_approval = _required_patterns(policy, "non_approval_bases", "definition_change_authority")
     required_bases = {"repository access", "failing test", "repair assignment", "general write authority"}
     if not required_bases.issubset(non_approval):
@@ -148,7 +202,9 @@ def definition_change_authority_lines(value: dict[str, object]) -> list[str]:
     sources = policy["governed_sources"]
     assert isinstance(sources, dict)
     generated = policy["generated_mirrors"]
+    relationships = policy["regeneration_relationships"]
     assert isinstance(generated, list)
+    assert isinstance(relationships, dict)
     lines = [
         AUTHORITY_HEADING,
         "",
@@ -169,9 +225,10 @@ def definition_change_authority_lines(value: dict[str, object]) -> list[str]:
     ]
     labels = (
         ("conceptual_agents", "Conceptual agent definitions"),
+        ("agent_definition_inputs", "Agent definition schemas and model inputs"),
         ("distributed_skills", "Distributed skill definitions"),
         ("adapter_skills", "Adapter-owned skill definitions"),
-        ("definition_metadata", "Definition-affecting metadata and model inputs"),
+        ("skill_metadata", "Skill definition metadata"),
     )
     for key, label in labels:
         patterns = sources[key]
@@ -182,7 +239,16 @@ def definition_change_authority_lines(value: dict[str, object]) -> list[str]:
         "Generated definition mirrors are source-owned and must never be edited directly:",
         "",
         f"- {', '.join(generated)}.",
-        "- Regenerate these mirrors only from an approved canonical definition change. The regeneration itself does not require a second approval.",
+        "",
+        "Supported source-category to generated-mirror relationships:",
+        "",
+    ])
+    for key, label in labels:
+        allowed_mirrors = relationships[key]
+        assert isinstance(allowed_mirrors, list)
+        lines.append(f"- {label}: {', '.join(allowed_mirrors)}.")
+    lines.extend([
+        "- Regenerate a mirror only when it is listed for the approved canonical source category. Cross-family role-to-skill and skill-to-role documentation regeneration is blocked. A supported regeneration does not require a second approval.",
         "",
         "When a test fails, investigate whether the test, fixture, assertion, or expected result is incorrect before proposing a definition change. Ordinary authorized implementation changes and corrections to incorrect tests remain allowed when they do not alter a governed definition.",
         "",
@@ -194,7 +260,7 @@ def _normalize_project_path(path: str) -> str:
     """Normalize one relative project path without resolving parent traversal."""
 
     portable = path.replace("\\", "/")
-    if portable.startswith("/"):
+    if portable.startswith("/") or re.match(r"^[A-Za-z]:/", portable):
         raise ValueError(f"definition path must be project-relative: {path}")
     segments: list[str] = []
     for segment in portable.split("/"):
@@ -263,15 +329,39 @@ def evaluate_definition_change(
         return {"outcome": "ALLOWED_ORDINARY_CHANGE", "classification": "ordinary"}
     sources = policy["governed_sources"]
     generated = policy["generated_mirrors"]
+    relationships = policy["regeneration_relationships"]
     assert isinstance(sources, dict)
     assert isinstance(generated, list)
-    source_patterns = [pattern for patterns in sources.values() for pattern in patterns]
+    assert isinstance(relationships, dict)
+    source_patterns = [pattern for category in GOVERNED_SOURCE_CATEGORIES for pattern in sources[category]]
     if _matches(normalized, generated):
-        if regenerated_from and _matches(regenerated_from, source_patterns):
+        source_category = next(
+            (
+                category
+                for category in GOVERNED_SOURCE_CATEGORIES
+                if regenerated_from and _matches(regenerated_from, sources[category])
+            ),
+            None,
+        )
+        if source_category is not None:
+            allowed_mirrors = relationships[source_category]
+            assert isinstance(allowed_mirrors, list)
+            if not _matches(normalized, allowed_mirrors):
+                return {
+                    "outcome": "BLOCKED_UNSUPPORTED_REGENERATION",
+                    "classification": "generated-mirror",
+                }
+            assert regenerated_from is not None
             approval_outcome = _approval_outcome(policy, approval, regenerated_from)
             if approval_outcome == "MATCHED":
                 return {"outcome": "ALLOWED_APPROVED_REGENERATION", "classification": "generated-mirror"}
             return {"outcome": approval_outcome, "classification": "generated-mirror"}
+        if regenerated_from is not None:
+            _normalize_project_path(regenerated_from)
+            return {
+                "outcome": "BLOCKED_UNSUPPORTED_REGENERATION",
+                "classification": "generated-mirror",
+            }
         return {"outcome": "BLOCKED_DIRECT_GENERATED_EDIT", "classification": "generated-mirror"}
     if _matches(normalized, source_patterns):
         approval_outcome = _approval_outcome(policy, approval, normalized)
@@ -516,11 +606,12 @@ def main(arguments: Sequence[str] | None = None) -> int:
 
     arguments is an explicit CLI argument sequence for programmatic callers, or None to
     parse the process arguments. Preflight mode prints one JSON policy result: allowed
-    outcomes return 0 and blocked outcomes return 3. Render mode prints generated
-    authority, workflow, and technology Markdown to standard output and returns 0 unless
-    an output path is supplied. Output mode creates a missing file, replaces one only
-    with the replace option, or updates only the authority section with the dedicated
-    update option.
+    outcomes return 0 and blocked outcomes return 3. Render mode without an output path
+    prints generated authority, workflow, and technology Markdown to standard output.
+    Output mode writes the generated Markdown to its file: it creates a missing file,
+    replaces one only with the replace option, or updates only the authority section
+    with the dedicated update option. Every successful render, output, and update mode
+    returns 0.
 
     File creation and updates are the only repository side effects. Handled OSError,
     ValueError, and yaml.YAMLError failures are printed to standard error and return 1.

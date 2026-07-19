@@ -49,14 +49,23 @@ The check validates the configured path boundary, exact scope, basis, and proven
 Governed canonical definition surfaces:
 
 - Conceptual agent definitions: agents/roles/**/*.role.yaml.
+- Agent definition schemas and model inputs: agents/role-schema.yaml, agents/model-profiles.yaml, adapters/*/model-profiles.yaml.
 - Distributed skill definitions: skills/*/SKILL.md.
 - Adapter-owned skill definitions: adapters/*/skills/*/SKILL.md.
-- Definition-affecting metadata and model inputs: skills/*/agents/openai.yaml, adapters/*/skills/*/agents/openai.yaml, agents/role-schema.yaml, agents/model-profiles.yaml, adapters/*/model-profiles.yaml.
+- Skill definition metadata: skills/*/agents/openai.yaml, adapters/*/skills/*/agents/openai.yaml.
 
 Generated definition mirrors are source-owned and must never be edited directly:
 
 - generated/adapters/**, design/generated/role-definitions.js, design/generated/skill-definitions.js.
-- Regenerate these mirrors only from an approved canonical definition change. The regeneration itself does not require a second approval.
+
+Supported source-category to generated-mirror relationships:
+
+- Conceptual agent definitions: generated/adapters/**, design/generated/role-definitions.js.
+- Agent definition schemas and model inputs: generated/adapters/**, design/generated/role-definitions.js.
+- Distributed skill definitions: generated/adapters/**, design/generated/skill-definitions.js.
+- Adapter-owned skill definitions: generated/adapters/**, design/generated/skill-definitions.js.
+- Skill definition metadata: generated/adapters/**, design/generated/skill-definitions.js.
+- Regenerate a mirror only when it is listed for the approved canonical source category. Cross-family role-to-skill and skill-to-role documentation regeneration is blocked. A supported regeneration does not require a second approval.
 
 When a test fails, investigate whether the test, fixture, assertion, or expected result is incorrect before proposing a definition change. Ordinary authorized implementation changes and corrections to incorrect tests remain allowed when they do not alter a governed definition.
 

@@ -47,14 +47,16 @@ def definition_change_authority() -> dict[str, object]:
         },
         "governed_sources": {
             "conceptual_agents": ["agents/roles/**/*.role.yaml"],
-            "distributed_skills": ["skills/*/SKILL.md"],
-            "adapter_skills": ["adapters/*/skills/*/SKILL.md"],
-            "definition_metadata": [
-                "skills/*/agents/openai.yaml",
-                "adapters/*/skills/*/agents/openai.yaml",
+            "agent_definition_inputs": [
                 "agents/role-schema.yaml",
                 "agents/model-profiles.yaml",
                 "adapters/*/model-profiles.yaml",
+            ],
+            "distributed_skills": ["skills/*/SKILL.md"],
+            "adapter_skills": ["adapters/*/skills/*/SKILL.md"],
+            "skill_metadata": [
+                "skills/*/agents/openai.yaml",
+                "adapters/*/skills/*/agents/openai.yaml",
             ],
         },
         "generated_mirrors": [
@@ -62,6 +64,28 @@ def definition_change_authority() -> dict[str, object]:
             "design/generated/role-definitions.js",
             "design/generated/skill-definitions.js",
         ],
+        "regeneration_relationships": {
+            "conceptual_agents": [
+                "generated/adapters/**",
+                "design/generated/role-definitions.js",
+            ],
+            "agent_definition_inputs": [
+                "generated/adapters/**",
+                "design/generated/role-definitions.js",
+            ],
+            "distributed_skills": [
+                "generated/adapters/**",
+                "design/generated/skill-definitions.js",
+            ],
+            "adapter_skills": [
+                "generated/adapters/**",
+                "design/generated/skill-definitions.js",
+            ],
+            "skill_metadata": [
+                "generated/adapters/**",
+                "design/generated/skill-definitions.js",
+            ],
+        },
         "non_approval_bases": [
             "repository access",
             "failing test",
@@ -1216,6 +1240,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             self.assertIn("test, fixture, assertion, or expected result is incorrect", first_content)
             self.assertIn("agents/roles/**/*.role.yaml", first_content)
             self.assertIn("generated/adapters/**", first_content)
+            self.assertIn("Cross-family role-to-skill and skill-to-role documentation regeneration is blocked", first_content)
             self.assertIn("Keep this repository-specific instruction", first_content)
             self.assertIn("Existing generated routing", first_content)
 
@@ -1241,6 +1266,48 @@ class TechnologyDetectionTests(unittest.TestCase):
         invalid_policies = (
             ({}, "approval_required must be true"),
             ({**definition_change_authority(), "governed_sources": []}, "governed_sources must be a mapping"),
+            ({
+                **definition_change_authority(),
+                "governed_sources": {
+                    **definition_change_authority()["governed_sources"],
+                    "unexpected_definitions": ["definitions/**"],
+                },
+            }, "governed_sources keys must be exactly"),
+            ({
+                **definition_change_authority(),
+                "governed_sources": {
+                    **definition_change_authority()["governed_sources"],
+                    "distributed_skills": "skills/*/SKILL.md",
+                },
+            }, "governed_sources.distributed_skills must be a non-empty list"),
+            ({
+                **definition_change_authority(),
+                "governed_sources": {
+                    **definition_change_authority()["governed_sources"],
+                    "distributed_skills": ["/skills/*/SKILL.md"],
+                },
+            }, "governed_sources.distributed_skills path pattern must be project-relative"),
+            ({
+                **definition_change_authority(),
+                "governed_sources": {
+                    **definition_change_authority()["governed_sources"],
+                    "distributed_skills": ["skills/../*/SKILL.md"],
+                },
+            }, "governed_sources.distributed_skills path pattern must not contain parent traversal"),
+            ({
+                **definition_change_authority(),
+                "governed_sources": {
+                    **definition_change_authority()["governed_sources"],
+                    "distributed_skills": ["./skills/*/SKILL.md"],
+                },
+            }, "governed_sources.distributed_skills path pattern must be normalized"),
+            ({
+                **definition_change_authority(),
+                "regeneration_relationships": {
+                    **definition_change_authority()["regeneration_relationships"],
+                    "unexpected_definitions": ["generated/adapters/**"],
+                },
+            }, "regeneration_relationships keys must be exactly"),
             ({
                 **definition_change_authority(),
                 "approval_evidence": {
@@ -1373,14 +1440,61 @@ class TechnologyDetectionTests(unittest.TestCase):
                 )
                 self.assertEqual("BLOCKED_DIRECT_GENERATED_EDIT", direct_generated["outcome"])
 
-        approved_source = "agents/roles/dev-activities/dev-coder.role.yaml"
-        regenerated = renderer.evaluate_definition_change(
-            project,
-            "generated/adapters/codex/dev-coder.toml",
-            explicit_user_approval(approved_source),
-            regenerated_from=approved_source,
+        supported_regenerations = (
+            (
+                "agents/roles/dev-activities/dev-coder.role.yaml",
+                "generated/adapters/codex/dev-coder.toml",
+            ),
+            (
+                "agents/roles/dev-activities/dev-coder.role.yaml",
+                "design/generated/role-definitions.js",
+            ),
+            (
+                "agents/model-profiles.yaml",
+                "generated/adapters/agent-generation-manifest.json",
+            ),
+            (
+                "skills/python/SKILL.md",
+                "design/generated/skill-definitions.js",
+            ),
+            (
+                "adapters/codex/skills/codex-harness-directives/SKILL.md",
+                "generated/adapters/codex/dev-coder.toml",
+            ),
+            (
+                "skills/python/agents/openai.yaml",
+                "generated/adapters/agent-generation-manifest.json",
+            ),
         )
-        self.assertEqual("ALLOWED_APPROVED_REGENERATION", regenerated["outcome"])
+        for approved_source, generated_path in supported_regenerations:
+            with self.subTest(approved_source=approved_source, generated_path=generated_path):
+                regenerated = renderer.evaluate_definition_change(
+                    project,
+                    generated_path,
+                    explicit_user_approval(approved_source),
+                    regenerated_from=approved_source,
+                )
+                self.assertEqual("ALLOWED_APPROVED_REGENERATION", regenerated["outcome"])
+
+        unsupported_regenerations = (
+            (
+                "agents/roles/dev-activities/dev-coder.role.yaml",
+                "design/generated/skill-definitions.js",
+            ),
+            (
+                "skills/python/SKILL.md",
+                "design/generated/role-definitions.js",
+            ),
+        )
+        for approved_source, generated_path in unsupported_regenerations:
+            with self.subTest(approved_source=approved_source, generated_path=generated_path):
+                regenerated = renderer.evaluate_definition_change(
+                    project,
+                    generated_path,
+                    explicit_user_approval(approved_source),
+                    regenerated_from=approved_source,
+                )
+                self.assertEqual("BLOCKED_UNSUPPORTED_REGENERATION", regenerated["outcome"])
 
         for ordinary_path in ("src/service.py", "scripts/test_service.py", "tests/fixtures/expected.json"):
             with self.subTest(ordinary_path=ordinary_path):

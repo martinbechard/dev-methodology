@@ -136,20 +136,37 @@ definition_change_authority:
   governed_sources:
     conceptual_agents:
       - agents/roles/**/*.role.yaml
+    agent_definition_inputs:
+      - agents/role-schema.yaml
+      - agents/model-profiles.yaml
+      - adapters/*/model-profiles.yaml
     distributed_skills:
       - skills/*/SKILL.md
     adapter_skills:
       - adapters/*/skills/*/SKILL.md
-    definition_metadata:
+    skill_metadata:
       - skills/*/agents/openai.yaml
       - adapters/*/skills/*/agents/openai.yaml
-      - agents/role-schema.yaml
-      - agents/model-profiles.yaml
-      - adapters/*/model-profiles.yaml
   generated_mirrors:
     - generated/adapters/**
     - design/generated/role-definitions.js
     - design/generated/skill-definitions.js
+  regeneration_relationships:
+    conceptual_agents:
+      - generated/adapters/**
+      - design/generated/role-definitions.js
+    agent_definition_inputs:
+      - generated/adapters/**
+      - design/generated/role-definitions.js
+    distributed_skills:
+      - generated/adapters/**
+      - design/generated/skill-definitions.js
+    adapter_skills:
+      - generated/adapters/**
+      - design/generated/skill-definitions.js
+    skill_metadata:
+      - generated/adapters/**
+      - design/generated/skill-definitions.js
   non_approval_bases:
     - repository access
     - failing test
