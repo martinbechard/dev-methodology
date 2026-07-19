@@ -1,8 +1,21 @@
 # Preserve Authoritative Configuration Evidence
 
-Status: Running
+Status: Completed
 
-Type: Defect
+Type: Feature
+
+## Completion Evidence
+
+- Running lifecycle: Dev Backlog Steward recorded Running ownership in commit 1ee72be549619d0eb3fe3e0a769d1d97865d6ba4 and released the exact-file lifecycle claim at event 9fab37c3-8870-4000-a110-cdec87092744.
+- Accepted renderer implementation: source commit a612fe255c96b28582433b5ff0390bed6a621832 and correction commit 6b5390436a03aaede4ec33ac4764f2067d133908 were independently reviewed and verified. The corrected behavior was integrated on main as e2e7a47e212df38852af802d4312c410c3c1ca2f.
+- Accepted Project Configurator evaluation contract: source commit 0fc48bdf435983dfc7409eb2f678613d6dca6a92 and correction commit c0fcca5ab7d0093f04e98fbe5df490281acaee88 were independently reviewed and verified. The corrected contract was integrated on main as 5d48cfb85853fa12e2e81adbb62385f8362594a7.
+- Reviews: fresh renderer code review, Project Configurator methodology artifact review, correction reviews, and final post-integration code and artifact reviews all accepted the bounded contributions with no remaining in-scope findings.
+- Deterministic verification: focused renderer tests passed 6 of 6, detector tests passed 64 of 64, Project Configurator fixture tests passed 10 of 10, Agent Suite runner tests passed 56 of 56, repository script tests passed 456 of 456, project-wiki tests passed 17 of 17, all applicable validators and generated-output freshness checks passed, and Git diff validation passed.
+- Semantic acceptance: the exact valid-configuration-reuse behavior passed independently in the retained focused run at /private/tmp/preserve-authoritative-config-corrected-focused.LqJWZx and in the retained full run at /private/tmp/preserve-authoritative-config-corrected-full.Y2DU9B. The full runner completed cleanly and valid-configuration-reuse returned PASS.
+- Aggregate disposition: accepted with WARN because the remaining aggregate failures were proven outside this bounded implementation. Identity attribution follow-up is recorded in [Ignore Unrelated Noop Events In Agent Suite Identity Attribution](../../defect-backlog/ignore-unrelated-noop-events-in-agent-suite-identity-attribution.md). Broader Project Configurator scenario follow-up is recorded in [Restore Project Configurator Scenario Verdict Integrity](../../defect-backlog/restore-project-configurator-scenario-verdict-integrity.md).
+- Evidence cleanliness: disposable repository-local validate-only output was classified, its summary digest was recorded as eea420f6a93cd8aae51cbbf498b22baeaebac5d31c61ffda612faf4092d7381c, retained external evidence was preserved, the disposable directory was removed, and the repository script suite then passed 456 of 456 from a clean primary worktree.
+- Scope boundary: no governed agent definition, skill definition, generated definition, README, design document, root PROJECT.yaml or AGENTS.md, or scripts/test_bundle_content.py was changed by this feature.
+- Terminal lifecycle: Dev Backlog Steward acquired PRIMARY backlog-only claim preserve-authoritative-configuration-evidence-terminal-completed at event a32bf0dd-e7f7-4010-9a99-09bf5d037718 from clean commit 01db43bba1b733ae5b991eb97f26b2a730330663. The claim is released immediately after this completion archive commit is clean.
 
 ## Running Ownership
 
