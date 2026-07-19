@@ -20,7 +20,7 @@ Type: Defect
 
 ## Integration Blocker
 
-- Attempted integration: dev-merge-coordinator acquired PRIMARY ownership of this exact backlog item plus merge:integration:main in event 0143a4da-7519-4e61-aabe-1c5409f56840 and attempted accepted commit 2d636dd0f240793820778031ab9d38db6c11ee60, stable patch id cd87d184bb55153bb0b3a27033fe915adb89c00b, against clean main baseline b0410174ce8127686ce89b3d1e1faefde8b6b112.
+- Attempted integration: dev-merge-coordinator acquired PRIMARY ownership of the exact integration file scripts/test_bundle_content.py plus merge:integration:main in event 0143a4da-7519-4e61-aabe-1c5409f56840 and attempted accepted commit 2d636dd0f240793820778031ab9d38db6c11ee60, stable patch id cd87d184bb55153bb0b3a27033fe915adb89c00b, against clean main baseline b0410174ce8127686ce89b3d1e1faefde8b6b112.
 - Conflict evidence: cherry-pick produced a content conflict in scripts/test_bundle_content.py, and an independent git apply --check failed at the accepted patch's old line-2203 context.
 - Scope boundary: the explicit user direction required stopping on applicability ambiguity rather than adapting the accepted test or absorbing sibling content.
 - Restoration evidence: the coordinator aborted the cherry-pick, restored the exact clean baseline, created no integration commit, ran no post-integration tests, and released ownership with no change in event 6082defa-4b29-4cdf-80c8-a87548ac4ec6.
