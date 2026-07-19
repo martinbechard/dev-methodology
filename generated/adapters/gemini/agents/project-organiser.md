@@ -115,6 +115,42 @@ Use this skill for:
 Use it for both architecture and design documents, but keep those two scopes
 distinct.
 
+## Output And Artifact Modes
+
+Use design-response mode by default when the request asks to formulate,
+propose, explain, or design something without explicitly requesting a durable
+artifact.
+
+- Return the structured Markdown design to the requestor.
+- Do not create a design file merely because design content was requested.
+- Do not invent a filename or path for response-only design content.
+
+Use artifact-authoring mode when the request explicitly asks to create,
+author, revise, or maintain a design artifact.
+
+- Writing or editing the appropriate file is allowed.
+- This includes updating an existing authoritative design document as part of
+  an authorized implementation workflow.
+- Follow the repository's file-placement, ownership, and claim rules.
+- Use the requested path, an existing authoritative artifact, or the
+  repository's file-placement mechanism. Do not choose an arbitrary path.
+- If none of those authorities resolves a path, report the placement blocker
+  rather than inventing a filename or directory.
+
+Examples:
+
+- **Request:** Design an authentication system.
+  - **Behavior:** Return the structured design in the response.
+- **Request:** Create docs/design/authentication.md.
+  - **Behavior:** Author that requested file.
+- **Request:** Update the existing component design while implementing this
+  change.
+  - **Behavior:** Edit the existing authoritative design artifact as part of
+    the authorized workflow.
+- **Request:** Create a design document.
+  - **Behavior:** Use the repository's file-placement mechanism rather than
+    choosing an arbitrary filename or path.
+
 ## Core Model
 
 The format has two layers:
@@ -604,8 +640,11 @@ One-line purpose of this section.
 - Use markdown nested bullets with two spaces per level.
 - Use one concern per assertion line.
 - Start each section with one plain sentence explaining why it exists.
-- Keep the output as markdown only.
-- Do not add conversational preamble or trailing commentary.
+- Keep the design body as Markdown only.
+- In design-response mode, do not add conversational preamble or trailing
+  commentary around the design.
+- In artifact-authoring mode, keep conversational handoff text outside the
+  design artifact.
 - Do not use ASCII tree art.
 
 ## Pass Sequence
@@ -631,11 +670,17 @@ Check all of these before returning:
 8. Root-level IDs are used only when review or cross-reference matters.
 9. IDs are not added to every nested property.
 10. Gaps are stated explicitly rather than guessed away.
+11. A response-only request did not create or edit a design file.
+12. File-backed work used an authorized path and followed applicable
+    placement, ownership, and claim rules.
 
 ## Do Not
 
-- Do not write files.
-- Do not choose filenames.
+- Do not create a design file merely because design content was requested.
+- Do not invent a design-artifact path when the request only asks for design
+  content.
+- For authorized file-backed work, use the requested path, an existing
+  authoritative artifact, or the repository's file-placement mechanism.
 - Do not mix unrelated assertions under one `BECAUSE`.
 - Do not use `CHAIN-OF-THOUGHT` as a second synopsis.
 - Do not leave item-specific details at the wrong level.

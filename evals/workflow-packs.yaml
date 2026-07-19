@@ -51,9 +51,11 @@ packs:
       - probe-code-discovery
       - probe-code-execution-tracing
       - probe-code-review-evidence
+      - probe-create-pull-request
       - probe-electron-main
       - probe-electron-preload
       - probe-end-to-end-verification
+      - probe-execute-workitem
       - probe-fastapi
       - probe-fix-explanation
       - probe-java
@@ -366,6 +368,8 @@ packs:
     skillProbes:
       - probe-agent-claim
       - probe-create-backlog
+      - probe-file-based-backlog
+      - probe-github-issues-backlog
       - probe-manage-backlog
       - probe-organise-project-files
       - probe-structured-explanation

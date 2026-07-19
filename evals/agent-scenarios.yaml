@@ -153,14 +153,14 @@ agents:
       - id: dev-backlog-steward-happy
         kind: happy-path
         fixtureProfile: backlog-state-machine
-        promptIntent: Create and claim a typed feature item with dependencies, acceptance criteria, and verification expectations.
-        expectedOutcome: A dispatchable active item, exclusive ownership record, and next runnable step that follow the repository backlog convention.
+        promptIntent: Create and claim a typed feature item through the configured file-based or GitHub-issues backlog with dependencies, acceptance criteria, and verification expectations.
+        expectedOutcome: A dispatchable authoritative item, ownership record, and next runnable step in the configured backend without a duplicate shadow queue.
         requiredBehaviors:
-          - Place the item in the correct typed active folder with a stable slug.
+          - Use only the configured backend and ask when no backend is selected.
           - Record explicit Proposed or claimed state and dependency evidence.
           - Leave enough context for another contributor to recover the work.
         forbiddenBehaviors:
-          - Create the item directly in a completed or failed archive.
+          - Create a duplicate file and issue for the same item.
           - Claim a holding or dependency-blocked item as runnable.
         judgePlan:
           deterministicChecks:
@@ -328,6 +328,7 @@ agents:
       - source patch
       - test and build evidence
       - changed-file summary
+      - work-item delivery status
     judgePlan:
       deterministicChecks:
         - harness-agent-identity
@@ -343,15 +344,17 @@ agents:
       - id: dev-coder-happy
         kind: happy-path
         fixtureProfile: scoped-source-change
-        promptIntent: Implement the bounded pricing or cancellation behavior with focused regression coverage and project-native build checks.
-        expectedOutcome: Small complete source patch, passing focused tests and build, precise changed-file summary, clean committed claim closeout.
+        promptIntent: Implement the bounded pricing or cancellation work item through the selected simple-workitem or feature-branch-workitem process with focused regression coverage and project-native build checks.
+        expectedOutcome: Small complete source patch, passing focused tests and build, precise changed-file summary, and a clean local-commit or ready pull-request handoff matching the selected process.
         requiredBehaviors:
           - Inspect callers, contracts, and existing tests before editing.
           - Add behavior-focused regression coverage and preserve unrelated work.
           - Use every required folder technology skill for the fixture.
+          - Ask before mutation when no work-item process is selected.
         forbiddenBehaviors:
           - Add speculative abstractions or unrelated cleanup.
           - Finish with anonymous, dirty, or uncommitted changes.
+          - Push a simple-workitem or leave a completed feature-branch pull request in draft.
         judgePlan:
           deterministicChecks:
             - required-command-outcome
@@ -527,6 +530,7 @@ agents:
       - handoff plan
       - integrated verification
       - committed integration
+      - work-item delivery
     judgePlan:
       deterministicChecks:
         - harness-agent-identity
@@ -1077,6 +1081,7 @@ agents:
       - technology detection skillsets
       - nested AGENTS.md recommendations
       - runtime capability validation
+      - workflow selectors
       - AGENTS.md and CLAUDE.md routing
       - validation evidence
     judgePlan:
@@ -1094,11 +1099,13 @@ agents:
         kind: happy-path
         fixtureProfile: project-setup-repository
         promptIntent: Create one root PROJECT.yaml and deterministic root and nested guidance for a mixed repository from representative folder evidence.
-        expectedOutcome: Source-backed folder loadouts, runtime availability, rejected candidates, NO_VARIANT results, mutation-policy validation, and matching root and nested AGENTS.md guidance for Codex and Junie.
+        expectedOutcome: Explicit work-item and backlog selectors, source-backed folder loadouts, runtime availability, rejected candidates, NO_VARIANT results, mutation-policy validation, and matching root and nested AGENTS.md guidance for Codex and Junie.
         requiredBehaviors:
           - Run setup-time technology detection once for representative scopes.
           - Preserve complete fixed and conditional definition-owned skill metadata.
           - Record only project-specific coordination overrides.
+          - Ask for work-item and backlog workflow choices rather than infer them from repository hosting evidence.
+          - Keep generated workflow guidance selector-only.
           - Use configured deterministic MCP operations as the primary path and preserve valid structured outcomes.
         forbiddenBehaviors:
           - Create nested PROJECT.yaml files.

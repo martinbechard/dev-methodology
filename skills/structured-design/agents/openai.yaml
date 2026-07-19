@@ -4,9 +4,9 @@ interface:
   # User-facing name shown in Codex skill surfaces.
   display_name: Structured Design
   # User-facing summary shown in Codex skill surfaces.
-  short_description: 'Use this skill when you need to write or revise a structured design,
+  short_description: 'Produces a structured Markdown design as response content, or authors or
 
-  architecture, prompt-chain...'
+  revises a design...'
   # Prompt Codex can use when launching this skill directly.
   default_prompt: Use $structured-design for work covered by this skill.
 

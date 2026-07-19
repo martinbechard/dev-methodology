@@ -50,6 +50,7 @@ cases:
       - dev-coder-happy
     requiredSkills:
       - agent-claim
+      - execute-workitem
       - careful-coding
       - code-comments
       - code-discovery
@@ -62,6 +63,7 @@ cases:
       - code-review-evidence
     skillProbes:
       - probe-agent-claim
+      - probe-execute-workitem
       - probe-careful-coding
       - probe-code-comments
       - probe-code-discovery
@@ -84,12 +86,13 @@ cases:
     contextPack:
       fixtureRoot: evals/projects/typescript-order-pricing
       include: [.gitignore, TASK.md, package-lock.json, package.json, src, test, tsconfig.json]
-      stagedSkillPackages: [agent-claim, careful-coding, code-comments, code-discovery, fix-explanation, structured-explanation, test-driven-development, typescript, typescript-strict, typescript-esm, code-review-evidence]
+      stagedSkillPackages: [agent-claim, execute-workitem, careful-coding, code-comments, code-discovery, fix-explanation, structured-explanation, test-driven-development, typescript, typescript-strict, typescript-esm, code-review-evidence]
       wholeRepositoryAllowed: false
       approvedSensitiveData: false
     modelVisiblePaths: [.gitignore, TASK.md, package-lock.json, package.json, src, test, tsconfig.json]
     skillResourceAllowlist:
       agent-claim: [SKILL.md, scripts/claim.py]
+      execute-workitem: [SKILL.md, references/simple-workitem.md, references/feature-branch-workitem.md]
       careful-coding: [SKILL.md]
       code-comments: [SKILL.md, references/review-checklist-code-comments.md]
       code-discovery: [SKILL.md]
@@ -126,6 +129,7 @@ cases:
       - dev-coder-happy
     requiredSkills:
       - agent-claim
+      - execute-workitem
       - careful-coding
       - code-comments
       - code-discovery
@@ -138,6 +142,7 @@ cases:
       - code-review-evidence
     skillProbes:
       - probe-agent-claim
+      - probe-execute-workitem
       - probe-careful-coding
       - probe-code-comments
       - probe-code-discovery
@@ -160,12 +165,13 @@ cases:
     contextPack:
       fixtureRoot: evals/projects/spring-boot-order-cancellation
       include: [.gitignore, TASK.md, pom.xml, src]
-      stagedSkillPackages: [agent-claim, careful-coding, code-comments, code-discovery, fix-explanation, structured-explanation, test-driven-development, java, spring-boot, sql, code-review-evidence]
+      stagedSkillPackages: [agent-claim, execute-workitem, careful-coding, code-comments, code-discovery, fix-explanation, structured-explanation, test-driven-development, java, spring-boot, sql, code-review-evidence]
       wholeRepositoryAllowed: false
       approvedSensitiveData: false
     modelVisiblePaths: [.gitignore, TASK.md, pom.xml, src]
     skillResourceAllowlist:
       agent-claim: [SKILL.md, scripts/claim.py]
+      execute-workitem: [SKILL.md, references/simple-workitem.md, references/feature-branch-workitem.md]
       careful-coding: [SKILL.md]
       code-comments: [SKILL.md, references/review-checklist-code-comments.md]
       code-discovery: [SKILL.md]
