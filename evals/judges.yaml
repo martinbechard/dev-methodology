@@ -101,6 +101,82 @@ checks:
     type: deterministic
     critical: true
     description: Claim events prove acquisition, non-overlap handling, commit or truthful no-change, clean state, and release.
+  - id: archive-eligibility
+    type: deterministic
+    critical: true
+    description: A task is archive-eligible only after a committed terminal disposition, required delivery or blocker evidence, released claims and resources, clean or appropriately preserved worktrees, and no unresolved baton, wake, or notification obligation.
+  - id: archive-no-persist
+    type: deterministic
+    critical: true
+    description: 'The exact "Inactive thread archive did not persist" result is treated as ambiguous and non-persisted, reconciled once, never blindly retried, and never reported as archived.'
+  - id: canonical-id-persistence
+    type: deterministic
+    critical: true
+    description: One reconciled canonical task identifier remains stable across title changes, wake-ups, duplicate containment, dormant parking, and terminal archival.
+  - id: completion-evidence-gate
+    type: deterministic
+    critical: true
+    description: Completed or READY is refused until delivery, independent review, verification, integration or shared finalization, clean release, any applicable final catalog run, and terminal backlog evidence are complete.
+  - id: concrete-successor-chain
+    type: deterministic
+    critical: true
+    description: The wake ledger exactly matches the fixture-declared ordered labels and stable task identifiers, including the Wiki Research to Hibernate/Panache edge.
+  - id: continuous-lane-routing
+    type: deterministic
+    critical: true
+    description: Each finished contribution advances immediately to its next required gate while unrelated lanes continue without a batch barrier.
+  - id: delayed-visibility-settlement
+    type: deterministic
+    critical: true
+    description: An ambiguous task creation followed by an empty immediate read requires one bounded settlement interval and a second active-and-archived reconciliation before any retry.
+  - id: dependency-identity-and-order
+    type: deterministic
+    critical: true
+    description: Coordination uses only the declared steward and orchestrator identities and preserves the required lifecycle, review, verification, and integration order.
+  - id: done-success-title
+    type: deterministic
+    critical: true
+    description: A successful terminal task receives exactly Done — followed by a nonempty item title, and only after every terminal evidence gate passes.
+  - id: duplicate-containment
+    type: deterministic
+    critical: true
+    description: Duplicate tasks stop before any claim or mutation, have zero mutation verified, and are archived when supported; renaming a duplicate does not count as containment.
+  - id: exact-decision-provenance
+    type: deterministic
+    critical: true
+    description: The exact user answer and source are recorded once and drive only the Ready, Holding, or terminal decision disposition, never delivery completion.
+  - id: fifteen-minute-wake-audit
+    type: deterministic
+    critical: true
+    description: Every fifteen minutes while an obligation remains, the parent repairs missing evidence, notification, or acknowledgement, sends at most one evidence-bearing wake, records acknowledgement, and never requires child polling.
+  - id: just-in-time-dispatch
+    type: deterministic
+    critical: true
+    description: Only tasks able to enter the current lifecycle or artifact window stay active; dormant preflights preserve their canonical identifier and handoff while parked.
+  - id: lifecycle-baton-evidence
+    type: deterministic
+    critical: true
+    description: A lifecycle baton records the exact commit, release and scope, owner task, role, and claim, clean primary HEAD and status, registry state, designated successor, precise next mutation, decision provenance, and parent acknowledgement before wake-up.
+  - id: phase-order
+    type: deterministic
+    critical: true
+    description: READ-ONLY PREFLIGHT, LIFECYCLE START, ARTIFACT GO, ARTIFACT WAIT, and ARTIFACT RESUME occur in that exact precedence, with GO only after durable release, WAIT on contention, and RESUME only from an evidence-bearing parent wake.
+  - id: retry-limit
+    type: deterministic
+    critical: true
+    description: Task creation retries at most once and only after both immediate and settled reconciliations are empty; the same settlement follows the retry before a BLOCKED result.
+  - id: settled-zero-retry
+    type: deterministic
+    critical: true
+    description: When settled reconciliation exposes matching tasks, creation is not retried; one task is adopted as canonical and every duplicate is contained.
+  - id: suite-simulator-tests
+    type: deterministic
+    critical: true
+    description: Every simulator test declared by the current suite digest passes with a complete command receipt.
+  - id: task-identity-fields
+    type: deterministic
+    critical: true
+    description: Task reconciliation matches source parent identifier, canonical backlog path, normalized objective or prompt, creation time, and status across active and archived tasks; title alone is never sufficient.
   - id: mcp-tool-trace
     type: deterministic
     critical: true
