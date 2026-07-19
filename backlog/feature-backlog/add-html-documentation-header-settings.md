@@ -1,6 +1,6 @@
 # Add Settings Popup To HTML Documentation Headers
 
-Status: Proposed
+Status: Ready
 
 Type: Feature
 

@@ -1,6 +1,6 @@
 # Add The MySQL Technology Skill
 
-Status: Proposed
+Status: Ready
 
 Type: Feature
 

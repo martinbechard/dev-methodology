@@ -1,6 +1,6 @@
 # Transform File Work-Item Skills
 
-Status: Proposed
+Status: Ready
 
 Type: Feature
 

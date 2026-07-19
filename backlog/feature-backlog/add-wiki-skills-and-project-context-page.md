@@ -1,6 +1,6 @@
 # Add The Wiki Skills And Project Context Page
 
-Status: Proposed
+Status: Ready
 
 Type: Feature
 

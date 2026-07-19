@@ -1,6 +1,6 @@
 # Split GitHub Work-Item Skills
 
-Status: Proposed
+Status: Ready
 
 Type: Feature
 

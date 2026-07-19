@@ -1,6 +1,6 @@
 # Add Direct-Main Completion Skill
 
-Status: Proposed
+Status: Ready
 
 Type: Feature
 

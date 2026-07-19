@@ -1,6 +1,6 @@
 # Add A Styled Backlog Report With User Input
 
-Status: Proposed
+Status: Ready
 
 Type: Feature
 

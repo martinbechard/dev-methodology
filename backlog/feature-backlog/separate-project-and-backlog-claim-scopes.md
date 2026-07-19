@@ -1,6 +1,6 @@
 # Separate Project And Backlog Claim Scopes
 
-Status: Proposed
+Status: Ready
 
 Type: Feature
 

@@ -1,6 +1,6 @@
 # Add Feature-Branch Completion Skill
 
-Status: Proposed
+Status: Ready
 
 Type: Feature
 

@@ -1,6 +1,6 @@
 # Document Claims And Worktrees In The Orchestrated Development Lifecycle
 
-Status: Proposed
+Status: Ready
 
 Type: Feature
 

@@ -1,6 +1,6 @@
 # Define Provider And Completion Selector Contracts
 
-Status: Proposed
+Status: Ready
 
 Type: Feature
 

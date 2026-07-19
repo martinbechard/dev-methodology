@@ -1,6 +1,6 @@
 # Add Azure DevOps And Jira Placeholders
 
-Status: Proposed
+Status: Ready
 
 Type: Feature
 

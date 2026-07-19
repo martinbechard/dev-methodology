@@ -1,6 +1,6 @@
 # Add The Quartz Scheduler Technology Skill
 
-Status: Proposed
+Status: Ready
 
 Type: Feature
 

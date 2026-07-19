@@ -1,6 +1,6 @@
 # Integrate Work-Item Contracts Across The Bundle
 
-Status: Proposed
+Status: Ready
 
 Type: Feature
 

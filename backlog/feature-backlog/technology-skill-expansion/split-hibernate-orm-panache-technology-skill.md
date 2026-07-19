@@ -1,6 +1,6 @@
 # Split Hibernate ORM With Panache From Quarkus Persistence
 
-Status: Proposed
+Status: Ready
 
 Type: Feature
 

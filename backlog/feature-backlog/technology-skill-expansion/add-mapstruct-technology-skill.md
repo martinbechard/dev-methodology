@@ -1,6 +1,6 @@
 # Add The MapStruct Technology Skill
 
-Status: Proposed
+Status: Ready
 
 Type: Feature
 

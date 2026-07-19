@@ -1,6 +1,6 @@
 # Improve Documentation Reverse-Engineering Contracts
 
-Status: Proposed
+Status: Ready
 
 Type: Feature
 
