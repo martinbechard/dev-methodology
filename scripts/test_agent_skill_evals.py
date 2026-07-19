@@ -3907,6 +3907,16 @@ class HarnessAndJudgeTests(unittest.TestCase):
             )
         )
 
+    def test_mcp_case_documented_version_matches_contract(self) -> None:
+        contract = self.module.load_cases()["project-configuration-routing"]["mcpAgentOps"]
+        documentation = (ROOT / "evals" / "README.md").read_text(encoding="utf-8")
+
+        self.assertIn(
+            "The project-configuration-routing base case additionally evaluates "
+            f"mcp-agent-ops {contract['requiredVersion']} through Codex and Junie.",
+            documentation,
+        )
+
     def test_completed_mcp_call_without_safe_outcome_is_not_semantic_evidence(self) -> None:
         records = [
             {
