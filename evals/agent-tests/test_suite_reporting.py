@@ -450,7 +450,7 @@ class AgentSuiteReportingTests(unittest.TestCase):
         self.assertNotIn("identity-only", metadata["modelJudgeEvidence"])
         self.assertTrue(
             any(
-                "model-Judge evidence unavailable" in value
+                "Judge receipts unavailable" in value
                 for value in metadata["omissions"]
             )
         )
@@ -476,6 +476,26 @@ class AgentSuiteReportingTests(unittest.TestCase):
                                             "identityEvidence": ["judge"],
                                             "deterministicEvidence": ["gates"],
                                             "modelJudgeEvidence": ["judge-verdict"],
+                                            "evidenceReceipts": [
+                                                {
+                                                    "path": f"{suite_id}/happy/receipts/evidence.json",
+                                                    "sha256": "a" * 64,
+                                                }
+                                            ],
+                                            "receiptAudit": {
+                                                "status": "verified",
+                                                "runIdentity": "codex-batch-01-test",
+                                                "deterministicChecks": [
+                                                    {
+                                                        "checkId": "harness-agent-identity",
+                                                        "critical": True,
+                                                        "verdict": "passed",
+                                                    }
+                                                ],
+                                                "judgeDisposition": "passed",
+                                                "failedCriticalCheck": None,
+                                                "diagnostics": [],
+                                            },
                                         }
                                     ],
                                 }
@@ -490,8 +510,8 @@ class AgentSuiteReportingTests(unittest.TestCase):
         """Aggregate reporting cannot turn missing governed receipts into a PASS."""
         unsupported = self._execution("dev-coder")
         unsupported.summary["results"][0]["report"]["runs"][0]["scenarioResults"][0][
-            "deterministicEvidence"
-        ] = []
+            "receiptAudit"
+        ]["status"] = "invalid"
         metadata = reporting.suite_metadata(
             "codex", "dev-coder", unsupported,
             source_revision="revision", suite_digest="digest",
@@ -507,6 +527,9 @@ class AgentSuiteReportingTests(unittest.TestCase):
         scenario["status"] = "FAIL"
         scenario["judgeInvoked"] = False
         scenario["modelJudgeEvidence"] = []
+        scenario["receiptAudit"]["deterministicChecks"][0]["verdict"] = "failed"
+        scenario["receiptAudit"]["judgeDisposition"] = "skipped-critical-failure"
+        scenario["receiptAudit"]["failedCriticalCheck"] = "harness-agent-identity"
         metadata = reporting.suite_metadata(
             "codex", "dev-coder", critical_skip,
             source_revision="revision", suite_digest="digest",
@@ -537,10 +560,37 @@ class AgentSuiteReportingTests(unittest.TestCase):
                     "evidence": ["proof"],
                     "deterministicEvidence": ["gates"],
                     "modelJudgeEvidence": ["judge-verdict"],
+                    "evidenceReceipts": [
+                        {
+                            "path": f"{suite_id}/happy/receipts/evidence.json",
+                            "sha256": "a" * 64,
+                        }
+                    ],
+                    "receiptAudit": {
+                        "status": "verified",
+                        "runIdentity": "codex-batch-01-test",
+                        "deterministicChecks": [
+                            {
+                                "checkId": "harness-agent-identity",
+                                "critical": True,
+                                "verdict": "passed",
+                            }
+                        ],
+                        "judgeDisposition": "passed",
+                        "failedCriticalCheck": None,
+                        "diagnostics": [],
+                    },
                 }
             ],
             "deterministicEvidence": ["proof"],
             "modelJudgeEvidence": ["judge"],
+            "evidenceReceipts": [
+                {
+                    "path": f"{suite_id}/happy/receipts/evidence.json",
+                    "sha256": "a" * 64,
+                }
+            ],
+            "receiptAudits": [],
             "omissions": [],
             "evidenceRoot": "/synthetic/evidence",
             "runnerExitCode": 0,

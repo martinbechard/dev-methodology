@@ -14,6 +14,7 @@ import tempfile
 import time
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 _RUNNER_PATH = Path(__file__).with_name("runner.py")
@@ -39,6 +40,14 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             "junie",
             runner._argument_parser().parse_args(["--harness", "junie", "--validate-only"]).harness,
         )
+
+    def test_reporting_subcommand_uses_the_repository_owned_runner_entry_point(self) -> None:
+        """Operators reach reporting through runner.py without invoking an internal module directly."""
+        with mock.patch.object(runner, "_reporting_main", return_value=0) as reporting_main:
+            status = runner.main(("reporting", "rebuild", "--harness", "codex"))
+
+        self.assertEqual(0, status)
+        reporting_main.assert_called_once_with(("rebuild", "--harness", "codex"))
 
     def test_real_junie_supervisor_binds_native_authority_and_runtime_names(self) -> None:
         """A real suite supervisor contains only Junie authority and hyphen runtime invocations."""
@@ -84,8 +93,8 @@ class AgentSuiteRunnerTests(unittest.TestCase):
 
             self.assertEqual(report, runner._extract_junie_report(events))
 
-    def test_junie_ledger_proves_parent_order_concurrency_and_nested_contract(self) -> None:
-        """Complete lifecycle evidence proves the governed Junie execution topology."""
+    def test_junie_name_lifecycle_is_retained_but_cannot_prove_definition_or_topology(self) -> None:
+        """The actual Junie schema proves names and statuses without inventing stronger attribution."""
         run = runner._RunSpec(suite=self._suite("one", nested_limit=1), scenario_ids=("happy",))
         report = {"runs": [self._suite_report("one", "PASS")]}
         staged = self._staged_junie_agents()
@@ -94,24 +103,25 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             self._write_junie_lifecycles(
                 junie_home,
                 (
-                    ("suite-supervisor", "root", 0, 5),
-                    ("target-agent", "suite-supervisor", 1, 2),
-                    ("suite-judge", "suite-supervisor", 3, 4),
+                    ("suite-supervisor", 0, 5),
+                    ("target-agent", 1, 2),
+                    ("suite-judge", 3, 4),
                 ),
-                staged,
             )
 
-            audit = runner._audit_junie_agent_lifecycles(junie_home, (run,), report, staged)
+            with self.assertRaisesRegex(
+                runner._JunieEvidenceInsufficient,
+                "cannot bind.*staged definition or parent topology",
+            ) as raised:
+                runner._audit_junie_agent_lifecycles(junie_home, (run,), report, staged)
 
-        self.assertTrue(audit["definitionDigestBound"])
-        self.assertEqual(3, len(audit["boundLifecycles"]))
-        self.assertTrue(audit["parentChildVerified"])
-        self.assertTrue(audit["targetJudgeOrderVerified"])
-        self.assertTrue(audit["childConcurrencyVerified"])
-        self.assertTrue(audit["nestedDependencyConstraintsVerified"])
+        self.assertFalse(raised.exception.diagnostics["definitionDigestBound"])
+        self.assertEqual("name-verified", raised.exception.diagnostics["status"])
+        self.assertEqual(3, len(raised.exception.diagnostics["lifecycles"]))
+        self.assertFalse(raised.exception.diagnostics["parentChildVerified"])
 
-    def test_junie_ledger_rejects_unexpected_agent_and_overlapping_children(self) -> None:
-        """An undeclared agent or concurrent supervisor children invalidates Junie evidence."""
+    def test_junie_ledger_rejects_unexpected_agent_and_wrong_outer_identity(self) -> None:
+        """Exact runtime names reject agents and event identities outside the controlled lookup set."""
         run = runner._RunSpec(suite=self._suite("one", nested_limit=1), scenario_ids=("happy",))
         report = {"runs": [self._suite_report("one", "PASS")]}
         staged = self._staged_junie_agents()
@@ -120,12 +130,11 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             self._write_junie_lifecycles(
                 junie_home,
                 (
-                    ("suite-supervisor", "root", 0, 6),
-                    ("target-agent", "suite-supervisor", 1, 4),
-                    ("suite-judge", "suite-supervisor", 3, 5),
-                    ("rogue-agent", "root", 1, 2),
+                    ("suite-supervisor", 0, 6),
+                    ("target-agent", 1, 4),
+                    ("suite-judge", 3, 5),
+                    ("rogue-agent", 1, 2),
                 ),
-                staged,
             )
             with self.assertRaisesRegex(RuntimeError, "unexpected custom agent"):
                 runner._audit_junie_agent_lifecycles(junie_home, (run,), report, staged)
@@ -133,13 +142,19 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             self._write_junie_lifecycles(
                 junie_home,
                 (
-                    ("suite-supervisor", "root", 0, 6),
-                    ("target-agent", "suite-supervisor", 1, 4),
-                    ("suite-judge", "suite-supervisor", 3, 5),
+                    ("suite-supervisor", 0, 6),
+                    ("target-agent", 1, 4),
+                    ("suite-judge", 3, 5),
                 ),
-                staged,
             )
-            with self.assertRaisesRegex(RuntimeError, "overlapping active children"):
+            event_path = junie_home / "sessions" / "session" / "events.jsonl"
+            events = [json.loads(line) for line in event_path.read_text(encoding="utf-8").splitlines()]
+            events[0]["event"]["agentEvent"]["name"] = "different-supervisor"
+            event_path.write_text(
+                "\n".join(json.dumps(event) for event in events) + "\n",
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(RuntimeError, "identity mismatch"):
                 runner._audit_junie_agent_lifecycles(junie_home, (run,), report, staged)
 
     def test_name_only_junie_lifecycle_evidence_blocks_definition_attribution(self) -> None:
@@ -152,13 +167,13 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             self._write_junie_lifecycles(
                 junie_home,
                 (
-                    ("suite-supervisor", "root", 0, 5),
-                    ("target-agent", "suite-supervisor", 1, 2),
-                    ("suite-judge", "suite-supervisor", 3, 4),
+                    ("suite-supervisor", 0, 5),
+                    ("target-agent", 1, 2),
+                    ("suite-judge", 3, 4),
                 ),
             )
             with self.assertRaisesRegex(
-                runner._JunieEvidenceInsufficient, "staged definition marker/digest"
+                runner._JunieEvidenceInsufficient, "cannot bind.*staged definition"
             ) as raised:
                 runner._audit_junie_agent_lifecycles(junie_home, (run,), report, staged)
             retained = runner._junie_lifecycle_evidence(junie_home)
@@ -182,10 +197,13 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                         "event": {
                             "agentEvent": {
                                 "kind": "CustomAgentBlockUpdatedEvent",
-                                "agent": {"name": "suite-supervisor"},
+                                "agent": {"id": "custom-suite-supervisor", "name": "suite-supervisor"},
                                 "name": "suite-supervisor",
                                 "status": "STARTED",
                                 "stepId": "supervisor-step",
+                                "menuItems": [],
+                                "details": None,
+                                "model": "opus",
                             }
                         }
                     }
@@ -198,7 +216,7 @@ class AgentSuiteRunnerTests(unittest.TestCase):
 
         blocked = runner._blocked_junie_report(report, str(raised.exception))
         self.assertEqual("BLOCKED", blocked["runs"][0]["scenarioResults"][0]["status"])
-        self.assertIn("parent-agent", blocked["residualRisk"])
+        self.assertIn("incomplete lifecycle", blocked["residualRisk"])
 
     def test_selects_one_suite_and_one_scenario(self) -> None:
         """A caller can narrow execution to one declared scenario."""
@@ -271,6 +289,7 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             (self._run_spec("one", 1),),
             Path("/tmp/checkpoints"),
             Path("/workspace/.agent-suite-fixtures"),
+            "codex-batch-01-test",
         )
 
         self.assertIn("agent_type exactly equal", prompt)
@@ -289,6 +308,7 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                 "identityEvidence",
                 "deterministicEvidence",
                 "modelJudgeEvidence",
+                "evidenceReceipts",
                 "evidence",
             }
             <= set(scenario_schema["required"])
@@ -999,6 +1019,7 @@ class AgentSuiteRunnerTests(unittest.TestCase):
     def test_partial_results_inside_one_batch_remain_addressable(self) -> None:
         """A failed scenario does not erase completed scenario results from the same batch."""
         batch = (self._run_spec("one", 1), self._run_spec("two", 2))
+        run_identity = "codex-batch-01-test"
         report = {
             "runs": [
                 self._suite_report("one", "PASS"),
@@ -1007,8 +1028,25 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             "batchCleanup": "clean",
             "residualRisk": "none",
         }
+        with tempfile.TemporaryDirectory() as temporary:
+            checkpoint_root = Path(temporary)
+            first = self._write_receipt_checkpoint(checkpoint_root, batch[0], run_identity)
+            second = self._write_receipt_checkpoint(
+                checkpoint_root,
+                batch[1],
+                run_identity,
+                status="FAIL",
+            )
+            checkpoint_report = runner._load_checkpoint_report(
+                checkpoint_root,
+                batch,
+                run_identity,
+            )
+        assert checkpoint_report is not None
+        report["runs"][0]["scenarioResults"][0]["evidenceReceipts"] = first["evidenceReceipts"]
+        report["runs"][1]["scenarioResults"][0]["evidenceReceipts"] = second["evidenceReceipts"]
 
-        audited = runner._audit_report(batch, report)
+        audited = runner._audit_report(batch, report, checkpoint_report)
 
         self.assertEqual(["PASS", "FAIL"], [item["scenarioResults"][0]["status"] for item in audited])
 
@@ -1410,7 +1448,7 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             runner._audit_report(batch, report)
 
     def test_critical_deterministic_failure_may_skip_judge(self) -> None:
-        """A manifest-authorized critical gate failure remains a governed FAIL without semantic judging."""
+        """An exact failed critical-check receipt can authorize the matching Judge skip."""
         run = self._run_spec("one", 1)
         manifest = dict(run.suite.manifest)
         manifest["acceptance"] = {"criticalFailureSkipsJudge": True}
@@ -1422,43 +1460,180 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             scenarios=run.suite.scenarios,
         )
         batch = (runner._RunSpec(suite=suite, scenario_ids=run.scenario_ids),)
+        run_identity = "codex-batch-01-test"
+        with tempfile.TemporaryDirectory() as temporary:
+            checkpoint_root = Path(temporary)
+            self._write_receipt_checkpoint(
+                checkpoint_root,
+                batch[0],
+                run_identity,
+                status="FAIL",
+                judge_invoked=False,
+            )
+            checkpoint_report = runner._load_checkpoint_report(
+                checkpoint_root,
+                batch,
+                run_identity,
+            )
+
+        assert checkpoint_report is not None
+        report = json.loads(json.dumps(checkpoint_report))
+        report["batchCleanup"] = "clean"
+        runner._audit_report(batch, report, checkpoint_report)
+        receipt_audit = checkpoint_report["runs"][0]["scenarioResults"][0]["receiptAudit"]
+        self.assertEqual("skipped-critical-failure", receipt_audit["judgeDisposition"])
+        self.assertEqual("harness-agent-identity", receipt_audit["failedCriticalCheck"])
+
+    def test_model_authored_evidence_strings_cannot_substitute_for_receipts(self) -> None:
+        """Repeated checkpoint prose cannot prove deterministic checks or a Judge disposition."""
+        batch = (self._run_spec("one", 1),)
         report = {
-            "runs": [self._suite_report("one", "FAIL")],
+            "runs": [self._suite_report("one", "PASS")],
             "batchCleanup": "clean",
             "residualRisk": "none",
         }
-        result = report["runs"][0]["scenarioResults"][0]
-        result["judgeInvoked"] = False
-        result["modelJudgeEvidence"] = []
-        result["evidence"] = [
-            "A critical deterministic gate failed.",
-            "criticalFailureSkipsJudge applied, so no semantic Judge scoring was performed.",
-        ]
 
-        runner._audit_report(batch, report)
+        with self.assertRaisesRegex(RuntimeError, "validated evidence receipts"):
+            runner._audit_report(batch, report)
 
-    def test_checkpoint_may_prove_critical_skip_when_final_evidence_is_summarized(self) -> None:
-        """Coordinator compression cannot erase a supervisor checkpoint's authorized Judge skip."""
+    def test_retained_receipts_bind_exact_checks_and_actual_judge_disposition(self) -> None:
+        """A terminal result passes only with selected-identity receipts and retained digest-bound artifacts."""
+        batch = (self._run_spec("one", 1),)
+        run_identity = "codex-batch-01-test"
+        with tempfile.TemporaryDirectory() as temporary:
+            checkpoint_root = Path(temporary)
+            checkpoint = self._write_receipt_checkpoint(checkpoint_root, batch[0], run_identity)
+            checkpoint_report = runner._load_checkpoint_report(
+                checkpoint_root,
+                batch,
+                run_identity,
+            )
+
+        assert checkpoint_report is not None
+        result = checkpoint_report["runs"][0]["scenarioResults"][0]
+        self.assertEqual("PASS", result["status"])
+        self.assertEqual("verified", result["receiptAudit"]["status"])
+        self.assertEqual("passed", result["receiptAudit"]["judgeDisposition"])
+        report = {
+            "runs": [self._suite_report("one", "PASS")],
+            "batchCleanup": "clean",
+            "residualRisk": "none",
+        }
+        report["runs"][0]["scenarioResults"][0]["evidenceReceipts"] = checkpoint["evidenceReceipts"]
+        runner._audit_report(batch, report, checkpoint_report)
+        runner._attach_receipt_audits(report, checkpoint_report)
+        self.assertEqual(
+            "verified",
+            report["runs"][0]["scenarioResults"][0]["receiptAudit"]["status"],
+        )
+
+    def test_invalid_receipts_are_retained_diagnostically_and_block_terminal_status(self) -> None:
+        """Missing, malformed, mismatched, duplicate, unretained, and incompatible receipts never pass."""
+        batch = (self._run_spec("one", 1),)
+        run_identity = "codex-batch-01-test"
+
+        def mutate_case(case: str, root: Path, checkpoint: dict[str, object]) -> None:
+            references = checkpoint["evidenceReceipts"]
+            assert isinstance(references, list)
+            if case == "missing":
+                references.pop()
+            elif case == "malformed":
+                references[0]["sha256"] = "not-a-digest"
+            elif case == "mismatched":
+                self._rewrite_receipt(
+                    root,
+                    checkpoint,
+                    "deterministic-check-disposition",
+                    lambda receipt: receipt.__setitem__("scenario", "wrong-scenario"),
+                )
+            elif case == "duplicate":
+                references.append(dict(references[0]))
+            elif case == "unretained":
+                references[-1] = {
+                    "path": "one/happy/receipts/missing.json",
+                    "sha256": "0" * 64,
+                }
+            elif case == "incompatible":
+                self._rewrite_receipt(
+                    root,
+                    checkpoint,
+                    "judge-disposition",
+                    lambda receipt: receipt.__setitem__("disposition", "failed"),
+                )
+            else:
+                raise AssertionError(case)
+
+        for case in (
+            "missing",
+            "malformed",
+            "mismatched",
+            "duplicate",
+            "unretained",
+            "incompatible",
+        ):
+            with self.subTest(case=case), tempfile.TemporaryDirectory() as temporary:
+                checkpoint_root = Path(temporary)
+                checkpoint = self._write_receipt_checkpoint(checkpoint_root, batch[0], run_identity)
+                mutate_case(case, checkpoint_root, checkpoint)
+                path = checkpoint_root / "one" / "happy.json"
+                path.write_text(json.dumps(checkpoint, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+                checkpoint_report = runner._load_checkpoint_report(
+                    checkpoint_root,
+                    batch,
+                    run_identity,
+                )
+
+            assert checkpoint_report is not None
+            result = checkpoint_report["runs"][0]["scenarioResults"][0]
+            self.assertEqual("BLOCKED", result["status"])
+            self.assertEqual("invalid", result["receiptAudit"]["status"])
+            self.assertTrue(result["receiptAudit"]["diagnostics"])
+
+    def test_wrong_identity_critical_skip_rows_remain_non_passing(self) -> None:
+        """Every structured skip field must match the failed selected critical gate exactly."""
         run = self._run_spec("one", 1)
         manifest = dict(run.suite.manifest)
         manifest["acceptance"] = {"criticalFailureSkipsJudge": True}
         suite = runner._Suite(run.suite.suite_id, run.suite.priority, run.suite.path, manifest, run.suite.scenarios)
         batch = (runner._RunSpec(suite=suite, scenario_ids=run.scenario_ids),)
-        report = {
-            "runs": [self._suite_report("one", "FAIL")],
-            "batchCleanup": "clean",
-            "residualRisk": "none",
+        run_identity = "codex-batch-01-test"
+        mutations = {
+            "eventType": lambda receipt: receipt.__setitem__("eventType", "critical-skip-prose"),
+            "suite": lambda receipt: receipt.__setitem__("suite", "wrong-suite"),
+            "scenario": lambda receipt: receipt.__setitem__("scenario", "wrong-scenario"),
+            "checkId": lambda receipt: receipt.__setitem__("checkId", "test-state-transition"),
+            "critical": lambda receipt: receipt.__setitem__("critical", False),
+            "deterministicVerdict": lambda receipt: receipt.__setitem__("deterministicVerdict", "passed"),
+            "disposition": lambda receipt: receipt.__setitem__("disposition", "skipped-by-prose"),
         }
-        result = report["runs"][0]["scenarioResults"][0]
-        result["judgeInvoked"] = False
-        result["modelJudgeEvidence"] = []
-        result["evidence"] = ["The deterministic gate failed before semantic scoring."]
-        checkpoint_report = json.loads(json.dumps(report))
-        checkpoint_report["runs"][0]["scenarioResults"][0]["evidence"] = [
-            "criticalFailureSkipsJudge applied after the proved critical deterministic failure."
-        ]
+        for field, mutation in mutations.items():
+            with self.subTest(field=field), tempfile.TemporaryDirectory() as temporary:
+                checkpoint_root = Path(temporary)
+                checkpoint = self._write_receipt_checkpoint(
+                    checkpoint_root,
+                    batch[0],
+                    run_identity,
+                    status="FAIL",
+                    judge_invoked=False,
+                )
+                self._rewrite_receipt(
+                    checkpoint_root,
+                    checkpoint,
+                    "judge-skip-disposition",
+                    mutation,
+                )
+                path = checkpoint_root / "one" / "happy.json"
+                path.write_text(json.dumps(checkpoint, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+                checkpoint_report = runner._load_checkpoint_report(
+                    checkpoint_root,
+                    batch,
+                    run_identity,
+                )
 
-        runner._audit_report(batch, report, checkpoint_report)
+            assert checkpoint_report is not None
+            result = checkpoint_report["runs"][0]["scenarioResults"][0]
+            self.assertEqual("BLOCKED", result["status"])
+            self.assertEqual("invalid", result["receiptAudit"]["status"])
 
     def test_unproved_critical_failure_skip_does_not_bypass_judge_requirement(self) -> None:
         """A missing Judge is rejected unless both manifest authority and explicit skip evidence are present."""
@@ -1471,25 +1646,7 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         report["runs"][0]["scenarioResults"][0]["judgeInvoked"] = False
         report["runs"][0]["scenarioResults"][0]["modelJudgeEvidence"] = []
 
-        with self.assertRaisesRegex(RuntimeError, "Terminal verdict lacks target and Judge"):
-            runner._audit_report(batch, report)
-
-    def test_terminal_verdict_requires_governed_evidence(self) -> None:
-        """Empty deterministic or invoked-Judge evidence cannot support PASS or FAIL."""
-        batch = (self._run_spec("one", 1),)
-        report = {
-            "runs": [self._suite_report("one", "PASS")],
-            "batchCleanup": "clean",
-            "residualRisk": "none",
-        }
-        result = report["runs"][0]["scenarioResults"][0]
-        result["deterministicEvidence"] = []
-        with self.assertRaisesRegex(RuntimeError, "Missing deterministic evidence"):
-            runner._audit_report(batch, report)
-
-        result["deterministicEvidence"] = ["gates"]
-        result["modelJudgeEvidence"] = []
-        with self.assertRaisesRegex(RuntimeError, "Missing model-Judge evidence"):
+        with self.assertRaisesRegex(RuntimeError, "validated evidence receipts"):
             runner._audit_report(batch, report)
 
     def test_judge_skip_rejects_model_judge_evidence(self) -> None:
@@ -1514,46 +1671,32 @@ class AgentSuiteRunnerTests(unittest.TestCase):
     def test_final_governed_evidence_must_match_checkpoint(self) -> None:
         """Coordinator evidence cannot replace deterministic or Judge supervisor receipts."""
         batch = (self._run_spec("one", 1),)
+        run_identity = "codex-batch-01-test"
+        with tempfile.TemporaryDirectory() as temporary:
+            checkpoint_root = Path(temporary)
+            checkpoint = self._write_receipt_checkpoint(checkpoint_root, batch[0], run_identity)
+            checkpoint_report = runner._load_checkpoint_report(checkpoint_root, batch, run_identity)
+        assert checkpoint_report is not None
         report = {
             "runs": [self._suite_report("one", "PASS")],
             "batchCleanup": "clean",
             "residualRisk": "none",
         }
-        checkpoint_report = json.loads(json.dumps(report))
-        checkpoint_report["runs"][0]["scenarioResults"][0]["modelJudgeEvidence"] = [
-            "different Judge receipt"
-        ]
+        report_receipts = json.loads(json.dumps(checkpoint["evidenceReceipts"]))
+        report_receipts[0]["path"] = "one/happy/receipts/repeated-prose.json"
+        report["runs"][0]["scenarioResults"][0]["evidenceReceipts"] = report_receipts
 
-        with self.assertRaisesRegex(RuntimeError, "modelJudgeEvidence disagrees with checkpoint"):
+        with self.assertRaisesRegex(RuntimeError, "evidenceReceipts disagree with checkpoint"):
             runner._audit_report(batch, report, checkpoint_report)
 
     def test_checkpoint_retains_completed_scenario_without_final_report(self) -> None:
         """A terminal supervisor checkpoint survives a later coordinator interruption."""
         batch = (self._run_spec("one", 1),)
+        run_identity = "codex-batch-01-test"
         with tempfile.TemporaryDirectory() as temporary:
-            workspace = Path(temporary)
-            checkpoint = workspace / ".agent-suite-results" / "one" / "happy.json"
-            checkpoint.parent.mkdir(parents=True)
-            checkpoint.write_text(
-                json.dumps(
-                    {
-                        "suite": "one",
-                        "scenario": "happy",
-                        "status": "PASS",
-                        "targetInvoked": True,
-                        "judgeInvoked": True,
-                        "identityEvidence": ["bound"],
-                        "deterministicEvidence": ["gates"],
-                        "modelJudgeEvidence": ["verdict"],
-                        "evidence": ["receipt"],
-                        "cleanup": "clean",
-                        "residualRisk": "none",
-                    }
-                ),
-                encoding="utf-8",
-            )
-
-            report = runner._load_checkpoint_report(workspace / ".agent-suite-results", batch)
+            checkpoint_root = Path(temporary) / ".agent-suite-results"
+            self._write_receipt_checkpoint(checkpoint_root, batch[0], run_identity)
+            report = runner._load_checkpoint_report(checkpoint_root, batch, run_identity)
 
         assert report is not None
         self.assertEqual("PASS", report["runs"][0]["scenarioResults"][0]["status"])
@@ -1613,7 +1756,7 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             )
 
             with self.assertRaisesRegex(RuntimeError, "array of strings"):
-                runner._load_checkpoint_report(Path(temporary), batch)
+                runner._load_checkpoint_report(Path(temporary), batch, "codex-batch-01-test")
 
     def test_checkpoint_rejects_non_boolean_invocation_flags(self) -> None:
         """Truth-like strings cannot become invocation evidence after coordinator failure."""
@@ -1641,7 +1784,7 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             )
 
             with self.assertRaisesRegex(RuntimeError, "must be booleans"):
-                runner._load_checkpoint_report(Path(temporary), batch)
+                runner._load_checkpoint_report(Path(temporary), batch, "codex-batch-01-test")
 
     @staticmethod
     def _suite(suite_id: str, nested_limit: int = 0) -> object:
@@ -1661,7 +1804,17 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                 },
                 "target": {"allowedAgentDependencies": ["dependency"]},
             },
-            scenarios=({"id": "happy", "status": "executable", "executableCase": "fixture"},),
+            scenarios=(
+                {
+                    "id": "happy",
+                    "status": "executable",
+                    "executableCase": "fixture",
+                    "deterministicChecks": [
+                        "harness-agent-identity",
+                        "test-state-transition",
+                    ],
+                },
+            ),
         )
 
     @classmethod
@@ -1708,6 +1861,7 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                     "identityEvidence": ["thread-bound"],
                     "deterministicEvidence": ["deterministic-gates"],
                     "modelJudgeEvidence": ["judge-verdict"],
+                    "evidenceReceipts": [],
                     "cleanup": "clean",
                     "evidence": ["synthetic"],
                 }
@@ -1716,34 +1870,207 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             "cleanup": "clean",
         }
 
+    @classmethod
+    def _write_receipt_checkpoint(
+        cls,
+        checkpoint_root: Path,
+        run: object,
+        run_identity: str,
+        *,
+        status: str = "PASS",
+        judge_invoked: bool = True,
+    ) -> dict[str, object]:
+        suite_id = run.suite.suite_id
+        scenario_id = run.scenario_ids[0]
+        scenario_root = checkpoint_root / suite_id / scenario_id
+        artifacts = scenario_root / "artifacts"
+        receipts = scenario_root / "receipts"
+        artifacts.mkdir(parents=True)
+        receipts.mkdir()
+        references: list[dict[str, str]] = []
+        criticality = {
+            "harness-agent-identity": True,
+            "test-state-transition": False,
+        }
+        failed_check = "harness-agent-identity" if status == "FAIL" and not judge_invoked else None
+        for check_id, critical in criticality.items():
+            artifact = artifacts / f"{check_id}.log"
+            artifact.write_text(f"{check_id} retained evidence\n", encoding="utf-8")
+            receipt = receipts / f"deterministic-{check_id}.json"
+            receipt.write_text(
+                json.dumps(
+                    {
+                        "schema": "dev-methodology-agent-suite-evidence-receipt",
+                        "version": 1,
+                        "eventType": "deterministic-check-disposition",
+                        "runIdentity": run_identity,
+                        "suite": suite_id,
+                        "scenario": scenario_id,
+                        "checkId": check_id,
+                        "critical": critical,
+                        "verdict": "failed" if check_id == failed_check else "passed",
+                        "evidence": {
+                            "path": artifact.relative_to(checkpoint_root).as_posix(),
+                            "sha256": runner._sha256(artifact),
+                        },
+                    },
+                    indent=2,
+                    sort_keys=True,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            references.append(
+                {
+                    "path": receipt.relative_to(checkpoint_root).as_posix(),
+                    "sha256": runner._sha256(receipt),
+                }
+            )
+        judge_invocation = str(run.suite.manifest["execution"]["judgeInvocation"])
+        if judge_invoked:
+            judge_output = artifacts / "judge-output.json"
+            judge_output.write_text(
+                json.dumps(
+                    {
+                        "schema": "dev-methodology-agent-suite-judge-output",
+                        "version": 1,
+                        "runIdentity": run_identity,
+                        "suite": suite_id,
+                        "scenario": scenario_id,
+                        "judgeInvocation": judge_invocation,
+                        "disposition": {"PASS": "passed", "FAIL": "failed"}.get(status, status.lower()),
+                    },
+                    indent=2,
+                    sort_keys=True,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            receipt = receipts / "judge-disposition.json"
+            receipt.write_text(
+                json.dumps(
+                    {
+                        "schema": "dev-methodology-agent-suite-evidence-receipt",
+                        "version": 1,
+                        "eventType": "judge-disposition",
+                        "runIdentity": run_identity,
+                        "suite": suite_id,
+                        "scenario": scenario_id,
+                        "judgeInvocation": judge_invocation,
+                        "disposition": {"PASS": "passed", "FAIL": "failed"}.get(status, status.lower()),
+                        "evidence": {
+                            "path": judge_output.relative_to(checkpoint_root).as_posix(),
+                            "sha256": runner._sha256(judge_output),
+                        },
+                    },
+                    indent=2,
+                    sort_keys=True,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            references.append(
+                {
+                    "path": receipt.relative_to(checkpoint_root).as_posix(),
+                    "sha256": runner._sha256(receipt),
+                }
+            )
+        else:
+            evidence = artifacts / f"{failed_check}.log"
+            receipt = receipts / "judge-skip-disposition.json"
+            receipt.write_text(
+                json.dumps(
+                    {
+                        "schema": "dev-methodology-agent-suite-evidence-receipt",
+                        "version": 1,
+                        "eventType": "judge-skip-disposition",
+                        "runIdentity": run_identity,
+                        "suite": suite_id,
+                        "scenario": scenario_id,
+                        "checkId": failed_check,
+                        "critical": True,
+                        "deterministicVerdict": "failed",
+                        "disposition": "skipped-critical-failure",
+                        "evidence": {
+                            "path": evidence.relative_to(checkpoint_root).as_posix(),
+                            "sha256": runner._sha256(evidence),
+                        },
+                    },
+                    indent=2,
+                    sort_keys=True,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            references.append(
+                {
+                    "path": receipt.relative_to(checkpoint_root).as_posix(),
+                    "sha256": runner._sha256(receipt),
+                }
+            )
+        checkpoint = checkpoint_root / suite_id / f"{scenario_id}.json"
+        document: dict[str, object] = {
+            "suite": suite_id,
+            "scenario": scenario_id,
+            "status": status,
+            "targetInvoked": True,
+            "judgeInvoked": judge_invoked,
+            "identityEvidence": ["runtime identity diagnostics"],
+            "deterministicEvidence": ["diagnostic summary only"],
+            "modelJudgeEvidence": ["diagnostic summary only"] if judge_invoked else [],
+            "evidenceReceipts": references,
+            "evidence": ["diagnostic summary only"],
+            "cleanup": "clean",
+            "residualRisk": "none",
+        }
+        checkpoint.write_text(json.dumps(document, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        return document
+
+    @staticmethod
+    def _rewrite_receipt(
+        checkpoint_root: Path,
+        checkpoint: dict[str, object],
+        event_type: str,
+        mutate: object,
+    ) -> None:
+        references = checkpoint["evidenceReceipts"]
+        assert isinstance(references, list)
+        for reference in references:
+            assert isinstance(reference, dict)
+            path = checkpoint_root / str(reference["path"])
+            loaded = json.loads(path.read_text(encoding="utf-8"))
+            if loaded.get("eventType") != event_type:
+                continue
+            mutate(loaded)
+            path.write_text(json.dumps(loaded, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+            reference["sha256"] = runner._sha256(path)
+            return
+        raise AssertionError(f"Missing receipt {event_type}")
+
     @staticmethod
     def _write_junie_lifecycles(
         junie_home: Path,
-        lifecycles: tuple[tuple[str, str, int, int], ...],
-        staged: tuple[object, ...] = (),
+        lifecycles: tuple[tuple[str, int, int], ...],
     ) -> None:
         session = junie_home / "sessions" / "session"
         session.mkdir(parents=True, exist_ok=True)
         events: list[dict[str, object]] = []
-        definitions = {agent.invocation: agent for agent in staged}
-        for index, (name, parent, started, finished) in enumerate(lifecycles):
+        for index, (name, started, finished) in enumerate(lifecycles):
             step_id = f"step-{index:08d}"
             for status, second in (("STARTED", started), ("FINISHED", finished)):
-                agent: dict[str, object] = {"kind": "CustomAgent", "name": name}
-                if name in definitions:
-                    agent["definitionMarker"] = definitions[name].instruction_marker
-                    agent["definitionSha256"] = definitions[name].sha256
                 events.append(
                     {
                         "timestamp": f"2026-07-19T00:00:{second:02d}Z",
                         "event": {
                             "agentEvent": {
                                 "kind": "CustomAgentBlockUpdatedEvent",
-                                "agent": agent,
+                                "agent": {"id": f"custom-{name}", "name": name},
                                 "name": name,
-                                "parentAgent": parent,
                                 "status": status,
                                 "stepId": step_id,
+                                "menuItems": [],
+                                "details": None,
+                                "model": "opus",
                             }
                         },
                     }

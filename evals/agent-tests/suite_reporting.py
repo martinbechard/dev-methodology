@@ -282,24 +282,39 @@ def _terminal_status(
 
 
 def _governed_evidence_error(scenario: Mapping[str, Any]) -> str | None:
-    if str(scenario.get("status", "")).upper() not in {"PASS", "FAIL"}:
+    terminal_status = str(scenario.get("status", "")).upper()
+    if terminal_status not in {"PASS", "FAIL"}:
         return None
-    deterministic = scenario.get("deterministicEvidence")
-    model_judge = scenario.get("modelJudgeEvidence")
+    references = scenario.get("evidenceReceipts")
+    if not isinstance(references, list) or not references or any(
+        not isinstance(value, Mapping)
+        or set(value) != {"path", "sha256"}
+        or not isinstance(value.get("path"), str)
+        or not isinstance(value.get("sha256"), str)
+        or not re.fullmatch(r"[0-9a-f]{64}", str(value.get("sha256")))
+        for value in references
+    ):
+        return "validated path- and SHA-256-bound evidence receipts were not retained"
+    receipt_audit = scenario.get("receiptAudit")
+    if not isinstance(receipt_audit, Mapping) or receipt_audit.get("status") != "verified":
+        return "the runner did not verify the retained evidence receipts"
+    deterministic = receipt_audit.get("deterministicChecks")
+    if not isinstance(deterministic, list) or not deterministic:
+        return "the exact deterministic-check receipts were not verified"
     judge_invoked = scenario.get("judgeInvoked")
-    if not isinstance(deterministic, list) or not any(
-        isinstance(value, str) and value.strip() for value in deterministic
-    ):
-        return "non-empty deterministic evidence was not retained"
-    if judge_invoked is True and (
-        not isinstance(model_judge, list)
-        or not any(isinstance(value, str) and value.strip() for value in model_judge)
-    ):
-        return "the invoked Judge has no retained model-Judge evidence"
-    if judge_invoked is False and model_judge:
-        return "model-Judge evidence was retained although the Judge was not invoked"
     if not isinstance(judge_invoked, bool):
         return "the Judge invocation disposition was not retained"
+    judge_disposition = receipt_audit.get("judgeDisposition")
+    if judge_invoked is True:
+        expected = "passed" if terminal_status == "PASS" else "failed"
+        if judge_disposition != expected:
+            return f"the actual Judge disposition is not {expected}"
+    elif (
+        terminal_status != "FAIL"
+        or judge_disposition != "skipped-critical-failure"
+        or not isinstance(receipt_audit.get("failedCriticalCheck"), str)
+    ):
+        return "the exact failed-critical-check Judge-skip disposition was not verified"
     return None
 
 
@@ -335,29 +350,30 @@ def suite_metadata(
         omissions.append("no governed scenario results were retained")
     if evidence_errors:
         omissions.append("unsupported terminal verdicts demoted: " + "; ".join(evidence_errors))
-    missing_deterministic = [
+    missing_receipts = [
         str(scenario.get("scenario", "unknown"))
         for scenario in scenarios
-        if not isinstance(scenario.get("deterministicEvidence"), list)
-        or not scenario.get("deterministicEvidence")
+        if not isinstance(scenario.get("receiptAudit"), Mapping)
+        or scenario.get("receiptAudit", {}).get("status") != "verified"
     ]
     missing_judge = [
         str(scenario.get("scenario", "unknown"))
         for scenario in scenarios
         if scenario.get("judgeInvoked") is True
         and (
-            not isinstance(scenario.get("modelJudgeEvidence"), list)
-            or not scenario.get("modelJudgeEvidence")
+            not isinstance(scenario.get("receiptAudit"), Mapping)
+            or scenario.get("receiptAudit", {}).get("judgeDisposition")
+            not in {"passed", "failed", "blocked", "stale"}
         )
     ]
-    if missing_deterministic:
+    if missing_receipts:
         omissions.append(
-            "explicit deterministic evidence unavailable for "
-            + ", ".join(missing_deterministic)
+            "validated deterministic and Judge receipts unavailable for "
+            + ", ".join(missing_receipts)
         )
     if missing_judge:
         omissions.append(
-            "explicit model-Judge evidence unavailable for " + ", ".join(missing_judge)
+            "actual Judge disposition unavailable for " + ", ".join(missing_judge)
         )
     return {
         "schema": _SCHEMA,
@@ -383,6 +399,17 @@ def suite_metadata(
             for scenario in scenarios
             for value in scenario.get("modelJudgeEvidence", [])
             if isinstance(value, str)
+        ],
+        "evidenceReceipts": [
+            dict(value)
+            for scenario in scenarios
+            for value in scenario.get("evidenceReceipts", [])
+            if isinstance(value, Mapping)
+        ],
+        "receiptAudits": [
+            dict(scenario["receiptAudit"])
+            for scenario in scenarios
+            if isinstance(scenario.get("receiptAudit"), Mapping)
         ],
         "omissions": omissions,
         "evidenceRoot": str(evidence_root),
@@ -441,7 +468,7 @@ def render_suite_html(metadata: Mapping[str, Any]) -> str:
 <style>body{{font:16px system-ui,sans-serif;line-height:1.5;margin:auto;max-width:72rem;padding:1rem;color:#18212b;background:#fff}}a{{color:#0645ad}}table{{border-collapse:collapse;width:100%}}th,td{{border:1px solid #667;padding:.55rem;text-align:left;vertical-align:top}}.status{{font-weight:700}}@media(max-width:40rem){{table{{display:block;overflow-x:auto}}}}</style></head>
 <body><main><h1>{html.escape(str(metadata["suite"]))}</h1><p class="status">{html.escape(str(metadata["status"]))} · {html.escape(str(metadata["harness"]))}</p>
 <h2>Run identity</h2><dl><dt>Source revision</dt><dd>{html.escape(str(metadata["sourceRevision"]))}</dd><dt>Suite digest</dt><dd>{html.escape(str(metadata["suiteDigest"]))}</dd><dt>Elapsed</dt><dd>{metadata["elapsedSeconds"]} seconds</dd></dl>
-<h2>Scenario results</h2><table><thead><tr><th scope="col">Scenario</th><th scope="col">Status</th><th scope="col">Evidence</th><th scope="col">Deterministic evidence</th><th scope="col">Model-Judge evidence</th></tr></thead><tbody>{"".join(rows) or '<tr><td colspan="5">No scenario results retained.</td></tr>'}</tbody></table>
+<h2>Scenario results</h2><table><thead><tr><th scope="col">Scenario</th><th scope="col">Status</th><th scope="col">Evidence</th><th scope="col">Deterministic diagnostics</th><th scope="col">Judge diagnostics</th></tr></thead><tbody>{"".join(rows) or '<tr><td colspan="5">No scenario results retained.</td></tr>'}</tbody></table>
 <h2>Omissions</h2><ul>{omissions}</ul><h2>Retained evidence</h2><p>{html.escape(str(metadata["evidenceRoot"]))}</p></main>{_embedded_metadata(metadata)}</body></html>\n"""
 
 

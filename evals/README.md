@@ -22,7 +22,7 @@ Validate the complete agent-owned catalog and bounded schedule without starting 
 python3 evals/agent-tests/runner.py --harness codex --validate-only
 ```
 
-Use agent-tests/suite_reporting.py for resource-bounded one-suite, multi-suite, or complete-catalog execution and durable offline HTML reporting. The reporting commands, Junie full-catalog authorization, report-only rebuild, and incremental update workflow are documented in [the agent-owned suite strategy](agent-tests/README.md).
+Use the agent-tests/runner.py reporting entry point for resource-bounded one-suite, multi-suite, or complete-catalog execution and durable offline HTML reporting. The reporting commands, Junie full-catalog authorization, report-only rebuild, and incremental update workflow are documented in [the agent-owned suite strategy](agent-tests/README.md).
 
 ## Evaluation Layers
 

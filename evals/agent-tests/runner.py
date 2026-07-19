@@ -12,6 +12,7 @@ import contextlib
 import dataclasses
 import datetime as dt
 import hashlib
+import importlib.util
 import json
 import os
 import re
@@ -27,7 +28,7 @@ import threading
 import time
 import tomllib
 from collections.abc import Callable, Iterator, Mapping, Sequence
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 from urllib.parse import urlsplit
 
@@ -56,10 +57,17 @@ _CAPTURE_REPLACEMENTS = (
     ("Martin.Bechard@DevConsult.ca", "[REDACTED-NONBEHAVIORAL-IDENTITY]"),
 )
 _MAXIMUM_CAPTURE_BYTES = 10 * 1024 * 1024
+_EVIDENCE_RECEIPT_SCHEMA = "dev-methodology-agent-suite-evidence-receipt"
+_JUDGE_OUTPUT_SCHEMA = "dev-methodology-agent-suite-judge-output"
+_SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 
 
 class _JunieEvidenceInsufficient(RuntimeError):
     """Signal that a Junie run must be BLOCKED because its ledger cannot prove topology."""
+
+    def __init__(self, message: str, diagnostics: Mapping[str, Any] | None = None) -> None:
+        super().__init__(message)
+        self.diagnostics = dict(diagnostics or {})
 
 
 @dataclasses.dataclass(frozen=True)
@@ -883,6 +891,7 @@ def _coordinator_schema() -> dict[str, Any]:
                                     "identityEvidence",
                                     "deterministicEvidence",
                                     "modelJudgeEvidence",
+                                    "evidenceReceipts",
                                     "cleanup",
                                     "evidence",
                                 ],
@@ -894,6 +903,21 @@ def _coordinator_schema() -> dict[str, Any]:
                                     "identityEvidence": {"type": "array", "items": {"type": "string"}},
                                     "deterministicEvidence": {"type": "array", "items": {"type": "string"}},
                                     "modelJudgeEvidence": {"type": "array", "items": {"type": "string"}},
+                                    "evidenceReceipts": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "additionalProperties": False,
+                                            "required": ["path", "sha256"],
+                                            "properties": {
+                                                "path": {"type": "string"},
+                                                "sha256": {
+                                                    "type": "string",
+                                                    "pattern": "^[0-9a-f]{64}$",
+                                                },
+                                            },
+                                        },
+                                    },
                                     "cleanup": {"type": "string", "enum": ["clean", "failed"]},
                                     "evidence": {"type": "array", "items": {"type": "string"}},
                                 },
@@ -1192,13 +1216,19 @@ def _preflight_runtime_capabilities(
     return tuple(evidence)
 
 
-def _coordinator_prompt(batch: Sequence[_RunSpec], checkpoint_root: Path, fixture_root: Path) -> str:
+def _coordinator_prompt(
+    batch: Sequence[_RunSpec],
+    checkpoint_root: Path,
+    fixture_root: Path,
+    run_identity: str,
+) -> str:
     assignments = []
     for run in batch:
         execution = run.suite.manifest["execution"]
         assignments.append(
             {
                 "suite": run.suite.suite_id,
+                "runIdentity": run_identity,
                 "supervisor": execution["supervisorInvocation"],
                 "target": execution["targetInvocation"],
                 "judge": execution["judgeInvocation"],
@@ -1224,8 +1254,19 @@ def _coordinator_prompt(batch: Sequence[_RunSpec], checkpoint_root: Path, fixtur
         "write the required checkpointRoot/suite-id/scenario-id.json checkpoint immediately after each terminal "
         "scenario and before starting later work. Each checkpoint must contain suite, scenario, status, targetInvoked, "
         "judgeInvoked, identityEvidence, deterministicEvidence, modelJudgeEvidence, and evidence as arrays of "
-        "strings, cleanup as clean or "
+        "diagnostic strings, evidenceReceipts as an array of exact path and lowercase SHA-256 references, cleanup as clean or "
         "failed, and residualRisk as a string; nested objects are forbidden for those fields. Each result must state "
+        "The diagnostic strings never prove a verdict. Beneath checkpointRoot/suite/scenario, retain one artifacts file and "
+        "one receipts JSON file per configured deterministic check. Each deterministic-check-disposition receipt must bind "
+        "schema dev-methodology-agent-suite-evidence-receipt version 1, the assignment runIdentity, suite, scenario, exact "
+        "checkId, catalog critical boolean, passed or failed verdict, and a relative artifacts path with its SHA-256. Retain "
+        "each configured check exactly once. When Judge runs, retain one judge-disposition receipt and one JSON Judge output "
+        "artifact using schema dev-methodology-agent-suite-judge-output version 1; both must bind runIdentity, suite, scenario, "
+        "exact judgeInvocation, and passed, failed, blocked, or stale disposition. When an authorized critical deterministic "
+        "failure skips Judge, retain one judge-skip-disposition receipt binding the same exact failed checkId, critical true, "
+        "deterministicVerdict failed, disposition skipped-critical-failure, and the same evidence artifact. Receipt paths must "
+        "be directly beneath suite/scenario/receipts and artifact paths directly beneath suite/scenario/artifacts. "
+        "Each result must state "
         "targetInvoked and judgeInvoked explicitly, "
         "and clean every fixture, claim, process, worktree, and credential it owns. One supervisor child may use one "
         "declared nested dependency at a time only where nestedAgentLimit is 1; serialize that temporary tenth-agent "
@@ -1240,8 +1281,13 @@ def _coordinator_prompt(batch: Sequence[_RunSpec], checkpoint_root: Path, fixtur
     )
 
 
-def _junie_coordinator_prompt(batch: Sequence[_RunSpec], checkpoint_root: Path, fixture_root: Path) -> str:
-    prompt = _coordinator_prompt(batch, checkpoint_root, fixture_root)
+def _junie_coordinator_prompt(
+    batch: Sequence[_RunSpec],
+    checkpoint_root: Path,
+    fixture_root: Path,
+    run_identity: str,
+) -> str:
+    prompt = _coordinator_prompt(batch, checkpoint_root, fixture_root, run_identity)
     for run in batch:
         execution = run.suite.manifest["execution"]
         for field in ("supervisorInvocation", "targetInvocation", "judgeInvocation"):
@@ -1284,7 +1330,289 @@ def _extract_coordinator_report(stream: str) -> dict[str, Any]:
     return report
 
 
-def _load_checkpoint_report(checkpoint_root: Path, batch: Sequence[_RunSpec]) -> dict[str, Any] | None:
+def _retained_artifact(
+    root: Path,
+    reference: object,
+    expected_parent: PurePosixPath,
+    field: str,
+    diagnostics: list[str],
+) -> Path | None:
+    if not isinstance(reference, Mapping) or set(reference) != {"path", "sha256"}:
+        diagnostics.append(f"{field} must contain exactly path and sha256")
+        return None
+    relative_value = reference.get("path")
+    digest = reference.get("sha256")
+    if (
+        not isinstance(relative_value, str)
+        or not relative_value
+        or "\\" in relative_value
+        or PurePosixPath(relative_value).is_absolute()
+        or any(part in {"", ".", ".."} for part in PurePosixPath(relative_value).parts)
+    ):
+        diagnostics.append(f"{field} path is not a safe retained relative path")
+        return None
+    relative = PurePosixPath(relative_value)
+    if relative.parent != expected_parent:
+        diagnostics.append(
+            f"{field} path must be directly beneath {expected_parent.as_posix()}"
+        )
+        return None
+    if not isinstance(digest, str) or not _SHA256_PATTERN.fullmatch(digest):
+        diagnostics.append(f"{field} sha256 must be a lowercase SHA-256 digest")
+        return None
+    candidate = root.joinpath(*relative.parts)
+    current = root
+    for part in relative.parts:
+        current = current / part
+        if current.is_symlink():
+            diagnostics.append(f"{field} path contains a symbolic link: {relative_value}")
+            return None
+    try:
+        resolved_root = root.resolve(strict=True)
+        resolved = candidate.resolve(strict=True)
+    except (OSError, RuntimeError):
+        diagnostics.append(f"{field} retained artifact is missing: {relative_value}")
+        return None
+    if resolved_root not in resolved.parents or not resolved.is_file():
+        diagnostics.append(f"{field} retained artifact is unsafe: {relative_value}")
+        return None
+    if _sha256(resolved) != digest:
+        diagnostics.append(f"{field} retained artifact digest mismatch: {relative_value}")
+        return None
+    return resolved
+
+
+def _json_mapping(path: Path, field: str, diagnostics: list[str]) -> Mapping[str, Any] | None:
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError):
+        diagnostics.append(f"{field} must be a retained JSON object: {path.name}")
+        return None
+    if not isinstance(value, Mapping):
+        diagnostics.append(f"{field} must be a retained JSON object: {path.name}")
+        return None
+    return value
+
+
+def _deterministic_check_catalog() -> dict[str, bool]:
+    document = _load_yaml(_REPOSITORY_ROOT / "evals" / "judges.yaml")
+    return {
+        str(item["id"]): bool(item["critical"])
+        for item in document.get("checks", [])
+        if isinstance(item, Mapping)
+        and isinstance(item.get("id"), str)
+        and isinstance(item.get("critical"), bool)
+    }
+
+
+def _validate_evidence_receipts(
+    checkpoint_root: Path,
+    references: object,
+    run: _RunSpec,
+    scenario_id: str,
+    run_identity: str,
+    reported_status: str,
+    judge_invoked: bool,
+) -> dict[str, Any]:
+    diagnostics: list[str] = []
+    if not isinstance(references, list):
+        references = []
+        diagnostics.append("evidenceReceipts must be an array of path and SHA-256 references")
+    scenario = next(
+        (value for value in run.suite.scenarios if str(value.get("id")) == scenario_id),
+        {},
+    )
+    raw_check_ids = scenario.get("deterministicChecks", [])
+    expected_check_ids = [str(value) for value in raw_check_ids] if isinstance(raw_check_ids, list) else []
+    if not expected_check_ids or len(expected_check_ids) != len(set(expected_check_ids)):
+        diagnostics.append("selected scenario deterministicChecks must identify unique checks")
+    catalog = _deterministic_check_catalog()
+    unknown_checks = sorted(set(expected_check_ids) - set(catalog))
+    if unknown_checks:
+        diagnostics.append(f"selected scenario uses unknown deterministic checks: {', '.join(unknown_checks)}")
+    receipt_parent = PurePosixPath(run.suite.suite_id, scenario_id, "receipts")
+    artifact_parent = PurePosixPath(run.suite.suite_id, scenario_id, "artifacts")
+    deterministic: dict[str, Mapping[str, Any]] = {}
+    judge_receipts: list[Mapping[str, Any]] = []
+    skip_receipts: list[Mapping[str, Any]] = []
+    seen_paths: set[str] = set()
+    for index, reference in enumerate(references):
+        field = f"evidenceReceipts[{index}]"
+        path_value = reference.get("path") if isinstance(reference, Mapping) else None
+        if isinstance(path_value, str) and path_value in seen_paths:
+            diagnostics.append(f"duplicate evidence receipt path: {path_value}")
+            continue
+        if isinstance(path_value, str):
+            seen_paths.add(path_value)
+        receipt_path = _retained_artifact(
+            checkpoint_root,
+            reference,
+            receipt_parent,
+            field,
+            diagnostics,
+        )
+        if receipt_path is None:
+            continue
+        receipt = _json_mapping(receipt_path, field, diagnostics)
+        if receipt is None:
+            continue
+        if (
+            receipt.get("schema") != _EVIDENCE_RECEIPT_SCHEMA
+            or receipt.get("version") != 1
+            or receipt.get("runIdentity") != run_identity
+            or receipt.get("suite") != run.suite.suite_id
+            or receipt.get("scenario") != scenario_id
+        ):
+            diagnostics.append(f"{field} receipt identity mismatch")
+            continue
+        event_type = receipt.get("eventType")
+        evidence_path = _retained_artifact(
+            checkpoint_root,
+            receipt.get("evidence"),
+            artifact_parent,
+            f"{field}.evidence",
+            diagnostics,
+        )
+        if evidence_path is None:
+            continue
+        if event_type == "deterministic-check-disposition":
+            expected_fields = {
+                "schema", "version", "eventType", "runIdentity", "suite", "scenario",
+                "checkId", "critical", "verdict", "evidence",
+            }
+            check_id = receipt.get("checkId")
+            if set(receipt) != expected_fields:
+                diagnostics.append(f"{field} deterministic receipt fields are malformed")
+            if not isinstance(check_id, str) or check_id not in expected_check_ids:
+                diagnostics.append(f"{field} deterministic check identity is not selected: {check_id}")
+                continue
+            if check_id in deterministic:
+                diagnostics.append(f"duplicate deterministic check receipt: {check_id}")
+                continue
+            if receipt.get("critical") is not catalog.get(check_id):
+                diagnostics.append(f"{field} deterministic criticality mismatch: {check_id}")
+            if receipt.get("verdict") not in {"passed", "failed"}:
+                diagnostics.append(f"{field} deterministic verdict is invalid: {check_id}")
+            deterministic[check_id] = receipt
+        elif event_type == "judge-disposition":
+            expected_fields = {
+                "schema", "version", "eventType", "runIdentity", "suite", "scenario",
+                "judgeInvocation", "disposition", "evidence",
+            }
+            if set(receipt) != expected_fields:
+                diagnostics.append(f"{field} Judge receipt fields are malformed")
+            judge_receipts.append(receipt)
+            output = _json_mapping(evidence_path, f"{field}.evidence", diagnostics)
+            expected_output = {
+                "schema": _JUDGE_OUTPUT_SCHEMA,
+                "version": 1,
+                "runIdentity": run_identity,
+                "suite": run.suite.suite_id,
+                "scenario": scenario_id,
+                "judgeInvocation": run.suite.manifest["execution"]["judgeInvocation"],
+                "disposition": receipt.get("disposition"),
+            }
+            if output is not None and dict(output) != expected_output:
+                diagnostics.append(f"{field} does not bind an actual selected Judge disposition")
+        elif event_type == "judge-skip-disposition":
+            expected_fields = {
+                "schema", "version", "eventType", "runIdentity", "suite", "scenario",
+                "checkId", "critical", "deterministicVerdict", "disposition", "evidence",
+            }
+            if set(receipt) != expected_fields:
+                diagnostics.append(f"{field} Judge-skip receipt fields are malformed")
+            skip_receipts.append(receipt)
+        else:
+            diagnostics.append(f"{field} receipt eventType is invalid: {event_type}")
+
+    observed_checks = set(deterministic)
+    expected_checks = set(expected_check_ids)
+    if observed_checks != expected_checks:
+        diagnostics.append(
+            "deterministic receipt coverage mismatch: "
+            f"expected {sorted(expected_checks)}, observed {sorted(observed_checks)}"
+        )
+    failed_critical = sorted(
+        check_id
+        for check_id, receipt in deterministic.items()
+        if receipt.get("critical") is True and receipt.get("verdict") == "failed"
+    )
+    if reported_status == "PASS" and any(
+        receipt.get("verdict") != "passed" for receipt in deterministic.values()
+    ):
+        diagnostics.append("PASS is incompatible with a failed deterministic receipt")
+    judge_disposition: str | None = None
+    failed_critical_check: str | None = None
+    if judge_invoked:
+        if len(judge_receipts) != 1:
+            diagnostics.append("an invoked Judge requires exactly one Judge disposition receipt")
+        if skip_receipts:
+            diagnostics.append("an invoked Judge cannot retain a Judge-skip disposition")
+        if judge_receipts:
+            judge_receipt = judge_receipts[0]
+            judge_disposition = str(judge_receipt.get("disposition"))
+            expected_judge = str(run.suite.manifest["execution"]["judgeInvocation"])
+            if judge_receipt.get("judgeInvocation") != expected_judge:
+                diagnostics.append("Judge receipt invocation does not match the selected Judge")
+            expected_disposition = {
+                "PASS": "passed",
+                "FAIL": "failed",
+                "BLOCKED": "blocked",
+                "STALE": "stale",
+            }.get(reported_status)
+            if judge_disposition != expected_disposition:
+                diagnostics.append(
+                    f"Judge disposition {judge_disposition} is incompatible with {reported_status}"
+                )
+        if failed_critical and run.suite.manifest.get("acceptance", {}).get(
+            "criticalFailureSkipsJudge"
+        ) is True:
+            diagnostics.append("a critical deterministic failure requires the exact Judge-skip disposition")
+    else:
+        if judge_receipts:
+            diagnostics.append("a skipped Judge cannot retain a Judge disposition receipt")
+        if len(skip_receipts) != 1:
+            diagnostics.append("a skipped Judge requires exactly one structured Judge-skip disposition")
+        if skip_receipts:
+            skip = skip_receipts[0]
+            check_id = skip.get("checkId")
+            failed_critical_check = str(check_id) if isinstance(check_id, str) else None
+            matching = deterministic.get(str(check_id))
+            if (
+                reported_status != "FAIL"
+                or run.suite.manifest.get("acceptance", {}).get("criticalFailureSkipsJudge") is not True
+                or skip.get("critical") is not True
+                or skip.get("deterministicVerdict") != "failed"
+                or skip.get("disposition") != "skipped-critical-failure"
+                or check_id not in failed_critical
+                or matching is None
+                or skip.get("evidence") != matching.get("evidence")
+            ):
+                diagnostics.append("Judge-skip disposition does not match the selected failed critical check")
+            else:
+                judge_disposition = "skipped-critical-failure"
+    return {
+        "status": "invalid" if diagnostics else "verified",
+        "runIdentity": run_identity,
+        "deterministicChecks": [
+            {
+                "checkId": check_id,
+                "critical": receipt.get("critical"),
+                "verdict": receipt.get("verdict"),
+            }
+            for check_id, receipt in sorted(deterministic.items())
+        ],
+        "judgeDisposition": judge_disposition,
+        "failedCriticalCheck": failed_critical_check,
+        "diagnostics": diagnostics,
+    }
+
+
+def _load_checkpoint_report(
+    checkpoint_root: Path,
+    batch: Sequence[_RunSpec],
+    run_identity: str,
+) -> dict[str, Any] | None:
     runs: list[dict[str, Any]] = []
     for run in batch:
         scenario_results: list[dict[str, Any]] = []
@@ -1301,6 +1629,7 @@ def _load_checkpoint_report(checkpoint_root: Path, batch: Sequence[_RunSpec]) ->
             identity_evidence = loaded.get("identityEvidence")
             deterministic_evidence = loaded.get("deterministicEvidence")
             model_judge_evidence = loaded.get("modelJudgeEvidence")
+            evidence_receipts = loaded.get("evidenceReceipts")
             evidence = loaded.get("evidence")
             if not isinstance(identity_evidence, list) or not all(
                 isinstance(value, str) for value in identity_evidence
@@ -1316,6 +1645,8 @@ def _load_checkpoint_report(checkpoint_root: Path, batch: Sequence[_RunSpec]) ->
                 raise RuntimeError(f"Scenario checkpoint modelJudgeEvidence must be an array of strings: {path}")
             if not isinstance(evidence, list) or not all(isinstance(value, str) for value in evidence):
                 raise RuntimeError(f"Scenario checkpoint evidence must be an array of strings: {path}")
+            if not isinstance(evidence_receipts, list):
+                evidence_receipts = []
             if loaded.get("status") not in _TERMINAL_STATUSES:
                 raise RuntimeError(f"Scenario checkpoint status must be terminal: {path}")
             if type(loaded.get("targetInvoked")) is not bool or type(loaded.get("judgeInvoked")) is not bool:
@@ -1324,17 +1655,40 @@ def _load_checkpoint_report(checkpoint_root: Path, batch: Sequence[_RunSpec]) ->
                 raise RuntimeError(f"Scenario checkpoint cleanup must be clean or failed: {path}")
             if not isinstance(loaded.get("residualRisk"), str):
                 raise RuntimeError(f"Scenario checkpoint residualRisk must be a string: {path}")
+            receipt_audit = _validate_evidence_receipts(
+                checkpoint_root,
+                evidence_receipts,
+                run,
+                scenario_id,
+                run_identity,
+                str(loaded.get("status")),
+                bool(loaded.get("judgeInvoked")),
+            )
+            reported_status = str(loaded.get("status"))
+            validated_status = (
+                "BLOCKED"
+                if reported_status in {"PASS", "FAIL"} and receipt_audit["status"] != "verified"
+                else reported_status
+            )
+            retained_evidence = list(evidence)
+            retained_evidence.extend(
+                f"Evidence receipt validation: {diagnostic}"
+                for diagnostic in receipt_audit["diagnostics"]
+            )
             scenario_results.append(
                 {
                     "scenario": scenario_id,
-                    "status": loaded.get("status"),
+                    "status": validated_status,
+                    "reportedStatus": reported_status,
                     "targetInvoked": loaded.get("targetInvoked"),
                     "judgeInvoked": loaded.get("judgeInvoked"),
                     "identityEvidence": identity_evidence,
                     "deterministicEvidence": deterministic_evidence,
                     "modelJudgeEvidence": model_judge_evidence,
+                    "evidenceReceipts": evidence_receipts,
+                    "receiptAudit": receipt_audit,
                     "cleanup": loaded["cleanup"],
-                    "evidence": evidence,
+                    "evidence": retained_evidence,
                 }
             )
             if loaded.get("residualRisk"):
@@ -1385,11 +1739,31 @@ def _audit_checkpoint_agreement(
         )
     compared_fields = (
         "status", "targetInvoked", "judgeInvoked",
-        "deterministicEvidence", "modelJudgeEvidence", "cleanup",
+        "evidenceReceipts", "cleanup",
     )
     for identity in sorted(expected):
         if any(final_results[identity].get(field) != checkpoints[identity].get(field) for field in compared_fields):
             raise RuntimeError(f"Final report disagrees with checkpoint for {identity[0]}:{identity[1]}")
+
+
+def _attach_receipt_audits(
+    report: dict[str, Any],
+    checkpoint_report: dict[str, Any],
+) -> None:
+    receipt_audits = {
+        (str(run_result.get("suite", "")), str(scenario.get("scenario", ""))): scenario.get(
+            "receiptAudit"
+        )
+        for run_result in checkpoint_report.get("runs", [])
+        for scenario in run_result.get("scenarioResults", [])
+    }
+    for run_result in report.get("runs", []):
+        suite_id = str(run_result.get("suite", ""))
+        for scenario in run_result.get("scenarioResults", []):
+            identity = (suite_id, str(scenario.get("scenario", "")))
+            receipt_audit = receipt_audits.get(identity)
+            if isinstance(receipt_audit, Mapping):
+                scenario["receiptAudit"] = json.loads(json.dumps(receipt_audit))
 
 
 def _audit_report(
@@ -1442,50 +1816,61 @@ def _audit_report(
                         f"{evidence_field} must be an array of strings for "
                         f"{suite_id}:{scenario_result.get('scenario')}"
                     )
-            evidence = scenario_result.get("evidence", [])
-            deterministic_evidence = scenario_result.get("deterministicEvidence", [])
-            model_judge_evidence = scenario_result.get("modelJudgeEvidence", [])
-            if scenario_result.get("status") in {"PASS", "FAIL"} and not any(
-                value.strip() for value in deterministic_evidence
+            evidence_receipts = scenario_result.get("evidenceReceipts")
+            if not isinstance(evidence_receipts, list) or any(
+                not isinstance(value, Mapping)
+                or set(value) != {"path", "sha256"}
+                or not isinstance(value.get("path"), str)
+                or not isinstance(value.get("sha256"), str)
+                or not _SHA256_PATTERN.fullmatch(str(value.get("sha256")))
+                for value in evidence_receipts
             ):
-                raise RuntimeError(f"Missing deterministic evidence for {suite_id}:{scenario_result.get('scenario')}")
-            if scenario_result.get("judgeInvoked") and not any(value.strip() for value in model_judge_evidence):
-                raise RuntimeError(f"Missing model-Judge evidence for {suite_id}:{scenario_result.get('scenario')}")
+                raise RuntimeError(
+                    f"evidenceReceipts must contain exact path and SHA-256 references for "
+                    f"{suite_id}:{scenario_result.get('scenario')}"
+                )
+            model_judge_evidence = scenario_result.get("modelJudgeEvidence", [])
             if not scenario_result.get("judgeInvoked") and model_judge_evidence:
                 raise RuntimeError(f"Unexpected model-Judge evidence for {suite_id}:{scenario_result.get('scenario')}")
             checkpoint_result = checkpoint_results.get(
                 (suite_id, str(scenario_result.get("scenario", ""))), {}
             )
-            for evidence_field in ("deterministicEvidence", "modelJudgeEvidence"):
-                if checkpoint_result and scenario_result.get(evidence_field) != checkpoint_result.get(evidence_field):
+            if checkpoint_result and evidence_receipts != checkpoint_result.get("evidenceReceipts"):
+                raise RuntimeError(
+                    f"Final report evidenceReceipts disagree with checkpoint for "
+                    f"{suite_id}:{scenario_result.get('scenario')}"
+                )
+            receipt_audit = checkpoint_result.get("receiptAudit", {})
+            if scenario_result.get("status") in {"PASS", "FAIL"} and (
+                not isinstance(receipt_audit, Mapping)
+                or receipt_audit.get("status") != "verified"
+            ):
+                raise RuntimeError(
+                    f"Terminal verdict lacks validated evidence receipts for "
+                    f"{suite_id}:{scenario_result.get('scenario')}"
+                )
+            if (
+                scenario_result.get("status") in {"PASS", "FAIL"}
+                and scenario_result.get("judgeInvoked")
+                and isinstance(receipt_audit, Mapping)
+            ):
+                expected_judge_disposition = (
+                    "passed" if scenario_result.get("status") == "PASS" else "failed"
+                )
+                if receipt_audit.get("judgeDisposition") != expected_judge_disposition:
                     raise RuntimeError(
-                        f"Final report {evidence_field} disagrees with checkpoint for "
+                        f"Judge receipt disposition disagrees with terminal status for "
                         f"{suite_id}:{scenario_result.get('scenario')}"
                     )
-            checkpoint_evidence = checkpoint_result.get("evidence", [])
-            checkpoint_proves_skip = (
-                checkpoint_result.get("status") == scenario_result.get("status")
-                and checkpoint_result.get("targetInvoked") == scenario_result.get("targetInvoked")
-                and checkpoint_result.get("judgeInvoked") == scenario_result.get("judgeInvoked")
-                and isinstance(checkpoint_evidence, list)
-                and any(
-                    isinstance(value, str) and "criticalFailureSkipsJudge" in value
-                    for value in checkpoint_evidence
-                )
-            )
             critical_failure_skipped_judge = (
                 scenario_result.get("status") == "FAIL"
                 and scenario_result.get("targetInvoked")
                 and not scenario_result.get("judgeInvoked")
                 and suites[suite_id].manifest.get("acceptance", {}).get("criticalFailureSkipsJudge") is True
-                and (
-                    isinstance(evidence, list)
-                    and any(
-                        isinstance(value, str) and "criticalFailureSkipsJudge" in value
-                        for value in evidence
-                    )
-                    or checkpoint_proves_skip
-                )
+                and isinstance(receipt_audit, Mapping)
+                and receipt_audit.get("status") == "verified"
+                and receipt_audit.get("judgeDisposition") == "skipped-critical-failure"
+                and isinstance(receipt_audit.get("failedCriticalCheck"), str)
             )
             if scenario_result.get("status") in {"PASS", "FAIL"} and not (
                 scenario_result.get("targetInvoked")
@@ -2175,20 +2560,114 @@ def _junie_lifecycle_evidence(junie_home: Path) -> list[dict[str, Any]]:
             agent_event = event.get("agentEvent") if isinstance(event, dict) else None
             agent = agent_event.get("agent") if isinstance(agent_event, dict) else None
             if isinstance(agent_event, dict) and agent_event.get("kind") == "CustomAgentBlockUpdatedEvent":
+                event_digest = hashlib.sha256(
+                    json.dumps(
+                        agent_event,
+                        sort_keys=True,
+                        separators=(",", ":"),
+                        ensure_ascii=True,
+                    ).encode("utf-8")
+                ).hexdigest()
                 evidence.append(
                     {
                         "timestamp": value.get("timestamp"),
                         "agent": {
+                            "id": agent.get("id") if isinstance(agent, dict) else None,
                             "name": agent.get("name") if isinstance(agent, dict) else None,
-                            "definitionMarker": agent.get("definitionMarker") if isinstance(agent, dict) else None,
-                            "definitionSha256": agent.get("definitionSha256") if isinstance(agent, dict) else None,
                         },
-                        "parentAgent": agent_event.get("parentAgent"),
+                        "eventType": agent_event.get("kind"),
+                        "name": agent_event.get("name"),
                         "status": agent_event.get("status"),
                         "stepId": agent_event.get("stepId"),
+                        "menuItems": agent_event.get("menuItems"),
+                        "details": agent_event.get("details"),
+                        "model": agent_event.get("model"),
+                        "eventDigest": event_digest,
                     }
                 )
     return evidence
+
+
+def _retain_junie_staged_manifest(
+    agent_root: Path,
+    destination: Path,
+    staged: Sequence[_StagedAgent],
+) -> Path:
+    destination.mkdir(parents=True, exist_ok=False)
+    agents: list[dict[str, str]] = []
+    for agent in sorted(staged, key=lambda value: value.invocation):
+        source = agent_root / f"{agent.invocation}.md"
+        retained = destination / source.name
+        shutil.copyfile(source, retained)
+        digest = _sha256(retained)
+        if digest != agent.sha256:
+            raise RuntimeError(f"Staged Junie definition digest changed for {agent.invocation}")
+        agents.append(
+            {
+                "name": agent.invocation,
+                "path": retained.relative_to(destination).as_posix(),
+                "sha256": digest,
+            }
+        )
+    manifest = destination / "staged-agent-manifest.json"
+    manifest.write_text(
+        json.dumps(
+            {
+                "schema": "dev-methodology-agent-suite-junie-staged-manifest",
+                "version": 1,
+                "configuredAgentLocation": str(agent_root),
+                "agents": agents,
+            },
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    return manifest
+
+
+def _audit_junie_staged_manifest(
+    manifest_path: Path | None,
+    staged: Sequence[_StagedAgent],
+) -> dict[str, Any]:
+    if manifest_path is None:
+        return {"status": "not-retained"}
+    loaded = json.loads(manifest_path.read_text(encoding="utf-8"))
+    expected_names = {agent.invocation for agent in staged}
+    if (
+        not isinstance(loaded, Mapping)
+        or set(loaded) != {"schema", "version", "configuredAgentLocation", "agents"}
+        or loaded.get("schema") != "dev-methodology-agent-suite-junie-staged-manifest"
+        or loaded.get("version") != 1
+        or not isinstance(loaded.get("configuredAgentLocation"), str)
+        or not isinstance(loaded.get("agents"), list)
+    ):
+        raise RuntimeError("Retained Junie staged-agent manifest is malformed")
+    observed: set[str] = set()
+    for item in loaded["agents"]:
+        if (
+            not isinstance(item, Mapping)
+            or set(item) != {"name", "path", "sha256"}
+            or item.get("name") in observed
+            or item.get("name") not in expected_names
+            or item.get("path") != f"{item.get('name')}.md"
+            or not isinstance(item.get("sha256"), str)
+            or not _SHA256_PATTERN.fullmatch(str(item.get("sha256")))
+        ):
+            raise RuntimeError("Retained Junie staged-agent manifest entry is invalid")
+        path = manifest_path.parent / str(item["path"])
+        if path.is_symlink() or not path.is_file() or _sha256(path) != item["sha256"]:
+            raise RuntimeError(f"Retained Junie staged definition is missing or stale: {item.get('name')}")
+        observed.add(str(item["name"]))
+    if observed != expected_names:
+        raise RuntimeError("Retained Junie staged-agent manifest coverage mismatch")
+    return {
+        "status": "path-and-digest-bound",
+        "configuredAgentLocation": loaded["configuredAgentLocation"],
+        "manifestPath": str(manifest_path),
+        "agents": sorted(observed),
+    }
 
 
 def _audit_junie_agent_lifecycles(
@@ -2196,36 +2675,19 @@ def _audit_junie_agent_lifecycles(
     batch: Sequence[_RunSpec],
     report: Mapping[str, Any],
     staged: Sequence[_StagedAgent],
+    staged_manifest: Path | None = None,
 ) -> dict[str, Any]:
     expected_counts = {
         invocation.replace("_", "-"): count
         for invocation, count in _expected_invocation_counts(batch, dict(report)).items()
     }
-    expected_parents: dict[str, str] = {}
-    dependency_parents: dict[str, str] = {}
-    supervisor_sequences: dict[str, list[str]] = {}
+    allowed_agents: set[str] = set()
     for run in batch:
         execution = run.suite.manifest["execution"]
         supervisor = str(execution["supervisorInvocation"]).replace("_", "-")
         target = str(execution["targetInvocation"]).replace("_", "-")
         judge = str(execution["judgeInvocation"]).replace("_", "-")
-        expected_parents[supervisor] = "root"
-        expected_parents[target] = supervisor
-        expected_parents[judge] = supervisor
-        reported = {
-            str(scenario.get("scenario")): scenario
-            for run_result in report.get("runs", [])
-            if run_result.get("suite") == run.suite.suite_id
-            for scenario in run_result.get("scenarioResults", [])
-        }
-        sequence: list[str] = []
-        for scenario_id in run.scenario_ids:
-            scenario = reported.get(scenario_id, {})
-            if scenario.get("targetInvoked"):
-                sequence.append(target)
-            if scenario.get("judgeInvoked"):
-                sequence.append(judge)
-        supervisor_sequences[supervisor] = sequence
+        allowed_agents.update((supervisor, target, judge))
         nested_limit = int(execution.get("nestedAgentLimit", 0))
         for dependency in run.suite.manifest["target"].get("allowedAgentDependencies", []):
             dependency_name = str(dependency).replace("_", "-")
@@ -2233,107 +2695,56 @@ def _audit_junie_agent_lifecycles(
                 raise RuntimeError(
                     f"Junie suite declares dependency {dependency_name} without nestedAgentLimit 1"
                 )
-            dependency_parents[dependency_name] = target
+            allowed_agents.add(dependency_name)
 
-    allowed_agents = set(expected_parents) | set(dependency_parents)
     staged_by_invocation = {agent.invocation: agent for agent in staged}
     missing_definitions = sorted(allowed_agents - set(staged_by_invocation))
     if missing_definitions:
         raise RuntimeError(f"Junie lifecycle agents lack staged definitions: {', '.join(missing_definitions)}")
     observed: dict[tuple[str, str], dict[str, Any]] = {}
-    for event_path in sorted((junie_home / "sessions").glob("**/events.jsonl")):
-        if event_path.is_symlink() or not event_path.is_file():
-            continue
-        for line in event_path.read_text(encoding="utf-8").splitlines():
-            try:
-                value = json.loads(line)
-            except json.JSONDecodeError:
-                continue
-            event = value.get("event") if isinstance(value, dict) else None
-            agent_event = event.get("agentEvent") if isinstance(event, dict) else None
-            agent = agent_event.get("agent") if isinstance(agent_event, dict) else None
-            name = agent.get("name") if isinstance(agent, dict) else None
-            if (
-                not isinstance(agent_event, dict)
-                or agent_event.get("kind") != "CustomAgentBlockUpdatedEvent"
-            ):
-                continue
-            if name not in allowed_agents:
-                raise RuntimeError(f"Junie session ledger contains unexpected custom agent: {name}")
-            step_id = agent_event.get("stepId")
-            status = agent_event.get("status")
-            parent_agent = agent_event.get("parentAgent")
-            timestamp = value.get("timestamp") if isinstance(value, dict) else None
-            definition_marker = agent.get("definitionMarker") if isinstance(agent, dict) else None
-            definition_sha256 = agent.get("definitionSha256") if isinstance(agent, dict) else None
-            if (
-                not isinstance(step_id, str)
-                or status not in {"STARTED", "FINISHED"}
-                or not isinstance(parent_agent, str)
-                or not isinstance(timestamp, str)
-            ):
-                raise _JunieEvidenceInsufficient(
-                    "Junie ledger lacks step, parent-agent, or timestamp evidence"
-                )
-            try:
-                timestamp_value = _timestamp_seconds(timestamp)
-            except ValueError as error:
-                raise _JunieEvidenceInsufficient(
-                    "Junie ledger timestamp evidence is invalid"
-                ) from error
-            record = observed.setdefault(
-                (str(name), step_id),
-                {
-                    "name": str(name), "parent": parent_agent, "start": None, "finish": None,
-                    "definitionMarker": definition_marker, "definitionSha256": definition_sha256,
-                },
+    for agent_event in _junie_lifecycle_evidence(junie_home):
+        agent = agent_event.get("agent")
+        name = agent.get("name") if isinstance(agent, Mapping) else None
+        if name not in allowed_agents:
+            raise RuntimeError(f"Junie session ledger contains unexpected custom agent: {name}")
+        step_id = agent_event.get("stepId")
+        status = agent_event.get("status")
+        agent_id = agent.get("id") if isinstance(agent, Mapping) else None
+        if (
+            not isinstance(step_id, str)
+            or status not in {"STARTED", "FINISHED"}
+            or not isinstance(agent_id, str)
+            or not agent_id
+            or agent_event.get("eventType") != "CustomAgentBlockUpdatedEvent"
+        ):
+            raise _JunieEvidenceInsufficient(
+                "Junie ledger custom-agent identity, step, or status evidence is malformed"
             )
-            if record["parent"] != parent_agent:
-                raise RuntimeError(f"Junie lifecycle parent changed for {name}:{step_id}")
-            if record["definitionMarker"] != definition_marker or record["definitionSha256"] != definition_sha256:
-                raise RuntimeError(f"Junie lifecycle definition binding changed for {name}:{step_id}")
-            field = "start" if status == "STARTED" else "finish"
-            prior = record[field]
-            if prior is not None and prior != timestamp_value:
-                raise RuntimeError(f"Junie lifecycle has conflicting {status} events for {name}:{step_id}")
-            record[field] = timestamp_value
+        if agent_event.get("name") != name:
+            raise RuntimeError(f"Junie custom-agent event identity mismatch for {name}:{step_id}")
+        record = observed.setdefault(
+            (str(name), step_id),
+            {
+                "name": str(name),
+                "agentId": agent_id,
+                "statuses": [],
+                "eventDigests": [],
+            },
+        )
+        if record["agentId"] != agent_id:
+            raise RuntimeError(f"Junie lifecycle agent id changed for {name}:{step_id}")
+        if status in record["statuses"]:
+            raise RuntimeError(f"Junie lifecycle has conflicting {status} events for {name}:{step_id}")
+        record["statuses"].append(status)
+        record["eventDigests"].append(agent_event["eventDigest"])
 
     complete: list[dict[str, Any]] = []
     for record in observed.values():
-        if record["start"] is None or record["finish"] is None:
+        if record["statuses"] != ["STARTED", "FINISHED"]:
             raise _JunieEvidenceInsufficient(
                 f"Junie ledger has an incomplete lifecycle for {record['name']}"
             )
-        if record["finish"] < record["start"]:
-            raise RuntimeError(f"Junie lifecycle finishes before it starts for {record['name']}")
-        staged_agent = staged_by_invocation[record["name"]]
-        if record["definitionMarker"] != staged_agent.instruction_marker or record["definitionSha256"] != staged_agent.sha256:
-            raise _JunieEvidenceInsufficient(
-                f"Junie lifecycle for {record['name']} lacks the staged definition marker/digest binding"
-            )
-        expected_parent = expected_parents.get(record["name"], dependency_parents.get(record["name"]))
-        if record["parent"] != expected_parent:
-            raise RuntimeError(
-                f"Junie lifecycle parent mismatch for {record['name']}: "
-                f"expected {expected_parent}, observed {record['parent']}"
-            )
         complete.append(record)
-
-    for record in complete:
-        if record["parent"] == "root":
-            continue
-        parent_lifecycles = [
-            parent
-            for parent in complete
-            if parent["name"] == record["parent"]
-            and float(parent["start"]) <= float(record["start"])
-            and float(record["finish"]) <= float(parent["finish"])
-        ]
-        if not parent_lifecycles:
-            raise RuntimeError(
-                f"Junie child lifecycle for {record['name']} is not contained by "
-                f"its parent {record['parent']}"
-            )
 
     mismatches = []
     for name, expected_count in expected_counts.items():
@@ -2345,43 +2756,30 @@ def _audit_junie_agent_lifecycles(
             f"Junie session ledger custom-agent lifecycle mismatch: {'; '.join(mismatches)}"
         )
 
-    by_parent: dict[str, list[dict[str, Any]]] = {}
-    for record in complete:
-        by_parent.setdefault(str(record["parent"]), []).append(record)
-    for parent, children in by_parent.items():
-        if parent == "root":
-            continue
-        ordered = sorted(children, key=lambda record: (float(record["start"]), str(record["name"])))
-        for previous, current in zip(ordered, ordered[1:]):
-            if float(current["start"]) < float(previous["finish"]):
-                raise RuntimeError(f"Junie parent {parent} has overlapping active children")
-    for supervisor, expected_sequence in supervisor_sequences.items():
-        observed_sequence = [
-            str(record["name"])
-            for record in sorted(by_parent.get(supervisor, []), key=lambda value: float(value["start"]))
-        ]
-        if observed_sequence != expected_sequence:
-            raise RuntimeError(
-                f"Junie target/Judge order mismatch for {supervisor}: "
-                f"expected {expected_sequence}, observed {observed_sequence}"
-            )
-    return {
-        "status": "definition-bound",
-        "definitionDigestBound": True,
+    diagnostics = {
+        "status": "name-verified",
+        "definitionDigestBound": False,
         "agents": dict(sorted(expected_counts.items())),
-        "boundLifecycles": [
+        "lifecycles": [
             {
-                "agent": str(record["name"]), "stepId": str(step_id),
-                "definitionMarker": str(record["definitionMarker"]),
-                "definitionSha256": str(record["definitionSha256"]),
+                "agentId": str(record["agentId"]),
+                "name": str(record["name"]),
+                "stepId": str(step_id),
+                "statuses": list(record["statuses"]),
+                "eventDigests": list(record["eventDigests"]),
             }
             for (_, step_id), record in sorted(observed.items())
         ],
-        "parentChildVerified": True,
-        "targetJudgeOrderVerified": True,
-        "childConcurrencyVerified": True,
-        "nestedDependencyConstraintsVerified": True,
+        "controlledLookup": _audit_junie_staged_manifest(staged_manifest, staged),
+        "parentChildVerified": False,
+        "targetJudgeOrderVerified": False,
+        "childConcurrencyVerified": False,
+        "nestedDependencyConstraintsVerified": False,
     }
+    raise _JunieEvidenceInsufficient(
+        "Junie name-level lifecycle cannot bind the emitted custom agent to its staged definition or parent topology",
+        diagnostics,
+    )
 
 
 def _blocked_junie_report(report: Mapping[str, Any], reason: str) -> dict[str, Any]:
@@ -2402,6 +2800,7 @@ def _run_live_junie_batch(
     timeout_seconds: int,
 ) -> dict[str, Any]:
     label = f"batch-{batch_number:02d}"
+    run_identity = f"junie-{label}-{secrets.token_hex(16)}"
     with _temporary_run_root(f"junie-{label}") as run_root:
         workspace, junie_home, skill_root, staged = _stage_junie_batch(batch, run_root)
         fixture_root = workspace / ".agent-suite-fixtures"
@@ -2427,7 +2826,7 @@ def _run_live_junie_batch(
             f"--skill-location={skill_root}",
             f"--agent-location={agent_root}",
             f"--timeout={timeout_seconds * 1000}",
-            f"--task={_junie_coordinator_prompt(batch, checkpoint_root, fixture_root)}",
+            f"--task={_junie_coordinator_prompt(batch, checkpoint_root, fixture_root, run_identity)}",
         ]
         environment = _controlled_environment(run_root / "home", junie_home, run_root / "tmp")
         environment.pop("CODEX_HOME", None)
@@ -2447,24 +2846,36 @@ def _run_live_junie_batch(
             "".join(f"{json.dumps(value, sort_keys=True)}\n" for value in _junie_lifecycle_evidence(junie_home)),
             encoding="utf-8",
         )
+        retained_staged_root = result_root / f"{label}.staged-agents"
+        staged_manifest = _retain_junie_staged_manifest(agent_root, retained_staged_root, staged)
+        checkpoint_destination = result_root / f"{label}.checkpoints"
+        if checkpoint_root.is_dir():
+            shutil.copytree(checkpoint_root, checkpoint_destination, dirs_exist_ok=True)
         report: dict[str, Any] | None = None
         checkpoint_report: dict[str, Any] | None = None
         errors: list[str] = []
         try:
-            checkpoint_report = _load_checkpoint_report(checkpoint_root, batch)
+            checkpoint_report = _load_checkpoint_report(checkpoint_destination, batch, run_identity)
             report = _extract_junie_report(event_path)
             _audit_report(batch, report, checkpoint_report)
             _audit_checkpoint_agreement(report, checkpoint_report, batch)
+            if checkpoint_report is not None:
+                _attach_receipt_audits(report, checkpoint_report)
         except (json.JSONDecodeError, RuntimeError) as error:
             errors.append(str(error))
         try:
-            identity = _audit_junie_agent_lifecycles(junie_home, batch, report or {}, staged)
+            identity = _audit_junie_agent_lifecycles(
+                junie_home,
+                batch,
+                report or {},
+                staged,
+                staged_manifest,
+            )
         except _JunieEvidenceInsufficient as error:
-            identity = {
-                "status": "unverified",
-                "definitionDigestBound": False,
-                "blockedReason": str(error),
-            }
+            identity = dict(error.diagnostics)
+            identity["status"] = "unverified"
+            identity["definitionDigestBound"] = False
+            identity["blockedReason"] = str(error)
             if report is not None:
                 report = _blocked_junie_report(report, str(error))
             else:
@@ -2472,9 +2883,6 @@ def _run_live_junie_batch(
         except RuntimeError as error:
             errors.append(str(error))
             identity = {"status": "unverified", "error": str(error)}
-        checkpoint_destination = result_root / f"{label}.checkpoints"
-        if checkpoint_root.is_dir():
-            shutil.copytree(checkpoint_root, checkpoint_destination, dirs_exist_ok=True)
         try:
             cleanup = _audit_workspace_cleanup(workspace)
         except RuntimeError as error:
@@ -2486,6 +2894,7 @@ def _run_live_junie_batch(
             errors.append(f"Process cleanup: {completed['cleanup']}")
         return {
             "batch": batch_number,
+            "runIdentity": run_identity,
             "harness": "junie",
             "status": "infrastructure-failed" if errors else "completed",
             "processExitCode": completed["exitCode"],
@@ -2496,6 +2905,7 @@ def _run_live_junie_batch(
             "evidence": {
                 "events": str(retained_events),
                 "lifecycles": str(retained_lifecycles),
+                "stagedAgents": str(retained_staged_root),
                 "checkpoints": str(checkpoint_destination),
                 "stderr": str(evidence_prefix.with_suffix('.stderr.log')),
             },
@@ -2509,6 +2919,7 @@ def _run_live_batch(
     timeout_seconds: int,
 ) -> dict[str, Any]:
     label = f"batch-{batch_number:02d}"
+    run_identity = f"codex-{label}-{secrets.token_hex(16)}"
     with _temporary_run_root(label) as run_root:
         workspace, codex_home, staged = _stage_batch(batch, run_root)
         capabilities = _runtime_capabilities(batch)
@@ -2542,7 +2953,7 @@ def _run_live_batch(
             str(schema_path),
             "-C",
             str(workspace),
-            _coordinator_prompt(batch, checkpoint_root, fixture_root),
+            _coordinator_prompt(batch, checkpoint_root, fixture_root, run_identity),
         ]
         environment = _controlled_environment(temporary_home, codex_home, temporary_dir)
         preflight_evidence = _preflight_runtime_capabilities(batch, workspace, codex_home, environment)
@@ -2559,10 +2970,13 @@ def _run_live_batch(
         evidence_prefix.with_suffix(".stderr.log").write_text(_redact_capture(completed["stderr"]), encoding="utf-8")
         session_directory = result_root / f"{label}.sessions"
         retained_session_count = _retain_sessions(codex_home, session_directory)
+        checkpoint_destination = result_root / f"{label}.checkpoints"
+        if checkpoint_root.is_dir():
+            shutil.copytree(checkpoint_root, checkpoint_destination, dirs_exist_ok=True)
         partial_report: dict[str, Any] | None = None
         report_error: str | None = None
         try:
-            checkpoint_report = _load_checkpoint_report(checkpoint_root, batch)
+            checkpoint_report = _load_checkpoint_report(checkpoint_destination, batch, run_identity)
         except (json.JSONDecodeError, RuntimeError) as checkpoint_error:
             checkpoint_report = None
             report_error = f"checkpoint error: {checkpoint_error}"
@@ -2570,13 +2984,12 @@ def _run_live_batch(
             partial_report = _extract_coordinator_report(completed["stdout"])
             _audit_report(batch, partial_report, checkpoint_report)
             _audit_checkpoint_agreement(partial_report, checkpoint_report, batch)
+            if checkpoint_report is not None:
+                _attach_receipt_audits(partial_report, checkpoint_report)
         except RuntimeError as error:
             report_error = f"{report_error}; {error}" if report_error else str(error)
             if checkpoint_report is not None:
                 partial_report = checkpoint_report
-        checkpoint_destination = result_root / f"{label}.checkpoints"
-        if checkpoint_root.is_dir():
-            shutil.copytree(checkpoint_root, checkpoint_destination, dirs_exist_ok=True)
         expected_invocation_counts = _expected_invocation_counts(batch, partial_report or {})
         identity_error: str | None = None
         try:
@@ -2619,6 +3032,7 @@ def _run_live_batch(
         ]
         return {
             "batch": batch_number,
+            "runIdentity": run_identity,
             "status": "infrastructure-failed" if infrastructure_errors else "completed",
             "processExitCode": completed["exitCode"],
             "report": partial_report,
@@ -2682,16 +3096,34 @@ def _argument_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def _reporting_main(argv: Sequence[str]) -> int:
+    module_path = _SUITE_ROOT / "suite_reporting.py"
+    specification = importlib.util.spec_from_file_location(
+        "agent_suite_reporting_entrypoint",
+        module_path,
+    )
+    if specification is None or specification.loader is None:
+        raise RuntimeError(f"Cannot load suite reporting entry point: {module_path}")
+    module = importlib.util.module_from_spec(specification)
+    sys.modules[specification.name] = module
+    specification.loader.exec_module(module)
+    return int(module.main(argv))
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     """Validate selections, execute bounded batches, and retain a machine-readable summary.
 
-    Callers use the command-line flags to select suites or scenarios, cap supervisor concurrency,
-    choose validation-only or live execution, and name the runner-owned evidence directory. Live
-    execution creates isolated homes and workspaces, invokes Codex, records UTC and monotonic timing,
-    retains partial failures, and removes disposable state before returning. The process returns zero
-    only when every requested batch validates or completes without an infrastructure failure.
+    Callers use the reporting subcommand for durable suite reports, or the execution flags to select
+    suites or scenarios, cap supervisor concurrency, choose validation-only or live execution, and
+    name the runner-owned evidence directory. Live execution creates isolated homes and workspaces,
+    invokes Codex or Junie, records UTC and monotonic timing, retains partial failures, and removes
+    disposable state before returning. The process returns zero only when every requested batch
+    validates or completes without an infrastructure failure.
     """
-    arguments = _argument_parser().parse_args(argv)
+    raw_arguments = tuple(sys.argv[1:] if argv is None else argv)
+    if raw_arguments[:1] == ("reporting",):
+        return _reporting_main(raw_arguments[1:])
+    arguments = _argument_parser().parse_args(raw_arguments)
     selected_suite_ids = set(arguments.suite)
     selected_suite_ids.update(value.partition(":")[0] for value in arguments.scenario if ":" in value)
     catalog = _load_catalog(include_ids=selected_suite_ids or None)
