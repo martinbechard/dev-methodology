@@ -142,6 +142,7 @@ definition_change_authority:
       - adapters/*/skills/*/SKILL.md
     definition_metadata:
       - skills/*/agents/openai.yaml
+      - adapters/*/skills/*/agents/openai.yaml
       - agents/role-schema.yaml
       - agents/model-profiles.yaml
       - adapters/*/model-profiles.yaml

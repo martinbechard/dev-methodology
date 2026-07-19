@@ -51,6 +51,7 @@ def definition_change_authority() -> dict[str, object]:
             "adapter_skills": ["adapters/*/skills/*/SKILL.md"],
             "definition_metadata": [
                 "skills/*/agents/openai.yaml",
+                "adapters/*/skills/*/agents/openai.yaml",
                 "agents/role-schema.yaml",
                 "agents/model-profiles.yaml",
                 "adapters/*/model-profiles.yaml",
@@ -1308,6 +1309,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             "skills/python/SKILL.md",
             "adapters/codex/skills/codex-harness-directives/SKILL.md",
             "skills/python/agents/openai.yaml",
+            "adapters/codex/skills/codex-harness-directives/agents/openai.yaml",
             "agents/role-schema.yaml",
             "agents/model-profiles.yaml",
             "adapters/codex/model-profiles.yaml",
@@ -1497,6 +1499,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             "./skills//python/SKILL.md",
             "./adapters//codex/skills/codex-harness-directives/SKILL.md",
             "./skills//python/agents/openai.yaml",
+            "./adapters//codex/skills/codex-harness-directives/agents/openai.yaml",
             "./generated//adapters/codex/dev-coder.toml",
         )
         for path in governed_normalized_paths:
@@ -1520,6 +1523,53 @@ class TechnologyDetectionTests(unittest.TestCase):
             with self.subTest(invalid_path=invalid_path):
                 with self.assertRaisesRegex(ValueError, "project-relative|parent traversal"):
                     renderer.evaluate_definition_change(project, invalid_path, None)
+
+    def test_adapter_owned_skill_metadata_requires_exact_approval(self) -> None:
+        renderer = load_renderer_module()
+        project = renderer.load_yaml(ROOT / "PROJECT.yaml")
+        governed = "adapters/codex/skills/example/agents/openai.yaml"
+        self.assertIn(
+            "adapters/*/skills/*/agents/openai.yaml",
+            (ROOT / "AGENTS.md").read_text(encoding="utf-8"),
+        )
+
+        self.assertEqual(
+            "BLOCKED_APPROVAL_REQUIRED",
+            renderer.evaluate_definition_change(project, governed, None)["outcome"],
+        )
+        self.assertEqual(
+            "ALLOWED_APPROVED_DEFINITION_CHANGE",
+            renderer.evaluate_definition_change(
+                project,
+                governed,
+                explicit_user_approval(governed),
+            )["outcome"],
+        )
+        self.assertEqual(
+            "BLOCKED_APPROVAL_REQUIRED",
+            renderer.evaluate_definition_change(
+                project,
+                governed,
+                explicit_user_approval("adapters/codex/skills/other/agents/openai.yaml"),
+            )["outcome"],
+        )
+
+        normalized = "./adapters//codex/skills/example/agents/openai.yaml"
+        self.assertEqual(
+            "BLOCKED_APPROVAL_REQUIRED",
+            renderer.evaluate_definition_change(project, normalized, None)["outcome"],
+        )
+        near_misses = (
+            "adapters/codex/skills/agents/openai.yaml",
+            "adapters/codex/skills/example/agents/internal/openai.yaml",
+            "adapters/codex/skills/example/agents/openai.yml",
+        )
+        for path in near_misses:
+            with self.subTest(near_miss=path):
+                self.assertEqual(
+                    "ALLOWED_ORDINARY_CHANGE",
+                    renderer.evaluate_definition_change(project, path, None)["outcome"],
+                )
 
     def test_incorrect_expectation_is_repaired_without_mutating_definition(self) -> None:
         renderer = load_renderer_module()

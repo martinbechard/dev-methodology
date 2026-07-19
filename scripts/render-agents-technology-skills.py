@@ -72,7 +72,15 @@ def _required_patterns(mapping: dict[str, object], key: str, prefix: str) -> lis
 
 
 def definition_change_authority(value: dict[str, object]) -> dict[str, object] | None:
-    """Return and validate the optional project-level definition-change authority directive."""
+    """Validate and return the project-level definition-change authority mapping.
+
+    Project Configurator and the renderer pass the mapping loaded from PROJECT.yaml.
+    The optional definition_change_authority value must contain the required approval,
+    provenance, governed-source, generated-mirror, non-approval, and test-repair shapes.
+    The function returns that validated mapping without mutating it, or None when the
+    directive is absent. It raises ValueError when the directive is malformed,
+    incomplete, or internally contradictory.
+    """
 
     policy = value.get("definition_change_authority")
     if policy is None:
@@ -125,7 +133,14 @@ def definition_change_authority(value: dict[str, object]) -> dict[str, object] |
 
 
 def definition_change_authority_lines(value: dict[str, object]) -> list[str]:
-    """Render the validated operational authority directive."""
+    """Render the configured authority mapping as the complete AGENTS.md section.
+
+    The input is a project mapping accepted by definition_change_authority. The return
+    value is an ordered list of Markdown lines containing the authority heading,
+    operational preflight, governed patterns, generated-mirror boundary, and test-repair
+    rule. An absent directive returns an empty list. Invalid configured content raises
+    ValueError through definition_change_authority. The function performs no file I/O.
+    """
 
     policy = definition_change_authority(value)
     if policy is None:
@@ -225,8 +240,24 @@ def evaluate_definition_change(
     *,
     regenerated_from: str | None = None,
 ) -> dict[str, str]:
-    """Evaluate one proposed path change against the configured definition authority boundary."""
+    """Classify one proposed repository change under the configured authority policy.
 
+    value is the loaded project mapping. path is a project-relative target; separators,
+    repeated separators, and dot segments are normalized, while absolute paths, parent
+    traversal, and empty paths are rejected. approval is either None or a mapping with
+    basis, exact definition_scope, and provenance source and reference fields.
+    regenerated_from optionally names the approved canonical source for a generated
+    mirror.
+
+    The returned mapping contains classification and outcome. Outcomes distinguish
+    ordinary changes, approved definition changes, approved regeneration, direct
+    generated edits, missing approval, and invalid approval. The function only evaluates
+    policy and never mutates files or enforces filesystem permissions. It raises
+    ValueError for invalid project policy or invalid target, pattern, or regenerated
+    source paths; malformed approval records return a blocked outcome instead.
+    """
+
+    normalized = _normalize_project_path(path)
     policy = definition_change_authority(value)
     if policy is None:
         return {"outcome": "ALLOWED_ORDINARY_CHANGE", "classification": "ordinary"}
@@ -235,8 +266,6 @@ def evaluate_definition_change(
     assert isinstance(sources, dict)
     assert isinstance(generated, list)
     source_patterns = [pattern for patterns in sources.values() for pattern in patterns]
-    normalized = _normalize_project_path(path)
-
     if _matches(normalized, generated):
         if regenerated_from and _matches(regenerated_from, source_patterns):
             approval_outcome = _approval_outcome(policy, approval, regenerated_from)
@@ -296,7 +325,15 @@ def _approval_outcome(
 
 
 def update_authority_directive(existing: str, section_lines: list[str]) -> str:
-    """Insert or replace only the generated authority section in maintained AGENTS.md content."""
+    """Merge a generated authority section into maintained AGENTS.md text.
+
+    existing is the complete maintained document and section_lines is the non-empty
+    output from definition_change_authority_lines. The returned text replaces the
+    existing authority section, inserts it before Technology Skills when absent, or
+    appends it when neither heading exists. Other sections retain their content and the
+    result ends with one newline. The function performs no file I/O and raises ValueError
+    when section_lines is empty.
+    """
 
     if not section_lines:
         raise ValueError("definition_change_authority is required to update the authority directive")

@@ -51,7 +51,7 @@ Governed canonical definition surfaces:
 - Conceptual agent definitions: agents/roles/**/*.role.yaml.
 - Distributed skill definitions: skills/*/SKILL.md.
 - Adapter-owned skill definitions: adapters/*/skills/*/SKILL.md.
-- Definition-affecting metadata and model inputs: skills/*/agents/openai.yaml, agents/role-schema.yaml, agents/model-profiles.yaml, adapters/*/model-profiles.yaml.
+- Definition-affecting metadata and model inputs: skills/*/agents/openai.yaml, adapters/*/skills/*/agents/openai.yaml, agents/role-schema.yaml, agents/model-profiles.yaml, adapters/*/model-profiles.yaml.
 
 Generated definition mirrors are source-owned and must never be edited directly:
 
