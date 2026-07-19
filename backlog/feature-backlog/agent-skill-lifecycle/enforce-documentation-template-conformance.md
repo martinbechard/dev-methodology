@@ -1,8 +1,16 @@
 # Enforce Documentation Template Conformance
 
-Status: Ready
+Status: Running
 
 Type: Defect
+
+## Running Ownership
+
+- Owner: Dev Orchestrator root task 019f77f4-c4bd-7c91-b197-c987a7beb838.
+- Lifecycle agent: Dev Backlog Steward.
+- Lifecycle claim: enforce-documentation-template-conformance-start.
+- Claim evidence: PRIMARY exact-file backlog ownership acquired at 2026-07-19T11:50:25.523351Z from clean baseline commit 1ee72be549619d0eb3fe3e0a769d1d97865d6ba4.
+- Scope boundary: this claim owns only the Running transition and is released after its clean commit. Project source, evaluation artifacts, generated outputs, verification, and integration remain gated on a later ARTIFACT GO.
 
 ## Summary
 
