@@ -496,9 +496,9 @@ cases:
         - -c
         - |
           from pathlib import Path
-          required = [Path("backlog-status.md"), Path("eval-result.md"), Path("docs/feature-backlog/retry-policy.md"), Path(".backlog-state/claims/retry-policy.yaml"), Path(".backlog-state/logs/retry-policy.log")]
+          required = [Path("backlog-status.md"), Path("eval-result.md"), Path("backlog/feature-backlog/retry-policy.md"), Path(".backlog-state/claims/retry-policy.yaml"), Path(".backlog-state/logs/retry-policy.log")]
           missing = [str(path) for path in required if not path.is_file()]
-          forbidden = [Path("docs/completed-backlog/features/retry-policy.md"), Path("docs/failed-backlog/features/retry-policy.md")]
+          forbidden = [Path("backlog/completed-backlog/features/retry-policy.md"), Path("backlog/failed-backlog/features/retry-policy.md")]
           moved = [str(path) for path in forbidden if path.exists()]
           message = ("missing required state or output: " + ", ".join(missing)) if missing else (("unsupported archive transition: " + ", ".join(moved)) if moved else "")
           raise SystemExit(message if message else 0)
@@ -520,11 +520,11 @@ cases:
       modelRubric: workflow-quality
     contextPack:
       fixtureRoot: evals/projects/backlog-lifecycle
-      include: [TASK.md, docs, .backlog-state]
+      include: [TASK.md, backlog, .backlog-state]
       stagedSkillPackages: [manage-backlog, agent-claim, structured-explanation]
       wholeRepositoryAllowed: false
       approvedSensitiveData: false
-    modelVisiblePaths: [TASK.md, docs, .backlog-state]
+    modelVisiblePaths: [TASK.md, backlog, .backlog-state]
     skillResourceAllowlist:
       manage-backlog: [SKILL.md]
       agent-claim: [SKILL.md, scripts/claim.py]

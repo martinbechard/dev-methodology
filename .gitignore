@@ -4,3 +4,4 @@ __pycache__/
 .agents/agent-claims.json
 .codex/
 .obsidian/
+/.worktrees/

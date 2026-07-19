@@ -820,15 +820,18 @@ Manage backlog work as a visible queue with explicit lifecycle state. The active
 
 Use these folders when present:
 
-- docs/defect-backlog for active defects.
-- docs/feature-backlog for active features.
-- docs/analysis-backlog for active analyses.
-- docs/investigation-backlog for active investigations.
-- docs/holding for visible work that should not be dispatched.
-- docs/completed-backlog grouped by item type for delivered work.
-- docs/failed-backlog grouped by item type for failed, incomplete, abandoned, or blocked terminal work.
+- backlog/defect-backlog for active defects.
+- backlog/feature-backlog for active features.
+- backlog/analysis-backlog for active analyses.
+- backlog/investigation-backlog for active investigations.
+- backlog/user-review for visible work whose next safe step requires a user answer.
+- backlog/holding for visible work that should not be dispatched.
+- backlog/completed-backlog grouped by item type for delivered work.
+- backlog/failed-backlog grouped by item type for failed, incomplete, abandoned, or blocked terminal work.
 
-Active backlog folders should contain only work that can still be dispatched or that is blocked by an explicit dependency. Completed and failed archives should not be scanned as fresh work.
+Active typed backlog folders should contain only work that can still be dispatched or that is blocked by an explicit non-user dependency. backlog/user-review is a separate non-dispatchable queue. Completed and failed archives should not be scanned as fresh work.
+
+backlog/holding is for intentionally deferred work that has no immediate user question. backlog/user-review is for an explicit user-owned decision or information boundary. Do not merge their counts or lifecycle rules.
 
 ## Series Folders
 
@@ -854,6 +857,7 @@ Use explicit states and do not infer success from silence:
 - claimed means a specific agent or run owns the item.
 - running means work is in progress.
 - blocked means dependencies or prerequisites are unmet.
+- user review means a user-owned decision or information prerequisite is unmet and the item is in backlog/user-review.
 - target merge pending means implementation evidence exists but delivery is not complete.
 - completed means delivery evidence exists and the item has been archived as completed.
 - failed means work ended in a non-success terminal state and has been archived as failed.
@@ -865,8 +869,11 @@ Missing result evidence, missing logs, a stopped process, or absence of errors i
 
 When asked about backlog status:
 
-- Scan active folders, holding, completed archives, failed archives, and any runner state folders that exist.
+- Scan active folders, user review, holding, completed archives, failed archives, and any runner state folders that exist.
 - Classify each markdown item by folder, slug, status header if present, dependencies, series membership, and archive location.
+- Treat backlog/user-review/README.md as queue guidance rather than a backlog item.
+- Validate that every user-review item records Status: User Review, an underlying work Type, one Question for the User, Why User Input Is Required, a Resolution, and an Unattended Work Boundary.
+- Treat user-review items as visible but not dispatchable, even when their underlying Type would otherwise have high priority.
 - Treat holding items as visible but not dispatchable.
 - Treat series index files as coordination artifacts unless project guidance makes them runnable.
 - Treat completed and failed archive location as durable outcome evidence.
@@ -882,12 +889,28 @@ When choosing work:
 - Reconcile existing claims and interrupted work before claiming new items.
 - Prefer unfinished claimed work over new work.
 - Apply folder priority from project guidance. If none exists, prefer defects, then features, then investigations, then analyses.
+- Exclude backlog/user-review from runnable selection and unattended queue counts.
+- Do not claim, dispatch, implement, or resolve user-review work before the user answers its recorded question.
 - Do not dispatch holding items.
 - Do not dispatch items with unmet dependencies.
 - Do not create duplicate claims for the same item.
 - Keep each claimed item isolated so concurrent work does not share mutable workspace state.
 
 Claims should be durable and exclusive. A claimed item remains readable in its active folder; claiming should not move the item.
+
+## User Review Workflow
+
+When backlog/user-review contains one or more items:
+
+1. Read the item and its current Resolution before asking anything.
+2. Ask the user the exact question recorded in the item. Include the stated options and tradeoffs when present.
+3. Do not infer approval from silence, prior unrelated decisions, repository access, or the ability to implement a technically plausible option.
+4. Record the user's answer under Resolution with the date and the resulting disposition.
+5. Move an approved or answered item into its typed active backlog folder only when the answer makes the work actionable, set its active status according to project convention, and preserve the user decision as authority evidence.
+6. Move a deferred item to backlog/holding. Archive a rejected or abandoned item under the matching failed-backlog type only when the user clearly ends the work.
+7. Keep a partially answered item in backlog/user-review with a narrowed Question for the User. Never claim its implementation scope while a material user decision remains open.
+
+Claim only the files needed to record and move an answered item. Claim implementation scope separately after the item becomes active and dispatchable.
 
 ## Completion Workflow
 
@@ -905,11 +928,11 @@ If the work failed, crashed, was incomplete, hit an unresolved conflict, or lack
 
 Archive movement is explicit and serialized:
 
-- Move successfully delivered defects under docs/completed-backlog/defects.
-- Move successfully delivered features under docs/completed-backlog/features.
-- Move completed analyses under docs/completed-backlog/analyses.
-- Move completed investigations under docs/completed-backlog/investigations.
-- Move failed or incomplete items under the matching docs/failed-backlog type folder.
+- Move successfully delivered defects under backlog/completed-backlog/defects.
+- Move successfully delivered features under backlog/completed-backlog/features.
+- Move completed analyses under backlog/completed-backlog/analyses.
+- Move completed investigations under backlog/completed-backlog/investigations.
+- Move failed or incomplete items under the matching backlog/failed-backlog type folder.
 - Preserve claims, logs, result summaries, and failure reasons until the user no longer needs recovery evidence.
 
 When the backlog and implementation live in the same repository, avoid mixing unrelated changes into archive commits or status updates. Archive movement should correspond to the item outcome being recorded.
@@ -930,6 +953,7 @@ When resuming interrupted backlog work:
 Report backlog state in operator terms:
 
 - Counts by queued, claimed, running, blocked, completed, failed, holding, and invalid.
+- A separate user-review count with each exact pending question; never combine it with blocked or holding.
 - The next runnable items and why they are runnable.
 - Blocked items and the dependency or prerequisite that blocks them.
 - Recent completed or failed outcomes with evidence.
@@ -945,7 +969,7 @@ Use this skill before editing files or taking exclusive runtime resources in a r
 
 ## Goal
 
-Claims make shared work explicit and keep completed work durable. The first independent writer may use a clean primary worktree. Later independent writers use isolated worktrees when their scopes do not overlap. Overlapping work waits. Dirty unclaimed state enters recovery rather than accepting another anonymous edit.
+Claims make shared work explicit and keep completed work durable. The first independent writer may use a clean primary worktree. Later independent writers use isolated worktrees when their scopes do not overlap. Every isolated checkout lives in the canonical .worktrees directory beneath the primary worktree, with the claim id as one portable directory component. Each isolated worktree uses worktree-specific sparse checkout so the repository-root backlog/ directory remains available only from the primary worktree. Overlapping work waits. Dirty unclaimed state enters recovery rather than accepting another anonymous edit.
 
 Start with the narrow scope supported by current evidence. Extend the same claim atomically when another file or resource becomes necessary. Do not speculate about entire directories merely because future scope is unknown.
 
@@ -965,9 +989,11 @@ Use the tool that matches the intended operation:
 | Maintain the journal | claim_maintain_journal | maintain-journal |
 | Report contention | claim_report | report |
 
-Always inspect result.outcome. PRIMARY, ISOLATE, RECOVER, WAIT, ISOLATE_REQUIRED, RECOVERY_REQUIRED, and structured rejections are valid coordination results. A valid result is not an MCP failure and must not be retried through a fallback command.
+For an acquisition or extension that includes backlog scope, and for an isolation acquisition that supplies branch or worktree arguments, use the MCP operation only when its exposed contract explicitly advertises PRIMARY_REQUIRED and backlog sparse-checkout behavior, plus canonical primary-root worktree placement. Otherwise resolve and run the loaded agent-claim skill's claim.py script before dispatch. Following ISOLATE_REQUIRED with the required isolation arguments is the documented state transition, not a retry of a failed mutation.
 
-Use a fallback only when the tool is absent or the MCP server cannot initialize or connect before request dispatch. Never use a fallback after a path, root, authorization, input-policy, or other structured rejection; those results enforce the active boundary. Prefer the installed mcp-agent-ops-claims command when available. Otherwise use the claim.py script inside the loaded agent-claim package. Resolve the script path once and reuse it for every fallback command in the task. Do not assume the target repository contains skills/agent-claim.
+Always inspect result.outcome. PRIMARY, ISOLATE, RECOVER, WAIT, PRIMARY_REQUIRED, ISOLATE_REQUIRED, RECOVERY_REQUIRED, and structured rejections are valid coordination results. A valid result is not an MCP failure and must not be retried through a fallback command.
+
+Outside that explicit capability route, use a fallback only when the tool is absent or the MCP server cannot initialize or connect before request dispatch. Never use a fallback after a path, root, authorization, input-policy, or other structured rejection; those results enforce the active boundary. Prefer the installed mcp-agent-ops-claims command when available. For the capability-routed sparse or backlog flows, use the claim.py script inside the loaded agent-claim package when the copied command does not advertise the required behavior. Resolve the script path once and reuse it for every fallback command in the task. Do not assume the target repository contains skills/agent-claim.
 
 When a transport interruption makes a mutating claim call ambiguous after dispatch, do not repeat the mutation or switch transports immediately. Reconcile with claim_status first. Reconnect and use the MCP status operation when possible; if the server remains unavailable, use only the read-only status fallback. Continue, retry, or release only from the observed registry state so a successful but unacknowledged acquisition cannot become a duplicate claim.
 
@@ -1015,6 +1041,8 @@ The live agent-claims.json registry in that directory is the coordination author
 
 External agent transcripts are not claim history. The journal contains coordination identifiers, normalized scopes, modes, outcomes, conflicts, worktree identifiers, and relevant commit identifiers. It does not contain prompts, reasoning, responses, arbitrary tool output, or task descriptions.
 
+Resolve the primary worktree from Git worktree metadata, even when the command runs from a linked checkout. The canonical linked-checkout root is the .worktrees directory immediately beneath that primary worktree. Never derive it from the current linked worktree, never create it below another linked checkout, and never embed its machine-specific absolute path in portable project guidance. Applicable root project instructions may declare .worktrees as ignored operational state, but the command owns absolute path calculation and enforcement.
+
 ## Claim Scope
 
 Use one scope form for each intended ownership kind:
@@ -1027,6 +1055,10 @@ Use one scope form for each intended ownership kind:
 Tree and all-files scope require a short coordination-only scope reason. Do not put prompts, sensitive company information, or personal information in the reason.
 
 The command rejects repository root, wildcards, and existing directories passed through file. It also rejects an existing file passed through tree. A temporary compat-file-directories switch converts existing directories passed through file into warned tree scopes, but still requires a scope reason. New callers use the explicit forms.
+
+The repository-root backlog directory is primary-worktree-only. Claim backlog paths from the primary worktree. When another claim already owns the primary worktree, a backlog acquisition or an isolated claim extension into backlog returns PRIMARY_REQUIRED and preserves the live registry unchanged.
+
+The claim id also names the canonical isolated checkout directory. It must be one portable path component containing only letters, digits, dots, underscores, or hyphens. Invalid identifiers return INVALID_IDENTIFIER before any worktree is created.
 
 ## When To Claim
 
@@ -1044,8 +1076,9 @@ Use the smallest useful file and resource scope. A parent agent keeps the root t
 The structured JSON outcome is the authoritative coordination result. Stable process exit codes support shell control flow:
 
 - 0 means the command succeeded. Acquisition success returns PRIMARY, ISOLATE, or RECOVER.
-- 1 means a general rejection or failure such as INVALID_SCOPE, CLAIM_NOT_FOUND, RELEASE_REJECTED, or worktree creation failure.
+- 1 means a general rejection or failure such as INVALID_SCOPE, INVALID_IDENTIFIER, INVALID_WORKTREE_PATH, WORKTREE_ROOT_NOT_IGNORED, CLAIM_NOT_FOUND, RELEASE_REJECTED, or worktree creation failure.
 - 3 means WAIT. Requested scope overlaps another active claim.
+- PRIMARY_REQUIRED with exit code 3 means backlog scope must wait until it can run from the primary worktree.
 - 4 means ISOLATE_REQUIRED. Another non-overlapping claim exists, but branch and worktree arguments were not supplied.
 - 5 means RECOVERY_REQUIRED. The unclaimed primary worktree is dirty and explicit recovery authorization was not supplied.
 
@@ -1088,7 +1121,7 @@ For a true repository-wide migration, replace the tree argument with:
 
 ### Isolation Acquisition
 
-When another non-overlapping claim is active, the primary command without isolation arguments returns ISOLATE_REQUIRED with exit code 4 and does not create a claim. Retry the same claim identifier with a unique branch and worktree:
+When another non-overlapping claim is active, the primary command without a branch returns ISOLATE_REQUIRED with exit code 4 and does not create a claim. The structured result reports the canonical worktree root and suggested checkout. Retry the same claim identifier with a unique branch:
 
 ```bash
 python3 "$CLAIM_SCRIPT" --repo . acquire \
@@ -1098,11 +1131,14 @@ python3 "$CLAIM_SCRIPT" --repo . acquire \
   --root-task-id task-123 \
   --file src/feature.py \
   --branch codex/task-123 \
-  --worktree-path ../project-task-123 \
   --base main
 ```
 
-This returns ISOLATE with exit code 0. The base option selects the Git commit or ref from which the isolated branch is created; it defaults to HEAD. Do not supply branch and worktree arguments to bypass overlap: conflicting scope still returns WAIT.
+This returns ISOLATE with exit code 0. The base option selects the Git commit or ref from which the isolated branch is created; it defaults to HEAD. The command derives the target as the primary worktree's .worktrees/task-123 directory, creates the linked checkout with worktree-specific sparse checkout, and omits the backlog/ directory without changing primary-worktree status. The worktree-path compatibility option is accepted only when it resolves exactly to that derived target; any other value returns INVALID_WORKTREE_PATH. Before creation, .worktrees must match the anchored /.worktrees/ pattern in the project .gitignore or another Git ignore source; otherwise the command returns WORKTREE_ROOT_NOT_IGNORED. Do not supply isolation arguments to bypass overlap: conflicting scope still returns WAIT.
+
+### Primary-Only Backlog Acquisition
+
+Backlog creation, lifecycle changes, and archive movements run from the primary worktree. When another claim already exists, a non-overlapping request for a file or tree under backlog returns PRIMARY_REQUIRED with exit code 3 instead of creating an isolated checkout. Wait for the primary claim to finish, then retry without branch or worktree arguments.
 
 ### WAIT
 
@@ -1149,6 +1185,8 @@ python3 "$CLAIM_SCRIPT" --repo . extend \
 
 Extension checks only net-new scope against every other active claim under the registry lock. All requested additions succeed together or WAIT leaves the live claim unchanged. Repeating scope the claim already owns succeeds idempotently and the structured result separates added scope from already-owned scope. Extension preserves the original worktree, branch, mode, baseline commit, and claim timestamp.
 
+An isolated claim cannot extend into backlog scope. That request returns PRIMARY_REQUIRED and leaves the claim unchanged so backlog work can be retried from the primary worktree.
+
 Scope contraction is not supported. Relinquishing a path while it still has uncommitted changes requires a separate safety design.
 
 ## Heartbeat
@@ -1181,10 +1219,13 @@ The shared Git operation is integration into a target branch. Acquire a target-s
 ## Overlap And Isolation
 
 - Any active writer claim causes a later non-overlapping independent writer to use an isolated branch and worktree.
+- Every isolated checkout is derived beneath the primary worktree's .worktrees directory, never beneath the caller's current linked worktree.
+- The canonical worktree root must be ignored, and double-force Git clean is prohibited while linked checkouts exist.
 - Exact files overlap only the same exact file.
 - Trees overlap descendants and intersecting ancestor or descendant trees.
 - All-files overlaps every exact file and tree.
 - Identical exclusive resources overlap even when file scope differs.
+- Backlog paths are never materialized in isolated worktrees and may only be claimed from the primary worktree.
 - Overlap returns WAIT. Worktree isolation does not make conflicting changes logically safe.
 - Never stage, commit, revert, or clean another claim owner’s files unless acting as the explicit integration owner.
 
@@ -1252,6 +1293,7 @@ A modifying task is not complete merely because implementation or tests are comp
 - The claimed worktree is clean.
 - Long-running resources are stopped or explicitly handed off.
 - The claim is released with the bundled command.
+- A clean released isolated checkout is removed by the orchestration owner only after its verified commit is preserved on a branch or integrated into the target.
 - The final response reports the commit hash, verification, and final status.
 
 ### Committed Release
@@ -1261,6 +1303,15 @@ After the claimed worktree is clean and contains the verified task commit, relea
 ```bash
 python3 "$CLAIM_SCRIPT" --repo . release --claim-id task-123
 ```
+
+After the verified commit is preserved and the claim is released, run cleanup from the primary worktree:
+
+```bash
+git worktree remove .worktrees/task-123
+git worktree prune
+```
+
+Never remove a dirty, active, uncommitted, or unpreserved checkout.
 
 ### No-Change Release
 

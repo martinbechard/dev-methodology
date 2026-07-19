@@ -83,23 +83,23 @@ The Project Bootstrapper multi-contribution attempt completed a clean terminal c
 
 ## Product And Skill Findings
 
-The governed runs did not patch distributed skills or target implementations. Fifteen reproducible correction items were added to the existing [Agent Skill Lifecycle backlog](../../../docs/feature-backlog/agent-skill-lifecycle/index.md):
+The governed runs did not patch distributed skills or target implementations. Fifteen reproducible correction items were added to the existing [Agent Skill Lifecycle backlog](../../../backlog/feature-backlog/agent-skill-lifecycle/index.md):
 
-1. [Align Project Organiser filename selection](../../../docs/feature-backlog/agent-skill-lifecycle/align-project-organiser-filename-selection.md).
-2. [Enforce behavioral regression assertions](../../../docs/feature-backlog/agent-skill-lifecycle/enforce-behavioral-regression-assertions.md).
-3. [Prevent unsupported review findings](../../../docs/feature-backlog/agent-skill-lifecycle/prevent-unsupported-review-findings.md).
-4. [Prevent unauthorized contract narrowing](../../../docs/feature-backlog/agent-skill-lifecycle/prevent-unauthorized-contract-narrowing.md).
-5. [Preserve authoritative configuration evidence](../../../docs/feature-backlog/agent-skill-lifecycle/preserve-authoritative-configuration-evidence.md).
-6. [Prevent read-only review side effects](../../../docs/feature-backlog/agent-skill-lifecycle/prevent-read-only-review-side-effects.md).
-7. [Require exact review quotation traceability](../../../docs/feature-backlog/agent-skill-lifecycle/require-exact-review-quotation-traceability.md).
-8. [Preserve canonical review checklists](../../../docs/feature-backlog/agent-skill-lifecycle/preserve-canonical-review-checklists.md).
-9. [Require claimed backlog resumption](../../../docs/feature-backlog/agent-skill-lifecycle/require-claimed-backlog-resumption.md).
-10. [Preserve Configurator runtime bridges](../../../docs/feature-backlog/agent-skill-lifecycle/preserve-configurator-runtime-bridges.md).
-11. [Enforce documentation template conformance](../../../docs/feature-backlog/agent-skill-lifecycle/enforce-documentation-template-conformance.md).
-12. [Preserve integrated documentation steady state](../../../docs/feature-backlog/agent-skill-lifecycle/preserve-integrated-documentation-steady-state.md).
-13. [Restore Wiki Ingester on verifier interruption](../../../docs/feature-backlog/agent-skill-lifecycle/restore-wiki-ingester-on-verifier-interruption.md).
-14. [Preserve Wiki Research source links](../../../docs/feature-backlog/agent-skill-lifecycle/preserve-wiki-research-source-links.md).
-15. [Replace Bootstrapper marathon with isolated test doubles](../../../docs/feature-backlog/agent-skill-lifecycle/replace-bootstrapper-marathon-with-isolated-test-doubles.md).
+1. [Align Project Organiser filename selection](../../../backlog/feature-backlog/agent-skill-lifecycle/align-project-organiser-filename-selection.md).
+2. [Enforce behavioral regression assertions](../../../backlog/feature-backlog/agent-skill-lifecycle/enforce-behavioral-regression-assertions.md).
+3. [Prevent unsupported review findings](../../../backlog/feature-backlog/agent-skill-lifecycle/prevent-unsupported-review-findings.md).
+4. [Prevent unauthorized contract narrowing](../../../backlog/feature-backlog/agent-skill-lifecycle/prevent-unauthorized-contract-narrowing.md).
+5. [Preserve authoritative configuration evidence](../../../backlog/feature-backlog/agent-skill-lifecycle/preserve-authoritative-configuration-evidence.md).
+6. [Prevent read-only review side effects](../../../backlog/feature-backlog/agent-skill-lifecycle/prevent-read-only-review-side-effects.md).
+7. [Require exact review quotation traceability](../../../backlog/feature-backlog/agent-skill-lifecycle/require-exact-review-quotation-traceability.md).
+8. [Preserve canonical review checklists](../../../backlog/feature-backlog/agent-skill-lifecycle/preserve-canonical-review-checklists.md).
+9. [Require claimed backlog resumption](../../../backlog/feature-backlog/agent-skill-lifecycle/require-claimed-backlog-resumption.md).
+10. [Preserve Configurator runtime bridges](../../../backlog/feature-backlog/agent-skill-lifecycle/preserve-configurator-runtime-bridges.md).
+11. [Enforce documentation template conformance](../../../backlog/feature-backlog/agent-skill-lifecycle/enforce-documentation-template-conformance.md).
+12. [Preserve integrated documentation steady state](../../../backlog/feature-backlog/agent-skill-lifecycle/preserve-integrated-documentation-steady-state.md).
+13. [Restore Wiki Ingester on verifier interruption](../../../backlog/feature-backlog/agent-skill-lifecycle/restore-wiki-ingester-on-verifier-interruption.md).
+14. [Preserve Wiki Research source links](../../../backlog/feature-backlog/agent-skill-lifecycle/preserve-wiki-research-source-links.md).
+15. [Replace Bootstrapper marathon with isolated test doubles](../../../backlog/feature-backlog/agent-skill-lifecycle/replace-bootstrapper-marathon-with-isolated-test-doubles.md).
 
 The final corrected Wiki Ingester suite demonstrates that the ordinary exhausted-correction path can restore tentative wiki edits and close cleanly. Backlog item 13 remains necessary for the distinct interruption path where verification cannot finish.
 

@@ -73,7 +73,7 @@ A suite is done when all of its initial scenarios are executable and have a gove
 - **FINISHED AT:** 2026-07-18T18:57:23Z.
 - **ACTUAL ELAPSED:** Recorded per parallel batch and recovery run in the complete execution report; suite elapsed times overlap because up to four supervisors ran concurrently.
 - **EVIDENCE:** [Complete agent-suite execution report](results/2026-07-17-complete-agent-suites.md).
-- **BACKLOG:** Reproducible target and skill corrections were recorded under [Agent Skill Lifecycle](../../docs/feature-backlog/agent-skill-lifecycle/index.md). No distributed skill was corrected from inside its governed evaluation.
+- **BACKLOG:** Reproducible target and skill corrections were recorded under [Agent Skill Lifecycle](../../backlog/feature-backlog/agent-skill-lifecycle/index.md). No distributed skill was corrected from inside its governed evaluation.
 - **COMMIT:** Recorded by the repository commit containing this completed tracker and report.
 
 ## Final State

@@ -469,7 +469,7 @@
           <tr>
             <td><span class="name">Claim gate</span></td>
             <td>Every modifying claim owner</td>
-            <td>Mutation begins only after <a href="../skills/agent-claim/SKILL.md">agent-claim</a> establishes narrow ownership of the affected exact files and exclusive resources. The owner extends that claim atomically when evidence reveals another required file, tree, or resource.</td>
+            <td>Mutation begins only after <a href="../skills/agent-claim/SKILL.md">agent-claim</a> establishes narrow ownership of the affected exact files and exclusive resources. The owner extends that claim atomically when evidence reveals another required file, tree, or resource. Isolated checkouts live only beneath the primary worktree's ignored <code>.worktrees</code> directory, use the claim id as one portable directory component, and omit the repository-root backlog directory through worktree-specific sparse checkout; backlog lifecycle work waits for the primary worktree.</td>
           </tr>
           <tr>
             <td><span class="name">Placement, when needed</span></td>
@@ -514,7 +514,7 @@
           <tr>
             <td><span class="name">Completion and claim release</span></td>
             <td>Dev Orchestrator and every claim owner</td>
-            <td>Record the final direct commit for the single-lane path, or the final integration commit after integrated review and verification for the multi-lane path. Release ownership only after clean status and resource cleanup or handoff. Repository-global claim events retain the coordination lifecycle for later contention reporting.</td>
+            <td>Record the final direct commit for the single-lane path, or the final integration commit after integrated review and verification for the multi-lane path. Release ownership only after clean status and resource cleanup or handoff. Once an isolated contribution is preserved on its branch or integrated, remove its clean linked checkout from the primary worktree and prune stale Git worktree metadata. Repository-global claim events retain the coordination lifecycle for later contention reporting.</td>
           </tr>
         </tbody>
       </table>

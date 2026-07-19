@@ -28,6 +28,10 @@ ERROR = 1
 WAIT = 3
 ISOLATE_REQUIRED = 4
 RECOVERY_REQUIRED = 5
+BACKLOG_ROOT_DIRECTORY = "backlog"
+WORKTREE_ROOT_DIRECTORY = ".worktrees"
+WORKTREE_IGNORE_PATTERN = "/.worktrees/"
+ISOLATED_SPARSE_CHECKOUT_PATTERNS = ("/*", "!/backlog/")
 REGISTRY_FILE_NAME = "agent-claims.json"
 LOCK_FILE_NAME = "agent-claims.lock"
 EVENT_DIRECTORY_NAME = "agent-claim-events"
@@ -40,6 +44,7 @@ MAX_IDENTIFIER_LENGTH = 200
 STALE_HEARTBEAT_HOURS = 24
 UTC_DAY_PATTERN = re.compile(r"^(\d{4}-\d{2}-\d{2})\.jsonl$")
 SINCE_PATTERN = re.compile(r"^(\d+)([dh])$")
+WORKTREE_COMPONENT_PATTERN = re.compile(r"^[A-Za-z0-9](?:[A-Za-z0-9._-]{0,198}[A-Za-z0-9_-])?$")
 
 
 class _ScopeError(ValueError):
@@ -67,6 +72,48 @@ def _git_common_directory(repository: Path) -> Path:
     if not raw_path.is_absolute():
         raw_path = repository / raw_path
     return raw_path.resolve()
+
+
+def _primary_worktree(repository: Path) -> Path:
+    fields = _git(repository, "worktree", "list", "--porcelain", "-z").stdout.split("\0")
+    for field in fields:
+        if field.startswith("worktree "):
+            return Path(field.removeprefix("worktree ")).resolve()
+    raise RuntimeError("Git did not report a primary worktree.")
+
+
+def _canonical_worktree_root(repository: Path) -> Path:
+    return (_primary_worktree(repository) / WORKTREE_ROOT_DIRECTORY).resolve()
+
+
+def _canonical_worktree(repository: Path, claim_id: str) -> Path:
+    return (_canonical_worktree_root(repository) / claim_id).resolve()
+
+
+def _claim_owns_primary_worktree(claim: dict[str, Any], primary_worktree: Path) -> bool:
+    if claim.get("mode") in {"primary", "recovery"}:
+        return True
+    worktree = claim.get("worktree")
+    return isinstance(worktree, str) and Path(worktree).resolve() == primary_worktree
+
+
+def _worktree_root_is_ignored(repository: Path) -> bool:
+    primary_worktree = _primary_worktree(repository)
+    probe = f"{WORKTREE_ROOT_DIRECTORY}/.agent-claim-ignore-probe"
+    ignored = _git(
+        primary_worktree,
+        "check-ignore",
+        "--quiet",
+        "--no-index",
+        "--",
+        probe,
+        check=False,
+    )
+    return ignored.returncode == SUCCESS
+
+
+def _claim_id_is_safe_worktree_component(claim_id: str) -> bool:
+    return bool(WORKTREE_COMPONENT_PATTERN.fullmatch(claim_id))
 
 
 def _registry_paths(repository: Path) -> tuple[Path, Path]:
@@ -150,6 +197,45 @@ def _head(worktree: Path) -> str:
 
 def _branch(worktree: Path) -> str:
     return _git(worktree, "branch", "--show-current").stdout.strip()
+
+
+def _discard_incomplete_worktree(repository: Path, worktree: Path, branch: str) -> None:
+    _git(repository, "worktree", "remove", "--force", str(worktree), check=False)
+    _git(repository, "branch", "-D", branch, check=False)
+
+
+def _create_isolated_worktree(repository: Path, worktree: Path, branch: str, base: str) -> str | None:
+    created = _git(
+        repository,
+        "worktree",
+        "add",
+        "--no-checkout",
+        "-b",
+        branch,
+        str(worktree),
+        base,
+        check=False,
+    )
+    if created.returncode != SUCCESS:
+        return "git_worktree_create_failed"
+
+    sparse_checkout = _git(
+        worktree,
+        "sparse-checkout",
+        "set",
+        "--no-cone",
+        *ISOLATED_SPARSE_CHECKOUT_PATTERNS,
+        check=False,
+    )
+    if sparse_checkout.returncode != SUCCESS:
+        _discard_incomplete_worktree(repository, worktree, branch)
+        return "sparse_checkout_configure_failed"
+
+    populated = _git(worktree, "reset", "--hard", "HEAD", check=False)
+    if populated.returncode != SUCCESS:
+        _discard_incomplete_worktree(repository, worktree, branch)
+        return "sparse_checkout_populate_failed"
+    return None
 
 
 def _bounded_identifier(value: str | None) -> str | None:
@@ -311,6 +397,15 @@ def _path_scopes(scope: dict[str, Any]) -> list[tuple[str, str]]:
     if scope.get("all_files"):
         values.append(("all_files", "."))
     return values
+
+
+def _scope_requires_primary_worktree(scope: dict[str, Any]) -> bool:
+    if scope.get("all_files"):
+        return True
+    return any(
+        kind in {"file", "tree"} and _path_is_within(path, BACKLOG_ROOT_DIRECTORY)
+        for kind, path in _path_scopes(scope)
+    )
 
 
 def _overlap_details(requested: dict[str, Any], claimed: dict[str, Any]) -> list[dict[str, str]]:
@@ -529,6 +624,98 @@ def _invalid_scope_result(
     )
 
 
+def _primary_required_result(
+    common_directory: Path,
+    action: str,
+    args: argparse.Namespace,
+    requested_scope: dict[str, Any],
+    scope_warnings: list[dict[str, str]],
+    claim: dict[str, Any] | None = None,
+    **details: Any,
+) -> int:
+    reason = "backlog_requires_primary_worktree"
+    event = _event(
+        action,
+        "PRIMARY_REQUIRED",
+        args,
+        claim=claim,
+        requested_scope=requested_scope,
+        reason=reason,
+        command_warnings=scope_warnings,
+        **details,
+    )
+    return _journaled_result(
+        WAIT,
+        common_directory,
+        event,
+        scope_warnings,
+        reason=reason,
+        message="Backlog scope is available only from the primary worktree.",
+        **details,
+    )
+
+
+def _invalid_identifier_result(common_directory: Path, args: argparse.Namespace) -> int:
+    message = "claim_id must be one portable path component containing only letters, digits, dots, underscores, or hyphens."
+    event = _event(
+        "acquire",
+        "INVALID_IDENTIFIER",
+        args,
+        field="claim_id",
+        reason="claim_id_not_portable_path_component",
+    )
+    return _journaled_result(
+        ERROR,
+        common_directory,
+        event,
+        field="claim_id",
+        message=message,
+    )
+
+
+def _invalid_worktree_path_result(
+    common_directory: Path,
+    args: argparse.Namespace,
+    expected_worktree: Path,
+    provided_worktree: Path,
+) -> int:
+    event = _event(
+        "acquire",
+        "INVALID_WORKTREE_PATH",
+        args,
+        reason="worktree_path_not_canonical",
+    )
+    return _journaled_result(
+        ERROR,
+        common_directory,
+        event,
+        expected_worktree=str(expected_worktree),
+        provided_worktree=str(provided_worktree),
+        message="The worktree path must match the canonical target under the primary worktree.",
+    )
+
+
+def _worktree_root_not_ignored_result(
+    common_directory: Path,
+    args: argparse.Namespace,
+    worktree_root: Path,
+) -> int:
+    event = _event(
+        "acquire",
+        "WORKTREE_ROOT_NOT_IGNORED",
+        args,
+        reason="canonical_worktree_root_not_ignored",
+    )
+    return _journaled_result(
+        ERROR,
+        common_directory,
+        event,
+        worktree_root=str(worktree_root),
+        required_ignore_pattern=WORKTREE_IGNORE_PATTERN,
+        message="Ignore the canonical worktree root before creating an isolated worktree.",
+    )
+
+
 def _acquire(args: argparse.Namespace) -> int:
     repository = _repository_root(Path(args.repo).resolve())
     with _locked_registry(repository) as (registry_path, data):
@@ -537,6 +724,8 @@ def _acquire(args: argparse.Namespace) -> int:
             requested_scope, scope_warnings = _scope_from_args(args, repository)
         except _ScopeError as error:
             return _invalid_scope_result(common_directory, "acquire", args, error)
+        if not _claim_id_is_safe_worktree_component(args.claim_id):
+            return _invalid_identifier_result(common_directory, args)
 
         claims: list[dict[str, Any]] = data["claims"]
         if any(claim.get("claim_id") == args.claim_id for claim in claims):
@@ -562,8 +751,28 @@ def _acquire(args: argparse.Namespace) -> int:
                 overlaps=event["overlaps"],
             )
 
-        if claims:
-            if not args.branch or not args.worktree_path:
+        requires_primary = _scope_requires_primary_worktree(requested_scope)
+        if requires_primary:
+            primary_worktree = _primary_worktree(repository)
+            caller_is_primary = repository == primary_worktree
+            primary_is_claimed = any(
+                _claim_owns_primary_worktree(claim, primary_worktree)
+                for claim in claims
+            )
+            if not caller_is_primary or primary_is_claimed:
+                return _primary_required_result(
+                    common_directory,
+                    "acquire",
+                    args,
+                    requested_scope,
+                    scope_warnings,
+                    active_claim_count=len(claims),
+                )
+
+        if claims and not requires_primary:
+            worktree_root = _canonical_worktree_root(repository)
+            target_worktree = _canonical_worktree(repository, args.claim_id)
+            if not args.branch:
                 event = _event(
                     "acquire",
                     "ISOLATE_REQUIRED",
@@ -578,25 +787,34 @@ def _acquire(args: argparse.Namespace) -> int:
                     event,
                     scope_warnings,
                     active_claim_count=len(claims),
+                    required_ignore_pattern=WORKTREE_IGNORE_PATTERN,
+                    suggested_worktree=str(target_worktree),
+                    worktree_root=str(worktree_root),
                 )
-            target_worktree = Path(args.worktree_path).resolve()
-            completed = _git(
+            if args.worktree_path:
+                provided_worktree = Path(args.worktree_path).resolve()
+                if provided_worktree != target_worktree:
+                    return _invalid_worktree_path_result(
+                        common_directory,
+                        args,
+                        target_worktree,
+                        provided_worktree,
+                    )
+            if not _worktree_root_is_ignored(repository):
+                return _worktree_root_not_ignored_result(common_directory, args, worktree_root)
+            failure_reason = _create_isolated_worktree(
                 repository,
-                "worktree",
-                "add",
-                "-b",
+                target_worktree,
                 args.branch,
-                str(target_worktree),
                 args.base,
-                check=False,
             )
-            if completed.returncode != SUCCESS:
+            if failure_reason is not None:
                 event = _event(
                     "acquire",
                     "WORKTREE_CREATE_FAILED",
                     args,
                     requested_scope=requested_scope,
-                    reason="git_worktree_create_failed",
+                    reason=failure_reason,
                 )
                 return _journaled_result(ERROR, common_directory, event, message="Git worktree creation failed.")
             mode = "isolated"
@@ -699,6 +917,18 @@ def _extend(args: argparse.Namespace) -> int:
                 scope_warnings,
                 conflicting_claim_ids=[item["claim_id"] for item in conflicts],
                 overlaps=event["overlaps"],
+                added_scope=added,
+                already_owned_scope=already_owned,
+            )
+
+        if claim.get("mode") == "isolated" and _scope_requires_primary_worktree(added):
+            return _primary_required_result(
+                common_directory,
+                "extend",
+                args,
+                requested_scope,
+                scope_warnings,
+                claim=claim,
                 added_scope=added,
                 already_owned_scope=already_owned,
             )
@@ -1180,7 +1410,10 @@ def _parser() -> argparse.ArgumentParser:
     acquire.add_argument("--parent-claim-id")
     _add_scope_arguments(acquire)
     acquire.add_argument("--branch")
-    acquire.add_argument("--worktree-path")
+    acquire.add_argument(
+        "--worktree-path",
+        help="Compatibility input that must equal the canonical primary-root .worktrees target.",
+    )
     acquire.add_argument("--base", default="HEAD")
     acquire.add_argument("--allow-recovery", action="store_true")
     acquire.set_defaults(handler=_acquire)
