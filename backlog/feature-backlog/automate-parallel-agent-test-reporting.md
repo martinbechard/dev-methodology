@@ -1,6 +1,6 @@
 # Automate Bounded-Parallel Agent Test Reporting
 
-Status: Running
+Status: Blocked
 
 Type: Feature
 
@@ -66,6 +66,14 @@ None.
 - Run selected Codex smoke suites and, when authorized resources permit, one full Codex aggregation acceptance run.
 - Run only selected Junie smoke suites for live-harness acceptance. Use fakes or local deterministic fixtures for full-selection scheduling and aggregation coverage; do not require or perform a full Junie run.
 - Run Agent Skill validation, generated-output checks when affected, repository script tests, project-wiki tests, and Git diff validation.
+
+## Blocked Evidence
+
+The Dev Orchestrator exhausted its bounded two-attempt correction loop. Work started at commit 4237167, and the clean implementation remains preserved in commits ea5d39b, 9c01df7, and 13f16c0.
+
+Focused verification passed 87 tests, generated checks passed, and project-wiki verification passed 17 tests. The broad scripts run passed 396 of 397 tests; the remaining failure is the isolated-worktree backlog omission. No live model or Junie credits were spent.
+
+Independent review rejected both attempts because actual Junie runtime events do not emit the staged marker and digest fields used by the positive test, so a normal selected Junie smoke run cannot be bound to its definition. The deterministic and Judge evidence also remains model-authored strings and repeated checkpoint content rather than path- and digest-bound receipts with an actual Judge disposition. The critical-skip proof is substring-based. These gaps leave the governed Junie and Judge acceptance criteria unproven.
 
 ## Notes
 
