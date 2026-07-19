@@ -1,0 +1,21 @@
+schema: dev-methodology-technology-detection
+version: 2
+skill: quartz
+kind: technology
+label: Quartz Scheduler
+capabilities:
+- job-scheduling
+activation:
+  anyOf:
+  - allOf:
+    - fileMatch: {glob: "**/src/**/*.java", extensions: [.java]}
+    - anyOf:
+      - owningContentPattern: {glob: pom.xml, contains: org.quartz-scheduler}
+      - owningContentPattern: {glob: pom.xml, contains: spring-boot-starter-quartz}
+      - owningContentPattern: {glob: pom.xml, contains: quarkus-quartz}
+      - owningContentPattern: {glob: "build.gradle*", contains: org.quartz-scheduler}
+      - owningContentPattern: {glob: "build.gradle*", contains: spring-boot-starter-quartz}
+      - owningContentPattern: {glob: "build.gradle*", contains: quarkus-quartz}
+companions:
+- java
+selection: additive

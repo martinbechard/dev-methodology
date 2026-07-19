@@ -1550,6 +1550,37 @@ class BundleContentTests(unittest.TestCase):
             self.assertIn(phrase, skill_text)
         self.assertTrue((skill_root / "detection.yaml").is_file())
 
+    def test_mysql_quartz_and_mapstruct_guidance_is_detection_backed(self) -> None:
+        expected_phrases = {
+            "mysql": (
+                "clustered key's effect",
+                "metadata-lock acquisition",
+                "against the production engine",
+            ),
+            "quartz": (
+                "explicit misfire instruction",
+                "sources of duplicate or partial execution",
+                "JDBCJobStore",
+                "cluster membership",
+            ),
+            "mapstruct": (
+                "explicit unmapped-target policy",
+                "@MappingTarget",
+                "cycle tracking",
+                "clean command-line compile",
+                "Inspect the generated mapper implementation",
+            ),
+        }
+
+        for skill_name, phrases in expected_phrases.items():
+            with self.subTest(skill=skill_name):
+                skill_root = SKILLS_ROOT / skill_name
+                skill_text = (skill_root / "SKILL.md").read_text(encoding="utf-8")
+                self.assertTrue((skill_root / "agents" / "openai.yaml").is_file())
+                self.assertTrue((skill_root / "detection.yaml").is_file())
+                for phrase in phrases:
+                    self.assertIn(phrase, skill_text)
+
     def test_code_comments_is_a_core_coding_and_review_contract(self) -> None:
         skill_root = SKILLS_ROOT / "code-comments"
         skill_text = (skill_root / "SKILL.md").read_text(encoding="utf-8")

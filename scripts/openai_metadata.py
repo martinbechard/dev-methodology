@@ -25,6 +25,11 @@ DERIVED_INTERFACE_KEYS = {"display_name", "short_description"}
 INTERFACE_SECTION_KEY = "interface"
 POLICY_SECTION_KEY = "policy"
 DEPENDENCIES_SECTION_KEY = "dependencies"
+BRAND_DISPLAY_NAMES = {
+    "jhipster": "JHipster",
+    "mapstruct": "MapStruct",
+    "mysql": "MySQL",
+}
 
 
 def split_frontmatter(text: str) -> dict[str, object]:
@@ -48,9 +53,9 @@ def load_skill_frontmatter(skill_directory: Path) -> dict[str, object]:
 
 
 def display_name_from_skill_name(skill_name: str) -> str:
-    """Convert a skill identifier to a UI label while preserving the JHipster brand spelling."""
+    """Convert a skill identifier to a UI label while preserving known brand spellings."""
     words = WORD_SEPARATOR_PATTERN.split(skill_name)
-    return " ".join("JHipster" if word.lower() == "jhipster" else word.title() for word in words)
+    return " ".join(BRAND_DISPLAY_NAMES.get(word.lower(), word.title()) for word in words)
 
 
 def short_description_from_skill_description(description: str) -> str:

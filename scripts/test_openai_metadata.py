@@ -83,6 +83,18 @@ class OpenAiMetadataTests(unittest.TestCase):
 
         self.assertEqual("JHipster Domain Modeling", script.display_name_from_skill_name("jhipster-domain-modeling"))
 
+    def test_display_name_preserves_mysql_brand_capitalization(self) -> None:
+        """Keep generated MySQL skill labels aligned with the product's canonical spelling."""
+        script = load_script()
+
+        self.assertEqual("MySQL", script.display_name_from_skill_name("mysql"))
+
+    def test_display_name_preserves_mapstruct_brand_capitalization(self) -> None:
+        """Keep generated MapStruct skill labels aligned with the product's canonical spelling."""
+        script = load_script()
+
+        self.assertEqual("MapStruct", script.display_name_from_skill_name("mapstruct"))
+
 
 if __name__ == "__main__":
     unittest.main()

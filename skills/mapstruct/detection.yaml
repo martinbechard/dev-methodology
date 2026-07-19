@@ -1,0 +1,20 @@
+schema: dev-methodology-technology-detection
+version: 2
+skill: mapstruct
+kind: technology
+label: MapStruct
+capabilities:
+- compile-time-object-mapping
+activation:
+  anyOf:
+  - allOf:
+    - anyOf:
+      - contentPattern: {glob: "**/*.java", contains: "import org.mapstruct."}
+      - contentPattern: {glob: "**/*.java", contains: "@org.mapstruct."}
+    - anyOf:
+      - owningContentPattern: {glob: pom.xml, contains: "<artifactId>mapstruct</artifactId>"}
+      - owningContentPattern: {glob: pom.xml, contains: "<artifactId>mapstruct-processor</artifactId>"}
+      - owningContentPattern: {glob: "build.gradle*", contains: "org.mapstruct:mapstruct"}
+      - owningContentPattern: {glob: "build.gradle*", contains: "org.mapstruct:mapstruct-processor"}
+companions:
+- java

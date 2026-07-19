@@ -440,12 +440,15 @@ The stack and project-domain skill packs are:
 - quarkus-persistence
 - quarkus-testing
 - liquibase
+- quartz
+- mapstruct
 - jhipster-project
 - jhipster-domain-modeling
 - jhipster-persistence
 - jhipster-testing
 - jhipster-security
 - sql
+- mysql
 - electron-main
 - electron-preload
 - react-vite-renderer

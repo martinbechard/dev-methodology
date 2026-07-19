@@ -1350,6 +1350,72 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
           {
             "allOf": [
               {
+                "anyOf": [
+                  {
+                    "contentPattern": {
+                      "contains": "import org.mapstruct.",
+                      "glob": "**/*.java"
+                    }
+                  },
+                  {
+                    "contentPattern": {
+                      "contains": "@org.mapstruct.",
+                      "glob": "**/*.java"
+                    }
+                  }
+                ]
+              },
+              {
+                "anyOf": [
+                  {
+                    "owningContentPattern": {
+                      "contains": "<artifactId>mapstruct</artifactId>",
+                      "glob": "pom.xml"
+                    }
+                  },
+                  {
+                    "owningContentPattern": {
+                      "contains": "<artifactId>mapstruct-processor</artifactId>",
+                      "glob": "pom.xml"
+                    }
+                  },
+                  {
+                    "owningContentPattern": {
+                      "contains": "org.mapstruct:mapstruct",
+                      "glob": "build.gradle*"
+                    }
+                  },
+                  {
+                    "owningContentPattern": {
+                      "contains": "org.mapstruct:mapstruct-processor",
+                      "glob": "build.gradle*"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "capabilities": [
+        "compile-time-object-mapping"
+      ],
+      "companions": [
+        "java"
+      ],
+      "kind": "technology",
+      "label": "MapStruct",
+      "priority": 100,
+      "requiredWhenDetected": true,
+      "selection": "additive",
+      "skill": "mapstruct"
+    },
+    {
+      "activation": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
                 "fileMatch": {
                   "extensions": [
                     ".java"
@@ -1407,6 +1473,423 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
       "requiredWhenDetected": true,
       "selection": "additive",
       "skill": "mockito"
+    },
+    {
+      "activation": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "fileMatch": {
+                      "extensions": [
+                        ".java",
+                        ".kt",
+                        ".kts",
+                        ".groovy",
+                        ".scala",
+                        ".ts",
+                        ".tsx",
+                        ".js",
+                        ".jsx",
+                        ".mts",
+                        ".cts",
+                        ".py",
+                        ".pyi",
+                        ".sql"
+                      ],
+                      "glob": "**/src/**"
+                    }
+                  },
+                  {
+                    "fileMatch": {
+                      "extensions": [
+                        ".java",
+                        ".kt",
+                        ".kts",
+                        ".groovy",
+                        ".scala",
+                        ".ts",
+                        ".tsx",
+                        ".js",
+                        ".jsx",
+                        ".mts",
+                        ".cts",
+                        ".py",
+                        ".pyi",
+                        ".sql"
+                      ],
+                      "glob": "**/app/**"
+                    }
+                  },
+                  {
+                    "fileMatch": {
+                      "extensions": [
+                        ".java",
+                        ".kt",
+                        ".kts",
+                        ".groovy",
+                        ".scala",
+                        ".ts",
+                        ".tsx",
+                        ".js",
+                        ".jsx",
+                        ".mts",
+                        ".cts",
+                        ".py",
+                        ".pyi",
+                        ".sql"
+                      ],
+                      "glob": "**/lib/**"
+                    }
+                  },
+                  {
+                    "fileMatch": {
+                      "extensions": [
+                        ".java",
+                        ".kt",
+                        ".kts",
+                        ".groovy",
+                        ".scala",
+                        ".ts",
+                        ".tsx",
+                        ".js",
+                        ".jsx",
+                        ".mts",
+                        ".cts",
+                        ".py",
+                        ".pyi",
+                        ".sql"
+                      ],
+                      "glob": "**/server/**"
+                    }
+                  },
+                  {
+                    "fileMatch": {
+                      "extensions": [
+                        ".java",
+                        ".kt",
+                        ".kts",
+                        ".groovy",
+                        ".scala",
+                        ".ts",
+                        ".tsx",
+                        ".js",
+                        ".jsx",
+                        ".mts",
+                        ".cts",
+                        ".py",
+                        ".pyi",
+                        ".sql"
+                      ],
+                      "glob": "*"
+                    }
+                  }
+                ]
+              },
+              {
+                "anyOf": [
+                  {
+                    "owningContentPattern": {
+                      "contains": "mysql-connector-j",
+                      "glob": "pom.xml"
+                    }
+                  },
+                  {
+                    "owningContentPattern": {
+                      "contains": "mysql-connector-java",
+                      "glob": "pom.xml"
+                    }
+                  },
+                  {
+                    "owningContentPattern": {
+                      "contains": "mysql-connector-j",
+                      "glob": "build.gradle*"
+                    }
+                  },
+                  {
+                    "owningContentPattern": {
+                      "contains": "mysql-connector-java",
+                      "glob": "build.gradle*"
+                    }
+                  },
+                  {
+                    "owningDependency": "mysql2"
+                  },
+                  {
+                    "owningDependency": "mysql"
+                  },
+                  {
+                    "owningDependency": "mysql-connector-python"
+                  },
+                  {
+                    "owningDependency": "pymysql"
+                  },
+                  {
+                    "owningDependency": "mysqlclient"
+                  },
+                  {
+                    "owningDependency": "aiomysql"
+                  },
+                  {
+                    "owningDependency": "asyncmy"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "allOf": [
+              {
+                "anyOf": [
+                  {
+                    "fileMatch": {
+                      "extensions": [
+                        ".java",
+                        ".kt",
+                        ".kts",
+                        ".groovy",
+                        ".scala",
+                        ".ts",
+                        ".tsx",
+                        ".js",
+                        ".jsx",
+                        ".mts",
+                        ".cts",
+                        ".py",
+                        ".pyi",
+                        ".sql"
+                      ],
+                      "glob": "**/src/**"
+                    }
+                  },
+                  {
+                    "fileMatch": {
+                      "extensions": [
+                        ".java",
+                        ".kt",
+                        ".kts",
+                        ".groovy",
+                        ".scala",
+                        ".ts",
+                        ".tsx",
+                        ".js",
+                        ".jsx",
+                        ".mts",
+                        ".cts",
+                        ".py",
+                        ".pyi",
+                        ".sql"
+                      ],
+                      "glob": "**/app/**"
+                    }
+                  },
+                  {
+                    "fileMatch": {
+                      "extensions": [
+                        ".java",
+                        ".kt",
+                        ".kts",
+                        ".groovy",
+                        ".scala",
+                        ".ts",
+                        ".tsx",
+                        ".js",
+                        ".jsx",
+                        ".mts",
+                        ".cts",
+                        ".py",
+                        ".pyi",
+                        ".sql"
+                      ],
+                      "glob": "**/lib/**"
+                    }
+                  },
+                  {
+                    "fileMatch": {
+                      "extensions": [
+                        ".java",
+                        ".kt",
+                        ".kts",
+                        ".groovy",
+                        ".scala",
+                        ".ts",
+                        ".tsx",
+                        ".js",
+                        ".jsx",
+                        ".mts",
+                        ".cts",
+                        ".py",
+                        ".pyi",
+                        ".sql"
+                      ],
+                      "glob": "**/server/**"
+                    }
+                  },
+                  {
+                    "fileMatch": {
+                      "extensions": [
+                        ".java",
+                        ".kt",
+                        ".kts",
+                        ".groovy",
+                        ".scala",
+                        ".ts",
+                        ".tsx",
+                        ".js",
+                        ".jsx",
+                        ".mts",
+                        ".cts",
+                        ".py",
+                        ".pyi",
+                        ".sql"
+                      ],
+                      "glob": "*"
+                    }
+                  }
+                ]
+              },
+              {
+                "anyOf": [
+                  {
+                    "contentPattern": {
+                      "contains": "jdbc:mysql:",
+                      "glob": "**/src/**/application.properties"
+                    }
+                  },
+                  {
+                    "contentPattern": {
+                      "contains": "jdbc:mysql:",
+                      "glob": "**/src/**/application.yaml"
+                    }
+                  },
+                  {
+                    "contentPattern": {
+                      "contains": "jdbc:mysql:",
+                      "glob": "**/src/**/application.yml"
+                    }
+                  },
+                  {
+                    "contentPattern": {
+                      "contains": "mysql://",
+                      "glob": "**/src/**/database.yaml"
+                    }
+                  },
+                  {
+                    "contentPattern": {
+                      "contains": "mysql://",
+                      "glob": "**/src/**/database.yml"
+                    }
+                  },
+                  {
+                    "contentPattern": {
+                      "contains": "mysql://",
+                      "glob": "**/src/**/database.toml"
+                    }
+                  },
+                  {
+                    "contentPattern": {
+                      "contains": "mysql://",
+                      "glob": "**/src/**/database.json"
+                    }
+                  },
+                  {
+                    "contentPattern": {
+                      "contains": "mysql+",
+                      "glob": "**/src/**/database.ini"
+                    }
+                  },
+                  {
+                    "owningContentPattern": {
+                      "contains": "mysql://",
+                      "glob": ".env"
+                    }
+                  },
+                  {
+                    "owningContentPattern": {
+                      "contains": "mysql+",
+                      "glob": ".env"
+                    }
+                  },
+                  {
+                    "owningContentPattern": {
+                      "contains": "jdbc:mysql:",
+                      "glob": "application.properties"
+                    }
+                  },
+                  {
+                    "owningContentPattern": {
+                      "contains": "jdbc:mysql:",
+                      "glob": "application.yaml"
+                    }
+                  },
+                  {
+                    "owningContentPattern": {
+                      "contains": "mysql://",
+                      "glob": "application.yaml"
+                    }
+                  },
+                  {
+                    "owningContentPattern": {
+                      "contains": "jdbc:mysql:",
+                      "glob": "application.yml"
+                    }
+                  },
+                  {
+                    "owningContentPattern": {
+                      "contains": "mysql://",
+                      "glob": "application.yml"
+                    }
+                  },
+                  {
+                    "owningContentPattern": {
+                      "contains": "mysql://",
+                      "glob": "database.yaml"
+                    }
+                  },
+                  {
+                    "owningContentPattern": {
+                      "contains": "mysql://",
+                      "glob": "database.yml"
+                    }
+                  },
+                  {
+                    "owningContentPattern": {
+                      "contains": "mysql://",
+                      "glob": "database.toml"
+                    }
+                  },
+                  {
+                    "owningContentPattern": {
+                      "contains": "mysql://",
+                      "glob": "database.json"
+                    }
+                  },
+                  {
+                    "owningContentPattern": {
+                      "contains": "mysql+",
+                      "glob": "database.ini"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "capabilities": [
+        "database-engine"
+      ],
+      "companions": [
+        "sql"
+      ],
+      "kind": "technology",
+      "label": "MySQL",
+      "priority": 100,
+      "requiredWhenDetected": true,
+      "selection": "additive",
+      "skill": "mysql"
     },
     {
       "activation": {
@@ -2092,6 +2575,76 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
       "requiredWhenDetected": true,
       "selection": "additive",
       "skill": "quarkus-testing"
+    },
+    {
+      "activation": {
+        "anyOf": [
+          {
+            "allOf": [
+              {
+                "fileMatch": {
+                  "extensions": [
+                    ".java"
+                  ],
+                  "glob": "**/src/**/*.java"
+                }
+              },
+              {
+                "anyOf": [
+                  {
+                    "owningContentPattern": {
+                      "contains": "org.quartz-scheduler",
+                      "glob": "pom.xml"
+                    }
+                  },
+                  {
+                    "owningContentPattern": {
+                      "contains": "spring-boot-starter-quartz",
+                      "glob": "pom.xml"
+                    }
+                  },
+                  {
+                    "owningContentPattern": {
+                      "contains": "quarkus-quartz",
+                      "glob": "pom.xml"
+                    }
+                  },
+                  {
+                    "owningContentPattern": {
+                      "contains": "org.quartz-scheduler",
+                      "glob": "build.gradle*"
+                    }
+                  },
+                  {
+                    "owningContentPattern": {
+                      "contains": "spring-boot-starter-quartz",
+                      "glob": "build.gradle*"
+                    }
+                  },
+                  {
+                    "owningContentPattern": {
+                      "contains": "quarkus-quartz",
+                      "glob": "build.gradle*"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "capabilities": [
+        "job-scheduling"
+      ],
+      "companions": [
+        "java"
+      ],
+      "kind": "technology",
+      "label": "Quartz Scheduler",
+      "priority": 100,
+      "requiredWhenDetected": true,
+      "selection": "additive",
+      "skill": "quartz"
     },
     {
       "activation": {

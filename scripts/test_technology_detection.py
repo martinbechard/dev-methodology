@@ -33,6 +33,19 @@ def load_renderer_module():
     return module
 
 
+def write_source_detection_registry(path: Path) -> None:
+    """Write a temporary registry from source detection definitions for focused source tests."""
+    spec = importlib.util.spec_from_file_location("build_technology_detection", BUILD_SCRIPT)
+    if spec is None or spec.loader is None:
+        raise AssertionError(f"cannot load detection builder: {BUILD_SCRIPT}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    path.write_text(
+        yaml.safe_dump(module.registry(module.load_detection_entries()), sort_keys=False),
+        encoding="utf-8",
+    )
+
+
 def definition_change_authority() -> dict[str, object]:
     """Return one valid authority directive fixture."""
     return {
@@ -513,6 +526,344 @@ class TechnologyDetectionTests(unittest.TestCase):
                 with self.subTest(detector=detector):
                     result = run_detection(root, notes.relative_to(root).as_posix(), detector=detector)
                     self.assertNotIn("liquibase", result["loadouts"][0]["skills"])
+
+    def test_mysql_connector_manifests_compose_with_sql(self) -> None:
+        cases = (
+            (
+                "maven",
+                "pom.xml",
+                "<dependency><groupId>com.mysql</groupId><artifactId>mysql-connector-j</artifactId></dependency>\n",
+                "src/main/java/example/Application.java",
+                "class Application {}\n",
+                ["java", "java-design", "mysql", "sql"],
+            ),
+            (
+                "gradle",
+                "build.gradle.kts",
+                'dependencies { runtimeOnly("com.mysql:mysql-connector-j:1") }\n',
+                "src/main/kotlin/example/Application.kt",
+                "class Application\n",
+                ["mysql", "sql"],
+            ),
+            (
+                "node",
+                "package.json",
+                '{"dependencies":{"mysql2":"1"}}\n',
+                "src/database.ts",
+                "export const database = {};\n",
+                ["mysql", "sql", "typescript"],
+            ),
+            (
+                "python",
+                "pyproject.toml",
+                '[project]\nname="orders"\nversion="1"\ndependencies=["mysql-connector-python>=1"]\n',
+                "src/orders/database.py",
+                "DATABASE = {}\n",
+                ["mysql", "python", "sql"],
+            ),
+            (
+                "python-requirements",
+                "requirements-prod.txt",
+                "PyMySQL==1\n",
+                "src/orders/database.py",
+                "DATABASE = {}\n",
+                ["mysql", "python", "sql"],
+            ),
+        )
+        for name, manifest_name, manifest, source_name, source, expected in cases:
+            with self.subTest(case=name), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory) / "project"
+                source_path = root / source_name
+                source_path.parent.mkdir(parents=True)
+                source_path.write_text(source, encoding="utf-8")
+                (root / manifest_name).write_text(manifest, encoding="utf-8")
+                registry = root.parent / "source-registry.yaml"
+                write_source_detection_registry(registry)
+
+                for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+                    with self.subTest(case=name, detector=detector):
+                        result = run_detection(
+                            root,
+                            "src",
+                            detector=detector,
+                            extra=["--registry", str(registry)],
+                        )
+                        self.assertEqual(expected, result["loadouts"][0]["skills"])
+
+    def test_mysql_connection_configuration_requires_pertinent_source(self) -> None:
+        cases = (
+            (
+                "connection-uri",
+                "src/main.ts",
+                "export const start = () => true;\n",
+                "src/config/database.yaml",
+                "url: mysql://db.example/orders\n",
+                "package.json",
+                '{"dependencies":{}}\n',
+                ["mysql", "sql", "typescript"],
+            ),
+            (
+                "jdbc-url",
+                "src/main/java/example/Application.java",
+                "class Application {}\n",
+                "src/main/resources/application.properties",
+                "datasource.url=jdbc:mysql://db.example/orders\n",
+                "pom.xml",
+                "<project/>\n",
+                ["java", "java-design", "mysql", "sql"],
+            ),
+        )
+        for name, source_name, source, config_name, config, manifest_name, manifest, expected in cases:
+            with self.subTest(case=name), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory) / "project"
+                source_path = root / source_name
+                configuration = root / config_name
+                source_path.parent.mkdir(parents=True)
+                configuration.parent.mkdir(parents=True)
+                source_path.write_text(source, encoding="utf-8")
+                configuration.write_text(config, encoding="utf-8")
+                (root / manifest_name).write_text(manifest, encoding="utf-8")
+                registry = root.parent / "source-registry.yaml"
+                write_source_detection_registry(registry)
+
+                for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+                    with self.subTest(case=name, detector=detector):
+                        result = run_detection(
+                            root,
+                            "src",
+                            detector=detector,
+                            extra=["--registry", str(registry)],
+                        )
+                        self.assertEqual(expected, result["loadouts"][0]["skills"])
+
+                configuration.unlink()
+                expected_without_configuration = [
+                    skill for skill in expected if skill not in {"mysql", "sql"}
+                ]
+                for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+                    with self.subTest(case=name, detector=detector, configuration="removed"):
+                        result = run_detection(
+                            root,
+                            "src",
+                            detector=detector,
+                            extra=["--registry", str(registry)],
+                        )
+                        self.assertEqual(expected_without_configuration, result["loadouts"][0]["skills"])
+
+    def test_mysql_documentation_and_sample_configuration_do_not_activate(self) -> None:
+        cases = (
+            ("docs", "README.md", "Use mysql-connector-j with jdbc:mysql://db.example/orders.\n"),
+            ("examples", "application-example.yaml", "url: mysql://db.example/orders\n"),
+        )
+        for scope, filename, content in cases:
+            with self.subTest(scope=scope), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory) / "project"
+                evidence = root / scope / filename
+                evidence.parent.mkdir(parents=True)
+                evidence.write_text(content, encoding="utf-8")
+                (root / "package.json").write_text(
+                    '{"dependencies":{"mysql2":"1"}}\n',
+                    encoding="utf-8",
+                )
+                registry = root.parent / "source-registry.yaml"
+                write_source_detection_registry(registry)
+
+                for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+                    with self.subTest(scope=scope, detector=detector):
+                        result = run_detection(
+                            root,
+                            scope,
+                            detector=detector,
+                            extra=["--registry", str(registry)],
+                        )
+                        self.assertNotIn("mysql", result["loadouts"][0]["skills"])
+
+    def test_mysql_root_scope_does_not_pair_source_with_documentation_config(self) -> None:
+        cases = (
+            ("docs", "docs/mysql.properties", "datasource.url=jdbc:mysql://db.example/orders\n"),
+            ("examples", "examples/application-example.yaml", "url: mysql://db.example/orders\n"),
+            ("env-example", ".env.example", "DATABASE_URL=mysql://db.example/orders\n"),
+        )
+        for name, evidence_name, content in cases:
+            with self.subTest(case=name), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory) / "project"
+                source = root / "src" / "main.ts"
+                evidence = root / evidence_name
+                source.parent.mkdir(parents=True)
+                evidence.parent.mkdir(parents=True, exist_ok=True)
+                source.write_text("export const start = () => true;\n", encoding="utf-8")
+                evidence.write_text(content, encoding="utf-8")
+                (root / "package.json").write_text('{"dependencies":{}}\n', encoding="utf-8")
+                registry = root.parent / "source-registry.yaml"
+                write_source_detection_registry(registry)
+
+                for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+                    with self.subTest(case=name, detector=detector):
+                        result = run_detection(
+                            root,
+                            ".",
+                            detector=detector,
+                            extra=["--registry", str(registry)],
+                        )
+                        self.assertEqual(["typescript"], result["loadouts"][0]["skills"])
+
+    def test_mysql_sibling_module_does_not_contaminate_selected_scope(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory) / "project"
+            service_source = root / "service" / "src" / "main.py"
+            example_source = root / "example" / "src" / "database.ts"
+            service_source.parent.mkdir(parents=True)
+            example_source.parent.mkdir(parents=True)
+            service_source.write_text("value = 1\n", encoding="utf-8")
+            example_source.write_text("export const database = {};\n", encoding="utf-8")
+            (root / "service" / "pyproject.toml").write_text(
+                '[project]\nname="service"\nversion="1"\n',
+                encoding="utf-8",
+            )
+            (root / "example" / "package.json").write_text(
+                '{"dependencies":{"mysql2":"1"}}\n',
+                encoding="utf-8",
+            )
+            registry = root.parent / "source-registry.yaml"
+            write_source_detection_registry(registry)
+
+            for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+                with self.subTest(detector=detector):
+                    result = run_detection(
+                        root,
+                        "service/src",
+                        detector=detector,
+                        extra=["--registry", str(registry)],
+                    )
+                    self.assertEqual(["python"], result["loadouts"][0]["skills"])
+
+    def test_quartz_maven_and_gradle_evidence_composes_with_java(self) -> None:
+        cases = (
+            (
+                "maven",
+                "pom.xml",
+                "<dependency><groupId>org.quartz-scheduler</groupId><artifactId>quartz</artifactId></dependency>\n",
+            ),
+            (
+                "gradle",
+                "build.gradle.kts",
+                'dependencies { implementation("org.quartz-scheduler:quartz:2.5.0") }\n',
+            ),
+        )
+        for name, manifest_name, manifest in cases:
+            with self.subTest(case=name), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory) / "project"
+                source = root / "src" / "main" / "java" / "example" / "CleanupJob.java"
+                source.parent.mkdir(parents=True)
+                source.write_text("class CleanupJob {}\n", encoding="utf-8")
+                (root / manifest_name).write_text(manifest, encoding="utf-8")
+                registry = root.parent / "source-registry.yaml"
+                write_source_detection_registry(registry)
+
+                for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+                    with self.subTest(case=name, detector=detector):
+                        result = run_detection(
+                            root,
+                            "src/main",
+                            detector=detector,
+                            extra=["--registry", str(registry)],
+                        )
+                        skills = result["loadouts"][0]["skills"]
+                        self.assertIn("java", skills)
+                        self.assertIn("quartz", skills)
+
+    def test_quartz_documentation_and_sibling_dependency_do_not_activate(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory) / "project"
+            service = root / "service"
+            source = service / "src" / "main" / "java" / "example" / "Application.java"
+            source.parent.mkdir(parents=True)
+            source.write_text("class Application {}\n", encoding="utf-8")
+            (service / "pom.xml").write_text("<project/>\n", encoding="utf-8")
+            sibling = root / "examples"
+            sibling.mkdir()
+            (sibling / "pom.xml").write_text(
+                "<dependency><groupId>org.quartz-scheduler</groupId><artifactId>quartz</artifactId></dependency>\n",
+                encoding="utf-8",
+            )
+            (service / "README.md").write_text("Use Quartz Scheduler jobs.\n", encoding="utf-8")
+            registry = root.parent / "source-registry.yaml"
+            write_source_detection_registry(registry)
+
+            for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+                with self.subTest(detector=detector):
+                    result = run_detection(
+                        root,
+                        "service/src",
+                        detector=detector,
+                        extra=["--registry", str(registry)],
+                    )
+                    self.assertNotIn("quartz", result["loadouts"][0]["skills"])
+
+    def test_mapstruct_maven_and_gradle_evidence_composes_with_java(self) -> None:
+        cases = (
+            (
+                "maven",
+                "pom.xml",
+                "<dependency><groupId>org.mapstruct</groupId><artifactId>mapstruct</artifactId></dependency>\n",
+            ),
+            (
+                "gradle",
+                "build.gradle.kts",
+                'dependencies { annotationProcessor("org.mapstruct:mapstruct-processor:1.6.3") }\n',
+            ),
+        )
+        for name, manifest_name, manifest in cases:
+            with self.subTest(case=name), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory) / "project"
+                source = root / "src" / "main" / "java" / "example" / "OrderMapper.java"
+                source.parent.mkdir(parents=True)
+                source.write_text(
+                    "import org.mapstruct.Mapper;\n@Mapper interface OrderMapper {}\n",
+                    encoding="utf-8",
+                )
+                (root / manifest_name).write_text(manifest, encoding="utf-8")
+                registry = root.parent / "source-registry.yaml"
+                write_source_detection_registry(registry)
+
+                for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+                    with self.subTest(case=name, detector=detector):
+                        result = run_detection(
+                            root,
+                            "src/main",
+                            detector=detector,
+                            extra=["--registry", str(registry)],
+                        )
+                        skills = result["loadouts"][0]["skills"]
+                        self.assertIn("java", skills)
+                        self.assertIn("mapstruct", skills)
+
+    def test_mapstruct_generated_output_and_sibling_dependency_do_not_activate(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory) / "project"
+            service = root / "service"
+            generated = service / "src" / "generated" / "java" / "example" / "OrderMapperImpl.java"
+            generated.parent.mkdir(parents=True)
+            generated.write_text("class OrderMapperImpl {}\n", encoding="utf-8")
+            (service / "pom.xml").write_text("<project/>\n", encoding="utf-8")
+            sibling = root / "other"
+            sibling.mkdir()
+            (sibling / "pom.xml").write_text(
+                "<dependency><artifactId>mapstruct-processor</artifactId></dependency>\n",
+                encoding="utf-8",
+            )
+            registry = root.parent / "source-registry.yaml"
+            write_source_detection_registry(registry)
+
+            for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+                with self.subTest(detector=detector):
+                    result = run_detection(
+                        root,
+                        "service/src",
+                        detector=detector,
+                        extra=["--registry", str(registry)],
+                    )
+                    self.assertNotIn("mapstruct", result["loadouts"][0]["skills"])
 
     def test_jhipster_scope_composes_focused_skills_with_java_and_spring_boot(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

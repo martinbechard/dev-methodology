@@ -708,6 +708,21 @@
             <td>Changeset identity, include-chain, validation, update, rollback, and recovery guidance together with SQL.</td>
           </tr>
           <tr>
+            <td><span class="tag" data-skill-definition="mysql">mysql</span></td>
+            <td>Application source plus a MySQL driver in the nearest owning Maven, Gradle, Node, or Python manifest, or application source plus a MySQL connection marker in a vetted runtime configuration file.</td>
+            <td>MySQL and InnoDB schema, index, transaction, locking, query-plan, DDL, replication, and production verification guidance together with SQL.</td>
+          </tr>
+          <tr>
+            <td><span class="tag" data-skill-definition="quartz">quartz</span></td>
+            <td>Java source plus Quartz core or an established Spring Boot or Quarkus Quartz integration in the nearest owning Maven or Gradle build.</td>
+            <td>Quartz job, trigger, misfire, concurrency, recovery, persistence, clustering, lifecycle, and observability guidance together with Java.</td>
+          </tr>
+          <tr>
+            <td><span class="tag" data-skill-definition="mapstruct">mapstruct</span></td>
+            <td>Java mapper source plus MapStruct annotations and processor configuration in the nearest owning Maven or Gradle build.</td>
+            <td>MapStruct mapping contracts, create and update semantics, null handling, conversions, collections, cycles, qualifiers, component models, generated implementation inspection, and command-line processor verification together with Java.</td>
+          </tr>
+          <tr>
             <td>
               <div class="tag-row">
                 <span class="tag" data-skill-definition="jhipster-project">jhipster-project</span>
@@ -912,9 +927,9 @@
               <td>Allows source code to prove framework use even when dependency metadata is incomplete, without accepting example text as executable evidence.</td>
             </tr>
             <tr>
-              <td><span class="name">contentPattern</span></td>
-              <td>Looks for an exact text marker inside a file whose path matches the rule's glob.</td>
-              <td>Supports configuration formats where a meaningful feature is expressed by file content rather than a dependency name.</td>
+              <td><span class="name">contentPattern and owningContentPattern</span></td>
+              <td>Look for an exact text marker inside a file whose path matches the rule's glob. Owning content is limited to files beside the nearest owning manifest.</td>
+              <td>Support configuration formats where a meaningful feature is expressed by file content while preventing nested documentation, examples, and sample environment files from acting as project-root evidence.</td>
             </tr>
           </tbody>
         </table>

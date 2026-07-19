@@ -1,0 +1,59 @@
+schema: dev-methodology-technology-detection
+version: 2
+skill: mysql
+kind: technology
+label: MySQL
+capabilities:
+- database-engine
+activation:
+  anyOf:
+  - allOf:
+    - anyOf:
+      - fileMatch: {glob: "**/src/**", extensions: [.java, .kt, .kts, .groovy, .scala, .ts, .tsx, .js, .jsx, .mts, .cts, .py, .pyi, .sql]}
+      - fileMatch: {glob: "**/app/**", extensions: [.java, .kt, .kts, .groovy, .scala, .ts, .tsx, .js, .jsx, .mts, .cts, .py, .pyi, .sql]}
+      - fileMatch: {glob: "**/lib/**", extensions: [.java, .kt, .kts, .groovy, .scala, .ts, .tsx, .js, .jsx, .mts, .cts, .py, .pyi, .sql]}
+      - fileMatch: {glob: "**/server/**", extensions: [.java, .kt, .kts, .groovy, .scala, .ts, .tsx, .js, .jsx, .mts, .cts, .py, .pyi, .sql]}
+      - fileMatch: {glob: "*", extensions: [.java, .kt, .kts, .groovy, .scala, .ts, .tsx, .js, .jsx, .mts, .cts, .py, .pyi, .sql]}
+    - anyOf:
+      - owningContentPattern: {glob: pom.xml, contains: mysql-connector-j}
+      - owningContentPattern: {glob: pom.xml, contains: mysql-connector-java}
+      - owningContentPattern: {glob: "build.gradle*", contains: mysql-connector-j}
+      - owningContentPattern: {glob: "build.gradle*", contains: mysql-connector-java}
+      - owningDependency: mysql2
+      - owningDependency: mysql
+      - owningDependency: mysql-connector-python
+      - owningDependency: pymysql
+      - owningDependency: mysqlclient
+      - owningDependency: aiomysql
+      - owningDependency: asyncmy
+  - allOf:
+    - anyOf:
+      - fileMatch: {glob: "**/src/**", extensions: [.java, .kt, .kts, .groovy, .scala, .ts, .tsx, .js, .jsx, .mts, .cts, .py, .pyi, .sql]}
+      - fileMatch: {glob: "**/app/**", extensions: [.java, .kt, .kts, .groovy, .scala, .ts, .tsx, .js, .jsx, .mts, .cts, .py, .pyi, .sql]}
+      - fileMatch: {glob: "**/lib/**", extensions: [.java, .kt, .kts, .groovy, .scala, .ts, .tsx, .js, .jsx, .mts, .cts, .py, .pyi, .sql]}
+      - fileMatch: {glob: "**/server/**", extensions: [.java, .kt, .kts, .groovy, .scala, .ts, .tsx, .js, .jsx, .mts, .cts, .py, .pyi, .sql]}
+      - fileMatch: {glob: "*", extensions: [.java, .kt, .kts, .groovy, .scala, .ts, .tsx, .js, .jsx, .mts, .cts, .py, .pyi, .sql]}
+    - anyOf:
+      - contentPattern: {glob: "**/src/**/application.properties", contains: "jdbc:mysql:"}
+      - contentPattern: {glob: "**/src/**/application.yaml", contains: "jdbc:mysql:"}
+      - contentPattern: {glob: "**/src/**/application.yml", contains: "jdbc:mysql:"}
+      - contentPattern: {glob: "**/src/**/database.yaml", contains: "mysql://"}
+      - contentPattern: {glob: "**/src/**/database.yml", contains: "mysql://"}
+      - contentPattern: {glob: "**/src/**/database.toml", contains: "mysql://"}
+      - contentPattern: {glob: "**/src/**/database.json", contains: "mysql://"}
+      - contentPattern: {glob: "**/src/**/database.ini", contains: "mysql+"}
+      - owningContentPattern: {glob: .env, contains: "mysql://"}
+      - owningContentPattern: {glob: .env, contains: "mysql+"}
+      - owningContentPattern: {glob: application.properties, contains: "jdbc:mysql:"}
+      - owningContentPattern: {glob: application.yaml, contains: "jdbc:mysql:"}
+      - owningContentPattern: {glob: application.yaml, contains: "mysql://"}
+      - owningContentPattern: {glob: application.yml, contains: "jdbc:mysql:"}
+      - owningContentPattern: {glob: application.yml, contains: "mysql://"}
+      - owningContentPattern: {glob: database.yaml, contains: "mysql://"}
+      - owningContentPattern: {glob: database.yml, contains: "mysql://"}
+      - owningContentPattern: {glob: database.toml, contains: "mysql://"}
+      - owningContentPattern: {glob: database.json, contains: "mysql://"}
+      - owningContentPattern: {glob: database.ini, contains: "mysql+"}
+companions:
+- sql
+selection: additive

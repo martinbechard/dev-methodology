@@ -700,6 +700,39 @@ skills:
   selection: additive
   priority: 100
   requiredWhenDetected: true
+- skill: mapstruct
+  kind: technology
+  label: MapStruct
+  capabilities:
+  - compile-time-object-mapping
+  activation:
+    anyOf:
+    - allOf:
+      - anyOf:
+        - contentPattern:
+            glob: '**/*.java'
+            contains: import org.mapstruct.
+        - contentPattern:
+            glob: '**/*.java'
+            contains: '@org.mapstruct.'
+      - anyOf:
+        - owningContentPattern:
+            glob: pom.xml
+            contains: <artifactId>mapstruct</artifactId>
+        - owningContentPattern:
+            glob: pom.xml
+            contains: <artifactId>mapstruct-processor</artifactId>
+        - owningContentPattern:
+            glob: build.gradle*
+            contains: org.mapstruct:mapstruct
+        - owningContentPattern:
+            glob: build.gradle*
+            contains: org.mapstruct:mapstruct-processor
+  companions:
+  - java
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
 - skill: mockito
   kind: technology
   label: Mockito
@@ -730,6 +763,273 @@ skills:
             contains: org.mockito
   companions:
   - java
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
+- skill: mysql
+  kind: technology
+  label: MySQL
+  capabilities:
+  - database-engine
+  activation:
+    anyOf:
+    - allOf:
+      - anyOf:
+        - fileMatch:
+            glob: '**/src/**'
+            extensions:
+            - .java
+            - .kt
+            - .kts
+            - .groovy
+            - .scala
+            - .ts
+            - .tsx
+            - .js
+            - .jsx
+            - .mts
+            - .cts
+            - .py
+            - .pyi
+            - .sql
+        - fileMatch:
+            glob: '**/app/**'
+            extensions:
+            - .java
+            - .kt
+            - .kts
+            - .groovy
+            - .scala
+            - .ts
+            - .tsx
+            - .js
+            - .jsx
+            - .mts
+            - .cts
+            - .py
+            - .pyi
+            - .sql
+        - fileMatch:
+            glob: '**/lib/**'
+            extensions:
+            - .java
+            - .kt
+            - .kts
+            - .groovy
+            - .scala
+            - .ts
+            - .tsx
+            - .js
+            - .jsx
+            - .mts
+            - .cts
+            - .py
+            - .pyi
+            - .sql
+        - fileMatch:
+            glob: '**/server/**'
+            extensions:
+            - .java
+            - .kt
+            - .kts
+            - .groovy
+            - .scala
+            - .ts
+            - .tsx
+            - .js
+            - .jsx
+            - .mts
+            - .cts
+            - .py
+            - .pyi
+            - .sql
+        - fileMatch:
+            glob: '*'
+            extensions:
+            - .java
+            - .kt
+            - .kts
+            - .groovy
+            - .scala
+            - .ts
+            - .tsx
+            - .js
+            - .jsx
+            - .mts
+            - .cts
+            - .py
+            - .pyi
+            - .sql
+      - anyOf:
+        - owningContentPattern:
+            glob: pom.xml
+            contains: mysql-connector-j
+        - owningContentPattern:
+            glob: pom.xml
+            contains: mysql-connector-java
+        - owningContentPattern:
+            glob: build.gradle*
+            contains: mysql-connector-j
+        - owningContentPattern:
+            glob: build.gradle*
+            contains: mysql-connector-java
+        - owningDependency: mysql2
+        - owningDependency: mysql
+        - owningDependency: mysql-connector-python
+        - owningDependency: pymysql
+        - owningDependency: mysqlclient
+        - owningDependency: aiomysql
+        - owningDependency: asyncmy
+    - allOf:
+      - anyOf:
+        - fileMatch:
+            glob: '**/src/**'
+            extensions:
+            - .java
+            - .kt
+            - .kts
+            - .groovy
+            - .scala
+            - .ts
+            - .tsx
+            - .js
+            - .jsx
+            - .mts
+            - .cts
+            - .py
+            - .pyi
+            - .sql
+        - fileMatch:
+            glob: '**/app/**'
+            extensions:
+            - .java
+            - .kt
+            - .kts
+            - .groovy
+            - .scala
+            - .ts
+            - .tsx
+            - .js
+            - .jsx
+            - .mts
+            - .cts
+            - .py
+            - .pyi
+            - .sql
+        - fileMatch:
+            glob: '**/lib/**'
+            extensions:
+            - .java
+            - .kt
+            - .kts
+            - .groovy
+            - .scala
+            - .ts
+            - .tsx
+            - .js
+            - .jsx
+            - .mts
+            - .cts
+            - .py
+            - .pyi
+            - .sql
+        - fileMatch:
+            glob: '**/server/**'
+            extensions:
+            - .java
+            - .kt
+            - .kts
+            - .groovy
+            - .scala
+            - .ts
+            - .tsx
+            - .js
+            - .jsx
+            - .mts
+            - .cts
+            - .py
+            - .pyi
+            - .sql
+        - fileMatch:
+            glob: '*'
+            extensions:
+            - .java
+            - .kt
+            - .kts
+            - .groovy
+            - .scala
+            - .ts
+            - .tsx
+            - .js
+            - .jsx
+            - .mts
+            - .cts
+            - .py
+            - .pyi
+            - .sql
+      - anyOf:
+        - contentPattern:
+            glob: '**/src/**/application.properties'
+            contains: 'jdbc:mysql:'
+        - contentPattern:
+            glob: '**/src/**/application.yaml'
+            contains: 'jdbc:mysql:'
+        - contentPattern:
+            glob: '**/src/**/application.yml'
+            contains: 'jdbc:mysql:'
+        - contentPattern:
+            glob: '**/src/**/database.yaml'
+            contains: mysql://
+        - contentPattern:
+            glob: '**/src/**/database.yml'
+            contains: mysql://
+        - contentPattern:
+            glob: '**/src/**/database.toml'
+            contains: mysql://
+        - contentPattern:
+            glob: '**/src/**/database.json'
+            contains: mysql://
+        - contentPattern:
+            glob: '**/src/**/database.ini'
+            contains: mysql+
+        - owningContentPattern:
+            glob: .env
+            contains: mysql://
+        - owningContentPattern:
+            glob: .env
+            contains: mysql+
+        - owningContentPattern:
+            glob: application.properties
+            contains: 'jdbc:mysql:'
+        - owningContentPattern:
+            glob: application.yaml
+            contains: 'jdbc:mysql:'
+        - owningContentPattern:
+            glob: application.yaml
+            contains: mysql://
+        - owningContentPattern:
+            glob: application.yml
+            contains: 'jdbc:mysql:'
+        - owningContentPattern:
+            glob: application.yml
+            contains: mysql://
+        - owningContentPattern:
+            glob: database.yaml
+            contains: mysql://
+        - owningContentPattern:
+            glob: database.yml
+            contains: mysql://
+        - owningContentPattern:
+            glob: database.toml
+            contains: mysql://
+        - owningContentPattern:
+            glob: database.json
+            contains: mysql://
+        - owningContentPattern:
+            glob: database.ini
+            contains: mysql+
+  companions:
+  - sql
   selection: additive
   priority: 100
   requiredWhenDetected: true
@@ -1099,6 +1399,42 @@ skills:
   companions:
   - quarkus
   - junit
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
+- skill: quartz
+  kind: technology
+  label: Quartz Scheduler
+  capabilities:
+  - job-scheduling
+  activation:
+    anyOf:
+    - allOf:
+      - fileMatch:
+          glob: '**/src/**/*.java'
+          extensions:
+          - .java
+      - anyOf:
+        - owningContentPattern:
+            glob: pom.xml
+            contains: org.quartz-scheduler
+        - owningContentPattern:
+            glob: pom.xml
+            contains: spring-boot-starter-quartz
+        - owningContentPattern:
+            glob: pom.xml
+            contains: quarkus-quartz
+        - owningContentPattern:
+            glob: build.gradle*
+            contains: org.quartz-scheduler
+        - owningContentPattern:
+            glob: build.gradle*
+            contains: spring-boot-starter-quartz
+        - owningContentPattern:
+            glob: build.gradle*
+            contains: quarkus-quartz
+  companions:
+  - java
   selection: additive
   priority: 100
   requiredWhenDetected: true

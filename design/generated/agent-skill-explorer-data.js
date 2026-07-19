@@ -982,7 +982,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "modelJudgeNotRequiredAgentCount": 0,
     "modelJudgeNotRequiredSkillCount": 21,
     "modelJudgePendingAgentCount": 27,
-    "modelJudgePendingSkillCount": 89,
+    "modelJudgePendingSkillCount": 92,
     "negativeCaseBackedSkillCount": 0,
     "ordinaryLocalCaseCount": 7,
     "pairedControlsExecutableSkillCount": 0,
@@ -994,7 +994,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "positiveSecurityContainedSkillCount": 0,
     "positiveStaleByDigestSkillCount": 0,
     "positiveVerifiedSkillCount": 0,
-    "probeDeclaredSkillCount": 110,
+    "probeDeclaredSkillCount": 113,
     "scenarioDeclaredAgentCount": 27,
     "securityContainedAgentCount": 0,
     "securityContainedRunCount": 0,
@@ -1003,7 +1003,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "staleByDigestRunCount": 0,
     "staleByDigestSkillCount": 0,
     "structuralAgentCount": 27,
-    "structuralSkillCount": 110,
+    "structuralSkillCount": 113,
     "verifiedAgentCount": 0,
     "verifiedRunCount": 0,
     "verifiedSkillCount": 0,
@@ -6793,6 +6793,117 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "positiveVerifiedCases": [],
         "probeDeclared": true,
         "probeIds": [
+          "probe-mapstruct"
+        ],
+        "scenarioAssociations": [
+          "dev-coder-happy",
+          "dev-verifier-happy"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "code-delivery"
+        ]
+      },
+      "declaredCases": [],
+      "detection": {
+        "activation": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "anyOf": [
+                    {
+                      "contentPattern": {
+                        "contains": "import org.mapstruct.",
+                        "glob": "**/*.java"
+                      }
+                    },
+                    {
+                      "contentPattern": {
+                        "contains": "@org.mapstruct.",
+                        "glob": "**/*.java"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "anyOf": [
+                    {
+                      "owningContentPattern": {
+                        "contains": "<artifactId>mapstruct</artifactId>",
+                        "glob": "pom.xml"
+                      }
+                    },
+                    {
+                      "owningContentPattern": {
+                        "contains": "<artifactId>mapstruct-processor</artifactId>",
+                        "glob": "pom.xml"
+                      }
+                    },
+                    {
+                      "owningContentPattern": {
+                        "contains": "org.mapstruct:mapstruct",
+                        "glob": "build.gradle*"
+                      }
+                    },
+                    {
+                      "owningContentPattern": {
+                        "contains": "org.mapstruct:mapstruct-processor",
+                        "glob": "build.gradle*"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "capabilities": [
+          "compile-time-object-mapping"
+        ],
+        "companions": [
+          "java"
+        ],
+        "kind": "technology",
+        "label": "MapStruct",
+        "priority": 100,
+        "requiredWhenDetected": true,
+        "selection": "additive",
+        "skill": "mapstruct"
+      },
+      "executedCases": [],
+      "id": "mapstruct",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
+      "verifiedCases": []
+    },
+    {
+      "category": "stack-and-domain",
+      "coverage": {
+        "catalogFixtureBacked": false,
+        "evaluationCategory": "stack-and-domain",
+        "executableCases": [],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": false,
+        "positiveCaseBackedCases": [],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
           "probe-mockito"
         ],
         "scenarioAssociations": [
@@ -6874,6 +6985,468 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "executedCases": [],
       "id": "mockito",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
+      "verifiedCases": []
+    },
+    {
+      "category": "stack-and-domain",
+      "coverage": {
+        "catalogFixtureBacked": false,
+        "evaluationCategory": "stack-and-domain",
+        "executableCases": [],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": false,
+        "positiveCaseBackedCases": [],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
+          "probe-mysql"
+        ],
+        "scenarioAssociations": [
+          "dev-coder-happy",
+          "dev-verifier-happy"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "code-delivery"
+        ]
+      },
+      "declaredCases": [],
+      "detection": {
+        "activation": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "anyOf": [
+                    {
+                      "fileMatch": {
+                        "extensions": [
+                          ".java",
+                          ".kt",
+                          ".kts",
+                          ".groovy",
+                          ".scala",
+                          ".ts",
+                          ".tsx",
+                          ".js",
+                          ".jsx",
+                          ".mts",
+                          ".cts",
+                          ".py",
+                          ".pyi",
+                          ".sql"
+                        ],
+                        "glob": "**/src/**"
+                      }
+                    },
+                    {
+                      "fileMatch": {
+                        "extensions": [
+                          ".java",
+                          ".kt",
+                          ".kts",
+                          ".groovy",
+                          ".scala",
+                          ".ts",
+                          ".tsx",
+                          ".js",
+                          ".jsx",
+                          ".mts",
+                          ".cts",
+                          ".py",
+                          ".pyi",
+                          ".sql"
+                        ],
+                        "glob": "**/app/**"
+                      }
+                    },
+                    {
+                      "fileMatch": {
+                        "extensions": [
+                          ".java",
+                          ".kt",
+                          ".kts",
+                          ".groovy",
+                          ".scala",
+                          ".ts",
+                          ".tsx",
+                          ".js",
+                          ".jsx",
+                          ".mts",
+                          ".cts",
+                          ".py",
+                          ".pyi",
+                          ".sql"
+                        ],
+                        "glob": "**/lib/**"
+                      }
+                    },
+                    {
+                      "fileMatch": {
+                        "extensions": [
+                          ".java",
+                          ".kt",
+                          ".kts",
+                          ".groovy",
+                          ".scala",
+                          ".ts",
+                          ".tsx",
+                          ".js",
+                          ".jsx",
+                          ".mts",
+                          ".cts",
+                          ".py",
+                          ".pyi",
+                          ".sql"
+                        ],
+                        "glob": "**/server/**"
+                      }
+                    },
+                    {
+                      "fileMatch": {
+                        "extensions": [
+                          ".java",
+                          ".kt",
+                          ".kts",
+                          ".groovy",
+                          ".scala",
+                          ".ts",
+                          ".tsx",
+                          ".js",
+                          ".jsx",
+                          ".mts",
+                          ".cts",
+                          ".py",
+                          ".pyi",
+                          ".sql"
+                        ],
+                        "glob": "*"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "anyOf": [
+                    {
+                      "owningContentPattern": {
+                        "contains": "mysql-connector-j",
+                        "glob": "pom.xml"
+                      }
+                    },
+                    {
+                      "owningContentPattern": {
+                        "contains": "mysql-connector-java",
+                        "glob": "pom.xml"
+                      }
+                    },
+                    {
+                      "owningContentPattern": {
+                        "contains": "mysql-connector-j",
+                        "glob": "build.gradle*"
+                      }
+                    },
+                    {
+                      "owningContentPattern": {
+                        "contains": "mysql-connector-java",
+                        "glob": "build.gradle*"
+                      }
+                    },
+                    {
+                      "owningDependency": "mysql2"
+                    },
+                    {
+                      "owningDependency": "mysql"
+                    },
+                    {
+                      "owningDependency": "mysql-connector-python"
+                    },
+                    {
+                      "owningDependency": "pymysql"
+                    },
+                    {
+                      "owningDependency": "mysqlclient"
+                    },
+                    {
+                      "owningDependency": "aiomysql"
+                    },
+                    {
+                      "owningDependency": "asyncmy"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "anyOf": [
+                    {
+                      "fileMatch": {
+                        "extensions": [
+                          ".java",
+                          ".kt",
+                          ".kts",
+                          ".groovy",
+                          ".scala",
+                          ".ts",
+                          ".tsx",
+                          ".js",
+                          ".jsx",
+                          ".mts",
+                          ".cts",
+                          ".py",
+                          ".pyi",
+                          ".sql"
+                        ],
+                        "glob": "**/src/**"
+                      }
+                    },
+                    {
+                      "fileMatch": {
+                        "extensions": [
+                          ".java",
+                          ".kt",
+                          ".kts",
+                          ".groovy",
+                          ".scala",
+                          ".ts",
+                          ".tsx",
+                          ".js",
+                          ".jsx",
+                          ".mts",
+                          ".cts",
+                          ".py",
+                          ".pyi",
+                          ".sql"
+                        ],
+                        "glob": "**/app/**"
+                      }
+                    },
+                    {
+                      "fileMatch": {
+                        "extensions": [
+                          ".java",
+                          ".kt",
+                          ".kts",
+                          ".groovy",
+                          ".scala",
+                          ".ts",
+                          ".tsx",
+                          ".js",
+                          ".jsx",
+                          ".mts",
+                          ".cts",
+                          ".py",
+                          ".pyi",
+                          ".sql"
+                        ],
+                        "glob": "**/lib/**"
+                      }
+                    },
+                    {
+                      "fileMatch": {
+                        "extensions": [
+                          ".java",
+                          ".kt",
+                          ".kts",
+                          ".groovy",
+                          ".scala",
+                          ".ts",
+                          ".tsx",
+                          ".js",
+                          ".jsx",
+                          ".mts",
+                          ".cts",
+                          ".py",
+                          ".pyi",
+                          ".sql"
+                        ],
+                        "glob": "**/server/**"
+                      }
+                    },
+                    {
+                      "fileMatch": {
+                        "extensions": [
+                          ".java",
+                          ".kt",
+                          ".kts",
+                          ".groovy",
+                          ".scala",
+                          ".ts",
+                          ".tsx",
+                          ".js",
+                          ".jsx",
+                          ".mts",
+                          ".cts",
+                          ".py",
+                          ".pyi",
+                          ".sql"
+                        ],
+                        "glob": "*"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "anyOf": [
+                    {
+                      "contentPattern": {
+                        "contains": "jdbc:mysql:",
+                        "glob": "**/src/**/application.properties"
+                      }
+                    },
+                    {
+                      "contentPattern": {
+                        "contains": "jdbc:mysql:",
+                        "glob": "**/src/**/application.yaml"
+                      }
+                    },
+                    {
+                      "contentPattern": {
+                        "contains": "jdbc:mysql:",
+                        "glob": "**/src/**/application.yml"
+                      }
+                    },
+                    {
+                      "contentPattern": {
+                        "contains": "mysql://",
+                        "glob": "**/src/**/database.yaml"
+                      }
+                    },
+                    {
+                      "contentPattern": {
+                        "contains": "mysql://",
+                        "glob": "**/src/**/database.yml"
+                      }
+                    },
+                    {
+                      "contentPattern": {
+                        "contains": "mysql://",
+                        "glob": "**/src/**/database.toml"
+                      }
+                    },
+                    {
+                      "contentPattern": {
+                        "contains": "mysql://",
+                        "glob": "**/src/**/database.json"
+                      }
+                    },
+                    {
+                      "contentPattern": {
+                        "contains": "mysql+",
+                        "glob": "**/src/**/database.ini"
+                      }
+                    },
+                    {
+                      "owningContentPattern": {
+                        "contains": "mysql://",
+                        "glob": ".env"
+                      }
+                    },
+                    {
+                      "owningContentPattern": {
+                        "contains": "mysql+",
+                        "glob": ".env"
+                      }
+                    },
+                    {
+                      "owningContentPattern": {
+                        "contains": "jdbc:mysql:",
+                        "glob": "application.properties"
+                      }
+                    },
+                    {
+                      "owningContentPattern": {
+                        "contains": "jdbc:mysql:",
+                        "glob": "application.yaml"
+                      }
+                    },
+                    {
+                      "owningContentPattern": {
+                        "contains": "mysql://",
+                        "glob": "application.yaml"
+                      }
+                    },
+                    {
+                      "owningContentPattern": {
+                        "contains": "jdbc:mysql:",
+                        "glob": "application.yml"
+                      }
+                    },
+                    {
+                      "owningContentPattern": {
+                        "contains": "mysql://",
+                        "glob": "application.yml"
+                      }
+                    },
+                    {
+                      "owningContentPattern": {
+                        "contains": "mysql://",
+                        "glob": "database.yaml"
+                      }
+                    },
+                    {
+                      "owningContentPattern": {
+                        "contains": "mysql://",
+                        "glob": "database.yml"
+                      }
+                    },
+                    {
+                      "owningContentPattern": {
+                        "contains": "mysql://",
+                        "glob": "database.toml"
+                      }
+                    },
+                    {
+                      "owningContentPattern": {
+                        "contains": "mysql://",
+                        "glob": "database.json"
+                      }
+                    },
+                    {
+                      "owningContentPattern": {
+                        "contains": "mysql+",
+                        "glob": "database.ini"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "capabilities": [
+          "database-engine"
+        ],
+        "companions": [
+          "sql"
+        ],
+        "kind": "technology",
+        "label": "MySQL",
+        "priority": 100,
+        "requiredWhenDetected": true,
+        "selection": "additive",
+        "skill": "mysql"
+      },
+      "executedCases": [],
+      "id": "mysql",
       "judgePassedCases": [],
       "securityContainedCases": [],
       "verifiedCases": []
@@ -8592,6 +9165,121 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "executedCases": [],
       "id": "quarkus-testing",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
+      "verifiedCases": []
+    },
+    {
+      "category": "stack-and-domain",
+      "coverage": {
+        "catalogFixtureBacked": false,
+        "evaluationCategory": "stack-and-domain",
+        "executableCases": [],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": false,
+        "positiveCaseBackedCases": [],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
+          "probe-quartz"
+        ],
+        "scenarioAssociations": [
+          "dev-coder-happy",
+          "dev-verifier-happy"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "code-delivery"
+        ]
+      },
+      "declaredCases": [],
+      "detection": {
+        "activation": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "fileMatch": {
+                    "extensions": [
+                      ".java"
+                    ],
+                    "glob": "**/src/**/*.java"
+                  }
+                },
+                {
+                  "anyOf": [
+                    {
+                      "owningContentPattern": {
+                        "contains": "org.quartz-scheduler",
+                        "glob": "pom.xml"
+                      }
+                    },
+                    {
+                      "owningContentPattern": {
+                        "contains": "spring-boot-starter-quartz",
+                        "glob": "pom.xml"
+                      }
+                    },
+                    {
+                      "owningContentPattern": {
+                        "contains": "quarkus-quartz",
+                        "glob": "pom.xml"
+                      }
+                    },
+                    {
+                      "owningContentPattern": {
+                        "contains": "org.quartz-scheduler",
+                        "glob": "build.gradle*"
+                      }
+                    },
+                    {
+                      "owningContentPattern": {
+                        "contains": "spring-boot-starter-quartz",
+                        "glob": "build.gradle*"
+                      }
+                    },
+                    {
+                      "owningContentPattern": {
+                        "contains": "quarkus-quartz",
+                        "glob": "build.gradle*"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "capabilities": [
+          "job-scheduling"
+        ],
+        "companions": [
+          "java"
+        ],
+        "kind": "technology",
+        "label": "Quartz Scheduler",
+        "priority": 100,
+        "requiredWhenDetected": true,
+        "selection": "additive",
+        "skill": "quartz"
+      },
+      "executedCases": [],
+      "id": "quartz",
       "judgePassedCases": [],
       "securityContainedCases": [],
       "verifiedCases": []
@@ -10992,6 +11680,8 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "probe-langgraph",
         "probe-liquibase",
         "probe-local-model-integration",
+        "probe-mapstruct",
+        "probe-mysql",
         "probe-nextjs-app-router",
         "probe-node-cli",
         "probe-organise-project-files",
@@ -11000,6 +11690,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "probe-postgres-drizzle",
         "probe-prompt-contracts",
         "probe-python",
+        "probe-quartz",
         "probe-react-server-components",
         "probe-react-vite-renderer",
         "probe-review-structured-artifact",

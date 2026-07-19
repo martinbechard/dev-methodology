@@ -20,8 +20,8 @@ This page is generated from the live conceptual agent and skill inventories, all
 
 ## Summary
 
-- [x] 27 conceptual agents and 110 bundled skills have structural coverage.
-- [x] 27 agents are scenario-declared and 110 skills are probe-declared.
+- [x] 27 conceptual agents and 113 bundled skills have structural coverage.
+- [x] 27 agents are scenario-declared and 113 skills are probe-declared.
 - [x] 54 agent scenarios and 5 workflow packs are declared.
 - 5 workflow packs have associated cases; 5 are partial and 0 have end-to-end fixture coverage.
 - 7 cases are fixture-backed and 7 fixtures are structurally executable before harness readiness is considered.
@@ -31,7 +31,7 @@ This page is generated from the live conceptual agent and skill inventories, all
 - 17 skills have positive-case support, 0 have negative-activation cases, 0 have executable paired controls, and 0 satisfy the full probe contract.
 - 0 agents and 0 skills have executable full fixtures.
 - 0 agents and 0 skills have calibrated Model Judge status.
-- 27 agents and 89 skills have pending Model Judge status.
+- 27 agents and 92 skills have pending Model Judge status.
 - 0 agents and 21 skills use Deterministic Judges only and do not require Model Judge calibration.
 - 0 agents and 0 skills have classified executions.
 - 0 agents and 0 skills have Judge-passed evidence.
@@ -203,7 +203,9 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | langgraph | [x] | [x] probe-langgraph | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | liquibase | [x] | [x] probe-liquibase | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | local-model-integration | [x] | [x] probe-local-model-integration | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
+| mapstruct | [x] | [x] probe-mapstruct | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | mockito | [x] | [x] probe-mockito | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| mysql | [x] | [x] probe-mysql | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | nextjs-app-router | [x] | [x] probe-nextjs-app-router | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | node-cli | [x] | [x] probe-node-cli | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | plan-engine | [x] | [x] probe-plan-engine | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
@@ -215,6 +217,7 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | quarkus-design | [x] | [x] probe-quarkus-design | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | quarkus-persistence | [x] | [x] probe-quarkus-persistence | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | quarkus-testing | [x] | [x] probe-quarkus-testing | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| quartz | [x] | [x] probe-quartz | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | react-server-components | [x] | [x] probe-react-server-components | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | react-vite-renderer | [x] | [x] probe-react-vite-renderer | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | spring-boot | [x] | [x] probe-spring-boot | [x] spring-boot-order-cancellation | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
@@ -253,7 +256,9 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | langgraph | technology | LangGraph | [x] | [ ] | [ ] | none | none | none | none |
 | liquibase | technology | Liquibase | [x] | [ ] | [ ] | none | none | none | none |
 | local-model-integration | domain | Local model integration | [x] | [ ] | [ ] | none | none | none | none |
+| mapstruct | technology | MapStruct | [x] | [ ] | [ ] | none | none | none | none |
 | mockito | technology | Mockito | [x] | [ ] | [ ] | none | none | none | none |
+| mysql | technology | MySQL | [x] | [ ] | [ ] | none | none | none | none |
 | nextjs-app-router | technology | Next.js App Router | [x] | [ ] | [ ] | none | none | none | none |
 | node-cli | technology | Node command line application | [x] | [ ] | [ ] | none | none | none | none |
 | plan-engine | domain | Plan engine | [x] | [ ] | [ ] | none | none | none | none |
@@ -265,6 +270,7 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | quarkus-design | technology | Quarkus Design | [x] | [ ] | [ ] | none | none | none | none |
 | quarkus-persistence | technology | Quarkus Persistence | [x] | [ ] | [ ] | none | none | none | none |
 | quarkus-testing | technology | Quarkus Testing | [x] | [ ] | [ ] | none | none | none | none |
+| quartz | technology | Quartz Scheduler | [x] | [ ] | [ ] | none | none | none | none |
 | react-server-components | technology | React Server Components | [x] | [ ] | [ ] | none | none | none | none |
 | react-vite-renderer | technology | React renderer with Vite | [x] | [ ] | [ ] | none | none | none | none |
 | spring-boot | technology | Spring Boot | [x] | [x] | [ ] | none | none | none | none |

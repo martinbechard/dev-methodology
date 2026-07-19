@@ -1171,6 +1171,48 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-mysql
+    skill: mysql
+    source: skills/mysql/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: Work implements, reviews, tests, or diagnoses MySQL or InnoDB schemas, queries, transactions, indexes, locks, migrations, replication, or production database behavior.
+    negativeCondition: Generic SQL or a non-MySQL store does not activate MySQL and InnoDB guidance, and documentation or sample connection configuration alone is not runtime evidence.
+    expectedBehavior: Verify the deployed version, engine, and effective defaults; account for clustered and secondary indexes plus lock ranges; inspect representative plans; control DDL and metadata-lock risk; and verify behavior against the production engine and topology.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, operation-coverage, actor-boundary-coverage], modelRubric: source-faithfulness}
+    scenarioAssociations: [dev-coder-happy, dev-verifier-happy]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: postgres-drizzle}
+  - id: probe-quartz
+    skill: quartz
+    source: skills/quartz/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: Work implements, reviews, tests, or diagnoses Quartz jobs, triggers, misfires, concurrency, persistence, clustering, recovery, or scheduler lifecycle behavior.
+    negativeCondition: Generic scheduling language, documentation-only Quartz text, or an unrelated sibling dependency does not activate Quartz guidance.
+    expectedBehavior: Define stable job and trigger identity, explicit misfire and concurrency policy, idempotent retry and recovery ownership, compatible JobDataMap persistence, JDBC and clustering boundaries, lifecycle ownership, observability, and real failure verification.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, operation-coverage, actor-boundary-coverage], modelRubric: source-faithfulness}
+    scenarioAssociations: [dev-coder-happy, dev-verifier-happy]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: mysql}
+  - id: probe-mapstruct
+    skill: mapstruct
+    source: skills/mapstruct/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: Work implements, reviews, tests, or diagnoses MapStruct mapper contracts, annotation processing, updates, null handling, conversions, collections, cycles, qualifiers, inheritance, or generated implementations.
+    negativeCondition: Generated mapper output without owning source configuration, documentation-only text, or an unrelated sibling processor does not activate MapStruct guidance.
+    expectedBehavior: Make unmapped-target and conversion policy explicit, distinguish create from MappingTarget updates, control null and collection behavior, bound nested and cyclic mappings, configure qualifiers and component models deliberately, inspect generated implementations, and verify annotation processing from the command line.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, operation-coverage, actor-boundary-coverage], modelRubric: source-faithfulness}
+    scenarioAssociations: [dev-coder-happy, dev-verifier-happy]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: quartz}
   - id: probe-quarkus-design
     skill: quarkus-design
     source: skills/quarkus-design/SKILL.md

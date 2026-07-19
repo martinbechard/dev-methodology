@@ -69,6 +69,8 @@ packs:
       - probe-langgraph
       - probe-liquibase
       - probe-local-model-integration
+      - probe-mapstruct
+      - probe-mysql
       - probe-nextjs-app-router
       - probe-node-cli
       - probe-organise-project-files
@@ -77,6 +79,7 @@ packs:
       - probe-postgres-drizzle
       - probe-prompt-contracts
       - probe-python
+      - probe-quartz
       - probe-react-server-components
       - probe-react-vite-renderer
       - probe-review-structured-artifact
