@@ -12,7 +12,7 @@ Add a source-backed explanation of the repository claim and isolated-worktree me
 
 The lifecycle page already names the claim gate, narrow ownership, isolated checkouts, integration resources, and clean release. It does not yet give readers one coherent explanation of the complete mechanism or show how the MCP server, distributed Agent Skill, claim engine, Git worktrees, and conceptual development agents cooperate.
 
-The explanation must be verified against implemented source rather than reconstructed from examples or prior conversation. The primary sources include skills/agent-claim/SKILL.md, skills/agent-claim/scripts/claim.py, its focused tests, the current mcp-agent-ops tool schemas and behavior, README.md, and the conceptual definitions for Dev Orchestrator, Dev Backlog Steward, modifying agents, Dev Merge Coordinator, reviewers, and Dev Verifier. The sibling backlog item separate-project-and-backlog-claim-scopes changes the public scope model and must stabilize before this page describes the steady-state contract.
+The explanation must be verified against implemented source rather than reconstructed from examples or prior conversation. The primary sources include skills/agent-claim/SKILL.md, skills/agent-claim/scripts/claim.py, its focused tests, the current mcp-agent-ops tool schemas and behavior, README.md, and the conceptual definitions for Parent Backlog Coordinator, Dev Orchestrator, Dev Backlog Steward, modifying agents, Dev Merge Coordinator, reviewers, and Dev Verifier. The sibling backlog item separate-project-and-backlog-claim-scopes stabilized the public scope model and completed at commit db82749e28b51f2cb9281e52b4d3ec587888e70a. The accepted codex-workitem-coordination skill and backlog-agent role contract provide the source for Codex task communication and wake-up behavior when that work is authorized and available.
 
 ## Requirements
 
@@ -27,6 +27,11 @@ The explanation must be verified against implemented source rather than reconstr
 - Describe the agent responsibilities from the current conceptual definitions: Dev Orchestrator coordinates root ownership and handoffs; producing agents own their narrow mutation lanes; Dev Merge Coordinator owns multi-contribution integration; Dev Backlog Steward owns brief lifecycle mutations through the configured backend; reviewers remain read-only unless mutation is separately authorized; and Dev Verifier owns verification resources required by its checks.
 - Make the backlog boundary explicit: backlog lifecycle ownership is primary-worktree-only, must remain separate from project-artifact ownership, and must be released immediately after the narrow lifecycle update so it does not block project claims.
 - Show the successful lifecycle from inspection through claim, isolated contribution when required, review, verification, integration, backlog finalization, claim release, and safe clean-worktree removal. Also show the stop conditions for overlap, dirty anonymous state, missing authority, and incomplete handoff evidence.
+- Add an accessible communication sequence for normal backlog intake through READ-ONLY PREFLIGHT, LIFECYCLE START, a brief primary claim and release, ARTIFACT GO, isolated production, independent review, Dev Verifier, direct completion or Dev Merge Coordinator target-specific integration, and the terminal Dev Backlog Steward claim.
+- Add an accessible communication sequence for WAIT or PRIMARY_REQUIRED through ARTIFACT WAIT, current-owner commit and release notice, the parent coordinator's evidence-bearing baton handoff, and ARTIFACT RESUME. Show that the waiting task stops without polling and that Codex task status is not delivery evidence.
+- Add an accessible communication sequence showing several serialized primary-only backlog batons followed by concurrent non-overlapping isolated artifact lanes. Keep generators, browsers and ports, verification, target integration, and claim contention behind explicit resources and adaptive parent dispatch.
+- Include Parent Backlog Coordinator, Dev Orchestrator task, Dev Backlog Steward, artifact producer, independent reviewer, Dev Verifier, Dev Merge Coordinator, the claim MCP server and repository-global registry, and Codex task wake-up messaging as distinct actors where they participate.
+- Keep these communication sequences on this lifecycle page rather than duplicating them in the codex-workitem-coordination skill documentation.
 - Use a compact table, flow, or diagram only where it materially clarifies ownership transitions and concurrency. Preserve the page's current visual language, accessibility behavior, navigation, and relative-link conventions.
 - Avoid duplicating the complete agent-claim procedure in HTML. Link to the authoritative skill and relevant generated agent catalog while explaining the system at the design level.
 - Update other maintained source documentation only when verification finds a factual contradiction that must be resolved for the lifecycle page to be truthful. Regenerate derived artifacts from their owning sources rather than editing them manually.
@@ -38,6 +43,7 @@ The explanation must be verified against implemented source rather than reconstr
 - Every named agent responsibility agrees with its current conceptual role definition and does not assign backlog, review, verification, or integration ownership to the wrong agent.
 - Every named MCP operation, claim outcome, scope, worktree rule, and fallback boundary is supported by current source, current published tool schemas, or an explicitly labeled portability path.
 - The page does not conflate a Codex task worktree with an acquired repository claim or imply that isolation resolves overlapping ownership.
+- The three communication sequences use the exact implemented claim outcomes and coordination phases, expose the evidence carried by every baton and wake-up, and remain understandable through accessible text alternatives without color or animation.
 - Existing lifecycle content contains no contradictory or stale claim and worktree statements after the new section is added.
 - Relative links resolve, the HTML remains usable at narrow and wide viewport sizes, and its heading, table, focus, contrast, and reduced-motion behavior remain accessible.
 - Repository validation and focused claim-engine tests pass from the required Python version, and any unavailable live MCP verification is reported explicitly rather than inferred.
@@ -53,6 +59,7 @@ The explanation must be verified against implemented source rather than reconstr
 - Run the focused claim-engine and bundle-content tests before the full repository validation commands required by AGENTS.md.
 - Run the repository checks for generated documentation and adapters so the maintained page agrees with source-owned representations.
 - Run the HTML page verification workflow, resolve every relative link, and inspect the rendered page at representative desktop and narrow viewport sizes.
+- Inspect the three communication sequences at narrow, standard, and desktop widths, in light and dark presentation, with keyboard navigation, zoom, reduced motion, readable labels, and accessible alternatives.
 - Record the implementation commit, independent documentation review, verification evidence, and any MCP version or capability limitation that affected the result.
 
 ## Notes
