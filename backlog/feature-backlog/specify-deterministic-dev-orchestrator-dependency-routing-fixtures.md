@@ -12,7 +12,7 @@ Provide a fully specified, deterministic fixture for the Dev Orchestrator depend
 
 The dependency-routing scenario names an API source lane and an operator runbook lane, but its frozen fixture supplies no target files, requested behavior, or acceptance criteria. Both producing agents therefore returned BLOCKED without commits. The runner correctly stopped before review, verification, integration, or backlog closeout because the committed-handoffs gate could not pass.
 
-This is a test-harness specification gap rather than a product authority question. The classification is recorded in [Classify Agent Suite Blocking Resources](../analysis-backlog/classify-agent-suite-blocking-resources.md), and the authoritative run evidence is preserved in [Complete Agent Suite Results](../../evals/agent-tests/results/2026-07-17-complete-agent-suites.md).
+This is a test-harness specification gap rather than a product authority question. The classification is recorded in [Classify Agent Suite Blocking Resources](../completed-backlog/analyses/classify-agent-suite-blocking-resources.md), and the authoritative run evidence is preserved in [Complete Agent Suite Results](../../evals/agent-tests/results/2026-07-17-complete-agent-suites.md).
 
 ## Requirements
 

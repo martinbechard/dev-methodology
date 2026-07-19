@@ -14,7 +14,7 @@ Five browser-dependent scenarios reached a common infrastructure boundary: the s
 
 The affected scenarios are Dev UX Specialist complete-responsive-flow and keyboard-and-accessibility-barriers, plus Dev Browser Operator persisted-setting-workflow, upload-boundary-failure, and blocked-route-owned-cleanup. The last scenario must remain semantically BLOCKED for its intentionally absent success route even after browser attachment works.
 
-The classification is recorded in [Classify Agent Suite Blocking Resources](../analysis-backlog/classify-agent-suite-blocking-resources.md), and the authoritative run evidence is preserved in [Complete Agent Suite Results](../../evals/agent-tests/results/2026-07-17-complete-agent-suites.md).
+The classification is recorded in [Classify Agent Suite Blocking Resources](../completed-backlog/analyses/classify-agent-suite-blocking-resources.md), and the authoritative run evidence is preserved in [Complete Agent Suite Results](../../evals/agent-tests/results/2026-07-17-complete-agent-suites.md).
 
 ## Requirements
 

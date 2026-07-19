@@ -14,7 +14,7 @@ The material-findings scenario asks the Dev Security Reviewer to trace a synthet
 
 This is a harness routing conflict rather than missing product authority. The separate missing-authority scenario correctly remains BLOCKED when deployed authorization policy evidence is absent.
 
-The classification is recorded in [Classify Agent Suite Blocking Resources](../analysis-backlog/classify-agent-suite-blocking-resources.md), and the authoritative run evidence is preserved in [Complete Agent Suite Results](../../evals/agent-tests/results/2026-07-17-complete-agent-suites.md).
+The classification is recorded in [Classify Agent Suite Blocking Resources](../completed-backlog/analyses/classify-agent-suite-blocking-resources.md), and the authoritative run evidence is preserved in [Complete Agent Suite Results](../../evals/agent-tests/results/2026-07-17-complete-agent-suites.md).
 
 ## Requirements
 
