@@ -108,7 +108,7 @@
         {
           "name": "project-organiser",
           "output": "generated/adapters/claude/agents/project-organiser.md",
-          "sha256": "fd8c5f5bb6da58979b37efdb377389e5b4c4e689c75e7b6753c93e35fa355bd4",
+          "sha256": "8e4e7c3a6ce9075677031b590b1cc5c0ad44563c31032167fa3a6d89a0cafcc5",
           "source": "agents/roles/project-setup/project-organiser.role.yaml"
         },
         {
@@ -272,7 +272,7 @@
         {
           "name": "project-organiser",
           "output": "generated/adapters/codex/agents/project-organiser.toml",
-          "sha256": "11580415bc31f608641af44809cfa243a014f4668664c9428873b18a8fe7b5a6",
+          "sha256": "f26a7b45370b4fc809e41449a12e05c169d248f65f3f014bfa790d200210e1f2",
           "source": "agents/roles/project-setup/project-organiser.role.yaml"
         },
         {
@@ -442,7 +442,7 @@
         {
           "name": "project-organiser",
           "output": "generated/adapters/gemini/agents/project-organiser.md",
-          "sha256": "b4826aa0238fbfcaf53dc40f3b502c9c289ad9e8124c3c462ded23603f844617",
+          "sha256": "b44e42578986dd95193d5a0b742cea380e9b6b8b9eaac0d0f762be9b787f4794",
           "source": "agents/roles/project-setup/project-organiser.role.yaml"
         },
         {
@@ -606,7 +606,7 @@
         {
           "name": "project-organiser",
           "output": "generated/adapters/junie/agents/project-organiser.md",
-          "sha256": "1cd963dcbd909e7d318773098d1fec594d733e94d57a9f2f286c5446010533bd",
+          "sha256": "8be63fd8295b1e6f1b5bebc8ef6cf8db546e8d8d7c6fe56abf20bc70a9e5fb87",
           "source": "agents/roles/project-setup/project-organiser.role.yaml"
         },
         {

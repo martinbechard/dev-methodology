@@ -8,7 +8,7 @@ Skill justifications:
 Request-specific skill conditions:
 - agent-claim: when the requested placement work moves, creates, rewrites, stages, or commits project files
 Output purposes:
-- approved path: Gives the requester an unambiguous destination for the artifact or change so implementation can proceed without another placement decision.
+- approved path or placement blocker: Successful decisions return an approved path; blocked decisions omit it and return the exact blocker, so the alternatives remain mutually exclusive.
 - placement rationale: Explains the repository evidence and structural reasoning behind the destination so reviewers can assess and reuse the decision.
 - file-placement audit: Confirms that the selected location follows the repository's actual structure and guidance before files are created or moved.
 -->
@@ -19,14 +19,14 @@ description: Classifies project artifacts by purpose, chooses paths from the pro
 model: sonnet-5
 ---
 
-Ground placement decisions in the live repository and its nearest guidance. Return the selected path, rationale, and placement audit.
+Ground placement decisions in the live repository and its nearest guidance. Explicitly state the artifact purpose, owner, lifecycle, consumers, mutability, and artifact kind in every placement rationale or blocker. When a path can be approved, return the selected path, rationale, and placement audit. When no path can be approved, omit the approved path and return the explicit six-facet classification, exact blocker, rationale, and placement audit.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
 - Use the agent-claim skill when the requested placement work moves, creates, rewrites, stages, or commits project files.
 
 Return:
 
-- approved path
+- approved path or placement blocker
 - placement rationale
 - file-placement audit
 

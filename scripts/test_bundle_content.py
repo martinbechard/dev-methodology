@@ -2184,10 +2184,112 @@ class BundleContentTests(unittest.TestCase):
         role_skill_names = [next(iter(entry)) for entry in role["skills"]]
         role_output_names = [next(iter(entry)) for entry in role["outputContract"]]
 
+        role_outputs = {
+            next(iter(entry)): next(iter(entry.values()))
+            for entry in role["outputContract"]
+        }
+
         self.assertIn("organise-project-files", role_skill_names)
-        self.assertIn("approved path", role_output_names)
+        decision_output_name = "approved path or placement blocker"
+        self.assertIn(decision_output_name, role_output_names)
+        self.assertNotIn("approved path", role_output_names)
+        self.assertNotIn("placement blocker", role_output_names)
+        self.assertIn("placement rationale", role_output_names)
         self.assertIn("file-placement audit", role_output_names)
-        self.assertIn("Return the selected path", role["instructions"])
+
+        approved_path_instruction = (
+            "When a path can be approved, return the selected path, rationale, and "
+            "placement audit."
+        )
+        blocked_path_instruction = (
+            "When no path can be approved, omit the approved path and return the "
+            "explicit six-facet classification, exact blocker, rationale, and "
+            "placement audit."
+        )
+        self.assertIn(approved_path_instruction, role["instructions"])
+        self.assertIn(blocked_path_instruction, role["instructions"])
+        self.assertIn(
+            "Successful decisions return an approved path",
+            role_outputs[decision_output_name]["purpose"],
+        )
+        self.assertIn(
+            "blocked decisions omit it and return the exact blocker",
+            role_outputs[decision_output_name]["purpose"],
+        )
+
+        classification_labels = (
+            "Purpose:",
+            "Owner:",
+            "Lifecycle:",
+            "Consumers:",
+            "Mutability:",
+            "Artifact kind:",
+        )
+        for example in role["examples"]:
+            with self.subTest(example=example["purpose"]):
+                for label in classification_labels:
+                    self.assertIn(label, example["plausibleResponse"])
+
+        example_responses = [
+            example["plausibleResponse"] for example in role["examples"]
+        ]
+        successful_example_indexes = {
+            index
+            for index, response in enumerate(example_responses)
+            if "Approved path:" in response
+        }
+        blocked_example_indexes = {
+            index
+            for index, response in enumerate(example_responses)
+            if "Status: BLOCKED" in response
+        }
+        self.assertEqual(2, len(example_responses))
+        self.assertEqual({0}, successful_example_indexes)
+        self.assertEqual({1}, blocked_example_indexes)
+        self.assertTrue(
+            successful_example_indexes.isdisjoint(blocked_example_indexes)
+        )
+        self.assertEqual(
+            set(range(len(example_responses))),
+            successful_example_indexes | blocked_example_indexes,
+        )
+
+        successful_response = example_responses[0]
+        successful_required_markers = (
+            "Approved path:",
+            "Rationale:",
+            "Placement audit:",
+        )
+        successful_forbidden_markers = (
+            "Blocker:",
+            "Exact decision needed:",
+            "Approved path omitted.",
+            "Status: BLOCKED",
+        )
+        for marker in successful_required_markers:
+            self.assertIn(marker, successful_response)
+        for marker in successful_forbidden_markers:
+            self.assertNotIn(marker, successful_response)
+
+        blocked_response = example_responses[1]
+        blocked_required_markers = (
+            *classification_labels,
+            "Blocker:",
+            "Exact decision needed:",
+            "Rationale:",
+            "Placement audit:",
+            "Approved path omitted.",
+            "Status: BLOCKED",
+        )
+        for marker in blocked_required_markers:
+            self.assertIn(marker, blocked_response)
+        self.assertNotIn("Approved path:", blocked_response)
+
+        classification_instruction = (
+            "Explicitly state the artifact purpose, owner, lifecycle, consumers, "
+            "mutability, and artifact kind in every placement rationale or blocker."
+        )
+        self.assertIn(classification_instruction, role["instructions"])
 
         filename_instruction = "Choose the filename from local conventions."
         response_only_instruction = (
@@ -2230,6 +2332,37 @@ class BundleContentTests(unittest.TestCase):
             / "agents"
             / "project-organiser.md",
         }
+        markdown_return = (
+            "Return:\n\n- approved path or placement blocker\n"
+            "- placement rationale\n- file-placement audit"
+        )
+        expected_adapter_returns = {
+            "codex": (
+                "Return: approved path or placement blocker; placement rationale; "
+                "file-placement audit."
+            ),
+            "claude": markdown_return,
+            "gemini": markdown_return,
+            "junie": markdown_return,
+        }
+        standalone_adapter_return_patterns = {
+            "codex": (
+                r"(?m)^Return: (?:[^;\n]+; )*approved path(?:; [^;\n]+)*\.$",
+                r"(?m)^Return: (?:[^;\n]+; )*placement blocker(?:; [^;\n]+)*\.$",
+            ),
+            "claude": (
+                r"(?m)^- approved path$",
+                r"(?m)^- placement blocker$",
+            ),
+            "gemini": (
+                r"(?m)^- approved path$",
+                r"(?m)^- placement blocker$",
+            ),
+            "junie": (
+                r"(?m)^- approved path$",
+                r"(?m)^- placement blocker$",
+            ),
+        }
         for adapter, adapter_path in adapter_paths.items():
             adapter_text = adapter_path.read_text(encoding="utf-8")
             with self.subTest(adapter=adapter):
@@ -2243,6 +2376,12 @@ class BundleContentTests(unittest.TestCase):
                     adapter_text,
                 )
                 self.assertIn(response_only_instruction, adapter_text)
+                self.assertIn(classification_instruction, adapter_text)
+                self.assertIn(approved_path_instruction, adapter_text)
+                self.assertIn(blocked_path_instruction, adapter_text)
+                self.assertIn(expected_adapter_returns[adapter], adapter_text)
+                for pattern in standalone_adapter_return_patterns[adapter]:
+                    self.assertNotRegex(adapter_text, pattern)
                 for forbidden_rule in forbidden_blanket_rules:
                     self.assertNotIn(forbidden_rule, adapter_text)
 
