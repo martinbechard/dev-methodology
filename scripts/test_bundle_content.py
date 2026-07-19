@@ -2918,6 +2918,62 @@ class BundleContentTests(unittest.TestCase):
                 ROLE_SCHEMA_PATH,
             )
 
+    def test_claim_guidance_separates_project_backlog_and_union_domains(self) -> None:
+        claim_text = (SKILLS_ROOT / "agent-claim" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        readme_text = README_PATH.read_text(encoding="utf-8")
+
+        for required_contract in (
+            "project-files names every project file except backlog and ignored operational worktree state",
+            "backlog names the complete repository-root backlog subtree",
+            "all-files names the explicit union of project-files and backlog",
+            "A request that mixes project and backlog paths is rejected atomically",
+            "compat_backlog_path warning",
+            "Project-files claims remain eligible for canonical isolated worktrees",
+        ):
+            with self.subTest(claim_contract=required_contract):
+                self.assertIn(required_contract, claim_text)
+
+        for required_contract in (
+            "Project-files owns the repository file tree except backlog and ignored operational state",
+            "Backlog owns only the complete primary-worktree backlog subtree",
+            "All-files is their deliberate union for recovery and true repository-wide work",
+            "Keep backlog lifecycle commits separate from long-running implementation claims",
+        ):
+            with self.subTest(readme_contract=required_contract):
+                self.assertIn(required_contract, readme_text)
+
+    def test_backlog_claim_guidance_uses_short_primary_batons(self) -> None:
+        create_text = (SKILLS_ROOT / "create-backlog" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        manage_text = (SKILLS_ROOT / "manage-backlog" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+
+        for required_contract in (
+            "short backlog-domain claim",
+            "release that claim immediately",
+            "Do not combine backlog creation with a project-files implementation claim",
+            "acquire a separate exact, tree, or project-files implementation claim",
+            "A later backlog claim records terminal evidence and archive movement",
+        ):
+            with self.subTest(create_contract=required_contract):
+                self.assertIn(required_contract, create_text)
+
+        for required_contract in (
+            "record Status: Running and ownership evidence",
+            "release immediately",
+            "Delivery then uses a separate exact, tree, or project-files claim without backlog ownership",
+            "acquire a later backlog claim to record result evidence and archive the item",
+            "PRIMARY_REQUIRED is a coordination outcome rather than a failed mutation",
+            "suspend without polling",
+            "Resume only after that notification",
+        ):
+            with self.subTest(manage_contract=required_contract):
+                self.assertIn(required_contract, manage_text)
+
     def test_modifying_roles_use_claims_and_coordination_roles_require_clean_commits(self) -> None:
         build_skill_docs = load_build_skill_docs_module()
         skill_payload = build_skill_docs.build_payload()
