@@ -1,6 +1,6 @@
 # Classify Agent Suite Blocking Resources
 
-Status: User Review
+Status: Ready
 
 Type: Analysis
 
@@ -33,7 +33,15 @@ This decision sets product priority and determines whether an intentionally with
 
 ### Resolution
 
-Pending.
+Resolved 2026-07-19.
+
+Classify every recorded BLOCKED outcome by the authority needed to continue:
+
+- Create a User Review item for every genuine blocker that requires missing information, permission, authority, or a persistent decision that an AI agent cannot resolve.
+- Create an ordinary typed backlog item for a technical blocker that an agent can resolve without additional user authority.
+- Keep deliberately synthetic safe-blocking scenarios as evaluation evidence only; do not present them as product defects or user decisions.
+
+This policy applies across all blocked categories. Classification must be based on the concrete evidence and required next authority for each outcome rather than the category label alone.
 
 ## Unattended Work Boundary
 
