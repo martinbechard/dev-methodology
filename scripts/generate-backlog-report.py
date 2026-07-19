@@ -35,12 +35,14 @@ SCAN_FOLDERS = (
 )
 REQUIRED_SECTIONS = (
     "Summary",
+    "Context",
     "Requirements",
     "Acceptance Criteria",
     "Dependencies",
     "Verification",
 )
 USER_SECTIONS = (
+    "User Action Required",
     "Question for the User",
     "Why User Input Is Required",
     "Resolution",
@@ -127,21 +129,20 @@ def _parse_document(path: Path) -> tuple[str, dict[str, str], dict[str, str]]:
 
 
 def _dependencies(section: str) -> list[str]:
-    """Extract dependency slugs while preserving their declared order."""
+    """Extract dependency declarations while preserving their declared order."""
     if not section or section.strip().lower() == "none":
         return []
     values: list[str] = []
     for line in section.splitlines():
         candidate = line.strip().lstrip("-* ").strip()
-        if not candidate or candidate.lower() == "none":
+        normalized = candidate.strip("`.,;:()[]")
+        if not candidate or normalized.lower() == "none":
             continue
         link_match = MARKDOWN_LINK_PATTERN.search(candidate)
         if link_match:
             candidate = Path(link_match.group(1)).stem
-        else:
-            candidate = candidate.split()[0].strip("`.,;:()[]")
-        if candidate.lower() == "none":
-            continue
+        elif not any(character.isspace() for character in candidate):
+            candidate = normalized
         values.append(candidate)
     return values
 
@@ -311,7 +312,13 @@ def _reconcile(items: list[_Item]) -> None:
         for dependency in item.dependencies:
             if not DEPENDENCY_PATTERN.fullmatch(dependency):
                 item.unmet_dependencies.append(dependency)
-                item.anomalies.append(f"Invalid dependency identifier: {dependency}.")
+                if any(character.isspace() for character in dependency):
+                    item.anomalies.append(
+                        "External prerequisite requires manual satisfaction: "
+                        f"{dependency}"
+                    )
+                else:
+                    item.anomalies.append(f"Invalid dependency identifier: {dependency}.")
             elif dependency not in known:
                 item.unmet_dependencies.append(dependency)
                 item.anomalies.append(f"Unresolved dependency: {dependency}.")

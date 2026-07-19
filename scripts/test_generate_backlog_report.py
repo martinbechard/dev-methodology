@@ -44,6 +44,7 @@ class BacklogReportTest(unittest.TestCase):
         status: str,
         item_type: str,
         dependencies: str = "None",
+        context: str = "Fixture context.",
         extra: str = "",
     ) -> None:
         """Write one complete backlog item with optional queue-specific sections."""
@@ -59,6 +60,10 @@ Type: {item_type}
 ## Summary
 
 Summary for {title}.
+
+## Context
+
+{context}
 
 ## Requirements
 
@@ -174,6 +179,46 @@ Do not implement.
         self.assertNotIn("<script", rendered.lower())
         self.assertNotIn("https://", rendered.lower())
 
+    def test_external_prerequisites_remain_complete_unmet_and_non_runnable(self) -> None:
+        """Plain-language prerequisites retain their text and require manual satisfaction."""
+        self.write_item(
+            "backlog/feature-backlog/python-runtime.md",
+            title="Python Runtime",
+            status="Ready",
+            item_type="Feature",
+            dependencies="- Python 3.11 or newer installed",
+        )
+        self.write_item(
+            "backlog/analysis-backlog/template-conformance.md",
+            title="Template Conformance",
+            status="Ready",
+            item_type="Analysis",
+            dependencies="- Enforce Documentation Template Conformance.",
+        )
+
+        rendered = self.generate()
+
+        self.assertIn("<span>Runnable now</span><strong>0</strong>", rendered)
+        self.assertIn(
+            "External prerequisite requires manual satisfaction: Python 3.11 or newer installed",
+            rendered,
+        )
+        self.assertIn(
+            "External prerequisite requires manual satisfaction: Enforce Documentation Template Conformance.",
+            rendered,
+        )
+        self.assertIn("Python 3.11 or newer installed (unmet)", rendered)
+        self.assertIn("Enforce Documentation Template Conformance. (unmet)", rendered)
+        self.assertNotIn("Invalid dependency identifier: Python.", rendered)
+        self.assertNotIn("Invalid dependency identifier: Enforce.", rendered)
+        runnable = rendered[rendered.index("Runnable Work"):rendered.index("Blocked Work")]
+        blocked_start = rendered.index("Blocked Work")
+        blocked = rendered[blocked_start:rendered.index("Holding", blocked_start)]
+        self.assertNotIn("Python Runtime", runnable)
+        self.assertNotIn("Template Conformance", runnable)
+        self.assertIn("Python Runtime", blocked)
+        self.assertIn("Template Conformance", blocked)
+
     def test_lifecycle_and_metadata_anomalies_are_visible(self) -> None:
         """Invalid states and archive or dependency drift remain visible without source mutation."""
         self.write_item("backlog/completed-backlog/features/done.md", title="Done", status="Completed", item_type="Feature")
@@ -230,9 +275,26 @@ Do not implement.
         self.assertIn("Unmet dependency: closed is not in the completed archive.", rendered)
         self.assertIn("Completed archive contains an item not declared Completed.", rendered)
         self.assertIn("Failed archive contains an item without Failed or Abandoned status.", rendered)
-        self.assertIn("Missing required fields: Summary, Requirements, Acceptance Criteria, Dependencies, Verification.", rendered)
+        self.assertIn("Missing required fields: Summary, Context, Requirements, Acceptance Criteria, Dependencies, Verification.", rendered)
         self.assertIn("Unreadable item: UnicodeDecodeError", rendered)
         self.assertIn("<span>Runnable now</span><strong>0</strong>", rendered)
+
+    def test_missing_context_is_anomalous_and_not_runnable(self) -> None:
+        """An otherwise complete Ready item without Context cannot be dispatched."""
+        self.write_item(
+            "backlog/feature-backlog/no-context.md",
+            title="No Context",
+            status="Ready",
+            item_type="Feature",
+            context="",
+        )
+
+        rendered = self.generate()
+
+        self.assertIn("Missing required fields: Context.", rendered)
+        self.assertIn("<span>Runnable now</span><strong>0</strong>", rendered)
+        runnable = rendered[rendered.index("Runnable Work"):rendered.index("Blocked Work")]
+        self.assertNotIn("No Context", runnable)
 
     def test_active_ready_non_dispatchable_types_are_anomalies_not_runnable(self) -> None:
         """Holding and invalid Types remain visible but cannot become runnable work."""
@@ -303,6 +365,37 @@ Do not proceed.
         )
         self.assertIn("<span>Needs your input</span><strong>1</strong>", rendered)
         self.assertIn("backlog/user-action-required/invalid-destination.md", rendered)
+
+    def test_user_action_required_section_is_mandatory(self) -> None:
+        """User-action work reports a missing queue-owning section as an anomaly."""
+        user_sections = """## Question for the User
+
+Should this proceed?
+
+## Why User Input Is Required
+
+The user owns the decision.
+
+## Resolution
+
+Pending.
+
+## Unattended Work Boundary
+
+Do not proceed.
+"""
+        self.write_item(
+            "backlog/user-action-required/missing-owner-section.md",
+            title="Missing Owner Section",
+            status="User Action Required",
+            item_type="Analysis",
+            extra=user_sections,
+        )
+
+        rendered = self.generate()
+
+        self.assertIn("Missing user-action fields: User Action Required.", rendered)
+        self.assertIn("<span>Needs your input</span><strong>1</strong>", rendered)
 
     def test_unreadable_series_index_is_ignored_and_reported(self) -> None:
         """An invalid UTF-8 series index cannot abort or become a counted work item."""
