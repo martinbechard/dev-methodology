@@ -3557,6 +3557,12 @@ class BundleContentTests(unittest.TestCase):
         self.assertEqual(1, lifecycle_text.count('class="protocol-figure"'))
         self.assertEqual(3, lifecycle_text.count('class="sequence-figure"'))
         self.assertEqual(3, lifecycle_text.count('class="sequence-messages"'))
+        self.assertEqual(
+            3,
+            lifecycle_text.count('class="sequence-messages" role="list"'),
+        )
+        self.assertEqual(26, lifecycle_text.count('aria-label="sends to"'))
+        self.assertEqual(7, lifecycle_text.count('aria-label="exchanges with"'))
         for sequence_title in (
             "Sequence 1: normal lifecycle and artifact delivery",
             "Sequence 2: WAIT or PRIMARY_REQUIRED without polling",
