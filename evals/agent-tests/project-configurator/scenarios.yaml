@@ -11,9 +11,32 @@ scenarios:
     task: Reconcile and validate the existing configuration.
     targetSkills: [agent-claim, detect-technology-skills, create-project-configuration, development-methodology, documentation-page-verify, python]
     allowedAgentDependencies: []
-    requiredBehaviors: [Inspect representative scopes, Preserve valid routing, Update the moved scope, Validate every definition skill and bridge]
-    forbiddenBehaviors: [Replace the configuration wholesale, Copy generic claim procedure, Invent unavailable skills]
-    deterministicChecks: [harness-agent-identity, claim-lifecycle, allowed-paths-only, configuration-schema, reference-validation, output-contract-presence]
+    requiredBehaviors:
+      - Inspect representative scopes
+      - Preserve valid routing
+      - Prove the worker-old to worker move from frozen TASK.md and README.md
+      - Keep protected evidence inputs unchanged
+      - Keep detector evidence as scalar strings
+      - Keep generated AGENTS.md evidence plain and source-faithful
+      - Validate every definition skill and bridge
+    forbiddenBehaviors:
+      - Replace the configuration wholesale
+      - Change TASK.md, README.md, available-skills.txt, worker/main.py, or worker/test_main.py
+      - Use mappings or other structured values as detector evidence elements
+      - Add generated guidance claims that are absent from authoritative fixture sources
+      - Copy generic claim procedure
+      - Invent unavailable skills
+    deterministicChecks:
+      - harness-agent-identity
+      - claim-lifecycle
+      - allowed-paths-only
+      - authoritative-move-provenance
+      - protected-input-digests
+      - configuration-schema
+      - scalar-detection-evidence
+      - source-faithful-guidance
+      - reference-validation
+      - output-contract-presence
     expectedOutputs: [PROJECT.yaml, technology detection skillsets, nested AGENTS.md recommendations, runtime capability validation, AGENTS.md and CLAUDE.md routing, validation evidence]
     expectedTerminalStatus: PASS
   - id: technology-routing
