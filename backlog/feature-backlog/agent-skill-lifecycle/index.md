@@ -28,7 +28,7 @@ Conceptual agent definitions declare their generic definition-owned skills. Proj
 
 ## Recommended Order
 
-1. [Replace task-time routing with setup-time technology detection](replace-router-with-setup-detector.md).
+1. [Replace task-time routing with setup-time technology detection](../../completed-backlog/features/replace-router-with-setup-detector.md).
 2. [Verify Codex CLI skill activation](verify-codex-skill-activation.md).
 3. [Document the cross-harness skill lifecycle](document-cross-harness-skill-lifecycle.md).
 4. [Build the agent and skill mind map](build-agent-skill-mind-map.md).
