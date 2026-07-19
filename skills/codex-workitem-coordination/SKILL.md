@@ -115,7 +115,7 @@ After the serialized lifecycle mutation releases, run concurrent non-overlapping
 
 ## Parent Baton Scheduler Audit
 
-Start the first parent-side audit interval when the queue campaign starts. Complete another audit every 15 minutes from the prior audit completion while any queue work, active claim or task, baton, release notification, successor wake or acknowledgement, or accepted but unintegrated contribution remains nonterminal. Continue after a predecessor or campaign turns terminal while any notification or acknowledgement remains pending. Stop only when the queue campaign is terminal and no task, claim, accepted fix, baton, wake, or acknowledgement remains.
+Start the first parent-side audit interval when the queue campaign starts. Complete another audit every 15 minutes from the prior audit completion while any queue work, active claim or task, baton, release notification, successor wake or acknowledgement, or accepted but unintegrated original or correction contribution remains unresolved. Continue after a predecessor or campaign turns terminal while any of those obligations remains unresolved. Stop only when the queue campaign is terminal and no queue work, active claim or task, baton, release notification, successor wake or acknowledgement, or accepted but unintegrated original or correction contribution remains.
 
 For each completed interval, calculate these measurements from durable task and repository evidence:
 
@@ -126,9 +126,9 @@ For each completed interval, calculate these measurements from durable task and 
 
 Record the interval boundary, queue counts, active claims and named resources, task-list anomalies, stale heartbeats, structured claim refusals, shared bottlenecks, and the exact commits and release events supporting each counted advance. Compare the current interval with the prior interval:
 
-- Improving means terminal throughput and flow throughput are nondecreasing while average blocked or waiting tasks is nonincreasing.
+- Improving means terminal throughput and flow throughput are nondecreasing while average blocked or waiting tasks is nonincreasing, with at least one throughput increasing or the blocked average decreasing.
 - Worsening means either throughput falls while the blocked average rises, or a baton drop, deadlock, repeated contention, stale activity, or overload appears.
-- Otherwise report stable or mixed and explain which measurements moved in different directions.
+- Stable means all three measurements are unchanged and none of the worsening conditions appears. Otherwise report mixed and explain the opposing movements.
 
 Perform this baton lookup during every audit:
 
@@ -139,7 +139,7 @@ Perform this baton lookup during every audit:
 5. If release evidence is complete and the successor wake is missing, reconcile the canonical successor identifier and have the parent send exactly one evidence-bearing wake. Record its delivery and acknowledgement so a later audit cannot duplicate it.
 6. If acknowledgement remains absent, inspect recorded task state and messages at the next scheduled audit. Do not send a readiness probe and never instruct a child to poll.
 
-The parent repairs missing notifications and baton deadlocks without transferring wake authority to a predecessor or child. After every audit, emit a concise user summary containing terminal throughput, flow throughput, both task averages, queue and claim state, trend, baton result, cause, routing or concurrency adjustment, and the next concurrency limit.
+The parent repairs missing notifications and baton deadlocks without transferring wake authority to a predecessor or child. After every audit, emit a concise user summary containing terminal throughput, flow throughput, both task averages, queue counts and claim state, named resources, task-list anomalies, stale heartbeats, structured claim refusals, shared bottlenecks, trend, baton result, cause, routing or concurrency adjustment, the next concurrency limit, and the supporting commits and release events.
 
 ## Claims, Isolation, And Shared Resources
 
@@ -153,7 +153,7 @@ The parent repairs missing notifications and baton deadlocks without transferrin
 
 When at least three dependency-ready, non-overlapping items and runtime capacity exist, start with a floor of THREE active artifact campaigns. The floor applies to productive artifact work, not parked analysis or waiting tasks.
 
-Use the 15-minute parent audit as the bounded health interval. When throughput is nondecreasing, the blocked average is nonincreasing, active lanes are progressing, claims remain narrow, isolation succeeds, task-list audits are clean, and shared resources have capacity, add at most one productive campaign for the next interval. Scale by plus one again only after another healthy interval.
+Use the 15-minute parent audit as the bounded health interval. When the audit reports Improving, active lanes are progressing, claims remain narrow, isolation succeeds, task-list audits are clean, and shared resources have capacity, add at most one productive campaign for the next interval. Scale by plus one again only after another healthy interval. Stable equality never authorizes scaling.
 
 Back off immediately and record the evidence when a named bottleneck appears:
 
@@ -218,7 +218,7 @@ Reversible dormant-preflight parking is not terminal archival. Keep its canonica
 
 ## Coordination Report
 
-After every 15-minute parent audit, report both throughputs, both task averages, queue and claim state, trend, baton lookup result, cause, adjustment, and next concurrency limit.
+After every 15-minute parent audit, report both throughputs, both task averages, queue counts and claim state, named resources, task-list anomalies, stale heartbeats, structured claim refusals, shared bottlenecks, trend, baton lookup result, cause, adjustment, next concurrency limit, and supporting commits and release events.
 
 Report:
 
