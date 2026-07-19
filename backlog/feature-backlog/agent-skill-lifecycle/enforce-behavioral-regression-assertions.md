@@ -1,6 +1,6 @@
 # Enforce Behavioral Regression Assertions
 
-Status: Running
+Status: Blocked
 
 Type: Defect
 
@@ -10,6 +10,20 @@ Type: Defect
 - Lifecycle claim: enforce-behavioral-regression-assertions-start.
 - Claim evidence: dev-backlog-steward acquired PRIMARY ownership of this exact backlog item at 2026-07-19T03:16:50.695793Z before recording the Running transition.
 - Scope boundary: the lifecycle claim is released after this committed transition; project-artifact ownership must be acquired separately before implementation.
+
+## Blocked Outcome
+
+The Dev Orchestrator exhausted the bounded two-correction loop after fresh independent reviews. The clean, unintegrated implementation lineage remains preserved in commits b91eecde8d1daec285b749713db2d07efd4750e5, 938ea228d0275a3563c0ad01840dfb2b1bfed622, and 3f63321c36347ae4df68e181bd1fedec2e36d149. These commits are recovery evidence, not accepted or integration-ready contributions.
+
+No implementation was integrated. Generated skill documentation and adapters were not regenerated or integrated, the live Dev Coder TypeScript suite was not run, and no dev-verifier acceptance occurred.
+
+## Blocked Evidence
+
+The final HIGH provenance defect is in scripts/agent_skill_evals/validation.py. The behavior-regression-sensitivity gate derives phase outcomes from supervisor-copied transitions[*].exitCode, while the retained command evidence is validated only for marker presence. An adversarial probe claimed the JSON exit sequence 1/0/1/0 while its referenced command evidence reported 0/1/0/1; _validate_judges returned errors: []. A false PASS therefore remains possible for this critical deterministic gate.
+
+## Unblock Condition
+
+A separately authorized implementation must resolve structured evaluator-owned command records for every phase, derive or cross-check each transition exit code from retained command evidence rather than supervisor JSON, and add a rejection regression test for conflicting JSON and command outcomes. The corrected contribution must then restart fresh independent review and independent verification, perform serialized generation and bundle integration, run the live TypeScript scenario, and complete terminal lifecycle evaluation. Until all of that evidence passes, the preserved commits must not be treated as accepted or ready to integrate.
 
 ## Summary
 
