@@ -8,6 +8,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import re
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -95,6 +96,52 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
                 ):
                     runner._audit_report((run,), omitted)
 
+    def test_scalar_receipt_evidence_matrix_is_rejected(self) -> None:
+        """Non-empty prose strings cannot masquerade as repository or runtime evidence."""
+        run, report = self._complete_dependency_routing_report()
+        for field in ("commit", "review", "verification", "claimRelease"):
+            with self.subTest(field=field):
+                fabricated = json.loads(json.dumps(report))
+                fabricated["runs"][0]["scenarioResults"][0]["handoffReceipts"][0][field] = "looks-valid"
+                with self.assertRaisesRegex(
+                    RuntimeError,
+                    f"dev-orchestrator:dependency-routing handoff receipt source field {field} must be structured",
+                ):
+                    runner._audit_report((run,), fabricated)
+
+    def test_fabricated_receipt_evidence_matrix_is_rejected(self) -> None:
+        """Receipts must resolve to commits, retained sessions, and release journal events."""
+        with tempfile.TemporaryDirectory() as directory:
+            run, report, sessions, fixture_root = self._evidence_fixture(Path(directory))
+            runner._audit_report((run,), report)
+            runner._audit_handoff_evidence((run,), report, sessions, fixture_root)
+            cases = {
+                "commit": (
+                    lambda receipt: receipt["commit"].update({"sha": "f" * 40}),
+                    "commit lacks repository ancestry evidence",
+                ),
+                "review": (
+                    lambda receipt: receipt["review"].update({"sessionIds": ["fabricated-review"]}),
+                    "review sessions are not retained evidence",
+                ),
+                "verification": (
+                    lambda receipt: receipt["verification"].update(
+                        {"sessionIds": ["fabricated-verification"]}
+                    ),
+                    "verification sessions are not retained evidence",
+                ),
+                "claimRelease": (
+                    lambda receipt: receipt["claimRelease"].update({"eventIds": ["fabricated-release"]}),
+                    "claim release lacks fixture lifecycle evidence",
+                ),
+            }
+            for field, (mutate, diagnostic) in cases.items():
+                with self.subTest(field=field):
+                    fabricated = json.loads(json.dumps(report))
+                    mutate(fabricated["runs"][0]["scenarioResults"][0]["handoffReceipts"][0])
+                    with self.assertRaisesRegex(RuntimeError, diagnostic):
+                        runner._audit_handoff_evidence((run,), fabricated, sessions, fixture_root)
+
     @staticmethod
     def _complete_dependency_routing_report() -> tuple[object, dict[str, object]]:
         """Build a complete structured report for omission-matrix tests."""
@@ -103,9 +150,20 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
         scenario = next(item for item in suite.scenarios if item["id"] == "dependency-routing")
         suite = runner._Suite(suite.suite_id, suite.priority, suite.path, suite.manifest, (scenario,))
         run = runner._RunSpec(suite, ("dependency-routing",))
-        fields = scenario["requiredHandoffReceiptFields"]
         receipts = [
-            {field: lane if field == "lane" else f"{field}-evidence" for field in fields}
+            {
+                "lane": lane,
+                "role": {
+                    "source": "dev-coder",
+                    "documentation": "dev-documentation-writer",
+                    "integration": "dev-merge-coordinator",
+                    "closeout": "dev-backlog-steward",
+                }[lane],
+                "commit": {"repository": "candidate", "sha": "a" * 40},
+                "review": {"sessionIds": ["review-evidence"]},
+                "verification": {"sessionIds": ["verification-evidence"]},
+                "claimRelease": {"eventIds": ["release-evidence"]},
+            }
             for lane in scenario["requiredHandoffReceiptLanes"]
         ]
         report = {
@@ -132,6 +190,96 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
             "residualRisk": "",
         }
         return run, report
+
+    @classmethod
+    def _evidence_fixture(
+        cls,
+        temporary_root: Path,
+    ) -> tuple[object, dict[str, object], tuple[object, ...], Path]:
+        """Create a disposable candidate repository and retained dependency evidence."""
+        run, report = cls._complete_dependency_routing_report()
+        fixture_root = temporary_root / "fixtures"
+        candidate = fixture_root / "dev-orchestrator" / "candidate"
+        candidate.mkdir(parents=True)
+        subprocess.run(["git", "init", "--quiet"], cwd=candidate, check=True)
+        subprocess.run(["git", "config", "user.name", "Fixture"], cwd=candidate, check=True)
+        subprocess.run(["git", "config", "user.email", "fixture@example.invalid"], cwd=candidate, check=True)
+        (candidate / "evidence.txt").write_text("synthetic\n", encoding="utf-8")
+        subprocess.run(["git", "add", "evidence.txt"], cwd=candidate, check=True)
+        subprocess.run(["git", "commit", "--quiet", "-m", "fixture evidence"], cwd=candidate, check=True)
+        sha = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=candidate,
+            check=True,
+            text=True,
+            capture_output=True,
+        ).stdout.strip()
+        roles = (
+            ("coder", "dev_coder"),
+            ("code-review-1", "dev_code_reviewer"),
+            ("writer", "dev_documentation_writer"),
+            ("artifact-review-1", "dev_artifact_reviewer"),
+            ("verifier-1", "dev_verifier"),
+            ("merge", "dev_merge_coordinator"),
+            ("code-review-2", "dev_code_reviewer"),
+            ("artifact-review-2", "dev_artifact_reviewer"),
+            ("verifier-2", "dev_verifier"),
+            ("backlog", "dev_backlog_steward"),
+        )
+        sessions = (
+            runner._Session("supervisor", "root", "dev_orchestrator_suite_supervisor", 1, 0.0, 30.0, frozenset()),
+            runner._Session("target", "supervisor", "dev_orchestrator", 2, 1.0, 29.0, frozenset()),
+            *tuple(
+                runner._Session(session_id, "target", role, 3, float(index * 2 + 2), float(index * 2 + 3), frozenset())
+                for index, (session_id, role) in enumerate(roles)
+            ),
+        )
+        receipt_by_lane = {
+            receipt["lane"]: receipt
+            for receipt in report["runs"][0]["scenarioResults"][0]["handoffReceipts"]
+        }
+        evidence = {
+            "source": ("dev-coder", ["code-review-1"], ["verifier-1"]),
+            "documentation": ("dev-documentation-writer", ["artifact-review-1"], ["verifier-1"]),
+            "integration": (
+                "dev-merge-coordinator",
+                ["code-review-2", "artifact-review-2"],
+                ["verifier-2"],
+            ),
+            "closeout": (
+                "dev-backlog-steward",
+                ["code-review-2", "artifact-review-2"],
+                ["verifier-2"],
+            ),
+        }
+        event_root = candidate / ".git" / "agent-claim-events" / "hot"
+        event_root.mkdir(parents=True)
+        events = []
+        for lane, (role, review_ids, verification_ids) in evidence.items():
+            event_id = f"release-{lane}"
+            receipt_by_lane[lane].update(
+                {
+                    "role": role,
+                    "commit": {"repository": "candidate", "sha": sha},
+                    "review": {"sessionIds": review_ids},
+                    "verification": {"sessionIds": verification_ids},
+                    "claimRelease": {"eventIds": [event_id]},
+                }
+            )
+            events.append(
+                {
+                    "action": "release",
+                    "outcome": "RELEASED",
+                    "event_id": event_id,
+                    "agent": role,
+                    "resulting_commit": sha,
+                }
+            )
+        (event_root / "2026-07-19.jsonl").write_text(
+            "".join(json.dumps(event) + "\n" for event in events),
+            encoding="utf-8",
+        )
+        return run, report, sessions, fixture_root
 
     @staticmethod
     def _without_path(document: dict[str, object], dotted_path: str) -> dict[str, object]:

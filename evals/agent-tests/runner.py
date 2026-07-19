@@ -213,6 +213,16 @@ def _agent_dependencies(run: _RunSpec) -> tuple[str, ...]:
     return tuple(sorted(dependencies))
 
 
+def _scenario_dependencies(suite: _Suite, scenario_id: str) -> tuple[str, ...]:
+    """Return fixed dependencies plus only those selected by one scenario."""
+    dependencies = {
+        str(value) for value in suite.manifest.get("target", {}).get("allowedAgentDependencies", [])
+    }
+    scenario = next(value for value in suite.scenarios if str(value.get("id", "")) == scenario_id)
+    dependencies.update(str(value) for value in scenario.get("taskSelectedAgentDependencies", []))
+    return tuple(sorted(dependencies))
+
+
 def _scenario_declared_values(run: _RunSpec, field: str) -> tuple[str, ...]:
     """Return the unique string values declared by selected scenarios for one field."""
     selected = set(run.scenario_ids)
@@ -1060,10 +1070,51 @@ def _coordinator_schema() -> dict[str, Any]:
                                             "properties": {
                                                 "lane": {"type": "string"},
                                                 "role": {"type": "string"},
-                                                "commit": {"type": "string"},
-                                                "review": {"type": "string"},
-                                                "verification": {"type": "string"},
-                                                "claimRelease": {"type": "string"},
+                                                "commit": {
+                                                    "type": "object",
+                                                    "additionalProperties": False,
+                                                    "required": ["repository", "sha"],
+                                                    "properties": {
+                                                        "repository": {"type": "string"},
+                                                        "sha": {"type": "string"},
+                                                    },
+                                                },
+                                                "review": {
+                                                    "type": "object",
+                                                    "additionalProperties": False,
+                                                    "required": ["sessionIds"],
+                                                    "properties": {
+                                                        "sessionIds": {
+                                                            "type": "array",
+                                                            "minItems": 1,
+                                                            "items": {"type": "string"},
+                                                        }
+                                                    },
+                                                },
+                                                "verification": {
+                                                    "type": "object",
+                                                    "additionalProperties": False,
+                                                    "required": ["sessionIds"],
+                                                    "properties": {
+                                                        "sessionIds": {
+                                                            "type": "array",
+                                                            "minItems": 1,
+                                                            "items": {"type": "string"},
+                                                        }
+                                                    },
+                                                },
+                                                "claimRelease": {
+                                                    "type": "object",
+                                                    "additionalProperties": False,
+                                                    "required": ["eventIds"],
+                                                    "properties": {
+                                                        "eventIds": {
+                                                            "type": "array",
+                                                            "minItems": 1,
+                                                            "items": {"type": "string"},
+                                                        }
+                                                    },
+                                                },
                                             },
                                         },
                                     },
@@ -1420,8 +1471,11 @@ def _coordinator_prompt(
         "judgeInvoked, identityEvidence, deterministicEvidence, modelJudgeEvidence, and evidence as arrays of "
         "diagnostic strings, evidenceReceipts as an array of exact path and lowercase SHA-256 references, cleanup as clean or "
         "failed, residualRisk as a string, and any assignment-declared handoffReceipts as structured objects with "
-        "the declared lanes and fields; prose cannot substitute for those receipts. Nested objects are forbidden in "
-        "the diagnostic arrays. "
+        "the declared lanes and fields. Each receipt commit must contain repository relative to its suite fixtureRoot "
+        "and an ancestor commit sha; review and verification must each contain retained dependency sessionIds; "
+        "claimRelease must contain successful fixture claim-journal eventIds whose resulting commit and agent match "
+        "the receipt. Keep each clean candidate repository and its Git claim journal available until the outer runner "
+        "audits them. Prose cannot substitute for those receipts. Nested objects are forbidden in the diagnostic arrays. "
         "The diagnostic strings never prove a verdict. Beneath checkpointRoot/suite/scenario, retain one artifacts file and "
         "one receipts JSON file per configured deterministic check. Each deterministic-check-disposition receipt must bind "
         "schema dev-methodology-agent-suite-evidence-receipt version 1, the assignment runIdentity, suite, scenario, exact "
@@ -2100,9 +2154,26 @@ def _audit_report(
                         raise RuntimeError(f"{suite_id}:{scenario_id} missing handoff receipt lane {lane}")
                     for field in required_fields:
                         value = receipts_by_lane[lane].get(field)
-                        if not isinstance(value, str) or not value:
+                        if value is None or value == "" or value == [] or value == {}:
                             raise RuntimeError(
                                 f"{suite_id}:{scenario_id} handoff receipt {lane} missing field {field}"
+                            )
+                    commit = receipts_by_lane[lane].get("commit")
+                    if not isinstance(commit, dict) or not all(
+                        isinstance(commit.get(field), str) and commit[field]
+                        for field in ("repository", "sha")
+                    ):
+                        raise RuntimeError(
+                            f"{suite_id}:{scenario_id} handoff receipt {lane} field commit must be structured"
+                        )
+                    for field, key in (("review", "sessionIds"), ("verification", "sessionIds"), ("claimRelease", "eventIds")):
+                        evidence_value = receipts_by_lane[lane].get(field)
+                        values = evidence_value.get(key) if isinstance(evidence_value, dict) else None
+                        if not isinstance(values, list) or not values or not all(
+                            isinstance(item, str) and item for item in values
+                        ):
+                            raise RuntimeError(
+                                f"{suite_id}:{scenario_id} handoff receipt {lane} field {field} must be structured"
                             )
         if int(item.get("maximumActiveChildrenObserved", -1)) > 1:
             raise RuntimeError(f"Child concurrency exceeded for {suite_id}")
@@ -2466,6 +2537,205 @@ def _bind_codex_judge_provenance(
             audit["status"] = "verified"
             if scenario.get("reportedStatus") in {"PASS", "FAIL"}:
                 scenario["status"] = scenario["reportedStatus"]
+def _bind_target_sessions(
+    sessions: Sequence[_Session],
+    batch: Sequence[_RunSpec],
+    report: dict[str, Any],
+) -> dict[tuple[str, str], _Session]:
+    """Bind each reported target invocation to its scenario by supervisor child order."""
+    by_parent: dict[str, list[_Session]] = {}
+    for session in sessions:
+        if session.parent_thread_id:
+            by_parent.setdefault(session.parent_thread_id, []).append(session)
+    reported = {
+        (str(run_result.get("suite", "")), str(result.get("scenario", ""))): result
+        for run_result in report.get("runs", [])
+        for result in run_result.get("scenarioResults", [])
+    }
+    bindings: dict[tuple[str, str], _Session] = {}
+    for run in batch:
+        supervisor_invocation = str(run.suite.manifest["execution"]["supervisorInvocation"])
+        supervisors = [
+            session for session in sessions if session.depth == 1 and session.invocation == supervisor_invocation
+        ]
+        if len(supervisors) != 1:
+            raise RuntimeError(f"Cannot bind scenario targets for {run.suite.suite_id}")
+        target_invocation = str(run.suite.manifest["execution"]["targetInvocation"])
+        target_sessions = sorted(
+            (
+                session
+                for session in by_parent.get(supervisors[0].session_id, [])
+                if session.invocation == target_invocation
+            ),
+            key=lambda session: session.started_at,
+        )
+        invoked_scenarios = [
+            scenario_id
+            for scenario_id in run.scenario_ids
+            if reported.get((run.suite.suite_id, scenario_id), {}).get("targetInvoked")
+        ]
+        if len(target_sessions) != len(invoked_scenarios):
+            raise RuntimeError(f"Cannot bind scenario targets for {run.suite.suite_id}")
+        bindings.update(
+            {
+                (run.suite.suite_id, scenario_id): session
+                for scenario_id, session in zip(invoked_scenarios, target_sessions, strict=True)
+            }
+        )
+    return bindings
+
+
+def _git_common_directory(repository: Path) -> Path:
+    """Return the resolved common Git directory for one disposable candidate repository."""
+    completed = subprocess.run(
+        ["git", "rev-parse", "--git-common-dir"],
+        cwd=repository,
+        check=False,
+        text=True,
+        capture_output=True,
+    )
+    if completed.returncode != 0:
+        raise RuntimeError(f"Receipt repository is not a Git worktree: {repository}")
+    common = Path(completed.stdout.strip())
+    return common.resolve() if common.is_absolute() else (repository / common).resolve()
+
+
+def _release_events(repository: Path) -> dict[str, dict[str, Any]]:
+    """Load successful release events retained by one disposable fixture repository."""
+    event_root = _git_common_directory(repository) / "agent-claim-events" / "hot"
+    events: dict[str, dict[str, Any]] = {}
+    for journal in sorted(event_root.glob("*.jsonl")):
+        for line in journal.read_text(encoding="utf-8").splitlines():
+            try:
+                event = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if (
+                isinstance(event, dict)
+                and event.get("action") == "release"
+                and event.get("outcome") == "RELEASED"
+                and isinstance(event.get("event_id"), str)
+            ):
+                events[str(event["event_id"])] = event
+    return events
+
+
+def _audit_handoff_evidence(
+    batch: Sequence[_RunSpec],
+    report: dict[str, Any],
+    sessions: Sequence[_Session],
+    fixture_root: Path,
+) -> None:
+    """Bind dependency-routing receipts to repository, session, and claim journal evidence."""
+    target_bindings = _bind_target_sessions(sessions, batch, report)
+    report_results = {
+        (str(run_result.get("suite", "")), str(result.get("scenario", ""))): result
+        for run_result in report.get("runs", [])
+        for result in run_result.get("scenarioResults", [])
+    }
+    lane_roles = {
+        "source": ("dev_coder", ("dev_code_reviewer", 0), (("dev_verifier", 0),)),
+        "documentation": ("dev_documentation_writer", ("dev_artifact_reviewer", 0), (("dev_verifier", 0),)),
+        "integration": (
+            "dev_merge_coordinator",
+            (("dev_code_reviewer", 1), ("dev_artifact_reviewer", 1)),
+            (("dev_verifier", 1),),
+        ),
+        "closeout": (
+            "dev_backlog_steward",
+            (("dev_code_reviewer", 1), ("dev_artifact_reviewer", 1)),
+            (("dev_verifier", 1),),
+        ),
+    }
+    for run in batch:
+        scenarios = {str(value["id"]): value for value in run.suite.scenarios}
+        for scenario_id in run.scenario_ids:
+            scenario = scenarios[scenario_id]
+            if not scenario.get("requiredHandoffReceiptFields"):
+                continue
+            identity = f"{run.suite.suite_id}:{scenario_id}"
+            target = target_bindings.get((run.suite.suite_id, scenario_id))
+            if target is None:
+                raise RuntimeError(f"{identity} has no target session for handoff evidence")
+            nested = sorted(
+                (session for session in sessions if session.parent_thread_id == target.session_id),
+                key=lambda session: session.started_at,
+            )
+            sessions_by_role: dict[str, list[_Session]] = {}
+            for session in nested:
+                sessions_by_role.setdefault(str(session.invocation), []).append(session)
+            receipts = {
+                str(receipt.get("lane", "")): receipt
+                for receipt in report_results[(run.suite.suite_id, scenario_id)].get("handoffReceipts", [])
+            }
+            suite_fixture_root = (fixture_root / run.suite.suite_id).resolve()
+            for lane in scenario.get("requiredHandoffReceiptLanes", []):
+                receipt = receipts[lane]
+                if lane not in lane_roles:
+                    raise RuntimeError(f"{identity} has no evidence binding for handoff lane {lane}")
+                producer_role, review_spec, verification_spec = lane_roles[lane]
+                if str(receipt.get("role", "")).replace("-", "_") != producer_role:
+                    raise RuntimeError(f"{identity} handoff receipt {lane} role has no matching producer session")
+                producer_sessions = sessions_by_role.get(producer_role, [])
+                if not producer_sessions:
+                    raise RuntimeError(f"{identity} handoff receipt {lane} role has no matching producer session")
+
+                commit = receipt["commit"]
+                repository = (suite_fixture_root / str(commit["repository"])).resolve()
+                if repository != suite_fixture_root and suite_fixture_root not in repository.parents:
+                    raise RuntimeError(f"{identity} handoff receipt {lane} repository escapes fixture root")
+                sha = str(commit["sha"])
+                if not repository.is_dir() or re.fullmatch(r"[0-9a-f]{40,64}", sha) is None:
+                    raise RuntimeError(f"{identity} handoff receipt {lane} commit lacks repository ancestry evidence")
+                commit_exists = subprocess.run(
+                    ["git", "cat-file", "-e", f"{sha}^{{commit}}"],
+                    cwd=repository,
+                    check=False,
+                    text=True,
+                    capture_output=True,
+                )
+                ancestor = subprocess.run(
+                    ["git", "merge-base", "--is-ancestor", sha, "HEAD"],
+                    cwd=repository,
+                    check=False,
+                    text=True,
+                    capture_output=True,
+                )
+                if commit_exists.returncode != 0 or ancestor.returncode != 0:
+                    raise RuntimeError(f"{identity} handoff receipt {lane} commit lacks repository ancestry evidence")
+
+                review_specs = (review_spec,) if isinstance(review_spec[0], str) else review_spec
+                expected_review_ids = []
+                for role, index in review_specs:
+                    role_sessions = sessions_by_role.get(role, [])
+                    if len(role_sessions) <= index:
+                        raise RuntimeError(f"{identity} handoff receipt {lane} lacks retained review session")
+                    expected_review_ids.append(role_sessions[index].session_id)
+                if receipt["review"]["sessionIds"] != expected_review_ids:
+                    raise RuntimeError(f"{identity} handoff receipt {lane} review sessions are not retained evidence")
+
+                expected_verification_ids = []
+                for role, index in verification_spec:
+                    role_sessions = sessions_by_role.get(role, [])
+                    if len(role_sessions) <= index:
+                        raise RuntimeError(f"{identity} handoff receipt {lane} lacks retained verification session")
+                    expected_verification_ids.append(role_sessions[index].session_id)
+                if receipt["verification"]["sessionIds"] != expected_verification_ids:
+                    raise RuntimeError(
+                        f"{identity} handoff receipt {lane} verification sessions are not retained evidence"
+                    )
+
+                release_events = _release_events(repository)
+                for event_id in receipt["claimRelease"]["eventIds"]:
+                    event = release_events.get(event_id)
+                    if (
+                        event is None
+                        or event.get("resulting_commit") != sha
+                        or str(event.get("agent", "")).replace("-", "_") != producer_role
+                    ):
+                        raise RuntimeError(
+                            f"{identity} handoff receipt {lane} claim release lacks fixture lifecycle evidence"
+                        )
 
 
 def _audit_session_concurrency(
@@ -2559,53 +2829,44 @@ def _audit_session_concurrency(
                 raise RuntimeError(
                     f"Supervisor {supervisor.invocation} spawned undeclared children: {', '.join(invalid_children)}"
                 )
-        for nested in (session for session in sessions if session.depth >= 3):
-            parent = session_by_id.get(str(nested.parent_thread_id))
-            run = run_by_target.get(str(parent.invocation)) if parent else None
-            suite_dependencies = {
-                str(value).replace("-", "_")
-                for value in _agent_dependencies(run)
-            } if run else set()
-            if nested.invocation not in suite_dependencies:
-                raise RuntimeError(
-                    f"Nested dependency {nested.invocation} is not allowed for parent "
-                    f"{parent.invocation if parent else nested.parent_thread_id}"
-                )
+        target_bindings: dict[tuple[str, str], _Session] = {}
         if report is not None:
-            reported_scenarios = {
-                (str(run_result.get("suite", "")), str(result.get("scenario", ""))): result
-                for run_result in report.get("runs", [])
-                for result in run_result.get("scenarioResults", [])
-            }
+            target_bindings = _bind_target_sessions(sessions, batch, report)
+            identity_by_target = {session.session_id: identity for identity, session in target_bindings.items()}
+            for nested in (session for session in sessions if session.depth >= 3):
+                identity = identity_by_target.get(str(nested.parent_thread_id))
+                if identity is None:
+                    raise RuntimeError(f"Nested dependency {nested.invocation} has no scenario-bound target")
+                suite_id, scenario_id = identity
+                run = next(value for value in batch if value.suite.suite_id == suite_id)
+                allowed = {
+                    value.replace("-", "_")
+                    for value in _scenario_dependencies(run.suite, scenario_id)
+                }
+                if nested.invocation not in allowed:
+                    raise RuntimeError(
+                        f"Nested dependency {nested.invocation} is not allowed for {suite_id}:{scenario_id}"
+                    )
+        else:
+            for nested in (session for session in sessions if session.depth >= 3):
+                parent = session_by_id.get(str(nested.parent_thread_id))
+                run = run_by_target.get(str(parent.invocation)) if parent else None
+                suite_dependencies = {
+                    str(value).replace("-", "_")
+                    for value in _agent_dependencies(run)
+                } if run else set()
+                if nested.invocation not in suite_dependencies:
+                    raise RuntimeError(
+                        f"Nested dependency {nested.invocation} is not allowed for parent "
+                        f"{parent.invocation if parent else nested.parent_thread_id}"
+                    )
+        if report is not None:
             for run in batch:
-                supervisor = next(
-                    (
-                        session
-                        for session in supervisor_sessions
-                        if session.invocation == run.suite.manifest["execution"]["supervisorInvocation"]
-                    ),
-                    None,
-                )
-                if supervisor is None:
-                    continue
-                target_invocation = str(run.suite.manifest["execution"]["targetInvocation"])
-                target_sessions = sorted(
-                    (
-                        session
-                        for session in by_parent.get(supervisor.session_id, [])
-                        if session.invocation == target_invocation
-                    ),
-                    key=lambda session: session.started_at,
-                )
-                invoked_scenarios = [
-                    scenario_id
-                    for scenario_id in run.scenario_ids
-                    if reported_scenarios.get((run.suite.suite_id, scenario_id), {}).get("targetInvoked")
-                ]
-                if len(target_sessions) != len(invoked_scenarios):
-                    raise RuntimeError(f"Cannot audit dependency order for {run.suite.suite_id}")
                 scenarios = {str(value["id"]): value for value in run.suite.scenarios}
-                for scenario_id, target_session in zip(invoked_scenarios, target_sessions, strict=True):
+                for scenario_id in run.scenario_ids:
+                    target_session = target_bindings.get((run.suite.suite_id, scenario_id))
+                    if target_session is None:
+                        continue
                     expected_order = [
                         str(value).replace("-", "_")
                         for value in scenarios[scenario_id].get("requiredDependencyOrder", [])
@@ -3522,13 +3783,19 @@ def _run_live_batch(
             browser_error = str(error)
             browser_audit = {"error": browser_error}
         concurrency_error: str | None = None
+        retained_sessions = _load_sessions(codex_home)
         try:
             concurrency = _audit_session_concurrency(
-                _load_sessions(codex_home), maximum_threads, batch, partial_report or {}
+                retained_sessions, maximum_threads, batch, partial_report or {}
             )
         except RuntimeError as error:
             concurrency_error = str(error)
             concurrency = {"error": concurrency_error}
+        handoff_error: str | None = None
+        try:
+            _audit_handoff_evidence(batch, partial_report or {}, retained_sessions, fixture_root)
+        except RuntimeError as error:
+            handoff_error = str(error)
         identity_path = evidence_prefix.with_suffix(".identity.json")
         identity_path.write_text(json.dumps(identity, indent=2, sort_keys=True) + "\n", encoding="utf-8")
         cleanup_error: str | None = None
@@ -3546,6 +3813,7 @@ def _run_live_batch(
                 identity_error,
                 browser_error,
                 concurrency_error,
+                handoff_error,
                 cleanup_error,
             )
             if message
@@ -3560,6 +3828,7 @@ def _run_live_batch(
             "identityAudit": identity,
             "browserAudit": browser_audit,
             "concurrencyAudit": concurrency,
+            "handoffAudit": "bound" if handoff_error is None else {"error": handoff_error},
             "workspaceCleanup": workspace_cleanup,
             "capabilityPreflight": list(preflight_evidence),
             "evidence": {

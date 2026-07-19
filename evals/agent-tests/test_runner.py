@@ -1300,6 +1300,47 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                 report=report,
             )
 
+    def test_task_selected_dependency_cannot_leak_into_fixed_only_scenario(self) -> None:
+        """Full-suite registration cannot authorize a selected role under another scenario target."""
+        suite = self._suite("mixed-scenarios", nested_limit=1)
+        fixed = dict(suite.scenarios[0], id="fixed")
+        selected = dict(
+            suite.scenarios[0],
+            id="selected",
+            taskSelectedAgentDependencies=["reviewer"],
+        )
+        suite = runner._Suite(suite.suite_id, suite.priority, suite.path, suite.manifest, (fixed, selected))
+        run = runner._RunSpec(suite, ("fixed", "selected"))
+        sessions = (
+            runner._Session("supervisor", "root", "suite_supervisor", 1, 0.0, 20.0, frozenset()),
+            runner._Session("fixed-target", "supervisor", "target_agent", 2, 1.0, 8.0, frozenset()),
+            runner._Session("leaked", "fixed-target", "reviewer", 3, 2.0, 3.0, frozenset()),
+            runner._Session("selected-target", "supervisor", "target_agent", 2, 10.0, 18.0, frozenset()),
+            runner._Session("allowed", "selected-target", "reviewer", 3, 11.0, 12.0, frozenset()),
+        )
+        report = {
+            "runs": [
+                {
+                    "suite": "mixed-scenarios",
+                    "scenarioResults": [
+                        {"scenario": "fixed", "targetInvoked": True, "judgeInvoked": False},
+                        {"scenario": "selected", "targetInvoked": True, "judgeInvoked": False},
+                    ],
+                }
+            ]
+        }
+
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "Nested dependency reviewer is not allowed for mixed-scenarios:fixed",
+        ):
+            runner._audit_session_concurrency(
+                sessions,
+                maximum_threads=9,
+                batch=(run,),
+                report=report,
+            )
+
     def test_target_target_judge_judge_order_fails_scenario_binding(self) -> None:
         """Each target must be followed by its Judge before the next scenario target."""
         with tempfile.TemporaryDirectory() as temporary:
