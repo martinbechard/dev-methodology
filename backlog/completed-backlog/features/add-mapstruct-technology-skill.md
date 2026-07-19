@@ -1,6 +1,6 @@
 # Add The MapStruct Technology Skill
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
@@ -68,6 +68,17 @@ None.
 - Run scripts/validate-agent-skills.py for skills and scripts/openai_metadata.py in check mode.
 - Run every generated-output freshness check required by AGENTS.md.
 - Run the repository script test suite, the project-wiki script test suite, and git diff validation.
+
+## Completion Evidence
+
+- Approval: the exact definition checks for skills/mapstruct/SKILL.md and skills/mapstruct/agents/openai.yaml used /private/tmp/mapstruct-skill-approval.yaml and /private/tmp/mapstruct-openai-metadata-approval.yaml; both returned ALLOWED_APPROVED_DEFINITION_CHANGE.
+- Accepted source: commit bdbd68c49064e34eeeaa636dcca4eb75f22b16a6, released by event 9d3fb5cb-1497-4241-97e3-6ce4b5b1411b.
+- Shared finalization: commit da557bd676edfd064284675d0859f5f1a39b7195, released from the isolated assembly by event f4993b97-2808-4aba-b692-00412db470fe.
+- Integration: main fast-forwarded byte-identically to da557bd676edfd064284675d0859f5f1a39b7195 and the primary integration claim released cleanly by event 5ae7a396-97e1-4e53-b45d-655b7db7562f.
+- Review: a fresh independent post-integration review reported no findings, confirmed the exact 22-file technology scope, and confirmed that unsupported-review commit 12438b8638bcc58cffe6307c8f5c61389e2c71b4 was not included.
+- Focused verification: 5 metadata tests, 73 technology-detection tests, and 87 bundle-content tests passed after integration; all four generated-output freshness checks, skill validation for source and Codex adapter skills, OpenAI metadata synchronization, exact candidate comparison, git diff validation, and clean status passed.
+- Full verification: 478 repository script tests and 17 project-wiki script tests passed on the byte-identical accepted candidate; they were not rerun after the exact fast-forward because integration changed no bytes and every focused gate passed.
+- Terminal authorization: parent task 019f77f4-c4bd-7c91-b197-c987a7beb838 issued TERMINAL LIFECYCLE GO for this separate archive transaction.
 
 ## Notes
 
