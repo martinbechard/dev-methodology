@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import importlib.util
 import json
 import subprocess
 import sys
@@ -20,6 +21,55 @@ DETECT_SCRIPT = ROOT / "scripts" / "detect-technology-skills.py"
 INSTALLED_DETECT_SCRIPT = ROOT / "skills" / "detect-technology-skills" / "scripts" / "detect.py"
 RENDER_SCRIPT = ROOT / "scripts" / "render-agents-technology-skills.py"
 REGISTRY = ROOT / "skills" / "detect-technology-skills" / "references" / "technology-skill-detection-registry.yaml"
+
+
+def load_renderer_module():
+    """Load the renderer script so policy decisions can be tested at its Python boundary."""
+    spec = importlib.util.spec_from_file_location("render_agents_technology_skills", RENDER_SCRIPT)
+    if spec is None or spec.loader is None:
+        raise AssertionError(f"cannot load renderer: {RENDER_SCRIPT}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def definition_change_authority() -> dict[str, object]:
+    """Return one valid authority directive fixture."""
+    return {
+        "approval_required": True,
+        "approval_evidence": {
+            "user_direction_required": True,
+            "exact_scope_required": True,
+            "audit_record_required": True,
+        },
+        "governed_sources": {
+            "conceptual_agents": ["agents/roles/**/*.role.yaml"],
+            "distributed_skills": ["skills/*/SKILL.md"],
+            "adapter_skills": ["adapters/*/skills/*/SKILL.md"],
+            "definition_metadata": [
+                "skills/*/agents/openai.yaml",
+                "agents/role-schema.yaml",
+                "agents/model-profiles.yaml",
+                "adapters/*/model-profiles.yaml",
+            ],
+        },
+        "generated_mirrors": [
+            "generated/adapters/**",
+            "design/generated/role-definitions.js",
+            "design/generated/skill-definitions.js",
+        ],
+        "non_approval_bases": [
+            "repository access",
+            "failing test",
+            "repair assignment",
+            "general write authority",
+        ],
+        "test_repair": {
+            "investigate_incorrect_expectations": True,
+            "ordinary_test_corrections_allowed": True,
+            "definition_rewrite_without_approval": False,
+        },
+    }
 
 
 def run_detection(
@@ -1110,6 +1160,175 @@ class TechnologyDetectionTests(unittest.TestCase):
                 "BEGIN INLINED TECHNOLOGY SKILL: python",
                 output.read_text(encoding="utf-8"),
             )
+
+    def test_definition_change_authority_renders_and_updates_without_losing_guidance(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            plan = root / "PROJECT.yaml"
+            output = root / "AGENTS.md"
+            plan.write_text(yaml.safe_dump({
+                "definition_change_authority": definition_change_authority(),
+                "technology_skill_loadouts": [],
+            }), encoding="utf-8")
+            maintained = (
+                "# Maintained guidance\n\n"
+                "Keep this repository-specific instruction.\n\n"
+                "## Technology Skills\n\nExisting generated routing.\n"
+            )
+            output.write_text(maintained, encoding="utf-8")
+
+            first = subprocess.run(
+                [
+                    sys.executable,
+                    str(RENDER_SCRIPT),
+                    "--project",
+                    str(plan),
+                    "--output",
+                    str(output),
+                    "--update-authority-directive",
+                ],
+                cwd=ROOT,
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(0, first.returncode, first.stderr)
+            first_content = output.read_text(encoding="utf-8")
+            self.assertIn("## Agent And Skill Definition Approval", first_content)
+            self.assertIn("explicit, scope-specific user approval", first_content)
+            self.assertIn("failing test", first_content)
+            self.assertIn("test, fixture, assertion, or expected result is incorrect", first_content)
+            self.assertIn("agents/roles/**/*.role.yaml", first_content)
+            self.assertIn("generated/adapters/**", first_content)
+            self.assertIn("Keep this repository-specific instruction", first_content)
+            self.assertIn("Existing generated routing", first_content)
+
+            second = subprocess.run(
+                [
+                    sys.executable,
+                    str(RENDER_SCRIPT),
+                    "--project",
+                    str(plan),
+                    "--output",
+                    str(output),
+                    "--update-authority-directive",
+                ],
+                cwd=ROOT,
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(0, second.returncode, second.stderr)
+            self.assertEqual(first_content, output.read_text(encoding="utf-8"))
+
+    def test_definition_change_authority_rejects_missing_malformed_and_contradictory_values(self) -> None:
+        invalid_policies = (
+            ({}, "approval_required must be true"),
+            ({**definition_change_authority(), "governed_sources": []}, "governed_sources must be a mapping"),
+            ({
+                **definition_change_authority(),
+                "test_repair": {
+                    "investigate_incorrect_expectations": False,
+                    "ordinary_test_corrections_allowed": True,
+                    "definition_rewrite_without_approval": False,
+                },
+            }, "investigate_incorrect_expectations must be true"),
+            ({
+                **definition_change_authority(),
+                "test_repair": {
+                    "investigate_incorrect_expectations": True,
+                    "ordinary_test_corrections_allowed": True,
+                    "definition_rewrite_without_approval": True,
+                },
+            }, "definition_rewrite_without_approval must be false"),
+        )
+        for policy, message in invalid_policies:
+            with self.subTest(message=message):
+                with tempfile.TemporaryDirectory() as directory:
+                    plan = Path(directory) / "PROJECT.yaml"
+                    plan.write_text(yaml.safe_dump({"definition_change_authority": policy}), encoding="utf-8")
+                    completed = subprocess.run(
+                        [sys.executable, str(RENDER_SCRIPT), "--project", str(plan)],
+                        cwd=ROOT,
+                        check=False,
+                        capture_output=True,
+                        text=True,
+                    )
+                    self.assertEqual(1, completed.returncode)
+                    self.assertIn(message, completed.stderr)
+
+    def test_definition_change_policy_requires_matching_auditable_user_approval(self) -> None:
+        renderer = load_renderer_module()
+        project = {"definition_change_authority": definition_change_authority()}
+        governed_paths = (
+            "agents/roles/dev-activities/dev-coder.role.yaml",
+            "skills/python/SKILL.md",
+            "adapters/codex/skills/codex-harness-directives/SKILL.md",
+            "skills/python/agents/openai.yaml",
+            "agents/role-schema.yaml",
+            "agents/model-profiles.yaml",
+            "adapters/codex/model-profiles.yaml",
+        )
+        for path in governed_paths:
+            with self.subTest(path=path):
+                blocked = renderer.evaluate_definition_change(project, path, None)
+                self.assertEqual("BLOCKED_APPROVAL_REQUIRED", blocked["outcome"])
+                for insufficient in (
+                    {"user_approved": False, "definition_scope": path, "evidence": "repair assignment"},
+                    {"user_approved": True, "definition_scope": "skills/other/SKILL.md", "evidence": "user approved other"},
+                    {"user_approved": True, "definition_scope": path, "evidence": ""},
+                    {"general_write_authority": True, "basis": "failing test"},
+                ):
+                    self.assertEqual(
+                        "BLOCKED_APPROVAL_REQUIRED",
+                        renderer.evaluate_definition_change(project, path, insufficient)["outcome"],
+                    )
+                approved = renderer.evaluate_definition_change(project, path, {
+                    "user_approved": True,
+                    "definition_scope": path,
+                    "evidence": f"user explicitly approved {path}",
+                })
+                self.assertEqual("ALLOWED_APPROVED_DEFINITION_CHANGE", approved["outcome"])
+
+    def test_definition_change_policy_protects_generated_mirrors_and_allows_ordinary_repairs(self) -> None:
+        renderer = load_renderer_module()
+        project = {"definition_change_authority": definition_change_authority()}
+        generated_paths = (
+            "generated/adapters/codex/dev-coder.toml",
+            "generated/adapters/agent-generation-manifest.json",
+            "design/generated/role-definitions.js",
+            "design/generated/skill-definitions.js",
+        )
+        for generated_path in generated_paths:
+            with self.subTest(generated_path=generated_path):
+                direct_generated = renderer.evaluate_definition_change(
+                    project,
+                    generated_path,
+                    {
+                        "user_approved": True,
+                        "definition_scope": generated_path,
+                        "evidence": "user approved this path",
+                    },
+                )
+                self.assertEqual("BLOCKED_DIRECT_GENERATED_EDIT", direct_generated["outcome"])
+
+        approved_source = "agents/roles/dev-activities/dev-coder.role.yaml"
+        regenerated = renderer.evaluate_definition_change(
+            project,
+            "generated/adapters/codex/dev-coder.toml",
+            {
+                "user_approved": True,
+                "definition_scope": approved_source,
+                "evidence": f"user explicitly approved {approved_source}",
+            },
+            regenerated_from=approved_source,
+        )
+        self.assertEqual("ALLOWED_APPROVED_REGENERATION", regenerated["outcome"])
+
+        for ordinary_path in ("src/service.py", "scripts/test_service.py", "tests/fixtures/expected.json"):
+            with self.subTest(ordinary_path=ordinary_path):
+                result = renderer.evaluate_definition_change(project, ordinary_path, None)
+                self.assertEqual("ALLOWED_ORDINARY_CHANGE", result["outcome"])
 
     def test_agents_section_rejects_invalid_inlined_skill_names(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

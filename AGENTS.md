@@ -32,6 +32,26 @@ Do not create separate skill files for repo-local maintenance procedures. Keep r
 - Preserve unrelated local changes and untracked files.
 - Keep changes scoped to the requested maintenance work.
 
+## Agent And Skill Definition Approval
+
+Every change to an agent definition or skill definition requires explicit, scope-specific user approval before mutation. Record the user's direction, the exact definition scope it authorizes, and the approval evidence in the work lifecycle. Silence, unrelated prior approval, and broad repository mutation authority are insufficient.
+
+Repository access, a failing test, a repair assignment, general write authority, review work, verification work, and a desire to make validation pass do not authorize a definition change.
+
+Governed canonical definition surfaces:
+
+- Conceptual agent definitions: agents/roles/**/*.role.yaml.
+- Distributed skill definitions: skills/*/SKILL.md.
+- Adapter-owned skill definitions: adapters/*/skills/*/SKILL.md.
+- Definition-affecting metadata and model inputs: skills/*/agents/openai.yaml, agents/role-schema.yaml, agents/model-profiles.yaml, adapters/*/model-profiles.yaml.
+
+Generated definition mirrors are source-owned and must never be edited directly:
+
+- generated/adapters/**, design/generated/role-definitions.js, design/generated/skill-definitions.js.
+- Regenerate these mirrors only from an approved canonical definition change. The regeneration itself does not require a second approval.
+
+When a test fails, investigate whether the test, fixture, assertion, or expected result is incorrect before proposing a definition change. Ordinary authorized implementation changes and corrections to incorrect tests remain allowed when they do not alter a governed definition.
+
 ## Technology Skills
 
 Technology detection is owned by Project Configurator. Do not rerun detection during ordinary work.

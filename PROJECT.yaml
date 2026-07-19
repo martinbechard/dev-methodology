@@ -119,7 +119,40 @@ root_agents_reference:
   purpose: "Tell agents how to maintain source files and generated outputs, which checks to run, and which Python technology skills must be loaded for each executable scope."
   required_content:
     - "Repository-wide source boundaries, privacy constraints, generation ownership, validation commands, and commit expectations."
+    - "Explicit user-approval authority for every agent or skill definition change, including governed sources, generated-mirror ownership, auditable evidence, and the incorrect-test boundary."
     - "Unconditional folder technology skillsets generated from this plan and their required-load failure policy."
+
+definition_change_authority:
+  approval_required: true
+  approval_evidence:
+    user_direction_required: true
+    exact_scope_required: true
+    audit_record_required: true
+  governed_sources:
+    conceptual_agents:
+      - agents/roles/**/*.role.yaml
+    distributed_skills:
+      - skills/*/SKILL.md
+    adapter_skills:
+      - adapters/*/skills/*/SKILL.md
+    definition_metadata:
+      - skills/*/agents/openai.yaml
+      - agents/role-schema.yaml
+      - agents/model-profiles.yaml
+      - adapters/*/model-profiles.yaml
+  generated_mirrors:
+    - generated/adapters/**
+    - design/generated/role-definitions.js
+    - design/generated/skill-definitions.js
+  non_approval_bases:
+    - repository access
+    - failing test
+    - repair assignment
+    - general write authority
+  test_repair:
+    investigate_incorrect_expectations: true
+    ordinary_test_corrections_allowed: true
+    definition_rewrite_without_approval: false
 
 technology_skill_detection:
   owner: "Project Configurator"
@@ -421,5 +454,6 @@ open_questions:
 
 maintenance_notes:
   - "Keep PROJECT.yaml and the generated Technology Skills section in AGENTS.md aligned."
+  - "Keep the generated Agent And Skill Definition Approval section in AGENTS.md aligned with definition_change_authority through scripts/render-agents-technology-skills.py."
   - "Rerun technology detection only when Python ownership, manifests, dependencies, or framework boundaries change."
   - "Keep false-positive detector evidence explicit so broad test strings and filenames do not activate unrelated technology skills."
