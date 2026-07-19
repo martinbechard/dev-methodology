@@ -1,6 +1,6 @@
 # Align Project Organiser Filename Selection
 
-Status: Ready
+Status: Running
 
 Type: Defect
 
@@ -36,9 +36,10 @@ The approval boundary remains exact: unattended work may change only the named P
 ## Running Ownership
 
 - Owner: Dev Orchestrator root task 019f77f4-c4bd-7c91-b197-c987a7beb838.
-- Lifecycle claim: align-project-organiser-filename-selection-start.
-- Claim evidence: dev-backlog-steward acquired PRIMARY ownership of this exact backlog item at 2026-07-19T03:15:20.949615Z before recording the Running transition.
-- Scope boundary: the lifecycle claim is released after this committed transition; project-artifact ownership must be acquired separately before implementation.
+- Lifecycle claim: align-project-organiser-filename-selection-running-approved.
+- Claim evidence: dev-backlog-steward acquired PRIMARY ownership of this exact backlog item on 2026-07-19 before recording the current Running transition.
+- Approval provenance: on 2026-07-19 the user said, "I already approved this one so yes," authorizing only agents/roles/project-setup/project-organiser.role.yaml together with supported generated role mirrors and regression coverage; no skill definition change is authorized.
+- Scope boundary: this lifecycle claim is released after the committed transition; project-artifact ownership must be acquired separately before implementation.
 
 ## Target Merge Pending
 
