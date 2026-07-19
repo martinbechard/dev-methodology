@@ -1,8 +1,15 @@
 # Enforce Runnable Type Eligibility In Backlog Report
 
-Status: Ready
+Status: Running
 
 Type: Defect
+
+## Running Ownership
+
+- Owner: Dev Orchestrator root task 019f77f4-c4bd-7c91-b197-c987a7beb838.
+- Lifecycle claim: backlog-runnable-type-defect-start.
+- Claim evidence: dev-backlog-steward acquired PRIMARY ownership of this exact backlog item at 2026-07-19T07:22:27.751764Z before recording the Running transition.
+- Scope boundary: this lifecycle claim is released after the committed transition; project-artifact ownership must be acquired separately after ARTIFACT GO.
 
 ## Summary
 
