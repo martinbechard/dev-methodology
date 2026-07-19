@@ -2282,7 +2282,8 @@ class BundleContentTests(unittest.TestCase):
         classification_item = (
             primary_root
             / "backlog"
-            / "analysis-backlog"
+            / "completed-backlog"
+            / "analyses"
             / "classify-agent-suite-blocking-resources.md"
         )
         self.assertTrue(queue_readme.is_file())
@@ -2297,7 +2298,7 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(required_queue_contract, queue_text)
         classification_text = classification_item.read_text(encoding="utf-8")
         for required_item_contract in (
-            "Status: Running",
+            "Status: Completed",
             "Type: Analysis",
             "## User Action Required",
             "### Question for the User",
