@@ -111,27 +111,40 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "review-structured-artifact"
     },
     {
-      "condition": "when backlog work is being claimed, resumed, or assigned exclusive ownership.",
+      "condition": "when the selected backlog operation mutates repository files or records repository-global claim state",
       "kind": "conditional",
       "role": "dev-backlog-steward",
       "skill": "agent-claim"
     },
     {
-      "condition": "when turning an incoming request into a durable, typed backlog item.",
+      "condition": "when file-based-backlog is selected and an incoming request must become a new durable item",
       "kind": "conditional",
       "role": "dev-backlog-steward",
       "skill": "create-backlog"
     },
     {
-      "condition": "when the requested backlog work creates a new file or directory.",
+      "condition": "when applicable project guidance or the request selects file-based-backlog",
+      "kind": "conditional",
+      "role": "dev-backlog-steward",
+      "skill": "file-based-backlog"
+    },
+    {
+      "condition": "when applicable project guidance or the request selects github-issues-backlog",
+      "kind": "conditional",
+      "role": "dev-backlog-steward",
+      "skill": "github-issues-backlog"
+    },
+    {
+      "condition": "when file-based-backlog is selected and existing backlog state must be inspected or changed",
+      "kind": "conditional",
+      "role": "dev-backlog-steward",
+      "skill": "manage-backlog"
+    },
+    {
+      "condition": "when file-based-backlog creates a new file or directory.",
       "kind": "conditional",
       "role": "dev-backlog-steward",
       "skill": "organise-project-files"
-    },
-    {
-      "kind": "fixed",
-      "role": "dev-backlog-steward",
-      "skill": "manage-backlog"
     },
     {
       "kind": "fixed",
@@ -193,6 +206,12 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "review-structured-artifact"
     },
     {
+      "condition": "when the selected work-item process is feature-branch-workitem or the request explicitly requires pull-request delivery",
+      "kind": "conditional",
+      "role": "dev-coder",
+      "skill": "create-pull-request"
+    },
+    {
       "condition": "when the requested implementation creates a new project file or directory.",
       "kind": "conditional",
       "role": "dev-coder",
@@ -223,6 +242,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "fixed",
       "role": "dev-coder",
       "skill": "code-discovery"
+    },
+    {
+      "kind": "fixed",
+      "role": "dev-coder",
+      "skill": "execute-workitem"
     },
     {
       "kind": "fixed",
@@ -383,11 +407,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "fixed",
       "role": "dev-orchestrator",
       "skill": "agent-claim"
-    },
-    {
-      "kind": "fixed",
-      "role": "dev-orchestrator",
-      "skill": "manage-backlog"
     },
     {
       "kind": "fixed",
@@ -941,7 +960,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "modelJudgeNotRequiredAgentCount": 0,
     "modelJudgeNotRequiredSkillCount": 21,
     "modelJudgePendingAgentCount": 26,
-    "modelJudgePendingSkillCount": 84,
+    "modelJudgePendingSkillCount": 88,
     "negativeCaseBackedSkillCount": 0,
     "ordinaryLocalCaseCount": 7,
     "pairedControlsExecutableSkillCount": 0,
@@ -953,7 +972,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "positiveSecurityContainedSkillCount": 0,
     "positiveStaleByDigestSkillCount": 0,
     "positiveVerifiedSkillCount": 0,
-    "probeDeclaredSkillCount": 105,
+    "probeDeclaredSkillCount": 109,
     "scenarioDeclaredAgentCount": 26,
     "securityContainedAgentCount": 0,
     "securityContainedRunCount": 0,
@@ -962,7 +981,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "staleByDigestRunCount": 0,
     "staleByDigestSkillCount": 0,
     "structuralAgentCount": 26,
-    "structuralSkillCount": 105,
+    "structuralSkillCount": 109,
     "verifiedAgentCount": 0,
     "verifiedRunCount": 0,
     "verifiedSkillCount": 0,
@@ -1058,9 +1077,12 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     },
     {
       "conditionalSkills": {
-        "agent-claim": "when backlog work is being claimed, resumed, or assigned exclusive ownership.",
-        "create-backlog": "when turning an incoming request into a durable, typed backlog item.",
-        "organise-project-files": "when the requested backlog work creates a new file or directory."
+        "agent-claim": "when the selected backlog operation mutates repository files or records repository-global claim state",
+        "create-backlog": "when file-based-backlog is selected and an incoming request must become a new durable item",
+        "file-based-backlog": "when applicable project guidance or the request selects file-based-backlog",
+        "github-issues-backlog": "when applicable project guidance or the request selects github-issues-backlog",
+        "manage-backlog": "when file-based-backlog is selected and existing backlog state must be inspected or changed",
+        "organise-project-files": "when file-based-backlog creates a new file or directory."
       },
       "coverage": {
         "caseBacked": true,
@@ -1110,11 +1132,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "declaredCases": [
         "backlog-lifecycle"
       ],
-      "description": "Creates, claims, resumes, blocks, completes, and archives typed backlog work with recoverable status evidence.",
+      "description": "Creates and manages typed backlog work through the project-selected repository-file or GitHub-issues backend while preserving ownership, lifecycle, and recovery evidence.",
       "dynamicFolderSkills": false,
       "executedCases": [],
       "fixedSkills": [
-        "manage-backlog",
         "structured-explanation"
       ],
       "id": "dev-backlog-steward",
@@ -1252,6 +1273,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     },
     {
       "conditionalSkills": {
+        "create-pull-request": "when the selected work-item process is feature-branch-workitem or the request explicitly requires pull-request delivery",
         "organise-project-files": "when the requested implementation creates a new project file or directory.",
         "test-driven-development": "when the requested behavior can be expressed through executable tests that should guide implementation."
       },
@@ -1307,11 +1329,12 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "spring-boot-order-cancellation",
         "typescript-order-pricing"
       ],
-      "description": "Implements scoped source changes using applicable project guidance, repository patterns, focused tests, and build commands.",
+      "description": "Executes scoped source work items through the configured local-commit or feature-branch delivery process using applicable project guidance, repository patterns, focused tests, and build commands.",
       "dynamicFolderSkills": true,
       "executedCases": [],
       "fixedSkills": [
         "agent-claim",
+        "execute-workitem",
         "careful-coding",
         "code-comments",
         "code-discovery",
@@ -1515,7 +1538,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "fixedSkills": [
         "structured-design",
         "structured-explanation",
-        "manage-backlog",
         "agent-claim"
       ],
       "id": "dev-orchestrator",
@@ -2058,7 +2080,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "declaredCases": [
         "project-configuration-routing"
       ],
-      "description": "Creates or updates the single project-root PROJECT.yaml and validates conceptual agent definitions, skillsets, folder routing, nested AGENTS.md guidance, and Claude bridges.",
+      "description": "Creates or updates the single project-root PROJECT.yaml and validates conceptual agent definitions, work-item and backlog workflow selectors, skillsets, folder routing, nested AGENTS.md guidance, and Claude bridges.",
       "dynamicFolderSkills": false,
       "executedCases": [],
       "fixedSkills": [
@@ -3992,6 +4014,52 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
+      "category": "development-practice",
+      "coverage": {
+        "catalogFixtureBacked": false,
+        "evaluationCategory": "development-practice",
+        "executableCases": [],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": false,
+        "positiveCaseBackedCases": [],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
+          "probe-create-pull-request"
+        ],
+        "scenarioAssociations": [
+          "dev-orchestrator-boundary",
+          "dev-orchestrator-happy"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "code-delivery"
+        ]
+      },
+      "declaredCases": [],
+      "detection": null,
+      "executedCases": [],
+      "id": "create-pull-request",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
+      "verifiedCases": []
+    },
+    {
       "category": "artifact-creation",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -4491,6 +4559,52 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "verifiedCases": []
     },
     {
+      "category": "development-practice",
+      "coverage": {
+        "catalogFixtureBacked": false,
+        "evaluationCategory": "development-practice",
+        "executableCases": [],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": false,
+        "positiveCaseBackedCases": [],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
+          "probe-execute-workitem"
+        ],
+        "scenarioAssociations": [
+          "dev-coder-boundary",
+          "dev-coder-happy"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "code-delivery"
+        ]
+      },
+      "declaredCases": [],
+      "detection": null,
+      "executedCases": [],
+      "id": "execute-workitem",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
+      "verifiedCases": []
+    },
+    {
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -4595,6 +4709,52 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "positiveVerifiedCases": [],
         "probeDeclared": true,
         "probeIds": [
+          "probe-file-based-backlog"
+        ],
+        "scenarioAssociations": [
+          "dev-backlog-steward-boundary",
+          "dev-backlog-steward-happy"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "backlog"
+        ]
+      },
+      "declaredCases": [],
+      "detection": null,
+      "executedCases": [],
+      "id": "file-based-backlog",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
+      "verifiedCases": []
+    },
+    {
+      "category": "development-practice",
+      "coverage": {
+        "catalogFixtureBacked": false,
+        "evaluationCategory": "development-practice",
+        "executableCases": [],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": false,
+        "positiveCaseBackedCases": [],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
           "probe-fix-explanation"
         ],
         "scenarioAssociations": [
@@ -4613,6 +4773,52 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "detection": null,
       "executedCases": [],
       "id": "fix-explanation",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
+      "verifiedCases": []
+    },
+    {
+      "category": "development-practice",
+      "coverage": {
+        "catalogFixtureBacked": false,
+        "evaluationCategory": "development-practice",
+        "executableCases": [],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": false,
+        "positiveCaseBackedCases": [],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
+          "probe-github-issues-backlog"
+        ],
+        "scenarioAssociations": [
+          "dev-backlog-steward-boundary",
+          "dev-backlog-steward-happy"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "backlog"
+        ]
+      },
+      "declaredCases": [],
+      "detection": null,
+      "executedCases": [],
+      "id": "github-issues-backlog",
       "judgePassedCases": [],
       "securityContainedCases": [],
       "verifiedCases": []
@@ -10592,6 +10798,8 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skillProbes": [
         "probe-agent-claim",
         "probe-create-backlog",
+        "probe-file-based-backlog",
+        "probe-github-issues-backlog",
         "probe-manage-backlog",
         "probe-organise-project-files",
         "probe-structured-explanation"
@@ -10639,9 +10847,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "probe-code-discovery",
         "probe-code-execution-tracing",
         "probe-code-review-evidence",
+        "probe-create-pull-request",
         "probe-electron-main",
         "probe-electron-preload",
         "probe-end-to-end-verification",
+        "probe-execute-workitem",
         "probe-fastapi",
         "probe-fix-explanation",
         "probe-java",

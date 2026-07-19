@@ -9,12 +9,12 @@ scenarios:
     purpose: Coordinate source and documentation lanes through their proper owners and gates.
     initialState: A source change and operator runbook update require separate clean contributions.
     task: Coordinate implementation, fresh review, verification, integration, and closeout.
-    targetSkills: [structured-design, structured-explanation, manage-backlog, agent-claim]
-    allowedAgentDependencies: [dev-coder, dev-code-reviewer, dev-verifier, dev-merge-coordinator]
+    targetSkills: [structured-design, structured-explanation, agent-claim]
+    allowedAgentDependencies: [dev-coder, dev-code-reviewer, dev-verifier, dev-merge-coordinator, dev-backlog-steward]
     requiredBehaviors: [Assign bounded lanes, Keep review ownership independent, Verify before and after required integration, Record commits claims and closeout]
     forbiddenBehaviors: [Implement child work directly, Self-review, Run dependencies concurrently, Skip post-integration gates]
     deterministicChecks: [harness-agent-identity, dependency-identity-and-order, claim-lifecycle, committed-handoffs, output-contract-presence, readiness-consistency]
-    expectedOutputs: [status, task breakdown, resolved definition-owned skillsets, assigned agents, handoff plan, integrated verification, committed integration]
+    expectedOutputs: [status, task breakdown, resolved definition-owned skillsets, assigned agents, handoff plan, integrated verification, committed integration, work-item delivery]
     expectedTerminalStatus: PASS
   - id: bounded-correction
     priority: 2
@@ -23,12 +23,12 @@ scenarios:
     purpose: Enforce the two-attempt correction boundary and preserve accepted work.
     initialState: A source review repeats the same material finding after two correction attempts.
     task: Coordinate the correction loop and report the terminal state.
-    targetSkills: [structured-design, structured-explanation, manage-backlog, agent-claim]
-    allowedAgentDependencies: [dev-coder, dev-code-reviewer, dev-verifier, dev-merge-coordinator]
+    targetSkills: [structured-design, structured-explanation, agent-claim]
+    allowedAgentDependencies: [dev-coder, dev-code-reviewer, dev-verifier, dev-merge-coordinator, dev-backlog-steward]
     requiredBehaviors: [Return findings to the original owner, Use fresh review contexts, Stop after two failed corrections, Preserve commits and evidence]
     forbiddenBehaviors: [Create a third correction attempt, Approve same-context review, Discard accepted work]
     deterministicChecks: [harness-agent-identity, dependency-identity-and-order, correction-attempt-limit, preserved-handoff-evidence, output-contract-presence]
-    expectedOutputs: [status, task breakdown, assigned agents, handoff plan, committed integration]
+    expectedOutputs: [status, task breakdown, assigned agents, handoff plan, committed integration, work-item delivery]
     expectedTerminalStatus: BLOCKED
   - id: terminal-status-integrity
     priority: 3
@@ -37,10 +37,10 @@ scenarios:
     purpose: Block completion when a fixed independent dependency is unavailable.
     initialState: A clean source commit exists but dev-code-reviewer cannot be invoked.
     task: Complete the source lane through release readiness.
-    targetSkills: [structured-design, structured-explanation, manage-backlog, agent-claim]
-    allowedAgentDependencies: [dev-coder, dev-code-reviewer, dev-verifier, dev-merge-coordinator]
+    targetSkills: [structured-design, structured-explanation, agent-claim]
+    allowedAgentDependencies: [dev-coder, dev-code-reviewer, dev-verifier, dev-merge-coordinator, dev-backlog-steward]
     requiredBehaviors: [Name the missing dependency, Preserve the clean commit, Leave downstream gates pending, Return BLOCKED]
     forbiddenBehaviors: [Substitute self-review, Invoke verification before review, Report READY]
     deterministicChecks: [harness-agent-identity, dependency-availability, no-substitution, output-contract-presence, readiness-consistency]
-    expectedOutputs: [status, task breakdown, assigned agents, handoff plan, remaining questions]
+    expectedOutputs: [status, task breakdown, assigned agents, handoff plan, work-item delivery, remaining questions]
     expectedTerminalStatus: BLOCKED

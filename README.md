@@ -15,7 +15,7 @@ This repository distributes portable Agent Skills for software project documenta
 
 Use the repository skill sources and generated adapters as the operating surface. Working on this bundle does not require copying its skills or agents into user-home runtime folders.
 
-Project agent and skill setup starts with one PROJECT.yaml at the project root as an intermediate, reviewable intent log. Project Configurator records every selected conceptual agent definition, skillset, folder route, and root or nested AGENTS.md placement in that one project-wide configuration before rendering operational guidance. A maintainer may edit PROJECT.yaml to request a correction; Project Configurator reconciles the edit with repository evidence and bundle constraints before regenerating the guidance. Claude Code projects also receive a thin CLAUDE.md beside each applicable AGENTS.md so Claude imports the same project guidance without duplicating it.
+Project agent and skill setup starts with one PROJECT.yaml at the project root as an intermediate, reviewable intent log. Project Configurator records every selected conceptual agent definition, work-item and backlog process selector, skillset, folder route, and root or nested AGENTS.md placement in that one project-wide configuration before rendering operational guidance. The selectors name simple-workitem or feature-branch-workitem delivery and file-based-backlog, github-issues-backlog, none, or UNSET without copying their procedures into project configuration. A maintainer may edit PROJECT.yaml to request a correction; Project Configurator reconciles the edit with repository evidence and bundle constraints before regenerating the guidance. Claude Code projects also receive a thin CLAUDE.md beside each applicable AGENTS.md so Claude imports the same project guidance without duplicating it.
 
 The core methodology keeps one shared wiki-compatible page contract and six document shapes. Each document shape has a focused creation skill, a reusable template asset, and an artifact review skill:
 
@@ -372,12 +372,16 @@ The development practice skills are:
 - organise-project-files
 - create-backlog
 - manage-backlog
+- file-based-backlog
+- github-issues-backlog
+- execute-workitem
 - fix-explanation
 - structured-explanation
 - structured-design
 - review-structured-artifact
 - agent-claim
 - agent-work-merge
+- create-pull-request
 - code-review-evidence
 - test-driven-development
 - code-execution-tracing
@@ -466,14 +470,14 @@ Artifact-specific review skills pass the artifact, source evidence, and complete
 Invoke Project Bootstrapper once and describe the desired steady state:
 
 1. Use the repository bundle sources and matching generated runtime adapter.
-2. Review the resulting PROJECT.yaml, root or nested AGENTS.md guidance, and verification commands. Detected technology skills are inlined into the applicable AGENTS.md guidance by default. Pass inline-tech-skills as false to scripts/render-agents-technology-skills.py only when the target runtime should load those skills dynamically. [Technology Skills](design/skills-modularization.html) explains setup-time detection and folder skillsets.
+2. Review the resulting PROJECT.yaml, selector-only work-item and backlog guidance, root or nested AGENTS.md guidance, and verification commands. Detected technology skills are inlined into the applicable AGENTS.md guidance by default. Pass inline-tech-skills as false to scripts/render-agents-technology-skills.py only when the target runtime should load those skills dynamically. [Technology Skills](design/skills-modularization.html) explains setup-time detection and folder skillsets.
 3. Use documentation-bootstrap and documentation-reverse-engineer when the project needs a source-backed documentation baseline. Whole-project reverse engineering covers every meaningful module by default: inventory and review module designs first, group the complete set into high-level designs, derive architecture from those groups, cover all observable workflows, and expose the complete hierarchy through README and wiki hubs. Narrower coverage is valid only when the user explicitly names the boundary.
 4. For normal planned development, treat accepted functional specifications and architecture as the upstream authority. Create and review the HLD, create and review its module designs, then implement with the ordinary coding agent and project-routed technology skills. A missing high-impact contract blocks dependent work instead of being filled with an unsupported assumption.
 5. Follow the [orchestrated development lifecycle](design/orchestrated-development-lifecycle.html) for the owning execution, independent review, integrated verification, commit, and claim-release gates.
 
 Separately requested deployment uses the user or project defaults, or caller-supplied destination overrides, under Scoped Target Deployment.
 
-The technology-skill renderer writes the rendered section to standard output by default so Project Configurator can merge it into an existing AGENTS.md without disturbing project instructions. The --output option creates a file only when the target does not exist. If the target already exists, the command stops and directs the caller to --replace; use that option only when complete replacement of the target file is intentional.
+The guidance renderer writes selector-only workflow routing and technology-skill sections to standard output by default so Project Configurator can merge them into an existing AGENTS.md without disturbing project instructions. The --output option creates a file only when the target does not exist. If the target already exists, the command stops and directs the caller to --replace; use that option only when complete replacement of the target file is intentional.
 
 ```bash
 python3 scripts/render-agents-technology-skills.py --project PROJECT.yaml --inline-tech-skills false

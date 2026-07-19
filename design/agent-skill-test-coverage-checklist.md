@@ -20,8 +20,8 @@ This page is generated from the live conceptual agent and skill inventories, all
 
 ## Summary
 
-- [x] 26 conceptual agents and 105 bundled skills have structural coverage.
-- [x] 26 agents are scenario-declared and 105 skills are probe-declared.
+- [x] 26 conceptual agents and 109 bundled skills have structural coverage.
+- [x] 26 agents are scenario-declared and 109 skills are probe-declared.
 - [x] 52 agent scenarios and 5 workflow packs are declared.
 - 5 workflow packs have associated cases; 5 are partial and 0 have end-to-end fixture coverage.
 - 7 cases are fixture-backed and 7 fixtures are structurally executable before harness readiness is considered.
@@ -31,7 +31,7 @@ This page is generated from the live conceptual agent and skill inventories, all
 - 17 skills have positive-case support, 0 have negative-activation cases, 0 have executable paired controls, and 0 satisfy the full probe contract.
 - 0 agents and 0 skills have executable full fixtures.
 - 0 agents and 0 skills have calibrated Model Judge status.
-- 26 agents and 84 skills have pending Model Judge status.
+- 26 agents and 88 skills have pending Model Judge status.
 - 0 agents and 21 skills use Deterministic Judges only and do not require Model Judge calibration.
 - 0 agents and 0 skills have classified executions.
 - 0 agents and 0 skills have Judge-passed evidence.
@@ -146,9 +146,13 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | code-execution-tracing | [x] | [x] probe-code-execution-tracing | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | code-review-evidence | [x] | [x] probe-code-review-evidence | [x] typescript-code-review | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | create-backlog | [x] | [x] probe-create-backlog | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
+| create-pull-request | [x] | [x] probe-create-pull-request | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | detect-technology-skills | [x] | [x] probe-detect-technology-skills | [x] project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | end-to-end-verification | [x] | [x] probe-end-to-end-verification | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| execute-workitem | [x] | [x] probe-execute-workitem | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| file-based-backlog | [x] | [x] probe-file-based-backlog | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | fix-explanation | [x] | [x] probe-fix-explanation | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| github-issues-backlog | [x] | [x] probe-github-issues-backlog | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | manage-backlog | [x] | [x] probe-manage-backlog | [x] backlog-lifecycle | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | organise-project-files | [x] | [x] probe-organise-project-files | [x] project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | prompt-contracts | [x] | [x] probe-prompt-contracts | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |

@@ -111,6 +111,19 @@ technology_skill_loadouts:
 
 folder_route_precedence: "Most-specific matching path pattern wins. Prefer non-overlapping routes and use this rule only when overlap is unavoidable."
 
+workflow_selection:
+  workitem:
+    default: "TODO: simple-workitem, feature-branch-workitem, or UNSET when the user has not selected a delivery process."
+    folder_overrides:
+      - pattern: "TODO: Real repository-relative folder path or valid glob, or Not applicable."
+        process: "TODO: simple-workitem or feature-branch-workitem."
+  backlog:
+    default: "TODO: file-based-backlog, github-issues-backlog, none, or UNSET when the user has not selected a backlog backend."
+    folder_overrides:
+      - pattern: "TODO: Real repository-relative folder path or valid glob, or Not applicable."
+        process: "TODO: file-based-backlog, github-issues-backlog, or none."
+  selection_policy: "Do not infer either process from repository files, remotes, hosting metadata, or available tools. Use an explicit project decision; when UNSET, the pertinent agent asks the user before the operation requires that choice."
+
 folder_routing:
   - pattern: "TODO: Real repository-relative folder path or valid glob; never use a prose scope label."
     tier_or_workflow: "TODO: Tier or workflow name."

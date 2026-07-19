@@ -914,6 +914,73 @@ class TechnologyDetectionTests(unittest.TestCase):
             self.assertNotIn("Agent Claims And Worktrees", completed.stdout)
             self.assertNotIn("agent-claim", completed.stdout)
 
+    def test_agents_section_renders_selector_only_workitem_and_backlog_workflows(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            plan = Path(directory) / "PROJECT.yaml"
+            plan.write_text(yaml.safe_dump({
+                "workflow_selection": {
+                    "workitem": {
+                        "default": "simple-workitem",
+                        "folder_overrides": [{
+                            "pattern": "services/**",
+                            "process": "feature-branch-workitem",
+                        }],
+                    },
+                    "backlog": {
+                        "default": "file-based-backlog",
+                        "folder_overrides": [{
+                            "pattern": "services/**",
+                            "process": "github-issues-backlog",
+                        }],
+                    },
+                },
+                "technology_skill_loadouts": [],
+            }), encoding="utf-8")
+
+            rendered = subprocess.run(
+                [sys.executable, str(RENDER_SCRIPT), "--project", str(plan)],
+                cwd=ROOT,
+                check=True,
+                capture_output=True,
+                text=True,
+            ).stdout
+
+            self.assertIn("## Work Item And Backlog Workflows", rendered)
+            self.assertIn("Default work-item process: simple-workitem", rendered)
+            self.assertIn(
+                "services/**: use the feature-branch-workitem work-item process",
+                rendered,
+            )
+            self.assertIn("Default backlog process: file-based-backlog", rendered)
+            self.assertIn(
+                "services/**: use the github-issues-backlog backlog process",
+                rendered,
+            )
+            self.assertIn("pertinent agent asks the user", rendered)
+            self.assertNotIn("create a feature branch", rendered)
+            self.assertNotIn("pull-request template", rendered)
+
+    def test_agents_section_rejects_invalid_workflow_selector(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            plan = Path(directory) / "PROJECT.yaml"
+            plan.write_text(yaml.safe_dump({
+                "workflow_selection": {
+                    "workitem": {"default": "invent a process"},
+                    "backlog": {"default": "UNSET"},
+                },
+            }), encoding="utf-8")
+
+            completed = subprocess.run(
+                [sys.executable, str(RENDER_SCRIPT), "--project", str(plan)],
+                cwd=ROOT,
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+
+            self.assertEqual(1, completed.returncode)
+            self.assertIn("must be a process identifier or UNSET", completed.stderr)
+
     def test_agents_section_inlines_technology_skills_by_default_with_false_override(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             plan = Path(directory) / "PROJECT.yaml"

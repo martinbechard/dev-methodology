@@ -6,11 +6,11 @@ target:
   conceptualRole: agents/roles/dev-activities/dev-orchestrator.role.yaml
   nativeAgent: generated/adapters/codex/agents/dev-orchestrator.toml
   repositoryMutation: required
-  requiredSkills: [structured-design, structured-explanation, manage-backlog, agent-claim]
+  requiredSkills: [structured-design, structured-explanation, agent-claim]
   conditionalSkills:
     organise-project-files: Orchestration creates a project file or directory.
-  allowedAgentDependencies: [dev-coder, dev-code-reviewer, dev-verifier, dev-merge-coordinator]
-  requiredOutputs: [status, task breakdown, resolved definition-owned skillsets, assigned agents, handoff plan, integrated verification, committed integration]
+  allowedAgentDependencies: [dev-coder, dev-code-reviewer, dev-verifier, dev-merge-coordinator, dev-backlog-steward]
+  requiredOutputs: [status, task breakdown, resolved definition-owned skillsets, assigned agents, handoff plan, integrated verification, committed integration, work-item delivery]
 projectAgents:
   supervisor: agents/supervisor.toml
   judge: agents/judge.toml

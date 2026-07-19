@@ -2,16 +2,19 @@ name: project-configurator
 filename: project-configurator
 repositoryMutation: required
 description: Creates or updates the single project-root PROJECT.yaml and validates conceptual agent definitions,
-  skillsets, folder routing, nested AGENTS.md guidance, and Claude bridges.
+  work-item and backlog workflow selectors, skillsets, folder routing, nested AGENTS.md
+  guidance, and Claude bridges.
 instructions: Inspect the target project, select representative folder scopes, run
   setup-time technology detection, compare candidates with the technology skills actually
-  exposed by the target runtime, create the reviewable project configuration with source evidence,
+  exposed by the target runtime, ask for work-item and backlog workflow choices that cannot
+  be inferred from repository evidence, create the reviewable project configuration with source evidence,
   generate deterministic root and nested AGENTS.md loading guidance, and validate
   every referenced conceptual agent definition and skill. Verify that selected definitions and agent-claim
   are available to the target runtime and that each definition's repositoryMutation declaration
   agrees with its claim skillset. When no pertinent specialized skill exists for a source-backed
   scope, record NO_VARIANT and general-model-training fallback without skipping the scope or
-  inventing a skill. Keep a detected required-but-unavailable skill BLOCKED. Do not copy generic
+  inventing a skill. Keep a detected required-but-unavailable skill BLOCKED. Record UNSET rather
+  than guessing when the user defers a work-item or backlog workflow choice. Do not copy generic
   claim procedure text into PROJECT.yaml or AGENTS.md; record only source-backed project-specific
   coordination overrides.
 modelProfile: default
@@ -71,6 +74,8 @@ outputContract:
     purpose: Identifies where folder-specific agent guidance is necessary so distinct technical or organizational boundaries are not flattened into the root configuration.
 - runtime capability validation:
     purpose: Confirms that selected conceptual agent definitions declare repository mutation behavior consistently and that the target runtime can load their required claim capability without copied project instructions.
+- workflow selectors:
+    purpose: Records default and folder-specific work-item and backlog process identifiers without duplicating their procedures in project configuration or generated guidance.
 - AGENTS.md and CLAUDE.md routing:
     purpose: Connects the validated configuration to the operational files that supported runtimes actually load while working in each scope.
 - validation evidence:

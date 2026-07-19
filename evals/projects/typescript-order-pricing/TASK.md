@@ -2,6 +2,9 @@
 
 Add an asynchronous coupon boundary to the order-pricing module.
 
+Use the simple-workitem delivery process. Complete and commit the verified local change
+without publishing a branch or pull request.
+
 Requirements:
 
 - Accept an optional coupon code as unknown external input.

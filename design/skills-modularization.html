@@ -531,13 +531,13 @@
             <td><span class="name">Required core skill</span></td>
             <td>A skill entry in the agent definition without a condition.</td>
             <td>Every invocation of that agent needs the capability.</td>
-            <td>Dev Coder always uses careful-coding, code-comments, code-discovery, and fix-explanation.</td>
+            <td>Dev Coder always uses execute-workitem, careful-coding, code-comments, code-discovery, and fix-explanation.</td>
           </tr>
           <tr>
             <td><span class="name">Optional core skill</span></td>
             <td>A skill entry in the agent definition with a human-readable condition.</td>
             <td>The request and available evidence satisfy the rule; the agent applies judgment rather than matching prompt words.</td>
-            <td>Dev Coder uses test-driven-development when behavior can be expressed through executable tests.</td>
+            <td>Dev Coder uses create-pull-request only for feature-branch-workitem or an explicit pull-request request, and uses test-driven-development when behavior can be expressed through executable tests.</td>
           </tr>
         </tbody>
       </table>
@@ -793,8 +793,8 @@
         <tbody>
           <tr>
             <td><span class="name">Dev Coder</span></td>
-            <td>agent-claim, careful-coding, code-comments, code-discovery, fix-explanation</td>
-            <td>organise-project-files when creating a file or directory; test-driven-development when tests can guide the behavior</td>
+            <td>agent-claim, execute-workitem, careful-coding, code-comments, code-discovery, fix-explanation</td>
+            <td>create-pull-request for feature-branch-workitem or an explicit pull-request request; organise-project-files when creating a file or directory; test-driven-development when tests can guide the behavior</td>
           </tr>
           <tr>
             <td><span class="name">Dev Artifact Reviewer</span></td>
@@ -805,6 +805,11 @@
             <td><span class="name">Project Configurator</span></td>
             <td>agent-claim, detect-technology-skills, create-project-configuration, development-methodology, documentation-page-verify</td>
             <td>organise-project-files when adding a path not fixed by the configuration contract; documentation-bootstrap when the project lacks the required documentation structure</td>
+          </tr>
+          <tr>
+            <td><span class="name">Dev Backlog Steward</span></td>
+            <td>No backend-specific skill is unconditional.</td>
+            <td>file-based-backlog with create-backlog and manage-backlog for a file-backed queue; github-issues-backlog for a GitHub Issues queue; the steward asks when the selector is unset</td>
           </tr>
         </tbody>
       </table>
@@ -835,7 +840,7 @@
 
   <section class="section" aria-labelledby="setup-title">
     <h2 id="setup-title">Technology Extensions Setup Process</h2>
-    <p class="lede">Project Configurator owns the setup process. It inspects the target repository, selects technology extensions from source evidence, records the intended configuration in PROJECT.yaml, renders the operational folder guidance, and verifies that the result matches the recorded intent.</p>
+    <p class="lede">Project Configurator owns the setup process. It inspects the target repository, selects technology extensions from source evidence, records the intended configuration and selector-only work-item and backlog choices in PROJECT.yaml, renders the operational folder guidance, and verifies that the result matches the recorded intent.</p>
     <aside class="note">
       <div class="tag-row"><span class="tag skill">Development precursor — outside setup</span></div>
       <p><strong>Actor: Methodology maintainer.</strong> Technology skills and their detection metadata are authored, validated, and shared before setup begins. Project Configurator consumes that existing collection; it does not create technology skills while configuring a target project.</p>
@@ -843,7 +848,7 @@
     <div class="flow">
       <article class="flow-step"><div class="tag-row"><span class="tag orchestrator">Actor: Project Configurator</span></div><strong>1. Inspect project scopes</strong><p>Inventory the project family, application tiers, manifests, source roots, tests, and folder boundaries without combining unrelated sibling technologies.</p></article>
       <article class="flow-step"><div class="tag-row"><span class="tag orchestrator">Actor: Project Configurator</span></div><strong>2. Match technology evidence</strong><p>Run setup-time detection for representative folders. Accept a technology skill only when one complete evidence rule matches, and retain missing requirements, conflicts, and explicit no-variant results.</p></article>
-      <article class="flow-step"><div class="tag-row"><span class="tag orchestrator">Actor: Project Configurator</span></div><strong>3. Write the intermediate configuration</strong><p>Create or update the root PROJECT.yaml before generating operational guidance. This reviewable intent log records the selected agent definitions, folder skillsets, source evidence, routing decisions, and planned AGENTS.md locations.</p></article>
+      <article class="flow-step"><div class="tag-row"><span class="tag orchestrator">Actor: Project Configurator</span></div><strong>3. Write the intermediate configuration</strong><p>Create or update the root PROJECT.yaml before generating operational guidance. This reviewable intent log records the selected agent definitions, folder skillsets, source evidence, routing decisions, planned AGENTS.md locations, and the identifiers of the work-item process and backlog backend. It does not duplicate branch, pull-request, or backlog procedure details owned by those skills. Record UNSET and ask when a selector has not been supplied.</p></article>
       <article class="flow-step"><div class="tag-row"><span class="tag reference">Actors: Maintainer and Project Configurator</span></div><strong>4. Review or correct the intent</strong><p>The maintainer can edit PROJECT.yaml to force a correction to the intended configuration. Project Configurator then reconciles that edit with repository evidence and bundle constraints before continuing.</p></article>
       <article class="flow-step"><div class="tag-row"><span class="tag orchestrator">Actor: Project Configurator</span></div><strong>5. Render folder guidance</strong><p>Seed the root <code>.gitignore</code> with the anchored <code>/.worktrees/</code> entry, then generate root or nested AGENTS.md files with each detected skill statically embedded under its applicable folder route by default. Root guidance identifies <code>.worktrees</code> as ignored operational state directly beneath the primary worktree without recording a machine-specific absolute path; the claim tool derives that path from Git metadata. The renderer emits the section to standard output for safe merging into an existing project file. Its output option creates only a missing file and requires the explicit replace option before overwriting an existing file. Use dynamic load-by-name guidance only when inline-tech-skills is false. For Claude Code, create a thin colocated CLAUDE.md bridge beside each applicable AGENTS.md.</p></article>
       <article class="flow-step"><div class="tag-row"><span class="tag orchestrator">Actor: Project Configurator</span></div><strong>6. Verify the setup</strong><p>Confirm that PROJECT.yaml, folder guidance, bridges, referenced agent definitions, skills, paths, worktree ignore behavior, and validation commands agree and that every required runtime capability is available.</p></article>

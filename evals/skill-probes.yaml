@@ -324,13 +324,27 @@ probes:
     evaluationKind: artifact-contract
     activationCondition: The single root PROJECT.yaml and generated root or nested agent guidance are created or substantially rewritten.
     negativeCondition: No nested PROJECT.yaml, workstation path, copied generic claim procedure, or invented skill is allowed.
-    expectedBehavior: Preserve complete conceptual definition skill metadata, use configured deterministic operations for availability and detection when present, detect pertinent folder variants against runtime availability, record NO_VARIANT and BLOCKED distinctly, generate matching guidance, and validate mutation policy.
+    expectedBehavior: Preserve complete conceptual definition skill metadata, ask for non-detectable work-item and backlog process selections or record UNSET, keep generated workflow guidance selector-only, use configured deterministic operations for availability and detection when present, detect pertinent folder variants against runtime availability, record NO_VARIANT and BLOCKED distinctly, generate matching guidance, and validate mutation policy.
     judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, technology-detection-evidence, source-link-resolution], modelRubric: source-faithfulness}
     scenarioAssociations: [project-configurator-happy, project-configurator-boundary]
     workflowAssociations: [project-setup]
     executableCases: [project-configuration-routing]
     coverageStatus: fixture-backed
     ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
+  - id: probe-create-pull-request
+    skill: create-pull-request
+    source: skills/create-pull-request/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: workflow-invariant
+    activationCondition: A request explicitly asks to prepare, publish, update, restack, recreate, or mark a pull request ready.
+    negativeCondition: Preparing pull-request content alone does not authorize external publication, and ordinary commit or push work does not create a pull request without a pull-request request.
+    expectedBehavior: Verify the branch and current diff, use the applicable template, split avoidably broad work into the smallest coherent independently reviewable pull requests, place shared foundations before separate feature or agent pull requests, keep genuinely atomic work together, create base dependencies before dependents, recreate a newly created confusing or unnecessarily broad stack when no substantive review history would be lost, use draft only for incomplete work, and verify published state and links.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, operation-coverage, tool-authority, readiness-consistency], modelRubric: workflow-quality}
+    scenarioAssociations: [dev-orchestrator-happy, dev-orchestrator-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: structured-design}
   - id: probe-create-unit-test-plan
     skill: create-unit-test-plan
     source: skills/create-unit-test-plan/SKILL.md
@@ -457,6 +471,20 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-execute-workitem
+    skill: execute-workitem
+    source: skills/execute-workitem/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: workflow-invariant
+    activationCondition: Dev Coder is asked to implement, resume, correct, or deliver an interactive, file-backed, or issue-backed work item.
+    negativeCondition: The skill does not infer a delivery process from hosting evidence, mix backlog persistence with delivery, publish a simple-workitem, or leave a completed feature-branch pull request in draft.
+    expectedBehavior: Normalize the work item, ask when no process is selected, load only the selected simple-workitem or feature-branch-workitem process, preserve claim and worktree boundaries, produce a verified local commit for simple delivery, or push and verify a pull request ready for review before reporting AWAITING_REVIEW for feature-branch delivery.
+    judgePlan: {deterministicChecks: [skill-read-trace, operation-coverage, tool-authority, claim-lifecycle, readiness-consistency], modelRubric: workflow-quality}
+    scenarioAssociations: [dev-coder-happy, dev-coder-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: manage-backlog}
   - id: probe-fastapi
     skill: fastapi
     source: skills/fastapi/SKILL.md
@@ -471,6 +499,20 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-file-based-backlog
+    skill: file-based-backlog
+    source: skills/file-based-backlog/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: workflow-invariant
+    activationCondition: Applicable project guidance or the request selects repository files as the authoritative backlog.
+    negativeCondition: The skill does not silently select file storage, create duplicate GitHub issues, or infer completion without configured delivery evidence.
+    expectedBehavior: Use the configured repository backlog location, apply create-backlog for new items and manage-backlog for lifecycle operations, claim file mutations, avoid duplicate active items, and report the durable item path and state.
+    judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, queue-state-transition, claim-lifecycle], modelRubric: workflow-quality}
+    scenarioAssociations: [dev-backlog-steward-happy, dev-backlog-steward-boundary]
+    workflowAssociations: [backlog]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: github-issues-backlog}
   - id: probe-fix-explanation
     skill: fix-explanation
     source: skills/fix-explanation/SKILL.md
@@ -485,6 +527,20 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-github-issues-backlog
+    skill: github-issues-backlog
+    source: skills/github-issues-backlog/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: workflow-invariant
+    activationCondition: Applicable project guidance or the request selects GitHub issues as the authoritative backlog.
+    negativeCondition: The skill does not silently select GitHub, create repository-file duplicates, expose unsuitable evidence, or close an issue merely because a commit or pull request exists.
+    expectedBehavior: Resolve authority and the target repository, require an authenticated GitHub issue interface, deduplicate before creation, preserve item and delivery evidence, mutate only authorized issue fields, and close only when configured completion evidence is satisfied.
+    judgePlan: {deterministicChecks: [skill-read-trace, operation-coverage, tool-authority, queue-state-transition], modelRubric: workflow-quality}
+    scenarioAssociations: [dev-backlog-steward-happy, dev-backlog-steward-boundary]
+    workflowAssociations: [backlog]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: file-based-backlog}
   - id: probe-java
     skill: java
     source: skills/java/SKILL.md
@@ -1372,9 +1428,9 @@ probes:
     source: skills/structured-design/SKILL.md
     evaluationCategory: documentation-methodology
     evaluationKind: artifact-contract
-    activationCondition: A structured technical design or plan must be written or revised and no narrower artifact-creation skill owns it.
-    negativeCondition: A target with a dedicated creation skill routes to that specific contract rather than this fallback.
-    expectedBehavior: Establish artifact purpose, audience, governing sources, schema, decisions, alternatives, exact operations and actors, risks, traceability, and verification; keep unknowns explicit and readiness consistent.
+    activationCondition: A structured technical design or plan must be formulated, returned, authored, or revised and no narrower artifact-creation skill owns it.
+    negativeCondition: A response-only design request does not authorize a design file or arbitrary path, and a target with a dedicated creation skill routes to that specific contract rather than this fallback.
+    expectedBehavior: Default to a structured Markdown response when no artifact is requested; author or revise a file only for explicit file-backed design work or an authorized workflow that maintains an existing authoritative design; use the requested path, existing authority, or repository placement mechanism; preserve the structured-design schema, governing sources, decisions, risks, traceability, and verification.
     judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, operation-coverage, actor-boundary-coverage, contradiction-scan, readiness-consistency], modelRubric: artifact-contract}
     scenarioAssociations: [dev-documentation-writer-happy, dev-artifact-reviewer-boundary]
     workflowAssociations: [code-delivery, documentation-methodology, project-setup]

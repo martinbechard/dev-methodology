@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Modified with AI assistance.
-# Summary: Renders unconditional folder technology guidance from PROJECT.yaml.
+# Summary: Renders workflow selectors and unconditional folder technology guidance from PROJECT.yaml.
 
 from __future__ import annotations
 
@@ -19,6 +19,7 @@ SKILLS_ROOT = REPOSITORY_ROOT / "skills"
 SKILL_FILE_NAME = "SKILL.md"
 FRONTMATTER_DELIMITER = "---"
 SKILL_NAME_PATTERN = re.compile(r"^[a-z0-9][a-z0-9-]*$")
+PROCESS_NAME_PATTERN = re.compile(r"^(?:[a-z0-9][a-z0-9-]*|UNSET)$")
 
 
 def parse_boolean(value: str) -> bool:
@@ -46,6 +47,50 @@ def loadouts(value: dict[str, object]) -> list[dict[str, object]]:
     return [row for row in rows if isinstance(row, dict)] if isinstance(rows, list) else []
 
 
+def workflow_lines(value: dict[str, object]) -> list[str]:
+    """Render selector-only work-item and backlog workflow guidance."""
+
+    selection = value.get("workflow_selection")
+    if selection is None:
+        return []
+    if not isinstance(selection, dict):
+        raise ValueError("workflow_selection must be a mapping")
+
+    lines = [
+        "## Work Item And Backlog Workflows",
+        "",
+        "Project Configurator owns these selectors. They choose role-owned procedures without duplicating those procedures here.",
+        "",
+    ]
+    for key, label in (("workitem", "work-item"), ("backlog", "backlog")):
+        configuration = selection.get(key)
+        if not isinstance(configuration, dict):
+            raise ValueError(f"workflow_selection.{key} must be a mapping")
+        default = configuration.get("default")
+        if not isinstance(default, str) or not PROCESS_NAME_PATTERN.fullmatch(default):
+            raise ValueError(f"workflow_selection.{key}.default must be a process identifier or UNSET")
+        lines.append(f"- Default {label} process: {default}.")
+        overrides = configuration.get("folder_overrides", [])
+        if not isinstance(overrides, list):
+            raise ValueError(f"workflow_selection.{key}.folder_overrides must be a list")
+        for override in overrides:
+            if not isinstance(override, dict):
+                raise ValueError(f"workflow_selection.{key}.folder_overrides entries must be mappings")
+            pattern = override.get("pattern")
+            process = override.get("process")
+            if not isinstance(pattern, str) or not pattern:
+                raise ValueError(f"workflow_selection.{key} override pattern must be a non-empty string")
+            if not isinstance(process, str) or not PROCESS_NAME_PATTERN.fullmatch(process):
+                raise ValueError(f"workflow_selection.{key} override process must be a process identifier or UNSET")
+            lines.append(f"- {pattern}: use the {process} {label} process.")
+    lines.extend([
+        "",
+        "When a required selector is UNSET, the pertinent agent asks the user before that operation and does not infer a process from repository or hosting evidence.",
+        "",
+    ])
+    return lines
+
+
 def inlined_skill_body(skill_name: str) -> str:
     """Return one validated bundled technology skill body."""
 
@@ -66,8 +111,9 @@ def inlined_skill_body(skill_name: str) -> str:
 
 
 def render(value: dict[str, object], inline_tech_skills: bool = True) -> str:
-    """Render root AGENTS.md technology sections."""
-    lines: list[str] = [
+    """Render root AGENTS.md workflow and technology sections."""
+    lines: list[str] = workflow_lines(value)
+    lines.extend([
         "## Technology Skills",
         "",
         "Technology detection is owned by Project Configurator. Do not rerun detection during ordinary work.",
@@ -82,7 +128,7 @@ def render(value: dict[str, object], inline_tech_skills: bool = True) -> str:
         "",
         "When configured folder patterns overlap, the most-specific matching pattern wins.",
         "",
-    ]
+    ])
     inlined_loadouts: list[tuple[str, list[str]]] = []
     rendered = 0
     for item in loadouts(value):
@@ -142,7 +188,7 @@ def render(value: dict[str, object], inline_tech_skills: bool = True) -> str:
 
 def main(arguments: Sequence[str] | None = None) -> int:
     """Render configured AGENTS.md sections without replacing an output file implicitly."""
-    parser = argparse.ArgumentParser(description="Render unconditional AGENTS.md technology skill guidance.")
+    parser = argparse.ArgumentParser(description="Render AGENTS.md workflow selectors and unconditional technology skill guidance.")
     parser.add_argument("--project", type=Path, required=True)
     parser.add_argument("--output", type=Path)
     parser.add_argument(

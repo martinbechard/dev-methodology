@@ -12,7 +12,7 @@
         {
           "name": "dev-backlog-steward",
           "output": "generated/adapters/claude/agents/dev-backlog-steward.md",
-          "sha256": "1c592b5857fa0a61591e7d7e49c0f2cbfcc4ce0e5dd944e624d4331f34f5867c",
+          "sha256": "d1182076d5493200ee3dfcaf01f47f2384b7dc7d7a674465f7c2d6db892d6fb9",
           "source": "agents/roles/dev-activities/dev-backlog-steward.role.yaml"
         },
         {
@@ -30,7 +30,7 @@
         {
           "name": "dev-coder",
           "output": "generated/adapters/claude/agents/dev-coder.md",
-          "sha256": "3d50ce99d763e1c6ce3217eb02c1edccacb06b5cfa3553e4642cde5670a4ba2f",
+          "sha256": "a34bc69d6e13d3540d3b0c361e1d32bd678d0a692cdb42b2dfa3584bf38d273b",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
         },
         {
@@ -48,7 +48,7 @@
         {
           "name": "dev-orchestrator",
           "output": "generated/adapters/claude/agents/dev-orchestrator.md",
-          "sha256": "80ecafdf21390f726ece3ce799f2a2bdd58b4e14cc73a07b265a6c76b1c37728",
+          "sha256": "3b31f8450838e7c65f47563119ea5c8cf8c2c5e120472ec33ec1480cf723846a",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -102,13 +102,13 @@
         {
           "name": "project-configurator",
           "output": "generated/adapters/claude/agents/project-configurator.md",
-          "sha256": "26dcfd914575234ca21a82988196653bb2a51c6127f36267bcc8d31fdc09b4c8",
+          "sha256": "497c15df265893e3f6616699f43db3268fe9b7998b179034d525158d57d1f71e",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {
           "name": "project-organiser",
           "output": "generated/adapters/claude/agents/project-organiser.md",
-          "sha256": "69127eccc7d7a9f6c6cfc316816a88362e41708ec744900933cff02e66dd13e1",
+          "sha256": "fd8c5f5bb6da58979b37efdb377389e5b4c4e689c75e7b6753c93e35fa355bd4",
           "source": "agents/roles/project-setup/project-organiser.role.yaml"
         },
         {
@@ -176,7 +176,7 @@
         {
           "name": "dev-backlog-steward",
           "output": "generated/adapters/codex/agents/dev-backlog-steward.toml",
-          "sha256": "574c8105ab2d0d904bfad3cb9772f8c878c3fb24056eee413693e66625879fcb",
+          "sha256": "9a51fbcc26950616d05b8e5790447886de751572a93b588a3821c0cbb86f2a73",
           "source": "agents/roles/dev-activities/dev-backlog-steward.role.yaml"
         },
         {
@@ -194,7 +194,7 @@
         {
           "name": "dev-coder",
           "output": "generated/adapters/codex/agents/dev-coder.toml",
-          "sha256": "d6494c3ae8d32c3aef22fe72740c16903dc87f43062f41ddc25969c11116286e",
+          "sha256": "514cd22ba430c31ad0e7e62353aafb1e9409b89fbb0815d13f17764bd27a8035",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
         },
         {
@@ -212,7 +212,7 @@
         {
           "name": "dev-orchestrator",
           "output": "generated/adapters/codex/agents/dev-orchestrator.toml",
-          "sha256": "8fec3b07da620b83f16b189953ae6cd2a2cb1acdb49028fbd39272350cba7e15",
+          "sha256": "4ab195017bb75bf4129df175aabe5363cd517a042d5b502349688829da158371",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -266,13 +266,13 @@
         {
           "name": "project-configurator",
           "output": "generated/adapters/codex/agents/project-configurator.toml",
-          "sha256": "28fb628cacfe62be92dee8ea40f9ae80026fa54dc86282e08544307219df34e6",
+          "sha256": "cb47191156cc418b3d377c38979d9180d8f81f03f4a1b1df0825cb0dbab8be51",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {
           "name": "project-organiser",
           "output": "generated/adapters/codex/agents/project-organiser.toml",
-          "sha256": "7b8e2390e2cc00821fa95a0f012bc0bdfdeebb5d1d959db685d0da01e86e6c9e",
+          "sha256": "11580415bc31f608641af44809cfa243a014f4668664c9428873b18a8fe7b5a6",
           "source": "agents/roles/project-setup/project-organiser.role.yaml"
         },
         {
@@ -346,7 +346,7 @@
         {
           "name": "dev-backlog-steward",
           "output": "generated/adapters/gemini/agents/dev-backlog-steward.md",
-          "sha256": "0a601795216836007f62b618bf4e40dd70d5c751603c4d86581db4662967e1e4",
+          "sha256": "eb8abc814ea59b0564e09ff7ea11b521ff3ac8fd9ce15e39bc0961ae08e0a5b7",
           "source": "agents/roles/dev-activities/dev-backlog-steward.role.yaml"
         },
         {
@@ -364,7 +364,7 @@
         {
           "name": "dev-coder",
           "output": "generated/adapters/gemini/agents/dev-coder.md",
-          "sha256": "d901f7cf4f78a70a0d8b2e03d51a3045a9a48ded300f8b3677864fc78318338a",
+          "sha256": "e093e838f741d1ebde05a04b927397797e5f63cc98534d0f3e34025cb9d4df57",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
         },
         {
@@ -382,7 +382,7 @@
         {
           "name": "dev-orchestrator",
           "output": "generated/adapters/gemini/agents/dev-orchestrator.md",
-          "sha256": "050f8adcf36359e0a984b2225acec641d9bb44a7d152c1973198fe490c042b0e",
+          "sha256": "0cca91c85884281f1f8e94e0323107678fc12d7a89e38483cfce11bd19d073de",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -436,13 +436,13 @@
         {
           "name": "project-configurator",
           "output": "generated/adapters/gemini/agents/project-configurator.md",
-          "sha256": "be2b1f52374f585a0030691c98cb45e945f54889f22e9e624cc2b76f56799249",
+          "sha256": "f24527a2fd4c73d5ed1ae67ecd0ce35069a3aeccae2334354842e1f7c64f14f2",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {
           "name": "project-organiser",
           "output": "generated/adapters/gemini/agents/project-organiser.md",
-          "sha256": "a657d6fa5e3b73933d10b6128baa88a26c7588a246e5f2c63972827f2b678024",
+          "sha256": "b4826aa0238fbfcaf53dc40f3b502c9c289ad9e8124c3c462ded23603f844617",
           "source": "agents/roles/project-setup/project-organiser.role.yaml"
         },
         {
@@ -510,7 +510,7 @@
         {
           "name": "dev-backlog-steward",
           "output": "generated/adapters/junie/agents/dev-backlog-steward.md",
-          "sha256": "0e8a2fb94bb00287398cebac0ea1399ddeac4d1eb385b09ef82c31d082f09a9c",
+          "sha256": "9eb32109860b57f3b7c268ed5e59243bf3b5d29c19b9c35cc442b414c19b8ec1",
           "source": "agents/roles/dev-activities/dev-backlog-steward.role.yaml"
         },
         {
@@ -528,7 +528,7 @@
         {
           "name": "dev-coder",
           "output": "generated/adapters/junie/agents/dev-coder.md",
-          "sha256": "a4d52ff367d6426b3229917857f712a3880a5c74dbf290626bafd98d51c77c52",
+          "sha256": "10e1560d7c3ee4149a58b22a47c5ae0c9ae5f9e7c4612b8a24d5cad05c96198a",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
         },
         {
@@ -546,7 +546,7 @@
         {
           "name": "dev-orchestrator",
           "output": "generated/adapters/junie/agents/dev-orchestrator.md",
-          "sha256": "c9640e93ca3e902163b150cafa50179e9ce2ebe97ac2adbcb7dd88f4d0f1dba1",
+          "sha256": "20e25d47f756c4f6cbbfd1d621f78d520bed5c39bf94b17e78088cd327d666ef",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
@@ -600,13 +600,13 @@
         {
           "name": "project-configurator",
           "output": "generated/adapters/junie/agents/project-configurator.md",
-          "sha256": "cb2c1ea54b151c861bc54b9c06065109156f322a8cca59d5bf469912f9486589",
+          "sha256": "0c4ea5c275825b0fa008a84a7a8c21fa11fa2a812e56594ff0c3b9638ffefd8f",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {
           "name": "project-organiser",
           "output": "generated/adapters/junie/agents/project-organiser.md",
-          "sha256": "169b2b313681a83884155ed6e55bc5c8cf443ce72cc44b04808b8e242d0858d3",
+          "sha256": "1cd963dcbd909e7d318773098d1fec594d733e94d57a9f2f286c5446010533bd",
           "source": "agents/roles/project-setup/project-organiser.role.yaml"
         },
         {

@@ -85,6 +85,10 @@ NEW_DEVELOPMENT_SKILLS = (
     "root-cause-analysis",
     "runtime-evidence-collection",
     "organise-project-files",
+    "execute-workitem",
+    "file-based-backlog",
+    "github-issues-backlog",
+    "create-pull-request",
     "create-unit-test-plan",
     "review-unit-test-plan",
     "typescript",
@@ -927,6 +931,61 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(role=role_name):
                 self.assertIn("skill-authoring", role_skills)
 
+    def test_structured_design_distinguishes_response_and_artifact_modes(self) -> None:
+        skill_path = SKILLS_ROOT / "structured-design" / "SKILL.md"
+        skill_text = skill_path.read_text(encoding="utf-8")
+        frontmatter = load_yaml_object_from_frontmatter(skill_path)
+        description = " ".join(frontmatter["description"].split())
+
+        self.assertIn(
+            "Produces a structured Markdown design as response content, or authors or revises a design artifact",
+            description,
+        )
+        for phrase in (
+            "Use design-response mode by default",
+            "Do not create a design file merely because design content was requested.",
+            "Use artifact-authoring mode when the request explicitly asks to create,",
+            "This includes updating an existing authoritative design document as part of",
+            "Use the requested path, an existing authoritative artifact, or the",
+            "report the placement blocker",
+            "Design an authentication system.",
+            "Create docs/design/authentication.md.",
+            "Update the existing component design while implementing this",
+            "Use the repository's file-placement mechanism rather than",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, skill_text)
+
+        for blanket_rule in (
+            "This skill returns markdown text only.",
+            "- Do not write files.",
+            "- Do not choose filenames.",
+        ):
+            with self.subTest(blanket_rule=blanket_rule):
+                self.assertNotIn(blanket_rule, skill_text)
+
+        for preserved_contract in (
+            "## Root-Level Item Types",
+            "## Assertion Lines",
+            "## Required Discipline",
+            "## Recommended Section Order",
+            "Use markdown nested bullets with two spaces per level.",
+            "`SYNOPSIS` states the item's role.",
+            "`BECAUSE` must justify its immediate parent line only.",
+            "`CHAIN-OF-THOUGHT` exists only to explain how the immediate parent leads to",
+        ):
+            with self.subTest(preserved_contract=preserved_contract):
+                self.assertIn(preserved_contract, skill_text)
+
+        probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
+        probe = next(
+            entry
+            for entry in probes["probes"]
+            if entry["id"] == "probe-structured-design"
+        )
+        self.assertIn("response-only design request", probe["negativeCondition"])
+        self.assertIn("repository placement mechanism", probe["expectedBehavior"])
+
     def test_skills_and_roles_do_not_reissue_harness_instruction_loading(self) -> None:
         instruction_target = r"(?:AGENTS\.md|CLAUDE\.md|project instructions|repository coordination instructions)"
         manual_target = rf"(?:{instruction_target}|agent instructions)"
@@ -1040,6 +1099,182 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(skill_name=skill_name):
                 self.assertTrue((SKILLS_ROOT / skill_name / "SKILL.md").is_file())
                 self.assertTrue(openai_metadata_path(skill_name).is_file())
+
+    def test_create_pull_request_skill_and_template_define_modular_scope_and_review_order(
+        self,
+    ) -> None:
+        skill_path = SKILLS_ROOT / "create-pull-request" / "SKILL.md"
+        template_path = (
+            SKILLS_ROOT
+            / "create-pull-request"
+            / "assets"
+            / "pull-request-template.md"
+        )
+        skill_text = skill_path.read_text(encoding="utf-8")
+        template_text = template_path.read_text(encoding="utf-8")
+
+        for phrase in (
+            "create the base dependency first",
+            "recreate the pull requests in dependency order before handoff",
+            "no substantive human review, comments, external references, or check history would be lost",
+            "Do not leave a completed pull request in draft merely because it belongs to a stack.",
+            "Create and verify replacements before closing obsolete pull requests.",
+            "Prefer multiple focused pull requests over one avoidably broad pull request",
+            "one common protocol and tooling pull request followed by one pull request per agent suite",
+            "Keep work together when splitting would break an atomic behavior",
+            "Do not use file count alone to decide the split.",
+        ):
+            with self.subTest(skill_phrase=phrase):
+                self.assertIn(phrase, skill_text)
+
+        for heading in (
+            "## Summary",
+            "## Changes",
+            "## Scope And Modularity",
+            "## Verification",
+            "## Review State",
+            "## Review Order",
+            "## Risks And Follow-Up",
+        ):
+            with self.subTest(template_heading=heading):
+                self.assertIn(heading, template_text)
+
+        role = load_yaml_object(
+            ROLES_ROOT / "dev-activities" / "dev-coder.role.yaml"
+        )
+        pull_request_skill = next(
+            entry["create-pull-request"]
+            for entry in role["skills"]
+            if "create-pull-request" in entry
+        )
+        self.assertIn("feature-branch-workitem", pull_request_skill["condition"])
+
+        probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
+        probe = next(
+            entry
+            for entry in probes["probes"]
+            if entry["id"] == "probe-create-pull-request"
+        )
+        self.assertIn("base dependencies before dependents", probe["expectedBehavior"])
+        self.assertIn(
+            "smallest coherent independently reviewable pull requests",
+            probe["expectedBehavior"],
+        )
+
+        workflow_packs = load_yaml_object(
+            REPOSITORY_ROOT / "evals" / "workflow-packs.yaml"
+        )
+        code_delivery = next(
+            entry for entry in workflow_packs["packs"] if entry["id"] == "code-delivery"
+        )
+        self.assertIn("probe-create-pull-request", code_delivery["skillProbes"])
+        self.assertIn(
+            "- create-pull-request",
+            README_PATH.read_text(encoding="utf-8"),
+        )
+        self.assertIn(
+            "Focused pull requests separate shared foundations from independently reviewable changes",
+            (REPOSITORY_ROOT / "design" / "agent-and-skill-definitions.html").read_text(
+                encoding="utf-8"
+            ),
+        )
+
+    def test_workitem_and_backlog_processes_are_selector_driven(self) -> None:
+        execute_text = (
+            SKILLS_ROOT / "execute-workitem" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        simple_text = (
+            SKILLS_ROOT
+            / "execute-workitem"
+            / "references"
+            / "simple-workitem.md"
+        ).read_text(encoding="utf-8")
+        feature_text = (
+            SKILLS_ROOT
+            / "execute-workitem"
+            / "references"
+            / "feature-branch-workitem.md"
+        ).read_text(encoding="utf-8")
+        file_backlog_text = (
+            SKILLS_ROOT / "file-based-backlog" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        github_backlog_text = (
+            SKILLS_ROOT / "github-issues-backlog" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+
+        self.assertIn("simple-workitem or feature-branch-workitem", execute_text)
+        self.assertIn("Read only the selected process", execute_text)
+        self.assertIn("Do not push a branch or create a pull request", simple_text)
+        self.assertIn("Set the pull request ready for review", feature_text)
+        self.assertIn("report AWAITING_REVIEW", feature_text)
+        self.assertIn("Apply create-backlog", file_backlog_text)
+        self.assertIn("GitHub issues are hosting-service records", github_backlog_text)
+
+        coder = load_yaml_object(
+            ROLES_ROOT / "dev-activities" / "dev-coder.role.yaml"
+        )
+        coder_skills = {
+            skill_name: metadata
+            for entry in coder["skills"]
+            for skill_name, metadata in entry.items()
+        }
+        self.assertIn("execute-workitem", coder_skills)
+        self.assertNotIn("condition", coder_skills["execute-workitem"])
+        self.assertIn("feature-branch-workitem", coder_skills["create-pull-request"]["condition"])
+        self.assertIn("work-item delivery status", {
+            next(iter(entry)) for entry in coder["outputContract"]
+        })
+
+        orchestrator = load_yaml_object(
+            ROLES_ROOT / "dev-activities" / "dev-orchestrator.role.yaml"
+        )
+        orchestrator_skills = {
+            next(iter(entry)) for entry in orchestrator["skills"]
+        }
+        self.assertNotIn("create-pull-request", orchestrator_skills)
+        self.assertNotIn("manage-backlog", orchestrator_skills)
+        self.assertIn("dev-backlog-steward", orchestrator["agentDependencies"])
+
+        backlog_steward = load_yaml_object(
+            ROLES_ROOT / "dev-activities" / "dev-backlog-steward.role.yaml"
+        )
+        backlog_skills = {
+            skill_name: metadata
+            for entry in backlog_steward["skills"]
+            for skill_name, metadata in entry.items()
+        }
+        self.assertIn("file-based-backlog", backlog_skills)
+        self.assertIn("github-issues-backlog", backlog_skills)
+        self.assertIn("condition", backlog_skills["file-based-backlog"])
+        self.assertIn("condition", backlog_skills["github-issues-backlog"])
+
+        project_template = (
+            SKILLS_ROOT
+            / "development-methodology"
+            / "assets"
+            / "templates"
+            / PROJECT_TEMPLATE
+        ).read_text(encoding="utf-8")
+        self.assertIn("workflow_selection:", project_template)
+        self.assertIn("simple-workitem, feature-branch-workitem, or UNSET", project_template)
+        self.assertIn("file-based-backlog, github-issues-backlog, none, or UNSET", project_template)
+
+        probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
+        probe_ids = {entry["id"] for entry in probes["probes"]}
+        for probe_id in (
+            "probe-execute-workitem",
+            "probe-file-based-backlog",
+            "probe-github-issues-backlog",
+        ):
+            self.assertIn(probe_id, probe_ids)
+
+        readme_text = README_PATH.read_text(encoding="utf-8")
+        for skill_name in (
+            "execute-workitem",
+            "file-based-backlog",
+            "github-issues-backlog",
+        ):
+            self.assertIn(f"- {skill_name}", readme_text)
 
     def test_jhipster_guidance_is_split_into_focused_skill_packages(self) -> None:
         expected_phrases = {
@@ -1627,6 +1862,9 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("schema: project", template_text)
         self.assertIn("proprietary_validation_notes:", template_text)
         self.assertIn("nested_agents_files:", template_text)
+        self.assertIn("workflow_selection:", template_text)
+        self.assertIn("simple-workitem, feature-branch-workitem, or UNSET", template_text)
+        self.assertIn("file-based-backlog, github-issues-backlog, none, or UNSET", template_text)
         self.assertNotIn("nested_project_files:", template_text)
         self.assertIn("Create exactly one PROJECT.yaml", skill_text)
         self.assertIn("Do not create nested PROJECT.yaml files", skill_text)
@@ -1650,6 +1888,8 @@ class BundleContentTests(unittest.TestCase):
             skill_text,
         )
         self.assertIn("Record a coordination_overrides mapping only when", skill_text)
+        self.assertIn("Keep workflow configuration selector-only", skill_text)
+        self.assertIn("Do not infer either process", skill_text)
         self.assertIn(
             "Treat a missing conceptual agent definition, skill, or command as BLOCKED",
             skill_text,
@@ -2716,6 +2956,7 @@ class BundleContentTests(unittest.TestCase):
                 "dev-code-reviewer",
                 "dev-verifier",
                 "dev-merge-coordinator",
+                "dev-backlog-steward",
             ),
             "methodology-maintainer": (
                 "methodology-artifact-reviewer",
@@ -2832,6 +3073,7 @@ class BundleContentTests(unittest.TestCase):
                 "dev-code-reviewer",
                 "dev-verifier",
                 "dev-merge-coordinator",
+                "dev-backlog-steward",
             ),
             role.agent_dependencies,
         )
