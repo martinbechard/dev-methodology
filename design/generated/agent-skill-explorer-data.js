@@ -111,6 +111,28 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "review-structured-artifact"
     },
     {
+      "condition": "when acquiring or releasing a repository-global coordination resource or creating or updating repository ledger evidence",
+      "kind": "conditional",
+      "role": "dev-backlog-coordinator",
+      "skill": "agent-claim"
+    },
+    {
+      "condition": "when Codex user-visible tasks coordinate multiple backlog work items",
+      "kind": "conditional",
+      "role": "dev-backlog-coordinator",
+      "skill": "codex-workitem-coordination"
+    },
+    {
+      "kind": "fixed",
+      "role": "dev-backlog-coordinator",
+      "skill": "manage-backlog"
+    },
+    {
+      "kind": "fixed",
+      "role": "dev-backlog-coordinator",
+      "skill": "structured-explanation"
+    },
+    {
       "condition": "when the selected backlog operation mutates repository files or records repository-global claim state",
       "kind": "conditional",
       "role": "dev-backlog-steward",
@@ -938,7 +960,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "caseBackedAgentCount": 6,
     "caseBackedWorkflowPackCount": 5,
     "codexRunnableCaseCount": 7,
-    "declaredScenarioCount": 52,
+    "declaredScenarioCount": 54,
     "endToEndFixtureBackedWorkflowPackCount": 0,
     "executableCaseCount": 7,
     "executableFixtureAgentCount": 0,
@@ -959,8 +981,8 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "modelJudgeCalibratedSkillCount": 0,
     "modelJudgeNotRequiredAgentCount": 0,
     "modelJudgeNotRequiredSkillCount": 21,
-    "modelJudgePendingAgentCount": 26,
-    "modelJudgePendingSkillCount": 88,
+    "modelJudgePendingAgentCount": 27,
+    "modelJudgePendingSkillCount": 89,
     "negativeCaseBackedSkillCount": 0,
     "ordinaryLocalCaseCount": 7,
     "pairedControlsExecutableSkillCount": 0,
@@ -972,16 +994,16 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "positiveSecurityContainedSkillCount": 0,
     "positiveStaleByDigestSkillCount": 0,
     "positiveVerifiedSkillCount": 0,
-    "probeDeclaredSkillCount": 109,
-    "scenarioDeclaredAgentCount": 26,
+    "probeDeclaredSkillCount": 110,
+    "scenarioDeclaredAgentCount": 27,
     "securityContainedAgentCount": 0,
     "securityContainedRunCount": 0,
     "securityContainedSkillCount": 0,
     "staleByDigestAgentCount": 0,
     "staleByDigestRunCount": 0,
     "staleByDigestSkillCount": 0,
-    "structuralAgentCount": 26,
-    "structuralSkillCount": 109,
+    "structuralAgentCount": 27,
+    "structuralSkillCount": 110,
     "verifiedAgentCount": 0,
     "verifiedRunCount": 0,
     "verifiedSkillCount": 0,
@@ -1072,6 +1094,63 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "judgePassedCases": [],
       "label": "dev-artifact-reviewer",
       "modelProfile": "advanced",
+      "securityContainedCases": [],
+      "verifiedCases": []
+    },
+    {
+      "conditionalSkills": {
+        "agent-claim": "when acquiring or releasing a repository-global coordination resource or creating or updating repository ledger evidence",
+        "codex-workitem-coordination": "when Codex user-visible tasks coordinate multiple backlog work items"
+      },
+      "coverage": {
+        "caseBacked": false,
+        "caseBackedCases": [],
+        "caseBackedScenarioIds": [],
+        "executableCases": [],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "partialScenarioCoverage": false,
+        "scenarioCoverage": {
+          "dev-backlog-coordinator-boundary": {
+            "caseBacked": false,
+            "executableCases": [],
+            "executableFixture": false
+          },
+          "dev-backlog-coordinator-happy": {
+            "caseBacked": false,
+            "executableCases": [],
+            "executableFixture": false
+          }
+        },
+        "scenarioDeclared": true,
+        "scenarioIds": [
+          "dev-backlog-coordinator-boundary",
+          "dev-backlog-coordinator-happy"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "backlog"
+        ]
+      },
+      "declaredCases": [],
+      "description": "Coordinates a prioritized backlog across user-visible work-item tasks while preserving canonical task identity, serialized lifecycle batons, adaptive artifact concurrency, durable handoffs, and terminal task housekeeping.",
+      "dynamicFolderSkills": false,
+      "executedCases": [],
+      "fixedSkills": [
+        "manage-backlog",
+        "structured-explanation"
+      ],
+      "id": "dev-backlog-coordinator",
+      "judgePassedCases": [],
+      "label": "dev-backlog-coordinator",
+      "modelProfile": "advanced-long",
       "securityContainedCases": [],
       "verifiedCases": []
     },
@@ -3629,6 +3708,52 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "detection": null,
       "executedCases": [],
       "id": "code-review-evidence",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
+      "verifiedCases": []
+    },
+    {
+      "category": "development-practice",
+      "coverage": {
+        "catalogFixtureBacked": false,
+        "evaluationCategory": "prompt-and-agent",
+        "executableCases": [],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": false,
+        "positiveCaseBackedCases": [],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
+          "probe-codex-workitem-coordination"
+        ],
+        "scenarioAssociations": [
+          "dev-backlog-coordinator-boundary",
+          "dev-backlog-coordinator-happy"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "backlog"
+        ]
+      },
+      "declaredCases": [],
+      "detection": null,
+      "executedCases": [],
+      "id": "codex-workitem-coordination",
       "judgePassedCases": [],
       "securityContainedCases": [],
       "verifiedCases": []
@@ -10781,6 +10906,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
   "workflowCoverage": {
     "backlog": {
       "agents": [
+        "dev-backlog-coordinator",
         "dev-backlog-steward"
       ],
       "caseBacked": true,
@@ -10797,6 +10923,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "judgeCalibration": "pending",
       "skillProbes": [
         "probe-agent-claim",
+        "probe-codex-workitem-coordination",
         "probe-create-backlog",
         "probe-file-based-backlog",
         "probe-github-issues-backlog",

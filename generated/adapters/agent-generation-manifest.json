@@ -1,13 +1,19 @@
 {
   "adapters": {
     "claude": {
-      "agentCount": 26,
+      "agentCount": 27,
       "agents": [
         {
           "name": "dev-artifact-reviewer",
           "output": "generated/adapters/claude/agents/dev-artifact-reviewer.md",
           "sha256": "250a93f9743cb7d3986800aef3eac59e9c168717b0d6d8679dec817abb294b96",
           "source": "agents/roles/dev-activities/dev-artifact-reviewer.role.yaml"
+        },
+        {
+          "name": "dev-backlog-coordinator",
+          "output": "generated/adapters/claude/agents/dev-backlog-coordinator.md",
+          "sha256": "de3395eaa2adc0e46b3ccf08998a59c2deababec2c1b5640dd94c9df507a9daf",
+          "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
           "name": "dev-backlog-steward",
@@ -165,13 +171,19 @@
       "outputRoot": "generated/adapters/claude/agents"
     },
     "codex": {
-      "agentCount": 26,
+      "agentCount": 27,
       "agents": [
         {
           "name": "dev-artifact-reviewer",
           "output": "generated/adapters/codex/agents/dev-artifact-reviewer.toml",
           "sha256": "0900a8af28038416afd983e06422ac29312b29d7d8541070807febb5016d7f28",
           "source": "agents/roles/dev-activities/dev-artifact-reviewer.role.yaml"
+        },
+        {
+          "name": "dev-backlog-coordinator",
+          "output": "generated/adapters/codex/agents/dev-backlog-coordinator.toml",
+          "sha256": "1090e947cec905b0248325237acb9d9eb479a963f84acea1b02d6131b53fda25",
+          "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
           "name": "dev-backlog-steward",
@@ -335,13 +347,19 @@
       "outputRoot": "generated/adapters/codex/agents"
     },
     "gemini": {
-      "agentCount": 26,
+      "agentCount": 27,
       "agents": [
         {
           "name": "dev-artifact-reviewer",
           "output": "generated/adapters/gemini/agents/dev-artifact-reviewer.md",
           "sha256": "aab1ba6e7bc897de68b51c8ee13281f507aa76da7a9c3dea1a69d5072d26f0a9",
           "source": "agents/roles/dev-activities/dev-artifact-reviewer.role.yaml"
+        },
+        {
+          "name": "dev-backlog-coordinator",
+          "output": "generated/adapters/gemini/agents/dev-backlog-coordinator.md",
+          "sha256": "f35a8dbf17b9f843cf88b34878904ad0ddee967c2f1edc9ea5023846c954e42f",
+          "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
           "name": "dev-backlog-steward",
@@ -499,13 +517,19 @@
       "outputRoot": "generated/adapters/gemini/agents"
     },
     "junie": {
-      "agentCount": 26,
+      "agentCount": 27,
       "agents": [
         {
           "name": "dev-artifact-reviewer",
           "output": "generated/adapters/junie/agents/dev-artifact-reviewer.md",
           "sha256": "d626e65a1ee24ce6060abee1d9f762292128c0c7da9f71a83ce955a234a872e3",
           "source": "agents/roles/dev-activities/dev-artifact-reviewer.role.yaml"
+        },
+        {
+          "name": "dev-backlog-coordinator",
+          "output": "generated/adapters/junie/agents/dev-backlog-coordinator.md",
+          "sha256": "988f7a2505810fa0f5adf5f09f8c95e7bd4b1ee454ae26d68a3339884ba3062a",
+          "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
           "name": "dev-backlog-steward",
@@ -663,7 +687,7 @@
       "outputRoot": "generated/adapters/junie/agents"
     }
   },
-  "canonicalRoleCount": 26,
+  "canonicalRoleCount": 27,
   "generationOptions": {
     "inlineCoreSkills": true
   },
