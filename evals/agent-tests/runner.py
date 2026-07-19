@@ -2637,13 +2637,16 @@ def _git_common_directory(
 
 def _release_events(repository: Path, fixture_root: Path) -> dict[str, dict[str, Any]]:
     """Load successful release events retained by one disposable fixture repository."""
-    event_root = (
-        _git_common_directory(repository, fixture_root, "fixture")
-        / "agent-claim-events"
-        / "hot"
-    )
+    common = _git_common_directory(repository, fixture_root, "fixture")
+    event_root = common / "agent-claim-events" / "hot"
+    resolved_event_root = event_root.resolve()
+    if common not in resolved_event_root.parents:
+        raise RuntimeError(f"Claim release journal escapes fixture containment: {event_root}")
     events: dict[str, dict[str, Any]] = {}
     for journal in sorted(event_root.glob("*.jsonl")):
+        resolved_journal = journal.resolve()
+        if common not in resolved_journal.parents:
+            raise RuntimeError(f"Claim release journal escapes fixture containment: {journal}")
         for line in journal.read_text(encoding="utf-8").splitlines():
             try:
                 event = json.loads(line)
@@ -2703,12 +2706,25 @@ def _audit_handoff_evidence(
             sessions_by_role: dict[str, list[_Session]] = {}
             for session in nested:
                 sessions_by_role.setdefault(str(session.invocation), []).append(session)
-            receipts = {
-                str(receipt.get("lane", "")): receipt
-                for receipt in report_results[(run.suite.suite_id, scenario_id)].get("handoffReceipts", [])
-            }
+            reported_receipts = report_results[(run.suite.suite_id, scenario_id)].get(
+                "handoffReceipts", []
+            )
+            if not isinstance(reported_receipts, list) or not all(
+                isinstance(receipt, dict) for receipt in reported_receipts
+            ):
+                raise RuntimeError(f"{identity} malformed handoff receipts: expected an array of objects")
+            receipts: dict[str, dict[str, Any]] = {}
+            for receipt in reported_receipts:
+                receipt_lane = receipt.get("lane")
+                if not isinstance(receipt_lane, str) or not receipt_lane:
+                    raise RuntimeError(
+                        f"{identity} malformed handoff receipt lane: expected a non-empty string"
+                    )
+                receipts[receipt_lane] = receipt
             suite_fixture_root = (fixture_root / run.suite.suite_id).resolve()
             for lane in scenario.get("requiredHandoffReceiptLanes", []):
+                if lane not in receipts:
+                    raise RuntimeError(f"{identity} missing handoff receipt lane {lane}")
                 receipt = receipts[lane]
                 if lane not in lane_roles:
                     raise RuntimeError(f"{identity} has no evidence binding for handoff lane {lane}")

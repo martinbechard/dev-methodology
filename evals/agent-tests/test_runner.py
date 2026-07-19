@@ -430,6 +430,34 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "Git common directory escapes fixture containment"):
                 runner._release_events(candidate, fixture)
 
+    def test_release_journal_paths_cannot_symlink_outside_contained_common_directory(self) -> None:
+        """Contained Git metadata cannot redirect its hot directory or journals outside the fixture."""
+        for escape in ("hot-directory", "journal"):
+            with self.subTest(escape=escape), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                fixture = root / "fixtures" / "dev-orchestrator"
+                candidate = fixture / "candidate"
+                outside = root / "outside"
+                candidate.mkdir(parents=True)
+                outside.mkdir()
+                subprocess.run(["git", "init", "--quiet"], cwd=candidate, check=True)
+                event_root = candidate / ".git" / "agent-claim-events"
+                hot = event_root / "hot"
+                if escape == "hot-directory":
+                    external_hot = outside / "hot"
+                    external_hot.mkdir()
+                    (external_hot / "2026-07-19.jsonl").write_text("{}\n", encoding="utf-8")
+                    event_root.mkdir()
+                    hot.symlink_to(external_hot, target_is_directory=True)
+                else:
+                    hot.mkdir(parents=True)
+                    external_journal = outside / "2026-07-19.jsonl"
+                    external_journal.write_text("{}\n", encoding="utf-8")
+                    (hot / "2026-07-19.jsonl").symlink_to(external_journal)
+
+                with self.assertRaisesRegex(RuntimeError, "Claim release journal escapes fixture containment"):
+                    runner._release_events(candidate, fixture)
+
     def test_project_bootstrapper_judge_defers_runner_owned_audits(self) -> None:
         """Bootstrapper semantic judgment cannot fail only on evidence owned by the outer runner."""
         contract = (
@@ -1111,6 +1139,8 @@ class AgentSuiteRunnerTests(unittest.TestCase):
     def test_malformed_checkpoint_receipts_retain_bounded_live_batch_evidence(self) -> None:
         """Checkpoint fallback reports malformed receipts without losing retained evidence paths."""
         malformed_receipts = {
+            "missing-lane": {},
+            "wrong-type-lane": {"lane": []},
             "missing-role": {"lane": "source"},
             "wrong-type-role": {"lane": "source", "role": []},
             "missing-commit": {
