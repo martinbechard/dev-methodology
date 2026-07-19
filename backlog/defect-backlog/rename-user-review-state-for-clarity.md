@@ -1,8 +1,15 @@
 # Rename User Review To User Action Required
 
-Status: Proposed
+Status: Running
 
 Type: Defect
+
+## Running Ownership
+
+- Owner: Dev Orchestrator root task 019f77f4-c4bd-7c91-b197-c987a7beb838.
+- Lifecycle claim: rename-user-review-start.
+- Claim evidence: dev-backlog-steward acquired PRIMARY ownership of this exact backlog item at 2026-07-19T04:47:14.696958Z before recording the Running transition.
+- Scope boundary: the lifecycle claim is released after this committed transition; project-artifact ownership must be acquired separately before implementation.
 
 ## Summary
 
