@@ -46,6 +46,19 @@ USER_SECTIONS = (
     "Resolution",
     "Unattended Work Boundary",
 )
+ALLOWED_TYPES = {"Defect", "Feature", "Analysis", "Investigation", "Holding"}
+ALLOWED_STATUSES = {
+    "Ready",
+    "Claimed",
+    "Running",
+    "Blocked",
+    "User Action Required",
+    "Target Merge Pending",
+    "Completed",
+    "Failed",
+    "Abandoned",
+    "Holding",
+}
 DEPENDENCY_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 MARKDOWN_LINK_PATTERN = re.compile(r"\[[^]]+\]\(([^)#?]+\.md)(?:#[^)]*)?\)")
 INLINE_MARKDOWN_PATTERN = re.compile(r"(`[^`]*`|\*\*([^*]+)\*\*|\*([^*]+)\*|\[([^]]+)\]\([^)]+\))")
@@ -79,6 +92,7 @@ class _Snapshot:
     generated_at: str
     claim_captured_at: str
     claims: tuple[dict[str, object], ...]
+    claim_status: str
 
 
 def _plain_text(markdown: str) -> str:
@@ -125,18 +139,29 @@ def _dependencies(section: str) -> list[str]:
             candidate = Path(link_match.group(1)).stem
         else:
             candidate = candidate.split()[0].strip("`.,;:()[]")
+        if candidate.lower() == "none":
+            continue
         values.append(candidate)
     return values
 
 
-def _series_orders(backlog_root: Path) -> tuple[dict[str, tuple[str, int]], list[str]]:
-    """Map series child paths to stable order and return ignored coordination files."""
+def _series_orders(
+    backlog_root: Path,
+) -> tuple[dict[str, tuple[str, int]], list[str], list[tuple[str, str]]]:
+    """Map readable series indexes to order and report ignored or invalid indexes."""
     orders: dict[str, tuple[str, int]] = {}
     ignored: list[str] = []
+    findings: list[tuple[str, str]] = []
     for index in sorted(backlog_root.rglob("index.md")):
         relative_index = index.relative_to(backlog_root.parent).as_posix()
         ignored.append(relative_index)
-        content = index.read_text(encoding="utf-8")
+        try:
+            content = index.read_text(encoding="utf-8")
+        except (OSError, UnicodeError) as exc:
+            findings.append(
+                (relative_index, f"Unreadable series index: {type(exc).__name__}: {exc}")
+            )
+            continue
         series = index.parent.name
         for position, target in enumerate(MARKDOWN_LINK_PATTERN.findall(content), start=1):
             child = (index.parent / target).resolve()
@@ -145,7 +170,7 @@ def _series_orders(backlog_root: Path) -> tuple[dict[str, tuple[str, int]], list
             except ValueError:
                 continue
             orders.setdefault(relative_child, (series, position))
-    return orders, ignored
+    return orders, ignored, findings
 
 
 def _queue_for(relative: Path) -> str:
@@ -180,12 +205,14 @@ def _expected_type(relative: Path, queue: str) -> str:
     return ""
 
 
-def _read_items(repository_root: Path) -> tuple[list[_Item], list[str], list[str]]:
+def _read_items(
+    repository_root: Path,
+) -> tuple[list[_Item], list[str], list[str], list[tuple[str, str]]]:
     """Read all configured backlog queues and report scanned and ignored paths."""
     backlog_root = repository_root / "backlog"
     if not backlog_root.is_dir():
         raise ValueError(f"Backlog directory does not exist: {backlog_root}")
-    series_orders, ignored = _series_orders(backlog_root)
+    series_orders, ignored, scope_findings = _series_orders(backlog_root)
     queue_readme = backlog_root / "user-action-required" / "README.md"
     if queue_readme.is_file():
         ignored.append(queue_readme.relative_to(repository_root).as_posix())
@@ -236,6 +263,14 @@ def _read_items(repository_root: Path) -> tuple[list[_Item], list[str], list[str
                 missing=missing,
             )
             expected_type = _expected_type(relative, queue)
+            if item.declared_type and item.declared_type not in ALLOWED_TYPES:
+                item.anomalies.append(f"Invalid Type value: {item.declared_type}.")
+            if item.status and item.status not in ALLOWED_STATUSES and item.status != "Proposed":
+                item.anomalies.append(f"Invalid Status value: {item.status}.")
+            if queue in {"completed", "failed"} and not expected_type:
+                item.anomalies.append(
+                    "Archive placement is not a recognized typed archive folder."
+                )
             if expected_type and item.declared_type and expected_type != item.declared_type:
                 item.anomalies.append(
                     f"Folder and Type mismatch: {relative.parts[1] if queue == 'active' else relative.parts[2]} expects {expected_type}, item declares {item.declared_type}."
@@ -259,12 +294,12 @@ def _read_items(repository_root: Path) -> tuple[list[_Item], list[str], list[str
             if queue == "failed" and item.status not in {"Failed", "Abandoned"}:
                 item.anomalies.append("Failed archive contains an item without Failed or Abandoned status.")
             items.append(item)
-    return items, scanned, sorted(set(ignored))
+    return items, scanned, sorted(set(ignored)), scope_findings
 
 
 def _reconcile(items: list[_Item]) -> None:
     """Resolve dependency evidence and effective dispatch eligibility in place."""
-    completed = {item.slug for item in items if item.queue == "completed" or item.status == "Completed"}
+    completed = {item.slug for item in items if item.queue == "completed"}
     known = {item.slug for item in items}
     for item in items:
         for dependency in item.dependencies:
@@ -278,6 +313,9 @@ def _reconcile(items: list[_Item]) -> None:
                 item.satisfied_dependencies.append(dependency)
             else:
                 item.unmet_dependencies.append(dependency)
+                item.anomalies.append(
+                    f"Unmet dependency: {dependency} is not in the completed archive."
+                )
         if item.queue == "active" and item.status == "Blocked" and not item.unmet_dependencies:
             item.anomalies.append("Stale blocked status: all declared dependencies are satisfied.")
         if item.queue == "active" and item.status == "Ready" and item.unmet_dependencies:
@@ -302,7 +340,9 @@ def _source_commit(repository_root: Path) -> str:
     return result.stdout.strip() if result.returncode == 0 else "unavailable"
 
 
-def _claim_snapshot(repository_root: Path, generated_at: str) -> tuple[str, tuple[dict[str, object], ...]]:
+def _claim_snapshot(
+    repository_root: Path, generated_at: str
+) -> tuple[str, tuple[dict[str, object], ...], str]:
     """Read repository-global claim state without interpreting it as backlog lifecycle."""
     result = subprocess.run(
         ["git", "-C", str(repository_root), "rev-parse", "--git-common-dir"],
@@ -311,20 +351,35 @@ def _claim_snapshot(repository_root: Path, generated_at: str) -> tuple[str, tupl
         text=True,
     )
     if result.returncode != 0:
-        return generated_at, ()
+        return generated_at, (), "unavailable: repository is not a Git checkout"
     common = Path(result.stdout.strip())
     if not common.is_absolute():
         common = repository_root / common
     registry = common.resolve() / "agent-claims.json"
     try:
-        payload = json.loads(registry.read_text(encoding="utf-8"))
-    except (OSError, ValueError):
-        return generated_at, ()
-    raw_claims = payload.get("claims", payload if isinstance(payload, list) else [])
+        registry_text = registry.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        return generated_at, (), "unavailable: claim registry is missing"
+    except (OSError, UnicodeError) as exc:
+        return generated_at, (), f"unavailable: claim registry is unreadable ({type(exc).__name__})"
+    try:
+        payload = json.loads(registry_text)
+    except ValueError:
+        return generated_at, (), "unavailable: claim registry contains invalid JSON"
+    if isinstance(payload, dict):
+        if "claims" not in payload:
+            return generated_at, (), "unavailable: claim registry is missing its claims field"
+        raw_claims = payload.get("claims", [])
+    elif isinstance(payload, list):
+        raw_claims = payload
+    else:
+        return generated_at, (), "unavailable: claim registry has an invalid root value"
     if not isinstance(raw_claims, list):
-        return generated_at, ()
+        return generated_at, (), "unavailable: claim registry has an invalid claims field"
+    if any(not isinstance(entry, dict) for entry in raw_claims):
+        return generated_at, (), "unavailable: claim registry contains an invalid claim entry"
     claims = tuple(sorted((entry for entry in raw_claims if isinstance(entry, dict)), key=lambda value: str(value.get("claim_id", ""))))
-    return generated_at, claims
+    return generated_at, claims, "available"
 
 
 def _escape(value: object) -> str:
@@ -379,7 +434,13 @@ def _sort_key(item: _Item) -> tuple[int, str, int, int, str]:
     return (queue_order[item.queue], item.series, item.series_order, item.priority, item.path)
 
 
-def _render_report(items: list[_Item], scanned: list[str], ignored: list[str], snapshot: _Snapshot) -> str:
+def _render_report(
+    items: list[_Item],
+    scanned: list[str],
+    ignored: list[str],
+    scope_findings: list[tuple[str, str]],
+    snapshot: _Snapshot,
+) -> str:
     """Render the complete accessible report as one offline HTML document."""
     ordered = sorted(items, key=_sort_key)
     active = [item for item in ordered if item.queue == "active"]
@@ -399,7 +460,7 @@ def _render_report(items: list[_Item], scanned: list[str], ignored: list[str], s
         ("Holding", len(holding)),
         ("Completed archive", len(completed)),
         ("Failed archive", len(failed)),
-        ("Validation findings", len(anomalies)),
+        ("Validation findings", len(anomalies) + len(scope_findings)),
     )
     metrics_html = "".join(f'<div class="metric"><span>{_escape(label)}</span><strong>{value}</strong></div>' for label, value in metrics)
     count_rows = "".join(
@@ -413,8 +474,13 @@ def _render_report(items: list[_Item], scanned: list[str], ignored: list[str], s
     anomaly_rows = "".join(
         f'<li><strong>{_escape(item.title)}</strong>: {_escape(message)} <code>{_escape(item.path)}</code></li>'
         for item, message in anomalies
-    ) or '<li>No lifecycle anomalies detected.</li>'
-    claims_html = "".join(
+    )
+    anomaly_rows += "".join(
+        f'<li><strong>Scan finding</strong>: {_escape(message)} <code>{_escape(path)}</code></li>'
+        for path, message in scope_findings
+    )
+    anomaly_rows = anomaly_rows or '<li>No lifecycle anomalies detected.</li>'
+    rendered_claims = "".join(
         '<li>'
         f'<strong>{_escape(claim.get("claim_id", "unnamed"))}</strong> — {_escape(claim.get("agent", "unknown agent"))}; '
         f'branch {_escape(claim.get("branch", "unknown"))}; '
@@ -422,7 +488,11 @@ def _render_report(items: list[_Item], scanned: list[str], ignored: list[str], s
         f'heartbeat {_escape(claim.get("heartbeat", "unknown"))}'
         '</li>'
         for claim in snapshot.claims
-    ) or '<li>No active claims were present in the captured registry.</li>'
+    )
+    if snapshot.claim_status != "available":
+        claims_html = f'<li>Claim snapshot {_escape(snapshot.claim_status)}.</li>'
+    else:
+        claims_html = rendered_claims or '<li>No active claims were present in the captured registry.</li>'
     scope_rows = "".join(f'<li><code>{_escape(path)}</code></li>' for path in scanned)
     ignored_rows = "".join(f'<li><code>{_escape(path)}</code></li>' for path in ignored) or '<li>None</li>'
     css = """
@@ -453,8 +523,9 @@ def _render_report(items: list[_Item], scanned: list[str], ignored: list[str], s
 def generate_report(repository_root: Path, output: Path, generated_at: str | None = None) -> None:
     """Generate a report from repository_root and write it to output.
 
-    repository_root must contain a backlog directory. output may be inside or
-    outside that repository; its parent directories are created. generated_at
+    repository_root must contain a backlog directory. output must not resolve
+    to a scanned backlog source or guidance file; its parent directories are
+    created after that validation. generated_at
     accepts an explicit ISO-8601 snapshot value for reproducible automation and
     otherwise defaults to the current UTC time. Source backlog files are read
     but never modified. Invalid backlog content is rendered as findings; a
@@ -462,13 +533,20 @@ def generate_report(repository_root: Path, output: Path, generated_at: str | Non
     """
     resolved_root = repository_root.resolve()
     timestamp = generated_at or datetime.now(timezone.utc).isoformat(timespec="seconds")
-    items, scanned, ignored = _read_items(resolved_root)
+    items, scanned, ignored, scope_findings = _read_items(resolved_root)
+    scanned_sources = {resolved_root / item.path for item in items}
+    scanned_sources.update(resolved_root / path for path in ignored)
+    resolved_output = output.resolve()
+    if resolved_output in {path.resolve() for path in scanned_sources}:
+        raise ValueError(f"Output path would overwrite a backlog source: {resolved_output}")
     _reconcile(items)
-    claim_captured_at, claims = _claim_snapshot(resolved_root, timestamp)
-    snapshot = _Snapshot(_source_commit(resolved_root), timestamp, claim_captured_at, claims)
-    rendered = _render_report(items, scanned, ignored, snapshot)
-    output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(rendered, encoding="utf-8")
+    claim_captured_at, claims, claim_status = _claim_snapshot(resolved_root, timestamp)
+    snapshot = _Snapshot(
+        _source_commit(resolved_root), timestamp, claim_captured_at, claims, claim_status
+    )
+    rendered = _render_report(items, scanned, ignored, scope_findings, snapshot)
+    resolved_output.parent.mkdir(parents=True, exist_ok=True)
+    resolved_output.write_text(rendered, encoding="utf-8")
 
 
 def main(argv: Sequence[str] | None = None) -> int:

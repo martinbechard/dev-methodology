@@ -197,6 +197,13 @@ Do not implement.
             dependencies="- done",
         )
         self.write_item("backlog/feature-backlog/closed.md", title="Closed", status="Completed", item_type="Feature")
+        self.write_item(
+            "backlog/feature-backlog/depends-on-active-completed.md",
+            title="Depends On Active Completed",
+            status="Ready",
+            item_type="Feature",
+            dependencies="- closed",
+        )
         self.write_item("backlog/completed-backlog/analyses/wrong.md", title="Wrong", status="Ready", item_type="Analysis")
         self.write_item("backlog/failed-backlog/features/wrong-failure.md", title="Wrong Failure", status="Ready", item_type="Feature")
         missing = self.root / "backlog/analysis-backlog/missing.md"
@@ -212,15 +219,99 @@ Do not implement.
         self.assertIn("Invalid dependency identifier: bad_slug.", rendered)
         self.assertIn("Stale blocked status: all declared dependencies are satisfied.", rendered)
         self.assertIn("Completed item remains in an active folder.", rendered)
+        self.assertIn("Unmet dependency: closed is not in the completed archive.", rendered)
         self.assertIn("Completed archive contains an item not declared Completed.", rendered)
         self.assertIn("Failed archive contains an item without Failed or Abandoned status.", rendered)
         self.assertIn("Missing required fields: Summary, Requirements, Acceptance Criteria, Dependencies, Verification.", rendered)
         self.assertIn("Unreadable item: UnicodeDecodeError", rendered)
         self.assertIn("<span>Runnable now</span><strong>0</strong>", rendered)
 
+    def test_unreadable_series_index_is_ignored_and_reported(self) -> None:
+        """An invalid UTF-8 series index cannot abort or become a counted work item."""
+        series = self.root / "backlog/feature-backlog/invalid-series"
+        series.mkdir(parents=True)
+        (series / "index.md").write_bytes(b"\xff\xfe")
+        self.write_item(
+            "backlog/feature-backlog/invalid-series/child.md",
+            title="Child",
+            status="Ready",
+            item_type="Feature",
+        )
+
+        rendered = self.generate()
+
+        self.assertIn("<span>Active typed items</span><strong>1</strong>", rendered)
+        self.assertIn("<span>Validation findings</span><strong>1</strong>", rendered)
+        self.assertIn("Unreadable series index: UnicodeDecodeError", rendered)
+        self.assertIn("backlog/feature-backlog/invalid-series/index.md", rendered)
+        self.assertNotIn("invalid-series/index.md</code></p></article>", rendered)
+
+    def test_invalid_values_and_untyped_archive_placement_are_findings(self) -> None:
+        """Unknown metadata and malformed archive groups remain visible as invalid evidence."""
+        self.write_item(
+            "backlog/feature-backlog/unknown.md",
+            title="Unknown",
+            status="Queued",
+            item_type="Epic",
+        )
+        self.write_item(
+            "backlog/completed-backlog/root-item.md",
+            title="Root Archive Item",
+            status="Completed",
+            item_type="Feature",
+        )
+        self.write_item(
+            "backlog/completed-backlog/epics/unknown-group.md",
+            title="Unknown Archive Group",
+            status="Completed",
+            item_type="Feature",
+        )
+
+        rendered = self.generate()
+
+        self.assertIn("Invalid Type value: Epic.", rendered)
+        self.assertIn("Invalid Status value: Queued.", rendered)
+        self.assertEqual(
+            2,
+            rendered.count("Archive placement is not a recognized typed archive folder."),
+        )
+
+    def test_output_cannot_overwrite_scanned_source_or_guidance(self) -> None:
+        """Output validation protects work items and ignored coordination files before writing."""
+        item = self.root / "backlog/feature-backlog/protected.md"
+        self.write_item(
+            "backlog/feature-backlog/protected.md",
+            title="Protected",
+            status="Ready",
+            item_type="Feature",
+        )
+        readme = self.root / "backlog/user-action-required/README.md"
+        readme.parent.mkdir(parents=True)
+        readme.write_text("# Protected guidance\n", encoding="utf-8")
+        item_before = item.read_bytes()
+        readme_before = readme.read_bytes()
+        alias = self.root / "report-alias.html"
+        alias.symlink_to(item)
+
+        for protected in (item, readme, alias):
+            with self.subTest(protected=protected):
+                with self.assertRaisesRegex(
+                    ValueError, "Output path would overwrite a backlog source"
+                ):
+                    REPORT.generate_report(self.root, protected)
+
+        self.assertEqual(item_before, item.read_bytes())
+        self.assertEqual(readme_before, readme.read_bytes())
+
     def test_missing_optional_folders_and_repeat_generation_are_deterministic(self) -> None:
         """A minimal backlog generates equivalent ordered content at a controlled snapshot time."""
-        self.write_item("backlog/feature-backlog/only.md", title="Only", status="Ready", item_type="Feature")
+        self.write_item(
+            "backlog/feature-backlog/only.md",
+            title="Only",
+            status="Ready",
+            item_type="Feature",
+            dependencies="- None.",
+        )
 
         first = self.generate()
         second_path = self.root / "second.html"
@@ -229,6 +320,8 @@ Do not implement.
 
         self.assertEqual(first, second)
         self.assertIn("backlog/feature-backlog/only.md", first)
+        self.assertIn("<span>Runnable now</span><strong>1</strong>", first)
+        self.assertNotIn("Invalid dependency identifier: None", first)
         self.assertIn("@media(prefers-color-scheme:dark)", first)
         self.assertIn("@media(max-width:420px)", first)
         self.assertIn('name="viewport"', first)
@@ -275,6 +368,41 @@ Do not implement.
         self.assertIn("/fixture/worktree", rendered)
         self.assertIn("Claims and worktrees are workspace coordination evidence", rendered)
         self.assertIn("<span>Runnable now</span><strong>1</strong>", rendered)
+
+    def test_claim_snapshot_distinguishes_empty_from_unavailable_registry(self) -> None:
+        """Missing, unreadable, and invalid registries never masquerade as confirmed empty."""
+        self.write_item(
+            "backlog/feature-backlog/ready.md",
+            title="Ready",
+            status="Ready",
+            item_type="Feature",
+        )
+        subprocess.run(["git", "init", "-q", str(self.root)], check=True)
+        registry = self.root / ".git/agent-claims.json"
+
+        missing = self.generate()
+        self.assertIn("claim registry is missing", missing)
+        self.assertNotIn("No active claims were present", missing)
+
+        registry.write_text("not json", encoding="utf-8")
+        invalid = self.generate()
+        self.assertIn("claim registry contains invalid JSON", invalid)
+        self.assertNotIn("No active claims were present", invalid)
+
+        registry.write_text('{"claims":{}}', encoding="utf-8")
+        invalid_shape = self.generate()
+        self.assertIn("claim registry has an invalid claims field", invalid_shape)
+        self.assertNotIn("No active claims were present", invalid_shape)
+
+        registry.write_bytes(b"\xff\xfe")
+        unreadable = self.generate()
+        self.assertIn("claim registry is unreadable (UnicodeDecodeError)", unreadable)
+        self.assertNotIn("No active claims were present", unreadable)
+
+        registry.write_text('{"claims":[]}', encoding="utf-8")
+        empty = self.generate()
+        self.assertIn("No active claims were present", empty)
+        self.assertNotIn("claim registry is missing", empty)
 
     def test_cli_writes_explicit_output_and_missing_backlog_fails(self) -> None:
         """The CLI owns explicit output creation and reports an absent backlog as input failure."""
