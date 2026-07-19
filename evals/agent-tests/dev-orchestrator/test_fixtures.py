@@ -142,6 +142,51 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
                     with self.assertRaisesRegex(RuntimeError, diagnostic):
                         runner._audit_handoff_evidence((run,), fabricated, sessions, fixture_root)
 
+    def test_producer_session_evidence_matrix_is_rejected(self) -> None:
+        """Producer identity requires a matching invocation and exact retained session ID."""
+        with tempfile.TemporaryDirectory() as directory:
+            run, report, sessions, fixture_root = self._evidence_fixture(Path(directory))
+            receipt = report["runs"][0]["scenarioResults"][0]["handoffReceipts"][0]
+            receipt["role"] = {"invocation": "dev-coder"}
+            with self.assertRaisesRegex(
+                RuntimeError,
+                "handoff receipt source field role must be structured",
+            ):
+                runner._audit_report((run,), report)
+
+        cases = {
+            "fabricated": (
+                {"invocation": "dev-coder", "sessionIds": ["fabricated-producer"]},
+                "producer sessions are not retained evidence",
+            ),
+            "wrong-role": (
+                {"invocation": "dev-verifier", "sessionIds": ["coder"]},
+                "role invocation does not match lane producer",
+            ),
+        }
+        for name, (role, diagnostic) in cases.items():
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
+                run, report, sessions, fixture_root = self._evidence_fixture(Path(directory))
+                report["runs"][0]["scenarioResults"][0]["handoffReceipts"][0]["role"] = role
+                with self.assertRaisesRegex(RuntimeError, diagnostic):
+                    runner._audit_handoff_evidence((run,), report, sessions, fixture_root)
+
+    def test_dirty_receipt_repository_matrix_is_rejected(self) -> None:
+        """Tracked and untracked post-commit drift invalidate every receipt for that candidate."""
+        for drift in ("tracked", "untracked"):
+            with self.subTest(drift=drift), tempfile.TemporaryDirectory() as directory:
+                run, report, sessions, fixture_root = self._evidence_fixture(Path(directory))
+                candidate = fixture_root / "dev-orchestrator" / "candidate"
+                if drift == "tracked":
+                    (candidate / "evidence.txt").write_text("changed\n", encoding="utf-8")
+                else:
+                    (candidate / "untracked.txt").write_text("new\n", encoding="utf-8")
+                with self.assertRaisesRegex(
+                    RuntimeError,
+                    "handoff receipt source repository has uncommitted drift",
+                ):
+                    runner._audit_handoff_evidence((run,), report, sessions, fixture_root)
+
     @staticmethod
     def _complete_dependency_routing_report() -> tuple[object, dict[str, object]]:
         """Build a complete structured report for omission-matrix tests."""
@@ -154,11 +199,14 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
             {
                 "lane": lane,
                 "role": {
-                    "source": "dev-coder",
-                    "documentation": "dev-documentation-writer",
-                    "integration": "dev-merge-coordinator",
-                    "closeout": "dev-backlog-steward",
-                }[lane],
+                    "invocation": {
+                        "source": "dev-coder",
+                        "documentation": "dev-documentation-writer",
+                        "integration": "dev-merge-coordinator",
+                        "closeout": "dev-backlog-steward",
+                    }[lane],
+                    "sessionIds": ["producer-evidence"],
+                },
                 "commit": {"repository": "candidate", "sha": "a" * 40},
                 "review": {"sessionIds": ["review-evidence"]},
                 "verification": {"sessionIds": ["verification-evidence"]},
@@ -252,6 +300,7 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
                 ["verifier-2"],
             ),
         }
+        producer_session_ids = {role.replace("_", "-"): session_id for session_id, role in roles}
         event_root = candidate / ".git" / "agent-claim-events" / "hot"
         event_root.mkdir(parents=True)
         events = []
@@ -259,7 +308,7 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
             event_id = f"release-{lane}"
             receipt_by_lane[lane].update(
                 {
-                    "role": role,
+                    "role": {"invocation": role, "sessionIds": [producer_session_ids[role]]},
                     "commit": {"repository": "candidate", "sha": sha},
                     "review": {"sessionIds": review_ids},
                     "verification": {"sessionIds": verification_ids},

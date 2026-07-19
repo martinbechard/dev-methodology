@@ -1069,7 +1069,19 @@ def _coordinator_schema() -> dict[str, Any]:
                                             "additionalProperties": False,
                                             "properties": {
                                                 "lane": {"type": "string"},
-                                                "role": {"type": "string"},
+                                                "role": {
+                                                    "type": "object",
+                                                    "additionalProperties": False,
+                                                    "required": ["invocation", "sessionIds"],
+                                                    "properties": {
+                                                        "invocation": {"type": "string"},
+                                                        "sessionIds": {
+                                                            "type": "array",
+                                                            "minItems": 1,
+                                                            "items": {"type": "string"},
+                                                        },
+                                                    },
+                                                },
                                                 "commit": {
                                                     "type": "object",
                                                     "additionalProperties": False,
@@ -1471,7 +1483,8 @@ def _coordinator_prompt(
         "judgeInvoked, identityEvidence, deterministicEvidence, modelJudgeEvidence, and evidence as arrays of "
         "diagnostic strings, evidenceReceipts as an array of exact path and lowercase SHA-256 references, cleanup as clean or "
         "failed, residualRisk as a string, and any assignment-declared handoffReceipts as structured objects with "
-        "the declared lanes and fields. Each receipt commit must contain repository relative to its suite fixtureRoot "
+        "the declared lanes and fields. Each receipt role must contain the producer invocation and its exact retained "
+        "sessionIds. Each receipt commit must contain repository relative to its suite fixtureRoot "
         "and an ancestor commit sha; review and verification must each contain retained dependency sessionIds; "
         "claimRelease must contain successful fixture claim-journal eventIds whose resulting commit and agent match "
         "the receipt. Keep each clean candidate repository and its Git claim journal available until the outer runner "
@@ -2159,6 +2172,19 @@ def _audit_report(
                                 f"{suite_id}:{scenario_id} handoff receipt {lane} missing field {field}"
                             )
                     commit = receipts_by_lane[lane].get("commit")
+                    role = receipts_by_lane[lane].get("role")
+                    role_session_ids = role.get("sessionIds") if isinstance(role, dict) else None
+                    if (
+                        not isinstance(role, dict)
+                        or not isinstance(role.get("invocation"), str)
+                        or not role["invocation"]
+                        or not isinstance(role_session_ids, list)
+                        or not role_session_ids
+                        or not all(isinstance(item, str) and item for item in role_session_ids)
+                    ):
+                        raise RuntimeError(
+                            f"{suite_id}:{scenario_id} handoff receipt {lane} field role must be structured"
+                        )
                     if not isinstance(commit, dict) or not all(
                         isinstance(commit.get(field), str) and commit[field]
                         for field in ("repository", "sha")
@@ -2674,11 +2700,18 @@ def _audit_handoff_evidence(
                 if lane not in lane_roles:
                     raise RuntimeError(f"{identity} has no evidence binding for handoff lane {lane}")
                 producer_role, review_spec, verification_spec = lane_roles[lane]
-                if str(receipt.get("role", "")).replace("-", "_") != producer_role:
-                    raise RuntimeError(f"{identity} handoff receipt {lane} role has no matching producer session")
+                receipt_role = receipt["role"]
+                if str(receipt_role["invocation"]).replace("-", "_") != producer_role:
+                    raise RuntimeError(
+                        f"{identity} handoff receipt {lane} role invocation does not match lane producer"
+                    )
                 producer_sessions = sessions_by_role.get(producer_role, [])
                 if not producer_sessions:
                     raise RuntimeError(f"{identity} handoff receipt {lane} role has no matching producer session")
+                if receipt_role["sessionIds"] != [session.session_id for session in producer_sessions]:
+                    raise RuntimeError(
+                        f"{identity} handoff receipt {lane} producer sessions are not retained evidence"
+                    )
 
                 commit = receipt["commit"]
                 repository = (suite_fixture_root / str(commit["repository"])).resolve()
@@ -2703,6 +2736,15 @@ def _audit_handoff_evidence(
                 )
                 if commit_exists.returncode != 0 or ancestor.returncode != 0:
                     raise RuntimeError(f"{identity} handoff receipt {lane} commit lacks repository ancestry evidence")
+                status = subprocess.run(
+                    ["git", "status", "--porcelain=v1", "-z", "--untracked-files=all"],
+                    cwd=repository,
+                    check=False,
+                    text=True,
+                    capture_output=True,
+                )
+                if status.returncode != 0 or status.stdout:
+                    raise RuntimeError(f"{identity} handoff receipt {lane} repository has uncommitted drift")
 
                 review_specs = (review_spec,) if isinstance(review_spec[0], str) else review_spec
                 expected_review_ids = []
