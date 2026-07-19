@@ -1,0 +1,8 @@
+cases:
+  - successful-ticket
+  - malformed-tool-arguments
+  - denied-authority
+  - incomplete-result
+  - timeout-retry-with-stable-request-id
+  - cancellation-before-side-effect
+  - fallback-exhaustion

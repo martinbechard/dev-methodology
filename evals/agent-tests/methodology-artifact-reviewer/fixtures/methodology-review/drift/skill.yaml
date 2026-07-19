@@ -1,0 +1,3 @@
+name: sample
+description: Report compact findings and residual risk.
+dependency: evidence-reader

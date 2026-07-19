@@ -1,0 +1,44 @@
+schema: dev-methodology-agent-suite
+version: 1
+id: wiki-source-collector
+priority: 24
+target:
+  conceptualRole: agents/roles/wiki-activities/wiki-source-collector.role.yaml
+  nativeAgent: generated/adapters/codex/agents/wiki-source-collector.toml
+  repositoryMutation: required
+  requiredSkills:
+    - agent-claim
+    - project-wiki-research
+    - project-wiki
+    - structured-explanation
+  conditionalSkills:
+    organise-project-files: The collection creates a new raw source artifact or other project file.
+  allowedAgentDependencies: []
+  requiredOutputs:
+    - raw-only source artifact
+    - timestamp window
+    - exclusions
+    - ingest handoff
+projectAgents:
+  supervisor: agents/supervisor.toml
+  judge: agents/judge.toml
+projectSkills:
+  shared:
+    - ../skills/agent-suite-supervision/SKILL.md
+    - ../skills/agent-scenario-design/SKILL.md
+    - ../skills/agent-evidence-judging/SKILL.md
+  suite:
+    - skills/wiki-source-collector-suite-contract/SKILL.md
+execution:
+  maximumActiveChildren: 1
+  nestedAgentLimit: 0
+  scenarioCatalog: scenarios.yaml
+  supervisorInvocation: wiki_source_collector_suite_supervisor
+  targetInvocation: wiki_source_collector
+  judgeInvocation: wiki_source_collector_suite_judge
+  requireCodexIdentityEvidence: true
+acceptance:
+  deterministicFirst: true
+  criticalFailureSkipsJudge: true
+  semanticRubric: raw-source-collection-quality
+  terminalStatuses: [PASS, FAIL, BLOCKED, STALE]

@@ -1,0 +1,5 @@
+<!-- Copyright (c) 2026 Martin.Bechard@DevConsult.ca -->
+<!-- AI attribution: Generated with AI assistance. -->
+<!-- Provides a persisted notification setting for browser workflow verification. -->
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Settings</title></head><body><main><h1>Notification settings</h1><label><input id="weekly" type="checkbox"> Weekly summary</label><p id="status" role="status"></p></main><script>const control=document.querySelector('#weekly');const status=document.querySelector('#status');control.checked=localStorage.getItem('weekly')==='true';status.textContent=control.checked?'Weekly summary enabled':'Weekly summary disabled';control.addEventListener('change',()=>{localStorage.setItem('weekly',String(control.checked));status.textContent=control.checked?'Weekly summary enabled':'Weekly summary disabled'});</script></body></html>

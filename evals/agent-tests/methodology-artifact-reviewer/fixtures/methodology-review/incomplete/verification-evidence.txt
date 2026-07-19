@@ -1,0 +1,3 @@
+NOT RUN generated output stale check
+NOT RUN regression suite
+PASS visible source and adapter text comparison

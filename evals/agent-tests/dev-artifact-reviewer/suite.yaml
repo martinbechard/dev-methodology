@@ -1,0 +1,47 @@
+schema: dev-methodology-agent-suite
+version: 1
+id: dev-artifact-reviewer
+priority: 15
+target:
+  conceptualRole: agents/roles/dev-activities/dev-artifact-reviewer.role.yaml
+  nativeAgent: generated/adapters/codex/agents/dev-artifact-reviewer.toml
+  repositoryMutation: conditional
+  requiredSkills: [review-structured-artifact, documentation-page-verify]
+  conditionalSkills:
+    agent-claim: Review evidence is saved.
+    organise-project-files: Review creates a checklist or findings artifact.
+    review-functional-spec: The target is a functional specification.
+    review-architecture: The target is architecture.
+    review-high-level-design: The target is a high-level design.
+    review-module-design: The target is a module design.
+    object-creation-patterns: The design uses an object creation pattern.
+    singleton-pattern: The design uses Singleton.
+    interface-patterns: The design uses Adapter, Bridge, or Facade.
+    composition-patterns: The design uses Composite, Decorator, Proxy, or Flyweight.
+    state-strategy-patterns: The design uses Strategy, State, or Template Method.
+    request-patterns: The design uses Command, Chain of Responsibility, or Memento.
+    collaboration-patterns: The design uses Observer or Mediator.
+    traversal-patterns: The design uses Iterator or Visitor.
+    interpreter-pattern: The design uses Interpreter.
+    review-unit-test-plan: The target is a unit test plan.
+  allowedAgentDependencies: []
+  requiredOutputs: [completed review checklist, verifier assessment, findings and corrections]
+projectAgents:
+  supervisor: agents/supervisor.toml
+  judge: agents/judge.toml
+projectSkills:
+  shared: [../skills/agent-suite-supervision/SKILL.md, ../skills/agent-scenario-design/SKILL.md, ../skills/agent-evidence-judging/SKILL.md]
+  suite: [skills/dev-artifact-reviewer-suite-contract/SKILL.md]
+execution:
+  maximumActiveChildren: 1
+  nestedAgentLimit: 0
+  scenarioCatalog: scenarios.yaml
+  supervisorInvocation: dev_artifact_reviewer_suite_supervisor
+  targetInvocation: dev_artifact_reviewer
+  judgeInvocation: dev_artifact_reviewer_suite_judge
+  requireCodexIdentityEvidence: true
+acceptance:
+  deterministicFirst: true
+  criticalFailureSkipsJudge: true
+  semanticRubric: artifact-review-quality
+  terminalStatuses: [PASS, FAIL, BLOCKED, STALE]

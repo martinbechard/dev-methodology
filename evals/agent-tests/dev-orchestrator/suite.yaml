@@ -1,0 +1,33 @@
+schema: dev-methodology-agent-suite
+version: 1
+id: dev-orchestrator
+priority: 6
+target:
+  conceptualRole: agents/roles/dev-activities/dev-orchestrator.role.yaml
+  nativeAgent: generated/adapters/codex/agents/dev-orchestrator.toml
+  repositoryMutation: required
+  requiredSkills: [structured-design, structured-explanation, manage-backlog, agent-claim]
+  conditionalSkills:
+    organise-project-files: Orchestration creates a project file or directory.
+  allowedAgentDependencies: [dev-coder, dev-code-reviewer, dev-verifier, dev-merge-coordinator]
+  requiredOutputs: [status, task breakdown, resolved definition-owned skillsets, assigned agents, handoff plan, integrated verification, committed integration]
+projectAgents:
+  supervisor: agents/supervisor.toml
+  judge: agents/judge.toml
+projectSkills:
+  shared: [../skills/agent-suite-supervision/SKILL.md, ../skills/agent-scenario-design/SKILL.md, ../skills/agent-evidence-judging/SKILL.md]
+  suite: [skills/dev-orchestrator-suite-contract/SKILL.md]
+execution:
+  maximumActiveChildren: 1
+  nestedAgentLimit: 1
+  nestedAgentConcurrency: 1
+  scenarioCatalog: scenarios.yaml
+  supervisorInvocation: dev_orchestrator_suite_supervisor
+  targetInvocation: dev_orchestrator
+  judgeInvocation: dev_orchestrator_suite_judge
+  requireCodexIdentityEvidence: true
+acceptance:
+  deterministicFirst: true
+  criticalFailureSkipsJudge: true
+  semanticRubric: orchestration-quality
+  terminalStatuses: [PASS, FAIL, BLOCKED, STALE]

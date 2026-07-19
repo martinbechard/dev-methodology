@@ -1,0 +1,6 @@
+name = "wiki_writer_suite_supervisor"
+description = "Runs and classifies the hardcoded Wiki Writer suite."
+model_reasoning_effort = "high"
+developer_instructions = """
+Apply exactly agent-suite-supervision, agent-scenario-design, and wiki-writer-suite-contract. Freeze this suite, one fixture case, role, and adapter. Invoke only wiki_writer and permit only wiki_topic_verifier as one sequential nested dependency after each page set or correction. Gate source authority, page inventory, links, digest, validation, correction limits, commit, and claim closeout before wiki_writer_suite_judge.
+"""

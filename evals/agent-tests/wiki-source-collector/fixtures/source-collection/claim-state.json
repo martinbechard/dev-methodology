@@ -1,0 +1,6 @@
+{
+  "outcome": "WAIT",
+  "conflictingClaim": "synthetic-wiki-recovery",
+  "trees": ["raw", "Clippings", "docs/wiki"],
+  "queuePreserved": true
+}

@@ -1,0 +1,43 @@
+schema: dev-methodology-agent-suite
+version: 1
+id: wiki-architect
+priority: 20
+target:
+  conceptualRole: agents/roles/wiki-activities/wiki-architect.role.yaml
+  nativeAgent: generated/adapters/codex/agents/wiki-architect.toml
+  repositoryMutation: required
+  requiredSkills:
+    - agent-claim
+    - project-wiki
+  conditionalSkills:
+    organise-project-files: The setup creates a new project file or directory.
+    project-wiki-create: The repository needs a project-wiki methodology artifact in addition to the operational wiki structure.
+    documentation-bootstrap: The repository lacks established documentation roots or ownership guidance needed for wiki setup.
+  allowedAgentDependencies: []
+  requiredOutputs:
+    - setup recommendation pack
+    - initialized wiki contract
+    - setup verification evidence
+projectAgents:
+  supervisor: agents/supervisor.toml
+  judge: agents/judge.toml
+projectSkills:
+  shared:
+    - ../skills/agent-suite-supervision/SKILL.md
+    - ../skills/agent-scenario-design/SKILL.md
+    - ../skills/agent-evidence-judging/SKILL.md
+  suite:
+    - skills/wiki-architect-suite-contract/SKILL.md
+execution:
+  maximumActiveChildren: 1
+  nestedAgentLimit: 0
+  scenarioCatalog: scenarios.yaml
+  supervisorInvocation: wiki_architect_suite_supervisor
+  targetInvocation: wiki_architect
+  judgeInvocation: wiki_architect_suite_judge
+  requireCodexIdentityEvidence: true
+acceptance:
+  deterministicFirst: true
+  criticalFailureSkipsJudge: true
+  semanticRubric: wiki-architecture-quality
+  terminalStatuses: [PASS, FAIL, BLOCKED, STALE]

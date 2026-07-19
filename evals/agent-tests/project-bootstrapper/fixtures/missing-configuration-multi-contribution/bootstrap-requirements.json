@@ -1,0 +1,12 @@
+{
+  "configuration": ["PROJECT.yaml", "AGENTS.md"],
+  "nonWikiDocumentation": [
+    "docs/coverage-manifest.yaml",
+    "docs/module-catalog.md",
+    "docs/module-orders.md"
+  ],
+  "wikiDocumentation": [
+    "docs/wiki/README.md",
+    "docs/wiki/topic-index.md"
+  ]
+}

@@ -1,0 +1,38 @@
+schema: dev-methodology-agent-suite
+version: 1
+id: dev-verifier
+priority: 5
+target:
+  conceptualRole: agents/roles/dev-activities/dev-verifier.role.yaml
+  nativeAgent: generated/adapters/codex/agents/dev-verifier.toml
+  repositoryMutation: conditional
+  requiredSkills: [test-strategy, review-structured-artifact, structured-explanation]
+  conditionalSkills:
+    agent-claim: Verification mutates files or owns exclusive runtime resources.
+    organise-project-files: Verification creates a project file or directory.
+    end-to-end-verification: Confidence depends on a complete workflow.
+    root-cause-analysis: A failed check needs classification.
+    runtime-evidence-collection: Static checks cannot prove behavior.
+    code-execution-tracing: Runtime outcomes need source-path evidence.
+    prompt-contracts: Verification depends on a model-facing evaluator or report contract.
+  allowedAgentDependencies: []
+  requiredOutputs: [command results, coverage notes, skipped-check rationale, PASS WARN or FAIL status]
+projectAgents:
+  supervisor: agents/supervisor.toml
+  judge: agents/judge.toml
+projectSkills:
+  shared: [../skills/agent-suite-supervision/SKILL.md, ../skills/agent-scenario-design/SKILL.md, ../skills/agent-evidence-judging/SKILL.md]
+  suite: [skills/dev-verifier-suite-contract/SKILL.md]
+execution:
+  maximumActiveChildren: 1
+  nestedAgentLimit: 0
+  scenarioCatalog: scenarios.yaml
+  supervisorInvocation: dev_verifier_suite_supervisor
+  targetInvocation: dev_verifier
+  judgeInvocation: dev_verifier_suite_judge
+  requireCodexIdentityEvidence: true
+acceptance:
+  deterministicFirst: true
+  criticalFailureSkipsJudge: true
+  semanticRubric: verification-quality
+  terminalStatuses: [PASS, FAIL, BLOCKED, STALE]

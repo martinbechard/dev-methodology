@@ -1,0 +1,6 @@
+repository: established-repository
+upstreamWiki: ../upstream-wiki/docs/wiki
+upstreamOwned: [Atlas Toolkit entity background]
+localOwned: [release pinning practice, deployment decisions]
+rawPolicy: preserve-unprocessed
+verification: [status, link-leaves, lint, okf-validate]

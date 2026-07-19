@@ -1,0 +1,5 @@
+schema: synthetic-agent-suite-cases
+cases:
+  accepted-artifact: {type: module design, sections: [responsibilities, interfaces, runtime paths, failures, tests], linksValid: true}
+  material-findings: {type: functional specification, covered: [actors, happy path, errors], missing: [lockout recovery acceptance criterion]}
+  missing-review-authority: {type: custom compliance plan, governingPolicy: unavailable, matchingChecklist: absent}

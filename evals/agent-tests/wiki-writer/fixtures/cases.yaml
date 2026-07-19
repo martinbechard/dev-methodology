@@ -1,0 +1,5 @@
+schema: synthetic-agent-suite-cases
+cases:
+  durable-topic-creation: {overviewTopics: [deployment, rollback, incident escalation], sources: [operations-procedure]}
+  code-aware-maintenance: {commitRange: synthetic-a..synthetic-b, sources: [implementation, tests, operator-procedure], conflict: procedure stale}
+  insufficient-sources: {requestedTopic: incident escalation, available: [unapproved chat summary], missing: [procedure, implementation evidence]}

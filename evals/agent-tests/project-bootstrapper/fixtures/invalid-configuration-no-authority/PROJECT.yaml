@@ -1,0 +1,6 @@
+schema: synthetic-project-configuration
+version: 1
+folders:
+  - path: src/missing-module
+    agents:
+      - missing-conceptual-agent

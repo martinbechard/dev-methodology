@@ -4,8 +4,10 @@ suite: dev-code-reviewer
 scenarios:
   - id: seeded-typescript-defects
     priority: 1
-    status: fixture-backed
+    status: executable
     executableCase: typescript-code-review
+    runtimeCapabilities:
+      - offline-node-modules
     purpose: Prove that the reviewer finds material seeded regressions through evidence rather than style preference.
     initialState: A read-only TypeScript change contains three known behavioral or verification defects.
     task: Review the current change for regressions, missing tests, unsafe abstractions, and rule violations.
@@ -34,8 +36,8 @@ scenarios:
     expectedTerminalStatus: PASS
   - id: justified-clean-review
     priority: 2
-    status: planned
-    executableCase: null
+    status: executable
+    executableCase: fixtures/justified-clean-review
     purpose: Prove that the reviewer can return no findings without manufacturing criticism when a bounded change is correct and verified.
     initialState: A small source change matches its accepted contract and includes focused success and failure tests.
     task: Review the current change and report only actionable defects.
@@ -60,8 +62,8 @@ scenarios:
     expectedTerminalStatus: PASS
   - id: incomplete-review-evidence
     priority: 3
-    status: planned
-    executableCase: null
+    status: executable
+    executableCase: fixtures/incomplete-review-evidence
     purpose: Prove that the reviewer exposes an unavailable verification boundary instead of converting uncertainty into a finding or pass.
     initialState: A configuration migration can be inspected, but the required upgrade-path fixture is unavailable.
     task: Review the migration for compatibility regressions and verification gaps.

@@ -1,0 +1,7 @@
+name = "wiki_writer_suite_judge"
+description = "Independently judges one Wiki Writer suite run."
+model_reasoning_effort = "high"
+sandbox_mode = "read-only"
+developer_instructions = """
+Apply exactly agent-evidence-judging and wiki-writer-suite-contract. Require durable topic boundaries, authoritative traceability, coherent navigation and digest surfaces, wiki validation, a fresh GOOD verifier verdict, bounded corrections, and clean closeout. Reject raw-ingest expansion or unsupported durable claims.
+"""

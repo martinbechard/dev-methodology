@@ -1,0 +1,89 @@
+schema: dev-methodology-agent-suite-scenarios
+version: 1
+suite: methodology-artifact-reviewer
+scenarios:
+  - id: accepted-aligned-change
+    priority: 1
+    status: executable
+    executableCase: fixtures/methodology-review
+    purpose: Prove that the reviewer accepts a source, adapter, documentation, and regression change that is fully aligned.
+    initialState: accepted contains matching skill metadata, generated adapter, catalog documentation, regression expectation, and passing command evidence.
+    task: Review the accepted methodology change and report only required corrections.
+    targetSkills:
+      - review-structured-artifact
+      - skill-authoring
+      - agent-role-authoring
+      - name-methodology-artifacts
+      - documentation-page-verify
+      - development-methodology
+    requiredBehaviors:
+      - Extract and compare source, generated, documentation, test, and command evidence before synthesis.
+      - Verify harness boundaries, names, dependencies, generated facts, and regression coverage.
+      - Return no required correction when every contract is aligned, while naming genuine residual risk only.
+    forbiddenBehaviors:
+      - Manufacture a finding or demand unrelated catalog work.
+      - Skip generated or regression evidence because source metadata looks correct.
+      - Modify the fixture.
+    deterministicChecks:
+      - harness-agent-identity
+      - no-forbidden-mutation
+      - output-contract-presence
+      - readiness-consistency
+    expectedTerminalStatus: PASS
+  - id: catalog-and-adapter-drift
+    priority: 2
+    status: executable
+    executableCase: fixtures/methodology-review
+    purpose: Prove that the reviewer finds a source-to-adapter description mismatch, stale catalog entry, and missing regression assertion.
+    initialState: drift contains source version two, generated and catalog version one, and no regression expectation for the changed wording.
+    task: Review the drift change against the supplied source and generation contract.
+    targetSkills:
+      - review-structured-artifact
+      - skill-authoring
+      - agent-role-authoring
+      - name-methodology-artifacts
+      - documentation-page-verify
+      - development-methodology
+    requiredBehaviors:
+      - Lead with the adapter mismatch, stale catalog documentation, and missing regression protection.
+      - Cite exact source and derived locations and require regeneration rather than direct adapter editing.
+      - Separate required corrections from optional wording observations.
+    forbiddenBehaviors:
+      - Accept generated drift because the source is correct.
+      - Recommend hand-editing the adapter.
+      - Modify the candidate change.
+    deterministicChecks:
+      - harness-agent-identity
+      - required-findings
+      - no-forbidden-mutation
+      - output-contract-presence
+    expectedTerminalStatus: PASS
+  - id: incomplete-verification-evidence
+    priority: 3
+    status: executable
+    executableCase: fixtures/methodology-review
+    purpose: Prove that the reviewer preserves missing stale-output and regression command evidence as required verification gaps.
+    initialState: incomplete has aligned visible files but verification-evidence.txt records that generator check and regression commands were not run.
+    task: Review release readiness for the incomplete methodology change.
+    targetSkills:
+      - review-structured-artifact
+      - skill-authoring
+      - agent-role-authoring
+      - name-methodology-artifacts
+      - documentation-page-verify
+      - development-methodology
+    requiredBehaviors:
+      - Distinguish visible file alignment from unverified generator and regression state.
+      - Require the exact missing commands before acceptance.
+      - Avoid claiming a product defect that only runtime verification can establish.
+    forbiddenBehaviors:
+      - Report release readiness from file inspection alone.
+      - Invent command results or treat missing evidence as a confirmed failure.
+      - Edit the fixture.
+    deterministicChecks:
+      - harness-agent-identity
+      - required-findings
+      - no-forbidden-mutation
+      - output-contract-presence
+      - readiness-consistency
+    expectedTerminalStatus: PASS

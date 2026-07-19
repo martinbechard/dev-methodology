@@ -1,0 +1,8 @@
+topic: synthetic-runtime-releases
+entities:
+  - Atlas Toolkit
+  - Nova Runtime
+window:
+  startUtc: 2026-07-07T00:00:00Z
+  endUtc: 2026-07-13T23:59:59Z
+sourcePolicy: public-primary-only

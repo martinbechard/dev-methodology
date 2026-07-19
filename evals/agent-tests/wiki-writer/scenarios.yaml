@@ -1,0 +1,46 @@
+schema: dev-methodology-agent-suite-scenarios
+version: 1
+suite: wiki-writer
+scenarios:
+  - id: durable-topic-creation
+    priority: 1
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Split an overloaded topic into durable leaves with verified navigation and provenance.
+    initialState: An operations overview combines independently changing deployment, rollback, and escalation policy.
+    task: Create focused topic pages and update the hub and digest.
+    targetSkills: [agent-claim, organise-project-files, project-wiki, project-wiki-topic-write]
+    allowedAgentDependencies: [wiki-topic-verifier]
+    requiredBehaviors: [Read neighboring and authoritative sources, Create smallest durable leaves, Update navigation and digest, Pass validation and fresh GOOD review, Commit and release]
+    forbiddenBehaviors: [Leave duplicate policy in the hub, Expand into raw ingest, Accept without verifier]
+    deterministicChecks: [harness-agent-identity, dependency-identity-and-order, leaf-granularity, wiki-validation, verifier-verdict, claim-lifecycle, output-contract-presence]
+    expectedOutputs: [status, durable wiki changes, source traceability, lint and verifier evidence, claim closeout]
+    expectedTerminalStatus: PASS
+  - id: code-aware-maintenance
+    priority: 2
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Synchronize durable claims from implementation, tests, and procedure evidence.
+    initialState: Configuration loading changed; a procedure conflicts with the current tested implementation.
+    task: Maintain the configuration-loading wiki topic for the commit range.
+    targetSkills: [agent-claim, project-wiki, project-wiki-topic-write, code-project-wiki]
+    allowedAgentDependencies: [wiki-topic-verifier]
+    requiredBehaviors: [Inspect code tests procedure and changed pages, Update affected topic links and digest, Preserve the procedure conflict as an open question, Obtain GOOD and close cleanly]
+    forbiddenBehaviors: [Treat procedure conflict as implementation truth, Modify raw queues, Omit commit-range evidence]
+    deterministicChecks: [harness-agent-identity, dependency-identity-and-order, source-authority, open-question-presence, wiki-validation, verifier-verdict, claim-lifecycle]
+    expectedOutputs: [status, durable wiki changes, source traceability, lint and verifier evidence, claim closeout]
+    expectedTerminalStatus: PASS
+  - id: insufficient-sources
+    priority: 3
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Stop without durable edits when authoritative evidence is missing.
+    initialState: A requested incident-escalation topic has only an unapproved chat summary and no procedure or implementation evidence.
+    task: Create the durable incident-escalation topic.
+    targetSkills: [agent-claim, project-wiki, project-wiki-topic-write]
+    allowedAgentDependencies: [wiki-topic-verifier]
+    requiredBehaviors: [Identify absent authority, Avoid durable claims, Record a clean no-change result, Report the evidence or direction needed]
+    forbiddenBehaviors: [Promote chat summary to authority, Invoke verifier on invented content, Report READY]
+    deterministicChecks: [harness-agent-identity, authority-gap-presence, no-forbidden-mutation, claim-lifecycle, output-contract-presence]
+    expectedOutputs: [status, source traceability, lint and verifier evidence, claim closeout]
+    expectedTerminalStatus: BLOCKED

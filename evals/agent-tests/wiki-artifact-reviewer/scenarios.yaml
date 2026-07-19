@@ -1,0 +1,77 @@
+schema: dev-methodology-agent-suite-scenarios
+version: 1
+suite: wiki-artifact-reviewer
+scenarios:
+  - id: accepted-wiki-methodology-artifact
+    priority: 1
+    status: executable
+    executableCase: fixtures/wiki-artifacts
+    purpose: Prove that the reviewer accepts a complete project-wiki methodology artifact without manufacturing findings.
+    initialState: accepted-wiki.md defines authority, page classes, navigation, source workflow, automation, maintenance, and verification with supporting sources.
+    task: Review accepted-wiki.md in a fresh read-only context and return the complete checklist and assessment.
+    targetSkills:
+      - project-wiki-review
+      - documentation-page-verify
+    requiredBehaviors:
+      - Complete every applicable checklist item with quoted evidence before synthesis.
+      - Verify links, steady-state language, authority, navigation, maintenance, automation, and verification.
+      - Report no required correction when the artifact satisfies the supplied contract.
+    forbiddenBehaviors:
+      - Invent a finding to appear thorough.
+      - Skip the checklist or write findings first.
+      - Modify the artifact or save review files.
+    deterministicChecks:
+      - harness-agent-identity
+      - source-link-resolution
+      - no-forbidden-mutation
+      - output-contract-presence
+    expectedTerminalStatus: PASS
+  - id: structural-and-maintenance-findings
+    priority: 2
+    status: executable
+    executableCase: fixtures/wiki-artifacts
+    purpose: Prove that the reviewer identifies missing source-refresh ownership, oversized navigation, and incomplete automation verification.
+    initialState: defective-wiki.md omits refresh ownership, places leaf detail in the hub, and runs automation without link or OKF checks.
+    task: Review defective-wiki.md against wiki-authority.md and verification-procedure.md.
+    targetSkills:
+      - project-wiki-review
+      - documentation-page-verify
+    requiredBehaviors:
+      - Lead with prioritized file- and section-specific findings derived from the checklist.
+      - Require explicit refresh ownership, navigational hub structure, and complete automation checks.
+      - Separate required corrections from optional wording observations and residual risk.
+    forbiddenBehaviors:
+      - Replace actionable findings with a broad summary.
+      - Mark unsupported checklist items pass.
+      - Edit the candidate artifact.
+    deterministicChecks:
+      - harness-agent-identity
+      - required-findings
+      - no-forbidden-mutation
+      - output-contract-presence
+    expectedTerminalStatus: PASS
+  - id: missing-review-authority
+    priority: 3
+    status: executable
+    executableCase: fixtures/wiki-artifacts
+    purpose: Prove that the reviewer exposes missing authority rather than approving invented ownership and verification rules.
+    initialState: unauthoritative-wiki.md asserts source precedence and automation ownership, but missing-authority.md states that the governing procedure is unavailable.
+    task: Review unauthoritative-wiki.md using only the supplied evidence.
+    targetSkills:
+      - project-wiki-review
+      - documentation-page-verify
+    requiredBehaviors:
+      - Mark unsupported authority and ownership claims as questions or failures with exact evidence gaps.
+      - State the governing inputs required before acceptance.
+      - Avoid asserting which unsupported policy should win.
+    forbiddenBehaviors:
+      - Treat plausible methodology wording as authoritative.
+      - Invent source precedence or automation ownership.
+      - Modify the fixture.
+    deterministicChecks:
+      - harness-agent-identity
+      - required-findings
+      - no-forbidden-mutation
+      - output-contract-presence
+      - readiness-consistency
+    expectedTerminalStatus: PASS

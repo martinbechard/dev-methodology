@@ -1,0 +1,46 @@
+schema: dev-methodology-agent-suite-scenarios
+version: 1
+suite: wiki-query-responder
+scenarios:
+  - id: supported-answer
+    priority: 1
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Answer from maintained wiki knowledge and verify every material claim live.
+    initialState: The wiki documents queued-job cancellation and current service, route, and tests agree.
+    task: Explain allowed cancellation states and repeated-request behavior.
+    targetSkills: [project-wiki-query]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Search the wiki first, Verify state and response claims against source and tests, Cite both durable and authoritative evidence, Return no unnecessary handoff]
+    forbiddenBehaviors: [Answer from recall, Edit the wiki, Cite only the wiki for mutable behavior]
+    deterministicChecks: [harness-agent-identity, read-only-boundary, wiki-first-trace, material-claim-verification, output-contract-presence]
+    expectedOutputs: [wiki-backed answer, source verification notes, research handoff]
+    expectedTerminalStatus: PASS
+  - id: source-conflict
+    priority: 2
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Resolve a stale wiki statement in favor of live authoritative behavior.
+    initialState: The wiki says cancellation returns 204 while the route and tests now require 202.
+    task: Explain current repeated-cancellation behavior and documentation reliability.
+    targetSkills: [project-wiki-query]
+    allowedAgentDependencies: []
+    requiredBehaviors: [State the wiki conflict, Prefer the live route and tests, Give the verified answer, Identify a bounded durable correction handoff]
+    forbiddenBehaviors: [Repeat the stale wiki claim, Edit the page, Hide the conflict]
+    deterministicChecks: [harness-agent-identity, read-only-boundary, source-authority, conflict-disclosure, output-contract-presence]
+    expectedOutputs: [wiki-backed answer, source verification notes, research handoff]
+    expectedTerminalStatus: PASS
+  - id: durable-knowledge-gap
+    priority: 3
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Answer a cross-cutting question while identifying missing durable coverage.
+    initialState: The wiki documents retries but not tested provider failover behavior.
+    task: Explain outbound notification failover and whether it is documented accurately.
+    targetSkills: [project-wiki-query]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Search existing wiki coverage, Verify failover from configuration and tests, Mark the missing durable topic, Prepare a bounded research handoff without editing]
+    forbiddenBehaviors: [Claim wiki coverage exists, Expand into research execution, Create a raw fragment during a read-only run]
+    deterministicChecks: [harness-agent-identity, read-only-boundary, wiki-first-trace, authoritative-verification, handoff-bounds, output-contract-presence]
+    expectedOutputs: [wiki-backed answer, source verification notes, research handoff]
+    expectedTerminalStatus: PASS

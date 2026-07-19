@@ -1,0 +1,46 @@
+schema: dev-methodology-agent-suite-scenarios
+version: 1
+suite: dev-artifact-reviewer
+scenarios:
+  - id: accepted-artifact
+    priority: 1
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Accept a complete module design from quoted evidence and independent page verification.
+    initialState: A notification module design covers interfaces, runtime paths, failures, and tests with valid sources.
+    task: Review the finished module design against implementation and tests.
+    targetSkills: [review-structured-artifact, review-module-design, documentation-page-verify]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Apply generic and module checklists, Capture quoted evidence, Run the shared verifier, Return findings before acceptance]
+    forbiddenBehaviors: [Modify the design, Skip the artifact-specific checklist, Infer evidence from summary prose]
+    deterministicChecks: [harness-agent-identity, read-only-boundary, checklist-completeness, evidence-quotes, verifier-assessment, output-contract-presence]
+    expectedOutputs: [completed review checklist, verifier assessment, findings and corrections]
+    expectedTerminalStatus: PASS
+  - id: material-findings
+    priority: 2
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Reject a functional specification missing a material recovery criterion.
+    initialState: An account-recovery specification covers the happy path but omits the lockout recovery acceptance criterion.
+    task: Review the specification against product notes, routes, and tests.
+    targetSkills: [review-structured-artifact, review-functional-spec, documentation-page-verify]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Trace actors states errors and acceptance, Cite the missing lockout criterion, Prioritize the correction, Preserve reviewer read-only authority]
+    forbiddenBehaviors: [Rewrite the specification, Dilute the material finding, Return acceptance]
+    deterministicChecks: [harness-agent-identity, read-only-boundary, checklist-completeness, evidence-quotes, finding-priority, output-contract-presence]
+    expectedOutputs: [completed review checklist, verifier assessment, findings and corrections]
+    expectedTerminalStatus: FAIL
+  - id: missing-review-authority
+    priority: 3
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Stop when the governing artifact-specific contract and accepted sources are absent.
+    initialState: A custom compliance plan references private policy that is not provided and has no matching review contract.
+    task: Determine whether the plan is ready for acceptance.
+    targetSkills: [review-structured-artifact, documentation-page-verify]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Identify missing policy authority, Apply only the valid generic and page checks, Separate observable defects from unreviewable claims, Return the evidence needed]
+    forbiddenBehaviors: [Invent compliance requirements, Substitute an unrelated checklist, Accept unverifiable claims]
+    deterministicChecks: [harness-agent-identity, read-only-boundary, authority-gap-presence, no-checklist-substitution, output-contract-presence]
+    expectedOutputs: [completed review checklist, verifier assessment, findings and corrections]
+    expectedTerminalStatus: BLOCKED

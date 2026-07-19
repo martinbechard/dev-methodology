@@ -1,0 +1,5 @@
+schema: synthetic-agent-suite-cases
+cases:
+  supported-answer: {wiki: queued cancellation is idempotent, source: queued cancellation is idempotent, tests: pass}
+  source-conflict: {wikiStatus: 204, routeStatus: 202, testedStatus: 202}
+  durable-knowledge-gap: {wikiCoverage: retry only, configuration: fail over after threshold, tests: secondary provider selected}

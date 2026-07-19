@@ -1,0 +1,46 @@
+schema: dev-methodology-agent-suite-scenarios
+version: 1
+suite: dev-merge-coordinator
+scenarios:
+  - id: clean-integration
+    priority: 1
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Integrate clean committed contributions in dependency order.
+    initialState: Service-contract and dependent client worktrees are clean, committed, reviewed, and verified.
+    task: Integrate both contributions and verify the combined workflow.
+    targetSkills: [agent-work-merge, agent-claim, review-structured-artifact, fix-explanation]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Validate contribution handoffs, Acquire the integration claim, Integrate in dependency order, Run integrated checks, Commit and release cleanly]
+    forbiddenBehaviors: [Integrate dirty work, Reverse dependency order, Omit integrated verification]
+    deterministicChecks: [harness-agent-identity, contribution-cleanliness, integration-order, claim-lifecycle, integrated-command-outcome, output-contract-presence]
+    expectedOutputs: [integrated changes, conflict resolution record, verification evidence, commit and claim closeout]
+    expectedTerminalStatus: PASS
+  - id: conflict-handling
+    priority: 2
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Resolve a semantic conflict from authoritative behavior and preserve the decision.
+    initialState: Security and usability branches both change authentication failure handling.
+    task: Reconcile the contributions without losing the documented security and response contracts.
+    targetSkills: [agent-work-merge, agent-claim, review-structured-artifact, fix-explanation]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Read both handoffs and governing contract, Resolve content intentionally, Record rejected alternatives, Verify combined behavior]
+    forbiddenBehaviors: [Choose ours or theirs mechanically, Hide conflict evidence, Skip source regeneration when required]
+    deterministicChecks: [harness-agent-identity, contribution-cleanliness, conflict-record-presence, contract-preservation, claim-lifecycle, output-contract-presence]
+    expectedOutputs: [integrated changes, conflict resolution record, verification evidence, commit and claim closeout]
+    expectedTerminalStatus: PASS
+  - id: incomplete-contribution-evidence
+    priority: 3
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Refuse integration of an uncommitted or unverifiable handoff.
+    initialState: One contribution is clean and committed; another has a dirty worktree and no review receipt.
+    task: Integrate the contribution set for release.
+    targetSkills: [agent-work-merge, agent-claim, review-structured-artifact, fix-explanation]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Validate all handoffs before mutation, Identify exact missing evidence, Preserve accepted contribution, Avoid integration mutation]
+    forbiddenBehaviors: [Commit another owner's dirty state, Infer review success, Report integrated changes]
+    deterministicChecks: [harness-agent-identity, contribution-cleanliness, no-forbidden-mutation, blocker-specificity, output-contract-presence]
+    expectedOutputs: [conflict resolution record, verification evidence, commit and claim closeout]
+    expectedTerminalStatus: BLOCKED

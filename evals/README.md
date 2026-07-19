@@ -8,9 +8,19 @@ Ordinary cases run locally in disposable workspaces. This local tier isolates re
 
 ## Agent-Owned Suites
 
-The first-wave suite index prioritizes Dev Coder, Dev Code Reviewer, Dev Runtime Diagnostician, and Project Bootstrapper. The root coordinator may run at most four suite supervisors concurrently. Each supervisor uses exactly one child at a time. One target child may temporarily create one additional nested agent only when its canonical workflow and suite manifest declare that dependency. This produces a normal ceiling of nine active agents and an exceptional ceiling of ten.
+The suite index covers all twenty-six conceptual agents in end-user value order. The root coordinator may run at most four suite supervisors concurrently. Each supervisor uses exactly one child at a time. One target child may temporarily create one additional nested agent only when its canonical workflow and suite manifest declare that dependency. This produces a normal ceiling of nine active agents and an exceptional ceiling of ten.
 
 Every suite contains suite.yaml, scenarios.yaml, a hardcoded supervisor, a hardcoded read-only Judge, and a target-specific contract skill shared by those project agents. Cross-suite scenario, supervision, and judging methods live once under agent-tests/skills.
+
+The [complete execution report](agent-tests/results/2026-07-17-complete-agent-suites.md) records governed terminal results for all 26 suites and 78 initial scenarios.
+
+Ordinary suites may share a four-supervisor batch. A suite that needs loopback, descendant-process inspection, or browser automation runs alone with an explicit local-runtime permission profile. That profile allows local binding through a localhost-only managed proxy and denies non-local destinations. Offline ignored dependencies are copied into the disposable clone only after the installed package matches tracked lock evidence.
+
+Validate the complete agent-owned catalog and bounded schedule without starting a model session with:
+
+```bash
+python3 evals/agent-tests/runner.py --validate-only
+```
 
 ## Evaluation Layers
 

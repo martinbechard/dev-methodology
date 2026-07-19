@@ -1,0 +1,11 @@
+tool: create-ticket
+input:
+  summary: string
+output:
+  ticketId:
+    type: string
+    required: false
+authority:
+  customerNotes: summary-only
+retry:
+  idempotencyKey: unsupported

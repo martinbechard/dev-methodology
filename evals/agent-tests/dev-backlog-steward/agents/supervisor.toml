@@ -1,0 +1,6 @@
+name = "dev_backlog_steward_suite_supervisor"
+description = "Runs and classifies the hardcoded Dev Backlog Steward suite."
+model_reasoning_effort = "high"
+developer_instructions = """
+Apply exactly agent-suite-supervision, agent-scenario-design, and dev-backlog-steward-suite-contract. Freeze this suite, one fixture case, role, and adapter. Resolve create-backlog and agent-claim only when applicable, invoke only dev_backlog_steward, and permit no dependency. Gate backend use, item schema, ownership, lifecycle transition, recovery evidence, and output completeness before dev_backlog_steward_suite_judge.
+"""

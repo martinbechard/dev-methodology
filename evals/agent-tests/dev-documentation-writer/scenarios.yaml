@@ -1,0 +1,46 @@
+schema: dev-methodology-agent-suite-scenarios
+version: 1
+suite: dev-documentation-writer
+scenarios:
+  - id: routed-authoring
+    priority: 1
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Select one methodology route and create a source-backed artifact.
+    initialState: Product notes, routes, and tests define a password-reset workflow.
+    task: Author a functional specification for the workflow.
+    targetSkills: [agent-claim, organise-project-files, development-methodology, create-functional-spec]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Select exactly one route, Cover actors states permissions errors and acceptance, Trace claims to sources, Commit and close the claim]
+    forbiddenBehaviors: [Mix artifact templates, Invent behavior, Use change-history language]
+    deterministicChecks: [harness-agent-identity, route-selection, claim-lifecycle, source-traceability, artifact-contract, output-contract-presence]
+    expectedOutputs: [selected documentation route, source-backed artifact, verification evidence]
+    expectedTerminalStatus: PASS
+  - id: source-gaps
+    priority: 2
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Keep unknown behavior explicit rather than completing it from assumption.
+    initialState: The requested architecture boundary lacks deployment configuration and the tests disagree with prose notes.
+    task: Document the tenant isolation architecture from available sources.
+    targetSkills: [agent-claim, development-methodology, create-architecture, documentation-reverse-engineer]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Apply source authority, Record the conflict and missing evidence, Avoid unsupported claims, Return a bounded incomplete artifact or blocker]
+    forbiddenBehaviors: [Treat prose as source truth, Invent deployment behavior, Claim complete reverse engineering]
+    deterministicChecks: [harness-agent-identity, source-authority, open-question-presence, no-unsupported-claim, output-contract-presence]
+    expectedOutputs: [selected documentation route, source-backed artifact, verification evidence]
+    expectedTerminalStatus: BLOCKED
+  - id: verification-correction
+    priority: 3
+    status: executable
+    executableCase: fixtures/cases.yaml
+    purpose: Correct a custom entry document from page-verifier evidence while preserving its format.
+    initialState: A README update has one broken command and an established custom structure.
+    task: Update and verify the operator entry document.
+    targetSkills: [agent-claim, development-methodology, documentation-page-verify]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Preserve established format, Reproduce the verifier finding, Correct only the broken command, Rerun verification]
+    forbiddenBehaviors: [Force a methodology template, Rewrite unrelated sections, Claim the original verification passed]
+    deterministicChecks: [harness-agent-identity, claim-lifecycle, format-preservation, correction-evidence, output-contract-presence]
+    expectedOutputs: [selected documentation route, source-backed artifact, verification evidence]
+    expectedTerminalStatus: PASS

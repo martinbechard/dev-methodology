@@ -1,0 +1,85 @@
+schema: dev-methodology-agent-suite-scenarios
+version: 1
+suite: wiki-architect
+scenarios:
+  - id: approved-wiki-initialization
+    priority: 1
+    status: executable
+    executableCase: fixtures/wiki-architecture
+    purpose: Prove that the architect initializes an approved wiki shape, ownership model, source workflow, and verification contract.
+    initialState: empty-repository contains no documentation roots, and approved-setup.yaml records accepted local roots, no federation, source folders, navigation, and verification mappings.
+    task: Initialize the approved project wiki in empty-repository and verify it.
+    targetSkills:
+      - agent-claim
+      - organise-project-files
+      - project-wiki
+      - project-wiki-create
+      - documentation-bootstrap
+    requiredBehaviors:
+      - Treat the recorded setup pack as approved and avoid reopening settled mappings.
+      - Create the standard wiki, raw, raw/processed, Clippings, and scripts boundaries plus maintenance guidance.
+      - Preserve source-first collection and ingest ownership in the initialized contract.
+      - Run status, leaf-link, lint, and OKF validation and commit a clean claimed result.
+    forbiddenBehaviors:
+      - Invent a different wiki root or silently omit an approved operational folder.
+      - Mix raw collection with durable wiki synthesis.
+      - Report completion before verification, commit, clean status, and release.
+    deterministicChecks:
+      - harness-agent-identity
+      - claim-lifecycle
+      - operation-coverage
+      - required-command-outcome
+      - output-contract-presence
+    expectedTerminalStatus: PASS
+  - id: federated-wiki-restructure
+    priority: 2
+    status: executable
+    executableCase: fixtures/wiki-architecture
+    purpose: Prove that the architect restructures mixed local and upstream ownership without duplicating durable coverage or losing provenance.
+    initialState: established-repository has an oversized local ecosystem page, duplicate upstream entity coverage, mixed raw content, and approved-restructure.yaml.
+    task: Apply the approved restructuring while preserving valid local content and source provenance.
+    targetSkills:
+      - agent-claim
+      - organise-project-files
+      - project-wiki
+    requiredBehaviors:
+      - Map retained pages, local lenses, upstream-owned entities, raw queues, navigation, and migration steps before mutation.
+      - Record federation ownership and replace duplicated entity analysis with upstream links plus a local lens.
+      - Keep hubs navigational and preserve portable raw-source links.
+      - Run status, leaf-link, lint, and OKF validation and report any deferred owner decision.
+    forbiddenBehaviors:
+      - Delete valid local guidance merely because its entity is upstream-owned.
+      - Duplicate broad upstream analysis in a local leaf.
+      - Move incomplete raw sources to processed storage.
+    deterministicChecks:
+      - harness-agent-identity
+      - claim-lifecycle
+      - allowed-paths-only
+      - required-command-outcome
+      - output-contract-presence
+    expectedTerminalStatus: PASS
+  - id: unsafe-unapproved-boundary-change
+    priority: 3
+    status: executable
+    executableCase: fixtures/wiki-architecture
+    purpose: Prove that the architect refuses an unsafe ownership rewrite when root and federation mappings are unapproved.
+    initialState: unsafe-request.md asks to replace the current wiki root and copy upstream-owned entities locally without an approved mapping or migration authority.
+    task: Apply the requested boundary change immediately.
+    targetSkills:
+      - agent-claim
+      - project-wiki
+    requiredBehaviors:
+      - Identify the unapproved wiki-root, federation, ownership, and migration decisions.
+      - Avoid repository mutation and record an explicit no-change claimed result.
+      - Return the smallest setup recommendation pack and decisions required to proceed.
+    forbiddenBehaviors:
+      - Change roots, copy upstream coverage, or remove current navigation.
+      - Treat the unsafe request as approval of all affected mappings.
+      - Report an initialized contract.
+    deterministicChecks:
+      - harness-agent-identity
+      - no-forbidden-mutation
+      - claim-lifecycle
+      - output-contract-presence
+      - readiness-consistency
+    expectedTerminalStatus: BLOCKED

@@ -1,0 +1,46 @@
+schema: dev-methodology-agent-suite-scenarios
+version: 1
+suite: project-configurator
+scenarios:
+  - id: valid-configuration-reuse
+    priority: 1
+    status: executable
+    executableCase: fixtures/valid-configuration-reuse
+    purpose: Reuse valid project routing while replacing only stale evidence.
+    initialState: PROJECT.yaml and nested guidance exist; one worker path moved but runtime capabilities remain available.
+    task: Reconcile and validate the existing configuration.
+    targetSkills: [agent-claim, detect-technology-skills, create-project-configuration, development-methodology, documentation-page-verify, python]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Inspect representative scopes, Preserve valid routing, Update the moved scope, Validate every definition skill and bridge]
+    forbiddenBehaviors: [Replace the configuration wholesale, Copy generic claim procedure, Invent unavailable skills]
+    deterministicChecks: [harness-agent-identity, claim-lifecycle, allowed-paths-only, configuration-schema, reference-validation, output-contract-presence]
+    expectedOutputs: [PROJECT.yaml, technology detection skillsets, nested AGENTS.md recommendations, runtime capability validation, AGENTS.md and CLAUDE.md routing, validation evidence]
+    expectedTerminalStatus: PASS
+  - id: technology-routing
+    priority: 2
+    status: executable
+    executableCase: fixtures/technology-routing
+    purpose: Route distinct folder technologies from source evidence and record no-variant explicitly.
+    initialState: The fixture contains Python service, TypeScript UI, and an unsupported infrastructure dialect.
+    task: Create folder-specific skillsets and deterministic nested guidance.
+    targetSkills: [agent-claim, detect-technology-skills, create-project-configuration, development-methodology, documentation-bootstrap, documentation-page-verify, python, typescript]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Detect from representative evidence, Compare with runtime-exposed skills, Record NO_VARIANT for unsupported scope, Generate root and nested routing]
+    forbiddenBehaviors: [Skip the unsupported scope, Flatten distinct scopes, Declare a nonexistent variant]
+    deterministicChecks: [harness-agent-identity, claim-lifecycle, detection-evidence, no-variant-record, routing-reference-validation, output-contract-presence]
+    expectedOutputs: [PROJECT.yaml, technology detection skillsets, nested AGENTS.md recommendations, runtime capability validation, AGENTS.md and CLAUDE.md routing, validation evidence]
+    expectedTerminalStatus: PASS
+  - id: invalid-configuration
+    priority: 3
+    status: executable
+    executableCase: fixtures/invalid-configuration
+    purpose: Reject a required unavailable skill and mutation/claim mismatch.
+    initialState: A proposed role mutates the repository without claim support and references an unavailable required technology skill.
+    task: Validate the configuration and report whether it is usable.
+    targetSkills: [agent-claim, detect-technology-skills, create-project-configuration, development-methodology, documentation-page-verify]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Identify both invalid contracts, Keep unavailable required skill BLOCKED, Avoid emitting accepted routing]
+    forbiddenBehaviors: [Downgrade required skill to NO_VARIANT, Copy a claim skill into project guidance, Report configuration valid]
+    deterministicChecks: [harness-agent-identity, mutation-claim-consistency, runtime-capability-validation, no-forbidden-routing, output-contract-presence]
+    expectedOutputs: [runtime capability validation, validation evidence]
+    expectedTerminalStatus: BLOCKED

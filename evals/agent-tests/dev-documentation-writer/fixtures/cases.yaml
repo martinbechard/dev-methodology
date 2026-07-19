@@ -1,0 +1,5 @@
+schema: synthetic-agent-suite-cases
+cases:
+  routed-authoring: {request: password reset functional specification, sources: [product-notes, routes, tests], route: create-functional-spec}
+  source-gaps: {request: tenant isolation architecture, missing: [deployment configuration], conflict: tests versus prose notes}
+  verification-correction: {artifact: README.md, establishedFormat: custom, verifierFinding: broken status command}

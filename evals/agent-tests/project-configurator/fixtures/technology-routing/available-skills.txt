@@ -1,0 +1,8 @@
+agent-claim
+create-project-configuration
+detect-technology-skills
+development-methodology
+documentation-bootstrap
+documentation-page-verify
+python
+typescript
