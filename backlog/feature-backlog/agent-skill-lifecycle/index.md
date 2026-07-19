@@ -47,7 +47,7 @@ Conceptual agent definitions declare their generic definition-owned skills. Proj
 17. [Restore Wiki Ingester on verifier interruption](restore-wiki-ingester-on-verifier-interruption.md).
 18. [Preserve Wiki Research source links](preserve-wiki-research-source-links.md).
 19. [Replace Bootstrapper marathon with isolated test doubles](replace-bootstrapper-marathon-with-isolated-test-doubles.md).
-20. [Integrate Codex work-item coordination](../../user-action-required/integrate-codex-workitem-coordination.md), pending explicit definition approval.
+20. [Integrate Codex work-item coordination](integrate-codex-workitem-coordination.md).
 
 The detector is the foundation. Codex verification must run against the stable generated definitions and project guidance. Documentation must distinguish designed behavior from behavior proven by the CLI suite. The mind map should consume the final detection and evidence data rather than adapting to an obsolete routing schema.
 

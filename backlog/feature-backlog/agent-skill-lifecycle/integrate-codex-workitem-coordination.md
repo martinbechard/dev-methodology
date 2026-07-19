@@ -1,6 +1,6 @@
 # Integrate Codex Work-Item Coordination
 
-Status: User Action Required
+Status: Ready
 
 Type: Feature
 
@@ -83,11 +83,13 @@ AGENTS.md requires explicit scope-specific user approval before any distributed 
 
 ### Resolution
 
-Pending.
+Approved on 2026-07-19. In direct response to the exact Question for the User above, the user answered “Ok approved.” This approval authorizes creation or change of only skills/codex-workitem-coordination/SKILL.md, skills/codex-workitem-coordination/agents/openai.yaml, and agents/roles/dev-activities/backlog-agent.role.yaml, together with regeneration of only their supported generated mirrors.
+
+The same user-message provenance separately authorizes task-list anomaly reconciliation after ambiguous dispatch, bounded settlement and second reconciliation for delayed task visibility, canonical duplicate containment, and terminal task archival within those same definitions. It does not authorize changes to another skill definition, skill metadata record, conceptual agent definition, or generated mirror family.
 
 ### Unattended Work Boundary
 
-Do not create or change the named skill definition, metadata, conceptual role, or their generated mirrors. Do not start artifact claims, integration, installation, or lifecycle-documentation implementation until an explicit answer is recorded and the item is moved through Ready to a separately claimed Running transition.
+Do not create or change the approved definitions or their supported generated mirrors until the approval record passes the supported pre-mutation checks and a separately claimed Running transition commits and releases. Stop for additional user approval before expanding to another governed definition.
 
 ## Notes
 
