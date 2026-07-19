@@ -1,6 +1,6 @@
 # Add A Styled Backlog Report With User Input
 
-Status: Running
+Status: Blocked
 
 Type: Feature
 
@@ -10,6 +10,17 @@ Type: Feature
 - Lifecycle claim: styled-backlog-report-start.
 - Claim evidence: dev-backlog-steward acquired PRIMARY ownership of this exact backlog item at 2026-07-19T05:50:37.189571Z before recording the Running transition.
 - Scope boundary: the lifecycle claim is released after this committed transition; project-artifact ownership must be acquired separately after ARTIFACT GO.
+
+## Blocked Evidence
+
+- Outcome: The bounded two-attempt correction loop ended with a repeated runnable-eligibility acceptance failure. No implementation or documentation contribution was integrated.
+- Preserved source commits: 381f09f557b7e73d07a9b735508687b2c27ac5f7, 8f7eb183846744180ee0ea3377ccbc7b072c5c60, and 32fd01a7fe214d7f5acb9a1ca2976073722c13ec on the report code branches.
+- Preserved documentation commit: 69f0461f94c56737d696c6ad3adc2f71207df977 on the report README branch; its fresh independent artifact review passed with no findings.
+- Source claim releases: 822386cf-efb3-4aed-a7a4-6a4e4c0b5a71, 2c50e789-9ca1-428c-83e1-55094bdfa46e, and ce635544-f131-40a3-a3c4-94ccdc7f0296. Documentation claim release: 9eae6030-78f9-415e-9333-8f523ef61c4e.
+- Review evidence: The initial fresh review rejected unsafe active-completion dependency satisfaction, unreadable index handling, output collision handling, metadata and archive validation, and unavailable claim snapshots. Correction attempt one resolved those findings but a second fresh review found incomplete underlying-Type and Proposed migration handling. Correction attempt two resolved those findings, but the final fresh review proved that active Ready items with Type Holding or another invalid Type still entered Runnable Work.
+- Passing evidence: Ten focused generator tests, Python compilation, Ruff, Mypy, controlled live generation, and git diff checks passed on the final preserved source commit. The full isolated Python 3.11 scripts run reached 411 tests with only the expected sparse-worktree failure caused by backlog omission.
+- Remaining correction: In scripts/generate-backlog-report.py, runnable eligibility must require the explicit Type to be Defect, Feature, Analysis, or Investigation before an active Ready item can affect runnable totals or appear in Runnable Work. Add focused assertions proving Holding and invalid types remain visible as validation findings but are excluded from runnable counts and sections.
+- Re-entry gates: After the remaining correction is committed by the original producer, repeat fresh independent source review. Only after review passes may the preserved README and source contributions be integrated, the primary example be updated, post-integration source and artifact or UX reviews run, complete primary verification pass, and browser accessibility checks run at 320 pixels, 736 pixels, and desktop widths in light and dark modes.
 
 ## Summary
 
