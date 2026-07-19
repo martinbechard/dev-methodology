@@ -26,7 +26,7 @@ import tempfile
 import threading
 import time
 import tomllib
-from collections.abc import Callable, Iterator, Sequence
+from collections.abc import Callable, Iterator, Mapping, Sequence
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlsplit
@@ -405,6 +405,52 @@ def _bundled_codex_executable() -> Path:
     raise RuntimeError("The app-bundled Codex CLI is unavailable")
 
 
+def _bundled_junie_executable() -> Path:
+    configured = os.environ.get("JUNIE_CLI")
+    discovered = shutil.which("junie")
+    candidates = [*([Path(configured)] if configured else []), *([Path(discovered)] if discovered else [])]
+    for candidate in candidates:
+        resolved = candidate.expanduser().resolve()
+        if resolved.is_file() and os.access(resolved, os.X_OK):
+            return resolved
+    raise RuntimeError("The managed Junie CLI is unavailable")
+
+
+def _copy_junie_agent(source: Path, invocation: str, agent_root: Path) -> _StagedAgent:
+    junie_name = invocation.replace("_", "-")
+    if not re.fullmatch(r"[a-z][a-z0-9-]*", junie_name):
+        raise ValueError(f"Invalid staged Junie agent invocation: {junie_name}")
+    source_text = source.read_text(encoding="utf-8")
+    if source.suffix == ".toml":
+        loaded = tomllib.loads(source_text)
+        instructions = str(loaded.get("developer_instructions", ""))
+        description = str(loaded.get("description", f"Governed {junie_name} evaluation agent."))
+        if not instructions:
+            raise ValueError(f"Staged Junie agent has no instructions: {source}")
+        instructions = instructions.replace(" Codex agent", " Junie custom agent")
+        instructions = instructions.replace("Codex agent", "Junie custom agent")
+        instructions = instructions.replace("fork_context exactly false", "a fresh independent subagent context")
+        instructions = instructions.replace("agent_type exactly ", "the custom agent named ")
+        frontmatter = yaml.safe_dump(
+            {"name": junie_name, "description": description, "model": "opus", "reasoningLevel": "high"},
+            sort_keys=False,
+        ).strip()
+        rendered = f"---\n{frontmatter}\n---\n\n{instructions.strip()}\n"
+    else:
+        rendered = source_text
+        loaded_frontmatter = yaml.safe_load(rendered.split("---", 2)[1])
+        if not isinstance(loaded_frontmatter, dict):
+            raise ValueError(f"Staged Junie agent frontmatter is invalid: {source}")
+        instructions = rendered.split("---", 2)[2].strip()
+        loaded_frontmatter["name"] = junie_name
+        rendered = f"---\n{yaml.safe_dump(loaded_frontmatter, sort_keys=False).strip()}\n---\n{instructions}\n"
+    marker = f"AGENT_INSTRUCTION_BINDING_{invocation}_{secrets.token_hex(16)}"
+    rendered += f"\nRuntime instruction binding marker retained by the harness: {marker}.\n"
+    destination = agent_root / f"{junie_name}.md"
+    destination.write_text(rendered, encoding="utf-8")
+    return _StagedAgent(junie_name, source, instructions, _sha256(destination), marker)
+
+
 def _stage_browser_runtime(
     plugin_root: Path,
     codex_home: Path,
@@ -688,6 +734,63 @@ def _stage_batch(batch: Sequence[_RunSpec], run_root: Path) -> tuple[Path, Path,
             source = _REPOSITORY_ROOT / "skills" / skill_name / "SKILL.md"
             _copy_skill_package(source, skill_root)
     return workspace, codex_home, tuple(staged.values())
+
+
+def _stage_junie_batch(batch: Sequence[_RunSpec], run_root: Path) -> tuple[Path, Path, Path, tuple[_StagedAgent, ...]]:
+    workspace = run_root / "workspace"
+    junie_home = run_root / "junie-home"
+    agent_root = run_root / "junie-agents"
+    skill_root = run_root / "junie-skills"
+    home_root = run_root / "home"
+    for path in (junie_home, agent_root, skill_root, home_root, run_root / "tmp"):
+        path.mkdir(parents=True, exist_ok=True)
+    subprocess.run(
+        ["git", "clone", "--quiet", "--no-hardlinks", str(_REPOSITORY_ROOT), str(workspace)],
+        check=True,
+        text=True,
+        capture_output=True,
+    )
+    _stage_offline_project_dependencies(batch, _REPOSITORY_ROOT, workspace)
+    _stage_offline_maven_dependencies(batch, _REPOSITORY_ROOT, workspace, home_root)
+    if _runtime_capabilities(batch) & frozenset({"browser-automation"}):
+        raise RuntimeError("Junie browser-automation agent suites require an externally approved browser adapter")
+    staged: dict[str, _StagedAgent] = {}
+    for run in batch:
+        suite = run.suite
+        _validate_target_skills(suite, run.scenario_ids, _REPOSITORY_ROOT)
+        manifest = suite.manifest
+        execution = manifest["execution"]
+        project_agents = manifest["projectAgents"]
+        codex_target = Path(str(manifest["target"]["nativeAgent"]))
+        junie_target = _REPOSITORY_ROOT / Path(
+            str(codex_target).replace("generated/adapters/codex/agents/", "generated/adapters/junie/agents/")
+        ).with_suffix(".md")
+        sources = (
+            (suite.path / project_agents["supervisor"], execution["supervisorInvocation"]),
+            (junie_target, execution["targetInvocation"]),
+            (suite.path / project_agents["judge"], execution["judgeInvocation"]),
+        )
+        for source, invocation in sources:
+            junie_invocation = str(invocation).replace("_", "-")
+            if junie_invocation not in staged:
+                staged[junie_invocation] = _copy_junie_agent(source, str(invocation), agent_root)
+        for dependency in manifest["target"].get("allowedAgentDependencies", []):
+            invocation = str(dependency).replace("_", "-")
+            source = _REPOSITORY_ROOT / "generated" / "adapters" / "junie" / "agents" / f"{dependency}.md"
+            if invocation not in staged:
+                staged[invocation] = _copy_junie_agent(source, str(dependency), agent_root)
+        for skill_path in manifest.get("projectSkills", {}).get("shared", []) + manifest.get("projectSkills", {}).get("suite", []):
+            _copy_skill_package(suite.path / skill_path, skill_root)
+        selected = set(run.scenario_ids)
+        scenario_skills = {
+            str(skill)
+            for scenario in suite.scenarios
+            if str(scenario["id"]) in selected
+            for skill in scenario.get("targetSkills", [])
+        }
+        for skill_name in scenario_skills:
+            _copy_skill_package(_REPOSITORY_ROOT / "skills" / skill_name / "SKILL.md", skill_root)
+    return workspace, junie_home, skill_root, tuple(staged.values())
 
 
 def _coordinator_schema() -> dict[str, Any]:
@@ -1072,6 +1175,22 @@ def _coordinator_prompt(batch: Sequence[_RunSpec], checkpoint_root: Path, fixtur
         "evaluation contracts during a run, or fix a distributed skill. Classify actual test-infrastructure failures "
         "separately from target findings. Wait for every supervisor, then return only the required JSON report. "
         f"Assignments: {json.dumps(assignments, sort_keys=True)}"
+    )
+
+
+def _junie_coordinator_prompt(batch: Sequence[_RunSpec], checkpoint_root: Path, fixture_root: Path) -> str:
+    prompt = _coordinator_prompt(batch, checkpoint_root, fixture_root)
+    for run in batch:
+        execution = run.suite.manifest["execution"]
+        for field in ("supervisorInvocation", "targetInvocation", "judgeInvocation"):
+            invocation = str(execution[field])
+            prompt = prompt.replace(invocation, invocation.replace("_", "-"))
+    return prompt.replace(
+        "using agent_type exactly equal to its supervisor value and fork_context exactly false",
+        "by routing to the custom agent whose name is exactly its supervisor value in a fresh context",
+    ).replace(
+        "pass agent_type exactly equal to the listed target or judge and fork_context exactly false for those child spawns",
+        "route to the custom agent named exactly by the listed target or judge in a fresh context",
     )
 
 
@@ -1908,6 +2027,155 @@ def _audit_workspace_cleanup(workspace: Path) -> str:
     return "clean"
 
 
+def _extract_junie_report(event_path: Path) -> dict[str, Any]:
+    if not event_path.is_file() or event_path.is_symlink():
+        raise RuntimeError("Junie event stream is missing or unsafe")
+    events: list[dict[str, Any]] = []
+    for line_number, line in enumerate(event_path.read_text(encoding="utf-8").splitlines(), start=1):
+        try:
+            value = json.loads(line)
+        except json.JSONDecodeError as error:
+            raise RuntimeError(f"Junie event stream line {line_number} is malformed") from error
+        if not isinstance(value, dict):
+            raise RuntimeError(f"Junie event stream line {line_number} is not an object")
+        events.append(value)
+    results = [event for event in events if event.get("type") == "result"]
+    if len(results) != 1 or not events or events[-1] is not results[0]:
+        raise RuntimeError("Junie event stream must contain one terminal result event")
+    result = results[0].get("result")
+    if not isinstance(result, str) or not result.strip():
+        raise RuntimeError("Junie terminal result is empty")
+    try:
+        report = json.loads(result)
+    except json.JSONDecodeError as error:
+        raise RuntimeError("Junie terminal result is not the required JSON report") from error
+    if not isinstance(report, dict):
+        raise RuntimeError("Junie terminal result must contain a JSON object")
+    return report
+
+
+def _audit_junie_agent_lifecycles(junie_home: Path, expected: Mapping[str, int]) -> dict[str, Any]:
+    observed: dict[str, dict[str, set[str]]] = {name: {} for name in expected}
+    for event_path in sorted((junie_home / "sessions").glob("**/events.jsonl")):
+        if event_path.is_symlink() or not event_path.is_file():
+            continue
+        for line in event_path.read_text(encoding="utf-8").splitlines():
+            try:
+                value = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            event = value.get("event") if isinstance(value, dict) else None
+            agent_event = event.get("agentEvent") if isinstance(event, dict) else None
+            agent = agent_event.get("agent") if isinstance(agent_event, dict) else None
+            name = agent.get("name") if isinstance(agent, dict) else None
+            if name not in observed or agent_event.get("kind") != "CustomAgentBlockUpdatedEvent":
+                continue
+            step_id = agent_event.get("stepId")
+            status = agent_event.get("status")
+            if isinstance(step_id, str) and status in {"STARTED", "FINISHED"}:
+                observed[name].setdefault(step_id, set()).add(str(status))
+    mismatches = []
+    for name, expected_count in expected.items():
+        actual_count = sum(
+            statuses == {"STARTED", "FINISHED"} for statuses in observed[name].values()
+        )
+        if actual_count != expected_count:
+            mismatches.append(f"{name} expected {expected_count}, observed {actual_count}")
+    if mismatches:
+        raise RuntimeError(f"Junie session ledger custom-agent lifecycle mismatch: {'; '.join(mismatches)}")
+    return {
+        "status": "name-verified",
+        "definitionDigestBound": False,
+        "agents": dict(sorted(expected.items())),
+        "limitation": "Junie session ledgers prove custom-agent names but do not bind adapter digests.",
+    }
+
+
+def _run_live_junie_batch(
+    batch: Sequence[_RunSpec],
+    batch_number: int,
+    result_root: Path,
+    timeout_seconds: int,
+) -> dict[str, Any]:
+    label = f"batch-{batch_number:02d}"
+    with _temporary_run_root(f"junie-{label}") as run_root:
+        workspace, junie_home, skill_root, staged = _stage_junie_batch(batch, run_root)
+        fixture_root = workspace / ".agent-suite-fixtures"
+        fixture_root.mkdir()
+        checkpoint_root = run_root / "checkpoints"
+        checkpoint_root.mkdir()
+        event_path = run_root / "junie-events.jsonl"
+        cache_root = run_root / "junie-cache"
+        agent_root = run_root / "junie-agents"
+        command = [
+            str(_bundled_junie_executable()),
+            f"--project={workspace}",
+            "--output-format=json-stream",
+            f"--json-output-file={event_path}",
+            f"--cache-dir={cache_root}",
+            "--skip-update-check",
+            "--config-default-locations=false",
+            "--model-default-locations=false",
+            "--mcp-default-locations=false",
+            "--skill-default-locations=false",
+            "--agent-default-location=false",
+            "--command-default-location=false",
+            f"--skill-location={skill_root}",
+            f"--agent-location={agent_root}",
+            f"--timeout={timeout_seconds * 1000}",
+            f"--task={_junie_coordinator_prompt(batch, checkpoint_root, fixture_root)}",
+        ]
+        environment = _controlled_environment(run_root / "home", junie_home, run_root / "tmp")
+        environment.pop("CODEX_HOME", None)
+        environment["JUNIE_HOME"] = str(junie_home)
+        if "JUNIE_API_KEY" in os.environ:
+            environment["JUNIE_API_KEY"] = os.environ["JUNIE_API_KEY"]
+        completed = _run_process(command, workspace, environment, timeout_seconds, containment_root=run_root)
+        result_root.mkdir(parents=True, exist_ok=True)
+        evidence_prefix = result_root / label
+        evidence_prefix.with_suffix(".stdout.log").write_text(_redact_capture(completed["stdout"]), encoding="utf-8")
+        evidence_prefix.with_suffix(".stderr.log").write_text(_redact_capture(completed["stderr"]), encoding="utf-8")
+        retained_events = evidence_prefix.with_suffix(".jsonl")
+        if event_path.is_file():
+            retained_events.write_text(_redact_capture(event_path.read_text(encoding="utf-8")), encoding="utf-8")
+        report: dict[str, Any] | None = None
+        errors: list[str] = []
+        try:
+            report = _extract_junie_report(event_path)
+            _audit_report(batch, report)
+        except RuntimeError as error:
+            errors.append(str(error))
+        try:
+            expected_counts = {
+                invocation.replace("_", "-"): count
+                for invocation, count in _expected_invocation_counts(batch, report or {}).items()
+            }
+            identity = _audit_junie_agent_lifecycles(junie_home, expected_counts)
+        except RuntimeError as error:
+            errors.append(str(error))
+            identity = {"status": "unverified", "error": str(error)}
+        try:
+            cleanup = _audit_workspace_cleanup(workspace)
+        except RuntimeError as error:
+            errors.append(str(error))
+            cleanup = "failed"
+        if completed["exitCode"] != 0:
+            errors.append(f"Junie exited with {completed['exitCode']}")
+        if completed["cleanup"] != "clean":
+            errors.append(f"Process cleanup: {completed['cleanup']}")
+        return {
+            "batch": batch_number,
+            "harness": "junie",
+            "status": "infrastructure-failed" if errors else "completed",
+            "processExitCode": completed["exitCode"],
+            "report": report,
+            "infrastructureErrors": errors,
+            "identityAudit": identity,
+            "workspaceCleanup": cleanup,
+            "evidence": {"events": str(retained_events), "stderr": str(evidence_prefix.with_suffix('.stderr.log'))},
+        }
+
+
 def _run_live_batch(
     batch: Sequence[_RunSpec],
     batch_number: int,
@@ -2067,6 +2335,7 @@ def _execute_batches(
 
 def _argument_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Run identity-gated conceptual-agent suites.")
+    parser.add_argument("--harness", required=True, choices=("codex", "junie"), help="Explicit execution harness.")
     parser.add_argument("--suite", action="append", default=[], help="Suite id to run; repeat for multiple suites.")
     parser.add_argument(
         "--scenario",
@@ -2076,7 +2345,7 @@ def _argument_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--jobs", type=int, default=4, help="Maximum concurrent supervisors, from 1 through 4.")
     parser.add_argument("--timeout-seconds", type=int, default=3600, help="Wall-clock limit for each coordinator batch.")
-    parser.add_argument("--validate-only", action="store_true", help="Validate and schedule suites without invoking Codex.")
+    parser.add_argument("--validate-only", action="store_true", help="Validate and schedule suites without invoking a harness.")
     parser.add_argument("--list", action="store_true", help="List validated suites and scenarios, then exit.")
     parser.add_argument(
         "--result-dir",
@@ -2115,14 +2384,10 @@ def main(argv: Sequence[str] | None = None) -> int:
 
         results = _execute_batches(batches, validate)
     else:
+        live_runner = _run_live_batch if arguments.harness == "codex" else _run_live_junie_batch
         results = _execute_batches(
             batches,
-            lambda batch, batch_number: _run_live_batch(
-                batch,
-                batch_number,
-                result_root,
-                arguments.timeout_seconds,
-            ),
+            lambda batch, batch_number: live_runner(batch, batch_number, result_root, arguments.timeout_seconds),
         )
     result_root.mkdir(parents=True, exist_ok=True)
     summary_path = result_root / "summary.json"
@@ -2130,6 +2395,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         "schema": "dev-methodology-agent-suite-run-summary",
         "version": 1,
         "generatedAtUtc": _utc_now(),
+        "harness": arguments.harness,
         "validateOnly": bool(arguments.validate_only),
         "maximumConcurrentSupervisors": arguments.jobs,
         "results": results,

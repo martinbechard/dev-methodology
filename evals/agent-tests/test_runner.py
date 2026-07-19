@@ -27,6 +27,57 @@ _SPEC.loader.exec_module(runner)
 class AgentSuiteRunnerTests(unittest.TestCase):
     """Protect the runner contract without invoking a live model."""
 
+    def test_harness_selection_is_explicit_and_supports_codex_and_junie(self) -> None:
+        """Every execution names one supported harness before selection or scheduling."""
+        with self.assertRaises(SystemExit):
+            runner._argument_parser().parse_args(["--validate-only"])
+        self.assertEqual(
+            "codex",
+            runner._argument_parser().parse_args(["--harness", "codex", "--validate-only"]).harness,
+        )
+        self.assertEqual(
+            "junie",
+            runner._argument_parser().parse_args(["--harness", "junie", "--validate-only"]).harness,
+        )
+
+    def test_junie_agent_conversion_uses_native_name_and_binding_marker(self) -> None:
+        """Junie receives isolated Markdown subagents rather than Codex TOML files."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "source.toml"
+            destination = root / "agents"
+            destination.mkdir()
+            source.write_text(
+                'name = "suite_supervisor"\n'
+                'description = "Govern one suite."\n'
+                'developer_instructions = """Invoke the Codex agent using agent_type exactly target_agent '
+                'and fork_context exactly false."""\n',
+                encoding="utf-8",
+            )
+
+            staged = runner._copy_junie_agent(source, "suite_supervisor", destination)
+            rendered = (destination / "suite-supervisor.md").read_text(encoding="utf-8")
+
+        self.assertEqual("suite-supervisor", staged.invocation)
+        self.assertIn("name: suite-supervisor", rendered)
+        self.assertIn("Junie custom agent", rendered)
+        self.assertIn(staged.instruction_marker, rendered)
+
+    def test_junie_terminal_event_yields_governed_report(self) -> None:
+        """Only one terminal Junie result event can carry the coordinator report."""
+        report = {"runs": [], "batchCleanup": "clean", "residualRisk": "none"}
+        with tempfile.TemporaryDirectory() as directory:
+            events = Path(directory) / "events.jsonl"
+            events.write_text(
+                json.dumps({"type": "session", "sessionId": "synthetic"})
+                + "\n"
+                + json.dumps({"type": "result", "result": json.dumps(report)})
+                + "\n",
+                encoding="utf-8",
+            )
+
+            self.assertEqual(report, runner._extract_junie_report(events))
+
     def test_selects_one_suite_and_one_scenario(self) -> None:
         """A caller can narrow execution to one declared scenario."""
         catalog = {
