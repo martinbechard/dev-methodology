@@ -1,6 +1,6 @@
 # Align Project Organiser Filename Selection
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
@@ -18,13 +18,11 @@ AGENTS.md requires explicit, scope-specific approval before any governed agent o
 
 ## Resolution
 
-Pending.
+Approved on 2026-07-19. The user confirmed, "I already approved this one so yes," in the parent coordination thread. This authorizes only the exact Project Organiser role-instruction change stated above, together with its supported generated role mirrors and regression coverage, including reconciling that regression coverage with current main without weakening the approved behavior.
 
 ## Unattended Work Boundary
 
-Until the user answers yes, unattended work must not create an approval record, change an agent or skill definition, regenerate definition mirrors, tailor tests or evaluations to the finding, rerun the Project Organiser scenarios, or perform terminal closeout for this item.
-
-A yes answer authorizes only the exact Project Organiser role-instruction scope stated in the question, together with its supported generated role mirrors and regression coverage. It does not authorize a distributed skill expansion. A no answer preserves the integrated filename-selection regression but leaves this item blocked from satisfying the remaining governed scenario.
+The approval boundary remains exact: unattended work may change only the named Project Organiser role definition, its supported generated role mirrors, and regression coverage needed to prove the approved behavior. It must not change a distributed skill definition or weaken the scenario or Judge contract to obtain a pass.
 
 ## Current Delivery And Verification Evidence
 
@@ -33,7 +31,7 @@ A yes answer authorizes only the exact Project Organiser role-instruction scope 
 - Project Organiser scenario known-runbook-placement: PASS.
 - Project Organiser scenario authorized-taxonomy-extension: PASS.
 - Project Organiser scenario ambiguous-ownership-boundary: independent Judge FAIL because the filename-selection classification omitted consumers and mutability and left purpose and lifecycle implicit.
-- External technical blocker: [Correct agent-suite classification archive references](../defect-backlog/correct-agent-suite-classification-archive-references.md). This separate defect is not part of the approval question.
+- Resolved external technical blocker: [Correct agent-suite classification archive references](../completed-backlog/defects/correct-agent-suite-classification-archive-references.md). This separate defect is not part of the approval scope.
 
 ## Running Ownership
 
