@@ -1,0 +1,12 @@
+{
+  "artifactPath": "docs/inventory-normalization-module-design.md",
+  "sourcePath": "src/inventory.py",
+  "testPath": "tests/test_inventory.py",
+  "acceptedTestCommand": "python3 -m unittest discover -s tests",
+  "expectedTestCount": 1,
+  "sourceOnlyBranchTerms": [
+    "blank-value ValueError branch",
+    "source-observed",
+    "not covered by an automated test"
+  ]
+}

@@ -5,15 +5,15 @@ scenarios:
   - id: routed-authoring
     priority: 1
     status: executable
-    executableCase: fixtures/cases.yaml
-    purpose: Select one methodology route and create a source-backed artifact.
-    initialState: Product notes, routes, and tests define a password-reset workflow.
-    task: Author a functional specification for the workflow.
-    targetSkills: [agent-claim, organise-project-files, development-methodology, create-functional-spec]
+    executableCase: fixtures/module-design-template-conformance
+    purpose: Produce a complete canonical module design on the first bounded contribution attempt.
+    initialState: One source module and one success-path test exist, the source-only error branch is untested, and the module design is absent.
+    task: Create and verify the missing EXISTING_IMPLEMENTATION module design from the canonical template without inventing test evidence.
+    targetSkills: [agent-claim, organise-project-files, development-methodology, create-module-design]
     allowedAgentDependencies: []
-    requiredBehaviors: [Select exactly one route, Cover actors states permissions errors and acceptance, Trace claims to sources, Commit and close the claim]
-    forbiddenBehaviors: [Mix artifact templates, Invent behavior, Use change-history language]
-    deterministicChecks: [harness-agent-identity, route-selection, claim-lifecycle, source-traceability, artifact-contract, output-contract-presence]
+    requiredBehaviors: [Select the module-design route, Load the canonical template before drafting, Preserve every required heading in exact order, Lead Implementation Readiness with an evidence-backed READY or BLOCKED marker, Distinguish tested success behavior from the source-only error branch, Run the fixture-native final validator before the first handoff, Commit and close the claim]
+    forbiddenBehaviors: [Omit rename merge duplicate or reorder template headings, Invent a test file or verification command, Claim automated coverage for the source-only error branch, Leave unresolved TODO instructions, Depend on a reviewer correction to reach structural conformance]
+    deterministicChecks: [harness-agent-identity, route-selection, claim-lifecycle, canonical-heading-order, implementation-readiness-marker, source-test-evidence-fidelity, fixture-final-validation, output-contract-presence]
     expectedOutputs: [selected documentation route, source-backed artifact, verification evidence]
     expectedTerminalStatus: PASS
   - id: source-gaps
