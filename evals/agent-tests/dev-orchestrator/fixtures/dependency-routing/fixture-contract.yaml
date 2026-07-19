@@ -1,0 +1,77 @@
+schema: dependency-routing-fixture
+version: 1
+scenario: dependency-routing
+surfaces:
+  fixture: [fixture-contract.yaml, PROJECT.yaml, AGENTS.md, backlog/feature-backlog/update-dependency-health-summary.md]
+  source: [src/dependency_status.py, tests/test_dependency_status.py, validate_fixture.py]
+  documentation: [docs/operator-runbook.md]
+  generatedReadOnly: [agents/roles, skills, generated/adapters, design/generated]
+  report:
+    checkpoint: handoffReceipts
+    coordinator: handoffReceipts
+repository:
+  project: PROJECT.yaml
+  guidance: AGENTS.md
+  backlogItem: backlog/feature-backlog/update-dependency-health-summary.md
+lanes:
+  source:
+    owner: dev-coder
+    reviewer: dev-code-reviewer
+    input: src/dependency_status.py
+    requestedBehavior: Return degraded status with lexically sorted unavailable dependency names.
+    acceptanceCriteria:
+      - Return ok with an empty unavailableDependencies list when all named dependencies are available.
+      - Return degraded with lexically sorted unavailableDependencies otherwise.
+    verification:
+      - python3 -m unittest tests/test_dependency_status.py
+  documentation:
+    owner: dev-documentation-writer
+    reviewer: dev-artifact-reviewer
+    input: docs/operator-runbook.md
+    requestedBehavior: Document operator interpretation of ok and degraded dependency status.
+    acceptanceCriteria:
+      - Describe both statuses and the unavailableDependencies field.
+      - Give the fixture verification command without adding product behavior.
+    verification:
+      - python3 validate_fixture.py
+orchestration:
+  dependencyOrder:
+    - {step: 1, role: dev-coder, lane: source, fresh: true}
+    - {step: 2, role: dev-code-reviewer, lane: source-review, fresh: true}
+    - {step: 3, role: dev-documentation-writer, lane: documentation, fresh: true}
+    - {step: 4, role: dev-artifact-reviewer, lane: documentation-review, fresh: true}
+    - {step: 5, role: dev-verifier, lane: contribution-verification, fresh: true}
+    - {step: 6, role: dev-merge-coordinator, lane: integration, fresh: true}
+    - {step: 7, role: dev-code-reviewer, lane: post-integration-source-review, fresh: true}
+    - {step: 8, role: dev-artifact-reviewer, lane: post-integration-documentation-review, fresh: true}
+    - {step: 9, role: dev-verifier, lane: final-verification, fresh: true}
+    - {step: 10, role: dev-backlog-steward, lane: closeout, fresh: true}
+  claims:
+    maximumActiveNestedDependencies: 1
+    sourceScope: [src/dependency_status.py, tests/test_dependency_status.py]
+    documentationScope: [docs/operator-runbook.md]
+    integrationResource: merge:integration:fixture-main
+    releaseRequirement: Every modifying claim is clean, committed, and normally released.
+  integration:
+    owner: dev-merge-coordinator
+    requiresAcceptedSource: true
+    requiresAcceptedDocumentation: true
+    targetBranch: main
+  postIntegrationReviews:
+    source: {role: dev-code-reviewer, context: fresh}
+    documentation: {role: dev-artifact-reviewer, context: fresh}
+  finalVerification:
+    owner: dev-verifier
+    command: python3 validate_fixture.py
+    requiresAcceptedPostIntegrationReviews: true
+  closeout:
+    owner: dev-backlog-steward
+    item: backlog/feature-backlog/update-dependency-health-summary.md
+    terminalState: Complete
+handoffReceipt:
+  requiredLanes: [source, documentation, integration, closeout]
+  requiredFields: [lane, role, commit, review, verification, claimRelease]
+runtimeResources:
+  python: Python 3.11 or newer
+  model: Current app-bundled Codex runtime with staged custom agents
+  externalNetwork: Not required

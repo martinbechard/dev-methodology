@@ -70,6 +70,36 @@ class _JunieEvidenceInsufficient(RuntimeError):
         self.diagnostics = dict(diagnostics or {})
 
 
+_DEPENDENCY_ROUTING_FIXTURE_FIELDS = (
+    "lanes.source.owner",
+    "lanes.source.input",
+    "lanes.source.requestedBehavior",
+    "lanes.source.acceptanceCriteria",
+    "lanes.source.verification",
+    "lanes.documentation.owner",
+    "lanes.documentation.input",
+    "lanes.documentation.requestedBehavior",
+    "lanes.documentation.acceptanceCriteria",
+    "lanes.documentation.verification",
+    "surfaces.fixture",
+    "surfaces.source",
+    "surfaces.documentation",
+    "surfaces.generatedReadOnly",
+    "surfaces.report",
+    "orchestration.dependencyOrder",
+    "orchestration.claims",
+    "orchestration.integration",
+    "orchestration.postIntegrationReviews",
+    "orchestration.finalVerification",
+    "orchestration.closeout",
+    "handoffReceipt.requiredLanes",
+    "handoffReceipt.requiredFields",
+    "runtimeResources.python",
+    "runtimeResources.model",
+    "runtimeResources.externalNetwork",
+)
+
+
 @dataclasses.dataclass(frozen=True)
 class _Suite:
     suite_id: str
@@ -129,6 +159,75 @@ def _load_yaml(path: Path) -> dict[str, Any]:
     return loaded
 
 
+def _dotted_value(document: dict[str, Any], dotted_path: str) -> Any:
+    """Return one nested mapping value, or None when any path component is absent."""
+    value: Any = document
+    for component in dotted_path.split("."):
+        if not isinstance(value, dict) or component not in value:
+            return None
+        value = value[component]
+    return value
+
+
+def _validate_fixture_contract(suite: _Suite, scenario: dict[str, Any]) -> None:
+    """Validate the dependency-routing fixture's required structured inputs."""
+    relative = scenario.get("fixtureContract")
+    if relative is None:
+        return
+    if not isinstance(relative, str) or not relative.strip():
+        raise ValueError(f"{suite.suite_id}:{scenario.get('id', '')} has an invalid fixtureContract")
+    path = (suite.path / relative).resolve()
+    if suite.path.resolve() not in path.parents or not path.is_file():
+        raise ValueError(f"{suite.suite_id}:{scenario.get('id', '')} has no fixture contract: {path}")
+    contract = _load_yaml(path)
+    identity = f"{suite.suite_id}:{scenario.get('id', '')}"
+    for dotted_path in _DEPENDENCY_ROUTING_FIXTURE_FIELDS:
+        value = _dotted_value(contract, dotted_path)
+        if value is None or value == "" or value == [] or value == {}:
+            raise ValueError(f"{identity} missing fixture field {dotted_path}")
+    expected_lanes = scenario.get("requiredHandoffReceiptLanes", [])
+    if expected_lanes and contract["handoffReceipt"]["requiredLanes"] != expected_lanes:
+        raise ValueError(f"{identity} fixture handoffReceipt.requiredLanes disagrees with scenario")
+    expected_fields = scenario.get("requiredHandoffReceiptFields", [])
+    if expected_fields and contract["handoffReceipt"]["requiredFields"] != expected_fields:
+        raise ValueError(f"{identity} fixture handoffReceipt.requiredFields disagrees with scenario")
+    expected_order = scenario.get("requiredDependencyOrder", [])
+    observed_order = [str(item.get("role", "")) for item in contract["orchestration"]["dependencyOrder"]]
+    if expected_order and observed_order != expected_order:
+        raise ValueError(f"{identity} fixture orchestration.dependencyOrder disagrees with scenario")
+
+
+def _agent_dependencies(run: _RunSpec) -> tuple[str, ...]:
+    """Return the fixed and selected task dependencies required by one run."""
+    dependencies = {
+        str(value)
+        for value in run.suite.manifest.get("target", {}).get("allowedAgentDependencies", [])
+    }
+    selected = set(run.scenario_ids)
+    dependencies.update(
+        str(value)
+        for scenario in run.suite.scenarios
+        if str(scenario.get("id", "")) in selected
+        for value in scenario.get("taskSelectedAgentDependencies", [])
+    )
+    return tuple(sorted(dependencies))
+
+
+def _scenario_declared_values(run: _RunSpec, field: str) -> tuple[str, ...]:
+    """Return the unique string values declared by selected scenarios for one field."""
+    selected = set(run.scenario_ids)
+    return tuple(
+        sorted(
+            {
+                str(value)
+                for scenario in run.suite.scenarios
+                if str(scenario.get("id", "")) in selected
+                for value in scenario.get(field, [])
+            }
+        )
+    )
+
+
 def _load_catalog(
     suite_root: Path = _SUITE_ROOT,
     include_ids: set[str] | None = None,
@@ -186,6 +285,9 @@ def _validate_suite(suite: _Suite, require_executable: bool = True) -> None:
     if len(suite.scenarios) < 3:
         raise ValueError(f"{suite.suite_id} requires at least three scenarios")
     scenario_ids: set[str] = set()
+    selectable_dependencies = {
+        str(value) for value in target.get("taskSelectableAgentDependencies", [])
+    }
     for scenario in suite.scenarios:
         scenario_id = str(scenario.get("id", ""))
         if not scenario_id or scenario_id in scenario_ids:
@@ -205,6 +307,31 @@ def _validate_suite(suite: _Suite, require_executable: bool = True) -> None:
                 f"{suite.suite_id}:{scenario_id} has an unknown runtime capability: "
                 f"{', '.join(sorted(unknown_capabilities))}"
             )
+        for field in (
+            "taskSelectedAgentDependencies",
+            "requiredDependencyOrder",
+            "requiredHandoffReceiptLanes",
+            "requiredHandoffReceiptFields",
+        ):
+            values = scenario.get(field, [])
+            if not isinstance(values, list) or not all(isinstance(value, str) and value for value in values):
+                raise ValueError(f"{suite.suite_id}:{scenario_id} {field} must be a list of strings")
+        unknown_dependencies = set(scenario.get("taskSelectedAgentDependencies", [])) - selectable_dependencies
+        if unknown_dependencies:
+            raise ValueError(
+                f"{suite.suite_id}:{scenario_id} selects undeclared task dependencies: "
+                f"{', '.join(sorted(unknown_dependencies))}"
+            )
+        allowed_dependencies = {
+            str(value) for value in target.get("allowedAgentDependencies", [])
+        } | set(scenario.get("taskSelectedAgentDependencies", []))
+        unknown_order = set(scenario.get("requiredDependencyOrder", [])) - allowed_dependencies
+        if unknown_order:
+            raise ValueError(
+                f"{suite.suite_id}:{scenario_id} orders undeclared dependencies: "
+                f"{', '.join(sorted(unknown_order))}"
+            )
+        _validate_fixture_contract(suite, scenario)
     for path_field in ("conceptualRole", "nativeAgent"):
         path = _REPOSITORY_ROOT / str(target.get(path_field, ""))
         if not path.is_file():
@@ -773,7 +900,7 @@ def _stage_batch(batch: Sequence[_RunSpec], run_root: Path) -> tuple[Path, Path,
         for source, invocation in sources:
             if invocation not in staged:
                 staged[invocation] = _copy_agent(source, invocation, agent_root)
-        for dependency in manifest["target"].get("allowedAgentDependencies", []):
+        for dependency in _agent_dependencies(run):
             invocation = str(dependency).replace("-", "_")
             source = _REPOSITORY_ROOT / "generated" / "adapters" / "codex" / "agents" / f"{dependency}.toml"
             if invocation not in staged:
@@ -925,6 +1052,21 @@ def _coordinator_schema() -> dict[str, Any]:
                                     },
                                     "cleanup": {"type": "string", "enum": ["clean", "failed"]},
                                     "evidence": {"type": "array", "items": {"type": "string"}},
+                                    "handoffReceipts": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "additionalProperties": False,
+                                            "properties": {
+                                                "lane": {"type": "string"},
+                                                "role": {"type": "string"},
+                                                "commit": {"type": "string"},
+                                                "review": {"type": "string"},
+                                                "verification": {"type": "string"},
+                                                "claimRelease": {"type": "string"},
+                                            },
+                                        },
+                                    },
                                 },
                             },
                         },
@@ -1242,6 +1384,23 @@ def _coordinator_prompt(
                 "runtimeCapabilities": sorted(_runtime_capabilities((run,))),
                 "checkpointRoot": str(checkpoint_root),
                 "fixtureRoot": str(fixture_root / run.suite.suite_id),
+                "agentDependencies": list(_agent_dependencies(run)),
+                "fixtureContracts": [
+                    str(scenario["fixtureContract"])
+                    for scenario in run.suite.scenarios
+                    if str(scenario["id"]) in set(run.scenario_ids) and scenario.get("fixtureContract")
+                ],
+                "requiredHandoffReceiptLanes": list(
+                    _scenario_declared_values(run, "requiredHandoffReceiptLanes")
+                ),
+                "requiredHandoffReceiptFields": list(
+                    _scenario_declared_values(run, "requiredHandoffReceiptFields")
+                ),
+                "dependencyOrderByScenario": {
+                    str(scenario["id"]): list(scenario.get("requiredDependencyOrder", []))
+                    for scenario in run.suite.scenarios
+                    if str(scenario["id"]) in set(run.scenario_ids)
+                },
             }
         )
     return (
@@ -1260,7 +1419,9 @@ def _coordinator_prompt(
         "scenario and before starting later work. Each checkpoint must contain suite, scenario, status, targetInvoked, "
         "judgeInvoked, identityEvidence, deterministicEvidence, modelJudgeEvidence, and evidence as arrays of "
         "diagnostic strings, evidenceReceipts as an array of exact path and lowercase SHA-256 references, cleanup as clean or "
-        "failed, and residualRisk as a string; nested objects are forbidden for those fields. Each result must state "
+        "failed, residualRisk as a string, and any assignment-declared handoffReceipts as structured objects with "
+        "the declared lanes and fields; prose cannot substitute for those receipts. Nested objects are forbidden in "
+        "the diagnostic arrays. "
         "The diagnostic strings never prove a verdict. Beneath checkpointRoot/suite/scenario, retain one artifacts file and "
         "one receipts JSON file per configured deterministic check. Each deterministic-check-disposition receipt must bind "
         "schema dev-methodology-agent-suite-evidence-receipt version 1, the assignment runIdentity, suite, scenario, exact "
@@ -1664,6 +1825,11 @@ def _load_checkpoint_report(
                 raise RuntimeError(f"Scenario checkpoint evidence must be an array of strings: {path}")
             if not isinstance(evidence_receipts, list):
                 evidence_receipts = []
+            handoff_receipts = loaded.get("handoffReceipts", [])
+            if not isinstance(handoff_receipts, list) or not all(
+                isinstance(receipt, dict) for receipt in handoff_receipts
+            ):
+                raise RuntimeError(f"Scenario checkpoint handoffReceipts must be an array of objects: {path}")
             if loaded.get("status") not in _TERMINAL_STATUSES:
                 raise RuntimeError(f"Scenario checkpoint status must be terminal: {path}")
             if type(loaded.get("targetInvoked")) is not bool or type(loaded.get("judgeInvoked")) is not bool:
@@ -1707,6 +1873,7 @@ def _load_checkpoint_report(
                     "receiptAudit": receipt_audit,
                     "cleanup": loaded["cleanup"],
                     "evidence": retained_evidence,
+                    "handoffReceipts": handoff_receipts,
                 }
             )
             if loaded.get("residualRisk"):
@@ -1755,11 +1922,18 @@ def _audit_checkpoint_agreement(
         raise RuntimeError(
             f"Checkpoint coverage mismatch: expected {sorted(expected)}, observed {sorted(checkpoints)}"
         )
-    compared_fields = (
-        "status", "targetInvoked", "judgeInvoked",
-        "evidenceReceipts", "cleanup",
-    )
+    scenarios = {
+        (run.suite.suite_id, str(scenario["id"])): scenario
+        for run in batch
+        for scenario in run.suite.scenarios
+        if str(scenario["id"]) in set(run.scenario_ids)
+    }
     for identity in sorted(expected):
+        compared_fields = [
+            "status", "targetInvoked", "judgeInvoked", "evidenceReceipts", "cleanup"
+        ]
+        if scenarios[identity].get("requiredHandoffReceiptFields"):
+            compared_fields.append("handoffReceipts")
         if any(final_results[identity].get(field) != checkpoints[identity].get(field) for field in compared_fields):
             raise RuntimeError(f"Final report disagrees with checkpoint for {identity[0]}:{identity[1]}")
 
@@ -1791,6 +1965,12 @@ def _audit_report(
 ) -> list[dict[str, Any]]:
     expected = {run.suite.suite_id: set(run.scenario_ids) for run in batch}
     suites = {run.suite.suite_id: run.suite for run in batch}
+    scenarios = {
+        (run.suite.suite_id, str(scenario["id"])): scenario
+        for run in batch
+        for scenario in run.suite.scenarios
+        if str(scenario["id"]) in set(run.scenario_ids)
+    }
     observed: dict[str, set[str]] = {}
     runs = report.get("runs", [])
     checkpoint_results = {
@@ -1812,6 +1992,8 @@ def _audit_report(
             raise RuntimeError(f"Duplicate scenario result for {suite_id}")
         observed[suite_id] = set(scenario_names)
         for scenario_result in scenario_results:
+            scenario_id = str(scenario_result.get("scenario", ""))
+            scenario = scenarios.get((suite_id, scenario_id), {})
             if scenario_result.get("status") not in _TERMINAL_STATUSES:
                 raise RuntimeError(f"Invalid terminal status for {suite_id}:{scenario_result.get('scenario')}")
             if not isinstance(scenario_result.get("targetInvoked"), bool) or not isinstance(
@@ -1899,6 +2081,29 @@ def _audit_report(
                 raise RuntimeError(f"Missing identity evidence for {suite_id}:{scenario_result.get('scenario')}")
             if scenario_result.get("cleanup") != "clean":
                 raise RuntimeError(f"Cleanup failed for {suite_id}:{scenario_result.get('scenario')}")
+            required_lanes = scenario.get("requiredHandoffReceiptLanes", [])
+            required_fields = scenario.get("requiredHandoffReceiptFields", [])
+            if required_lanes or required_fields:
+                handoff_receipts = scenario_result.get("handoffReceipts", [])
+                if not isinstance(handoff_receipts, list):
+                    raise RuntimeError(f"{suite_id}:{scenario_id} handoffReceipts must be a list")
+                receipts_by_lane: dict[str, dict[str, Any]] = {}
+                for receipt in handoff_receipts:
+                    if not isinstance(receipt, dict):
+                        raise RuntimeError(f"{suite_id}:{scenario_id} handoff receipt must be an object")
+                    lane = str(receipt.get("lane", ""))
+                    if lane in receipts_by_lane:
+                        raise RuntimeError(f"{suite_id}:{scenario_id} duplicate handoff receipt lane {lane}")
+                    receipts_by_lane[lane] = receipt
+                for lane in required_lanes:
+                    if lane not in receipts_by_lane:
+                        raise RuntimeError(f"{suite_id}:{scenario_id} missing handoff receipt lane {lane}")
+                    for field in required_fields:
+                        value = receipts_by_lane[lane].get(field)
+                        if not isinstance(value, str) or not value:
+                            raise RuntimeError(
+                                f"{suite_id}:{scenario_id} handoff receipt {lane} missing field {field}"
+                            )
         if int(item.get("maximumActiveChildrenObserved", -1)) > 1:
             raise RuntimeError(f"Child concurrency exceeded for {suite_id}")
         if item.get("cleanup") != "clean":
@@ -2267,6 +2472,7 @@ def _audit_session_concurrency(
     sessions: Sequence[_Session],
     maximum_threads: int,
     batch: Sequence[_RunSpec] | None = None,
+    report: dict[str, Any] | None = None,
 ) -> dict[str, int]:
     by_parent: dict[str, list[_Session]] = {}
     for session in sessions:
@@ -2316,7 +2522,7 @@ def _audit_session_concurrency(
         allowed_dependencies = {
             str(dependency).replace("-", "_")
             for run in batch
-            for dependency in run.suite.manifest["target"].get("allowedAgentDependencies", [])
+            for dependency in _agent_dependencies(run)
         }
         known_invocations = {
             str(run.suite.manifest["execution"][key])
@@ -2336,8 +2542,8 @@ def _audit_session_concurrency(
         suite_by_supervisor = {
             str(run.suite.manifest["execution"]["supervisorInvocation"]): run.suite for run in batch
         }
-        suite_by_target = {
-            str(run.suite.manifest["execution"]["targetInvocation"]): run.suite for run in batch
+        run_by_target = {
+            str(run.suite.manifest["execution"]["targetInvocation"]): run for run in batch
         }
         for supervisor in supervisor_sessions:
             suite = suite_by_supervisor.get(str(supervisor.invocation))
@@ -2355,16 +2561,69 @@ def _audit_session_concurrency(
                 )
         for nested in (session for session in sessions if session.depth >= 3):
             parent = session_by_id.get(str(nested.parent_thread_id))
-            suite = suite_by_target.get(str(parent.invocation)) if parent else None
+            run = run_by_target.get(str(parent.invocation)) if parent else None
             suite_dependencies = {
                 str(value).replace("-", "_")
-                for value in suite.manifest["target"].get("allowedAgentDependencies", [])
-            } if suite else set()
+                for value in _agent_dependencies(run)
+            } if run else set()
             if nested.invocation not in suite_dependencies:
                 raise RuntimeError(
                     f"Nested dependency {nested.invocation} is not allowed for parent "
                     f"{parent.invocation if parent else nested.parent_thread_id}"
                 )
+        if report is not None:
+            reported_scenarios = {
+                (str(run_result.get("suite", "")), str(result.get("scenario", ""))): result
+                for run_result in report.get("runs", [])
+                for result in run_result.get("scenarioResults", [])
+            }
+            for run in batch:
+                supervisor = next(
+                    (
+                        session
+                        for session in supervisor_sessions
+                        if session.invocation == run.suite.manifest["execution"]["supervisorInvocation"]
+                    ),
+                    None,
+                )
+                if supervisor is None:
+                    continue
+                target_invocation = str(run.suite.manifest["execution"]["targetInvocation"])
+                target_sessions = sorted(
+                    (
+                        session
+                        for session in by_parent.get(supervisor.session_id, [])
+                        if session.invocation == target_invocation
+                    ),
+                    key=lambda session: session.started_at,
+                )
+                invoked_scenarios = [
+                    scenario_id
+                    for scenario_id in run.scenario_ids
+                    if reported_scenarios.get((run.suite.suite_id, scenario_id), {}).get("targetInvoked")
+                ]
+                if len(target_sessions) != len(invoked_scenarios):
+                    raise RuntimeError(f"Cannot audit dependency order for {run.suite.suite_id}")
+                scenarios = {str(value["id"]): value for value in run.suite.scenarios}
+                for scenario_id, target_session in zip(invoked_scenarios, target_sessions, strict=True):
+                    expected_order = [
+                        str(value).replace("-", "_")
+                        for value in scenarios[scenario_id].get("requiredDependencyOrder", [])
+                    ]
+                    if not expected_order:
+                        continue
+                    observed_order = [
+                        str(session.invocation)
+                        for session in sorted(
+                            by_parent.get(target_session.session_id, []),
+                            key=lambda session: session.started_at,
+                        )
+                    ]
+                    if observed_order != expected_order:
+                        raise RuntimeError(
+                            f"Dependency order mismatch for {run.suite.suite_id}:{scenario_id}: "
+                            f"expected {expected_order}, observed {observed_order}"
+                        )
     return {"maximumActiveSessions": maximum_active, "maximumChildrenObserved": maximum_children}
 
 
@@ -3264,7 +3523,9 @@ def _run_live_batch(
             browser_audit = {"error": browser_error}
         concurrency_error: str | None = None
         try:
-            concurrency = _audit_session_concurrency(_load_sessions(codex_home), maximum_threads, batch)
+            concurrency = _audit_session_concurrency(
+                _load_sessions(codex_home), maximum_threads, batch, partial_report or {}
+            )
         except RuntimeError as error:
             concurrency_error = str(error)
             concurrency = {"error": concurrency_error}

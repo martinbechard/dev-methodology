@@ -1267,6 +1267,39 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "Anonymous child"):
             runner._audit_session_concurrency(sessions, maximum_threads=9, batch=batch)
 
+    def test_declared_nested_dependency_order_is_audited(self) -> None:
+        """A task-selected dependency cannot run before its declared predecessor."""
+        suite = self._suite("ordered", nested_limit=1)
+        scenario = dict(suite.scenarios[0])
+        scenario["taskSelectedAgentDependencies"] = ["reviewer"]
+        scenario["requiredDependencyOrder"] = ["dependency", "reviewer"]
+        suite = runner._Suite(suite.suite_id, suite.priority, suite.path, suite.manifest, (scenario,))
+        run = runner._RunSpec(suite, ("happy",))
+        sessions = (
+            runner._Session("supervisor", "root", "suite_supervisor", 1, 0.0, 10.0, frozenset()),
+            runner._Session("target", "supervisor", "target_agent", 2, 1.0, 8.0, frozenset()),
+            runner._Session("reviewer", "target", "reviewer", 3, 2.0, 3.0, frozenset()),
+            runner._Session("dependency", "target", "dependency", 3, 4.0, 5.0, frozenset()),
+        )
+        report = {
+            "runs": [
+                {
+                    "suite": "ordered",
+                    "scenarioResults": [
+                        {"scenario": "happy", "targetInvoked": True, "judgeInvoked": False}
+                    ],
+                }
+            ]
+        }
+
+        with self.assertRaisesRegex(RuntimeError, "Dependency order mismatch for ordered:happy"):
+            runner._audit_session_concurrency(
+                sessions,
+                maximum_threads=9,
+                batch=(run,),
+                report=report,
+            )
+
     def test_target_target_judge_judge_order_fails_scenario_binding(self) -> None:
         """Each target must be followed by its Judge before the next scenario target."""
         with tempfile.TemporaryDirectory() as temporary:
@@ -1922,6 +1955,106 @@ class AgentSuiteRunnerTests(unittest.TestCase):
 
             with self.assertRaisesRegex(RuntimeError, "must be booleans"):
                 runner._load_checkpoint_report(Path(temporary), batch, "codex-batch-01-test")
+
+    def test_task_selected_dependencies_extend_fixed_dependencies(self) -> None:
+        """A scenario can stage bounded task roles without changing the canonical manifest."""
+        suite = self._suite("dependency-selection")
+        scenario = dict(suite.scenarios[0])
+        scenario["taskSelectedAgentDependencies"] = [
+            "dev-documentation-writer",
+            "dev-artifact-reviewer",
+        ]
+        suite = runner._Suite(
+            suite.suite_id,
+            suite.priority,
+            suite.path,
+            suite.manifest,
+            (scenario,),
+        )
+
+        observed = runner._agent_dependencies(
+            runner._RunSpec(suite=suite, scenario_ids=("happy",))
+        )
+
+        self.assertEqual(
+            (
+                "dependency",
+                "dev-artifact-reviewer",
+                "dev-documentation-writer",
+            ),
+            observed,
+        )
+
+    def test_fixture_contract_reports_exact_missing_dotted_field(self) -> None:
+        """Fixture omissions identify the suite, scenario, and exact dotted field."""
+        with tempfile.TemporaryDirectory() as directory:
+            suite = self._dependency_routing_suite(Path(directory))
+            contract = Path(directory) / "fixture-contract.yaml"
+            contract.write_text("schema: dependency-routing-fixture\n", encoding="utf-8")
+
+            with self.assertRaisesRegex(
+                ValueError,
+                r"dependency-routing:dependency-routing missing fixture field lanes\.source\.owner",
+            ):
+                runner._validate_fixture_contract(suite, suite.scenarios[0])
+
+    def test_report_reports_exact_missing_handoff_receipt_field(self) -> None:
+        """Receipt omissions identify the scenario, lane, and exact required field."""
+        suite = self._suite("dependency-routing")
+        scenario = dict(suite.scenarios[0])
+        scenario["requiredHandoffReceiptFields"] = [
+            "lane",
+            "role",
+            "commit",
+            "review",
+            "verification",
+            "claimRelease",
+        ]
+        scenario["requiredHandoffReceiptLanes"] = ["source"]
+        suite = runner._Suite(
+            suite.suite_id,
+            suite.priority,
+            suite.path,
+            suite.manifest,
+            (scenario,),
+        )
+        run = runner._RunSpec(suite=suite, scenario_ids=("happy",))
+        report = {
+            "runs": [self._suite_report("dependency-routing", "PASS")],
+            "batchCleanup": "clean",
+            "residualRisk": "",
+        }
+        report["runs"][0]["scenarioResults"][0]["handoffReceipts"] = [
+            {
+                "lane": "source",
+                "role": "dev-coder",
+                "commit": "abc123",
+                "review": "accepted",
+                "verification": "pass",
+            }
+        ]
+
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "dependency-routing:happy handoff receipt source missing field claimRelease",
+        ):
+            runner._audit_report((run,), report)
+
+    @staticmethod
+    def _dependency_routing_suite(path: Path) -> object:
+        """Build the smallest suite that exercises fixture-contract validation."""
+        return runner._Suite(
+            suite_id="dependency-routing",
+            priority=1,
+            path=path,
+            manifest={"target": {"allowedAgentDependencies": ["dev-coder"]}},
+            scenarios=(
+                {
+                    "id": "dependency-routing",
+                    "fixtureContract": "fixture-contract.yaml",
+                },
+            ),
+        )
 
     @staticmethod
     def _suite(suite_id: str, nested_limit: int = 0) -> object:

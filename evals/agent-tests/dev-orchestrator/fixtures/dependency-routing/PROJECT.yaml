@@ -1,0 +1,14 @@
+schema: synthetic-project-configuration
+version: 1
+project: dependency-health-fixture
+privacyBoundary: Synthetic dependency names and statuses only.
+folders:
+  - path: src
+    owner: dev-coder
+    reviewer: dev-code-reviewer
+    skills: [python, careful-coding, test-driven-development]
+  - path: docs
+    owner: dev-documentation-writer
+    reviewer: dev-artifact-reviewer
+verification:
+  command: python3 validate_fixture.py
