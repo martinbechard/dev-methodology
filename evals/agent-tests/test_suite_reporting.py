@@ -335,6 +335,76 @@ class AgentSuiteReportingTests(unittest.TestCase):
             )
         )
 
+    def test_aggregate_classifies_null_scenario_results_as_missing_and_malformed(
+        self,
+    ) -> None:
+        """Digest-consistent malformed metadata is bounded at the aggregate edge."""
+        with (
+            tempfile.TemporaryDirectory() as directory,
+            mock.patch.object(reporting, "_suite_digest", return_value="digest"),
+        ):
+            root = Path(directory)
+            reporting.write_suite_report(
+                root,
+                self._metadata(
+                    "codex", "dev-coder", "PASS", root / "runner-result"
+                ),
+            )
+            pointer_path = root / "suites" / "codex" / "dev-coder.manifest.json"
+            pointer = json.loads(pointer_path.read_text(encoding="utf-8"))
+            generation_root = (root / pointer["metadata"]).parent
+            metadata_path = generation_root / "metadata.json"
+            html_path = generation_root / "report.html"
+            manifest_path = generation_root / "evidence" / "manifest.json"
+            metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+            original_embedded = reporting._embedded_metadata(metadata)
+            metadata["scenarioResults"] = None
+            metadata_content = json.dumps(metadata, indent=2, sort_keys=True) + "\n"
+            html_content = html_path.read_text(encoding="utf-8").replace(
+                original_embedded, reporting._embedded_metadata(metadata)
+            )
+            manifest_content = manifest_path.read_text(encoding="utf-8")
+            generation = hashlib.sha256(
+                metadata_content.encode("utf-8")
+                + html_content.encode("utf-8")
+                + manifest_content.encode("utf-8")
+            ).hexdigest()
+            replacement_root = generation_root.with_name(generation)
+            generation_root.rename(replacement_root)
+            metadata_path = replacement_root / "metadata.json"
+            html_path = replacement_root / "report.html"
+            metadata_path.write_text(metadata_content, encoding="utf-8")
+            html_path.write_text(html_content, encoding="utf-8")
+            pointer.update(
+                {
+                    "generation": generation,
+                    "metadata": metadata_path.relative_to(root).as_posix(),
+                    "metadataSha256": hashlib.sha256(
+                        metadata_content.encode("utf-8")
+                    ).hexdigest(),
+                    "html": html_path.relative_to(root).as_posix(),
+                    "htmlSha256": hashlib.sha256(
+                        html_content.encode("utf-8")
+                    ).hexdigest(),
+                    "evidenceManifest": (
+                        replacement_root / "evidence" / "manifest.json"
+                    ).relative_to(root).as_posix(),
+                }
+            )
+            pointer_path.write_text(
+                json.dumps(pointer, indent=2, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
+
+            entries = reporting.aggregate_entries(
+                root, ("dev-coder",), "codex", "revision"
+            )
+
+        self.assertEqual(
+            {"MISSING", "MALFORMED"},
+            {entry["inputState"] for entry in entries},
+        )
+
     def test_publication_requires_response_index_to_name_the_sole_judge_terminal(
         self,
     ) -> None:

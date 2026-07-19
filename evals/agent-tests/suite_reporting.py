@@ -1136,7 +1136,10 @@ def _validate_evidence_bundle(generation_root: Path, metadata: Mapping[str, Any]
             raise ValueError(f"suite report {kind} object is unavailable")
         return content
 
-    for scenario in metadata.get("scenarioResults", []):
+    scenario_results = metadata.get("scenarioResults")
+    if not isinstance(scenario_results, list):
+        raise ValueError("suite report scenarioResults must be a list")
+    for scenario in scenario_results:
         if not isinstance(scenario, Mapping) or scenario.get("judgeInvoked") is not True:
             continue
         scenario_id = scenario.get("scenario")
