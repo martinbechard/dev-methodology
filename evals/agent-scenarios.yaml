@@ -157,7 +157,7 @@ agents:
         expectedOutcome: A dispatchable authoritative item, ownership record, and next runnable step in the configured backend without a duplicate shadow queue.
         requiredBehaviors:
           - Use only the configured backend and ask when no backend is selected.
-          - Record explicit Proposed or claimed state and dependency evidence.
+          - Record explicit Ready or claimed state and dependency evidence.
           - Leave enough context for another contributor to recover the work.
         forbiddenBehaviors:
           - Create a duplicate file and issue for the same item.

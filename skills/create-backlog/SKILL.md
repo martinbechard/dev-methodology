@@ -1,6 +1,6 @@
 ---
 name: create-backlog
-description: Create structured markdown backlog items and user-review requests from notes, defects, features, investigations, analyses, or blocked work. Use when the user asks to capture work for later, split or classify backlog work, or preserve a decision that must return to the user before unattended execution.
+description: Create structured markdown backlog items and user-action-required requests from notes, defects, features, investigations, analyses, or blocked work. Use when the user asks to capture work for later, split or classify backlog work, or preserve a decision that must return to the user before unattended execution.
 metadata:
   category: development-practice
 ---
@@ -9,7 +9,7 @@ metadata:
 
 ## Purpose
 
-Create backlog items that are clear, typed, and safe to manage later. Ordinary active items must be dispatchable without the original conversation. User-review items must preserve the exact decision or information only the user can provide and must remain separate from unattended work.
+Create backlog items that are clear, typed, and safe to manage later. Ordinary active items must be dispatchable without the original conversation. User-action-required items must preserve the exact decision or information only the user can provide and must remain separate from unattended work.
 
 ## Folder Model
 
@@ -19,15 +19,15 @@ Place new backlog items by work type:
 - Features go in backlog/feature-backlog.
 - Analyses go in backlog/analysis-backlog.
 - Investigations go in backlog/investigation-backlog.
-- Items whose next safe step requires a user decision, approval, authority grant, value judgment, or user-held information go in backlog/user-review.
+- Items whose next safe step requires a user decision, approval, authority grant, value judgment, or user-held information go in backlog/user-action-required.
 - Items that should remain visible but not automatically worked go in backlog/holding.
 - Do not create items directly in completed or failed archive folders.
 
 If a repository has a documented taxonomy or placement rule, follow it before creating files. If the expected backlog folder does not exist, create the most specific standard folder that matches the item type unless project guidance says otherwise.
 
-User review is a queue state, not a work type. Preserve the underlying Type as Defect, Feature, Analysis, or Investigation so an answered item has a deterministic active destination. Use Status: User Review while the item remains in backlog/user-review.
+User Action Required is a queue state, not a work type. Preserve the underlying Type as Defect, Feature, Analysis, or Investigation so an answered item has a deterministic active destination. Use Status: User Action Required while the item remains in backlog/user-action-required.
 
-backlog/holding and backlog/user-review are different. Holding contains work intentionally deferred without an immediate question. User review contains work that cannot safely advance until the user answers a concrete question.
+backlog/holding and backlog/user-action-required are different. Holding contains work intentionally deferred without an immediate question. User Action Required contains work that cannot safely advance until the user answers a concrete question.
 
 ## Related Item Series
 
@@ -58,17 +58,21 @@ Classify by the outcome the work must produce:
 
 When a request mixes types, split it into separate backlog items only when the parts can be completed independently. Keep a single item when one coherent delivery outcome depends on all parts.
 
-## User Review Classification
+## User Action Required Classification
 
-Place an item in backlog/user-review only when all of these are true:
+Place an independently identified potentially valuable idea in backlog/user-action-required when the user has not requested or authorized the work. Preserve its underlying Type, set Status: User Action Required, and ask one concrete approval question before unattended work can continue.
+
+Also place an item in backlog/user-action-required when all of these are true:
 
 - The next safe action depends on a decision, approval, authority grant, value judgment, or information that belongs to the user.
 - The item can state one concrete question whose answer changes what happens next.
 - Proceeding without that answer would invent authority, product intent, risk acceptance, ownership, or source truth.
 
-Do not place an item in backlog/user-review merely because the task is difficult, an ordinary dependency is unavailable, an agent lacks a tool, implementation failed, or more technical investigation is possible. Keep agent-actionable work in its typed active backlog and record ordinary dependencies there.
+Do not place an item in backlog/user-action-required merely because the task is difficult, an ordinary dependency is unavailable, an agent lacks a tool, implementation failed, or more technical investigation is possible. Keep agent-actionable work in its typed active backlog and record ordinary dependencies there.
 
-Do not turn a synthetic evaluation boundary into user-review work unless it represents a genuine unresolved project decision. A scenario designed to prove safe blocking is test evidence, not automatically a user obligation.
+Do not turn a synthetic evaluation boundary into user-action-required work unless it represents a genuine unresolved project decision. A scenario designed to prove safe blocking is test evidence, not automatically a user obligation.
+
+A direct user request or explicit user authorization is sufficient authority to create an item in its typed active backlog with Status: Ready. Keep it there when ordinary evidence-backed dependencies remain. Route it to backlog/user-action-required only when a separate genuine user-owned question still prevents safe unattended work, or to backlog/holding when the user explicitly defers it.
 
 ## Filename And Slug
 
@@ -83,7 +87,7 @@ Before writing a new file, check the target folder for an existing matching or o
 Write each backlog item as a self-contained work package with these sections:
 
 - Title: one clear heading naming the work.
-- Status: Proposed for new items unless the user gives a different explicit state.
+- Status: Ready for directly requested or explicitly authorized active work; User Action Required for independently identified ideas or work awaiting a separate user-owned answer; or Holding when the user explicitly defers the work.
 - Type: Defect, Feature, Analysis, Investigation, or Holding.
 - Summary: one short paragraph explaining the desired outcome.
 - Context: facts, current behavior, user impact, constraints, and source references needed to understand the work.
@@ -95,9 +99,9 @@ Write each backlog item as a self-contained work package with these sections:
 
 Use imperative, steady-state language. Do not describe the item as revised, enhanced, or updated unless the work itself is specifically about revision history.
 
-For an item in backlog/user-review, also include this structure:
+For an item in backlog/user-action-required, also include this structure:
 
-- User Review Required: the section that owns the review request.
+- User Action Required: the section that owns the user request.
 - Question for the User: one direct question that can be answered without reconstructing the original task.
 - Why User Input Is Required: the authority or knowledge boundary that prevents unattended work.
 - Options and Tradeoffs: known choices and their consequences when choices are available.
@@ -127,7 +131,9 @@ Before reporting completion:
 - Confirm related multi-item goals have a goal subfolder with index.md and child item links.
 - Confirm the filename slug is stable and unique.
 - Confirm the item contains Status, Type, Summary, Requirements, Acceptance Criteria, Dependencies, and Verification.
-- Confirm every user-review item contains User Review Required, Question for the User, Why User Input Is Required, Resolution, and Unattended Work Boundary.
+- Confirm every user-action-required item contains User Action Required, Question for the User, Why User Input Is Required, Resolution, and Unattended Work Boundary.
+- Confirm independently identified work has explicit user authorization before it enters a typed active folder.
+- Confirm directly requested or explicitly authorized active work uses Status: Ready unless the user defers it or a separate genuine user-owned question remains.
 - Confirm the underlying Type maps to one typed active folder after resolution.
-- Confirm an ordinary dependency or synthetic evaluation boundary was not misclassified as user review.
+- Confirm an ordinary dependency or synthetic evaluation boundary was not misclassified as User Action Required.
 - Confirm the item can be understood without the chat history.

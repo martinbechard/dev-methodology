@@ -35,16 +35,19 @@ Keep the configured backlog authoritative and recoverable by applying the select
 
 - Do not infer a backlog backend from existing files, a GitHub remote, or available tools. Use applicable project guidance or an explicit request, and ask the user when durable backlog work is required but neither selects a backend.
 - Do not create a shadow file backlog for GitHub issues or shadow GitHub issues for a file-based backlog.
+- Do not make an independently identified idea dispatchable before the user explicitly authorizes it.
 
 ## Decisions
 
 - Use file-based-backlog with create-backlog and manage-backlog when repository files are the configured authority.
 - Use github-issues-backlog when GitHub issues are the configured authority.
 - Treat an explicit one-item backend request as a task override unless the user establishes it as the project default.
+- Put directly requested or explicitly authorized work in its typed active queue as Ready unless the user defers it or a separate genuine user-owned question remains.
+- Put an independently identified potentially valuable idea in User Action Required with its underlying Type and one concrete approval question; keep ordinary evidence-backed dependencies with typed active work.
 
 ## Workflow
 
-1. Resolve the backend, target, item type, source evidence, requirements, acceptance criteria, dependencies, verification expectations, ownership, and requested lifecycle transition.
+1. Resolve the backend, target, item type, user authorization source, source evidence, requirements, acceptance criteria, dependencies, verification expectations, ownership, and requested lifecycle transition.
 2. Search the selected backend for an existing matching item before creating another.
 3. Apply the selected backend skill to create, claim, resume, block, complete, fail, archive, or report the item without changing unrelated backlog state.
 4. Preserve implementation and delivery references while requiring the configured completion evidence before closing or archiving the item.

@@ -2146,7 +2146,7 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(guidance=guidance):
                 self.assertIn(guidance, skill_text)
 
-    def test_backlog_skills_separate_user_review_from_dispatchable_work(self) -> None:
+    def test_backlog_skills_separate_user_action_required_from_dispatchable_work(self) -> None:
         create_text = (SKILLS_ROOT / "create-backlog" / "SKILL.md").read_text(
             encoding="utf-8"
         )
@@ -2159,22 +2159,22 @@ class BundleContentTests(unittest.TestCase):
             ("manage-backlog", manage_text),
         ):
             with self.subTest(skill=skill_name):
-                self.assertIn("backlog/user-review", skill_text)
-                self.assertNotIn("docs/user-review", skill_text)
-                self.assertIn("user review", skill_text.lower())
+                self.assertIn("backlog/user-action-required", skill_text)
+                self.assertNotIn("docs/user-action-required", skill_text)
+                self.assertIn("user action required", skill_text.lower())
 
         for required_guidance in (
-            "User Review Required",
+            "User Action Required",
             "Question for the User",
             "Why User Input Is Required",
-            "Do not place an item in backlog/user-review merely because",
+            "Do not place an item in backlog/user-action-required merely because",
             "synthetic evaluation boundary",
         ):
             with self.subTest(create_guidance=required_guidance):
                 self.assertIn(required_guidance, create_text)
 
         for required_guidance in (
-            "Do not claim, dispatch, implement, or resolve user-review work",
+            "Do not claim, dispatch, implement, or resolve user-action-required work",
             "Ask the user the exact question recorded in the item",
             "Move an approved or answered item into its typed active backlog folder",
             "backlog/holding is for intentionally deferred work",
@@ -2182,22 +2182,82 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(manage_guidance=required_guidance):
                 self.assertIn(required_guidance, manage_text)
 
-        user_review_root = REPOSITORY_ROOT / "backlog" / "user-review"
-        queue_readme = user_review_root / "README.md"
-        classification_item = user_review_root / "classify-agent-suite-blocking-resources.md"
+        user_action_required_root = REPOSITORY_ROOT / "backlog" / "user-action-required"
+        queue_readme = user_action_required_root / "README.md"
+        classification_item = (
+            REPOSITORY_ROOT
+            / "backlog"
+            / "analysis-backlog"
+            / "classify-agent-suite-blocking-resources.md"
+        )
         self.assertTrue(queue_readme.is_file())
         self.assertTrue(classification_item.is_file())
+        queue_text = queue_readme.read_text(encoding="utf-8")
+        for required_queue_contract in (
+            "# User Action Required Queue",
+            "Status: User Action Required",
+            "README.md is queue guidance and is not a backlog item.",
+        ):
+            with self.subTest(queue_contract=required_queue_contract):
+                self.assertIn(required_queue_contract, queue_text)
         classification_text = classification_item.read_text(encoding="utf-8")
         for required_item_contract in (
-            "Status: User Review",
+            "Status: Running",
             "Type: Analysis",
-            "## User Review Required",
+            "## User Action Required",
             "### Question for the User",
             "### Why User Input Is Required",
             "### Resolution",
+            "Resolved 2026-07-19.",
+            "Which blocked categories should become real follow-up backlog work: test infrastructure limitations only, selected authority or evidence gaps, all categories, or none?",
         ):
             with self.subTest(item_contract=required_item_contract):
                 self.assertIn(required_item_contract, classification_text)
+
+    def test_user_action_required_migration_has_no_stale_canonical_references(self) -> None:
+        tracked = subprocess.run(
+            ["git", "ls-files", "-z"],
+            cwd=REPOSITORY_ROOT,
+            check=True,
+            capture_output=True,
+        ).stdout.decode("utf-8").split("\0")
+        historical_name = "rename-user-review-state-for-clarity.md"
+        stale_path = "backlog/" + "user-review"
+        stale_status = "Status: User" + " Review"
+        stale_references: list[str] = []
+
+        for relative_path in filter(None, tracked):
+            path = REPOSITORY_ROOT / relative_path
+            if not path.is_file():
+                continue
+            if relative_path.startswith("legacy_procedures/") or path.name == historical_name:
+                continue
+            try:
+                text = path.read_text(encoding="utf-8")
+            except UnicodeDecodeError:
+                continue
+            if stale_path in text or stale_status in text:
+                stale_references.append(relative_path)
+
+        self.assertEqual([], stale_references)
+
+    def test_active_typed_backlog_has_no_proposed_status(self) -> None:
+        active_roots = (
+            REPOSITORY_ROOT / "backlog" / "defect-backlog",
+            REPOSITORY_ROOT / "backlog" / "feature-backlog",
+            REPOSITORY_ROOT / "backlog" / "analysis-backlog",
+            REPOSITORY_ROOT / "backlog" / "investigation-backlog",
+        )
+        stale_status = "Status: " + "Proposed"
+        proposed_items = [
+            str(path.relative_to(REPOSITORY_ROOT))
+            for root in active_roots
+            for path in root.rglob("*.md")
+            if path.name != "index.md"
+            and stale_status in path.read_text(encoding="utf-8")
+        ]
+
+        self.assertEqual([], proposed_items)
 
     def test_skill_names_follow_category_naming_rules(self) -> None:
         build_skill_docs = load_build_skill_docs_module()

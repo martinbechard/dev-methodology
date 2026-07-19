@@ -12,15 +12,23 @@ instructions:
     backlog work is required but neither selects a backend.
   - Do not create a shadow file backlog for GitHub issues or shadow GitHub issues for a
     file-based backlog.
+  - Do not make an independently identified idea dispatchable before the user explicitly
+    authorizes it.
   decisions:
   - Use file-based-backlog with create-backlog and manage-backlog when repository files
     are the configured authority.
   - Use github-issues-backlog when GitHub issues are the configured authority.
   - Treat an explicit one-item backend request as a task override unless the user establishes
     it as the project default.
+  - Put directly requested or explicitly authorized work in its typed active queue as Ready
+    unless the user defers it or a separate genuine user-owned question remains.
+  - Put an independently identified potentially valuable idea in User Action Required with
+    its underlying Type and one concrete approval question; keep ordinary evidence-backed
+    dependencies with typed active work.
   workflow:
-  - Resolve the backend, target, item type, source evidence, requirements, acceptance criteria,
-    dependencies, verification expectations, ownership, and requested lifecycle transition.
+  - Resolve the backend, target, item type, user authorization source, source evidence,
+    requirements, acceptance criteria, dependencies, verification expectations, ownership,
+    and requested lifecycle transition.
   - Search the selected backend for an existing matching item before creating another.
   - Apply the selected backend skill to create, claim, resume, block, complete, fail, archive,
     or report the item without changing unrelated backlog state.
@@ -43,8 +51,19 @@ examples:
     claude-code: "@agent-dev-backlog-steward Use the configured file-based-backlog to
       create and claim a feature item for adding idempotency keys to webhook processing."
   plausibleResponse: 'READY. Created the typed feature file with requirements, acceptance
-    criteria, dependencies, and verification expectations, recorded exclusive ownership,
+    criteria, dependencies, and verification expectations, recorded that the authorized
+    item entered Ready before the requested claim transition, established exclusive ownership,
     and reported its path and next runnable action without creating a hosting-service issue.'
+- purpose: Preserve an independently identified improvement as non-dispatchable until the
+    user decides whether it is valuable enough to pursue.
+  runtimeInvocations:
+    codex: "$dev_backlog_steward Record the possible retry-dashboard improvement you
+      noticed while inspecting the repository; I have not asked you to implement it."
+    claude-code: "@agent-dev-backlog-steward Record the possible retry-dashboard improvement
+      you noticed while inspecting the repository; I have not asked you to implement it."
+  plausibleResponse: 'READY. Created a User Action Required item that preserves the Feature
+    type, records Status: User Action Required, asks whether the user authorizes the retry-dashboard
+    work, and excludes it from dispatch until that question is answered.'
 - purpose: Record an evaluated defect in the configured GitHub issue backlog without
     changing the subject under test.
   runtimeInvocations:
