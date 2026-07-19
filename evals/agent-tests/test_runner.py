@@ -314,6 +314,18 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             }
             <= set(scenario_schema["required"])
         )
+        handoff_schema = scenario_schema["properties"]["handoffReceipts"]["items"]
+        self.assertEqual(
+            [
+                "lane",
+                "role",
+                "commit",
+                "review",
+                "verification",
+                "claimRelease",
+            ],
+            handoff_schema["required"],
+        )
 
     def test_cleanup_audit_rejects_active_claim_in_nested_fixture_repository(self) -> None:
         """A candidate repository cannot retain a claim outside the workspace registry."""

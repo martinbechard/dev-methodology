@@ -1067,6 +1067,14 @@ def _coordinator_schema() -> dict[str, Any]:
                                         "items": {
                                             "type": "object",
                                             "additionalProperties": False,
+                                            "required": [
+                                                "lane",
+                                                "role",
+                                                "commit",
+                                                "review",
+                                                "verification",
+                                                "claimRelease",
+                                            ],
                                             "properties": {
                                                 "lane": {"type": "string"},
                                                 "role": {

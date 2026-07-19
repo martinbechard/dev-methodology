@@ -285,7 +285,7 @@ class AgentSuiteReportingTests(unittest.TestCase):
             metadata = self._metadata(
                 "codex", "dev-coder", "PASS", root / "runner-result"
             )
-            self._duplicate_terminal_judge_response(metadata)
+            self._mutate_terminal_judge_responses(metadata, "duplicate")
 
             _, metadata_path = reporting.write_suite_report(root, metadata)
             published = json.loads(metadata_path.read_text(encoding="utf-8"))
@@ -299,41 +299,81 @@ class AgentSuiteReportingTests(unittest.TestCase):
             )
         )
 
+    def test_publication_rejects_zero_or_mismatched_judge_terminal_response(self) -> None:
+        """Publication requires one exact terminal response at the declared event index."""
+        for mutation, diagnostic in (
+            ("remove", "exactly one eligible terminal"),
+            ("mismatch-index", "responseEventIndex"),
+        ):
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                metadata = self._metadata(
+                    "codex", "dev-coder", "PASS", root / "runner-result"
+                )
+                self._mutate_terminal_judge_responses(metadata, mutation)
+
+                _, metadata_path = reporting.write_suite_report(root, metadata)
+                published = json.loads(metadata_path.read_text(encoding="utf-8"))
+
+            self.assertEqual("INFRASTRUCTURE_FAILED", published["status"])
+            self.assertTrue(
+                any(
+                    diagnostic in value
+                    for value in published["evidenceBundle"]["diagnostics"]
+                )
+            )
+
     def test_aggregate_independently_rejects_published_duplicate_judge_terminal(
         self,
     ) -> None:
         """Aggregation re-enumerates Judge finals instead of trusting publication state."""
-        with (
-            tempfile.TemporaryDirectory() as directory,
-            mock.patch.object(reporting, "_suite_digest", return_value="digest"),
+        for mutation, diagnostic in (
+            ("duplicate", "exactly one eligible terminal"),
+            ("remove", "exactly one eligible terminal"),
+            ("mismatch-index", "responseEventIndex"),
         ):
-            root = Path(directory)
-            metadata = self._metadata(
-                "codex", "dev-coder", "PASS", root / "runner-result"
-            )
-            self._duplicate_terminal_judge_response(metadata)
-            with mock.patch.object(
-                reporting,
-                "_judge_rollout_binding_error",
-                return_value=None,
-                create=True,
+            with (
+                self.subTest(mutation=mutation),
+                tempfile.TemporaryDirectory() as directory,
+                mock.patch.object(reporting, "_suite_digest", return_value="digest"),
             ):
-                reporting.write_suite_report(root, metadata)
+                root = Path(directory)
+                metadata = self._metadata(
+                    "codex", "dev-coder", "PASS", root / "runner-result"
+                )
+                self._mutate_terminal_judge_responses(metadata, mutation)
+                with mock.patch.object(
+                    reporting,
+                    "_judge_rollout_binding_error",
+                    return_value=None,
+                    create=True,
+                ):
+                    reporting.write_suite_report(root, metadata)
 
-            entries = reporting.aggregate_entries(
-                root, ("dev-coder",), "codex", "revision"
-            )
+                entries = reporting.aggregate_entries(
+                    root, ("dev-coder",), "codex", "revision"
+                )
 
-        states = {entry["inputState"] for entry in entries}
-        self.assertNotIn("CURRENT", states)
-        self.assertTrue({"MISSING", "MALFORMED"} <= states)
-        self.assertFalse(
-            any(
-                entry.get("status") == "PASS"
-                and entry.get("inputState") == "CURRENT"
-                for entry in entries
+            states = {entry["inputState"] for entry in entries}
+            self.assertNotIn("CURRENT", states)
+            self.assertTrue({"MISSING", "MALFORMED"} <= states)
+            malformed = next(
+                entry for entry in entries if entry["inputState"] == "MALFORMED"
             )
-        )
+            self.assertTrue(
+                any(diagnostic in value for value in malformed["diagnostics"])
+            )
+            self.assertEqual(
+                ["suites/codex/dev-coder.manifest.json"],
+                malformed["evidencePaths"],
+            )
+            self.assertFalse(
+                any(
+                    entry.get("status") == "PASS"
+                    and entry.get("inputState") == "CURRENT"
+                    for entry in entries
+                )
+            )
 
     def test_aggregate_classifies_null_scenario_results_as_missing_and_malformed(
         self,
@@ -1040,7 +1080,9 @@ class AgentSuiteReportingTests(unittest.TestCase):
         }
 
     @staticmethod
-    def _duplicate_terminal_judge_response(metadata: dict[str, object]) -> None:
+    def _mutate_terminal_judge_responses(
+        metadata: dict[str, object], mutation: str
+    ) -> None:
         scenario = metadata["scenarioResults"][0]
         provenance = scenario["receiptAudit"]["judgeProvenance"]
         rollout = Path(str(metadata["evidenceRoot"])) / provenance["rolloutPath"]
@@ -1048,11 +1090,17 @@ class AgentSuiteReportingTests(unittest.TestCase):
             json.loads(line)
             for line in rollout.read_text(encoding="utf-8").splitlines()
         ]
-        duplicate = json.loads(
-            json.dumps(events[provenance["responseEventIndex"]])
-        )
-        duplicate["timestamp"] = "2026-07-19T00:00:02Z"
-        events.append(duplicate)
+        response_index = provenance["responseEventIndex"]
+        if mutation == "duplicate":
+            duplicate = json.loads(json.dumps(events[response_index]))
+            duplicate["timestamp"] = "2026-07-19T00:00:02Z"
+            events.append(duplicate)
+        elif mutation == "remove":
+            events.pop(response_index)
+        elif mutation == "mismatch-index":
+            provenance["responseEventIndex"] = 0
+        else:
+            raise ValueError(f"unsupported terminal response mutation: {mutation}")
         rollout.write_text(
             "\n".join(json.dumps(event) for event in events) + "\n",
             encoding="utf-8",

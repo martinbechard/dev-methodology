@@ -579,7 +579,7 @@ def _judge_rollout_binding_error(
     if len(eligible_responses) != 1:
         return (
             "Judge rollout must contain exactly one eligible terminal assistant "
-            "final_answer"
+            f"final_answer/output_text response; found {len(eligible_responses)}"
         )
     response_index, response_text = eligible_responses[0]
     if type(provenance.get("responseEventIndex")) is not int or provenance.get(
@@ -1439,15 +1439,16 @@ def aggregate_entries(
     """Classify report metadata, keeping missing and every non-passing input state visible."""
 
     parsed: dict[tuple[str, str], list[tuple[Path, Mapping[str, Any], Path]]] = {}
-    malformed: list[Path] = []
+    malformed: list[tuple[Path, str]] = []
     for path in _metadata_candidates(report_root):
         try:
             value, html_path = _load_generation_pointer(report_root, path)
-        except (OSError, UnicodeError, json.JSONDecodeError, ValueError):
-            malformed.append(path)
+        except (OSError, UnicodeError, json.JSONDecodeError, ValueError) as error:
+            diagnostic = " ".join(str(error).split()) or type(error).__name__
+            malformed.append((path, diagnostic[:512]))
             continue
         if not isinstance(value, dict) or not _valid_metadata(value):
-            malformed.append(path)
+            malformed.append((path, "suite report metadata is malformed"))
             continue
         key = (str(value.get("harness", "")), str(value.get("suite", "")))
         parsed.setdefault(key, []).append((path, value, html_path))
@@ -1512,8 +1513,10 @@ def aggregate_entries(
             "suite": path.name,
             "inputState": "MALFORMED",
             "status": "MALFORMED",
+            "diagnostics": [diagnostic],
+            "evidencePaths": [path.relative_to(report_root).as_posix()],
         }
-        for path in malformed
+        for path, diagnostic in malformed
     )
     if any(entry["inputState"] not in _VISIBLE_INPUT_STATES for entry in entries):
         raise RuntimeError("unrecognized aggregate input state")
