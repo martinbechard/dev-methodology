@@ -17,6 +17,7 @@ import json
 import os
 import platform
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -24,7 +25,7 @@ import threading
 import time
 import uuid
 from collections.abc import Callable, Mapping, Sequence
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 
 import yaml
@@ -53,6 +54,10 @@ _ABSOLUTE_WORKER_LIMIT = 4
 _MEMORY_BYTES_PER_WORKER = 2 * 1024**3
 _SCHEMA = "dev-methodology-agent-suite-report"
 _POINTER_SCHEMA = "dev-methodology-agent-suite-report-pointer"
+_EVIDENCE_BUNDLE_SCHEMA = "dev-methodology-agent-suite-evidence-bundle"
+_EVIDENCE_RECEIPT_SCHEMA = "dev-methodology-agent-suite-evidence-receipt"
+_JUDGE_OUTPUT_SCHEMA = "dev-methodology-agent-suite-judge-output"
+_SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 
 
 @dataclasses.dataclass(frozen=True)
@@ -91,6 +96,22 @@ def _atomic_write(path: Path, content: str) -> None:
     temporary = Path(temporary_name)
     try:
         with os.fdopen(descriptor, "w", encoding="utf-8") as stream:
+            stream.write(content)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temporary, path)
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
+def _atomic_write_bytes(path: Path, content: bytes) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    descriptor, temporary_name = tempfile.mkstemp(
+        prefix=f".{path.name}.", dir=path.parent
+    )
+    temporary = Path(temporary_name)
+    try:
+        with os.fdopen(descriptor, "wb") as stream:
             stream.write(content)
             stream.flush()
             os.fsync(stream.fileno())
@@ -258,12 +279,31 @@ def _scenario_rows(execution: SuiteExecution) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     for batch in (execution.summary or {}).get("results", []):
         report = batch.get("report") if isinstance(batch, dict) else None
+        evidence = batch.get("evidence") if isinstance(batch, dict) else None
+        checkpoint_root = (
+            evidence.get("checkpoints") if isinstance(evidence, Mapping) else None
+        )
+        identity_path = evidence.get("identity") if isinstance(evidence, Mapping) else None
+        identity_digest = (
+            evidence.get("identitySha256") if isinstance(evidence, Mapping) else None
+        )
+        run_identity = batch.get("runIdentity") if isinstance(batch, Mapping) else None
         for run in report.get("runs", []) if isinstance(report, dict) else []:
             for scenario in (
                 run.get("scenarioResults", []) if isinstance(run, dict) else []
             ):
                 if isinstance(scenario, dict):
-                    rows.append(dict(scenario))
+                    row = dict(scenario)
+                    if isinstance(checkpoint_root, str):
+                        row["_checkpointRoot"] = checkpoint_root
+                    if isinstance(identity_path, str) and isinstance(identity_digest, str):
+                        row["_identityAudit"] = {
+                            "path": identity_path,
+                            "sha256": identity_digest,
+                        }
+                    if isinstance(run_identity, str):
+                        row["_runIdentity"] = run_identity
+                    rows.append(row)
     return rows
 
 
@@ -281,7 +321,9 @@ def _terminal_status(
     return "PASS" if statuses else "INFRASTRUCTURE_FAILED"
 
 
-def _governed_evidence_error(scenario: Mapping[str, Any]) -> str | None:
+def _governed_evidence_error(
+    scenario: Mapping[str, Any], suite_id: str
+) -> str | None:
     terminal_status = str(scenario.get("status", "")).upper()
     if terminal_status not in {"PASS", "FAIL"}:
         return None
@@ -309,6 +351,16 @@ def _governed_evidence_error(scenario: Mapping[str, Any]) -> str | None:
         expected = "passed" if terminal_status == "PASS" else "failed"
         if judge_disposition != expected:
             return f"the actual Judge disposition is not {expected}"
+        provenance = receipt_audit.get("judgeProvenance")
+        if (
+            not isinstance(provenance, Mapping)
+            or provenance.get("status") != "verified"
+            or provenance.get("runIdentity") != receipt_audit.get("runIdentity")
+            or provenance.get("disposition") != expected
+            or provenance.get("suite") != suite_id
+            or provenance.get("scenario") != scenario.get("scenario")
+        ):
+            return "the actual Judge child session response was not retained"
     elif (
         terminal_status != "FAIL"
         or judge_disposition != "skipped-critical-failure"
@@ -335,7 +387,7 @@ def suite_metadata(
     scenarios = _scenario_rows(execution)
     evidence_errors: list[str] = []
     for scenario in scenarios:
-        error = _governed_evidence_error(scenario)
+        error = _governed_evidence_error(scenario, suite_id)
         if error is None:
             continue
         scenario_id = str(scenario.get("scenario", "unknown"))
@@ -472,26 +524,645 @@ def render_suite_html(metadata: Mapping[str, Any]) -> str:
 <h2>Omissions</h2><ul>{omissions}</ul><h2>Retained evidence</h2><p>{html.escape(str(metadata["evidenceRoot"]))}</p></main>{_embedded_metadata(metadata)}</body></html>\n"""
 
 
+def _safe_relative(value: object) -> PurePosixPath | None:
+    if (
+        not isinstance(value, str)
+        or not value
+        or "\\" in value
+        or PurePosixPath(value).is_absolute()
+        or any(part in {"", ".", ".."} for part in PurePosixPath(value).parts)
+    ):
+        return None
+    return PurePosixPath(value)
+
+
+def _bundle_evidence(
+    metadata: Mapping[str, Any],
+) -> tuple[dict[str, Any], dict[str, bytes], dict[str, Any]]:
+    prepared = json.loads(json.dumps(metadata))
+    diagnostics: list[str] = []
+    entries: list[dict[str, Any]] = []
+    objects: dict[str, bytes] = {}
+    evidence_root_value = prepared.get("evidenceRoot")
+    evidence_root = (
+        Path(evidence_root_value)
+        if isinstance(evidence_root_value, str)
+        else Path()
+    )
+    try:
+        resolved_evidence_root = evidence_root.resolve(strict=True)
+    except (OSError, RuntimeError):
+        resolved_evidence_root = evidence_root.resolve()
+        diagnostics.append("retained evidence root is missing")
+
+    def capture(
+        root: Path,
+        reference: object,
+        expected_parent: PurePosixPath | None,
+        kind: str,
+        label: str,
+    ) -> tuple[Path | None, bytes | None]:
+        entry: dict[str, Any] = {"kind": kind, "status": "invalid"}
+        if not isinstance(reference, Mapping) or set(reference) != {"path", "sha256"}:
+            entry["sourcePath"] = "unresolved"
+            entries.append(entry)
+            diagnostics.append(f"{label} reference must contain exactly path and sha256")
+            return None, None
+        relative = _safe_relative(reference.get("path"))
+        declared = reference.get("sha256")
+        entry["sourcePath"] = str(reference.get("path", "unresolved"))
+        entry["declaredSha256"] = declared
+        if relative is None or (
+            expected_parent is not None and relative.parent != expected_parent
+        ):
+            entries.append(entry)
+            diagnostics.append(f"{label} path is outside its retained evidence directory")
+            return None, None
+        if not isinstance(declared, str) or not _SHA256_PATTERN.fullmatch(declared):
+            entries.append(entry)
+            diagnostics.append(f"{label} digest is malformed")
+            return None, None
+        candidate = root.joinpath(*relative.parts)
+        current = root
+        for part in relative.parts:
+            current = current / part
+            if current.is_symlink():
+                entries.append(entry)
+                diagnostics.append(f"{label} contains a symbolic link")
+                return None, None
+        try:
+            resolved_root = root.resolve(strict=True)
+            resolved = candidate.resolve(strict=True)
+        except (OSError, RuntimeError):
+            entries.append(entry)
+            diagnostics.append(f"{label} is missing")
+            return None, None
+        if resolved_root not in resolved.parents or not resolved.is_file():
+            entries.append(entry)
+            diagnostics.append(f"{label} is outside retained evidence")
+            return None, None
+        try:
+            retained_path = resolved.relative_to(resolved_evidence_root).as_posix()
+        except ValueError:
+            entries.append(entry)
+            diagnostics.append(f"{label} is outside the runner result evidenceRoot")
+            return None, None
+        content = resolved.read_bytes()
+        actual = hashlib.sha256(content).hexdigest()
+        entry["sourcePath"] = retained_path
+        entry["sha256"] = actual
+        entry["bundlePath"] = f"evidence/objects/{actual}"
+        objects.setdefault(actual, content)
+        if actual != declared:
+            entries.append(entry)
+            diagnostics.append(f"{label} digest mismatch")
+            return resolved, content
+        entry["status"] = "verified"
+        entries.append(entry)
+        return resolved, content
+
+    for scenario in prepared.get("scenarioResults", []):
+        if not isinstance(scenario, dict):
+            diagnostics.append("scenario result is malformed")
+            continue
+        suite_id = str(prepared.get("suite", ""))
+        scenario_id = str(scenario.get("scenario", ""))
+        retained_run_identity = scenario.pop("_runIdentity", None)
+        identity_reference = scenario.pop("_identityAudit", None)
+        try:
+            suite_manifest = yaml.safe_load(
+                (_ROOT / suite_id / "suite.yaml").read_text(encoding="utf-8")
+            )
+        except (OSError, UnicodeError, yaml.YAMLError):
+            suite_manifest = None
+        expected_judge_invocation = (
+            suite_manifest.get("execution", {}).get("judgeInvocation")
+            if isinstance(suite_manifest, Mapping)
+            and isinstance(suite_manifest.get("execution"), Mapping)
+            else None
+        )
+        if not isinstance(expected_judge_invocation, str):
+            diagnostics.append(f"{scenario_id}: governed Judge invocation is unavailable")
+        checkpoint_value = scenario.pop("_checkpointRoot", None)
+        checkpoint_root: Path | None = None
+        if isinstance(checkpoint_value, str):
+            candidate = Path(checkpoint_value)
+            if not candidate.is_absolute():
+                candidate = resolved_evidence_root / candidate
+            try:
+                resolved_checkpoint = candidate.resolve(strict=True)
+            except (OSError, RuntimeError):
+                diagnostics.append(f"{scenario_id}: retained checkpoint root is missing")
+            else:
+                if (
+                    resolved_checkpoint.parent != resolved_evidence_root
+                    or not resolved_checkpoint.is_dir()
+                    or resolved_checkpoint.is_symlink()
+                ):
+                    diagnostics.append(
+                        f"{scenario_id}: retained checkpoint root is outside evidenceRoot or ambiguous"
+                    )
+                else:
+                    checkpoint_root = resolved_checkpoint
+        else:
+            diagnostics.append(f"{scenario_id}: retained checkpoint root is missing")
+        references = scenario.get("evidenceReceipts")
+        if not isinstance(references, list) or not references:
+            diagnostics.append(f"{scenario_id}: retained evidence receipts are missing")
+            references = []
+        audit = scenario.get("receiptAudit")
+        if not isinstance(audit, Mapping):
+            diagnostics.append(f"{scenario_id}: runner receipt audit is missing")
+            audit = {}
+        if not isinstance(retained_run_identity, str) or audit.get(
+            "runIdentity"
+        ) != retained_run_identity:
+            diagnostics.append(f"{scenario_id}: retained run identity mismatch")
+        seen_receipts: set[str] = set()
+        deterministic: list[dict[str, Any]] = []
+        deterministic_receipts: dict[str, Mapping[str, Any]] = {}
+        judge_dispositions: list[str] = []
+        judge_invocations: list[str] = []
+        judge_output: tuple[Path, bytes, str] | None = None
+        skip_rows: list[Mapping[str, Any]] = []
+        for index, reference in enumerate(references):
+            path_value = reference.get("path") if isinstance(reference, Mapping) else None
+            if isinstance(path_value, str) and path_value in seen_receipts:
+                entries.append(
+                    {
+                        "kind": "receipt",
+                        "status": "duplicate",
+                        "sourcePath": path_value,
+                        "declaredSha256": reference.get("sha256"),
+                    }
+                )
+                diagnostics.append(f"{scenario_id}: duplicate receipt path {path_value}")
+                continue
+            if isinstance(path_value, str):
+                seen_receipts.add(path_value)
+            if checkpoint_root is None:
+                entries.append(
+                    {
+                        "kind": "receipt",
+                        "status": "missing-root",
+                        "sourcePath": str(path_value or "unresolved"),
+                        "declaredSha256": (
+                            reference.get("sha256")
+                            if isinstance(reference, Mapping)
+                            else None
+                        ),
+                    }
+                )
+                continue
+            receipt_path, receipt_bytes = capture(
+                checkpoint_root,
+                reference,
+                PurePosixPath(suite_id, scenario_id, "receipts"),
+                "receipt",
+                f"{scenario_id} evidenceReceipts[{index}]",
+            )
+            if receipt_path is None or receipt_bytes is None:
+                continue
+            try:
+                receipt = json.loads(receipt_bytes.decode("utf-8"))
+            except (UnicodeError, json.JSONDecodeError):
+                diagnostics.append(f"{scenario_id}: retained receipt is malformed JSON")
+                continue
+            if (
+                not isinstance(receipt, dict)
+                or receipt.get("schema") != _EVIDENCE_RECEIPT_SCHEMA
+                or receipt.get("version") != 1
+                or receipt.get("runIdentity") != audit.get("runIdentity")
+                or receipt.get("suite") != suite_id
+                or receipt.get("scenario") != scenario_id
+            ):
+                diagnostics.append(f"{scenario_id}: retained receipt identity mismatch")
+                continue
+            artifact_path, artifact_bytes = capture(
+                checkpoint_root,
+                receipt.get("evidence"),
+                PurePosixPath(suite_id, scenario_id, "artifacts"),
+                "artifact",
+                f"{scenario_id} receipt evidence",
+            )
+            if artifact_path is None or artifact_bytes is None:
+                continue
+            event_type = receipt.get("eventType")
+            if event_type == "deterministic-check-disposition":
+                expected_fields = {
+                    "schema", "version", "eventType", "runIdentity", "suite", "scenario",
+                    "checkId", "critical", "verdict", "evidence",
+                }
+                if (
+                    set(receipt) != expected_fields
+                    or not isinstance(receipt.get("checkId"), str)
+                    or type(receipt.get("critical")) is not bool
+                    or receipt.get("verdict") not in {"passed", "failed"}
+                ):
+                    diagnostics.append(f"{scenario_id}: deterministic receipt is malformed")
+                deterministic.append(
+                    {
+                        "checkId": receipt.get("checkId"),
+                        "critical": receipt.get("critical"),
+                        "verdict": receipt.get("verdict"),
+                    }
+                )
+                check_id = receipt.get("checkId")
+                if isinstance(check_id, str):
+                    if check_id in deterministic_receipts:
+                        diagnostics.append(
+                            f"{scenario_id}: duplicate deterministic receipt {check_id}"
+                        )
+                    deterministic_receipts[check_id] = receipt
+            elif event_type == "judge-disposition":
+                expected_fields = {
+                    "schema", "version", "eventType", "runIdentity", "suite", "scenario",
+                    "judgeInvocation", "disposition", "evidence",
+                }
+                if set(receipt) != expected_fields:
+                    diagnostics.append(f"{scenario_id}: Judge receipt is malformed")
+                judge_dispositions.append(str(receipt.get("disposition")))
+                judge_invocations.append(str(receipt.get("judgeInvocation")))
+                judge_output = (
+                    artifact_path,
+                    artifact_bytes,
+                    hashlib.sha256(artifact_bytes).hexdigest(),
+                )
+            elif event_type == "judge-skip-disposition":
+                expected_fields = {
+                    "schema", "version", "eventType", "runIdentity", "suite", "scenario",
+                    "checkId", "critical", "deterministicVerdict", "disposition", "evidence",
+                }
+                if set(receipt) != expected_fields:
+                    diagnostics.append(f"{scenario_id}: Judge-skip receipt is malformed")
+                skip_rows.append(receipt)
+            else:
+                diagnostics.append(f"{scenario_id}: retained receipt event type is invalid")
+        expected_deterministic = audit.get("deterministicChecks")
+        if not isinstance(expected_deterministic, list) or sorted(
+            deterministic, key=lambda value: str(value.get("checkId"))
+        ) != sorted(
+            [dict(value) for value in expected_deterministic if isinstance(value, Mapping)],
+            key=lambda value: str(value.get("checkId")),
+        ):
+            diagnostics.append(f"{scenario_id}: deterministic receipt audit mismatch")
+        judge_invoked = scenario.get("judgeInvoked")
+        if judge_invoked is True:
+            if judge_dispositions != [audit.get("judgeDisposition")]:
+                diagnostics.append(f"{scenario_id}: Judge receipt audit mismatch")
+            provenance = audit.get("judgeProvenance")
+            expected_provenance_fields = {
+                "status", "sessionId", "parentSessionId", "invocation", "runIdentity",
+                "suite", "scenario", "rolloutPath", "rolloutSha256", "responseEventIndex",
+                "responsePath", "responseSha256", "outputPath", "outputSha256", "disposition",
+            }
+            if not isinstance(provenance, Mapping) or set(provenance) != expected_provenance_fields:
+                diagnostics.append(f"{scenario_id}: exact Judge child provenance is missing")
+                provenance = {}
+            expected_identity = {
+                "status": "verified",
+                "runIdentity": audit.get("runIdentity"),
+                "suite": suite_id,
+                "scenario": scenario_id,
+                "disposition": audit.get("judgeDisposition"),
+            }
+            if any(provenance.get(key) != value for key, value in expected_identity.items()):
+                diagnostics.append(f"{scenario_id}: Judge provenance identity mismatch")
+            if (
+                provenance.get("invocation") != expected_judge_invocation
+                or judge_invocations != [expected_judge_invocation]
+            ):
+                diagnostics.append(f"{scenario_id}: selected Judge invocation mismatch")
+            normalized_identity_reference: object = identity_reference
+            if isinstance(identity_reference, Mapping) and isinstance(
+                identity_reference.get("path"), str
+            ):
+                raw_identity_path = Path(str(identity_reference["path"]))
+                if raw_identity_path.is_absolute():
+                    try:
+                        relative_identity_path = raw_identity_path.resolve(
+                            strict=True
+                        ).relative_to(resolved_evidence_root)
+                    except (OSError, RuntimeError, ValueError):
+                        relative_identity_path = None
+                    normalized_identity_reference = {
+                        "path": (
+                            relative_identity_path.as_posix()
+                            if relative_identity_path is not None
+                            else str(identity_reference["path"])
+                        ),
+                        "sha256": identity_reference.get("sha256"),
+                    }
+            _, identity_bytes = capture(
+                resolved_evidence_root,
+                normalized_identity_reference,
+                None,
+                "identity-audit",
+                f"{scenario_id} identity audit",
+            )
+            identity_document: object = None
+            if identity_bytes is not None:
+                try:
+                    identity_document = json.loads(identity_bytes.decode("utf-8"))
+                except (UnicodeError, json.JSONDecodeError):
+                    diagnostics.append(f"{scenario_id}: retained identity audit is malformed")
+            identity_bindings = (
+                identity_document.get("scenarioBindings")
+                if isinstance(identity_document, Mapping)
+                else None
+            )
+            matching_identity_bindings = [
+                value
+                for value in identity_bindings
+                if isinstance(value, Mapping)
+                and value.get("suite") == suite_id
+                and value.get("scenario") == scenario_id
+                and value.get("kind") == "judge"
+                and value.get("invocation") == provenance.get("invocation")
+                and value.get("sessionId") == provenance.get("sessionId")
+                and value.get("parentSessionId") == provenance.get("parentSessionId")
+            ] if isinstance(identity_bindings, list) else []
+            if len(matching_identity_bindings) != 1:
+                diagnostics.append(
+                    f"{scenario_id}: Judge session is not paired by retained identity/order evidence"
+                )
+            provenance_files: dict[str, tuple[Path | None, bytes | None]] = {}
+            for kind, path_field, digest_field in (
+                ("judge-rollout", "rolloutPath", "rolloutSha256"),
+                ("judge-response", "responsePath", "responseSha256"),
+                ("judge-output", "outputPath", "outputSha256"),
+            ):
+                provenance_files[kind] = capture(
+                    resolved_evidence_root,
+                    {"path": provenance.get(path_field), "sha256": provenance.get(digest_field)},
+                    None,
+                    kind,
+                    f"{scenario_id} {kind}",
+                )
+            response_path, response_bytes = provenance_files["judge-response"]
+            output_path, output_bytes = provenance_files["judge-output"]
+            rollout_path, rollout_bytes = provenance_files["judge-rollout"]
+            if response_bytes is None or output_bytes is None or response_bytes != output_bytes:
+                diagnostics.append(f"{scenario_id}: Judge response and output bytes mismatch")
+            if (
+                judge_output is None
+                or output_path is None
+                or output_path != judge_output[0]
+                or provenance.get("outputSha256") != judge_output[2]
+            ):
+                diagnostics.append(f"{scenario_id}: Judge receipt output and provenance mismatch")
+            response_document: object = None
+            if response_bytes is not None:
+                try:
+                    response_document = json.loads(response_bytes.decode("utf-8"))
+                except (UnicodeError, json.JSONDecodeError):
+                    diagnostics.append(f"{scenario_id}: Judge response is malformed")
+            expected_response = {
+                "schema": _JUDGE_OUTPUT_SCHEMA,
+                "version": 1,
+                "runIdentity": audit.get("runIdentity"),
+                "suite": suite_id,
+                "scenario": scenario_id,
+                "judgeInvocation": provenance.get("invocation"),
+                "disposition": audit.get("judgeDisposition"),
+            }
+            if response_document != expected_response:
+                diagnostics.append(f"{scenario_id}: Judge response contract mismatch")
+            if rollout_bytes is not None and response_bytes is not None:
+                rollout_events: list[object] = []
+                try:
+                    rollout_events = [
+                        json.loads(line)
+                        for line in rollout_bytes.decode("utf-8").splitlines()
+                    ]
+                except (UnicodeError, json.JSONDecodeError):
+                    diagnostics.append(f"{scenario_id}: Judge rollout is malformed")
+                event_index = provenance.get("responseEventIndex")
+                event = (
+                    rollout_events[event_index]
+                    if isinstance(event_index, int)
+                    and not isinstance(event_index, bool)
+                    and 0 <= event_index < len(rollout_events)
+                    else None
+                )
+                payload = event.get("payload") if isinstance(event, Mapping) else None
+                content = payload.get("content") if isinstance(payload, Mapping) else None
+                text_value = (
+                    content[0].get("text")
+                    if isinstance(content, list)
+                    and len(content) == 1
+                    and isinstance(content[0], Mapping)
+                    else None
+                )
+                session_meta = next(
+                    (
+                        value.get("payload")
+                        for value in rollout_events
+                        if isinstance(value, Mapping) and value.get("type") == "session_meta"
+                    ),
+                    None,
+                )
+                if (
+                    not isinstance(payload, Mapping)
+                    or event.get("type") != "response_item"
+                    or payload.get("type") != "message"
+                    or payload.get("role") != "assistant"
+                    or payload.get("phase") != "final_answer"
+                    or not isinstance(text_value, str)
+                    or text_value.encode("utf-8") != response_bytes
+                    or not isinstance(session_meta, Mapping)
+                    or session_meta.get("id") != provenance.get("sessionId")
+                    or session_meta.get("parent_thread_id") != provenance.get("parentSessionId")
+                    or session_meta.get("agent_role") != provenance.get("invocation")
+                ):
+                    diagnostics.append(f"{scenario_id}: Judge rollout session binding mismatch")
+        elif judge_invoked is False:
+            skip = skip_rows[0] if len(skip_rows) == 1 else {}
+            matching_deterministic = deterministic_receipts.get(str(skip.get("checkId")))
+            if (
+                len(skip_rows) != 1
+                or audit.get("judgeDisposition") != "skipped-critical-failure"
+                or skip.get("critical") is not True
+                or skip.get("deterministicVerdict") != "failed"
+                or skip.get("disposition") != "skipped-critical-failure"
+                or matching_deterministic is None
+                or matching_deterministic.get("critical") is not True
+                or matching_deterministic.get("verdict") != "failed"
+                or skip.get("evidence") != matching_deterministic.get("evidence")
+                or audit.get("failedCriticalCheck") != skip.get("checkId")
+            ):
+                diagnostics.append(f"{scenario_id}: exact critical Judge skip is missing")
+        else:
+            diagnostics.append(f"{scenario_id}: Judge invocation disposition is missing")
+
+    bundle_status = "invalid" if diagnostics else "verified"
+    for scenario in prepared.get("scenarioResults", []):
+        if isinstance(scenario, dict) and bundle_status != "verified" and str(
+            scenario.get("status", "")
+        ).upper() in {"PASS", "FAIL"}:
+            scenario["status"] = "INFRASTRUCTURE_FAILED"
+            scenario.setdefault("evidence", []).append(
+                "Governed evidence bundle validation failed before publication."
+            )
+    if bundle_status != "verified" and prepared.get("status") in {"PASS", "FAIL"}:
+        prepared["status"] = "INFRASTRUCTURE_FAILED"
+        prepared.setdefault("omissions", []).append(
+            "evidence bundle incomplete: " + "; ".join(diagnostics)
+        )
+    manifest = {
+        "schema": _EVIDENCE_BUNDLE_SCHEMA,
+        "version": 1,
+        "identity": prepared.get("identity"),
+        "status": bundle_status,
+        "entries": entries,
+        "diagnostics": diagnostics,
+    }
+    manifest_content = json.dumps(manifest, indent=2, sort_keys=True) + "\n"
+    prepared["evidenceBundle"] = {
+        "schema": _EVIDENCE_BUNDLE_SCHEMA,
+        "version": 1,
+        "status": bundle_status,
+        "manifest": "evidence/manifest.json",
+        "manifestSha256": hashlib.sha256(manifest_content.encode("utf-8")).hexdigest(),
+        "objectCount": len(objects),
+        "diagnostics": diagnostics,
+    }
+    return prepared, objects, manifest
+
+
+def _validate_evidence_bundle(generation_root: Path, metadata: Mapping[str, Any]) -> str:
+    bundle = metadata.get("evidenceBundle")
+    if not isinstance(bundle, Mapping) or bundle.get("schema") != _EVIDENCE_BUNDLE_SCHEMA:
+        raise ValueError("suite report evidence bundle metadata is missing")
+    manifest_relative = _safe_relative(bundle.get("manifest"))
+    if manifest_relative != PurePosixPath("evidence/manifest.json"):
+        raise ValueError("suite report evidence bundle manifest path is invalid")
+    manifest_path = generation_root.joinpath(*manifest_relative.parts)
+    if manifest_path.is_symlink() or not manifest_path.is_file():
+        raise ValueError("suite report evidence bundle manifest is missing or unsafe")
+    manifest_content = manifest_path.read_bytes()
+    manifest_digest = hashlib.sha256(manifest_content).hexdigest()
+    if manifest_digest != bundle.get("manifestSha256"):
+        raise ValueError("suite report evidence bundle manifest digest mismatch")
+    manifest = json.loads(manifest_content.decode("utf-8"))
+    if (
+        not isinstance(manifest, Mapping)
+        or manifest.get("schema") != _EVIDENCE_BUNDLE_SCHEMA
+        or manifest.get("version") != 1
+        or manifest.get("identity") != metadata.get("identity")
+        or manifest.get("status") != bundle.get("status")
+        or not isinstance(manifest.get("entries"), list)
+        or not isinstance(manifest.get("diagnostics"), list)
+    ):
+        raise ValueError("suite report evidence bundle manifest is malformed")
+    object_digests: set[str] = set()
+    for entry in manifest["entries"]:
+        if not isinstance(entry, Mapping):
+            raise ValueError("suite report evidence bundle entry is malformed")
+        bundle_path = entry.get("bundlePath")
+        digest = entry.get("sha256")
+        if bundle_path is None:
+            if entry.get("status") == "verified":
+                raise ValueError("verified evidence bundle entry lacks an object")
+            continue
+        if (
+            not isinstance(digest, str)
+            or not _SHA256_PATTERN.fullmatch(digest)
+            or bundle_path != f"evidence/objects/{digest}"
+        ):
+            raise ValueError("suite report evidence bundle object binding is malformed")
+        object_path = generation_root / str(bundle_path)
+        if object_path.is_symlink() or not object_path.is_file():
+            raise ValueError("suite report evidence bundle object is missing or unsafe")
+        if hashlib.sha256(object_path.read_bytes()).hexdigest() != digest:
+            raise ValueError("suite report evidence bundle object digest mismatch")
+        object_digests.add(digest)
+    if len(object_digests) != bundle.get("objectCount"):
+        raise ValueError("suite report evidence bundle object count mismatch")
+    if metadata.get("status") in {"PASS", "FAIL"} and bundle.get("status") != "verified":
+        raise ValueError("terminal suite verdict lacks a verified evidence bundle")
+    return manifest_digest
+
+
+def _validate_generation_content(
+    generation_root: Path,
+    metadata: Mapping[str, Any],
+    metadata_content: str,
+    html_content: str,
+    manifest_content: str,
+) -> None:
+    if (generation_root / "metadata.json").read_text(encoding="utf-8") != metadata_content:
+        raise ValueError("suite report staged metadata bytes mismatch")
+    if (generation_root / "report.html").read_text(encoding="utf-8") != html_content:
+        raise ValueError("suite report staged HTML bytes mismatch")
+    if (
+        generation_root / "evidence" / "manifest.json"
+    ).read_text(encoding="utf-8") != manifest_content:
+        raise ValueError("suite report staged evidence manifest bytes mismatch")
+    if _embedded_metadata(metadata) not in html_content:
+        raise ValueError("suite report staged HTML metadata binding mismatch")
+    _validate_evidence_bundle(generation_root, metadata)
+
+
 def write_suite_report(
     report_root: Path, metadata: Mapping[str, Any]
 ) -> tuple[Path, Path]:
     """Publish one immutable generation through a single atomic pointer replacement."""
 
-    harness = str(metadata["harness"])
-    suite_id = str(metadata["suite"])
-    metadata_content = json.dumps(metadata, indent=2, sort_keys=True) + "\n"
-    html_content = render_suite_html(metadata)
+    prepared, objects, manifest = _bundle_evidence(metadata)
+    harness = str(prepared["harness"])
+    suite_id = str(prepared["suite"])
+    manifest_content = json.dumps(manifest, indent=2, sort_keys=True) + "\n"
+    metadata_content = json.dumps(prepared, indent=2, sort_keys=True) + "\n"
+    html_content = render_suite_html(prepared)
     generation = hashlib.sha256(
-        metadata_content.encode("utf-8") + html_content.encode("utf-8")
+        metadata_content.encode("utf-8")
+        + html_content.encode("utf-8")
+        + manifest_content.encode("utf-8")
     ).hexdigest()
     generation_root = report_root / "generations" / harness / suite_id / generation
     metadata_path = generation_root / "metadata.json"
     html_path = generation_root / "report.html"
-    _atomic_write(metadata_path, metadata_content)
-    _atomic_write(html_path, html_content)
+    pending_parent = report_root / "generations" / harness / suite_id
+    pending_parent.mkdir(parents=True, exist_ok=True)
+    pending_root = Path(tempfile.mkdtemp(prefix=".pending-", dir=pending_parent))
+    try:
+        _atomic_write(pending_root / "metadata.json", metadata_content)
+        _atomic_write(pending_root / "report.html", html_content)
+        _atomic_write(pending_root / "evidence" / "manifest.json", manifest_content)
+        for digest, content in objects.items():
+            object_path = pending_root / "evidence" / "objects" / digest
+            _atomic_write_bytes(object_path, content)
+        _validate_generation_content(
+            pending_root,
+            prepared,
+            metadata_content,
+            html_content,
+            manifest_content,
+        )
+        if generation_root.exists():
+            _validate_generation_content(
+                generation_root,
+                prepared,
+                metadata_content,
+                html_content,
+                manifest_content,
+            )
+        else:
+            os.replace(pending_root, generation_root)
+        _validate_generation_content(
+            generation_root,
+            prepared,
+            metadata_content,
+            html_content,
+            manifest_content,
+        )
+    finally:
+        if pending_root.exists():
+            shutil.rmtree(pending_root)
     pointer = {
         "schema": _POINTER_SCHEMA,
-        "version": 1,
+        "version": 2,
         "identity": f"{harness}:{suite_id}",
         "harness": harness,
         "suite": suite_id,
@@ -500,6 +1171,10 @@ def write_suite_report(
         "metadataSha256": hashlib.sha256(metadata_content.encode("utf-8")).hexdigest(),
         "html": html_path.relative_to(report_root).as_posix(),
         "htmlSha256": hashlib.sha256(html_content.encode("utf-8")).hexdigest(),
+        "evidenceManifest": (
+            generation_root / "evidence" / "manifest.json"
+        ).relative_to(report_root).as_posix(),
+        "evidenceManifestSha256": prepared["evidenceBundle"]["manifestSha256"],
     }
     pointer_path = report_root / "suites" / harness / f"{suite_id}.manifest.json"
     _atomic_write(pointer_path, json.dumps(pointer, indent=2, sort_keys=True) + "\n")
@@ -519,7 +1194,7 @@ def _load_generation_pointer(
     if (
         not isinstance(pointer, dict)
         or pointer.get("schema") != _POINTER_SCHEMA
-        or pointer.get("version") != 1
+        or pointer.get("version") != 2
         or pointer.get("harness") not in _HARNESSES
         or not isinstance(pointer.get("suite"), str)
         or not isinstance(pointer.get("generation"), str)
@@ -544,8 +1219,10 @@ def _load_generation_pointer(
 
     metadata_path = governed_path("metadata")
     html_path = governed_path("html")
+    evidence_manifest_path = governed_path("evidenceManifest")
     metadata_content = metadata_path.read_text(encoding="utf-8")
     html_content = html_path.read_text(encoding="utf-8")
+    evidence_manifest_content = evidence_manifest_path.read_text(encoding="utf-8")
     if hashlib.sha256(metadata_content.encode("utf-8")).hexdigest() != pointer.get(
         "metadataSha256"
     ):
@@ -554,24 +1231,33 @@ def _load_generation_pointer(
         "htmlSha256"
     ):
         raise ValueError("suite report HTML digest mismatch")
+    if hashlib.sha256(evidence_manifest_content.encode("utf-8")).hexdigest() != pointer.get(
+        "evidenceManifestSha256"
+    ):
+        raise ValueError("suite report evidence manifest digest mismatch")
     generation = hashlib.sha256(
-        metadata_content.encode("utf-8") + html_content.encode("utf-8")
+        metadata_content.encode("utf-8")
+        + html_content.encode("utf-8")
+        + evidence_manifest_content.encode("utf-8")
     ).hexdigest()
     if generation != pointer.get("generation"):
         raise ValueError("suite report generation digest mismatch")
     if (
         metadata_path.parent != html_path.parent
+        or metadata_path.parent != evidence_manifest_path.parents[1]
         or metadata_path.parent.name != generation
     ):
         raise ValueError(
             "suite report files do not share their governed generation directory"
         )
     metadata = json.loads(metadata_content)
+    manifest_digest = _validate_evidence_bundle(metadata_path.parent, metadata)
     if (
         not isinstance(metadata, dict)
         or metadata.get("identity") != pointer.get("identity")
         or metadata.get("harness") != pointer.get("harness")
         or metadata.get("suite") != pointer.get("suite")
+        or manifest_digest != pointer.get("evidenceManifestSha256")
         or _embedded_metadata(metadata) not in html_content
     ):
         raise ValueError("suite report generation identity mismatch")
@@ -592,6 +1278,8 @@ def _valid_metadata(value: Mapping[str, Any]) -> bool:
         and value.get("status") in _TERMINAL_STATUSES
         and isinstance(value.get("scenarioResults"), list)
         and isinstance(value.get("omissions"), list)
+        and isinstance(value.get("evidenceBundle"), Mapping)
+        and value.get("evidenceBundle", {}).get("schema") == _EVIDENCE_BUNDLE_SCHEMA
     )
 
 
@@ -806,8 +1494,8 @@ def run_suites(
             elapsed_seconds=time.monotonic() - monotonic,
             evidence_root=result_dir,
         )
-        write_suite_report(report_root, metadata)
-        return metadata
+        _, metadata_path = write_suite_report(report_root, metadata)
+        return json.loads(metadata_path.read_text(encoding="utf-8"))
 
     results: list[dict[str, Any]] = []
     iterator = iter(selected)

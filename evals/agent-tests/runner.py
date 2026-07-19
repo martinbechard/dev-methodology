@@ -103,6 +103,11 @@ class _Session:
     started_at: float
     finished_at: float
     instruction_markers: frozenset[str]
+    rollout_path: Path | None = None
+    rollout_sha256: str | None = None
+    terminal_response_index: int | None = None
+    terminal_response: bytes | None = None
+    terminal_response_error: str | None = None
 
 
 def _utc_now() -> str:
@@ -1260,9 +1265,11 @@ def _coordinator_prompt(
         "one receipts JSON file per configured deterministic check. Each deterministic-check-disposition receipt must bind "
         "schema dev-methodology-agent-suite-evidence-receipt version 1, the assignment runIdentity, suite, scenario, exact "
         "checkId, catalog critical boolean, passed or failed verdict, and a relative artifacts path with its SHA-256. Retain "
-        "each configured check exactly once. When Judge runs, retain one judge-disposition receipt and one JSON Judge output "
-        "artifact using schema dev-methodology-agent-suite-judge-output version 1; both must bind runIdentity, suite, scenario, "
-        "exact judgeInvocation, and passed, failed, blocked, or stale disposition. When an authorized critical deterministic "
+        "each configured check exactly once. When Judge runs, instruct that exact Judge child to return only one compact JSON "
+        "object with exactly schema dev-methodology-agent-suite-judge-output, version 1, runIdentity, suite, scenario, "
+        "judgeInvocation, and disposition. The Judge must use passed, failed, blocked, or stale as disposition and return no "
+        "fence, commentary, or trailing newline. Preserve those exact Judge output_text bytes verbatim as the Judge output "
+        "artifact, then retain one judge-disposition receipt that binds that artifact and the same identity fields. When an authorized critical deterministic "
         "failure skips Judge, retain one judge-skip-disposition receipt binding the same exact failed checkId, critical true, "
         "deterministicVerdict failed, disposition skipped-critical-failure, and the same evidence artifact. Receipt paths must "
         "be directly beneath suite/scenario/receipts and artifact paths directly beneath suite/scenario/artifacts. "
@@ -1413,6 +1420,7 @@ def _validate_evidence_receipts(
     run_identity: str,
     reported_status: str,
     judge_invoked: bool,
+    require_runtime_judge_provenance: bool,
 ) -> dict[str, Any]:
     diagnostics: list[str] = []
     if not isinstance(references, list):
@@ -1434,6 +1442,7 @@ def _validate_evidence_receipts(
     artifact_parent = PurePosixPath(run.suite.suite_id, scenario_id, "artifacts")
     deterministic: dict[str, Mapping[str, Any]] = {}
     judge_receipts: list[Mapping[str, Any]] = []
+    judge_output_reference: Mapping[str, Any] | None = None
     skip_receipts: list[Mapping[str, Any]] = []
     seen_paths: set[str] = set()
     for index, reference in enumerate(references):
@@ -1502,6 +1511,7 @@ def _validate_evidence_receipts(
             if set(receipt) != expected_fields:
                 diagnostics.append(f"{field} Judge receipt fields are malformed")
             judge_receipts.append(receipt)
+            judge_output_reference = receipt.get("evidence")
             output = _json_mapping(evidence_path, f"{field}.evidence", diagnostics)
             expected_output = {
                 "schema": _JUDGE_OUTPUT_SCHEMA,
@@ -1591,8 +1601,11 @@ def _validate_evidence_receipts(
                 diagnostics.append("Judge-skip disposition does not match the selected failed critical check")
             else:
                 judge_disposition = "skipped-critical-failure"
+    status = "invalid" if diagnostics else "verified"
+    if status == "verified" and judge_invoked and require_runtime_judge_provenance:
+        status = "pending-runtime-judge"
     return {
-        "status": "invalid" if diagnostics else "verified",
+        "status": status,
         "runIdentity": run_identity,
         "deterministicChecks": [
             {
@@ -1603,6 +1616,8 @@ def _validate_evidence_receipts(
             for check_id, receipt in sorted(deterministic.items())
         ],
         "judgeDisposition": judge_disposition,
+        "judgeOutput": dict(judge_output_reference) if isinstance(judge_output_reference, Mapping) else None,
+        "judgeProvenance": None,
         "failedCriticalCheck": failed_critical_check,
         "diagnostics": diagnostics,
     }
@@ -1612,6 +1627,8 @@ def _load_checkpoint_report(
     checkpoint_root: Path,
     batch: Sequence[_RunSpec],
     run_identity: str,
+    *,
+    require_runtime_judge_provenance: bool = True,
 ) -> dict[str, Any] | None:
     runs: list[dict[str, Any]] = []
     for run in batch:
@@ -1663,6 +1680,7 @@ def _load_checkpoint_report(
                 run_identity,
                 str(loaded.get("status")),
                 bool(loaded.get("judgeInvoked")),
+                require_runtime_judge_provenance,
             )
             reported_status = str(loaded.get("status"))
             validated_status = (
@@ -1896,6 +1914,39 @@ def _timestamp_seconds(value: str) -> float:
     return dt.datetime.fromisoformat(value.replace("Z", "+00:00")).timestamp()
 
 
+def _terminal_response(
+    events: Sequence[Mapping[str, Any]],
+) -> tuple[int | None, bytes | None, str | None]:
+    candidates: list[tuple[int, bytes]] = []
+    for index, event in enumerate(events):
+        payload = event.get("payload")
+        if (
+            event.get("type") != "response_item"
+            or not isinstance(payload, Mapping)
+            or payload.get("type") != "message"
+            or payload.get("role") != "assistant"
+            or payload.get("phase") != "final_answer"
+        ):
+            continue
+        content = payload.get("content")
+        if (
+            not isinstance(content, list)
+            or len(content) != 1
+            or not isinstance(content[0], Mapping)
+            or set(content[0]) != {"type", "text"}
+            or content[0].get("type") != "output_text"
+            or not isinstance(content[0].get("text"), str)
+        ):
+            return None, None, "terminal assistant response is not one exact output_text item"
+        candidates.append((index, str(content[0]["text"]).encode("utf-8")))
+    if not candidates:
+        return None, None, "terminal assistant response is absent"
+    if len(candidates) != 1:
+        return None, None, "terminal assistant response is ambiguous"
+    index, response = candidates[0]
+    return index, response, None
+
+
 def _load_sessions(codex_home: Path) -> tuple[_Session, ...]:
     sessions: list[_Session] = []
     for rollout in codex_home.glob("**/rollout-*.jsonl"):
@@ -1914,6 +1965,7 @@ def _load_sessions(codex_home: Path) -> tuple[_Session, ...]:
         source = metadata.get("source", {})
         spawn = source.get("subagent", {}).get("thread_spawn", {}) if isinstance(source, dict) else {}
         invocation = metadata.get("agent_role") or spawn.get("agent_role")
+        response_index, response, response_error = _terminal_response(events)
         bound_markers: set[str] = set()
         for event in events:
             payload = event.get("payload", {})
@@ -1938,6 +1990,11 @@ def _load_sessions(codex_home: Path) -> tuple[_Session, ...]:
                 started_at=_timestamp_seconds(str(events[0]["timestamp"])),
                 finished_at=_timestamp_seconds(str(events[-1]["timestamp"])),
                 instruction_markers=frozenset(bound_markers),
+                rollout_path=rollout.resolve(),
+                rollout_sha256=_sha256(rollout),
+                terminal_response_index=response_index,
+                terminal_response=response,
+                terminal_response_error=response_error,
             )
         )
     return tuple(sessions)
@@ -2029,6 +2086,181 @@ def _audit_identity(
                     }
                 )
     return {"rolloutCount": len(sessions), "agents": agents, "scenarioBindings": scenario_bindings}
+
+
+def _retained_relative_path(root: Path, path: Path, field: str) -> str:
+    try:
+        resolved_root = root.resolve(strict=True)
+        resolved = path.resolve(strict=True)
+    except (OSError, RuntimeError) as error:
+        raise RuntimeError(f"{field} is missing") from error
+    if resolved_root not in resolved.parents or resolved.is_symlink() or not resolved.is_file():
+        raise RuntimeError(f"{field} is outside retained run evidence")
+    return resolved.relative_to(resolved_root).as_posix()
+
+
+def _bind_codex_judge_provenance(
+    checkpoint_report: dict[str, Any],
+    identity: Mapping[str, Any],
+    batch: Sequence[_RunSpec],
+    checkpoint_root: Path,
+    retained_session_root: Path,
+    evidence_root: Path,
+) -> None:
+    sessions = _load_sessions(retained_session_root)
+    sessions_by_id: dict[str, list[_Session]] = {}
+    for session in sessions:
+        sessions_by_id.setdefault(session.session_id, []).append(session)
+    bindings = identity.get("scenarioBindings")
+    binding_rows = list(bindings) if isinstance(bindings, list) else []
+    runs = {run.suite.suite_id: run for run in batch}
+    for run_result in checkpoint_report.get("runs", []):
+        suite_id = str(run_result.get("suite", ""))
+        run = runs.get(suite_id)
+        for scenario in run_result.get("scenarioResults", []):
+            if scenario.get("judgeInvoked") is not True:
+                continue
+            scenario_id = str(scenario.get("scenario", ""))
+            audit = scenario.get("receiptAudit")
+            if not isinstance(audit, dict):
+                continue
+            diagnostics = audit.setdefault("diagnostics", [])
+            errors: list[str] = []
+            expected_invocation = (
+                str(run.suite.manifest["execution"]["judgeInvocation"])
+                if run is not None
+                else ""
+            )
+            matching_bindings = [
+                value
+                for value in binding_rows
+                if isinstance(value, Mapping)
+                and value.get("suite") == suite_id
+                and value.get("scenario") == scenario_id
+                and value.get("kind") == "judge"
+            ]
+            if len(matching_bindings) != 1:
+                errors.append("exact Judge session binding is absent or ambiguous")
+                binding: Mapping[str, Any] = {}
+            else:
+                binding = matching_bindings[0]
+            session_id = binding.get("sessionId")
+            matching_sessions = (
+                sessions_by_id.get(str(session_id), [])
+                if isinstance(session_id, str)
+                else []
+            )
+            if len(matching_sessions) != 1:
+                errors.append("bound Judge session is absent or ambiguous")
+                session = None
+            else:
+                session = matching_sessions[0]
+            if binding.get("invocation") != expected_invocation:
+                errors.append("Judge session binding invocation mismatch")
+            if session is not None:
+                if session.invocation != expected_invocation:
+                    errors.append("bound session is not the selected Judge invocation")
+                if str(session.parent_thread_id) != str(binding.get("parentSessionId")):
+                    errors.append("bound Judge session parent mismatch")
+                if session.terminal_response is None:
+                    errors.append(
+                        session.terminal_response_error
+                        or "bound Judge terminal response is unavailable"
+                    )
+            response: Mapping[str, Any] | None = None
+            if session is not None and session.terminal_response is not None:
+                try:
+                    loaded_response = json.loads(session.terminal_response.decode("utf-8"))
+                except (UnicodeError, json.JSONDecodeError):
+                    errors.append("bound Judge terminal response is malformed")
+                else:
+                    if isinstance(loaded_response, Mapping):
+                        response = loaded_response
+                    else:
+                        errors.append("bound Judge terminal response is not an object")
+            expected_response = {
+                "schema": _JUDGE_OUTPUT_SCHEMA,
+                "version": 1,
+                "runIdentity": audit.get("runIdentity"),
+                "suite": suite_id,
+                "scenario": scenario_id,
+                "judgeInvocation": expected_invocation,
+                "disposition": audit.get("judgeDisposition"),
+            }
+            if response is not None and dict(response) != expected_response:
+                errors.append("bound Judge terminal response identity or disposition mismatch")
+            output_reference = audit.get("judgeOutput")
+            output_diagnostics: list[str] = []
+            output_path = (
+                _retained_artifact(
+                    checkpoint_root,
+                    output_reference,
+                    PurePosixPath(suite_id, scenario_id, "artifacts"),
+                    "Judge output",
+                    output_diagnostics,
+                )
+                if run is not None
+                else None
+            )
+            errors.extend(output_diagnostics)
+            if (
+                session is not None
+                and session.terminal_response is not None
+                and output_path is not None
+                and output_path.read_bytes() != session.terminal_response
+            ):
+                errors.append("Judge output artifact does not match retained child response bytes")
+            if errors:
+                diagnostics.extend(errors)
+                audit["status"] = "invalid"
+                audit["judgeProvenance"] = None
+                if scenario.get("reportedStatus") in {"PASS", "FAIL"}:
+                    scenario["status"] = "BLOCKED"
+                continue
+            assert session is not None
+            assert session.terminal_response is not None
+            assert session.rollout_path is not None
+            assert session.rollout_sha256 is not None
+            assert session.terminal_response_index is not None
+            assert output_path is not None
+            response_digest = hashlib.sha256(session.terminal_response).hexdigest()
+            response_path = retained_session_root / "responses" / f"{response_digest}.json"
+            response_path.parent.mkdir(parents=True, exist_ok=True)
+            if response_path.exists() and response_path.read_bytes() != session.terminal_response:
+                diagnostics.append("retained Judge response digest collision")
+                audit["status"] = "invalid"
+                audit["judgeProvenance"] = None
+                if scenario.get("reportedStatus") in {"PASS", "FAIL"}:
+                    scenario["status"] = "BLOCKED"
+                continue
+            response_path.write_bytes(session.terminal_response)
+            output_digest = _sha256(output_path)
+            audit["judgeProvenance"] = {
+                "status": "verified",
+                "sessionId": session.session_id,
+                "parentSessionId": str(session.parent_thread_id),
+                "invocation": expected_invocation,
+                "runIdentity": audit.get("runIdentity"),
+                "suite": suite_id,
+                "scenario": scenario_id,
+                "rolloutPath": _retained_relative_path(
+                    evidence_root, session.rollout_path, "Judge rollout"
+                ),
+                "rolloutSha256": session.rollout_sha256,
+                "responseEventIndex": session.terminal_response_index,
+                "responsePath": _retained_relative_path(
+                    evidence_root, response_path, "Judge response"
+                ),
+                "responseSha256": response_digest,
+                "outputPath": _retained_relative_path(
+                    evidence_root, output_path, "Judge output"
+                ),
+                "outputSha256": output_digest,
+                "disposition": audit.get("judgeDisposition"),
+            }
+            audit["status"] = "verified"
+            if scenario.get("reportedStatus") in {"PASS", "FAIL"}:
+                scenario["status"] = scenario["reportedStatus"]
 
 
 def _audit_session_concurrency(
@@ -2161,7 +2393,8 @@ def _retain_sessions(codex_home: Path, destination: Path) -> int:
     count = 0
     destination.mkdir(parents=True, exist_ok=True)
     for rollout in codex_home.glob("**/rollout-*.jsonl"):
-        target = destination / rollout.name
+        target = destination / rollout.relative_to(codex_home)
+        target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(_redact_capture(rollout.read_text(encoding="utf-8", errors="replace")), encoding="utf-8")
         count += 1
     return count
@@ -2855,7 +3088,12 @@ def _run_live_junie_batch(
         checkpoint_report: dict[str, Any] | None = None
         errors: list[str] = []
         try:
-            checkpoint_report = _load_checkpoint_report(checkpoint_destination, batch, run_identity)
+            checkpoint_report = _load_checkpoint_report(
+                checkpoint_destination,
+                batch,
+                run_identity,
+                require_runtime_judge_provenance=False,
+            )
             report = _extract_junie_report(event_path)
             _audit_report(batch, report, checkpoint_report)
             _audit_checkpoint_agreement(report, checkpoint_report, batch)
@@ -2982,10 +3220,6 @@ def _run_live_batch(
             report_error = f"checkpoint error: {checkpoint_error}"
         try:
             partial_report = _extract_coordinator_report(completed["stdout"])
-            _audit_report(batch, partial_report, checkpoint_report)
-            _audit_checkpoint_agreement(partial_report, checkpoint_report, batch)
-            if checkpoint_report is not None:
-                _attach_receipt_audits(partial_report, checkpoint_report)
         except RuntimeError as error:
             report_error = f"{report_error}; {error}" if report_error else str(error)
             if checkpoint_report is not None:
@@ -2993,10 +3227,35 @@ def _run_live_batch(
         expected_invocation_counts = _expected_invocation_counts(batch, partial_report or {})
         identity_error: str | None = None
         try:
-            identity = _audit_identity(staged, codex_home, expected_invocation_counts, batch, partial_report or {})
+            identity = _audit_identity(
+                staged,
+                session_directory,
+                expected_invocation_counts,
+                batch,
+                partial_report or {},
+            )
+            if checkpoint_report is not None:
+                _bind_codex_judge_provenance(
+                    checkpoint_report,
+                    identity,
+                    batch,
+                    checkpoint_destination,
+                    session_directory,
+                    result_root,
+                )
         except RuntimeError as error:
             identity_error = str(error)
             identity = {"rolloutCount": retained_session_count, "error": identity_error}
+        if partial_report is not None:
+            try:
+                _audit_report(batch, partial_report, checkpoint_report)
+                _audit_checkpoint_agreement(partial_report, checkpoint_report, batch)
+                if checkpoint_report is not None:
+                    _attach_receipt_audits(partial_report, checkpoint_report)
+            except RuntimeError as error:
+                report_error = f"{report_error}; {error}" if report_error else str(error)
+                if checkpoint_report is not None:
+                    partial_report = checkpoint_report
         browser_error: str | None = None
         try:
             browser_audit = _audit_browser_activity(codex_home, batch, identity, partial_report or {})
@@ -3046,6 +3305,7 @@ def _run_live_batch(
                 "events": str(evidence_prefix.with_suffix(".jsonl")),
                 "stderr": str(evidence_prefix.with_suffix(".stderr.log")),
                 "identity": str(identity_path),
+                "identitySha256": _sha256(identity_path),
                 "sessions": str(session_directory),
                 "checkpoints": str(checkpoint_destination),
             },

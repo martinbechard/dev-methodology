@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import importlib.util
 import contextlib
+import hashlib
 import json
 import sys
 import tempfile
@@ -106,7 +107,7 @@ class AgentSuiteReportingTests(unittest.TestCase):
             time.sleep(0.02)
             with lock:
                 active -= 1
-            return self._execution(suite_id)
+            return self._execution(suite_id, destination)
 
         with tempfile.TemporaryDirectory() as directory, self._stable_sources():
             results = reporting.run_suites(
@@ -134,7 +135,7 @@ class AgentSuiteReportingTests(unittest.TestCase):
             harness: str, suite_id: str, destination: Path, timeout: int
         ) -> object:
             executed.append(suite_id)
-            return self._execution(suite_id)
+            return self._execution(suite_id, destination)
 
         with (
             tempfile.TemporaryDirectory() as directory,
@@ -172,7 +173,7 @@ class AgentSuiteReportingTests(unittest.TestCase):
         ) -> object:
             if suite_id == "dev-code-reviewer":
                 raise RuntimeError("synthetic harness failure")
-            return self._execution(suite_id)
+            return self._execution(suite_id, destination)
 
         with tempfile.TemporaryDirectory() as directory, self._stable_sources():
             root = Path(directory)
@@ -194,9 +195,12 @@ class AgentSuiteReportingTests(unittest.TestCase):
         self.assertIn("synthetic harness failure", failed["runnerStderr"])
 
     def test_suite_report_is_self_contained_and_carries_machine_metadata(self) -> None:
-        metadata = self._metadata("codex", "dev-coder", "PASS")
+        with tempfile.TemporaryDirectory() as directory:
+            metadata = self._metadata(
+                "codex", "dev-coder", "PASS", Path(directory)
+            )
 
-        rendered = reporting.render_suite_html(metadata)
+            rendered = reporting.render_suite_html(metadata)
 
         self.assertIn('<script id="report-metadata" type="application/json">', rendered)
         self.assertIn('<meta name="viewport"', rendered)
@@ -208,10 +212,10 @@ class AgentSuiteReportingTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             reporting.write_suite_report(
-                root, self._metadata("codex", "dev-coder", "PASS")
+                root, self._metadata("codex", "dev-coder", "PASS", root / "pass-evidence")
             )
             html_path, metadata_path = reporting.write_suite_report(
-                root, self._metadata("codex", "dev-coder", "FAIL")
+                root, self._metadata("codex", "dev-coder", "FAIL", root / "fail-evidence")
             )
 
             self.assertIn("FAIL", html_path.read_text(encoding="utf-8"))
@@ -220,13 +224,108 @@ class AgentSuiteReportingTests(unittest.TestCase):
             )
             self.assertEqual([], list(root.rglob(".*.tmp")))
 
+    def test_publication_reopens_missing_runner_evidence_before_preserving_pass(
+        self,
+    ) -> None:
+        """A serialized runner audit cannot preserve PASS after its receipt disappears."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            evidence_root = root / "runner-result"
+            metadata = self._metadata(
+                "codex", "dev-coder", "PASS", evidence_root
+            )
+            receipt_path = Path(
+                metadata["scenarioResults"][0]["_checkpointRoot"]
+            ) / metadata["scenarioResults"][0]["evidenceReceipts"][0]["path"]
+            receipt_path.unlink()
+
+            _, metadata_path = reporting.write_suite_report(root, metadata)
+            published = json.loads(metadata_path.read_text(encoding="utf-8"))
+
+        self.assertEqual("INFRASTRUCTURE_FAILED", published["status"])
+        self.assertEqual("invalid", published["evidenceBundle"]["status"])
+        self.assertTrue(
+            any("missing" in value for value in published["evidenceBundle"]["diagnostics"])
+        )
+
+    def test_publication_rejects_post_audit_receipt_and_artifact_mutation(self) -> None:
+        """Receipt and bound-artifact bytes remain authoritative through publication."""
+        for kind in ("receipt", "artifact"):
+            with self.subTest(kind=kind), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                evidence_root = root / "runner-result"
+                metadata = self._metadata(
+                    "codex", "dev-coder", "PASS", evidence_root
+                )
+                scenario = metadata["scenarioResults"][0]
+                checkpoint_root = Path(scenario["_checkpointRoot"])
+                receipt_path = checkpoint_root / scenario["evidenceReceipts"][0]["path"]
+                if kind == "receipt":
+                    receipt_path.write_text("{}\n", encoding="utf-8")
+                else:
+                    receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+                    artifact_path = checkpoint_root / receipt["evidence"]["path"]
+                    artifact_path.write_text("mutated after runner audit\n", encoding="utf-8")
+
+                _, metadata_path = reporting.write_suite_report(root, metadata)
+                published = json.loads(metadata_path.read_text(encoding="utf-8"))
+
+            self.assertEqual("INFRASTRUCTURE_FAILED", published["status"])
+            self.assertEqual("invalid", published["evidenceBundle"]["status"])
+            self.assertTrue(
+                any("digest mismatch" in value for value in published["evidenceBundle"]["diagnostics"])
+            )
+
+    def test_aggregate_revalidates_bundle_objects_before_counting_current_pass(
+        self,
+    ) -> None:
+        """A bundle mutation after publication is visible and cannot count as CURRENT PASS."""
+        with (
+            tempfile.TemporaryDirectory() as directory,
+            mock.patch.object(reporting, "_suite_digest", return_value="digest"),
+        ):
+            root = Path(directory)
+            reporting.write_suite_report(
+                root,
+                self._metadata(
+                    "codex", "dev-coder", "PASS", root / "runner-result"
+                ),
+            )
+            pointer = json.loads(
+                (root / "suites" / "codex" / "dev-coder.manifest.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+            manifest = json.loads(
+                (root / pointer["evidenceManifest"]).read_text(encoding="utf-8")
+            )
+            object_entry = next(
+                entry for entry in manifest["entries"] if entry.get("bundlePath")
+            )
+            bundle_object = (root / pointer["metadata"]).parent / object_entry["bundlePath"]
+            bundle_object.write_bytes(b"mutated after publication")
+
+            entries = reporting.aggregate_entries(
+                root, ("dev-coder",), "codex", "revision"
+            )
+
+        states = {entry["inputState"] for entry in entries}
+        self.assertNotIn("CURRENT", states)
+        self.assertTrue({"MISSING", "MALFORMED"} <= states)
+        self.assertFalse(
+            any(
+                entry.get("status") == "PASS" and entry.get("inputState") == "CURRENT"
+                for entry in entries
+            )
+        )
+
     def test_interrupted_generation_keeps_previous_pointer_and_report_consistent(
         self,
     ) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             reporting.write_suite_report(
-                root, self._metadata("codex", "dev-coder", "PASS")
+                root, self._metadata("codex", "dev-coder", "PASS", root / "pass-evidence")
             )
             pointer = root / "suites" / "codex" / "dev-coder.manifest.json"
             before = pointer.read_bytes()
@@ -242,7 +341,7 @@ class AgentSuiteReportingTests(unittest.TestCase):
             ):
                 with self.assertRaisesRegex(OSError, "synthetic interruption"):
                     reporting.write_suite_report(
-                        root, self._metadata("codex", "dev-coder", "FAIL")
+                        root, self._metadata("codex", "dev-coder", "FAIL", root / "fail-evidence")
                     )
 
             self.assertEqual(before, pointer.read_bytes())
@@ -254,11 +353,11 @@ class AgentSuiteReportingTests(unittest.TestCase):
     ) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            stale = self._metadata("codex", "dev-coder", "PASS")
+            stale = self._metadata("codex", "dev-coder", "PASS", root / "codex-evidence")
             stale["sourceRevision"] = "older"
             reporting.write_suite_report(root, stale)
             reporting.write_suite_report(
-                root, self._metadata("junie", "dev-coder", "PASS")
+                root, self._metadata("junie", "dev-coder", "BLOCKED", root / "junie-evidence")
             )
             malformed = root / "suites" / "codex" / "broken.manifest.json"
             malformed.write_text("not-json", encoding="utf-8")
@@ -277,7 +376,7 @@ class AgentSuiteReportingTests(unittest.TestCase):
         ):
             root = Path(directory)
             html_path, _ = reporting.write_suite_report(
-                root, self._metadata("codex", "dev-coder", "PASS")
+                root, self._metadata("codex", "dev-coder", "PASS", root / "evidence")
             )
             html_path.unlink()
 
@@ -295,7 +394,7 @@ class AgentSuiteReportingTests(unittest.TestCase):
             ),
         ):
             root = Path(directory)
-            incompatible = self._metadata("codex", "dev-coder", "PASS")
+            incompatible = self._metadata("codex", "dev-coder", "PASS", root / "evidence")
             incompatible["suiteDigest"] = "other-digest"
             reporting.write_suite_report(root, incompatible)
             source_pointer = root / "suites" / "codex" / "dev-coder.manifest.json"
@@ -317,7 +416,7 @@ class AgentSuiteReportingTests(unittest.TestCase):
             ),
         ):
             root = Path(directory)
-            incompatible = self._metadata("codex", "dev-coder", "PASS")
+            incompatible = self._metadata("codex", "dev-coder", "PASS", root / "evidence")
             incompatible["suiteDigest"] = "other-digest"
             reporting.write_suite_report(root, incompatible)
 
@@ -334,14 +433,14 @@ class AgentSuiteReportingTests(unittest.TestCase):
         ):
             root = Path(directory)
             reporting.write_suite_report(
-                root, self._metadata("codex", "dev-coder", "PASS")
+                root, self._metadata("codex", "dev-coder", "PASS", root / "coder-pass-evidence")
             )
             _, unrelated = reporting.write_suite_report(
-                root, self._metadata("codex", "dev-verifier", "PASS")
+                root, self._metadata("codex", "dev-verifier", "PASS", root / "verifier-evidence")
             )
             before = unrelated.read_bytes()
             reporting.write_suite_report(
-                root, self._metadata("codex", "dev-coder", "FAIL")
+                root, self._metadata("codex", "dev-coder", "FAIL", root / "coder-fail-evidence")
             )
             reporting.rebuild_global(
                 root, ("dev-coder", "dev-verifier"), "codex", "revision"
@@ -363,7 +462,7 @@ class AgentSuiteReportingTests(unittest.TestCase):
             root = Path(directory)
             for status in ("PASS", "FAIL", "BLOCKED", "STALE"):
                 reporting.write_suite_report(
-                    root, self._metadata("codex", "dev-coder", status)
+                    root, self._metadata("codex", "dev-coder", status, root / f"{status.lower()}-evidence")
                 )
                 reporting.rebuild_global(root, ("dev-coder",), "codex", "revision")
                 aggregate = self._embedded_json(
@@ -384,7 +483,7 @@ class AgentSuiteReportingTests(unittest.TestCase):
         ):
             root = Path(directory)
             reporting.write_suite_report(
-                root, self._metadata("codex", "dev-coder", "PASS")
+                root, self._metadata("codex", "dev-coder", "PASS", root / "evidence")
             )
 
             output = reporting.rebuild_global(root, ("dev-coder",), "codex", "revision")
@@ -434,17 +533,18 @@ class AgentSuiteReportingTests(unittest.TestCase):
             },
         )
 
-        metadata = reporting.suite_metadata(
-            "codex",
-            "dev-coder",
-            execution,
-            source_revision="revision",
-            suite_digest="digest",
-            started_at="2026-07-19T00:00:00Z",
-            finished_at="2026-07-19T00:00:01Z",
-            elapsed_seconds=1,
-            evidence_root=Path("/synthetic"),
-        )
+        with tempfile.TemporaryDirectory() as directory:
+            metadata = reporting.suite_metadata(
+                "codex",
+                "dev-coder",
+                execution,
+                source_revision="revision",
+                suite_digest="digest",
+                started_at="2026-07-19T00:00:00Z",
+                finished_at="2026-07-19T00:00:01Z",
+                elapsed_seconds=1,
+                evidence_root=Path(directory),
+            )
 
         self.assertEqual([], metadata["modelJudgeEvidence"])
         self.assertNotIn("identity-only", metadata["modelJudgeEvidence"])
@@ -455,49 +555,25 @@ class AgentSuiteReportingTests(unittest.TestCase):
             )
         )
 
-    @staticmethod
-    def _execution(suite_id: str) -> object:
+    @classmethod
+    def _execution(cls, suite_id: str, evidence_root: Path) -> object:
+        metadata = cls._metadata("codex", suite_id, "PASS", evidence_root)
         return reporting.SuiteExecution(
             0,
             {
                 "results": [
                     {
+                        "runIdentity": metadata["scenarioResults"][0]["_runIdentity"],
+                        "evidence": {
+                            "checkpoints": metadata["scenarioResults"][0]["_checkpointRoot"],
+                            "identity": metadata["scenarioResults"][0]["_identityAudit"]["path"],
+                            "identitySha256": metadata["scenarioResults"][0]["_identityAudit"]["sha256"],
+                        },
                         "report": {
                             "runs": [
                                 {
                                     "suite": suite_id,
-                                    "scenarioResults": [
-                                        {
-                                            "scenario": "happy",
-                                            "status": "PASS",
-                                            "targetInvoked": True,
-                                            "judgeInvoked": True,
-                                            "evidence": ["deterministic"],
-                                            "identityEvidence": ["judge"],
-                                            "deterministicEvidence": ["gates"],
-                                            "modelJudgeEvidence": ["judge-verdict"],
-                                            "evidenceReceipts": [
-                                                {
-                                                    "path": f"{suite_id}/happy/receipts/evidence.json",
-                                                    "sha256": "a" * 64,
-                                                }
-                                            ],
-                                            "receiptAudit": {
-                                                "status": "verified",
-                                                "runIdentity": "codex-batch-01-test",
-                                                "deterministicChecks": [
-                                                    {
-                                                        "checkId": "harness-agent-identity",
-                                                        "critical": True,
-                                                        "verdict": "passed",
-                                                    }
-                                                ],
-                                                "judgeDisposition": "passed",
-                                                "failedCriticalCheck": None,
-                                                "diagnostics": [],
-                                            },
-                                        }
-                                    ],
+                                    "scenarioResults": metadata["scenarioResults"],
                                 }
                             ]
                         }
@@ -508,39 +584,243 @@ class AgentSuiteReportingTests(unittest.TestCase):
 
     def test_suite_metadata_demotes_unsupported_pass_and_preserves_critical_skip(self) -> None:
         """Aggregate reporting cannot turn missing governed receipts into a PASS."""
-        unsupported = self._execution("dev-coder")
-        unsupported.summary["results"][0]["report"]["runs"][0]["scenarioResults"][0][
-            "receiptAudit"
-        ]["status"] = "invalid"
-        metadata = reporting.suite_metadata(
-            "codex", "dev-coder", unsupported,
-            source_revision="revision", suite_digest="digest",
-            started_at="2026-07-19T00:00:00Z", finished_at="2026-07-19T00:00:01Z",
-            elapsed_seconds=1, evidence_root=Path("/synthetic"),
-        )
+        with tempfile.TemporaryDirectory() as directory:
+            evidence_root = Path(directory)
+            unsupported = self._execution("dev-coder", evidence_root)
+            unsupported.summary["results"][0]["report"]["runs"][0]["scenarioResults"][0][
+                "receiptAudit"
+            ]["status"] = "invalid"
+            metadata = reporting.suite_metadata(
+                "codex", "dev-coder", unsupported,
+                source_revision="revision", suite_digest="digest",
+                started_at="2026-07-19T00:00:00Z", finished_at="2026-07-19T00:00:01Z",
+                elapsed_seconds=1, evidence_root=evidence_root,
+            )
         self.assertEqual("INFRASTRUCTURE_FAILED", metadata["status"])
         self.assertEqual("INFRASTRUCTURE_FAILED", metadata["scenarioResults"][0]["status"])
         self.assertTrue(any("unsupported terminal verdicts demoted" in value for value in metadata["omissions"]))
 
-        critical_skip = self._execution("dev-coder")
-        scenario = critical_skip.summary["results"][0]["report"]["runs"][0]["scenarioResults"][0]
-        scenario["status"] = "FAIL"
-        scenario["judgeInvoked"] = False
-        scenario["modelJudgeEvidence"] = []
-        scenario["receiptAudit"]["deterministicChecks"][0]["verdict"] = "failed"
-        scenario["receiptAudit"]["judgeDisposition"] = "skipped-critical-failure"
-        scenario["receiptAudit"]["failedCriticalCheck"] = "harness-agent-identity"
-        metadata = reporting.suite_metadata(
-            "codex", "dev-coder", critical_skip,
-            source_revision="revision", suite_digest="digest",
-            started_at="2026-07-19T00:00:00Z", finished_at="2026-07-19T00:00:01Z",
-            elapsed_seconds=1, evidence_root=Path("/synthetic"),
-        )
+        with tempfile.TemporaryDirectory() as directory:
+            evidence_root = Path(directory)
+            critical_skip = self._execution("dev-coder", evidence_root)
+            scenario = critical_skip.summary["results"][0]["report"]["runs"][0]["scenarioResults"][0]
+            scenario["status"] = "FAIL"
+            scenario["judgeInvoked"] = False
+            scenario["modelJudgeEvidence"] = []
+            scenario["receiptAudit"]["deterministicChecks"][0]["verdict"] = "failed"
+            scenario["receiptAudit"]["judgeDisposition"] = "skipped-critical-failure"
+            scenario["receiptAudit"]["failedCriticalCheck"] = "harness-agent-identity"
+            metadata = reporting.suite_metadata(
+                "codex", "dev-coder", critical_skip,
+                source_revision="revision", suite_digest="digest",
+                started_at="2026-07-19T00:00:00Z", finished_at="2026-07-19T00:00:01Z",
+                elapsed_seconds=1, evidence_root=evidence_root,
+            )
         self.assertEqual("FAIL", metadata["status"])
         self.assertFalse(any("unsupported terminal verdicts" in value for value in metadata["omissions"]))
 
     @staticmethod
-    def _metadata(harness: str, suite_id: str, status: str) -> dict[str, object]:
+    def _metadata(
+        harness: str,
+        suite_id: str,
+        status: str,
+        evidence_root: Path,
+    ) -> dict[str, object]:
+        run_identity = f"{harness}-batch-01-test"
+        scenario_id = "happy"
+        checkpoint_root = evidence_root / "batch-01.checkpoints"
+        artifacts = checkpoint_root / suite_id / scenario_id / "artifacts"
+        receipts = checkpoint_root / suite_id / scenario_id / "receipts"
+        sessions = evidence_root / "batch-01.sessions"
+        artifacts.mkdir(parents=True)
+        receipts.mkdir()
+        sessions.mkdir(parents=True)
+        deterministic_artifact = artifacts / "harness-agent-identity.log"
+        deterministic_artifact.write_text("retained deterministic evidence\n", encoding="utf-8")
+        deterministic_receipt = receipts / "deterministic-harness-agent-identity.json"
+        deterministic_receipt.write_text(
+            json.dumps(
+                {
+                    "schema": "dev-methodology-agent-suite-evidence-receipt",
+                    "version": 1,
+                    "eventType": "deterministic-check-disposition",
+                    "runIdentity": run_identity,
+                    "suite": suite_id,
+                    "scenario": scenario_id,
+                    "checkId": "harness-agent-identity",
+                    "critical": True,
+                    "verdict": "passed",
+                    "evidence": {
+                        "path": deterministic_artifact.relative_to(checkpoint_root).as_posix(),
+                        "sha256": hashlib.sha256(deterministic_artifact.read_bytes()).hexdigest(),
+                    },
+                },
+                indent=2,
+                sort_keys=True,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        disposition = {
+            "PASS": "passed",
+            "FAIL": "failed",
+            "BLOCKED": "blocked",
+            "STALE": "stale",
+        }[status]
+        judge_invocation = f"{suite_id.replace('-', '_')}_suite_judge"
+        judge_output = artifacts / "judge-output.json"
+        judge_response = json.dumps(
+            {
+                "schema": "dev-methodology-agent-suite-judge-output",
+                "version": 1,
+                "runIdentity": run_identity,
+                "suite": suite_id,
+                "scenario": scenario_id,
+                "judgeInvocation": judge_invocation,
+                "disposition": disposition,
+            },
+            separators=(",", ":"),
+            sort_keys=True,
+        ).encode("utf-8")
+        judge_output.write_bytes(judge_response)
+        judge_receipt = receipts / "judge-disposition.json"
+        judge_receipt.write_text(
+            json.dumps(
+                {
+                    "schema": "dev-methodology-agent-suite-evidence-receipt",
+                    "version": 1,
+                    "eventType": "judge-disposition",
+                    "runIdentity": run_identity,
+                    "suite": suite_id,
+                    "scenario": scenario_id,
+                    "judgeInvocation": judge_invocation,
+                    "disposition": disposition,
+                    "evidence": {
+                        "path": judge_output.relative_to(checkpoint_root).as_posix(),
+                        "sha256": hashlib.sha256(judge_response).hexdigest(),
+                    },
+                },
+                indent=2,
+                sort_keys=True,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        session_id = f"judge-session-{suite_id}-{status.lower()}"
+        parent_session_id = f"supervisor-session-{suite_id}"
+        rollout = sessions / f"rollout-{session_id}.jsonl"
+        rollout.write_text(
+            "\n".join(
+                json.dumps(event)
+                for event in (
+                    {
+                        "timestamp": "2026-07-19T00:00:00Z",
+                        "type": "session_meta",
+                        "payload": {
+                            "id": session_id,
+                            "parent_thread_id": parent_session_id,
+                            "agent_role": judge_invocation,
+                            "source": {
+                                "subagent": {
+                                    "thread_spawn": {
+                                        "depth": 2,
+                                        "agent_role": judge_invocation,
+                                    }
+                                }
+                            },
+                        },
+                    },
+                    {
+                        "timestamp": "2026-07-19T00:00:01Z",
+                        "type": "response_item",
+                        "payload": {
+                            "type": "message",
+                            "role": "assistant",
+                            "content": [
+                                {
+                                    "type": "output_text",
+                                    "text": judge_response.decode("utf-8"),
+                                }
+                            ],
+                            "phase": "final_answer",
+                        },
+                    },
+                )
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        response_digest = hashlib.sha256(judge_response).hexdigest()
+        response_path = sessions / "responses" / f"{response_digest}.json"
+        response_path.parent.mkdir()
+        response_path.write_bytes(judge_response)
+        references = [
+            {
+                "path": deterministic_receipt.relative_to(checkpoint_root).as_posix(),
+                "sha256": hashlib.sha256(deterministic_receipt.read_bytes()).hexdigest(),
+            },
+            {
+                "path": judge_receipt.relative_to(checkpoint_root).as_posix(),
+                "sha256": hashlib.sha256(judge_receipt.read_bytes()).hexdigest(),
+            },
+        ]
+        provenance = {
+            "status": "verified",
+            "sessionId": session_id,
+            "parentSessionId": parent_session_id,
+            "invocation": judge_invocation,
+            "runIdentity": run_identity,
+            "suite": suite_id,
+            "scenario": scenario_id,
+            "rolloutPath": rollout.relative_to(evidence_root).as_posix(),
+            "rolloutSha256": hashlib.sha256(rollout.read_bytes()).hexdigest(),
+            "responseEventIndex": 1,
+            "responsePath": response_path.relative_to(evidence_root).as_posix(),
+            "responseSha256": response_digest,
+            "outputPath": judge_output.relative_to(evidence_root).as_posix(),
+            "outputSha256": response_digest,
+            "disposition": disposition,
+        }
+        identity_path = evidence_root / "batch-01.identity.json"
+        identity_path.write_text(
+            json.dumps(
+                {
+                    "scenarioBindings": [
+                        {
+                            "suite": suite_id,
+                            "scenario": scenario_id,
+                            "kind": "judge",
+                            "invocation": judge_invocation,
+                            "sessionId": session_id,
+                            "parentSessionId": parent_session_id,
+                        }
+                    ]
+                },
+                indent=2,
+                sort_keys=True,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        receipt_audit = {
+            "status": "verified",
+            "runIdentity": run_identity,
+            "deterministicChecks": [
+                {
+                    "checkId": "harness-agent-identity",
+                    "critical": True,
+                    "verdict": "passed",
+                }
+            ],
+            "judgeDisposition": disposition,
+            "judgeOutput": {
+                "path": judge_output.relative_to(checkpoint_root).as_posix(),
+                "sha256": response_digest,
+            },
+            "judgeProvenance": provenance,
+            "failedCriticalCheck": None,
+            "diagnostics": [],
+        }
         return {
             "schema": reporting._SCHEMA,
             "version": 1,
@@ -557,42 +837,27 @@ class AgentSuiteReportingTests(unittest.TestCase):
                 {
                     "scenario": "happy",
                     "status": status,
+                    "targetInvoked": True,
+                    "judgeInvoked": True,
                     "evidence": ["proof"],
                     "deterministicEvidence": ["gates"],
                     "modelJudgeEvidence": ["judge-verdict"],
-                    "evidenceReceipts": [
-                        {
-                            "path": f"{suite_id}/happy/receipts/evidence.json",
-                            "sha256": "a" * 64,
-                        }
-                    ],
-                    "receiptAudit": {
-                        "status": "verified",
-                        "runIdentity": "codex-batch-01-test",
-                        "deterministicChecks": [
-                            {
-                                "checkId": "harness-agent-identity",
-                                "critical": True,
-                                "verdict": "passed",
-                            }
-                        ],
-                        "judgeDisposition": "passed",
-                        "failedCriticalCheck": None,
-                        "diagnostics": [],
+                    "evidenceReceipts": references,
+                    "receiptAudit": receipt_audit,
+                    "_checkpointRoot": str(checkpoint_root),
+                    "_runIdentity": run_identity,
+                    "_identityAudit": {
+                        "path": str(identity_path),
+                        "sha256": hashlib.sha256(identity_path.read_bytes()).hexdigest(),
                     },
                 }
             ],
             "deterministicEvidence": ["proof"],
             "modelJudgeEvidence": ["judge"],
-            "evidenceReceipts": [
-                {
-                    "path": f"{suite_id}/happy/receipts/evidence.json",
-                    "sha256": "a" * 64,
-                }
-            ],
-            "receiptAudits": [],
+            "evidenceReceipts": references,
+            "receiptAudits": [receipt_audit],
             "omissions": [],
-            "evidenceRoot": "/synthetic/evidence",
+            "evidenceRoot": str(evidence_root),
             "runnerExitCode": 0,
             "runnerStderr": "",
             "machine": {

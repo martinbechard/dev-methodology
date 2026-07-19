@@ -1042,6 +1042,12 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                 batch,
                 run_identity,
             )
+            assert checkpoint_report is not None
+            self._bind_checkpoint_judges(
+                checkpoint_root,
+                checkpoint_report,
+                batch,
+            )
         assert checkpoint_report is not None
         report["runs"][0]["scenarioResults"][0]["evidenceReceipts"] = first["evidenceReceipts"]
         report["runs"][1]["scenarioResults"][0]["evidenceReceipts"] = second["evidenceReceipts"]
@@ -1475,6 +1481,12 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                 batch,
                 run_identity,
             )
+            assert checkpoint_report is not None
+            self._bind_checkpoint_judges(
+                checkpoint_root,
+                checkpoint_report,
+                batch,
+            )
 
         assert checkpoint_report is not None
         report = json.loads(json.dumps(checkpoint_report))
@@ -1508,6 +1520,12 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                 batch,
                 run_identity,
             )
+            assert checkpoint_report is not None
+            self._bind_checkpoint_judges(
+                checkpoint_root,
+                checkpoint_report,
+                batch,
+            )
 
         assert checkpoint_report is not None
         result = checkpoint_report["runs"][0]["scenarioResults"][0]
@@ -1526,6 +1544,123 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             "verified",
             report["runs"][0]["scenarioResults"][0]["receiptAudit"]["status"],
         )
+
+    def test_supervisor_judge_output_without_bound_child_response_is_non_passing(
+        self,
+    ) -> None:
+        """A supervisor-authored receipt and output cannot prove what the Judge child returned."""
+        batch = (self._run_spec("one", 1),)
+        run_identity = "codex-batch-01-test"
+        with tempfile.TemporaryDirectory() as temporary:
+            checkpoint_root = Path(temporary)
+            self._write_receipt_checkpoint(
+                checkpoint_root,
+                batch[0],
+                run_identity,
+            )
+            checkpoint_report = runner._load_checkpoint_report(
+                checkpoint_root,
+                batch,
+                run_identity,
+            )
+
+        assert checkpoint_report is not None
+        result = checkpoint_report["runs"][0]["scenarioResults"][0]
+        self.assertEqual("BLOCKED", result["status"])
+        self.assertNotEqual("verified", result["receiptAudit"]["status"])
+        self.assertIsNone(result["receiptAudit"].get("judgeProvenance"))
+
+    def test_judge_child_provenance_rejects_runtime_substitution_boundaries(self) -> None:
+        """Only the exact selected Judge session and its exact terminal bytes can restore PASS."""
+        cases = (
+            "absent",
+            "malformed",
+            "mismatched-session",
+            "mismatched-digest",
+            "supervisor-substitute",
+        )
+        for case in cases:
+            with self.subTest(case=case), tempfile.TemporaryDirectory() as temporary:
+                checkpoint_root = Path(temporary)
+                batch = (self._run_spec("one", 1),)
+                run_identity = "codex-batch-01-test"
+                self._write_receipt_checkpoint(
+                    checkpoint_root,
+                    batch[0],
+                    run_identity,
+                )
+                checkpoint_report = runner._load_checkpoint_report(
+                    checkpoint_root,
+                    batch,
+                    run_identity,
+                )
+                assert checkpoint_report is not None
+                scenario = checkpoint_report["runs"][0]["scenarioResults"][0]
+                output_reference = scenario["receiptAudit"]["judgeOutput"]
+                output_path = checkpoint_root / output_reference["path"]
+                valid_response = output_path.read_bytes()
+                sessions = checkpoint_root / ".sessions"
+                sessions.mkdir()
+                expected_invocation = str(
+                    batch[0].suite.manifest["execution"]["judgeInvocation"]
+                )
+                bound_session_id = "rollout-judge"
+                if case == "mismatched-session":
+                    bound_session_id = "rollout-target"
+                    self._write_rollout(
+                        sessions / "rollout-target.jsonl",
+                        "target_agent",
+                        depth=2,
+                        parent="rollout-supervisor",
+                        final_response=valid_response,
+                    )
+                elif case == "supervisor-substitute":
+                    bound_session_id = "rollout-supervisor-substitute"
+                    self._write_rollout(
+                        sessions / "rollout-supervisor-substitute.jsonl",
+                        "suite_supervisor",
+                        depth=2,
+                        parent="rollout-supervisor",
+                        final_response=valid_response,
+                    )
+                elif case != "absent":
+                    self._write_rollout(
+                        sessions / "rollout-judge.jsonl",
+                        expected_invocation,
+                        depth=2,
+                        parent="rollout-supervisor",
+                        final_response=(
+                            b"not-json" if case == "malformed" else valid_response
+                        ),
+                    )
+                if case == "mismatched-digest":
+                    output_path.write_bytes(b"post-audit supervisor substitution")
+                identity = {
+                    "scenarioBindings": [
+                        {
+                            "suite": "one",
+                            "scenario": "happy",
+                            "kind": "judge",
+                            "invocation": expected_invocation,
+                            "sessionId": bound_session_id,
+                            "parentSessionId": "rollout-supervisor",
+                        }
+                    ]
+                }
+
+                runner._bind_codex_judge_provenance(
+                    checkpoint_report,
+                    identity,
+                    batch,
+                    checkpoint_root,
+                    sessions,
+                    checkpoint_root,
+                )
+
+                self.assertEqual("BLOCKED", scenario["status"])
+                self.assertEqual("invalid", scenario["receiptAudit"]["status"])
+                self.assertIsNone(scenario["receiptAudit"]["judgeProvenance"])
+                self.assertTrue(scenario["receiptAudit"]["diagnostics"])
 
     def test_invalid_receipts_are_retained_diagnostically_and_block_terminal_status(self) -> None:
         """Missing, malformed, mismatched, duplicate, unretained, and incompatible receipts never pass."""
@@ -1697,6 +1832,8 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             checkpoint_root = Path(temporary) / ".agent-suite-results"
             self._write_receipt_checkpoint(checkpoint_root, batch[0], run_identity)
             report = runner._load_checkpoint_report(checkpoint_root, batch, run_identity)
+            assert report is not None
+            self._bind_checkpoint_judges(checkpoint_root, report, batch)
 
         assert report is not None
         self.assertEqual("PASS", report["runs"][0]["scenarioResults"][0]["status"])
@@ -2108,10 +2245,14 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         arbitrary_message: bool = False,
         parent: str | None = None,
         started_second: int = 0,
+        final_response: bytes | None = None,
     ) -> None:
         session_id = path.stem
         parent = parent or ("root" if depth == 1 else "rollout-supervisor")
-        timestamp = lambda offset: f"2026-07-17T00:00:{started_second + offset:02d}Z"
+
+        def timestamp(offset: int) -> str:
+            return f"2026-07-17T00:00:{started_second + offset:02d}Z"
+
         events: tuple[dict[str, object], ...] = (
             {"timestamp": timestamp(0), "type": "session_meta", "payload": {
                 "id": session_id,
@@ -2139,7 +2280,62 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                     "type": "agent_message", "message": marker or "no binding evidence"
                 }},
             )
+        if final_response is not None:
+            events += (
+                {"timestamp": timestamp(2), "type": "response_item", "payload": {
+                    "type": "message",
+                    "role": "assistant",
+                    "content": [{"type": "output_text", "text": final_response.decode("utf-8")}],
+                    "phase": "final_answer",
+                }},
+            )
         path.write_text("\n".join(json.dumps(event) for event in events) + "\n", encoding="utf-8")
+
+    def _bind_checkpoint_judges(
+        self,
+        checkpoint_root: Path,
+        checkpoint_report: dict[str, object],
+        batch: tuple[object, ...],
+    ) -> None:
+        retained_sessions = checkpoint_root / ".sessions"
+        retained_sessions.mkdir(parents=True, exist_ok=True)
+        bindings: list[dict[str, str]] = []
+        for index, raw_run in enumerate(batch):
+            run = raw_run
+            suite_id = run.suite.suite_id
+            scenario_id = run.scenario_ids[0]
+            scenario_result = checkpoint_report["runs"][index]["scenarioResults"][0]
+            if not scenario_result["judgeInvoked"]:
+                continue
+            output_reference = scenario_result["receiptAudit"]["judgeOutput"]
+            output_path = checkpoint_root / output_reference["path"]
+            session_id = f"rollout-judge-{suite_id}"
+            invocation = str(run.suite.manifest["execution"]["judgeInvocation"])
+            self._write_rollout(
+                retained_sessions / f"{session_id}.jsonl",
+                invocation,
+                depth=2,
+                parent=f"rollout-supervisor-{suite_id}",
+                final_response=output_path.read_bytes(),
+            )
+            bindings.append(
+                {
+                    "suite": suite_id,
+                    "scenario": scenario_id,
+                    "kind": "judge",
+                    "invocation": invocation,
+                    "sessionId": session_id,
+                    "parentSessionId": f"rollout-supervisor-{suite_id}",
+                }
+            )
+        runner._bind_codex_judge_provenance(
+            checkpoint_report,
+            {"scenarioBindings": bindings},
+            batch,
+            checkpoint_root,
+            retained_sessions,
+            checkpoint_root,
+        )
 
 
 if __name__ == "__main__":
