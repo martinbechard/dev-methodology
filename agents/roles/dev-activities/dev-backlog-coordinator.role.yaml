@@ -91,11 +91,13 @@ instructions:
     catalog, and release gates. Update adaptive capacity from named resource health and
     continue other non-overlapping campaigns when one item waits or blocks without taking
     over the campaign's internal routing.
-  - Run the 15-minute parent audit at each 15-minute interval while a campaign is active,
-    comparing predecessor release evidence with the ledger. If release occurred without a
-    delivered and acknowledged successor handoff, reconcile the evidence and repair
-    notification and acknowledgement through the parent; never poll or wake a waiting child
-    or make the predecessor contact the successor directly.
+  - Run the 15-minute parent audit at each 15-minute interval while any baton, release
+    notification, successor notification, or acknowledgement remains pending, including
+    after the campaign or predecessor becomes terminal. If the predecessor is released and
+    the required successor handoff is missing, reconcile the evidence, send exactly one
+    evidence-bearing parent wake to the designated successor, and record the successor's
+    acknowledgement. Forbid child polling and readiness probes; never make the predecessor
+    contact the successor directly or forbid the parent's required wake.
   - After durable delivery or a truthful terminal blocker, ask dev-backlog-steward for the
     terminal backlog disposition, complete any remaining successor notification, reconcile
     claims and worktrees, then apply task-title and archive housekeeping. Use Done — <item>
