@@ -1,8 +1,16 @@
 # Integrate Codex Work-Item Coordination
 
-Status: Ready
+Status: Running
 
 Type: Feature
+
+## Running Ownership
+
+- Owner: Dev Orchestrator task 019f78f5-beee-7e52-92b1-ffa72dedf736 under parent campaign 019f77f4-c4bd-7c91-b197-c987a7beb838.
+- Lifecycle claim: codex-workitem-coordination-running.
+- Claim evidence: Dev Backlog Steward acquired PRIMARY ownership of this exact backlog item at 2026-07-19T14:01:51.762332Z in event c8be5f2d-7554-4c73-a55e-88dd54e31f86 before recording the Running transition.
+- Approval evidence: the 2026-07-19 user answer “Ok approved” authorizes only the three governed definitions and supported mirrors recorded under Resolution, including the approved protocol refinements preserved there and in the parent ledger.
+- Scope boundary: this lifecycle claim is released after the committed Running transition. Definition, routing, generated-output, evaluation, documentation, installation, integration, and terminal ownership require separate ARTIFACT GO claims.
 
 ## Summary
 
