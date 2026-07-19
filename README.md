@@ -143,6 +143,18 @@ python3 skills/agent-claim/scripts/claim.py --help
 
 Dev Orchestrator owns the root task claim and child handoffs. Dev Merge Coordinator accepts committed clean contributions, acquires the target-specific integration resource, owns shared regeneration and integration verification, commits the combined result, and releases the integration claim only from a clean worktree.
 
+## Backlog Report
+
+Generate an offline HTML snapshot from the repository's live backlog state:
+
+```bash
+python3 scripts/generate-backlog-report.py --output /path/to/backlog-report.html
+```
+
+The command writes one self-contained HTML file with no network dependencies. It reports User Action Required separately from dispatchable work and treats any remaining active Status: Proposed item as a migration anomaly rather than an operational bucket.
+
+The report is read-only. It does not approve user-action items, mutate backlog files, acquire work, or dispatch agents.
+
 ## Scoped Target Deployment
 
 The build and maintenance workflow does not install skills or agents automatically. The installer acts only when explicitly invoked. Use --scope user to select the adapter's standard user directories or --scope project to select its standard directories under the current project. Explicit --dest and --agents-dest values override the corresponding scoped defaults.
