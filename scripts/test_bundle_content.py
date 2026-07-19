@@ -3341,6 +3341,10 @@ class BundleContentTests(unittest.TestCase):
         roles = build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
         roles_by_name = {role.name: role for role in roles}
         expected_dependencies = {
+            "dev-backlog-coordinator": (
+                "dev-orchestrator",
+                "dev-backlog-steward",
+            ),
             "dev-orchestrator": (
                 "dev-coder",
                 "dev-code-reviewer",
@@ -3745,7 +3749,7 @@ class BundleContentTests(unittest.TestCase):
             "Dev Merge Coordinator",
             "Claim MCP server and registry",
             "Codex task wake-up messaging",
-            "A task status or message acknowledges coordination only",
+            "A task status, title, archive state, or message acknowledges coordination only",
             "set its parent_claim_id to the orchestrator root claim's claim_id",
             "Lineage never transfers file ownership",
             "explicit authorization to preserve the complete dirty state",

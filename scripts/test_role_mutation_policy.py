@@ -42,7 +42,7 @@ class RoleMutationPolicyTests(unittest.TestCase):
         skill_payload = build_skill_docs.build_payload()
         roles = build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
 
-        self.assertEqual(26, len(roles))
+        self.assertEqual(27, len(roles))
         self.assertEqual(
             {"required", "conditional", "never"},
             {role.repository_mutation for role in roles},

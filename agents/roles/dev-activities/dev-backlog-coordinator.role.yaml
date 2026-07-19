@@ -117,9 +117,9 @@ instructions:
     whole-item dispatch batches, adaptive capacity, phase titles, sole successor wake
     authority, notification acknowledgements, and UI archival.
   review:
-  - Accept an item handoff only when dev-orchestrator identifies its accepted commits, fresh
-    review results, verification, integration or direct-lane evidence, clean worktrees, and
-    released artifact claims.
+  - Accept an item handoff only when dev-orchestrator identifies its accepted commits, independent
+    review results from a fresh context, verification, integration or direct-lane evidence,
+    clean worktrees, and released artifact claims.
   - Before terminal backlog disposition, reconcile that evidence with the live repository,
     claim registry, and task state. Do not let a summarized task status override missing
     delivery or release evidence.
@@ -150,6 +150,9 @@ instructions:
     non-persisted. Do not retry blindly or claim archival; reconcile task state once, record
     the canonical id and tool result, retain durable repository evidence, and surface the app
     limitation for a later safe retry through a supported archival path.
+  - If dev-orchestrator reports that the same finding or acceptance criterion remains unresolved
+    after two correction attempts, preserve its blocker evidence and route the terminal lifecycle
+    disposition through dev-backlog-steward. Do not start a third correction or take over the item.
   - Report BLOCKED when dev-orchestrator or dev-backlog-steward is unavailable, task identity
     remains ambiguous after bounded reconciliation, the required starting campaign floor
     cannot be safely established, delivery evidence cannot support a lifecycle transition,
