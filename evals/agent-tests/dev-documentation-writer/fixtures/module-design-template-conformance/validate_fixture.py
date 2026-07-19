@@ -17,8 +17,11 @@ from pathlib import Path
 
 _ROOT = Path(__file__).resolve().parent
 _CONTRACT_PATH = _ROOT / "fixture-contract.json"
-_PATH_REFERENCE = re.compile(r"(?:src|tests)/[A-Za-z0-9_./-]+\.py")
-_COMMAND_START = re.compile(r"\b(?:python3(?:\.[0-9]+)?|python|pytest|tox|nox)\b")
+_PATH_REFERENCE = re.compile(
+    r"(?<![A-Za-z0-9_./-])"
+    r"(?P<path>/(?:[A-Za-z0-9_.-]+/)*(?:src|tests)/[A-Za-z0-9_./-]+\.py"
+    r"|(?:\.\.?/|[A-Za-z0-9_.-]+/)*(?:src|tests)/[A-Za-z0-9_./-]+\.py)"
+)
 _POSITIVE_COVERAGE = re.compile(
     r"(?:automated tests?|tests?)\s+(?:cover|covers|exercise|exercises|verify|verifies|assert|asserts)"
     r"|(?:covered|tested|verified)\s+by\s+(?:an\s+)?automated test"
@@ -63,22 +66,33 @@ def _sha256(path: Path) -> str:
         return hashlib.file_digest(stream, "sha256").hexdigest()
 
 
-def _command_claims(text: str) -> list[str]:
-    """Return every command-like line from the artifact for exact allowlist comparison."""
+def _command_claims(text: str) -> tuple[list[str], bool]:
+    """Return complete lines from one command-only shell fence and its structural validity."""
 
     commands: list[str] = []
+    active_fence = ""
+    command_block_count = 0
     for line in text.splitlines():
-        match = _COMMAND_START.search(line)
-        if match:
-            commands.append(line[match.start() :].strip().strip("`").rstrip(".;"))
-    return commands
+        stripped = line.strip()
+        if stripped.startswith("```"):
+            if active_fence:
+                active_fence = ""
+            else:
+                active_fence = stripped[3:].strip().lower()
+                if active_fence in {"bash", "sh", "shell"}:
+                    command_block_count += 1
+            continue
+        if active_fence in {"bash", "sh", "shell"} and stripped and not stripped.startswith("#"):
+            commands.append(stripped)
+    structure_valid = command_block_count == 1 and active_fence == ""
+    return commands, structure_valid
 
 
 def _readiness_valid(text: str) -> bool:
     """Accept plain or canonically emphasized READY and BLOCKED readiness leads."""
 
     first = _first_section_content(text, "## Implementation Readiness")
-    return re.match(r"^(?:\*\*)?(?:READY\.|BLOCKED\.)(?:\*\*)?", first) is not None
+    return re.match(r"^(?:READY\.|BLOCKED\.|\*\*(?:READY\.|BLOCKED\.)\*\*)", first) is not None
 
 
 def _references_valid(referenced_paths: list[str], required_paths: set[str]) -> bool:
@@ -101,14 +115,15 @@ def _test_claims_valid(text: str, required_terms: list[str]) -> bool:
         return False
     for line in text.splitlines():
         lowered = line.lower()
+        without_disclaimers = re.sub(
+            r"(?:is\s+)?not covered by an automated test|not tested|untested|no automated test",
+            "",
+            lowered,
+        )
         identifies_source_only_branch = any(
-            subject in lowered for subject in ("blank", "valueerror", "rejection")
+            subject in without_disclaimers for subject in ("blank", "valueerror", "rejection")
         )
-        explicitly_negative = any(
-            phrase in lowered
-            for phrase in ("not covered", "not tested", "untested", "no automated test")
-        )
-        if identifies_source_only_branch and not explicitly_negative and _POSITIVE_COVERAGE.search(lowered):
+        if identifies_source_only_branch and _POSITIVE_COVERAGE.search(without_disclaimers):
             return False
     return True
 
@@ -155,10 +170,10 @@ def _final_evidence(
     """Return deterministic conformance and source-fidelity evidence."""
 
     text = artifact.read_text(encoding="utf-8") if artifact.is_file() else ""
-    referenced_paths = sorted(set(_PATH_REFERENCE.findall(text)))
+    referenced_paths = sorted({match.group("path") for match in _PATH_REFERENCE.finditer(text)})
     required_paths = {str(contract["sourcePath"]), str(contract["testPath"])}
     source_only_terms = [str(term) for term in contract["sourceOnlyBranchTerms"]]
-    command_claims = _command_claims(text)
+    command_claims, command_structure_valid = _command_claims(text)
     initial = _initial_evidence(contract)
     evidence = {
         **initial,
@@ -171,9 +186,11 @@ def _final_evidence(
         "readinessValid": _readiness_valid(text),
         "todoFree": "TODO" not in text,
         "evidenceReferencesValid": _references_valid(referenced_paths, required_paths),
-        "testCommandValid": command_claims == [str(contract["acceptedTestCommand"])],
+        "testCommandValid": command_structure_valid
+        and command_claims == [str(contract["acceptedTestCommand"])],
         "testClaimsValid": _test_claims_valid(text, source_only_terms),
         "commandClaims": command_claims,
+        "commandStructureValid": command_structure_valid,
         "referencedPaths": referenced_paths,
     }
     return evidence

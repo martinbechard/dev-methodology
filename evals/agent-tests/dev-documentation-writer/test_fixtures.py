@@ -46,6 +46,7 @@ def _run_validator(
 
 def _complete_artifact_text(
     *,
+    commands: list[str] | None = None,
     headings: list[str] | None = None,
     readiness: str = "**READY.** The existing implementation contract is source-backed.",
 ) -> str:
@@ -56,6 +57,7 @@ def _complete_artifact_text(
         for line in _TEMPLATE.read_text(encoding="utf-8").splitlines()
         if line.startswith("## ")
     ]
+    accepted_commands = commands or ["python3 -m unittest discover -s tests"]
     sections = []
     for heading in ordered:
         body = "Evidence is grounded in src/inventory.py and tests/test_inventory.py."
@@ -65,7 +67,8 @@ def _complete_artifact_text(
             body = (
                 "The accepted command is:\n\n"
                 "```bash\n"
-                "python3 -m unittest discover -s tests\n"
+                + "\n".join(accepted_commands)
+                + "\n"
                 "```\n\n"
                 "The success path is tested. The blank-value ValueError branch is source-observed "
                 "and is not covered by an automated test."
@@ -131,6 +134,17 @@ class DocumentationWriterFixtureTests(unittest.TestCase):
         evidence = json.loads(completed.stdout)
         self.assertFalse(evidence["readinessValid"])
 
+    def test_final_validator_rejects_unbalanced_readiness_emphasis(self) -> None:
+        artifact_text = _complete_artifact_text(readiness="**READY. Evidence is incomplete.")
+
+        with tempfile.TemporaryDirectory() as directory:
+            artifact = Path(directory) / "module-design.md"
+            artifact.write_text(artifact_text, encoding="utf-8")
+            completed = _run_validator("final", artifact=artifact)
+
+        self.assertEqual(3, completed.returncode)
+        self.assertFalse(json.loads(completed.stdout)["readinessValid"])
+
     def test_final_validator_accepts_canonical_bold_readiness_markers(self) -> None:
         for marker in ("**READY.**", "**BLOCKED.**"):
             with self.subTest(marker=marker), tempfile.TemporaryDirectory() as directory:
@@ -145,7 +159,9 @@ class DocumentationWriterFixtureTests(unittest.TestCase):
             self.assertTrue(json.loads(completed.stdout)["readinessValid"])
 
     def test_final_validator_rejects_unapproved_command(self) -> None:
-        artifact_text = _complete_artifact_text() + "\npytest -q\n"
+        artifact_text = _complete_artifact_text(
+            commands=["python3 -m unittest discover -s tests", "pytest -q"]
+        )
 
         with tempfile.TemporaryDirectory() as directory:
             artifact = Path(directory) / "module-design.md"
@@ -158,6 +174,35 @@ class DocumentationWriterFixtureTests(unittest.TestCase):
         self.assertEqual(
             ["python3 -m unittest discover -s tests", "pytest -q"], evidence["commandClaims"]
         )
+
+    def test_final_validator_rejects_non_python_command(self) -> None:
+        artifact_text = _complete_artifact_text(
+            commands=["python3 -m unittest discover -s tests", "make test"]
+        )
+
+        with tempfile.TemporaryDirectory() as directory:
+            artifact = Path(directory) / "module-design.md"
+            artifact.write_text(artifact_text, encoding="utf-8")
+            completed = _run_validator("final", artifact=artifact)
+
+        self.assertEqual(3, completed.returncode)
+        self.assertFalse(json.loads(completed.stdout)["testCommandValid"])
+
+    def test_final_validator_rejects_prefixed_allowed_command(self) -> None:
+        prefixes = ("sudo ", "false && ", "env PYTHONPATH=/unapproved ")
+        for prefix in prefixes:
+            with self.subTest(prefix=prefix), tempfile.TemporaryDirectory() as directory:
+                artifact = Path(directory) / "module-design.md"
+                artifact.write_text(
+                    _complete_artifact_text(
+                        commands=[f"{prefix}python3 -m unittest discover -s tests"]
+                    ),
+                    encoding="utf-8",
+                )
+                completed = _run_validator("final", artifact=artifact)
+
+            self.assertEqual(3, completed.returncode)
+            self.assertFalse(json.loads(completed.stdout)["testCommandValid"])
 
     def test_final_validator_rejects_noncanonical_template(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -201,6 +246,21 @@ class DocumentationWriterFixtureTests(unittest.TestCase):
         evidence = json.loads(completed.stdout)
         self.assertFalse(evidence["testClaimsValid"])
 
+    def test_final_validator_rejects_same_line_coverage_contradiction(self) -> None:
+        artifact_text = _complete_artifact_text().replace(
+            "The blank-value ValueError branch is source-observed and is not covered by an automated test.",
+            "The blank-value ValueError branch is source-observed and is not covered by an automated test, "
+            "but automated tests exercise the blank rejection behavior.",
+        )
+
+        with tempfile.TemporaryDirectory() as directory:
+            artifact = Path(directory) / "module-design.md"
+            artifact.write_text(artifact_text, encoding="utf-8")
+            completed = _run_validator("final", artifact=artifact)
+
+        self.assertEqual(3, completed.returncode)
+        self.assertFalse(json.loads(completed.stdout)["testClaimsValid"])
+
     def test_final_validator_rejects_escaping_evidence_path(self) -> None:
         artifact_text = _complete_artifact_text() + "\ntests/../../../../runner.py is supporting evidence.\n"
 
@@ -211,6 +271,19 @@ class DocumentationWriterFixtureTests(unittest.TestCase):
 
         self.assertEqual(3, completed.returncode)
         self.assertFalse(json.loads(completed.stdout)["evidenceReferencesValid"])
+
+    def test_final_validator_rejects_absolute_prefixed_evidence_path(self) -> None:
+        artifact_text = _complete_artifact_text() + "\n/tmp/src/inventory.py is supporting evidence.\n"
+
+        with tempfile.TemporaryDirectory() as directory:
+            artifact = Path(directory) / "module-design.md"
+            artifact.write_text(artifact_text, encoding="utf-8")
+            completed = _run_validator("final", artifact=artifact)
+
+        self.assertEqual(3, completed.returncode)
+        evidence = json.loads(completed.stdout)
+        self.assertFalse(evidence["evidenceReferencesValid"])
+        self.assertIn("/tmp/src/inventory.py", evidence["referencedPaths"])
 
 
 if __name__ == "__main__":
