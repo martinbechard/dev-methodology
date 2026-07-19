@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -17,6 +18,11 @@ from pathlib import Path
 _ROOT = Path(__file__).resolve().parent
 _CONTRACT_PATH = _ROOT / "fixture-contract.json"
 _PATH_REFERENCE = re.compile(r"(?:src|tests)/[A-Za-z0-9_./-]+\.py")
+_COMMAND_START = re.compile(r"\b(?:python3(?:\.[0-9]+)?|python|pytest|tox|nox)\b")
+_POSITIVE_COVERAGE = re.compile(
+    r"(?:automated tests?|tests?)\s+(?:cover|covers|exercise|exercises|verify|verifies|assert|asserts)"
+    r"|(?:covered|tested|verified)\s+by\s+(?:an\s+)?automated test"
+)
 
 
 def _load_contract() -> dict[str, object]:
@@ -48,6 +54,63 @@ def _first_section_content(text: str, heading: str) -> str:
         if inside and line.strip():
             return line.strip()
     return ""
+
+
+def _sha256(path: Path) -> str:
+    """Return the SHA-256 digest of one authoritative fixture input."""
+
+    with path.open("rb") as stream:
+        return hashlib.file_digest(stream, "sha256").hexdigest()
+
+
+def _command_claims(text: str) -> list[str]:
+    """Return every command-like line from the artifact for exact allowlist comparison."""
+
+    commands: list[str] = []
+    for line in text.splitlines():
+        match = _COMMAND_START.search(line)
+        if match:
+            commands.append(line[match.start() :].strip().strip("`").rstrip(".;"))
+    return commands
+
+
+def _readiness_valid(text: str) -> bool:
+    """Accept plain or canonically emphasized READY and BLOCKED readiness leads."""
+
+    first = _first_section_content(text, "## Implementation Readiness")
+    return re.match(r"^(?:\*\*)?(?:READY\.|BLOCKED\.)(?:\*\*)?", first) is not None
+
+
+def _references_valid(referenced_paths: list[str], required_paths: set[str]) -> bool:
+    """Require all evidence paths to exist within the synthetic repository boundary."""
+
+    root = _ROOT.resolve()
+    if not required_paths.issubset(referenced_paths):
+        return False
+    for path in referenced_paths:
+        candidate = (_ROOT / path).resolve()
+        if not candidate.is_relative_to(root) or not candidate.is_file():
+            return False
+    return True
+
+
+def _test_claims_valid(text: str, required_terms: list[str]) -> bool:
+    """Reject positive automated-coverage claims for the declared source-only branch."""
+
+    if not all(term in text for term in required_terms):
+        return False
+    for line in text.splitlines():
+        lowered = line.lower()
+        identifies_source_only_branch = any(
+            subject in lowered for subject in ("blank", "valueerror", "rejection")
+        )
+        explicitly_negative = any(
+            phrase in lowered
+            for phrase in ("not covered", "not tested", "untested", "no automated test")
+        )
+        if identifies_source_only_branch and not explicitly_negative and _POSITIVE_COVERAGE.search(lowered):
+            return False
+    return True
 
 
 def _run_source_tests() -> tuple[int, bool, str]:
@@ -94,24 +157,23 @@ def _final_evidence(
     text = artifact.read_text(encoding="utf-8") if artifact.is_file() else ""
     referenced_paths = sorted(set(_PATH_REFERENCE.findall(text)))
     required_paths = {str(contract["sourcePath"]), str(contract["testPath"])}
-    references_resolve = all((_ROOT / path).is_file() for path in referenced_paths)
     source_only_terms = [str(term) for term in contract["sourceOnlyBranchTerms"]]
+    command_claims = _command_claims(text)
     initial = _initial_evidence(contract)
     evidence = {
         **initial,
         "artifactPresent": artifact.is_file(),
+        "templateAuthorityValid": template.is_file()
+        and _sha256(template) == str(contract["canonicalTemplateSha256"]),
         "headingsMatch": artifact.is_file()
         and template.is_file()
         and _ordered_headings(artifact) == _ordered_headings(template),
-        "readinessValid": _first_section_content(text, "## Implementation Readiness").startswith(
-            ("READY.", "BLOCKED.")
-        ),
+        "readinessValid": _readiness_valid(text),
         "todoFree": "TODO" not in text,
-        "evidenceReferencesValid": required_paths.issubset(referenced_paths) and references_resolve,
-        "testCommandValid": str(contract["acceptedTestCommand"]) in text,
-        "testClaimsValid": all(term in text for term in source_only_terms)
-        and "tests/test_inventory_boundaries.py" not in text
-        and "covers the blank-value ValueError branch" not in text,
+        "evidenceReferencesValid": _references_valid(referenced_paths, required_paths),
+        "testCommandValid": command_claims == [str(contract["acceptedTestCommand"])],
+        "testClaimsValid": _test_claims_valid(text, source_only_terms),
+        "commandClaims": command_claims,
         "referencedPaths": referenced_paths,
     }
     return evidence
@@ -149,6 +211,7 @@ def main() -> int:
             "testPresent",
             "artifactPresent",
             "testsPass",
+            "templateAuthorityValid",
             "headingsMatch",
             "readinessValid",
             "todoFree",
