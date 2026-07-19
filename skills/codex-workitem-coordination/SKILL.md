@@ -115,15 +115,31 @@ After the serialized lifecycle mutation releases, run concurrent non-overlapping
 
 ## Parent Baton Scheduler Audit
 
-While a baton is pending in an active queue, run a parent-side scheduler audit every 15 minutes. Compare the predecessor’s active or terminal task state and claim-release state with the ledger’s required evidence, release notification, parent acknowledgement, successor notification, and successor acknowledgement.
+Start the first parent-side audit interval when the queue campaign starts. Complete another audit every 15 minutes from the prior audit completion while any queue work, active claim or task, baton, release notification, successor wake or acknowledgement, or accepted but unintegrated contribution remains nonterminal. Continue after a predecessor or campaign turns terminal while any notification or acknowledgement remains pending. Stop only when the queue campaign is terminal and no task, claim, accepted fix, baton, wake, or acknowledgement remains.
 
-- If the predecessor is still active or still owns the claim, contact only that predecessor for the required release notification. Do not contact or poll the waiting successor.
-- If the predecessor is terminal and the claim is released but its notification is missing, have the parent reconstruct the exact commit, release event, owner task identifier, role, claim, clean primary state, and next mutation from live evidence. Record the missed notification duty before continuing.
-- If release evidence is complete but the successor notification is missing, have the parent reconcile the canonical successor identifier and send one evidence-bearing wake directly.
-- If a successor acknowledgement is absent, inspect already recorded task state and messages at the scheduled parent audit. Do not send readiness probes or instruct the successor to poll.
-- Record every repair and acknowledgement so a later audit does not duplicate a wake or create a cross-task baton chain.
+For each completed interval, calculate these measurements from durable task and repository evidence:
 
-The scheduler repairs missing notifications and baton deadlocks through the parent. It never transfers wake authority to the predecessor and never turns a waiting successor into a polling task.
+- Terminal throughput is the count of backlog items that received a committed terminal disposition during the interval.
+- Flow throughput is the count of distinct durable gate advances during the interval: a committed producer or correction contribution, accepted independent review, verifier verdict, integration commit, deployment or refresh completion, or terminal backlog commit. Count each gate advance once. Commentary, polls, retries, and duplicate evidence do not count.
+- Average productive active tasks is the sum of task-seconds spent in claimed artifact work or another bounded running operation, divided by interval seconds. Exclude the parent coordinator, parked preflights, idle tasks, and wait-only tasks.
+- Average blocked or waiting tasks is the sum of task-seconds spent blocked or waiting, divided by interval seconds. Report claim, baton, and shared-resource waits separately from technical blockers.
+
+Record the interval boundary, queue counts, active claims and named resources, task-list anomalies, stale heartbeats, structured claim refusals, shared bottlenecks, and the exact commits and release events supporting each counted advance. Compare the current interval with the prior interval:
+
+- Improving means terminal throughput and flow throughput are nondecreasing while average blocked or waiting tasks is nonincreasing.
+- Worsening means either throughput falls while the blocked average rises, or a baton drop, deadlock, repeated contention, stale activity, or overload appears.
+- Otherwise report stable or mixed and explain which measurements moved in different directions.
+
+Perform this baton lookup during every audit:
+
+1. Reconcile live active and archived tasks, the authoritative claim registry, primary Git state, the file-backed backlog, unread handoffs, and the parent ledger.
+2. Detect a predecessor release or terminal state without parent receipt, missing successor wake, missing acknowledgement, a successor still waiting after claim release, duplicate or mismatched tasks, or an ownerless pending mutation.
+3. If the predecessor remains active or owns the claim, contact only that predecessor for its required release notification. Do not contact or poll the waiting successor.
+4. If the predecessor is terminal and released but its notification is missing, reconstruct the exact commit, release event, owner task identifier, role, claim, clean primary state, and next mutation from live evidence. Record the missed notification duty.
+5. If release evidence is complete and the successor wake is missing, reconcile the canonical successor identifier and have the parent send exactly one evidence-bearing wake. Record its delivery and acknowledgement so a later audit cannot duplicate it.
+6. If acknowledgement remains absent, inspect recorded task state and messages at the next scheduled audit. Do not send a readiness probe and never instruct a child to poll.
+
+The parent repairs missing notifications and baton deadlocks without transferring wake authority to a predecessor or child. After every audit, emit a concise user summary containing terminal throughput, flow throughput, both task averages, queue and claim state, trend, baton result, cause, routing or concurrency adjustment, and the next concurrency limit.
 
 ## Claims, Isolation, And Shared Resources
 
@@ -137,7 +153,7 @@ The scheduler repairs missing notifications and baton deadlocks through the pare
 
 When at least three dependency-ready, non-overlapping items and runtime capacity exist, start with a floor of THREE active artifact campaigns. The floor applies to productive artifact work, not parked analysis or waiting tasks.
 
-Observe a bounded health interval before changing the limit. When active lanes are progressing, claims remain narrow, isolation succeeds, task-list audits are clean, and shared resources have capacity, add at most one active campaign for the next interval. Scale by plus one again only after another healthy interval.
+Use the 15-minute parent audit as the bounded health interval. When throughput is nondecreasing, the blocked average is nonincreasing, active lanes are progressing, claims remain narrow, isolation succeeds, task-list audits are clean, and shared resources have capacity, add at most one productive campaign for the next interval. Scale by plus one again only after another healthy interval.
 
 Back off immediately and record the evidence when a named bottleneck appears:
 
@@ -147,6 +163,8 @@ Back off immediately and record the evidence when a named bottleneck appears:
 - integration contention: serialize the target-specific merge resource and preserve accepted commits
 - claim contention: narrow or reorder work; WAIT remains non-polling and overlapping scope never isolates around the conflict
 - runtime pressure or stale heartbeats: stop new dispatch, reduce the next interval, and reconcile active tasks
+
+Back off the affected resource or lane first. Reduce the global limit only when evidence shows system-wide pressure. When the trend is worsening, identify the cause and change routing or concurrency before dispatching another item.
 
 Do not wait for an entire batch before routing finished work. Send each completed contribution into its next independent review, correction, verification, or integration step while other non-overlapping lanes continue.
 
@@ -199,6 +217,8 @@ If set_thread_archived returns exactly “Inactive thread archive did not persis
 Reversible dormant-preflight parking is not terminal archival. Keep its canonical identifier and preflight handoff in the ledger, and unarchive it only when the parent selects that item just in time.
 
 ## Coordination Report
+
+After every 15-minute parent audit, report both throughputs, both task averages, queue and claim state, trend, baton lookup result, cause, adjustment, and next concurrency limit.
 
 Report:
 
