@@ -1,6 +1,6 @@
 # Restore Wiki Ingester On Verifier Interruption
 
-Status: Running
+Status: Blocked
 
 Type: Defect
 
@@ -51,6 +51,16 @@ None.
 - Inspect the evaluation result, claim trace, and worktree cleanup evidence.
 - Run the Wiki Ingester raw-ingest, destination-collision, and verifier-failure scenarios.
 - Run Agent Skill validation, generated-output freshness checks, repository unit tests, and Git diff validation.
+
+## Blocked Outcome
+
+The same HIGH code-review finding remained after two correction attempts, so the correction budget is exhausted. The clean implementation and correction commits 8c28d9b, c677f09, and c75c8b1 remain preserved.
+
+Independent code review never accepted the contribution. Verification and integration therefore did not run.
+
+The unresolved defect is the missing executable boundary to the actual Wiki Ingester or its generated adapter. The current harness injects verifier receipts and then performs restoration, writes the evaluation result, commits the result, and releases the claim itself. Actual Wiki Ingester role regressions can therefore false-pass the interruption tests.
+
+The next action requires an executable target boundary with a nested verifier dependency-injection seam. Injected verifier outcomes must pass through the actual Wiki Ingester execution path so the suite observes the target's restoration, result, commit, receipt, and claim-closeout behavior.
 
 ## Notes
 
