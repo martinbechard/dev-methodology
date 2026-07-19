@@ -3607,6 +3607,7 @@ class BundleContentTests(unittest.TestCase):
             "Claim MCP server and registry",
             "Codex task wake-up messaging",
             "A task status or message acknowledges coordination only",
+            "set its parent_claim_id to the orchestrator root claim's claim_id",
             "Lineage never transfers file ownership",
             "explicit authorization to preserve the complete dirty state",
             "checkpoint commit before cleanup or release",
