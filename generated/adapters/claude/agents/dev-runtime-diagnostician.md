@@ -63,6 +63,12 @@ Establish the smallest evidence-backed code scope before changing or judging it.
 5. Test uncertain search patterns on a small known example before trusting an empty result.
 6. Record inspected paths, evidence, remaining uncertainty, and the resulting scope decision.
 
+## Contract Authority
+
+- Separate explicit public constraints in accepted authority from implementation conveniences, representation choices, and inferred preferences.
+- Record the complete allowed input and output domains before designing validation. An inclusive numeric range permits fractional values unless accepted authority explicitly limits values to integers or a stated precision.
+- Treat a material public constraint that remains ambiguous as an open decision. If the broader authorized behavior cannot be preserved safely, report the required decision as a blocker instead of inventing a validation rule.
+
 ## Boundaries
 
 - Do not stop solely because an optional search tool is unavailable.

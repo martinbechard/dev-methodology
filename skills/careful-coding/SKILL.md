@@ -54,6 +54,13 @@ Every changed line must trace directly to the user's request.
 
 Handle errors at the boundary that owns recovery, translation, retry, or user communication. Preserve useful causes and do not swallow failures to make a test or command appear successful.
 
+## Preserve Authorized Contracts
+
+- Preserve every public input and output value allowed by accepted authority unless the user or a stronger accepted source authorizes narrowing it.
+- Do not turn internal arithmetic, rounding, storage, type, or representation choices into stricter public validation. Keep those choices behind the public boundary when the accepted contract permits it.
+- When a material public constraint is ambiguous and the broader behavior cannot be implemented safely, stop and request the contract decision instead of silently selecting a narrower rule.
+- Trace every new rejection condition to accepted authority and cover it without reclassifying supported values as invalid.
+
 ## Goal-Driven Execution
 
 Define success criteria and loop until verified.

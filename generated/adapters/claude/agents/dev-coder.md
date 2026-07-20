@@ -581,6 +581,13 @@ Every changed line must trace directly to the user's request.
 
 Handle errors at the boundary that owns recovery, translation, retry, or user communication. Preserve useful causes and do not swallow failures to make a test or command appear successful.
 
+## Preserve Authorized Contracts
+
+- Preserve every public input and output value allowed by accepted authority unless the user or a stronger accepted source authorizes narrowing it.
+- Do not turn internal arithmetic, rounding, storage, type, or representation choices into stricter public validation. Keep those choices behind the public boundary when the accepted contract permits it.
+- When a material public constraint is ambiguous and the broader behavior cannot be implemented safely, stop and request the contract decision instead of silently selecting a narrower rule.
+- Trace every new rejection condition to accepted authority and cover it without reclassifying supported values as invalid.
+
 ## Goal-Driven Execution
 
 Define success criteria and loop until verified.
@@ -693,6 +700,12 @@ Establish the smallest evidence-backed code scope before changing or judging it.
 4. Prefer the repository's available search and navigation tools. Use structure-aware search when available and useful, but keep a text-search and direct-reading fallback.
 5. Test uncertain search patterns on a small known example before trusting an empty result.
 6. Record inspected paths, evidence, remaining uncertainty, and the resulting scope decision.
+
+## Contract Authority
+
+- Separate explicit public constraints in accepted authority from implementation conveniences, representation choices, and inferred preferences.
+- Record the complete allowed input and output domains before designing validation. An inclusive numeric range permits fractional values unless accepted authority explicitly limits values to integers or a stated precision.
+- Treat a material public constraint that remains ambiguous as an open decision. If the broader authorized behavior cannot be preserved safely, report the required decision as a blocker instead of inventing a validation rule.
 
 ## Boundaries
 

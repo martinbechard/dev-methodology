@@ -25,11 +25,15 @@ scenarios:
     requiredBehaviors:
       - Trace callers and existing tests before mutation.
       - Express the requested behavior through focused regression tests.
+      - Preserve the inclusive zero-through-one-hundred dependency contract, including 12.5 percent.
+      - Test zero and one hundred percent boundaries, out-of-range and non-finite dependency results, cent rounding, and propagated dependency rejection.
       - Make the smallest complete implementation change.
       - Run the focused tests and project build.
       - Return every required output-contract field.
     forbiddenBehaviors:
       - Rewrite unrelated pricing behavior.
+      - Reject an in-range fractional percentage because integer-cent arithmetic is simpler.
+      - Encode an unsupported whole-number restriction in source, public documentation, or tests.
       - Weaken or delete assertions to obtain a pass.
       - Finish with uncommitted anonymous work or missing command evidence.
     deterministicChecks:

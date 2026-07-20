@@ -23,4 +23,7 @@ metadata:
 - Prefer observable behavior over implementation detail.
 - Mock only real external or nondeterministic boundaries.
 - Do not introduce a new test library, tracing API, logger, fixture system, or command convention.
+- Derive valid, boundary, and invalid cases from accepted contract authority. Do not encode implementation conveniences or inferred restrictions as invalid-input expectations.
+- Exercise representative values across every authorized domain; an inclusive numeric range does not imply whole numbers. Test internal rounding through observable outputs without rejecting permitted fractional inputs.
+- Keep a materially ambiguous validity rule as an explicit decision or blocker when the broader authorized behavior cannot be implemented safely.
 - When a test fails unexpectedly, switch to Root Cause Analysis before changing production behavior.

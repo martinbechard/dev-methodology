@@ -30,13 +30,13 @@
         {
           "name": "dev-code-reviewer",
           "output": "generated/adapters/claude/agents/dev-code-reviewer.md",
-          "sha256": "1311ae2fc41ec036c0b48e0a1cabd0b3dc9c69e4bc732ce2ae8c6da2baf54894",
+          "sha256": "f79c4a4f076cadd39bb0d5af280b1a50cd9a22bc5c9d174e3e3dea25823bb35a",
           "source": "agents/roles/dev-activities/dev-code-reviewer.role.yaml"
         },
         {
           "name": "dev-coder",
           "output": "generated/adapters/claude/agents/dev-coder.md",
-          "sha256": "cf0c519fa73b9253170cda9f4b4848f62fb45529c7869a472f39f64709bba642",
+          "sha256": "8441441bb3a184339078ec519e7068d58fa7af9671aea4d5a355d39e774f5cf2",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
         },
         {
@@ -66,7 +66,7 @@
         {
           "name": "dev-runtime-diagnostician",
           "output": "generated/adapters/claude/agents/dev-runtime-diagnostician.md",
-          "sha256": "be563d9b94b4cded1d96c4f7ce603fbe04f1f51641bfe9c43f8713965fa04e3f",
+          "sha256": "cd59afe6e29e9fca7040b0691a31c4a7a5283241f190db1cb10d02be0f6dcc5d",
           "source": "agents/roles/dev-activities/dev-runtime-diagnostician.role.yaml"
         },
         {
@@ -200,13 +200,13 @@
         {
           "name": "dev-code-reviewer",
           "output": "generated/adapters/codex/agents/dev-code-reviewer.toml",
-          "sha256": "a3f234b4c0c2e0f5336c3b375fd84300c5445af7f28fea9885ed3d3e7129bc67",
+          "sha256": "549c6b991009cf27f79586303ab653460e3ba5eb1bf99e79ff8e1f18262f81f2",
           "source": "agents/roles/dev-activities/dev-code-reviewer.role.yaml"
         },
         {
           "name": "dev-coder",
           "output": "generated/adapters/codex/agents/dev-coder.toml",
-          "sha256": "9d9d6b3400f31ea877d8e20ef34a921a60a19985a2940c5ea58e10e84a78a6a4",
+          "sha256": "43d9e569d5a352c198ac06fc9c689d7d75550a4906c967e933b9cc4ff648591b",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
         },
         {
@@ -236,7 +236,7 @@
         {
           "name": "dev-runtime-diagnostician",
           "output": "generated/adapters/codex/agents/dev-runtime-diagnostician.toml",
-          "sha256": "61443e47d12e9c8a61d89a3dee1f83ff647f4fbde724319137a42cdb06f0ade4",
+          "sha256": "c3cd094099b040755e9a9abc11d9eebb450996c65dd1103a70514f65e4a4b943",
           "source": "agents/roles/dev-activities/dev-runtime-diagnostician.role.yaml"
         },
         {
@@ -376,13 +376,13 @@
         {
           "name": "dev-code-reviewer",
           "output": "generated/adapters/gemini/agents/dev-code-reviewer.md",
-          "sha256": "31dcc4a2d09ff51a3b462de6aec96587b1438f7d34e1f249ef4d5734b0104fd7",
+          "sha256": "e65fc2f6f584a847d48657be45f07ecffcea194a351a375a71e50a9b73947554",
           "source": "agents/roles/dev-activities/dev-code-reviewer.role.yaml"
         },
         {
           "name": "dev-coder",
           "output": "generated/adapters/gemini/agents/dev-coder.md",
-          "sha256": "ecdeab6412d6319d743937a5896b7c9402037bd4d9865c49ab3d3159e9581444",
+          "sha256": "f80c3754de0895b794e5b0c6a529cfcac271e4168d376ede1cc51bba4668c972",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
         },
         {
@@ -412,7 +412,7 @@
         {
           "name": "dev-runtime-diagnostician",
           "output": "generated/adapters/gemini/agents/dev-runtime-diagnostician.md",
-          "sha256": "2a2cdf31f9cfa83502625197eb10d65868e0cea68207644407789f3d2e5827ca",
+          "sha256": "04e53c6992b5e81566271ec538dcba1fded2f199eaa5f0f0929394974b63b647",
           "source": "agents/roles/dev-activities/dev-runtime-diagnostician.role.yaml"
         },
         {
@@ -546,13 +546,13 @@
         {
           "name": "dev-code-reviewer",
           "output": "generated/adapters/junie/agents/dev-code-reviewer.md",
-          "sha256": "0905925da4aadb89ba447658c4b7111fa8af6ad53273de3399a59a2071aeb8b3",
+          "sha256": "fbd674fd3b48774cd35b474621cf0870f8bc881dc814dffa2eb9de5745e0e08e",
           "source": "agents/roles/dev-activities/dev-code-reviewer.role.yaml"
         },
         {
           "name": "dev-coder",
           "output": "generated/adapters/junie/agents/dev-coder.md",
-          "sha256": "8efdeec773a51e8f08b588ce58159989385945dc29e58f674f99ff5b4ea6ec46",
+          "sha256": "a9fd589127db33d4a620ef1f790cf9aa7e5a8639e3b01b7e4cfb225ab62128ec",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
         },
         {
@@ -582,7 +582,7 @@
         {
           "name": "dev-runtime-diagnostician",
           "output": "generated/adapters/junie/agents/dev-runtime-diagnostician.md",
-          "sha256": "5568b40a1a525280bca4149a0a8c5fdefc6618d6452c49fdffc5e1fcece191db",
+          "sha256": "2ce3ea99ebf8c4ee55cc457a3611b9ba883f5af757e51dc183659547fa85196e",
           "source": "agents/roles/dev-activities/dev-runtime-diagnostician.role.yaml"
         },
         {
