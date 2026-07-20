@@ -30,6 +30,15 @@ CORRECTION_EXPECTATIONS = (
         "The first retry waits 200 milliseconds and the second retry waits 500 milliseconds.",
     ),
 )
+CONCLUSION_INVENTORY_LABEL = (
+    r"(?:(?:ingested|substantiated|supported)\s+"
+    r"|(?:preserved|retained)\s+(?:substantiated|supported)\s+)"
+    r"(?:conclusions?|content|facts|knowledge)"
+)
+OPEN_QUESTION_INVENTORY_LABEL = (
+    r"(?:(?:recorded|retained|preserved|page-local)\s+)*"
+    r"(?:open\s+questions?|unresolved\s+(?:questions?|points?|uncertaint(?:y|ies)))"
+)
 
 
 def _load_module(name: str, path: Path):
@@ -79,9 +88,8 @@ def _labeled_inventory(result_text: str, label_pattern: str) -> str:
         flags=re.IGNORECASE,
     )
     any_inventory = re.compile(
-        r"^(?:[-*]\s*)?(?:#{1,6}\s*)?"
-        r"(?:(?:ingested|substantiated|supported)\s+)?conclusions?"
-        r"|^(?:[-*]\s*)?(?:#{1,6}\s*)?(?:recorded\s+)?open questions?",
+        rf"^(?:[-*]\s*)?(?:#{{1,6}}\s*)?(?:{CONCLUSION_INVENTORY_LABEL})"
+        rf"|^(?:[-*]\s*)?(?:#{{1,6}}\s*)?(?:{OPEN_QUESTION_INVENTORY_LABEL})",
         flags=re.IGNORECASE,
     )
     entries: list[str] = []
@@ -104,11 +112,11 @@ def _assert_result_inventory(test: unittest.TestCase, result_text: str) -> None:
     """Require distinct conclusion and open-question entries with fixture facts."""
     conclusions = _labeled_inventory(
         result_text,
-        r"(?:(?:ingested|substantiated|supported)\s+)?conclusions?",
+        CONCLUSION_INVENTORY_LABEL,
     )
     open_questions = _labeled_inventory(
         result_text,
-        r"(?:recorded\s+)?open questions?",
+        OPEN_QUESTION_INVENTORY_LABEL,
     )
     with test.subTest(result_inventory="conclusion-entry-present"):
         test.assertTrue(conclusions)
@@ -125,7 +133,10 @@ def _assert_result_inventory(test: unittest.TestCase, result_text: str) -> None:
     with test.subTest(result_inventory="open-question-jitter"):
         test.assertIn("jitter", open_questions)
     with test.subTest(result_inventory="open-question-missing-evidence"):
-        test.assertRegex(open_questions, r"authoritative|missing evidence|no evidence")
+        test.assertRegex(
+            open_questions,
+            r"authoritative|missing evidence|no .{0,80}evidence|lacks?.{0,80}evidence",
+        )
     with test.subTest(result_inventory="open-question-provenance"):
         test.assertIn("raw/processed/retry-policy.md", open_questions)
 
@@ -141,6 +152,38 @@ def _markdown_section(page_text: str, heading: str) -> str:
     remainder = page_text[matched.end():]
     next_heading = re.search(r"(?m)^##\s+", remainder)
     return remainder[: next_heading.start() if next_heading else None].strip()
+
+
+def _canonical_runtime_path(path: str) -> str:
+    """Canonicalize runtime paths while collapsing the macOS /private/var alias."""
+    canonical = os.path.realpath(path)
+    if canonical == "/private/var" or canonical.startswith("/private/var/"):
+        return canonical.removeprefix("/private")
+    return canonical
+
+
+def _contains_missing_evidence(text: str) -> bool:
+    """Return whether text semantically identifies absent authoritative evidence."""
+    return re.search(
+        r"authoritative|missing evidence|no .{0,80}evidence|lacks?.{0,80}evidence",
+        text,
+        flags=re.IGNORECASE | re.DOTALL,
+    ) is not None
+
+
+def _assert_collision_no_change(
+    test: unittest.TestCase, result_text: str
+) -> None:
+    """Require a collision result to identify the unchanged product surfaces."""
+    normalized = result_text.lower()
+    test.assertRegex(
+        normalized,
+        r"no[- ]product(?:[- ]changes?| or durable wiki content changed)",
+    )
+    test.assertRegex(normalized, r"queue.{0,40}unchanged|unchanged.{0,40}queue")
+    for surface in ("topic page", "digest", "source link", "code", "test"):
+        with test.subTest(collision_surface=surface):
+            test.assertIn(surface, normalized)
 
 
 def _provider_routing_pages(
@@ -164,11 +207,11 @@ def _assert_provider_result_inventory(
     """Require provider conclusions and ownership uncertainty in distinct inventories."""
     conclusions = _labeled_inventory(
         result_text,
-        r"(?:(?:ingested|substantiated|supported)\s+)?conclusions?",
+        CONCLUSION_INVENTORY_LABEL,
     )
     open_questions = _labeled_inventory(
         result_text,
-        r"(?:recorded\s+)?open questions?",
+        OPEN_QUESTION_INVENTORY_LABEL,
     )
     for fact in ("primary provider", "secondary provider", "mutation requests"):
         with test.subTest(provider_inventory="conclusion", fact=fact):
@@ -266,10 +309,8 @@ def _validate_control_result(
                 }
             test.assertTrue(allowed, path)
     test.assertNotEqual(result["initialOwnedTreeDigest"], result["finalOwnedTreeDigest"])
-    test.assertNotEqual(trace_digests[-1], result["finalOwnedTreeDigest"])
     committed_paths = set(result["committedPaths"])
     test.assertIn("eval-result.md", committed_paths)
-    test.assertIn("raw/retry-policy.md", committed_paths)
     test.assertIn("raw/processed/retry-policy.md", committed_paths)
     retry_pages = {
         path: content
@@ -295,7 +336,7 @@ def _validate_control_result(
         (path, content.lower())
         for path, content in retry_pages.items()
         if "jitter" in content.lower()
-        and "authoritative" in content.lower()
+        and _contains_missing_evidence(content)
         and "## open questions" in content.lower()
     ]
     with test.subTest(page_contract="jitter-open-question-count"):
@@ -336,6 +377,14 @@ def _validate_execution_ownership(
     )
     dependency_calls = result["dependencyToolCalls"]
     test.assertEqual(len(result["dependencySessionIds"]), len(dependency_calls))
+    test.assertEqual(
+        len(result["dependencySessionIds"]),
+        len(set(result["dependencySessionIds"])),
+    )
+    test.assertEqual(
+        len(result["dependencyAgentPaths"]),
+        len(set(result["dependencyAgentPaths"])),
+    )
     dependency_requests = result["dependencyRequests"]
     test.assertEqual(len(dependency_calls), len(dependency_requests))
     target_spawns = []
@@ -354,15 +403,23 @@ def _validate_execution_ownership(
             result["verifierDriverCommand"],
             _extract_single_exec_command(arguments),
         )
+        trace = result["verifierControlTrace"][index]
+        receipt = trace["receipt"]
         request_messages = dependency_requests[index]
         test.assertIsInstance(request_messages, list)
         test.assertTrue(request_messages)
-        request = "\n".join(request_messages)
-        trace = result["verifierControlTrace"][index]
-        receipt = trace["receipt"]
-        test.assertIn(result["repositoryPath"], request)
-        test.assertIn(str(receipt["gate"]), request.lower())
-        test.assertIn("lint", request.lower())
+        captured_environment = "\n".join(request_messages)
+        captured_cwds = re.findall(r"<cwd>([^<]+)</cwd>", captured_environment)
+        test.assertTrue(captured_cwds)
+        test.assertEqual(
+            _canonical_runtime_path(str(result["repositoryPath"])),
+            _canonical_runtime_path(captured_cwds[-1]),
+        )
+        spawn_arguments = target_spawns[index]
+        verifier_request = str(spawn_arguments.get("message", ""))
+        test.assertTrue(verifier_request)
+        test.assertIn(str(receipt["gate"]), verifier_request.lower())
+        test.assertIn("lint", verifier_request.lower())
         source_name = (
             "provider-routing.md"
             if result.get("rawSourcePresent") or result.get("processedSourcePresent")
@@ -373,11 +430,10 @@ def _validate_execution_ownership(
             if receipt["gate"] == "pre-move"
             else f"raw/processed/{source_name}"
         )
-        test.assertIn(expected_source, request)
+        test.assertIn(expected_source, verifier_request)
         for path in trace["changedPaths"]:
             if str(path).startswith("docs/wiki/"):
-                test.assertIn(path, request)
-        spawn_arguments = target_spawns[index]
+                test.assertIn(path, verifier_request)
         test.assertTrue(
             spawn_arguments.get("fork_context") is False
             or spawn_arguments.get("fork_turns") == "none"
@@ -536,6 +592,34 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
             _labeled_inventory(positive, r"(?:recorded\s+)?open questions?"),
         )
 
+    def test_result_inventory_accepts_fact_bearing_semantic_labels(self) -> None:
+        """Structured inventory variants remain valid when they carry required facts."""
+        result_text = (
+            "## Preserved substantiated content\n\n"
+            "- Idempotent reads use fixed retry delays of 200 and 500 milliseconds. "
+            "Source: raw/processed/retry-policy.md.\n\n"
+            "## Page-local unresolved point\n\n"
+            "- Deployment jitter remains unresolved because there is no deployment-policy "
+            "or implementation evidence. Page: docs/wiki/retry-policy/backoff.md; "
+            "source: raw/processed/retry-policy.md.\n"
+        )
+        _assert_result_inventory(self, result_text)
+
+    def test_path_aliases_canonicalize_before_runtime_ownership_comparison(self) -> None:
+        """macOS /var and /private/var names identify the same captured repository."""
+        self.assertEqual(
+            _canonical_runtime_path("/var/folders/example/fixture"),
+            _canonical_runtime_path("/private/var/folders/example/fixture"),
+        )
+
+    def test_collision_result_accepts_durable_wiki_phrase_and_enumerated_surfaces(self) -> None:
+        """A semantic no-change statement must still enumerate every protected surface."""
+        result_text = (
+            "Queue unchanged. No product or durable wiki content changed. "
+            "No topic page, digest, source link, code, or test was changed."
+        )
+        _assert_collision_no_change(self, result_text)
+
     def test_provider_page_contract_is_bound_to_one_committed_page(self) -> None:
         """Provider conclusions and their open question must share one committed page."""
         provider_page = (
@@ -587,8 +671,10 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
                 "every substantiated claim and relationship",
                 "Open Questions section of the most relevant page",
                 "not a NEEDS_CORRECTION verdict",
+                "do not invoke wiki_topic_verifier again for that source",
                 "Verifier interruption alone is not a BLOCKED condition",
-                "distinguishes ingested conclusions from recorded open questions",
+                "labeled ingested or substantiated conclusions inventory",
+                "labeled Open Questions inventory",
             ):
                 with self.subTest(canonical_phrase=phrase):
                     self.assertIn(phrase, canonical_instructions)
@@ -664,15 +750,29 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
             ],
             "verifierDriverPath": "/control/next_verdict.py",
             "verifierDriverCommand": "/python /control/next_verdict.py",
-            "repositoryPath": "/fixture",
+            "repositoryPath": "/private/var/folders/example/fixture",
             "targetToolCalls": [
                 {
                     "name": "spawn_agent",
-                    "arguments": '{"agent_type":"wiki_topic_verifier","fork_turns":"none"}',
+                    "arguments": json.dumps({
+                        "agent_type": "wiki_topic_verifier",
+                        "fork_turns": "none",
+                        "message": (
+                            "/var/folders/example/fixture pre-move raw/retry-policy.md "
+                            "lint docs/wiki/retry-policy/example.md"
+                        ),
+                    }),
                 },
                 {
                     "name": "spawn_agent",
-                    "arguments": '{"agent_type":"wiki_topic_verifier","fork_turns":"none"}',
+                    "arguments": json.dumps({
+                        "agent_type": "wiki_topic_verifier",
+                        "fork_turns": "none",
+                        "message": (
+                            "/var/folders/example/fixture pre-move raw/retry-policy.md "
+                            "lint docs/wiki/retry-policy/example.md"
+                        ),
+                    }),
                 },
             ],
             "dependencyToolCalls": [
@@ -691,12 +791,12 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
             ],
             "dependencyRequests": [
                 [
-                    "/fixture pre-move raw/retry-policy.md lint "
-                    "docs/wiki/retry-policy/example.md"
+                    "<environment_context><cwd>/var/folders/example/fixture</cwd>"
+                    "</environment_context>"
                 ],
                 [
-                    "/fixture pre-move raw/retry-policy.md lint "
-                    "docs/wiki/retry-policy/example.md"
+                    "<environment_context><cwd>/var/folders/example/fixture</cwd>"
+                    "</environment_context>"
                 ],
             ],
             "targetTerminalResponse": f"READY {head} {release_id} RELEASED CLEAN",
@@ -723,13 +823,12 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
                 for observation in trace
             ],
             "initialOwnedTreeDigest": "d" * 64,
-            "finalOwnedTreeDigest": "e" * 64,
+            "finalOwnedTreeDigest": "b" * 64,
             "committedPaths": [
                 "docs/wiki/retry-policy/fixed-retry-backoff.md",
                 "docs/wiki/retry-policy/request-retry-eligibility.md",
                 "eval-result.md",
                 "raw/processed/retry-policy.md",
-                "raw/retry-policy.md",
             ],
             "wikiContent": {
                 "docs/wiki/retry-policy/fixed-retry-backoff.md": (
@@ -1042,11 +1141,10 @@ class WikiIngesterLiveNeighborTests(unittest.TestCase):
                 ("collision", r"collision"),
                 ("naming", r"naming"),
                 ("disposition", r"disposition"),
-                ("no product change", r"no[- ]product[- ]changes?"),
-                ("unchanged", r"unchanged"),
             ):
                 with self.subTest(result_evidence=evidence):
                     self.assertRegex(result_text, pattern)
+            _assert_collision_no_change(self, result_text)
             self.assertIn(str(result["head"]), result["targetTerminalResponse"])
             _validate_claim_events(self, result, result["targetTerminalResponse"])
 

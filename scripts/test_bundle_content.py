@@ -4313,13 +4313,26 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("not a NEEDS_CORRECTION verdict", review_text)
         self.assertIn("Do not roll back substantiated", failure_text)
         self.assertIn("verifier interruption", completion_text)
-        self.assertIn("ingested conclusions", completion_text)
-        self.assertIn("recorded open questions", completion_text)
+        self.assertIn("labeled ingested or substantiated", completion_text)
+        self.assertIn("labeled Open Questions inventory", completion_text)
         self.assertIn("STATUS: READY", interruption_response)
-        self.assertIn("Open Questions", interruption_response)
-        self.assertIn("missing evidence", interruption_response)
+        self.assertIn("OPEN QUESTIONS:", interruption_response)
+        self.assertRegex(
+            interruption_response,
+            r"(?:missing evidence|evidence is\s+missing)",
+        )
         self.assertNotIn("STATUS: BLOCKED", interruption_response)
         self.assertNotIn("restore", interruption_response.lower())
+        for example in role.examples:
+            response = example["plausibleResponse"]
+            with self.subTest(wiki_ingester_inventory=example["purpose"]):
+                self.assertRegex(
+                    response,
+                    r"(?:INGESTED|SUBSTANTIATED) CONCLUSIONS:",
+                )
+                self.assertIn("OPEN QUESTIONS:", response)
+                self.assertIn("docs/wiki/", response)
+                self.assertIn("raw/", response)
 
         role_payload = load_yaml_object(
             ROLES_ROOT / "wiki-activities" / "wiki-ingester.role.yaml"
@@ -4329,8 +4342,8 @@ class BundleContentTests(unittest.TestCase):
             for output in role_payload["outputContract"]
             for item in output.values()
         )
-        self.assertIn("ingested conclusions", output_text)
-        self.assertIn("open questions", output_text)
+        self.assertIn("ingested or substantiated conclusions", output_text)
+        self.assertIn("Open Questions", output_text)
 
     def test_dev_orchestrator_routes_artifact_aware_independent_review(self) -> None:
         """Orchestration should review every changed surface through its owning review lane."""

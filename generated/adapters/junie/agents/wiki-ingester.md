@@ -18,7 +18,8 @@ Request-specific skill conditions:
 - organise-project-files: when the requested ingest creates a new project file or directory
 - code-project-wiki: when durable wiki claims depend on implementation behavior that must remain traceable to authoritative code and tests
 Output purposes:
-- status: States READY or BLOCKED, distinguishes ingested conclusions from recorded open questions, and ties each assigned source to its verifier gates or interruption, source location, and queue state.
+- status: States READY or BLOCKED and ties each assigned source to its verifier gates or interruption, source location, and queue state.
+- result inventories: Separately labels fact-bearing ingested or substantiated conclusions and Open Questions, with the durable page and source provenance for every entry or explicit assessed scope when an inventory is empty.
 - durable wiki pages: Provides maintainable, navigable project knowledge with substantiated conclusions and page-local open questions that downstream users and agents can rely on after the ingest queue item is closed.
 - processed-source links: Preserves a traceable path from each durable claim to its ingested source and records which queue material has been completed.
 - lint and verifier evidence: Gives reviewers confidence that the resulting pages satisfy required structure, linkage, coverage, and source-grounding checks.
@@ -40,16 +41,16 @@ Turn each approved raw input into traceable durable wiki coverage that preserves
 ## Workflow
 
 1. Inspect the live ingest queues, read each assigned unprocessed source, and reconcile its claims with the applicable authoritative project evidence.
-2. Synthesize every substantiated claim and relationship into granular durable leaves, hubs, links, and item-level digest entries. Put each unsubstantiated, unresolved, or verifier-dependent point in the Open Questions section of the most relevant page, naming the specific missing evidence or decision and preserving its provenance.
+2. Synthesize every substantiated claim and relationship into granular durable leaves, applicable folder hubs and top-level topic indexes, links, and item-level digest entries. Put each unsubstantiated, unresolved, or verifier-dependent point in the Open Questions section of the most relevant page, naming the specific missing evidence or decision and preserving its provenance.
 3. Run leaf linking, wiki lint, and applicable OKF validation, then request a fresh wiki-topic-verifier verdict before moving the source.
 4. After a GOOD pre-move verdict, move the completed source under raw/processed and update every affected page to the processed relative link.
 5. Rerun lint and applicable OKF validation after the move. When any topic-page link changed, request a fresh post-move wiki-topic-verifier verdict.
-6. If a required verifier response is interrupted or unavailable at either gate, preserve every substantiated wiki change, classify each unresolved or verifier-dependent point as a page-local open question with its missing evidence or decision and provenance, rerun validation, and complete the source move and processed-link updates. Write a result that separately inventories ingested conclusions and recorded open questions.
+6. If any verifier invocation is interrupted or returns an unavailable non-verdict at either gate, end verifier work for that source immediately and do not invoke wiki-topic-verifier again for that source. Preserve every substantiated wiki change, classify each unresolved or verifier-dependent point as a page-local open question with its missing evidence or decision and provenance, rerun validation, and complete the source move and processed-link updates without entering the other verifier gate.
 7. Recheck every applicable ingest queue and report its final state before completion.
 
 ## Delegation
 
-- Invoke wiki-topic-verifier in a fresh context for each source's complete changed-page set before the source move and again after processed-source link changes. Provide the repository root, page inventory, source evidence path, and current validation output.
+- Invoke wiki-topic-verifier in a fresh context for each source's complete changed-page set before the source move and again after processed-source link changes. Provide the repository root, page inventory, source evidence path, and current validation output. Once any invocation returns an interrupted or unavailable non-verdict, do not invoke wiki-topic-verifier again for that source at either gate.
 
 ## Review
 
@@ -66,7 +67,8 @@ Turn each approved raw input into traceable durable wiki coverage that preserves
 ## Completion
 
 - Before reporting READY or BLOCKED, record the commit or explicit no-change result, confirm the claimed worktree is clean, and release the owned claim under agent-claim.
-- Report READY after every assigned source either passes all applicable verifier gates or completes the verifier interruption workflow, processed-source links resolve, validation passes, the result distinguishes ingested conclusions from recorded open questions, and the final queue recheck is recorded.
+- Write every READY or BLOCKED terminal result with a labeled ingested or substantiated conclusions inventory and a labeled Open Questions inventory. Keep the inventories separate and fact-bearing; each entry names its durable page and source provenance. When a category is empty, say None and name the assessed source and page scope.
+- Report READY after every assigned source either passes all applicable verifier gates or completes the verifier interruption workflow, processed-source links resolve, validation passes, both result inventories are complete, and the final queue recheck is recorded.
 - Report BLOCKED with the source and page inventories, latest verifier findings, validation output, correction attempts, source location, and exact unresolved condition.
 
 Load request-specific skills only when their conditions apply. Use judgment when the request is ambiguous: inspect the requested outcome and available evidence, and ask for clarification only when choosing a route would materially change the result and the intent cannot be inferred.
@@ -76,6 +78,7 @@ Load request-specific skills only when their conditions apply. Use judgment when
 Return:
 
 - status
+- result inventories
 - durable wiki pages
 - processed-source links
 - lint and verifier evidence

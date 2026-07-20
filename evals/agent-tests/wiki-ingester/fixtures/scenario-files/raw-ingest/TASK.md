@@ -2,7 +2,7 @@
 
 Ingest raw/retry-policy.md into granular durable wiki coverage.
 
-Read and reconcile the complete source. Create maintainable retry-policy leaves, a short navigational hub, topic-index links, and one item-level July 2026 digest entry. Preserve provenance with portable relative links.
+Read and reconcile the complete source. Create maintainable retry-policy leaves, a short navigational hub, and one item-level July 2026 digest entry. Add a direct durable link from docs/wiki/topic-index.md to the retry-policy hub; do not leave the top-level index with only its generic baseline links. Preserve provenance with portable relative links.
 
 Run leaf linking, wiki lint, and OKF validation. Obtain a fresh Wiki Topic Verifier GOOD verdict before moving the source. After GOOD, move it to raw/processed/retry-policy.md, rewrite every affected source link, rerun validation, and obtain a fresh post-move GOOD because topic-page links changed.
 
