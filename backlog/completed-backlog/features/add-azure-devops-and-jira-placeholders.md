@@ -1,6 +1,6 @@
 # Add Azure DevOps And Jira Placeholders
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
@@ -34,7 +34,7 @@ Add symmetric Azure DevOps and Jira create and manage skill packages that make t
 
 ## Context
 
-This item is a provider lane in the [Work-Item Provider And Completion Contracts series](../feature-backlog/work-item-provider-and-completion/index.md). Azure DevOps and Jira are required selector placeholders, not implemented providers. Explicit packages let project validation name the intended provider and report a truthful capability boundary instead of silently selecting files, GitHub, GitLab, or an arbitrary external API.
+This item is a provider lane in the [Work-Item Provider And Completion Contracts series](../../feature-backlog/work-item-provider-and-completion/index.md). Azure DevOps and Jira are required selector placeholders, not implemented providers. Explicit packages let project validation name the intended provider and report a truthful capability boundary instead of silently selecting files, GitHub, GitLab, or an arbitrary external API.
 
 ## Requirements
 
@@ -70,6 +70,19 @@ define-provider-and-completion-selector-contracts.
 - Validate source skills and Codex metadata, regenerate affected catalogs, and inspect support-status wording.
 - Add selector tests proving values remain stable and are not normalized to file, GitHub, or GitLab.
 - Run full repository tests, project-wiki tests, and Git diff validation.
+
+## Completion Evidence
+
+- Candidate commit: 47b305958e5dde342603eb965ff167faf39dec2f on codex/add-azure-devops-jira-placeholders.
+- Governed approval: all eight exact source and metadata pre-mutation checks returned ALLOWED_APPROVED_DEFINITION_CHANGE using thread 019f77f4-c4bd-7c91-b197-c987a7beb838 message item-2093.
+- Independent methodology review: APPROVED after correction of identifier echoing and addition of the read-only provider-placeholder-matrix evaluation case.
+- Independent focused verification: VERIFIED for the four packages, exact BLOCKED and no-fallback contracts, eval catalog, metadata and generated-output freshness, focused bundle tests, Codex read-only preflight, and diff hygiene. Junie execution remained unavailable because the executable was not installed.
+- Main integration commit: a07d4c8d81c57a77025e860ee05047a4d6c901b8, semantically reconciled with the previously integrated GitHub provider catalog.
+- Integration claim azure-jira-placeholders-integration-019f7f8c released normally at event e4d43e58-c88d-4ee0-8d94-37d5f9a905ec from clean main.
+- Focused post-integration verification: four bundle tests passed; evaluation catalogs validated; targeted metadata, skill documentation, hierarchy, diff, and main-observation gates passed; provider-placeholder-matrix produced a Codex read-only PREFLIGHT PASS.
+- Current main at 5f84d5b8625df6a93661b92827b33877c49cada8 retains the integrated Azure DevOps and Jira sources and regenerated combined provider views after later serialized integrations.
+- Terminal backlog claim azure-jira-placeholders-backlog-019f7f8c acquired PRIMARY at event c183d07b-fddb-4a5d-ac08-5c1e49ede171 for only this active path and completed destination.
+- Residual shared-generator convention: derived Codex display labels render Azure Devops. The independent reviewer accepted this as non-blocking because correcting the shared metadata generator was outside this item’s exact authorized mutation scope.
 
 ## Notes
 
