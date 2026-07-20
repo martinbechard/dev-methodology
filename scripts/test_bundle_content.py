@@ -2446,6 +2446,8 @@ class BundleContentTests(unittest.TestCase):
         )
         for required_phrase in (
             "## Blocked Resumption Workflow",
+            "replace the prior owner with Owner: Unowned",
+            "replace the prior claim with Claim: None",
             "Set the item to Ready",
             "Only after a successful claim",
             "Restore the byte-for-byte pre-attempt Blocked item",
