@@ -1,6 +1,6 @@
 # Ignore Unrelated Noop Events In Agent Suite Identity Attribution
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
@@ -9,8 +9,28 @@ Type: Defect
 - Canonical Dev Orchestrator task: 019f7e52-1c6d-7cc2-bf96-3edd212462a8.
 - Parent Dev Backlog Coordinator task: 019f77f4-c4bd-7c91-b197-c987a7beb838.
 - Worktree: /Users/martinbechard/.codex/worktrees/12da/dev-methodology.
-- Phase: implement the bounded identity-attribution correction, obtain fresh independent review, run focused deterministic verification, integrate directly into main, and complete this work item.
+- Phase: Completed.
 - Verification boundary: focused runner and identity-attribution tests only; no live or full agent-catalog run unless affected-surface evidence requires escalation.
+
+## Execution Record
+
+- Accepted candidate commit: 78e873d75ff9e62cb4612bd00402f16cdeea35c6, including initial implementation commit e42f5ce457f8bcdb1d86e8d205d0fef56176144f.
+- Integrated main commits: 4a4ca52 and 7ac0059f0bbd856fcb5d8159dbf351a9268be876.
+- Integration wait: None; exact two-file ownership plus agent-suite-runner-tests was acquired on the first attempt in event 14113d92-6951-4d78-9177-291d44d153d1.
+- Terminal backlog wait: None; exact source and completed-destination ownership was acquired on the first attempt in event e9d9b040-ef1f-4dc8-b829-9396b4d4f7b1.
+- Open issues: None.
+
+## Completion Evidence
+
+- The corrected runner partitions only fully parsed, depth-one default or noop sessions that contain the standard runtime envelope, literal noop input, a turn-aborted terminal event within ten seconds, no assistant, tool, or staged-instruction activity, no expected suite invocation, and no descendants.
+- Participating default identities, malformed rollout evidence, expected target, Judge, supervisor, and dependency identities, and sessions with descendants remain in the strict identity, topology, unexpected-agent, sequencing, and concurrency gates.
+- Excluded identity evidence retains the session id, parent session id, invocation, exact exclusion reason, resolved rollout path, and rollout SHA-256 while preserving the total rollout count.
+- Fresh independent review accepted candidate 78e873d75ff9e62cb4612bd00402f16cdeea35c6 with no findings after verifying the corrected real-envelope, malformed-evidence, participating-default, expected-invocation, descendant, and retained-evidence boundaries.
+- Post-integration verification ran all 86 deterministic Agent Suite runner tests successfully in 2.857 seconds. The expected argparse usage text emitted by the CLI-validation test did not change the successful unittest exit.
+- The historical retained default rollout reproduced exclusion for session 019f7ab3-bbad-78b3-a37a-bc7543095358: literal noop input, turn-aborted after 3.448 seconds without assistant, tool, or instruction-binding activity, with rollout SHA-256 6b8648ad6cc2cd807e2f8748589d399dea691fc07082041f98e25094509565f0.
+- Git diff validation passed and main was clean at 7ac0059f0bbd856fcb5d8159dbf351a9268be876 before this terminal backlog transaction.
+- Integration claim integrate-noop-identity-019f7e52 released cleanly in event 0f4532df-2b24-441d-9662-c9f168141745.
+- No live Agent Suite, process-enumeration probe, broad repository regression, or final campaign-wide catalog was run for this bounded item.
 
 ## Summary
 
