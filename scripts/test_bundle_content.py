@@ -88,6 +88,8 @@ NEW_DEVELOPMENT_SKILLS = (
     "organise-project-files",
     "execute-workitem",
     "file-based-backlog",
+    "create-github-work-item",
+    "manage-github-work-items",
     "github-issues-backlog",
     "create-gitlab-work-item",
     "manage-gitlab-work-items",
@@ -1319,6 +1321,12 @@ class BundleContentTests(unittest.TestCase):
         github_backlog_text = (
             SKILLS_ROOT / "github-issues-backlog" / "SKILL.md"
         ).read_text(encoding="utf-8")
+        create_github_text = (
+            SKILLS_ROOT / "create-github-work-item" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        manage_github_text = (
+            SKILLS_ROOT / "manage-github-work-items" / "SKILL.md"
+        ).read_text(encoding="utf-8")
 
         self.assertIn("simple-workitem or feature-branch-workitem", execute_text)
         self.assertIn("Read only the selected process", execute_text)
@@ -1326,7 +1334,21 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("Set the pull request ready for review", feature_text)
         self.assertIn("report AWAITING_REVIEW", feature_text)
         self.assertIn("Apply create-backlog", file_backlog_text)
-        self.assertIn("GitHub issues are hosting-service records", github_backlog_text)
+        self.assertIn("transition route for current generated and configured callers", github_backlog_text)
+        self.assertIn("create-github-work-item", github_backlog_text)
+        self.assertIn("manage-github-work-items", github_backlog_text)
+        self.assertIn("Search open and recently closed issues", create_github_text)
+        self.assertIn("do not create another", create_github_text)
+        self.assertIn("possibly completed mutation", create_github_text)
+        self.assertIn("never retry creation blindly", create_github_text)
+        self.assertIn("Do not create repository backlog files", create_github_text)
+        self.assertIn("permission denial", create_github_text)
+        self.assertIn("Re-read provider state before a transition", manage_github_text)
+        self.assertIn("Record BLOCKED", manage_github_text)
+        self.assertIn("Reopen only when explicit workflow authority permits it", manage_github_text)
+        self.assertIn("publication or AWAITING_REVIEW alone", manage_github_text)
+        self.assertIn("possibly applied", manage_github_text)
+        self.assertIn("Do not create repository backlog files", manage_github_text)
 
         coder = load_yaml_object(
             ROLES_ROOT / "dev-activities" / "dev-coder.role.yaml"
@@ -1382,6 +1404,8 @@ class BundleContentTests(unittest.TestCase):
         for probe_id in (
             "probe-execute-workitem",
             "probe-file-based-backlog",
+            "probe-create-github-work-item",
+            "probe-manage-github-work-items",
             "probe-github-issues-backlog",
         ):
             self.assertIn(probe_id, probe_ids)
@@ -1390,6 +1414,8 @@ class BundleContentTests(unittest.TestCase):
         for skill_name in (
             "execute-workitem",
             "file-based-backlog",
+            "create-github-work-item",
+            "manage-github-work-items",
             "github-issues-backlog",
         ):
             self.assertIn(f"- {skill_name}", readme_text)
@@ -5240,7 +5266,7 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(status=phrase):
                 self.assertIn(phrase, checklist)
         self.assertIn("Evaluation execution support is limited to Codex and Junie.", checklist)
-        self.assertIn("7 cases can run locally through Codex and 7 can run locally through Junie.", checklist)
+        self.assertIn("8 cases can run locally through Codex and 8 can run locally through Junie.", checklist)
         self.assertNotIn("Every post-run verification command still requires trusted external containment.", checklist)
         self.assertNotIn("| Claude Code |", checklist)
         self.assertNotIn("| Gemini CLI |", checklist)

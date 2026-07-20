@@ -541,20 +541,48 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-create-github-work-item
+    skill: create-github-work-item
+    source: skills/create-github-work-item/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: workflow-invariant
+    activationCondition: The effective provider is github or an explicit one-item request selects GitHub issue creation.
+    negativeCondition: The skill does not infer the provider, create a duplicate issue, retry an ambiguous creation blindly, or write a repository-file shadow on any outcome.
+    expectedBehavior: Confirm repository authority, read plausible duplicate matches, create one typed issue through the authenticated provider, verify all observed fields, and reconcile partial mutation before returning CREATED, EXISTING, or BLOCKED.
+    judgePlan: {deterministicChecks: [skill-read-trace, operation-coverage, tool-authority, queue-state-transition], modelRubric: workflow-quality}
+    scenarioAssociations: [dev-backlog-steward-happy, dev-backlog-steward-boundary]
+    workflowAssociations: [backlog]
+    executableCases: [github-work-item-provider]
+    coverageStatus: fixture-backed
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
   - id: probe-github-issues-backlog
     skill: github-issues-backlog
     source: skills/github-issues-backlog/SKILL.md
     evaluationCategory: development-practice
     evaluationKind: workflow-invariant
-    activationCondition: Applicable project guidance or the request selects GitHub issues as the authoritative backlog.
-    negativeCondition: The skill does not silently select GitHub, create repository-file duplicates, expose unsuitable evidence, or close an issue merely because a commit or pull request exists.
-    expectedBehavior: Resolve authority and the target repository, require an authenticated GitHub issue interface, deduplicate before creation, preserve item and delivery evidence, mutate only authorized issue fields, and close only when configured completion evidence is satisfied.
+    activationCondition: Existing applicable guidance or an explicit request still names the legacy github-issues-backlog identifier.
+    negativeCondition: The compatibility route does not reproduce provider procedures, write the legacy identifier into new configuration, create shadow files, or treat pull-request publication as completion.
+    expectedBehavior: Route creation to create-github-work-item, route inventory and lifecycle operations to manage-github-work-items, preserve issue identity across a combined handoff, and return the canonical replacement result.
     judgePlan: {deterministicChecks: [skill-read-trace, operation-coverage, tool-authority, queue-state-transition], modelRubric: workflow-quality}
     scenarioAssociations: [dev-backlog-steward-happy, dev-backlog-steward-boundary]
     workflowAssociations: [backlog]
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: file-based-backlog}
+  - id: probe-manage-github-work-items
+    skill: manage-github-work-items
+    source: skills/manage-github-work-items/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: workflow-invariant
+    activationCondition: The effective provider is github or an explicit one-item request selects GitHub issue inventory or lifecycle management.
+    negativeCondition: The skill does not infer the provider, create a new issue, write a shadow file, alter unrelated fields, or close an issue from publication evidence alone.
+    expectedBehavior: Read observed provider state, inventory and select without guessing, update ownership and lifecycle fields, preserve delivery references, reconcile partial mutations, and close or reopen only with the configured evidence and authority.
+    judgePlan: {deterministicChecks: [skill-read-trace, operation-coverage, tool-authority, queue-state-transition], modelRubric: workflow-quality}
+    scenarioAssociations: [dev-backlog-steward-happy, dev-backlog-steward-boundary]
+    workflowAssociations: [backlog]
+    executableCases: [github-work-item-provider]
+    coverageStatus: fixture-backed
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
   - id: probe-java
     skill: java
     source: skills/java/SKILL.md

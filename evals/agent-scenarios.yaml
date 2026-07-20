@@ -257,8 +257,9 @@ agents:
             - queue-state-transition
             - claim-lifecycle
           modelRubric: workflow-quality
-        executableCases: []
-        coverageStatus: declared
+        executableCases:
+          - github-work-item-provider
+        coverageStatus: fixture-backed
       - id: dev-backlog-steward-boundary
         kind: boundary-failure
         fixtureProfile: backlog-state-machine

@@ -1,37 +1,28 @@
 ---
 name: github-issues-backlog
-description: Route backlog creation, triage, lifecycle updates, recovery, and completion through GitHub issues. Use when applicable project guidance selects github-issues-backlog for the active scope or the user explicitly asks to create or manage GitHub issues as the project backlog.
+description: Compatibility route for existing guidance that still selects github-issues-backlog. Dispatch creation to create-github-work-item and every inventory or lifecycle operation to manage-github-work-items without creating a shadow file queue.
 metadata:
   category: development-practice
 ---
 
 # GitHub Issues Backlog
 
-Use GitHub issues as the authoritative backlog without creating duplicate repository backlog files.
+This package is a transition route for current generated and configured callers that still name github-issues-backlog. The separately approved selector and role migration will move those callers to create-github-work-item for creation and manage-github-work-items for inventory, ownership, lifecycle, recovery, and terminal updates.
 
-## Inputs And Authority
+## Routing
 
-- Resolve the target repository, issue or new-item intent, item type, requirements, acceptance criteria, dependencies, labels, and verification expectations.
-- Use the configured repository and issue conventions. Ask when the target repository or required convention is missing.
-- Create, edit, label, assign, close, reopen, or comment on issues only when the request or authorized workflow permits that external change.
-- Require an available authenticated GitHub issue interface. Report BLOCKED when it is unavailable rather than falling back to local files.
-
-## Operations
-
-- Search open and recently closed issues for the same work before creating a new issue.
-- Create one issue for one independently actionable outcome. Use issue links or task lists for related work when repository convention permits them.
-- Preserve requirements, acceptance criteria, dependencies, verification expectations, and source evidence in the issue.
-- Record claims or active ownership through the repository's configured labels, assignees, project fields, or comments.
-- Link implementation branches and pull requests without treating their existence as completion.
-- Close an issue only when its configured delivery evidence is satisfied. Record blocked or failed outcomes without misreporting them as complete.
+- Load create-github-work-item when the requested operation may create one durable GitHub issue. That skill owns duplicate detection and creation.
+- Load manage-github-work-items for lookup, inventory, selection, ownership, lifecycle, recovery, delivery evidence, reconciliation, close, or reopen operations.
+- Load both only when one explicit request genuinely contains creation followed by management. Preserve the created or matched issue identity across the handoff.
+- Return the selected skill's observed provider result. Do not reproduce its procedure or mutate GitHub independently in this compatibility package.
 
 ## Boundaries
 
-- GitHub issues are hosting-service records, not Git objects.
-- Do not create repository backlog files as a shadow copy unless the user explicitly asks for an export.
-- Do not expose sensitive findings, private data, credentials, or proprietary evidence in an issue whose visibility is not appropriate.
-- Do not alter unrelated labels, milestones, assignments, project fields, or issue text.
+- Use this route while applicable generated or configured guidance still selects github-issues-backlog, or when an explicit request names this legacy identifier. Do not claim that selector or role migration is complete until its separately governed sources have changed.
+- GitHub issues remain the sole durable authority. Never create a repository backlog file, cached issue mirror, or fallback queue.
+- Return BLOCKED when the authenticated GitHub provider interface, repository authority, required capability, or mutation permission is unavailable.
+- A GitHub issue is the work item. A pull request is only a delivery reference, and publication alone never completes the issue.
 
 ## Result
 
-Return the issue link, type, state, ownership, dependencies, delivery evidence, and next runnable action.
+Return the canonical replacement skill used, repository, issue number and URL, observed lifecycle state, ownership, dependencies, delivery evidence, and next action.

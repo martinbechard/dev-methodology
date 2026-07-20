@@ -3674,6 +3674,17 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "codex",
         "junie"
       ],
+      "id": "github-work-item-provider",
+      "kind": "evaluation-case",
+      "receiptPaths": [],
+      "sourcePath": "evals/cases.yaml",
+      "status": "declared"
+    },
+    {
+      "harnesses": [
+        "codex",
+        "junie"
+      ],
       "id": "project-configuration-routing",
       "kind": "evaluation-case",
       "receiptPaths": [],
@@ -3752,42 +3763,42 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
   "evidenceStatus": {
     "caseBackedAgentCount": 6,
     "caseBackedWorkflowPackCount": 5,
-    "codexRunnableCaseCount": 7,
+    "codexRunnableCaseCount": 8,
     "declaredScenarioCount": 54,
     "endToEndFixtureBackedWorkflowPackCount": 0,
-    "executableCaseCount": 7,
-    "executableFixtureAgentCount": 0,
+    "executableCaseCount": 8,
+    "executableFixtureAgentCount": 1,
     "executableFixtureSkillCount": 0,
     "executedAgentCount": 0,
     "executedRunCount": 0,
     "executedSkillCount": 0,
-    "fixtureBackedAgentCount": 0,
-    "fixtureBackedCaseCount": 7,
+    "fixtureBackedAgentCount": 1,
+    "fixtureBackedCaseCount": 8,
     "fixtureBackedSkillCount": 0,
     "highRiskExternalCaseCount": 0,
     "judgeCalibrationStatusCounts": {},
     "judgePassedAgentCount": 0,
     "judgePassedRunCount": 0,
     "judgePassedSkillCount": 0,
-    "junieRunnableCaseCount": 7,
+    "junieRunnableCaseCount": 8,
     "modelJudgeCalibratedAgentCount": 0,
     "modelJudgeCalibratedSkillCount": 0,
     "modelJudgeNotRequiredAgentCount": 0,
     "modelJudgeNotRequiredSkillCount": 21,
     "modelJudgePendingAgentCount": 27,
-    "modelJudgePendingSkillCount": 93,
+    "modelJudgePendingSkillCount": 95,
     "negativeCaseBackedSkillCount": 0,
-    "ordinaryLocalCaseCount": 7,
+    "ordinaryLocalCaseCount": 8,
     "pairedControlsExecutableSkillCount": 0,
-    "partialScenarioBackedAgentCount": 6,
+    "partialScenarioBackedAgentCount": 5,
     "partialWorkflowPackCount": 5,
-    "positiveCaseBackedSkillCount": 17,
+    "positiveCaseBackedSkillCount": 19,
     "positiveExecutedSkillCount": 0,
     "positiveJudgePassedSkillCount": 0,
     "positiveSecurityContainedSkillCount": 0,
     "positiveStaleByDigestSkillCount": 0,
     "positiveVerifiedSkillCount": 0,
-    "probeDeclaredSkillCount": 114,
+    "probeDeclaredSkillCount": 116,
     "scenarioDeclaredAgentCount": 27,
     "securityContainedAgentCount": 0,
     "securityContainedRunCount": 0,
@@ -3796,7 +3807,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "staleByDigestRunCount": 0,
     "staleByDigestSkillCount": 0,
     "structuralAgentCount": 27,
-    "structuralSkillCount": 114,
+    "structuralSkillCount": 116,
     "verifiedAgentCount": 0,
     "verifiedRunCount": 0,
     "verifiedSkillCount": 0,
@@ -4222,21 +4233,27 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "coverage": {
         "caseBacked": true,
         "caseBackedCases": [
-          "backlog-lifecycle"
+          "backlog-lifecycle",
+          "github-work-item-provider"
         ],
         "caseBackedScenarioIds": [
-          "dev-backlog-steward-boundary"
+          "dev-backlog-steward-boundary",
+          "dev-backlog-steward-happy"
         ],
         "executableCases": [
-          "backlog-lifecycle"
+          "backlog-lifecycle",
+          "github-work-item-provider"
         ],
-        "executableFixture": false,
+        "executableFixture": true,
         "executedCases": [],
-        "fixtureBacked": false,
-        "fixtureBackedCases": [],
+        "fixtureBacked": true,
+        "fixtureBackedCases": [
+          "backlog-lifecycle",
+          "github-work-item-provider"
+        ],
         "judgeCalibration": "pending",
         "judgePassedCases": [],
-        "partialScenarioCoverage": true,
+        "partialScenarioCoverage": false,
         "scenarioCoverage": {
           "dev-backlog-steward-boundary": {
             "caseBacked": true,
@@ -4246,9 +4263,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
             "executableFixture": true
           },
           "dev-backlog-steward-happy": {
-            "caseBacked": false,
-            "executableCases": [],
-            "executableFixture": false
+            "caseBacked": true,
+            "executableCases": [
+              "github-work-item-provider"
+            ],
+            "executableFixture": true
           }
         },
         "scenarioDeclared": true,
@@ -4265,7 +4284,8 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         ]
       },
       "declaredCases": [
-        "backlog-lifecycle"
+        "backlog-lifecycle",
+        "github-work-item-provider"
       ],
       "description": "Creates and manages typed backlog work through the project-selected repository-file or GitHub-issues backend while preserving ownership, lifecycle, and recovery evidence.",
       "dynamicFolderSkills": false,
@@ -7858,6 +7878,63 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     },
     {
       "capabilities": [],
+      "category": "development-practice",
+      "coverage": {
+        "catalogFixtureBacked": true,
+        "evaluationCategory": "development-practice",
+        "executableCases": [
+          "github-work-item-provider"
+        ],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": true,
+        "positiveCaseBackedCases": [
+          "github-work-item-provider"
+        ],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
+          "probe-create-github-work-item"
+        ],
+        "scenarioAssociations": [
+          "dev-backlog-steward-boundary",
+          "dev-backlog-steward-happy"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "backlog"
+        ]
+      },
+      "declaredCases": [
+        "github-work-item-provider"
+      ],
+      "detection": null,
+      "detectionPath": null,
+      "executedCases": [],
+      "id": "create-github-work-item",
+      "judgePassedCases": [],
+      "kind": "core",
+      "label": "Create Github Work Item",
+      "securityContainedCases": [],
+      "sourcePath": "skills/create-github-work-item/SKILL.md",
+      "verifiedCases": []
+    },
+    {
+      "capabilities": [],
       "category": "artifact-creation",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -10929,6 +11006,63 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "label": "Manage Backlog",
       "securityContainedCases": [],
       "sourcePath": "skills/manage-backlog/SKILL.md",
+      "verifiedCases": []
+    },
+    {
+      "capabilities": [],
+      "category": "development-practice",
+      "coverage": {
+        "catalogFixtureBacked": true,
+        "evaluationCategory": "development-practice",
+        "executableCases": [
+          "github-work-item-provider"
+        ],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": true,
+        "positiveCaseBackedCases": [
+          "github-work-item-provider"
+        ],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
+          "probe-manage-github-work-items"
+        ],
+        "scenarioAssociations": [
+          "dev-backlog-steward-boundary",
+          "dev-backlog-steward-happy"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "backlog"
+        ]
+      },
+      "declaredCases": [
+        "github-work-item-provider"
+      ],
+      "detection": null,
+      "detectionPath": null,
+      "executedCases": [],
+      "id": "manage-github-work-items",
+      "judgePassedCases": [],
+      "kind": "core",
+      "label": "Manage Github Work Items",
+      "securityContainedCases": [],
+      "sourcePath": "skills/manage-github-work-items/SKILL.md",
       "verifiedCases": []
     },
     {
@@ -16135,11 +16269,13 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       ],
       "caseBacked": true,
       "caseBackedCases": [
-        "backlog-lifecycle"
+        "backlog-lifecycle",
+        "github-work-item-provider"
       ],
       "caseCoverageStatus": "partial",
       "executableCases": [
-        "backlog-lifecycle"
+        "backlog-lifecycle",
+        "github-work-item-provider"
       ],
       "executableFixture": false,
       "fixtureBacked": false,
@@ -16149,9 +16285,11 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "probe-agent-claim",
         "probe-codex-workitem-coordination",
         "probe-create-backlog",
+        "probe-create-github-work-item",
         "probe-file-based-backlog",
         "probe-github-issues-backlog",
         "probe-manage-backlog",
+        "probe-manage-github-work-items",
         "probe-organise-project-files",
         "probe-structured-explanation"
       ]

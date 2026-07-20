@@ -1,0 +1,63 @@
+{
+  "audit": [],
+  "repositories": {
+    "acme/partial": {
+      "authenticated": true,
+      "can_mutate": true,
+      "fail_once": {
+        "update:3": "after_body"
+      },
+      "issues": [
+        {
+          "assignees": [
+            "worker"
+          ],
+          "body": "Running implementation.",
+          "comments": [],
+          "labels": [
+            "running"
+          ],
+          "number": 3,
+          "state": "open",
+          "title": "Add delivery tracing",
+          "url": "https://github.example/acme/partial/issues/3"
+        }
+      ],
+      "next_number": 4
+    },
+    "acme/widgets": {
+      "authenticated": true,
+      "can_mutate": true,
+      "fail_once": {},
+      "issues": [
+        {
+          "assignees": [],
+          "body": "Type: Defect\nRequirements: Retry failed webhook deliveries.\nAcceptance Criteria: A failed delivery is retried once.",
+          "comments": [],
+          "labels": [
+            "defect"
+          ],
+          "number": 7,
+          "state": "open",
+          "title": "Retry webhook delivery",
+          "url": "https://github.example/acme/widgets/issues/7"
+        }
+      ],
+      "next_number": 8
+    },
+    "auth/widgets": {
+      "authenticated": false,
+      "can_mutate": false,
+      "fail_once": {},
+      "issues": [],
+      "next_number": 1
+    },
+    "readonly/widgets": {
+      "authenticated": true,
+      "can_mutate": false,
+      "fail_once": {},
+      "issues": [],
+      "next_number": 1
+    }
+  }
+}

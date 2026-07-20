@@ -392,6 +392,8 @@ The development practice skills are:
 - create-backlog
 - manage-backlog
 - file-based-backlog
+- create-github-work-item
+- manage-github-work-items
 - github-issues-backlog
 - create-gitlab-work-item
 - manage-gitlab-work-items
@@ -418,6 +420,8 @@ The development practice skills are:
 - collaboration-patterns
 - traversal-patterns
 - interpreter-pattern
+
+create-github-work-item and manage-github-work-items are the canonical split GitHub provider skills. github-issues-backlog remains only as a transition route for existing callers until the separately governed selector and role migration removes those references.
 
 The stack and project-domain skill packs are:
 

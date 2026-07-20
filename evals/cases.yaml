@@ -536,3 +536,39 @@ cases:
       agent-claim: [SKILL.md, scripts/claim.py]
       structured-explanation: [SKILL.md]
     requiredEvidence: [BACKLOG-ITEM, OWNERSHIP-RECORD, STATE-TRANSITION, TERMINAL-SUMMARY]
+  - id: github-work-item-provider
+    coverageStatus: fixture-backed
+    executionStatus: runnable
+    project: evals/projects/github-work-item-provider
+    task: TASK.md
+    allowedWritePaths: [provider-state.json, eval-result.md]
+    ephemeralWritePaths: []
+    install: null
+    verify: python3 verify.py
+    harnesses: [codex, junie]
+    risk: {level: ordinary, reasons: []}
+    executionTier: local
+    securityContainmentRequired: false
+    harnessExecutionStatus: {codex: runnable, junie: runnable}
+    requiredAgents: [dev-backlog-steward]
+    agentScenarios: [dev-backlog-steward-happy]
+    requiredSkills: [create-github-work-item, manage-github-work-items, structured-explanation]
+    skillProbes: [probe-create-github-work-item, probe-manage-github-work-items]
+    fixtureBackedProbeClaims: [probe-create-github-work-item, probe-manage-github-work-items]
+    workflowPack: backlog
+    sandboxProfiles: {codex: codex-workspace-write, junie: junie-workspace-write}
+    judgePlan:
+      deterministicChecks: [model-input-safety, skill-read-trace, harness-agent-identity, required-command-outcome, allowed-paths-only, operation-coverage, tool-authority, queue-state-transition, no-forbidden-mutation, snapshot-reset, local-execution-boundary]
+      modelRubric: workflow-quality
+    contextPack:
+      fixtureRoot: evals/projects/github-work-item-provider
+      include: [TASK.md, mock_github.py, provider-state.json, verify.py]
+      stagedSkillPackages: [create-github-work-item, manage-github-work-items, structured-explanation]
+      wholeRepositoryAllowed: false
+      approvedSensitiveData: false
+    modelVisiblePaths: [TASK.md, mock_github.py, provider-state.json, verify.py]
+    skillResourceAllowlist:
+      create-github-work-item: [SKILL.md]
+      manage-github-work-items: [SKILL.md]
+      structured-explanation: [SKILL.md]
+    requiredEvidence: [DUPLICATE, CREATED, LIFECYCLE, DEPENDENCY, TERMINAL, REOPEN, PARTIAL-MUTATION, AUTHENTICATION, PERMISSION, NO-SHADOW-FILE, COMPLETION-INDEPENDENCE]

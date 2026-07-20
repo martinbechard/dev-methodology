@@ -373,9 +373,11 @@ packs:
       - probe-agent-claim
       - probe-codex-workitem-coordination
       - probe-create-backlog
+      - probe-create-github-work-item
       - probe-file-based-backlog
       - probe-github-issues-backlog
       - probe-manage-backlog
+      - probe-manage-github-work-items
       - probe-organise-project-files
       - probe-structured-explanation
     phases:
@@ -431,5 +433,6 @@ packs:
         - junie-workspace-write
     executableCases:
       - backlog-lifecycle
+      - github-work-item-provider
     caseCoverageStatus: partial
     coverageStatus: declared
