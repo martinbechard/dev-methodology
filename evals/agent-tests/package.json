@@ -1,0 +1,9 @@
+{
+  "name": "dev-methodology-agent-test-runtime",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Pinned local browser runtime for isolated agent-suite scenarios.",
+  "dependencies": {
+    "playwright": "1.61.1"
+  }
+}

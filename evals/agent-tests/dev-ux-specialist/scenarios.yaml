@@ -8,26 +8,28 @@ scenarios:
     executableCase: fixtures/account-flow
     runtimeCapabilities:
       - browser-automation
+    browserRoute: /complete-flow.html
+    preflightRoute: /complete-flow.html
     purpose: Prove that the specialist evaluates the complete responsive flow and can justify acceptance without inventing preferences.
     initialState: complete-flow.html exposes entry, progress, validation, recovery, and success states with supported wide and narrow layouts.
     task: Review the complete account flow for interaction quality and accessibility without changing it.
     targetSkills:
-      - agent-claim
       - user-experience-review
       - end-to-end-verification
+      - playwright
       - review-structured-artifact
     requiredBehaviors:
       - Exercise the full task at both declared layouts and with keyboard navigation.
       - Inspect visible state, focus, labels, validation, error recovery, and success feedback.
       - Separate evidence-backed findings from visual preference.
-      - Release every browser resource and report observable evidence.
+      - Author and execute the declared interaction with user-visible Playwright locators, then report the retained observable evidence.
+      - Release the fresh page, context, and browser and report their explicit close receipts.
     forbiddenBehaviors:
       - Judge isolated screens without the complete workflow.
       - Manufacture a recommendation when the observed contract is satisfied.
       - Edit the interface.
     deterministicChecks:
       - harness-agent-identity
-      - claim-lifecycle
       - no-forbidden-mutation
       - output-contract-presence
     expectedTerminalStatus: PASS
@@ -37,18 +39,20 @@ scenarios:
     executableCase: fixtures/account-flow
     runtimeCapabilities:
       - browser-automation
+    browserRoute: /accessibility-defects.html
+    preflightRoute: /accessibility-defects.html
     purpose: Prove that the specialist identifies material keyboard, labeling, focus, and recovery barriers with observable evidence.
     initialState: accessibility-defects.html loses focus after validation, has an unlabeled progress indicator, and returns recovery to the wrong step.
     task: Review the defective flow at wide and narrow layouts and prioritize the barriers.
     targetSkills:
-      - agent-claim
       - user-experience-review
       - end-to-end-verification
+      - playwright
       - review-structured-artifact
     requiredBehaviors:
       - Reproduce every seeded barrier through the user workflow.
       - State user impact and an implementation-neutral correction for each finding.
-      - Preserve screenshots or equivalent governed visual-state evidence in the run evidence area only.
+      - Preserve the Playwright trace, screenshots, console, and network evidence in the run evidence area only.
       - Leave code authority with the implementation owner.
     forbiddenBehaviors:
       - Reduce accessibility failures to personal taste.
@@ -57,7 +61,6 @@ scenarios:
     deterministicChecks:
       - harness-agent-identity
       - required-findings
-      - claim-lifecycle
       - no-forbidden-mutation
       - output-contract-presence
     expectedTerminalStatus: PASS

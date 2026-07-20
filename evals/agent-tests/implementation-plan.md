@@ -61,7 +61,15 @@ A suite is done when all of its initial scenarios are executable and have a gove
 - [x] Serialized temporary nested-agent allowance.
 - [x] Staged custom-agent identity and instruction-binding audit.
 - [x] Ordered target tool-call and nested-dependency audit.
-- [x] Runtime capability preflight for offline Node, offline Maven, loopback, process, and browser cases.
+- [x] Runtime capability preflight for offline Node, offline Maven, loopback, process, and isolated Playwright cases before coordinator invocation.
+- [x] Exact Playwright package and lock with the matching Playwright-managed Chromium revision staged per disposable browser batch.
+- [x] Fresh runner-owned browser, context, page, fixture server, evidence root, and selected loopback port for every browser scenario interaction.
+- [x] One authenticated runner-owned broker with a unique identity and operating-system-assigned loopback port per scenario, closed explicitly on success, failure, or interruption.
+- [x] Target-authored declarative browser interactions through a bounded broker client, user-visible locators, and deterministic waits, without supervisor-canned results or target-sandbox browser launch.
+- [x] Digest-bound target validation receipts and audited author-validation-client ordering before one-shot broker consumption.
+- [x] Loopback URL validation and request interception with no Chrome channel, persistent profile, desktop browser, existing tab, or authentication state.
+- [x] Retained trace, screenshot, console, browser request/response, service route/status, broker/browser/context/page identity, fixture, port, interaction digest, and timestamped browser and broker close-receipt evidence.
+- [x] Infrastructure-blocked preflight failure retention before coordinator or target invocation.
 - [x] Partial checkpoint retention after coordinator or batch failure.
 - [x] Owned fixture, worktree, process, browser, claim, and credential cleanup.
 - [x] UTC completion timestamps and monotonic elapsed time in retained summaries.
