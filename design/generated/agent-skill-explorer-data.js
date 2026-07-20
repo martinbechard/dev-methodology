@@ -6805,7 +6805,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "agent-harness"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/agent-harness/detection.yaml",
       "executedCases": [],
       "id": "agent-harness",
       "judgePassedCases": [],
@@ -7016,7 +7016,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "api-routes"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/api-routes/detection.yaml",
       "executedCases": [],
       "id": "api-routes",
       "judgePassedCases": [],
@@ -7273,7 +7273,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "clerk-auth"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/clerk-auth/detection.yaml",
       "executedCases": [],
       "id": "clerk-auth",
       "judgePassedCases": [],
@@ -8468,7 +8468,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "electron-main"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/electron-main/detection.yaml",
       "executedCases": [],
       "id": "electron-main",
       "judgePassedCases": [],
@@ -8553,7 +8553,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "electron-preload"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/electron-preload/detection.yaml",
       "executedCases": [],
       "id": "electron-preload",
       "judgePassedCases": [],
@@ -8743,7 +8743,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "fastapi"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/fastapi/detection.yaml",
       "executedCases": [],
       "id": "fastapi",
       "judgePassedCases": [],
@@ -8989,7 +8989,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "hibernate-orm-panache"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/hibernate-orm-panache/detection.yaml",
       "executedCases": [],
       "id": "hibernate-orm-panache",
       "judgePassedCases": [],
@@ -9170,7 +9170,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "java"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/java/detection.yaml",
       "executedCases": [],
       "id": "java",
       "judgePassedCases": [],
@@ -9243,7 +9243,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "java-design"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/java-design/detection.yaml",
       "executedCases": [],
       "id": "java-design",
       "judgePassedCases": [],
@@ -9489,7 +9489,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "java-design-pattern-examples"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/java-design-pattern-examples/detection.yaml",
       "executedCases": [],
       "id": "java-design-pattern-examples",
       "judgePassedCases": [],
@@ -9602,7 +9602,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "jest"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/jest/detection.yaml",
       "executedCases": [],
       "id": "jest",
       "judgePassedCases": [],
@@ -9750,7 +9750,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "jhipster-domain-modeling"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/jhipster-domain-modeling/detection.yaml",
       "executedCases": [],
       "id": "jhipster-domain-modeling",
       "judgePassedCases": [],
@@ -9879,7 +9879,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "jhipster-persistence"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/jhipster-persistence/detection.yaml",
       "executedCases": [],
       "id": "jhipster-persistence",
       "judgePassedCases": [],
@@ -10008,7 +10008,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "jhipster-project"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/jhipster-project/detection.yaml",
       "executedCases": [],
       "id": "jhipster-project",
       "judgePassedCases": [],
@@ -10153,7 +10153,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "jhipster-security"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/jhipster-security/detection.yaml",
       "executedCases": [],
       "id": "jhipster-security",
       "judgePassedCases": [],
@@ -10293,7 +10293,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "jhipster-testing"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/jhipster-testing/detection.yaml",
       "executedCases": [],
       "id": "jhipster-testing",
       "judgePassedCases": [],
@@ -10415,7 +10415,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "junit"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/junit/detection.yaml",
       "executedCases": [],
       "id": "junit",
       "judgePassedCases": [],
@@ -10516,7 +10516,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "langgraph"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/langgraph/detection.yaml",
       "executedCases": [],
       "id": "langgraph",
       "judgePassedCases": [],
@@ -10709,7 +10709,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "liquibase"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/liquibase/detection.yaml",
       "executedCases": [],
       "id": "liquibase",
       "judgePassedCases": [],
@@ -10813,7 +10813,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "local-model-integration"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/local-model-integration/detection.yaml",
       "executedCases": [],
       "id": "local-model-integration",
       "judgePassedCases": [],
@@ -11039,7 +11039,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "mapstruct"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/mapstruct/detection.yaml",
       "executedCases": [],
       "id": "mapstruct",
       "judgePassedCases": [],
@@ -11155,7 +11155,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "mockito"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/mockito/detection.yaml",
       "executedCases": [],
       "id": "mockito",
       "judgePassedCases": [],
@@ -11624,7 +11624,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "mysql"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/mysql/detection.yaml",
       "executedCases": [],
       "id": "mysql",
       "judgePassedCases": [],
@@ -11765,7 +11765,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "nextjs-app-router"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/nextjs-app-router/detection.yaml",
       "executedCases": [],
       "id": "nextjs-app-router",
       "judgePassedCases": [],
@@ -11896,7 +11896,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "node-cli"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/node-cli/detection.yaml",
       "executedCases": [],
       "id": "node-cli",
       "judgePassedCases": [],
@@ -12098,7 +12098,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "plan-engine"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/plan-engine/detection.yaml",
       "executedCases": [],
       "id": "plan-engine",
       "judgePassedCases": [],
@@ -12211,7 +12211,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "playwright"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/playwright/detection.yaml",
       "executedCases": [],
       "id": "playwright",
       "judgePassedCases": [],
@@ -12317,7 +12317,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "postgres-drizzle"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/postgres-drizzle/detection.yaml",
       "executedCases": [],
       "id": "postgres-drizzle",
       "judgePassedCases": [],
@@ -12821,7 +12821,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "python"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/python/detection.yaml",
       "executedCases": [],
       "id": "python",
       "judgePassedCases": [],
@@ -13067,7 +13067,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "python-design-pattern-examples"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/python-design-pattern-examples/detection.yaml",
       "executedCases": [],
       "id": "python-design-pattern-examples",
       "judgePassedCases": [],
@@ -13168,7 +13168,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "quarkus"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/quarkus/detection.yaml",
       "executedCases": [],
       "id": "quarkus",
       "judgePassedCases": [],
@@ -13269,7 +13269,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "quarkus-design"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/quarkus-design/detection.yaml",
       "executedCases": [],
       "id": "quarkus-design",
       "judgePassedCases": [],
@@ -13375,7 +13375,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "quarkus-persistence"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/quarkus-persistence/detection.yaml",
       "executedCases": [],
       "id": "quarkus-persistence",
       "judgePassedCases": [],
@@ -13474,7 +13474,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "quarkus-testing"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/quarkus-testing/detection.yaml",
       "executedCases": [],
       "id": "quarkus-testing",
       "judgePassedCases": [],
@@ -13596,7 +13596,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "quartz"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/quartz/detection.yaml",
       "executedCases": [],
       "id": "quartz",
       "judgePassedCases": [],
@@ -13670,7 +13670,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "react-server-components"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/react-server-components/detection.yaml",
       "executedCases": [],
       "id": "react-server-components",
       "judgePassedCases": [],
@@ -13768,7 +13768,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "react-vite-renderer"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/react-vite-renderer/detection.yaml",
       "executedCases": [],
       "id": "react-vite-renderer",
       "judgePassedCases": [],
@@ -14437,7 +14437,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "spring-boot"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/spring-boot/detection.yaml",
       "executedCases": [],
       "id": "spring-boot",
       "judgePassedCases": [],
@@ -14532,7 +14532,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "spring-boot-design"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/spring-boot-design/detection.yaml",
       "executedCases": [],
       "id": "spring-boot-design",
       "judgePassedCases": [],
@@ -14632,7 +14632,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "spring-boot-testing"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/spring-boot-testing/detection.yaml",
       "executedCases": [],
       "id": "spring-boot-testing",
       "judgePassedCases": [],
@@ -14726,7 +14726,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "spring-data-jpa"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/spring-data-jpa/detection.yaml",
       "executedCases": [],
       "id": "spring-data-jpa",
       "judgePassedCases": [],
@@ -14803,7 +14803,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "sql"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/sql/detection.yaml",
       "executedCases": [],
       "id": "sql",
       "judgePassedCases": [],
@@ -15063,7 +15063,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "tailwind-design-system"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/tailwind-design-system/detection.yaml",
       "executedCases": [],
       "id": "tailwind-design-system",
       "judgePassedCases": [],
@@ -15300,7 +15300,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "tool-runtime"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/tool-runtime/detection.yaml",
       "executedCases": [],
       "id": "tool-runtime",
       "judgePassedCases": [],
@@ -15440,7 +15440,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "typescript"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/typescript/detection.yaml",
       "executedCases": [],
       "id": "typescript",
       "judgePassedCases": [],
@@ -15708,7 +15708,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "typescript-design-pattern-examples"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/typescript-design-pattern-examples/detection.yaml",
       "executedCases": [],
       "id": "typescript-design-pattern-examples",
       "judgePassedCases": [],
@@ -15823,7 +15823,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "typescript-esm"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/typescript-esm/detection.yaml",
       "executedCases": [],
       "id": "typescript-esm",
       "judgePassedCases": [],
@@ -15928,7 +15928,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "typescript-strict"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/typescript-strict/detection.yaml",
       "executedCases": [],
       "id": "typescript-strict",
       "judgePassedCases": [],
@@ -16089,7 +16089,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "vitest"
       },
-      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+      "detectionPath": "skills/vitest/detection.yaml",
       "executedCases": [],
       "id": "vitest",
       "judgePassedCases": [],

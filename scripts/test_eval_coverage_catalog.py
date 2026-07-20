@@ -1030,7 +1030,7 @@ class EvalCoverageCatalogTests(unittest.TestCase):
         )
         self.assertEqual("skills/skill-a/SKILL.md", payload["skills"][0]["sourcePath"])
         self.assertEqual(
-            "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+            "skills/skill-a/detection.yaml",
             payload["skills"][0]["detectionPath"],
         )
         self.assertEqual(

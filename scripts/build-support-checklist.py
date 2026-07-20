@@ -2120,8 +2120,7 @@ def build_explorer_payload(
                 "category": category,
                 "sourcePath": f"skills/{skill_id}/SKILL.md",
                 "detectionPath": (
-                    "skills/detect-technology-skills/references/"
-                    "technology-skill-detection-registry.yaml"
+                    f"skills/{skill_id}/detection.yaml"
                     if detector_mapping
                     else None
                 ),

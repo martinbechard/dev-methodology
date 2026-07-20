@@ -50,7 +50,7 @@ Project-specific evaluation skills may freeze inputs and compare completed candi
 - generated/adapters contains ready-to-copy native agent definitions and agent-generation-manifest.json. Codex, Claude Code, Gemini CLI, and Junie CLI definitions are generated from the same conceptual sources.
 - backlog contains the repository's typed active work, user-action-required queue, holding state, and outcome archives. It is available only from the primary worktree.
 - .worktrees contains ignored linked agent checkouts beneath the primary worktree. It is operational state rather than distributable project source.
-- design/generated/technology-skill-detection-registry.js exposes the same detection registry for documentation and the future interactive agent-skill explorer.
+- design/generated/technology-skill-detection-registry.js exposes the same detection registry for documentation and the interactive agent-skill explorer.
 - scripts/openai_metadata.py refreshes derived Codex interface fields from SKILL.md while preserving hand-authored policy and dependencies.
 - scripts contains regression tests for installer behavior and bundle content.
 - AGENTS.md contains repo-local maintenance directives for agents working on this source repository.
