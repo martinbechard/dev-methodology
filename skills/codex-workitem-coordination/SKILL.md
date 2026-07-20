@@ -69,6 +69,7 @@ Create each Dev Orchestrator task in an environment that can perform its ordinar
 
 - Use the exposed mcp-agent-ops claim operations for claim status, acquisition, extension, heartbeat, and release whenever they are available. Do not invoke the shell claim fallback merely as a routine preflight when the MCP operations are available.
 - Keep implementation and focused tests in the task-owned private worktree. The environment must permit ordinary writes to that worktree and the Git worktree metadata needed for local commits.
+- When a work item depends on a special runtime capability, test that capability through the same nested execution path the real workload uses before assigning more equivalent work to that environment. A direct command is not sufficient evidence for a runner that invokes the command from a child process.
 - If an ordinary required operation fails because the task environment lacks a capability, the task stops immediately, preserves its work, releases any claim truthfully, and reports the exact failed operation to the parent. It must not request escalation from the user.
 - The parent promptly re-homes or replaces that task in a compatible environment, updates the canonical task identifier in the work item, and fills any resulting Running vacancy. Do not leave an approval prompt or an execution-incompatible task consuming a Running slot.
 
