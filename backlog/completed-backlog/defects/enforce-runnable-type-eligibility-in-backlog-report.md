@@ -1,8 +1,17 @@
 # Enforce Runnable Type Eligibility In Backlog Report
 
-Status: Blocked
+Status: Completed
 
 Type: Defect
+
+## Completion Evidence
+
+- Accepted report bytes are integrated on main in commits ba86db7712b77a54dba525714ce70156b51f73a9 and 5514063bb51a56cbd8b667bcf49aa34fca329d06. Their stable patch identities exactly match accepted candidate commits 8482993557dc98dcfc6bd06ec83f8172d4090b7b and 6991c5daae2fa6cf01f8daa56b256f55d403121e.
+- The final report corrections are carried by accepted contributions 095bbd9388be69df6b3250aed3c2a2d49ca705d9 and 4649a2fcfee5e88c3cef6048c3a7f8a0b0b1eb61.
+- Focused verification passed 22 backlog-report tests. The retained full-candidate and browser evidence remains applicable by exact byte identity.
+- Fresh post-integration review of the exact integrated candidate reported no findings.
+- Integration ownership for main was released in event dfa15ec8-93d8-45ff-bada-57424517ae2a, and main was clean at 5514063bb51a56cbd8b667bcf49aa34fca329d06 before terminal lifecycle recording began.
+- The earlier blocked and exhausted-correction evidence below is historical and superseded by the accepted resumed contribution, verification, integration, browser evidence, and review recorded here.
 
 ## Running Ownership
 
