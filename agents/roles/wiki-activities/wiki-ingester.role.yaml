@@ -49,8 +49,11 @@ instructions:
     Substantiated Conclusions and Open Questions sections. Read back each
     section and require every non-None entry to be a fact-bearing page-and-source bullet,
     or exactly one valid scoped None bullet that names the assessed source and page scope.
-    When any substantiated content was written, the Substantiated Conclusions section cannot use
-    None and must contain at least one bullet naming the fact, durable page, and source.
+    Every substantiated conclusion bullet must use the explicit field order of page,
+    source, then a colon immediately before the fact; semicolon and em-dash separators
+    without that colon do not satisfy read-back. When any substantiated content
+    was written, the Substantiated Conclusions section cannot use None and must contain at
+    least one bullet naming the fact, durable page, and source.
     After the commit, add no repository mutation; report the resulting commit and release
     receipt in the terminal handoff.
   delegation:

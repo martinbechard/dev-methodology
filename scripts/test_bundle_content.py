@@ -4329,6 +4329,8 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("Substantiated Conclusions", workflow_text)
         self.assertIn("Open Questions", workflow_text)
         self.assertIn("every non-None entry", workflow_text)
+        self.assertIn("field order of page, source", workflow_text)
+        self.assertIn("colon immediately before the fact", workflow_text)
         self.assertIn("valid scoped None", workflow_text)
         self.assertIn("substantiated content was written", workflow_text)
         self.assertIn("at least one fact-bearing bullet", completion_text)

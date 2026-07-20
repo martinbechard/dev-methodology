@@ -38,6 +38,12 @@
       "substantiatedContentWritten": false,
       "expected": "reject",
       "resultText": "# Wiki Ingest Closeout\n\n## Substantiated Conclusions\n\n- None. Assessed source: raw/provider.md. Assessed page scope: docs/wiki; no substantiated content was written.\n\nAdditional conclusions were reviewed.\n\n## Open Questions\n\n- None. Assessed source: raw/provider.md. Assessed page scope: docs/wiki; no unresolved point was found.\n"
+    },
+    "observedSemicolonEmDash": {
+      "sourceEvidenceSha256": "f494bbe3b3e5110d9e2192ecd003c7b46b8b70fe76135723769337833398b5a1",
+      "substantiatedContentWritten": true,
+      "expected": "reject",
+      "resultText": "# Wiki Ingest Result\n\n## Substantiated Conclusions\n\n- Eligible transient-transport retries are limited to idempotent reads and order-status lookups; creation, cancellation, and payment mutations are not retried — [Request Retry Eligibility](docs/wiki/retry-policy/request-retry-eligibility.md) — [processed retry policy source](raw/processed/retry-policy.md).\n\n## Open Questions\n\n- Whether deployment-specific jitter changes either fixed retry delay requires authoritative deployment-policy or implementation evidence — [Retry Attempt Timing](docs/wiki/retry-policy/retry-attempt-timing.md) — [processed retry policy source](raw/processed/retry-policy.md).\n"
     }
   },
   "executions": {
