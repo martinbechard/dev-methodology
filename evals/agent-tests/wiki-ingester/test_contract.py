@@ -46,7 +46,7 @@ MISSING_EVIDENCE_PATTERN = (
     r"|neither .{0,80} nor .{0,80} evidence"
 )
 LIVE_CASE_SELECTOR_ENV = "WIKI_INGESTER_LIVE_CASES"
-FOCUSED_LIVE_CASES = frozenset({"pre0", "pre2", "post0", "raw-ingest"})
+FOCUSED_LIVE_CASES = frozenset({"pre0", "raw-ingest"})
 
 
 def _load_module(name: str, path: Path):
@@ -178,19 +178,97 @@ def _assert_fact_bearing_conclusion_bullet(
     )
 
 
+def _inventory_entries(inventory: str) -> list[str]:
+    """Split an inventory into bullets or separately invalid prose entries."""
+    entries: list[str] = []
+    current: list[str] = []
+    for line in inventory.splitlines():
+        stripped = line.strip()
+        if not stripped:
+            if current:
+                entries.append("\n".join(current))
+                current = []
+            continue
+        if re.match(r"^[-*]\s+", stripped):
+            if current:
+                entries.append("\n".join(current))
+            current = [stripped]
+        elif current:
+            current.append(stripped)
+        else:
+            entries.append(stripped)
+    if current:
+        entries.append("\n".join(current))
+    return entries
+
+
+def _assert_fact_bearing_inventory_entries(
+    test: unittest.TestCase, inventory: str
+) -> None:
+    """Require every non-None entry to be a fact-bearing page/source bullet."""
+    entries = _inventory_entries(inventory)
+    test.assertTrue(entries)
+    for entry in entries:
+        normalized = " ".join(entry.lower().split())
+        test.assertRegex(entry, r"^[-*]\s+")
+        test.assertIn("docs/wiki/", normalized)
+        test.assertIn("raw/", normalized)
+        test.assertRegex(normalized, r":\s*\S")
+
+
+def _assert_terminal_result_readback(
+    test: unittest.TestCase,
+    result_text: str,
+    substantiated_content_written: bool,
+) -> None:
+    """Require literal on-disk inventories with bullets or one scoped None entry."""
+    sections = {}
+    for heading in ("Substantiated Conclusions", "Open Questions"):
+        matches = re.findall(
+            rf"^## {re.escape(heading)}\s*$",
+            result_text,
+            flags=re.MULTILINE,
+        )
+        test.assertEqual(1, len(matches))
+        section = _markdown_section(result_text, heading)
+        test.assertTrue(section)
+        sections[heading] = section
+
+    conclusions = sections["Substantiated Conclusions"]
+    conclusion_is_none = re.search(
+        r"(?:^|\n)\s*[-*]\s+none\s*[.:;]",
+        conclusions,
+        flags=re.IGNORECASE,
+    ) is not None
+    if conclusion_is_none:
+        test.assertIs(substantiated_content_written, False)
+        _assert_single_scoped_none_entry(test, conclusions)
+    else:
+        _assert_fact_bearing_inventory_entries(test, conclusions)
+
+    open_questions = sections["Open Questions"]
+    open_questions_is_none = re.search(
+        r"(?:^|\n)\s*[-*]\s+none\s*[.:;]",
+        open_questions,
+        flags=re.IGNORECASE,
+    ) is not None
+    if open_questions_is_none:
+        _assert_single_scoped_none_entry(test, open_questions)
+    else:
+        _assert_fact_bearing_inventory_entries(test, open_questions)
+
+
 def _assert_single_scoped_none_entry(
     test: unittest.TestCase, inventory: str
 ) -> None:
     """Require exactly one explicit None entry with assessed source and page scope."""
-    lines = [line.strip() for line in inventory.splitlines() if line.strip()]
-    bullet_lines = [line for line in lines if re.match(r"^[-*]\s+", line)]
-    if bullet_lines:
-        test.assertEqual(1, len(bullet_lines))
-        entry_start = bullet_lines[0]
-    else:
-        test.assertEqual(1, len(lines))
-        entry_start = lines[0]
-    test.assertRegex(entry_start, r"^(?:[-*]\s+)?none\s*[.:;]")
+    entries = _inventory_entries(inventory)
+    test.assertEqual(1, len(entries))
+    entry_start = entries[0]
+    test.assertRegex(entry_start, r"^[-*]\s+")
+    test.assertIsNotNone(
+        re.search(r"^[-*]\s+none\s*[.:;]", entry_start, re.IGNORECASE)
+    )
     _assert_inventory_scope(test, inventory)
 
 
@@ -342,6 +420,11 @@ def _validate_control_result(
     with test.subTest(result_disposition="interruption"):
         test.assertIn("interrupt", result_text)
     _assert_result_inventory(test, result_text)
+    _assert_terminal_result_readback(
+        test,
+        str(result["evaluationResultText"]),
+        substantiated_content_written=True,
+    )
     with test.subTest(result_disposition="no-rollback"):
         test.assertNotIn("restor", result_text)
     expected = plan.outcomes()
@@ -893,6 +976,21 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
         self.assertEqual([], post1["liveRegistryClaims"])
         self.assertIs(post1["claimReleased"], True)
         self.assertIs(post1["terminalResultWrittenBeforeCommit"], True)
+        for name, capture in replay["terminalResultCaptures"].items():
+            with self.subTest(terminal_result_capture=name):
+                if capture["expected"] == "accept":
+                    _assert_terminal_result_readback(
+                        self,
+                        capture["resultText"],
+                        capture["substantiatedContentWritten"],
+                    )
+                else:
+                    with self.assertRaises(AssertionError):
+                        _assert_terminal_result_readback(
+                            self,
+                            capture["resultText"],
+                            capture["substantiatedContentWritten"],
+                        )
 
     def test_encrypted_spawn_fallback_rejects_false_identity_and_receipts(self) -> None:
         """Opaque prompts cannot bypass fresh-child, call, or receipt evidence."""
@@ -962,13 +1060,15 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
         """Focused reruns select only named interruption and raw-ingest controls."""
         self.assertIsNone(_parse_live_case_selector(None))
         self.assertEqual(
-            frozenset({"pre0", "pre2", "post0", "raw-ingest"}),
-            _parse_live_case_selector("pre0,pre2,post0,raw-ingest"),
+            frozenset({"pre0", "raw-ingest"}),
+            _parse_live_case_selector("pre0,raw-ingest"),
         )
         for invalid in (
             "",
             "pre1",
             "post1",
+            "pre2",
+            "post0",
             "pre0,pre0",
             "pre0, raw-ingest",
             "all",
@@ -1219,7 +1319,7 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
             "retryProcessedSourcePresent": True,
             "evaluationResultText": (
                 "Interruption continuation completed.\n\n"
-                "## Ingested Conclusion\n\n"
+                "## Substantiated Conclusions\n\n"
                 "- docs/wiki/retry-policy/retry-execution.md: idempotent reads "
                 "use retry delays of 200 and 500 milliseconds. Source: "
                 "raw/processed/retry-policy.md.\n\n"
@@ -1539,6 +1639,11 @@ class WikiIngesterLiveNeighborTests(unittest.TestCase):
                 with self.subTest(result_evidence=evidence):
                     self.assertRegex(result_text, pattern)
             _assert_result_inventory(self, result_text)
+            _assert_terminal_result_readback(
+                self,
+                result["evaluationResultText"],
+                substantiated_content_written=True,
+            )
             _assert_terminal_head(self, result, result["targetTerminalResponse"])
             _validate_claim_events(self, result, result["targetTerminalResponse"])
 
@@ -1573,6 +1678,11 @@ class WikiIngesterLiveNeighborTests(unittest.TestCase):
                     self.assertRegex(result_text, pattern)
             _assert_collision_no_change(self, result_text)
             _assert_collision_result_inventory(self, result_text)
+            _assert_terminal_result_readback(
+                self,
+                result["evaluationResultText"],
+                substantiated_content_written=False,
+            )
             _assert_terminal_head(self, result, result["targetTerminalResponse"])
             _validate_claim_events(self, result, result["targetTerminalResponse"])
 
@@ -1652,6 +1762,11 @@ class WikiIngesterLiveNeighborTests(unittest.TestCase):
                 with self.subTest(result_evidence=evidence):
                     self.assertRegex(result_text, pattern)
             _assert_provider_result_inventory(self, result_text)
+            _assert_terminal_result_readback(
+                self,
+                result["evaluationResultText"],
+                substantiated_content_written=True,
+            )
             _assert_terminal_head(self, result, terminal)
             _validate_claim_events(self, result, terminal)
 

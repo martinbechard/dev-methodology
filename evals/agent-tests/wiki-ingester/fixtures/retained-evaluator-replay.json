@@ -2,6 +2,44 @@
   "matrixSha256": "4e2f8ce5abac470a099b46dcb178c62c4292e1cdea19d3de3c0b7620631a259f",
   "fiveCaseLogSha256": "6e3cad8d49df63ca055634f3e8940aa93794ba3918ce17928ae088898ae3729c",
   "fiveCaseResourceReleaseEventId": "6dc61d29-4cd1-4879-b06f-6d72e1773a5f",
+  "terminalResultCaptures": {
+    "observedEmptyInventory": {
+      "sourceEvidenceSha256": "6e3cad8d49df63ca055634f3e8940aa93794ba3918ce17928ae088898ae3729c",
+      "substantiatedContentWritten": true,
+      "expected": "reject",
+      "resultText": "# Wiki Ingest Closeout\n\nSTATUS: READY. The source was processed, validation passed, the worktree is clean, and the claim was released.\n"
+    },
+    "validFactBearing": {
+      "substantiatedContentWritten": true,
+      "expected": "accept",
+      "resultText": "# Wiki Ingest Closeout\n\n## Substantiated Conclusions\n\n- docs/wiki/retry-policy/request-eligibility.md from raw/processed/retry-policy.md: mutation requests are never retried.\n\n## Open Questions\n\n- docs/wiki/retry-policy/retry-execution.md from raw/processed/retry-policy.md: deployment jitter lacks authoritative implementation evidence.\n"
+    },
+    "validScopedNone": {
+      "substantiatedContentWritten": false,
+      "expected": "accept",
+      "resultText": "# Wiki Ingest Closeout\n\n## Substantiated Conclusions\n\n- None. Assessed source: raw/provider.md. Assessed page scope: docs/wiki; no substantiated content was written.\n\n## Open Questions\n\n- None. Assessed source: raw/provider.md. Assessed page scope: docs/wiki; no unresolved point was found.\n"
+    },
+    "adversarialUnbulleted": {
+      "substantiatedContentWritten": true,
+      "expected": "reject",
+      "resultText": "# Wiki Ingest Closeout\n\n## Substantiated Conclusions\n\ndocs/wiki/retry-policy/request-eligibility.md from raw/processed/retry-policy.md records that mutation requests are never retried.\n\n## Open Questions\n\n- docs/wiki/retry-policy/retry-execution.md from raw/processed/retry-policy.md: deployment jitter lacks authoritative implementation evidence.\n"
+    },
+    "adversarialFalseNone": {
+      "substantiatedContentWritten": true,
+      "expected": "reject",
+      "resultText": "# Wiki Ingest Closeout\n\n## Substantiated Conclusions\n\n- None. Assessed source: raw/processed/retry-policy.md. Assessed page scope: docs/wiki/retry-policy.\n\n## Open Questions\n\n- docs/wiki/retry-policy/retry-execution.md from raw/processed/retry-policy.md: deployment jitter lacks authoritative implementation evidence.\n"
+    },
+    "adversarialMixedEntries": {
+      "substantiatedContentWritten": true,
+      "expected": "reject",
+      "resultText": "# Wiki Ingest Closeout\n\n## Substantiated Conclusions\n\n- docs/wiki/retry-policy/request-eligibility.md from raw/processed/retry-policy.md: mutation requests are never retried.\n- Mutation retry behavior was reviewed.\n\n## Open Questions\n\n- docs/wiki/retry-policy/retry-execution.md from raw/processed/retry-policy.md: deployment jitter lacks authoritative implementation evidence.\n"
+    },
+    "adversarialNoneWithExtra": {
+      "substantiatedContentWritten": false,
+      "expected": "reject",
+      "resultText": "# Wiki Ingest Closeout\n\n## Substantiated Conclusions\n\n- None. Assessed source: raw/provider.md. Assessed page scope: docs/wiki; no substantiated content was written.\n\nAdditional conclusions were reviewed.\n\n## Open Questions\n\n- None. Assessed source: raw/provider.md. Assessed page scope: docs/wiki; no unresolved point was found.\n"
+    }
+  },
   "executions": {
     "02": {
       "resultText": "Interruption reconciliation completed.\n\n## Substantiated Conclusions\n\n- docs/wiki/retry-policy/fixed-retry-backoff.md from raw/processed/retry-policy.md: fixed retry delays are 200 and 500 milliseconds.\n- docs/wiki/retry-policy/request-retry-eligibility.md from raw/processed/retry-policy.md: idempotent reads are eligible and mutation requests are never retried.\n\n## Open Questions\n\n- docs/wiki/retry-policy/fixed-retry-backoff.md from raw/processed/retry-policy.md: deployment jitter remains unresolved because authoritative evidence has not been identified.\n",

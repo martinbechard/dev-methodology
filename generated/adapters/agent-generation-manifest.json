@@ -132,7 +132,7 @@
         {
           "name": "wiki-ingester",
           "output": "generated/adapters/claude/agents/wiki-ingester.md",
-          "sha256": "d452155ebcb578ef5863bc67ebbe36425fab54aa718e42621158fdd5d1724ea4",
+          "sha256": "9a9cacd58cf5587656d72eb12d1421d4e32507426b20dad70b2a4322742e2d6c",
           "source": "agents/roles/wiki-activities/wiki-ingester.role.yaml"
         },
         {
@@ -302,7 +302,7 @@
         {
           "name": "wiki-ingester",
           "output": "generated/adapters/codex/agents/wiki-ingester.toml",
-          "sha256": "a87b4c4ea8b546323cb175c34200e84196f343be792a4cac5ebca67ec5f5408e",
+          "sha256": "0fadffa293bca8f9c11dd8d3b478517f39c7fb61ab2857ab8163e63165ea5075",
           "source": "agents/roles/wiki-activities/wiki-ingester.role.yaml"
         },
         {
@@ -478,7 +478,7 @@
         {
           "name": "wiki-ingester",
           "output": "generated/adapters/gemini/agents/wiki-ingester.md",
-          "sha256": "267805632391e047cd16b1cbf317c48b61e835d81df177f71fd5c0dfa67c46e9",
+          "sha256": "eb29e9145551d02704cccb5cd4ab18a0119c1bfd354277df5c92860a68e74063",
           "source": "agents/roles/wiki-activities/wiki-ingester.role.yaml"
         },
         {
@@ -648,7 +648,7 @@
         {
           "name": "wiki-ingester",
           "output": "generated/adapters/junie/agents/wiki-ingester.md",
-          "sha256": "3527233f93e28f496ec03021b33572a67d0d22d6905fc3315e19b7bd25e62f20",
+          "sha256": "8c109dfa7e4140f9c088041538b8cd190a2f6c29283b8229b6e861ffa9904071",
           "source": "agents/roles/wiki-activities/wiki-ingester.role.yaml"
         },
         {

@@ -44,9 +44,15 @@ instructions:
   - Recheck every applicable ingest queue and report its final state before completion.
   - Before creating the commit, write or update the terminal result with the intended
     READY or BLOCKED status, both required inventories, validation and verifier evidence,
-    source and queue state, and the planned commit and claim closeout. After the commit,
-    add no repository mutation; report the resulting commit and release receipt in the
-    terminal handoff.
+    source and queue state, and the planned commit and claim closeout. Re-open
+    eval-result.md from disk. Do not commit until it contains literal level-two
+    Substantiated Conclusions and Open Questions sections. Read back each
+    section and require every non-None entry to be a fact-bearing page-and-source bullet,
+    or exactly one valid scoped None bullet that names the assessed source and page scope.
+    When any substantiated content was written, the Substantiated Conclusions section cannot use
+    None and must contain at least one bullet naming the fact, durable page, and source.
+    After the commit, add no repository mutation; report the resulting commit and release
+    receipt in the terminal handoff.
   delegation:
   - Invoke wiki-topic-verifier in a fresh context for each source's complete changed-page
     set before the source move and again after processed-source link changes. Provide the
