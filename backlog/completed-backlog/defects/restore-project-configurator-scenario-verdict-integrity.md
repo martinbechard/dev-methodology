@@ -1,6 +1,6 @@
 # Restore Project Configurator Scenario Verdict Integrity
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
@@ -17,12 +17,28 @@ Type: Defect
 - Canonical Dev Orchestrator task: 019f7dfe-6b43-7402-8776-813473e71069
 - Branch: accepted source branch codex/restore-project-configurator-verdict-integrity; delivery is integrated on main
 - Worktree: /Users/martinbechard/.codex/worktrees/c9fc/dev-methodology
-- Current phase: Fresh post-integration review and focused verification
+- Current phase: Completed and archived
 - Accepted candidate commit: 1ed42a6e8bb2f1e9807415056089a3e29bd98f2e
 - Integrated main commit: ded845bf39f8f21c1cb9a2b250141a38ab8c5c5c
 - Integration or completion wait: None
 - Claim attempts: Integration acquired on the first attempt at event 758e3985-2a6f-472d-a394-3f93f181cb08 and released at event f20ccca5-f409-44c9-b06e-ef78cfc1f29d; task-record claim acquired at event 1171342f-f007-4691-a3f4-7ce376ac4e33
-- Open issues: Fresh post-integration review and focused verifier evidence are required before terminal completion
+- Open issues: None
+
+## Completion Evidence
+
+- Canonical Dev Orchestrator task: 019f7dfe-6b43-7402-8776-813473e71069 under parent Dev Backlog Coordinator task 019f77f4-c4bd-7c91-b197-c987a7beb838.
+- Accepted candidate commit: 1ed42a6e8bb2f1e9807415056089a3e29bd98f2e.
+- Integrated main commit: ded845bf39f8f21c1cb9a2b250141a38ab8c5c5c.
+- Integration claim: integrate-project-configurator-verdict-integrity acquired at event 758e3985-2a6f-472d-a394-3f93f181cb08 and released normally at event f20ccca5-f409-44c9-b06e-ef78cfc1f29d.
+- Task-record commit: 4e5b84517b187908ac6bee81b914fd078cdb7e25.
+- Task-record claim acquired at event 1171342f-f007-4691-a3f4-7ce376ac4e33 and released normally at event feffd81b-e556-4c6a-8dbf-29e1c2ce7b37.
+- Fresh independent post-integration review covered exactly the seven files changed by the integration diff from c0e3bbe9d0ba43322c50489c566d4f9704fa9e88 through ded845bf39f8f21c1cb9a2b250141a38ab8c5c5c. The reviewer reported no findings, no open questions, and an ACCEPT verdict. The reviewed files remained byte-identical on the then-current main commit 2978cb2340c55cb18d4b49c97732d28c152094bd.
+- The 14 Project Configurator suite-local unittest cases passed in 0.157 seconds.
+- Project Configurator validate-only scheduling passed with the Codex harness, one suite, one supervisor job, and no model or live scenario execution.
+- Global evaluation catalog validation passed with CATALOGS VALID.
+- Git diff validation passed. The task-owned validate-only summary was preserved externally at /private/tmp/project-configurator-verdict-postintegration-edEvgq/summary.json, its accidental primary copy was removed, and primary status returned clean before terminal claim acquisition.
+- No broad, full, or live suite was run during post-integration closeout.
+- Terminal backlog claim restore-project-configurator-verdict-terminal-backlog acquired in PRIMARY mode from clean main 7b79a959c11d057ea969be4f1e6a6c962964b672 at event 67fa9b49-cf79-46ae-928e-18b6b0d0391a for exactly the active source path and completed defect destination. Its normal release event is reported in the terminal handoff after the clean archive commit.
 
 ## Summary
 
