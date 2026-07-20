@@ -89,12 +89,12 @@ class VerifierPlan:
                 **(
                     {
                         "finding": (
-                            "docs/wiki/retry-policy/request-retry-eligibility.md: "
+                            "docs/wiki/retry-policy/request-eligibility.md: "
                             "add the exact heading '## Ineligible mutation requests' "
                             "and the exact sentence 'Order creation, cancellation, and "
                             "payment mutation requests are never retried.'"
                             if invocation == 0
-                            else "docs/wiki/retry-policy/fixed-retry-backoff.md: add an "
+                            else "docs/wiki/retry-policy/retry-execution.md: add an "
                             "exact '## Retry delay sequence' heading and the exact sentence "
                             "'The first retry waits 200 milliseconds and the second retry "
                             "waits 500 milliseconds.'"

@@ -21,8 +21,9 @@ instructions:
   - Synthesize every substantiated claim and relationship into granular durable leaves,
     applicable folder hubs and top-level topic indexes, links, and item-level digest
     entries. Put each unsubstantiated, unresolved, or verifier-dependent point in the Open
-    Questions section of the most relevant page, naming the specific missing evidence or
-    decision and preserving its provenance.
+    Questions section of exactly one most-relevant existing page, naming the specific
+    missing evidence or decision and preserving its provenance. Create a new page for the
+    point only when no appropriate existing page fits.
   - Run leaf linking, wiki lint, and applicable OKF validation, then request a fresh
     wiki-topic-verifier verdict before moving the source.
   - After a GOOD pre-move verdict, move the completed source under raw/processed and
@@ -41,6 +42,11 @@ instructions:
     with its missing evidence or decision and provenance, rerun validation, and complete
     the source move and processed-link updates without entering the other verifier gate.
   - Recheck every applicable ingest queue and report its final state before completion.
+  - Before creating the commit, write or update the terminal result with the intended
+    READY or BLOCKED status, both required inventories, validation and verifier evidence,
+    source and queue state, and the planned commit and claim closeout. After the commit,
+    add no repository mutation; report the resulting commit and release receipt in the
+    terminal handoff.
   delegation:
   - Invoke wiki-topic-verifier in a fresh context for each source's complete changed-page
     set before the source move and again after processed-source link changes. Provide the
@@ -76,7 +82,8 @@ instructions:
   - Write every READY or BLOCKED terminal result with a labeled ingested or substantiated
     conclusions inventory and a labeled Open Questions inventory. Keep the inventories
     separate and fact-bearing; each entry names its durable page and source provenance.
-    When any substantiated conclusions exist, the conclusions inventory must be nonempty.
+    When any substantiated conclusions exist, the conclusions inventory must contain at
+    least one fact-bearing bullet naming the conclusion, its durable page, and its source.
     When any unresolved or unsubstantiated points exist, the Open Questions inventory must
     be nonempty. Use None only when that category truly has no entries, and name the
     assessed source and page scope for that explicit None.
@@ -166,14 +173,14 @@ examples:
     STATUS: READY. The post-move verifier was interrupted after one correction, so no
     verifier was invoked again for this source.
     SUBSTANTIATED CONCLUSIONS:
-    - docs/wiki/retry-policy/eligibility.md from raw/processed/retry-policy.md: idempotent
-      reads are retryable and mutation requests are not.
-    - docs/wiki/retry-policy/backoff.md from raw/processed/retry-policy.md: the fixed retry
-      delays are 200 and 500 milliseconds.
+    - docs/wiki/retry-policy/request-eligibility.md from raw/processed/retry-policy.md:
+      idempotent reads are retryable and mutation requests are not.
+    - docs/wiki/retry-policy/retry-execution.md from raw/processed/retry-policy.md: the fixed
+      retry delays are 200 and 500 milliseconds.
     OPEN QUESTIONS:
-    - docs/wiki/retry-policy/backoff.md from raw/processed/retry-policy.md: deployment
-      jitter remains unresolved because deployment-policy or implementation evidence is
-      missing.
+    - docs/wiki/retry-policy/retry-execution.md from raw/processed/retry-policy.md:
+      deployment jitter remains unresolved because deployment-policy or implementation
+      evidence is missing.
     Validation passed, processed links resolve, the queue is empty, the commit is clean,
     and the ingest claim is released.
 skills:

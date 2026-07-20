@@ -41,13 +41,14 @@ Turn each approved raw input into traceable durable wiki coverage that preserves
 ## Workflow
 
 1. Inspect the live ingest queues, read each assigned unprocessed source, and reconcile its claims with the applicable authoritative project evidence.
-2. Synthesize every substantiated claim and relationship into granular durable leaves, applicable folder hubs and top-level topic indexes, links, and item-level digest entries. Put each unsubstantiated, unresolved, or verifier-dependent point in the Open Questions section of the most relevant page, naming the specific missing evidence or decision and preserving its provenance.
+2. Synthesize every substantiated claim and relationship into granular durable leaves, applicable folder hubs and top-level topic indexes, links, and item-level digest entries. Put each unsubstantiated, unresolved, or verifier-dependent point in the Open Questions section of exactly one most-relevant existing page, naming the specific missing evidence or decision and preserving its provenance. Create a new page for the point only when no appropriate existing page fits.
 3. Run leaf linking, wiki lint, and applicable OKF validation, then request a fresh wiki-topic-verifier verdict before moving the source.
 4. After a GOOD pre-move verdict, move the completed source under raw/processed and update every affected page to the processed relative link.
 5. Rerun lint and applicable OKF validation after the move. When any topic-page link changed, request a fresh post-move wiki-topic-verifier verdict.
 6. Treat every actual NEEDS_CORRECTION verdict, including one returned after the source move, as the ordinary bounded correction path. Apply the in-scope correction, revalidate, and submit to a fresh verifier; do not report BLOCKED on the first finding and do not enter interruption reconciliation unless a later invocation is actually interrupted or unavailable.
 7. If any verifier invocation is interrupted or returns an unavailable non-verdict at either gate, end verifier work for that source immediately and do not invoke wiki-topic-verifier again for that source. Preserve every substantiated wiki change, classify each unresolved or verifier-dependent point as a page-local open question with its missing evidence or decision and provenance, rerun validation, and complete the source move and processed-link updates without entering the other verifier gate.
 8. Recheck every applicable ingest queue and report its final state before completion.
+9. Before creating the commit, write or update the terminal result with the intended READY or BLOCKED status, both required inventories, validation and verifier evidence, source and queue state, and the planned commit and claim closeout. After the commit, add no repository mutation; report the resulting commit and release receipt in the terminal handoff.
 
 ## Delegation
 
@@ -68,7 +69,7 @@ Turn each approved raw input into traceable durable wiki coverage that preserves
 ## Completion
 
 - Before reporting READY or BLOCKED, record the commit or explicit no-change result, confirm the claimed worktree is clean, and release the owned claim under agent-claim.
-- Write every READY or BLOCKED terminal result with a labeled ingested or substantiated conclusions inventory and a labeled Open Questions inventory. Keep the inventories separate and fact-bearing; each entry names its durable page and source provenance. When any substantiated conclusions exist, the conclusions inventory must be nonempty. When any unresolved or unsubstantiated points exist, the Open Questions inventory must be nonempty. Use None only when that category truly has no entries, and name the assessed source and page scope for that explicit None.
+- Write every READY or BLOCKED terminal result with a labeled ingested or substantiated conclusions inventory and a labeled Open Questions inventory. Keep the inventories separate and fact-bearing; each entry names its durable page and source provenance. When any substantiated conclusions exist, the conclusions inventory must contain at least one fact-bearing bullet naming the conclusion, its durable page, and its source. When any unresolved or unsubstantiated points exist, the Open Questions inventory must be nonempty. Use None only when that category truly has no entries, and name the assessed source and page scope for that explicit None.
 - Report READY after every assigned source either passes all applicable verifier gates or completes the verifier interruption workflow, processed-source links resolve, validation passes, both result inventories are complete, and the final queue recheck is recorded.
 - Report BLOCKED with the source and page inventories, latest verifier findings, validation output, correction attempts, source location, and exact unresolved condition.
 

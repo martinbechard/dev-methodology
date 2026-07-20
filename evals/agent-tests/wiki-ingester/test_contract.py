@@ -22,12 +22,12 @@ REPOSITORY_ROOT = SUITE_ROOT.parents[2]
 RETAINED_REPLAY_PATH = SUITE_ROOT / "fixtures" / "retained-evaluator-replay.json"
 CORRECTION_EXPECTATIONS = (
     (
-        "docs/wiki/retry-policy/request-retry-eligibility.md",
+        "docs/wiki/retry-policy/request-eligibility.md",
         "## Ineligible mutation requests",
         "Order creation, cancellation, and payment mutation requests are never retried.",
     ),
     (
-        "docs/wiki/retry-policy/fixed-retry-backoff.md",
+        "docs/wiki/retry-policy/retry-execution.md",
         "## Retry delay sequence",
         "The first retry waits 200 milliseconds and the second retry waits 500 milliseconds.",
     ),
@@ -46,7 +46,7 @@ MISSING_EVIDENCE_PATTERN = (
     r"|neither .{0,80} nor .{0,80} evidence"
 )
 LIVE_CASE_SELECTOR_ENV = "WIKI_INGESTER_LIVE_CASES"
-FOCUSED_LIVE_CASES = frozenset({"pre0", "pre2", "post0", "post1", "raw-ingest"})
+FOCUSED_LIVE_CASES = frozenset({"pre0", "pre2", "post0", "raw-ingest"})
 
 
 def _load_module(name: str, path: Path):
@@ -128,6 +128,7 @@ def _assert_result_inventory(test: unittest.TestCase, result_text: str) -> None:
     )
     _assert_inventory_scope(test, conclusions)
     _assert_inventory_scope(test, open_questions)
+    _assert_fact_bearing_conclusion_bullet(test, conclusions)
     with test.subTest(result_inventory="conclusion-entry-present"):
         test.assertTrue(conclusions)
     with test.subTest(result_inventory="conclusion-retry-delays"):
@@ -161,6 +162,20 @@ def _assert_inventory_scope(test: unittest.TestCase, inventory: str) -> None:
         return
     test.assertIn("raw/", normalized)
     test.assertIn("docs/wiki/", normalized)
+
+
+def _assert_fact_bearing_conclusion_bullet(
+    test: unittest.TestCase, conclusions: str
+) -> None:
+    """Require one conclusion bullet that binds fact, page, and source evidence."""
+    bullets = [
+        line.lower()
+        for line in conclusions.splitlines()
+        if re.match(r"^[-*]\s+", line.strip())
+    ]
+    test.assertTrue(
+        any("docs/wiki/" in bullet and "raw/" in bullet for bullet in bullets)
+    )
 
 
 def _assert_single_scoped_none_entry(
@@ -300,6 +315,7 @@ def _assert_provider_result_inventory(
         result_text,
         OPEN_QUESTION_INVENTORY_LABEL,
     )
+    _assert_fact_bearing_conclusion_bullet(test, conclusions)
     for fact in ("primary provider", "secondary provider", "mutation requests"):
         with test.subTest(provider_inventory="conclusion", fact=fact):
             test.assertIn(fact, conclusions)
@@ -432,7 +448,7 @@ def _validate_control_result(
         open_question_path, open_question_text = open_question_pages[0]
         with test.subTest(page_contract="jitter-open-question-location"):
             test.assertEqual(
-                "docs/wiki/retry-policy/fixed-retry-backoff.md",
+                "docs/wiki/retry-policy/retry-execution.md",
                 open_question_path,
             )
         with test.subTest(page_contract="jitter-open-question-provenance"):
@@ -707,9 +723,10 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
                         )
                     )
                     for outcome in gate_outcomes[:-1]:
-                        _, heading, statement = CORRECTION_EXPECTATIONS[
+                        page_path, heading, statement = CORRECTION_EXPECTATIONS[
                             outcome["invocation"]
                         ]
+                        self.assertIn(page_path, outcome["finding"])
                         self.assertIn(heading, outcome["finding"])
                         self.assertIn(statement, outcome["finding"])
         self.assertEqual(6, len(observed))
@@ -796,6 +813,13 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
             "source: raw/processed/retry-policy.md.\n"
         )
         _assert_result_inventory(self, result_text)
+        unbulleted_conclusion = result_text.replace(
+            "- docs/wiki/retry-policy/backoff.md: idempotent reads",
+            "docs/wiki/retry-policy/backoff.md: idempotent reads",
+            1,
+        )
+        with self.assertRaises(AssertionError):
+            _assert_result_inventory(self, unbulleted_conclusion)
 
     def test_retained_evaluator_artifacts_replay_offline(self) -> None:
         """Sanitized 02/06/08/09 artifacts must replay without live execution."""
@@ -822,6 +846,53 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
                 executions["06"]["terminalCommit"]
             )
         )
+        self.assertEqual(
+            "6e3cad8d49df63ca055634f3e8940aa93794ba3918ce17928ae088898ae3729c",
+            replay["fiveCaseLogSha256"],
+        )
+        self.assertEqual(
+            "6dc61d29-4cd1-4879-b06f-6d72e1773a5f",
+            replay["fiveCaseResourceReleaseEventId"],
+        )
+        post1 = executions["post1"]
+        self.assertEqual(
+            [
+                ("pre-move", 0, "GOOD"),
+                ("post-move", 0, "NEEDS_CORRECTION"),
+                ("post-move", 1, "VERIFIER_INTERRUPTED"),
+            ],
+            [
+                (receipt["gate"], receipt["invocation"], receipt["outcome"])
+                for receipt in post1["receipts"]
+            ],
+        )
+        corrected_page = post1["resubmissionPageContents"][
+            "docs/wiki/retry-policy/request-eligibility.md"
+        ]
+        self.assertIn("## Ineligible mutation requests", corrected_page)
+        self.assertIn(
+            "Order creation, cancellation, and payment mutation requests are never retried.",
+            corrected_page,
+        )
+        _assert_result_inventory(self, post1["resultText"])
+        jitter = _markdown_section(
+            post1["wikiContent"]["docs/wiki/retry-policy/retry-execution.md"],
+            "Open Questions",
+        ).lower()
+        self.assertIn("jitter", jitter)
+        self.assertIn("raw/processed/retry-policy.md", jitter)
+        self.assertEqual(
+            {
+                "rawSourcePresent": False,
+                "processedSourcePresent": True,
+                "processedLinksResolve": True,
+            },
+            post1["sourceState"],
+        )
+        self.assertEqual("", post1["gitStatus"])
+        self.assertEqual([], post1["liveRegistryClaims"])
+        self.assertIs(post1["claimReleased"], True)
+        self.assertIs(post1["terminalResultWrittenBeforeCommit"], True)
 
     def test_encrypted_spawn_fallback_rejects_false_identity_and_receipts(self) -> None:
         """Opaque prompts cannot bypass fresh-child, call, or receipt evidence."""
@@ -891,10 +962,17 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
         """Focused reruns select only named interruption and raw-ingest controls."""
         self.assertIsNone(_parse_live_case_selector(None))
         self.assertEqual(
-            frozenset({"pre0", "pre2", "post0", "post1", "raw-ingest"}),
-            _parse_live_case_selector("pre0,pre2,post0,post1,raw-ingest"),
+            frozenset({"pre0", "pre2", "post0", "raw-ingest"}),
+            _parse_live_case_selector("pre0,pre2,post0,raw-ingest"),
         )
-        for invalid in ("", "pre1", "pre0,pre0", "pre0, raw-ingest", "all"):
+        for invalid in (
+            "",
+            "pre1",
+            "post1",
+            "pre0,pre0",
+            "pre0, raw-ingest",
+            "all",
+        ):
             with self.subTest(invalid=invalid):
                 with self.assertRaises(ValueError):
                     _parse_live_case_selector(invalid)
@@ -1001,7 +1079,7 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
             canonical_instructions = canonical["developer_instructions"]
             for phrase in (
                 "every substantiated claim and relationship",
-                "Open Questions section of the most relevant page",
+                "Open Questions section of exactly one most-relevant existing page",
                 "not a NEEDS_CORRECTION verdict",
                 "do not invoke wiki_topic_verifier again for that source",
                 "Verifier interruption alone is not a BLOCKED condition",
@@ -1142,11 +1220,11 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
             "evaluationResultText": (
                 "Interruption continuation completed.\n\n"
                 "## Ingested Conclusion\n\n"
-                "- docs/wiki/retry-policy/fixed-retry-backoff.md: idempotent reads "
+                "- docs/wiki/retry-policy/retry-execution.md: idempotent reads "
                 "use retry delays of 200 and 500 milliseconds. Source: "
                 "raw/processed/retry-policy.md.\n\n"
                 "## Open Questions\n\n"
-                "- docs/wiki/retry-policy/fixed-retry-backoff.md: jitter lacks "
+                "- docs/wiki/retry-policy/retry-execution.md: jitter lacks "
                 "authoritative evidence in raw/processed/retry-policy.md.\n"
             ),
             "verifierControlTrace": trace,
@@ -1162,13 +1240,13 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
             "initialOwnedTreeDigest": "d" * 64,
             "finalOwnedTreeDigest": "b" * 64,
             "committedPaths": [
-                "docs/wiki/retry-policy/fixed-retry-backoff.md",
-                "docs/wiki/retry-policy/request-retry-eligibility.md",
+                "docs/wiki/retry-policy/retry-execution.md",
+                "docs/wiki/retry-policy/request-eligibility.md",
                 "eval-result.md",
                 "raw/processed/retry-policy.md",
             ],
             "wikiContent": {
-                "docs/wiki/retry-policy/fixed-retry-backoff.md": (
+                "docs/wiki/retry-policy/retry-execution.md": (
                     "## Open Questions\n\n"
                     "- Jitter remains unresolved because authoritative retry-policy "
                     "evidence is missing. Provenance: raw/processed/retry-policy.md.\n"

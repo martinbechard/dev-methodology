@@ -4303,7 +4303,7 @@ class BundleContentTests(unittest.TestCase):
 
         for phrase in (
             "substantiated claim and relationship",
-            "Open Questions section of the most relevant page",
+            "Open Questions section of exactly one most-relevant existing page",
             "missing evidence or decision",
             "provenance",
         ):
@@ -4319,11 +4319,24 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("verifier interruption", completion_text)
         self.assertIn("labeled ingested or substantiated", completion_text)
         self.assertIn("labeled Open Questions inventory", completion_text)
-        self.assertIn("conclusions inventory must be nonempty", completion_text)
+        self.assertIn("conclusions inventory must contain", completion_text)
         self.assertIn("Open Questions inventory must be nonempty", completion_text)
         self.assertIn("Use None only when that category truly has no entries", completion_text)
+        self.assertIn("before creating the commit", workflow_text.lower())
+        self.assertIn("at least one fact-bearing bullet", completion_text)
+        self.assertIn("exactly one most-relevant existing page", workflow_text)
+        self.assertIn("only when no appropriate existing page fits", workflow_text)
         self.assertIn("STATUS: READY", interruption_response)
         self.assertIn("OPEN QUESTIONS:", interruption_response)
+        self.assertIn(
+            "docs/wiki/retry-policy/request-eligibility.md",
+            interruption_response,
+        )
+        self.assertIn(
+            "docs/wiki/retry-policy/retry-execution.md",
+            interruption_response,
+        )
+        self.assertNotIn("docs/wiki/retry-policy/backoff.md", interruption_response)
         self.assertRegex(
             interruption_response,
             r"(?:missing evidence|evidence is\s+missing)",
