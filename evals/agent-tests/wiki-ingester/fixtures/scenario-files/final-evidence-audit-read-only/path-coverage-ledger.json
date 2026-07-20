@@ -1,0 +1,33 @@
+{
+  "sourceBaseline": {
+    "paths": [
+      {
+        "path": "src/catalog.py",
+        "sha256": "ed7501b393936ecee9256df4643e8bc4ad3db92ac94e4a0f32baf87ad0e89a75",
+        "classification": "MUST_DOCUMENT",
+        "documentationOwner": "docs/module-catalog-design.md"
+      }
+    ]
+  },
+  "trackedPathClassifications": {
+    "AGENTS.md": "PROJECT_GUIDANCE",
+    "PROJECT.yaml": "PROJECT_CONFIGURATION",
+    "TASK.md": "AUDIT_REQUEST",
+    "docs/coverage-manifest.yaml": "DOCUMENTATION_ARTIFACT",
+    "docs/module-catalog-design.md": "DOCUMENTATION_ARTIFACT",
+    "docs/module-catalog.md": "DOCUMENTATION_ARTIFACT",
+    "docs/wiki/README.md": "DOCUMENTATION_ARTIFACT",
+    "docs/wiki/topic-index.md": "DOCUMENTATION_ARTIFACT",
+    "path-coverage-ledger.json": "AUDIT_EVIDENCE",
+    "src/catalog.py": "MUST_DOCUMENT"
+  },
+  "artifactOwnership": {
+    "PROJECT.yaml": "project-configurator",
+    "AGENTS.md": "project-configurator",
+    "docs/coverage-manifest.yaml": "dev-documentation-writer",
+    "docs/module-catalog.md": "dev-documentation-writer",
+    "docs/module-catalog-design.md": "dev-documentation-writer",
+    "docs/wiki/README.md": "wiki-architect",
+    "docs/wiki/topic-index.md": "wiki-writer"
+  }
+}

@@ -1,8 +1,40 @@
 # Integrate Work-Item Contracts Across The Bundle
 
-Status: Ready
+Status: User Action Required
 
 Type: Feature
+
+## Current Execution
+
+- Canonical Dev Orchestrator task: 019f80f3-41d5-7481-910e-6f54d43083ae.
+- Worktree: /Users/martinbechard/.codex/worktrees/2c00/dev-methodology.
+- Intended branch: codex/integrate-work-item-contracts-across-bundle.
+- Starting main commit: 2ddedf5a83ca8567ac3de93867a3f90624a2e28c.
+- Phase: Paused before governed definition mutation pending the provider-neutral coordination approval below.
+- Verification: focused provider, completion, selector, role, metadata, renderer, migration, stale-name, and evaluation checks first; then the item-required full repository, project-wiki, catalog, generated-adapter, disposable smoke, and install/refresh release gates.
+
+## User Action Required
+
+### Question for the User
+
+Do you approve changing exactly skills/codex-workitem-coordination/SKILL.md so Dev Backlog Steward applies the management skill selected by the effective work-item provider, instead of hard-coding manage-backlog or manage-file-work-items, together with only its supported generated skill mirror and directly related tests and documentation?
+
+### Why User Input Is Required
+
+The final bundle integration must remove the retired manage-backlog caller from the coordination skill. Replacing it permanently with manage-file-work-items would couple the provider-neutral coordinator to the file provider and make future GitHub, GitLab, Jira, Azure DevOps, or other providers require another coordination definition change. The provider-neutral wording changes a governed distributed skill definition and therefore requires exact user approval before mutation.
+
+### Options and Tradeoffs
+
+- Approve the provider-neutral wording: one coordinator and one Dev Backlog Steward continue to work with the provider selected in PROJECT.yaml; provider-specific create and manage skills remain interchangeable capabilities rather than separate agents.
+- Decline: the integration cannot truthfully remove the retired caller while preserving future provider support, so this final bundle-integration item remains unresolved.
+
+### Resolution
+
+Pending.
+
+### Unattended Work Boundary
+
+Do not mutate skills/codex-workitem-coordination/SKILL.md or its generated mirror, resume implementation, or acquire integration ownership until the user answers this exact question and the answer is committed as approval evidence.
 
 ## Summary
 
@@ -10,7 +42,7 @@ Integrate the stabilized provider, completion, and selector contracts across con
 
 ## Context
 
-This is the final integration item in the [Work-Item Provider And Completion Contracts series](index.md). Provider and completion lanes can proceed independently after the foundation contract, but the bundle is not coherent until every source-owned role, generated runtime, public explanation, evaluation, and installed artifact agrees with the final identifiers and terminal semantics.
+This is the final integration item in the [Work-Item Provider And Completion Contracts series](../feature-backlog/work-item-provider-and-completion/index.md). Provider and completion lanes can proceed independently after the foundation contract, but the bundle is not coherent until every source-owned role, generated runtime, public explanation, evaluation, and installed artifact agrees with the final identifiers and terminal semantics.
 
 ## Requirements
 

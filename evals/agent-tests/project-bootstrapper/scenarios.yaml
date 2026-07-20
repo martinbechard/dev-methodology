@@ -88,8 +88,54 @@ scenarios:
       - output-contract-presence
       - readiness-consistency
     expectedTerminalStatus: PASS
-  - id: invalid-configuration-no-authority
+  - id: whole-project-reverse-engineering-steady-state
     priority: 3
+    status: fixture-backed
+    executableCase: fixtures/missing-configuration-multi-contribution
+    executionMode: scripted-double
+    scriptedCommand: python3.11 evals/agent-tests/project-bootstrapper/scripted_orchestration.py --reverse-engineering
+    purpose: Prove that only whole-project reverse engineering runs the final Wiki Ingester evidence audit and routes every finding to the existing artifact owner.
+    initialState: Accepted contributions are assembled into an integrated tree that retains stale phase wording and lacks the catalog module design required by source evidence.
+    task: Audit the final reverse-engineered tree, route exact corrections and missing artifacts, review them independently, and verify the reconciled steady state.
+    targetSkills:
+      - agent-claim
+      - organise-project-files
+      - documentation-bootstrap
+      - development-methodology
+    allowedAgentDependencies:
+      - project-configurator
+      - dev-documentation-writer
+      - wiki-architect
+      - wiki-writer
+      - dev-artifact-reviewer
+      - wiki-artifact-reviewer
+      - wiki-topic-verifier
+      - wiki-ingester
+      - dev-merge-coordinator
+      - dev-verifier
+    requiredBehaviors:
+      - Invoke Wiki Ingester only after the reverse-engineering contributions are integrated and reviewed.
+      - Keep the final evidence audit read-only and require exact stale, contradictory, or missing artifact findings.
+      - Route configuration, non-wiki document, wiki setup, and ordinary wiki page work to their existing owners.
+      - Assign the missing catalog module design to Dev Documentation Writer without making it the audit owner.
+      - Independently review every corrected or newly created artifact before a clear re-audit and final verification.
+      - Remove fixture-specific absent, excluded, contribution-phase, and future-work markers from the final artifacts.
+    forbiddenBehaviors:
+      - Run the final evidence audit during ordinary project setup.
+      - Let Wiki Ingester create or correct an audited artifact.
+      - Give Dev Documentation Writer ownership of the final cross-artifact audit.
+      - Run final verification before the re-audit is clear.
+    deterministicChecks:
+      - harness-agent-identity
+      - agent-dependency-routing
+      - operation-coverage
+      - correction-loop-cap
+      - required-command-outcome
+      - output-contract-presence
+      - readiness-consistency
+    expectedTerminalStatus: PASS
+  - id: invalid-configuration-no-authority
+    priority: 4
     status: executable
     executableCase: fixtures/invalid-configuration-no-authority
     purpose: Prove that bootstrap stops safely when configuration is invalid and reconfiguration is not authorized.

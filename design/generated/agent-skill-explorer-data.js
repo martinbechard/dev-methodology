@@ -3286,6 +3286,12 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "project-wiki-review"
     },
     {
+      "condition": "when the requested mode performs mutating ingest rather than a read-only final evidence audit.",
+      "kind": "conditional",
+      "role": "wiki-ingester",
+      "skill": "agent-claim"
+    },
+    {
       "condition": "when durable wiki claims depend on implementation behavior that must remain traceable to authoritative code and tests.",
       "kind": "conditional",
       "role": "wiki-ingester",
@@ -3296,11 +3302,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "conditional",
       "role": "wiki-ingester",
       "skill": "organise-project-files"
-    },
-    {
-      "kind": "fixed",
-      "role": "wiki-ingester",
-      "skill": "agent-claim"
     },
     {
       "kind": "fixed",
@@ -4037,6 +4038,35 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "sourcePath": "adapters/claude/model-profiles.yaml"
         },
         {
+          "effort": "high",
+          "harness": "codex",
+          "model": "gpt-5.6-sol",
+          "sourcePath": "adapters/codex/model-profiles.yaml"
+        },
+        {
+          "harness": "gemini",
+          "model": "auto",
+          "sourcePath": "adapters/gemini/model-profiles.yaml"
+        },
+        {
+          "effort": "high",
+          "harness": "junie",
+          "model": "gpt-5.6-sol",
+          "sourcePath": "adapters/junie/model-profiles.yaml"
+        }
+      ],
+      "id": "documentation",
+      "purpose": "Source-backed documentation authoring that requires advanced synthesis without changing unrelated default-profile agents.",
+      "sourcePath": "agents/model-profiles.yaml"
+    },
+    {
+      "adapters": [
+        {
+          "harness": "claude",
+          "model": "fable-5",
+          "sourcePath": "adapters/claude/model-profiles.yaml"
+        },
+        {
           "effort": "medium",
           "harness": "codex",
           "model": "gpt-5.6-luna",
@@ -4734,33 +4764,33 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "generatedAdapters": [
         {
           "harness": "claude",
-          "model": "sonnet-5",
-          "modelProfile": "default",
+          "model": "fable-5",
+          "modelProfile": "documentation",
           "path": "generated/adapters/claude/agents/dev-documentation-writer.md"
         },
         {
           "harness": "codex",
-          "model": "gpt-5.6-terra",
-          "modelProfile": "default",
+          "model": "gpt-5.6-sol",
+          "modelProfile": "documentation",
           "path": "generated/adapters/codex/agents/dev-documentation-writer.toml"
         },
         {
           "harness": "gemini",
           "model": "auto",
-          "modelProfile": "default",
+          "modelProfile": "documentation",
           "path": "generated/adapters/gemini/agents/dev-documentation-writer.md"
         },
         {
           "harness": "junie",
-          "model": "sonnet",
-          "modelProfile": "default",
+          "model": "gpt-5.6-sol",
+          "modelProfile": "documentation",
           "path": "generated/adapters/junie/agents/dev-documentation-writer.md"
         }
       ],
       "id": "dev-documentation-writer",
       "judgePassedCases": [],
       "label": "dev-documentation-writer",
-      "modelProfile": "default",
+      "modelProfile": "documentation",
       "securityContainedCases": [],
       "skillAvailability": [],
       "sourcePath": "agents/roles/dev-activities/dev-documentation-writer.role.yaml",
@@ -5695,7 +5725,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "declaredCases": [
         "project-configuration-routing"
       ],
-      "description": "Creates or updates the single project-root PROJECT.yaml and validates conceptual agent definitions, work-item and backlog workflow selectors, skillsets, folder routing, nested AGENTS.md guidance, and Claude bridges.",
+      "description": "Creates or updates the single project-root PROJECT.yaml and validates conceptual agent definitions, independent work-item provider and completion selectors, skillsets, folder routing, nested AGENTS.md guidance, and Claude bridges.",
       "dynamicFolderSkills": false,
       "executedCases": [],
       "fixedSkills": [
@@ -5998,6 +6028,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     },
     {
       "conditionalSkills": {
+        "agent-claim": "when the requested mode performs mutating ingest rather than a read-only final evidence audit.",
         "code-project-wiki": "when durable wiki claims depend on implementation behavior that must remain traceable to authoritative code and tests.",
         "organise-project-files": "when the requested ingest creates a new project file or directory."
       },
@@ -6049,11 +6080,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "declaredCases": [
         "wiki-raw-ingest"
       ],
-      "description": "Processes raw inputs into durable wiki leaves, digest entries, processed-source links, linted pages, and verifier evidence.",
+      "description": "Processes raw inputs into durable wiki coverage and performs the final integrated-tree evidence audit for whole-project reverse engineering when Project Bootstrapper assigns that bounded read-only mode.",
       "dynamicFolderSkills": false,
       "executedCases": [],
       "fixedSkills": [
-        "agent-claim",
         "project-wiki",
         "project-wiki-topic-write"
       ],

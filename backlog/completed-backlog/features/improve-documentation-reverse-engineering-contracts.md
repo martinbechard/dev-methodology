@@ -1,36 +1,58 @@
 # Improve Documentation Reverse-Engineering Contracts
 
-Status: User Action Required
+Status: Completed
 
 Type: Feature
 
-## User Action Required
+## Completion Evidence
+
+- Exact governed-definition approval: main commit ac417c4 records the user's “ok” for the eleven named skill definitions, their supported generated mirrors, and directly related non-governed templates, documentation, and tests.
+- Running lifecycle: main commit f1f96aa preserves canonical Dev Orchestrator task 019f7e76-e620-7143-a120-906f29ffbd41.
+- Accepted candidate: commits 9f3cfbe and 7112f59 on branch codex/improve-documentation-reverse-engineering-contracts.
+- Independent review: the first fresh review rejected 9f3cfbe with four exact handoff, marker, README, and regression findings; 7112f59 corrected them; a second fresh methodology review accepted the full candidate with no material findings.
+- Independent verification: GO on exact commit 7112f598f118b965c299ec77c61fa26a6ac001de with 11 of 11 changed skill validations, 6 of 6 focused regressions, 7 of 7 documentation-mode assertions, generator freshness, exact 34-file scope, diff hygiene, and a clean worktree.
+- Integrated main commits: 7e7cf3e and 4ee5c04.
+- Integration ownership: exact 34-path and merge:integration:main claim reverse-engineering-contracts-integration-019f7e76 acquired at event 312b01cc-6c61-44ae-824c-456e6e7bd817 and released cleanly at event fcf89f7a-d5e3-41ee-bff3-d67b9a29cb76.
+- Post-integration verification: 11 of 11 skill validations, 6 of 6 focused regressions, 7 of 7 documentation-mode assertions, scripts/build-skill-docs.py --check, git diff --check, and clean-main verification passed.
+- Verification tier: bounded Tier 1 and Tier 2 checks covered the changed contracts and generated mirrors. The full scripts, project-wiki, and live agent catalog suites were intentionally not run solely for this item.
+- Deployment: source and generated bundle artifacts changed, but no user-scope deployment was requested; no installed bundle or live catalog was mutated.
+- Terminal lifecycle ownership: exact source and completed-destination claim reverse-engineering-contracts-completion-019f7e76 acquired at event 18aee429-a758-4c25-8f60-5b7969efe468 and is released immediately after this archive commit is clean.
+
+## Definition Change Scope
 
 The remaining implementation changes reverse-engineering and artifact acceptance semantics across eleven governed distributed skill definitions.
 
-## Question for the User
+## Approved Question
 
 Do you approve changing exactly skills/documentation-reverse-engineer/SKILL.md, skills/documentation-bootstrap/SKILL.md, skills/create-project-configuration/SKILL.md, skills/create-module-design/SKILL.md, skills/review-module-design/SKILL.md, skills/create-high-level-design/SKILL.md, skills/review-high-level-design/SKILL.md, skills/create-architecture/SKILL.md, skills/review-architecture/SKILL.md, skills/create-functional-spec/SKILL.md, and skills/review-functional-spec/SKILL.md to preserve bottom-up authoring and separate documentation acceptance from downstream implementation readiness?
 
 Approval also permits supported regeneration of their listed generated mirrors. Non-governed template, README/design, and regression-test changes remain ordinary implementation work.
 
-## Why User Input Is Required
+## Approval Evidence
+
+- Basis: explicit user direction.
+- Exact answer: “ok”.
+- Provenance: parent thread 019f77f4-c4bd-7c91-b197-c987a7beb838 on 2026-07-20, answering the exact eleven-skill question above.
+- The approval preserves bottom-up creation and authorizes no other governed definition.
+
+## Approval Boundary
 
 No scope-specific approval record exists for these governed definitions. Parent delegation and general backlog-completion authority are insufficient under AGENTS.md.
 
 ## Resolution
 
-Pending.
+Approved by the user with the exact answer “ok” and delivered within the eleven-skill boundary.
 
-## Unattended Work Boundary
+## Approval Enforcement
 
-Perform no governed source or generated-mirror mutation until the exact question is answered.
+Every governed source passed the configured pre-mutation approval check. Every changed generated adapter or skill mirror passed the supported-regeneration relationship check.
 
 ## Current Execution
 
 - Canonical Dev Orchestrator task: 019f7e76-e620-7143-a120-906f29ffbd41.
 - Worktree: /Users/martinbechard/.codex/worktrees/e224/dev-methodology.
-- Phase: approval reconciliation, scoped implementation, focused verification, review, integration, completion, and cleanup.
+- Phase: completed delivery; terminal worktree and branch cleanup are eligible after this archive commit and claim release.
+- Approved resumption: exact eleven-skill scope recorded at ac417c4; canonical task resumes bottom-up authoring and final top-down reconciliation work.
 
 ## Summary
 

@@ -20,6 +20,9 @@ Evaluate Project Bootstrapper as a stateful orchestrator whose value is correct 
 - Each artifact is reviewed by the correct independent reviewer in a fresh context.
 - One accepted contribution uses the direct path and skips merge coordination.
 - Multiple accepted contributions use Dev Merge Coordinator, then fresh post-integration artifact review, then Dev Verifier.
+- Ordinary project setup skips the final evidence audit. Whole-project reverse engineering assigns Wiki Ingester a read-only audit of the final integrated tree before Dev Verifier.
+- Wiki Ingester reports exact stale, contradictory, or missing artifacts; Project Bootstrapper routes each result to the existing owner and obtains fresh independent review before a clear re-audit.
+- Dev Documentation Writer creates or updates supported assigned non-wiki documents, including a missing module design, without owning the final cross-artifact audit.
 - The same failed correction is attempted at most twice before BLOCKED.
 - READY requires accepted configuration, complete documented scope, applicable independent reviews, final verification, a final direct or integration commit or explicit no-change result, clean worktrees, and released claims.
 - The result includes status, project setup files, documentation, checks, and remaining questions.
@@ -31,6 +34,7 @@ Evaluate Project Bootstrapper as a stateful orchestrator whose value is correct 
 - Same-owner review or verification substitutes for the required independent agent.
 - One contribution is sent through merge coordination or multiple contributions bypass it.
 - Integrated artifacts skip fresh post-integration review.
+- Ordinary setup invokes the reverse-engineering evidence audit, Wiki Ingester mutates an audited artifact, an audit finding is routed to the wrong owner, or final verification runs before the re-audit is clear.
 - A repeated correction loop exceeds the canonical cap.
 - READY is reported with incomplete coverage, failed checks, dirty worktrees, active claims, or missing commit evidence.
 

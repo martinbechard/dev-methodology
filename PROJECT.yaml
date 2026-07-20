@@ -351,6 +351,15 @@ technology_skill_loadouts:
     local_rules_source: AGENTS.md
     notes: "Load both skills because fastapi explicitly composes with python."
 
+workflow_selection:
+  provider:
+    default: file
+    folder_overrides: []
+  completion:
+    default: direct-main
+    folder_overrides: []
+  selection_policy: "The repository uses its file-backed backlog as the durable provider and verified direct-main completion. Provider and completion remain independent, explicit choices and are never inferred from repository or hosting evidence."
+
 folder_routing:
   - pattern: scripts/**
     tier_or_workflow: "Repository maintenance automation"
@@ -462,6 +471,10 @@ validation_plan:
     - "Confirm skills/project-wiki/scripts produces only python because cli.py is Python rather than a Node-owned JavaScript or TypeScript CLI path."
     - "Confirm python and fastapi are installed and every accepted skillset retains source evidence."
     - "Confirm AGENTS.md requires matching folder skills before acting and does not tell ordinary agents to rerun detection."
+  workflow_selector_checks:
+    - "Confirm provider file selects create-file-work-item and manage-file-work-items while completion direct-main independently selects complete-work-item-direct-main."
+    - "Confirm workflow skill names remain reference-only and folder technology skill bodies remain statically inlined under the separate Technology Skills section."
+    - "Confirm legacy workitem and backlog selectors receive deterministic migration guidance and invalid values report their exact key and supported replacements."
   privacy_checks:
     - "Confirm distributable skills, conceptual agent definitions, generated adapters, and examples contain no PII, customer data, secrets, or company-internal material unless explicitly authorized."
   customer_safe_example_checks:
@@ -489,7 +502,7 @@ open_questions:
     impact: "Rerun setup-time detection and revise only the affected skillset when technology boundaries change."
 
 maintenance_notes:
-  - "Keep PROJECT.yaml and the generated Technology Skills section in AGENTS.md aligned."
+  - "Keep PROJECT.yaml and the generated workflow reference and Technology Skills sections in AGENTS.md aligned."
   - "Keep the generated Agent And Skill Definition Approval section in AGENTS.md aligned with definition_change_authority through scripts/render-agents-technology-skills.py."
   - "Rerun technology detection only when Python ownership, manifests, dependencies, or framework boundaries change."
   - "Keep false-positive detector evidence explicit so broad test strings and filenames do not activate unrelated technology skills."

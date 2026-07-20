@@ -521,10 +521,10 @@ technology_skill_loadouts:
     pathPattern: "{src,test,tests}/**"
     skills: [node-cli, typescript-esm, typescript-strict, vitest]
 workflow_selection:
-  workitem:
-    default: simple-workitem
-  backlog:
-    default: file-based-backlog
+  provider:
+    default: file
+  completion:
+    default: direct-main
 validation_plan:
   commands:
     - command: pnpm test

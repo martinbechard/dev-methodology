@@ -18,7 +18,7 @@ Do not mark pass without quoted evidence.
 ## Skill Workflow Checks
 
 - Question: Before semantic review, do the artifact's ordered level-two headings match every module design template heading exactly, with no missing, renamed, duplicated, merged, or reordered heading?
-- Question: Does the first nonblank content under Implementation Readiness begin with READY or BLOCKED before any explanatory prose?
+- Question: Does the first nonblank content under Documentation Acceptance begin with ACCEPTED or BLOCKED, and does the first nonblank content under Implementation Readiness begin with READY or BLOCKED, before any explanatory prose?
 - Question: Does the review identify runtime path, responsibility, callers, dependencies, contracts, internal state, processing rules, error handling, and verification claims before assessment?
 - Question: Does the completed review checklist name this checklist as review-checklist-module-design.md?
 - Question: Does the completed review checklist save next to the artifact using artifact-name.review-checklist-module-design.md?
@@ -32,9 +32,11 @@ Do not mark pass without quoted evidence.
 - Question: Does Current Understanding describe the module as it exists or is intended now?
 - Question: Does Current Understanding select PLANNED_DEVELOPMENT, EXISTING_IMPLEMENTATION, or MIXED_CHANGE, and does the evidence set obey that mode?
 - Question: In PLANNED_DEVELOPMENT mode, do Authoritative Sources include accepted functional specifications, architecture, owning HLD, decisions, backlog requirements, project configuration, and relevant technology guidance without requiring source or tests that do not exist?
-- Question: In EXISTING_IMPLEMENTATION or MIXED_CHANGE mode, do Authoritative Sources include the applicable module source, callers, tests, configuration, parent designs, procedures, and related wiki pages?
+- Question: In EXISTING_IMPLEMENTATION or MIXED_CHANGE mode, do Authoritative Sources include the applicable module source, callers, tests, configuration, procedures, and runtime evidence, plus parent designs and related wiki pages when they are available and applicable to the current pass, without requiring intentionally absent later layers during bottom-up reverse engineering?
 - Question: Do Related Code and Related Tests identify evidence permitted by the selected mode or say Not yet identified when planned implementation and tests do not exist?
 - Question: Do Open Questions capture unresolved ownership, contracts, behavior, errors, identity, security, selectors, validation, state, response, or verification issues and classify each as blocking or non-blocking with a decision owner?
+- Question: Does Documentation Acceptance begin with ACCEPTED or BLOCKED and judge source evidence, accepted prerequisites, and current reverse-engineering pass requirements without requiring intentionally absent later high-level designs, architecture, functional specifications, or wiki pages?
+- Question: Is documentation acceptance separate from implementation readiness, allowing accurate documentation of known defects, unimplemented behavior, open design decisions, and current limitations while Implementation Readiness is BLOCKED for affected downstream work?
 
 ## Response Adequacy Questions
 

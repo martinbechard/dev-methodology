@@ -1,8 +1,33 @@
 # Render Selected Work-Item Skills
 
-Status: Ready
+Status: Completed
 
 Type: Feature
+
+## Current Execution
+
+- Canonical Dev Orchestrator task: 019f80a4-8c6a-7a50-9a0a-636053ce5710.
+- Worktree: /Users/martinbechard/.codex/worktrees/bc99/dev-methodology.
+- Intended branch: codex/render-selected-work-item-skills.
+- Owner: Dev Orchestrator.
+- Phase: Completed and integrated on main.
+- Verification: focused selector and renderer tests, applicable generated freshness checks, governed-definition approval gates where required, and Git diff validation before independent review.
+
+## Completion Evidence
+
+- Accepted candidate: 9d84ce39c5efae6871060293bf6505ee43779ab5.
+- Independent review: two fresh final ACCEPT reviews found no material findings.
+- Independent candidate verification: GO.
+- Governed definition gates: exact skill and role checks returned ALLOWED_APPROVED_DEFINITION_CHANGE; supported generated preflights also passed.
+- Main delivery commits: a5636b3, 176ef60, and a71823bb6e2bf6e156705e5b8067904250ec8e56.
+- Post-integration GO: 88/88 renderer tests, 2/2 focused bundle tests, 17/17 fixtures, skill and generated-output freshness checks, Git diff validation, 21/21 matrix checks, 8/8 collision checks, 2/2 combined diagnostics, and clean main.
+- Runtime boundary: system Python 3.9 lacked tomllib; supported Python 3.11 was used for the applicable checks.
+- Verification tier: bounded Tier 1/2 scope. Broad repository, project-wiki, and live-agent-catalog suites were intentionally omitted. The unchanged broad-bundle phrase warning was independently confirmed as a baseline condition outside this candidate scope.
+- Integration ownership: claim acquired at event 10b2a2c6-4c16-4a1f-83b5-8024a0c70936 and released at event 9d96dda7-52fd-4d89-bd37-26567f98c13b. The earlier event 513411a6-a747-4851-9478-81dbc3d32ace was an invalid worktree-path attempt corrected before acquisition; it did not establish ownership.
+- Terminal backlog ownership: claim render-selected-work-item-skills-completion-019f80a4 acquired PRIMARY at event 1d292e41-c57c-4d16-a1b2-c6691d799b2c for exactly this source and completed destination, then released normally at event 1f1d7a45-f13e-44b4-9a27-c4cbba36aa53 after archive commit 2dd2fd857ceb5456bc38d1050aa3527434a34016. Commit c5d723b corrected the archive Status to Completed.
+- Cleanup-race evidence: the resource-only merge claim acquired at event 57213aec-7b01-45cb-bc43-05fed4b7fe21 produced no-tree-change commit dcaaa56fc87b5302f692011520bb03f9da6f02b8. Its tree 8d5c48c7a9c23d2e1955efd2f342eb416074fac5 exactly equals its parent tree. The claim released at event 8f226794-ed3a-4752-bfd2-47e917bdc17e. It changed no product bytes, and further topology work was stopped.
+- Cleanup eligibility: the clean private branch and worktree remain preserved for parent cleanup review. The parent next action is to verify merge/patch-equivalence, remove the clean worktree, safely delete the merged branch, prune worktree metadata, and update the task display state.
+- Open issues: none for this work item.
 
 ## Summary
 

@@ -38,6 +38,12 @@ Use create-high-level-design when the work is one subsystem or feature family. U
 
 Use documentation-reverse-engineer when the user asks to derive an architecture set from an existing codebase.
 
+## Reverse-Engineering Acceptance
+
+During the architecture current reverse-engineering pass, derive the artifact from accepted high-level designs and confirmed cross-cutting source evidence. Functional specifications and wiki pages are intentionally created later and are not mandatory current-pass inputs. Record their absence as Not yet identified where applicable; do not block documentation acceptance solely because those later artifacts do not exist yet.
+
+Documentation acceptance asks whether the architecture accurately reconciles the accepted HLD set and current-pass evidence. Implementation readiness separately asks whether architecture-dependent design or implementation can proceed safely. Known product defects, unimplemented behavior, open design decisions, and current limitations may remain visible in ACCEPTED documentation while making downstream implementation BLOCKED.
+
 ## Workflow
 
 1. Inspect the target repository before writing. Read README files, task-relevant procedures, package metadata, build configuration, runtime entry points, source roots, tests, scripts, docs, wiki pages, backlog files, and current worktree status.
@@ -59,5 +65,7 @@ Before finishing:
 3. Run project wiki status and lint when docs/wiki exists and the artifact lives in or links from docs/wiki.
 4. Search the artifact for unresolved TODO markers that are not intentional.
 5. Confirm every architectural claim names source evidence, a verification path, or an open question.
+6. Confirm Documentation Acceptance begins with ACCEPTED or BLOCKED and judges only source evidence, accepted HLD prerequisites, and current reverse-engineering pass requirements.
+7. Confirm Implementation Readiness begins with READY or BLOCKED as a separate downstream decision and does not turn an accurately documented defect or open decision into an automatic documentation failure.
 
 Do not send private, proprietary, sensitive, PII, or company-internal material to an external service unless the user explicitly authorizes it.

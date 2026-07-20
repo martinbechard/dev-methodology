@@ -77,7 +77,7 @@ TODO: Give every exact route variant or supporting UI action named by an authori
 
 TODO: Link the architecture document that governs this subsystem.
 
-TODO: If no accepted parent architecture exists, record it as a blocking upstream design question rather than inventing architectural constraints.
+TODO: In PLANNED_DEVELOPMENT, when an accepted parent architecture is required but absent, record a blocking upstream design question rather than inventing architectural constraints. In EXISTING_IMPLEMENTATION bottom-up reverse engineering, state that the intentionally later parent architecture is Not yet identified; do not treat that expected absence as a documentation-acceptance blocker, and record any effect on implementation readiness separately.
 
 TODO: State which architectural constraints apply most directly to this subsystem.
 
@@ -222,9 +222,15 @@ TODO: Describe what complete and correct looks like for this subsystem.
 
 TODO: Include user-visible outcomes, runtime behavior, observability, maintainability, and test coverage.
 
+## Documentation Acceptance
+
+TODO: Begin this section with **ACCEPTED.** or **BLOCKED.** State ACCEPTED when the artifact accurately synthesizes source evidence, accepted module prerequisites, and current-pass requirements. During bottom-up reverse engineering, do not fail documentation acceptance solely because later architecture, functional specifications, or wiki pages are intentionally absent, or because an accurately recorded defect, open decision, or limitation blocks implementation.
+
+TODO: When BLOCKED, name the missing accepted prerequisite, insufficient evidence, unresolved current-pass review finding, or unavailable mandatory dependency.
+
 ## Implementation Readiness
 
-TODO: State READY only when every applicable requirement is DEFINED, every required cross-module contract is AGREED, and no high-impact blocking question remains. Otherwise state BLOCKED for the affected downstream work and list the exact decisions or upstream artifacts required before dependent module design or implementation.
+TODO: Begin this section with **READY.** or **BLOCKED.** State READY only when every applicable requirement is DEFINED, every required cross-module contract is AGREED, and no high-impact blocking question remains. Otherwise state BLOCKED for the affected downstream work and list the exact decisions or upstream artifacts required before dependent module design or implementation.
 
 ## Verification
 

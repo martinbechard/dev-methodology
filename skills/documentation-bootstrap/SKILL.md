@@ -33,6 +33,7 @@ Before editing, inspect the repository and present a concise setup recommendatio
 - Functional, architecture, high-level design, and module design locations.
 - Whether the project needs local editable template copies or can use installed skill assets directly.
 - Project wiki setup needs, including raw/wiki-fragments and raw/processed.
+- Documentation mode selection. Use hybrid-specifications-and-wiki for a full structured-specification and wiki bootstrap unless the project already records another supported mode.
 - AGENTS.md guidance needed for future agents.
 - Verification commands and gaps.
 
@@ -43,13 +44,15 @@ Proceed directly when the user already specified these choices or the repository
 1. Inspect the target repository before creating files. Apply the project instructions already in context, then read README files, task-relevant procedures, package metadata, build scripts, existing docs, existing wiki pages, backlog folders, and current git status when present.
 2. Choose documentation roots that fit existing conventions. Prefer a single documentation root with functional, architecture, high-level, and modules subfolders when the project has no convention. This keeps the structure compact; it does not reduce artifact coverage.
 3. Confirm docs/wiki as the wiki root unless the project has a stronger established location.
-4. Use development-methodology to select template assets for initial documents.
-5. Copy only template files that will become active project documents or project-owned templates.
-6. Use project-wiki setup guidance for docs/wiki initialization, schema, topic index, glossary, open decisions, known defects, and maintenance log.
-7. Add or update AGENTS.md guidance so future agents check docs/wiki first, save unsynthesized wiki knowledge under raw/wiki-fragments, use project-wiki skills for wiki work, and commit wiki changes with the source or documentation changes that made them necessary.
-8. Keep runtime-specific commands in project guidance only when the project actually depends on that runtime.
-9. When reverse engineering is in scope, require the project configuration gate, documentation coverage manifest, and every pass completion gate from documentation-reverse-engineer before bootstrap can advance or report completion.
-10. Record unresolved ownership, source authority, verification, or automation questions in Open Questions instead of guessing.
+4. Select hybrid-specifications-and-wiki when bootstrap will keep structured module, high-level, architecture, and functional specifications authoritative while using README and docs/wiki for navigation and synthesis. Pass that exact selection to create-project-configuration so PROJECT.yaml persists it; later agents must not depend on conversational context.
+5. When a legacy PROJECT.yaml has no documentation_mode field, infer hybrid-specifications-and-wiki only when both structured specification roots and docs/wiki already exist or this bootstrap is establishing that full hierarchy. Otherwise obtain the project-owned selection and persist it before documentation work. Treat an unsupported documentation mode or a missing value without safe migration evidence as BLOCKED.
+6. Use development-methodology to select template assets for initial documents.
+7. Copy only template files that will become active project documents or project-owned templates.
+8. Use project-wiki setup guidance for docs/wiki initialization, schema, topic index, glossary, open decisions, known defects, and maintenance log.
+9. Add or update AGENTS.md guidance so future agents check docs/wiki first, save unsynthesized wiki knowledge under raw/wiki-fragments, use project-wiki skills for wiki work, and commit wiki changes with the source or documentation changes that made them necessary.
+10. Keep runtime-specific commands in project guidance only when the project actually depends on that runtime.
+11. When reverse engineering is in scope, require the project configuration gate, documentation coverage manifest, and every pass completion gate plus final top-down semantic reconciliation from documentation-reverse-engineer before bootstrap can advance or report completion.
+12. Record unresolved ownership, source authority, verification, or automation questions in Open Questions instead of guessing.
 
 ## Local Template Policy
 
@@ -73,3 +76,4 @@ Before finishing:
 4. Run repository build or documentation checks only if setup changed code, imports, generated artifacts, project metadata, or documented commands.
 5. Search for unresolved TODO markers outside intentionally copied templates.
 6. Report the documentation root, wiki root, local templates copied, AGENTS.md guidance changed, verification commands run, and unresolved questions.
+7. Confirm PROJECT.yaml contains the validated documentation mode selected during bootstrap, including the legacy missing-field migration result when applicable, and report that persisted value.

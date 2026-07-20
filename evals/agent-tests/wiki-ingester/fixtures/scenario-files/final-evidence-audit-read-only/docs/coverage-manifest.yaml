@@ -1,0 +1,5 @@
+schema: synthetic-coverage
+documentationOwner: dev-documentation-writer
+modules:
+  - source: src/catalog.py
+    design: docs/module-catalog-design.md

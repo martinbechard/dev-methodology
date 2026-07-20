@@ -1,9 +1,29 @@
-serviceCommand: python3 -m http.server PORT --bind 127.0.0.1 --directory FIXTURE_ROOT
+runtime: isolated-playwright
+server:
+  owner: safe-runtime-wrapper
+  bindAddress: 127.0.0.1
+  portSelection: os-assigned-ephemeral
+browser:
+  engine: repository-designated-chromium
+  launch: fresh-headless-browser
+  context: fresh-isolated-context
+  page: fresh-page
+  persistentProfile: false
 healthRoute: /settings.html
 successRoute: /missing-success.html
 uploadRoute: /upload.html
 storageRoute: /missing-storage
+evidence:
+  - trace
+  - screenshots
+  - console
+  - requests-and-responses
+  - runtime-browser-context-page-identities
+  - fixture-root-and-selected-port
+  - interaction-digest
+  - close-receipts
 cleanup:
-  - stop-service
-  - close-isolated-browser-session
-  - release-port-and-session-claims
+  - close-page
+  - close-context
+  - close-browser
+  - stop-server-and-release-port

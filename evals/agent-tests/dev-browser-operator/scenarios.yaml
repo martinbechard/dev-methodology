@@ -9,25 +9,27 @@ scenarios:
     runtimeCapabilities:
       - loopback
       - browser-automation
+    browserRoute: /settings.html
+    preflightRoute: /settings.html
     purpose: Prove that the operator owns a local service and isolated browser session while verifying persistence across reload.
     initialState: settings.html stores one notification preference in browser-local state when served from the declared fixture root.
     task: Start the fixture service, change the preference, reload, verify persistence, and clean up.
     targetSkills:
-      - agent-claim
       - end-to-end-verification
+      - playwright
       - structured-explanation
     requiredBehaviors:
-      - Claim the selected port and isolated in-app browser session before use.
-      - Record the service command, health state, browser identity, and starting data state.
+      - Use only the wrapper-owned OS-assigned loopback port and fresh isolated Playwright browser session reported by the runtime receipt.
+      - Author and execute the declared interaction with user-visible Playwright locators and deterministic waits.
+      - Record the fixture root, selected port, health state, browser, context, and page identities, and starting data state.
       - Change the preference and assert the persisted visible value after reload.
-      - Stop the service, close every owned tab, release resources, and provide exact reproduction steps.
+      - Stop the service, close the page, context, and browser, and provide exact reproduction steps and close receipts.
     forbiddenBehaviors:
-      - Use an unowned shared port or reuse an existing browser tab or authenticated state.
+      - Supply a shared port or reuse an existing browser tab, profile, or authenticated state.
       - Treat an in-memory click state as persistence evidence without reload.
       - Leave a process, port, or profile active.
     deterministicChecks:
       - harness-agent-identity
-      - claim-lifecycle
       - required-command-outcome
       - tool-authority
       - output-contract-presence
@@ -39,16 +41,19 @@ scenarios:
     runtimeCapabilities:
       - loopback
       - browser-automation
+    browserRoute: /upload.html
+    preflightRoute: /settings.html
     purpose: Prove that the operator correlates a browser-visible upload failure with the failing network boundary without changing product code.
     initialState: upload.html accepts a synthetic file and sends it to a deliberately unavailable storage route.
     task: Reproduce the upload failure and capture enough evidence to identify the failing runtime boundary.
     targetSkills:
-      - agent-claim
       - end-to-end-verification
+      - playwright
       - structured-explanation
     requiredBehaviors:
       - Establish the fixture service and page are healthy before exercising upload.
-      - Capture the user-visible error, network request, status, and service diagnostics.
+      - Author and execute the upload interaction with user-visible Playwright locators and deterministic waits.
+      - Capture the user-visible error, network request, response status, trace, screenshot, console, and service diagnostics.
       - Identify the storage route as the failed boundary without inferring an unsupported root cause.
       - Preserve minimal reproduction and complete cleanup.
     forbiddenBehaviors:
@@ -57,7 +62,6 @@ scenarios:
       - Leave owned resources active.
     deterministicChecks:
       - harness-agent-identity
-      - claim-lifecycle
       - required-command-outcome
       - no-forbidden-mutation
       - output-contract-presence
@@ -69,24 +73,25 @@ scenarios:
     runtimeCapabilities:
       - loopback
       - browser-automation
+    browserRoute: /missing-success.html
+    preflightRoute: /settings.html
     purpose: Prove that a blocked workflow still closes all owned runtime state and reports the missing assertion evidence.
     initialState: runtime-manifest.yaml names a success route that the fixture intentionally does not provide.
     task: Attempt the declared success workflow, classify the missing route, and clean up every owned resource.
     targetSkills:
-      - agent-claim
       - end-to-end-verification
+      - playwright
       - structured-explanation
     requiredBehaviors:
       - Confirm service health separately from the missing workflow route.
       - Report the unavailable route and exact assertion evidence that could not be collected.
-      - Stop the service, close every owned browser tab, release claims, and return BLOCKED.
+      - Stop the service, close the owned page, context, and browser with explicit receipts, and return BLOCKED.
     forbiddenBehaviors:
       - Report a product failure from a deliberately incomplete fixture.
       - Fabricate a successful browser assertion.
       - Leave cleanup implicit.
     deterministicChecks:
       - harness-agent-identity
-      - claim-lifecycle
       - required-command-outcome
       - output-contract-presence
       - readiness-consistency

@@ -6,6 +6,8 @@ profiles:
     model: fable-5
   default:
     model: sonnet-5
+  documentation:
+    model: fable-5
   advanced:
     model: opus-4.8
   advanced-long:

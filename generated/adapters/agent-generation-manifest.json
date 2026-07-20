@@ -42,7 +42,7 @@
         {
           "name": "dev-documentation-writer",
           "output": "generated/adapters/claude/agents/dev-documentation-writer.md",
-          "sha256": "55d9ca64dd1da2a6831a2818e070af295d6e7c438ffcf1f1ed735f91ae425920",
+          "sha256": "1ceb06911dd619ff1ddc80241dd60bb487408d24472fc378d7453320dcfedfc0",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -102,13 +102,13 @@
         {
           "name": "project-bootstrapper",
           "output": "generated/adapters/claude/agents/project-bootstrapper.md",
-          "sha256": "1b72ca8b26077184d41c01a3ce64b153c92862fc1db97d7c0469d028027ed715",
+          "sha256": "f383d8b40cca7510474b89d388937290c6a75a37f953470ea28c154546a98d42",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
           "name": "project-configurator",
           "output": "generated/adapters/claude/agents/project-configurator.md",
-          "sha256": "77ab948f0efcd860e1b37890d63ae314c1aefe18925f7589961128cbbee2e4a3",
+          "sha256": "ae934b62e78be6c978d0a403364e79bce2144b8ee1f7c516dcd450da427f58d1",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {
@@ -132,7 +132,7 @@
         {
           "name": "wiki-ingester",
           "output": "generated/adapters/claude/agents/wiki-ingester.md",
-          "sha256": "c7650fdd9841f95d01fdd4bdc02de999a8d8711b9035210b6c8b62d5914fcb7b",
+          "sha256": "db8a9334b180450c91c1d7c241dd6a7a1cfe47ad1ba931f39f6ce88e9124263d",
           "source": "agents/roles/wiki-activities/wiki-ingester.role.yaml"
         },
         {
@@ -212,7 +212,7 @@
         {
           "name": "dev-documentation-writer",
           "output": "generated/adapters/codex/agents/dev-documentation-writer.toml",
-          "sha256": "c6f2969a15b900d6a051f1ac1bea3e5355adaaed75ed9adf83e0c34fc40727c7",
+          "sha256": "9495c8b58264afe9fecdda41f27e12adb7c863a54c6fc99af4c96f64d79b3ceb",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -272,13 +272,13 @@
         {
           "name": "project-bootstrapper",
           "output": "generated/adapters/codex/agents/project-bootstrapper.toml",
-          "sha256": "5ea090968a1c08d293701eded10446fdd268c9355421a899cb682d02e15030af",
+          "sha256": "854931f616dc2318d8513ed6fac096c2eda3d6599b0cc132580b93aaa01232c3",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
           "name": "project-configurator",
           "output": "generated/adapters/codex/agents/project-configurator.toml",
-          "sha256": "798a905abc408fe2cbb1c3ba7d53e5635312afd8689abc371da630654bc11073",
+          "sha256": "b11bbafa74ccc307ae7e611f48fdbf8cfc844e7ad9acb946d7d7aeb5b886c6a8",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {
@@ -302,7 +302,7 @@
         {
           "name": "wiki-ingester",
           "output": "generated/adapters/codex/agents/wiki-ingester.toml",
-          "sha256": "77cc6e70fa792122f80fe0c6072b82e79d9d511fb97bbe41949938833ed0af0c",
+          "sha256": "23f30a5de4b73eda17d2341a3e69ec9ad3f852d29c443ca18e2220806cefa496",
           "source": "agents/roles/wiki-activities/wiki-ingester.role.yaml"
         },
         {
@@ -388,7 +388,7 @@
         {
           "name": "dev-documentation-writer",
           "output": "generated/adapters/gemini/agents/dev-documentation-writer.md",
-          "sha256": "8dc5855cce7bd98a616b68f0e99d49635b23c1e6e550eefed90bbe326116b8c2",
+          "sha256": "0522c7cac4985a5b4af0643c8528e7be614bed04c71b00719e015bc9c9a15232",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -448,13 +448,13 @@
         {
           "name": "project-bootstrapper",
           "output": "generated/adapters/gemini/agents/project-bootstrapper.md",
-          "sha256": "2411eb551fcd761117c5887e8abd0d471899ecaa47bc96ce7984dc752355866c",
+          "sha256": "6c8b71c37125ed7c8ca99f89a1943e4dd72abc19fa2d8a497505793b1661079c",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
           "name": "project-configurator",
           "output": "generated/adapters/gemini/agents/project-configurator.md",
-          "sha256": "6f194ebe86c175c7a5560c1778a91d62addb798f024610d824eadacb36ac4276",
+          "sha256": "1cc86ce23b8121ba3088d835b1d8ca4dac65829b2e810a50df28b6af18642c04",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {
@@ -478,7 +478,7 @@
         {
           "name": "wiki-ingester",
           "output": "generated/adapters/gemini/agents/wiki-ingester.md",
-          "sha256": "f955c1057efe0200d7f289327fecef48e0eeba92a35eac5bbbbc23b73dca99dc",
+          "sha256": "f95ca3564fd44c5db05fd41e5058d669c297e18b7ab19047b65e6e71e89d3e77",
           "source": "agents/roles/wiki-activities/wiki-ingester.role.yaml"
         },
         {
@@ -558,7 +558,7 @@
         {
           "name": "dev-documentation-writer",
           "output": "generated/adapters/junie/agents/dev-documentation-writer.md",
-          "sha256": "fd6aea51915d02772dbf6b4a642d7c0e37b0c2d5f485d06332b013b4b8255e93",
+          "sha256": "31ab49fef52f83f023a64efd3567a4fe25b48af38a10f43f8f11627afa301add",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -618,13 +618,13 @@
         {
           "name": "project-bootstrapper",
           "output": "generated/adapters/junie/agents/project-bootstrapper.md",
-          "sha256": "dec437c593870767f7bd3e5160de3229acefd234eaf2ae86b6e0c04a634bba05",
+          "sha256": "ca861664877aa2b332efa440aabf1416bfe278dad874a851487a77302c82b0b2",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
           "name": "project-configurator",
           "output": "generated/adapters/junie/agents/project-configurator.md",
-          "sha256": "9b767f7ebd74f05642144499e90633490f1a985d9932c510997b3b5469928f0b",
+          "sha256": "6f53071b6dbba4979b7eabb8675a266bc272e0858776ef4adbdeecf9d3b87a3b",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {
@@ -648,7 +648,7 @@
         {
           "name": "wiki-ingester",
           "output": "generated/adapters/junie/agents/wiki-ingester.md",
-          "sha256": "b90197bd0ccc024c1bb6ffb3022dc86cfdf0b6e2636da4577925e6f4eed55f62",
+          "sha256": "92213c8231de52b9d43315caa60c9fa26c43d7acd8c4dc2b7aad97a014596de1",
           "source": "agents/roles/wiki-activities/wiki-ingester.role.yaml"
         },
         {

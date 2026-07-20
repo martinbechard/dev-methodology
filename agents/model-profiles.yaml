@@ -5,6 +5,8 @@ profiles:
     purpose: Extraction, classification, lookup, and mechanical evidence checks.
   default:
     purpose: Normal implementation, documentation, and bounded verification work.
+  documentation:
+    purpose: Source-backed documentation authoring that requires advanced synthesis without changing unrelated default-profile agents.
   advanced:
     purpose: Review synthesis, architecture, diagnosis, and difficult implementation work.
   advanced-long:

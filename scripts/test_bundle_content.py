@@ -982,6 +982,31 @@ class BundleContentTests(unittest.TestCase):
                 self.assertTrue((SKILLS_ROOT / skill_name / "SKILL.md").is_file())
                 self.assertTrue(openai_metadata_path(skill_name).is_file())
 
+    def test_codex_coordination_controls_long_running_tasks(self) -> None:
+        skill_text = (
+            SKILLS_ROOT / "codex-workitem-coordination" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+
+        for phrase in (
+            "Treat a heartbeat as ownership evidence only.",
+            "expected to take more than five minutes",
+            "the exact currently active unit and any later units that have not started",
+            "a hard stop condition and the retained evidence path",
+            "not a new backlog transaction or parent approval gate",
+            "The task may start without waiting for parent acknowledgement.",
+            "This observation must not serialize healthy work.",
+            "must not describe queued work as running.",
+            "classify its failure signature before repeating anything",
+            "add the smallest offline replay or deterministic regression",
+            "Run one cheapest representative first.",
+            "prove the applicable worktree clean before releasing its shared claim",
+            "retain and heartbeat the claim or hand it off explicitly",
+            "Do not let later serial cases start automatically after a shared-boundary failure.",
+            "require immediate parent investigation and a revised plan",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, skill_text)
+
     def test_skill_authoring_contract_is_shared_by_maintainer_and_reviewer(self) -> None:
         skill_text = (SKILLS_ROOT / "skill-authoring" / "SKILL.md").read_text(
             encoding="utf-8"
@@ -1436,7 +1461,7 @@ class BundleContentTests(unittest.TestCase):
             code_delivery["skillProbes"],
         )
 
-    def test_workitem_and_backlog_processes_are_selector_driven(self) -> None:
+    def test_workitem_provider_and_completion_processes_are_selector_driven(self) -> None:
         execute_text = (
             SKILLS_ROOT / "execute-workitem" / "SKILL.md"
         ).read_text(encoding="utf-8")
@@ -1542,8 +1567,36 @@ class BundleContentTests(unittest.TestCase):
             / PROJECT_TEMPLATE
         ).read_text(encoding="utf-8")
         self.assertIn("workflow_selection:", project_template)
-        self.assertIn("simple-workitem, feature-branch-workitem, or UNSET", project_template)
-        self.assertIn("file-based-backlog, github-issues-backlog, none, or UNSET", project_template)
+        self.assertIn("provider:", project_template)
+        self.assertIn("file, github, gitlab, azure-devops, jira, none, or UNSET", project_template)
+        self.assertIn(
+            'provider: "TODO: file, github, gitlab, azure-devops, jira, none, or UNSET."',
+            project_template,
+        )
+        self.assertIn("completion:", project_template)
+        self.assertIn("direct-main, feature-branch, or UNSET", project_template)
+        self.assertIn(
+            'completion: "TODO: direct-main, feature-branch, or UNSET."',
+            project_template,
+        )
+        self.assertNotIn("  workitem:", project_template)
+        self.assertNotIn("  backlog:", project_template)
+
+        project_configuration = load_yaml_object(REPOSITORY_ROOT / "PROJECT.yaml")
+        self.assertEqual(
+            "file",
+            project_configuration["workflow_selection"]["provider"]["default"],
+        )
+        self.assertEqual(
+            "direct-main",
+            project_configuration["workflow_selection"]["completion"]["default"],
+        )
+        agents_text = (REPOSITORY_ROOT / "AGENTS.md").read_text(encoding="utf-8")
+        self.assertIn("## Work-Item Workflow Skill References", agents_text)
+        self.assertIn("create-file-work-item", agents_text)
+        self.assertIn("manage-file-work-items", agents_text)
+        self.assertIn("complete-work-item-direct-main", agents_text)
+        self.assertIn("Technology skill inlining is a separate mechanism", agents_text)
 
         probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
         probe_ids = {entry["id"] for entry in probes["probes"]}
@@ -2249,8 +2302,14 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("proprietary_validation_notes:", template_text)
         self.assertIn("nested_agents_files:", template_text)
         self.assertIn("workflow_selection:", template_text)
-        self.assertIn("simple-workitem, feature-branch-workitem, or UNSET", template_text)
-        self.assertIn("file-based-backlog, github-issues-backlog, none, or UNSET", template_text)
+        self.assertIn("file, github, gitlab, azure-devops, jira, none, or UNSET", template_text)
+        self.assertIn("direct-main, feature-branch, or UNSET", template_text)
+        self.assertIn("simple-workitem to direct-main", skill_text)
+        self.assertIn("file-based-backlog to file", skill_text)
+        self.assertIn("selected create, manage, and completion skills as references only", skill_text)
+        self.assertIn("record explicit UNSET rather than omitting a deferred decision", skill_text)
+        self.assertIn("one exact folder pattern may appear only once", skill_text)
+        self.assertIn("one exact folder pattern may appear only once", template_text)
         self.assertNotIn("nested_project_files:", template_text)
         self.assertIn("Create exactly one PROJECT.yaml", skill_text)
         self.assertIn("Do not create nested PROJECT.yaml files", skill_text)
@@ -2275,7 +2334,7 @@ class BundleContentTests(unittest.TestCase):
         )
         self.assertIn("Record a coordination_overrides mapping only when", skill_text)
         self.assertIn("Keep workflow configuration selector-only", skill_text)
-        self.assertIn("Do not infer either process", skill_text)
+        self.assertIn("Do not infer either selector", skill_text)
         self.assertIn(
             "Treat a missing conceptual agent definition, skill, or command as BLOCKED",
             skill_text,
@@ -2437,6 +2496,77 @@ class BundleContentTests(unittest.TestCase):
                 skill_path = SKILLS_ROOT / skill_name / "SKILL.md"
                 self.assertTrue(skill_path.is_file())
                 self.assertTrue(openai_metadata_path(skill_name).is_file())
+
+    def test_dev_backlog_steward_requires_claimed_blocked_work_resumption(self) -> None:
+        """The suite makes claim-backed resumption and lossless failure observable."""
+        suite_root = AGENT_TEST_SUITES_ROOT / "dev-backlog-steward"
+        manage_file_text = (
+            SKILLS_ROOT / "manage-file-work-items" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        legacy_bridge_text = (
+            SKILLS_ROOT / "manage-backlog" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        self.assertNotIn(
+            "## Blocked Handoff And Resumption",
+            legacy_bridge_text,
+        )
+        for required_phrase in (
+            "## Blocked Handoff And Resumption",
+            "replace the prior owner with Owner: Unowned",
+            "replace the prior claim with Claim: None",
+            "Set the item to Ready",
+            "Only after a successful claim",
+            "Restore the byte-for-byte pre-attempt Blocked item",
+        ):
+            with self.subTest(manage_file_contract=required_phrase):
+                self.assertIn(required_phrase, manage_file_text)
+
+        scenarios = load_yaml_object(suite_root / "scenarios.yaml")["scenarios"]
+        by_id = {scenario["id"]: scenario for scenario in scenarios}
+        for scenario_id in (
+            "blocked-state-transition",
+            "blocked-unowned-running-shortcut",
+            "blocked-claimed-resumption",
+            "blocked-failed-claim-resumption",
+        ):
+            with self.subTest(retargeted_scenario=scenario_id):
+                target_skills = by_id[scenario_id]["targetSkills"]
+                self.assertIn("manage-file-work-items", target_skills)
+                self.assertNotIn("manage-backlog", target_skills)
+
+        known_checks = {
+            check["id"]
+            for check in load_yaml_object(REPOSITORY_ROOT / "evals" / "judges.yaml")[
+                "checks"
+            ]
+        }
+        for scenario in scenarios:
+            with self.subTest(scenario_checks=scenario["id"]):
+                self.assertLessEqual(set(scenario["deterministicChecks"]), known_checks)
+
+        blocked_handoff_checks = by_id["blocked-state-transition"][
+            "deterministicChecks"
+        ]
+        self.assertIn("queue-state-transition", blocked_handoff_checks)
+        self.assertNotIn("test-state-transition", blocked_handoff_checks)
+
+        self.assertEqual(
+            "BLOCKED",
+            by_id["blocked-unowned-running-shortcut"]["expectedTerminalStatus"],
+        )
+        self.assertEqual(
+            "PASS", by_id["blocked-claimed-resumption"]["expectedTerminalStatus"]
+        )
+        self.assertEqual(
+            "BLOCKED",
+            by_id["blocked-failed-claim-resumption"]["expectedTerminalStatus"],
+        )
+        self.assertTrue((suite_root / "contract_harness.py").is_file())
+        judge_text = (suite_root / "agents" / "judge.toml").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("reject direct unowned Blocked to Running", judge_text)
+        self.assertIn("byte-for-byte pre-attempt Blocked item", judge_text)
 
     def test_skill_frontmatter_uses_agent_skill_schema(self) -> None:
         for skill_path in sorted(SKILLS_ROOT.glob("*/SKILL.md")):
@@ -3635,7 +3765,10 @@ class BundleContentTests(unittest.TestCase):
                         self.assertIn(f"Use the {skill} skill {condition}.", codex_agent_text)
                 self.assertIn("# Output purposes:", codex_agent_text)
                 self.assertEqual(
-                    build_skill_docs.codex_role_instruction_text(role),
+                    build_skill_docs.codex_role_instruction_text(
+                        role,
+                        known_role_names=tuple(sorted(source_role_names)),
+                    ),
                     tomllib.loads(codex_agent_text)["developer_instructions"],
                 )
                 self.assertNotIn(
@@ -4191,6 +4324,7 @@ class BundleContentTests(unittest.TestCase):
                 "dev-artifact-reviewer",
                 "wiki-artifact-reviewer",
                 "wiki-topic-verifier",
+                "wiki-ingester",
                 "dev-merge-coordinator",
                 "dev-verifier",
             ),
@@ -4353,7 +4487,17 @@ class BundleContentTests(unittest.TestCase):
         )
         self.assertNotIn("STATUS: BLOCKED", interruption_response)
         self.assertNotIn("restore", interruption_response.lower())
+        audit_examples = [
+            example
+            for example in role.examples
+            if "audit the final integrated tree" in example["purpose"].lower()
+        ]
+        self.assertEqual(1, len(audit_examples))
+        self.assertIn("STATUS: NEEDS_CORRECTION", audit_examples[0]["plausibleResponse"])
+        self.assertIn("explicit no-change result", audit_examples[0]["plausibleResponse"])
         for example in role.examples:
+            if example in audit_examples:
+                continue
             response = example["plausibleResponse"]
             with self.subTest(wiki_ingester_inventory=example["purpose"]):
                 self.assertRegex(
@@ -4821,7 +4965,9 @@ class BundleContentTests(unittest.TestCase):
             "do not enter production generation",
             "project-specific reconstruction instructions",
             "primary and supporting operation inventory",
-            "exact ordered template-heading and readiness-marker gate",
+            "exact ordered template-heading and decision-marker gate",
+            "Documentation Acceptance section that does not begin with ACCEPTED or BLOCKED",
+            "Implementation Readiness section that does not begin with READY or BLOCKED",
             "installed documentation path",
             "transient assembly or control files",
             "boundary-edge inventory",
@@ -5021,6 +5167,7 @@ class BundleContentTests(unittest.TestCase):
             "wiki-writer",
             "wiki-artifact-reviewer",
             "wiki-topic-verifier",
+            "wiki-ingester",
             "dev-merge-coordinator",
             "dev-verifier",
         ):
@@ -5035,6 +5182,7 @@ class BundleContentTests(unittest.TestCase):
                 "dev-artifact-reviewer",
                 "wiki-artifact-reviewer",
                 "wiki-topic-verifier",
+                "wiki-ingester",
                 "dev-merge-coordinator",
                 "dev-verifier",
             ),
@@ -5058,7 +5206,7 @@ class BundleContentTests(unittest.TestCase):
             ),
             role.output_contract,
         )
-        self.assertEqual(4, len(role.examples))
+        self.assertEqual(5, len(role.examples))
         self.assertTrue(role.examples[0]["plausibleResponse"].startswith("STATUS: READY"))
         self.assertTrue(role.examples[1]["plausibleResponse"].startswith("STATUS: READY"))
         self.assertIn("STATUS: BLOCKED", role.examples[2]["plausibleResponse"])
@@ -5298,7 +5446,7 @@ class BundleContentTests(unittest.TestCase):
     def test_model_profiles_are_semantic_and_adapter_complete(self) -> None:
         source_profiles = load_yaml_object(MODEL_PROFILES_PATH)["profiles"]
         self.assertEqual(
-            {"simple", "default", "advanced", "advanced-long"},
+            {"simple", "default", "documentation", "advanced", "advanced-long"},
             set(source_profiles),
         )
 
@@ -5317,6 +5465,7 @@ class BundleContentTests(unittest.TestCase):
             {
                 "simple": "gpt-5.6-luna",
                 "default": "gpt-5.6-terra",
+                "documentation": "gpt-5.6-sol",
                 "advanced": "gpt-5.6-sol",
                 "advanced-long": "gpt-5.6-sol",
             },
@@ -5334,6 +5483,92 @@ class BundleContentTests(unittest.TestCase):
                 self.assertNotIn("effort", role)
                 for profile in role.get("modelStages", {}).values():
                     self.assertIn(profile, source_profiles)
+
+    def test_dev_documentation_writer_uses_dedicated_model_profile(self) -> None:
+        build_skill_docs = load_build_skill_docs_module()
+        skill_names = set(build_skill_docs.build_payload()["skills"])
+        roles = build_skill_docs.load_role_definitions(skill_names)
+        writer = next(role for role in roles if role.name == "dev-documentation-writer")
+        unrelated_roles = [role for role in roles if role.name != writer.name]
+        source_profile_ids = set(build_skill_docs.load_model_profiles())
+
+        self.assertEqual("documentation", writer.model_profile)
+        self.assertTrue(all(role.model_profile != "documentation" for role in unrelated_roles))
+
+        expected_profiles = {
+            "codex": {
+                "simple": ("gpt-5.6-luna", "medium"),
+                "default": ("gpt-5.6-terra", "medium"),
+                "documentation": ("gpt-5.6-sol", "high"),
+                "advanced": ("gpt-5.6-sol", "high"),
+                "advanced-long": ("gpt-5.6-sol", "high"),
+            },
+            "claude": {
+                "simple": ("fable-5", None),
+                "default": ("sonnet-5", None),
+                "documentation": ("fable-5", None),
+                "advanced": ("opus-4.8", None),
+                "advanced-long": ("opus-4.8", None),
+            },
+            "gemini": {
+                "simple": ("flash", None),
+                "default": ("auto", None),
+                "documentation": ("auto", None),
+                "advanced": ("pro", None),
+                "advanced-long": ("pro", None),
+            },
+            "junie": {
+                "simple": ("gemini-flash", "low"),
+                "default": ("sonnet", "medium"),
+                "documentation": ("gpt-5.6-sol", "high"),
+                "advanced": ("opus", "high"),
+                "advanced-long": ("opus", "high"),
+            },
+        }
+
+        profiles_by_adapter = {
+            adapter: build_skill_docs.load_adapter_model_profiles(adapter, source_profile_ids)
+            for adapter in expected_profiles
+        }
+        for adapter, expected in expected_profiles.items():
+            with self.subTest(adapter=adapter):
+                self.assertEqual(
+                    expected,
+                    {
+                        profile_id: (profile.model, profile.effort)
+                        for profile_id, profile in profiles_by_adapter[adapter].items()
+                    },
+                )
+
+        codex_text = build_skill_docs.render_codex_agent(
+            writer,
+            profiles_by_adapter["codex"],
+            known_role_names=tuple(role.name for role in roles),
+        )
+        self.assertIn('model = "gpt-5.6-sol"', codex_text)
+        self.assertIn('model_reasoning_effort = "high"', codex_text)
+
+        claude_frontmatter = yaml.safe_load(
+            build_skill_docs.render_claude_agent(
+                writer, profiles_by_adapter["claude"]
+            ).split("---", 2)[1]
+        )
+        self.assertEqual("fable-5", claude_frontmatter["model"])
+
+        gemini_frontmatter = yaml.safe_load(
+            build_skill_docs.render_gemini_agent(
+                writer, profiles_by_adapter["gemini"]
+            ).split("---", 2)[1]
+        )
+        self.assertEqual("auto", gemini_frontmatter["model"])
+
+        junie_frontmatter = yaml.safe_load(
+            build_skill_docs.render_junie_agent(
+                writer, profiles_by_adapter["junie"]
+            ).split("---", 2)[1]
+        )
+        self.assertEqual("gpt-5.6-sol", junie_frontmatter["model"])
+        self.assertEqual("high", junie_frontmatter["reasoningLevel"])
 
     def test_agent_skill_evals_cover_implementation_and_independent_review(self) -> None:
         """Code-delivery fixtures keep coding contracts without imposing them on other workflows."""
@@ -5537,6 +5772,36 @@ class BundleContentTests(unittest.TestCase):
                             "justified-clean-review",
                             "incomplete-review-evidence",
                             "header-policy-authority-boundary",
+                        },
+                        {
+                            scenario["id"]
+                            for scenario in scenarios["scenarios"]
+                        },
+                    )
+                elif entry["id"] == "dev-backlog-steward":
+                    self.assertEqual(6, len(scenarios["scenarios"]))
+                elif entry["id"] == "project-bootstrapper":
+                    self.assertEqual(4, len(scenarios["scenarios"]))
+                    self.assertEqual(
+                        {
+                            "valid-configuration-direct-path",
+                            "missing-configuration-multi-contribution",
+                            "whole-project-reverse-engineering-steady-state",
+                            "invalid-configuration-no-authority",
+                        },
+                        {
+                            scenario["id"]
+                            for scenario in scenarios["scenarios"]
+                        },
+                    )
+                elif entry["id"] == "wiki-ingester":
+                    self.assertEqual(4, len(scenarios["scenarios"]))
+                    self.assertEqual(
+                        {
+                            "raw-ingest",
+                            "destination-collision",
+                            "verifier-failure",
+                            "final-evidence-audit-read-only",
                         },
                         {
                             scenario["id"]
@@ -6341,7 +6606,7 @@ class BundleContentTests(unittest.TestCase):
             "Pass 4: Functional Specifications",
             "Pass 5: README And Wiki Integration",
             "Every accepted module appears in an accepted HLD",
-            "Pass 5 completes whole-repository reverse engineering",
+            "Pass 5 plus a passing final reconciliation completes whole-repository reverse engineering",
             "separate project-owned evaluation",
         )
         for phrase in required_reverse_phrases:
@@ -6423,6 +6688,216 @@ class BundleContentTests(unittest.TestCase):
         )
         self.assertFalse((REPOSITORY_ROOT / "evals" / "reconstruction-review").exists())
 
+    def test_reverse_engineering_final_audit_preserves_artifact_ownership(self) -> None:
+        """Whole-project reverse engineering should audit final evidence without widening authorship."""
+        build_skill_docs = load_build_skill_docs_module()
+        skill_payload = build_skill_docs.build_payload()
+        roles = build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
+        roles_by_name = {role.name: role for role in roles}
+        bootstrapper = roles_by_name["project-bootstrapper"]
+        ingester = roles_by_name["wiki-ingester"]
+
+        bootstrap_workflow = " ".join(bootstrapper.instruction_sections["workflow"])
+        bootstrap_delegation = " ".join(bootstrapper.instruction_sections["delegation"])
+        bootstrap_completion = " ".join(bootstrapper.instruction_sections["completion"])
+        bootstrap_failure = " ".join(bootstrapper.instruction_sections["failureHandling"])
+        self.assertIn("Only for whole-project reverse engineering", bootstrapper.instructions)
+        self.assertIn("Do not invoke this audit for ordinary project setup", bootstrapper.instructions)
+        self.assertIn(
+            "whole-project reverse-engineering no-change path still requires the final audit",
+            bootstrapper.instructions,
+        )
+        self.assertIn("wiki-ingester", bootstrap_workflow)
+        self.assertIn("complete tree", bootstrap_workflow)
+        self.assertIn("missing module design", bootstrap_workflow)
+        self.assertIn("dev-documentation-writer", bootstrap_workflow)
+        self.assertIn("fresh independent review", bootstrap_workflow)
+        self.assertIn("wiki-ingester", bootstrap_delegation)
+        self.assertIn("does not become the non-wiki document author", bootstrap_delegation)
+        self.assertIn("final wiki-ingester audit reports no stale", bootstrap_completion)
+        self.assertIn(
+            "after any verification-driven correction",
+            bootstrap_failure,
+        )
+        self.assertIn("before retrying dev-verifier", bootstrap_failure)
+
+        ingester_boundaries = " ".join(ingester.instruction_sections["boundaries"])
+        ingester_workflow = " ".join(ingester.instruction_sections["workflow"])
+        ingester_completion = " ".join(ingester.instruction_sections["completion"])
+        self.assertIn("inspect and report only", ingester_boundaries)
+        self.assertIn("Do not create, update, move, or correct", ingester_boundaries)
+        for artifact in (
+            "PROJECT.yaml",
+            "AGENTS.md",
+            "wiki navigation",
+            "module catalogs",
+            "coverage manifests",
+            "module pages",
+            "links",
+            "ownership statements",
+        ):
+            with self.subTest(audited_artifact=artifact):
+                self.assertIn(artifact, ingester_workflow)
+        for stale_marker in ("absent", "excluded", "contribution-phase", "future work"):
+            with self.subTest(stale_marker=stale_marker):
+                self.assertIn(stale_marker, ingester_workflow)
+        self.assertIn("NEEDS_CORRECTION", ingester_completion)
+        self.assertIn("explicit no-change result", ingester_completion)
+        self.assertNotIn(
+            "final evidence audit",
+            roles_by_name["dev-documentation-writer"].instructions,
+        )
+    def test_reverse_engineering_separates_pass_acceptance_and_readiness(self) -> None:
+        """Keep bottom-up acceptance, persisted mode, wiki routing, and reconciliation aligned."""
+        reverse_text = (
+            SKILLS_ROOT / "documentation-reverse-engineer" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        bootstrap_text = (
+            SKILLS_ROOT / "documentation-bootstrap" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        configuration_text = (
+            SKILLS_ROOT / "create-project-configuration" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        project_template_text = (
+            SKILLS_ROOT
+            / "development-methodology"
+            / "assets"
+            / "templates"
+            / "project-template.yaml"
+        ).read_text(encoding="utf-8")
+
+        ordered_passes = (
+            "Pass -1: Project Configuration",
+            "Pass 0: Repository Orientation",
+            "Pass 1: Module Designs",
+            "Pass 2: High-Level Designs",
+            "Pass 3: Architecture",
+            "Pass 4: Functional Specifications",
+            "Pass 5: README And Wiki Integration",
+            "Final Top-Down Semantic Reconciliation",
+        )
+        pass_positions = [reverse_text.index(heading) for heading in ordered_passes]
+        self.assertEqual(sorted(pass_positions), pass_positions)
+
+        for phrase in (
+            "source evidence, accepted prerequisite layers, and current-pass requirements",
+            "intentionally created by a later reverse-engineering pass",
+            "Documentation acceptance and downstream implementation readiness are separate decisions",
+            "supplements rather than replaces the bottom-up creation sequence",
+            "wiki and functional specifications",
+            "architecture, then high-level designs, then module designs, and finally source",
+            "Correction ownership follows source authority",
+        ):
+            with self.subTest(reverse_phrase=phrase):
+                self.assertIn(phrase, reverse_text)
+
+        for phrase in (
+            "hybrid-specifications-and-wiki",
+            "legacy PROJECT.yaml",
+            "unsupported documentation mode",
+            "conversational context",
+        ):
+            with self.subTest(configuration_phrase=phrase):
+                self.assertIn(phrase, configuration_text)
+                self.assertIn(phrase, bootstrap_text)
+
+        for phrase in (
+            "documentation_mode:",
+            "selected: \"hybrid-specifications-and-wiki\"",
+            "legacy_missing_field_policy:",
+            "unsupported_value_policy:",
+        ):
+            with self.subTest(project_template_phrase=phrase):
+                self.assertIn(phrase, project_template_text)
+
+        wiki_handoffs = (
+            "project-wiki",
+            "project-wiki-create",
+            "project-wiki-topic-write",
+            "project-wiki-review",
+            "project-wiki-topic-verify",
+        )
+        for handoff in wiki_handoffs:
+            with self.subTest(wiki_handoff=handoff):
+                self.assertIn(handoff, reverse_text)
+        for phrase in ("Required inputs", "Owned outputs", "Completion evidence"):
+            self.assertIn(phrase, reverse_text)
+        for phrase in (
+            "Invoke project-wiki to initialize docs/wiki",
+            "Required inputs are the repository root, accepted PROJECT.yaml, accepted wiki setup recommendation",
+            "Owned outputs are the initialized docs/wiki root",
+            "Completion evidence is the exact created or changed wiki page list",
+            "project-wiki-topic-write for main pages",
+            "Required inputs are the repository root, bounded page scope",
+            "project-wiki-topic-verify in a fresh read-only context",
+            "Required inputs are the repository root, exact page list",
+        ):
+            with self.subTest(wiki_contract_phrase=phrase):
+                self.assertIn(phrase, reverse_text)
+
+        artifact_contracts = (
+            ("create-module-design", "review-module-design", "module-design-template.md", "review-checklist-module-design.md"),
+            ("create-high-level-design", "review-high-level-design", "high-level-design-template.md", "review-checklist-high-level-design.md"),
+            ("create-architecture", "review-architecture", "architecture-template.md", "review-checklist-architecture.md"),
+            ("create-functional-spec", "review-functional-spec", "functional-spec-template.md", "review-checklist-functional-spec.md"),
+        )
+        for create_name, review_name, template_name, checklist_name in artifact_contracts:
+            create_text = (SKILLS_ROOT / create_name / "SKILL.md").read_text(
+                encoding="utf-8"
+            )
+            review_text = (SKILLS_ROOT / review_name / "SKILL.md").read_text(
+                encoding="utf-8"
+            )
+            template_text = (
+                SKILLS_ROOT
+                / "development-methodology"
+                / "assets"
+                / "templates"
+                / template_name
+            ).read_text(encoding="utf-8")
+            checklist_text = (
+                SKILLS_ROOT / review_name / "references" / checklist_name
+            ).read_text(encoding="utf-8")
+            for text in (create_text, review_text, checklist_text):
+                with self.subTest(contract=create_name, phrase="documentation acceptance"):
+                    self.assertIn("documentation acceptance", text.lower())
+                with self.subTest(contract=create_name, phrase="implementation readiness"):
+                    self.assertIn("implementation readiness", text.lower())
+                with self.subTest(contract=create_name, phrase="current pass"):
+                    self.assertIn("current reverse-engineering pass", text.lower())
+            self.assertEqual(1, template_text.count("## Documentation Acceptance"))
+            self.assertEqual(1, template_text.count("## Implementation Readiness"))
+            self.assertIn(
+                "Begin this section with **ACCEPTED.** or **BLOCKED.**",
+                template_text,
+            )
+            self.assertIn(
+                "Begin this section with **READY.** or **BLOCKED.**",
+                template_text,
+            )
+            self.assertIn(
+                "first nonblank content under Documentation Acceptance",
+                checklist_text,
+            )
+            self.assertIn(
+                "first nonblank content under Implementation Readiness",
+                checklist_text,
+            )
+
+        readme_text = README_PATH.read_text(encoding="utf-8")
+        applying_bundle_text = readme_text.split(
+            "## Applying This Bundle To A Project", maxsplit=1
+        )[1].split("## Neutral Target Project Layout", maxsplit=1)[0]
+        self.assertIn("README and wiki integration", applying_bundle_text)
+        self.assertIn("final supplemental top-down semantic reconciliation", applying_bundle_text)
+        lifecycle_text = (
+            REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
+        ).read_text(encoding="utf-8")
+        for text in (readme_text, lifecycle_text):
+            self.assertIn("hybrid-specifications-and-wiki", text)
+            self.assertIn("top-down semantic reconciliation", text)
+            self.assertIn("documentation acceptance", text.lower())
+            self.assertIn("implementation readiness", text.lower())
     def test_project_configuration_distinguishes_no_variant_from_missing_required_skill(self) -> None:
         detector_text = (SKILLS_ROOT / "detect-technology-skills" / "SKILL.md").read_text(
             encoding="utf-8"

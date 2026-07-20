@@ -9,6 +9,7 @@ import hashlib
 import importlib.util
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -785,8 +786,8 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                     maven_repository,
                 )
 
-    def test_capability_arguments_use_local_only_profile_and_in_app_browser(self) -> None:
-        """Local capabilities use the managed proxy and never select an external browser."""
+    def test_capability_arguments_use_local_only_profile_without_desktop_browser_features(self) -> None:
+        """Playwright runs behind the local-only proxy without desktop browser features."""
         with tempfile.TemporaryDirectory() as temporary:
             codex_home = Path(temporary)
             arguments = runner._capability_runtime_arguments(
@@ -795,13 +796,59 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             profile = (codex_home / "agent-suite-local-runtime.config.toml").read_text(encoding="utf-8")
 
         self.assertIn("network_proxy", arguments)
-        self.assertIn("in_app_browser", arguments)
-        self.assertIn("browser_use", arguments)
+        self.assertNotIn("in_app_browser", arguments)
+        self.assertNotIn("browser_use", arguments)
         self.assertNotIn("browser_use_external", arguments)
         self.assertNotIn("sandbox_workspace_write.network_access=true", arguments)
         self.assertIn('mode = "limited"', profile)
         self.assertIn('"localhost" = "allow"', profile)
         self.assertNotIn("example.com", profile)
+
+    def test_browser_assignment_exposes_the_exact_flat_interaction_contract(self) -> None:
+        """The target does not have to infer the wrapper schema from source or validation failures."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            broker = runner._PlaywrightBroker(
+                scenario="browser-suite:happy",
+                broker_id="broker-assignment",
+                port=43117,
+                token="t" * 48,
+                token_path=root / "broker.token",
+                token_digest=hashlib.sha256(("t" * 48).encode("utf-8")).hexdigest(),
+                process=mock.Mock(),
+                receipt_path=root / "broker.json",
+            )
+            prompt = runner._coordinator_prompt(
+                (self._browser_run_spec("browser-suite"),),
+                root / "checkpoints",
+                root / "fixtures",
+                "run-identity",
+                playwright_runtime_root=root / "playwright-runtime",
+                playwright_brokers={"browser-suite:happy": broker},
+            )
+
+        self.assertIn('"root": "one JSON object containing exactly an actions array"', prompt)
+        self.assertIn('"initialRoute": "/"', prompt)
+        self.assertIn('"label": "Email", "type": "fill"', prompt)
+        self.assertIn('"text": "Enter a valid email address."', prompt)
+        self.assertIn("name paired with role is an accessible name", prompt)
+        self.assertIn("must not invent interactions, action, locator, fixture", prompt)
+        self.assertIn("playwright-harness.mjs validate", prompt)
+        self.assertIn("validation.json", prompt)
+        self.assertIn("playwright-harness.mjs client", prompt)
+        self.assertIn("byte-for-byte", prompt)
+        self.assertIn("--token-file", prompt)
+        self.assertNotIn(broker.token, prompt)
+        self.assertIn(
+            '"deterministicChecksByScenario": {"happy": [{"checkId": "harness-agent-identity", '
+            '"critical": true}, {"checkId": "no-forbidden-mutation", "critical": true}, '
+            '{"checkId": "output-contract-presence", "critical": true}]}',
+            prompt,
+        )
+        self.assertIn("retain no inferred or extra deterministic receipt", prompt)
+        self.assertIn("Claim lifecycle or other useful evidence may remain diagnostic evidence", prompt)
+        self.assertIn("http://127.0.0.1:43117", prompt)
+        self.assertNotIn("playwright-harness.mjs run", prompt)
 
     def test_offline_typescript_launcher_uses_bundled_node(self) -> None:
         """The staged compiler cannot fall back to an older Node from a target login shell."""
@@ -943,74 +990,375 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "escaping symlink"):
                 runner._stage_offline_project_dependencies(batch, repository, workspace)
 
-    def test_browser_runtime_is_copied_and_bound_to_isolated_home(self) -> None:
-        """Browser instructions and Node REPL trust stay inside the isolated home."""
+    def test_playwright_runtime_is_pinned_and_copied_to_isolated_home(self) -> None:
+        """The wrapper, package, and designated Chromium binary stay inside the run home."""
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
-            plugin = root / "plugin"
-            (plugin / "scripts").mkdir(parents=True)
-            (plugin / "scripts" / "browser-client.mjs").write_text("export {};", encoding="utf-8")
-            source_skill = plugin / "skills" / "control-in-app-browser"
-            source_skill.mkdir(parents=True)
-            (source_skill / "SKILL.md").write_text(
-                "Use <plugin root>/scripts/browser-client.mjs", encoding="utf-8"
+            package_root = root / "agent-tests"
+            (package_root / "runtime").mkdir(parents=True)
+            (package_root / "runtime" / "playwright-harness.mjs").write_text(
+                "export {};", encoding="utf-8"
             )
+            (package_root / "package.json").write_text(
+                json.dumps({"dependencies": {"playwright": "1.61.1"}}), encoding="utf-8"
+            )
+            (package_root / "package-lock.json").write_text(
+                json.dumps(
+                    {
+                        "packages": {
+                            "": {"dependencies": {"playwright": "1.61.1"}},
+                            "node_modules/playwright": {"version": "1.61.1"},
+                            "node_modules/playwright-core": {"version": "1.61.1"},
+                        }
+                    }
+                ),
+                encoding="utf-8",
+            )
+            for package in ("playwright", "playwright-core"):
+                source = package_root / "node_modules" / package
+                source.mkdir(parents=True)
+                (source / "package.json").write_text(
+                    json.dumps({"name": package, "version": "1.61.1"}), encoding="utf-8"
+                )
+            browser_root = root / "cache" / "chromium-1234"
+            browser_executable = browser_root / "chrome" / "Chromium"
+            browser_executable.parent.mkdir(parents=True)
+            browser_executable.write_text("fixture", encoding="utf-8")
             codex_home = root / "codex-home"
-            skill_root = codex_home / "skills"
-            skill_root.mkdir(parents=True)
-            app_resources = root / "ChatGPT.app" / "Contents" / "Resources"
-            (app_resources / "cua_node" / "bin").mkdir(parents=True)
-            for relative in ("cua_node/bin/node_repl", "cua_node/bin/node", "codex"):
-                executable = app_resources / relative
-                executable.write_text("fixture", encoding="utf-8")
-            computer_use_service = root / "plugin-cache" / "Codex Computer Use.app"
-            computer_use_service.mkdir(parents=True)
-            (computer_use_service / "fixture").write_text("service", encoding="utf-8")
+            codex_home.mkdir()
 
-            runtime = runner._stage_browser_runtime(
-                plugin,
+            runtime = runner._stage_playwright_runtime(
+                package_root,
                 codex_home,
-                skill_root,
-                app_resources,
-                computer_use_service,
+                browser_executable=browser_executable,
             )
-            staged_skill = skill_root / "control-in-app-browser" / "SKILL.md"
-            config = (codex_home / "config.toml").read_text(encoding="utf-8")
+            staged_config = json.loads((runtime / "runtime-config.json").read_text(encoding="utf-8"))
 
-            self.assertEqual(codex_home / "browser-runtime", runtime)
-            self.assertIn(str(runtime), staged_skill.read_text(encoding="utf-8"))
-            self.assertNotIn("<plugin root>", staged_skill.read_text(encoding="utf-8"))
-            self.assertIn('[mcp_servers.node_repl]', config)
-            self.assertIn('BROWSER_USE_AVAILABLE_BACKENDS = "iab"', config)
-            self.assertIn(f'CODEX_HOME = "{codex_home}"', config)
-            self.assertIn(f'NODE_REPL_TRUSTED_CODE_PATHS = "{codex_home}"', config)
-            self.assertIn(runner._sha256(runtime / "scripts" / "browser-client.mjs"), config)
-            self.assertIn(f'SKY_CUA_SERVICE_PATH = "{codex_home / "computer-use-service.app"}"', config)
-            self.assertTrue((codex_home / "computer-use-service.app" / "fixture").is_file())
-            self.assertNotIn("extension", config)
-            self.assertNotIn(str(Path.home()), config)
+            self.assertEqual(codex_home / "playwright-runtime", runtime)
+            self.assertEqual("1.61.1", staged_config["playwrightVersion"])
+            self.assertTrue((runtime / "playwright-harness.mjs").is_file())
+            self.assertTrue((runtime / "node_modules" / "playwright" / "package.json").is_file())
+            self.assertTrue((runtime / staged_config["chromiumExecutable"]).is_file())
+            self.assertNotIn(str(Path.home()), json.dumps(staged_config))
 
-    def test_browser_activity_audit_requires_iab_interaction_and_cleanup(self) -> None:
-        """A browser verdict needs an observed in-app tab interaction and close."""
+    def test_upload_interaction_separates_visible_label_from_synthetic_filename(self) -> None:
+        """A safe upload can name both the visible input and its synthetic file without overloading fields."""
         with tempfile.TemporaryDirectory() as temporary:
-            codex_home = Path(temporary)
+            interaction = Path(temporary) / "interaction.json"
+            interaction.write_text(
+                json.dumps(
+                    {
+                        "actions": [
+                            {
+                                "type": "setInputFiles",
+                                "label": "Attachment",
+                                "fileName": "synthetic.txt",
+                                "content": "synthetic fixture",
+                                "mimeType": "text/plain",
+                            }
+                        ]
+                    }
+                ),
+                encoding="utf-8",
+            )
+            wrapper = _RUNNER_PATH.parent / "runtime" / "playwright-harness.mjs"
+            validation = Path(temporary) / "validation.json"
+            completed = subprocess.run(
+                [
+                    str(runner._bundled_node_executable()),
+                    str(wrapper),
+                    "validate",
+                    "--scenario",
+                    "browser-suite:upload",
+                    "--interaction",
+                    str(interaction),
+                    "--receipt",
+                    str(validation),
+                ],
+                check=False,
+                text=True,
+                capture_output=True,
+            )
+            expected_digest = runner._sha256(interaction)
+            retained_validation = json.loads(validation.read_text(encoding="utf-8"))
+
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        validated = json.loads(completed.stdout)
+        self.assertEqual("validated", validated["status"])
+        self.assertEqual(1, validated["interaction"]["actionCount"])
+        self.assertEqual(expected_digest, validated["interaction"]["sha256"])
+        self.assertEqual(validated, retained_validation)
+        upload_fixture = (
+            _RUNNER_PATH.parent
+            / "dev-browser-operator"
+            / "fixtures"
+            / "browser-workflow"
+            / "upload.html"
+        ).read_text(encoding="utf-8")
+        self.assertIn('<label for="file">Attachment</label>', upload_fixture)
+
+    def test_playwright_interaction_validation_rejects_external_navigation(self) -> None:
+        """The declarative target contract cannot express a non-loopback navigation."""
+        with tempfile.TemporaryDirectory() as temporary:
+            interaction = Path(temporary) / "interaction.json"
+            interaction.write_text(
+                json.dumps({"actions": [{"type": "goto", "route": "https://example.invalid"}]}),
+                encoding="utf-8",
+            )
+            validation = Path(temporary) / "validation.json"
+            completed = subprocess.run(
+                [
+                    str(runner._bundled_node_executable()),
+                    str(_RUNNER_PATH.parent / "runtime" / "playwright-harness.mjs"),
+                    "validate",
+                    "--scenario",
+                    "browser-suite:external",
+                    "--interaction",
+                    str(interaction),
+                    "--receipt",
+                    str(validation),
+                ],
+                check=False,
+                text=True,
+                capture_output=True,
+            )
+
+        self.assertNotEqual(0, completed.returncode)
+        self.assertIn("loopback-relative route", completed.stderr)
+        self.assertFalse(validation.exists())
+
+    def test_accessibility_interaction_can_observe_focus_label_and_recovery_state(self) -> None:
+        """The safe schema exposes the seeded focus, progress-label, and recovery-step observations."""
+        with tempfile.TemporaryDirectory() as temporary:
+            interaction = Path(temporary) / "interaction.json"
+            interaction.write_text(
+                json.dumps(
+                    {
+                        "actions": [
+                            {"type": "observeAttribute", "text": "1 / 3", "attribute": "aria-label"},
+                            {"type": "click", "role": "button", "name": "Continue"},
+                            {"type": "observeFocused", "placeholder": "Email"},
+                            {"type": "click", "role": "link", "name": "Recover setup"},
+                            {"type": "expectVisible", "text": "Recovery always returns to step one."},
+                        ]
+                    }
+                ),
+                encoding="utf-8",
+            )
+            validation = Path(temporary) / "validation.json"
+            completed = subprocess.run(
+                [
+                    str(runner._bundled_node_executable()),
+                    str(_RUNNER_PATH.parent / "runtime" / "playwright-harness.mjs"),
+                    "validate",
+                    "--scenario",
+                    "browser-suite:accessibility",
+                    "--interaction",
+                    str(interaction),
+                    "--receipt",
+                    str(validation),
+                ],
+                check=False,
+                text=True,
+                capture_output=True,
+            )
+
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        validated = json.loads(completed.stdout)
+        self.assertEqual("validated", validated["status"])
+        self.assertEqual(5, validated["interaction"]["actionCount"])
+
+    def test_browser_activity_audit_requires_target_authored_playwright_receipt(self) -> None:
+        """A browser verdict needs target-authored interaction evidence and explicit closure receipts."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            codex_home = root / "codex-home"
+            checkpoint_root = root / "retained-checkpoints"
+            source_checkpoint_root = root / "source-run" / "checkpoints"
+            codex_home.mkdir()
             session_id = "target-session"
             rollout = codex_home / f"rollout-{session_id}.jsonl"
+            interaction = checkpoint_root / "browser-suite" / "happy" / "artifacts" / "browser-interaction.json"
+            configured_interaction = (
+                source_checkpoint_root / "browser-suite" / "happy" / "artifacts" / "browser-interaction.json"
+            )
+            interaction.parent.mkdir(parents=True)
+            interaction.write_text(
+                json.dumps({"actions": [{"type": "click", "role": "button", "name": "Save"}]}),
+                encoding="utf-8",
+            )
+            receipt = checkpoint_root / "browser-suite" / "happy" / "browser-runtime" / "receipt.json"
+            receipt.parent.mkdir(parents=True)
+            validation = receipt.parent / "validation.json"
+            configured_validation = (
+                source_checkpoint_root / "browser-suite" / "happy" / "browser-runtime" / "validation.json"
+            )
+            validation.write_text(
+                json.dumps(
+                    {
+                        "schema": "dev-methodology-playwright-interaction-validation",
+                        "version": 1,
+                        "status": "validated",
+                        "scenario": "browser-suite:happy",
+                        "interaction": {
+                            "path": str(configured_interaction),
+                            "sha256": runner._sha256(interaction),
+                            "actionCount": 1,
+                        },
+                        "validatedAt": "2026-07-17T00:00:00.750Z",
+                    }
+                ),
+                encoding="utf-8",
+            )
+            for artifact, content in (
+                ("trace.zip", b"trace"),
+                ("final.png", b"image"),
+                ("console.json", b"[]\n"),
+                ("network.json", b"[]\n"),
+                ("service.json", b"[]\n"),
+            ):
+                (receipt.parent / artifact).write_bytes(content)
+            runtime_root = codex_home / "playwright-runtime"
+            runtime_root.mkdir()
+            fixture = runtime_root / "fixture-snapshots" / "browser-suite" / "happy"
+            fixture.mkdir(parents=True)
+            fixture_binding = runner._fixture_root_binding(fixture, runtime_root)
+            runtime_config_path = runtime_root / "runtime-config.json"
+            runtime_config = {
+                "playwrightVersion": "1.61.1",
+                "scenarios": {
+                    "browser-suite:happy": {
+                        "fixtureRoot": fixture_binding["canonicalRoot"],
+                        "fixtureBinding": fixture_binding,
+                        "interactionPath": str(configured_interaction),
+                        "validationReceiptPath": str(configured_validation),
+                        "broker": {"id": "broker-1", "port": 43117},
+                    }
+                },
+            }
+            runtime_config_path.write_text(
+                json.dumps(
+                    runtime_config
+                ),
+                encoding="utf-8",
+            )
+            receipt.write_text(
+                json.dumps(
+                    {
+                        "schema": "dev-methodology-isolated-playwright-evidence",
+                        "version": 1,
+                        "status": "completed",
+                        "scenario": "browser-suite:happy",
+                        "targetIdentity": "target_agent",
+                        "fixtureRoot": fixture_binding["canonicalRoot"],
+                        "fixtureBinding": fixture_binding,
+                        "selectedPort": 43117,
+                        "interaction": {
+                            "path": str(configured_interaction),
+                            "sha256": runner._sha256(interaction),
+                            "actions": [
+                                {"type": "initialNavigation"},
+                                {"type": "click"},
+                            ],
+                        },
+                        "runtime": {
+                            "playwrightVersion": "1.61.1",
+                            "browserId": "browser-1",
+                            "contextId": "context-1",
+                            "pageId": "page-1",
+                        },
+                        "broker": {"id": "broker-1", "port": 43117},
+                        "network": {"nonLoopbackRequests": 0, "blockedRequests": 0},
+                        "evidence": {
+                            "trace": "trace.zip",
+                            "screenshot": "final.png",
+                            "console": "console.json",
+                            "network": "network.json",
+                            "service": "service.json",
+                        },
+                        "cleanup": {
+                            resource: {
+                                "created": True,
+                                "requested": True,
+                                "requestedAt": "2026-07-17T00:00:02Z",
+                                "closed": True,
+                                "closedAt": "2026-07-17T00:00:03Z",
+                                "disposition": "closed",
+                            }
+                            for resource in ("page", "context", "browser", "server")
+                        },
+                    }
+                ),
+                encoding="utf-8",
+            )
+            (receipt.parent / "broker.json").write_text(
+                json.dumps(
+                    {
+                        "schema": "dev-methodology-playwright-broker-evidence",
+                        "version": 1,
+                        "status": "completed",
+                        "scenario": "browser-suite:happy",
+                        "brokerId": "broker-1",
+                        "selectedPort": 43117,
+                        "request": {
+                            "scenario": "browser-suite:happy",
+                            "interactionPath": str(configured_interaction),
+                            "interactionSha256": runner._sha256(interaction),
+                            "validationReceiptPath": str(configured_validation),
+                            "validationReceiptSha256": runner._sha256(validation),
+                        },
+                        "browserReceiptSha256": runner._sha256(receipt),
+                        "cleanup": {
+                            "server": {
+                                "created": True,
+                                "requested": True,
+                                "closed": True,
+                                "disposition": "closed",
+                            }
+                        },
+                    }
+                ),
+                encoding="utf-8",
+            )
             events = [
                 {"timestamp": "2026-07-17T00:00:00Z", "type": "session_meta", "payload": {"id": session_id}},
+                {
+                    "timestamp": "2026-07-17T00:00:00.500Z",
+                    "type": "response_item",
+                    "payload": {
+                        "type": "custom_tool_call",
+                        "name": "apply_patch",
+                        "input": f"*** Add File: {configured_interaction}\n+{{\"actions\":[]}}",
+                    },
+                },
+                {
+                    "timestamp": "2026-07-17T00:00:00.500Z",
+                    "type": "response_item",
+                    "payload": {
+                        "type": "custom_tool_call",
+                        "name": "apply_patch",
+                        "input": f"*** Add File: {configured_interaction}\n+{{\"actions\":[{{\"type\":\"click\"}}]}}",
+                    },
+                },
+                {
+                    "timestamp": "2026-07-17T00:00:00.750Z",
+                    "type": "response_item",
+                    "payload": {
+                        "type": "custom_tool_call",
+                        "name": "exec",
+                        "input": "node /runtime/playwright-harness.mjs validate --scenario browser-suite:happy "
+                        f"--interaction {configured_interaction} --receipt {configured_validation}",
+                    },
+                },
                 {
                     "timestamp": "2026-07-17T00:00:01Z",
                     "type": "response_item",
                     "payload": {
                         "type": "custom_tool_call",
                         "name": "exec",
-                        "input": (
-                            "await tools.mcp__node_repl__js({code: `"
-                            "globalThis.iab = await agent.browsers.get('iab'); "
-                            "globalThis.tab = await iab.tabs.new(); "
-                            "await tab.goto('http://127.0.0.1:43117/'); "
-                            "await tab.playwright.domSnapshot(); await tab.close();`});"
-                        ),
+                        "input": "node /runtime/playwright-harness.mjs client --scenario browser-suite:happy "
+                        f"--interaction {configured_interaction} --endpoint http://127.0.0.1:43117 "
+                        f"--validation-receipt {configured_validation} --token-file /runtime/broker.token",
                     },
                 },
             ]
@@ -1032,84 +1380,109 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                 batch,
                 identity,
                 {"runs": [self._suite_report("browser-suite", "PASS")]},
+                checkpoint_root,
             )
 
             self.assertEqual(1, audit["targetSessions"])
-            self.assertEqual(1, audit["nodeReplCalls"])
-            self.assertEqual(0, audit["blockedTargetSessions"])
+            self.assertEqual(1, audit["playwrightRuns"])
+            self.assertEqual(4, audit["closedResources"])
+            runtime_config["scenarios"]["browser-suite:happy"]["interactionPath"] = str(
+                source_checkpoint_root / "browser-suite" / "happy" / "artifacts" / "wrong.json"
+            )
+            runtime_config_path.write_text(json.dumps(runtime_config), encoding="utf-8")
+            with self.assertRaisesRegex(RuntimeError, "declared interaction"):
+                runner._audit_browser_activity(
+                    codex_home,
+                    batch,
+                    identity,
+                    {"runs": [self._suite_report("browser-suite", "PASS")]},
+                    checkpoint_root,
+                )
 
-    def test_browser_activity_audit_preserves_verified_unavailable_backend_block(self) -> None:
-        """A detached CLI can report BLOCKED from the retained unavailable-backend result."""
+    def test_browser_activity_audit_rejects_missing_runtime_receipt(self) -> None:
+        """Target prose cannot replace missing runtime evidence."""
         with tempfile.TemporaryDirectory() as temporary:
-            codex_home = Path(temporary)
+            root = Path(temporary)
+            codex_home = root / "codex-home"
+            codex_home.mkdir()
+            interaction = root / "checkpoints" / "browser-suite" / "happy" / "artifacts" / "browser-interaction.json"
+            interaction.parent.mkdir(parents=True)
+            interaction.write_text('{"actions": []}', encoding="utf-8")
+            validation = root / "checkpoints" / "browser-suite" / "happy" / "browser-runtime" / "validation.json"
+            validation.parent.mkdir(parents=True)
+            validation.write_text(
+                json.dumps(
+                    {
+                        "schema": "dev-methodology-playwright-interaction-validation",
+                        "version": 1,
+                        "status": "validated",
+                        "scenario": "browser-suite:happy",
+                        "interaction": {
+                            "path": str(interaction),
+                            "sha256": runner._sha256(interaction),
+                            "actionCount": 0,
+                        },
+                        "validatedAt": "2026-07-17T00:00:00.750Z",
+                    }
+                ),
+                encoding="utf-8",
+            )
             session_id = "target-session"
             rollout = codex_home / f"rollout-{session_id}.jsonl"
+            runtime_root = codex_home / "playwright-runtime"
+            runtime_root.mkdir()
+            (runtime_root / "runtime-config.json").write_text(
+                json.dumps(
+                    {
+                        "playwrightVersion": "1.61.1",
+                        "scenarios": {
+                            "browser-suite:happy": {
+                                "fixtureRoot": "/workspace/fixture",
+                                "interactionPath": str(interaction),
+                                "validationReceiptPath": str(validation),
+                                "broker": {"id": "broker-1", "port": 43117},
+                            }
+                        },
+                    }
+                ),
+                encoding="utf-8",
+            )
             events = [
                 {"timestamp": "2026-07-17T00:00:00Z", "type": "session_meta", "payload": {"id": session_id}},
+                {
+                    "timestamp": "2026-07-17T00:00:00.500Z",
+                    "type": "response_item",
+                    "payload": {
+                        "type": "custom_tool_call",
+                        "name": "apply_patch",
+                        "input": f"*** Add File: {interaction}\n+{{\"actions\":[]}}",
+                    },
+                },
+                {
+                    "timestamp": "2026-07-17T00:00:00.750Z",
+                    "type": "response_item",
+                    "payload": {
+                        "type": "custom_tool_call",
+                        "name": "exec",
+                        "input": "node /runtime/playwright-harness.mjs validate --scenario browser-suite:happy "
+                        f"--interaction {interaction} --receipt {validation}",
+                    },
+                },
                 {
                     "timestamp": "2026-07-17T00:00:01Z",
                     "type": "response_item",
                     "payload": {
                         "type": "custom_tool_call",
                         "name": "exec",
-                        "input": (
-                            "const r = await tools.mcp__node_repl__js({\"code\":\""
-                            "await agent.browsers.get(\\\"iab\\\");\"});"
-                        ),
-                    },
-                },
-                {
-                    "timestamp": "2026-07-17T00:00:02Z",
-                    "type": "response_item",
-                    "payload": {
-                        "type": "custom_tool_call_output",
-                        "output": "Browser is not available: iab",
+                        "input": "node /runtime/playwright-harness.mjs client --scenario browser-suite:happy "
+                        f"--interaction {interaction} --endpoint http://127.0.0.1:43117 "
+                        f"--validation-receipt {validation} --token-file /runtime/broker.token",
                     },
                 },
             ]
             rollout.write_text("\n".join(json.dumps(event) for event in events) + "\n", encoding="utf-8")
 
-            audit = runner._audit_browser_activity(
-                codex_home,
-                (self._browser_run_spec("browser-suite"),),
-                {
-                    "scenarioBindings": [
-                        {
-                            "suite": "browser-suite",
-                            "scenario": "happy",
-                            "kind": "target",
-                            "sessionId": session_id,
-                        }
-                    ]
-                },
-                {"runs": [self._suite_report("browser-suite", "BLOCKED")]},
-            )
-
-            self.assertEqual(1, audit["blockedTargetSessions"])
-
-    def test_browser_activity_audit_rejects_external_browser_selection(self) -> None:
-        """Browser evidence cannot select Chrome or an external destination."""
-        with tempfile.TemporaryDirectory() as temporary:
-            codex_home = Path(temporary)
-            session_id = "target-session"
-            rollout = codex_home / f"rollout-{session_id}.jsonl"
-            events = [
-                {"timestamp": "2026-07-17T00:00:00Z", "type": "session_meta", "payload": {"id": session_id}},
-                {
-                    "timestamp": "2026-07-17T00:00:01Z",
-                    "type": "response_item",
-                    "payload": {
-                        "type": "function_call",
-                        "name": "mcp__node_repl__js",
-                        "arguments": json.dumps(
-                            {"code": "await agent.browsers.get('extension'); await tab.goto('https://example.com')"}
-                        ),
-                    },
-                },
-            ]
-            rollout.write_text("\n".join(json.dumps(event) for event in events) + "\n", encoding="utf-8")
-
-            with self.assertRaisesRegex(RuntimeError, "external browser or destination"):
+            with self.assertRaisesRegex(RuntimeError, "receipt is missing"):
                 runner._audit_browser_activity(
                     codex_home,
                     (self._browser_run_spec("browser-suite"),),
@@ -1124,7 +1497,635 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                         ]
                     },
                     {"runs": [self._suite_report("browser-suite", "BLOCKED")]},
+                    root / "checkpoints",
                 )
+
+    def test_playwright_preflight_failure_blocks_model_and_preserves_cleanup_evidence(self) -> None:
+        """A launch failure returns infrastructure evidence without invoking coordinator or target."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            result_root = root / "results"
+            run = self._browser_run_spec("browser-suite")
+
+            def stage_batch(batch: object, run_root: Path) -> tuple[Path, Path, tuple[object, ...]]:
+                workspace = run_root / "workspace"
+                codex_home = run_root / "codex-home"
+                workspace.mkdir()
+                fixture = workspace / "evals" / "agent-tests" / "browser-suite" / "fixture"
+                fixture.mkdir(parents=True)
+                (fixture / "index.html").write_text("<h1>Ready</h1>", encoding="utf-8")
+                runtime = codex_home / "playwright-runtime"
+                runtime.mkdir(parents=True)
+                (runtime / "runtime-config.json").write_text(
+                    json.dumps(
+                        {
+                            "schema": "dev-methodology-isolated-playwright-runtime",
+                            "version": 1,
+                            "playwrightVersion": "1.61.1",
+                            "chromiumExecutable": "browsers/chromium",
+                            "scenarios": {},
+                        }
+                    ),
+                    encoding="utf-8",
+                )
+                return workspace, codex_home, ()
+
+            with (
+                mock.patch.object(runner, "_stage_batch", side_effect=stage_batch),
+                mock.patch.object(runner, "_bundled_codex_executable", return_value=Path("/bin/false")),
+                mock.patch.object(runner, "_bundled_node_executable", return_value=Path("/bin/node")),
+                mock.patch.object(runner, "_controlled_environment", return_value={}),
+                mock.patch.object(
+                    runner,
+                    "_preflight_runtime_capabilities",
+                    side_effect=RuntimeError("Chromium launch failed cleanup=clean"),
+                ),
+                mock.patch.object(runner, "_audit_workspace_cleanup", return_value="clean"),
+                mock.patch.object(runner, "_run_process") as run_process,
+            ):
+                result = runner._run_live_batch((run,), 1, result_root, timeout_seconds=1)
+
+            self.assertEqual("infrastructure-failed", result["status"])
+            self.assertIsNone(result["processExitCode"])
+            self.assertFalse(result["identityAudit"]["targetInvoked"])
+            self.assertEqual("preserved", result["browserAudit"]["cleanup"])
+            run_process.assert_not_called()
+            self.assertTrue(Path(result["evidence"]["stderr"]).is_file())
+            self.assertTrue(Path(result["evidence"]["checkpoints"]).is_dir())
+
+    def test_playwright_preflight_timeout_reaps_a_hung_process_tree(self) -> None:
+        """A dedicated preflight timeout terminates, kills when needed, and reaps detached descendants."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            codex_home = root / "codex-home"
+            runtime = codex_home / "playwright-runtime"
+            runtime.mkdir(parents=True)
+            pid_file = root / "child.pid"
+            harness = runtime / "playwright-harness.mjs"
+            harness.write_text(
+                "import os, signal, subprocess, sys, time\n"
+                "signal.signal(signal.SIGTERM, signal.SIG_IGN)\n"
+                "child = subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(60)'], start_new_session=True)\n"
+                "open(os.environ['HANG_PID_FILE'], 'w', encoding='utf-8').write(str(child.pid))\n"
+                "time.sleep(60)\n",
+                encoding="utf-8",
+            )
+            (runtime / "runtime-config.json").write_text(
+                json.dumps(
+                    {
+                        "schema": "dev-methodology-isolated-playwright-runtime",
+                        "version": 1,
+                        "scenarios": {"browser-suite:hang": {}},
+                    }
+                ),
+                encoding="utf-8",
+            )
+            environment = dict(os.environ)
+            environment["HANG_PID_FILE"] = str(pid_file)
+            with (
+                mock.patch.object(runner, "_bundled_node_executable", return_value=Path(sys.executable)),
+                self.assertRaisesRegex(RuntimeError, "exit=124.*cleanup=") as raised,
+            ):
+                runner._preflight_playwright_scenarios(
+                    codex_home,
+                    environment,
+                    timeout_seconds=0.25,
+                )
+            child_pid = int(pid_file.read_text(encoding="utf-8"))
+
+        self.assertIn("exit=124", str(raised.exception))
+        self.assertIn("termination=killed-after-grace", str(raised.exception))
+        self.assertIn("cleanup=failed-retained-processes-recovered", str(raised.exception))
+        self.assertIn("process timed out", str(raised.exception))
+        self.assertFalse(runner._pid_exists(child_pid))
+
+    def test_playwright_broker_rejects_wrong_authentication_without_launching_browser(self) -> None:
+        """A caller without the scenario's one-time token cannot reach Chromium execution."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            codex_home, interaction = self._write_playwright_broker_fixture(root, ("browser-suite:happy",))
+            (root / "wrong-token").write_text("x" * 48, encoding="utf-8")
+            brokers = runner._start_playwright_brokers(codex_home, dict(os.environ))
+            broker = brokers[0]
+            completed = subprocess.run(
+                [
+                    str(runner._bundled_node_executable()),
+                    str(codex_home / "playwright-runtime" / "playwright-harness.mjs"),
+                    "client",
+                    "--scenario",
+                    broker.scenario,
+                    "--interaction",
+                    str(interaction[broker.scenario]),
+                    "--endpoint",
+                    f"http://127.0.0.1:{broker.port}",
+                    "--validation-receipt",
+                    str(broker.receipt_path.parent / "validation.json"),
+                    "--token-file",
+                    str(root / "wrong-token"),
+                ],
+                check=False,
+                text=True,
+                capture_output=True,
+            )
+            runner._stop_playwright_brokers(brokers, require_request=False)
+            receipt = json.loads(broker.receipt_path.read_text(encoding="utf-8"))
+
+        self.assertNotEqual(0, completed.returncode)
+        self.assertIn("authentication failed", completed.stderr)
+        self.assertEqual("rejected", receipt["status"])
+        self.assertIsNone(receipt["browserReceiptSha256"])
+        self.assertTrue(receipt["cleanup"]["server"]["closed"])
+
+    def test_playwright_broker_rejects_interaction_path_outside_its_scenario(self) -> None:
+        """Valid broker authority cannot be reused for another interaction checkpoint."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            codex_home, interaction = self._write_playwright_broker_fixture(root, ("browser-suite:happy",))
+            other = root / "other-interaction.json"
+            other.write_text('{"actions": []}', encoding="utf-8")
+            other_validation = root / "other-validation.json"
+            subprocess.run(
+                [
+                    str(runner._bundled_node_executable()),
+                    str(codex_home / "playwright-runtime" / "playwright-harness.mjs"),
+                    "validate",
+                    "--scenario",
+                    "browser-suite:happy",
+                    "--interaction",
+                    str(other),
+                    "--receipt",
+                    str(other_validation),
+                ],
+                check=True,
+                text=True,
+                capture_output=True,
+            )
+            brokers = runner._start_playwright_brokers(codex_home, dict(os.environ))
+            broker = brokers[0]
+            completed = subprocess.run(
+                [
+                    str(runner._bundled_node_executable()),
+                    str(codex_home / "playwright-runtime" / "playwright-harness.mjs"),
+                    "client",
+                    "--scenario",
+                    broker.scenario,
+                    "--interaction",
+                    str(other),
+                    "--endpoint",
+                    f"http://127.0.0.1:{broker.port}",
+                    "--validation-receipt",
+                    str(other_validation),
+                    "--token-file",
+                    str(broker.token_path),
+                ],
+                check=False,
+                text=True,
+                capture_output=True,
+            )
+            runner._stop_playwright_brokers(brokers, require_request=False)
+            receipt = json.loads(broker.receipt_path.read_text(encoding="utf-8"))
+
+        self.assertNotEqual(0, completed.returncode)
+        self.assertIn("interaction path, or validation receipt path is invalid", completed.stderr)
+        self.assertEqual("rejected", receipt["status"])
+        self.assertIsNone(receipt["request"])
+        self.assertTrue(interaction[broker.scenario].is_absolute())
+
+    def test_failed_target_validation_does_not_consume_the_one_shot_broker(self) -> None:
+        """Malformed target JSON removes stale validation evidence and leaves the broker available for correction."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            codex_home, interactions = self._write_playwright_broker_fixture(root, ("browser-suite:happy",))
+            interaction = interactions["browser-suite:happy"]
+            valid_bytes = interaction.read_bytes()
+            broker = runner._start_playwright_brokers(codex_home, dict(os.environ))[0]
+            validation = broker.receipt_path.parent / "validation.json"
+            interaction.write_text('{"actions":[{"action":"click"}]}', encoding="utf-8")
+            failed = subprocess.run(
+                [
+                    str(runner._bundled_node_executable()),
+                    str(codex_home / "playwright-runtime" / "playwright-harness.mjs"),
+                    "validate",
+                    "--scenario",
+                    broker.scenario,
+                    "--interaction",
+                    str(interaction),
+                    "--receipt",
+                    str(validation),
+                ],
+                check=False,
+                text=True,
+                capture_output=True,
+            )
+            still_running = broker.process.poll() is None
+            browser_not_started = not (broker.receipt_path.parent / "receipt.json").exists()
+            interaction.write_bytes(valid_bytes)
+            subprocess.run(
+                [
+                    str(runner._bundled_node_executable()),
+                    str(codex_home / "playwright-runtime" / "playwright-harness.mjs"),
+                    "validate",
+                    "--scenario",
+                    broker.scenario,
+                    "--interaction",
+                    str(interaction),
+                    "--receipt",
+                    str(validation),
+                ],
+                check=True,
+                text=True,
+                capture_output=True,
+            )
+            corrected = subprocess.run(
+                [
+                    str(runner._bundled_node_executable()),
+                    str(codex_home / "playwright-runtime" / "playwright-harness.mjs"),
+                    "client",
+                    "--scenario",
+                    broker.scenario,
+                    "--interaction",
+                    str(interaction),
+                    "--endpoint",
+                    f"http://127.0.0.1:{broker.port}",
+                    "--validation-receipt",
+                    str(validation),
+                    "--token-file",
+                    str(broker.token_path),
+                ],
+                check=False,
+                text=True,
+                capture_output=True,
+                timeout=30,
+            )
+            runner._stop_playwright_brokers((broker,), require_request=True)
+
+        self.assertNotEqual(0, failed.returncode)
+        self.assertIn("Unsupported declarative browser action", failed.stderr)
+        self.assertTrue(still_running)
+        self.assertTrue(browser_not_started)
+        self.assertEqual(0, corrected.returncode, corrected.stderr)
+
+    def test_playwright_brokers_use_unique_loopback_ports_and_close_when_unused(self) -> None:
+        """Concurrent scenarios cannot share broker identity, port, or server lifecycle."""
+        with tempfile.TemporaryDirectory() as temporary:
+            codex_home, _ = self._write_playwright_broker_fixture(
+                Path(temporary),
+                ("browser-suite:first", "browser-suite:second"),
+            )
+            brokers = runner._start_playwright_brokers(codex_home, dict(os.environ))
+            identities = {(broker.broker_id, broker.port) for broker in brokers}
+            evidence = runner._stop_playwright_brokers(brokers, require_request=False)
+            receipts = [json.loads(broker.receipt_path.read_text(encoding="utf-8")) for broker in brokers]
+
+        self.assertEqual(2, len(identities))
+        self.assertEqual(2, len(evidence))
+        self.assertTrue(all(receipt["status"] == "closed-without-request" for receipt in receipts))
+        self.assertTrue(all(receipt["cleanup"]["server"]["closed"] for receipt in receipts))
+
+    def test_ephemeral_broker_token_is_absent_from_commands_and_retained_evidence(self) -> None:
+        """Broker credentials travel through a transient file and are redacted from every durable capture."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            codex_home, _ = self._write_playwright_broker_fixture(root, ("browser-suite:happy",))
+            broker = runner._start_playwright_brokers(codex_home, dict(os.environ))[0]
+            secret = broker.token
+            prompt = runner._coordinator_prompt(
+                (self._browser_run_spec("browser-suite"),),
+                root / "checkpoints",
+                root / "fixtures",
+                "run-identity",
+                playwright_runtime_root=codex_home / "playwright-runtime",
+                playwright_brokers={broker.scenario: broker},
+            )
+            process_arguments = json.dumps(broker.process.args)
+            rollout = codex_home / "sessions" / "rollout-secret.jsonl"
+            rollout.parent.mkdir()
+            rollout.write_text(json.dumps({"token": secret}) + "\n", encoding="utf-8")
+            runner._stop_playwright_brokers((broker,), require_request=False)
+            retained = root / "retained-sessions"
+            runner._retain_sessions(codex_home, retained, (secret,))
+            durable_text = "\n".join(
+                (
+                    prompt,
+                    process_arguments,
+                    (codex_home / "playwright-runtime" / "runtime-config.json").read_text(encoding="utf-8"),
+                    broker.receipt_path.read_text(encoding="utf-8"),
+                    *(path.read_text(encoding="utf-8") for path in retained.rglob("*.jsonl")),
+                    runner._redact_runtime_secrets(f"stderr {secret}", (secret,)),
+                )
+            )
+            token_removed = not broker.token_path.exists()
+
+        self.assertNotIn(secret, durable_text)
+        self.assertIn(broker.token_digest, durable_text)
+        self.assertTrue(token_removed)
+
+    def test_playwright_target_client_reaches_runner_broker_and_closes_real_browser(self) -> None:
+        """The bounded client can trigger a real fresh browser outside the target command sandbox."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            codex_home, interactions = self._write_playwright_broker_fixture(root, ("browser-suite:happy",))
+            broker = runner._start_playwright_brokers(codex_home, dict(os.environ))[0]
+            completed = subprocess.run(
+                [
+                    str(runner._bundled_node_executable()),
+                    str(codex_home / "playwright-runtime" / "playwright-harness.mjs"),
+                    "client",
+                    "--scenario",
+                    broker.scenario,
+                    "--interaction",
+                    str(interactions[broker.scenario]),
+                    "--endpoint",
+                    f"http://127.0.0.1:{broker.port}",
+                    "--validation-receipt",
+                    str(broker.receipt_path.parent / "validation.json"),
+                    "--token-file",
+                    str(broker.token_path),
+                ],
+                check=False,
+                text=True,
+                capture_output=True,
+                timeout=30,
+            )
+            evidence = runner._stop_playwright_brokers((broker,), require_request=True)
+            browser_receipt = json.loads(
+                (broker.receipt_path.parent / "receipt.json").read_text(encoding="utf-8")
+            )
+
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        self.assertEqual("completed", json.loads(completed.stdout)["status"])
+        self.assertEqual(1, len(evidence))
+        self.assertEqual({"id": broker.broker_id, "port": broker.port}, browser_receipt["broker"])
+        self.assertTrue(all(value["closed"] for value in browser_receipt["cleanup"].values()))
+
+    def test_playwright_broker_rejects_fixture_root_swap_after_startup(self) -> None:
+        """A protected fixture snapshot cannot be replaced with an attacker-controlled symlink after readiness."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            codex_home, interactions = self._write_playwright_broker_fixture(root, ("browser-suite:happy",))
+            runtime_config = json.loads(
+                (codex_home / "playwright-runtime" / "runtime-config.json").read_text(encoding="utf-8")
+            )
+            scenario = runtime_config["scenarios"]["browser-suite:happy"]
+            configured_fixture = Path(scenario["fixtureBinding"]["configuredPath"])
+            broker = runner._start_playwright_brokers(codex_home, dict(os.environ))[0]
+            original_fixture = configured_fixture.with_name(f"{configured_fixture.name}-original")
+            configured_fixture.rename(original_fixture)
+            outside_fixture = root / "attacker-fixture"
+            outside_fixture.mkdir()
+            outside_marker = "ATTACKER CONTROLLED FIXTURE"
+            (outside_fixture / "index.html").write_text(
+                f"<!doctype html><html><body><h1>{outside_marker}</h1></body></html>",
+                encoding="utf-8",
+            )
+            configured_fixture.symlink_to(outside_fixture, target_is_directory=True)
+            completed = subprocess.run(
+                [
+                    str(runner._bundled_node_executable()),
+                    str(codex_home / "playwright-runtime" / "playwright-harness.mjs"),
+                    "client",
+                    "--scenario",
+                    broker.scenario,
+                    "--interaction",
+                    str(interactions[broker.scenario]),
+                    "--endpoint",
+                    f"http://127.0.0.1:{broker.port}",
+                    "--validation-receipt",
+                    str(broker.receipt_path.parent / "validation.json"),
+                    "--token-file",
+                    str(broker.token_path),
+                ],
+                check=False,
+                text=True,
+                capture_output=True,
+                timeout=30,
+            )
+            runner._stop_playwright_brokers((broker,), require_request=False)
+            broker_receipt = json.loads(broker.receipt_path.read_text(encoding="utf-8"))
+            browser_receipt_exists = (broker.receipt_path.parent / "receipt.json").exists()
+            retained_evidence = "\n".join(
+                path.read_text(encoding="utf-8", errors="replace")
+                for path in broker.receipt_path.parent.glob("*.json")
+            )
+
+        self.assertNotEqual(0, completed.returncode)
+        self.assertIn("Configured fixture root was replaced", completed.stderr)
+        self.assertEqual("failed", broker_receipt["status"])
+        self.assertEqual(1, broker_receipt["requestAccounting"]["consumed"])
+        self.assertIsNone(broker_receipt["browserReceiptSha256"])
+        self.assertFalse(browser_receipt_exists)
+        self.assertNotIn(outside_marker, retained_evidence)
+
+    def test_concurrent_playwright_clients_keep_browser_and_port_identity_isolated(self) -> None:
+        """Concurrent scenarios receive disjoint brokers, fixture ports, browsers, contexts, and pages."""
+        with tempfile.TemporaryDirectory() as temporary:
+            codex_home, interactions = self._write_playwright_broker_fixture(
+                Path(temporary),
+                ("browser-suite:first", "browser-suite:second"),
+            )
+            brokers = runner._start_playwright_brokers(codex_home, dict(os.environ))
+            processes = [
+                subprocess.Popen(
+                    [
+                        str(runner._bundled_node_executable()),
+                        str(codex_home / "playwright-runtime" / "playwright-harness.mjs"),
+                        "client",
+                        "--scenario",
+                        broker.scenario,
+                        "--interaction",
+                        str(interactions[broker.scenario]),
+                        "--endpoint",
+                        f"http://127.0.0.1:{broker.port}",
+                        "--validation-receipt",
+                        str(broker.receipt_path.parent / "validation.json"),
+                        "--token-file",
+                        str(broker.token_path),
+                    ],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                )
+                for broker in brokers
+            ]
+            completed = [process.communicate(timeout=30) for process in processes]
+            evidence = runner._stop_playwright_brokers(brokers, require_request=True)
+            receipts = [
+                json.loads((broker.receipt_path.parent / "receipt.json").read_text(encoding="utf-8"))
+                for broker in brokers
+            ]
+
+        self.assertTrue(all(process.returncode == 0 for process in processes), completed)
+        self.assertEqual(2, len(evidence))
+        self.assertEqual(2, len({receipt["selectedPort"] for receipt in receipts}))
+        self.assertEqual(2, len({receipt["runtime"]["browserId"] for receipt in receipts}))
+        self.assertEqual(2, len({receipt["runtime"]["contextId"] for receipt in receipts}))
+        self.assertEqual(2, len({receipt["runtime"]["pageId"] for receipt in receipts}))
+        self.assertTrue(
+            all(all(value["closed"] for value in receipt["cleanup"].values()) for receipt in receipts)
+        )
+
+    def test_same_broker_concurrent_valid_clients_consume_exactly_one_launch(self) -> None:
+        """An atomic validation reservation prevents two valid clients from sharing one evidence root."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            codex_home, interactions = self._write_playwright_broker_fixture(root, ("browser-suite:happy",))
+            interaction = interactions["browser-suite:happy"]
+            interaction.write_bytes(interaction.read_bytes() + (b" " * (8 * 1024 * 1024)))
+            validation = root / "evidence-0" / "validation.json"
+            subprocess.run(
+                [
+                    str(runner._bundled_node_executable()),
+                    str(codex_home / "playwright-runtime" / "playwright-harness.mjs"),
+                    "validate",
+                    "--scenario",
+                    "browser-suite:happy",
+                    "--interaction",
+                    str(interaction),
+                    "--receipt",
+                    str(validation),
+                ],
+                check=True,
+                text=True,
+                capture_output=True,
+            )
+            broker = runner._start_playwright_brokers(codex_home, dict(os.environ))[0]
+            commands = [
+                subprocess.Popen(
+                    [
+                        str(runner._bundled_node_executable()),
+                        str(codex_home / "playwright-runtime" / "playwright-harness.mjs"),
+                        "client",
+                        "--scenario",
+                        broker.scenario,
+                        "--interaction",
+                        str(interaction),
+                        "--endpoint",
+                        f"http://127.0.0.1:{broker.port}",
+                        "--validation-receipt",
+                        str(validation),
+                        "--token-file",
+                        str(broker.token_path),
+                    ],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                )
+                for _ in range(8)
+            ]
+            outputs = [process.communicate(timeout=30) for process in commands]
+            runner._stop_playwright_brokers((broker,), require_request=True)
+            broker_receipt = json.loads(broker.receipt_path.read_text(encoding="utf-8"))
+            browser_receipt = json.loads(
+                (broker.receipt_path.parent / "receipt.json").read_text(encoding="utf-8")
+            )
+            expected_interaction_digest = runner._sha256(interaction)
+
+        self.assertEqual(1, sum(process.returncode == 0 for process in commands), outputs)
+        self.assertEqual(1, broker_receipt["requestAccounting"]["consumed"])
+        self.assertGreaterEqual(broker_receipt["requestAccounting"]["reservationRejections"], 1)
+        self.assertEqual(expected_interaction_digest, browser_receipt["interaction"]["sha256"])
+        self.assertEqual(2, len(browser_receipt["interaction"]["actions"]))
+        self.assertTrue(all(value["closed"] for value in browser_receipt["cleanup"].values()))
+
+    def test_fixture_server_rejects_file_and_directory_symlink_escapes(self) -> None:
+        """Fixture serving canonicalizes targets and never follows symlink or traversal paths outside the root."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            codex_home, interactions = self._write_playwright_broker_fixture(root, ("browser-suite:happy",))
+            runtime_config = json.loads(
+                (codex_home / "playwright-runtime" / "runtime-config.json").read_text(encoding="utf-8")
+            )
+            scenario = runtime_config["scenarios"]["browser-suite:happy"]
+            fixture = Path(scenario["fixtureRoot"])
+            outside_secret = root / "outside-secret.html"
+            outside_secret.write_text("TOP SECRET OUTSIDE FIXTURE", encoding="utf-8")
+            (fixture / "leak.html").symlink_to(outside_secret)
+            outside_directory = root / "outside-directory"
+            outside_directory.mkdir()
+            (outside_directory / "secret.html").write_text("NESTED TOP SECRET", encoding="utf-8")
+            (fixture / "nested").symlink_to(outside_directory, target_is_directory=True)
+            (fixture / "broken.html").symlink_to(root / "missing-symlink-target.html")
+            (fixture / "regular-directory").mkdir()
+            interaction = interactions["browser-suite:happy"]
+            interaction.write_text(
+                json.dumps(
+                    {
+                        "actions": [
+                            {"type": "goto", "route": "/leak.html"},
+                            {"type": "expectVisible", "text": "Not found"},
+                            {"type": "goto", "route": "/nested/secret.html"},
+                            {"type": "expectVisible", "text": "Not found"},
+                            {"type": "goto", "route": "/%2e%2e/outside-secret.html"},
+                            {"type": "expectVisible", "text": "Not found"},
+                            {"type": "goto", "route": "/missing.html"},
+                            {"type": "expectVisible", "text": "Not found"},
+                            {"type": "goto", "route": "/broken.html"},
+                            {"type": "expectVisible", "text": "Not found"},
+                            {"type": "goto", "route": "/regular-directory"},
+                            {"type": "expectVisible", "text": "Not found"},
+                            {"type": "goto", "route": "/index.html"},
+                            {"type": "expectVisible", "role": "heading", "name": "Ready"},
+                        ]
+                    }
+                ),
+                encoding="utf-8",
+            )
+            validation = Path(scenario["validationReceiptPath"])
+            subprocess.run(
+                [
+                    str(runner._bundled_node_executable()),
+                    str(codex_home / "playwright-runtime" / "playwright-harness.mjs"),
+                    "validate",
+                    "--scenario",
+                    "browser-suite:happy",
+                    "--interaction",
+                    str(interaction),
+                    "--receipt",
+                    str(validation),
+                ],
+                check=True,
+                text=True,
+                capture_output=True,
+            )
+            broker = runner._start_playwright_brokers(codex_home, dict(os.environ))[0]
+            completed = subprocess.run(
+                [
+                    str(runner._bundled_node_executable()),
+                    str(codex_home / "playwright-runtime" / "playwright-harness.mjs"),
+                    "client",
+                    "--scenario",
+                    broker.scenario,
+                    "--interaction",
+                    str(interaction),
+                    "--endpoint",
+                    f"http://127.0.0.1:{broker.port}",
+                    "--validation-receipt",
+                    str(validation),
+                    "--token-file",
+                    str(broker.token_path),
+                ],
+                check=False,
+                text=True,
+                capture_output=True,
+                timeout=30,
+            )
+            runner._stop_playwright_brokers((broker,), require_request=True)
+            service_path = broker.receipt_path.parent / "service.json"
+            service = json.loads(service_path.read_text(encoding="utf-8"))
+            retained_evidence = "\n".join(
+                path.read_text(encoding="utf-8", errors="replace")
+                for path in broker.receipt_path.parent.glob("*.json")
+            )
+
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        self.assertTrue(any(event["route"] == "/leak.html" and event["status"] == 404 for event in service))
+        self.assertTrue(any(event["route"] == "/nested/secret.html" and event["status"] == 404 for event in service))
+        self.assertTrue(any(event["route"] == "/outside-secret.html" and event["status"] == 404 for event in service))
+        self.assertTrue(any(event["route"] == "/missing.html" and event["status"] == 404 for event in service))
+        self.assertTrue(any(event["route"] == "/broken.html" and event["status"] == 404 for event in service))
+        self.assertTrue(any(event["route"] == "/regular-directory" and event["status"] == 404 for event in service))
+        self.assertTrue(any(event["route"] == "/index.html" and event["status"] == 200 for event in service))
+        self.assertNotIn("TOP SECRET", retained_evidence)
 
     def test_nested_child_limit_rejects_more_than_temporary_tenth_agent(self) -> None:
         """A suite cannot declare more than one nested canonical dependency."""
@@ -1554,6 +2555,41 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             loaded = runner.tomllib.loads((agent_root / "target_agent.toml").read_text(encoding="utf-8"))
 
         self.assertEqual("gpt-5.6-terra", loaded["model"])
+
+    def test_staging_propagates_local_only_permissions_to_runtime_agents(self) -> None:
+        """A spawned browser target can bind loopback without receiving external network authority."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            source = root / "source.toml"
+            agent_root = root / "agents"
+            agent_root.mkdir()
+            source.write_text(
+                'name = "target_agent"\ndeveloper_instructions = """governed"""\n',
+                encoding="utf-8",
+            )
+
+            runner._copy_agent(
+                source,
+                "target_agent",
+                agent_root,
+                local_runtime_permissions=True,
+                additional_writable_roots=(root / "checkpoints",),
+            )
+            loaded = runner.tomllib.loads((agent_root / "target_agent.toml").read_text(encoding="utf-8"))
+
+        self.assertEqual("agent-suite-local-runtime", loaded["default_permissions"])
+        permissions = loaded["permissions"]["agent-suite-local-runtime"]
+        self.assertEqual(":workspace", permissions["extends"])
+        self.assertEqual("write", permissions["filesystem"][str((root / "checkpoints").resolve())])
+        self.assertEqual(
+            {
+                "enabled": True,
+                "mode": "limited",
+                "allow_local_binding": True,
+                "domains": {"localhost": "allow", "127.0.0.1": "allow"},
+            },
+            permissions["network"],
+        )
 
     def test_staged_agents_are_registered_as_codex_config_files(self) -> None:
         """A task name alone cannot replace the custom-agent config registration."""
@@ -2426,6 +3462,122 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         self.assertEqual("PASS", result["status"])
         self.assertEqual("verified", result["receiptAudit"]["status"])
 
+    def test_strict_read_only_inventory_rejects_detected_cleaned_side_effects(self) -> None:
+        """A strict audit fails when any mutation occurred, even after exact cleanup."""
+        suite = self._suite("one")
+        scenario = dict(suite.scenarios[0])
+        scenario["deterministicChecks"] = ["no-forbidden-mutation"]
+        scenario["requiresWorkspaceInventory"] = True
+        scenario["requiresNoDetectedMutation"] = True
+        suite = runner._Suite(suite.suite_id, suite.priority, suite.path, suite.manifest, (scenario,))
+        run = runner._RunSpec(suite=suite, scenario_ids=("happy",))
+        run_identity = "codex-batch-01-test"
+        with tempfile.TemporaryDirectory() as temporary:
+            checkpoint_root = Path(temporary)
+            checkpoint = self._write_receipt_checkpoint(checkpoint_root, run, run_identity)
+            self._replace_deterministic_artifact(
+                checkpoint_root,
+                checkpoint,
+                "no-forbidden-mutation",
+                self._workspace_mutation_evidence(final_matches=True),
+            )
+            path = checkpoint_root / "one" / "happy.json"
+            path.write_text(json.dumps(checkpoint, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+            report = runner._load_checkpoint_report(
+                checkpoint_root,
+                (run,),
+                run_identity,
+                require_runtime_judge_provenance=False,
+            )
+
+        assert report is not None
+        result = report["runs"][0]["scenarioResults"][0]
+        self.assertEqual("BLOCKED", result["status"])
+        self.assertEqual("invalid", result["receiptAudit"]["status"])
+        self.assertIn(
+            "passed after detected workspace mutation",
+            " ".join(result["receiptAudit"]["diagnostics"]),
+        )
+
+    def test_scenario_dependency_override_can_forbid_suite_dependency(self) -> None:
+        """The audit scenario's explicit empty dependency set overrides ingest allowance."""
+        suite = runner._load_catalog(include_ids={"wiki-ingester"})["wiki-ingester"]
+
+        self.assertEqual(
+            (),
+            runner._scenario_dependencies(
+                suite,
+                "final-evidence-audit-read-only",
+            ),
+        )
+        self.assertEqual(
+            ("wiki-topic-verifier",),
+            runner._scenario_dependencies(suite, "raw-ingest"),
+        )
+
+    def test_read_only_audit_rejects_retained_verifier_session(self) -> None:
+        """Retained topology cannot use the ingest-only verifier in audit mode."""
+        suite = runner._load_catalog(include_ids={"wiki-ingester"})["wiki-ingester"]
+        run = runner._RunSpec(
+            suite=suite,
+            scenario_ids=("final-evidence-audit-read-only",),
+        )
+        sessions = (
+            runner._Session(
+                "supervisor",
+                "root",
+                "wiki_ingester_suite_supervisor",
+                1,
+                0.0,
+                10.0,
+                frozenset(),
+            ),
+            runner._Session(
+                "target",
+                "supervisor",
+                "wiki_ingester",
+                2,
+                1.0,
+                8.0,
+                frozenset(),
+            ),
+            runner._Session(
+                "verifier",
+                "target",
+                "wiki_topic_verifier",
+                3,
+                2.0,
+                3.0,
+                frozenset(),
+            ),
+        )
+        report = {
+            "runs": [
+                {
+                    "suite": "wiki-ingester",
+                    "scenarioResults": [
+                        {
+                            "scenario": "final-evidence-audit-read-only",
+                            "targetInvoked": True,
+                            "judgeInvoked": False,
+                        }
+                    ],
+                }
+            ]
+        }
+
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "Nested dependency wiki_topic_verifier is not allowed for "
+            "wiki-ingester:final-evidence-audit-read-only",
+        ):
+            runner._audit_session_concurrency(
+                sessions,
+                maximum_threads=9,
+                batch=(run,),
+                report=report,
+            )
+
     def test_workspace_inventory_rejects_wrong_roots_and_unsafe_entries(self) -> None:
         """Retained inventory structure cannot escape or substitute the protected workspace."""
         for case in ("wrong-root", "unsafe-path", "malformed-entry", "invented-preexisting"):
@@ -2496,7 +3648,46 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                 baselines[("dev-code-reviewer", "incomplete-review-evidence")],
             )
 
-        self.assertTrue(diagnostics)
+            self.assertTrue(diagnostics)
+
+    def test_wiki_ingester_read_only_audit_stages_runner_owned_inventory(self) -> None:
+        """The audit scenario enters execution with its dedicated protected workspace."""
+        suite = runner._load_catalog(include_ids={"wiki-ingester"})["wiki-ingester"]
+        run = runner._RunSpec(
+            suite=suite,
+            scenario_ids=("final-evidence-audit-read-only",),
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            fixture_root = root / "fixtures"
+            checkpoint_root = root / "checkpoints"
+            fixture_root.mkdir()
+            checkpoint_root.mkdir()
+
+            baselines = runner._stage_workspace_inventory_fixtures(
+                (run,), fixture_root, checkpoint_root
+            )
+
+            protected = (
+                fixture_root
+                / "wiki-ingester"
+                / "final-evidence-audit-read-only"
+            )
+            self.assertTrue((protected / ".git").is_dir())
+            self.assertTrue((protected / "path-coverage-ledger.json").is_file())
+            self.assertIn(
+                ("wiki-ingester", "final-evidence-audit-read-only"),
+                baselines,
+            )
+            self.assertTrue(
+                (
+                    checkpoint_root
+                    / "wiki-ingester"
+                    / "final-evidence-audit-read-only"
+                    / "artifacts"
+                    / "workspace-baseline.json"
+                ).is_file()
+            )
 
     def test_wrong_identity_critical_skip_rows_remain_non_passing(self) -> None:
         """Every structured skip field must match the failed selected critical gate exactly."""
@@ -2895,10 +4086,89 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                     "status": "executable",
                     "executableCase": "fixture",
                     "runtimeCapabilities": ["browser-automation"],
+                    "deterministicChecks": [
+                        "harness-agent-identity",
+                        "no-forbidden-mutation",
+                        "output-contract-presence",
+                    ],
                 },
             ),
         )
         return runner._RunSpec(suite=suite, scenario_ids=("happy",))
+
+    @staticmethod
+    def _write_playwright_broker_fixture(
+        root: Path,
+        scenario_keys: tuple[str, ...],
+    ) -> tuple[Path, dict[str, Path]]:
+        """Stage a lightweight real broker runtime without copying the installed browser distribution."""
+        codex_home = root / "codex-home"
+        runtime = codex_home / "playwright-runtime"
+        runtime.mkdir(parents=True)
+        shutil.copyfile(
+            _RUNNER_PATH.parent / "runtime" / "playwright-harness.mjs",
+            runtime / "playwright-harness.mjs",
+        )
+        (runtime / "node_modules").symlink_to(_RUNNER_PATH.parent / "node_modules", target_is_directory=True)
+        executable = runner._resolve_playwright_chromium(_RUNNER_PATH.parent)
+        scenarios: dict[str, dict[str, str]] = {}
+        interactions: dict[str, Path] = {}
+        for index, scenario_key in enumerate(scenario_keys):
+            fixture = runtime / "fixture-snapshots" / f"fixture-{index}"
+            fixture.mkdir(parents=True)
+            (fixture / "index.html").write_text(
+                "<!doctype html><html><body><h1>Ready</h1></body></html>",
+                encoding="utf-8",
+            )
+            interaction = root / f"interaction-{index}.json"
+            interaction.write_text(
+                json.dumps({"actions": [{"type": "expectVisible", "role": "heading", "name": "Ready"}]}),
+                encoding="utf-8",
+            )
+            evidence = root / f"evidence-{index}"
+            validation_receipt = evidence / "validation.json"
+            fixture_binding = runner._fixture_root_binding(fixture, runtime)
+            scenarios[scenario_key] = {
+                "targetIdentity": "target_agent",
+                "fixtureRoot": fixture_binding["canonicalRoot"],
+                "fixtureBinding": fixture_binding,
+                "initialRoute": "/",
+                "preflightRoute": "/",
+                "interactionPath": str(interaction),
+                "validationReceiptPath": str(validation_receipt),
+                "evidenceRoot": str(evidence),
+                "preflightEvidenceRoot": str(root / f"preflight-{index}"),
+            }
+            interactions[scenario_key] = interaction
+            subprocess.run(
+                [
+                    str(runner._bundled_node_executable()),
+                    str(runtime / "playwright-harness.mjs"),
+                    "validate",
+                    "--scenario",
+                    scenario_key,
+                    "--interaction",
+                    str(interaction),
+                    "--receipt",
+                    str(validation_receipt),
+                ],
+                check=True,
+                text=True,
+                capture_output=True,
+            )
+        (runtime / "runtime-config.json").write_text(
+            json.dumps(
+                {
+                    "schema": "dev-methodology-isolated-playwright-runtime",
+                    "version": 1,
+                    "playwrightVersion": runner._playwright_version(_RUNNER_PATH.parent),
+                    "chromiumExecutable": os.path.relpath(executable, runtime.resolve()),
+                    "scenarios": scenarios,
+                }
+            ),
+            encoding="utf-8",
+        )
+        return codex_home, interactions
 
     @staticmethod
     def _suite_report(suite_id: str, status: str) -> dict[str, object]:

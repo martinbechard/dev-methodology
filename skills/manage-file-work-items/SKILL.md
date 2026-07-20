@@ -116,6 +116,20 @@ Record durable evidence appropriate to every transition:
 
 Keep wait_started_at, attempt_count, last_attempt, next_attempt, open issues, and accepted_candidate_commit when bounded retry or interrupted recovery needs them.
 
+## Blocked Handoff And Resumption
+
+A blocked handoff ends the prior ownership transaction. While that transaction still owns the backlog mutation, set Status to Blocked, replace the prior owner with Owner: Unowned, replace the prior claim with Claim: None, and retain the exact blocker, unblock condition, accumulated evidence, and acceptance criteria. Commit those durable item fields before releasing the prior claim, then release it promptly. Do not report the handoff complete until both the committed item and claim registry are unowned. Neither the BLOCKED state nor satisfaction of the unblock condition authorizes execution or a direct transition to RUNNING.
+
+Resume blocked work through one serialized backlog transaction:
+
+1. Read and retain the complete pre-attempt Blocked item bytes.
+2. Reconcile the blocker and confirm that the recorded unblock condition is satisfied.
+3. Set the item to Ready without removing or rewriting its blocker, unblock condition, evidence, or acceptance criteria.
+4. Acquire a new exclusive claim for the resuming agent.
+5. Only after a successful claim, record the new claim and owner, then set Status to Running and commit the transaction.
+
+If no claim is attempted, no successful claim result exists, or acquisition returns WAIT, a structured rejection, or another non-success outcome, do not infer ownership. Restore the byte-for-byte pre-attempt Blocked item, leave it unowned and not Running, and preserve all prior blocker, unblock, evidence, and acceptance data. Release any partially acquired ownership truthfully before reporting the unchanged Blocked outcome.
+
 ## User Action Required Workflow
 
 1. Read the item and current Resolution.
@@ -157,6 +171,7 @@ Record the destination as the terminal provider_reference. Preserve claims, revi
 - Reconcile owner, canonical task, claims, branch, worktree, accepted candidate commit, logs, results, checks, delivery references, waits, and archive locations.
 - Classify stale running state as resumable, blocked, crashed, failed, or already delivered but pending provider update from concrete evidence.
 - Resume recoverable claimed work before selecting new work.
+- Apply the Blocked Handoff And Resumption workflow when the item is Blocked; state alone never supplies ownership.
 - Preserve failed or partial delivery evidence for diagnosis.
 - Do not rerun accepted delivery solely because a terminal provider update failed unless the evidence is stale or contradictory.
 - Ask for human direction only when state and evidence cannot determine the next safe action.

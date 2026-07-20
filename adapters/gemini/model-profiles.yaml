@@ -6,6 +6,8 @@ profiles:
     model: flash
   default:
     model: auto
+  documentation:
+    model: auto
   advanced:
     model: pro
   advanced-long:
