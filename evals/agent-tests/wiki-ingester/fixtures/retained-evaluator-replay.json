@@ -46,6 +46,15 @@
       "resultText": "# Wiki Ingest Result\n\n## Substantiated Conclusions\n\n- Eligible transient-transport retries are limited to idempotent reads and order-status lookups; creation, cancellation, and payment mutations are not retried — [Request Retry Eligibility](docs/wiki/retry-policy/request-retry-eligibility.md) — [processed retry policy source](raw/processed/retry-policy.md).\n\n## Open Questions\n\n- Whether deployment-specific jitter changes either fixed retry delay requires authoritative deployment-policy or implementation evidence — [Retry Attempt Timing](docs/wiki/retry-policy/retry-attempt-timing.md) — [processed retry policy source](raw/processed/retry-policy.md).\n"
     }
   },
+  "pageLocalJitterReplay": {
+    "sourceEvidenceSha256": "6d718e1333087bf078bedf7bed4aed085975a76153ca87a9177037d7035e9143",
+    "expectedPage": "docs/wiki/retry-policy/retry-backoff.md",
+    "resultText": "# Wiki Ingest Result\n\n## Substantiated Conclusions\n\n- docs/wiki/retry-policy/retry-backoff.md from raw/processed/retry-policy.md: idempotent reads use fixed waits of 200 and 500 milliseconds, while mutation requests are not retried.\n\n## Open Questions\n\n- docs/wiki/retry-policy/retry-backoff.md from raw/processed/retry-policy.md: deployment-specific jitter remains unresolved because no authoritative deployment-policy or implementation evidence is available.\n",
+    "wikiContent": {
+      "docs/wiki/retry-policy/retry-backoff.md": "# Retry Backoff\n\n## Current Understanding\n\nEligible requests use fixed waits of 200 and 500 milliseconds.\n\n## Open Questions\n\n- Deployment-specific jitter remains unresolved because no authoritative deployment-policy or implementation evidence is available. Source: raw/processed/retry-policy.md.\n",
+      "docs/wiki/retry-policy/request-eligibility.md": "# Request Eligibility\n\nIdempotent reads are eligible for bounded retries. Source: raw/processed/retry-policy.md.\n"
+    }
+  },
   "executions": {
     "02": {
       "resultText": "Interruption reconciliation completed.\n\n## Substantiated Conclusions\n\n- docs/wiki/retry-policy/fixed-retry-backoff.md from raw/processed/retry-policy.md: fixed retry delays are 200 and 500 milliseconds.\n- docs/wiki/retry-policy/request-retry-eligibility.md from raw/processed/retry-policy.md: idempotent reads are eligible and mutation requests are never retried.\n\n## Open Questions\n\n- docs/wiki/retry-policy/fixed-retry-backoff.md from raw/processed/retry-policy.md: deployment jitter remains unresolved because authoritative evidence has not been identified.\n",

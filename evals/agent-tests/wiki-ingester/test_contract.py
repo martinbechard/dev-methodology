@@ -402,6 +402,30 @@ def _assert_provider_result_inventory(
             test.assertIn(fact, open_questions)
 
 
+def _assert_single_jitter_open_question_page(
+    test: unittest.TestCase,
+    wiki_content: dict[str, str],
+) -> str:
+    """Require one retry-policy Open Questions section to own unresolved jitter."""
+    jitter_pages = []
+    for path, content in wiki_content.items():
+        if not path.startswith("docs/wiki/retry-policy/"):
+            continue
+        open_questions = _markdown_section(content, "Open Questions").lower()
+        if "jitter" in open_questions:
+            jitter_pages.append((path, open_questions))
+    with test.subTest(page_contract="jitter-open-question-count"):
+        test.assertEqual(1, len(jitter_pages))
+    if not jitter_pages:
+        return ""
+    path, open_questions = jitter_pages[0]
+    with test.subTest(page_contract="jitter-open-question-missing-evidence"):
+        test.assertTrue(_contains_missing_evidence(open_questions))
+    with test.subTest(page_contract="jitter-open-question-provenance"):
+        test.assertIn("raw/processed/retry-policy.md", open_questions)
+    return path
+
+
 def _validate_control_result(
     test: unittest.TestCase, plan, result: dict[str, object]
 ) -> None:
@@ -518,24 +542,7 @@ def _validate_control_result(
         test.assertIn(page_path, committed_paths)
         test.assertIn(heading, result["wikiContent"][page_path])
         test.assertIn(statement, result["wikiContent"][page_path])
-    open_question_pages = [
-        (path, content.lower())
-        for path, content in retry_pages.items()
-        if "jitter" in content.lower()
-        and _contains_missing_evidence(content)
-        and "## open questions" in content.lower()
-    ]
-    with test.subTest(page_contract="jitter-open-question-count"):
-        test.assertEqual(1, len(open_question_pages))
-    if open_question_pages:
-        open_question_path, open_question_text = open_question_pages[0]
-        with test.subTest(page_contract="jitter-open-question-location"):
-            test.assertEqual(
-                "docs/wiki/retry-policy/retry-execution.md",
-                open_question_path,
-            )
-        with test.subTest(page_contract="jitter-open-question-provenance"):
-            test.assertIn("raw/processed/retry-policy.md", open_question_text)
+    _assert_single_jitter_open_question_page(test, retry_pages)
     _assert_terminal_head(test, result, terminal)
     test.assertIn("RELEASED", terminal.upper())
     test.assertIn("CLEAN", terminal.upper())
@@ -905,7 +912,7 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
             _assert_result_inventory(self, unbulleted_conclusion)
 
     def test_retained_evaluator_artifacts_replay_offline(self) -> None:
-        """Sanitized 02/06/08/09 artifacts must replay without live execution."""
+        """Sanitized retained evaluator artifacts must replay without live execution."""
         replay = json.loads(RETAINED_REPLAY_PATH.read_text(encoding="utf-8"))
         self.assertEqual(
             "4e2f8ce5abac470a099b46dcb178c62c4292e1cdea19d3de3c0b7620631a259f",
@@ -937,6 +944,13 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
             "6dc61d29-4cd1-4879-b06f-6d72e1773a5f",
             replay["fiveCaseResourceReleaseEventId"],
         )
+        page_local_jitter = replay["pageLocalJitterReplay"]
+        _assert_result_inventory(self, page_local_jitter["resultText"])
+        accepted_jitter_page = _assert_single_jitter_open_question_page(
+            self,
+            page_local_jitter["wikiContent"],
+        )
+        self.assertEqual(page_local_jitter["expectedPage"], accepted_jitter_page)
         post1 = executions["post1"]
         self.assertEqual(
             [
@@ -991,6 +1005,29 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
                             capture["resultText"],
                             capture["substantiatedContentWritten"],
                         )
+
+    def test_jitter_page_contract_rejects_missing_or_duplicate_evidence(self) -> None:
+        """One page-local jitter question must retain reason and provenance."""
+        replay = json.loads(RETAINED_REPLAY_PATH.read_text(encoding="utf-8"))
+        valid = replay["pageLocalJitterReplay"]["wikiContent"]
+        page_path = replay["pageLocalJitterReplay"]["expectedPage"]
+        page = valid[page_path]
+        invalid_pages = (
+            {page_path: page.replace("## Open Questions", "## Notes")},
+            {page_path: page.replace("no authoritative", "unspecified")},
+            {page_path: page.replace("raw/processed/retry-policy.md", "the source")},
+            {
+                **valid,
+                "docs/wiki/retry-policy/retry-timing.md": page,
+            },
+        )
+        for invalid in invalid_pages:
+            with self.subTest(invalid=invalid):
+                with self.assertRaises(AssertionError):
+                    _assert_single_jitter_open_question_page(
+                        unittest.TestCase(),
+                        invalid,
+                    )
 
     def test_encrypted_spawn_fallback_rejects_false_identity_and_receipts(self) -> None:
         """Opaque prompts cannot bypass fresh-child, call, or receipt evidence."""
