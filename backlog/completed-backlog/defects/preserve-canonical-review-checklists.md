@@ -1,6 +1,6 @@
 # Preserve Canonical Review Checklists
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
@@ -17,12 +17,27 @@ Type: Defect
 - Canonical Dev Orchestrator task: 019f7e00-7b6e-7db1-a463-5e648ce79f89
 - Branch: accepted source branch codex/baton-8-canonical-checklists-current-main; delivery is integrated on main
 - Worktree: /Users/martinbechard/.codex/worktrees/b27c/dev-methodology
-- Current phase: Fresh post-integration review and focused verification
+- Current phase: Completed
 - Accepted candidate commit: 6eede9c3c90526f12bf2442bacbc8c7215f000f6
 - Integrated main commit: 2978cb2340c55cb18d4b49c97732d28c152094bd
 - Integration or completion wait: None
-- Claim attempts: Integration acquired on the first attempt at event 56b884c0-84d4-4f4e-a1a9-f1e3ca7ca774 and released at event 02ac3c1f-8fce-4eb4-ae97-4e51d0bc9023; task-record claim acquired at event 7bb440c7-4905-471d-b0cd-1f8882f30bd5
-- Open issues: Fresh post-integration review and focused verifier evidence are required before terminal completion
+- Claim attempts: Integration acquired on the first attempt at event 56b884c0-84d4-4f4e-a1a9-f1e3ca7ca774 and released at event 02ac3c1f-8fce-4eb4-ae97-4e51d0bc9023; task-record claim acquired at event 7bb440c7-4905-471d-b0cd-1f8882f30bd5 and released normally at event c10732b5-097e-4558-96ce-4f9e6f38f2d5; terminal work-item claim acquired on the first attempt at event 017135b8-886f-46b0-a701-095ed4a33b60 from clean main commit ac0ddc0900d0bb1b7974d16a6d3c4842b6a79a59
+- Open issues: None
+
+## Completion Evidence
+
+- Canonical Dev Orchestrator task 019f7e00-7b6e-7db1-a463-5e648ce79f89 completed this Running item under parent Dev Backlog Coordinator task 019f77f4-c4bd-7c91-b197-c987a7beb838.
+- The canonical task record was committed on main as 0e5897a811bf30cd10f94d40c5fb0b95eaf2d18e after task-record claim event 7bb440c7-4905-471d-b0cd-1f8882f30bd5; the unrelated validate-only artifact that initially prevented release was preserved and removed by its owner before normal release event c10732b5-097e-4558-96ce-4f9e6f38f2d5.
+- Accepted candidate 6eede9c3c90526f12bf2442bacbc8c7215f000f6 was integrated on main as 2978cb2340c55cb18d4b49c97732d28c152094bd under integration acquisition event 56b884c0-84d4-4f4e-a1a9-f1e3ca7ca774 and clean release event 02ac3c1f-8fce-4eb4-ae97-4e51d0bc9023.
+- A fresh independent post-integration review accepted the exact seven integrated paths with no actionable findings or open questions. The reviewer confirmed that all seven current blobs still matched the integrated commit through terminal-claim baseline ac0ddc0900d0bb1b7974d16a6d3c4842b6a79a59.
+- The reviewed paths were evals/agent-tests/dev-artifact-reviewer/agents/judge.toml, evals/agent-tests/dev-artifact-reviewer/agents/supervisor.toml, evals/agent-tests/dev-artifact-reviewer/checklist_contract.py, evals/agent-tests/dev-artifact-reviewer/scenarios.yaml, evals/agent-tests/dev-artifact-reviewer/skills/dev-artifact-reviewer-suite-contract/SKILL.md, evals/agent-tests/dev-artifact-reviewer/test_checklist_contract.py, and evals/judges.yaml.
+- Suite-local Dev Artifact Reviewer tests passed: 9 tests ran successfully.
+- Suite-only validate-only passed for Dev Artifact Reviewer with one job under Python 3.11. The runner wrote its retained summary outside the repository at /private/tmp/preserve-canonical-review-checklists.iwl35I/summary.json and reported one validated suite with one supervisor.
+- The default Python 3.9 validate-only attempt exited before runner execution because tomllib was unavailable; rerunning the same focused check with the repository-supported Python 3.11 interpreter passed.
+- Global catalog validation passed with CATALOGS VALID.
+- The exact suite-contract skill passed scripts/validate-agent-skills.py. The MCP validator could not accept this eval-local path because it is outside the configured installed skill roots, so the repository validator supplied the applicable source validation.
+- Git diff validation passed, main status was clean, and the exact seven paths remained byte-identical while unrelated commits advanced main.
+- No broad, full, live, browser, generated-output, or complete agent-catalog suite was run during post-integration closeout.
 
 ## Summary
 
