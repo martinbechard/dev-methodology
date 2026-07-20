@@ -1,6 +1,6 @@
 # Require Claimed Backlog Resumption
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
 
@@ -21,6 +21,19 @@ Approval also permits supported regeneration of design/generated/skill-definitio
 - Provenance: thread 019f77f4-c4bd-7c91-b197-c987a7beb838, the user's direct reply on 2026-07-20 to the exact question above.
 
 The decision gate is resolved. Delivery completion still requires the governed pre-mutation check, implementation, supported regeneration, independent review, focused verification, integration, and terminal backlog evidence.
+
+## Current User Decision
+
+The reviewed implementation cannot be integrated against current main under the original approval scope. Commit 60dbbd2 retired skills/manage-backlog/SKILL.md into a migration-only bridge that owns no lifecycle or recovery procedure. The replacement skills/manage-file-work-items/SKILL.md now owns file-work-item lifecycle and recovery behavior, and the bridge explicitly forbids adding new procedure there.
+
+Do you approve changing only skills/manage-file-work-items/SKILL.md to carry the already reviewed claimed blocked-work resumption contract (blocked handoff commits Status: Blocked, Owner: Unowned, Claim: None with evidence preserved before release; resumption passes Ready → successful new exclusive claim/new owner → Running; absent/WAIT/rejected acquisition restores the exact pre-attempt Blocked bytes), together with only its supported generated skill-definition mirror and the already reviewed non-governed eval/test coverage? This supersedes the obsolete manage-backlog target and authorizes no other definition.
+
+## Preserved Candidate
+
+- Candidate 0579356 is clean and independently methodology-reviewed PASS.
+- Focused verification passed four deterministic tests, two bundle tests, source/mirror freshness, and the four required live selector outcomes with clean claim release and rollback evidence.
+- No integration claim was acquired and no obsolete bridge procedure was restored.
+- Branch and private worktree remain clean and preserved under canonical task 019f7f95-1242-7133-9033-a921c127df66.
 
 ## Current Resumption Ownership
 
