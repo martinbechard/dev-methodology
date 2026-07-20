@@ -1,8 +1,16 @@
 # Add Azure DevOps And Jira Placeholders
 
-Status: Ready
+Status: Running
 
 Type: Feature
+
+## Current Execution
+
+- Canonical Dev Orchestrator task: 019f7f8c-e53a-7f23-9920-9e170a05fa0b.
+- Branch: codex/add-azure-devops-jira-placeholders.
+- Worktree: /Users/martinbechard/.codex/worktrees/5489/dev-methodology.
+- Started from approved Ready commit 547e2159e5621351adb9a4e975b7659bc1993671.
+- Scope remains limited to the four approved placeholder skill packages, their metadata, supported generated mirrors, and directly related non-governed tests and documentation.
 
 ## Approval Resolution
 
