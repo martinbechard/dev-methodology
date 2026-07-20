@@ -1,10 +1,10 @@
 # Restore Wiki Ingester On Verifier Interruption
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
-## User Decision Required
+## User Decision Resolved
 
 - Canonical Dev Orchestrator task: 019f7e86-aece-7a40-96e1-b1e1863dba28.
 - Preserved branch: codex/restore-wiki-ingester-verifier-flow.
@@ -13,13 +13,15 @@ Type: Defect
 - The eval-only boundary now proves the current canonical Wiki Ingester behavior retains unaccepted docs/wiki drafts after a bound pre-move verifier interruption following one genuine correction.
 - No governed role or distributed skill definition was mutated.
 
-Exact approval question:
+The proposed rollback-and-BLOCKED behavior was rejected. The user directed Wiki Ingester to continue ingesting what is substantiated and to flag what is not substantiated as open questions in the appropriate wiki page Open Questions sections.
 
-Do you approve changing exactly agents/roles/wiki-activities/wiki-ingester.role.yaml, plus its supported generated role mirrors and focused bundle/eval expectations, to require Wiki Ingester to freeze the last accepted baseline; treat missing/interrupted verifier evidence as BLOCKED; restore every unaccepted wiki edit, source move, and link change; write the required restoration result; release all owned claims; and verify a clean worktree/empty registry? This approval would not authorize any distributed skill-definition change.
+Approved governed scope: change only agents/roles/wiki-activities/wiki-ingester.role.yaml, its supported generated role mirrors, and directly related focused bundle/evaluation expectations to implement this continuation-and-open-questions behavior. This authorizes no distributed skill-definition change.
+
+Approval evidence: the user's direct clarification in parent thread 019f77f4-c4bd-7c91-b197-c987a7beb838 on 2026-07-20: “Ingest what is substantiated, flag what is not as open questions.”
 
 ## Summary
 
-Require Wiki Ingester to restore unaccepted wiki drafts, close claims, and return a clean governed result when verification cannot finish.
+Require Wiki Ingester to preserve and ingest substantiated material while recording unsubstantiated or unresolved material as explicit open questions on the relevant wiki pages.
 
 ## Context
 
@@ -36,22 +38,24 @@ The contention was evaluation infrastructure, but the unsafe interruption closeo
 
 ## Requirements
 
-- Treat unavailable or interrupted required verification as a governed BLOCKED boundary.
-- Restore every unaccepted wiki edit to the frozen baseline before returning BLOCKED.
-- Preserve accepted work only when its verifier evidence is complete and current.
-- Write the required evaluation result with the blocker and restoration evidence.
-- Release every claim owned by the task and verify the live registry is clear.
-- Verify the worktree is clean before returning the terminal result.
+- Ingest every claim and relationship supported by the available authoritative evidence.
+- Do not discard substantiated wiki content merely because another claim remains uncertain or verifier execution is interrupted.
+- Put each unsubstantiated, unresolved, or verifier-dependent point into the Open Questions section of the most relevant wiki page.
+- Keep open questions specific enough to identify the missing evidence or decision needed for later resolution.
+- Preserve source links and provenance for both ingested conclusions and open questions.
+- Write the required result describing what was ingested and which open questions were recorded.
+- Release every claim owned by the task and verify the worktree and live registry are clean.
 - Add interruption coverage at each point in the bounded verifier loop.
 
 ## Acceptance Criteria
 
-- A verifier interruption leaves no unaccepted docs/wiki changes.
-- The evaluation result states the blocker and the restoration performed.
+- A verifier interruption retains all substantiated wiki updates.
+- Unsubstantiated or unresolved content appears as explicit open questions on the appropriate wiki pages rather than being silently asserted or discarded.
+- The evaluation result distinguishes ingested conclusions from recorded open questions.
 - Claims are released and the worktree is clean without supervisor repair.
 - Normal verifier correction and acceptance behavior remains unchanged.
-- The Wiki Ingester verifier-failure scenario produces a governed terminal result under a forced verifier interruption.
-- Repository skill validation, generated-output checks, and unit tests pass.
+- The Wiki Ingester verifier-interruption scenario produces a governed terminal result without rolling back substantiated content.
+- Repository role validation, generated-output checks, and focused unit tests pass.
 
 ## Dependencies
 
@@ -79,4 +83,5 @@ The next action requires an executable target boundary with a nested verifier de
 
 ## Notes
 
-- The harness contention that triggered the path is separate from the target's obligation to fail cleanly.
+- The harness contention that triggered the path is separate from the target's obligation to preserve supported knowledge and expose uncertainty honestly.
+- A verifier interruption is not authority to erase substantiated knowledge or promote unresolved claims to facts.
