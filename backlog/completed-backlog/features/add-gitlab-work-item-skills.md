@@ -1,16 +1,35 @@
 # Add GitLab Work-Item Skills
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
-## Current Execution
+## Completed Execution
 
 - Canonical Dev Orchestrator task: 019f7f89-2eb3-74c2-bb87-191d19a9efe4.
 - Branch: codex/add-gitlab-work-item-skills.
 - Worktree: /Users/martinbechard/.codex/worktrees/6e52/dev-methodology.
 - Started from approved Ready commit 4a7cb49119def8dde665f8a2f9f5508adb9edd86.
 - Scope remains limited to the two approved GitLab skill packages, their metadata, supported generated mirrors, and directly related non-governed tests and documentation.
+
+## Completion Evidence
+
+- Exact governed pre-mutation checks returned ALLOWED_APPROVED_DEFINITION_CHANGE for both SKILL.md paths and both agents/openai.yaml paths using the user-message provenance recorded below.
+- Accepted private candidate: a642928f8a6798cb3d3d71f78acecb01ab4ed920 on codex/add-gitlab-work-item-skills.
+- Independent methodology review: ACCEPTED after correcting terminal sequencing so READY and delivery evidence precede the GitLab terminal update, and observed terminal state precedes terminal evidence and lifecycle COMPLETED.
+- Independent focused verifier: PASS for the exact seven-path cumulative diff, metadata freshness, supported generated-document freshness, two GitLab package and contract tests, diff integrity, clean worktree, and generated-mirror scope.
+- Main integration claim: integrate-gitlab-work-item-skills-019f7f89 acquired at journal event 2de66243-ae84-4ec9-b252-74d9173732ad for exactly the seven integrated paths and merge:integration:main.
+- Integrated main commit: e249af9f995545eb15fea548cfa2402d0eb10013.
+- Post-integration verification passed on main: exact-package metadata check, build-skill-docs freshness, two focused bundle tests, commit diff integrity, main reachability, and byte-for-byte equality between all accepted candidate paths and the integrated paths.
+- Integration claim released normally at journal event da1181a8-b7e7-4b01-b3b0-b04224a24c23 from clean main.
+- Work-item completion claim: complete-gitlab-work-item-skills-019f7f89 acquired at journal event 70881bd1-2759-4598-86e2-3330bca96889 for only this active path and its completed destination.
+- Full catalog, project-wiki, hierarchy, support-checklist, and live GitLab smoke suites were not run because this is a bounded Tier 1/2 skill addition and no authorized disposable GitLab project or provider runtime is available.
+- The preferred MCP package and YAML validators rejected this linked worktree as outside their configured roots. The corrected independent gate preserved that structured rejection and did not bypass it.
+- Cleanup eligibility: the private worktree is clean and the accepted seven-path candidate is patch-equivalent to main commit e249af9f995545eb15fea548cfa2402d0eb10013.
+
+## Deferred Follow-Up
+
+The shared metadata generator currently derives Gitlab rather than canonical GitLab in display names. The exact two-file proposal in candidate commit fca057871b3772c83665cef5e8e8bd044078014b adds the brand map in scripts/openai_metadata.py and its focused test in scripts/test_openai_metadata.py. That proposal passed its focused test but is deliberately excluded from this integrated item pending a separate scope-specific user decision.
 
 ## Approval Resolution
 
