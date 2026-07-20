@@ -6,11 +6,11 @@ Type: Feature
 
 ## Current Resumption Ownership
 
-- Canonical Dev Orchestrator task: 019f7e25-66d5-7962-b665-ee245ab37c3c.
+- Canonical Dev Orchestrator task: 019f7e31-2df9-7281-9e2e-766e545e76b5.
 - Parent task: 019f77f4-c4bd-7c91-b197-c987a7beb838.
 - Resumption authority: fresh ARTIFACT RESUME issued on 2026-07-20 for focused current-main reconciliation, the exact dependency-routing live selector, and any evidence-required bounded evaluation/test-only correction.
-- Phase: focused verification and current-main reconciliation.
-- Superseded tasks: prior dependency-routing preflight, waiting, and permission-failed tasks are evidence only and are not canonical ownership.
+- Phase: local-environment execution-compatibility pilot and focused live verification.
+- Superseded tasks: prior dependency-routing preflight, waiting, and permission-failed tasks are evidence only and are not canonical ownership. Task 019f7e25-66d5-7962-b665-ee245ab37c3c was archived after its worktree sandbox denied the required process inspection; it produced no code and released resource claim verify-dependency-routing-019f7e25 at event beaaa6d2-996d-4c34-8dd7-7fcf5968f2c5.
 
 ## Running Ownership
 
