@@ -422,7 +422,11 @@
     if (!repositoryRoot) {
       return "";
     }
-    return `${selectedEditorScheme()}://file${encodeURI(`${repositoryRoot}/${role.sourcePath}`)}`;
+    const filePath = `${repositoryRoot}/${role.sourcePath}`;
+    const settings = window[SETTINGS_GLOBAL_NAME];
+    return settings
+      ? settings.editorUrl(filePath)
+      : `${selectedEditorScheme()}://file${encodeURI(filePath)}`;
   }
 
   function injectStyle() {

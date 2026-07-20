@@ -208,6 +208,14 @@
     return readSettings(storage).editor;
   }
 
+  function editorUrl(filePath, search = window.location.search, storage = resolveStorage()) {
+    const scheme = editorScheme(search, storage);
+    if (scheme === "idea") {
+      return `idea://open?file=${encodeURIComponent(filePath)}`;
+    }
+    return `${scheme}://file${encodeURI(filePath)}`;
+  }
+
   function dispatchChange(settings) {
     document.dispatchEvent(new CustomEvent(CHANGE_EVENT_NAME, { detail: settings }));
   }
@@ -354,7 +362,7 @@
   /**
    * Shared browser API for documentation viewers that need persistent display preferences.
    * Consumers may read or write validated settings, resolve a view-supported harness, and
-   * preserve an explicit editor query parameter while falling back to the stored editor.
+   * build editor-specific file links while preserving an explicit editor query parameter.
    * Storage access failures are contained and return usable in-memory defaults.
    */
   window[API_GLOBAL_NAME] = Object.freeze({
@@ -365,6 +373,7 @@
     set: writeSetting,
     resolveHarness,
     editorScheme,
+    editorUrl,
   });
 
   if (document.readyState === DOM_READY_STATE_LOADING) {

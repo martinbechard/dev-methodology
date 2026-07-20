@@ -82,6 +82,25 @@ test("editor setting supports VS Code, IntelliJ, and explicit query overrides", 
   assert.equal(settings.editorScheme("?editor=idea", memoryStorage()), "idea");
 });
 
+test("editor links use editor-specific URL formats for Markdown and YAML", () => {
+  const vscodeStorage = memoryStorage({ [settings.storageKeys.editor]: "vscode" });
+  const ideaStorage = memoryStorage({ [settings.storageKeys.editor]: "idea" });
+  const markdownPath = "/repo/skills/example/SKILL.md";
+  const roleYamlPath = "/repo/agents/roles/example.role.yaml";
+  const templateYamlPath = "/repo/skills/example/assets/template.yaml";
+
+  assert.equal(
+    settings.editorUrl(markdownPath, "", vscodeStorage),
+    "vscode://file/repo/skills/example/SKILL.md",
+  );
+  for (const filePath of [markdownPath, roleYamlPath, templateYamlPath]) {
+    assert.equal(
+      settings.editorUrl(filePath, "", ideaStorage),
+      `idea://open?file=${encodeURIComponent(filePath)}`,
+    );
+  }
+});
+
 test("inaccessible storage cannot prevent usable settings", () => {
   settings.read(memoryStorage());
   const storage = {

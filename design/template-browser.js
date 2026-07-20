@@ -230,7 +230,11 @@
     if (!repositoryRoot) {
       return "";
     }
-    return `${selectedEditorScheme()}://file${encodeURI(`${repositoryRoot}/${template.sourcePath}`)}`;
+    const filePath = `${repositoryRoot}/${template.sourcePath}`;
+    const settings = window[SETTINGS_GLOBAL_NAME];
+    return settings
+      ? settings.editorUrl(filePath)
+      : `${selectedEditorScheme()}://file${encodeURI(filePath)}`;
   }
 
   function sourceUrlForTemplate(template) {

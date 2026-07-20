@@ -5497,6 +5497,7 @@ class BundleContentTests(unittest.TestCase):
             'const KEY_TAB = "Tab"',
             "storage.getItem",
             "storage.setItem",
+            'return `idea://open?file=${encodeURIComponent(filePath)}`;',
         ):
             with self.subTest(documentation_settings_phrase=phrase):
                 self.assertIn(phrase, settings_text)
