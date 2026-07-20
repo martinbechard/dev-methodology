@@ -3,3 +3,43 @@ cases:
   creation-and-claim: {backend: files, request: webhook idempotency keys, initialStatus: absent}
   interrupted-work-recovery: {status: active, claim: stale, result: complete, verification: pass}
   blocked-state-transition: {status: active, blocker: external schema decision, acceptanceEvidence: incomplete}
+  blocked-unowned-running-shortcut:
+    status: blocked
+    claim: null
+    blocker: external schema decision
+    unblockCondition: approved schema decision is recorded
+    unblockConditionSatisfied: true
+    acceptanceEvidence: [schema decision remains traceable, existing verification remains required]
+    claimOutcome: NOT_ATTEMPTED
+    attemptedTransition: running
+    itemBefore: &blocked-resumption-item |
+      # Schema Migration
+      Status: Blocked
+      Owner: Unowned
+      Claim: None
+      Blocker: External schema decision is unavailable.
+      Unblock Condition: Approved schema decision is recorded.
+      Evidence: Existing schema analysis and verification log.
+      Acceptance Criteria: Schema decision remains traceable; existing verification remains required.
+  blocked-claimed-resumption:
+    status: blocked
+    claim: null
+    blocker: external schema decision
+    unblockCondition: approved schema decision is recorded
+    unblockConditionSatisfied: true
+    acceptanceEvidence: [schema decision remains traceable, existing verification remains required]
+    claimOutcome: PRIMARY
+    newOwner: dev-coder
+    newClaim: schema-migration-resumption
+    requiredTransitions: [ready, claimed, running]
+    itemBefore: *blocked-resumption-item
+  blocked-failed-claim-resumption:
+    status: blocked
+    claim: null
+    blocker: external schema decision
+    unblockCondition: approved schema decision is recorded
+    unblockConditionSatisfied: true
+    acceptanceEvidence: [schema decision remains traceable, existing verification remains required]
+    claimOutcome: WAIT
+    requiredResult: byte-for-byte unchanged
+    itemBefore: *blocked-resumption-item

@@ -2438,6 +2438,30 @@ class BundleContentTests(unittest.TestCase):
                 self.assertTrue(skill_path.is_file())
                 self.assertTrue(openai_metadata_path(skill_name).is_file())
 
+    def test_dev_backlog_steward_requires_claimed_blocked_work_resumption(self) -> None:
+        """The suite makes claim-backed resumption and lossless failure observable."""
+        suite_root = AGENT_TEST_SUITES_ROOT / "dev-backlog-steward"
+        scenarios = load_yaml_object(suite_root / "scenarios.yaml")["scenarios"]
+        by_id = {scenario["id"]: scenario for scenario in scenarios}
+
+        self.assertEqual(
+            "BLOCKED",
+            by_id["blocked-unowned-running-shortcut"]["expectedTerminalStatus"],
+        )
+        self.assertEqual(
+            "PASS", by_id["blocked-claimed-resumption"]["expectedTerminalStatus"]
+        )
+        self.assertEqual(
+            "BLOCKED",
+            by_id["blocked-failed-claim-resumption"]["expectedTerminalStatus"],
+        )
+        self.assertTrue((suite_root / "contract_harness.py").is_file())
+        judge_text = (suite_root / "agents" / "judge.toml").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("reject direct unowned Blocked to Running", judge_text)
+        self.assertIn("byte-for-byte pre-attempt Blocked item", judge_text)
+
     def test_skill_frontmatter_uses_agent_skill_schema(self) -> None:
         for skill_path in sorted(SKILLS_ROOT.glob("*/SKILL.md")):
             with self.subTest(skill_path=skill_path):
@@ -5451,6 +5475,8 @@ class BundleContentTests(unittest.TestCase):
                             for scenario in scenarios["scenarios"]
                         },
                     )
+                elif entry["id"] == "dev-backlog-steward":
+                    self.assertEqual(6, len(scenarios["scenarios"]))
                 else:
                     self.assertEqual(3, len(scenarios["scenarios"]))
 
