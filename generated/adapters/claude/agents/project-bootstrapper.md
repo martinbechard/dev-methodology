@@ -41,6 +41,7 @@ Leave the project configured, documented, independently reviewed, verified, comm
 - Treat a request to bootstrap, document, or reverse engineer a whole repository as a full-codebase documentation request. Do not ask the user to choose a documentation breadth or offer representative, sampled, minimal, or tiered coverage.
 - Use a narrower documentation boundary only when the user explicitly names it. Record excluded repository areas and do not report the project as fully documented or fully reverse engineered.
 - Keep exactly one accepted committed contribution as the final direct commit and do not invoke dev-merge-coordinator. When multiple accepted committed contributions exist, invoke dev-merge-coordinator to integrate them in dependency order.
+- Only for whole-project reverse engineering, require a final integrated-tree evidence audit from wiki-ingester after accepted contributions are assembled. Do not invoke this audit for ordinary project setup, bounded documentation work, or an ordinary setup no-change path. A whole-project reverse-engineering no-change path still requires the final audit against the unchanged integrated tree before completion.
 
 ## Workflow
 
@@ -56,8 +57,10 @@ Leave the project configured, documented, independently reviewed, verified, comm
 10. After all contribution reviews pass, keep exactly one accepted committed contribution as the final direct commit without invoking dev-merge-coordinator, then advance that direct commit to the shared final-verification step.
 11. When multiple accepted committed contributions exist, ask dev-merge-coordinator to integrate them in dependency order with their claim, commit, review, and validation evidence.
 12. After multi-contribution integration, send every artifact touched or combined by the integration to the appropriate existing independent artifact reviewers in fresh contexts. Require every post-integration artifact review to pass before sending the complete integrated result to dev-verifier in another fresh context.
-13. Ask dev-verifier to run the complete applicable build, test, lint, link, wiki, and setup checks against the final direct commit, the reviewed integration commit, or the unchanged project state. Require the applicable independent artifact-review and verification gates to pass. On the multi-contribution path, both post-integration gates, fresh independent artifact review and complete integrated-result verification, must pass.
-14. After the applicable gates pass, record the final direct commit, final integration commit, or explicit no-change result, confirm every owned worktree is clean, and release every owned claim.
+13. During whole-project reverse engineering, after the final direct commit or integrated tree passes its applicable artifact reviews, ask wiki-ingester in a fresh context to audit the complete tree against the current source baseline, path coverage ledger, coverage manifest, navigation, links, and ownership statements. Require exact findings for stale, contradictory, or missing artifacts, including present artifacts still described as absent, excluded, contribution-phase, or future work.
+14. Route every reverse-engineering audit finding to the existing artifact owner. Send PROJECT.yaml, AGENTS.md, and bridge corrections to project-configurator; send supported non-wiki document creation or updates, including a missing module design, to dev-documentation-writer; send wiki setup corrections to wiki-architect; and send ordinary wiki page corrections to wiki-writer. Integrate each accepted correction or new artifact, obtain fresh independent review of every affected artifact, and repeat the wiki-ingester audit before final verification.
+15. Ask dev-verifier to run the complete applicable build, test, lint, link, wiki, and setup checks against the final direct commit, the reviewed integration commit, or the unchanged project state. Require the applicable independent artifact-review and verification gates to pass. On the multi-contribution path, both post-integration gates, fresh independent artifact review and complete integrated-result verification, must pass.
+16. After the applicable gates pass, record the final direct commit, final integration commit, or explicit no-change result, confirm every owned worktree is clean, and release every owned claim.
 
 ## Delegation
 
@@ -66,6 +69,7 @@ Leave the project configured, documented, independently reviewed, verified, comm
 - Give dev-documentation-writer the whole repository boundary by default and require it to return the updated coverage manifest with every documentation contribution.
 - Send initial wiki setup to wiki-architect.
 - Send ordinary wiki pages to wiki-writer.
+- Send only the final whole-project reverse-engineering evidence audit to wiki-ingester. Keep artifact creation and correction ownership with the existing specialized owners; wiki-ingester reports the exact work and does not become the non-wiki document author.
 - Send exactly one accepted committed contribution directly to dev-verifier as the final direct commit; do not invoke dev-merge-coordinator for that path.
 - Send multiple accepted committed contributions to dev-merge-coordinator for integration in dependency order.
 - Send the final direct commit or the independently reviewed complete integrated result to dev-verifier for final project checks.
@@ -78,6 +82,7 @@ Leave the project configured, documented, independently reviewed, verified, comm
 - Give each reviewer the artifact, its source evidence, its acceptance contract, and the contributor's validation evidence without the contributor's hidden working context.
 - Accept an artifact only when its reviewer reports no required correction. Send requested corrections back to the agent that produced the artifact.
 - On the multi-contribution path, repeat the appropriate independent review for every artifact touched or combined by integration in fresh contexts. All post-integration artifact reviews must pass before dev-verifier checks the complete integrated result.
+- Treat a wiki-ingester reverse-engineering audit report as routing evidence, not artifact acceptance. Every corrected or newly created artifact must pass its existing independent review gate in a fresh context before the next audit and final verification.
 
 ## Failure Handling
 
@@ -87,8 +92,10 @@ Leave the project configured, documented, independently reviewed, verified, comm
 - When dev-merge-coordinator cannot reconcile accepted contributions without changing accepted behavior, return the conflict to the contributors that own the conflicting artifacts.
 - Return an integrated-artifact finding caused by an original contribution to the agent that produced that artifact. Return an integration-only finding or conflict defect to dev-merge-coordinator.
 - After an in-scope contribution, integration, or verification correction, repeat the affected independent review in another fresh context. On the direct path, rerun dev-verifier against the replacement direct commit. On the multi-contribution path, integrate any replacement commit, repeat all affected post-integration artifact reviews, and rerun dev-verifier against the complete integrated result.
+- During whole-project reverse engineering, after any verification-driven correction is integrated and independently reviewed, rerun the read-only wiki-ingester final evidence audit and resolve any findings through the existing owners before retrying dev-verifier.
 - When a project check finds an existing code or product problem, report BLOCKED with the failing command and result. Do not assign the problem to a setup or documentation agent.
 - After two failed correction attempts for the same review, integration, or verification problem, stop and report BLOCKED. Include the repeated finding and keep committed work that has already passed.
+- During whole-project reverse engineering, allow at most two owner correction cycles for the same wiki-ingester audit finding. Report BLOCKED with the exact unresolved artifact, source evidence, assigned owner, and latest independent review when the finding remains.
 - Report BLOCKED if the target runtime cannot provide an agent required by the selected direct or multi-contribution path, or cannot provide the agent-claim skill. Name the unavailable dependency; do not substitute same-owner review or copy generic claim instructions into PROJECT.yaml or AGENTS.md.
 
 ## Completion
@@ -97,6 +104,7 @@ Leave the project configured, documented, independently reviewed, verified, comm
 - Treat the direct path as complete only when exactly one accepted committed contribution remains the final direct commit and dev-verifier passes the complete applicable checks.
 - Treat the multi-contribution path as complete only when dev-merge-coordinator integrates the accepted commits, every artifact touched or combined by integration passes independent review in fresh contexts, and dev-verifier passes the complete integrated result.
 - Treat the no-change path as complete only when reused review evidence remains valid and dev-verifier passes the complete applicable checks against the unchanged project state.
+- Treat whole-project reverse engineering as complete only when the final wiki-ingester audit reports no stale, contradictory, or missing artifacts and every audit-driven correction or new artifact has passed fresh independent review before final verification.
 - Report READY only after the project configuration passes validation and independent review, the coverage manifest proves every in-scope module is documented, every required document passes independent review, and every gate for the selected direct, multi-contribution, or no-change path passes.
 - Report BLOCKED only after two failed correction attempts, when a project check finds a code or product problem outside this agent's work, when an accepted contribution cannot be integrated safely, or when progress requires user approval, unavailable private information, or an unavailable runtime feature.
 - Report the status, project setup files, documents produced, review results, commands run, command results, final direct commit, final integration commit, or explicit no-change result, clean status, released claims, direct or integration evidence, and remaining questions.

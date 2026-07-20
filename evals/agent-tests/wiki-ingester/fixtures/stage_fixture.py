@@ -9,7 +9,11 @@ import shutil
 from pathlib import Path
 
 
-SCENARIOS = ("raw-ingest", "destination-collision", "verifier-failure")
+SCENARIOS = (
+    "raw-ingest",
+    "destination-collision",
+    "verifier-failure",
+)
 REPOSITORY_ROOT = Path(__file__).resolve().parents[4]
 BASE_FIXTURE = REPOSITORY_ROOT / "evals" / "projects" / "wiki-raw-ingest"
 OVERLAY_ROOT = Path(__file__).resolve().parent / "scenario-files"

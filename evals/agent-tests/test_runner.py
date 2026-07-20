@@ -2426,6 +2426,122 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         self.assertEqual("PASS", result["status"])
         self.assertEqual("verified", result["receiptAudit"]["status"])
 
+    def test_strict_read_only_inventory_rejects_detected_cleaned_side_effects(self) -> None:
+        """A strict audit fails when any mutation occurred, even after exact cleanup."""
+        suite = self._suite("one")
+        scenario = dict(suite.scenarios[0])
+        scenario["deterministicChecks"] = ["no-forbidden-mutation"]
+        scenario["requiresWorkspaceInventory"] = True
+        scenario["requiresNoDetectedMutation"] = True
+        suite = runner._Suite(suite.suite_id, suite.priority, suite.path, suite.manifest, (scenario,))
+        run = runner._RunSpec(suite=suite, scenario_ids=("happy",))
+        run_identity = "codex-batch-01-test"
+        with tempfile.TemporaryDirectory() as temporary:
+            checkpoint_root = Path(temporary)
+            checkpoint = self._write_receipt_checkpoint(checkpoint_root, run, run_identity)
+            self._replace_deterministic_artifact(
+                checkpoint_root,
+                checkpoint,
+                "no-forbidden-mutation",
+                self._workspace_mutation_evidence(final_matches=True),
+            )
+            path = checkpoint_root / "one" / "happy.json"
+            path.write_text(json.dumps(checkpoint, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+            report = runner._load_checkpoint_report(
+                checkpoint_root,
+                (run,),
+                run_identity,
+                require_runtime_judge_provenance=False,
+            )
+
+        assert report is not None
+        result = report["runs"][0]["scenarioResults"][0]
+        self.assertEqual("BLOCKED", result["status"])
+        self.assertEqual("invalid", result["receiptAudit"]["status"])
+        self.assertIn(
+            "passed after detected workspace mutation",
+            " ".join(result["receiptAudit"]["diagnostics"]),
+        )
+
+    def test_scenario_dependency_override_can_forbid_suite_dependency(self) -> None:
+        """The audit scenario's explicit empty dependency set overrides ingest allowance."""
+        suite = runner._load_catalog(include_ids={"wiki-ingester"})["wiki-ingester"]
+
+        self.assertEqual(
+            (),
+            runner._scenario_dependencies(
+                suite,
+                "final-evidence-audit-read-only",
+            ),
+        )
+        self.assertEqual(
+            ("wiki-topic-verifier",),
+            runner._scenario_dependencies(suite, "raw-ingest"),
+        )
+
+    def test_read_only_audit_rejects_retained_verifier_session(self) -> None:
+        """Retained topology cannot use the ingest-only verifier in audit mode."""
+        suite = runner._load_catalog(include_ids={"wiki-ingester"})["wiki-ingester"]
+        run = runner._RunSpec(
+            suite=suite,
+            scenario_ids=("final-evidence-audit-read-only",),
+        )
+        sessions = (
+            runner._Session(
+                "supervisor",
+                "root",
+                "wiki_ingester_suite_supervisor",
+                1,
+                0.0,
+                10.0,
+                frozenset(),
+            ),
+            runner._Session(
+                "target",
+                "supervisor",
+                "wiki_ingester",
+                2,
+                1.0,
+                8.0,
+                frozenset(),
+            ),
+            runner._Session(
+                "verifier",
+                "target",
+                "wiki_topic_verifier",
+                3,
+                2.0,
+                3.0,
+                frozenset(),
+            ),
+        )
+        report = {
+            "runs": [
+                {
+                    "suite": "wiki-ingester",
+                    "scenarioResults": [
+                        {
+                            "scenario": "final-evidence-audit-read-only",
+                            "targetInvoked": True,
+                            "judgeInvoked": False,
+                        }
+                    ],
+                }
+            ]
+        }
+
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "Nested dependency wiki_topic_verifier is not allowed for "
+            "wiki-ingester:final-evidence-audit-read-only",
+        ):
+            runner._audit_session_concurrency(
+                sessions,
+                maximum_threads=9,
+                batch=(run,),
+                report=report,
+            )
+
     def test_workspace_inventory_rejects_wrong_roots_and_unsafe_entries(self) -> None:
         """Retained inventory structure cannot escape or substitute the protected workspace."""
         for case in ("wrong-root", "unsafe-path", "malformed-entry", "invented-preexisting"):
@@ -2496,7 +2612,46 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                 baselines[("dev-code-reviewer", "incomplete-review-evidence")],
             )
 
-        self.assertTrue(diagnostics)
+            self.assertTrue(diagnostics)
+
+    def test_wiki_ingester_read_only_audit_stages_runner_owned_inventory(self) -> None:
+        """The audit scenario enters execution with its dedicated protected workspace."""
+        suite = runner._load_catalog(include_ids={"wiki-ingester"})["wiki-ingester"]
+        run = runner._RunSpec(
+            suite=suite,
+            scenario_ids=("final-evidence-audit-read-only",),
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            fixture_root = root / "fixtures"
+            checkpoint_root = root / "checkpoints"
+            fixture_root.mkdir()
+            checkpoint_root.mkdir()
+
+            baselines = runner._stage_workspace_inventory_fixtures(
+                (run,), fixture_root, checkpoint_root
+            )
+
+            protected = (
+                fixture_root
+                / "wiki-ingester"
+                / "final-evidence-audit-read-only"
+            )
+            self.assertTrue((protected / ".git").is_dir())
+            self.assertTrue((protected / "path-coverage-ledger.json").is_file())
+            self.assertIn(
+                ("wiki-ingester", "final-evidence-audit-read-only"),
+                baselines,
+            )
+            self.assertTrue(
+                (
+                    checkpoint_root
+                    / "wiki-ingester"
+                    / "final-evidence-audit-read-only"
+                    / "artifacts"
+                    / "workspace-baseline.json"
+                ).is_file()
+            )
 
     def test_wrong_identity_critical_skip_rows_remain_non_passing(self) -> None:
         """Every structured skip field must match the failed selected critical gate exactly."""

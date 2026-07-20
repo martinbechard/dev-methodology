@@ -3706,7 +3706,10 @@ class BundleContentTests(unittest.TestCase):
                         self.assertIn(f"Use the {skill} skill {condition}.", codex_agent_text)
                 self.assertIn("# Output purposes:", codex_agent_text)
                 self.assertEqual(
-                    build_skill_docs.codex_role_instruction_text(role),
+                    build_skill_docs.codex_role_instruction_text(
+                        role,
+                        known_role_names=tuple(sorted(source_role_names)),
+                    ),
                     tomllib.loads(codex_agent_text)["developer_instructions"],
                 )
                 self.assertNotIn(
@@ -4262,6 +4265,7 @@ class BundleContentTests(unittest.TestCase):
                 "dev-artifact-reviewer",
                 "wiki-artifact-reviewer",
                 "wiki-topic-verifier",
+                "wiki-ingester",
                 "dev-merge-coordinator",
                 "dev-verifier",
             ),
@@ -5000,6 +5004,7 @@ class BundleContentTests(unittest.TestCase):
             "wiki-writer",
             "wiki-artifact-reviewer",
             "wiki-topic-verifier",
+            "wiki-ingester",
             "dev-merge-coordinator",
             "dev-verifier",
         ):
@@ -5014,6 +5019,7 @@ class BundleContentTests(unittest.TestCase):
                 "dev-artifact-reviewer",
                 "wiki-artifact-reviewer",
                 "wiki-topic-verifier",
+                "wiki-ingester",
                 "dev-merge-coordinator",
                 "dev-verifier",
             ),
@@ -5037,7 +5043,7 @@ class BundleContentTests(unittest.TestCase):
             ),
             role.output_contract,
         )
-        self.assertEqual(4, len(role.examples))
+        self.assertEqual(5, len(role.examples))
         self.assertTrue(role.examples[0]["plausibleResponse"].startswith("STATUS: READY"))
         self.assertTrue(role.examples[1]["plausibleResponse"].startswith("STATUS: READY"))
         self.assertIn("STATUS: BLOCKED", role.examples[2]["plausibleResponse"])
@@ -5524,6 +5530,34 @@ class BundleContentTests(unittest.TestCase):
                     )
                 elif entry["id"] == "dev-backlog-steward":
                     self.assertEqual(6, len(scenarios["scenarios"]))
+                elif entry["id"] == "project-bootstrapper":
+                    self.assertEqual(4, len(scenarios["scenarios"]))
+                    self.assertEqual(
+                        {
+                            "valid-configuration-direct-path",
+                            "missing-configuration-multi-contribution",
+                            "whole-project-reverse-engineering-steady-state",
+                            "invalid-configuration-no-authority",
+                        },
+                        {
+                            scenario["id"]
+                            for scenario in scenarios["scenarios"]
+                        },
+                    )
+                elif entry["id"] == "wiki-ingester":
+                    self.assertEqual(4, len(scenarios["scenarios"]))
+                    self.assertEqual(
+                        {
+                            "raw-ingest",
+                            "destination-collision",
+                            "verifier-failure",
+                            "final-evidence-audit-read-only",
+                        },
+                        {
+                            scenario["id"]
+                            for scenario in scenarios["scenarios"]
+                        },
+                    )
                 else:
                     self.assertEqual(3, len(scenarios["scenarios"]))
 
@@ -6404,6 +6438,65 @@ class BundleContentTests(unittest.TestCase):
         )
         self.assertFalse((REPOSITORY_ROOT / "evals" / "reconstruction-review").exists())
 
+    def test_reverse_engineering_final_audit_preserves_artifact_ownership(self) -> None:
+        """Whole-project reverse engineering should audit final evidence without widening authorship."""
+        build_skill_docs = load_build_skill_docs_module()
+        skill_payload = build_skill_docs.build_payload()
+        roles = build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
+        roles_by_name = {role.name: role for role in roles}
+        bootstrapper = roles_by_name["project-bootstrapper"]
+        ingester = roles_by_name["wiki-ingester"]
+
+        bootstrap_workflow = " ".join(bootstrapper.instruction_sections["workflow"])
+        bootstrap_delegation = " ".join(bootstrapper.instruction_sections["delegation"])
+        bootstrap_completion = " ".join(bootstrapper.instruction_sections["completion"])
+        bootstrap_failure = " ".join(bootstrapper.instruction_sections["failureHandling"])
+        self.assertIn("Only for whole-project reverse engineering", bootstrapper.instructions)
+        self.assertIn("Do not invoke this audit for ordinary project setup", bootstrapper.instructions)
+        self.assertIn(
+            "whole-project reverse-engineering no-change path still requires the final audit",
+            bootstrapper.instructions,
+        )
+        self.assertIn("wiki-ingester", bootstrap_workflow)
+        self.assertIn("complete tree", bootstrap_workflow)
+        self.assertIn("missing module design", bootstrap_workflow)
+        self.assertIn("dev-documentation-writer", bootstrap_workflow)
+        self.assertIn("fresh independent review", bootstrap_workflow)
+        self.assertIn("wiki-ingester", bootstrap_delegation)
+        self.assertIn("does not become the non-wiki document author", bootstrap_delegation)
+        self.assertIn("final wiki-ingester audit reports no stale", bootstrap_completion)
+        self.assertIn(
+            "after any verification-driven correction",
+            bootstrap_failure,
+        )
+        self.assertIn("before retrying dev-verifier", bootstrap_failure)
+
+        ingester_boundaries = " ".join(ingester.instruction_sections["boundaries"])
+        ingester_workflow = " ".join(ingester.instruction_sections["workflow"])
+        ingester_completion = " ".join(ingester.instruction_sections["completion"])
+        self.assertIn("inspect and report only", ingester_boundaries)
+        self.assertIn("Do not create, update, move, or correct", ingester_boundaries)
+        for artifact in (
+            "PROJECT.yaml",
+            "AGENTS.md",
+            "wiki navigation",
+            "module catalogs",
+            "coverage manifests",
+            "module pages",
+            "links",
+            "ownership statements",
+        ):
+            with self.subTest(audited_artifact=artifact):
+                self.assertIn(artifact, ingester_workflow)
+        for stale_marker in ("absent", "excluded", "contribution-phase", "future work"):
+            with self.subTest(stale_marker=stale_marker):
+                self.assertIn(stale_marker, ingester_workflow)
+        self.assertIn("NEEDS_CORRECTION", ingester_completion)
+        self.assertIn("explicit no-change result", ingester_completion)
+        self.assertNotIn(
+            "final evidence audit",
+            roles_by_name["dev-documentation-writer"].instructions,
+        )
     def test_reverse_engineering_separates_pass_acceptance_and_readiness(self) -> None:
         """Keep bottom-up acceptance, persisted mode, wiki routing, and reconciliation aligned."""
         reverse_text = (
@@ -6555,7 +6648,6 @@ class BundleContentTests(unittest.TestCase):
             self.assertIn("top-down semantic reconciliation", text)
             self.assertIn("documentation acceptance", text.lower())
             self.assertIn("implementation readiness", text.lower())
-
     def test_project_configuration_distinguishes_no_variant_from_missing_required_skill(self) -> None:
         detector_text = (SKILLS_ROOT / "detect-technology-skills" / "SKILL.md").read_text(
             encoding="utf-8"

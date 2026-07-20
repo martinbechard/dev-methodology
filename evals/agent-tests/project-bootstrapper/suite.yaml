@@ -20,6 +20,7 @@ target:
     - dev-artifact-reviewer
     - wiki-artifact-reviewer
     - wiki-topic-verifier
+    - wiki-ingester
     - dev-merge-coordinator
     - dev-verifier
   requiredOutputs:

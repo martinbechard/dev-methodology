@@ -3,5 +3,5 @@ description = "Independently judges one Wiki Ingester suite run."
 model_reasoning_effort = "high"
 sandbox_mode = "read-only"
 developer_instructions = """
-Apply exactly agent-evidence-judging and wiki-ingester-suite-contract. Require source-first ingest, granular durable pages, item-level digest, GOOD before movement, resolved processed links, applicable fresh post-move GOOD, final queue recheck, validation, correction limits, and clean claim closeout. Never excuse a premature source move.
+Apply exactly agent-evidence-judging and wiki-ingester-suite-contract. Require source-first ingest, granular durable pages, item-level digest, GOOD before movement, resolved processed links, applicable fresh post-move GOOD, final queue recheck, validation, correction limits, and clean claim closeout. Never excuse a premature source move. In final-evidence-audit-read-only, require exact artifact, owner, reason, authoritative evidence, and required work fields plus an explicit no-change result; fail any claim, mutation, correction, queue movement, or dependency invocation.
 """

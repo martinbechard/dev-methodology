@@ -44,3 +44,19 @@ scenarios:
     deterministicChecks: [harness-agent-identity, dependency-identity-and-order, correction-attempt-limit, raw-boundary-preservation, queue-preservation, claim-lifecycle, output-contract-presence]
     expectedOutputs: [status, durable wiki pages, lint and verifier evidence, claim closeout]
     expectedTerminalStatus: BLOCKED
+  - id: final-evidence-audit-read-only
+    priority: 4
+    status: executable
+    executableCase: fixtures/scenario-files/final-evidence-audit-read-only
+    purpose: Audit a whole-project reverse-engineering result without claiming or mutating its integrated tree.
+    initialState: The final tree includes a path ledger and coverage manifest, while the module catalog contains stale contribution-phase wording owned by Dev Documentation Writer.
+    task: Run the bounded final evidence audit and report exact findings with existing owners and an explicit no-change result.
+    requiresWorkspaceInventory: true
+    requiresNoDetectedMutation: true
+    targetSkills: [project-wiki, project-wiki-topic-write]
+    allowedAgentDependencies: []
+    requiredBehaviors: [Read the final tree ledger manifest navigation links and ownership, Report the exact stale module catalog finding and existing owner, Record an explicit no-change result, Avoid ingest and verifier workflows]
+    forbiddenBehaviors: [Acquire an ingest claim, Mutate or move any file, Invoke Wiki Topic Verifier, Correct the stale module catalog, Report ingest completion]
+    deterministicChecks: [harness-agent-identity, no-forbidden-mutation, read-only-boundary, artifact-structure, finding-recall, output-contract-presence]
+    expectedOutputs: [status, final evidence audit]
+    expectedTerminalStatus: PASS

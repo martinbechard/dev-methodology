@@ -5,13 +5,14 @@ priority: 12
 target:
   conceptualRole: agents/roles/wiki-activities/wiki-ingester.role.yaml
   nativeAgent: generated/adapters/codex/agents/wiki-ingester.toml
-  repositoryMutation: required
-  requiredSkills: [agent-claim, project-wiki, project-wiki-topic-write]
+  repositoryMutation: conditional
+  requiredSkills: [project-wiki, project-wiki-topic-write]
   conditionalSkills:
+    agent-claim: The requested mode performs mutating ingest rather than a read-only final evidence audit.
     organise-project-files: Ingest creates a project file or directory.
     code-project-wiki: Durable claims depend on implementation behavior.
   allowedAgentDependencies: [wiki-topic-verifier]
-  requiredOutputs: [status, durable wiki pages, processed-source links, lint and verifier evidence, claim closeout]
+  requiredOutputs: [status, durable wiki pages, processed-source links, lint and verifier evidence, claim closeout, final evidence audit]
 projectAgents:
   supervisor: agents/supervisor.toml
   judge: agents/judge.toml

@@ -1,0 +1,41 @@
+{
+  "schema": "scripted-path-coverage-ledger",
+  "version": 1,
+  "sourceBaseline": {
+    "id": "missing-configuration-multi-contribution-v1",
+    "paths": [
+      {
+        "path": "src/catalog.py",
+        "sha256": "7fad47038f46a22fbc584bfb54fea641f6cda74ceced3f2c8ef9451b7920125f",
+        "classification": "MUST_DOCUMENT",
+        "documentationOwner": "docs/module-catalog-design.md"
+      },
+      {
+        "path": "src/orders.py",
+        "sha256": "b3929b868e9235db2a9241c97d80a8f293a166232226fdb686168daac3904d60",
+        "classification": "MUST_DOCUMENT",
+        "documentationOwner": "docs/module-orders.md"
+      }
+    ]
+  },
+  "trackedPathClassifications": {
+    "README.md": "setup",
+    "bootstrap-requirements.json": "setup",
+    "path-coverage-ledger.json": "audit-evidence",
+    "src/catalog.py": "MUST_DOCUMENT",
+    "src/orders.py": "MUST_DOCUMENT",
+    "tests/test_catalog.py": "related-test",
+    "tests/test_orders.py": "related-test",
+    "validate_fixture.py": "fixture-validator"
+  },
+  "artifactOwnership": {
+    "PROJECT.yaml": "project-configurator",
+    "AGENTS.md": "project-configurator",
+    "docs/coverage-manifest.yaml": "dev-documentation-writer",
+    "docs/module-catalog.md": "dev-documentation-writer",
+    "docs/module-orders.md": "dev-documentation-writer",
+    "docs/module-catalog-design.md": "dev-documentation-writer",
+    "docs/wiki/README.md": "wiki-architect",
+    "docs/wiki/topic-index.md": "wiki-writer"
+  }
+}

@@ -3286,6 +3286,12 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "project-wiki-review"
     },
     {
+      "condition": "when the requested mode performs mutating ingest rather than a read-only final evidence audit.",
+      "kind": "conditional",
+      "role": "wiki-ingester",
+      "skill": "agent-claim"
+    },
+    {
       "condition": "when durable wiki claims depend on implementation behavior that must remain traceable to authoritative code and tests.",
       "kind": "conditional",
       "role": "wiki-ingester",
@@ -3296,11 +3302,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "conditional",
       "role": "wiki-ingester",
       "skill": "organise-project-files"
-    },
-    {
-      "kind": "fixed",
-      "role": "wiki-ingester",
-      "skill": "agent-claim"
     },
     {
       "kind": "fixed",
@@ -5998,6 +5999,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     },
     {
       "conditionalSkills": {
+        "agent-claim": "when the requested mode performs mutating ingest rather than a read-only final evidence audit.",
         "code-project-wiki": "when durable wiki claims depend on implementation behavior that must remain traceable to authoritative code and tests.",
         "organise-project-files": "when the requested ingest creates a new project file or directory."
       },
@@ -6049,11 +6051,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "declaredCases": [
         "wiki-raw-ingest"
       ],
-      "description": "Processes raw inputs into durable wiki leaves, digest entries, processed-source links, linted pages, and verifier evidence.",
+      "description": "Processes raw inputs into durable wiki coverage and performs the final integrated-tree evidence audit for whole-project reverse engineering when Project Bootstrapper assigns that bounded read-only mode.",
       "dynamicFolderSkills": false,
       "executedCases": [],
       "fixedSkills": [
-        "agent-claim",
         "project-wiki",
         "project-wiki-topic-write"
       ],

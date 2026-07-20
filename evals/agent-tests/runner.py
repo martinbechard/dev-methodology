@@ -220,10 +220,16 @@ def _agent_dependencies(run: _RunSpec) -> tuple[str, ...]:
 
 def _scenario_dependencies(suite: _Suite, scenario_id: str) -> tuple[str, ...]:
     """Return fixed dependencies plus only those selected by one scenario."""
-    dependencies = {
-        str(value) for value in suite.manifest.get("target", {}).get("allowedAgentDependencies", [])
-    }
     scenario = next(value for value in suite.scenarios if str(value.get("id", "")) == scenario_id)
+    declared = scenario.get("allowedAgentDependencies")
+    dependencies = {
+        str(value)
+        for value in (
+            declared
+            if isinstance(declared, list)
+            else suite.manifest.get("target", {}).get("allowedAgentDependencies", [])
+        )
+    }
     dependencies.update(str(value) for value in scenario.get("taskSelectedAgentDependencies", []))
     return tuple(sorted(dependencies))
 
@@ -333,6 +339,33 @@ def _validate_suite(suite: _Suite, require_executable: bool = True) -> None:
             raise ValueError(
                 f"{suite.suite_id}:{scenario_id} workspace inventory requires no-forbidden-mutation"
             )
+        requires_no_detected_mutation = scenario.get("requiresNoDetectedMutation", False)
+        if type(requires_no_detected_mutation) is not bool:
+            raise ValueError(
+                f"{suite.suite_id}:{scenario_id} requiresNoDetectedMutation must be a boolean"
+            )
+        if requires_no_detected_mutation and not requires_inventory:
+            raise ValueError(
+                f"{suite.suite_id}:{scenario_id} no-detected-mutation enforcement requires workspace inventory"
+            )
+        scenario_dependencies = scenario.get("allowedAgentDependencies")
+        if scenario_dependencies is not None:
+            if not isinstance(scenario_dependencies, list) or not all(
+                isinstance(value, str) and value for value in scenario_dependencies
+            ):
+                raise ValueError(
+                    f"{suite.suite_id}:{scenario_id} allowedAgentDependencies must be a list of strings"
+                )
+            suite_dependencies = {
+                str(value)
+                for value in target.get("allowedAgentDependencies", [])
+            }
+            unknown_scenario_dependencies = set(scenario_dependencies) - suite_dependencies
+            if unknown_scenario_dependencies:
+                raise ValueError(
+                    f"{suite.suite_id}:{scenario_id} allows undeclared dependencies: "
+                    f"{', '.join(sorted(unknown_scenario_dependencies))}"
+                )
         for field in (
             "taskSelectedAgentDependencies",
             "requiredDependencyOrder",
@@ -2080,6 +2113,19 @@ def _validate_evidence_receipts(
                 ):
                     diagnostics.append(
                         f"{field} no-forbidden-mutation passed without restoring the baseline inventory"
+                    )
+                if (
+                    inventory is not None
+                    and receipt.get("verdict") == "passed"
+                    and scenario.get("requiresNoDetectedMutation") is True
+                    and (
+                        inventory.get("derivedMutationClaim") != "no-changes-detected"
+                        or not isinstance(inventory.get("detected"), Mapping)
+                        or any(inventory["detected"].values())
+                    )
+                ):
+                    diagnostics.append(
+                        f"{field} no-forbidden-mutation passed after detected workspace mutation"
                     )
             deterministic[check_id] = receipt
         elif event_type == "judge-disposition":
