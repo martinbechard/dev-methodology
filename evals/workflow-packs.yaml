@@ -51,6 +51,7 @@ packs:
       - probe-code-discovery
       - probe-code-execution-tracing
       - probe-code-review-evidence
+      - probe-complete-work-item-direct-main
       - probe-create-pull-request
       - probe-electron-main
       - probe-electron-preload

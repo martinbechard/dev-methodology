@@ -87,6 +87,7 @@ NEW_DEVELOPMENT_SKILLS = (
     "runtime-evidence-collection",
     "organise-project-files",
     "execute-workitem",
+    "complete-work-item-direct-main",
     "file-based-backlog",
     "create-github-work-item",
     "manage-github-work-items",
@@ -1475,6 +1476,54 @@ class BundleContentTests(unittest.TestCase):
             "github-issues-backlog",
         ):
             self.assertIn(f"- {skill_name}", readme_text)
+
+    def test_direct_main_completion_requires_integrated_main_evidence(self) -> None:
+        skill_name = "complete-work-item-direct-main"
+        skill_path = SKILLS_ROOT / skill_name / "SKILL.md"
+        skill_text = skill_path.read_text(encoding="utf-8")
+
+        required_phrases = (
+            "This skill owns Git delivery and main observation.",
+            "Do not include provider lifecycle surfaces in this integration claim.",
+            "Preserve unrelated main advances.",
+            "do not manufacture a topology-only merge",
+            "The integration commit is an ancestor of the observed main tip.",
+            "content-equivalence evidence",
+            "Do not report a provider-backed item as completed before that succeeds.",
+            "An unmerged temporary branch can never return READY or cause lifecycle COMPLETED.",
+        )
+        for phrase in required_phrases:
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, skill_text)
+
+        self.assertTrue(openai_metadata_path(skill_name).is_file())
+        self.assertIn(
+            f"- {skill_name}",
+            README_PATH.read_text(encoding="utf-8"),
+        )
+
+        generated_text = SKILL_DEFINITIONS_PATH.read_text(encoding="utf-8")
+        self.assertIn(f'"name": "{skill_name}"', generated_text)
+
+        probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
+        probe = next(
+            entry
+            for entry in probes["probes"]
+            if entry["id"] == "probe-complete-work-item-direct-main"
+        )
+        self.assertEqual(skill_name, probe["skill"])
+        self.assertIn("unmerged temporary branch", probe["negativeCondition"])
+
+        workflow_packs = load_yaml_object(
+            REPOSITORY_ROOT / "evals" / "workflow-packs.yaml"
+        )
+        code_delivery = next(
+            entry for entry in workflow_packs["packs"] if entry["id"] == "code-delivery"
+        )
+        self.assertIn(
+            "probe-complete-work-item-direct-main",
+            code_delivery["skillProbes"],
+        )
 
     def test_jhipster_guidance_is_split_into_focused_skill_packages(self) -> None:
         expected_phrases = {

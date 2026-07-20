@@ -387,6 +387,20 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: structured-design}
+  - id: probe-complete-work-item-direct-main
+    skill: complete-work-item-direct-main
+    source: skills/complete-work-item-direct-main/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: workflow-invariant
+    activationCondition: A reviewed and verified work item must complete through the explicitly selected direct-main completion process.
+    negativeCondition: An unmerged temporary branch, pushed branch, pull request, merge request, clean worktree, or successful merge command without observed main reachability does not activate terminal provider closure or return READY.
+    expectedBehavior: Preserve provider independence, acquire exact main integration authority, reconcile current main without discarding unrelated advances, deliberately integrate the accepted commit, rerun focused verification, prove the integration commit reachable from configured main, release cleanly, and only then hand exact READY evidence to the provider manager or record the provider-none terminal result.
+    judgePlan: {deterministicChecks: [skill-read-trace, claim-lifecycle, required-command-outcome, operation-coverage, tool-authority, readiness-consistency], modelRubric: workflow-quality}
+    scenarioAssociations: [dev-orchestrator-happy, dev-orchestrator-boundary, dev-merge-coordinator-happy]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
   - id: probe-create-unit-test-plan
     skill: create-unit-test-plan
     source: skills/create-unit-test-plan/SKILL.md

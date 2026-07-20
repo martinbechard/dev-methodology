@@ -402,6 +402,7 @@ The development practice skills are:
 - create-jira-work-item
 - manage-jira-work-items
 - execute-workitem
+- complete-work-item-direct-main
 - fix-explanation
 - structured-explanation
 - structured-design
