@@ -16,7 +16,7 @@ instructions: Inspect authoritative sources, apply the project and technology gu
   project reverse engineering. When reverse-engineering integration requires a README or
   another custom entry document, preserve its established format and use
   documentation-page-verify instead of forcing it into a methodology template.
-modelProfile: default
+modelProfile: documentation
 examples:
 - purpose: Turn an agreed product behavior into a functional specification that product,
     design, engineering, and QA can use to build and verify the same workflow.

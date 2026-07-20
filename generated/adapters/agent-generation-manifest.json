@@ -42,7 +42,7 @@
         {
           "name": "dev-documentation-writer",
           "output": "generated/adapters/claude/agents/dev-documentation-writer.md",
-          "sha256": "55d9ca64dd1da2a6831a2818e070af295d6e7c438ffcf1f1ed735f91ae425920",
+          "sha256": "1ceb06911dd619ff1ddc80241dd60bb487408d24472fc378d7453320dcfedfc0",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -212,7 +212,7 @@
         {
           "name": "dev-documentation-writer",
           "output": "generated/adapters/codex/agents/dev-documentation-writer.toml",
-          "sha256": "c6f2969a15b900d6a051f1ac1bea3e5355adaaed75ed9adf83e0c34fc40727c7",
+          "sha256": "9495c8b58264afe9fecdda41f27e12adb7c863a54c6fc99af4c96f64d79b3ceb",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -388,7 +388,7 @@
         {
           "name": "dev-documentation-writer",
           "output": "generated/adapters/gemini/agents/dev-documentation-writer.md",
-          "sha256": "8dc5855cce7bd98a616b68f0e99d49635b23c1e6e550eefed90bbe326116b8c2",
+          "sha256": "0522c7cac4985a5b4af0643c8528e7be614bed04c71b00719e015bc9c9a15232",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
@@ -558,7 +558,7 @@
         {
           "name": "dev-documentation-writer",
           "output": "generated/adapters/junie/agents/dev-documentation-writer.md",
-          "sha256": "fd6aea51915d02772dbf6b4a642d7c0e37b0c2d5f485d06332b013b4b8255e93",
+          "sha256": "31ab49fef52f83f023a64efd3567a4fe25b48af38a10f43f8f11627afa301add",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {

@@ -4038,6 +4038,35 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
           "sourcePath": "adapters/claude/model-profiles.yaml"
         },
         {
+          "effort": "high",
+          "harness": "codex",
+          "model": "gpt-5.6-sol",
+          "sourcePath": "adapters/codex/model-profiles.yaml"
+        },
+        {
+          "harness": "gemini",
+          "model": "auto",
+          "sourcePath": "adapters/gemini/model-profiles.yaml"
+        },
+        {
+          "effort": "high",
+          "harness": "junie",
+          "model": "gpt-5.6-sol",
+          "sourcePath": "adapters/junie/model-profiles.yaml"
+        }
+      ],
+      "id": "documentation",
+      "purpose": "Source-backed documentation authoring that requires advanced synthesis without changing unrelated default-profile agents.",
+      "sourcePath": "agents/model-profiles.yaml"
+    },
+    {
+      "adapters": [
+        {
+          "harness": "claude",
+          "model": "fable-5",
+          "sourcePath": "adapters/claude/model-profiles.yaml"
+        },
+        {
           "effort": "medium",
           "harness": "codex",
           "model": "gpt-5.6-luna",
@@ -4735,33 +4764,33 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "generatedAdapters": [
         {
           "harness": "claude",
-          "model": "sonnet-5",
-          "modelProfile": "default",
+          "model": "fable-5",
+          "modelProfile": "documentation",
           "path": "generated/adapters/claude/agents/dev-documentation-writer.md"
         },
         {
           "harness": "codex",
-          "model": "gpt-5.6-terra",
-          "modelProfile": "default",
+          "model": "gpt-5.6-sol",
+          "modelProfile": "documentation",
           "path": "generated/adapters/codex/agents/dev-documentation-writer.toml"
         },
         {
           "harness": "gemini",
           "model": "auto",
-          "modelProfile": "default",
+          "modelProfile": "documentation",
           "path": "generated/adapters/gemini/agents/dev-documentation-writer.md"
         },
         {
           "harness": "junie",
-          "model": "sonnet",
-          "modelProfile": "default",
+          "model": "gpt-5.6-sol",
+          "modelProfile": "documentation",
           "path": "generated/adapters/junie/agents/dev-documentation-writer.md"
         }
       ],
       "id": "dev-documentation-writer",
       "judgePassedCases": [],
       "label": "dev-documentation-writer",
-      "modelProfile": "default",
+      "modelProfile": "documentation",
       "securityContainedCases": [],
       "skillAvailability": [],
       "sourcePath": "agents/roles/dev-activities/dev-documentation-writer.role.yaml",

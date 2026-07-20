@@ -5317,7 +5317,7 @@ class BundleContentTests(unittest.TestCase):
     def test_model_profiles_are_semantic_and_adapter_complete(self) -> None:
         source_profiles = load_yaml_object(MODEL_PROFILES_PATH)["profiles"]
         self.assertEqual(
-            {"simple", "default", "advanced", "advanced-long"},
+            {"simple", "default", "documentation", "advanced", "advanced-long"},
             set(source_profiles),
         )
 
@@ -5336,6 +5336,7 @@ class BundleContentTests(unittest.TestCase):
             {
                 "simple": "gpt-5.6-luna",
                 "default": "gpt-5.6-terra",
+                "documentation": "gpt-5.6-sol",
                 "advanced": "gpt-5.6-sol",
                 "advanced-long": "gpt-5.6-sol",
             },
@@ -5353,6 +5354,92 @@ class BundleContentTests(unittest.TestCase):
                 self.assertNotIn("effort", role)
                 for profile in role.get("modelStages", {}).values():
                     self.assertIn(profile, source_profiles)
+
+    def test_dev_documentation_writer_uses_dedicated_model_profile(self) -> None:
+        build_skill_docs = load_build_skill_docs_module()
+        skill_names = set(build_skill_docs.build_payload()["skills"])
+        roles = build_skill_docs.load_role_definitions(skill_names)
+        writer = next(role for role in roles if role.name == "dev-documentation-writer")
+        unrelated_roles = [role for role in roles if role.name != writer.name]
+        source_profile_ids = set(build_skill_docs.load_model_profiles())
+
+        self.assertEqual("documentation", writer.model_profile)
+        self.assertTrue(all(role.model_profile != "documentation" for role in unrelated_roles))
+
+        expected_profiles = {
+            "codex": {
+                "simple": ("gpt-5.6-luna", "medium"),
+                "default": ("gpt-5.6-terra", "medium"),
+                "documentation": ("gpt-5.6-sol", "high"),
+                "advanced": ("gpt-5.6-sol", "high"),
+                "advanced-long": ("gpt-5.6-sol", "high"),
+            },
+            "claude": {
+                "simple": ("fable-5", None),
+                "default": ("sonnet-5", None),
+                "documentation": ("fable-5", None),
+                "advanced": ("opus-4.8", None),
+                "advanced-long": ("opus-4.8", None),
+            },
+            "gemini": {
+                "simple": ("flash", None),
+                "default": ("auto", None),
+                "documentation": ("auto", None),
+                "advanced": ("pro", None),
+                "advanced-long": ("pro", None),
+            },
+            "junie": {
+                "simple": ("gemini-flash", "low"),
+                "default": ("sonnet", "medium"),
+                "documentation": ("gpt-5.6-sol", "high"),
+                "advanced": ("opus", "high"),
+                "advanced-long": ("opus", "high"),
+            },
+        }
+
+        profiles_by_adapter = {
+            adapter: build_skill_docs.load_adapter_model_profiles(adapter, source_profile_ids)
+            for adapter in expected_profiles
+        }
+        for adapter, expected in expected_profiles.items():
+            with self.subTest(adapter=adapter):
+                self.assertEqual(
+                    expected,
+                    {
+                        profile_id: (profile.model, profile.effort)
+                        for profile_id, profile in profiles_by_adapter[adapter].items()
+                    },
+                )
+
+        codex_text = build_skill_docs.render_codex_agent(
+            writer,
+            profiles_by_adapter["codex"],
+            known_role_names=tuple(role.name for role in roles),
+        )
+        self.assertIn('model = "gpt-5.6-sol"', codex_text)
+        self.assertIn('model_reasoning_effort = "high"', codex_text)
+
+        claude_frontmatter = yaml.safe_load(
+            build_skill_docs.render_claude_agent(
+                writer, profiles_by_adapter["claude"]
+            ).split("---", 2)[1]
+        )
+        self.assertEqual("fable-5", claude_frontmatter["model"])
+
+        gemini_frontmatter = yaml.safe_load(
+            build_skill_docs.render_gemini_agent(
+                writer, profiles_by_adapter["gemini"]
+            ).split("---", 2)[1]
+        )
+        self.assertEqual("auto", gemini_frontmatter["model"])
+
+        junie_frontmatter = yaml.safe_load(
+            build_skill_docs.render_junie_agent(
+                writer, profiles_by_adapter["junie"]
+            ).split("---", 2)[1]
+        )
+        self.assertEqual("gpt-5.6-sol", junie_frontmatter["model"])
+        self.assertEqual("high", junie_frontmatter["reasoningLevel"])
 
     def test_agent_skill_evals_cover_implementation_and_independent_review(self) -> None:
         """Code-delivery fixtures keep coding contracts without imposing them on other workflows."""
