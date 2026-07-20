@@ -126,6 +126,18 @@ def explicit_user_approval(path: str) -> dict[str, object]:
     }
 
 
+def with_unset_workflows(value: dict[str, object]) -> dict[str, object]:
+    """Add explicit deferred provider and completion selectors to one renderer fixture."""
+
+    return {
+        "workflow_selection": {
+            "provider": {"default": "UNSET"},
+            "completion": {"default": "UNSET"},
+        },
+        **value,
+    }
+
+
 def run_detection(
     project: Path,
     *scopes: str,
@@ -1380,13 +1392,13 @@ class TechnologyDetectionTests(unittest.TestCase):
     def test_agents_section_requires_unconditional_loading_without_redetection(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             plan = Path(directory) / "PROJECT.yaml"
-            plan.write_text(yaml.safe_dump({
+            plan.write_text(yaml.safe_dump(with_unset_workflows({
                 "technology_skill_loadouts": [{
                     "pathPattern": "api/**",
                     "skills": ["fastapi", "python"],
                     "sourceEvidence": [{"skill": "fastapi", "evidence": ["owning manifest dependency fastapi"]}],
                 }],
-            }), encoding="utf-8")
+            })), encoding="utf-8")
             completed = subprocess.run(
                 [sys.executable, str(RENDER_SCRIPT), "--project", str(plan)],
                 cwd=ROOT,
@@ -1409,7 +1421,7 @@ class TechnologyDetectionTests(unittest.TestCase):
         renderer = load_renderer_module()
         for evidence_key in ("sourceEvidence", "source_evidence"):
             with self.subTest(evidence_key=evidence_key):
-                project = {
+                project = with_unset_workflows({
                     "technology_skill_loadouts": [{
                         "pathPattern": "worker/**",
                         "skills": ["python"],
@@ -1418,7 +1430,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                             "evidence": ["  Python source evidence: worker/main.py  "],
                         }],
                     }],
-                }
+                })
 
                 rendered = renderer.render(project, inline_tech_skills=False)
 
@@ -1444,13 +1456,13 @@ class TechnologyDetectionTests(unittest.TestCase):
 
         for evidence_value, expected in invalid_values:
             with self.subTest(evidence_value=evidence_value):
-                project = {
+                project = with_unset_workflows({
                     "technology_skill_loadouts": [{
                         "pathPattern": "worker/**",
                         "skills": ["python"],
                         **evidence_value,
                     }],
-                }
+                })
 
                 with self.assertRaises(ValueError) as raised:
                     renderer.render(project, inline_tech_skills=False)
@@ -1474,13 +1486,13 @@ class TechnologyDetectionTests(unittest.TestCase):
             plan = Path(directory) / "PROJECT.yaml"
             for evidence_value, expected in invalid_values:
                 with self.subTest(evidence_value=evidence_value):
-                    plan.write_text(yaml.safe_dump({
+                    plan.write_text(yaml.safe_dump(with_unset_workflows({
                         "technology_skill_loadouts": [{
                             "pathPattern": "worker/**",
                             "skills": ["python"],
                             **evidence_value,
                         }],
-                    }), encoding="utf-8")
+                    })), encoding="utf-8")
 
                     completed = subprocess.run(
                         [sys.executable, str(RENDER_SCRIPT), "--project", str(plan)],
@@ -1495,14 +1507,14 @@ class TechnologyDetectionTests(unittest.TestCase):
 
     def test_agents_section_validates_source_evidence_before_skipping_empty_loadout(self) -> None:
         renderer = load_renderer_module()
-        project = {
+        project = with_unset_workflows({
             "technology_skill_loadouts": [{
                 "pathPattern": "worker/**",
                 "skills": [],
                 "sourceEvidence": ["python"],
                 "status": "NO_VARIANT",
             }],
-        }
+        })
 
         with self.assertRaises(ValueError) as raised:
             renderer.render(project, inline_tech_skills=False)
@@ -1521,7 +1533,7 @@ class TechnologyDetectionTests(unittest.TestCase):
 
         for invalid_fact in invalid_facts:
             with self.subTest(invalid_fact=invalid_fact):
-                project = {
+                project = with_unset_workflows({
                     "technology_skill_loadouts": [{
                         "pathPattern": "worker/**",
                         "skills": ["python"],
@@ -1530,7 +1542,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                             "evidence": [invalid_fact],
                         }],
                     }],
-                }
+                })
 
                 with self.assertRaisesRegex(
                     ValueError,
@@ -1540,7 +1552,7 @@ class TechnologyDetectionTests(unittest.TestCase):
 
     def test_agents_section_rejects_non_list_source_evidence(self) -> None:
         renderer = load_renderer_module()
-        project = {
+        project = with_unset_workflows({
             "technology_skill_loadouts": [{
                 "pathPattern": "worker/**",
                 "skills": ["python"],
@@ -1549,13 +1561,125 @@ class TechnologyDetectionTests(unittest.TestCase):
                     "evidence": {"path": "worker/main.py"},
                 }],
             }],
-        }
+        })
 
         with self.assertRaisesRegex(
             ValueError,
             r"^technology_skill_loadouts\[0\]\.sourceEvidence\[0\]\.evidence must be a list of strings$",
         ):
             renderer.render(project, inline_tech_skills=False)
+
+    def test_agents_section_requires_explicit_provider_and_completion_selectors(self) -> None:
+        renderer = load_renderer_module()
+        invalid_projects = (
+            (
+                {},
+                "workflow_selection is required; record workflow_selection.provider.default and workflow_selection.completion.default explicitly, using UNSET when either decision is deferred",
+            ),
+            (
+                {
+                    "workflow_selection": {
+                        "completion": {"default": "UNSET"},
+                    },
+                },
+                "workflow_selection.provider must be a mapping; record workflow_selection.provider.default: UNSET when the provider decision is deferred",
+            ),
+            (
+                {
+                    "workflow_selection": {
+                        "provider": {"default": "UNSET"},
+                    },
+                },
+                "workflow_selection.completion must be a mapping; record workflow_selection.completion.default: UNSET when the completion decision is deferred",
+            ),
+            (
+                {
+                    "workflow_selection": {
+                        "provider": {},
+                        "completion": {"default": "UNSET"},
+                    },
+                },
+                "workflow_selection.provider.default is required; record workflow_selection.provider.default: UNSET when the provider decision is deferred",
+            ),
+            (
+                {
+                    "workflow_selection": {
+                        "provider": {"default": "UNSET"},
+                        "completion": {},
+                    },
+                },
+                "workflow_selection.completion.default is required; record workflow_selection.completion.default: UNSET when the completion decision is deferred",
+            ),
+        )
+
+        for project, expected in invalid_projects:
+            with self.subTest(expected=expected):
+                with self.assertRaisesRegex(ValueError, f"^{re.escape(expected)}$"):
+                    renderer.render(project)
+
+    def test_agents_section_rejects_duplicate_provider_and_completion_patterns(self) -> None:
+        renderer = load_renderer_module()
+        invalid_projects = (
+            (
+                {
+                    "workflow_selection": {
+                        "provider": {
+                            "default": "file",
+                            "folder_overrides": [
+                                {"pattern": "services/**", "provider": "file"},
+                                {"pattern": "services/**", "provider": "github"},
+                            ],
+                        },
+                        "completion": {"default": "direct-main"},
+                    },
+                },
+                "workflow_selection.provider.folder_overrides[1].pattern 'services/**' conflicts with workflow_selection.provider.folder_overrides[0].pattern using values 'file' and 'github'",
+            ),
+            (
+                {
+                    "workflow_selection": {
+                        "provider": {"default": "file"},
+                        "completion": {
+                            "default": "direct-main",
+                            "folder_overrides": [
+                                {"pattern": "services/**", "completion": "feature-branch"},
+                                {"pattern": "services/**", "completion": "feature-branch"},
+                            ],
+                        },
+                    },
+                },
+                "workflow_selection.completion.folder_overrides[1].pattern 'services/**' duplicates workflow_selection.completion.folder_overrides[0].pattern with value 'feature-branch'; duplicate patterns are not allowed",
+            ),
+        )
+
+        for project, expected in invalid_projects:
+            with self.subTest(expected=expected):
+                with self.assertRaisesRegex(ValueError, f"^{re.escape(expected)}$"):
+                    renderer.render(project)
+
+    def test_agents_section_accepts_boundary_provider_overrides_without_inference(self) -> None:
+        renderer = load_renderer_module()
+        rendered = renderer.render({
+            "workflow_selection": {
+                "provider": {
+                    "default": "file",
+                    "folder_overrides": [
+                        {"pattern": "interactive/**", "provider": "none"},
+                        {"pattern": "deferred/**", "provider": "UNSET"},
+                        {"pattern": "jira/**", "provider": "jira"},
+                        {"pattern": "ado/**", "provider": "azure-devops"},
+                    ],
+                },
+                "completion": {"default": "direct-main"},
+            },
+        })
+
+        self.assertIn("interactive/** provider none: no durable provider skill", rendered)
+        self.assertIn("deferred/** provider UNSET: the pertinent agent asks", rendered)
+        self.assertIn("jira/** provider jira: create with create-jira-work-item", rendered)
+        self.assertIn("ado/** provider azure-devops: create with create-azure-devops-work-item", rendered)
+        self.assertEqual(2, rendered.count("unsupported placeholder remains selected and reports BLOCKED"))
+        self.assertIn("does not infer either value", rendered)
 
     def test_agents_section_renders_every_provider_as_reference_only_skill_guidance(self) -> None:
         renderer = load_renderer_module()
@@ -1726,6 +1850,33 @@ class TechnologyDetectionTests(unittest.TestCase):
                 },
                 "workflow_selection.provider.folder_overrides[0] keys must be exactly: pattern, provider",
             ),
+            (
+                {
+                    "workflow_selection": {
+                        "provider": {
+                            "default": "file",
+                            "folder_overrides": [{"pattern": "", "provider": "github"}],
+                        },
+                        "completion": {"default": "direct-main"},
+                    },
+                },
+                "workflow_selection.provider.folder_overrides[0].pattern must be a non-empty project-relative path pattern",
+            ),
+            (
+                {
+                    "workflow_selection": {
+                        "provider": {"default": "file"},
+                        "completion": {
+                            "default": "direct-main",
+                            "folder_overrides": [{
+                                "pattern": "services/**",
+                                "completion": "merge-when-green",
+                            }],
+                        },
+                    },
+                },
+                "workflow_selection.completion.folder_overrides[0].completion rejects 'merge-when-green'; supported values: direct-main, feature-branch, UNSET",
+            ),
         )
 
         for project, expected in invalid_projects:
@@ -1786,6 +1937,138 @@ class TechnologyDetectionTests(unittest.TestCase):
             migration,
         )
 
+    def test_agents_section_validates_every_legacy_selector_field_before_migration(self) -> None:
+        renderer = load_renderer_module()
+        completion_guidance = (
+            "; supported legacy values and canonical replacements: simple-workitem -> direct-main, "
+            "feature-branch-workitem -> feature-branch, UNSET -> UNSET"
+        )
+        provider_guidance = (
+            "; supported legacy values and canonical replacements: file-based-backlog -> file, "
+            "github-issues-backlog -> github, none -> none, UNSET -> UNSET"
+        )
+        invalid_projects = (
+            (
+                {"workflow_selection": {"workitem": "simple-workitem"}},
+                "workflow_selection.workitem must be a mapping; canonical replacement: workflow_selection.completion"
+                + completion_guidance,
+            ),
+            (
+                {"workflow_selection": {"workitem": {"default": "invented"}}},
+                "workflow_selection.workitem.default rejects 'invented'; supported legacy values and canonical replacements: simple-workitem -> direct-main, feature-branch-workitem -> feature-branch, UNSET -> UNSET",
+            ),
+            (
+                {"workflow_selection": {"backlog": {}}},
+                "workflow_selection.backlog.default rejects None; supported legacy values and canonical replacements: file-based-backlog -> file, github-issues-backlog -> github, none -> none, UNSET -> UNSET",
+            ),
+            (
+                {
+                    "workflow_selection": {
+                        "workitem": {
+                            "default": "simple-workitem",
+                            "folder_overrides": "services/**",
+                        },
+                    },
+                },
+                "workflow_selection.workitem.folder_overrides must be a list" + completion_guidance,
+            ),
+            (
+                {
+                    "workflow_selection": {
+                        "backlog": {
+                            "default": "file-based-backlog",
+                            "folder_overrides": ["not-a-mapping"],
+                        },
+                    },
+                },
+                "workflow_selection.backlog.folder_overrides[0] must be a mapping with pattern and process" + provider_guidance,
+            ),
+            (
+                {
+                    "workflow_selection": {
+                        "workitem": {
+                            "default": "simple-workitem",
+                            "folder_overrides": [{"process": "feature-branch-workitem"}],
+                        },
+                    },
+                },
+                "workflow_selection.workitem.folder_overrides[0].pattern must be a non-empty project-relative path pattern" + completion_guidance,
+            ),
+            (
+                {
+                    "workflow_selection": {
+                        "backlog": {
+                            "default": "file-based-backlog",
+                            "folder_overrides": [{"pattern": "services/**"}],
+                        },
+                    },
+                },
+                "workflow_selection.backlog.folder_overrides[0] keys must be exactly: pattern, process"
+                + provider_guidance,
+            ),
+            (
+                {
+                    "workflow_selection": {
+                        "workitem": {
+                            "default": "simple-workitem",
+                            "folder_overrides": [{
+                                "pattern": "",
+                                "process": "feature-branch-workitem",
+                            }],
+                        },
+                    },
+                },
+                "workflow_selection.workitem.folder_overrides[0].pattern must be a non-empty project-relative path pattern" + completion_guidance,
+            ),
+            (
+                {
+                    "workflow_selection": {
+                        "backlog": {
+                            "default": "file-based-backlog",
+                            "folder_overrides": [{
+                                "pattern": "services/**",
+                                "process": "jira",
+                            }],
+                        },
+                    },
+                },
+                "workflow_selection.backlog.folder_overrides[0].process rejects 'jira'; supported legacy values and canonical replacements: file-based-backlog -> file, github-issues-backlog -> github, none -> none, UNSET -> UNSET",
+            ),
+            (
+                {
+                    "workflow_selection": {
+                        "backlog": {
+                            "default": "file-based-backlog",
+                            "folder_overrides": [
+                                {"pattern": "services/**", "process": "none"},
+                                {"pattern": "services/**", "process": "UNSET"},
+                            ],
+                        },
+                    },
+                },
+                "workflow_selection.backlog.folder_overrides[1].pattern 'services/**' conflicts with workflow_selection.backlog.folder_overrides[0].pattern using values 'none' and 'UNSET'" + provider_guidance,
+            ),
+            (
+                {
+                    "workflow_selection": {
+                        "workitem": {
+                            "default": "simple-workitem",
+                            "folder_overrides": [
+                                {"pattern": "services/**", "process": "feature-branch-workitem"},
+                                {"pattern": "services/**", "process": "feature-branch-workitem"},
+                            ],
+                        },
+                    },
+                },
+                "workflow_selection.workitem.folder_overrides[1].pattern 'services/**' duplicates workflow_selection.workitem.folder_overrides[0].pattern with value 'feature-branch-workitem'; duplicate patterns are not allowed" + completion_guidance,
+            ),
+        )
+
+        for project, expected in invalid_projects:
+            with self.subTest(expected=expected):
+                with self.assertRaisesRegex(ValueError, f"^{re.escape(expected)}$"):
+                    renderer.render(project)
+
     def test_agents_section_rejects_legacy_values_under_canonical_selector_keys(self) -> None:
         renderer = load_renderer_module()
         projects = (
@@ -1832,12 +2115,12 @@ class TechnologyDetectionTests(unittest.TestCase):
     def test_agents_section_inlines_technology_skills_by_default_with_false_override(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             plan = Path(directory) / "PROJECT.yaml"
-            plan.write_text(yaml.safe_dump({
+            plan.write_text(yaml.safe_dump(with_unset_workflows({
                 "technology_skill_loadouts": [{
                     "pathPattern": "src/**",
                     "skills": ["python"],
                 }],
-            }), encoding="utf-8")
+            })), encoding="utf-8")
 
             inlined = subprocess.run(
                 [sys.executable, str(RENDER_SCRIPT), "--project", str(plan)],
@@ -1890,12 +2173,12 @@ class TechnologyDetectionTests(unittest.TestCase):
             root = Path(directory)
             plan = root / "PROJECT.yaml"
             output = root / "AGENTS.md"
-            plan.write_text(yaml.safe_dump({
+            plan.write_text(yaml.safe_dump(with_unset_workflows({
                 "technology_skill_loadouts": [{
                     "pathPattern": "src/**",
                     "skills": ["python"],
                 }],
-            }), encoding="utf-8")
+            })), encoding="utf-8")
 
             created = subprocess.run(
                 [
@@ -1964,10 +2247,10 @@ class TechnologyDetectionTests(unittest.TestCase):
             root = Path(directory)
             plan = root / "PROJECT.yaml"
             output = root / "AGENTS.md"
-            plan.write_text(yaml.safe_dump({
+            plan.write_text(yaml.safe_dump(with_unset_workflows({
                 "definition_change_authority": definition_change_authority(),
                 "technology_skill_loadouts": [],
-            }), encoding="utf-8")
+            })), encoding="utf-8")
             maintained = (
                 "# Maintained guidance\n\n"
                 "Keep this repository-specific instruction.\n\n"
@@ -2482,12 +2765,12 @@ class TechnologyDetectionTests(unittest.TestCase):
     def test_agents_section_rejects_invalid_inlined_skill_names(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             plan = Path(directory) / "PROJECT.yaml"
-            plan.write_text(yaml.safe_dump({
+            plan.write_text(yaml.safe_dump(with_unset_workflows({
                 "technology_skill_loadouts": [{
                     "pathPattern": "src/**",
                     "skills": ["../../private"],
                 }],
-            }), encoding="utf-8")
+            })), encoding="utf-8")
             completed = subprocess.run(
                 [sys.executable, str(RENDER_SCRIPT), "--project", str(plan)],
                 cwd=ROOT,
@@ -2501,7 +2784,7 @@ class TechnologyDetectionTests(unittest.TestCase):
     def test_agents_section_preserves_no_variant_general_training_fallback(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             plan = Path(directory) / "PROJECT.yaml"
-            plan.write_text(yaml.safe_dump({
+            plan.write_text(yaml.safe_dump(with_unset_workflows({
                 "technology_skill_loadouts": [
                     {
                         "pathPattern": "src/main/**",
@@ -2515,7 +2798,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                         "fallback": "general model training",
                     },
                 ],
-            }), encoding="utf-8")
+            })), encoding="utf-8")
             completed = subprocess.run(
                 [sys.executable, str(RENDER_SCRIPT), "--project", str(plan)],
                 cwd=ROOT,

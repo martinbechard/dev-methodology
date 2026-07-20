@@ -472,7 +472,7 @@ def update_authority_directive(existing: str, section_lines: list[str]) -> str:
 
 
 def _legacy_selector_migration(selection: dict[str, object]) -> str | None:
-    """Return deterministic migration guidance for the prototype selector shape."""
+    """Validate prototype selectors and return deterministic canonical migration guidance."""
 
     migrations: list[str] = []
     for legacy_key, target_key, values in (
@@ -481,38 +481,118 @@ def _legacy_selector_migration(selection: dict[str, object]) -> str | None:
     ):
         if legacy_key not in selection:
             continue
+        prefix = f"workflow_selection.{legacy_key}"
+        mappings = ", ".join(f"{source} -> {target}" for source, target in values.items())
+        guidance = f"supported legacy values and canonical replacements: {mappings}"
         configuration = selection[legacy_key]
         if not isinstance(configuration, dict):
-            migrations.append(f"workflow_selection.{legacy_key} must become workflow_selection.{target_key}")
-            continue
+            raise ValueError(
+                f"{prefix} must be a mapping; canonical replacement: workflow_selection.{target_key}; {guidance}"
+            )
+        unsupported_keys = set(configuration) - {"default", "folder_overrides"}
+        if unsupported_keys:
+            raise ValueError(f"{prefix} keys must be exactly: default, folder_overrides; {guidance}")
         default = configuration.get("default")
-        if isinstance(default, str) and default in values:
-            migrations.append(
-                f"workflow_selection.{target_key}.default: {values[default]}"
+        if not isinstance(default, str) or default not in values:
+            raise ValueError(
+                f"{prefix}.default rejects {default!r}; supported legacy values and canonical replacements: {mappings}"
             )
-        else:
-            mappings = ", ".join(f"{source} -> {target}" for source, target in values.items())
-            migrations.append(
-                f"workflow_selection.{legacy_key} must become workflow_selection.{target_key} using {mappings}"
-            )
+        migrations.append(f"workflow_selection.{target_key}.default: {values[default]}")
         overrides = configuration.get("folder_overrides", [])
-        if isinstance(overrides, list):
-            for override_index, override in enumerate(overrides):
-                if not isinstance(override, dict):
-                    continue
-                pattern = override.get("pattern")
-                process = override.get("process")
-                if isinstance(pattern, str) and isinstance(process, str) and process in values:
-                    migrations.append(
-                        f"workflow_selection.{target_key}.folder_overrides[{override_index}]: "
-                        f"pattern={pattern}, {target_key}={values[process]}"
-                    )
+        if not isinstance(overrides, list):
+            raise ValueError(f"{prefix}.folder_overrides must be a list; {guidance}")
+        seen_patterns: dict[str, tuple[int, str]] = {}
+        for override_index, override in enumerate(overrides):
+            override_prefix = f"{prefix}.folder_overrides[{override_index}]"
+            if not isinstance(override, dict):
+                raise ValueError(
+                    f"{override_prefix} must be a mapping with pattern and process; {guidance}"
+                )
+            if "pattern" not in override:
+                _validated_override_pattern(override_prefix, None, guidance=guidance)
+            if set(override) != {"pattern", "process"}:
+                raise ValueError(f"{override_prefix} keys must be exactly: pattern, process; {guidance}")
+            pattern = _validated_override_pattern(
+                override_prefix,
+                override.get("pattern"),
+                guidance=guidance,
+            )
+            process = override.get("process")
+            if not isinstance(process, str) or process not in values:
+                raise ValueError(
+                    f"{override_prefix}.process rejects {process!r}; supported legacy values and canonical replacements: {mappings}"
+                )
+            _reject_duplicate_override_pattern(
+                seen_patterns,
+                prefix,
+                override_index,
+                pattern,
+                process,
+                guidance=guidance,
+            )
+            migrations.append(
+                f"workflow_selection.{target_key}.folder_overrides[{override_index}]: "
+                f"pattern={pattern}, {target_key}={values[process]}"
+            )
     if not migrations:
         return None
     return (
         "legacy workflow selectors require migration: "
         + "; ".join(migrations)
         + "; preserve folder overrides under the matching independent selector and do not infer replacements from repository evidence"
+    )
+
+
+def _validated_override_pattern(
+    prefix: str,
+    pattern: object,
+    *,
+    guidance: str | None = None,
+) -> str:
+    """Return one normalized non-empty project-relative selector override pattern."""
+
+    suffix = f"; {guidance}" if guidance else ""
+    if not isinstance(pattern, str) or not pattern:
+        raise ValueError(
+            f"{prefix}.pattern must be a non-empty project-relative path pattern{suffix}"
+        )
+    try:
+        normalized_pattern = _normalize_project_path(pattern)
+    except ValueError as error:
+        detail = str(error).removeprefix("definition path ")
+        raise ValueError(f"{prefix}.pattern {detail}{suffix}") from error
+    if normalized_pattern != pattern:
+        raise ValueError(f"{prefix}.pattern must be normalized: {pattern}{suffix}")
+    return pattern
+
+
+def _reject_duplicate_override_pattern(
+    seen_patterns: dict[str, tuple[int, str]],
+    selector_prefix: str,
+    override_index: int,
+    pattern: str,
+    selected_value: str,
+    *,
+    guidance: str | None = None,
+) -> None:
+    """Reject a repeated exact folder pattern with its original and repeated values."""
+
+    previous = seen_patterns.get(pattern)
+    if previous is None:
+        seen_patterns[pattern] = (override_index, selected_value)
+        return
+    previous_index, previous_value = previous
+    current_path = f"{selector_prefix}.folder_overrides[{override_index}].pattern"
+    previous_path = f"{selector_prefix}.folder_overrides[{previous_index}].pattern"
+    suffix = f"; {guidance}" if guidance else ""
+    if previous_value == selected_value:
+        raise ValueError(
+            f"{current_path} {pattern!r} duplicates {previous_path} with value {selected_value!r}; "
+            f"duplicate patterns are not allowed{suffix}"
+        )
+    raise ValueError(
+        f"{current_path} {pattern!r} conflicts with {previous_path} using values "
+        f"{previous_value!r} and {selected_value!r}{suffix}"
     )
 
 
@@ -526,11 +606,17 @@ def _workflow_configuration(
     configuration = selection.get(key)
     prefix = f"workflow_selection.{key}"
     if not isinstance(configuration, dict):
-        raise ValueError(f"{prefix} must be a mapping")
+        raise ValueError(
+            f"{prefix} must be a mapping; record {prefix}.default: UNSET when the {key} decision is deferred"
+        )
     allowed_configuration_keys = {"default", "folder_overrides"}
     unsupported_configuration_keys = set(configuration) - allowed_configuration_keys
     if unsupported_configuration_keys:
         raise ValueError(f"{prefix} keys must be exactly: default, folder_overrides")
+    if "default" not in configuration:
+        raise ValueError(
+            f"{prefix}.default is required; record {prefix}.default: UNSET when the {key} decision is deferred"
+        )
     default = configuration.get("default")
     if not isinstance(default, str) or default not in supported_values:
         legacy_values = LEGACY_PROVIDER_VALUES if key == "provider" else LEGACY_COMPLETION_VALUES
@@ -544,22 +630,16 @@ def _workflow_configuration(
     if not isinstance(overrides, list):
         raise ValueError(f"{prefix}.folder_overrides must be a list")
     validated_overrides: list[tuple[str, str]] = []
+    seen_patterns: dict[str, tuple[int, str]] = {}
     for override_index, override in enumerate(overrides):
         override_prefix = f"{prefix}.folder_overrides[{override_index}]"
         if not isinstance(override, dict):
             raise ValueError(f"{override_prefix} must be a mapping")
+        if "pattern" not in override:
+            _validated_override_pattern(override_prefix, None)
         if set(override) != {"pattern", key}:
             raise ValueError(f"{override_prefix} keys must be exactly: pattern, {key}")
-        pattern = override.get("pattern")
-        if not isinstance(pattern, str) or not pattern:
-            raise ValueError(f"{override_prefix}.pattern must be a non-empty project-relative path pattern")
-        try:
-            normalized_pattern = _normalize_project_path(pattern)
-        except ValueError as error:
-            detail = str(error).removeprefix("definition path ")
-            raise ValueError(f"{override_prefix}.pattern {detail}") from error
-        if normalized_pattern != pattern:
-            raise ValueError(f"{override_prefix}.pattern must be normalized: {pattern}")
+        pattern = _validated_override_pattern(override_prefix, override.get("pattern"))
         selected_value = override.get(key)
         if not isinstance(selected_value, str) or selected_value not in supported_values:
             legacy_values = LEGACY_PROVIDER_VALUES if key == "provider" else LEGACY_COMPLETION_VALUES
@@ -571,6 +651,13 @@ def _workflow_configuration(
             raise ValueError(
                 f"{override_prefix}.{key} rejects {selected_value!r}; supported values: {rendered_values}"
             )
+        _reject_duplicate_override_pattern(
+            seen_patterns,
+            prefix,
+            override_index,
+            pattern,
+            selected_value,
+        )
         validated_overrides.append((pattern, selected_value))
     return default, validated_overrides
 
@@ -609,7 +696,10 @@ def workflow_lines(value: dict[str, object]) -> list[str]:
 
     selection = value.get("workflow_selection")
     if selection is None:
-        return []
+        raise ValueError(
+            "workflow_selection is required; record workflow_selection.provider.default and "
+            "workflow_selection.completion.default explicitly, using UNSET when either decision is deferred"
+        )
     if not isinstance(selection, dict):
         raise ValueError("workflow_selection must be a mapping")
     migration = _legacy_selector_migration(selection)

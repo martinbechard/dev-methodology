@@ -132,7 +132,7 @@ workflow_selection:
     folder_overrides:
       - pattern: "TODO: Real repository-relative folder path or valid glob, or Not applicable."
         completion: "TODO: direct-main or feature-branch."
-  selection_policy: "Resolve provider and completion independently. Do not infer either selector from repository files, remotes, hosting metadata, templates, installed plugins, or available tools. Preserve an explicit UNSET so the pertinent agent asks before its operation boundary. Azure DevOps and Jira remain selected as unsupported BLOCKED placeholders instead of falling back."
+  selection_policy: "Always record provider and completion independently, using explicit UNSET when a decision is deferred. Within either selector, one exact folder pattern may appear only once. Do not infer either selector from repository files, remotes, hosting metadata, templates, installed plugins, or available tools. Azure DevOps and Jira remain selected as unsupported BLOCKED placeholders instead of falling back."
 
 folder_routing:
   - pattern: "TODO: Real repository-relative folder path or valid glob; never use a prose scope label."
