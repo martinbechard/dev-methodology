@@ -1415,6 +1415,84 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         self.assertEqual(3, identity["agents"][0]["requiredSessionCount"])
         self.assertEqual(4, len(identity["agents"][0]["boundSessionIds"]))
 
+    def test_immediately_closed_default_noop_is_excluded_from_suite_identity(self) -> None:
+        """An inert coordinator discovery child cannot become a second suite supervisor."""
+        with tempfile.TemporaryDirectory() as temporary:
+            codex_home = Path(temporary)
+            sessions = codex_home / "sessions"
+            sessions.mkdir()
+            markers = {
+                "suite_supervisor": "AGENT_INSTRUCTION_BINDING_suite_supervisor_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "target_agent": "AGENT_INSTRUCTION_BINDING_target_agent_bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+                "suite_judge": "AGENT_INSTRUCTION_BINDING_suite_judge_cccccccccccccccccccccccccccccccc",
+            }
+            self._write_rollout(
+                sessions / "rollout-supervisor.jsonl", "suite_supervisor", 1, markers["suite_supervisor"]
+            )
+            self._write_rollout(
+                sessions / "rollout-target.jsonl",
+                "target_agent",
+                2,
+                markers["target_agent"],
+                parent="rollout-supervisor",
+                started_second=2,
+            )
+            self._write_rollout(
+                sessions / "rollout-judge.jsonl",
+                "suite_judge",
+                2,
+                markers["suite_judge"],
+                parent="rollout-supervisor",
+                started_second=5,
+            )
+            self._write_noop_rollout(sessions / "rollout-default-noop.jsonl")
+            run = runner._RunSpec(self._suite("one"), ("happy",))
+            report = {
+                "runs": [{
+                    "suite": "one",
+                    "scenarioResults": [{
+                        "scenario": "happy", "targetInvoked": True, "judgeInvoked": True
+                    }],
+                }]
+            }
+            staged = tuple(
+                runner._StagedAgent(invocation, Path(f"{invocation}.toml"), "instructions", key * 64, marker)
+                for invocation, key, marker in (
+                    ("suite_supervisor", "a", markers["suite_supervisor"]),
+                    ("target_agent", "b", markers["target_agent"]),
+                    ("suite_judge", "c", markers["suite_judge"]),
+                )
+            )
+
+            identity = runner._audit_identity(
+                staged,
+                codex_home,
+                {"suite_supervisor": 1, "target_agent": 1, "suite_judge": 1},
+                (run,),
+                report,
+            )
+            concurrency = runner._audit_session_concurrency(
+                runner._load_sessions(codex_home), 9, (run,), report
+            )
+
+        self.assertEqual(4, identity["rolloutCount"])
+        self.assertEqual(3, identity["suiteLifecycleRolloutCount"])
+        self.assertEqual("rollout-default-noop", identity["excludedSessions"][0]["sessionId"])
+        self.assertIn("turn-aborted", identity["excludedSessions"][0]["reason"])
+        self.assertRegex(identity["excludedSessions"][0]["rolloutSha256"], r"^[0-9a-f]{64}$")
+        self.assertEqual(1, concurrency["excludedSessionCount"])
+
+    def test_default_identity_with_agent_work_remains_participating(self) -> None:
+        """A default child that produces agent output still fails strict supervisor attribution."""
+        run = runner._RunSpec(self._suite("one"), ("happy",))
+        sessions = (
+            runner._Session("supervisor", "root", "suite_supervisor", 1, 0.0, 8.0, frozenset()),
+            runner._Session("default", "root", "default", 1, 1.0, 2.0, frozenset()),
+        )
+
+        with self.assertRaisesRegex(RuntimeError, "Supervisor identity mismatch"):
+            runner._audit_session_concurrency(sessions, 9, (run,))
+
     def test_staging_instruments_inline_closing_instruction_delimiter(self) -> None:
         """Generated adapters may close developer instructions after the final text on the same line."""
         with tempfile.TemporaryDirectory() as temporary:
@@ -2754,6 +2832,27 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                     "phase": "final_answer",
                 }},
             )
+        path.write_text("\n".join(json.dumps(event) for event in events) + "\n", encoding="utf-8")
+
+    @staticmethod
+    def _write_noop_rollout(path: Path) -> None:
+        events = (
+            {"timestamp": "2026-07-17T00:00:00Z", "type": "session_meta", "payload": {
+                "id": path.stem,
+                "parent_thread_id": "root",
+                "agent_role": "default",
+                "source": {"subagent": {"thread_spawn": {
+                    "depth": 1, "agent_path": None, "agent_role": "default",
+                }}},
+            }},
+            {"timestamp": "2026-07-17T00:00:01Z", "type": "response_item", "payload": {
+                "type": "message", "role": "user",
+                "content": [{"type": "input_text", "text": "noop"}],
+            }},
+            {"timestamp": "2026-07-17T00:00:02Z", "type": "event_msg", "payload": {
+                "type": "turn_aborted", "reason": "interrupted",
+            }},
+        )
         path.write_text("\n".join(json.dumps(event) for event in events) + "\n", encoding="utf-8")
 
     def _bind_checkpoint_judges(

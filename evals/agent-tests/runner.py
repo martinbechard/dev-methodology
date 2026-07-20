@@ -60,6 +60,7 @@ _MAXIMUM_CAPTURE_BYTES = 10 * 1024 * 1024
 _EVIDENCE_RECEIPT_SCHEMA = "dev-methodology-agent-suite-evidence-receipt"
 _JUDGE_OUTPUT_SCHEMA = "dev-methodology-agent-suite-judge-output"
 _SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
+_IMMEDIATE_NOOP_CLOSE_SECONDS = 10.0
 
 
 class _JunieEvidenceInsufficient(RuntimeError):
@@ -138,6 +139,7 @@ class _Session:
     terminal_response_index: int | None = None
     terminal_response: bytes | None = None
     terminal_response_error: str | None = None
+    suite_exclusion_candidate: str | None = None
 
 
 def _utc_now() -> str:
@@ -2257,6 +2259,70 @@ def _terminal_response(
     return index, response, None
 
 
+def _noop_exclusion_candidate(
+    events: Sequence[Mapping[str, Any]],
+    invocation: str | None,
+    depth: int,
+    started_at: float,
+    finished_at: float,
+) -> str | None:
+    """Return auditable evidence for an inert, immediately aborted default/noop child."""
+    if invocation not in {"default", "noop"} or depth != 1:
+        return None
+    prompts: list[str] = []
+    aborted = False
+    unexpected_activity = False
+    for event in events:
+        event_type = event.get("type")
+        payload = event.get("payload")
+        if event_type in {"session_meta", "turn_context"}:
+            continue
+        if event_type == "response_item" and isinstance(payload, Mapping):
+            if payload.get("type") != "message" or payload.get("role") != "user":
+                unexpected_activity = True
+                continue
+            content = payload.get("content", [])
+            if not isinstance(content, list):
+                unexpected_activity = True
+                continue
+            for item in content:
+                if not isinstance(item, Mapping) or item.get("type") != "input_text":
+                    unexpected_activity = True
+                    continue
+                text = str(item.get("text", "")).strip()
+                if text.startswith("<turn_aborted>"):
+                    aborted = True
+                elif text:
+                    prompts.append(text)
+            continue
+        if event_type == "event_msg" and isinstance(payload, Mapping):
+            payload_type = payload.get("type")
+            if payload_type == "user_message":
+                message = str(payload.get("message", "")).strip()
+                if message:
+                    prompts.append(message)
+            elif payload_type == "turn_aborted":
+                aborted = True
+            elif payload_type != "token_count":
+                unexpected_activity = True
+            continue
+        unexpected_activity = True
+    duration = finished_at - started_at
+    if (
+        unexpected_activity
+        or not aborted
+        or not prompts
+        or any(prompt.casefold() != "noop" for prompt in prompts)
+        or duration < 0
+        or duration > _IMMEDIATE_NOOP_CLOSE_SECONDS
+    ):
+        return None
+    return (
+        f"depth-one {invocation} session received only literal noop input and was turn-aborted "
+        f"after {duration:.3f}s without assistant, tool, or instruction-binding activity"
+    )
+
+
 def _load_sessions(codex_home: Path) -> tuple[_Session, ...]:
     sessions: list[_Session] = []
     for rollout in codex_home.glob("**/rollout-*.jsonl"):
@@ -2291,23 +2357,73 @@ def _load_sessions(codex_home: Path) -> tuple[_Session, ...]:
             bound_markers.update(
                 re.findall(r"AGENT_INSTRUCTION_BINDING_[a-z0-9_]+_[a-f0-9]{32}", developer_text)
             )
+        depth = int(spawn.get("depth", 0))
+        started_at = _timestamp_seconds(str(events[0]["timestamp"]))
+        finished_at = _timestamp_seconds(str(events[-1]["timestamp"]))
         sessions.append(
             _Session(
                 session_id=str(metadata.get("id", rollout.stem)),
                 parent_thread_id=metadata.get("parent_thread_id"),
                 invocation=str(invocation) if invocation else None,
-                depth=int(spawn.get("depth", 0)),
-                started_at=_timestamp_seconds(str(events[0]["timestamp"])),
-                finished_at=_timestamp_seconds(str(events[-1]["timestamp"])),
+                depth=depth,
+                started_at=started_at,
+                finished_at=finished_at,
                 instruction_markers=frozenset(bound_markers),
                 rollout_path=rollout.resolve(),
                 rollout_sha256=_sha256(rollout),
                 terminal_response_index=response_index,
                 terminal_response=response,
                 terminal_response_error=response_error,
+                suite_exclusion_candidate=_noop_exclusion_candidate(
+                    events,
+                    str(invocation) if invocation else None,
+                    depth,
+                    started_at,
+                    finished_at,
+                ),
             )
         )
     return tuple(sessions)
+
+
+def _suite_lifecycle_sessions(
+    sessions: Sequence[_Session],
+    batch: Sequence[_RunSpec],
+) -> tuple[tuple[_Session, ...], list[dict[str, Any]]]:
+    """Partition proven inert noops from sessions participating in the evaluated suite."""
+    expected_invocations = {
+        str(run.suite.manifest["execution"][key])
+        for run in batch
+        for key in ("supervisorInvocation", "targetInvocation", "judgeInvocation")
+    }
+    expected_invocations.update(
+        str(dependency).replace("-", "_")
+        for run in batch
+        for dependency in _agent_dependencies(run)
+    )
+    parent_ids = {str(session.parent_thread_id) for session in sessions if session.parent_thread_id}
+    participating: list[_Session] = []
+    excluded: list[dict[str, Any]] = []
+    for session in sessions:
+        reason = session.suite_exclusion_candidate
+        if (
+            reason is None
+            or session.invocation in expected_invocations
+            or session.session_id in parent_ids
+        ):
+            participating.append(session)
+            continue
+        excluded.append(
+            {
+                "sessionId": session.session_id,
+                "parentSessionId": session.parent_thread_id,
+                "invocation": session.invocation,
+                "reason": reason,
+                "rolloutPath": str(session.rollout_path) if session.rollout_path else None,
+                "rolloutSha256": session.rollout_sha256,
+            }
+        )
+    return tuple(participating), excluded
 
 
 def _audit_identity(
@@ -2317,7 +2433,10 @@ def _audit_identity(
     batch: Sequence[_RunSpec] | None = None,
     report: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    sessions = _load_sessions(codex_home)
+    all_sessions = _load_sessions(codex_home)
+    sessions, excluded_sessions = (
+        _suite_lifecycle_sessions(all_sessions, batch) if batch is not None else (all_sessions, [])
+    )
     sessions_by_invocation: dict[str, list[_Session]] = {}
     for session in sessions:
         if session.invocation:
@@ -2395,7 +2514,13 @@ def _audit_identity(
                         "parentSessionId": str(session.parent_thread_id),
                     }
                 )
-    return {"rolloutCount": len(sessions), "agents": agents, "scenarioBindings": scenario_bindings}
+    return {
+        "rolloutCount": len(all_sessions),
+        "suiteLifecycleRolloutCount": len(sessions),
+        "excludedSessions": excluded_sessions,
+        "agents": agents,
+        "scenarioBindings": scenario_bindings,
+    }
 
 
 def _retained_relative_path(root: Path, path: Path, field: str) -> str:
@@ -2877,6 +3002,11 @@ def _audit_session_concurrency(
     batch: Sequence[_RunSpec] | None = None,
     report: dict[str, Any] | None = None,
 ) -> dict[str, int]:
+    all_sessions = sessions
+    excluded_session_count = 0
+    if batch is not None:
+        sessions, excluded_sessions = _suite_lifecycle_sessions(sessions, batch)
+        excluded_session_count = len(excluded_sessions)
     by_parent: dict[str, list[_Session]] = {}
     for session in sessions:
         if session.parent_thread_id:
@@ -2906,8 +3036,8 @@ def _audit_session_concurrency(
                 if max(first.started_at, second.started_at) < min(first.finished_at, second.finished_at):
                     raise RuntimeError(f"Supervisor {supervisor} has overlapping children")
     timeline = sorted(
-        [(session.started_at, 1, session.depth) for session in sessions]
-        + [(session.finished_at, -1, session.depth) for session in sessions]
+        [(session.started_at, 1, session.depth) for session in all_sessions]
+        + [(session.finished_at, -1, session.depth) for session in all_sessions]
     )
     active = 0
     active_nested = 0
@@ -3018,7 +3148,11 @@ def _audit_session_concurrency(
                             f"Dependency order mismatch for {run.suite.suite_id}:{scenario_id}: "
                             f"expected {expected_order}, observed {observed_order}"
                         )
-    return {"maximumActiveSessions": maximum_active, "maximumChildrenObserved": maximum_children}
+    return {
+        "maximumActiveSessions": maximum_active,
+        "maximumChildrenObserved": maximum_children,
+        "excludedSessionCount": excluded_session_count,
+    }
 
 
 def _expected_invocation_counts(batch: Sequence[_RunSpec], report: dict[str, Any]) -> dict[str, int]:
