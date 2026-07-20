@@ -1,6 +1,6 @@
 # Enforce Behavioral Regression Assertions
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
@@ -8,8 +8,23 @@ Type: Defect
 
 - Canonical Dev Orchestrator task: 019f7e67-dfd1-7812-bb26-abb5cf14ea94.
 - Parent task: 019f77f4-c4bd-7c91-b197-c987a7beb838.
-- Phase: post-restart current-main reconciliation, focused acceptance evidence, any bounded correction/review, completion, and cleanup without replaying rejected lineage.
+- Phase: completed after current-main reconciliation, focused acceptance, independent review, audited live verification, and clean backlog closeout without replaying rejected lineage.
 - Superseded implementation commits b91eecde8d1daec285b749713db2d07efd4750e5, 938ea228d0275a3563c0ad01840dfb2b1bfed622, and 3f63321c36347ae4df68e181bd1fedec2e36d149 remain recovery evidence only.
+
+## Completion Outcome
+
+The accepted provenance correction 69dee2fcbcd795dafc9d7c1c7ab4b93787efd545 is an ancestor of main. It makes retained evaluator-owned command records authoritative, rejects conflicting supervisor exit codes, rejects alternate same-phase records, rejects duplicate behavior markers, and preserves strict phase and outcome validation. No rejected historical commit was replayed.
+
+The current-main runner dependency required by live acceptance was integrated separately at 48e6d614df53c437d173e13b4903d5e6d6f8dbd5. Its exact integration claim was released cleanly at event 64ffa4e7-260f-4016-b495-15c04c95625d before this item's final selector ran.
+
+## Completion Evidence
+
+- Five focused evaluator and provenance tests passed, covering valid structured records, conflicting exit codes, alternate same-phase records, duplicate behavior markers, and missing, malformed, duplicate, wrong-phase, or unresolved command provenance.
+- Fresh independent Dev Code Reviewer inspection found no material issue. The reviewer independently reran the same five focused tests and confirmed strict non-boolean integer handling with an additional narrow probe.
+- The exact live selector dev-coder:typescript-behavior-change passed on integrated main 48e6d614df53c437d173e13b4903d5e6d6f8dbd5 using Node v24.14.0 and lock-matching TypeScript 7.0.2.
+- All six selected deterministic checks passed: harness-agent-identity, claim-lifecycle, allowed-paths-only, test-state-transition, required-command-outcome, and output-contract-presence.
+- The independent Judge disposition was passed with verified retained-session provenance. The run's handoff audit was bound, maximum active sessions was 3, maximum children observed was 1, process exit code was 0, and workspace cleanup was clean.
+- Live evidence is retained under /tmp/behavior-regression-final.zNMw2y for the current execution session.
 
 ## Running Ownership
 
@@ -18,17 +33,17 @@ Type: Defect
 - Claim evidence: dev-backlog-steward acquired PRIMARY ownership of this exact backlog item at 2026-07-19T03:16:50.695793Z before recording the Running transition.
 - Scope boundary: the lifecycle claim is released after this committed transition; project-artifact ownership must be acquired separately before implementation.
 
-## Blocked Outcome
+## Historical Blocked Outcome
 
 The Dev Orchestrator exhausted the bounded two-correction loop after fresh independent reviews. The clean, unintegrated implementation lineage remains preserved in commits b91eecde8d1daec285b749713db2d07efd4750e5, 938ea228d0275a3563c0ad01840dfb2b1bfed622, and 3f63321c36347ae4df68e181bd1fedec2e36d149. These commits are recovery evidence, not accepted or integration-ready contributions.
 
 No implementation was integrated. Generated skill documentation and adapters were not regenerated or integrated, the live Dev Coder TypeScript suite was not run, and no dev-verifier acceptance occurred.
 
-## Blocked Evidence
+## Historical Blocked Evidence
 
 The final HIGH provenance defect is in scripts/agent_skill_evals/validation.py. The behavior-regression-sensitivity gate derives phase outcomes from supervisor-copied transitions[*].exitCode, while the retained command evidence is validated only for marker presence. An adversarial probe claimed the JSON exit sequence 1/0/1/0 while its referenced command evidence reported 0/1/0/1; _validate_judges returned errors: []. A false PASS therefore remains possible for this critical deterministic gate.
 
-## Unblock Condition
+## Historical Unblock Condition
 
 A separately authorized implementation must resolve structured evaluator-owned command records for every phase, derive or cross-check each transition exit code from retained command evidence rather than supervisor JSON, and add a rejection regression test for conflicting JSON and command outcomes. The corrected contribution must then restart fresh independent review and independent verification, perform serialized generation and bundle integration, run the live TypeScript scenario, and complete terminal lifecycle evaluation. Until all of that evidence passes, the preserved commits must not be treated as accepted or ready to integrate.
 
