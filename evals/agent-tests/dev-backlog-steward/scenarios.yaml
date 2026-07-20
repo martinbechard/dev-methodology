@@ -37,7 +37,7 @@ scenarios:
     purpose: Preserve a blocked item with an exact unresolved dependency.
     initialState: A Running item with an active owner and claim depends on an unavailable external schema decision and has durable acceptance evidence.
     task: Block the item for handoff, preserve its durable evidence, and release prior ownership.
-    targetSkills: [manage-backlog, agent-claim, structured-explanation]
+    targetSkills: [manage-file-work-items, agent-claim, structured-explanation]
     allowedAgentDependencies: []
     requiredBehaviors: [Record the exact blocker and unblock condition, Preserve evidence and acceptance criteria, Commit Status Blocked with Owner Unowned and Claim None before release, Release the prior claim, Leave the Blocked item and registry unowned, Keep the item recoverable]
     forbiddenBehaviors: [Mark complete, Archive unresolved work, Invent the schema decision, Omit Owner Unowned or Claim None, Retain prior ownership after handoff]
@@ -51,7 +51,7 @@ scenarios:
     purpose: Reject direct execution of otherwise eligible blocked work when no new claim establishes ownership.
     initialState: A blocked item has preserved evidence, no active claim, and a satisfied unblock condition.
     task: Resume the item directly as Running and continue implementation.
-    targetSkills: [manage-backlog, agent-claim, structured-explanation]
+    targetSkills: [manage-file-work-items, agent-claim, structured-explanation]
     allowedAgentDependencies: []
     requiredBehaviors: [Reject direct Blocked to Running, Reject because no new claim and owner exist, Leave the backlog item unchanged, Preserve blocker unblock and acceptance evidence, Report that successful new claim acquisition is required]
     forbiddenBehaviors: [Run work from state alone, Infer ownership from Blocked, Create claim evidence without acquisition, Discard prior evidence]
@@ -65,7 +65,7 @@ scenarios:
     purpose: Resume eligible blocked work only after a successful new claim establishes ownership.
     initialState: A blocked item has preserved evidence, no active claim, and a satisfied unblock condition.
     task: Make the item Ready and resume it through a newly acquired claim.
-    targetSkills: [manage-backlog, agent-claim, structured-explanation]
+    targetSkills: [manage-file-work-items, agent-claim, structured-explanation]
     allowedAgentDependencies: []
     requiredBehaviors: [Preserve blocker unblock and acceptance evidence, Record Ready then a successful new claim and owner before Running, Use new exclusive ownership, Report the resumed next action]
     forbiddenBehaviors: [Move directly from Blocked to Running, Reuse released ownership, Record Running before claim success, Discard prior evidence]
@@ -79,7 +79,7 @@ scenarios:
     purpose: Preserve the exact blocked item when a new claim cannot be acquired.
     initialState: A blocked item has preserved evidence, no active owner, a satisfied unblock condition, and claim acquisition returns WAIT.
     task: Attempt governed resumption and report the failed claim without changing the item.
-    targetSkills: [manage-backlog, agent-claim, structured-explanation]
+    targetSkills: [manage-file-work-items, agent-claim, structured-explanation]
     allowedAgentDependencies: []
     requiredBehaviors: [Record eligible Ready only as an attempted transition, Restore the exact pre-attempt Blocked bytes after WAIT, Leave the item unowned and not Running, Preserve blocker unblock evidence and acceptance criteria]
     forbiddenBehaviors: [Record Running, Invent a claim or owner, Leave a Ready mutation after WAIT, Rewrite or discard prior evidence]

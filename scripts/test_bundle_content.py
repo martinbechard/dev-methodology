@@ -2441,19 +2441,26 @@ class BundleContentTests(unittest.TestCase):
     def test_dev_backlog_steward_requires_claimed_blocked_work_resumption(self) -> None:
         """The suite makes claim-backed resumption and lossless failure observable."""
         suite_root = AGENT_TEST_SUITES_ROOT / "dev-backlog-steward"
-        manage_backlog_text = (SKILLS_ROOT / "manage-backlog" / "SKILL.md").read_text(
-            encoding="utf-8"
+        manage_file_text = (
+            SKILLS_ROOT / "manage-file-work-items" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        legacy_bridge_text = (
+            SKILLS_ROOT / "manage-backlog" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        self.assertNotIn(
+            "## Blocked Handoff And Resumption",
+            legacy_bridge_text,
         )
         for required_phrase in (
-            "## Blocked Resumption Workflow",
+            "## Blocked Handoff And Resumption",
             "replace the prior owner with Owner: Unowned",
             "replace the prior claim with Claim: None",
             "Set the item to Ready",
             "Only after a successful claim",
             "Restore the byte-for-byte pre-attempt Blocked item",
         ):
-            with self.subTest(manage_backlog_contract=required_phrase):
-                self.assertIn(required_phrase, manage_backlog_text)
+            with self.subTest(manage_file_contract=required_phrase):
+                self.assertIn(required_phrase, manage_file_text)
 
         scenarios = load_yaml_object(suite_root / "scenarios.yaml")["scenarios"]
         by_id = {scenario["id"]: scenario for scenario in scenarios}
