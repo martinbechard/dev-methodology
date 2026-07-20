@@ -34,6 +34,7 @@ Do not mark pass without quoted evidence.
 - Question: Do Related Code and Related Tests identify evidence permitted by the selected mode or say Not yet identified when planned implementation and tests do not exist?
 - Question: Do Open Questions capture unresolved subsystem ownership, boundaries, contracts, identity, security, selectors, validation, state, response, or verification issues and classify each as blocking or non-blocking with a decision owner?
 - Question: Does Documentation Acceptance begin with ACCEPTED or BLOCKED and judge source evidence, accepted module prerequisites, and current reverse-engineering pass requirements without requiring intentionally absent later architecture, functional specifications, or wiki pages?
+- Question: Does the first nonblank content under Documentation Acceptance begin with ACCEPTED or BLOCKED, and does the first nonblank content under Implementation Readiness begin with READY or BLOCKED, before any explanatory prose?
 - Question: Is documentation acceptance separate from implementation readiness, allowing accurate documentation of known defects, open design decisions, and current limitations while Implementation Readiness is BLOCKED for affected downstream work?
 
 ## Response Adequacy Questions

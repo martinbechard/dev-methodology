@@ -4727,7 +4727,9 @@ class BundleContentTests(unittest.TestCase):
             "do not enter production generation",
             "project-specific reconstruction instructions",
             "primary and supporting operation inventory",
-            "exact ordered template-heading and readiness-marker gate",
+            "exact ordered template-heading and decision-marker gate",
+            "Documentation Acceptance section that does not begin with ACCEPTED or BLOCKED",
+            "Implementation Readiness section that does not begin with READY or BLOCKED",
             "installed documentation path",
             "transient assembly or control files",
             "boundary-edge inventory",
@@ -6393,6 +6395,7 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(phrase, project_template_text)
 
         wiki_handoffs = (
+            "project-wiki",
             "project-wiki-create",
             "project-wiki-topic-write",
             "project-wiki-review",
@@ -6403,6 +6406,18 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(handoff, reverse_text)
         for phrase in ("Required inputs", "Owned outputs", "Completion evidence"):
             self.assertIn(phrase, reverse_text)
+        for phrase in (
+            "Invoke project-wiki to initialize docs/wiki",
+            "Required inputs are the repository root, accepted PROJECT.yaml, accepted wiki setup recommendation",
+            "Owned outputs are the initialized docs/wiki root",
+            "Completion evidence is the exact created or changed wiki page list",
+            "project-wiki-topic-write for main pages",
+            "Required inputs are the repository root, bounded page scope",
+            "project-wiki-topic-verify in a fresh read-only context",
+            "Required inputs are the repository root, exact page list",
+        ):
+            with self.subTest(wiki_contract_phrase=phrase):
+                self.assertIn(phrase, reverse_text)
 
         artifact_contracts = (
             ("create-module-design", "review-module-design", "module-design-template.md", "review-checklist-module-design.md"),
@@ -6436,8 +6451,29 @@ class BundleContentTests(unittest.TestCase):
                     self.assertIn("current reverse-engineering pass", text.lower())
             self.assertEqual(1, template_text.count("## Documentation Acceptance"))
             self.assertEqual(1, template_text.count("## Implementation Readiness"))
+            self.assertIn(
+                "Begin this section with **ACCEPTED.** or **BLOCKED.**",
+                template_text,
+            )
+            self.assertIn(
+                "Begin this section with **READY.** or **BLOCKED.**",
+                template_text,
+            )
+            self.assertIn(
+                "first nonblank content under Documentation Acceptance",
+                checklist_text,
+            )
+            self.assertIn(
+                "first nonblank content under Implementation Readiness",
+                checklist_text,
+            )
 
         readme_text = README_PATH.read_text(encoding="utf-8")
+        applying_bundle_text = readme_text.split(
+            "## Applying This Bundle To A Project", maxsplit=1
+        )[1].split("## Neutral Target Project Layout", maxsplit=1)[0]
+        self.assertIn("README and wiki integration", applying_bundle_text)
+        self.assertIn("final supplemental top-down semantic reconciliation", applying_bundle_text)
         lifecycle_text = (
             REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
         ).read_text(encoding="utf-8")

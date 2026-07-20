@@ -230,7 +230,7 @@ TODO: When BLOCKED, name the missing accepted prerequisite, insufficient evidenc
 
 ## Implementation Readiness
 
-TODO: State READY only when every applicable requirement is DEFINED, every required cross-module contract is AGREED, and no high-impact blocking question remains. Otherwise state BLOCKED for the affected downstream work and list the exact decisions or upstream artifacts required before dependent module design or implementation.
+TODO: Begin this section with **READY.** or **BLOCKED.** State READY only when every applicable requirement is DEFINED, every required cross-module contract is AGREED, and no high-impact blocking question remains. Otherwise state BLOCKED for the affected downstream work and list the exact decisions or upstream artifacts required before dependent module design or implementation.
 
 ## Verification
 
