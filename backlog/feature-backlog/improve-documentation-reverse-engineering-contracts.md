@@ -1,6 +1,6 @@
 # Improve Documentation Reverse-Engineering Contracts
 
-Status: User Action Required
+Status: Ready
 
 Type: Feature
 
@@ -13,6 +13,13 @@ The remaining implementation changes reverse-engineering and artifact acceptance
 Do you approve changing exactly skills/documentation-reverse-engineer/SKILL.md, skills/documentation-bootstrap/SKILL.md, skills/create-project-configuration/SKILL.md, skills/create-module-design/SKILL.md, skills/review-module-design/SKILL.md, skills/create-high-level-design/SKILL.md, skills/review-high-level-design/SKILL.md, skills/create-architecture/SKILL.md, skills/review-architecture/SKILL.md, skills/create-functional-spec/SKILL.md, and skills/review-functional-spec/SKILL.md to preserve bottom-up authoring and separate documentation acceptance from downstream implementation readiness?
 
 Approval also permits supported regeneration of their listed generated mirrors. Non-governed template, README/design, and regression-test changes remain ordinary implementation work.
+
+## Approval Evidence
+
+- Basis: explicit user direction.
+- Exact answer: “ok”.
+- Provenance: parent thread 019f77f4-c4bd-7c91-b197-c987a7beb838 on 2026-07-20, answering the exact eleven-skill question above.
+- The approval preserves bottom-up creation and authorizes no other governed definition.
 
 ## Why User Input Is Required
 
