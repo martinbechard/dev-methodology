@@ -1,6 +1,6 @@
 # Require Exact Review Quotation Traceability
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
@@ -20,6 +20,16 @@ Type: Defect
 - Lifecycle claim: exact-review-quotation-start.
 - Claim evidence: PRIMARY exact-file backlog ownership acquired at 2026-07-20T02:56:13.102579Z from clean baseline commit 3b147e3d5e5d98bc6e6da76d8b9d472f4b32a91e in event 876822a9-0789-4c02-a3f1-f1e280125f12.
 - Scope boundary: this claim owns only the Running transition and is released after its clean commit. Governed definitions, checklist and reference files, deterministic suite files, generated mirrors, broad verification, integration, and completion remain separately claimed.
+
+## Completion Evidence
+
+- The approved definition boundary remained limited to the three named source skills and their supported generated mirrors; all three definition-change checks returned ALLOWED_APPROVED_DEFINITION_CHANGE.
+- Accepted source commit: 2669a3f6ec50fbba502e969516058daf2839de66; source claim released normally in event be462ade-9cbb-4ad5-88bc-d863e60240b2.
+- Fresh independent source review accepted the exact quotation resolver, positive and negative fixtures, suite contract, checklist semantics, and the approved broken-link Open Questions behavior with no material findings.
+- Integrated on main as f806a2bc5a1f9da672fe24efe6b634b892d2e150 with Source-Commit provenance; supported generated skill documentation and native adapters were regenerated from the approved sources.
+- Focused verification passed: eight Wiki Artifact Reviewer quotation tests, global catalog validation, exact validation of all three source skills and the suite contract, generated skill-doc freshness, Codex validate-only for the accepted quotation scenario with jobs 1, Git diff validation, and clean status.
+- Integration claim integrate-exact-review-quotation-traceability released normally in event 037a6d9d-bdbf-4561-9c97-8ad2ad87302e.
+- No broad or full agent-catalog run was used for this item; that final-state gate remains campaign-level work.
 
 ## Summary
 
