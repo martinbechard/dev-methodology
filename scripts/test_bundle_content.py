@@ -2455,6 +2455,15 @@ class BundleContentTests(unittest.TestCase):
 
         scenarios = load_yaml_object(suite_root / "scenarios.yaml")["scenarios"]
         by_id = {scenario["id"]: scenario for scenario in scenarios}
+        known_checks = {
+            check["id"]
+            for check in load_yaml_object(REPOSITORY_ROOT / "evals" / "judges.yaml")[
+                "checks"
+            ]
+        }
+        for scenario in scenarios:
+            with self.subTest(scenario_checks=scenario["id"]):
+                self.assertLessEqual(set(scenario["deterministicChecks"]), known_checks)
 
         self.assertEqual(
             "BLOCKED",
