@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -922,6 +923,32 @@ class EvalCoverageCatalogTests(unittest.TestCase):
                 "adapter": "codex",
                 "profiles": {"default": {"model": "test-model", "effort": "medium"}},
             },
+        )
+        manifest_path = (
+            self.root
+            / "generated"
+            / "adapters"
+            / "agent-generation-manifest.json"
+        )
+        manifest_path.parent.mkdir(parents=True, exist_ok=True)
+        manifest_path.write_text(
+            json.dumps(
+                {
+                    "schema": "dev-methodology-agent-generation-manifest",
+                    "version": 3,
+                    "adapters": {
+                        "codex": {
+                            "agents": [
+                                {
+                                    "name": "agent-a",
+                                    "output": "generated/adapters/codex/agents/agent-a.toml",
+                                }
+                            ]
+                        }
+                    },
+                }
+            ),
+            encoding="utf-8",
         )
         self.write_yaml(
             "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",

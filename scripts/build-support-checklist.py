@@ -39,12 +39,6 @@ _CATALOG_FILES = {
 }
 _COVERAGE_STATUSES = {"declared", "fixture-backed", "verified"}
 _CATALOG_COVERAGE_STATUSES = _COVERAGE_STATUSES | {"mixed"}
-_ADAPTER_EXTENSIONS = {
-    "claude": ".md",
-    "codex": ".toml",
-    "gemini": ".md",
-    "junie": ".md",
-}
 _STATUS_VOCABULARY = (
     ("missing", "No declaration or evidence is available."),
     ("unsupported", "The selected harness has no supported mapping."),
@@ -1866,6 +1860,27 @@ def _load_explorer_model_profiles(root: Path) -> list[dict[str, object]]:
     return rows
 
 
+def _load_explorer_adapter_outputs(
+    root: Path,
+) -> dict[str, list[dict[str, str]]]:
+    """Index generated adapter outputs from the generator-owned manifest."""
+    manifest_path = root / "generated" / "adapters" / "agent-generation-manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    adapters = _require_mapping(manifest.get("adapters"), "agent generation adapters")
+    outputs: dict[str, list[dict[str, str]]] = {}
+    for harness, raw_adapter in sorted(adapters.items()):
+        adapter = _require_mapping(raw_adapter, f"generated adapter {harness}")
+        for raw_agent in _require_list(
+            adapter.get("agents"), f"generated adapter {harness} agents"
+        ):
+            agent = _require_mapping(raw_agent, f"generated adapter {harness} agent")
+            role_id = str(agent["name"])
+            outputs.setdefault(role_id, []).append(
+                {"harness": harness, "path": str(agent["output"])}
+            )
+    return outputs
+
+
 def _evidence_status_for_case(
     case_id: str, coverage: dict[str, object]
 ) -> str:
@@ -2021,6 +2036,7 @@ def build_explorer_payload(
     """Build joined explorer data without promoting declarations or manual notes."""
     model_profiles = _load_explorer_model_profiles(root)
     profiles_by_id = {str(item["id"]): item for item in model_profiles}
+    adapter_outputs = _load_explorer_adapter_outputs(root)
     role_items: list[dict[str, object]] = []
     edges: list[dict[str, object]] = []
     for role_id, role in sorted(roles.items()):
@@ -2033,8 +2049,8 @@ def build_explorer_payload(
         }
         state = coverage["agents"][role_id]
         generated_adapters = []
-        adapter_filename = str(role.get("filename", role_id))
-        for harness, extension in sorted(_ADAPTER_EXTENSIONS.items()):
+        for adapter_output in adapter_outputs.get(role_id, []):
+            harness = adapter_output["harness"]
             profile = profiles_by_id.get(str(role["modelProfile"]), {})
             adapter_profile = next(
                 (
@@ -2047,7 +2063,7 @@ def build_explorer_payload(
             generated_adapters.append(
                 {
                     "harness": harness,
-                    "path": f"generated/adapters/{harness}/agents/{adapter_filename}{extension}",
+                    "path": adapter_output["path"],
                     "modelProfile": role["modelProfile"],
                     "model": adapter_profile.get("model"),
                 }
