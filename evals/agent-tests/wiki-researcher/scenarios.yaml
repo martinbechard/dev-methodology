@@ -44,6 +44,7 @@ scenarios:
       - Bound research to policy cadence, compatibility gates, and rollback ownership.
       - Save exactly one date-prefixed collision-safe report under raw and leave docs/wiki unchanged.
       - Record source dates, reliability, exclusions, inferences, conflicts, and ingest destinations.
+      - Resolve every local Markdown link from the final report location and run python3 validate_links.py REPORT --repository-root . before commit.
     forbiddenBehaviors:
       - Create or update a durable wiki page.
       - Save the report under raw/processed or overwrite a collision.
