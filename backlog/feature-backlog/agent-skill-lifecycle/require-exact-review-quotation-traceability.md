@@ -4,6 +4,15 @@ Status: Ready
 
 Type: Defect
 
+## Definition Approval
+
+- Decision: Approved on 2026-07-19.
+- Provenance: Exact user authority was resolved in parent Process Backlog Items task 019f77f4-c4bd-7c91-b197-c987a7beb838 and delegated to this sole replacement for unavailable task 019f7a45-a697-7d80-9744-a06c8d22d69a.
+- Approved governed scope: modify only skills/review-structured-artifact/SKILL.md, skills/project-wiki-review/SKILL.md, and skills/documentation-page-verify/SKILL.md, with only their supported generated mirrors regenerated later from source.
+- Approved refinement: a complete review file must not be refused solely because one link is broken; preserve the file and surface the unresolved link in Open Questions unless that exact evidence is indispensable to a claimed conclusion.
+- Excluded scope: no agents/roles definition or other skill definition is authorized.
+- Lifecycle boundary: this approval transaction retains Status: Ready. Running ownership and artifact work require separate lifecycle and ARTIFACT GO transactions.
+
 ## Summary
 
 Require every review statement presented as an exact quotation to occur verbatim in the cited source or retained response.
