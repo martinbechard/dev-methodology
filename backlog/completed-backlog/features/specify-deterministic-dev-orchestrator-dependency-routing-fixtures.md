@@ -1,6 +1,6 @@
 # Specify Deterministic Dev Orchestrator Dependency Routing Fixtures
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
@@ -9,10 +9,10 @@ Type: Feature
 - Canonical Dev Orchestrator task: 019f7e67-dfca-76f0-92ad-d810516c19cc.
 - Parent task: 019f77f4-c4bd-7c91-b197-c987a7beb838.
 - Resumption authority: fresh ARTIFACT RESUME issued on 2026-07-20 for focused current-main reconciliation, the exact dependency-routing live selector, and any evidence-required bounded evaluation/test-only correction.
-- Phase: post-restart focused current-main verification, any evidence-required bounded correction, review, completion, and cleanup.
+- Phase: Done after focused current-main verification, evidence-required bounded correction, independent review, direct integration, and terminal backlog completion.
 - Superseded tasks: prior dependency-routing preflight, waiting, and permission-failed tasks are evidence only and are not canonical ownership. Task 019f7e25-66d5-7962-b665-ee245ab37c3c was archived after its worktree sandbox denied the required process inspection; it produced no code and released resource claim verify-dependency-routing-019f7e25 at event beaaa6d2-996d-4c34-8dd7-7fcf5968f2c5.
 
-## Running Ownership
+## Historical Running Ownership
 
 - Owner: Dev Orchestrator root task 019f77f4-c4bd-7c91-b197-c987a7beb838.
 - Lifecycle agent: Dev Backlog Steward.
@@ -20,7 +20,20 @@ Type: Feature
 - Claim evidence: PRIMARY exact-file backlog ownership acquired at 2026-07-19T11:51:35.871715Z from clean baseline commit ee278e2f7e17f8f8c6b22bd44531111edaab859a.
 - Scope boundary: this claim owns only the Running transition and is released after its clean commit. Evaluation fixtures, runner source, tests, generated outputs, verification, and integration remain gated on a later ARTIFACT GO.
 
-## Blocked Evidence
+## Completion Evidence
+
+- Reviewed candidate: 48df25301ef4165efe5f4f8ed792267b1cda47d0 on codex/dependency-routing-fixtures-reverify.
+- Main integration: 48e6d614df53c437d173e13b4903d5e6d6f8dbd5, patch-equivalent across all three changed files.
+- Integration claim: exact project-file ownership acquired at event 586faa64-49c6-4727-b8ca-3cf675c3588e and released cleanly at event 64ffa4e7-260f-4016-b495-15c04c95625d.
+- Terminal backlog claim: exact source and destination ownership acquired at event 78dfa487-666a-4904-8e72-2b2b457ccc5a.
+- Independent review: no findings after the malformed-boundary and zero-duration containment cases were corrected.
+- Focused deterministic verification: 97 runner tests passed, 11 Dev Orchestrator fixture tests passed, dependency-routing validate-only passed, and Git diff validation passed.
+- Exact live selector evidence: the dependency-routing scenario passed all nine deterministic gates, Judge disposition passed, the handoff audit was bound, the receipt audit was verified, process exit was zero, and workspace cleanup was clean. The retained run is at /tmp/dependency-routing-live.0uXKJ4/summary.json.
+- Evidence-required runner correction: retained task boundary evidence proved that a coder session completed, a reviewer ran, and the coder session later resumed. The concurrency audit now uses exact paired task intervals and conservatively retains the whole-session envelope when boundary evidence is absent, incomplete, mismatched, malformed, non-monotonic, or zero-duration. Re-auditing the retained exact live run passed with maximumActiveSessions 4 and maximumChildrenObserved 1.
+- Behavioral Assertions task 019f7e67-dfd1-7812-bb26-abb5cf14ea94 received the main integration and claim-release evidence for its TypeScript-only rerun.
+- No full catalog was run because this item was explicitly limited to the exact dependency-routing selector and focused deterministic gates.
+
+## Superseded Blocked Evidence
 
 - The accepted runbook contribution is preserved at commit 0e82042c4a9111cbd0ab4e33613bb00d39ef6326.
 - The source contribution and its two bounded correction attempts are preserved at commits 7535a9b9c0ab42c1e78ef0c8cfb16f7e24e6e4dd, 78a0ce5ab5dfefde118d37691a80ba446fef5ac1, and 118939e52f2d68081eba5be091357fa244a2ec37.
@@ -28,7 +41,7 @@ Type: Feature
 - The terminal fresh review found that linked-worktree Git common-directory and claim-journal containment remains incomplete, malformed checkpoint receipts can escape bounded diagnostics, and producer invocation aliases are normalized instead of matched literally.
 - No contribution integration, live suite, Judge evaluation, or terminal success occurred.
 
-## Unblock Condition
+## Superseded Unblock Condition
 
 Resume only after the parent Dev Orchestrator issues a fresh ARTIFACT RESUME or ARTIFACT GO that names this item and explicitly authorizes a new evaluation/test-only correction cycle for all three terminal review findings. Resource availability, the preserved branches, general repository authority, or the prior exhausted correction loop do not authorize resumption.
 
@@ -40,7 +53,7 @@ Provide a fully specified, deterministic fixture for the Dev Orchestrator depend
 
 The dependency-routing scenario names an API source lane and an operator runbook lane, but its frozen fixture supplies no target files, requested behavior, or acceptance criteria. Both producing agents therefore returned BLOCKED without commits. The runner correctly stopped before review, verification, integration, or backlog closeout because the committed-handoffs gate could not pass.
 
-This is a test-harness specification gap rather than a product authority question. The classification is recorded in [Classify Agent Suite Blocking Resources](../completed-backlog/analyses/classify-agent-suite-blocking-resources.md), and the authoritative run evidence is preserved in [Complete Agent Suite Results](../../evals/agent-tests/results/2026-07-17-complete-agent-suites.md).
+This is a test-harness specification gap rather than a product authority question. The classification is recorded in [Classify Agent Suite Blocking Resources](../analyses/classify-agent-suite-blocking-resources.md), and the authoritative run evidence is preserved in [Complete Agent Suite Results](../../../evals/agent-tests/results/2026-07-17-complete-agent-suites.md).
 
 ## Requirements
 
