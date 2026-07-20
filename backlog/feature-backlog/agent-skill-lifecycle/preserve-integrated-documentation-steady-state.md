@@ -1,6 +1,6 @@
 # Preserve Integrated Documentation Steady State
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
@@ -13,6 +13,13 @@ The original proposal assigned a broad cross-artifact audit to Dev Documentation
 Do you approve changing exactly agents/roles/project-setup/project-bootstrapper.role.yaml and agents/roles/wiki-activities/wiki-ingester.role.yaml so that, only during whole-project reverse engineering, Project Bootstrapper assigns Wiki Ingester a final integrated-tree evidence audit; Wiki Ingester identifies stale, contradictory, or missing artifacts against source evidence and reports the exact artifact work required; Project Bootstrapper routes each result to its existing owner; Dev Documentation Writer creates or updates every template-backed or other supported non-wiki document its definition owns, including a missing module design found by Wiki Ingester; and corrected or newly created artifacts receive independent review before final verification?
 
 Approval also permits regeneration of only the supported generated agent mirrors from those two sources.
+
+## Approval Evidence
+
+- Basis: explicit user direction after two ownership-boundary corrections.
+- Exact answer: “ok”.
+- Provenance: parent thread 019f77f4-c4bd-7c91-b197-c987a7beb838 on 2026-07-20, answering the corrected two-role scope recorded at 9d9716c.
+- The approval applies only to whole-project reverse engineering. It does not add the audit to ordinary project setup and does not make Dev Documentation Writer the audit owner.
 
 ## Why User Input Is Required
 
