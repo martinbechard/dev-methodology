@@ -1524,6 +1524,9 @@ class BundleContentTests(unittest.TestCase):
             "probe-complete-work-item-direct-main",
             code_delivery["skillProbes"],
         )
+        self.assertTrue(
+            (REPOSITORY_ROOT / "scripts" / "test_direct_main_completion_contract.py").is_file()
+        )
 
     def test_jhipster_guidance_is_split_into_focused_skill_packages(self) -> None:
         expected_phrases = {
