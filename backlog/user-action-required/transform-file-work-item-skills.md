@@ -1,8 +1,28 @@
 # Transform File Work-Item Skills
 
-Status: Ready
+Status: User Action Required
 
 Type: Feature
+
+## User Action Required
+
+This transformation creates two governed skill packages and retires or changes three existing governed skill packages.
+
+## Question for the User
+
+Do you approve changing or retiring skills/create-backlog/SKILL.md, skills/manage-backlog/SKILL.md, and skills/file-based-backlog/SKILL.md and their agents/openai.yaml metadata, and creating skills/create-file-work-item/SKILL.md and skills/manage-file-work-items/SKILL.md with their agents/openai.yaml metadata, together with only their supported generated mirrors and directly related non-governed tests and documentation?
+
+## Why User Input Is Required
+
+The accepted provider contract establishes the design but does not constitute exact approval to mutate governed skill definitions.
+
+## Resolution
+
+Pending.
+
+## Unattended Work Boundary
+
+Do not dispatch or mutate these skill packages until the exact question is answered.
 
 ## Summary
 
@@ -10,7 +30,7 @@ Replace the generic create-backlog and manage-backlog names with symmetric file-
 
 ## Context
 
-This item is a provider lane in the [Work-Item Provider And Completion Contracts series](index.md). The current create-backlog and manage-backlog skills contain the mature typed-item and lifecycle procedures. The newer file-based-backlog skill mostly selects those procedures. The transformation should preserve the mature behavior under provider-specific names rather than layer another wrapper around it.
+This item is a provider lane in the [Work-Item Provider And Completion Contracts series](../feature-backlog/work-item-provider-and-completion/index.md). The current create-backlog and manage-backlog skills contain the mature typed-item and lifecycle procedures. The newer file-based-backlog skill mostly selects those procedures. The transformation should preserve the mature behavior under provider-specific names rather than layer another wrapper around it.
 
 ## Requirements
 

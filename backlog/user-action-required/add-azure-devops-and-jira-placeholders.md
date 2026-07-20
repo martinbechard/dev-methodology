@@ -1,8 +1,28 @@
 # Add Azure DevOps And Jira Placeholders
 
-Status: Ready
+Status: User Action Required
 
 Type: Feature
+
+## User Action Required
+
+This item creates four governed unsupported-provider skill packages.
+
+## Question for the User
+
+Do you approve creating skills/create-azure-devops-work-item/SKILL.md, skills/manage-azure-devops-work-items/SKILL.md, skills/create-jira-work-item/SKILL.md, and skills/manage-jira-work-items/SKILL.md with their agents/openai.yaml metadata, together with only their supported generated mirrors and directly related non-governed tests and documentation?
+
+## Why User Input Is Required
+
+The accepted provider contract establishes the design but does not constitute exact approval to create governed skill definitions.
+
+## Resolution
+
+Pending.
+
+## Unattended Work Boundary
+
+Do not dispatch or create these skill packages until the exact question is answered.
 
 ## Summary
 
@@ -10,7 +30,7 @@ Add symmetric Azure DevOps and Jira create and manage skill packages that make t
 
 ## Context
 
-This item is a provider lane in the [Work-Item Provider And Completion Contracts series](index.md). Azure DevOps and Jira are required selector placeholders, not implemented providers. Explicit packages let project validation name the intended provider and report a truthful capability boundary instead of silently selecting files, GitHub, GitLab, or an arbitrary external API.
+This item is a provider lane in the [Work-Item Provider And Completion Contracts series](../feature-backlog/work-item-provider-and-completion/index.md). Azure DevOps and Jira are required selector placeholders, not implemented providers. Explicit packages let project validation name the intended provider and report a truthful capability boundary instead of silently selecting files, GitHub, GitLab, or an arbitrary external API.
 
 ## Requirements
 

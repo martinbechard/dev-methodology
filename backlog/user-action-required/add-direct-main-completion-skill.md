@@ -1,8 +1,28 @@
 # Add Direct-Main Completion Skill
 
-Status: Ready
+Status: User Action Required
 
 Type: Feature
+
+## User Action Required
+
+This item creates one governed direct-main completion skill package.
+
+## Question for the User
+
+Do you approve creating skills/complete-work-item-direct-main/SKILL.md with its agents/openai.yaml metadata, together with only its supported generated mirrors and directly related non-governed tests and documentation?
+
+## Why User Input Is Required
+
+The accepted provider contract establishes the design but does not constitute exact approval to create a governed skill definition.
+
+## Resolution
+
+Pending.
+
+## Unattended Work Boundary
+
+Do not dispatch or create this skill package until the exact question is answered.
 
 ## Summary
 
@@ -10,7 +30,7 @@ Add complete-work-item-direct-main so a verified contribution reaches completion
 
 ## Context
 
-This item is a completion lane in the [Work-Item Provider And Completion Contracts series](index.md). The current simple-workitem prototype ends with a verified local commit, which is a useful handoff but does not guarantee that the commit is on main. A temporary isolation branch may be required for safe claim ownership, but that branch is an implementation mechanism rather than the terminal delivery state.
+This item is a completion lane in the [Work-Item Provider And Completion Contracts series](../feature-backlog/work-item-provider-and-completion/index.md). The current simple-workitem prototype ends with a verified local commit, which is a useful handoff but does not guarantee that the commit is on main. A temporary isolation branch may be required for safe claim ownership, but that branch is an implementation mechanism rather than the terminal delivery state.
 
 ## Requirements
 

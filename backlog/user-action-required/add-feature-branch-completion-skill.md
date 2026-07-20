@@ -1,8 +1,28 @@
 # Add Feature-Branch Completion Skill
 
-Status: Ready
+Status: User Action Required
 
 Type: Feature
+
+## User Action Required
+
+This item creates one governed feature-branch completion skill package.
+
+## Question for the User
+
+Do you approve creating skills/complete-work-item-feature-branch/SKILL.md with its agents/openai.yaml metadata, together with only its supported generated mirrors and directly related non-governed tests and documentation?
+
+## Why User Input Is Required
+
+The accepted provider contract establishes the design but does not constitute exact approval to create a governed skill definition.
+
+## Resolution
+
+Pending.
+
+## Unattended Work Boundary
+
+Do not dispatch or create this skill package until the exact question is answered.
 
 ## Summary
 
@@ -10,7 +30,7 @@ Add complete-work-item-feature-branch so implementation, provider-accurate pull 
 
 ## Context
 
-This item is a completion lane in the [Work-Item Provider And Completion Contracts series](index.md). The current feature-branch-workitem prototype correctly publishes completed work as ready for review, but AWAITING_REVIEW is a handoff state rather than backlog completion. The final contract must resume after review and verify merge evidence before the selected work-item provider is asked to close the item.
+This item is a completion lane in the [Work-Item Provider And Completion Contracts series](../feature-backlog/work-item-provider-and-completion/index.md). The current feature-branch-workitem prototype correctly publishes completed work as ready for review, but AWAITING_REVIEW is a handoff state rather than backlog completion. The final contract must resume after review and verify merge evidence before the selected work-item provider is asked to close the item.
 
 ## Requirements
 

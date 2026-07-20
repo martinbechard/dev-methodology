@@ -1,8 +1,28 @@
 # Split GitHub Work-Item Skills
 
-Status: Ready
+Status: User Action Required
 
 Type: Feature
+
+## User Action Required
+
+This transformation creates two governed GitHub skill packages and retires or changes one existing governed package.
+
+## Question for the User
+
+Do you approve changing or retiring skills/github-issues-backlog/SKILL.md and its agents/openai.yaml metadata, and creating skills/create-github-work-item/SKILL.md and skills/manage-github-work-items/SKILL.md with their agents/openai.yaml metadata, together with only their supported generated mirrors and directly related non-governed tests and documentation?
+
+## Why User Input Is Required
+
+The accepted provider contract establishes the design but does not constitute exact approval to mutate governed skill definitions.
+
+## Resolution
+
+Pending.
+
+## Unattended Work Boundary
+
+Do not dispatch or mutate these skill packages until the exact question is answered.
 
 ## Summary
 
@@ -10,7 +30,7 @@ Replace github-issues-backlog with symmetric create-github-work-item and manage-
 
 ## Context
 
-This item is a provider lane in the [Work-Item Provider And Completion Contracts series](index.md). The current github-issues-backlog prototype combines creation and lifecycle management in one skill. Separating those responsibilities makes GitHub symmetric with other providers while keeping issue lifecycle distinct from pull-request delivery.
+This item is a provider lane in the [Work-Item Provider And Completion Contracts series](../feature-backlog/work-item-provider-and-completion/index.md). The current github-issues-backlog prototype combines creation and lifecycle management in one skill. Separating those responsibilities makes GitHub symmetric with other providers while keeping issue lifecycle distinct from pull-request delivery.
 
 ## Requirements
 

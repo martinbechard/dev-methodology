@@ -1,8 +1,28 @@
 # Add GitLab Work-Item Skills
 
-Status: Ready
+Status: User Action Required
 
 Type: Feature
+
+## User Action Required
+
+This item creates two governed GitLab skill packages.
+
+## Question for the User
+
+Do you approve creating skills/create-gitlab-work-item/SKILL.md and skills/manage-gitlab-work-items/SKILL.md with their agents/openai.yaml metadata, together with only their supported generated mirrors and directly related non-governed tests and documentation?
+
+## Why User Input Is Required
+
+The accepted provider contract establishes the design but does not constitute exact approval to create governed skill definitions.
+
+## Resolution
+
+Pending.
+
+## Unattended Work Boundary
+
+Do not dispatch or create these skill packages until the exact question is answered.
 
 ## Summary
 
@@ -10,7 +30,7 @@ Add symmetric create-gitlab-work-item and manage-gitlab-work-items skills that u
 
 ## Context
 
-This item is a provider lane in the [Work-Item Provider And Completion Contracts series](index.md). GitLab must be a first-class provider rather than a GitHub-shaped alias. Its issue references, labels, milestones, relationships, merge requests, approvals, pipelines, and merge evidence must be expressed through GitLab capabilities and terminology.
+This item is a provider lane in the [Work-Item Provider And Completion Contracts series](../feature-backlog/work-item-provider-and-completion/index.md). GitLab must be a first-class provider rather than a GitHub-shaped alias. Its issue references, labels, milestones, relationships, merge requests, approvals, pipelines, and merge evidence must be expressed through GitLab capabilities and terminology.
 
 ## Requirements
 
