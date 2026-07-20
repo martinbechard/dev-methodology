@@ -1,6 +1,6 @@
 # Replace Bootstrapper Marathon With Isolated Test Doubles
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
@@ -11,6 +11,15 @@ Type: Defect
 - Lifecycle claim: baton-1-bootstrapper-isolated-doubles-lifecycle.
 - Claim evidence: PRIMARY exact-file backlog ownership acquired at 2026-07-20T01:42:21.016690Z from clean baseline commit 54f8fa65dd840c2a5d529c6acff1080830c516bc.
 - Scope boundary: this claim owns only the Running transition and primary index resource and is released after its clean commit. Project Bootstrapper suite-local scripted doubles, fixtures, tests, independent review, verification, and integration require a separate canonical isolated claim.
+
+## Completion Evidence
+
+- Accepted source lineage: 00741117821bc1304d2887bd6927c8ad9a334b6a, d47c7caee4044e381506a7480a3f6f4ff64ea7ed, and c347031d0be4ee27116fd5402cff6ab1c5175ff1; the cumulative source claim released normally in event 1037e4cd-14e1-4a3a-aad2-9de7a4ba37cd.
+- Independent review accepted the exact six-file Project Bootstrapper suite-local contribution and its deterministic scripted orchestration boundary.
+- Integrated on main as 4967f880e6aee0f9687729d55d0cb0585385e772 with all three Source-Commit records; the pinned generated Project Bootstrapper adapter digest was reconciled to the current-main generated adapter without widening scope.
+- Focused verification passed twice with seven suite-local tests; global catalog validation passed; Codex validate-only for project-bootstrapper:missing-configuration-multi-contribution with jobs 1 passed; Git diff validation and clean status passed.
+- Integration claim integrate-bootstrapper-isolated-test-doubles released normally in event 7890cebb-8cc7-49da-853c-940555e53e9d.
+- The default required gate now uses bounded isolated scripted doubles; the variable live marathon remains optional and no broad or full agent-catalog run was used for this item.
 
 ## Summary
 
