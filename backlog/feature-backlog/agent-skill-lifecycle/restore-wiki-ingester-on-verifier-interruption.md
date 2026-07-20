@@ -1,6 +1,6 @@
 # Restore Wiki Ingester On Verifier Interruption
 
-Status: Ready
+Status: Running
 
 Type: Defect
 
@@ -10,6 +10,7 @@ Type: Defect
 - Preserved branch: codex/restore-wiki-ingester-verifier-flow.
 - Preserved clean worktree: /Users/martinbechard/.codex/worktrees/8a44/dev-methodology.
 - Preserved eval-only evidence head: 914bc09, following the bounded executable-boundary correction history on the same branch.
+- Resumed direction: implement the approved substantiated-ingest plus page-local Open Questions contract; the rejected rollback/BLOCKED proposal is historical only.
 - The eval-only boundary now proves the current canonical Wiki Ingester behavior retains unaccepted docs/wiki drafts after a bound pre-move verifier interruption following one genuine correction.
 - No governed role or distributed skill definition was mutated.
 
