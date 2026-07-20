@@ -20,8 +20,8 @@ This page is generated from the live conceptual agent and skill inventories, all
 
 ## Summary
 
-- [x] 27 conceptual agents and 125 bundled skills have structural coverage.
-- [x] 27 agents are scenario-declared and 125 skills are probe-declared.
+- [x] 27 conceptual agents and 126 bundled skills have structural coverage.
+- [x] 27 agents are scenario-declared and 126 skills are probe-declared.
 - [x] 55 agent scenarios and 5 workflow packs are declared.
 - 5 workflow packs have associated cases; 5 are partial and 0 have end-to-end fixture coverage.
 - 10 cases are fixture-backed and 10 fixtures are structurally executable before harness readiness is considered.
@@ -31,7 +31,7 @@ This page is generated from the live conceptual agent and skill inventories, all
 - 23 skills have positive-case support, 0 have negative-activation cases, 0 have executable paired controls, and 0 satisfy the full probe contract.
 - 1 agents and 0 skills have executable full fixtures.
 - 0 agents and 0 skills have calibrated Model Judge status.
-- 27 agents and 101 skills have pending Model Judge status.
+- 27 agents and 102 skills have pending Model Judge status.
 - 0 agents and 24 skills use Deterministic Judges only and do not require Model Judge calibration.
 - 0 agents and 0 skills have classified executions.
 - 0 agents and 0 skills have Judge-passed evidence.
@@ -148,6 +148,7 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | code-review-evidence | [x] | [x] probe-code-review-evidence | [x] typescript-code-review | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | codex-workitem-coordination | [x] | [x] probe-codex-workitem-coordination | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | complete-work-item-direct-main | [x] | [x] probe-complete-work-item-direct-main | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
+| complete-work-item-feature-branch | [x] | [x] probe-complete-work-item-feature-branch | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | create-azure-devops-work-item | [x] | [x] probe-create-azure-devops-work-item | [x] provider-placeholder-matrix | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | create-backlog | [x] | [x] probe-create-backlog | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | create-file-work-item | [x] | [x] probe-create-file-work-item | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |

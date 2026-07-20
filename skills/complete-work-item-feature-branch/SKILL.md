@@ -26,7 +26,7 @@ Resolve these inputs before repository mutation:
 - Existing pull-request or merge-request identity when resuming publication or accepted corrections.
 - Authority to create the branch, push it, publish or update the delivery record, and perform any requested merge action.
 
-The work-item provider and code host are independent. A file or GitLab work item may be delivered through GitHub, and a file or GitHub work item may be delivered through GitLab, when project configuration explicitly selects that host. Do not infer either selection from remotes, templates, available tools, or existing records.
+The work-item provider and code host are independent. A file or GitLab work item may be delivered through GitHub, and a file or GitHub work item may be delivered through GitLab, when applicable project configuration or explicit task-level user direction selects that host. Do not infer either selection from remotes, templates, available tools, or existing records.
 
 ## Branch And Ownership
 
@@ -46,7 +46,7 @@ The work-item provider and code host are independent. A file or GitLab work item
    - For GitLab, use the configured merge-request capability and GitLab evidence. Call it a merge request.
    - For another host, use only a configured capability whose terminology, readiness, review, checks, and merge evidence are explicit.
 5. Publish completed, verified work ready for review. Use draft only when the user requests it or concrete implementation, verification, or dependency work remains incomplete.
-6. Record and verify the publication URL, code host, base, head, commit, dependencies, review order, required checks, and observed ready or draft state.
+6. Record and verify the canonical work-item identifier and provider reference, publication URL, code host, base, head, commit, dependencies, review order, required checks, and observed ready or draft state.
 
 Successful publication returns AWAITING_REVIEW while any required approval, check, dependency merge, or configured merge remains outstanding. A ready publication is not READY delivery evidence.
 
@@ -57,6 +57,27 @@ Successful publication returns AWAITING_REVIEW while any required approval, chec
 3. Rerun every check affected by the correction, commit coherently, push, and verify the existing publication now points to the corrected head.
 4. Observe required approvals, checks or pipelines, and dependency order from the configured code host. Do not translate GitLab pipelines into GitHub checks or GitHub review evidence into GitLab approval evidence.
 5. Preserve AWAITING_REVIEW while valid review or merge work is merely pending. Return BLOCKED only when a concrete failure, missing authority, unavailable capability, rejected check, ownership conflict, or unsatisfied dependency prevents safe progress.
+
+## Host State Decision Table
+
+Apply these outcomes to provider-accurate host evidence. Do not convert a pending gate into success or a concrete failure into an indefinite review wait.
+
+| Scenario | Required observed evidence | Disposition |
+| --- | --- | --- |
+| Ready publication | Ready pull request or merge request; review or merge remains pending | AWAITING_REVIEW |
+| Explicit draft | User-requested draft, or named incomplete implementation, check, or dependency work | AWAITING_REVIEW |
+| Review correction | Existing publication points to the corrected commit on the same branch; affected checks reran | AWAITING_REVIEW |
+| Checks pending | Required checks or pipelines have not completed for the current head | AWAITING_REVIEW |
+| Check failure | A required check or pipeline failed for the current head | BLOCKED |
+| Approval pending | Required current-head approval has not arrived | AWAITING_REVIEW |
+| Dependency pending | Required dependency has not merged in the configured order | AWAITING_REVIEW |
+| Merge pending | Host remains open even when other merge evidence is present | AWAITING_REVIEW |
+| Merge complete | Required approvals and checks passed; dependencies merged; host reports merged; final merged commit is reachable from the configured base | READY |
+| Merge evidence mismatch | Host reports merged but the resulting verified commit is not reachable from the configured base | BLOCKED |
+| Closed unmerged | Host reports closed without merge evidence | BLOCKED |
+| Superseded | Publication was replaced without a verified same-work-item relationship and preserved branch history | BLOCKED |
+| Missing authority | Required branch, push, publication, update, or requested merge authority is absent | BLOCKED |
+| Terminology mismatch | GitHub evidence is shaped as a merge request or GitLab evidence is shaped as a pull request | BLOCKED |
 
 ## Merge And Completion Gate
 
@@ -69,6 +90,15 @@ Return READY only after all of the following are observed:
 - The recorded merge commit and resulting verified commit are reachable from the configured base branch in Git.
 - Provider lifecycle completion evidence is prepared for the selected work-item manager.
 
+For a merge strategy that preserves the published head, verify both the published commit and final merge commit with the project-supported equivalent of these read-only ancestry checks:
+
+```bash
+git merge-base --is-ancestor PUBLISHED_HEAD CONFIGURED_BASE
+git merge-base --is-ancestor FINAL_MERGED_COMMIT CONFIGURED_BASE
+```
+
+When the configured strategy rebases or squashes, record the provider-observed mapping from the published head to the resulting verified commit, then apply the final-commit ancestry check. Never treat the missing published-head ancestry expected from that configured strategy as silent success.
+
 A closed-unmerged, abandoned, replaced, or superseded publication cannot return READY. Follow an explicit replacement only after its relationship to the same work item and branch history is verified; otherwise return BLOCKED with both references.
 
 After the merge gate passes, send the selected provider manager the work-item reference, completion disposition READY, branch and publication reference, final merged base commit, approvals, checks, dependencies, merge evidence, claim releases, and requested terminal lifecycle update. The provider-backed item remains nonterminal until that manager records lifecycle COMPLETED. When the selected provider is none, record the complete task-local terminal evidence and lifecycle COMPLETED before returning READY.
@@ -77,7 +107,7 @@ After the merge gate passes, send the selected provider manager the work-item re
 
 Return exactly one disposition with deciding evidence:
 
-- AWAITING_REVIEW: branch, pushed commit, pull-request or merge-request URL, base and head, ready or draft state, review and dependency order, completed checks, and every outstanding review, check, dependency, or merge gate.
+- AWAITING_REVIEW: canonical work-item identifier and provider reference, branch, pushed commit, pull-request or merge-request URL, base and head, ready or draft state, review and dependency order, completed checks, and every outstanding review, check, dependency, or merge gate.
 - READY: all publication evidence plus required approvals and checks, merged state, final merge commit, configured base-branch reachability, released ownership, and the provider lifecycle update this evidence authorizes.
 - BLOCKED: preserved branch, commits, publication URL when one exists, provider-accurate state, released or retained ownership state, exact missing evidence or authority, and the next safe action.
 

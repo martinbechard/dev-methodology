@@ -52,6 +52,7 @@ packs:
       - probe-code-execution-tracing
       - probe-code-review-evidence
       - probe-complete-work-item-direct-main
+      - probe-complete-work-item-feature-branch
       - probe-create-pull-request
       - probe-electron-main
       - probe-electron-preload

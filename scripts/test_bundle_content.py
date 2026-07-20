@@ -1377,6 +1377,7 @@ class BundleContentTests(unittest.TestCase):
             "The pull request or merge request reports a merged state",
             "reachable from the configured base branch in Git",
             "A closed-unmerged, abandoned, replaced, or superseded publication cannot return READY.",
+            "canonical work-item identifier and provider reference",
             "the provider lifecycle update this evidence authorizes",
         ):
             with self.subTest(skill_phrase=phrase):
@@ -1391,6 +1392,48 @@ class BundleContentTests(unittest.TestCase):
             (
                 REPOSITORY_ROOT / "design" / "agent-and-skill-definitions.html"
             ).read_text(encoding="utf-8"),
+        )
+
+        probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
+        probe = next(
+            entry
+            for entry in probes["probes"]
+            if entry["id"] == "probe-complete-work-item-feature-branch"
+        )
+        self.assertEqual("complete-work-item-feature-branch", probe["skill"])
+        self.assertIn("configured base-branch reachability", probe["expectedBehavior"])
+        self.assertIn(
+            "return AWAITING_REVIEW while review checks dependencies or merge remain pending",
+            probe["expectedBehavior"],
+        )
+        self.assertIn(
+            "return READY only after required approvals checks dependency order host merge and configured base-branch reachability",
+            probe["expectedBehavior"],
+        )
+        self.assertEqual(
+            "Explicitly selected direct-main completion, or a request only to draft publication content without feature-branch delivery, does not activate this skill.",
+            probe["negativeCondition"],
+        )
+        self.assertIn(
+            "only that manager or the provider-none task result records lifecycle COMPLETED",
+            probe["expectedBehavior"],
+        )
+        self.assertNotIn("phase-order", probe["judgePlan"]["deterministicChecks"])
+        self.assertIn(
+            "readiness-consistency",
+            probe["judgePlan"]["deterministicChecks"],
+        )
+        self.assertEqual(["code-delivery"], probe["workflowAssociations"])
+
+        workflow_packs = load_yaml_object(
+            REPOSITORY_ROOT / "evals" / "workflow-packs.yaml"
+        )
+        code_delivery = next(
+            entry for entry in workflow_packs["packs"] if entry["id"] == "code-delivery"
+        )
+        self.assertIn(
+            "probe-complete-work-item-feature-branch",
+            code_delivery["skillProbes"],
         )
 
     def test_workitem_and_backlog_processes_are_selector_driven(self) -> None:

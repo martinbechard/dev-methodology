@@ -429,6 +429,20 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-complete-work-item-feature-branch
+    skill: complete-work-item-feature-branch
+    source: skills/complete-work-item-feature-branch/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: workflow-invariant
+    activationCondition: The selected completion process is feature-branch or explicit task direction requires reviewed feature-branch delivery through an observed merge.
+    negativeCondition: Explicitly selected direct-main completion, or a request only to draft publication content without feature-branch delivery, does not activate this skill.
+    expectedBehavior: Create the owned branch before source mutation, publish provider-accurate GitHub pull requests or GitLab merge requests, preserve the same branch through accepted corrections, return AWAITING_REVIEW while review checks dependencies or merge remain pending, reject failed contradictory closed-unmerged superseded or unauthorized states, and return READY only after required approvals checks dependency order host merge and configured base-branch reachability are independently observed; READY carries the terminal update to the selected provider manager, while only that manager or the provider-none task result records lifecycle COMPLETED.
+    judgePlan: {deterministicChecks: [skill-read-trace, claim-lifecycle, required-command-outcome, operation-coverage, tool-authority, readiness-consistency], modelRubric: workflow-quality}
+    scenarioAssociations: [dev-coder-happy, dev-verifier-happy, dev-merge-coordinator-happy]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
   - id: probe-create-unit-test-plan
     skill: create-unit-test-plan
     source: skills/create-unit-test-plan/SKILL.md
