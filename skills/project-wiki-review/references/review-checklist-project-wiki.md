@@ -10,10 +10,12 @@ For every question record:
 
 - Status: pass, fail, question, or n/a.
 - Question: copy the objective question being answered.
-- Quoted evidence: quote the exact artifact or source text that supports the status.
-- Assessment: explain why the quoted evidence passes, fails, is unclear, or is not applicable.
+- Evidence type: exact quotation, summary, assessment, or not applicable.
+- Evidence source: name the artifact, authority source, checklist, or retained response used.
+- Evidence: record exact source text for an exact quotation, or clearly labeled summary or derived assessment text.
+- Assessment: explain why the evidence passes, fails, is unclear, or is not applicable.
 
-Do not mark pass without quoted evidence.
+Do not mark pass without evidence. The label Quoted evidence: is not an additional checklist field; use Evidence with Evidence type: exact quotation. Every exact quotation must occur in the named source after CRLF and LF normalization. The literal [omitted] marker may replace intervening text only when the retained segments occur exactly and in order. Label paraphrases as summaries and derived judgments as assessments. For n/a, record not applicable with a reason instead of inventing quoted evidence.
 
 ## Skill Workflow Checks
 
@@ -50,4 +52,4 @@ Do not mark pass without quoted evidence.
 
 ## Findings
 
-Report findings first. Treat missing source authority, missing Related Code, missing Related Tests, unresolved TODO markers, broken links, and unsourced automation claims as review findings.
+Report findings first. Treat missing source authority, missing Related Code, missing Related Tests, unresolved TODO markers, unsupported exact quotations, and unsourced automation claims as review findings. Preserve an otherwise complete review when a link is broken, record the unresolved link in Open Questions, and make it a blocking evidence failure only when that exact source is indispensable to the claimed conclusion.

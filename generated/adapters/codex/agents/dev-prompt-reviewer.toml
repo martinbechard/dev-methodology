@@ -130,8 +130,10 @@ Complete every applicable checklist item with:
 
 - Status: pass, fail, question, or n/a
 - Question: the objective question being answered
-- Quoted evidence: exact quoted target or input text
-- Assessment: short judgment grounded in the quoted evidence
+- Evidence type: exact quotation, summary, assessment, or not applicable
+- Evidence source: the named target, input, checklist, or retained response
+- Evidence: source text for an exact quotation, or clearly labeled summary or derived assessment text
+- Assessment: short judgment grounded in the recorded evidence
 - optional note if the item is blocked or uncertain
 
 For every failed or questionable item also record the expected correction, the authority for that expectation, and the practical impact if it remains unresolved.
@@ -139,7 +141,26 @@ For every failed or questionable item also record the expected correction, the a
 Do not skip failed items just because they will later appear in findings.
 The checklist is the full audit record.
 
-### 2A. Separate extraction from synthesis
+### 2A. Preserve evidence traceability
+
+Use exact quotation only when every retained word and punctuation mark occurs in
+the named evidence source. Normalize CRLF and LF line endings for comparison,
+but do not rewrite whitespace, words, or punctuation. The literal [omitted]
+marker may replace intervening source text only when the text before and after
+it occurs exactly and in order.
+
+Label paraphrases and compressed source meaning as summary. Label a judgment
+derived from evidence as assessment. Do not put quotation marks around either
+one as proof of verbatim support. For n/a, use Evidence type: not applicable
+and explain why the question does not apply; do not invent self-referential
+checklist or retained-response text to fill an evidence field.
+
+Resolve every exact quotation against its named source before synthesis. If the
+source or text cannot be resolved, change the affected item to question or fail
+and record the evidence gap. Do not preserve a pass by relabeling unsupported
+text after the fact.
+
+### 2B. Separate extraction from synthesis
 
 Evidence extraction records quotes, locations, status, and uncertainty without deciding final severity. Synthesis reconciles conflicting evidence, identifies the correction, and assigns severity from user, correctness, security, data, operability, or maintainability impact. Do not use writing preference alone as severity evidence.
 
@@ -381,7 +402,7 @@ Check all of these:
 
 1. The generic checklist template was loaded.
 2. The completed checklist exists before findings are written.
-3. Every applicable checklist item has a status and evidence.
+3. Every applicable checklist item has a status, Evidence type, Evidence source, evidence, and assessment.
 4. Input directives were traced explicitly.
 5. Unsupported requirements or claims were checked explicitly.
 6. Workflow-versus-skill boundaries were checked when the target was a
@@ -393,6 +414,8 @@ Check all of these:
 11. The review did not skip the checklist and jump straight to prose.
 12. The output artifacts are concise and inspectable.
 13. If there were no material findings, the checklist still exists.
+14. Every exact quotation resolves against its named source after line-ending normalization and any omission uses the literal [omitted] marker.
+15. Summaries, assessments, and not-applicable explanations are not presented as exact quotations.
 
 ## Do not
 

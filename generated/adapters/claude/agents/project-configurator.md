@@ -753,11 +753,19 @@ Examples of format-owned artifacts include design HTML pages, README files, runt
 When a completed review checklist is available, use it as the evidence record for verification.
 
 1. Read the completed review checklist before writing the assessment.
-2. Check that each applicable item has status, question, quoted evidence, and assessment.
-3. Use the quoted evidence to complete shared page contract, source authority, link, diagram, and steady-state verification.
-4. Re-read the cited source text when quoted evidence is unclear, incomplete, or contradicted.
-5. Do not complete verification from memory or from the checklist question text alone.
-6. Base the final assessment on the completed review checklist plus any source text rechecked during verification.
+2. Check that each applicable item has status, question, Evidence type, Evidence source, evidence, and assessment.
+3. Distinguish exact quotation from summary, assessment, and not applicable. A summary paraphrases source meaning, an assessment states a derived judgment, and not applicable explains why no source quotation is needed.
+   Use quoted evidence only for an exact quotation.
+4. Resolve every exact quotation against the named page, source, checklist, or retained response. Normalize CRLF and LF line endings only. The literal [omitted] marker may replace intervening source text only when the retained segments occur exactly and in order; do not rewrite words or punctuation.
+5. Use the resolved evidence to complete shared page contract, source authority, link, diagram, and steady-state verification.
+6. Re-read the cited source text when evidence is unclear, incomplete, contradicted, or unavailable.
+7. Do not complete verification from memory or from the checklist question text alone. Do not accept a self-referential exact quotation unless the sentence occurs in the named completed checklist or retained response.
+8. Base the final assessment on the completed review checklist plus any source text rechecked during verification.
+
+An unsupported exact quotation is a checklist-integrity failure for the
+affected item. A clearly labeled summary or assessment remains valid evidence
+when exact quotation is inapplicable. For n/a, require a not-applicable reason
+instead of manufactured quoted text.
 
 ## Shared Page Contract
 
@@ -788,6 +796,13 @@ Each section must contain source-backed content or a clear Not yet identified en
 8. Check that Related Code and Related Tests are project-relative or explicitly marked as not yet identified.
 9. Check that source links resolve when the repository is available.
 10. When mcp-agent-ops is available, use verify_markdown_links for the applicable Markdown scope. Treat returned findings as verification failures, not transport failures. Use the repository-specific checker or direct resolution only when the tool is absent or its server cannot initialize or connect before request dispatch. Never use the fallback to bypass a path, root, authorization, input-policy, or other structured rejection.
+
+A broken link must not discard or refuse the completed review solely because
+the link does not resolve. Preserve the completed review and record the
+unresolved link in Open Questions. Mark the affected conclusion question or
+fail only when that exact linked evidence is indispensable to the conclusion;
+otherwise retain the source-backed assessment and report the unresolved link
+as a non-blocking verification gap.
 
 ## Specialized Section Checks
 

@@ -13,11 +13,13 @@ scenarios:
       - project-wiki-review
       - documentation-page-verify
     requiredBehaviors:
-      - Complete every applicable checklist item with quoted evidence before synthesis.
+      - Complete every applicable checklist item with labeled evidence before synthesis.
+      - Resolve every exact quotation
       - Verify links, steady-state language, authority, navigation, maintenance, automation, and verification.
       - Report no required correction when the artifact satisfies the supplied contract.
     forbiddenBehaviors:
       - Invent a finding to appear thorough.
+      - Unsupported exact quotation
       - Skip the checklist or write findings first.
       - Modify the artifact or save review files.
     deterministicChecks:

@@ -7,5 +7,5 @@ Apply exactly these project skills: agent-evidence-judging and wiki-artifact-rev
 
 Judge only the selected wiki-artifact-reviewer scenario from the frozen role, adapter, targets, authority sources, completed checklist, deterministic results, verifier assessment, findings, final response, and trace. Do not edit files, rerun the review, or infer checklist evidence from findings prose.
 
-Require checklist-first evidence, source authority, structure, navigation, maintenance, automation, verification, finding prioritization, uncertainty separation, read-only behavior, and every output field. Return dimension-level evidence, critical failures, PASS, FAIL, BLOCKED, or STALE, and residual uncertainty.
+Require checklist-first evidence, source authority, structure, navigation, maintenance, automation, verification, finding prioritization, uncertainty separation, read-only behavior, and every output field. Treat any exact quotation absent from its named frozen source or retained response as a checklist-integrity failure; do not infer support from a plausible summary or assessment. Preserve an otherwise complete review when an unrelated broken link is recorded in Open Questions and is not indispensable to the claimed conclusion. Return dimension-level evidence, critical failures, PASS, FAIL, BLOCKED, or STALE, and residual uncertainty.
 """

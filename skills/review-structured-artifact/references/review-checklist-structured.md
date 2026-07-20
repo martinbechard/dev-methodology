@@ -8,13 +8,15 @@ For every question record:
 
 - Status: pass, fail, question, or n/a.
 - Question: copy the objective question being answered.
-- Quoted evidence: quote the exact target or input text that supports the status.
-- Assessment: explain why the quoted evidence passes, fails, is unclear, or is not applicable.
+- Evidence type: exact quotation, summary, assessment, or not applicable.
+- Evidence source: name the target, input, checklist, or retained response used.
+- Evidence: record exact source text for an exact quotation, or clearly labeled summary or derived assessment text.
+- Assessment: explain why the evidence passes, fails, is unclear, or is not applicable.
 - Correction: state the expected change for failed or questionable items.
 - Authority: cite the directive, source, contract, or project rule that supports the correction.
 - Impact: state the practical consequence if the issue remains unresolved.
 
-Do not mark pass without quoted evidence.
+Do not mark pass without evidence. The label Quoted evidence: is not an additional checklist field; use Evidence with Evidence type: exact quotation. Every exact quotation must occur in the named source after CRLF and LF normalization. The literal [omitted] marker may replace intervening text only when the retained segments occur exactly and in order. Label paraphrases as summaries and derived judgments as assessments. For n/a, record not applicable with a reason instead of inventing quoted evidence.
 
 ## Skill Workflow Questions
 
@@ -33,7 +35,7 @@ Do not mark pass without quoted evidence.
 - Question: Are all material input directives traced to target locations or marked as not applied?
 - Question: Are missing directive applications marked as failures or open questions instead of ignored?
 - Question: Does the target avoid contradicting stated input directives?
-- Question: Are unsupported requirements or claims flagged with quoted evidence?
+- Question: Are unsupported requirements or claims flagged with exact evidence gaps rather than plausible paraphrases labeled as quotations?
 
 ## Internal Logic Questions
 
@@ -72,4 +74,4 @@ Do not mark pass without quoted evidence.
 
 ## Findings
 
-Report findings first. Treat missing directive coverage, contradictions, unsupported claims, scope blur, section-model drift, and evidence-free pass assessments as review findings.
+Report findings first. Treat missing directive coverage, contradictions, unsupported claims, scope blur, section-model drift, unsupported exact quotations, and evidence-free pass assessments as review findings.
