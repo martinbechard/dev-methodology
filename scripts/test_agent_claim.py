@@ -299,6 +299,8 @@ class AgentClaimTests(unittest.TestCase):
             *self.acquire_arguments("backlog"),
             "--file",
             "backlog/feature-backlog/queued.md",
+            "--resource",
+            "git-index:primary",
         )
 
         self.assertEqual(0, released.returncode, released.stderr)
@@ -306,6 +308,124 @@ class AgentClaimTests(unittest.TestCase):
         result = self.output(completed)
         self.assertEqual("PRIMARY", result["outcome"])
         self.assertEqual(str(self.repository.resolve()), result["target"]["worktree"])
+
+    def test_primary_integration_scope_uses_available_primary_while_isolated_claim_remains(self) -> None:
+        self.claim(*self.acquire_arguments("first"), "--file", "README.md")
+        isolated, _isolated_path = self.isolated_arguments("isolated")
+        self.claim(
+            *self.acquire_arguments("isolated"),
+            "--file",
+            "src/one.py",
+            *isolated,
+        )
+        self.claim("release", "--claim-id", "first", "--no-change")
+
+        completed = self.claim(
+            *self.acquire_arguments("integration"),
+            "--file",
+            "skills/codex-workitem-coordination/SKILL.md",
+            "--file",
+            "design/generated/skill-definitions.js",
+            "--resource",
+            "merge:integration:main",
+        )
+
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        result = self.output(completed)
+        self.assertEqual("PRIMARY", result["outcome"])
+        self.assertEqual(str(self.repository.resolve()), result["target"]["worktree"])
+
+    def test_primary_git_index_resource_uses_available_primary_while_isolated_claim_remains(self) -> None:
+        self.claim(*self.acquire_arguments("first"), "--file", "README.md")
+        isolated, _isolated_path = self.isolated_arguments("isolated")
+        self.claim(
+            *self.acquire_arguments("isolated"),
+            "--file",
+            "src/one.py",
+            *isolated,
+        )
+        self.claim("release", "--claim-id", "first", "--no-change")
+
+        completed = self.claim(
+            *self.acquire_arguments("git-index"),
+            "--resource",
+            "git-index:primary",
+        )
+
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        result = self.output(completed)
+        self.assertEqual("PRIMARY", result["outcome"])
+        self.assertEqual(str(self.repository.resolve()), result["target"]["worktree"])
+
+    def test_primary_integration_scope_waits_for_overlapping_isolated_claim(self) -> None:
+        self.claim(*self.acquire_arguments("first"), "--file", "README.md")
+        isolated, _isolated_path = self.isolated_arguments("isolated")
+        self.claim(
+            *self.acquire_arguments("isolated"),
+            "--file",
+            "skills/codex-workitem-coordination/SKILL.md",
+            *isolated,
+        )
+        self.claim("release", "--claim-id", "first", "--no-change")
+
+        completed = self.claim(
+            *self.acquire_arguments("integration"),
+            "--file",
+            "skills/codex-workitem-coordination/SKILL.md",
+            "--file",
+            "design/generated/skill-definitions.js",
+            "--resource",
+            "merge:integration:main",
+        )
+
+        self.assertEqual(3, completed.returncode)
+        result = self.output(completed)
+        self.assertEqual("WAIT", result["outcome"])
+        self.assertEqual(["isolated"], result["conflicting_claim_ids"])
+
+    def test_primary_integration_scope_waits_for_existing_primary_owner(self) -> None:
+        self.claim(*self.acquire_arguments("first"), "--file", "README.md")
+
+        completed = self.claim(
+            *self.acquire_arguments("integration"),
+            "--file",
+            "design/generated/skill-definitions.js",
+            "--resource",
+            "merge:integration:main",
+        )
+
+        self.assertEqual(3, completed.returncode)
+        result = self.output(completed)
+        self.assertEqual("PRIMARY_REQUIRED", result["outcome"])
+        self.assertEqual("primary_location_resource_requires_primary_worktree", result["reason"])
+
+    def test_primary_integration_scope_preserves_dirty_primary_recovery(self) -> None:
+        self.claim(*self.acquire_arguments("first"), "--file", "README.md")
+        isolated, _isolated_path = self.isolated_arguments("isolated")
+        self.claim(
+            *self.acquire_arguments("isolated"),
+            "--file",
+            "src/one.py",
+            *isolated,
+        )
+        self.claim("release", "--claim-id", "first", "--no-change")
+        (self.repository / "docs" / "guide.md").write_text("dirty\n", encoding="utf-8")
+
+        completed = self.claim(
+            *self.acquire_arguments("integration"),
+            "--file",
+            "design/generated/skill-definitions.js",
+            "--resource",
+            "merge:integration:main",
+        )
+
+        self.assertEqual(5, completed.returncode)
+        result = self.output(completed)
+        self.assertEqual("RECOVERY_REQUIRED", result["outcome"])
+        self.assertEqual(
+            [{"path": "docs/guide.md", "status": " M"}],
+            result["dirty_status"],
+        )
 
     def test_simultaneous_writers_cannot_both_claim_primary(self) -> None:
         commands = [self.claim_command(*self.acquire_arguments(claim_id)) for claim_id in ("first", "second")]

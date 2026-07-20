@@ -32,6 +32,7 @@ BACKLOG_ROOT_DIRECTORY = "backlog"
 WORKTREE_ROOT_DIRECTORY = ".worktrees"
 WORKTREE_IGNORE_PATTERN = "/.worktrees/"
 ISOLATED_SPARSE_CHECKOUT_PATTERNS = ("/*", "!/backlog/")
+PRIMARY_WORKTREE_RESOURCES = frozenset({"git-index:primary", "merge:integration:main"})
 REGISTRY_FILE_NAME = "agent-claims.json"
 LOCK_FILE_NAME = "agent-claims.lock"
 EVENT_DIRECTORY_NAME = "agent-claim-events"
@@ -633,7 +634,10 @@ def _path_scopes(scope: dict[str, Any], include_broad: bool = True) -> list[tupl
 
 
 def _scope_requires_primary_worktree(scope: dict[str, Any]) -> bool:
-    return scope.get("file_domain") in {"backlog", "all_files"}
+    return scope.get("file_domain") in {"backlog", "all_files"} or any(
+        resource in PRIMARY_WORKTREE_RESOURCES
+        for resource in scope.get("resources", [])
+    )
 
 
 def _scope_file_domain(scope: dict[str, Any]) -> str:
@@ -934,7 +938,17 @@ def _primary_required_result(
     claim: dict[str, Any] | None = None,
     **details: Any,
 ) -> int:
-    reason = "backlog_requires_primary_worktree"
+    backlog_scope = requested_scope.get("file_domain") in {"backlog", "all_files"}
+    reason = (
+        "backlog_requires_primary_worktree"
+        if backlog_scope
+        else "primary_location_resource_requires_primary_worktree"
+    )
+    message = (
+        "Backlog scope is available only from the primary worktree."
+        if backlog_scope
+        else "The requested primary-location resource is available only from the primary worktree."
+    )
     event = _event(
         action,
         "PRIMARY_REQUIRED",
@@ -951,7 +965,7 @@ def _primary_required_result(
         event,
         scope_warnings,
         reason=reason,
-        message="Backlog scope is available only from the primary worktree.",
+        message=message,
         requested_scopes=requested_scope,
         **details,
     )
