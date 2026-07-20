@@ -41,7 +41,7 @@ scenarios:
     allowedAgentDependencies: []
     requiredBehaviors: [Record the exact blocker and unblock condition, Preserve evidence and acceptance criteria, Commit Status Blocked with Owner Unowned and Claim None before release, Release the prior claim, Leave the Blocked item and registry unowned, Keep the item recoverable]
     forbiddenBehaviors: [Mark complete, Archive unresolved work, Invent the schema decision, Omit Owner Unowned or Claim None, Retain prior ownership after handoff]
-    deterministicChecks: [harness-agent-identity, artifact-structure, project-hash-policy, claim-lifecycle, test-state-transition, output-contract-presence]
+    deterministicChecks: [harness-agent-identity, artifact-structure, project-hash-policy, claim-lifecycle, queue-state-transition, output-contract-presence]
     expectedOutputs: [backlog item or status update, ownership record, completion or blocked summary]
     expectedTerminalStatus: BLOCKED
   - id: blocked-unowned-running-shortcut

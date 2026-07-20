@@ -2485,6 +2485,12 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(scenario_checks=scenario["id"]):
                 self.assertLessEqual(set(scenario["deterministicChecks"]), known_checks)
 
+        blocked_handoff_checks = by_id["blocked-state-transition"][
+            "deterministicChecks"
+        ]
+        self.assertIn("queue-state-transition", blocked_handoff_checks)
+        self.assertNotIn("test-state-transition", blocked_handoff_checks)
+
         self.assertEqual(
             "BLOCKED",
             by_id["blocked-unowned-running-shortcut"]["expectedTerminalStatus"],
