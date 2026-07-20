@@ -2464,6 +2464,17 @@ class BundleContentTests(unittest.TestCase):
 
         scenarios = load_yaml_object(suite_root / "scenarios.yaml")["scenarios"]
         by_id = {scenario["id"]: scenario for scenario in scenarios}
+        for scenario_id in (
+            "blocked-state-transition",
+            "blocked-unowned-running-shortcut",
+            "blocked-claimed-resumption",
+            "blocked-failed-claim-resumption",
+        ):
+            with self.subTest(retargeted_scenario=scenario_id):
+                target_skills = by_id[scenario_id]["targetSkills"]
+                self.assertIn("manage-file-work-items", target_skills)
+                self.assertNotIn("manage-backlog", target_skills)
+
         known_checks = {
             check["id"]
             for check in load_yaml_object(REPOSITORY_ROOT / "evals" / "judges.yaml")[
