@@ -1,6 +1,6 @@
 # Align Project Organiser Output Contract Catalog
 
-Status: Ready
+Status: Running
 
 Type: Defect
 
@@ -16,13 +16,13 @@ This item is the first end-to-end pilot of the file-backed Dev Backlog Coordinat
 
 ## Execution Record
 
-- Canonical Dev Orchestrator task: Pending dispatch
-- Branch: Pending dispatch
-- Worktree: Pending dispatch
-- Current phase: Ready
+- Canonical Dev Orchestrator task: 019f7df2-ad96-7b03-bb1b-3127775ebf1b
+- Branch: codex/align-project-organiser-output-contract-catalog (to be created before the first task mutation)
+- Worktree: /Users/martinbechard/.codex/worktrees/ba6b/dev-methodology
+- Current phase: Lifecycle Start complete; ARTIFACT GO pending
 - Accepted candidate commit: None
 - Integration or completion wait: None
-- Claim attempts: None
+- Claim attempts: Running transition acquired as PRIMARY with event 5998175b-58ad-4362-83ef-6ef96af85729
 - Open issues: None
 
 ## Requirements
