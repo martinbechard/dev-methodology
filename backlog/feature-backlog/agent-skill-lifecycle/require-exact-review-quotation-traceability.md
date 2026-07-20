@@ -1,6 +1,6 @@
 # Require Exact Review Quotation Traceability
 
-Status: Ready
+Status: Running
 
 Type: Defect
 
@@ -12,6 +12,14 @@ Type: Defect
 - Approved refinement: a complete review file must not be refused solely because one link is broken; preserve the file and surface the unresolved link in Open Questions unless that exact evidence is indispensable to a claimed conclusion.
 - Excluded scope: no agents/roles definition or other skill definition is authorized.
 - Lifecycle boundary: this approval transaction retains Status: Ready. Running ownership and artifact work require separate lifecycle and ARTIFACT GO transactions.
+
+## Running Ownership
+
+- Owner: Dev Orchestrator sole replacement for unavailable task 019f7a45-a697-7d80-9744-a06c8d22d69a under parent task 019f77f4-c4bd-7c91-b197-c987a7beb838.
+- Lifecycle agent: Dev Backlog Steward.
+- Lifecycle claim: exact-review-quotation-start.
+- Claim evidence: PRIMARY exact-file backlog ownership acquired at 2026-07-20T02:56:13.102579Z from clean baseline commit 3b147e3d5e5d98bc6e6da76d8b9d472f4b32a91e in event 876822a9-0789-4c02-a3f1-f1e280125f12.
+- Scope boundary: this claim owns only the Running transition and is released after its clean commit. Governed definitions, checklist and reference files, deterministic suite files, generated mirrors, broad verification, integration, and completion remain separately claimed.
 
 ## Summary
 
