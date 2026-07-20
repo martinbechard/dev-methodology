@@ -1,0 +1,863 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wiki Skills And Project Context</title>
+  <style>
+    :root {
+      --color-ink: #172033;
+      --color-muted: #5b6678;
+      --color-page: #f6f8fb;
+      --color-panel: #ffffff;
+      --color-line: #d9e1ea;
+      --color-blue: #2563eb;
+      --color-green: #0f766e;
+      --color-amber: #b45309;
+      --color-purple: #7c3aed;
+      --color-rose: #be123c;
+      --color-soft-blue: #e8f0ff;
+      --color-soft-green: #e4f7f4;
+      --color-soft-amber: #fff1d8;
+      --color-soft-purple: #f0e8ff;
+      --color-soft-rose: #ffe5ec;
+      --color-soft-gray: #edf1f6;
+      --shadow-panel: 0 14px 32px rgba(31, 41, 55, 0.08);
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.25rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --space-10: 2.5rem;
+      --radius: 0.5rem;
+      --radius-small: 0.35rem;
+      --content-max: 1220px;
+      --font-sm: 0.92rem;
+      --font-xs: 0.78rem;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      display: flex;
+      min-height: 100vh;
+      margin: 0;
+      flex-direction: column;
+      color: var(--color-ink);
+      background:
+        linear-gradient(180deg, rgba(232, 240, 255, 0.9), rgba(246, 248, 251, 0) 340px),
+        var(--color-page);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.52;
+    }
+
+    a {
+      color: var(--color-blue);
+    }
+
+    a:focus-visible {
+      outline: 3px solid var(--color-amber);
+      outline-offset: 3px;
+    }
+
+    .skip-link {
+      position: fixed;
+      z-index: 10;
+      top: var(--space-3);
+      left: var(--space-3);
+      padding: var(--space-3) var(--space-4);
+      transform: translateY(-180%);
+      border-radius: var(--radius-small);
+      background: var(--color-ink);
+      color: var(--color-panel);
+      font-weight: 750;
+    }
+
+    .skip-link:focus {
+      transform: translateY(0);
+    }
+
+    main {
+      width: 100%;
+      max-width: var(--content-max);
+      margin: 0 auto;
+      padding: var(--space-10) var(--space-6);
+      flex: 1 0 auto;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      line-height: 1.15;
+    }
+
+    h1 {
+      max-width: 940px;
+      font-size: clamp(2rem, 4vw, 3.7rem);
+    }
+
+    h2 {
+      margin-bottom: var(--space-4);
+      font-size: clamp(1.35rem, 2vw, 2rem);
+    }
+
+    h3 {
+      font-size: 1.05rem;
+    }
+
+    p {
+      margin: 0;
+      color: var(--color-muted);
+    }
+
+    ul,
+    ol {
+      margin: 0;
+      padding-left: var(--space-5);
+    }
+
+    li + li {
+      margin-top: var(--space-2);
+    }
+
+    code {
+      padding: 0.1rem 0.24rem;
+      border-radius: 0.25rem;
+      background: var(--color-soft-gray);
+      font-size: 0.9em;
+    }
+
+    .site-header,
+    .site-footer {
+      width: 100%;
+      max-width: var(--content-max);
+      margin: 0 auto;
+      padding-right: var(--space-6);
+      padding-left: var(--space-6);
+    }
+
+    .site-header {
+      padding-top: var(--space-4);
+    }
+
+    .site-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-3);
+      color: var(--color-ink);
+      font-size: clamp(0.88rem, 1.4vw, 0.95rem);
+      font-weight: 750;
+      line-height: 1.2;
+      text-decoration: none;
+    }
+
+    .site-logo {
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: var(--radius-small);
+      object-fit: cover;
+      box-shadow: 0 4px 12px rgba(31, 41, 55, 0.14);
+    }
+
+    .document-nav {
+      display: grid;
+      gap: var(--space-3);
+      margin-bottom: var(--space-6);
+    }
+
+    .document-sequence {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+    }
+
+    .document-nav a {
+      display: inline-flex;
+      width: max-content;
+      align-items: center;
+      gap: var(--space-2);
+      padding: 0.45rem 0.75rem;
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      background: var(--color-panel);
+      color: var(--color-muted);
+      font-size: var(--font-sm);
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: var(--shadow-panel);
+      transition: border-color 160ms ease, color 160ms ease, transform 160ms ease;
+    }
+
+    .document-nav a:hover,
+    .document-nav a:focus-visible {
+      transform: translateY(-1px);
+      border-color: var(--color-blue);
+      color: var(--color-ink);
+    }
+
+    .hero {
+      display: grid;
+      gap: var(--space-5);
+      margin-bottom: var(--space-8);
+    }
+
+    .eyebrow {
+      color: var(--color-green);
+      font-size: var(--font-xs);
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .lede {
+      max-width: 940px;
+      font-size: 1.08rem;
+    }
+
+    .hero-note {
+      max-width: 940px;
+      padding: var(--space-4) var(--space-5);
+      border-left: 0.35rem solid var(--color-green);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      background: var(--color-soft-green);
+    }
+
+    .hero-note p {
+      color: var(--color-ink);
+    }
+
+    .section {
+      margin-top: var(--space-8);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: var(--space-4);
+    }
+
+    .card,
+    .panel,
+    .matrix,
+    .flow-shell {
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      background: var(--color-panel);
+      box-shadow: var(--shadow-panel);
+    }
+
+    .card,
+    .panel {
+      display: grid;
+      gap: var(--space-3);
+      padding: var(--space-5);
+    }
+
+    .card {
+      border-top: 0.35rem solid var(--accent, var(--color-blue));
+    }
+
+    .card p,
+    .card li,
+    .panel li,
+    td {
+      color: var(--color-muted);
+    }
+
+    .pattern {
+      --accent: var(--color-blue);
+    }
+
+    .format {
+      --accent: var(--color-purple);
+    }
+
+    .method {
+      --accent: var(--color-green);
+    }
+
+    .hybrid {
+      --accent: var(--color-amber);
+    }
+
+    .tag {
+      width: max-content;
+      padding: 0.25rem 0.5rem;
+      border-radius: 999px;
+      background: var(--color-soft-gray);
+      color: var(--color-muted);
+      font-size: var(--font-xs);
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .flow-shell {
+      padding: var(--space-5);
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 0, rgba(232, 240, 255, 0.95), transparent 44%),
+        var(--color-panel);
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: minmax(170px, 0.85fr) auto minmax(230px, 1.2fr) auto minmax(190px, 0.95fr);
+      align-items: stretch;
+      gap: var(--space-3);
+    }
+
+    .flow-stage {
+      display: grid;
+      gap: var(--space-3);
+      align-content: start;
+      padding: var(--space-4);
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius-small);
+      background: var(--color-panel);
+    }
+
+    .flow-stage.sources {
+      border-top: 0.35rem solid var(--color-rose);
+    }
+
+    .flow-stage.compilation {
+      border-top: 0.35rem solid var(--color-green);
+    }
+
+    .flow-stage.use {
+      border-top: 0.35rem solid var(--color-blue);
+    }
+
+    .flow-stage ul {
+      color: var(--color-muted);
+      font-size: var(--font-sm);
+    }
+
+    .flow-arrow {
+      display: grid;
+      place-items: center;
+      color: var(--color-green);
+      font-size: 1.8rem;
+      font-weight: 800;
+    }
+
+    .code-rail {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-3);
+      margin-top: var(--space-4);
+      padding-top: var(--space-4);
+      border-top: 1px dashed var(--color-line);
+    }
+
+    .code-input {
+      padding: var(--space-3);
+      border: 1px solid #edc998;
+      border-radius: var(--radius-small);
+      background: var(--color-soft-amber);
+      color: var(--color-ink);
+      font-size: var(--font-sm);
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .flow-caption {
+      margin-top: var(--space-4);
+      font-size: var(--font-sm);
+    }
+
+    .matrix {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+      font-size: var(--font-sm);
+    }
+
+    th,
+    td {
+      padding: var(--space-3) var(--space-4);
+      border-bottom: 1px solid var(--color-line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--color-soft-blue);
+      color: var(--color-ink);
+      font-size: var(--font-xs);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .skill-link {
+      font-weight: 780;
+    }
+
+    .boundary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: var(--space-4);
+    }
+
+    .boundary-card {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: var(--space-3);
+      padding: var(--space-5);
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius);
+      background: var(--color-panel);
+      box-shadow: var(--shadow-panel);
+    }
+
+    .boundary-mark {
+      display: grid;
+      width: 2.1rem;
+      height: 2.1rem;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--color-soft-green);
+      color: var(--color-green);
+      font-size: var(--font-xs);
+      font-weight: 850;
+    }
+
+    .boundary-copy {
+      display: grid;
+      gap: var(--space-2);
+    }
+
+    .note {
+      margin-top: var(--space-4);
+      padding: var(--space-4) var(--space-5);
+      border-left: 0.35rem solid var(--color-purple);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      background: var(--color-soft-purple);
+    }
+
+    .note p {
+      color: var(--color-ink);
+    }
+
+    .source-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+      padding: 0;
+      list-style: none;
+    }
+
+    .source-list a {
+      display: inline-flex;
+      padding: 0.45rem 0.7rem;
+      border: 1px solid var(--color-line);
+      border-radius: var(--radius-small);
+      background: var(--color-panel);
+      font-size: var(--font-sm);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .site-footer {
+      flex: 0 0 auto;
+      padding-bottom: var(--space-6);
+    }
+
+    .site-footer p {
+      padding-top: var(--space-4);
+      border-top: 1px solid var(--color-line);
+      color: var(--color-muted);
+      font-size: var(--font-xs);
+    }
+
+    .site-footer a {
+      color: inherit;
+      font-weight: 700;
+    }
+
+    @media (max-width: 860px) {
+      main {
+        padding: var(--space-8) var(--space-4);
+      }
+
+      .site-header,
+      .site-footer {
+        padding-right: var(--space-4);
+        padding-left: var(--space-4);
+      }
+
+      .flow {
+        grid-template-columns: 1fr;
+      }
+
+      .flow-arrow {
+        transform: rotate(90deg);
+      }
+
+      .code-rail {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 520px) {
+      .document-nav a {
+        width: 100%;
+      }
+
+      .code-rail {
+        grid-template-columns: 1fr;
+      }
+
+      .boundary-card {
+        grid-template-columns: 1fr;
+      }
+
+      .boundary-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --color-ink: #edf4ff;
+        --color-muted: #b8c4d8;
+        --color-page: #0f1728;
+        --color-panel: #172238;
+        --color-line: #33425b;
+        --color-blue: #86b2ff;
+        --color-green: #72d6c9;
+        --color-amber: #f3bf77;
+        --color-purple: #bea7ff;
+        --color-rose: #ff9ab3;
+        --color-soft-blue: #203b64;
+        --color-soft-green: #1b4542;
+        --color-soft-amber: #4b381d;
+        --color-soft-purple: #392a57;
+        --color-soft-rose: #512636;
+        --color-soft-gray: #29354a;
+        --shadow-panel: 0 14px 32px rgba(0, 0, 0, 0.32);
+      }
+
+      body {
+        background:
+          linear-gradient(180deg, rgba(32, 59, 100, 0.72), rgba(15, 23, 40, 0) 340px),
+          var(--color-page);
+      }
+
+      .code-input {
+        border-color: #74542b;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <header class="site-header">
+    <a class="site-brand" href="../index.html">
+      <img class="site-logo" src="../logo.png" alt="DevConsult Canada logo">
+      <span>AI-Assisted Coding Toolkit</span>
+    </a>
+  </header>
+  <main id="main-content">
+    <nav class="document-nav" aria-label="Documentation navigation">
+      <a href="../index.html">Back to Documentation Index</a>
+      <div class="document-sequence">
+        <a href="documentation-templates.html" rel="prev"><span aria-hidden="true">&larr;</span> Previous: Documentation Templates</a>
+      </div>
+    </nav>
+
+    <section class="hero" aria-labelledby="page-title">
+      <p class="eyebrow">Persistent context, disciplined authority</p>
+      <h1 id="page-title">Wiki Skills And Project Context</h1>
+      <p class="lede">The bundle turns an agent-maintained wiki into durable, compiled project understanding. Source-backed knowledge is synthesized incrementally into linked topic leaves, then verified and reused across later tasks. The wiki compounds; it does not outrank the code, tests, requirements, procedures, plans, architecture, or backlog records that supply its facts.</p>
+      <aside class="hero-note">
+        <p><strong>One family, four different ideas:</strong> the LLM-wiki is a maintenance pattern, Open Knowledge Format is a portable representation, project-wiki is this bundle's operating methodology, and code-project-wiki adds repository-change synchronization.</p>
+      </aside>
+    </section>
+
+    <section class="section" aria-labelledby="layers-title">
+      <h2 id="layers-title">Four Layers, Not Four Names For One Thing</h2>
+      <div class="grid">
+        <article class="card pattern">
+          <span class="tag">Pattern</span>
+          <h3>Karpathy LLM-wiki</h3>
+          <p>Places a persistent, agent-maintained Markdown wiki between immutable raw sources and the user. Incremental ingest updates summaries, entity and concept pages, cross-links, contradictions, indexes, and logs. Useful query results can be filed back so future questions begin from accumulated synthesis.</p>
+          <p><a href="https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f">Read the primary LLM-wiki idea file</a></p>
+        </article>
+        <article class="card format">
+          <span class="tag">Representation</span>
+          <h3>Open Knowledge Format</h3>
+          <p>Defines a portable directory of Markdown knowledge documents with YAML frontmatter. Non-reserved concept files need parseable frontmatter and a non-empty type. Normal Markdown links form relationships; index.md and log.md have reserved navigational meanings.</p>
+          <p><a href="https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md">Read the OKF v0.1 draft specification</a></p>
+        </article>
+        <article class="card method">
+          <span class="tag">Methodology</span>
+          <h3>Project wiki</h3>
+          <p>Instantiates the compounding-wiki idea for repository context. It adds an explicit authority order, standard page sections, source-first ingest, hub and leaf granularity, federation, linting, OKF validation, leaf linking, and independent writer-verifier loops.</p>
+          <p><a href="../skills/project-wiki/SKILL.md">Read the project-wiki skill</a></p>
+        </article>
+        <article class="card hybrid">
+          <span class="tag">Specialization</span>
+          <h3>Code project wiki</h3>
+          <p>Adds a commit-aware hybrid for code repositories. Code, tests, specifications, procedures, architecture, plans, and backlog records become synchronization inputs. Wiki pages change only when durable understanding changes; skipped commits or file groups are recorded.</p>
+          <p><a href="../skills/code-project-wiki/SKILL.md">Read the code-project-wiki skill</a></p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="flow-title">
+      <h2 id="flow-title">Compiled Context Flow</h2>
+      <div class="flow-shell">
+        <div class="flow" role="img" aria-label="Authoritative and raw sources flow through incremental synthesis into linked topic leaves, hubs, indexes, verification, and agent query use. Code, tests, specifications, procedures, architecture, plans, and backlog items enter the same synthesis in the code-aware specialization.">
+          <article class="flow-stage sources">
+            <h3>Source layer</h3>
+            <ul>
+              <li>Raw public or project inputs</li>
+              <li>Authoritative project artifacts</li>
+              <li>Immutable captures when used</li>
+            </ul>
+          </article>
+          <div class="flow-arrow" aria-hidden="true">&rarr;</div>
+          <article class="flow-stage compilation">
+            <h3>Agent-owned compilation</h3>
+            <ul>
+              <li>Incremental ingest and synthesis</li>
+              <li>Durable entity and concept leaves</li>
+              <li>Short hubs, indexes, cross-links</li>
+              <li>Contradictions and open questions</li>
+              <li>Lint, OKF, linking, verification</li>
+            </ul>
+          </article>
+          <div class="flow-arrow" aria-hidden="true">&rarr;</div>
+          <article class="flow-stage use">
+            <h3>Query and maintenance</h3>
+            <ul>
+              <li>Agents recover project context</li>
+              <li>Answers verify against sources</li>
+              <li>Durable query findings return to raw</li>
+              <li>Health checks expose gaps and drift</li>
+            </ul>
+          </article>
+        </div>
+        <div class="code-rail" aria-label="Code-aware synchronization inputs">
+          <span class="code-input">Code and tests</span>
+          <span class="code-input">Specifications and procedures</span>
+          <span class="code-input">Architecture and plans</span>
+          <span class="code-input">Commits and backlog</span>
+        </div>
+        <p class="flow-caption"><strong>Code-project hybrid:</strong> repository evidence joins the source layer. Related Code and Related Tests keep synthesis connected to implementation and verification; a change with no durable context impact is logged as skipped instead of forcing wiki churn.</p>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="authority-title">
+      <h2 id="authority-title">Project Wiki Operating Model</h2>
+      <div class="grid">
+        <article class="panel">
+          <h3>Compiled understanding, lower authority</h3>
+          <p>The wiki accelerates orientation and navigation, but source conflicts resolve upward. Actual behavior comes from code and tests; intended behavior, workflow obligations, tracked status, and design intent come from their owning project artifacts. The wiki is corrected from those sources.</p>
+        </article>
+        <article class="panel">
+          <h3>Hubs stay small; leaves carry concepts</h3>
+          <p>Folder index pages define a stable domain and route readers. Independently changing frameworks, products, workflows, decisions, governance rules, evaluation questions, and source snapshots become focused leaves. A leaf-link pass connects the first useful mention elsewhere.</p>
+        </article>
+        <article class="panel">
+          <h3>Federate instead of duplicating</h3>
+          <p>A downstream wiki checks upstream topic indexes before creating a local entity page. Broad ecosystem background stays with its owner; the downstream wiki keeps only its project-specific practice, decision, adoption, governance, evaluation, or implementation lens.</p>
+        </article>
+        <article class="panel">
+          <h3>Uncertainty remains visible</h3>
+          <p>Conflicts and missing evidence become Open Questions rather than guesses. Lint checks page and link health, OKF validation checks the representation boundary, and bounded independent writer-verifier loops prevent endless self-review.</p>
+        </article>
+      </div>
+      <aside class="note">
+        <p><strong>OKF boundary:</strong> this methodology aims for OKF-compatible concept documents; it does not claim that the workflow itself is OKF. The format standardizes exchangeable files. The bundle separately defines source authority, topic sections, ingest, federation, writer ownership, and verification.</p>
+      </aside>
+    </section>
+
+    <section class="section" aria-labelledby="separation-title">
+      <h2 id="separation-title">Separation Of Work</h2>
+      <div class="matrix">
+        <table>
+          <thead>
+            <tr>
+              <th>Stage</th>
+              <th>Owns</th>
+              <th>Does not own</th>
+              <th>Durable result</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Raw collection</strong></td>
+              <td>Public or project source capture, dates, provenance, exclusions, and follow-up notes.</td>
+              <td>Direct edits to durable docs/wiki synthesis.</td>
+              <td>Unprocessed evidence under raw or Clippings.</td>
+            </tr>
+            <tr>
+              <td><strong>Durable synthesis</strong></td>
+              <td>Source-backed topic leaves, hubs, indexes, digests, cross-links, and open questions.</td>
+              <td>Replacing higher-authority project artifacts.</td>
+              <td>Compact, linked understanding under docs/wiki.</td>
+            </tr>
+            <tr>
+              <td><strong>Independent verification</strong></td>
+              <td>Read-only checking of page contracts, source links, leaf coverage, federation, lint, and OKF results.</td>
+              <td>Editing the pages it judges.</td>
+              <td>GOOD or actionable NEEDS_CORRECTION verdict.</td>
+            </tr>
+            <tr>
+              <td><strong>Query-time use</strong></td>
+              <td>Wiki-first discovery followed by verification against authoritative files or fresh public sources.</td>
+              <td>Silently rewriting docs/wiki from a conversational answer.</td>
+              <td>A verified answer and, when durable coverage is missing, a raw query fragment for later ingest.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="skills-title">
+      <h2 id="skills-title">Skill Collaboration Boundaries</h2>
+      <div class="boundary-grid">
+        <article class="boundary-card">
+          <span class="boundary-mark" aria-hidden="true">01</span>
+          <div class="boundary-copy">
+            <h3><a class="skill-link" href="../skills/project-wiki/SKILL.md">project-wiki</a></h3>
+            <p>Owns the shared wiki engine: shape, authority, setup recommendations, source ingest, federation, hub and leaf rules, operations, lint, and OKF validation.</p>
+          </div>
+        </article>
+        <article class="boundary-card">
+          <span class="boundary-mark" aria-hidden="true">02</span>
+          <div class="boundary-copy">
+            <h3><a class="skill-link" href="../skills/project-wiki-create/SKILL.md">project-wiki-create</a></h3>
+            <p>Creates or substantially rewrites one repository's wiki methodology artifact from the supplied template. Ordinary topic editing stays with project-wiki.</p>
+          </div>
+        </article>
+        <article class="boundary-card">
+          <span class="boundary-mark" aria-hidden="true">03</span>
+          <div class="boundary-copy">
+            <h3><a class="skill-link" href="../skills/project-wiki-query/SKILL.md">project-wiki-query</a></h3>
+            <p>Answers from docs/wiki first, verifies against authoritative files, and saves durable missing knowledge as a raw query fragment rather than editing the wiki immediately.</p>
+          </div>
+        </article>
+        <article class="boundary-card">
+          <span class="boundary-mark" aria-hidden="true">04</span>
+          <div class="boundary-copy">
+            <h3><a class="skill-link" href="../skills/project-wiki-research/SKILL.md">project-wiki-research</a></h3>
+            <p>Checks existing and federated coverage before bounded external research. A genuine gap becomes one sourced raw report for later ingest, not an immediate wiki edit.</p>
+          </div>
+        </article>
+        <article class="boundary-card">
+          <span class="boundary-mark" aria-hidden="true">05</span>
+          <div class="boundary-copy">
+            <h3><a class="skill-link" href="../skills/project-wiki-review/SKILL.md">project-wiki-review</a></h3>
+            <p>Reviews a project-wiki methodology artifact against its template, source authority, maintenance rules, page contract, and code-aware navigation.</p>
+          </div>
+        </article>
+        <article class="boundary-card">
+          <span class="boundary-mark" aria-hidden="true">06</span>
+          <div class="boundary-copy">
+            <h3><a class="skill-link" href="../skills/project-wiki-topic-write/SKILL.md">project-wiki-topic-write</a></h3>
+            <p>Owns topic-page edits, leaf splitting, hub and index updates, source links, lint, and corrections within a bounded verifier loop.</p>
+          </div>
+        </article>
+        <article class="boundary-card">
+          <span class="boundary-mark" aria-hidden="true">07</span>
+          <div class="boundary-copy">
+            <h3><a class="skill-link" href="../skills/project-wiki-topic-verify/SKILL.md">project-wiki-topic-verify</a></h3>
+            <p>Independently and read-only judges the changed topic pages, leaf coverage, source links, digest and federation boundaries, lint, and OKF validation.</p>
+          </div>
+        </article>
+        <article class="boundary-card">
+          <span class="boundary-mark" aria-hidden="true">08</span>
+          <div class="boundary-copy">
+            <h3><a class="skill-link" href="../skills/code-project-wiki/SKILL.md">code-project-wiki</a></h3>
+            <p>Adds commit-range classification, repository source synchronization, Related Code and Related Tests upkeep, and explicit skipped-change records to the shared engine.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="hybrid-title">
+      <h2 id="hybrid-title">Code-Aware Hybrid</h2>
+      <div class="grid">
+        <article class="panel">
+          <h3>When it applies</h3>
+          <p>Use code-project-wiki when maintaining docs/wiki for a code repository, inspecting a commit range, changing source ownership, updating verification evidence, or deciding whether recent repository changes alter durable project understanding.</p>
+        </article>
+        <article class="panel">
+          <h3>What it reads</h3>
+          <p>Changed code and tests establish actual behavior and verification. Specifications, procedures, architecture, high-level and module designs, plans, and backlog items supply intent, workflow, ownership, decisions, and known gaps.</p>
+        </article>
+        <article class="panel">
+          <h3>What it writes</h3>
+          <p>Existing leaves are preferred. New leaves are reserved for concepts that can recur or change independently. Related Code and Related Tests point back to project-relative evidence, and uncertain source disagreements remain open questions.</p>
+        </article>
+        <article class="panel">
+          <h3>What it skips</h3>
+          <p>Generated noise, refactors with no ownership or behavior impact, and other changes that do not alter durable understanding do not force a wiki edit. Their commit or file group is recorded as skipped so the sync remains auditable.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="health-title">
+      <h2 id="health-title">Verification And Compounding Health</h2>
+      <div class="grid">
+        <article class="panel">
+          <h3>Ingest compounds</h3>
+          <p>A source can update several existing leaves, add a focused leaf, refresh indexes, and record contradictions. Fully synthesized raw files move to raw/processed only after source links, lint, and independent verification pass.</p>
+        </article>
+        <article class="panel">
+          <h3>Queries compound</h3>
+          <p>A useful answer that exposes reusable missing knowledge becomes a raw query fragment. Later ingest decides the durable destination, preserving the separation between conversational use and maintained synthesis.</p>
+        </article>
+        <article class="panel">
+          <h3>Health checks compound</h3>
+          <p>Lint and review expose orphan leaves, missing cross-links, oversized hubs, stale claims, unresolved contradictions, and concepts that deserve their own page. Corrections strengthen the shared context for every later agent.</p>
+        </article>
+      </div>
+      <h3 class="section">Primary and local sources</h3>
+      <ul class="source-list">
+        <li><a href="https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f">Karpathy LLM-wiki</a></li>
+        <li><a href="https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing">Google Cloud OKF introduction</a></li>
+        <li><a href="https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md">OKF v0.1 draft specification</a></li>
+        <li><a href="../skills/project-wiki/SKILL.md">Project Wiki source</a></li>
+        <li><a href="../skills/code-project-wiki/SKILL.md">Code Project Wiki source</a></li>
+      </ul>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <p>Copyright 2026 (c) Martin.Bechard@DevConsult.ca - <a href="../LICENSE">MIT License</a></p>
+  </footer>
+</body>
+</html>
