@@ -140,6 +140,25 @@ Per-item verification is proportional to changed behavior and risk:
 
 Run the complete accepted agent catalog once against the final integrated campaign state after every accepted work-item fix is on main. Retain the final per-suite and global reports and disposition every failure.
 
+## Long-Running Task Control
+
+Treat a heartbeat as ownership evidence only. It does not prove useful progress, justify the current command, or make an expensive phase healthy.
+
+When a command or phase is expected to take more than five minutes, the Dev Orchestrator exposes before starting it:
+
+- the exact currently active unit and any later units that have not started
+- the expected duration or best evidence-based estimate
+- a hard stop condition and the retained evidence path
+- the distinct acceptance criterion that requires the expensive operation
+
+This is non-blocking operational telemetry in the task update, not a new backlog transaction or parent approval gate. Persist it in the work item at the next already-authorized material phase transition; do not acquire a backlog claim solely to record timing. The task may start without waiting for parent acknowledgement.
+
+The parent observes long-running work at phase start, first failure, timeout, and completion rather than waiting for the fifteen-minute periodic review. This observation must not serialize healthy work. Inspect the actual process, elapsed time, latest evidence-bearing output, and remaining work. Status messages must distinguish one active serial case from selected or queued cases and must not describe queued work as running.
+
+After an expensive failure, classify its failure signature before repeating anything. Reuse retained output, add the smallest offline replay or deterministic regression that reproduces the boundary, and make that focused check pass before another equivalent live or broad run. Run one cheapest representative first. Start a second expensive representative only when it covers a distinct acceptance criterion that retained evidence and deterministic checks cannot prove.
+
+If the active unit reaches its hard stop, repeats the same failure signature, or stops producing evidence-bearing progress within its declared bound, stop that exact unit, preserve or commit owned work, stop or hand off every claimed resource, and prove the applicable worktree clean before releasing its shared claim. If safe release is not yet possible, retain and heartbeat the claim or hand it off explicitly rather than releasing unsafely. Return to focused correction only after truthful claim disposition. Do not let later serial cases start automatically after a shared-boundary failure. Two unproductive attempts or fifteen minutes beyond the declared phase estimate require immediate parent investigation and a revised plan rather than another retry.
+
 ## Fifteen-Minute Parent Review
 
 Every fifteen minutes while queue work remains, Dev Backlog Coordinator reviews:

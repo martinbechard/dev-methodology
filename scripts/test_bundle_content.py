@@ -982,6 +982,31 @@ class BundleContentTests(unittest.TestCase):
                 self.assertTrue((SKILLS_ROOT / skill_name / "SKILL.md").is_file())
                 self.assertTrue(openai_metadata_path(skill_name).is_file())
 
+    def test_codex_coordination_controls_long_running_tasks(self) -> None:
+        skill_text = (
+            SKILLS_ROOT / "codex-workitem-coordination" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+
+        for phrase in (
+            "Treat a heartbeat as ownership evidence only.",
+            "expected to take more than five minutes",
+            "the exact currently active unit and any later units that have not started",
+            "a hard stop condition and the retained evidence path",
+            "not a new backlog transaction or parent approval gate",
+            "The task may start without waiting for parent acknowledgement.",
+            "This observation must not serialize healthy work.",
+            "must not describe queued work as running.",
+            "classify its failure signature before repeating anything",
+            "add the smallest offline replay or deterministic regression",
+            "Run one cheapest representative first.",
+            "prove the applicable worktree clean before releasing its shared claim",
+            "retain and heartbeat the claim or hand it off explicitly",
+            "Do not let later serial cases start automatically after a shared-boundary failure.",
+            "require immediate parent investigation and a revised plan",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, skill_text)
+
     def test_skill_authoring_contract_is_shared_by_maintainer_and_reviewer(self) -> None:
         skill_text = (SKILLS_ROOT / "skill-authoring" / "SKILL.md").read_text(
             encoding="utf-8"
