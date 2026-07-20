@@ -6,9 +6,11 @@ Type: Defect
 
 ## User Decision Resolved
 
-- Canonical Dev Orchestrator task: 019f7e86-aece-7a40-96e1-b1e1863dba28.
-- Preserved branch: codex/restore-wiki-ingester-verifier-flow.
-- Preserved clean worktree: /Users/martinbechard/.codex/worktrees/8a44/dev-methodology.
+- Canonical Dev Orchestrator task: 019f8056-a0f4-7090-8715-65f718d14f76.
+- Active branch: codex/restore-wiki-ingester-open-questions.
+- Active worktree: /Users/martinbechard/.codex/worktrees/7f71/dev-methodology.
+- Superseded archived task: 019f7e86-aece-7a40-96e1-b1e1863dba28; its rollout was unavailable and it is not active ownership.
+- Preserved evidence branch: codex/restore-wiki-ingester-verifier-flow.
 - Preserved eval-only evidence head: 914bc09, following the bounded executable-boundary correction history on the same branch.
 - Resumed direction: implement the approved substantiated-ingest plus page-local Open Questions contract; the rejected rollback/BLOCKED proposal is historical only.
 - The eval-only boundary now proves the current canonical Wiki Ingester behavior retains unaccepted docs/wiki drafts after a bound pre-move verifier interruption following one genuine correction.
