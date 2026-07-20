@@ -1,8 +1,16 @@
 # Preserve Canonical Review Checklists
 
-Status: Ready
+Status: Running
 
 Type: Defect
+
+## Running Ownership
+
+- Owner: Dev Orchestrator root task 019f77f4-c4bd-7c91-b197-c987a7beb838.
+- Lifecycle agent: Dev Backlog Steward.
+- Lifecycle claim: preserve-canonical-review-checklists-lifecycle.
+- Claim evidence: PRIMARY exact-file backlog ownership acquired at 2026-07-20T00:55:10.289057Z from clean baseline commit 439f638a0c752afa4acae42e3cd9c97eff84e443.
+- Scope boundary: this claim owns only the Running transition and primary index resource and is released after its clean commit. Implementation artifacts, tests, review, verification, and integration require a separate canonical isolated claim.
 
 ## Summary
 
