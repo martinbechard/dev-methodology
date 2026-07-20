@@ -1,8 +1,17 @@
 # Build The Agent And Skill Mind Map
 
-Status: Blocked
+Status: Running
 
 Type: Feature
+
+## Current Execution
+
+- Canonical Dev Orchestrator task: 019f7e8f-f751-7ef2-83d3-31d17323de48.
+- Branch: codex/build-agent-skill-mind-map-resume-019f7e8f.
+- Worktree: /Users/martinbechard/.codex/worktrees/c1cd/dev-methodology.
+- Dependencies: replace-router-with-setup-detector and verify-codex-skill-activation are completed.
+- Preserved evidence: archived integration task 019f7d30-de3a-7e61-a838-a3e127383b27 and accepted cumulative candidate 67ee16ef002d297e755a6284fe20afde4457d4f2; reconcile and semantically extract the mind-map portion rather than rebuild or discard it.
+- Phase: current-main provenance reconciliation, focused implementation/review, direct integration, and terminal completion.
 
 ## Summary
 

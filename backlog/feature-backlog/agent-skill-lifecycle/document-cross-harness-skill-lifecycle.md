@@ -1,8 +1,17 @@
 # Document The Cross-Harness Skill Lifecycle
 
-Status: Blocked
+Status: Running
 
 Type: Feature
+
+## Current Execution
+
+- Canonical Dev Orchestrator task: 019f7e8f-f75f-71c1-b138-4a1775b15fdf.
+- Branch: codex/document-cross-harness-skill-lifecycle.
+- Worktree: /Users/martinbechard/.codex/worktrees/ac58/dev-methodology.
+- Dependencies: replace-router-with-setup-detector and verify-codex-skill-activation are completed.
+- Preserved evidence: source commit 3e26250447dd5bc095c4ceef22de3beb093e1fd4 within accepted cumulative candidate 67ee16ef002d297e755a6284fe20afde4457d4f2; semantically reconcile its four cross-harness paths against current main rather than replaying the combined candidate.
+- Phase: current-main provenance reconciliation, focused documentation review/verification, direct integration, and terminal completion.
 
 ## Summary
 
