@@ -1,8 +1,18 @@
 # Verify Codex CLI Skill Activation
 
-Status: Blocked
+Status: Completed
 
 Type: Feature
+
+## Completion Evidence
+
+- Delivery: the accepted activation runtime identity contribution is integrated on main at f5d58ca8bc8143f333bb09266583b5247b35e2fb. It pins mcp-agent-ops 0.3.0 and runtime digest 314a780796740e8e31c375af7e5a3b1f8446d7566b2732846f266fe1cca13aeb in the executable evaluation contract.
+- Reporting dependency: the accepted strict reporting integration is present on main at 90c937a488f1f82d3573621a83d0bfbd9f55033d and supplies the complete required handoff response shape that removed the activation-run blocker.
+- Documentation correction: 353273d2806b7109033ec3954e7a7394126d4db5 keeps the operator-facing base-case version aligned with the activation contract and adds a regression against future documentation drift.
+- Review: independent review accepted the activation contribution for correctness, narrow scope, runtime provenance, deterministic coverage, and compatibility with reporting after the bounded documentation correction. A fresh independent review of the correction returned PASS with no findings.
+- Verification: the installed runtime independently reported mcp-agent-ops 0.3.0, 26 files, and the required digest. Python 3.11 focused verification passed, the evaluator suite passed all 118 tests, the reporting suites passed 82 and 29 tests, the combined offline suite validator passed, and the digest-bound invocation dry run passed. The previously confirmed unrelated project-organiser catalog mismatch remained baseline-only.
+- Integration integrity: main was clean at 290ca87194be9b6829d992b7fb70aa76dbd5b468, with f5d58ca and 353273d both confirmed as ancestors. No implementation, live scenario, generator, browser, deployment, or broad regression was rerun for this identical reviewed integration.
+- Terminal lifecycle: Dev Backlog Steward acquired PRIMARY ownership of only the active and completed archive paths at event bdc9a245-8478-4fa7-b234-c51df850e9cf under terminal authority from parent task 019f77f4-c4bd-7c91-b197-c987a7beb838. The archive commit and clean release are reported in the terminal handoff.
 
 ## Summary
 
