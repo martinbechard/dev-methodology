@@ -1,6 +1,6 @@
 # Prevent Unauthorized Contract Narrowing
 
-Status: Running
+Status: Done
 
 Type: Defect
 
@@ -75,6 +75,15 @@ None.
 - Run the Dev Coder TypeScript behavior scenario with fractional in-range, boundary, invalid, rounding, and dependency-failure cases.
 - Inspect the public types, implementation, regression assertions, independent Judge verdict, and cleanup evidence.
 - Run repository unit tests and Git diff validation.
+
+## Completion Evidence
+
+- Delivery: main commit d24b3f442a897108238ec65cbbaf0d0bfb4b5a3e implements the approved scope.
+- Review: independent methodology review passed with no findings.
+- Focused verification: exact skill validation, build-skill-docs freshness, support-checklist freshness, focused fixtures (2/2), validate-only TypeScript scenario, source/generated integrity, and Git diff validation passed.
+- Integration: main fast-forwarded from 1a58d26 to d24b3f4 under integration claim event 4458f88e-afcb-4e21-b3ad-e4031f9f4ecd; that claim released cleanly in event 0d0cfaae-3432-403b-802f-adc71966d9a9. The integrated tree is 5a12dd3203c12473c503d8ccc83462ddc19b084c with stable patch ID 28513d8a4f490354c483856899454fabdb9be843.
+- Cleanup: primary and managed worktrees were clean at d24b3f4; the private branch was deleted after its managed worktree detached at the preserved integrated commit.
+- Baseline warning: build-agent-skill-hierarchy --check reports the pre-existing stale design/agent-skill-hierarchy.svg from clean base; it was reproduced unchanged and is non-blocking for this item.
 
 ## Notes
 
