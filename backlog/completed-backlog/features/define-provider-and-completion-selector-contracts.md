@@ -1,14 +1,27 @@
 # Define Provider And Completion Selector Contracts
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
-## Current Execution
+## Running Ownership
 
 - Canonical Dev Orchestrator task: 019f7e76-e5e9-78b3-bfae-ab6ef1df6410.
 - Worktree: /Users/martinbechard/.codex/worktrees/789a/dev-methodology.
-- Phase: approval reconciliation, scoped implementation, focused verification, review, integration, completion, and cleanup.
+- Running transition: main commit 8fe27b53dac5dc0792a166211ae52cbfa67f79cf recorded the canonical task and Ready-to-Running transition; startup claim released at event cb29eef4-cebd-4149-aad2-a1449806b899.
+- Scope boundary: implementation and review owned only design/work-item-provider-and-completion-contracts.md in the private worktree. Main integration and terminal backlog mutation used separate exact claims.
+
+## Completion Evidence
+
+- Accepted source commit: 8e144b9c87648ab569ea84db1e51cc11e1c12943 on codex/provider-completion-contracts.
+- Independent review: a fresh Dev Artifact Reviewer rejected two earlier candidates with precise provider-none, state-ordering, and selector-source findings; all corrections remained on the same branch. The reviewer accepted 8e144b9 with no actionable findings.
+- Integrated delivery: accepted source content was cherry-picked onto current main as 08024d3c740569982f7ea21add497d4f4bc5dae1 and observed reachable from main.
+- Focused verification: contract structure, selector vocabulary, all combination-matrix rows, canonical identifiers, provider-none terminal behavior, completion-disposition versus provider-lifecycle ordering, table closure, prohibited inline-code formatting, TODO absence, git diff validation, and git show validation passed.
+- Markdown links: the primary-root Markdown verifier checked design/work-item-provider-and-completion-contracts.md after integration and returned ok with zero findings.
+- Integration ownership: exact path design/work-item-provider-and-completion-contracts.md and resource merge:integration:main were held under claim provider-completion-contract-integration-019f7e76 and released normally at event 67d56197-fe73-4da3-9d39-b6be2cab4c01.
+- Verification tier: focused documentation checks were the lowest applicable tier for this one non-governed planning artifact. No distributed skill, conceptual agent definition, generated mirror, shared runner, or release surface changed, so no full scripts, project-wiki, or agent-catalog suite was run.
+- Terminal lifecycle ownership: exact source and destination paths are held under claim provider-completion-contract-backlog-019f7e76 from clean baseline 08024d3c740569982f7ea21add497d4f4bc5dae1. The claim is released immediately after this completed-feature archive commit is validated and clean.
+- Cleanup eligibility: the private worktree is clean and contains only the accepted candidate commit. Its branch will be reconciled to completed main before the parent performs safe worktree and branch cleanup.
 
 ## Summary
 
@@ -16,7 +29,7 @@ Establish the canonical provider, completion, identifier, authority, state, and 
 
 ## Context
 
-This is the foundation item in the [Work-Item Provider And Completion Contracts series](index.md). Commit c18d476 supplies a working selector prototype, while aeb7bc4 preserves the earlier integration evidence named by the planning request. The prototype combines some provider and completion responsibilities under execute-workitem, file-based-backlog, and github-issues-backlog. Later items must not rename or split those skills independently without one accepted cross-provider contract.
+This is the foundation item in the [Work-Item Provider And Completion Contracts series](../../feature-backlog/work-item-provider-and-completion/index.md). Commit c18d476 supplies a working selector prototype, while aeb7bc4 preserves the earlier integration evidence named by the planning request. The prototype combines some provider and completion responsibilities under execute-workitem, file-based-backlog, and github-issues-backlog. Later items must not rename or split those skills independently without one accepted cross-provider contract.
 
 ## Requirements
 
