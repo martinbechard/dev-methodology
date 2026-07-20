@@ -1,8 +1,16 @@
 # Restore Wiki Ingester On Verifier Interruption
 
-Status: Blocked
+Status: Running
 
 Type: Defect
+
+## Current Execution
+
+- Canonical Dev Orchestrator task: 019f7e86-aece-7a40-96e1-b1e1863dba28.
+- Branch: codex/restore-wiki-ingester-verifier-flow.
+- Worktree: /Users/martinbechard/.codex/worktrees/8a44/dev-methodology.
+- Resumption plan: use preserved commits 8c28d9b, c677f09, and c75c8b1 as evidence while implementing an eval/test-only dependency-injection seam that drives verifier outcomes through the actual Wiki Ingester execution path or canonical generated adapter.
+- Phase: current-main reconciliation and bounded implementation; the prior harness-owned restoration approach is rejected.
 
 ## Summary
 
@@ -53,6 +61,8 @@ None.
 - Run Agent Skill validation, generated-output freshness checks, repository unit tests, and Git diff validation.
 
 ## Blocked Outcome
+
+Historical outcome, superseded by the current Running resumption above.
 
 The same HIGH code-review finding remained after two correction attempts, so the correction budget is exhausted. The clean implementation and correction commits 8c28d9b, c677f09, and c75c8b1 remain preserved.
 

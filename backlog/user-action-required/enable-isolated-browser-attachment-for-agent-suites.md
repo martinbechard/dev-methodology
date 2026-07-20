@@ -1,14 +1,37 @@
 # Enable Isolated Browser Attachment For Agent Suites
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
+
+## User Action Required
+
+The repository and current Codex host can attach the user-visible root task to a fresh in-app browser session, but cannot provision an isolated in-app backend for the agent-suite child target identity.
+
+## Question for the User
+
+Should this item wait for supported child-thread in-app-browser provisioning, or should scope explicitly authorize a new app-owned root-task suite harness and its identity and evidence contract?
+
+## Why User Input Is Required
+
+The supported root-task path passed, but nested Dev Browser Operator and Dev Runtime Diagnostician tasks had no in-app backend. The current runner stages browser clients for detached Codex execution but cannot provision the desktop-owned backend. Reusing or proxying the parent backend would bypass the host's exact session-isolation boundary, so the repository cannot select that workaround safely without a product or scope decision.
+
+## Resolution
+
+Pending.
+
+## Unattended Work Boundary
+
+Do not proxy, spoof, reuse, or otherwise bypass the parent task's browser-session identity. Resume only after supported child-target provisioning exists or the user explicitly authorizes the app-owned root-task harness alternative.
 
 ## Current Execution
 
 - Canonical Dev Orchestrator task: 019f7e76-c898-7e72-bdef-1c5f6897abd2.
+- Branch: codex/isolated-browser-attachment.
 - Worktree: /Users/martinbechard/.codex/worktrees/a509/dev-methodology.
-- Phase: current-main reconciliation, scoped implementation, focused verification, review, integration, completion, and cleanup.
+- Root-task proof: fresh local tab and Account-flow DOM with empty inventories before and after; claim released at event 5a17988a-8d9c-4283-afa2-d018e360a221.
+- Child-target blocker: no in-app backend was provisioned for either nested child identity; no repository change or candidate commit was produced.
+- Phase: stopped cleanly for the user-owned execution-model decision.
 
 ## Summary
 
