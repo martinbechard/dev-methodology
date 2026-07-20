@@ -18,6 +18,18 @@ from pathlib import Path
 
 SUITE_ROOT = Path(__file__).resolve().parent
 REPOSITORY_ROOT = SUITE_ROOT.parents[2]
+CORRECTION_EXPECTATIONS = (
+    (
+        "docs/wiki/retry-policy/request-retry-eligibility.md",
+        "## Ineligible mutation requests",
+        "Order creation, cancellation, and payment mutation requests are never retried.",
+    ),
+    (
+        "docs/wiki/retry-policy/fixed-retry-backoff.md",
+        "## Retry delay sequence",
+        "The first retry waits 200 milliseconds and the second retry waits 500 milliseconds.",
+    ),
+)
 
 
 def _load_module(name: str, path: Path):
@@ -54,11 +66,11 @@ def _validate_control_result(
     expected = plan.outcomes()
     observed = [
         {
-            "gate": outcome["gate"],
-            "invocation": outcome["invocation"],
-            "outcome": outcome["outcome"],
+            "gate": observation["receipt"]["gate"],
+            "invocation": observation["receipt"]["invocation"],
+            "outcome": observation["receipt"]["outcome"],
         }
-        for outcome in result["verifierControlTrace"]
+        for observation in result["verifierControlTrace"]
     ]
     expected_trace = [
         {
@@ -86,44 +98,32 @@ def _validate_control_result(
             )
         )
         receipt = json.loads(str(response))
-        expected_keys = {
-            "gate",
-            "invocation",
-            "outcome",
-            "ownedTreeDigest",
-            "changedPaths",
-        }
+        expected_keys = {"gate", "invocation", "outcome"}
         if outcome["outcome"] == "NEEDS_CORRECTION":
             expected_keys.add("finding")
-        elif outcome["outcome"] == "VERIFIER_INTERRUPTED":
-            expected_keys.update(
-                {"unresolvedPoint", "missingEvidence", "provenance", "appropriatePage"}
-            )
         test.assertEqual(expected_keys, set(receipt))
         test.assertEqual(gate, receipt["gate"])
         test.assertEqual(outcome["invocation"], receipt["invocation"])
         test.assertEqual(outcome["outcome"], receipt["outcome"])
-        test.assertRegex(receipt["ownedTreeDigest"], r"^[0-9a-f]{64}$")
-        test.assertIsInstance(receipt["changedPaths"], list)
         if receipt["outcome"] == "VERIFIER_INTERRUPTED":
             test.assertNotIn("GOOD", receipt.values())
             test.assertNotIn("NEEDS_CORRECTION", receipt.values())
-            test.assertEqual(
-                "docs/wiki/retry-policy/fixed-retry-backoff.md",
-                receipt["appropriatePage"],
-            )
-            test.assertIn("deployment retry policy", receipt["missingEvidence"])
-            test.assertEqual("raw/retry-policy.md#Backoff", receipt["provenance"])
-        test.assertEqual(result["verifierControlTrace"][index], receipt)
-    trace_digests = [outcome["ownedTreeDigest"] for outcome in result["verifierControlTrace"]]
+        test.assertEqual(result["verifierControlTrace"][index]["receipt"], receipt)
+    trace_digests = [
+        observation["ownedTreeDigest"]
+        for observation in result["verifierControlTrace"]
+    ]
+    for digest in trace_digests:
+        test.assertRegex(digest, r"^[0-9a-f]{64}$")
     test.assertNotEqual(result["initialOwnedTreeDigest"], trace_digests[0])
     for previous, current in zip(trace_digests, trace_digests[1:]):
         test.assertNotEqual(previous, current)
-    for outcome in result["verifierControlTrace"]:
-        changed_paths = outcome["changedPaths"]
+    for observation in result["verifierControlTrace"]:
+        changed_paths = observation["changedPaths"]
+        test.assertIsInstance(changed_paths, list)
         for path in changed_paths:
             allowed = str(path).startswith("docs/wiki/")
-            if outcome["gate"] == "post-move":
+            if observation["receipt"]["gate"] == "post-move":
                 allowed = allowed or str(path) in {
                     "raw/retry-policy.md",
                     "raw/processed/retry-policy.md",
@@ -142,12 +142,24 @@ def _validate_control_result(
     }
     test.assertTrue(retry_pages)
     test.assertTrue(set(retry_pages).issubset(committed_paths))
+    for index, outcome in enumerate(expected):
+        if outcome["outcome"] != "NEEDS_CORRECTION":
+            continue
+        page_path, heading, statement = CORRECTION_EXPECTATIONS[
+            outcome["invocation"]
+        ]
+        resubmission_pages = result["verifierControlTrace"][index + 1]["pageContents"]
+        test.assertIn(page_path, resubmission_pages)
+        test.assertIn(heading, resubmission_pages[page_path])
+        test.assertIn(statement, resubmission_pages[page_path])
+        test.assertIn(page_path, committed_paths)
+        test.assertIn(heading, result["wikiContent"][page_path])
+        test.assertIn(statement, result["wikiContent"][page_path])
     open_question_pages = [
         (path, content.lower())
         for path, content in retry_pages.items()
-        if "deployment" in content.lower()
-        and "jitter" in content.lower()
-        and "missing" in content.lower()
+        if "jitter" in content.lower()
+        and "authoritative" in content.lower()
         and "## open questions" in content.lower()
     ]
     test.assertEqual(1, len(open_question_pages))
@@ -209,13 +221,19 @@ def _validate_execution_ownership(
         test.assertTrue(request_messages)
         request = "\n".join(request_messages)
         trace = result["verifierControlTrace"][index]
+        receipt = trace["receipt"]
         test.assertIn(result["repositoryPath"], request)
-        test.assertIn(str(trace["gate"]), request.lower())
+        test.assertIn(str(receipt["gate"]), request.lower())
         test.assertIn("lint", request.lower())
+        source_name = (
+            "provider-routing.md"
+            if result.get("rawSourcePresent") or result.get("processedSourcePresent")
+            else "retry-policy.md"
+        )
         expected_source = (
-            "raw/retry-policy.md"
-            if trace["gate"] == "pre-move"
-            else "raw/processed/retry-policy.md"
+            f"raw/{source_name}"
+            if receipt["gate"] == "pre-move"
+            else f"raw/processed/{source_name}"
         )
         test.assertIn(expected_source, request)
         for path in trace["changedPaths"]:
@@ -286,11 +304,9 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
                     self.assertEqual(gate, outcomes[-1]["gate"])
                     self.assertEqual(interruption, outcomes[-1]["invocation"])
                     self.assertEqual(
-                        "docs/wiki/retry-policy/fixed-retry-backoff.md",
-                        outcomes[-1]["appropriatePage"],
+                        {"gate", "invocation", "outcome"},
+                        set(outcomes[-1]),
                     )
-                    self.assertIn("missingEvidence", outcomes[-1])
-                    self.assertIn("provenance", outcomes[-1])
                     gate_outcomes = outcomes[1:] if gate == "post-move" else outcomes
                     self.assertEqual(interruption + 1, len(gate_outcomes))
                     self.assertTrue(
@@ -305,7 +321,30 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
                             for outcome in gate_outcomes[:-1]
                         )
                     )
+                    for outcome in gate_outcomes[:-1]:
+                        _, heading, statement = CORRECTION_EXPECTATIONS[
+                            outcome["invocation"]
+                        ]
+                        self.assertIn(heading, outcome["finding"])
+                        self.assertIn(statement, outcome["finding"])
         self.assertEqual(6, len(observed))
+
+    def test_launcher_does_not_supply_the_expected_interruption_disposition(self) -> None:
+        """The canonical target, not its launcher, must derive the resulting behavior."""
+        prompt = self.harness._target_prompt(
+            self.harness.VerifierPlan("pre-move", 1)
+        )
+        for injected_expectation in (
+            "substantiated conclusion",
+            "Open Questions",
+            "missing evidence",
+            "provenance",
+            "processed-source",
+            "ingested conclusions",
+            "VERIFIER_INTERRUPTED",
+        ):
+            with self.subTest(injected_expectation=injected_expectation):
+                self.assertNotIn(injected_expectation, prompt)
 
     def test_runtime_binds_canonical_target_and_only_injects_dependency(self) -> None:
         """The canonical target instructions are bound while only its verifier is replaced."""
@@ -360,11 +399,23 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
         plan = self.harness.VerifierPlan("pre-move", 1)
         trace = [
             {
-                **outcome,
+                "receipt": outcome,
                 "ownedTreeDigest": character * 64,
                 "changedPaths": ["docs/wiki/retry-policy/example.md"],
+                "pageContents": (
+                    {
+                        CORRECTION_EXPECTATIONS[0][0]: (
+                            f"{CORRECTION_EXPECTATIONS[0][1]}\n\n"
+                            f"{CORRECTION_EXPECTATIONS[0][2]}\n"
+                        )
+                    }
+                    if index == 1
+                    else {}
+                ),
             }
-            for outcome, character in zip(plan.outcomes(), ("a", "b"), strict=True)
+            for index, (outcome, character) in enumerate(
+                zip(plan.outcomes(), ("a", "b"), strict=True)
+            )
         ]
         head = "c" * 40
         release_id = "release-event"
@@ -446,11 +497,15 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
                 "/root/wiki_ingester/pre_move_verifier_0",
                 "/root/wiki_ingester/pre_move_verifier_1",
             ],
-            "dependencyResponses": [json.dumps(receipt) for receipt in trace],
+            "dependencyResponses": [
+                json.dumps(observation["receipt"])
+                for observation in trace
+            ],
             "initialOwnedTreeDigest": "d" * 64,
             "finalOwnedTreeDigest": "e" * 64,
             "committedPaths": [
                 "docs/wiki/retry-policy/fixed-retry-backoff.md",
+                "docs/wiki/retry-policy/request-retry-eligibility.md",
                 "eval-result.md",
                 "raw/processed/retry-policy.md",
                 "raw/retry-policy.md",
@@ -458,9 +513,13 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
             "wikiContent": {
                 "docs/wiki/retry-policy/fixed-retry-backoff.md": (
                     "## Open Questions\n\n"
-                    "- Deployment jitter is unresolved; missing authoritative deployment "
-                    "retry policy evidence. Provenance: raw/processed/retry-policy.md.\n"
-                )
+                    "- Jitter remains unresolved because authoritative retry-policy "
+                    "evidence is missing. Provenance: raw/processed/retry-policy.md.\n"
+                ),
+                CORRECTION_EXPECTATIONS[0][0]: (
+                    f"{CORRECTION_EXPECTATIONS[0][1]}\n\n"
+                    f"{CORRECTION_EXPECTATIONS[0][2]}\n"
+                ),
             },
             "head": head,
             "claimEvents": [acquisition, release],
@@ -483,7 +542,7 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
         result["dependencyToolCalls"][0][0]["arguments"] = original_arguments
         result["verifierControlTrace"][1]["ownedTreeDigest"] = "a" * 64
         result["dependencyResponses"][1] = json.dumps(
-            result["verifierControlTrace"][1]
+            result["verifierControlTrace"][1]["receipt"]
         )
         with self.assertRaises(AssertionError):
             _validate_control_result(self, plan, result)
@@ -511,10 +570,21 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
                 destination,
             )
             receipt = json.loads(completed.stdout)
-            self.assertIn(
-                "docs/wiki/retry-policy/new-leaf.md", receipt["changedPaths"]
+            self.assertEqual(
+                {"gate", "invocation", "outcome"},
+                set(receipt),
             )
-            self.assertIn("docs/wiki/topic-index.md", receipt["changedPaths"])
+            observation = json.loads(
+                (layout.control_root / "state.json").read_text(encoding="utf-8")
+            )[0]
+            self.assertIn(
+                "docs/wiki/retry-policy/new-leaf.md", observation["changedPaths"]
+            )
+            self.assertIn("docs/wiki/topic-index.md", observation["changedPaths"])
+            self.assertIn(
+                "docs/wiki/retry-policy/new-leaf.md",
+                observation["pageContents"],
+            )
 
     def test_boundary_observes_but_never_repairs_target_lifecycle(self) -> None:
         """Execution and observation contain no target mutation or closeout helper."""
@@ -559,6 +629,26 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
                     self.fixture.stage_fixture(scenario, destination)
                     for relative, expected in paths:
                         self.assertEqual(expected, (destination / relative).is_file())
+
+    def test_verifier_failure_neighbor_uses_three_real_correction_verdicts(self) -> None:
+        """The executable neighbor must exhaust the real bounded verifier loop."""
+        outcomes = self.harness._neighbor_outcomes("verifier-failure")
+        self.assertEqual(3, len(outcomes))
+        self.assertEqual([0, 1, 2], [outcome["invocation"] for outcome in outcomes])
+        self.assertTrue(
+            all(outcome["outcome"] == "NEEDS_CORRECTION" for outcome in outcomes)
+        )
+        self.assertTrue(
+            all(outcome["finding"] == "federated ownership duplicated" for outcome in outcomes)
+        )
+        task_text = (
+            SUITE_ROOT
+            / "fixtures/scenario-files/verifier-failure/TASK.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("preserve every substantiated local-routing conclusion", task_text)
+        self.assertIn("Open Questions section", task_text)
+        self.assertIn("raw-source provenance", task_text)
+        self.assertNotIn("restore every unaccepted wiki edit", task_text)
 
 
 @unittest.skipUnless(
@@ -639,10 +729,13 @@ class WikiIngesterLiveNeighborTests(unittest.TestCase):
                 self.assertEqual(gate, receipt["gate"])
                 self.assertEqual(invocation, receipt["invocation"])
                 self.assertEqual(outcome, receipt["outcome"])
-                self.assertEqual(result["verifierControlTrace"][index], receipt)
+                self.assertEqual(
+                    result["verifierControlTrace"][index]["receipt"],
+                    receipt,
+                )
             trace_digests = [
-                outcome["ownedTreeDigest"]
-                for outcome in result["verifierControlTrace"]
+                observation["ownedTreeDigest"]
+                for observation in result["verifierControlTrace"]
             ]
             self.assertNotEqual(result["initialOwnedTreeDigest"], trace_digests[0])
             for previous, current in zip(trace_digests, trace_digests[1:]):
@@ -714,6 +807,66 @@ class WikiIngesterLiveNeighborTests(unittest.TestCase):
                 self.assertIn(evidence, result_text)
             self.assertIn(str(result["head"]), result["targetTerminalResponse"])
             _validate_claim_events(self, result, result["targetTerminalResponse"])
+
+    def test_verifier_failure_retains_substantiated_content_and_closes_blocked(self) -> None:
+        """Three real correction verdicts retain supported content and release cleanly."""
+        with tempfile.TemporaryDirectory() as temporary:
+            result = self.harness.run_neighbor_control(
+                "verifier-failure", Path(temporary) / "fixture"
+            )
+            self.assertEqual(0, result["process"]["exitCode"])
+            terminal = result["targetTerminalResponse"]
+            self.assertIn("BLOCKED", terminal)
+            self.assertNotIn("READY", terminal)
+            self.assertIs(result["rawSourcePresent"], True)
+            self.assertIs(result["processedSourcePresent"], False)
+            self.assertEqual("", result["gitStatus"])
+            self.assertEqual([], result["liveRegistryClaims"])
+            self.assertEqual(3, len(result["dependencySessionIds"]))
+            _validate_execution_ownership(self, result)
+            for invocation, (agent_path, response, observation) in enumerate(zip(
+                result["dependencyAgentPaths"],
+                result["dependencyResponses"],
+                result["verifierControlTrace"],
+                strict=True,
+            )):
+                self.assertTrue(
+                    agent_path.endswith(f"/pre_move_verifier_{invocation}")
+                )
+                receipt = json.loads(response)
+                self.assertEqual("pre-move", receipt["gate"])
+                self.assertEqual(invocation, receipt["invocation"])
+                self.assertEqual("NEEDS_CORRECTION", receipt["outcome"])
+                self.assertEqual(observation["receipt"], receipt)
+            self.assertNotEqual(
+                result["initialOwnedTreeDigest"], result["finalOwnedTreeDigest"]
+            )
+            committed_paths = set(result["committedPaths"])
+            self.assertIn("eval-result.md", committed_paths)
+            self.assertNotIn("raw/provider-routing.md", committed_paths)
+            self.assertNotIn("raw/processed/provider-routing.md", committed_paths)
+            retained_wiki_text = "\n".join(result["wikiContent"].values()).lower()
+            for conclusion in (
+                "primary provider",
+                "secondary provider",
+                "mutation requests do not fail over",
+            ):
+                self.assertIn(conclusion, retained_wiki_text)
+            self.assertIn("## open questions", retained_wiki_text)
+            self.assertIn("federat", retained_wiki_text)
+            self.assertIn("authoritative", retained_wiki_text)
+            self.assertIn("raw/provider-routing.md", retained_wiki_text)
+            result_text = result["evaluationResultText"].lower()
+            for evidence in (
+                "blocked",
+                "needs_correction",
+                "two correction attempts",
+                "substantiated",
+                "open question",
+            ):
+                self.assertIn(evidence, result_text)
+            self.assertIn(str(result["head"]), terminal)
+            _validate_claim_events(self, result, terminal)
 
 
 if __name__ == "__main__":

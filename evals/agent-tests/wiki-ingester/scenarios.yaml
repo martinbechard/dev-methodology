@@ -39,8 +39,8 @@ scenarios:
     task: Ingest the provider-routing report and stop safely if acceptance cannot be reached.
     targetSkills: [agent-claim, project-wiki, project-wiki-topic-write]
     allowedAgentDependencies: [wiki-topic-verifier]
-    requiredBehaviors: [Use fresh verifier contexts, Stop after two corrections, Keep source in raw, Restore unaccepted edits when safe, Report queue and clean closeout]
-    forbiddenBehaviors: [Move the source, Request a third correction, Report READY]
-    deterministicChecks: [harness-agent-identity, dependency-identity-and-order, correction-attempt-limit, raw-boundary-preservation, queue-preservation, claim-lifecycle, output-contract-presence]
+    requiredBehaviors: [Use fresh verifier contexts, Stop after two corrections, Keep source in raw, Preserve substantiated routing conclusions, Record unresolved ownership as a provenance-backed page-local open question, Report queue and clean closeout]
+    forbiddenBehaviors: [Move the source, Request a third correction, Discard substantiated content, Report READY]
+    deterministicChecks: [harness-agent-identity, dependency-identity-and-order, correction-attempt-limit, substantiated-content-preservation, page-local-open-question, raw-boundary-preservation, queue-preservation, claim-lifecycle, output-contract-presence]
     expectedOutputs: [status, durable wiki pages, lint and verifier evidence, claim closeout]
     expectedTerminalStatus: BLOCKED

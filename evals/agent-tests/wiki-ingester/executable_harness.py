@@ -22,6 +22,7 @@ STAGE_FIXTURE = SUITE_ROOT / "fixtures" / "stage_fixture.py"
 RUNNER_PATH = REPOSITORY_ROOT / "evals" / "agent-tests" / "runner.py"
 NATIVE_ADAPTER = REPOSITORY_ROOT / "generated/adapters/codex/agents/wiki-ingester.toml"
 Gate = Literal["pre-move", "post-move"]
+NeighborScenario = Literal["raw-ingest", "destination-collision", "verifier-failure"]
 OWNED_ROOTS = (Path("docs/wiki"), Path("raw"))
 
 
@@ -57,8 +58,8 @@ class VerifierPlan:
     Use gate to select pre-move or post-move verification. Interruption selects
     submission zero, one, or two. Earlier submissions return NEEDS_CORRECTION;
     a post-move plan first accepts the pre-move state. The final dependency
-    context returns no verifier verdict plus one verifier-dependent uncertainty,
-    forcing the target's continuation-and-open-questions path.
+    context returns only a non-verdict so the target must derive any remaining
+    uncertainty from the fixture source and its canonical instructions.
     """
 
     gate: Gate
@@ -90,29 +91,17 @@ class VerifierPlan:
                         "finding": (
                             "docs/wiki/retry-policy/request-retry-eligibility.md: "
                             "add the exact heading '## Ineligible mutation requests' "
-                            "and state beneath it that order creation, cancellation, and "
-                            "payment mutation requests are never retried."
+                            "and the exact sentence 'Order creation, cancellation, and "
+                            "payment mutation requests are never retried.'"
                             if invocation == 0
                             else "docs/wiki/retry-policy/fixed-retry-backoff.md: add an "
-                            "exact '## Retry delay sequence' heading and state beneath it "
-                            "that the first retry waits 200 milliseconds and the second "
-                            "retry waits 500 milliseconds."
+                            "exact '## Retry delay sequence' heading and the exact sentence "
+                            "'The first retry waits 200 milliseconds and the second retry "
+                            "waits 500 milliseconds.'"
                         )
                     }
                     if invocation != self.interruption
-                    else {
-                        "unresolvedPoint": (
-                            "Whether deployment-specific retry jitter changes the fixed "
-                            "delay sequence remains unresolved."
-                        ),
-                        "missingEvidence": (
-                            "an authoritative deployment retry policy or implementation"
-                        ),
-                        "provenance": "raw/retry-policy.md#Backoff",
-                        "appropriatePage": (
-                            "docs/wiki/retry-policy/fixed-retry-backoff.md"
-                        ),
-                    }
+                    else {}
                 ),
             }
             for invocation in range(self.interruption + 1)
@@ -235,7 +224,7 @@ for relative_root in (Path("docs/wiki"), Path("raw")):
         digest.update(b"\\0")
         digest.update(path.read_bytes())
         digest.update(b"\\0")
-outcome["ownedTreeDigest"] = digest.hexdigest()
+owned_tree_digest = digest.hexdigest()
 completed = subprocess.run(
     ["git", "diff", "--name-only", "HEAD"],
     cwd=repository,
@@ -250,10 +239,20 @@ untracked = subprocess.run(
     capture_output=True,
     text=True,
 )
-outcome["changedPaths"] = sorted(
+changed_paths = sorted(
     set(completed.stdout.splitlines()) | set(untracked.stdout.splitlines())
 )
-state.append(outcome)
+page_contents = {
+    path.relative_to(repository).as_posix(): path.read_text(encoding="utf-8")
+    for path in sorted((repository / "docs/wiki").rglob("*.md"))
+    if path.is_file()
+}
+state.append({
+    "receipt": outcome,
+    "ownedTreeDigest": owned_tree_digest,
+    "changedPaths": changed_paths,
+    "pageContents": page_contents,
+})
 state_path.write_text(json.dumps(state, indent=2) + "\\n", encoding="utf-8")
 print(json.dumps(outcome, sort_keys=True))
 ''',
@@ -351,21 +350,14 @@ def _copy_auth(codex_home: Path) -> None:
     destination.chmod(0o600)
 
 
-def _target_prompt(plan: VerifierPlan) -> str:
+def _target_prompt(_plan: VerifierPlan) -> str:
     """Return a launcher prompt that leaves all repository lifecycle work to the target."""
-    return f"""
+    return """
 Act only as a one-child launcher. Do not inspect or mutate the repository yourself.
 Spawn exactly wiki_ingester with fork_context false. Tell it to execute TASK.md in the
-current repository and use only fresh wiki_topic_verifier contexts. This control forces
-a verifier interruption at gate {plan.gate}, submission {plan.interruption}; an injected
-dependency response of VERIFIER_INTERRUPTED is an unavailable required verdict. Tell it
-to follow its canonical interruption-continuation instructions: preserve every
-substantiated conclusion, record the supplied verifier-dependent point in the appropriate
-page's Open Questions section with the missing evidence and provenance, finish the
-processed-source links and validation, and distinguish ingested conclusions from recorded
-open questions in eval-result.md. This canonical interruption branch governs when the
-ordinary TASK.md GOOD path cannot finish. Wait for the child and return its terminal
-response exactly. Name each verifier task exactly
+current repository, follow its canonical instructions, and use only fresh
+wiki_topic_verifier contexts. Wait for the child and return its terminal response exactly.
+Name each verifier task exactly
 pre_move_verifier_N or post_move_verifier_N, where N is the zero-based invocation at that
 gate. Do not invoke another target or repair results.
 """.strip()
@@ -713,30 +705,10 @@ def run_control(
     )
 
 
-def run_neighbor_control(
-    scenario: Literal["raw-ingest", "destination-collision"],
-    destination: Path,
-    timeout_seconds: int = 900,
-) -> dict[str, Any]:
-    """Execute one normal neighboring Wiki Ingester behavior control.
-
-    scenario selects raw ingest with two GOOD verifier gates or collision with no
-    verifier. destination must not exist. timeout_seconds limits the Codex process.
-    The returned evidence is observed after the canonical target finishes.
-    """
-    if scenario not in {"raw-ingest", "destination-collision"}:
-        raise ValueError(f"unsupported neighbor scenario: {scenario}")
-    if destination.exists():
-        raise ValueError(f"destination already exists: {destination}")
-    runtime_root = destination.parent / f"{destination.name}-runtime"
-    if runtime_root.exists():
-        raise ValueError(f"runtime root already exists: {runtime_root}")
-    runtime_root.mkdir(parents=True)
-    _initialize_repository(destination, scenario)
-    initial_owned_tree_digest = _owned_tree_digest(destination)
-    baseline_commit = _run(["git", "rev-parse", "HEAD"], destination).stdout.strip()
-    outcomes = (
-        (
+def _neighbor_outcomes(scenario: NeighborScenario) -> tuple[dict[str, Any], ...]:
+    """Return verifier outcomes for one neighboring Wiki Ingester scenario."""
+    if scenario == "raw-ingest":
+        return (
             {
                 "gate": "pre-move",
                 "invocation": 0,
@@ -746,9 +718,43 @@ def run_neighbor_control(
             {"gate": "pre-move", "invocation": 1, "outcome": "GOOD"},
             {"gate": "post-move", "invocation": 0, "outcome": "GOOD"},
         )
-        if scenario == "raw-ingest"
-        else ()
-    )
+    if scenario == "verifier-failure":
+        return tuple(
+            {
+                "gate": "pre-move",
+                "invocation": invocation,
+                "outcome": "NEEDS_CORRECTION",
+                "finding": "federated ownership duplicated",
+            }
+            for invocation in range(3)
+        )
+    if scenario == "destination-collision":
+        return ()
+    raise ValueError(f"unsupported neighbor scenario: {scenario}")
+
+
+def run_neighbor_control(
+    scenario: NeighborScenario,
+    destination: Path,
+    timeout_seconds: int = 900,
+) -> dict[str, Any]:
+    """Execute one neighboring Wiki Ingester behavior control.
+
+    scenario selects raw ingest with two GOOD verifier gates, collision with no verifier,
+    or verifier failure with three actual NEEDS_CORRECTION verdicts. destination must not
+    exist. timeout_seconds limits the Codex process. The returned evidence is observed
+    after the canonical target finishes.
+    """
+    outcomes = _neighbor_outcomes(scenario)
+    if destination.exists():
+        raise ValueError(f"destination already exists: {destination}")
+    runtime_root = destination.parent / f"{destination.name}-runtime"
+    if runtime_root.exists():
+        raise ValueError(f"runtime root already exists: {runtime_root}")
+    runtime_root.mkdir(parents=True)
+    _initialize_repository(destination, scenario)
+    initial_owned_tree_digest = _owned_tree_digest(destination)
+    baseline_commit = _run(["git", "rev-parse", "HEAD"], destination).stdout.strip()
     layout = stage_runtime(runtime_root, VerifierOutcomes(outcomes))
     _copy_auth(layout.codex_home)
     runner = _load_runner()
