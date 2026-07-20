@@ -4281,6 +4281,57 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn("GOOD post-move verdict", response)
                 self.assertIn("released the ingest claim", response)
 
+    def test_wiki_ingester_continues_substantiated_ingest_after_verifier_interruption(
+        self,
+    ) -> None:
+        """Verifier interruption should expose uncertainty without erasing supported work."""
+        build_skill_docs = load_build_skill_docs_module()
+        skill_payload = build_skill_docs.build_payload()
+        roles = build_skill_docs.load_role_definitions(set(skill_payload["skills"]))
+        role = next(role for role in roles if role.name == "wiki-ingester")
+
+        workflow_text = " ".join(role.instruction_sections["workflow"])
+        review_text = " ".join(role.instruction_sections["review"])
+        failure_text = " ".join(role.instruction_sections["failureHandling"])
+        completion_text = " ".join(role.instruction_sections["completion"])
+        interruption_example = next(
+            example
+            for example in role.examples
+            if "interruption" in example["purpose"].lower()
+        )
+        interruption_response = interruption_example["plausibleResponse"]
+
+        for phrase in (
+            "substantiated claim and relationship",
+            "Open Questions section of the most relevant page",
+            "missing evidence or decision",
+            "provenance",
+        ):
+            with self.subTest(workflow_phrase=phrase):
+                self.assertIn(phrase, workflow_text)
+        self.assertIn("interrupted", review_text)
+        self.assertIn("not a NEEDS_CORRECTION verdict", review_text)
+        self.assertIn("Do not roll back substantiated", failure_text)
+        self.assertIn("verifier interruption", completion_text)
+        self.assertIn("ingested conclusions", completion_text)
+        self.assertIn("recorded open questions", completion_text)
+        self.assertIn("STATUS: READY", interruption_response)
+        self.assertIn("Open Questions", interruption_response)
+        self.assertIn("missing evidence", interruption_response)
+        self.assertNotIn("STATUS: BLOCKED", interruption_response)
+        self.assertNotIn("restore", interruption_response.lower())
+
+        role_payload = load_yaml_object(
+            ROLES_ROOT / "wiki-activities" / "wiki-ingester.role.yaml"
+        )
+        output_text = " ".join(
+            item["purpose"]
+            for output in role_payload["outputContract"]
+            for item in output.values()
+        )
+        self.assertIn("ingested conclusions", output_text)
+        self.assertIn("open questions", output_text)
+
     def test_dev_orchestrator_routes_artifact_aware_independent_review(self) -> None:
         """Orchestration should review every changed surface through its owning review lane."""
         build_skill_docs = load_build_skill_docs_module()
