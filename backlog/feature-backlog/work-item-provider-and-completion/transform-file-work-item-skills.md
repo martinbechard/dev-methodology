@@ -1,28 +1,25 @@
 # Transform File Work-Item Skills
 
-Status: User Action Required
+Status: Ready
 
 Type: Feature
 
-## User Action Required
+## Approval Resolution
 
-This transformation creates two governed skill packages and retires or changes three existing governed skill packages.
+The user approved the exact governed definition scope, conditional on equivalent replacement skills existing before retirement.
 
-## Question for the User
+## Approved Scope
 
 Do you approve changing or retiring skills/create-backlog/SKILL.md, skills/manage-backlog/SKILL.md, and skills/file-based-backlog/SKILL.md and their agents/openai.yaml metadata, and creating skills/create-file-work-item/SKILL.md and skills/manage-file-work-items/SKILL.md with their agents/openai.yaml metadata, together with only their supported generated mirrors and directly related non-governed tests and documentation?
 
-## Why User Input Is Required
+## Approval Evidence
 
-The accepted provider contract establishes the design but does not constitute exact approval to mutate governed skill definitions.
+- Basis: explicit-user-direction.
+- Exact answer: “I want to have equivalent skills so retire them as long as you have replacements”.
+- Provenance: thread 019f77f4-c4bd-7c91-b197-c987a7beb838, message item-2078.
+- Condition: create-file-work-item and manage-file-work-items must provide equivalent replacement behavior before create-backlog, manage-backlog, or file-based-backlog is retired.
 
-## Resolution
-
-Pending.
-
-## Unattended Work Boundary
-
-Do not dispatch or mutate these skill packages until the exact question is answered.
+The decision gate is resolved. Delivery completion still requires implementation, the governed pre-mutation checks for every exact canonical definition, supported regeneration, independent review, focused verification, integration, and terminal backlog evidence.
 
 ## Summary
 

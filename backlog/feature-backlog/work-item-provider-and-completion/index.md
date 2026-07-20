@@ -48,7 +48,7 @@ This series plans the transformation only. It does not implement, rename, delete
 
 1. [Define provider and completion selector contracts](define-provider-and-completion-selector-contracts.md).
 2. After the contract is accepted, proceed in parallel with:
-   - [Transform file work-item skills](../../user-action-required/transform-file-work-item-skills.md).
+   - [Transform file work-item skills](transform-file-work-item-skills.md).
    - [Split GitHub work-item skills](../../user-action-required/split-github-work-item-skills.md).
    - [Add GitLab work-item skills](../../user-action-required/add-gitlab-work-item-skills.md).
    - [Add Azure DevOps and Jira placeholders](../../user-action-required/add-azure-devops-and-jira-placeholders.md).
