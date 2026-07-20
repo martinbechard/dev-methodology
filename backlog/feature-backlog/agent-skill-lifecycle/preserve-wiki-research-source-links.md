@@ -1,8 +1,16 @@
 # Preserve Wiki Research Source Links
 
-Status: Ready
+Status: Running
 
 Type: Defect
+
+## Running Ownership
+
+- Owner: Dev Orchestrator root task 019f77f4-c4bd-7c91-b197-c987a7beb838.
+- Lifecycle agent: Dev Backlog Steward.
+- Lifecycle claim: preserve-wiki-research-source-links-lifecycle.
+- Claim evidence: PRIMARY exact-file backlog ownership acquired at 2026-07-20T01:12:15.710366Z from clean baseline commit 9f6f4d41ef185eecd1a37fe3334c082cf85c6bdb.
+- Scope boundary: this claim owns only the Running transition and primary index resource and is released after its clean commit. Wiki Researcher suite-local fixtures, scenarios, link validation, tests, review, verification, and integration require a separate canonical isolated claim.
 
 ## Summary
 
