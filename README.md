@@ -438,6 +438,7 @@ The stack and project-domain skill packs are:
 - quarkus
 - quarkus-design
 - quarkus-persistence
+- hibernate-orm-panache
 - quarkus-testing
 - liquibase
 - quartz

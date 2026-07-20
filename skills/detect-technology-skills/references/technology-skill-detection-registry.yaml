@@ -180,6 +180,27 @@ skills:
   selection: additive
   priority: 100
   requiredWhenDetected: true
+- skill: hibernate-orm-panache
+  kind: technology
+  label: Hibernate ORM With Panache
+  capabilities:
+  - persistence-framework
+  activation:
+    anyOf:
+    - allOf:
+      - fileExtension: .java
+      - anyOf:
+        - owningContentPattern:
+            glob: pom.xml
+            contains: quarkus-hibernate-orm-panache
+        - owningContentPattern:
+            glob: build.gradle*
+            contains: quarkus-hibernate-orm-panache
+  companions:
+  - quarkus-persistence
+  selection: additive
+  priority: 100
+  requiredWhenDetected: true
 - skill: java
   kind: technology
   label: Java

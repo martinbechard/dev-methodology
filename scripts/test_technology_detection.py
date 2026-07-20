@@ -342,7 +342,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                     result = run_detection(root, "src/test", detector=detector)
                     self.assertEqual(expected, result["loadouts"][0]["skills"])
 
-    def test_quarkus_persistence_composes_with_java_design_and_sql(self) -> None:
+    def test_blocking_quarkus_panache_composes_with_shared_persistence(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             source = root / "src" / "main" / "java" / "example"
@@ -355,12 +355,61 @@ class TechnologyDetectionTests(unittest.TestCase):
             )
 
             expected = [
+                "hibernate-orm-panache",
                 "java",
                 "java-design",
                 "quarkus",
                 "quarkus-design",
                 "quarkus-persistence",
                 "sql",
+            ]
+            for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+                with self.subTest(detector=detector):
+                    result = run_detection(root, "src/main", detector=detector)
+                    self.assertEqual(expected, result["loadouts"][0]["skills"])
+
+    def test_reactive_quarkus_panache_does_not_select_blocking_panache(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "src" / "main" / "java" / "example"
+            source.mkdir(parents=True)
+            (source / "Order.java").write_text("class Order {}\n", encoding="utf-8")
+            (root / "pom.xml").write_text(
+                "<artifactId>quarkus-maven-plugin</artifactId>\n"
+                "<artifactId>quarkus-hibernate-reactive-panache</artifactId>\n",
+                encoding="utf-8",
+            )
+
+            expected = [
+                "java",
+                "java-design",
+                "quarkus",
+                "quarkus-design",
+                "quarkus-persistence",
+                "sql",
+            ]
+            for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
+                with self.subTest(detector=detector):
+                    result = run_detection(root, "src/main", detector=detector)
+                    self.assertEqual(expected, result["loadouts"][0]["skills"])
+
+    def test_unrelated_quarkus_source_does_not_select_blocking_panache(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "src" / "main" / "java" / "example"
+            source.mkdir(parents=True)
+            (source / "GreetingResource.java").write_text("class GreetingResource {}\n", encoding="utf-8")
+            (root / "pom.xml").write_text(
+                "<artifactId>quarkus-maven-plugin</artifactId>\n"
+                "<artifactId>quarkus-rest</artifactId>\n",
+                encoding="utf-8",
+            )
+
+            expected = [
+                "java",
+                "java-design",
+                "quarkus",
+                "quarkus-design",
             ]
             for detector in (DETECT_SCRIPT, INSTALLED_DETECT_SCRIPT):
                 with self.subTest(detector=detector):

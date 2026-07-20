@@ -117,6 +117,7 @@ NEW_DEVELOPMENT_SKILLS = (
     "quarkus",
     "quarkus-design",
     "quarkus-persistence",
+    "hibernate-orm-panache",
     "quarkus-testing",
     "liquibase",
     "jhipster-project",
@@ -258,6 +259,7 @@ EXAMPLE_PROJECT_SKILL_PACKS = (
     "quarkus",
     "quarkus-design",
     "quarkus-persistence",
+    "hibernate-orm-panache",
     "quarkus-testing",
     "sql",
     "typescript",
@@ -302,6 +304,7 @@ README_REQUIRED_PHRASES = (
     "- quarkus",
     "- quarkus-design",
     "- quarkus-persistence",
+    "- hibernate-orm-panache",
     "- quarkus-testing",
     "jhipster-domain-modeling",
     "[Technology Skills](design/skills-modularization.html) explains always-used and rule-selected agent skills",
@@ -439,6 +442,7 @@ TECHNOLOGY_EXTENSION_SKILLS = (
     "quarkus",
     "quarkus-design",
     "quarkus-persistence",
+    "hibernate-orm-panache",
     "quarkus-testing",
     "liquibase",
     "jhipster-project",
@@ -1509,7 +1513,7 @@ class BundleContentTests(unittest.TestCase):
             if role.name not in {"dev-documentation-writer", "dev-artifact-reviewer"}:
                 self.assertTrue(pattern_skills.isdisjoint(role.skills))
 
-    def test_quarkus_concerns_are_separate_and_detection_backed(self) -> None:
+    def test_quarkus_persistence_concerns_are_split_and_detection_backed(self) -> None:
         expected = {
             "quarkus": (
                 "Framework Baseline",
@@ -1520,8 +1524,12 @@ class BundleContentTests(unittest.TestCase):
                 "references/design-principles-quarkus.md",
             ),
             "quarkus-persistence": (
-                "Persistence Model",
+                "Shared Persistence Boundary",
                 "references/persistence-guidelines-quarkus.md",
+            ),
+            "hibernate-orm-panache": (
+                "Blocking Persistence Boundary",
+                None,
             ),
             "quarkus-testing": (
                 "Test Selection",
@@ -1534,8 +1542,14 @@ class BundleContentTests(unittest.TestCase):
                 skill_root = SKILLS_ROOT / skill_name
                 skill_text = (skill_root / "SKILL.md").read_text(encoding="utf-8")
                 self.assertIn(boundary_phrase, skill_text)
-                self.assertTrue((skill_root / reference_path).is_file())
+                if reference_path is not None:
+                    self.assertTrue((skill_root / reference_path).is_file())
                 self.assertTrue((skill_root / "detection.yaml").is_file())
+
+        quarkus_text = (SKILLS_ROOT / "quarkus-persistence" / "SKILL.md").read_text(encoding="utf-8")
+        panache_text = (SKILLS_ROOT / "hibernate-orm-panache" / "SKILL.md").read_text(encoding="utf-8")
+        self.assertIn("Route stack-specific entity, repository, query, and transaction work", quarkus_text)
+        self.assertIn("Do not use this skill for Hibernate Reactive with Panache", panache_text)
 
     def test_liquibase_guidance_is_portable_and_detection_backed(self) -> None:
         skill_root = SKILLS_ROOT / "liquibase"

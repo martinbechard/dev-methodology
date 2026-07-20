@@ -1,28 +1,26 @@
 ---
 name: quarkus-persistence
-description: Implement, test, diagnose, or review Quarkus Hibernate ORM, Hibernate Reactive, Panache entities and repositories, queries, transactions, fetch plans, pagination, locking, schema integration, and database behavior.
+description: Implement, test, diagnose, or review Quarkus Hibernate ORM, Hibernate Reactive, Panache entities and shared persistence integration while limiting this skill to stack selection, datasource and persistence-unit alignment, schema ownership, database fidelity, and specialized companion routing.
 metadata:
   category: stack-and-domain
 ---
 
 # Quarkus Persistence
 
-Combine with Quarkus, Java, and SQL. Use Quarkus Design or Java Design when choosing aggregate boundaries, active record versus repositories, persistence abstractions, or transaction ownership.
+Combine with Quarkus, Java, and SQL. Use Quarkus Design or Java Design when choosing aggregate boundaries, persistence abstractions, or transaction ownership.
 
-## Persistence Model
+## Persistence Stack
 
-- Identify standard Hibernate ORM with JDBC or Hibernate Reactive with reactive drivers before selecting APIs, annotations, transaction behavior, and test support.
+- Inspect the owning extensions and datasource configuration before selecting standard Hibernate ORM with JDBC or Hibernate Reactive with reactive drivers.
 - Do not introduce Hibernate Reactive only because the REST layer is reactive. Use it when the complete data path and workload justify non-blocking high concurrency.
-- Choose Panache active record or repository style from the application's ownership and testability needs, then use that style consistently within a capability.
+- Route stack-specific entity, repository, query, and transaction work to the pertinent companion skill selected from source evidence.
 
-## Persistence Coding
+## Shared Persistence Boundary
 
-- Align entities, identifiers, relationships, converters, constraints, persistence units, and database versions with the migration-owned schema.
-- Make fetch plans and projections explicit from use-case result shapes; prevent unbounded results and N plus one access with measured queries.
-- Bound and deterministically order list queries. Choose paging, ranges, or keyset behavior from scale and public contract needs.
-- Put writes and multi-query operations inside the transaction model owned by the selected blocking or reactive stack.
-- Use locking, flushing, batching, and retries only with an explicit concurrency or immediate-validation contract.
-- Verify mappings, queries, migrations, transactions, and concurrency against the production database engine when dialect behavior matters.
+- Align datasources, entity packages, persistence units, mappings, constraints, and database versions with the migration-owned schema.
+- Keep blocking and reactive execution and transaction models distinct across each workflow.
+- Treat migrations as the production schema authority and avoid destructive automatic schema generation in production.
+- Verify mappings, migrations, transaction boundaries, and database-specific behavior against a sufficiently faithful database engine.
 
 Read [Quarkus Persistence Guidelines](references/persistence-guidelines-quarkus.md) when implementation or review needs detailed rules.
 

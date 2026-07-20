@@ -982,7 +982,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "modelJudgeNotRequiredAgentCount": 0,
     "modelJudgeNotRequiredSkillCount": 21,
     "modelJudgePendingAgentCount": 27,
-    "modelJudgePendingSkillCount": 92,
+    "modelJudgePendingSkillCount": 93,
     "negativeCaseBackedSkillCount": 0,
     "ordinaryLocalCaseCount": 7,
     "pairedControlsExecutableSkillCount": 0,
@@ -994,7 +994,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "positiveSecurityContainedSkillCount": 0,
     "positiveStaleByDigestSkillCount": 0,
     "positiveVerifiedSkillCount": 0,
-    "probeDeclaredSkillCount": 113,
+    "probeDeclaredSkillCount": 114,
     "scenarioDeclaredAgentCount": 27,
     "securityContainedAgentCount": 0,
     "securityContainedRunCount": 0,
@@ -1003,7 +1003,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "staleByDigestRunCount": 0,
     "staleByDigestSkillCount": 0,
     "structuralAgentCount": 27,
-    "structuralSkillCount": 113,
+    "structuralSkillCount": 114,
     "verifiedAgentCount": 0,
     "verifiedRunCount": 0,
     "verifiedSkillCount": 0,
@@ -4944,6 +4944,92 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "detection": null,
       "executedCases": [],
       "id": "github-issues-backlog",
+      "judgePassedCases": [],
+      "securityContainedCases": [],
+      "verifiedCases": []
+    },
+    {
+      "category": "stack-and-domain",
+      "coverage": {
+        "catalogFixtureBacked": false,
+        "evaluationCategory": "stack-and-domain",
+        "executableCases": [],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "pending",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": false,
+        "positiveCaseBackedCases": [],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
+          "probe-hibernate-orm-panache"
+        ],
+        "scenarioAssociations": [
+          "dev-code-reviewer-boundary",
+          "dev-coder-happy"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "code-delivery"
+        ]
+      },
+      "declaredCases": [],
+      "detection": {
+        "activation": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "fileExtension": ".java"
+                },
+                {
+                  "anyOf": [
+                    {
+                      "owningContentPattern": {
+                        "contains": "quarkus-hibernate-orm-panache",
+                        "glob": "pom.xml"
+                      }
+                    },
+                    {
+                      "owningContentPattern": {
+                        "contains": "quarkus-hibernate-orm-panache",
+                        "glob": "build.gradle*"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "capabilities": [
+          "persistence-framework"
+        ],
+        "companions": [
+          "quarkus-persistence"
+        ],
+        "kind": "technology",
+        "label": "Hibernate ORM With Panache",
+        "priority": 100,
+        "requiredWhenDetected": true,
+        "selection": "additive",
+        "skill": "hibernate-orm-panache"
+      },
+      "executedCases": [],
+      "id": "hibernate-orm-panache",
       "judgePassedCases": [],
       "securityContainedCases": [],
       "verifiedCases": []

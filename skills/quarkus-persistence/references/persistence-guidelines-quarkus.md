@@ -12,24 +12,19 @@
 - Align table, column, constraint, precision, scale, temporal, enumeration, and converter mappings with the migration-owned schema.
 - Choose identifiers from database, API, batching, sharding, and lifecycle requirements rather than framework convenience alone.
 - Keep relationship ownership, cascades, orphan removal, and both sides of bidirectional associations deliberate and synchronized.
-- Attach every entity and dependent mapped type consistently to the intended persistence unit. Panache entities belong to one persistence unit.
+- Attach every entity and dependent mapped type consistently to the intended persistence unit.
 - Keep equality, hashing, string representation, and serialization safe across transient, managed, detached, proxied, and lazy-loaded states.
 
-## Panache Style And Queries
+## Specialized Persistence Guidance
 
-- Choose active record when entity-owned persistence behavior fits the domain and static access is acceptable; choose repositories when injected persistence boundaries improve separation or testability.
-- Keep one style consistent within a capability and avoid parallel DAO layers that duplicate Panache behavior.
-- Bind external values as parameters and allowlist dynamic identifiers or sort fragments.
-- Use projections and explicit fetch plans for large or read-only results and verify N plus one claims through executed SQL.
-- Bound all list results, define deterministic ordering, and do not mix Panache range and page state accidentally.
-- Close standard ORM streams within their transaction and session scope.
+- Load the focused companion selected by the owning extension before applying entity, repository, query, paging, projection, flush, or locking rules.
+- Use Hibernate ORM With Panache only for the blocking quarkus-hibernate-orm-panache extension. Keep other persistence-stack behavior with its matching companion.
+- Keep shared datasource, persistence-unit, migration, schema, and database-fidelity decisions in this foundation rather than duplicating them across companions.
 
-## Transactions And Concurrency
+## Transaction Model
 
 - Wrap writes and multi-query operations in the transaction mechanism owned by the selected stack.
-- For Hibernate Reactive, use one consistent reactive transaction approach and keep the returned reactive value inside its session and transaction lifecycle.
-- Flush only when a constraint, generated value, optimistic-lock failure, query ordering, or external boundary requires immediate feedback.
-- Use optimistic versioning or pessimistic locks only with a defined contention, timeout, conflict, and retry contract.
+- Keep blocking and reactive transaction models distinct within each workflow and route their detailed behavior to the matching companion.
 - Keep remote calls and irreversible side effects outside local database transactions unless a durable coordination mechanism owns recovery.
 
 ## Schema And Verification

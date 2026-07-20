@@ -1232,15 +1232,29 @@ probes:
     source: skills/quarkus-persistence/SKILL.md
     evaluationCategory: stack-and-domain
     evaluationKind: activation-and-behavior
-    activationCondition: Work changes, reviews, tests, or diagnoses Quarkus Hibernate ORM, Hibernate Reactive, Panache entities, repositories, queries, or transactions.
-    negativeCondition: SQL-only or non-Hibernate persistence does not activate Panache, CDI session, or Quarkus transaction guidance.
-    expectedBehavior: Identify the blocking or reactive stack, preserve mapping and persistence-unit contracts, select active record or repositories deliberately, bound and optimize queries, match transaction context to the stack, and verify real database behavior.
+    activationCondition: Work changes, reviews, tests, or diagnoses shared Quarkus Hibernate ORM or Hibernate Reactive stack selection, datasource, persistence-unit, migration, schema, database-fidelity, or specialized-companion routing behavior.
+    negativeCondition: Detailed blocking Panache entity, repository, query, paging, projection, flush, or locking work requires the Hibernate ORM With Panache companion rather than this foundation alone.
+    expectedBehavior: Identify the blocking or reactive stack, align datasources, persistence units, mappings, migrations, schemas, and database versions, keep execution models distinct, route stack-specific behavior to the matching companion, and verify shared persistence behavior against a sufficiently faithful database.
     judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, operation-coverage, actor-boundary-coverage], modelRubric: source-faithfulness}
     scenarioAssociations: [dev-coder-happy, dev-code-reviewer-boundary]
     workflowAssociations: [code-delivery]
     executableCases: []
     coverageStatus: declared
-    ablation: {omitTargetSkill: true, wrongSkillControl: react-vite-renderer}
+    ablation: {omitTargetSkill: true, wrongSkillControl: hibernate-orm-panache}
+  - id: probe-hibernate-orm-panache
+    skill: hibernate-orm-panache
+    source: skills/hibernate-orm-panache/SKILL.md
+    evaluationCategory: stack-and-domain
+    evaluationKind: activation-and-behavior
+    activationCondition: Work implements, reviews, tests, or diagnoses blocking Quarkus Hibernate ORM with Panache entities, repositories, identifiers, queries, paging, projections, transactions, flushing, locking, or persistence-unit behavior.
+    negativeCondition: Hibernate Reactive with Panache, plain Hibernate ORM without the Panache extension, and shared datasource or schema concerns alone do not activate blocking Panache guidance.
+    expectedBehavior: Confirm the blocking Hibernate ORM with Panache extension and JDBC path, choose active record or repository style deliberately, preserve identifier and mapping contracts, bind and bound queries, keep page and range state distinct, control transactions, flushing, and locks explicitly, and verify database and executed-SQL behavior.
+    judgePlan: {deterministicChecks: [skill-read-trace, required-command-outcome, operation-coverage, actor-boundary-coverage], modelRubric: source-faithfulness}
+    scenarioAssociations: [dev-coder-happy, dev-code-reviewer-boundary]
+    workflowAssociations: [code-delivery]
+    executableCases: []
+    coverageStatus: declared
+    ablation: {omitTargetSkill: true, wrongSkillControl: quarkus-persistence}
   - id: probe-quarkus-testing
     skill: quarkus-testing
     source: skills/quarkus-testing/SKILL.md

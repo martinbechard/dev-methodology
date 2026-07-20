@@ -308,6 +308,47 @@ window.DEV_METHODOLOGY_TECHNOLOGY_SKILL_DETECTION_REGISTRY = {
       "activation": {
         "anyOf": [
           {
+            "allOf": [
+              {
+                "fileExtension": ".java"
+              },
+              {
+                "anyOf": [
+                  {
+                    "owningContentPattern": {
+                      "contains": "quarkus-hibernate-orm-panache",
+                      "glob": "pom.xml"
+                    }
+                  },
+                  {
+                    "owningContentPattern": {
+                      "contains": "quarkus-hibernate-orm-panache",
+                      "glob": "build.gradle*"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "capabilities": [
+        "persistence-framework"
+      ],
+      "companions": [
+        "quarkus-persistence"
+      ],
+      "kind": "technology",
+      "label": "Hibernate ORM With Panache",
+      "priority": 100,
+      "requiredWhenDetected": true,
+      "selection": "additive",
+      "skill": "hibernate-orm-panache"
+    },
+    {
+      "activation": {
+        "anyOf": [
+          {
             "fileExtension": ".java"
           }
         ]
