@@ -1,6 +1,6 @@
 # Document The Cross-Harness Skill Lifecycle
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
@@ -11,7 +11,7 @@ Type: Feature
 - Worktree: /Users/martinbechard/.codex/worktrees/ac58/dev-methodology.
 - Dependencies: replace-router-with-setup-detector and verify-codex-skill-activation are completed.
 - Preserved evidence: source commit 3e26250447dd5bc095c4ceef22de3beb093e1fd4 within accepted cumulative candidate 67ee16ef002d297e755a6284fe20afde4457d4f2; semantically reconcile its four cross-harness paths against current main rather than replaying the combined candidate.
-- Phase: current-main provenance reconciliation, focused documentation review/verification, direct integration, and terminal completion.
+- Phase: completed on main; terminal archive and cleanup handoff recorded.
 
 ## Summary
 
@@ -59,6 +59,17 @@ See the series [index](index.md).
 - Sweep for obsolete router terminology and contradictory preload claims.
 - Verify every external mechanism claim against a primary source.
 - Perform an independent documentation review using the applicable review checklist.
+
+## Completion Evidence
+
+- Preserved source provenance: cross-harness source commit 3e26250447dd5bc095c4ceef22de3beb093e1fd4 was semantically reconciled from accepted cumulative candidate 67ee16ef002d297e755a6284fe20afde4457d4f2 instead of being rebuilt or discarded.
+- Accepted candidate: f7d202bfd95e5b28e49b8d4ed9e1ced6b722eb85 on codex/document-cross-harness-skill-lifecycle. The earlier incorrectly expanded f7d202b hash was rejected and is not delivery evidence.
+- Fresh independent documentation review: ACCEPT with no findings. It confirmed the single authoritative lifecycle owner, cross-harness mechanism accuracy, sibling-page consistency, five resolving primary-source URLs, and 42 changed-page local paths and fragments with zero failures.
+- Focused verification: four lifecycle documentation tests and five selected bundle, generator, and documentation-owner tests passed; scripts/build-skill-docs.py --check reported current output; git diff checks passed; no governed definition or generated-definition mirror changed. The complete agent catalog was intentionally not run for this bounded documentation item.
+- Main integration: cbd37825c7ca7328f4b3538087974cdb2beb0a60. The same nine focused tests, documentation freshness check, and diff hygiene passed on main.
+- Cleanup eligibility: the private branch and worktree are clean and patch-equivalent to main after cherry-pick integration. Per the parent cleanup rule, no zero-byte topology merge is created; the parent rebases the clean branch onto current main so Git skips the applied patch, then removes the worktree and deletes the ancestor branch non-forcing.
+- Integration claim: integrate-cross-harness-lifecycle-019f7e8f acquired event c98f904e-e57d-4318-9a16-ec565023ac98 and released cleanly at event 3dbcc11d-586e-45e2-9b9c-841f1b0cb0f0. The initial primary-worktree contention attempt was preserved at event 9d9c1fe4-a210-41c1-a7c0-249ec3d12961 and resolved by direct release notification rather than isolated integration.
+- Terminal backlog claim: complete-cross-harness-lifecycle-019f7e8f acquired exact active and completed paths at event 8185b759-dcb0-41f5-ada0-e88e7bcb814e; its clean release follows this archive commit and is reported in the terminal handoff.
 
 ## Notes
 
