@@ -1,8 +1,15 @@
 # Enforce Behavioral Regression Assertions
 
-Status: Blocked
+Status: Running
 
 Type: Defect
+
+## Current Resumption Ownership
+
+- Canonical Dev Orchestrator task: 019f7e25-67ed-7dd2-bbae-00dc3b80f31f.
+- Parent task: 019f77f4-c4bd-7c91-b197-c987a7beb838.
+- Phase: reconcile the accepted implementation already on main, run only missing focused acceptance evidence, and complete the item without replaying rejected lineage.
+- Superseded implementation commits b91eecde8d1daec285b749713db2d07efd4750e5, 938ea228d0275a3563c0ad01840dfb2b1bfed622, and 3f63321c36347ae4df68e181bd1fedec2e36d149 remain recovery evidence only.
 
 ## Running Ownership
 
