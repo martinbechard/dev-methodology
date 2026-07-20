@@ -118,6 +118,8 @@ def _assert_result_inventory(test: unittest.TestCase, result_text: str) -> None:
         result_text,
         OPEN_QUESTION_INVENTORY_LABEL,
     )
+    _assert_inventory_scope(test, conclusions)
+    _assert_inventory_scope(test, open_questions)
     with test.subTest(result_inventory="conclusion-entry-present"):
         test.assertTrue(conclusions)
     with test.subTest(result_inventory="conclusion-retry-delays"):
@@ -139,6 +141,18 @@ def _assert_result_inventory(test: unittest.TestCase, result_text: str) -> None:
         )
     with test.subTest(result_inventory="open-question-provenance"):
         test.assertIn("raw/processed/retry-policy.md", open_questions)
+
+
+def _assert_inventory_scope(test: unittest.TestCase, inventory: str) -> None:
+    """Require page and source scope, with stricter wording for an explicit None."""
+    normalized = " ".join(inventory.lower().split())
+    test.assertTrue(normalized)
+    if re.search(r"(?:^|\n)\s*[-*]?\s*none\s*[.:;]", inventory, re.IGNORECASE):
+        test.assertRegex(normalized, r"assessed source.{0,80}raw/")
+        test.assertRegex(normalized, r"assessed page scope.{0,80}docs/wiki")
+        return
+    test.assertIn("raw/", normalized)
+    test.assertIn("docs/wiki/", normalized)
 
 
 def _markdown_section(page_text: str, heading: str) -> str:
@@ -184,6 +198,21 @@ def _assert_collision_no_change(
     for surface in ("topic page", "digest", "source link", "code", "test"):
         with test.subTest(collision_surface=surface):
             test.assertIn(surface, normalized)
+
+
+def _assert_collision_result_inventory(
+    test: unittest.TestCase, result_text: str
+) -> None:
+    """Require scoped empty conclusions and one fact-bearing collision question."""
+    conclusions = _labeled_inventory(result_text, CONCLUSION_INVENTORY_LABEL)
+    open_questions = _labeled_inventory(result_text, OPEN_QUESTION_INVENTORY_LABEL)
+    _assert_inventory_scope(test, conclusions)
+    _assert_inventory_scope(test, open_questions)
+    test.assertRegex(conclusions, r"\bnone\b")
+    test.assertNotRegex(open_questions, r"\bnone\b")
+    test.assertIn("raw/provider.md", conclusions)
+    test.assertIn("raw/provider.md", open_questions)
+    test.assertRegex(open_questions, r"collision|naming|disposition|authority")
 
 
 def _provider_routing_pages(
@@ -596,14 +625,32 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
         """Structured inventory variants remain valid when they carry required facts."""
         result_text = (
             "## Preserved substantiated content\n\n"
-            "- Idempotent reads use fixed retry delays of 200 and 500 milliseconds. "
-            "Source: raw/processed/retry-policy.md.\n\n"
+            "- docs/wiki/retry-policy/backoff.md: idempotent reads use fixed retry "
+            "delays of 200 and 500 milliseconds. Source: "
+            "raw/processed/retry-policy.md.\n\n"
             "## Page-local unresolved point\n\n"
             "- Deployment jitter remains unresolved because there is no deployment-policy "
             "or implementation evidence. Page: docs/wiki/retry-policy/backoff.md; "
             "source: raw/processed/retry-policy.md.\n"
         )
         _assert_result_inventory(self, result_text)
+
+    def test_none_inventory_requires_assessed_source_and_page_scope(self) -> None:
+        """None is valid only with explicit assessed raw source and wiki page scope."""
+        valid = (
+            "- None. Assessed source: raw/provider.md. "
+            "Assessed page scope: docs/wiki; no pages changed."
+        )
+        _assert_inventory_scope(self, valid)
+        for invalid in (
+            "",
+            "- None.",
+            "- None. Assessed source: raw/provider.md.",
+            "- None. Assessed page scope: docs/wiki.",
+        ):
+            with self.subTest(invalid=invalid):
+                with self.assertRaises(AssertionError):
+                    _assert_inventory_scope(self, invalid)
 
     def test_path_aliases_canonicalize_before_runtime_ownership_comparison(self) -> None:
         """macOS /var and /private/var names identify the same captured repository."""
@@ -616,9 +663,16 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
         """A semantic no-change statement must still enumerate every protected surface."""
         result_text = (
             "Queue unchanged. No product or durable wiki content changed. "
-            "No topic page, digest, source link, code, or test was changed."
+            "No topic page, digest, source link, code, or test was changed.\n\n"
+            "## Substantiated Conclusions\n\n"
+            "- None. Assessed source: raw/provider.md. "
+            "Assessed page scope: docs/wiki; no pages changed.\n\n"
+            "## Open Questions\n\n"
+            "- docs/wiki/ page scope for raw/provider.md: the destination collision "
+            "requires naming or disposition authority."
         )
         _assert_collision_no_change(self, result_text)
+        _assert_collision_result_inventory(self, result_text)
 
     def test_provider_page_contract_is_bound_to_one_committed_page(self) -> None:
         """Provider conclusions and their open question must share one committed page."""
@@ -807,10 +861,12 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
             "evaluationResultText": (
                 "Interruption continuation completed.\n\n"
                 "## Ingested Conclusion\n\n"
-                "- Idempotent reads use retry delays of 200 and 500 milliseconds.\n\n"
+                "- docs/wiki/retry-policy/fixed-retry-backoff.md: idempotent reads "
+                "use retry delays of 200 and 500 milliseconds. Source: "
+                "raw/processed/retry-policy.md.\n\n"
                 "## Open Questions\n\n"
-                "- Jitter lacks authoritative evidence in "
-                "raw/processed/retry-policy.md.\n"
+                "- docs/wiki/retry-policy/fixed-retry-backoff.md: jitter lacks "
+                "authoritative evidence in raw/processed/retry-policy.md.\n"
             ),
             "verifierControlTrace": trace,
             "dependencySessionIds": ["verifier-0", "verifier-1"],
@@ -1114,6 +1170,7 @@ class WikiIngesterLiveNeighborTests(unittest.TestCase):
             ):
                 with self.subTest(result_evidence=evidence):
                     self.assertRegex(result_text, pattern)
+            _assert_result_inventory(self, result_text)
             self.assertIn(str(result["head"]), result["targetTerminalResponse"])
             _validate_claim_events(self, result, result["targetTerminalResponse"])
 
@@ -1145,6 +1202,7 @@ class WikiIngesterLiveNeighborTests(unittest.TestCase):
                 with self.subTest(result_evidence=evidence):
                     self.assertRegex(result_text, pattern)
             _assert_collision_no_change(self, result_text)
+            _assert_collision_result_inventory(self, result_text)
             self.assertIn(str(result["head"]), result["targetTerminalResponse"])
             _validate_claim_events(self, result, result["targetTerminalResponse"])
 
