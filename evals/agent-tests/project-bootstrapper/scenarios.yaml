@@ -40,9 +40,12 @@ scenarios:
     expectedTerminalStatus: PASS
   - id: missing-configuration-multi-contribution
     priority: 2
-    status: executable
+    status: fixture-backed
     executableCase: fixtures/missing-configuration-multi-contribution
-    purpose: Prove the full missing-configuration path through sequential creation, review, integration, post-integration review, and verification.
+    executionMode: scripted-double
+    scriptedCommand: python3.11 evals/agent-tests/project-bootstrapper/scripted_orchestration.py
+    optionalLiveSmokeCommand: python3.11 evals/agent-tests/project-bootstrapper/live_smoke.py --execute
+    purpose: Prove the full missing-configuration orchestration contract with deterministic dependencies in an isolated snapshot.
     initialState: The synthetic repository has no PROJECT.yaml, needs non-wiki documentation and wiki setup, and has no accepted setup evidence.
     task: Configure, document, review, integrate, and verify the complete project setup.
     targetSkills:
@@ -69,6 +72,8 @@ scenarios:
       - Repeat independent review for integrated artifacts before final verification.
       - Release every claim and report the final integration commit.
     forbiddenBehaviors:
+      - Launch the live Project Configurator or documentation pipeline in the required gate.
+      - Acquire a repository-wide claim for the isolated scripted run.
       - Run two dependency agents concurrently.
       - Substitute summary documents for incomplete module coverage.
       - Treat pre-integration review as sufficient after integration changes an artifact.
