@@ -2332,6 +2332,46 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         ):
             runner._audit_report((run,), report)
 
+    def test_dependency_receipt_schema_requires_and_rejects_missing_lane(self) -> None:
+        """Dependency receipts cannot satisfy the schema or report contract without a lane."""
+        handoff_schema = runner._coordinator_schema()["properties"]["runs"]["items"][
+            "properties"
+        ]["scenarioResults"]["items"]["properties"]["handoffReceipts"]["items"]
+        self.assertIn("lane", handoff_schema["required"])
+
+        suite = self._suite("dependency-routing")
+        scenario = dict(suite.scenarios[0])
+        scenario["requiredHandoffReceiptFields"] = list(handoff_schema["required"])
+        scenario["requiredHandoffReceiptLanes"] = ["source"]
+        suite = runner._Suite(
+            suite.suite_id,
+            suite.priority,
+            suite.path,
+            suite.manifest,
+            (scenario,),
+        )
+        run = runner._RunSpec(suite=suite, scenario_ids=("happy",))
+        report = {
+            "runs": [self._suite_report("dependency-routing", "BLOCKED")],
+            "batchCleanup": "clean",
+            "residualRisk": "",
+        }
+        report["runs"][0]["scenarioResults"][0]["handoffReceipts"] = [
+            {
+                "role": {"invocation": "dev-coder", "sessionIds": ["source-session"]},
+                "commit": {"repository": "candidate", "sha": "abc123"},
+                "review": {"sessionIds": ["review-session"]},
+                "verification": {"sessionIds": ["verification-session"]},
+                "claimRelease": {"eventIds": ["release-event"]},
+            }
+        ]
+
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "dependency-routing:happy missing handoff receipt lane source",
+        ):
+            runner._audit_report((run,), report)
+
     @staticmethod
     def _dependency_routing_suite(path: Path) -> object:
         """Build the smallest suite that exercises fixture-contract validation."""
