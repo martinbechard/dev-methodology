@@ -306,9 +306,24 @@ class DirectMainCompletionContractTests(unittest.TestCase):
             "Candidate",
         )
         self.repository.git("switch", "main")
+        self.repository.commit_file(
+            "unrelated.txt",
+            "main advance\n",
+            "Advance main before replay",
+        )
         self.repository.git("cherry-pick", source_commit)
         integration_commit = self.repository.rev_parse("HEAD")
         self.assertNotEqual(source_commit, integration_commit)
+        self.assertNotEqual(
+            0,
+            self.repository.git(
+                "merge-base",
+                "--is-ancestor",
+                source_commit,
+                "main",
+                check=False,
+            ).returncode,
+        )
 
         without_mapping = observe_direct_main_completion(
             self.repository,
