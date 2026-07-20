@@ -376,6 +376,7 @@ packs:
       - probe-create-backlog
       - probe-create-file-work-item
       - probe-create-github-work-item
+      - probe-create-gitlab-work-item
       - probe-create-azure-devops-work-item
       - probe-create-jira-work-item
       - probe-file-based-backlog
@@ -383,6 +384,7 @@ packs:
       - probe-manage-backlog
       - probe-manage-file-work-items
       - probe-manage-github-work-items
+      - probe-manage-gitlab-work-items
       - probe-manage-azure-devops-work-items
       - probe-manage-jira-work-items
       - probe-organise-project-files
@@ -442,5 +444,6 @@ packs:
       - backlog-lifecycle
       - github-work-item-provider
       - provider-placeholder-matrix
+      - file-work-item-no-mutation
     caseCoverageStatus: partial
     coverageStatus: declared

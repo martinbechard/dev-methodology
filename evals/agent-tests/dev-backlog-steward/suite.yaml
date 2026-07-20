@@ -6,10 +6,10 @@ target:
   conceptualRole: agents/roles/dev-activities/dev-backlog-steward.role.yaml
   nativeAgent: generated/adapters/codex/agents/dev-backlog-steward.toml
   repositoryMutation: conditional
-  requiredSkills: [manage-file-work-items, structured-explanation]
+  requiredSkills: [manage-backlog, structured-explanation]
   conditionalSkills:
     organise-project-files: Backlog work creates a file or directory.
-    create-file-work-item: An incoming file-provider request becomes a typed item.
+    create-backlog: An incoming request becomes a typed item.
     agent-claim: Work is claimed, resumed, or exclusively assigned.
   allowedAgentDependencies: []
   requiredOutputs: [backlog item or status update, ownership record, completion or blocked summary]

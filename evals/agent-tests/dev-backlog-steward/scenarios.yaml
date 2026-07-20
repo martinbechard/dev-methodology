@@ -9,7 +9,7 @@ scenarios:
     purpose: Create a dispatchable typed item and establish recoverable ownership.
     initialState: A directly authorized request has no backlog representation or active owner.
     task: Create and claim a feature item for webhook idempotency.
-    targetSkills: [organise-project-files, create-file-work-item, manage-file-work-items, agent-claim, structured-explanation]
+    targetSkills: [organise-project-files, create-backlog, manage-backlog, agent-claim, structured-explanation]
     allowedAgentDependencies: []
     requiredBehaviors: [Use the repository backlog backend, Distinguish direct authorization from independently identified ideas, Record Ready before the requested claim transition, Record requirements acceptance and verification, Acquire exclusive ownership, Report the next runnable step]
     forbiddenBehaviors: [Create a shadow backlog, Record Status Proposed, Make an unauthorized independently identified idea dispatchable, Omit claim evidence, Start implementation]
@@ -23,7 +23,7 @@ scenarios:
     purpose: Reconcile interrupted work from durable evidence without losing history.
     initialState: An active investigation has a stale claim, completed result record, and passing verification evidence.
     task: Recover the item and archive it if completion is supported.
-    targetSkills: [manage-file-work-items, agent-claim, structured-explanation]
+    targetSkills: [manage-backlog, agent-claim, structured-explanation]
     allowedAgentDependencies: []
     requiredBehaviors: [Reconcile item claim logs and result, Preserve recovery evidence, Record completion, Release stale ownership and archive]
     forbiddenBehaviors: [Archive from prose alone, Delete history, Leave the claim active]
@@ -37,7 +37,7 @@ scenarios:
     purpose: Preserve a blocked item with an exact unresolved dependency.
     initialState: An active item depends on an unavailable external schema decision and has incomplete acceptance evidence.
     task: Reconcile the item status for handoff.
-    targetSkills: [manage-file-work-items, agent-claim, structured-explanation]
+    targetSkills: [manage-backlog, agent-claim, structured-explanation]
     allowedAgentDependencies: []
     requiredBehaviors: [Record the exact blocker, Preserve ownership semantics, Identify the decision and next transition, Keep the item recoverable]
     forbiddenBehaviors: [Mark complete, Archive unresolved work, Invent the schema decision]

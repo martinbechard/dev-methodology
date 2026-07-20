@@ -94,6 +94,7 @@ If closed items remain in active folders, explicit status is the open or closed 
 - Apply configured priority; otherwise prefer defects, features, investigations, then analyses.
 - Exclude User Action Required and Holding from runnable selection and unattended counts.
 - Do not dispatch items with unmet dependencies or duplicate ownership.
+- Keep each dispatched item isolated so concurrent work does not share mutable workspace state.
 - Keep delivery ownership isolated from backlog mutation ownership.
 - Do not claim, dispatch, implement, or resolve user-action-required work before the user answers its recorded question.
 
@@ -163,6 +164,8 @@ Record the destination as the terminal provider_reference. Preserve claims, revi
 ## Reporting
 
 Return provider file; canonical active or archive path; counts by lifecycle state; separate User Action Required questions; next runnable items; dependencies and blockers; owner and canonical task; delivery, review, check, main-observation, and archive evidence; claim and commit references; invalid or duplicate records; and the next safe action.
+
+Keep the report grounded in current files and state, not prior conversation memory.
 
 ## Migration
 

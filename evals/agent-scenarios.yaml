@@ -58,6 +58,7 @@ fixtureProfiles:
     purpose: Typed active, holding, completed, and failed backlog trees with claims, dependencies, and result evidence.
     executableCases:
       - backlog-lifecycle
+      - file-work-item-no-mutation
     coverageStatus: fixture-backed
   - id: multi-contribution-integration
     purpose: Several committed and uncommitted worktrees with claims, dependency order, conflicts, and verification commands.
@@ -242,14 +243,19 @@ agents:
       - id: dev-backlog-steward-happy
         kind: happy-path
         fixtureProfile: backlog-state-machine
-        promptIntent: Create and claim a typed feature item through the configured file-based or GitHub-issues backlog with dependencies, acceptance criteria, and verification expectations.
-        expectedOutcome: A dispatchable authoritative item, ownership record, and next runnable step in the configured backend without a duplicate shadow queue.
+        promptIntent: Create and manage typed work through the configured provider, including file-provider duplicate and series placement, lifecycle, recovery, completion, failure, and archive transitions.
+        expectedOutcome: One authoritative provider record with durable source, dependency, ownership, claim, delivery, verification, recovery, completion or failure, and archive evidence without a duplicate shadow queue.
         requiredBehaviors:
           - Use only the configured backend and ask when no backend is selected.
+          - For provider file, create only under backlog in the primary main worktree through a short backlog claim.
+          - Detect matching active items before creation and preserve related-series index and child links.
           - Record explicit Ready or claimed state and dependency evidence.
+          - Keep dispatched mutable work isolated from other concurrent items and separate from backlog mutation ownership.
+          - Reconcile lifecycle, recovery, review, checks, main observation, completion, failure, and archive evidence from current files and state.
           - Leave enough context for another contributor to recover the work.
         forbiddenBehaviors:
           - Create a duplicate file and issue for the same item.
+          - Mutate a file-backed item from an isolated or non-main worktree.
           - Claim a holding or dependency-blocked item as runnable.
         judgePlan:
           deterministicChecks:
@@ -280,6 +286,29 @@ agents:
         executableCases:
           - backlog-lifecycle
           - provider-placeholder-matrix
+        coverageStatus: fixture-backed
+      - id: dev-backlog-steward-provider-boundary
+        kind: boundary-failure
+        fixtureProfile: backlog-state-machine
+        promptIntent: Evaluate file-provider create, transition, and archive requests when another provider is selected and primary-main authority is unavailable.
+        expectedOutcome: BLOCKED evidence for provider mismatch, isolated and non-main authority, PRIMARY_REQUIRED handoff, and zero backlog or shadow-provider mutations.
+        requiredBehaviors:
+          - Read effective provider and worktree authority from current fixture state.
+          - Block every file mutation and report the exact next safe handoff.
+          - Preserve the existing item and all provider boundaries.
+        forbiddenBehaviors:
+          - Create, transition, or archive a backlog file.
+          - Create a shadow provider issue or substitute queue.
+          - Infer authority from the requested operation.
+        judgePlan:
+          deterministicChecks:
+            - no-forbidden-mutation
+            - allowed-paths-only
+            - tool-authority
+            - artifact-structure
+          modelRubric: workflow-quality
+        executableCases:
+          - file-work-item-no-mutation
         coverageStatus: fixture-backed
     coverageStatus: fixture-backed
   - id: dev-browser-operator

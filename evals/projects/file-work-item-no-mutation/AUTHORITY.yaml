@@ -1,0 +1,9 @@
+effectiveProvider: github
+currentWorktree: isolated
+currentBranch: feature/provider-boundary
+primaryMainAvailable: false
+requestedOperations:
+  - create backlog/feature-backlog/new-file-item.md
+  - transition backlog/feature-backlog/existing-file-item.md to RUNNING
+  - archive backlog/feature-backlog/existing-file-item.md as COMPLETED
+requiredDisposition: BLOCKED

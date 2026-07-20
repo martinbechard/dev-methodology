@@ -5183,6 +5183,29 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("code-review-evidence", review_case["requiredSkills"])
         self.assertEqual(3, len(review_case["requiredFindings"]))
 
+        file_boundary_case = by_id["file-work-item-no-mutation"]
+        self.assertEqual(
+            ["dev-backlog-steward-provider-boundary"],
+            file_boundary_case["agentScenarios"],
+        )
+        self.assertEqual([], file_boundary_case["fixtureBackedProbeClaims"])
+        self.assertEqual(["eval-result.md"], file_boundary_case["allowedWritePaths"])
+        self.assertEqual(
+            {"create-file-work-item", "manage-file-work-items"},
+            set(file_boundary_case["requiredSkills"]) - {"structured-explanation"},
+        )
+
+        probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
+        probes_by_id = {probe["id"]: probe for probe in probes["probes"]}
+        self.assertEqual(
+            "declared",
+            probes_by_id["probe-create-file-work-item"]["coverageStatus"],
+        )
+        self.assertEqual(
+            ["backlog-lifecycle"],
+            probes_by_id["probe-manage-file-work-items"]["executableCases"],
+        )
+
     def test_agent_owned_eval_suites_hardcode_steady_state_orchestration(self) -> None:
         """Agent-first suites must keep target, supervisor, Judge, skill, and concurrency contracts explicit."""
         index = load_yaml_object(AGENT_TEST_SUITES_ROOT / "suite-index.yaml")
