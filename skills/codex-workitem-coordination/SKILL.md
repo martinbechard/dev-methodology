@@ -141,6 +141,24 @@ Perform this baton lookup during every audit:
 
 The parent repairs missing notifications and baton deadlocks without transferring wake authority to a predecessor or child. After every audit, emit a concise user summary containing terminal throughput, flow throughput, both task averages, queue counts and claim state, named resources, task-list anomalies, stale heartbeats, structured claim refusals, shared bottlenecks, trend, baton result, cause, routing or concurrency adjustment, the next concurrency limit, and the supporting commits and release events.
 
+### Post-Facto Scope And Work Reduction Audit
+
+Treat claim reduction and targeted-work analysis as retrospective effectiveness practices, never as pre-dispatch, claim-acquisition, lifecycle, review, or verification gates. Do not delay ordinary narrow work to manufacture alternatives. Trigger this audit only after live evidence shows that a task held scope which delayed or blocked other work, or performed substantial broad work whose results were mostly unrelated to the changed surface.
+
+When a claim caused measurable contention or an avoidable baton wait:
+
+1. Record the oversized scope, affected tasks, wait duration or refusal evidence, and the work that actually required exclusivity.
+2. Identify three concrete ways the claim could be reduced, such as replacing a tree with exact files, splitting unrelated files and named resources into separate claims, or releasing a completed stage before reacquiring only the next shared resource.
+3. Compare the three options for ownership safety, preserved evidence, coordination cost, and expected throughput. Implement the best viable reduction for the resumed or next equivalent operation. If none is safe, retain the necessary scope and record why each reduction was rejected.
+
+When an available full suite, broad runner, or large workflow consumed substantial effort while most checks were not applicable:
+
+1. Record the broad command, duration or resource cost, relevant failures, and which evidence the work item actually required.
+2. Identify three concrete targeted alternatives, including existing selectors or focused tests, a new focused script or runner selector, and a smaller fixture or preflight that proves the same boundary without launching unrelated work.
+3. Compare evidence strength, false-negative risk, implementation cost, and reuse value. Implement the best viable targeted alternative before repeating the same broad work. Adding a focused script, test surface, fixture validator, or runner capability is valid optimization work when it preserves the required evidence.
+
+This audit improves subsequent execution; it does not retroactively invalidate completed evidence, authorize mutation, weaken a required final gate, or require three-option analysis for work that remained narrow and did not create measurable waste. Retain full-suite or full-catalog verification for the risk-proportionate or final-state gate that genuinely requires it.
+
 ## Claims, Isolation, And Shared Resources
 
 - Require every modifying owner to apply agent-claim before mutation and to inspect structured outcomes such as PRIMARY, ISOLATE, WAIT, PRIMARY_REQUIRED, ISOLATE_REQUIRED, and RECOVERY_REQUIRED.
