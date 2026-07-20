@@ -1,6 +1,6 @@
 # Add Direct-Main Completion Skill
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
@@ -11,6 +11,24 @@ Type: Feature
 - Worktree: /Users/martinbechard/.codex/worktrees/5785/dev-methodology.
 - Started from approved Ready commit 547e2159e5621351adb9a4e975b7659bc1993671.
 - Scope remains limited to the approved direct-main completion skill, its metadata, supported generated mirrors, and directly related non-governed tests and documentation.
+
+## Completion Evidence
+
+- Phase: Completed.
+- Accepted candidate: e8a25d9b3348673d4a6e967b3b69534c96f48850 on codex/add-direct-main-completion-skill.
+- Governed checks: both exact authorized paths returned ALLOWED_APPROVED_DEFINITION_CHANGE before mutation.
+- Independent methodology review: APPROVED after the disposable-repository coverage and deterministic non-ancestral replay corrections.
+- Independent verifier: VERIFIER PASS for the accepted candidate with seven disposable Git contract tests, two focused bundle tests, metadata freshness, skill-documentation freshness, support-checklist freshness, hierarchy freshness, generated attribution, and diff hygiene.
+- Integration claim: direct-main-completion-integration-019f7f8c acquired PRIMARY at event 6f014d25-6b72-46a8-9e8d-92d3731a157f on main base a07d4c8d81c57a77025e860ee05047a4d6c901b8 and released normally at event e43a3a6c-2b02-4f67-8933-23e3b401efd5.
+- Semantic integration mapping: 99661ff7a7a33770f9093cd6fd87450259f00940 to 41a9da8, e78c489f54bf54aa08d33ecc042ae2875b55b279 to e8a96f5, and e8a25d9b3348673d4a6e967b3b69534c96f48850 to final delivery commit 8e10117b0d695f12e5acc54576825566e2a3879b.
+- Main observation: 8e10117b0d695f12e5acc54576825566e2a3879b was observed on checked-out clean main and remains reachable from current main c2df2eaf1d4629df34e75a1c6896a2d401241c5a.
+- Current-main verification: nine focused tests pass; OpenAI metadata, skill documentation, agent-skill hierarchy, and support checklist are current; the accepted skill, metadata, and disposable Git test are byte-identical to current main; main is clean.
+- Validation: MCP YAML validation passed. MCP skill validation rejected repository source as outside configured installed skill roots, so no fallback bypass was attempted.
+- Review correction evidence: the contract tests cover direct primary delivery, isolated integration, unrelated main advances, unresolved and resolved conflicts, failed verification, missing publication authority, live claim blocking, non-ancestral patch-equivalent replay, provider handoff, and the unmerged-branch negative.
+- Integration contention: attempt 1 waited on split-github-integration-019f7f82 at event 860e22c3-cc38-41d9-987d-ec7126804abc; a release-baton retry returned ISOLATE_REQUIRED at event dcb8fc1d-0969-41b2-8e26-3ebf691bfc54 while GitHub closed its backlog; attempt 2 waited on azure-jira-placeholders-integration-019f7f8c at event c9945d9d-3313-463c-b877-a40bd865611d; the next clean baton acquired successfully.
+- Terminal backlog claim: direct-main-completion-backlog-019f7f8c acquired PRIMARY for only the active and completed paths at event 5aba46de-242e-4084-be4f-ce93f5f03771 after serialized predecessor releases. Its normal clean release follows this committed archive transaction.
+- Cleanup eligibility: the private worktree is clean at e8a25d9b3348673d4a6e967b3b69534c96f48850. The governed skill files and disposable Git contract test are byte-identical to current main. The branch is semantically integrated through the mapping above rather than ancestry-merged, so the parent may remove the clean worktree and safely delete the branch using this patch-equivalence evidence.
+- Open issues: none for this work item. The full catalog remains the campaign final-state gate and was intentionally not run for this bounded item.
 
 ## Approval Resolution
 
@@ -34,7 +52,7 @@ Add complete-work-item-direct-main so a verified contribution reaches completion
 
 ## Context
 
-This item is a completion lane in the [Work-Item Provider And Completion Contracts series](../feature-backlog/work-item-provider-and-completion/index.md). The current simple-workitem prototype ends with a verified local commit, which is a useful handoff but does not guarantee that the commit is on main. A temporary isolation branch may be required for safe claim ownership, but that branch is an implementation mechanism rather than the terminal delivery state.
+This item is a completion lane in the [Work-Item Provider And Completion Contracts series](../../feature-backlog/work-item-provider-and-completion/index.md). The current simple-workitem prototype ends with a verified local commit, which is a useful handoff but does not guarantee that the commit is on main. A temporary isolation branch may be required for safe claim ownership, but that branch is an implementation mechanism rather than the terminal delivery state.
 
 ## Requirements
 
