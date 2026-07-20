@@ -1,6 +1,6 @@
 # Enable Policy Compatible Security Review Agent Suites
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
@@ -11,6 +11,15 @@ Type: Feature
 - Lifecycle claim: policy-security-review-backlog.
 - Claim evidence: PRIMARY exact-file backlog ownership acquired at 2026-07-20T03:07:05.914008Z from clean baseline commit 361488356d9a3fef1a30202a46f6a1589cc17fa6.
 - Scope boundary: this claim owns only the Running transition and is released after its clean commit. Dev Security Reviewer suite-local scenarios, route-selection contract and fixtures, deterministic tests, review, verification, and integration require a separate canonical isolated claim.
+
+## Completion Evidence
+
+- Accepted source commit: b3f3a40dae1da479ebdb67d2d6948c688c58b0a6; source claim released normally in event 153ef1f9-00a7-4c5c-b858-63db4bf8aed7.
+- Independent source review and focused verifier gates accepted the exact seven-file Dev Security Reviewer evaluation route; the verifier resource claim released normally in event d54cad7e-7f2f-4ce2-9a70-bb63bfd13c63.
+- Integrated on main as a72fea663484d9d7a57c789e436a9baa2fc933ec with Source-Commit provenance after rebuilding the same accepted tree as a linear exact-scope commit.
+- Focused verification passed: six suite-local tests, global catalog validation, exact suite-contract skill validation, Codex validate-only for dev-security-reviewer:material-findings with jobs 1, Git diff validation, and clean status.
+- Integration claim integrate-policy-security-review-route released normally in event 58a48fa9-6bd3-4415-8225-03602a08763b.
+- No broad or full agent-catalog run was used for this item; that final-state gate remains campaign-level work.
 
 ## Summary
 
