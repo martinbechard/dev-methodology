@@ -1,6 +1,6 @@
 # Require Claimed Backlog Resumption
 
-Status: Ready
+Status: Running
 
 Type: Defect
 
@@ -45,6 +45,7 @@ The user approved this exact replacement scope with the direct answer “ok” i
 - Branch/ref: codex/claimed-backlog-resumption, preserving candidate 244efcd2aa26dc14d226ad33dc9be680cef6b95d.
 - Started from approved Ready commit 78441b34f6e2df68d38e61d048d8d0d3f0bc0a81.
 - Phase: semantic current-main reconciliation, approved governed source implementation, focused resumption verification, review, integration, closeout, and cleanup.
+- Replacement-scope resumption: user-approved skills/manage-file-work-items/SKILL.md authority recorded at bf18ae8; canonical task resumed under the same preserved candidate and evidence.
 - Preserved commits 25b93bad57e1ee2ffe445de29421aa5bf80c5c9a, 58b502bcfd3d79666b190b3db192da5007c22391, and eb9826f4c87e6b3ed30b1068841cc357898fe531 remain evidence until a reviewed current-main candidate supersedes them.
 - Superseded archived claimed-resumption tasks, including 019f7e67-dfdf-74f0-ac17-e6d06b63828e, are not canonical ownership.
 
