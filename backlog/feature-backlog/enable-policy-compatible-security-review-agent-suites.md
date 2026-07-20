@@ -1,8 +1,16 @@
 # Enable Policy Compatible Security Review Agent Suites
 
-Status: Ready
+Status: Running
 
 Type: Feature
+
+## Running Ownership
+
+- Owner: Dev Orchestrator for the exact item under parent task 019f77f4-c4bd-7c91-b197-c987a7beb838.
+- Lifecycle agent: Dev Backlog Steward.
+- Lifecycle claim: policy-security-review-backlog.
+- Claim evidence: PRIMARY exact-file backlog ownership acquired at 2026-07-20T03:07:05.914008Z from clean baseline commit 361488356d9a3fef1a30202a46f6a1589cc17fa6.
+- Scope boundary: this claim owns only the Running transition and is released after its clean commit. Dev Security Reviewer suite-local scenarios, route-selection contract and fixtures, deterministic tests, review, verification, and integration require a separate canonical isolated claim.
 
 ## Summary
 
