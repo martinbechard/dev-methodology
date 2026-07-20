@@ -6,11 +6,23 @@ Type: Defect
 
 ## Running Ownership
 
-- Owner: Dev Orchestrator root task 019f77f4-c4bd-7c91-b197-c987a7beb838.
+- Owner: Dev Orchestrator task 019f7dfe-6b43-7402-8776-813473e71069 under parent Dev Backlog Coordinator task 019f77f4-c4bd-7c91-b197-c987a7beb838.
 - Lifecycle agent: Dev Backlog Steward.
 - Lifecycle claim: restore-project-configurator-verdict-start.
 - Claim evidence: PRIMARY exact-file backlog ownership acquired at 2026-07-20T00:50:55.174511Z from clean baseline commit 353273d2806b7109033ec3954e7a7394126d4db5.
 - Scope boundary: this claim owns only the Running transition and primary index resource and is released after its clean commit. Project Configurator suite artifacts, tests, review, verification, and integration require a separate canonical isolated claim.
+
+## Execution Record
+
+- Canonical Dev Orchestrator task: 019f7dfe-6b43-7402-8776-813473e71069
+- Branch: accepted source branch codex/restore-project-configurator-verdict-integrity; delivery is integrated on main
+- Worktree: /Users/martinbechard/.codex/worktrees/c9fc/dev-methodology
+- Current phase: Fresh post-integration review and focused verification
+- Accepted candidate commit: 1ed42a6e8bb2f1e9807415056089a3e29bd98f2e
+- Integrated main commit: ded845bf39f8f21c1cb9a2b250141a38ab8c5c5c
+- Integration or completion wait: None
+- Claim attempts: Integration acquired on the first attempt at event 758e3985-2a6f-472d-a394-3f93f181cb08 and released at event f20ccca5-f409-44c9-b06e-ef78cfc1f29d; task-record claim acquired at event 1171342f-f007-4691-a3f4-7ce376ac4e33
+- Open issues: Fresh post-integration review and focused verifier evidence are required before terminal completion
 
 ## Summary
 
