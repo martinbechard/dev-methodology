@@ -63,6 +63,17 @@ Before retrying, reconcile active and archived tasks using all available identit
 
 If exactly one match exists, adopt it. If multiple matches exist, preserve one canonical task, stop every duplicate before mutation, verify no unique work is lost, and archive the duplicates when supported. If no match is immediately visible, allow one bounded settlement interval and reconcile again. Retry creation only once after that settled read still shows no match, then reconcile once more.
 
+## Task Execution Compatibility And Titles
+
+Create each Dev Orchestrator task in an environment that can perform its ordinary repository work without asking the user to approve Git, shell, test, process-inspection, or claim commands. The dispatch prompt must state that these ordinary operations are already authorized by the work item and that the task must not open or wait on a user approval prompt for them.
+
+- Use the exposed mcp-agent-ops claim operations for claim status, acquisition, extension, heartbeat, and release whenever they are available. Do not invoke the shell claim fallback merely as a routine preflight when the MCP operations are available.
+- Keep implementation and focused tests in the task-owned private worktree. The environment must permit ordinary writes to that worktree and the Git worktree metadata needed for local commits.
+- If an ordinary required operation fails because the task environment lacks a capability, the task stops immediately, preserves its work, releases any claim truthfully, and reports the exact failed operation to the parent. It must not request escalation from the user.
+- The parent promptly re-homes or replaces that task in a compatible environment, updates the canonical task identifier in the work item, and fills any resulting Running vacancy. Do not leave an approval prompt or an execution-incompatible task consuming a Running slot.
+
+Set a concise plain-text title when the task is created and update it only at material phase changes. Use a phase prefix such as Implementing —, Reviewing —, Verifying —, Integrating —, Waiting for Claim —, Waiting for Help —, Waiting for User —, Done —, Blocked —, Failed —, or Abandoned — followed by a short work-item name. Never use raw prompt text, XML or delegation tags, error output, task identifiers, or generic titles as the display title. Preserve the stable task identifier; the title remains display state and never becomes lifecycle authority or delivery evidence.
+
 ## Private Worktree Work
 
 Implementation, correction, review, and focused local tests on a task-owned private branch and worktree do not require a project-file claim when they cannot mutate shared repository state or a named shared resource.
