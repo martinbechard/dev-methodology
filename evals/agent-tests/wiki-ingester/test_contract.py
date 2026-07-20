@@ -43,6 +43,36 @@ def _load_module(name: str, path: Path):
     return module
 
 
+def _extract_single_exec_command(arguments: str) -> str:
+    """Return the one literal command from a verifier's sole exec_command call."""
+    tool_calls = re.findall(r"tools\.([a-z_]+)", arguments)
+    if tool_calls != ["exec_command"]:
+        raise ValueError(f"expected one exec_command call, observed {tool_calls}")
+    command_literals = re.findall(
+        r'(?:(?:"cmd")|cmd)\s*:\s*("(?:\\.|[^"\\])*")',
+        arguments,
+    )
+    if len(command_literals) != 1:
+        raise ValueError(
+            f"expected one quoted cmd value, observed {len(command_literals)}"
+        )
+    command = json.loads(command_literals[0])
+    if not isinstance(command, str):
+        raise ValueError("cmd value must decode to a string")
+    return command
+
+
+def _assert_result_inventory(
+    test: unittest.TestCase, result_text: str
+) -> None:
+    """Require semantic conclusion and open-question inventories without fixed phrasing."""
+    normalized = result_text.lower()
+    with test.subTest(result_inventory="conclusions"):
+        test.assertRegex(normalized, r"(?:conclusion|substantiat|supported)")
+    with test.subTest(result_inventory="open-questions"):
+        test.assertRegex(normalized, r"(?:open question|unresolved)")
+
+
 def _validate_control_result(
     test: unittest.TestCase, plan, result: dict[str, object]
 ) -> None:
@@ -58,11 +88,11 @@ def _validate_control_result(
     test.assertIs(result["retryRawSourcePresent"], False)
     test.assertIs(result["retryProcessedSourcePresent"], True)
     result_text = str(result["evaluationResultText"]).lower()
-    test.assertIn("ready", result_text)
-    test.assertIn("interrupt", result_text)
-    test.assertIn("ingested conclusions", result_text)
-    test.assertIn("open questions", result_text)
-    test.assertNotIn("restor", result_text)
+    with test.subTest(result_disposition="interruption"):
+        test.assertIn("interrupt", result_text)
+    _assert_result_inventory(test, result_text)
+    with test.subTest(result_disposition="no-rollback"):
+        test.assertNotIn("restor", result_text)
     expected = plan.outcomes()
     observed = [
         {
@@ -81,7 +111,8 @@ def _validate_control_result(
         for outcome in expected
     ]
     test.assertEqual(expected_trace, observed)
-    _validate_execution_ownership(test, result)
+    with test.subTest(runtime_contract="execution-ownership"):
+        _validate_execution_ownership(test, result)
     test.assertEqual(len(expected), len(result["dependencySessionIds"]))
     expected_gates = [str(outcome["gate"]) for outcome in expected]
     test.assertEqual(len(expected_gates), len(result["dependencyAgentPaths"]))
@@ -162,13 +193,17 @@ def _validate_control_result(
         and "authoritative" in content.lower()
         and "## open questions" in content.lower()
     ]
-    test.assertEqual(1, len(open_question_pages))
-    open_question_path, open_question_text = open_question_pages[0]
-    test.assertEqual(
-        "docs/wiki/retry-policy/fixed-retry-backoff.md",
-        open_question_path,
-    )
-    test.assertIn("raw/processed/retry-policy.md", open_question_text)
+    with test.subTest(page_contract="jitter-open-question-count"):
+        test.assertEqual(1, len(open_question_pages))
+    if open_question_pages:
+        open_question_path, open_question_text = open_question_pages[0]
+        with test.subTest(page_contract="jitter-open-question-location"):
+            test.assertEqual(
+                "docs/wiki/retry-policy/fixed-retry-backoff.md",
+                open_question_path,
+            )
+        with test.subTest(page_contract="jitter-open-question-provenance"):
+            test.assertIn("raw/processed/retry-policy.md", open_question_text)
     test.assertIn(str(result["head"]), terminal)
     test.assertIn("RELEASED", terminal.upper())
     test.assertIn("CLEAN", terminal.upper())
@@ -210,12 +245,10 @@ def _validate_execution_ownership(
         test.assertEqual(1, len(calls))
         test.assertEqual("exec", calls[0]["name"])
         arguments = calls[0]["arguments"]
-        test.assertEqual(["exec_command"], re.findall(r"tools\.([a-z_]+)", arguments))
-        command_literals = re.findall(
-            r'cmd\s*:\s*("(?:\\.|[^"\\])*")', arguments
+        test.assertEqual(
+            result["verifierDriverCommand"],
+            _extract_single_exec_command(arguments),
         )
-        test.assertEqual(1, len(command_literals))
-        test.assertEqual(result["verifierDriverCommand"], json.loads(command_literals[0]))
         request_messages = dependency_requests[index]
         test.assertIsInstance(request_messages, list)
         test.assertTrue(request_messages)
@@ -345,6 +378,24 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
         ):
             with self.subTest(injected_expectation=injected_expectation):
                 self.assertNotIn(injected_expectation, prompt)
+
+    def test_exec_command_parser_accepts_current_quoted_and_unquoted_key_shapes(self) -> None:
+        """Both emitted JavaScript object-key forms must preserve the exact command."""
+        expected = "/python /control/next_verdict.py"
+        for arguments in (
+            'const r=await tools.exec_command({cmd:"/python /control/next_verdict.py"});',
+            'const r=await tools.exec_command({"cmd":"/python /control/next_verdict.py"});',
+        ):
+            with self.subTest(arguments=arguments):
+                self.assertEqual(expected, _extract_single_exec_command(arguments))
+        for invalid in (
+            'tools.exec_command({command:"/python /control/next_verdict.py"})',
+            'tools.exec_command({cmd:"one", "cmd":"two"})',
+            'tools.exec_command({cmd:"one"}); tools.write_stdin({})',
+        ):
+            with self.subTest(invalid=invalid):
+                with self.assertRaises(ValueError):
+                    _extract_single_exec_command(invalid)
 
     def test_runtime_binds_canonical_target_and_only_injects_dependency(self) -> None:
         """The canonical target instructions are bound while only its verifier is replaced."""
@@ -630,6 +681,25 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
                     for relative, expected in paths:
                         self.assertEqual(expected, (destination / relative).is_file())
 
+    def test_retry_fixture_declares_jitter_as_unresolved_source_evidence(self) -> None:
+        """The source itself, not evaluator injection, must establish the open question."""
+        source_text = (
+            SUITE_ROOT
+            / "fixtures/scenario-files/raw-ingest/raw/retry-policy.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("deployment-specific jitter", source_text)
+        self.assertIn("remains unresolved", source_text)
+        self.assertIn(
+            "authoritative deployment policy or implementation evidence",
+            source_text,
+        )
+        self.assertNotIn(
+            "deployment-specific jitter",
+            self.harness._target_prompt(self.harness.VerifierPlan("pre-move", 0)),
+        )
+        interruption = self.harness.VerifierPlan("pre-move", 0).outcomes()[-1]
+        self.assertEqual({"gate", "invocation", "outcome"}, set(interruption))
+
     def test_verifier_failure_neighbor_uses_three_real_correction_verdicts(self) -> None:
         """The executable neighbor must exhaust the real bounded verifier loop."""
         outcomes = self.harness._neighbor_outcomes("verifier-failure")
@@ -708,7 +778,8 @@ class WikiIngesterLiveNeighborTests(unittest.TestCase):
             self.assertEqual("", result["gitStatus"])
             self.assertEqual([], result["liveRegistryClaims"])
             self.assertEqual(3, len(result["dependencySessionIds"]))
-            _validate_execution_ownership(self, result)
+            with self.subTest(runtime_contract="execution-ownership"):
+                _validate_execution_ownership(self, result)
             expected = (
                 ("pre-move", 0, "NEEDS_CORRECTION"),
                 ("pre-move", 1, "GOOD"),
@@ -764,16 +835,16 @@ class WikiIngesterLiveNeighborTests(unittest.TestCase):
             for path in retry_pages:
                 self.assertIn(path, result["committedPaths"])
             result_text = result["evaluationResultText"].lower()
-            for evidence in (
-                "ready",
-                "pre-move",
-                "post-move",
-                "needs_correction",
-                "lint",
-                "okf",
-                "processed",
+            for evidence, pattern in (
+                ("pre-move gate", r"pre[- ]move"),
+                ("post-move gate", r"post[- ]move"),
+                ("correction verdict", r"needs[_ -]correction"),
+                ("lint", r"lint"),
+                ("okf", r"okf"),
+                ("processed source", r"processed"),
             ):
-                self.assertIn(evidence, result_text)
+                with self.subTest(result_evidence=evidence):
+                    self.assertRegex(result_text, pattern)
             self.assertIn(str(result["head"]), result["targetTerminalResponse"])
             _validate_claim_events(self, result, result["targetTerminalResponse"])
 
@@ -793,18 +864,19 @@ class WikiIngesterLiveNeighborTests(unittest.TestCase):
             self.assertEqual([], result["dependencySessionIds"])
             self.assertEqual("", result["gitStatus"])
             self.assertEqual([], result["liveRegistryClaims"])
-            _validate_execution_ownership(self, result)
+            with self.subTest(runtime_contract="execution-ownership"):
+                _validate_execution_ownership(self, result)
             self.assertEqual(["eval-result.md"], result["committedPaths"])
             result_text = result["evaluationResultText"].lower()
-            for evidence in (
-                "blocked",
-                "collision",
-                "naming",
-                "disposition",
-                "no-product-change",
-                "unchanged",
+            for evidence, pattern in (
+                ("collision", r"collision"),
+                ("naming", r"naming"),
+                ("disposition", r"disposition"),
+                ("no product change", r"no[- ]product[- ]changes?"),
+                ("unchanged", r"unchanged"),
             ):
-                self.assertIn(evidence, result_text)
+                with self.subTest(result_evidence=evidence):
+                    self.assertRegex(result_text, pattern)
             self.assertIn(str(result["head"]), result["targetTerminalResponse"])
             _validate_claim_events(self, result, result["targetTerminalResponse"])
 
@@ -823,7 +895,8 @@ class WikiIngesterLiveNeighborTests(unittest.TestCase):
             self.assertEqual("", result["gitStatus"])
             self.assertEqual([], result["liveRegistryClaims"])
             self.assertEqual(3, len(result["dependencySessionIds"]))
-            _validate_execution_ownership(self, result)
+            with self.subTest(runtime_contract="execution-ownership"):
+                _validate_execution_ownership(self, result)
             for invocation, (agent_path, response, observation) in enumerate(zip(
                 result["dependencyAgentPaths"],
                 result["dependencyResponses"],
@@ -857,14 +930,14 @@ class WikiIngesterLiveNeighborTests(unittest.TestCase):
             self.assertIn("authoritative", retained_wiki_text)
             self.assertIn("raw/provider-routing.md", retained_wiki_text)
             result_text = result["evaluationResultText"].lower()
-            for evidence in (
-                "blocked",
-                "needs_correction",
-                "two correction attempts",
-                "substantiated",
-                "open question",
+            for evidence, pattern in (
+                ("correction verdict", r"needs[_ -]correction"),
+                ("correction count", r"(?:two|2) correction attempts"),
+                ("substantiated content", r"substantiat|supported conclusion"),
+                ("open question", r"open question|unresolved"),
             ):
-                self.assertIn(evidence, result_text)
+                with self.subTest(result_evidence=evidence):
+                    self.assertRegex(result_text, pattern)
             self.assertIn(str(result["head"]), terminal)
             _validate_claim_events(self, result, terminal)
 

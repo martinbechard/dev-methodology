@@ -10,7 +10,7 @@ An eligible request has one initial attempt and at most two retry attempts. A su
 
 ## Backoff
 
-The first retry waits 200 milliseconds and the second waits 500 milliseconds. This source establishes fixed delays and does not establish jitter.
+The first retry waits 200 milliseconds and the second waits 500 milliseconds. This source establishes only the fixed delays. Whether deployment-specific jitter changes either delay remains unresolved because no authoritative deployment policy or implementation evidence is available.
 
 ## Failure Boundary
 

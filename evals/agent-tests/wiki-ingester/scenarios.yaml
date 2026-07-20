@@ -6,14 +6,14 @@ scenarios:
     priority: 1
     status: executable
     executableCase: fixtures/cases.yaml
-    purpose: Close a raw queue item only after both verifier gates and link updates.
-    initialState: One approved retry-policy report is present in raw with no destination collision.
+    purpose: Close a raw queue item only after both verifier gates and link updates while preserving its explicit unresolved jitter point.
+    initialState: One approved retry-policy report is present in raw with no destination collision; it supplies fixed delays but leaves deployment-specific jitter unresolved.
     task: Ingest the report into granular durable wiki coverage.
     targetSkills: [agent-claim, organise-project-files, project-wiki, project-wiki-topic-write]
     allowedAgentDependencies: [wiki-topic-verifier]
-    requiredBehaviors: [Read and reconcile the source, Write leaves hub links and item digest, Obtain GOOD before move, Move and rewrite links, Reverify changed topic links, Recheck queues and close claim]
-    forbiddenBehaviors: [Move before pre-move GOOD, Leave raw links after move, Skip final queue check]
-    deterministicChecks: [harness-agent-identity, dependency-identity-and-order, pre-move-verdict, processed-link-resolution, post-move-verdict, wiki-validation, claim-lifecycle, output-contract-presence]
+    requiredBehaviors: [Read and reconcile the source, Write leaves hub links and item digest, Record deployment-specific jitter as a provenance-backed page-local open question, Obtain GOOD before move, Move and rewrite links, Reverify changed topic links, Recheck queues and close claim]
+    forbiddenBehaviors: [Assert jitter is absent, Omit the unresolved jitter point, Move before pre-move GOOD, Leave raw links after move, Skip final queue check]
+    deterministicChecks: [harness-agent-identity, dependency-identity-and-order, page-local-open-question, pre-move-verdict, processed-link-resolution, post-move-verdict, wiki-validation, claim-lifecycle, output-contract-presence]
     expectedOutputs: [status, durable wiki pages, processed-source links, lint and verifier evidence, claim closeout]
     expectedTerminalStatus: PASS
   - id: destination-collision
