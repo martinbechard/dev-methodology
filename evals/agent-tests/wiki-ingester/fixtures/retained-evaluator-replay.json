@@ -47,7 +47,7 @@
     }
   },
   "pageLocalJitterReplay": {
-    "sourceEvidenceSha256": "6d718e1333087bf078bedf7bed4aed085975a76153ca87a9177037d7035e9143",
+    "retainedRootCauseArtifactSha256": "6d718e1333087bf078bedf7bed4aed085975a76153ca87a9177037d7035e9143",
     "expectedPage": "docs/wiki/retry-policy/retry-backoff.md",
     "resultText": "# Wiki Ingest Result\n\n## Substantiated Conclusions\n\n- docs/wiki/retry-policy/retry-backoff.md from raw/processed/retry-policy.md: idempotent reads use fixed waits of 200 and 500 milliseconds, while mutation requests are not retried.\n\n## Open Questions\n\n- docs/wiki/retry-policy/retry-backoff.md from raw/processed/retry-policy.md: deployment-specific jitter remains unresolved because no authoritative deployment-policy or implementation evidence is available.\n",
     "wikiContent": {

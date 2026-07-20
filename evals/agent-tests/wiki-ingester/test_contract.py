@@ -42,8 +42,10 @@ OPEN_QUESTION_INVENTORY_LABEL = (
     r"(?:open\s+questions?|unresolved\s+(?:questions?|points?|uncertaint(?:y|ies)))"
 )
 MISSING_EVIDENCE_PATTERN = (
-    r"authoritative|missing evidence|no .{0,80}evidence|lacks?.{0,80}evidence"
+    r"missing evidence|no .{0,80}evidence|lacks?.{0,80}evidence"
     r"|neither .{0,80} nor .{0,80} evidence"
+    r"|authoritative.{0,80}evidence.{0,40}"
+    r"(?:missing|absent|unavailable|not (?:been )?(?:identified|found|available))"
 )
 LIVE_CASE_SELECTOR_ENV = "WIKI_INGESTER_LIVE_CASES"
 FOCUSED_LIVE_CASES = frozenset({"pre0", "raw-ingest"})
@@ -945,6 +947,10 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
             replay["fiveCaseResourceReleaseEventId"],
         )
         page_local_jitter = replay["pageLocalJitterReplay"]
+        self.assertEqual(
+            "6d718e1333087bf078bedf7bed4aed085975a76153ca87a9177037d7035e9143",
+            page_local_jitter["retainedRootCauseArtifactSha256"],
+        )
         _assert_result_inventory(self, page_local_jitter["resultText"])
         accepted_jitter_page = _assert_single_jitter_open_question_page(
             self,
@@ -1015,6 +1021,12 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
         invalid_pages = (
             {page_path: page.replace("## Open Questions", "## Notes")},
             {page_path: page.replace("no authoritative", "unspecified")},
+            {
+                page_path: page.replace(
+                    "no authoritative deployment-policy or implementation evidence is available",
+                    "authoritative evidence is available",
+                )
+            },
             {page_path: page.replace("raw/processed/retry-policy.md", "the source")},
             {
                 **valid,
@@ -1664,6 +1676,13 @@ class WikiIngesterLiveNeighborTests(unittest.TestCase):
                 self.assertIn(path, result["committedPaths"])
             for path in retry_pages:
                 self.assertIn(path, result["committedPaths"])
+            _assert_single_jitter_open_question_page(
+                self,
+                {
+                    path: result["wikiContent"][path]
+                    for path in retry_pages
+                },
+            )
             result_text = result["evaluationResultText"].lower()
             for evidence, pattern in (
                 ("pre-move gate", r"pre[- ]move"),
