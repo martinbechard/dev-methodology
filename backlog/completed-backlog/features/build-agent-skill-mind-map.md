@@ -1,6 +1,6 @@
 # Build The Agent And Skill Mind Map
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
@@ -11,7 +11,20 @@ Type: Feature
 - Worktree: /Users/martinbechard/.codex/worktrees/c1cd/dev-methodology.
 - Dependencies: replace-router-with-setup-detector and verify-codex-skill-activation are completed.
 - Preserved evidence: archived integration task 019f7d30-de3a-7e61-a838-a3e127383b27 and accepted cumulative candidate 67ee16ef002d297e755a6284fe20afde4457d4f2; reconcile and semantically extract the mind-map portion rather than rebuild or discard it.
-- Phase: current-main provenance reconciliation, focused implementation/review, direct integration, and terminal completion.
+- Phase: completed and integrated on main.
+
+## Completion Evidence
+
+- Preserved source provenance: archived task 019f7d30-de3a-7e61-a838-a3e127383b27, accepted source commit 0cd05b35f7e793c4b9191b5b5c3fce52955c7ef1, and cumulative candidate 67ee16ef002d297e755a6284fe20afde4457d4f2.
+- Final corrected candidate: 0e5a286f407efc12ad75a67325ef9183a2b95002 on codex/build-agent-skill-mind-map-resume-019f7e8f.
+- Fresh independent final review: PASS with no required correction or open question.
+- Fresh focused verifier: PASS on 23 focused tests, support-checklist, hierarchy, technology-detection, skill-documentation and adapter-manifest freshness, JavaScript syntax, exact detector-source paths, link resolution, and diff hygiene.
+- Main integration commits: b97bb48, 35790ec, 76c0e49, fa0425e, and 026f100. The final integrated main commit is 026f100deab77685dccc8cf7a0cd46aaec35dc60.
+- Post-integration verification: 23 focused tests passed; build-support-checklist, build-agent-skill-hierarchy, build-technology-detection, and build-skill-docs freshness checks passed; both explorer JavaScript files passed syntax checks; main was clean.
+- Integration ownership: exact nine-path and merge:integration:main claim 019f7e8f-mind-map-integration acquired at event 2a56c5ff-cce5-469d-a6f4-5215bde08367 and released at event facfffde-c33e-4432-aacb-feaf61c1fd84.
+- Browser environment warning: the resource-only browser:in-app claim was released at event a3173fee-7b31-4ac0-9691-0cd37249b3ff after the in-app browser rejected the local file URL under host policy. Parent disposition classified this as an environment warning; no prohibited workaround was attempted.
+- Terminal backlog ownership: exact source/destination claim 019f7e8f-mind-map-completion acquired at event b0d55304-b4ca-4d9a-825c-292f14d9265b.
+- Cleanup eligibility: the task worktree is clean and the source branch is patch-equivalent to main. No topology-only merge was created; the parent owns rebase-and-skip cleanup followed by non-forcing branch deletion.
 
 ## Summary
 
