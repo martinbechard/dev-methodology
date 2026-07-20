@@ -48,9 +48,18 @@ def _extract_single_exec_command(arguments: str) -> str:
     tool_calls = re.findall(r"tools\.([a-z_]+)", arguments)
     if tool_calls != ["exec_command"]:
         raise ValueError(f"expected one exec_command call, observed {tool_calls}")
-    command_literals = re.findall(
-        r'(?:(?:"cmd")|cmd)\s*:\s*("(?:\\.|[^"\\])*")',
+    call_objects = re.findall(
+        r"tools\.exec_command\(\s*\{(.*?)\}\s*\)",
         arguments,
+        flags=re.DOTALL,
+    )
+    if len(call_objects) != 1:
+        raise ValueError(
+            f"expected one literal exec_command object, observed {len(call_objects)}"
+        )
+    command_literals = re.findall(
+        r'(?:^|,)\s*(?:"cmd"|cmd)\s*:\s*("(?:\\.|[^"\\])*")',
+        call_objects[0],
     )
     if len(command_literals) != 1:
         raise ValueError(
@@ -62,15 +71,111 @@ def _extract_single_exec_command(arguments: str) -> str:
     return command
 
 
-def _assert_result_inventory(
+def _labeled_inventory(result_text: str, label_pattern: str) -> str:
+    """Return entries beneath one Markdown heading or labeled inventory line."""
+    lines = result_text.splitlines()
+    label = re.compile(
+        rf"^(?:[-*]\s*)?(?:#{{1,6}}\s*)?{label_pattern}\s*:?\s*(.*)$",
+        flags=re.IGNORECASE,
+    )
+    any_inventory = re.compile(
+        r"^(?:[-*]\s*)?(?:#{1,6}\s*)?"
+        r"(?:(?:ingested|substantiated|supported)\s+)?conclusions?"
+        r"|^(?:[-*]\s*)?(?:#{1,6}\s*)?(?:recorded\s+)?open questions?",
+        flags=re.IGNORECASE,
+    )
+    entries: list[str] = []
+    for index, line in enumerate(lines):
+        matched = label.match(line.strip())
+        if matched is None:
+            continue
+        if matched.group(1):
+            entries.append(matched.group(1))
+        for following in lines[index + 1:]:
+            stripped = following.strip()
+            if re.match(r"^#{1,6}\s+", stripped) or any_inventory.match(stripped):
+                break
+            if stripped:
+                entries.append(stripped)
+    return "\n".join(entries).lower()
+
+
+def _assert_result_inventory(test: unittest.TestCase, result_text: str) -> None:
+    """Require distinct conclusion and open-question entries with fixture facts."""
+    conclusions = _labeled_inventory(
+        result_text,
+        r"(?:(?:ingested|substantiated|supported)\s+)?conclusions?",
+    )
+    open_questions = _labeled_inventory(
+        result_text,
+        r"(?:recorded\s+)?open questions?",
+    )
+    with test.subTest(result_inventory="conclusion-entry-present"):
+        test.assertTrue(conclusions)
+    with test.subTest(result_inventory="conclusion-retry-delays"):
+        test.assertIn("200", conclusions)
+        test.assertIn("500", conclusions)
+    with test.subTest(result_inventory="conclusion-retry-boundary"):
+        test.assertRegex(
+            conclusions,
+            r"(?:idempotent|order.status|mutation requests?.{0,40}(?:never|not) retr)",
+        )
+    with test.subTest(result_inventory="open-question-entry-present"):
+        test.assertTrue(open_questions)
+    with test.subTest(result_inventory="open-question-jitter"):
+        test.assertIn("jitter", open_questions)
+    with test.subTest(result_inventory="open-question-missing-evidence"):
+        test.assertRegex(open_questions, r"authoritative|missing evidence|no evidence")
+    with test.subTest(result_inventory="open-question-provenance"):
+        test.assertIn("raw/processed/retry-policy.md", open_questions)
+
+
+def _markdown_section(page_text: str, heading: str) -> str:
+    """Return one level-two Markdown section body without adjacent sections."""
+    matched = re.search(
+        rf"(?im)^##\s+{re.escape(heading)}\s*$",
+        page_text,
+    )
+    if matched is None:
+        return ""
+    remainder = page_text[matched.end():]
+    next_heading = re.search(r"(?m)^##\s+", remainder)
+    return remainder[: next_heading.start() if next_heading else None].strip()
+
+
+def _provider_routing_pages(
+    wiki_content: dict[str, str], committed_paths: set[str]
+) -> list[tuple[str, str]]:
+    """Return committed provider pages containing every substantiated routing fact."""
+    return [
+        (path, content)
+        for path, content in wiki_content.items()
+        if "provider" in path.lower()
+        and path in committed_paths
+        and "primary provider" in content.lower()
+        and "secondary provider" in content.lower()
+        and "mutation requests do not fail over" in content.lower()
+    ]
+
+
+def _assert_provider_result_inventory(
     test: unittest.TestCase, result_text: str
 ) -> None:
-    """Require semantic conclusion and open-question inventories without fixed phrasing."""
-    normalized = result_text.lower()
-    with test.subTest(result_inventory="conclusions"):
-        test.assertRegex(normalized, r"(?:conclusion|substantiat|supported)")
-    with test.subTest(result_inventory="open-questions"):
-        test.assertRegex(normalized, r"(?:open question|unresolved)")
+    """Require provider conclusions and ownership uncertainty in distinct inventories."""
+    conclusions = _labeled_inventory(
+        result_text,
+        r"(?:(?:ingested|substantiated|supported)\s+)?conclusions?",
+    )
+    open_questions = _labeled_inventory(
+        result_text,
+        r"(?:recorded\s+)?open questions?",
+    )
+    for fact in ("primary provider", "secondary provider", "mutation requests"):
+        with test.subTest(provider_inventory="conclusion", fact=fact):
+            test.assertIn(fact, conclusions)
+    for fact in ("federat", "authoritative", "raw/provider-routing.md"):
+        with test.subTest(provider_inventory="open-question", fact=fact):
+            test.assertIn(fact, open_questions)
 
 
 def _validate_control_result(
@@ -392,10 +497,70 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
             'tools.exec_command({command:"/python /control/next_verdict.py"})',
             'tools.exec_command({cmd:"one", "cmd":"two"})',
             'tools.exec_command({cmd:"one"}); tools.write_stdin({})',
+            'const evil="git add docs/wiki"; await tools.exec_command({cmd:evil}); '
+            'const decoy={cmd:"/python /control/next_verdict.py"};',
         ):
             with self.subTest(invalid=invalid):
                 with self.assertRaises(ValueError):
                     _extract_single_exec_command(invalid)
+
+    def test_result_inventory_requires_labeled_entries_instead_of_category_words(self) -> None:
+        """Negative prose must not masquerade as populated result inventories."""
+        negative = (
+            "No ingested conclusions were recorded.\n"
+            "No open questions were recorded.\n"
+        )
+        self.assertEqual(
+            "",
+            _labeled_inventory(
+                negative,
+                r"(?:(?:ingested|substantiated|supported)\s+)?conclusions?",
+            ),
+        )
+        self.assertEqual(
+            "",
+            _labeled_inventory(negative, r"(?:recorded\s+)?open questions?"),
+        )
+        positive = (
+            "## Ingested Conclusion\n\n"
+            "- Fixed retry delays are 200 and 500 milliseconds.\n\n"
+            "## Open Questions\n\n"
+            "- Jitter lacks authoritative evidence in raw/processed/retry-policy.md.\n"
+        )
+        self.assertIn("200", _labeled_inventory(
+            positive,
+            r"(?:(?:ingested|substantiated|supported)\s+)?conclusions?",
+        ))
+        self.assertIn(
+            "jitter",
+            _labeled_inventory(positive, r"(?:recorded\s+)?open questions?"),
+        )
+
+    def test_provider_page_contract_is_bound_to_one_committed_page(self) -> None:
+        """Provider conclusions and their open question must share one committed page."""
+        provider_page = (
+            "Primary provider handles reads. Secondary provider handles failover. "
+            "Mutation requests do not fail over.\n\n"
+            "## Open Questions\n\n"
+            "- Federation ownership lacks an authoritative decision; provenance: "
+            "raw/provider-routing.md.\n"
+        )
+        pages = _provider_routing_pages(
+            {
+                "docs/wiki/provider-routing.md": provider_page,
+                "docs/wiki/uncommitted-provider.md": provider_page,
+                "docs/wiki/unrelated.md": "## Open Questions\n\n- raw/provider-routing.md",
+            },
+            {"docs/wiki/provider-routing.md", "docs/wiki/unrelated.md"},
+        )
+        self.assertEqual(
+            [("docs/wiki/provider-routing.md", provider_page)],
+            pages,
+        )
+        open_questions = _markdown_section(pages[0][1], "Open Questions").lower()
+        for fact in ("federat", "authoritative", "raw/provider-routing.md"):
+            with self.subTest(fact=fact):
+                self.assertIn(fact, open_questions)
 
     def test_runtime_binds_canonical_target_and_only_injects_dependency(self) -> None:
         """The canonical target instructions are bound while only its verifier is replaced."""
@@ -540,7 +705,12 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
             "retryRawSourcePresent": False,
             "retryProcessedSourcePresent": True,
             "evaluationResultText": (
-                "READY interruption; ingested conclusions; recorded open questions"
+                "Interruption continuation completed.\n\n"
+                "## Ingested Conclusion\n\n"
+                "- Idempotent reads use retry delays of 200 and 500 milliseconds.\n\n"
+                "## Open Questions\n\n"
+                "- Jitter lacks authoritative evidence in "
+                "raw/processed/retry-policy.md.\n"
             ),
             "verifierControlTrace": trace,
             "dependencySessionIds": ["verifier-0", "verifier-1"],
@@ -918,26 +1088,39 @@ class WikiIngesterLiveNeighborTests(unittest.TestCase):
             self.assertIn("eval-result.md", committed_paths)
             self.assertNotIn("raw/provider-routing.md", committed_paths)
             self.assertNotIn("raw/processed/provider-routing.md", committed_paths)
-            retained_wiki_text = "\n".join(result["wikiContent"].values()).lower()
-            for conclusion in (
-                "primary provider",
-                "secondary provider",
-                "mutation requests do not fail over",
-            ):
-                self.assertIn(conclusion, retained_wiki_text)
-            self.assertIn("## open questions", retained_wiki_text)
-            self.assertIn("federat", retained_wiki_text)
-            self.assertIn("authoritative", retained_wiki_text)
-            self.assertIn("raw/provider-routing.md", retained_wiki_text)
+            provider_pages = _provider_routing_pages(
+                result["wikiContent"],
+                committed_paths,
+            )
+            with self.subTest(page_contract="provider-routing-page-count"):
+                self.assertEqual(1, len(provider_pages))
+            if provider_pages:
+                provider_path, provider_content = provider_pages[0]
+                with self.subTest(page_contract="provider-routing-path"):
+                    self.assertIn("provider", provider_path.lower())
+                    self.assertIn(provider_path, committed_paths)
+                open_questions = _markdown_section(
+                    provider_content,
+                    "Open Questions",
+                ).lower()
+                for fact in (
+                    "federat",
+                    "authoritative",
+                    "raw/provider-routing.md",
+                ):
+                    with self.subTest(
+                        page_contract="provider-routing-open-question",
+                        fact=fact,
+                    ):
+                        self.assertIn(fact, open_questions)
             result_text = result["evaluationResultText"].lower()
             for evidence, pattern in (
                 ("correction verdict", r"needs[_ -]correction"),
                 ("correction count", r"(?:two|2) correction attempts"),
-                ("substantiated content", r"substantiat|supported conclusion"),
-                ("open question", r"open question|unresolved"),
             ):
                 with self.subTest(result_evidence=evidence):
                     self.assertRegex(result_text, pattern)
+            _assert_provider_result_inventory(self, result_text)
             self.assertIn(str(result["head"]), terminal)
             _validate_claim_events(self, result, terminal)
 
