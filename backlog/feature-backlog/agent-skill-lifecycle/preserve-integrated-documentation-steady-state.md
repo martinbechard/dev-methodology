@@ -1,6 +1,6 @@
 # Preserve Integrated Documentation Steady State
 
-Status: Ready
+Status: Running
 
 Type: Defect
 
@@ -38,6 +38,7 @@ Perform no governed role or generated-mirror mutation until the exact question i
 - Canonical Dev Orchestrator task: 019f7e7b-e949-7fb0-916b-0a8b932198ca.
 - Worktree: /Users/martinbechard/.codex/worktrees/60e7/dev-methodology.
 - Phase: current-main reconciliation, scoped implementation, focused verification, review, integration, completion, and cleanup.
+- Corrected resumption scope: reverse-engineering-only Wiki Ingester audit with artifact creation and updates routed to existing owners, including Dev Documentation Writer for supported documents.
 
 ## Summary
 
