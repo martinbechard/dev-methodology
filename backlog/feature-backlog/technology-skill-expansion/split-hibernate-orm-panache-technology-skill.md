@@ -4,6 +4,14 @@ Status: Ready
 
 Type: Feature
 
+## Definition Approval
+
+- User direction: “The hibernate split is approved.”
+- Approval date: 2026-07-19.
+- Provenance: User direction delegated through Codex parent task 019f77f4-c4bd-7c91-b197-c987a7beb838.
+- Authorized governed scope: create skills/hibernate-orm-panache/SKILL.md and skills/hibernate-orm-panache/agents/openai.yaml; modify skills/quarkus-persistence/SKILL.md; update its persistence guidance and review-checklist references; update corresponding detection metadata and only the supported generated mirrors.
+- Excluded scope: agent-role definition changes, a Hibernate Reactive with Panache skill, and changes to any other governed skill definition.
+
 ## Summary
 
 Create a focused Hibernate ORM with Panache skill and reduce Quarkus Persistence to a concise shared foundation for persistence-stack selection, schema alignment, persistence units, and common database verification.
