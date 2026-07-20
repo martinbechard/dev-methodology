@@ -1226,7 +1226,10 @@ def _extend(args: argparse.Namespace) -> int:
             event = _event("extend", "CLAIM_NOT_FOUND", args, requested_scope=requested_scope)
             return _journaled_result(ERROR, common_directory, event, claim_id=args.claim_id)
 
-        if claim.get("mode") == "isolated" and _scope_requires_primary_worktree(requested_scope):
+        if claim.get("mode") == "isolated" and requested_scope.get("file_domain") in {
+            "backlog",
+            "all_files",
+        }:
             return _primary_required_result(
                 common_directory,
                 "extend",

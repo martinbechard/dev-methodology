@@ -997,6 +997,30 @@ class AgentClaimTests(unittest.TestCase):
         self.assertEqual("WAIT", self.output(blocked)["outcome"])
         self.assertEqual(before, self.registry_path().read_bytes())
 
+    def test_isolated_extension_reports_primary_resource_overlap_before_location(self) -> None:
+        self.claim(
+            *self.acquire_arguments("first"),
+            "--resource",
+            "merge:integration:main",
+        )
+        isolated, _isolated_path = self.isolated_arguments("second")
+        self.claim(*self.acquire_arguments("second"), "--file", "src/one.py", *isolated)
+        before = self.registry_path().read_bytes()
+
+        blocked = self.claim(
+            "extend",
+            "--claim-id",
+            "second",
+            "--resource",
+            "merge:integration:main",
+        )
+
+        self.assertEqual(3, blocked.returncode)
+        result = self.output(blocked)
+        self.assertEqual("WAIT", result["outcome"])
+        self.assertEqual(["first"], result["conflicting_claim_ids"])
+        self.assertEqual(before, self.registry_path().read_bytes())
+
     def test_simultaneous_extensions_cannot_both_acquire_same_file(self) -> None:
         self.claim(*self.acquire_arguments("first"), "--file", "README.md")
         isolated, _isolated_path = self.isolated_arguments("second")
