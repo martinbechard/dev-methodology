@@ -2261,13 +2261,14 @@ def _terminal_response(
 
 def _noop_exclusion_candidate(
     events: Sequence[Mapping[str, Any]],
+    parse_complete: bool,
     invocation: str | None,
     depth: int,
     started_at: float,
     finished_at: float,
 ) -> str | None:
     """Return auditable evidence for an inert, immediately aborted default/noop child."""
-    if invocation not in {"default", "noop"} or depth != 1:
+    if not parse_complete or invocation not in {"default", "noop"} or depth != 1:
         return None
     prompts: list[str] = []
     aborted = False
@@ -2275,10 +2276,18 @@ def _noop_exclusion_candidate(
     for event in events:
         event_type = event.get("type")
         payload = event.get("payload")
-        if event_type in {"session_meta", "turn_context"}:
+        if event_type in {"session_meta", "turn_context", "world_state"}:
             continue
         if event_type == "response_item" and isinstance(payload, Mapping):
-            if payload.get("type") != "message" or payload.get("role") != "user":
+            if payload.get("type") != "message":
+                unexpected_activity = True
+                continue
+            if payload.get("role") == "developer":
+                serialized = json.dumps(payload, sort_keys=True)
+                if "AGENT_INSTRUCTION_BINDING_" in serialized:
+                    unexpected_activity = True
+                continue
+            if payload.get("role") != "user":
                 unexpected_activity = True
                 continue
             content = payload.get("content", [])
@@ -2292,6 +2301,8 @@ def _noop_exclusion_candidate(
                 text = str(item.get("text", "")).strip()
                 if text.startswith("<turn_aborted>"):
                     aborted = True
+                elif text.startswith(("<recommended_plugins>", "# AGENTS.md instructions for ", "<environment_context>")):
+                    continue
                 elif text:
                     prompts.append(text)
             continue
@@ -2303,7 +2314,7 @@ def _noop_exclusion_candidate(
                     prompts.append(message)
             elif payload_type == "turn_aborted":
                 aborted = True
-            elif payload_type != "token_count":
+            elif payload_type not in {"task_started", "token_count"}:
                 unexpected_activity = True
             continue
         unexpected_activity = True
@@ -2328,13 +2339,17 @@ def _load_sessions(codex_home: Path) -> tuple[_Session, ...]:
     for rollout in codex_home.glob("**/rollout-*.jsonl"):
         rollout_text = rollout.read_text(encoding="utf-8", errors="replace")
         events = []
+        parse_complete = True
         for line in rollout_text.splitlines():
             try:
                 event = json.loads(line)
             except json.JSONDecodeError:
+                parse_complete = False
                 continue
-            if isinstance(event, dict) and isinstance(event.get("timestamp"), str):
-                events.append(event)
+            if not isinstance(event, dict) or not isinstance(event.get("timestamp"), str):
+                parse_complete = False
+                continue
+            events.append(event)
         metadata = next((event.get("payload", {}) for event in events if event.get("type") == "session_meta"), None)
         if not isinstance(metadata, dict) or not events:
             continue
@@ -2376,6 +2391,7 @@ def _load_sessions(codex_home: Path) -> tuple[_Session, ...]:
                 terminal_response_error=response_error,
                 suite_exclusion_candidate=_noop_exclusion_candidate(
                     events,
+                    parse_complete,
                     str(invocation) if invocation else None,
                     depth,
                     started_at,

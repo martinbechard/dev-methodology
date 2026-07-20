@@ -1493,6 +1493,25 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "Supervisor identity mismatch"):
             runner._audit_session_concurrency(sessions, 9, (run,))
 
+    def test_malformed_default_noop_evidence_remains_participating(self) -> None:
+        """Incomplete rollout parsing cannot prove that a default child performed no work."""
+        with tempfile.TemporaryDirectory() as temporary:
+            codex_home = Path(temporary)
+            sessions = codex_home / "sessions"
+            sessions.mkdir()
+            noop_path = sessions / "rollout-default-noop.jsonl"
+            self._write_noop_rollout(noop_path)
+            noop_path.write_text(
+                noop_path.read_text(encoding="utf-8") + '{"timestamp":"2026-07-17T00:00:03Z",broken}\n',
+                encoding="utf-8",
+            )
+            loaded = runner._load_sessions(codex_home)
+            run = runner._RunSpec(self._suite("one"), ("happy",))
+            participating, excluded = runner._suite_lifecycle_sessions(loaded, (run,))
+
+        self.assertEqual((), tuple(excluded))
+        self.assertEqual(("rollout-default-noop",), tuple(session.session_id for session in participating))
+
     def test_staging_instruments_inline_closing_instruction_delimiter(self) -> None:
         """Generated adapters may close developer instructions after the final text on the same line."""
         with tempfile.TemporaryDirectory() as temporary:
@@ -2845,9 +2864,43 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                     "depth": 1, "agent_path": None, "agent_role": "default",
                 }}},
             }},
+            {"timestamp": "2026-07-17T00:00:00.001Z", "type": "event_msg", "payload": {
+                "type": "task_started", "turn_id": "turn-noop",
+            }},
+            {"timestamp": "2026-07-17T00:00:00.500Z", "type": "response_item", "payload": {
+                "type": "message", "role": "developer",
+                "content": [{"type": "input_text", "text": "global runtime context"}],
+            }},
+            {"timestamp": "2026-07-17T00:00:00.600Z", "type": "response_item", "payload": {
+                "type": "message", "role": "user",
+                "content": [
+                    {"type": "input_text", "text": "<recommended_plugins>runtime catalog</recommended_plugins>"},
+                    {"type": "input_text", "text": "# AGENTS.md instructions for /workspace\ncontract"},
+                    {"type": "input_text", "text": "<environment_context>workspace</environment_context>"},
+                ],
+                "internal_chat_message_metadata_passthrough": {"turn_id": "turn-noop"},
+            }},
+            {"timestamp": "2026-07-17T00:00:00.700Z", "type": "world_state", "payload": {
+                "full": True, "state": {},
+            }},
+            {"timestamp": "2026-07-17T00:00:00.800Z", "type": "turn_context", "payload": {
+                "turn_id": "turn-noop",
+            }},
             {"timestamp": "2026-07-17T00:00:01Z", "type": "response_item", "payload": {
                 "type": "message", "role": "user",
                 "content": [{"type": "input_text", "text": "noop"}],
+                "internal_chat_message_metadata_passthrough": {"turn_id": "turn-noop"},
+            }},
+            {"timestamp": "2026-07-17T00:00:01.001Z", "type": "event_msg", "payload": {
+                "type": "user_message", "message": "noop",
+            }},
+            {"timestamp": "2026-07-17T00:00:01.500Z", "type": "event_msg", "payload": {
+                "type": "token_count", "info": None,
+            }},
+            {"timestamp": "2026-07-17T00:00:01.900Z", "type": "response_item", "payload": {
+                "type": "message", "role": "user",
+                "content": [{"type": "input_text", "text": "<turn_aborted>interrupted</turn_aborted>"}],
+                "internal_chat_message_metadata_passthrough": {"turn_id": "turn-noop"},
             }},
             {"timestamp": "2026-07-17T00:00:02Z", "type": "event_msg", "payload": {
                 "type": "turn_aborted", "reason": "interrupted",
