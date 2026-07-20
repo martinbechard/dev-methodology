@@ -10,7 +10,7 @@ The original proposal assigned a broad cross-artifact audit to Dev Documentation
 
 ## Question for the User
 
-Do you approve changing exactly agents/roles/project-setup/project-bootstrapper.role.yaml and agents/roles/wiki-activities/wiki-ingester.role.yaml so that, only during whole-project reverse engineering, Project Bootstrapper assigns Wiki Ingester a final integrated-tree evidence audit; Wiki Ingester identifies stale contribution-phase wording, broken navigation, and contradictions against the final tree; Project Bootstrapper routes each resulting correction to its existing owner; Dev Documentation Writer only writes or updates assigned non-wiki documents; and corrected artifacts receive renewed independent review before final verification?
+Do you approve changing exactly agents/roles/project-setup/project-bootstrapper.role.yaml and agents/roles/wiki-activities/wiki-ingester.role.yaml so that, only during whole-project reverse engineering, Project Bootstrapper assigns Wiki Ingester a final integrated-tree evidence audit; Wiki Ingester identifies stale, contradictory, or missing artifacts against source evidence and reports the exact artifact work required; Project Bootstrapper routes each result to its existing owner; Dev Documentation Writer creates or updates every template-backed or other supported non-wiki document its definition owns, including a missing module design found by Wiki Ingester; and corrected or newly created artifacts receive independent review before final verification?
 
 Approval also permits regeneration of only the supported generated agent mirrors from those two sources.
 
@@ -56,7 +56,8 @@ The complete evaluation did not edit the distributed Project Bootstrapper, Proje
 - Replace contribution-phase, absent-artifact, exclusion, and future-work wording when the referenced artifact now exists.
 - Keep PROJECT.yaml, AGENTS.md, wiki navigation, module catalogs, manifests, and module pages mutually consistent.
 - Resolve links and ownership statements against the final tree rather than an earlier contribution snapshot.
-- Keep Dev Documentation Writer limited to writing or updating assigned non-wiki documents; do not assign it a broad repository audit.
+- Keep Dev Documentation Writer out of the broad repository audit, but use it to create or update every assigned document type supported by its definition and templates during reverse engineering.
+- When Wiki Ingester finds that source evidence requires a missing module design or another supported non-wiki artifact, report that exact gap so Project Bootstrapper can assign it to Dev Documentation Writer.
 - Route PROJECT.yaml and AGENTS.md corrections to Project Configurator, wiki corrections to their existing wiki owner, and non-wiki document corrections to Dev Documentation Writer.
 - Require fresh independent review of every corrected artifact before final verification.
 - Add deterministic checks for stale phase wording and contradictions about present files.
@@ -68,7 +69,7 @@ The complete evaluation did not edit the distributed Project Bootstrapper, Proje
 - Final configuration and documentation describe the same integrated repository state.
 - No present wiki or module artifact is labeled absent, excluded, or future work.
 - Navigation and manifests include every accepted contribution with valid links.
-- Dev Documentation Writer performs assigned document changes without becoming the audit owner.
+- Dev Documentation Writer creates or updates assigned supported documents, including missing module designs discovered by the audit, without becoming the audit owner.
 - The Project Bootstrapper missing-configuration scenario reaches final acceptance within its bounded correction policy.
 - Repository skill validation, generated-output checks, and unit tests pass.
 
@@ -79,7 +80,7 @@ The complete evaluation did not edit the distributed Project Bootstrapper, Proje
 ## Verification
 
 - Add focused integration tests that distinguish ordinary setup from whole-project reverse engineering and transition a reverse-engineering fixture from contribution phase to steady state.
-- Verify Wiki Ingester owns the final audit and that correction routing preserves existing artifact ownership.
+- Verify Wiki Ingester owns the final audit and that correction or missing-artifact routing preserves existing artifact ownership, including a missing-module-design case assigned to Dev Documentation Writer.
 - Search final artifacts for fixture-specific absent, excluded, and future-work markers.
 - Run the Project Bootstrapper missing-configuration scenario and inspect every accepted contribution and the final review packet.
 - Run Agent Skill validation, generated-output freshness checks, repository unit tests, and Git diff validation.
@@ -87,4 +88,4 @@ The complete evaluation did not edit the distributed Project Bootstrapper, Proje
 ## Notes
 
 - A correct intermediate contribution does not satisfy the final integrated-state contract.
-- Dev Documentation Writer writes and updates documents; it does not perform the final cross-artifact audit.
+- Dev Documentation Writer writes and updates every supported assigned document needed by reverse engineering; it does not perform the final cross-artifact audit.
