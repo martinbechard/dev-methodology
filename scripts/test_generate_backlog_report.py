@@ -251,6 +251,46 @@ Do not implement.
         self.assertNotIn("Embedded Link", runnable)
         self.assertNotIn("base (satisfied)", runnable)
 
+    def test_punctuation_wrapped_markdown_links_remain_verbatim_manual_prerequisites(
+        self,
+    ) -> None:
+        """Link prose without whitespace cannot be mistaken for a local identifier."""
+        self.write_item(
+            "backlog/completed-backlog/features/base.md",
+            title="Base",
+            status="Completed",
+            item_type="Feature",
+        )
+        dependencies = {
+            "Wrapped Local Link": "([Base](../completed-backlog/features/base.md))",
+            "Wrapped External Link": (
+                "([Base](https://example.invalid/base.md?view=full#approval))"
+            ),
+        }
+        for title, dependency in dependencies.items():
+            self.write_item(
+                f"backlog/feature-backlog/{title.lower().replace(' ', '-')}.md",
+                title=title,
+                status="Ready",
+                item_type="Feature",
+                dependencies=f"- {dependency}",
+            )
+
+        rendered = self.generate()
+
+        self.assertIn("<span>Runnable now</span><strong>0</strong>", rendered)
+        runnable = rendered[rendered.index("Runnable Work"):rendered.index("Blocked Work")]
+        for title, dependency in dependencies.items():
+            with self.subTest(dependency=dependency):
+                self.assertIn(f"{dependency} (unmet)", rendered)
+                self.assertIn(
+                    f"External prerequisite requires manual satisfaction: {dependency}",
+                    rendered,
+                )
+                self.assertNotIn(f"Invalid dependency identifier: {dependency}", rendered)
+                self.assertNotIn(title, runnable)
+        self.assertNotIn("base (satisfied)", rendered)
+
     def test_external_markdown_uri_with_query_and_fragment_remains_manual(self) -> None:
         """An external link remains verbatim and cannot borrow same-stem completion evidence."""
         self.write_item(
@@ -352,6 +392,8 @@ Do not implement.
         dependencies = {
             "Query Link": "[Base](../completed-backlog/features/base.md?view=full)",
             "Fragment Link": "[Base](../completed-backlog/features/base.md#approval)",
+            "Empty Query Link": "[Base](../completed-backlog/features/base.md?)",
+            "Empty Fragment Link": "[Base](../completed-backlog/features/base.md#)",
         }
         for title, dependency in dependencies.items():
             self.write_item(
@@ -690,8 +732,34 @@ Do not proceed.
 
         self.assertIn(f"source commit {long_commit}", rendered)
         self.assertIn(long_claim_value, rendered)
-        self.assertIn(".meta,.snapshot{overflow-wrap:anywhere}", rendered)
+        self.assertIn(
+            ".meta,.detail,.findings li,.snapshot{overflow-wrap:anywhere}",
+            rendered,
+        )
         self.assertIn("@media(max-width:420px)", rendered)
+
+    def test_long_dependency_and_finding_have_narrow_viewport_wrap_contract(
+        self,
+    ) -> None:
+        """Long prerequisite text cannot force report grids wider than the viewport."""
+        dependency = "https://example.invalid/" + "unbroken-dependency-segment-" * 12
+        self.write_item(
+            "backlog/feature-backlog/long-dependency.md",
+            title="Long Dependency",
+            status="Ready",
+            item_type="Feature",
+            dependencies=f"- {dependency}",
+        )
+
+        rendered = self.generate()
+
+        self.assertGreaterEqual(rendered.count(dependency), 2)
+        self.assertIn(".metric,.item,.panel{min-width:0", rendered)
+        self.assertIn(
+            ".meta,.detail,.findings li,.snapshot{overflow-wrap:anywhere}",
+            rendered,
+        )
+        self.assertIn('<meta name="viewport" content="width=device-width, initial-scale=1">', rendered)
 
     def test_git_source_and_claim_snapshot_do_not_change_eligibility(self) -> None:
         """Git and claim metadata form a separate snapshot and never remove Ready work."""

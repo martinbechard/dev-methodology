@@ -313,6 +313,8 @@ def _unwrap_launcher(tokens: list[str]) -> str | None:
         launcher = Path(remaining[0]).name
         if launcher in _SIMPLE_WRAPPERS:
             remaining.pop(0)
+            if launcher == "command" and remaining and remaining[0] == "--":
+                remaining.pop(0)
             continue
         if launcher == "env":
             remaining.pop(0)
@@ -375,6 +377,9 @@ def _runnable_prose_commands(line: str) -> list[str]:
     candidate = re.sub(r"^\s*(?:[-*+]\s+|\d+[.)]\s+)?", "", without_inline).strip()
     directive = _DIRECTIVE.search(candidate)
     runnable = directive.group(1).strip() if directive else candidate
+    emphasis = re.fullmatch(r"(?P<marker>\*\*|__)(?P<body>.+)(?P=marker)", runnable)
+    if emphasis:
+        runnable = emphasis.group("body").strip()
     if _is_runnable_command(runnable):
         commands.append(runnable)
     return list(dict.fromkeys(commands))

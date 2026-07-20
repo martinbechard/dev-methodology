@@ -409,6 +409,36 @@ class DocumentationWriterFixtureTests(unittest.TestCase):
             self.assertEqual(3, completed.returncode)
             self.assertFalse(json.loads(completed.stdout)["testCommandValid"])
 
+    def test_final_validator_rejects_bold_command_outside_shell_fence(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            artifact = Path(directory) / "module-design.md"
+            artifact.write_text(
+                _complete_artifact_text() + "\n**node tools/check.js**\n",
+                encoding="utf-8",
+            )
+            completed = _run_validator("final", artifact=artifact)
+
+        self.assertEqual(3, completed.returncode)
+        evidence = json.loads(completed.stdout)
+        self.assertFalse(evidence["testCommandValid"])
+        self.assertIn("node tools/check.js", evidence["commandClaims"])
+
+    def test_final_validator_rejects_command_separator_wrapper_outside_shell_fence(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            artifact = Path(directory) / "module-design.md"
+            artifact.write_text(
+                _complete_artifact_text() + "\ncommand -- node tools/check.js\n",
+                encoding="utf-8",
+            )
+            completed = _run_validator("final", artifact=artifact)
+
+        self.assertEqual(3, completed.returncode)
+        evidence = json.loads(completed.stdout)
+        self.assertFalse(evidence["testCommandValid"])
+        self.assertIn("command -- node tools/check.js", evidence["commandClaims"])
+
     def test_final_validator_rejects_wrapped_unapproved_shell_command(self) -> None:
         commands = [
             "python3 -m unittest discover -s tests",
