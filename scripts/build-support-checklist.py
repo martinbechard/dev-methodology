@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Modified with AI assistance.
-# Summary: Builds truthful agent and skill evaluation coverage reports from catalogs and receipt classifications.
+# Summary: Builds truthful coverage reports and joined explorer data from canonical catalogs and receipt classifications.
 
 from __future__ import annotations
 
@@ -39,6 +39,20 @@ _CATALOG_FILES = {
 }
 _COVERAGE_STATUSES = {"declared", "fixture-backed", "verified"}
 _CATALOG_COVERAGE_STATUSES = _COVERAGE_STATUSES | {"mixed"}
+_ADAPTER_EXTENSIONS = {
+    "claude": ".md",
+    "codex": ".toml",
+    "gemini": ".md",
+    "junie": ".md",
+}
+_STATUS_VOCABULARY = (
+    ("missing", "No declaration or evidence is available."),
+    ("unsupported", "The selected harness has no supported mapping."),
+    ("blocked", "Stale or conflicting evidence prevents promotion."),
+    ("manual", "A human-readable observation exists without a current receipt."),
+    ("declared", "The source contract exists but current verified behavior is absent."),
+    ("verified", "A current classified receipt establishes verified behavior."),
+)
 
 
 def load_yaml(path: Path) -> dict[str, object]:
@@ -1815,13 +1829,198 @@ def render(
     return "\n".join(lines)
 
 
+def _load_explorer_model_profiles(root: Path) -> list[dict[str, object]]:
+    """Join semantic model profiles to every available adapter mapping."""
+    source = load_yaml(root / "agents" / "model-profiles.yaml")
+    profiles = _require_mapping(source.get("profiles"), "model profiles")
+    adapters: dict[str, dict[str, object]] = {}
+    for path in sorted((root / "adapters").glob("*/model-profiles.yaml")):
+        mapping = load_yaml(path)
+        adapter_id = str(mapping.get("adapter", path.parent.name))
+        adapters[adapter_id] = _require_mapping(
+            mapping.get("profiles"), f"{adapter_id} model profiles"
+        )
+    rows: list[dict[str, object]] = []
+    for profile_id, raw_profile in sorted(profiles.items()):
+        profile = _require_mapping(raw_profile, f"model profile {profile_id}")
+        adapter_rows: list[dict[str, object]] = []
+        for adapter_id, adapter_profiles in sorted(adapters.items()):
+            raw_adapter_profile = adapter_profiles.get(profile_id)
+            if not isinstance(raw_adapter_profile, dict):
+                continue
+            adapter_rows.append(
+                {
+                    "harness": adapter_id,
+                    **raw_adapter_profile,
+                    "sourcePath": f"adapters/{adapter_id}/model-profiles.yaml",
+                }
+            )
+        rows.append(
+            {
+                "id": profile_id,
+                "purpose": str(profile.get("purpose", "")),
+                "sourcePath": "agents/model-profiles.yaml",
+                "adapters": adapter_rows,
+            }
+        )
+    return rows
+
+
+def _evidence_status_for_case(
+    case_id: str, coverage: dict[str, object]
+) -> str:
+    """Classify one evaluation case without promoting declarations or manual notes."""
+    states = [
+        *_require_mapping(coverage.get("agents"), "coverage agents").values(),
+        *_require_mapping(coverage.get("skills"), "coverage skills").values(),
+    ]
+    verified = any(
+        case_id in state.get("verifiedCases", [])
+        for state in states
+        if isinstance(state, dict)
+    )
+    if verified:
+        return "verified"
+    stale = any(
+        case_id in state.get("staleByDigestCases", [])
+        for state in states
+        if isinstance(state, dict)
+    )
+    return "blocked" if stale else "declared"
+
+
+def _build_evidence_records(
+    root: Path, coverage: dict[str, object]
+) -> list[dict[str, object]]:
+    """Expose catalog cases, classified receipts, and non-promoted result notes."""
+    receipt_paths_by_case: dict[str, list[str]] = {}
+    evidence_root = root / "evals" / "evidence"
+    if evidence_root.is_dir():
+        for path in sorted(evidence_root.rglob("*.yaml")):
+            receipt = load_yaml(path)
+            case_id = receipt.get("case")
+            if isinstance(case_id, str):
+                receipt_paths_by_case.setdefault(case_id, []).append(
+                    path.relative_to(root).as_posix()
+                )
+    cases = _require_mapping(coverage.get("cases"), "coverage cases")
+    records = [
+        {
+            "id": case_id,
+            "kind": "evaluation-case",
+            "status": _evidence_status_for_case(case_id, coverage),
+            "sourcePath": "evals/cases.yaml",
+            "receiptPaths": receipt_paths_by_case.get(case_id, []),
+            "harnesses": list(case.get("harnesses", [])),
+        }
+        for case_id, case in sorted(cases.items())
+        if isinstance(case, dict)
+    ]
+    results_root = root / "evals" / "results"
+    if results_root.is_dir():
+        records.extend(
+            {
+                "id": f"manual:{path.stem}",
+                "kind": "manual-observation",
+                "status": "manual",
+                "sourcePath": path.relative_to(root).as_posix(),
+                "receiptPaths": [],
+                "harnesses": [],
+            }
+            for path in sorted(results_root.glob("*.md"))
+        )
+    return records
+
+
+def _build_loading_modes(coverage: dict[str, object]) -> list[dict[str, object]]:
+    """Describe implemented harness loading routes and their evidence boundary."""
+    return [
+        {
+            "id": "core-inline",
+            "harness": "all",
+            "mode": "static-inline",
+            "status": "declared",
+            "label": "Definition-owned core skills",
+            "sourcePath": "scripts/build-skill-docs.py",
+            "edgeKinds": ["fixed"],
+        },
+        {
+            "id": "conditional-dynamic",
+            "harness": "all",
+            "mode": "request-driven",
+            "status": "declared",
+            "label": "Conditional definition-owned skills",
+            "sourcePath": "scripts/build-skill-docs.py",
+            "edgeKinds": ["conditional"],
+        },
+        {
+            "id": "claude-preload",
+            "harness": "claude",
+            "mode": "native-preload",
+            "status": "declared",
+            "label": "Claude fixed-skill preload when static inlining is disabled",
+            "sourcePath": "scripts/build-skill-docs.py",
+            "edgeKinds": ["fixed"],
+        },
+        {
+            "id": "claude-folder",
+            "harness": "claude",
+            "mode": "skill-tool",
+            "status": "declared",
+            "label": "Claude dynamic Skill-tool loading",
+            "sourcePath": "agents/role-schema.yaml",
+            "edgeKinds": ["conditional", "detected-folder"],
+        },
+        {
+            "id": "codex-folder",
+            "harness": "codex",
+            "mode": "instruction-driven",
+            "status": "declared",
+            "label": "Codex instruction-driven loading",
+            "sourcePath": "agents/role-schema.yaml",
+            "edgeKinds": ["conditional", "detected-folder"],
+        },
+        {
+            "id": "codex-availability",
+            "harness": "codex",
+            "mode": "availability-override",
+            "status": "declared",
+            "label": "Codex optional skill availability overrides",
+            "sourcePath": "agents/role-schema.yaml",
+            "edgeKinds": [],
+        },
+        {
+            "id": "claude-availability",
+            "harness": "claude",
+            "mode": "availability-override",
+            "status": "unsupported",
+            "label": "Claude optional skill availability overrides",
+            "sourcePath": "design/generic-agent-definitions-source.html",
+            "edgeKinds": [],
+        },
+        {
+            "id": "codex-app-server",
+            "harness": "codex",
+            "mode": "app-server-injection",
+            "status": "missing",
+            "label": "Codex app-server injection evidence",
+            "sourcePath": "evals/cases.yaml",
+            "edgeKinds": [],
+        },
+    ]
+
+
 def build_explorer_payload(
     skills: dict[str, str],
     roles: dict[str, dict[str, object]],
     detection: dict[str, object],
     coverage: dict[str, object],
+    *,
+    root: Path = ROOT,
 ) -> dict[str, object]:
-    """Build version-two explorer data without promoting catalog declarations."""
+    """Build joined explorer data without promoting declarations or manual notes."""
+    model_profiles = _load_explorer_model_profiles(root)
+    profiles_by_id = {str(item["id"]): item for item in model_profiles}
     role_items: list[dict[str, object]] = []
     edges: list[dict[str, object]] = []
     for role_id, role in sorted(roles.items()):
@@ -1833,12 +2032,35 @@ def build_explorer_payload(
             if condition is not None
         }
         state = coverage["agents"][role_id]
+        generated_adapters = []
+        adapter_filename = str(role.get("filename", role_id))
+        for harness, extension in sorted(_ADAPTER_EXTENSIONS.items()):
+            profile = profiles_by_id.get(str(role["modelProfile"]), {})
+            adapter_profile = next(
+                (
+                    item
+                    for item in profile.get("adapters", [])
+                    if item.get("harness") == harness
+                ),
+                {},
+            )
+            generated_adapters.append(
+                {
+                    "harness": harness,
+                    "path": f"generated/adapters/{harness}/agents/{adapter_filename}{extension}",
+                    "modelProfile": role["modelProfile"],
+                    "model": adapter_profile.get("model"),
+                }
+            )
         role_items.append(
             {
                 "id": role_id,
                 "label": role.get("label", role_id),
                 "description": role.get("description", ""),
                 "modelProfile": role["modelProfile"],
+                "sourcePath": role.get("_sourcePath"),
+                "generatedAdapters": generated_adapters,
+                "skillAvailability": role.get("skillAvailability", []),
                 "fixedSkills": fixed_skills,
                 "conditionalSkills": conditional_skills,
                 "dynamicFolderSkills": bool(role.get("dynamicFolderSkills", False)),
@@ -1863,14 +2085,33 @@ def build_explorer_payload(
             }
             for skill, condition in conditional_skills.items()
         )
+        if role.get("dynamicFolderSkills", False):
+            edges.extend(
+                {"role": role_id, "skill": skill_id, "kind": "detected-folder"}
+                for skill_id in sorted(detection)
+            )
     skill_items: list[dict[str, object]] = []
     for skill_id, category in sorted(skills.items()):
         state = coverage["skills"][skill_id]
+        detector = detection.get(skill_id)
+        detector_mapping = detector if isinstance(detector, dict) else {}
         skill_items.append(
             {
                 "id": skill_id,
+                "label": detector_mapping.get(
+                    "label", skill_id.replace("-", " ").title()
+                ),
                 "category": category,
-                "detection": detection.get(skill_id),
+                "sourcePath": f"skills/{skill_id}/SKILL.md",
+                "detectionPath": (
+                    "skills/detect-technology-skills/references/"
+                    "technology-skill-detection-registry.yaml"
+                    if detector_mapping
+                    else None
+                ),
+                "kind": detector_mapping.get("kind", "core"),
+                "capabilities": detector_mapping.get("capabilities", []),
+                "detection": detector,
                 "declaredCases": state["executableCases"],
                 "executedCases": state["executedCases"],
                 "judgePassedCases": state["judgePassedCases"],
@@ -1881,8 +2122,15 @@ def build_explorer_payload(
         )
     return {
         "schema": "dev-methodology-agent-skill-explorer-data",
-        "version": 2,
+        "version": 3,
+        "statusVocabulary": [
+            {"id": status_id, "description": description}
+            for status_id, description in _STATUS_VOCABULARY
+        ],
         "evaluationHarnesses": coverage["harnesses"],
+        "modelProfiles": model_profiles,
+        "loadingModes": _build_loading_modes(coverage),
+        "evidence": _build_evidence_records(root, coverage),
         "roles": role_items,
         "skills": skill_items,
         "edges": sorted(
@@ -1925,7 +2173,7 @@ def render_explorer_data(
         if isinstance(entry, dict)
     }
     payload = build_explorer_payload(
-        active_skills, active_roles, detection, active_coverage
+        active_skills, active_roles, detection, active_coverage, root=root
     )
     return (
         "// Copyright (c) 2026 Martin.Bechard@DevConsult.ca\n"

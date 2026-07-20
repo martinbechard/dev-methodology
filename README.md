@@ -87,7 +87,7 @@ The generated [interactive agent and skill hierarchy](design/agent-and-skill-def
 python3 scripts/build-agent-skill-hierarchy.py
 ```
 
-The generated [agent, skill, technology, and test coverage checklist](design/agent-skill-test-coverage-checklist.md) inventories every agent and bundled skill, shows specialized activation coverage, and distinguishes declarations and manual observations from independently verified behavior. Regenerate it with:
+The generated [agent and skill wiring map](design/agent-skill-explorer.html) joins conceptual definitions, detected technology routes, model profiles, native adapters, loading semantics, evaluation cases, and classified receipts in one offline, keyboard-accessible explorer. The generated [agent, skill, technology, and test coverage checklist](design/agent-skill-test-coverage-checklist.md) inventories every agent and bundled skill, shows specialized activation coverage, and distinguishes declarations and manual observations from independently verified behavior. Regenerate both data views with:
 
 ```bash
 python3 scripts/build-support-checklist.py

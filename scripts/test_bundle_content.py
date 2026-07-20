@@ -497,6 +497,7 @@ AGENT_ROLE_MAP_REQUIRED_PHRASES = (
     "Interactive Agent And Skill Map",
     'class="hierarchy-embed"',
     "Open the interactive SVG diagram",
+    "explore agents, detected skills, harness loading, and evidence in the wiring map",
     'id="agent-skill-hierarchy"',
     "dev-methodology:view-definition",
     "event.source !== hierarchyMap.contentWindow",

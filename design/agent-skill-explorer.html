@@ -1,0 +1,169 @@
+<!doctype html>
+<!--
+Copyright (c) 2026 Martin.Bechard@DevConsult.ca
+AI attribution: Generated with AI assistance.
+Summary: Presents the generated agent and skill relationship contract as an offline interactive explorer.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agent &amp; Skill Wiring Map</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #eef2ea;
+      --muted: #afc0c8;
+      --night: #071522;
+      --panel: #0d2234;
+      --panel-raised: #143148;
+      --line: #607f96;
+      --amber: #ffba63;
+      --cyan: #65d7df;
+      --magenta: #ef8fc7;
+      --green: #82dc9b;
+      --red: #ff8a8a;
+      --focus: #fff3b0;
+      --radius: 0.7rem;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--night);
+      color: var(--ink);
+      font: 1rem/1.5 Inter, ui-sans-serif, system-ui, sans-serif;
+    }
+    a { color: var(--cyan); }
+    a:focus-visible, button:focus-visible, select:focus-visible, [tabindex]:focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 3px;
+    }
+    .masthead {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(16rem, 0.7fr);
+      gap: 2rem;
+      padding: clamp(2rem, 5vw, 5rem);
+      border-bottom: 1px solid var(--line);
+      background:
+        linear-gradient(115deg, rgba(101, 215, 223, 0.08), transparent 44%),
+        repeating-linear-gradient(90deg, transparent 0 4.9rem, rgba(255,255,255,0.025) 5rem);
+    }
+    .masthead > *, .workspace > *, .control { min-width: 0; }
+    .eyebrow, .utility { color: var(--cyan); font: 700 0.72rem/1.2 ui-monospace, monospace; letter-spacing: 0.14em; text-transform: uppercase; }
+    h1, h2 { font-family: Georgia, "Times New Roman", serif; font-weight: 500; }
+    h1 { max-width: 13ch; margin: 0.45rem 0 1rem; font-size: clamp(2.8rem, 7vw, 6.8rem); line-height: 0.88; letter-spacing: -0.055em; }
+    .lede { max-width: 64ch; color: var(--muted); font-size: 1.08rem; }
+    .signal-card { align-self: end; padding: 1.2rem; border: 1px solid var(--line); background: rgba(13,34,52,0.84); border-radius: var(--radius); }
+    .signal-card strong { display: block; margin-top: 0.35rem; color: var(--amber); font: 500 2rem/1 Georgia, serif; }
+    main { padding: clamp(1rem, 3vw, 2.5rem); }
+    .controls { display: grid; grid-template-columns: repeat(5, minmax(9rem, 1fr)); gap: 0.75rem; margin-bottom: 1rem; }
+    .control { display: grid; gap: 0.3rem; }
+    .control label { color: var(--muted); font: 700 0.69rem/1.2 ui-monospace, monospace; letter-spacing: 0.08em; text-transform: uppercase; }
+    select, button {
+      min-height: 2.7rem;
+      border: 1px solid var(--line);
+      border-radius: 0.45rem;
+      background: var(--panel);
+      color: var(--ink);
+      padding: 0.55rem 0.7rem;
+      font: inherit;
+    }
+    select { width: 100%; }
+    button { cursor: pointer; }
+    .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.8rem; margin: 1rem 0; }
+    .toolbar button:hover { border-color: var(--cyan); }
+    .legend { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-left: auto; }
+    .status-chip { padding: 0.22rem 0.5rem; border: 1px solid currentColor; border-radius: 999px; font: 700 0.68rem/1 ui-monospace, monospace; text-transform: uppercase; }
+    .status-missing { color: #b8c1c7; }
+    .status-unsupported { color: #d9a7e8; }
+    .status-blocked { color: var(--red); }
+    .status-manual { color: var(--magenta); }
+    .status-declared { color: var(--amber); }
+    .status-verified { color: var(--green); }
+    .workspace { display: grid; grid-template-columns: minmax(0, 1fr) minmax(17rem, 24rem); gap: 1rem; align-items: start; }
+    .map-shell, .detail-panel { border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); }
+    .map-shell { min-width: 0; max-width: 100%; overflow: auto; max-height: 72vh; }
+    #relationship-map { display: block; width: 100%; min-width: 48rem; min-height: 35rem; }
+    .detail-panel { position: sticky; top: 1rem; padding: 1.15rem; }
+    .detail-panel h2 { margin: 0.3rem 0 0.7rem; font-size: 1.7rem; }
+    .detail-panel p { color: var(--muted); }
+    .detail-list { padding: 0; list-style: none; }
+    .detail-list li { padding: 0.5rem 0; border-top: 1px solid var(--line); }
+    .empty { padding: 4rem 2rem; color: var(--muted); text-align: center; }
+    .map-node rect { fill: var(--panel-raised); stroke: var(--line); stroke-width: 1.5; }
+    .map-node text { fill: var(--ink); font: 13px ui-monospace, monospace; pointer-events: none; }
+    .map-node:hover rect, .map-node[data-selected="true"] rect { stroke: var(--focus); stroke-width: 3; }
+    .map-edge { fill: none; stroke-width: 1.4; opacity: 0.52; }
+    .edge-fixed, .edge-conditional { stroke: var(--amber); }
+    .edge-detected-folder { stroke: var(--cyan); stroke-dasharray: 5 5; }
+    .column-label { fill: var(--muted); font: 700 12px ui-monospace, monospace; letter-spacing: 0.12em; }
+    @media (max-width: 960px) {
+      .masthead, .workspace { grid-template-columns: minmax(0, 1fr); }
+      .controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .detail-panel { position: static; }
+      .legend { margin-left: 0; }
+    }
+    @media (max-width: 560px) {
+      .masthead { padding: 2rem 1rem; }
+      main { padding: 0.75rem; }
+      .controls { grid-template-columns: 1fr; }
+      #relationship-map { min-width: 42rem; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+  </style>
+</head>
+<body>
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Generated relationship contract / offline</div>
+      <h1>Agent &amp; skill wiring map</h1>
+      <p class="lede">Trace what an agent owns, what a folder can add, how each harness loads it, and whether evidence is merely declared or actually verified. Amber is definition-owned. Cyan is detected from repository scope.</p>
+    </div>
+    <div class="signal-card">
+      <span class="utility">Current view</span>
+      <strong id="result-count">Loading…</strong>
+      <span id="result-summary">Reading generated data.</span>
+    </div>
+  </header>
+  <main>
+    <section class="controls" aria-label="Relationship filters">
+      <div class="control"><label for="filter-agent">Agent</label><select id="filter-agent"><option value="">All agents</option></select></div>
+      <div class="control"><label for="filter-category">Skill category</label><select id="filter-category"><option value="">All categories</option></select></div>
+      <div class="control"><label for="filter-technology">Technology</label><select id="filter-technology"><option value="">All technologies</option></select></div>
+      <div class="control"><label for="filter-capability">Capability</label><select id="filter-capability"><option value="">All capabilities</option></select></div>
+      <div class="control"><label for="filter-folder-scope">Folder scope</label><select id="filter-folder-scope"><option value="">Any scope</option><option value="dynamic">Detected-folder enabled</option><option value="static">Definition only</option></select></div>
+      <div class="control"><label for="filter-harness">Harness</label><select id="filter-harness"><option value="">All harnesses</option></select></div>
+      <div class="control"><label for="filter-model-profile">Model profile</label><select id="filter-model-profile"><option value="">All profiles</option></select></div>
+      <div class="control"><label for="filter-loading-mode">Loading mode</label><select id="filter-loading-mode"><option value="">All modes</option></select></div>
+      <div class="control"><label for="filter-declaration-status">Declaration status</label><select id="filter-declaration-status"><option value="">All states</option></select></div>
+      <div class="control"><label for="filter-verified-behavior">Verified behavior</label><select id="filter-verified-behavior"><option value="">Any evidence</option><option value="verified">Verified only</option><option value="unverified">Not verified</option></select></div>
+    </section>
+    <div class="toolbar">
+      <button id="reset-filters" type="button">Reset filters</button>
+      <span class="utility">Keyboard: Tab into map, arrows move, Enter opens details</span>
+      <div id="status-legend" class="legend" aria-label="Evidence status legend"></div>
+    </div>
+    <div class="workspace">
+      <section class="map-shell" aria-label="Agent and skill relationship map">
+        <svg id="relationship-map" role="group" aria-label="Filtered agent and skill relationships"></svg>
+        <div id="empty-state" class="empty" hidden>No relationships match these filters. Reset filters or widen one selection.</div>
+      </section>
+      <aside id="detail-panel" class="detail-panel" aria-live="polite">
+        <div id="selection-detail">
+          <span class="utility">Selection</span>
+          <h2>Choose a node</h2>
+          <p>Use a filter or select a node to inspect its canonical source, generated adapters, loading route, and evidence.</p>
+        </div>
+        <h2>Loading routes</h2>
+        <ul id="loading-route-list" class="detail-list"></ul>
+        <details>
+          <summary>Evidence ledger</summary>
+          <ul id="evidence-list" class="detail-list"></ul>
+        </details>
+      </aside>
+    </div>
+  </main>
+  <script src="generated/agent-skill-explorer-data.js"></script>
+  <script src="agent-skill-explorer.js"></script>
+</body>
+</html>

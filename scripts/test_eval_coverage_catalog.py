@@ -903,6 +903,40 @@ class EvalCoverageCatalogTests(unittest.TestCase):
         self.catalogs()
         snapshot = self.coverage()
 
+        self.write_yaml(
+            "agents/model-profiles.yaml",
+            {
+                "schema": "dev-methodology-model-profiles",
+                "version": 1,
+                "profiles": {"default": {"purpose": "Normal work."}},
+            },
+        )
+        self.write_yaml(
+            "adapters/codex/model-profiles.yaml",
+            {
+                "schema": "dev-methodology-adapter-model-profiles",
+                "version": 1,
+                "adapter": "codex",
+                "profiles": {"default": {"model": "test-model", "effort": "medium"}},
+            },
+        )
+        self.write_yaml(
+            "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+            {
+                "schema": "dev-methodology-technology-skill-detection-registry",
+                "version": 2,
+                "skills": [
+                    {
+                        "skill": "skill-a",
+                        "kind": "technology",
+                        "label": "Skill A",
+                        "capabilities": ["test-capability"],
+                        "activation": {"anyOf": [{"fileExtension": ".test"}]},
+                    }
+                ],
+            },
+        )
+
         payload = self.module.build_explorer_payload(
             {"skill-a": "test"},
             {
@@ -911,14 +945,26 @@ class EvalCoverageCatalogTests(unittest.TestCase):
                     "label": "Agent A",
                     "description": "Test agent",
                     "modelProfile": "default",
-                    "skills": [],
+                    "skills": ["skill-a"],
+                    "dynamicFolderSkills": True,
+                    "skillAvailability": [{"name": "skill-a", "enabled": False}],
+                    "_sourcePath": "agents/roles/test/agent-a.role.yaml",
                 }
             },
-            {},
+            {
+                "skill-a": {
+                    "skill": "skill-a",
+                    "kind": "technology",
+                    "label": "Skill A",
+                    "capabilities": ["test-capability"],
+                    "activation": {"anyOf": [{"fileExtension": ".test"}]},
+                }
+            },
             snapshot,
+            root=self.root,
         )
 
-        self.assertEqual(2, payload["version"])
+        self.assertEqual(3, payload["version"])
         self.assertEqual([], payload["roles"][0]["judgePassedCases"])
         self.assertEqual([], payload["roles"][0]["securityContainedCases"])
         self.assertEqual([], payload["roles"][0]["coverage"]["verifiedCases"])
@@ -927,6 +973,71 @@ class EvalCoverageCatalogTests(unittest.TestCase):
         self.assertEqual([], payload["skills"][0]["coverage"]["verifiedCases"])
         self.assertEqual("pending", payload["judgeStatus"]["calibrationStatus"])
         self.assertEqual(["codex", "junie"], payload["evaluationHarnesses"])
+        self.assertEqual(
+            "agents/roles/test/agent-a.role.yaml", payload["roles"][0]["sourcePath"]
+        )
+        self.assertEqual(
+            [{"name": "skill-a", "enabled": False}],
+            payload["roles"][0]["skillAvailability"],
+        )
+        self.assertEqual("skills/skill-a/SKILL.md", payload["skills"][0]["sourcePath"])
+        self.assertEqual(
+            "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
+            payload["skills"][0]["detectionPath"],
+        )
+        self.assertEqual(
+            ["test-capability"], payload["skills"][0]["capabilities"]
+        )
+        self.assertIn(
+            {"role": "agent-a", "skill": "skill-a", "kind": "detected-folder"},
+            payload["edges"],
+        )
+        self.assertEqual("test-model", payload["modelProfiles"][0]["adapters"][0]["model"])
+        adapter_paths = {
+            item["harness"]: item["path"]
+            for item in payload["roles"][0]["generatedAdapters"]
+        }
+        self.assertEqual(
+            "generated/adapters/codex/agents/agent-a.toml", adapter_paths["codex"]
+        )
+        loading_by_id = {item["id"]: item for item in payload["loadingModes"]}
+        self.assertEqual("instruction-driven", loading_by_id["codex-folder"]["mode"])
+        self.assertEqual(
+            ["conditional", "detected-folder"],
+            loading_by_id["codex-folder"]["edgeKinds"],
+        )
+        self.assertEqual("skill-tool", loading_by_id["claude-folder"]["mode"])
+        self.assertEqual(
+            ["conditional", "detected-folder"],
+            loading_by_id["claude-folder"]["edgeKinds"],
+        )
+        self.assertEqual(
+            ["conditional"], loading_by_id["conditional-dynamic"]["edgeKinds"]
+        )
+        self.assertEqual("unsupported", loading_by_id["claude-availability"]["status"])
+        self.assertEqual("missing", loading_by_id["codex-app-server"]["status"])
+        self.assertNotIn("evidenceCase", loading_by_id["codex-app-server"])
+        self.assertEqual(
+            ["missing", "unsupported", "blocked", "manual", "declared", "verified"],
+            [item["id"] for item in payload["statusVocabulary"]],
+        )
+        rendered = self.module.render_explorer_data(
+            self.root,
+            skills={"skill-a": "test"},
+            roles={
+                "agent-a": {
+                    "name": "agent-a",
+                    "label": "Agent A",
+                    "description": "Test agent",
+                    "modelProfile": "default",
+                    "skills": ["skill-a"],
+                    "_sourcePath": "agents/roles/test/agent-a.role.yaml",
+                }
+            },
+            coverage=snapshot,
+        )
+        self.assertIn('"model": "test-model"', rendered)
+        self.assertNotIn("gpt-", rendered)
 
 
 if __name__ == "__main__":

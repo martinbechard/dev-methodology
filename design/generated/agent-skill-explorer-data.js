@@ -101,6 +101,251 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "traversal-patterns"
     },
     {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "agent-harness"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "api-routes"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "clerk-auth"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "electron-main"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "electron-preload"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "fastapi"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "hibernate-orm-panache"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "java"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "java-design"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "java-design-pattern-examples"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "jest"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "jhipster-domain-modeling"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "jhipster-persistence"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "jhipster-project"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "jhipster-security"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "jhipster-testing"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "junit"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "langgraph"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "liquibase"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "local-model-integration"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "mapstruct"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "mockito"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "mysql"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "nextjs-app-router"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "node-cli"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "plan-engine"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "playwright"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "postgres-drizzle"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "python"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "python-design-pattern-examples"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "quarkus"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "quarkus-design"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "quarkus-persistence"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "quarkus-testing"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "quartz"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "react-server-components"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "react-vite-renderer"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "spring-boot"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "spring-boot-design"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "spring-boot-testing"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "spring-data-jpa"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "sql"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "tailwind-design-system"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "tool-runtime"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "typescript"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "typescript-design-pattern-examples"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "typescript-esm"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "typescript-strict"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-artifact-reviewer",
+      "skill": "vitest"
+    },
+    {
       "kind": "fixed",
       "role": "dev-artifact-reviewer",
       "skill": "documentation-page-verify"
@@ -181,6 +426,251 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "organise-project-files"
     },
     {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "agent-harness"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "api-routes"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "clerk-auth"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "electron-main"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "electron-preload"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "fastapi"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "hibernate-orm-panache"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "java"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "java-design"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "java-design-pattern-examples"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "jest"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "jhipster-domain-modeling"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "jhipster-persistence"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "jhipster-project"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "jhipster-security"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "jhipster-testing"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "junit"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "langgraph"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "liquibase"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "local-model-integration"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "mapstruct"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "mockito"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "mysql"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "nextjs-app-router"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "node-cli"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "plan-engine"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "playwright"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "postgres-drizzle"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "python"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "python-design-pattern-examples"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "quarkus"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "quarkus-design"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "quarkus-persistence"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "quarkus-testing"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "quartz"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "react-server-components"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "react-vite-renderer"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "spring-boot"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "spring-boot-design"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "spring-boot-testing"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "spring-data-jpa"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "sql"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "tailwind-design-system"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "tool-runtime"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "typescript"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "typescript-design-pattern-examples"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "typescript-esm"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "typescript-strict"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-browser-operator",
+      "skill": "vitest"
+    },
+    {
       "kind": "fixed",
       "role": "dev-browser-operator",
       "skill": "end-to-end-verification"
@@ -201,6 +691,251 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "conditional",
       "role": "dev-code-reviewer",
       "skill": "organise-project-files"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "agent-harness"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "api-routes"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "clerk-auth"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "electron-main"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "electron-preload"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "fastapi"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "hibernate-orm-panache"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "java"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "java-design"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "java-design-pattern-examples"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "jest"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "jhipster-domain-modeling"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "jhipster-persistence"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "jhipster-project"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "jhipster-security"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "jhipster-testing"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "junit"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "langgraph"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "liquibase"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "local-model-integration"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "mapstruct"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "mockito"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "mysql"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "nextjs-app-router"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "node-cli"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "plan-engine"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "playwright"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "postgres-drizzle"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "python"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "python-design-pattern-examples"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "quarkus"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "quarkus-design"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "quarkus-persistence"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "quarkus-testing"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "quartz"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "react-server-components"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "react-vite-renderer"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "spring-boot"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "spring-boot-design"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "spring-boot-testing"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "spring-data-jpa"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "sql"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "tailwind-design-system"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "tool-runtime"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "typescript"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "typescript-design-pattern-examples"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "typescript-esm"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "typescript-strict"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-code-reviewer",
+      "skill": "vitest"
     },
     {
       "kind": "fixed",
@@ -239,6 +974,251 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "conditional",
       "role": "dev-coder",
       "skill": "test-driven-development"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "agent-harness"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "api-routes"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "clerk-auth"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "electron-main"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "electron-preload"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "fastapi"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "hibernate-orm-panache"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "java"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "java-design"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "java-design-pattern-examples"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "jest"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "jhipster-domain-modeling"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "jhipster-persistence"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "jhipster-project"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "jhipster-security"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "jhipster-testing"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "junit"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "langgraph"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "liquibase"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "local-model-integration"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "mapstruct"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "mockito"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "mysql"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "nextjs-app-router"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "node-cli"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "plan-engine"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "playwright"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "postgres-drizzle"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "python"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "python-design-pattern-examples"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "quarkus"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "quarkus-design"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "quarkus-persistence"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "quarkus-testing"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "quartz"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "react-server-components"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "react-vite-renderer"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "spring-boot"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "spring-boot-design"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "spring-boot-testing"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "spring-data-jpa"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "sql"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "tailwind-design-system"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "tool-runtime"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "typescript"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "typescript-design-pattern-examples"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "typescript-esm"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "typescript-strict"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-coder",
+      "skill": "vitest"
     },
     {
       "kind": "fixed",
@@ -379,6 +1359,251 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "traversal-patterns"
     },
     {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "agent-harness"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "api-routes"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "clerk-auth"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "electron-main"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "electron-preload"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "fastapi"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "hibernate-orm-panache"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "java"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "java-design"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "java-design-pattern-examples"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "jest"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "jhipster-domain-modeling"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "jhipster-persistence"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "jhipster-project"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "jhipster-security"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "jhipster-testing"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "junit"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "langgraph"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "liquibase"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "local-model-integration"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "mapstruct"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "mockito"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "mysql"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "nextjs-app-router"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "node-cli"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "plan-engine"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "playwright"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "postgres-drizzle"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "python"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "python-design-pattern-examples"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "quarkus"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "quarkus-design"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "quarkus-persistence"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "quarkus-testing"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "quartz"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "react-server-components"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "react-vite-renderer"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "spring-boot"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "spring-boot-design"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "spring-boot-testing"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "spring-data-jpa"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "sql"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "tailwind-design-system"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "tool-runtime"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "typescript"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "typescript-design-pattern-examples"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "typescript-esm"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "typescript-strict"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-documentation-writer",
+      "skill": "vitest"
+    },
+    {
       "kind": "fixed",
       "role": "dev-documentation-writer",
       "skill": "agent-claim"
@@ -448,6 +1673,251 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "organise-project-files"
     },
     {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "agent-harness"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "api-routes"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "clerk-auth"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "electron-main"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "electron-preload"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "fastapi"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "hibernate-orm-panache"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "java"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "java-design"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "java-design-pattern-examples"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "jest"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "jhipster-domain-modeling"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "jhipster-persistence"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "jhipster-project"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "jhipster-security"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "jhipster-testing"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "junit"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "langgraph"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "liquibase"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "local-model-integration"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "mapstruct"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "mockito"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "mysql"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "nextjs-app-router"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "node-cli"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "plan-engine"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "playwright"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "postgres-drizzle"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "python"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "python-design-pattern-examples"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "quarkus"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "quarkus-design"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "quarkus-persistence"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "quarkus-testing"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "quartz"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "react-server-components"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "react-vite-renderer"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "spring-boot"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "spring-boot-design"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "spring-boot-testing"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "spring-data-jpa"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "sql"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "tailwind-design-system"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "tool-runtime"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "typescript"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "typescript-design-pattern-examples"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "typescript-esm"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "typescript-strict"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-prompt-reviewer",
+      "skill": "vitest"
+    },
+    {
       "kind": "fixed",
       "role": "dev-prompt-reviewer",
       "skill": "prompt-contracts"
@@ -480,6 +1950,251 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "conditional",
       "role": "dev-runtime-diagnostician",
       "skill": "runtime-evidence-collection"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "agent-harness"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "api-routes"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "clerk-auth"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "electron-main"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "electron-preload"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "fastapi"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "hibernate-orm-panache"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "java"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "java-design"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "java-design-pattern-examples"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "jest"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "jhipster-domain-modeling"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "jhipster-persistence"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "jhipster-project"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "jhipster-security"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "jhipster-testing"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "junit"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "langgraph"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "liquibase"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "local-model-integration"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "mapstruct"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "mockito"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "mysql"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "nextjs-app-router"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "node-cli"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "plan-engine"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "playwright"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "postgres-drizzle"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "python"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "python-design-pattern-examples"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "quarkus"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "quarkus-design"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "quarkus-persistence"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "quarkus-testing"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "quartz"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "react-server-components"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "react-vite-renderer"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "spring-boot"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "spring-boot-design"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "spring-boot-testing"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "spring-data-jpa"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "sql"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "tailwind-design-system"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "tool-runtime"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "typescript"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "typescript-design-pattern-examples"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "typescript-esm"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "typescript-strict"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-runtime-diagnostician",
+      "skill": "vitest"
     },
     {
       "kind": "fixed",
@@ -519,6 +2234,251 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "organise-project-files"
     },
     {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "agent-harness"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "api-routes"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "clerk-auth"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "electron-main"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "electron-preload"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "fastapi"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "hibernate-orm-panache"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "java"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "java-design"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "java-design-pattern-examples"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "jest"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "jhipster-domain-modeling"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "jhipster-persistence"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "jhipster-project"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "jhipster-security"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "jhipster-testing"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "junit"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "langgraph"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "liquibase"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "local-model-integration"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "mapstruct"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "mockito"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "mysql"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "nextjs-app-router"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "node-cli"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "plan-engine"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "playwright"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "postgres-drizzle"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "python"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "python-design-pattern-examples"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "quarkus"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "quarkus-design"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "quarkus-persistence"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "quarkus-testing"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "quartz"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "react-server-components"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "react-vite-renderer"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "spring-boot"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "spring-boot-design"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "spring-boot-testing"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "spring-data-jpa"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "sql"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "tailwind-design-system"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "tool-runtime"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "typescript"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "typescript-design-pattern-examples"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "typescript-esm"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "typescript-strict"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-security-reviewer",
+      "skill": "vitest"
+    },
+    {
       "kind": "fixed",
       "role": "dev-security-reviewer",
       "skill": "application-security"
@@ -544,6 +2504,251 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "conditional",
       "role": "dev-ux-specialist",
       "skill": "organise-project-files"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "agent-harness"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "api-routes"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "clerk-auth"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "electron-main"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "electron-preload"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "fastapi"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "hibernate-orm-panache"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "java"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "java-design"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "java-design-pattern-examples"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "jest"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "jhipster-domain-modeling"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "jhipster-persistence"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "jhipster-project"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "jhipster-security"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "jhipster-testing"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "junit"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "langgraph"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "liquibase"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "local-model-integration"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "mapstruct"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "mockito"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "mysql"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "nextjs-app-router"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "node-cli"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "plan-engine"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "playwright"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "postgres-drizzle"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "python"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "python-design-pattern-examples"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "quarkus"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "quarkus-design"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "quarkus-persistence"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "quarkus-testing"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "quartz"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "react-server-components"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "react-vite-renderer"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "spring-boot"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "spring-boot-design"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "spring-boot-testing"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "spring-data-jpa"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "sql"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "tailwind-design-system"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "tool-runtime"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "typescript"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "typescript-design-pattern-examples"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "typescript-esm"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "typescript-strict"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-ux-specialist",
+      "skill": "vitest"
     },
     {
       "kind": "fixed",
@@ -601,6 +2806,251 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "conditional",
       "role": "dev-verifier",
       "skill": "runtime-evidence-collection"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "agent-harness"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "api-routes"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "clerk-auth"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "electron-main"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "electron-preload"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "fastapi"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "hibernate-orm-panache"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "java"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "java-design"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "java-design-pattern-examples"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "jest"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "jhipster-domain-modeling"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "jhipster-persistence"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "jhipster-project"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "jhipster-security"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "jhipster-testing"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "junit"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "langgraph"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "liquibase"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "local-model-integration"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "mapstruct"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "mockito"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "mysql"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "nextjs-app-router"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "node-cli"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "plan-engine"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "playwright"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "postgres-drizzle"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "python"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "python-design-pattern-examples"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "quarkus"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "quarkus-design"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "quarkus-persistence"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "quarkus-testing"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "quartz"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "react-server-components"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "react-vite-renderer"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "spring-boot"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "spring-boot-design"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "spring-boot-testing"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "spring-data-jpa"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "sql"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "tailwind-design-system"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "tool-runtime"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "typescript"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "typescript-design-pattern-examples"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "typescript-esm"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "typescript-strict"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "dev-verifier",
+      "skill": "vitest"
     },
     {
       "kind": "fixed",
@@ -932,6 +3382,251 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "organise-project-files"
     },
     {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "agent-harness"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "api-routes"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "clerk-auth"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "electron-main"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "electron-preload"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "fastapi"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "hibernate-orm-panache"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "java"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "java-design"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "java-design-pattern-examples"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "jest"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "jhipster-domain-modeling"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "jhipster-persistence"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "jhipster-project"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "jhipster-security"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "jhipster-testing"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "junit"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "langgraph"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "liquibase"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "local-model-integration"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "mapstruct"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "mockito"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "mysql"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "nextjs-app-router"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "node-cli"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "plan-engine"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "playwright"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "postgres-drizzle"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "python"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "python-design-pattern-examples"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "quarkus"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "quarkus-design"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "quarkus-persistence"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "quarkus-testing"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "quartz"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "react-server-components"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "react-vite-renderer"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "spring-boot"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "spring-boot-design"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "spring-boot-testing"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "spring-data-jpa"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "sql"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "tailwind-design-system"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "tool-runtime"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "typescript"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "typescript-design-pattern-examples"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "typescript-esm"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "typescript-strict"
+    },
+    {
+      "kind": "detected-folder",
+      "role": "wiki-writer",
+      "skill": "vitest"
+    },
+    {
       "kind": "fixed",
       "role": "wiki-writer",
       "skill": "agent-claim"
@@ -950,6 +3645,109 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
   "evaluationHarnesses": [
     "codex",
     "junie"
+  ],
+  "evidence": [
+    {
+      "harnesses": [
+        "codex",
+        "junie"
+      ],
+      "id": "backlog-lifecycle",
+      "kind": "evaluation-case",
+      "receiptPaths": [],
+      "sourcePath": "evals/cases.yaml",
+      "status": "declared"
+    },
+    {
+      "harnesses": [
+        "codex",
+        "junie"
+      ],
+      "id": "documentation-functional-spec",
+      "kind": "evaluation-case",
+      "receiptPaths": [],
+      "sourcePath": "evals/cases.yaml",
+      "status": "declared"
+    },
+    {
+      "harnesses": [
+        "codex",
+        "junie"
+      ],
+      "id": "project-configuration-routing",
+      "kind": "evaluation-case",
+      "receiptPaths": [],
+      "sourcePath": "evals/cases.yaml",
+      "status": "declared"
+    },
+    {
+      "harnesses": [
+        "codex",
+        "junie"
+      ],
+      "id": "spring-boot-order-cancellation",
+      "kind": "evaluation-case",
+      "receiptPaths": [],
+      "sourcePath": "evals/cases.yaml",
+      "status": "declared"
+    },
+    {
+      "harnesses": [
+        "codex",
+        "junie"
+      ],
+      "id": "typescript-code-review",
+      "kind": "evaluation-case",
+      "receiptPaths": [],
+      "sourcePath": "evals/cases.yaml",
+      "status": "declared"
+    },
+    {
+      "harnesses": [
+        "codex",
+        "junie"
+      ],
+      "id": "typescript-order-pricing",
+      "kind": "evaluation-case",
+      "receiptPaths": [],
+      "sourcePath": "evals/cases.yaml",
+      "status": "declared"
+    },
+    {
+      "harnesses": [
+        "codex",
+        "junie"
+      ],
+      "id": "wiki-raw-ingest",
+      "kind": "evaluation-case",
+      "receiptPaths": [],
+      "sourcePath": "evals/cases.yaml",
+      "status": "declared"
+    },
+    {
+      "harnesses": [],
+      "id": "manual:2026-07-09-live-agent-evaluations",
+      "kind": "manual-observation",
+      "receiptPaths": [],
+      "sourcePath": "evals/results/2026-07-09-live-agent-evaluations.md",
+      "status": "manual"
+    },
+    {
+      "harnesses": [],
+      "id": "manual:2026-07-16-mcp-agent-ops-v0.2.3",
+      "kind": "manual-observation",
+      "receiptPaths": [],
+      "sourcePath": "evals/results/2026-07-16-mcp-agent-ops-v0.2.3.md",
+      "status": "manual"
+    },
+    {
+      "harnesses": [],
+      "id": "manual:2026-07-16-mcp-skill-catalog",
+      "kind": "manual-observation",
+      "receiptPaths": [],
+      "sourcePath": "evals/results/2026-07-16-mcp-skill-catalog.md",
+      "status": "manual"
+    }
   ],
   "evidenceStatus": {
     "caseBackedAgentCount": 6,
@@ -1020,6 +3818,214 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "promotionStatus": "disabled-pending-provenance",
     "requiredBeforeJudgeCalibrationClaim": true
   },
+  "loadingModes": [
+    {
+      "edgeKinds": [
+        "fixed"
+      ],
+      "harness": "all",
+      "id": "core-inline",
+      "label": "Definition-owned core skills",
+      "mode": "static-inline",
+      "sourcePath": "scripts/build-skill-docs.py",
+      "status": "declared"
+    },
+    {
+      "edgeKinds": [
+        "conditional"
+      ],
+      "harness": "all",
+      "id": "conditional-dynamic",
+      "label": "Conditional definition-owned skills",
+      "mode": "request-driven",
+      "sourcePath": "scripts/build-skill-docs.py",
+      "status": "declared"
+    },
+    {
+      "edgeKinds": [
+        "fixed"
+      ],
+      "harness": "claude",
+      "id": "claude-preload",
+      "label": "Claude fixed-skill preload when static inlining is disabled",
+      "mode": "native-preload",
+      "sourcePath": "scripts/build-skill-docs.py",
+      "status": "declared"
+    },
+    {
+      "edgeKinds": [
+        "conditional",
+        "detected-folder"
+      ],
+      "harness": "claude",
+      "id": "claude-folder",
+      "label": "Claude dynamic Skill-tool loading",
+      "mode": "skill-tool",
+      "sourcePath": "agents/role-schema.yaml",
+      "status": "declared"
+    },
+    {
+      "edgeKinds": [
+        "conditional",
+        "detected-folder"
+      ],
+      "harness": "codex",
+      "id": "codex-folder",
+      "label": "Codex instruction-driven loading",
+      "mode": "instruction-driven",
+      "sourcePath": "agents/role-schema.yaml",
+      "status": "declared"
+    },
+    {
+      "edgeKinds": [],
+      "harness": "codex",
+      "id": "codex-availability",
+      "label": "Codex optional skill availability overrides",
+      "mode": "availability-override",
+      "sourcePath": "agents/role-schema.yaml",
+      "status": "declared"
+    },
+    {
+      "edgeKinds": [],
+      "harness": "claude",
+      "id": "claude-availability",
+      "label": "Claude optional skill availability overrides",
+      "mode": "availability-override",
+      "sourcePath": "design/generic-agent-definitions-source.html",
+      "status": "unsupported"
+    },
+    {
+      "edgeKinds": [],
+      "harness": "codex",
+      "id": "codex-app-server",
+      "label": "Codex app-server injection evidence",
+      "mode": "app-server-injection",
+      "sourcePath": "evals/cases.yaml",
+      "status": "missing"
+    }
+  ],
+  "modelProfiles": [
+    {
+      "adapters": [
+        {
+          "harness": "claude",
+          "model": "opus-4.8",
+          "sourcePath": "adapters/claude/model-profiles.yaml"
+        },
+        {
+          "effort": "high",
+          "harness": "codex",
+          "model": "gpt-5.6-sol",
+          "sourcePath": "adapters/codex/model-profiles.yaml"
+        },
+        {
+          "harness": "gemini",
+          "model": "pro",
+          "sourcePath": "adapters/gemini/model-profiles.yaml"
+        },
+        {
+          "effort": "high",
+          "harness": "junie",
+          "model": "opus",
+          "sourcePath": "adapters/junie/model-profiles.yaml"
+        }
+      ],
+      "id": "advanced",
+      "purpose": "Review synthesis, architecture, diagnosis, and difficult implementation work.",
+      "sourcePath": "agents/model-profiles.yaml"
+    },
+    {
+      "adapters": [
+        {
+          "context": "extra-long",
+          "harness": "claude",
+          "model": "opus-4.8",
+          "sourcePath": "adapters/claude/model-profiles.yaml"
+        },
+        {
+          "context": "extra-long",
+          "effort": "high",
+          "harness": "codex",
+          "model": "gpt-5.6-sol",
+          "sourcePath": "adapters/codex/model-profiles.yaml"
+        },
+        {
+          "context": "extra-long",
+          "harness": "gemini",
+          "model": "pro",
+          "sourcePath": "adapters/gemini/model-profiles.yaml"
+        },
+        {
+          "context": "extra-long",
+          "effort": "high",
+          "harness": "junie",
+          "model": "opus",
+          "sourcePath": "adapters/junie/model-profiles.yaml"
+        }
+      ],
+      "id": "advanced-long",
+      "purpose": "Advanced reasoning over unusually large evidence sets or cross-project context.",
+      "sourcePath": "agents/model-profiles.yaml"
+    },
+    {
+      "adapters": [
+        {
+          "harness": "claude",
+          "model": "sonnet-5",
+          "sourcePath": "adapters/claude/model-profiles.yaml"
+        },
+        {
+          "effort": "medium",
+          "harness": "codex",
+          "model": "gpt-5.6-terra",
+          "sourcePath": "adapters/codex/model-profiles.yaml"
+        },
+        {
+          "harness": "gemini",
+          "model": "auto",
+          "sourcePath": "adapters/gemini/model-profiles.yaml"
+        },
+        {
+          "effort": "medium",
+          "harness": "junie",
+          "model": "sonnet",
+          "sourcePath": "adapters/junie/model-profiles.yaml"
+        }
+      ],
+      "id": "default",
+      "purpose": "Normal implementation, documentation, and bounded verification work.",
+      "sourcePath": "agents/model-profiles.yaml"
+    },
+    {
+      "adapters": [
+        {
+          "harness": "claude",
+          "model": "fable-5",
+          "sourcePath": "adapters/claude/model-profiles.yaml"
+        },
+        {
+          "effort": "medium",
+          "harness": "codex",
+          "model": "gpt-5.6-luna",
+          "sourcePath": "adapters/codex/model-profiles.yaml"
+        },
+        {
+          "harness": "gemini",
+          "model": "flash",
+          "sourcePath": "adapters/gemini/model-profiles.yaml"
+        },
+        {
+          "effort": "low",
+          "harness": "junie",
+          "model": "gemini-flash",
+          "sourcePath": "adapters/junie/model-profiles.yaml"
+        }
+      ],
+      "id": "simple",
+      "purpose": "Extraction, classification, lookup, and mechanical evidence checks.",
+      "sourcePath": "agents/model-profiles.yaml"
+    }
+  ],
   "roles": [
     {
       "conditionalSkills": {
@@ -1085,11 +4091,39 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "review-structured-artifact",
         "documentation-page-verify"
       ],
+      "generatedAdapters": [
+        {
+          "harness": "claude",
+          "model": "opus-4.8",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/claude/agents/dev-artifact-reviewer.md"
+        },
+        {
+          "harness": "codex",
+          "model": "gpt-5.6-sol",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/codex/agents/dev-artifact-reviewer.toml"
+        },
+        {
+          "harness": "gemini",
+          "model": "pro",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/gemini/agents/dev-artifact-reviewer.md"
+        },
+        {
+          "harness": "junie",
+          "model": "opus",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/junie/agents/dev-artifact-reviewer.md"
+        }
+      ],
       "id": "dev-artifact-reviewer",
       "judgePassedCases": [],
       "label": "dev-artifact-reviewer",
       "modelProfile": "advanced",
       "securityContainedCases": [],
+      "skillAvailability": [],
+      "sourcePath": "agents/roles/dev-activities/dev-artifact-reviewer.role.yaml",
       "verifiedCases": []
     },
     {
@@ -1141,11 +4175,39 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "fixedSkills": [
         "structured-explanation"
       ],
+      "generatedAdapters": [
+        {
+          "harness": "claude",
+          "model": "opus-4.8",
+          "modelProfile": "advanced-long",
+          "path": "generated/adapters/claude/agents/dev-backlog-coordinator.md"
+        },
+        {
+          "harness": "codex",
+          "model": "gpt-5.6-sol",
+          "modelProfile": "advanced-long",
+          "path": "generated/adapters/codex/agents/dev-backlog-coordinator.toml"
+        },
+        {
+          "harness": "gemini",
+          "model": "pro",
+          "modelProfile": "advanced-long",
+          "path": "generated/adapters/gemini/agents/dev-backlog-coordinator.md"
+        },
+        {
+          "harness": "junie",
+          "model": "opus",
+          "modelProfile": "advanced-long",
+          "path": "generated/adapters/junie/agents/dev-backlog-coordinator.md"
+        }
+      ],
       "id": "dev-backlog-coordinator",
       "judgePassedCases": [],
       "label": "dev-backlog-coordinator",
       "modelProfile": "advanced-long",
       "securityContainedCases": [],
+      "skillAvailability": [],
+      "sourcePath": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml",
       "verifiedCases": []
     },
     {
@@ -1211,11 +4273,39 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "fixedSkills": [
         "structured-explanation"
       ],
+      "generatedAdapters": [
+        {
+          "harness": "claude",
+          "model": "sonnet-5",
+          "modelProfile": "default",
+          "path": "generated/adapters/claude/agents/dev-backlog-steward.md"
+        },
+        {
+          "harness": "codex",
+          "model": "gpt-5.6-terra",
+          "modelProfile": "default",
+          "path": "generated/adapters/codex/agents/dev-backlog-steward.toml"
+        },
+        {
+          "harness": "gemini",
+          "model": "auto",
+          "modelProfile": "default",
+          "path": "generated/adapters/gemini/agents/dev-backlog-steward.md"
+        },
+        {
+          "harness": "junie",
+          "model": "sonnet",
+          "modelProfile": "default",
+          "path": "generated/adapters/junie/agents/dev-backlog-steward.md"
+        }
+      ],
       "id": "dev-backlog-steward",
       "judgePassedCases": [],
       "label": "dev-backlog-steward",
       "modelProfile": "default",
       "securityContainedCases": [],
+      "skillAvailability": [],
+      "sourcePath": "agents/roles/dev-activities/dev-backlog-steward.role.yaml",
       "verifiedCases": []
     },
     {
@@ -1268,11 +4358,39 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "end-to-end-verification",
         "structured-explanation"
       ],
+      "generatedAdapters": [
+        {
+          "harness": "claude",
+          "model": "opus-4.8",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/claude/agents/dev-browser-operator.md"
+        },
+        {
+          "harness": "codex",
+          "model": "gpt-5.6-sol",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/codex/agents/dev-browser-operator.toml"
+        },
+        {
+          "harness": "gemini",
+          "model": "pro",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/gemini/agents/dev-browser-operator.md"
+        },
+        {
+          "harness": "junie",
+          "model": "opus",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/junie/agents/dev-browser-operator.md"
+        }
+      ],
       "id": "dev-browser-operator",
       "judgePassedCases": [],
       "label": "dev-browser-operator",
       "modelProfile": "advanced",
       "securityContainedCases": [],
+      "skillAvailability": [],
+      "sourcePath": "agents/roles/dev-activities/dev-browser-operator.role.yaml",
       "verifiedCases": []
     },
     {
@@ -1337,11 +4455,39 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "careful-coding",
         "code-comments"
       ],
+      "generatedAdapters": [
+        {
+          "harness": "claude",
+          "model": "opus-4.8",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/claude/agents/dev-code-reviewer.md"
+        },
+        {
+          "harness": "codex",
+          "model": "gpt-5.6-sol",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/codex/agents/dev-code-reviewer.toml"
+        },
+        {
+          "harness": "gemini",
+          "model": "pro",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/gemini/agents/dev-code-reviewer.md"
+        },
+        {
+          "harness": "junie",
+          "model": "opus",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/junie/agents/dev-code-reviewer.md"
+        }
+      ],
       "id": "dev-code-reviewer",
       "judgePassedCases": [],
       "label": "dev-code-reviewer",
       "modelProfile": "advanced",
       "securityContainedCases": [],
+      "skillAvailability": [],
+      "sourcePath": "agents/roles/dev-activities/dev-code-reviewer.role.yaml",
       "verifiedCases": []
     },
     {
@@ -1413,11 +4559,39 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "code-discovery",
         "fix-explanation"
       ],
+      "generatedAdapters": [
+        {
+          "harness": "claude",
+          "model": "opus-4.8",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/claude/agents/dev-coder.md"
+        },
+        {
+          "harness": "codex",
+          "model": "gpt-5.6-sol",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/codex/agents/dev-coder.toml"
+        },
+        {
+          "harness": "gemini",
+          "model": "pro",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/gemini/agents/dev-coder.md"
+        },
+        {
+          "harness": "junie",
+          "model": "opus",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/junie/agents/dev-coder.md"
+        }
+      ],
       "id": "dev-coder",
       "judgePassedCases": [],
       "label": "dev-coder",
       "modelProfile": "advanced",
       "securityContainedCases": [],
+      "skillAvailability": [],
+      "sourcePath": "agents/roles/dev-activities/dev-coder.role.yaml",
       "verifiedCases": []
     },
     {
@@ -1497,11 +4671,39 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "agent-claim",
         "development-methodology"
       ],
+      "generatedAdapters": [
+        {
+          "harness": "claude",
+          "model": "sonnet-5",
+          "modelProfile": "default",
+          "path": "generated/adapters/claude/agents/dev-documentation-writer.md"
+        },
+        {
+          "harness": "codex",
+          "model": "gpt-5.6-terra",
+          "modelProfile": "default",
+          "path": "generated/adapters/codex/agents/dev-documentation-writer.toml"
+        },
+        {
+          "harness": "gemini",
+          "model": "auto",
+          "modelProfile": "default",
+          "path": "generated/adapters/gemini/agents/dev-documentation-writer.md"
+        },
+        {
+          "harness": "junie",
+          "model": "sonnet",
+          "modelProfile": "default",
+          "path": "generated/adapters/junie/agents/dev-documentation-writer.md"
+        }
+      ],
       "id": "dev-documentation-writer",
       "judgePassedCases": [],
       "label": "dev-documentation-writer",
       "modelProfile": "default",
       "securityContainedCases": [],
+      "skillAvailability": [],
+      "sourcePath": "agents/roles/dev-activities/dev-documentation-writer.role.yaml",
       "verifiedCases": []
     },
     {
@@ -1556,11 +4758,39 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "review-structured-artifact",
         "fix-explanation"
       ],
+      "generatedAdapters": [
+        {
+          "harness": "claude",
+          "model": "opus-4.8",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/claude/agents/dev-merge-coordinator.md"
+        },
+        {
+          "harness": "codex",
+          "model": "gpt-5.6-sol",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/codex/agents/dev-merge-coordinator.toml"
+        },
+        {
+          "harness": "gemini",
+          "model": "pro",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/gemini/agents/dev-merge-coordinator.md"
+        },
+        {
+          "harness": "junie",
+          "model": "opus",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/junie/agents/dev-merge-coordinator.md"
+        }
+      ],
       "id": "dev-merge-coordinator",
       "judgePassedCases": [],
       "label": "dev-merge-coordinator",
       "modelProfile": "advanced",
       "securityContainedCases": [],
+      "skillAvailability": [],
+      "sourcePath": "agents/roles/dev-activities/dev-merge-coordinator.role.yaml",
       "verifiedCases": []
     },
     {
@@ -1613,11 +4843,39 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "structured-explanation",
         "agent-claim"
       ],
+      "generatedAdapters": [
+        {
+          "harness": "claude",
+          "model": "opus-4.8",
+          "modelProfile": "advanced-long",
+          "path": "generated/adapters/claude/agents/dev-orchestrator.md"
+        },
+        {
+          "harness": "codex",
+          "model": "gpt-5.6-sol",
+          "modelProfile": "advanced-long",
+          "path": "generated/adapters/codex/agents/dev-orchestrator.toml"
+        },
+        {
+          "harness": "gemini",
+          "model": "pro",
+          "modelProfile": "advanced-long",
+          "path": "generated/adapters/gemini/agents/dev-orchestrator.md"
+        },
+        {
+          "harness": "junie",
+          "model": "opus",
+          "modelProfile": "advanced-long",
+          "path": "generated/adapters/junie/agents/dev-orchestrator.md"
+        }
+      ],
       "id": "dev-orchestrator",
       "judgePassedCases": [],
       "label": "dev-orchestrator",
       "modelProfile": "advanced-long",
       "securityContainedCases": [],
+      "skillAvailability": [],
+      "sourcePath": "agents/roles/dev-activities/dev-orchestrator.role.yaml",
       "verifiedCases": []
     },
     {
@@ -1670,11 +4928,39 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "prompt-contracts",
         "review-structured-artifact"
       ],
+      "generatedAdapters": [
+        {
+          "harness": "claude",
+          "model": "opus-4.8",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/claude/agents/dev-prompt-reviewer.md"
+        },
+        {
+          "harness": "codex",
+          "model": "gpt-5.6-sol",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/codex/agents/dev-prompt-reviewer.toml"
+        },
+        {
+          "harness": "gemini",
+          "model": "pro",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/gemini/agents/dev-prompt-reviewer.md"
+        },
+        {
+          "harness": "junie",
+          "model": "opus",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/junie/agents/dev-prompt-reviewer.md"
+        }
+      ],
       "id": "dev-prompt-reviewer",
       "judgePassedCases": [],
       "label": "dev-prompt-reviewer",
       "modelProfile": "advanced",
       "securityContainedCases": [],
+      "skillAvailability": [],
+      "sourcePath": "agents/roles/dev-activities/dev-prompt-reviewer.role.yaml",
       "verifiedCases": []
     },
     {
@@ -1732,11 +5018,39 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "code-execution-tracing",
         "structured-explanation"
       ],
+      "generatedAdapters": [
+        {
+          "harness": "claude",
+          "model": "opus-4.8",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/claude/agents/dev-runtime-diagnostician.md"
+        },
+        {
+          "harness": "codex",
+          "model": "gpt-5.6-sol",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/codex/agents/dev-runtime-diagnostician.toml"
+        },
+        {
+          "harness": "gemini",
+          "model": "pro",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/gemini/agents/dev-runtime-diagnostician.md"
+        },
+        {
+          "harness": "junie",
+          "model": "opus",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/junie/agents/dev-runtime-diagnostician.md"
+        }
+      ],
       "id": "dev-runtime-diagnostician",
       "judgePassedCases": [],
       "label": "dev-runtime-diagnostician",
       "modelProfile": "advanced",
       "securityContainedCases": [],
+      "skillAvailability": [],
+      "sourcePath": "agents/roles/dev-activities/dev-runtime-diagnostician.role.yaml",
       "verifiedCases": []
     },
     {
@@ -1790,11 +5104,39 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "review-structured-artifact",
         "structured-explanation"
       ],
+      "generatedAdapters": [
+        {
+          "harness": "claude",
+          "model": "opus-4.8",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/claude/agents/dev-security-reviewer.md"
+        },
+        {
+          "harness": "codex",
+          "model": "gpt-5.6-sol",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/codex/agents/dev-security-reviewer.toml"
+        },
+        {
+          "harness": "gemini",
+          "model": "pro",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/gemini/agents/dev-security-reviewer.md"
+        },
+        {
+          "harness": "junie",
+          "model": "opus",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/junie/agents/dev-security-reviewer.md"
+        }
+      ],
       "id": "dev-security-reviewer",
       "judgePassedCases": [],
       "label": "dev-security-reviewer",
       "modelProfile": "advanced",
       "securityContainedCases": [],
+      "skillAvailability": [],
+      "sourcePath": "agents/roles/dev-activities/dev-security-reviewer.role.yaml",
       "verifiedCases": []
     },
     {
@@ -1848,11 +5190,39 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "end-to-end-verification",
         "review-structured-artifact"
       ],
+      "generatedAdapters": [
+        {
+          "harness": "claude",
+          "model": "sonnet-5",
+          "modelProfile": "default",
+          "path": "generated/adapters/claude/agents/dev-ux-specialist.md"
+        },
+        {
+          "harness": "codex",
+          "model": "gpt-5.6-terra",
+          "modelProfile": "default",
+          "path": "generated/adapters/codex/agents/dev-ux-specialist.toml"
+        },
+        {
+          "harness": "gemini",
+          "model": "auto",
+          "modelProfile": "default",
+          "path": "generated/adapters/gemini/agents/dev-ux-specialist.md"
+        },
+        {
+          "harness": "junie",
+          "model": "sonnet",
+          "modelProfile": "default",
+          "path": "generated/adapters/junie/agents/dev-ux-specialist.md"
+        }
+      ],
       "id": "dev-ux-specialist",
       "judgePassedCases": [],
       "label": "dev-ux-specialist",
       "modelProfile": "default",
       "securityContainedCases": [],
+      "skillAvailability": [],
+      "sourcePath": "agents/roles/dev-activities/dev-ux-specialist.role.yaml",
       "verifiedCases": []
     },
     {
@@ -1913,11 +5283,39 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "review-structured-artifact",
         "structured-explanation"
       ],
+      "generatedAdapters": [
+        {
+          "harness": "claude",
+          "model": "opus-4.8",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/claude/agents/dev-verifier.md"
+        },
+        {
+          "harness": "codex",
+          "model": "gpt-5.6-sol",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/codex/agents/dev-verifier.toml"
+        },
+        {
+          "harness": "gemini",
+          "model": "pro",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/gemini/agents/dev-verifier.md"
+        },
+        {
+          "harness": "junie",
+          "model": "opus",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/junie/agents/dev-verifier.md"
+        }
+      ],
       "id": "dev-verifier",
       "judgePassedCases": [],
       "label": "dev-verifier",
       "modelProfile": "advanced",
       "securityContainedCases": [],
+      "skillAvailability": [],
+      "sourcePath": "agents/roles/dev-activities/dev-verifier.role.yaml",
       "verifiedCases": []
     },
     {
@@ -1974,11 +5372,39 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "documentation-page-verify",
         "development-methodology"
       ],
+      "generatedAdapters": [
+        {
+          "harness": "claude",
+          "model": "opus-4.8",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/claude/agents/methodology-artifact-reviewer.md"
+        },
+        {
+          "harness": "codex",
+          "model": "gpt-5.6-sol",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/codex/agents/methodology-artifact-reviewer.toml"
+        },
+        {
+          "harness": "gemini",
+          "model": "pro",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/gemini/agents/methodology-artifact-reviewer.md"
+        },
+        {
+          "harness": "junie",
+          "model": "opus",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/junie/agents/methodology-artifact-reviewer.md"
+        }
+      ],
       "id": "methodology-artifact-reviewer",
       "judgePassedCases": [],
       "label": "methodology-artifact-reviewer",
       "modelProfile": "advanced",
       "securityContainedCases": [],
+      "skillAvailability": [],
+      "sourcePath": "agents/roles/methodology-maintenance/methodology-artifact-reviewer.role.yaml",
       "verifiedCases": []
     },
     {
@@ -2036,11 +5462,39 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "development-methodology",
         "structured-explanation"
       ],
+      "generatedAdapters": [
+        {
+          "harness": "claude",
+          "model": "opus-4.8",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/claude/agents/methodology-maintainer.md"
+        },
+        {
+          "harness": "codex",
+          "model": "gpt-5.6-sol",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/codex/agents/methodology-maintainer.toml"
+        },
+        {
+          "harness": "gemini",
+          "model": "pro",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/gemini/agents/methodology-maintainer.md"
+        },
+        {
+          "harness": "junie",
+          "model": "opus",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/junie/agents/methodology-maintainer.md"
+        }
+      ],
       "id": "methodology-maintainer",
       "judgePassedCases": [],
       "label": "methodology-maintainer",
       "modelProfile": "advanced",
       "securityContainedCases": [],
+      "skillAvailability": [],
+      "sourcePath": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml",
       "verifiedCases": []
     },
     {
@@ -2093,11 +5547,39 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "documentation-bootstrap",
         "development-methodology"
       ],
+      "generatedAdapters": [
+        {
+          "harness": "claude",
+          "model": "opus-4.8",
+          "modelProfile": "advanced-long",
+          "path": "generated/adapters/claude/agents/project-bootstrapper.md"
+        },
+        {
+          "harness": "codex",
+          "model": "gpt-5.6-sol",
+          "modelProfile": "advanced-long",
+          "path": "generated/adapters/codex/agents/project-bootstrapper.toml"
+        },
+        {
+          "harness": "gemini",
+          "model": "pro",
+          "modelProfile": "advanced-long",
+          "path": "generated/adapters/gemini/agents/project-bootstrapper.md"
+        },
+        {
+          "harness": "junie",
+          "model": "opus",
+          "modelProfile": "advanced-long",
+          "path": "generated/adapters/junie/agents/project-bootstrapper.md"
+        }
+      ],
       "id": "project-bootstrapper",
       "judgePassedCases": [],
       "label": "project-bootstrapper",
       "modelProfile": "advanced-long",
       "securityContainedCases": [],
+      "skillAvailability": [],
+      "sourcePath": "agents/roles/project-setup/project-bootstrapper.role.yaml",
       "verifiedCases": []
     },
     {
@@ -2163,11 +5645,39 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "development-methodology",
         "documentation-page-verify"
       ],
+      "generatedAdapters": [
+        {
+          "harness": "claude",
+          "model": "sonnet-5",
+          "modelProfile": "default",
+          "path": "generated/adapters/claude/agents/project-configurator.md"
+        },
+        {
+          "harness": "codex",
+          "model": "gpt-5.6-terra",
+          "modelProfile": "default",
+          "path": "generated/adapters/codex/agents/project-configurator.toml"
+        },
+        {
+          "harness": "gemini",
+          "model": "auto",
+          "modelProfile": "default",
+          "path": "generated/adapters/gemini/agents/project-configurator.md"
+        },
+        {
+          "harness": "junie",
+          "model": "sonnet",
+          "modelProfile": "default",
+          "path": "generated/adapters/junie/agents/project-configurator.md"
+        }
+      ],
       "id": "project-configurator",
       "judgePassedCases": [],
       "label": "project-configurator",
       "modelProfile": "default",
       "securityContainedCases": [],
+      "skillAvailability": [],
+      "sourcePath": "agents/roles/project-setup/project-configurator.role.yaml",
       "verifiedCases": []
     },
     {
@@ -2220,11 +5730,39 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "structured-design",
         "structured-explanation"
       ],
+      "generatedAdapters": [
+        {
+          "harness": "claude",
+          "model": "sonnet-5",
+          "modelProfile": "default",
+          "path": "generated/adapters/claude/agents/project-organiser.md"
+        },
+        {
+          "harness": "codex",
+          "model": "gpt-5.6-terra",
+          "modelProfile": "default",
+          "path": "generated/adapters/codex/agents/project-organiser.toml"
+        },
+        {
+          "harness": "gemini",
+          "model": "auto",
+          "modelProfile": "default",
+          "path": "generated/adapters/gemini/agents/project-organiser.md"
+        },
+        {
+          "harness": "junie",
+          "model": "sonnet",
+          "modelProfile": "default",
+          "path": "generated/adapters/junie/agents/project-organiser.md"
+        }
+      ],
       "id": "project-organiser",
       "judgePassedCases": [],
       "label": "project-organiser",
       "modelProfile": "default",
       "securityContainedCases": [],
+      "skillAvailability": [],
+      "sourcePath": "agents/roles/project-setup/project-organiser.role.yaml",
       "verifiedCases": []
     },
     {
@@ -2278,11 +5816,39 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "agent-claim",
         "project-wiki"
       ],
+      "generatedAdapters": [
+        {
+          "harness": "claude",
+          "model": "opus-4.8",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/claude/agents/wiki-architect.md"
+        },
+        {
+          "harness": "codex",
+          "model": "gpt-5.6-sol",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/codex/agents/wiki-architect.toml"
+        },
+        {
+          "harness": "gemini",
+          "model": "pro",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/gemini/agents/wiki-architect.md"
+        },
+        {
+          "harness": "junie",
+          "model": "opus",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/junie/agents/wiki-architect.md"
+        }
+      ],
       "id": "wiki-architect",
       "judgePassedCases": [],
       "label": "wiki-architect",
       "modelProfile": "advanced",
       "securityContainedCases": [],
+      "skillAvailability": [],
+      "sourcePath": "agents/roles/wiki-activities/wiki-architect.role.yaml",
       "verifiedCases": []
     },
     {
@@ -2335,11 +5901,39 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "project-wiki-review",
         "documentation-page-verify"
       ],
+      "generatedAdapters": [
+        {
+          "harness": "claude",
+          "model": "opus-4.8",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/claude/agents/wiki-artifact-reviewer.md"
+        },
+        {
+          "harness": "codex",
+          "model": "gpt-5.6-sol",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/codex/agents/wiki-artifact-reviewer.toml"
+        },
+        {
+          "harness": "gemini",
+          "model": "pro",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/gemini/agents/wiki-artifact-reviewer.md"
+        },
+        {
+          "harness": "junie",
+          "model": "opus",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/junie/agents/wiki-artifact-reviewer.md"
+        }
+      ],
       "id": "wiki-artifact-reviewer",
       "judgePassedCases": [],
       "label": "wiki-artifact-reviewer",
       "modelProfile": "advanced",
       "securityContainedCases": [],
+      "skillAvailability": [],
+      "sourcePath": "agents/roles/wiki-activities/wiki-artifact-reviewer.role.yaml",
       "verifiedCases": []
     },
     {
@@ -2403,11 +5997,39 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "project-wiki",
         "project-wiki-topic-write"
       ],
+      "generatedAdapters": [
+        {
+          "harness": "claude",
+          "model": "sonnet-5",
+          "modelProfile": "default",
+          "path": "generated/adapters/claude/agents/wiki-ingester.md"
+        },
+        {
+          "harness": "codex",
+          "model": "gpt-5.6-terra",
+          "modelProfile": "default",
+          "path": "generated/adapters/codex/agents/wiki-ingester.toml"
+        },
+        {
+          "harness": "gemini",
+          "model": "auto",
+          "modelProfile": "default",
+          "path": "generated/adapters/gemini/agents/wiki-ingester.md"
+        },
+        {
+          "harness": "junie",
+          "model": "sonnet",
+          "modelProfile": "default",
+          "path": "generated/adapters/junie/agents/wiki-ingester.md"
+        }
+      ],
       "id": "wiki-ingester",
       "judgePassedCases": [],
       "label": "wiki-ingester",
       "modelProfile": "default",
       "securityContainedCases": [],
+      "skillAvailability": [],
+      "sourcePath": "agents/roles/wiki-activities/wiki-ingester.role.yaml",
       "verifiedCases": []
     },
     {
@@ -2456,11 +6078,39 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "fixedSkills": [
         "project-wiki-query"
       ],
+      "generatedAdapters": [
+        {
+          "harness": "claude",
+          "model": "sonnet-5",
+          "modelProfile": "default",
+          "path": "generated/adapters/claude/agents/wiki-query-responder.md"
+        },
+        {
+          "harness": "codex",
+          "model": "gpt-5.6-terra",
+          "modelProfile": "default",
+          "path": "generated/adapters/codex/agents/wiki-query-responder.toml"
+        },
+        {
+          "harness": "gemini",
+          "model": "auto",
+          "modelProfile": "default",
+          "path": "generated/adapters/gemini/agents/wiki-query-responder.md"
+        },
+        {
+          "harness": "junie",
+          "model": "sonnet",
+          "modelProfile": "default",
+          "path": "generated/adapters/junie/agents/wiki-query-responder.md"
+        }
+      ],
       "id": "wiki-query-responder",
       "judgePassedCases": [],
       "label": "wiki-query-responder",
       "modelProfile": "default",
       "securityContainedCases": [],
+      "skillAvailability": [],
+      "sourcePath": "agents/roles/wiki-activities/wiki-query-responder.role.yaml",
       "verifiedCases": []
     },
     {
@@ -2513,11 +6163,39 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "project-wiki-query",
         "project-wiki-research"
       ],
+      "generatedAdapters": [
+        {
+          "harness": "claude",
+          "model": "sonnet-5",
+          "modelProfile": "default",
+          "path": "generated/adapters/claude/agents/wiki-researcher.md"
+        },
+        {
+          "harness": "codex",
+          "model": "gpt-5.6-terra",
+          "modelProfile": "default",
+          "path": "generated/adapters/codex/agents/wiki-researcher.toml"
+        },
+        {
+          "harness": "gemini",
+          "model": "auto",
+          "modelProfile": "default",
+          "path": "generated/adapters/gemini/agents/wiki-researcher.md"
+        },
+        {
+          "harness": "junie",
+          "model": "sonnet",
+          "modelProfile": "default",
+          "path": "generated/adapters/junie/agents/wiki-researcher.md"
+        }
+      ],
       "id": "wiki-researcher",
       "judgePassedCases": [],
       "label": "wiki-researcher",
       "modelProfile": "default",
       "securityContainedCases": [],
+      "skillAvailability": [],
+      "sourcePath": "agents/roles/wiki-activities/wiki-researcher.role.yaml",
       "verifiedCases": []
     },
     {
@@ -2571,11 +6249,39 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "project-wiki",
         "structured-explanation"
       ],
+      "generatedAdapters": [
+        {
+          "harness": "claude",
+          "model": "fable-5",
+          "modelProfile": "simple",
+          "path": "generated/adapters/claude/agents/wiki-source-collector.md"
+        },
+        {
+          "harness": "codex",
+          "model": "gpt-5.6-luna",
+          "modelProfile": "simple",
+          "path": "generated/adapters/codex/agents/wiki-source-collector.toml"
+        },
+        {
+          "harness": "gemini",
+          "model": "flash",
+          "modelProfile": "simple",
+          "path": "generated/adapters/gemini/agents/wiki-source-collector.md"
+        },
+        {
+          "harness": "junie",
+          "model": "gemini-flash",
+          "modelProfile": "simple",
+          "path": "generated/adapters/junie/agents/wiki-source-collector.md"
+        }
+      ],
       "id": "wiki-source-collector",
       "judgePassedCases": [],
       "label": "wiki-source-collector",
       "modelProfile": "simple",
       "securityContainedCases": [],
+      "skillAvailability": [],
+      "sourcePath": "agents/roles/wiki-activities/wiki-source-collector.role.yaml",
       "verifiedCases": []
     },
     {
@@ -2624,11 +6330,39 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "fixedSkills": [
         "project-wiki-topic-verify"
       ],
+      "generatedAdapters": [
+        {
+          "harness": "claude",
+          "model": "opus-4.8",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/claude/agents/wiki-topic-verifier.md"
+        },
+        {
+          "harness": "codex",
+          "model": "gpt-5.6-sol",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/codex/agents/wiki-topic-verifier.toml"
+        },
+        {
+          "harness": "gemini",
+          "model": "pro",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/gemini/agents/wiki-topic-verifier.md"
+        },
+        {
+          "harness": "junie",
+          "model": "opus",
+          "modelProfile": "advanced",
+          "path": "generated/adapters/junie/agents/wiki-topic-verifier.md"
+        }
+      ],
       "id": "wiki-topic-verifier",
       "judgePassedCases": [],
       "label": "wiki-topic-verifier",
       "modelProfile": "advanced",
       "securityContainedCases": [],
+      "skillAvailability": [],
+      "sourcePath": "agents/roles/wiki-activities/wiki-topic-verifier.role.yaml",
       "verifiedCases": []
     },
     {
@@ -2682,11 +6416,39 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "project-wiki",
         "project-wiki-topic-write"
       ],
+      "generatedAdapters": [
+        {
+          "harness": "claude",
+          "model": "sonnet-5",
+          "modelProfile": "default",
+          "path": "generated/adapters/claude/agents/wiki-writer.md"
+        },
+        {
+          "harness": "codex",
+          "model": "gpt-5.6-terra",
+          "modelProfile": "default",
+          "path": "generated/adapters/codex/agents/wiki-writer.toml"
+        },
+        {
+          "harness": "gemini",
+          "model": "auto",
+          "modelProfile": "default",
+          "path": "generated/adapters/gemini/agents/wiki-writer.md"
+        },
+        {
+          "harness": "junie",
+          "model": "sonnet",
+          "modelProfile": "default",
+          "path": "generated/adapters/junie/agents/wiki-writer.md"
+        }
+      ],
       "id": "wiki-writer",
       "judgePassedCases": [],
       "label": "wiki-writer",
       "modelProfile": "default",
       "securityContainedCases": [],
+      "skillAvailability": [],
+      "sourcePath": "agents/roles/wiki-activities/wiki-writer.role.yaml",
       "verifiedCases": []
     }
   ],
@@ -2863,6 +6625,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
   "schema": "dev-methodology-agent-skill-explorer-data",
   "skills": [
     {
+      "capabilities": [],
       "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -2908,13 +6671,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "agent-claim",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Agent Claim",
       "securityContainedCases": [],
+      "sourcePath": "skills/agent-claim/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "agent-harness-runtime"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -3035,13 +6805,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "agent-harness"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "agent-harness",
       "judgePassedCases": [],
+      "kind": "domain",
+      "label": "Agent harness",
       "securityContainedCases": [],
+      "sourcePath": "skills/agent-harness/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "documentation-methodology",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -3081,13 +6856,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "agent-role-authoring",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Agent Role Authoring",
       "securityContainedCases": [],
+      "sourcePath": "skills/agent-role-authoring/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -3127,13 +6907,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "agent-work-merge",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Agent Work Merge",
       "securityContainedCases": [],
+      "sourcePath": "skills/agent-work-merge/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "http-api"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -3229,13 +7016,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "api-routes"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "api-routes",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "Application route handlers",
       "securityContainedCases": [],
+      "sourcePath": "skills/api-routes/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -3275,13 +7067,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "application-security",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Application Security",
       "securityContainedCases": [],
+      "sourcePath": "skills/application-security/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -3321,13 +7118,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "ast-grep",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Ast Grep",
       "securityContainedCases": [],
+      "sourcePath": "skills/ast-grep/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -3367,13 +7169,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "careful-coding",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Careful Coding",
       "securityContainedCases": [],
+      "sourcePath": "skills/careful-coding/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "identity-provider"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -3464,13 +7273,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "clerk-auth"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "clerk-auth",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "Clerk identity integration",
       "securityContainedCases": [],
+      "sourcePath": "skills/clerk-auth/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -3510,13 +7324,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "code-comments",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Code Comments",
       "securityContainedCases": [],
+      "sourcePath": "skills/code-comments/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -3556,13 +7375,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "code-discovery",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Code Discovery",
       "securityContainedCases": [],
+      "sourcePath": "skills/code-discovery/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -3602,13 +7426,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "code-execution-tracing",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Code Execution Tracing",
       "securityContainedCases": [],
+      "sourcePath": "skills/code-execution-tracing/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "wiki-and-knowledge",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -3648,13 +7477,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "code-project-wiki",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Code Project Wiki",
       "securityContainedCases": [],
+      "sourcePath": "skills/code-project-wiki/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": true,
@@ -3700,13 +7534,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "typescript-code-review"
       ],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "code-review-evidence",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Code Review Evidence",
       "securityContainedCases": [],
+      "sourcePath": "skills/code-review-evidence/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -3746,13 +7585,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "codex-workitem-coordination",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Codex Workitem Coordination",
       "securityContainedCases": [],
+      "sourcePath": "skills/codex-workitem-coordination/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "design-patterns",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -3792,13 +7636,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "collaboration-patterns",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Collaboration Patterns",
       "securityContainedCases": [],
+      "sourcePath": "skills/collaboration-patterns/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "design-patterns",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -3838,13 +7687,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "composition-patterns",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Composition Patterns",
       "securityContainedCases": [],
+      "sourcePath": "skills/composition-patterns/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "artifact-creation",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -3884,13 +7738,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "create-architecture",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Create Architecture",
       "securityContainedCases": [],
+      "sourcePath": "skills/create-architecture/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -3930,13 +7789,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "create-backlog",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Create Backlog",
       "securityContainedCases": [],
+      "sourcePath": "skills/create-backlog/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "artifact-creation",
       "coverage": {
         "catalogFixtureBacked": true,
@@ -3982,13 +7846,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "documentation-functional-spec"
       ],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "create-functional-spec",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Create Functional Spec",
       "securityContainedCases": [],
+      "sourcePath": "skills/create-functional-spec/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "artifact-creation",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -4028,13 +7897,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "create-high-level-design",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Create High Level Design",
       "securityContainedCases": [],
+      "sourcePath": "skills/create-high-level-design/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "artifact-creation",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -4074,13 +7948,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "create-module-design",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Create Module Design",
       "securityContainedCases": [],
+      "sourcePath": "skills/create-module-design/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "documentation-methodology",
       "coverage": {
         "catalogFixtureBacked": true,
@@ -4126,13 +8005,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "project-configuration-routing"
       ],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "create-project-configuration",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Create Project Configuration",
       "securityContainedCases": [],
+      "sourcePath": "skills/create-project-configuration/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -4172,13 +8056,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "create-pull-request",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Create Pull Request",
       "securityContainedCases": [],
+      "sourcePath": "skills/create-pull-request/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "artifact-creation",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -4218,13 +8107,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "create-unit-test-plan",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Create Unit Test Plan",
       "securityContainedCases": [],
+      "sourcePath": "skills/create-unit-test-plan/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": true,
@@ -4270,13 +8164,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "project-configuration-routing"
       ],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "detect-technology-skills",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Detect Technology Skills",
       "securityContainedCases": [],
+      "sourcePath": "skills/detect-technology-skills/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "documentation-methodology",
       "coverage": {
         "catalogFixtureBacked": true,
@@ -4326,13 +8225,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "project-configuration-routing"
       ],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "development-methodology",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Development Methodology",
       "securityContainedCases": [],
+      "sourcePath": "skills/development-methodology/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "documentation-methodology",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -4374,13 +8278,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "documentation-bootstrap",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Documentation Bootstrap",
       "securityContainedCases": [],
+      "sourcePath": "skills/documentation-bootstrap/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "documentation-methodology",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -4422,13 +8331,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "documentation-page-verify",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Documentation Page Verify",
       "securityContainedCases": [],
+      "sourcePath": "skills/documentation-page-verify/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "documentation-methodology",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -4469,13 +8383,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "documentation-reverse-engineer",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Documentation Reverse Engineer",
       "securityContainedCases": [],
+      "sourcePath": "skills/documentation-reverse-engineer/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "desktop-main-runtime"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -4547,13 +8468,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "electron-main"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "electron-main",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "Electron main process",
       "securityContainedCases": [],
+      "sourcePath": "skills/electron-main/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "desktop-preload-boundary"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -4625,13 +8553,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "electron-preload"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "electron-preload",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "Electron preload boundary",
       "securityContainedCases": [],
+      "sourcePath": "skills/electron-preload/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -4671,13 +8604,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "end-to-end-verification",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "End To End Verification",
       "securityContainedCases": [],
+      "sourcePath": "skills/end-to-end-verification/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -4717,13 +8655,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "execute-workitem",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Execute Workitem",
       "securityContainedCases": [],
+      "sourcePath": "skills/execute-workitem/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "web-application-framework"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -4798,13 +8743,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "fastapi"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "fastapi",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "FastAPI",
       "securityContainedCases": [],
+      "sourcePath": "skills/fastapi/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -4844,13 +8794,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "file-based-backlog",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "File Based Backlog",
       "securityContainedCases": [],
+      "sourcePath": "skills/file-based-backlog/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -4890,13 +8845,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "fix-explanation",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Fix Explanation",
       "securityContainedCases": [],
+      "sourcePath": "skills/fix-explanation/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -4936,13 +8896,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "github-issues-backlog",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Github Issues Backlog",
       "securityContainedCases": [],
+      "sourcePath": "skills/github-issues-backlog/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "persistence-framework"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -5022,13 +8989,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "hibernate-orm-panache"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "hibernate-orm-panache",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "Hibernate ORM With Panache",
       "securityContainedCases": [],
+      "sourcePath": "skills/hibernate-orm-panache/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "design-patterns",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -5068,13 +9040,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "interface-patterns",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Interface Patterns",
       "securityContainedCases": [],
+      "sourcePath": "skills/interface-patterns/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "design-patterns",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -5114,13 +9091,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "interpreter-pattern",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Interpreter Pattern",
       "securityContainedCases": [],
+      "sourcePath": "skills/interpreter-pattern/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "language-coding"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": true,
@@ -5186,13 +9170,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "java"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "java",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "Java",
       "securityContainedCases": [],
+      "sourcePath": "skills/java/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "language-design"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -5252,13 +9243,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "java-design"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "java-design",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "Java Design",
       "securityContainedCases": [],
+      "sourcePath": "skills/java-design/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "design-pattern-examples"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -5491,13 +9489,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "java-design-pattern-examples"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "java-design-pattern-examples",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "Java Design Pattern Examples",
       "securityContainedCases": [],
+      "sourcePath": "skills/java-design-pattern-examples/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "test-framework"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -5597,13 +9602,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "jest"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "jest",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "Jest",
       "securityContainedCases": [],
+      "sourcePath": "skills/jest/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "domain-modeling"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -5738,13 +9750,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "jhipster-domain-modeling"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "jhipster-domain-modeling",
       "judgePassedCases": [],
+      "kind": "domain",
+      "label": "JHipster Domain Modeling",
       "securityContainedCases": [],
+      "sourcePath": "skills/jhipster-domain-modeling/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "database-migrations"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -5860,13 +9879,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "jhipster-persistence"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "jhipster-persistence",
       "judgePassedCases": [],
+      "kind": "domain",
+      "label": "JHipster Persistence",
       "securityContainedCases": [],
+      "sourcePath": "skills/jhipster-persistence/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "application-scaffolding"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -5982,13 +10008,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "jhipster-project"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "jhipster-project",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "JHipster Project",
       "securityContainedCases": [],
+      "sourcePath": "skills/jhipster-project/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "application-security"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -6120,13 +10153,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "jhipster-security"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "jhipster-security",
       "judgePassedCases": [],
+      "kind": "domain",
+      "label": "JHipster Security",
       "securityContainedCases": [],
+      "sourcePath": "skills/jhipster-security/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "application-testing"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -6253,13 +10293,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "jhipster-testing"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "jhipster-testing",
       "judgePassedCases": [],
+      "kind": "domain",
+      "label": "JHipster Testing",
       "securityContainedCases": [],
+      "sourcePath": "skills/jhipster-testing/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "test-framework"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -6368,13 +10415,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "junit"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "junit",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "JUnit",
       "securityContainedCases": [],
+      "sourcePath": "skills/junit/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "workflow-runtime"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -6462,13 +10516,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "langgraph"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "langgraph",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "LangGraph",
       "securityContainedCases": [],
+      "sourcePath": "skills/langgraph/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "database-migrations"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -6648,13 +10709,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "liquibase"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "liquibase",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "Liquibase",
       "securityContainedCases": [],
+      "sourcePath": "skills/liquibase/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "local-model-runtime"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -6745,13 +10813,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "local-model-integration"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "local-model-integration",
       "judgePassedCases": [],
+      "kind": "domain",
+      "label": "Local model integration",
       "securityContainedCases": [],
+      "sourcePath": "skills/local-model-integration/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "documentation-methodology",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -6791,13 +10864,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "maintain-methodology-documentation",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Maintain Methodology Documentation",
       "securityContainedCases": [],
+      "sourcePath": "skills/maintain-methodology-documentation/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": true,
@@ -6843,13 +10921,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "backlog-lifecycle"
       ],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "manage-backlog",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Manage Backlog",
       "securityContainedCases": [],
+      "sourcePath": "skills/manage-backlog/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "compile-time-object-mapping"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -6954,13 +11039,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "mapstruct"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "mapstruct",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "MapStruct",
       "securityContainedCases": [],
+      "sourcePath": "skills/mapstruct/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "test-doubles"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -7063,13 +11155,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "mockito"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "mockito",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "Mockito",
       "securityContainedCases": [],
+      "sourcePath": "skills/mockito/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "database-engine"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -7525,13 +11624,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "mysql"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "mysql",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "MySQL",
       "securityContainedCases": [],
+      "sourcePath": "skills/mysql/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "documentation-methodology",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -7571,13 +11675,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "name-methodology-artifacts",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Name Methodology Artifacts",
       "securityContainedCases": [],
+      "sourcePath": "skills/name-methodology-artifacts/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "web-application-framework"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -7654,13 +11765,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "nextjs-app-router"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "nextjs-app-router",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "Next.js App Router",
       "securityContainedCases": [],
+      "sourcePath": "skills/nextjs-app-router/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "command-line-runtime"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -7778,13 +11896,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "node-cli"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "node-cli",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "Node command line application",
       "securityContainedCases": [],
+      "sourcePath": "skills/node-cli/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "design-patterns",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -7824,13 +11947,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "object-creation-patterns",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Object Creation Patterns",
       "securityContainedCases": [],
+      "sourcePath": "skills/object-creation-patterns/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": true,
@@ -7880,13 +12008,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "project-configuration-routing"
       ],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "organise-project-files",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Organise Project Files",
       "securityContainedCases": [],
+      "sourcePath": "skills/organise-project-files/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "planning-runtime"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -7963,13 +12098,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "plan-engine"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "plan-engine",
       "judgePassedCases": [],
+      "kind": "domain",
+      "label": "Plan engine",
       "securityContainedCases": [],
+      "sourcePath": "skills/plan-engine/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "end-to-end-framework"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -8069,13 +12211,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "playwright"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "playwright",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "Playwright",
       "securityContainedCases": [],
+      "sourcePath": "skills/playwright/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "persistence-framework"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -8168,13 +12317,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "postgres-drizzle"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "postgres-drizzle",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "PostgreSQL with Drizzle",
       "securityContainedCases": [],
+      "sourcePath": "skills/postgres-drizzle/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "wiki-and-knowledge",
       "coverage": {
         "catalogFixtureBacked": true,
@@ -8221,13 +12375,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "wiki-raw-ingest"
       ],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "project-wiki",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Project Wiki",
       "securityContainedCases": [],
+      "sourcePath": "skills/project-wiki/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "wiki-and-knowledge",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -8268,13 +12427,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "project-wiki-create",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Project Wiki Create",
       "securityContainedCases": [],
+      "sourcePath": "skills/project-wiki-create/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "wiki-and-knowledge",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -8314,13 +12478,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "project-wiki-query",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Project Wiki Query",
       "securityContainedCases": [],
+      "sourcePath": "skills/project-wiki-query/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "wiki-and-knowledge",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -8360,13 +12529,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "project-wiki-research",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Project Wiki Research",
       "securityContainedCases": [],
+      "sourcePath": "skills/project-wiki-research/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "wiki-and-knowledge",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -8407,13 +12581,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "project-wiki-review",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Project Wiki Review",
       "securityContainedCases": [],
+      "sourcePath": "skills/project-wiki-review/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "wiki-and-knowledge",
       "coverage": {
         "catalogFixtureBacked": true,
@@ -8459,13 +12638,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "wiki-raw-ingest"
       ],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "project-wiki-topic-verify",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Project Wiki Topic Verify",
       "securityContainedCases": [],
+      "sourcePath": "skills/project-wiki-topic-verify/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "wiki-and-knowledge",
       "coverage": {
         "catalogFixtureBacked": true,
@@ -8512,13 +12696,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "wiki-raw-ingest"
       ],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "project-wiki-topic-write",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Project Wiki Topic Write",
       "securityContainedCases": [],
+      "sourcePath": "skills/project-wiki-topic-write/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -8558,13 +12747,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "prompt-contracts",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Prompt Contracts",
       "securityContainedCases": [],
+      "sourcePath": "skills/prompt-contracts/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "language-coding"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -8625,13 +12821,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "python"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "python",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "Python",
       "securityContainedCases": [],
+      "sourcePath": "skills/python/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "design-pattern-examples"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -8864,13 +13067,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "python-design-pattern-examples"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "python-design-pattern-examples",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "Python Design Pattern Examples",
       "securityContainedCases": [],
+      "sourcePath": "skills/python-design-pattern-examples/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "application-framework"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -8958,13 +13168,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "quarkus"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "quarkus",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "Quarkus",
       "securityContainedCases": [],
+      "sourcePath": "skills/quarkus/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "application-design"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -9052,13 +13269,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "quarkus-design"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "quarkus-design",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "Quarkus Design",
       "securityContainedCases": [],
+      "sourcePath": "skills/quarkus-design/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "persistence-framework"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -9151,13 +13375,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "quarkus-persistence"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "quarkus-persistence",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "Quarkus Persistence",
       "securityContainedCases": [],
+      "sourcePath": "skills/quarkus-persistence/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "application-testing"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -9243,13 +13474,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "quarkus-testing"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "quarkus-testing",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "Quarkus Testing",
       "securityContainedCases": [],
+      "sourcePath": "skills/quarkus-testing/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "job-scheduling"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -9358,13 +13596,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "quartz"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "quartz",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "Quartz Scheduler",
       "securityContainedCases": [],
+      "sourcePath": "skills/quartz/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "server-user-interface"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -9425,13 +13670,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "react-server-components"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "react-server-components",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "React Server Components",
       "securityContainedCases": [],
+      "sourcePath": "skills/react-server-components/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "client-user-interface"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -9516,13 +13768,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "react-vite-renderer"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "react-vite-renderer",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "React renderer with Vite",
       "securityContainedCases": [],
+      "sourcePath": "skills/react-vite-renderer/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "design-patterns",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -9562,13 +13819,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "request-patterns",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Request Patterns",
       "securityContainedCases": [],
+      "sourcePath": "skills/request-patterns/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "artifact-review",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -9608,13 +13870,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "review-architecture",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Review Architecture",
       "securityContainedCases": [],
+      "sourcePath": "skills/review-architecture/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "artifact-review",
       "coverage": {
         "catalogFixtureBacked": true,
@@ -9660,13 +13927,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "documentation-functional-spec"
       ],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "review-functional-spec",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Review Functional Spec",
       "securityContainedCases": [],
+      "sourcePath": "skills/review-functional-spec/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "artifact-review",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -9706,13 +13978,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "review-high-level-design",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Review High Level Design",
       "securityContainedCases": [],
+      "sourcePath": "skills/review-high-level-design/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "artifact-review",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -9752,13 +14029,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "review-module-design",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Review Module Design",
       "securityContainedCases": [],
+      "sourcePath": "skills/review-module-design/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "artifact-review",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -9799,13 +14081,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "review-structured-artifact",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Review Structured Artifact",
       "securityContainedCases": [],
+      "sourcePath": "skills/review-structured-artifact/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "artifact-review",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -9845,13 +14132,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "review-unit-test-plan",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Review Unit Test Plan",
       "securityContainedCases": [],
+      "sourcePath": "skills/review-unit-test-plan/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -9891,13 +14183,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "root-cause-analysis",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Root Cause Analysis",
       "securityContainedCases": [],
+      "sourcePath": "skills/root-cause-analysis/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -9937,13 +14234,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "runtime-evidence-collection",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Runtime Evidence Collection",
       "securityContainedCases": [],
+      "sourcePath": "skills/runtime-evidence-collection/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "design-patterns",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -9983,13 +14285,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "singleton-pattern",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Singleton Pattern",
       "securityContainedCases": [],
+      "sourcePath": "skills/singleton-pattern/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "documentation-methodology",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -10029,13 +14336,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "skill-authoring",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Skill Authoring",
       "securityContainedCases": [],
+      "sourcePath": "skills/skill-authoring/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "application-framework"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": true,
@@ -10123,13 +14437,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "spring-boot"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "spring-boot",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "Spring Boot",
       "securityContainedCases": [],
+      "sourcePath": "skills/spring-boot/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "application-design"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -10211,13 +14532,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "spring-boot-design"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "spring-boot-design",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "Spring Boot Design",
       "securityContainedCases": [],
+      "sourcePath": "skills/spring-boot-design/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "application-testing"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -10304,13 +14632,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "spring-boot-testing"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "spring-boot-testing",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "Spring Boot Testing",
       "securityContainedCases": [],
+      "sourcePath": "skills/spring-boot-testing/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "persistence-framework"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -10391,13 +14726,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "spring-data-jpa"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "spring-data-jpa",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "Spring Data JPA",
       "securityContainedCases": [],
+      "sourcePath": "skills/spring-data-jpa/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "query-language"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": true,
@@ -10461,13 +14803,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "sql"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "sql",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "SQL",
       "securityContainedCases": [],
+      "sourcePath": "skills/sql/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "design-patterns",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -10507,13 +14854,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "state-strategy-patterns",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "State Strategy Patterns",
       "securityContainedCases": [],
+      "sourcePath": "skills/state-strategy-patterns/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -10555,13 +14907,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "structured-design",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Structured Design",
       "securityContainedCases": [],
+      "sourcePath": "skills/structured-design/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -10605,13 +14962,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "structured-explanation",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Structured Explanation",
       "securityContainedCases": [],
+      "sourcePath": "skills/structured-explanation/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "styling-system"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -10699,13 +15063,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "tailwind-design-system"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "tailwind-design-system",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "Tailwind design system",
       "securityContainedCases": [],
+      "sourcePath": "skills/tailwind-design-system/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -10745,13 +15114,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "test-driven-development",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Test Driven Development",
       "securityContainedCases": [],
+      "sourcePath": "skills/test-driven-development/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -10791,13 +15165,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "test-strategy",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Test Strategy",
       "securityContainedCases": [],
+      "sourcePath": "skills/test-strategy/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "tool-runtime"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -10919,13 +15300,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "tool-runtime"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "tool-runtime",
       "judgePassedCases": [],
+      "kind": "domain",
+      "label": "Tool runtime",
       "securityContainedCases": [],
+      "sourcePath": "skills/tool-runtime/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "design-patterns",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -10965,13 +15351,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "traversal-patterns",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "Traversal Patterns",
       "securityContainedCases": [],
+      "sourcePath": "skills/traversal-patterns/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "language-coding"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": true,
@@ -11047,13 +15440,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "typescript"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "typescript",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "TypeScript",
       "securityContainedCases": [],
+      "sourcePath": "skills/typescript/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "design-pattern-examples"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -11308,13 +15708,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "typescript-design-pattern-examples"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "typescript-design-pattern-examples",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "TypeScript Design Pattern Examples",
       "securityContainedCases": [],
+      "sourcePath": "skills/typescript-design-pattern-examples/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "module-system"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": true,
@@ -11416,13 +15823,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "typescript-esm"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "typescript-esm",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "TypeScript ECMAScript modules",
       "securityContainedCases": [],
+      "sourcePath": "skills/typescript-esm/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "strict-type-system"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": true,
@@ -11514,13 +15928,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "typescript-strict"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "typescript-strict",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "Strict TypeScript",
       "securityContainedCases": [],
+      "sourcePath": "skills/typescript-strict/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [],
       "category": "development-practice",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -11560,13 +15979,20 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       },
       "declaredCases": [],
       "detection": null,
+      "detectionPath": null,
       "executedCases": [],
       "id": "user-experience-review",
       "judgePassedCases": [],
+      "kind": "core",
+      "label": "User Experience Review",
       "securityContainedCases": [],
+      "sourcePath": "skills/user-experience-review/SKILL.md",
       "verifiedCases": []
     },
     {
+      "capabilities": [
+        "test-framework"
+      ],
       "category": "stack-and-domain",
       "coverage": {
         "catalogFixtureBacked": false,
@@ -11663,14 +16089,44 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         "selection": "additive",
         "skill": "vitest"
       },
+      "detectionPath": "skills/detect-technology-skills/references/technology-skill-detection-registry.yaml",
       "executedCases": [],
       "id": "vitest",
       "judgePassedCases": [],
+      "kind": "technology",
+      "label": "Vitest",
       "securityContainedCases": [],
+      "sourcePath": "skills/vitest/SKILL.md",
       "verifiedCases": []
     }
   ],
-  "version": 2,
+  "statusVocabulary": [
+    {
+      "description": "No declaration or evidence is available.",
+      "id": "missing"
+    },
+    {
+      "description": "The selected harness has no supported mapping.",
+      "id": "unsupported"
+    },
+    {
+      "description": "Stale or conflicting evidence prevents promotion.",
+      "id": "blocked"
+    },
+    {
+      "description": "A human-readable observation exists without a current receipt.",
+      "id": "manual"
+    },
+    {
+      "description": "The source contract exists but current verified behavior is absent.",
+      "id": "declared"
+    },
+    {
+      "description": "A current classified receipt establishes verified behavior.",
+      "id": "verified"
+    }
+  ],
+  "version": 3,
   "workflowCoverage": {
     "backlog": {
       "agents": [
