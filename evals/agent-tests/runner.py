@@ -1535,15 +1535,13 @@ def _coordinator_prompt(
                             / "artifacts"
                             / "workspace-baseline.json"
                         ),
-                        "sha256": hashlib.sha256(
-                            json.dumps(
-                                workspace_inventory_baselines[
-                                    (run.suite.suite_id, str(scenario["id"]))
-                                ],
-                                sort_keys=True,
-                                separators=(",", ":"),
-                            ).encode("utf-8")
-                        ).hexdigest(),
+                        "sha256": _sha256(
+                            checkpoint_root
+                            / run.suite.suite_id
+                            / str(scenario["id"])
+                            / "artifacts"
+                            / "workspace-baseline.json"
+                        ),
                     }
                     for scenario in run.suite.scenarios
                     if str(scenario["id"]) in set(run.scenario_ids)
@@ -1760,6 +1758,7 @@ def _validate_workspace_mutation_evidence(
         "schema",
         "version",
         "root",
+        "baselineFileSha256",
         "baseline",
         "baselineSha256",
         "observed",
@@ -1883,6 +1882,15 @@ def _validate_workspace_mutation_evidence(
         and bool(evidence.get("root"))
         and (expected_root is None or evidence.get("root") == str(expected_root.resolve(strict=True)))
         and (expected_baseline is None or baseline == expected_baseline)
+        and isinstance(evidence.get("baselineFileSha256"), str)
+        and _SHA256_PATTERN.fullmatch(str(evidence.get("baselineFileSha256"))) is not None
+        and (
+            expected_baseline is None
+            or evidence.get("baselineFileSha256")
+            == hashlib.sha256(
+                (json.dumps(expected_baseline, indent=2, sort_keys=True) + "\n").encode("utf-8")
+            ).hexdigest()
+        )
         and isinstance(evidence.get("baselineSha256"), str)
         and _SHA256_PATTERN.fullmatch(str(evidence.get("baselineSha256"))) is not None
         and isinstance(evidence.get("finalSha256"), str)

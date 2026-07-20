@@ -134,7 +134,16 @@ def _canonical_sha256(value: object) -> str:
     return _sha256_bytes(encoded)
 
 
-def _load_baseline(path: Path, root: Path) -> dict[str, Any]:
+def _file_sha256(path: Path) -> str:
+    return _sha256_bytes(path.read_bytes())
+
+
+def _load_baseline(path: Path, root: Path, expected_sha256: str) -> dict[str, Any]:
+    observed_sha256 = _file_sha256(path)
+    if observed_sha256 != expected_sha256:
+        raise ValueError(
+            f"Baseline file digest mismatch: expected {expected_sha256}, observed {observed_sha256}"
+        )
     loaded = json.loads(path.read_text(encoding="utf-8"))
     if (
         not isinstance(loaded, dict)
@@ -194,8 +203,13 @@ def _cleanup_created(root: Path, created: Sequence[dict[str, Any]]) -> tuple[lis
     return sorted(removed), sorted(preserved)
 
 
-def _mutation_evidence(root: Path, baseline_path: Path, cleanup_created: bool) -> dict[str, Any]:
-    baseline = _load_baseline(baseline_path, root)
+def _mutation_evidence(
+    root: Path,
+    baseline_path: Path,
+    cleanup_created: bool,
+    expected_baseline_sha256: str,
+) -> dict[str, Any]:
+    baseline = _load_baseline(baseline_path, root, expected_baseline_sha256)
     observed = _inventory(root)
     detected = _changes(baseline, observed)
     removed: list[str] = []
@@ -209,6 +223,7 @@ def _mutation_evidence(root: Path, baseline_path: Path, cleanup_created: bool) -
         "schema": _MUTATION_SCHEMA,
         "version": 1,
         "root": str(root.resolve(strict=True)),
+        "baselineFileSha256": expected_baseline_sha256,
         "baseline": baseline,
         "baselineSha256": _canonical_sha256(baseline),
         "observed": observed,
@@ -249,6 +264,7 @@ def _parse_arguments(argv: Sequence[str] | None = None) -> argparse.Namespace:
     reconcile = subparsers.add_parser("reconcile")
     reconcile.add_argument("--root", type=Path, required=True)
     reconcile.add_argument("--baseline", type=Path, required=True)
+    reconcile.add_argument("--expected-baseline-sha256", required=True)
     reconcile.add_argument("--output", type=Path, required=True)
     reconcile.add_argument("--cleanup-created", action="store_true")
     return parser.parse_args(argv)
@@ -261,7 +277,12 @@ def _main(argv: Sequence[str] | None = None) -> int:
     else:
         _write_json(
             arguments.output,
-            _mutation_evidence(arguments.root, arguments.baseline, arguments.cleanup_created),
+            _mutation_evidence(
+                arguments.root,
+                arguments.baseline,
+                arguments.cleanup_created,
+                arguments.expected_baseline_sha256,
+            ),
         )
     return 0
 

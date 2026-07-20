@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 import shutil
 import subprocess
@@ -53,7 +54,9 @@ class WorkspaceInventoryTests(unittest.TestCase):
             cache.mkdir()
             bytecode = cache / "tracked.cpython-311.pyc"
             bytecode.write_bytes(b"generated-bytecode")
-            evidence = workspace_inventory._mutation_evidence(repository, baseline_path, True)
+            evidence = workspace_inventory._mutation_evidence(
+                repository, baseline_path, True, workspace_inventory._file_sha256(baseline_path)
+            )
 
         self.assertEqual("side-effects-detected", evidence["derivedMutationClaim"])
         self.assertEqual(
@@ -105,7 +108,9 @@ class WorkspaceInventoryTests(unittest.TestCase):
                     check=False,
                 )
                 self.assertEqual(0, completed.returncode, completed.stdout + completed.stderr)
-                evidence = workspace_inventory._mutation_evidence(fixture, baseline_path, True)
+                evidence = workspace_inventory._mutation_evidence(
+                    fixture, baseline_path, True, workspace_inventory._file_sha256(baseline_path)
+                )
                 self.assertEqual("no-changes-detected", evidence["derivedMutationClaim"])
                 self.assertTrue(evidence["finalMatchesBaseline"])
 
@@ -119,7 +124,9 @@ class WorkspaceInventoryTests(unittest.TestCase):
             workspace_inventory._write_json(baseline_path, workspace_inventory._inventory(repository))
 
             (repository / "generated.pyc").write_bytes(b"owned")
-            evidence = workspace_inventory._mutation_evidence(repository, baseline_path, True)
+            evidence = workspace_inventory._mutation_evidence(
+                repository, baseline_path, True, workspace_inventory._file_sha256(baseline_path)
+            )
 
             self.assertTrue((repository / "existing.pyc").is_file())
             self.assertTrue((repository / "notes.txt").is_file())
@@ -138,7 +145,9 @@ class WorkspaceInventoryTests(unittest.TestCase):
 
             (repository / "tracked.py").write_text("VALUE = 2\n", encoding="utf-8")
             (repository / ".gitignore").unlink()
-            evidence = workspace_inventory._mutation_evidence(repository, baseline_path, True)
+            evidence = workspace_inventory._mutation_evidence(
+                repository, baseline_path, True, workspace_inventory._file_sha256(baseline_path)
+            )
 
             self.assertEqual("VALUE = 2\n", (repository / "tracked.py").read_text(encoding="utf-8"))
             self.assertFalse((repository / ".gitignore").exists())
@@ -159,7 +168,9 @@ class WorkspaceInventoryTests(unittest.TestCase):
             tracked.chmod(0o755)
             tracked.write_text("VALUE = 2\n", encoding="utf-8")
             subprocess.run(["git", "-C", str(repository), "add", "tracked.py"], check=True)
-            evidence = workspace_inventory._mutation_evidence(repository, baseline_path, True)
+            evidence = workspace_inventory._mutation_evidence(
+                repository, baseline_path, True, workspace_inventory._file_sha256(baseline_path)
+            )
 
         self.assertEqual("0755", evidence["detected"]["modified"][0]["after"]["mode"])
         self.assertEqual(1, len(evidence["detected"]["gitMetadata"]))
@@ -176,7 +187,9 @@ class WorkspaceInventoryTests(unittest.TestCase):
                 ["git", "-C", str(repository), "update-index", "--assume-unchanged", "tracked.py"],
                 check=True,
             )
-            evidence = workspace_inventory._mutation_evidence(repository, baseline_path, False)
+            evidence = workspace_inventory._mutation_evidence(
+                repository, baseline_path, False, workspace_inventory._file_sha256(baseline_path)
+            )
 
         self.assertEqual(1, len(evidence["detected"]["gitMetadata"]))
         self.assertFalse(evidence["finalMatchesBaseline"])
@@ -188,6 +201,29 @@ class WorkspaceInventoryTests(unittest.TestCase):
 
             with self.assertRaisesRegex(RuntimeError, "Git workspace classification failed"):
                 workspace_inventory._inventory(root)
+
+    def test_changed_baseline_fails_before_owned_cleanup(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            repository = self._repository(root)
+            baseline_path = root / "baseline.json"
+            workspace_inventory._write_json(baseline_path, workspace_inventory._inventory(repository))
+            expected_sha256 = workspace_inventory._file_sha256(baseline_path)
+            changed = json.loads(baseline_path.read_text(encoding="utf-8"))
+            changed["entries"] = [
+                entry for entry in changed["entries"] if entry["path"] != "tracked.py"
+            ]
+            workspace_inventory._write_json(baseline_path, changed)
+
+            with self.assertRaisesRegex(ValueError, "Baseline file digest mismatch"):
+                workspace_inventory._mutation_evidence(
+                    repository,
+                    baseline_path,
+                    True,
+                    expected_sha256,
+                )
+
+            self.assertTrue((repository / "tracked.py").is_file())
 
 
 if __name__ == "__main__":

@@ -2265,6 +2265,17 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                 (run,), fixture_root, checkpoint_root
             )
             protected = fixture_root / "dev-code-reviewer" / "incomplete-review-evidence"
+            baseline_file = (
+                checkpoint_root
+                / "dev-code-reviewer"
+                / "incomplete-review-evidence"
+                / "artifacts"
+                / "workspace-baseline.json"
+            )
+            prompt = runner._coordinator_prompt(
+                (run,), checkpoint_root, fixture_root, "test-run", baselines
+            )
+            self.assertIn(runner._sha256(baseline_file), prompt)
             (protected / "late-created.pyc").write_bytes(b"hidden mutation")
             late_baseline_path = root / "late-baseline.json"
             runner.workspace_inventory_support._write_json(
@@ -2275,6 +2286,7 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                 protected,
                 late_baseline_path,
                 False,
+                runner.workspace_inventory_support._file_sha256(late_baseline_path),
             )
             diagnostics: list[str] = []
             runner._validate_workspace_mutation_evidence(
@@ -2922,6 +2934,9 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             "schema": "dev-methodology-workspace-mutation-evidence",
             "version": 1,
             "root": "/synthetic/candidate",
+            "baselineFileSha256": hashlib.sha256(
+                (json.dumps(baseline, indent=2, sort_keys=True) + "\n").encode("utf-8")
+            ).hexdigest(),
             "baseline": baseline,
             "baselineSha256": hashlib.sha256(
                 json.dumps(baseline, sort_keys=True, separators=(",", ":")).encode("utf-8")
