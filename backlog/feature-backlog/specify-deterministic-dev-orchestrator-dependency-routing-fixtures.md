@@ -1,8 +1,16 @@
 # Specify Deterministic Dev Orchestrator Dependency Routing Fixtures
 
-Status: Blocked
+Status: Running
 
 Type: Feature
+
+## Current Resumption Ownership
+
+- Canonical Dev Orchestrator task: 019f7e25-66d5-7962-b665-ee245ab37c3c.
+- Parent task: 019f77f4-c4bd-7c91-b197-c987a7beb838.
+- Resumption authority: fresh ARTIFACT RESUME issued on 2026-07-20 for focused current-main reconciliation, the exact dependency-routing live selector, and any evidence-required bounded evaluation/test-only correction.
+- Phase: focused verification and current-main reconciliation.
+- Superseded tasks: prior dependency-routing preflight, waiting, and permission-failed tasks are evidence only and are not canonical ownership.
 
 ## Running Ownership
 
