@@ -1,18 +1,12 @@
 # Preserve Integrated Documentation Steady State
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
-## User Action Required
+## Approval Resolution
 
-The original proposal assigned a broad cross-artifact audit to Dev Documentation Writer and applied it to ordinary project setup. The user rejected both boundaries. The corrected behavior applies only when Project Bootstrapper is reverse engineering an existing project, and Wiki Ingester owns the final evidence audit. Dev Documentation Writer remains responsible only for writing or updating assigned non-wiki documents.
-
-## Question for the User
-
-Do you approve changing exactly agents/roles/project-setup/project-bootstrapper.role.yaml and agents/roles/wiki-activities/wiki-ingester.role.yaml so that, only during whole-project reverse engineering, Project Bootstrapper assigns Wiki Ingester a final integrated-tree evidence audit; Wiki Ingester identifies stale, contradictory, or missing artifacts against source evidence and reports the exact artifact work required; Project Bootstrapper routes each result to its existing owner; Dev Documentation Writer creates or updates every template-backed or other supported non-wiki document its definition owns, including a missing module design found by Wiki Ingester; and corrected or newly created artifacts receive independent review before final verification?
-
-Approval also permits regeneration of only the supported generated agent mirrors from those two sources.
+The original proposal assigned a broad cross-artifact audit to Dev Documentation Writer and applied it to ordinary project setup. The user rejected both boundaries, then approved the corrected two-role scope. The completed behavior applies only when Project Bootstrapper is reverse engineering an existing project, and Wiki Ingester owns the final read-only evidence audit. Dev Documentation Writer remains responsible only for writing or updating assigned non-wiki documents.
 
 ## Approval Evidence
 
@@ -21,24 +15,29 @@ Approval also permits regeneration of only the supported generated agent mirrors
 - Provenance: parent thread 019f77f4-c4bd-7c91-b197-c987a7beb838 on 2026-07-20, answering the corrected two-role scope recorded at 9d9716c.
 - The approval applies only to whole-project reverse engineering. It does not add the audit to ordinary project setup and does not make Dev Documentation Writer the audit owner.
 
-## Why User Input Is Required
-
-The user explicitly corrected the behavior and ownership boundary, but the revised implementation reaches two governed role definitions rather than the one role named by the rejected question. Exact approval for this corrected two-role scope is required before mutation.
-
 ## Resolution
 
-Pending.
+Resolved. The exact answer “ok” authorized the corrected Project Bootstrapper and Wiki Ingester changes and supported mirror regeneration. No further user decision is required for this item.
 
-## Unattended Work Boundary
+## Unattended Work Authority
 
-Perform no governed role or generated-mirror mutation until the exact question is answered.
+The recorded exact approval authorized the governed two-role implementation, supported mirror regeneration, focused correction and verification, direct main integration, terminal backlog completion, and cleanup. It did not authorize the rejected Documentation Writer audit ownership or an audit during ordinary project setup.
 
 ## Current Execution
 
 - Canonical Dev Orchestrator task: 019f7e7b-e949-7fb0-916b-0a8b932198ca.
 - Worktree: /Users/martinbechard/.codex/worktrees/60e7/dev-methodology.
-- Phase: current-main reconciliation, scoped implementation, focused verification, review, integration, completion, and cleanup.
+- Phase: Completed; terminal cleanup handoff pending parent worktree and branch removal.
 - Corrected resumption scope: reverse-engineering-only Wiki Ingester audit with artifact creation and updates routed to existing owners, including Dev Documentation Writer for supported documents.
+
+## Delivery Evidence
+
+- Accepted private candidate: bfe14a4, after fresh independent review returned PASS with no material findings.
+- Main integration: 53f32fe, a single-parent exact-path integration commit based on the claimed current-main baseline.
+- Integration claim: preserve-integrated-docs-integration-019f7e7b, released at event 13e093ee-bc31-4c92-b8d2-d445223e0283.
+- Terminal backlog claim: preserve-integrated-docs-completion-019f7e7b, acquired separately for only the source and completed destination paths and scheduled for immediate clean release after this commit.
+- Focused verification passed: 23 Project Bootstrapper orchestration and fixture tests, 9 strict workspace-inventory and dependency tests, 8 bundle contract tests, Wiki Ingester suite validation, Python compilation, Agent Skill validation, generated role and adapter freshness, hierarchy freshness, support-explorer freshness, and Git diff validation.
+- Cleanup eligibility: the accepted branch is fully integrated into main by tree content, the private worktree is clean, and no implementation work remains.
 
 ## Summary
 
