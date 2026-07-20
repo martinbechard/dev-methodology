@@ -33,6 +33,8 @@ Do not mark pass without quoted evidence.
 - Question: In EXISTING_IMPLEMENTATION or MIXED_CHANGE mode, do Authoritative Sources include the applicable accepted module designs, source, tests, configuration, procedures, and runtime evidence?
 - Question: Do Related Code and Related Tests identify evidence permitted by the selected mode or say Not yet identified when planned implementation and tests do not exist?
 - Question: Do Open Questions capture unresolved subsystem ownership, boundaries, contracts, identity, security, selectors, validation, state, response, or verification issues and classify each as blocking or non-blocking with a decision owner?
+- Question: Does Documentation Acceptance begin with ACCEPTED or BLOCKED and judge source evidence, accepted module prerequisites, and current reverse-engineering pass requirements without requiring intentionally absent later architecture, functional specifications, or wiki pages?
+- Question: Is documentation acceptance separate from implementation readiness, allowing accurate documentation of known defects, open design decisions, and current limitations while Implementation Readiness is BLOCKED for affected downstream work?
 
 ## Response Adequacy Questions
 
@@ -57,7 +59,7 @@ Do not mark pass without quoted evidence.
 
 ## Artifact-Specific Questions
 
-- Question: Does Parent Architecture explain why the subsystem exists and how it fits an accepted parent architecture, or mark its absence as a blocking upstream design question?
+- Question: Does Parent Architecture explain why the subsystem exists and how it fits an accepted parent architecture, or, during bottom-up reverse engineering before the architecture pass, state that the intentionally absent later parent is Not yet identified without inventing constraints or blocking current-pass documentation acceptance?
 - Question: Do Scope And Non-Goals distinguish included components, excluded components, and deferred work?
 - Question: Do Data Anchors name planned or existing authoritative data sources, state owners, records, events, messages, or external systems?
 - Question: Do Constituent Components identify each component and responsibility without collapsing into implementation detail for every module?
@@ -72,4 +74,4 @@ Do not mark pass without quoted evidence.
 
 ## Findings
 
-Report findings first in separate Response Adequacy, Identity And Security, and Other Contract Or Evidence groups. Treat unaccounted requirements, unsupported specificity, hidden omissions, unjustified out-of-scope requirements, unresolved identity or selector conflicts, collapsed authentication and authorization claims, unclear disclosure, validation, or state ownership, missing transaction or error timing, unsafe sensitive-data handling, false readiness, a missing accepted parent architecture, vague component responsibilities, unclear data contracts, unsupported interaction claims, missing invariants, and missing verification as findings.
+Report findings first in separate Response Adequacy, Identity And Security, and Other Contract Or Evidence groups. Treat unaccounted requirements, unsupported specificity, hidden omissions, unjustified out-of-scope requirements, unresolved identity or selector conflicts, collapsed authentication and authorization claims, unclear disclosure, validation, or state ownership, missing transaction or error timing, unsafe sensitive-data handling, false readiness, a missing accepted parent architecture when PLANNED_DEVELOPMENT requires it, vague component responsibilities, unclear data contracts, unsupported interaction claims, missing invariants, and missing verification as findings. An intentionally absent later parent architecture during the current bottom-up EXISTING_IMPLEMENTATION reverse-engineering pass is not a documentation-acceptance finding when the artifact records it without inventing constraints and reports any readiness effect separately.

@@ -193,6 +193,16 @@ TODO: Add a Risk Association Diagram only when risks cluster around components, 
 
 TODO: The Risk Association Diagram should connect each risk to the architectural item that creates or mitigates it.
 
+## Documentation Acceptance
+
+TODO: Begin this section with **ACCEPTED.** or **BLOCKED.** State ACCEPTED when the artifact accurately reconciles source evidence, accepted high-level-design prerequisites, and current-pass requirements. During bottom-up reverse engineering, do not fail documentation acceptance solely because later functional specifications or wiki pages are intentionally absent, or because an accurately recorded defect, open decision, or limitation blocks implementation.
+
+TODO: When BLOCKED, name the missing accepted prerequisite, insufficient evidence, unresolved current-pass review finding, or unavailable mandatory dependency.
+
+## Implementation Readiness
+
+TODO: Begin this section with **READY.** or **BLOCKED.** State READY only when architecture-dependent downstream work can proceed without an unresolved critical boundary, decision, defect, or verification gap. Otherwise state BLOCKED for the affected downstream work while preserving an independent Documentation Acceptance result.
+
 ## Verification
 
 TODO: Define how this architecture will be verified through builds, tests, linting, manual checks, runtime logging, or design review.

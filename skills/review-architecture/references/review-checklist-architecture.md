@@ -31,6 +31,8 @@ Do not mark pass without quoted evidence.
 - Question: Do Authoritative Sources include source roots, tests, configuration, procedures, and related design documents?
 - Question: Do Related Code and Related Tests identify evidence or say Not yet identified after a real search?
 - Question: Do Open Questions capture unresolved system boundaries, ownership, behavior, or verification conflicts?
+- Question: Does Documentation Acceptance begin with ACCEPTED or BLOCKED and judge source evidence, accepted high-level-design prerequisites, and current reverse-engineering pass requirements without requiring intentionally absent later functional specifications or wiki pages?
+- Question: Is documentation acceptance separate from implementation readiness, allowing accurate documentation of known defects, open design decisions, and current limitations while Implementation Readiness is BLOCKED for affected downstream work?
 
 ## Artifact-Specific Questions
 

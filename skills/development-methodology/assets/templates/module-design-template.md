@@ -239,6 +239,12 @@ TODO: Describe expected errors, unexpected errors, failure-closed behavior, retr
 
 TODO: State which errors are returned, thrown, swallowed, or escalated; whether each occurs before the response, after the response, or asynchronously; and which side effects have already committed.
 
+## Documentation Acceptance
+
+TODO: Begin this section with **ACCEPTED.** or **BLOCKED.** State ACCEPTED when the artifact accurately and completely records source evidence, accepted prerequisites, and current-pass requirements. Do not fail documentation acceptance solely because a later parent artifact is intentionally absent or because an accurately recorded defect, unimplemented behavior, open decision, or current limitation blocks implementation.
+
+TODO: When BLOCKED, name the missing accepted prerequisite, insufficient evidence, unresolved current-pass review finding, or unavailable mandatory dependency.
+
 ## Implementation Readiness
 
 TODO: Begin this section with **READY.** or **BLOCKED.** State READY only when every applicable requirement and required contract is DEFINED and no high-impact blocking question remains. Otherwise state BLOCKED for the affected downstream work and list the exact decisions or upstream artifacts required before implementation.

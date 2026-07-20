@@ -34,6 +34,12 @@ Use project-wiki-topic-write instead when the task is a durable wiki topic page 
 
 Use documentation-reverse-engineer when the user asks to derive a set of functional specifications from an existing codebase.
 
+## Reverse-Engineering Acceptance
+
+During the functional-specification current reverse-engineering pass, derive behavior from the accepted architecture and lower-level designs plus source, routes, UI surfaces, commands, jobs, tests, procedures, and runtime evidence. Wiki pages are intentionally created later and are not a mandatory current-pass input. Record their absence as Not yet identified where applicable; do not block documentation acceptance solely because wiki integration has not occurred.
+
+Documentation acceptance asks whether the specification accurately records observable behavior and satisfies current-pass requirements. Implementation readiness separately asks whether the workflow is sufficiently decided and supported for downstream implementation or change. Known defects, unimplemented behavior, open design decisions, and current limitations may remain visible in ACCEPTED documentation while making downstream implementation BLOCKED.
+
 ## Workflow
 
 1. Inspect the target repository before writing. Read product requirements, README files, task-relevant procedures, routes, UI surfaces, commands, integrations, services, tests, backlog files, existing docs, wiki pages, and current worktree status.
@@ -59,5 +65,7 @@ Before finishing:
 4. Search the artifact for unresolved TODO markers that are not intentional.
 5. Confirm every workflow, state group, edge case, and acceptance claim has source evidence or a clearly recorded open question.
 6. Reconcile every primary and supporting operation inventory row with Entry Points, Workflows, States And Rules, Edge Cases, and Verification. Do not omit a supporting operation merely because its most specific filter, projection, paging, or error detail remains open.
+7. Confirm Documentation Acceptance begins with ACCEPTED or BLOCKED and judges source evidence, accepted design prerequisites, and current reverse-engineering pass requirements without requiring intentionally absent wiki pages.
+8. Confirm Implementation Readiness begins with READY or BLOCKED as a separate downstream decision and preserves known defects, unimplemented behavior, open decisions, and current limitations.
 
 Do not send private, proprietary, sensitive, PII, or company-internal material to an external service unless the user explicitly authorizes it.

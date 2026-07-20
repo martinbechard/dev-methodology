@@ -6,6 +6,16 @@ current_understanding:
   development_stage: "TODO: Name the current project stage or say Not yet identified."
   setup_need: "TODO: Explain why this project needs explicit conceptual agent definition and skill setup."
 
+documentation_mode:
+  selected: "hybrid-specifications-and-wiki"
+  supported_values:
+    - "hybrid-specifications-and-wiki"
+  selection_evidence: "TODO: Name the explicit project decision, existing structured specification and docs/wiki evidence, or documentation-bootstrap selection."
+  authority_contract: "Structured module designs, high-level designs, architecture, and functional specifications own detailed specification content. README and docs/wiki own navigation and source-backed synthesis."
+  conversational_context_policy: "Downstream agents consume this persisted selection and do not reconstruct it from chat history."
+  legacy_missing_field_policy: "Migrate a legacy PROJECT.yaml to hybrid-specifications-and-wiki only when both structured specification roots and docs/wiki exist or documentation-bootstrap is establishing that full hierarchy; otherwise obtain and persist the project-owned selection before downstream documentation work."
+  unsupported_value_policy: "BLOCKED until create-project-configuration records a supported value."
+
 authoritative_sources:
   readme_files:
     - path: "TODO: README or entry point path."

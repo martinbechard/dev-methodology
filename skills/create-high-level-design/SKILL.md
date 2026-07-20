@@ -25,6 +25,12 @@ Choose and state exactly one mode before writing:
 
 Use only the authoritative inputs permitted by the selected design mode. Names, framework conventions, generated defaults, and likely implementation patterns are not requirements evidence.
 
+## Reverse-Engineering Acceptance
+
+During the high-level-design current reverse-engineering pass, EXISTING_IMPLEMENTATION uses accepted module designs, source, tests, procedures, configuration, runtime evidence, and project configuration. Parent architecture, functional specifications, and wiki pages are intentionally created later and are not mandatory current-pass inputs. Keep the Parent Architecture section and state Not yet identified with the later owning pass; do not invent constraints or block documentation acceptance solely because that parent artifact does not yet exist.
+
+Documentation acceptance asks whether the HLD accurately synthesizes accepted lower-level evidence and satisfies current-pass requirements. Implementation readiness separately asks whether dependent design or code can proceed. Known defects, open design decisions, missing intended contracts, and current limitations may produce ACCEPTED documentation with BLOCKED implementation readiness when the evidence and limitation are represented accurately.
+
 ## Scope
 
 Create one high-level design that defines:
@@ -86,5 +92,7 @@ Before finishing:
 12. Confirm the source-category inventory accounts for every mode-permitted category and the Requirements Coverage table accounts for every exact operation-and-obligation inventory row, including exact route variants, supporting UI actions and lookups, source open questions, schedules, predicates, cache effects, and boundary verification. Reject an abstract operation group that hides an accepted exact method, route, response, error, notification, transition, command, or verification obligation.
 13. Confirm every boundary-edge inventory row appears in Cross-Module Contract Reconciliation and every privileged or sensitive row also appears in Critical Trust And Identity Boundaries. Confirm each named anonymous, authenticated, administrator, service, or background actor has an explicit applicable, denied, equivalent, or out-of-scope boundary row.
 14. Preserve accepted exact validation commands and map them to the components, operations, boundaries, or risks they verify. Do not replace an available executable command with a generic future-test description.
+15. Confirm Documentation Acceptance begins with ACCEPTED or BLOCKED and judges source evidence, accepted module prerequisites, and current reverse-engineering pass requirements without requiring intentionally absent later architecture, functional specifications, or wiki pages.
+16. Confirm Implementation Readiness begins with READY or BLOCKED as a separate downstream decision and keeps known defects, open decisions, and current limitations visible.
 
 Do not send private, proprietary, sensitive, PII, or company-internal material to an external service unless the user explicitly authorizes it.

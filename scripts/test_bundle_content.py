@@ -6247,7 +6247,7 @@ class BundleContentTests(unittest.TestCase):
             "Pass 4: Functional Specifications",
             "Pass 5: README And Wiki Integration",
             "Every accepted module appears in an accepted HLD",
-            "Pass 5 completes whole-repository reverse engineering",
+            "Pass 5 plus a passing final reconciliation completes whole-repository reverse engineering",
             "separate project-owned evaluation",
         )
         for phrase in required_reverse_phrases:
@@ -6328,6 +6328,124 @@ class BundleContentTests(unittest.TestCase):
             ).exists()
         )
         self.assertFalse((REPOSITORY_ROOT / "evals" / "reconstruction-review").exists())
+
+    def test_reverse_engineering_separates_pass_acceptance_and_readiness(self) -> None:
+        """Keep bottom-up acceptance, persisted mode, wiki routing, and reconciliation aligned."""
+        reverse_text = (
+            SKILLS_ROOT / "documentation-reverse-engineer" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        bootstrap_text = (
+            SKILLS_ROOT / "documentation-bootstrap" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        configuration_text = (
+            SKILLS_ROOT / "create-project-configuration" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        project_template_text = (
+            SKILLS_ROOT
+            / "development-methodology"
+            / "assets"
+            / "templates"
+            / "project-template.yaml"
+        ).read_text(encoding="utf-8")
+
+        ordered_passes = (
+            "Pass -1: Project Configuration",
+            "Pass 0: Repository Orientation",
+            "Pass 1: Module Designs",
+            "Pass 2: High-Level Designs",
+            "Pass 3: Architecture",
+            "Pass 4: Functional Specifications",
+            "Pass 5: README And Wiki Integration",
+            "Final Top-Down Semantic Reconciliation",
+        )
+        pass_positions = [reverse_text.index(heading) for heading in ordered_passes]
+        self.assertEqual(sorted(pass_positions), pass_positions)
+
+        for phrase in (
+            "source evidence, accepted prerequisite layers, and current-pass requirements",
+            "intentionally created by a later reverse-engineering pass",
+            "Documentation acceptance and downstream implementation readiness are separate decisions",
+            "supplements rather than replaces the bottom-up creation sequence",
+            "wiki and functional specifications",
+            "architecture, then high-level designs, then module designs, and finally source",
+            "Correction ownership follows source authority",
+        ):
+            with self.subTest(reverse_phrase=phrase):
+                self.assertIn(phrase, reverse_text)
+
+        for phrase in (
+            "hybrid-specifications-and-wiki",
+            "legacy PROJECT.yaml",
+            "unsupported documentation mode",
+            "conversational context",
+        ):
+            with self.subTest(configuration_phrase=phrase):
+                self.assertIn(phrase, configuration_text)
+                self.assertIn(phrase, bootstrap_text)
+
+        for phrase in (
+            "documentation_mode:",
+            "selected: \"hybrid-specifications-and-wiki\"",
+            "legacy_missing_field_policy:",
+            "unsupported_value_policy:",
+        ):
+            with self.subTest(project_template_phrase=phrase):
+                self.assertIn(phrase, project_template_text)
+
+        wiki_handoffs = (
+            "project-wiki-create",
+            "project-wiki-topic-write",
+            "project-wiki-review",
+            "project-wiki-topic-verify",
+        )
+        for handoff in wiki_handoffs:
+            with self.subTest(wiki_handoff=handoff):
+                self.assertIn(handoff, reverse_text)
+        for phrase in ("Required inputs", "Owned outputs", "Completion evidence"):
+            self.assertIn(phrase, reverse_text)
+
+        artifact_contracts = (
+            ("create-module-design", "review-module-design", "module-design-template.md", "review-checklist-module-design.md"),
+            ("create-high-level-design", "review-high-level-design", "high-level-design-template.md", "review-checklist-high-level-design.md"),
+            ("create-architecture", "review-architecture", "architecture-template.md", "review-checklist-architecture.md"),
+            ("create-functional-spec", "review-functional-spec", "functional-spec-template.md", "review-checklist-functional-spec.md"),
+        )
+        for create_name, review_name, template_name, checklist_name in artifact_contracts:
+            create_text = (SKILLS_ROOT / create_name / "SKILL.md").read_text(
+                encoding="utf-8"
+            )
+            review_text = (SKILLS_ROOT / review_name / "SKILL.md").read_text(
+                encoding="utf-8"
+            )
+            template_text = (
+                SKILLS_ROOT
+                / "development-methodology"
+                / "assets"
+                / "templates"
+                / template_name
+            ).read_text(encoding="utf-8")
+            checklist_text = (
+                SKILLS_ROOT / review_name / "references" / checklist_name
+            ).read_text(encoding="utf-8")
+            for text in (create_text, review_text, checklist_text):
+                with self.subTest(contract=create_name, phrase="documentation acceptance"):
+                    self.assertIn("documentation acceptance", text.lower())
+                with self.subTest(contract=create_name, phrase="implementation readiness"):
+                    self.assertIn("implementation readiness", text.lower())
+                with self.subTest(contract=create_name, phrase="current pass"):
+                    self.assertIn("current reverse-engineering pass", text.lower())
+            self.assertEqual(1, template_text.count("## Documentation Acceptance"))
+            self.assertEqual(1, template_text.count("## Implementation Readiness"))
+
+        readme_text = README_PATH.read_text(encoding="utf-8")
+        lifecycle_text = (
+            REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
+        ).read_text(encoding="utf-8")
+        for text in (readme_text, lifecycle_text):
+            self.assertIn("hybrid-specifications-and-wiki", text)
+            self.assertIn("top-down semantic reconciliation", text)
+            self.assertIn("documentation acceptance", text.lower())
+            self.assertIn("implementation readiness", text.lower())
 
     def test_project_configuration_distinguishes_no_variant_from_missing_required_skill(self) -> None:
         detector_text = (SKILLS_ROOT / "detect-technology-skills" / "SKILL.md").read_text(

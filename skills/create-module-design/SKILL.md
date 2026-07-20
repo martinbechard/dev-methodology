@@ -17,7 +17,7 @@ Copy the template only when a local editable artifact is needed. Replace every T
 
 Treat every level-two heading in the template as mandatory. Preserve the heading text and order exactly; do not rename, merge, reorder, or omit headings. When a section is not applicable, keep its heading and state why. Compare the candidate's ordered level-two headings with the template before production review. A mismatch is BLOCKED and must be corrected before spending a semantic-review pass.
 
-The first nonblank content under Implementation Readiness must begin with READY or BLOCKED. Put the decision before explanatory prose so deterministic gates and downstream agents cannot mistake an unresolved design for an accepted one.
+The first nonblank content under Documentation Acceptance must begin with ACCEPTED or BLOCKED. The first nonblank content under Implementation Readiness must begin with READY or BLOCKED. Put each decision before explanatory prose so deterministic gates and downstream agents cannot conflate an accurate artifact with permission to implement from it.
 
 ## Design Mode
 
@@ -28,6 +28,12 @@ Choose and state exactly one mode before writing:
 - MIXED_CHANGE separates current behavior from the intended change and names the authority for each statement.
 
 Use only the authoritative inputs permitted by the selected design mode. In planned development, names, framework conventions, generated defaults, and likely implementation patterns are not requirements evidence.
+
+## Reverse-Engineering Acceptance
+
+During the module-design current reverse-engineering pass, EXISTING_IMPLEMENTATION uses the accepted project configuration, repository inventory, assigned source paths, callers, dependencies, tests, procedures, configuration, and runtime evidence. High-level designs, architecture, functional specifications, and wiki pages are intentionally created later and are not mandatory current-pass inputs. Record their absence as Not yet identified where the template calls for a link; do not block documentation acceptance solely because they do not exist yet.
+
+Documentation acceptance asks whether the artifact accurately and completely records the current-pass evidence. Implementation readiness asks whether its contracts and decisions are sufficient for safe downstream implementation or change. Known product defects, unimplemented behavior, current limitations, and open design decisions may coexist with ACCEPTED documentation and BLOCKED implementation readiness when they are accurately recorded and do not leave the current documentation scope unsupported.
 
 ## Scope
 
@@ -85,7 +91,7 @@ Use documentation-reverse-engineer when the user asks to derive many module desi
 
 Before finishing:
 
-1. Compare the ordered level-two headings with the module design template and verify that Implementation Readiness begins with READY or BLOCKED. If any required heading is missing, renamed, duplicated, merged, or reordered, or the readiness marker does not lead its section, stop with BLOCKED and correct the structure before invoking review-module-design.
+1. Compare the ordered level-two headings with the module design template and verify that Documentation Acceptance begins with ACCEPTED or BLOCKED and Implementation Readiness begins with READY or BLOCKED. If any required heading is missing, renamed, duplicated, merged, or reordered, or either marker does not lead its section, stop with BLOCKED and correct the structure before invoking review-module-design.
 2. After the template-conformance gate passes, use review-module-design on the completed artifact.
 3. Use documentation-page-verify with the artifact, source evidence, and completed review checklist when the review skill calls for it.
 4. Run project wiki status and lint when docs/wiki exists and the artifact lives in or links from docs/wiki.
@@ -113,5 +119,7 @@ Before finishing:
 26. Confirm every reactive or asynchronous failure distinguishes its returned or emitted value from signal/store mutation, cache replacement or retention, and subscriber side effects; do not convert a fallback emission into an unproved state transition.
 27. Resolve every local Markdown link from the installed documentation path and remove links to transient assembly or control files before review.
 28. Confirm the source-category inventory accounts for every mode-permitted category and every applicable owning-HLD open question remains visible in Requirements Coverage, Open Questions, the affected contract or phase, and Implementation Readiness.
+29. For the current reverse-engineering pass, confirm documentation acceptance considers only source evidence, accepted prerequisites, and current-pass requirements; do not require intentionally absent later high-level designs, architecture, functional specifications, or wiki pages.
+30. Confirm Documentation Acceptance and Implementation Readiness state independent results and preserve known defects, unimplemented behavior, open decisions, and current limitations for downstream reconciliation.
 
 Do not send private, proprietary, sensitive, PII, or company-internal material to an external service unless the user explicitly authorizes it.

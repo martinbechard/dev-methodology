@@ -31,6 +31,8 @@ Do not mark pass without quoted evidence.
 - Question: Do Authoritative Sources distinguish implemented behavior from intended behavior?
 - Question: Do Related Code and Related Tests identify evidence or say Not yet identified after a real search?
 - Question: Do Open Questions capture behavior, ownership, or acceptance conflicts that cannot be resolved from sources?
+- Question: Does Documentation Acceptance begin with ACCEPTED or BLOCKED and judge source evidence, accepted design prerequisites, and current reverse-engineering pass requirements without requiring intentionally absent later wiki pages?
+- Question: Is documentation acceptance separate from implementation readiness, allowing accurate documentation of known defects, unimplemented behavior, open design decisions, and current limitations while Implementation Readiness is BLOCKED for affected downstream work?
 
 ## Artifact-Specific Questions
 

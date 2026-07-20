@@ -125,6 +125,16 @@ TODO: List the edge cases that users can realistically encounter.
 
 TODO: For each edge case, state what the user sees and whether the workflow can continue.
 
+## Documentation Acceptance
+
+TODO: Begin this section with **ACCEPTED.** or **BLOCKED.** State ACCEPTED when the artifact accurately records observable behavior from source evidence, accepted design prerequisites, and current-pass requirements. During bottom-up reverse engineering, do not fail documentation acceptance solely because later wiki pages are intentionally absent, or because an accurately recorded defect, unimplemented behavior, open decision, or limitation blocks implementation.
+
+TODO: When BLOCKED, name the missing accepted prerequisite, insufficient evidence, unresolved current-pass review finding, or unavailable mandatory dependency.
+
+## Implementation Readiness
+
+TODO: Begin this section with **READY.** or **BLOCKED.** State READY only when workflow-dependent downstream work can proceed without an unresolved critical behavior, decision, defect, or verification gap. Otherwise state BLOCKED for the affected downstream work while preserving an independent Documentation Acceptance result.
+
 ## Verification
 
 TODO: Add a verification block for every workflow, rule group, and important edge case.
