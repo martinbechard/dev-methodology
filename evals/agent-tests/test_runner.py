@@ -298,6 +298,9 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         self.assertIn("fork_context exactly false", prompt)
         self.assertIn('"fixtureRoot": "/workspace/.agent-suite-fixtures/one"', prompt)
         self.assertIn("never under /tmp or /private/tmp", prompt)
+        self.assertIn("path strings alone are invalid", prompt)
+        self.assertIn("objects, never prose strings", prompt)
+        self.assertIn("structurally identical values", prompt)
 
     def test_governed_result_contract_separates_identity_deterministic_and_judge_evidence(self) -> None:
         """Coordinator output cannot substitute identity strings for Judge or deterministic evidence."""
@@ -312,6 +315,7 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                 "modelJudgeEvidence",
                 "evidenceReceipts",
                 "evidence",
+                "handoffReceipts",
             }
             <= set(scenario_schema["required"])
         )
@@ -1599,6 +1603,201 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         sessions = (
             runner._Session("nested-one", "target-one", "dependency", 3, 1.0, 5.0, frozenset()),
             runner._Session("nested-two", "target-two", "dependency", 3, 2.0, 4.0, frozenset()),
+        )
+
+        with self.assertRaisesRegex(RuntimeError, "Nested dependency execution"):
+            runner._audit_session_concurrency(sessions, maximum_threads=9)
+
+    def test_resumed_nested_dependency_sessions_use_task_activity_for_runtime_audit(self) -> None:
+        """An idle retained session may resume after another serialized dependency finishes."""
+        sessions = (
+            runner._Session(
+                "nested-one",
+                "target",
+                "dependency-one",
+                3,
+                1.0,
+                9.0,
+                frozenset(),
+                activity_intervals=((1.0, 3.0), (7.0, 9.0)),
+            ),
+            runner._Session(
+                "nested-two",
+                "target",
+                "dependency-two",
+                3,
+                4.0,
+                6.0,
+                frozenset(),
+                activity_intervals=((4.0, 6.0),),
+            ),
+        )
+
+        audit = runner._audit_session_concurrency(sessions, maximum_threads=9)
+
+        self.assertEqual(1, audit["maximumActiveSessions"])
+
+    def test_load_sessions_retains_each_completed_task_activity_interval(self) -> None:
+        """Retained rollouts expose separate active turns instead of one continuous envelope."""
+        with tempfile.TemporaryDirectory() as temporary:
+            rollout = Path(temporary) / "rollout-resumed.jsonl"
+            events = (
+                {"timestamp": "2026-07-17T00:00:00Z", "type": "session_meta", "payload": {
+                    "id": "resumed",
+                    "parent_thread_id": "target",
+                    "agent_role": "dependency",
+                    "source": {"subagent": {"thread_spawn": {"depth": 3, "agent_role": "dependency"}}},
+                }},
+                {"timestamp": "2026-07-17T00:00:01Z", "type": "event_msg", "payload": {
+                    "type": "task_started",
+                    "turn_id": "turn-one",
+                }},
+                {"timestamp": "2026-07-17T00:00:03Z", "type": "event_msg", "payload": {
+                    "type": "task_complete",
+                    "turn_id": "turn-one",
+                }},
+                {"timestamp": "2026-07-17T00:00:07Z", "type": "event_msg", "payload": {
+                    "type": "task_started",
+                    "turn_id": "turn-two",
+                }},
+                {"timestamp": "2026-07-17T00:00:09Z", "type": "event_msg", "payload": {
+                    "type": "task_complete",
+                    "turn_id": "turn-two",
+                }},
+            )
+            rollout.write_text(
+                "\n".join(json.dumps(event) for event in events) + "\n",
+                encoding="utf-8",
+            )
+
+            session = runner._load_sessions(Path(temporary))[0]
+
+        self.assertEqual(
+            (
+                (
+                    runner._timestamp_seconds("2026-07-17T00:00:01Z"),
+                    runner._timestamp_seconds("2026-07-17T00:00:03Z"),
+                ),
+                (
+                    runner._timestamp_seconds("2026-07-17T00:00:07Z"),
+                    runner._timestamp_seconds("2026-07-17T00:00:09Z"),
+                ),
+            ),
+            session.activity_intervals,
+        )
+
+    def test_load_sessions_uses_envelope_when_task_activity_is_incomplete(self) -> None:
+        """Missing task completion evidence cannot narrow the retained session interval."""
+        with tempfile.TemporaryDirectory() as temporary:
+            rollout = Path(temporary) / "rollout-incomplete.jsonl"
+            events = (
+                {"timestamp": "2026-07-17T00:00:00Z", "type": "session_meta", "payload": {
+                    "id": "incomplete",
+                    "parent_thread_id": "target",
+                    "agent_role": "dependency",
+                    "source": {"subagent": {"thread_spawn": {"depth": 3, "agent_role": "dependency"}}},
+                }},
+                {"timestamp": "2026-07-17T00:00:01Z", "type": "event_msg", "payload": {
+                    "type": "task_started",
+                    "turn_id": "turn-incomplete",
+                }},
+                {"timestamp": "2026-07-17T00:00:09Z", "type": "event_msg", "payload": {
+                    "type": "token_count",
+                }},
+            )
+            rollout.write_text(
+                "\n".join(json.dumps(event) for event in events) + "\n",
+                encoding="utf-8",
+            )
+
+            session = runner._load_sessions(Path(temporary))[0]
+
+        self.assertEqual(((session.started_at, session.finished_at),), session.activity_intervals)
+
+    def test_load_sessions_uses_envelope_when_task_boundary_timestamp_is_malformed(self) -> None:
+        """Malformed task timing evidence cannot narrow the retained session interval."""
+        with tempfile.TemporaryDirectory() as temporary:
+            rollout = Path(temporary) / "rollout-malformed-boundary.jsonl"
+            events = (
+                {"timestamp": "2026-07-17T00:00:00Z", "type": "session_meta", "payload": {
+                    "id": "malformed-boundary",
+                    "parent_thread_id": "target",
+                    "agent_role": "dependency",
+                    "source": {"subagent": {"thread_spawn": {"depth": 3, "agent_role": "dependency"}}},
+                }},
+                {"timestamp": "not-a-timestamp", "type": "event_msg", "payload": {
+                    "type": "task_started",
+                    "turn_id": "turn-malformed",
+                }},
+                {"timestamp": "2026-07-17T00:00:09Z", "type": "event_msg", "payload": {
+                    "type": "task_complete",
+                    "turn_id": "turn-malformed",
+                }},
+            )
+            rollout.write_text(
+                "\n".join(json.dumps(event) for event in events) + "\n",
+                encoding="utf-8",
+            )
+
+            session = runner._load_sessions(Path(temporary))[0]
+
+        self.assertEqual(((session.started_at, session.finished_at),), session.activity_intervals)
+
+    def test_load_sessions_uses_envelope_for_zero_duration_task_activity(self) -> None:
+        """Sub-resolution task intervals cannot disappear from the concurrency timeline."""
+        with tempfile.TemporaryDirectory() as temporary:
+            rollout = Path(temporary) / "rollout-zero-duration.jsonl"
+            events = (
+                {"timestamp": "2026-07-17T00:00:00Z", "type": "session_meta", "payload": {
+                    "id": "zero-duration",
+                    "parent_thread_id": "target",
+                    "agent_role": "dependency",
+                    "source": {"subagent": {"thread_spawn": {"depth": 3, "agent_role": "dependency"}}},
+                }},
+                {"timestamp": "2026-07-17T00:00:01Z", "type": "event_msg", "payload": {
+                    "type": "task_started",
+                    "turn_id": "turn-zero",
+                }},
+                {"timestamp": "2026-07-17T00:00:01Z", "type": "event_msg", "payload": {
+                    "type": "task_complete",
+                    "turn_id": "turn-zero",
+                }},
+                {"timestamp": "2026-07-17T00:00:09Z", "type": "event_msg", "payload": {
+                    "type": "token_count",
+                }},
+            )
+            rollout.write_text(
+                "\n".join(json.dumps(event) for event in events) + "\n",
+                encoding="utf-8",
+            )
+
+            session = runner._load_sessions(Path(temporary))[0]
+
+        self.assertEqual(((session.started_at, session.finished_at),), session.activity_intervals)
+
+    def test_overlapping_resumed_nested_dependency_tasks_fail_runtime_audit(self) -> None:
+        """Task-level evidence still rejects genuinely concurrent resumed dependencies."""
+        sessions = (
+            runner._Session(
+                "nested-one",
+                "target",
+                "dependency-one",
+                3,
+                1.0,
+                9.0,
+                frozenset(),
+                activity_intervals=((1.0, 5.0), (7.0, 9.0)),
+            ),
+            runner._Session(
+                "nested-two",
+                "target",
+                "dependency-two",
+                3,
+                4.0,
+                6.0,
+                frozenset(),
+                activity_intervals=((4.0, 6.0),),
+            ),
         )
 
         with self.assertRaisesRegex(RuntimeError, "Nested dependency execution"):

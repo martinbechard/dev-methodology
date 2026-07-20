@@ -171,6 +171,38 @@ class DependencyRoutingFixtureTests(unittest.TestCase):
                 with self.assertRaisesRegex(RuntimeError, diagnostic):
                     runner._audit_handoff_evidence((run,), report, sessions, fixture_root)
 
+    def test_receipts_may_retain_additional_same_role_review_and_verification_sessions(self) -> None:
+        """Later retained gates may supplement, but cannot replace, each lane's required evidence."""
+        with tempfile.TemporaryDirectory() as directory:
+            run, report, sessions, fixture_root = self._evidence_fixture(Path(directory))
+            source = report["runs"][0]["scenarioResults"][0]["handoffReceipts"][0]
+            source["review"]["sessionIds"] = ["code-review-2", "code-review-1"]
+            source["verification"]["sessionIds"] = ["verifier-2", "verifier-1"]
+
+            runner._audit_handoff_evidence((run,), report, sessions, fixture_root)
+
+    def test_receipt_session_superset_rejects_duplicates_replacements_and_foreign_roles(self) -> None:
+        """Supplemental gate evidence remains unique, role-bound, and additive to required sessions."""
+        cases = {
+            "duplicate-review": ("review", ["code-review-1", "code-review-1"]),
+            "replacement-review": ("review", ["code-review-2"]),
+            "foreign-review": ("review", ["code-review-1", "artifact-review-1"]),
+            "duplicate-verification": ("verification", ["verifier-1", "verifier-1"]),
+            "replacement-verification": ("verification", ["verifier-2"]),
+            "foreign-verification": ("verification", ["verifier-1", "code-review-1"]),
+        }
+        for name, (field, session_ids) in cases.items():
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
+                run, report, sessions, fixture_root = self._evidence_fixture(Path(directory))
+                source = report["runs"][0]["scenarioResults"][0]["handoffReceipts"][0]
+                source[field]["sessionIds"] = session_ids
+
+                with self.assertRaisesRegex(
+                    RuntimeError,
+                    rf"handoff receipt source {field} sessions are not retained evidence",
+                ):
+                    runner._audit_handoff_evidence((run,), report, sessions, fixture_root)
+
     def test_hyphenated_producer_alias_does_not_match_registered_invocation(self) -> None:
         """Receipt and release aliases cannot substitute for the literal retained runtime invocation."""
         with tempfile.TemporaryDirectory() as directory:

@@ -142,6 +142,7 @@ class _Session:
     terminal_response: bytes | None = None
     terminal_response_error: str | None = None
     suite_exclusion_candidate: str | None = None
+    activity_intervals: tuple[tuple[float, float], ...] = ()
 
 
 def _utc_now() -> str:
@@ -1097,6 +1098,7 @@ def _coordinator_schema() -> dict[str, Any]:
                                     "evidenceReceipts",
                                     "cleanup",
                                     "evidence",
+                                    "handoffReceipts",
                                 ],
                                 "properties": {
                                     "scenario": {"type": "string"},
@@ -1581,13 +1583,17 @@ def _coordinator_prompt(
         "write the required checkpointRoot/suite-id/scenario-id.json checkpoint immediately after each terminal "
         "scenario and before starting later work. Each checkpoint must contain suite, scenario, status, targetInvoked, "
         "judgeInvoked, identityEvidence, deterministicEvidence, modelJudgeEvidence, and evidence as arrays of "
-        "diagnostic strings, evidenceReceipts as an array of exact path and lowercase SHA-256 references, cleanup as clean or "
-        "failed, residualRisk as a string, and any assignment-declared handoffReceipts as structured objects with "
-        "the declared lanes and fields. Each receipt role must contain the producer invocation and its exact retained "
-        "sessionIds. Each receipt commit must contain repository relative to its suite fixtureRoot "
-        "and an ancestor commit sha; review and verification must each contain retained dependency sessionIds; "
-        "claimRelease must contain successful fixture claim-journal eventIds whose resulting commit and agent match "
-        "the receipt. Keep each clean candidate repository and its Git claim journal available until the outer runner "
+        "diagnostic strings. evidenceReceipts must be an array of objects containing exactly path and sha256, where path "
+        "is relative to checkpointRoot and sha256 is lowercase; path strings alone are invalid. cleanup must be clean or "
+        "failed and residualRisk must be a string. Each assignment-declared handoffReceipts entry must be an object whose "
+        "lane is a string and whose role, commit, review, verification, and claimRelease values are objects, never prose "
+        "strings. role must contain exactly invocation and sessionIds; commit must contain exactly repository and sha; "
+        "review and verification must each contain exactly sessionIds; claimRelease must contain exactly eventIds. The "
+        "repository is relative to the suite fixtureRoot, every sessionIds and eventIds value is a non-empty string array, "
+        "and the commit sha must be an ancestor. The final coordinator scenario result must repeat the checkpoint's status, "
+        "targetInvoked, judgeInvoked, evidenceReceipts, handoffReceipts, and cleanup with structurally identical values. "
+        "Successful claim-release eventIds must bind a resulting commit and agent matching the receipt. Keep each clean "
+        "candidate repository and its Git claim journal available until the outer runner "
         "audits them. Prose cannot substitute for those receipts. Nested objects are forbidden in the diagnostic arrays. "
         "The diagnostic strings never prove a verdict. Beneath checkpointRoot/suite/scenario, retain one artifacts file and "
         "one receipts JSON file per configured deterministic check. Each deterministic-check-disposition receipt must bind "
@@ -2714,6 +2720,53 @@ def _load_sessions(codex_home: Path) -> tuple[_Session, ...]:
         depth = int(spawn.get("depth", 0))
         started_at = _timestamp_seconds(str(events[0]["timestamp"]))
         finished_at = _timestamp_seconds(str(events[-1]["timestamp"]))
+        activity_intervals: list[tuple[float, float]] = []
+        active_start: float | None = None
+        active_turn_id: str | None = None
+        previous_end: float | None = None
+        activity_complete = parse_complete
+        for event in events:
+            payload = event.get("payload")
+            if event.get("type") != "event_msg" or not isinstance(payload, Mapping):
+                continue
+            event_type = payload.get("type")
+            if event_type == "task_started":
+                if active_start is not None:
+                    activity_complete = False
+                    break
+                turn_id = payload.get("turn_id")
+                if not isinstance(turn_id, str) or not turn_id:
+                    activity_complete = False
+                    break
+                try:
+                    active_start = _timestamp_seconds(str(event["timestamp"]))
+                except ValueError:
+                    activity_complete = False
+                    break
+                if previous_end is not None and active_start < previous_end:
+                    activity_complete = False
+                    break
+                active_turn_id = turn_id
+            elif event_type in {"task_complete", "turn_aborted"}:
+                if active_start is None or payload.get("turn_id") != active_turn_id:
+                    activity_complete = False
+                    break
+                try:
+                    activity_end = _timestamp_seconds(str(event["timestamp"]))
+                except ValueError:
+                    activity_complete = False
+                    break
+                if activity_end <= active_start:
+                    activity_complete = False
+                    break
+                activity_intervals.append((active_start, activity_end))
+                previous_end = activity_end
+                active_start = None
+                active_turn_id = None
+        if active_start is not None:
+            activity_complete = False
+        if not activity_complete or not activity_intervals:
+            activity_intervals = [(started_at, finished_at)]
         sessions.append(
             _Session(
                 session_id=str(metadata.get("id", rollout.stem)),
@@ -2736,6 +2789,7 @@ def _load_sessions(codex_home: Path) -> tuple[_Session, ...]:
                     started_at,
                     finished_at,
                 ),
+                activity_intervals=tuple(activity_intervals),
             )
         )
     return tuple(sessions)
@@ -3319,21 +3373,35 @@ def _audit_handoff_evidence(
 
                 review_specs = (review_spec,) if isinstance(review_spec[0], str) else review_spec
                 expected_review_ids = []
+                allowed_review_ids: set[str] = set()
                 for role, index in review_specs:
                     role_sessions = sessions_by_role.get(role, [])
                     if len(role_sessions) <= index:
                         raise RuntimeError(f"{identity} handoff receipt {lane} lacks retained review session")
                     expected_review_ids.append(role_sessions[index].session_id)
-                if review["sessionIds"] != expected_review_ids:
+                    allowed_review_ids.update(session.session_id for session in role_sessions)
+                reported_review_ids = review["sessionIds"]
+                if (
+                    len(reported_review_ids) != len(set(reported_review_ids))
+                    or not set(expected_review_ids).issubset(reported_review_ids)
+                    or not set(reported_review_ids).issubset(allowed_review_ids)
+                ):
                     raise RuntimeError(f"{identity} handoff receipt {lane} review sessions are not retained evidence")
 
                 expected_verification_ids = []
+                allowed_verification_ids: set[str] = set()
                 for role, index in verification_spec:
                     role_sessions = sessions_by_role.get(role, [])
                     if len(role_sessions) <= index:
                         raise RuntimeError(f"{identity} handoff receipt {lane} lacks retained verification session")
                     expected_verification_ids.append(role_sessions[index].session_id)
-                if verification["sessionIds"] != expected_verification_ids:
+                    allowed_verification_ids.update(session.session_id for session in role_sessions)
+                reported_verification_ids = verification["sessionIds"]
+                if (
+                    len(reported_verification_ids) != len(set(reported_verification_ids))
+                    or not set(expected_verification_ids).issubset(reported_verification_ids)
+                    or not set(reported_verification_ids).issubset(allowed_verification_ids)
+                ):
                     raise RuntimeError(
                         f"{identity} handoff receipt {lane} verification sessions are not retained evidence"
                     )
@@ -3391,8 +3459,10 @@ def _audit_session_concurrency(
                 if max(first.started_at, second.started_at) < min(first.finished_at, second.finished_at):
                     raise RuntimeError(f"Supervisor {supervisor} has overlapping children")
     timeline = sorted(
-        [(session.started_at, 1, session.depth) for session in all_sessions]
-        + [(session.finished_at, -1, session.depth) for session in all_sessions]
+        event
+        for session in all_sessions
+        for interval in (session.activity_intervals or ((session.started_at, session.finished_at),))
+        for event in ((interval[0], 1, session.depth), (interval[1], -1, session.depth))
     )
     active = 0
     active_nested = 0
