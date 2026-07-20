@@ -1,16 +1,21 @@
 # Restore Wiki Ingester On Verifier Interruption
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
 
-## Current Execution
+## User Decision Required
 
 - Canonical Dev Orchestrator task: 019f7e86-aece-7a40-96e1-b1e1863dba28.
-- Branch: codex/restore-wiki-ingester-verifier-flow.
-- Worktree: /Users/martinbechard/.codex/worktrees/8a44/dev-methodology.
-- Resumption plan: use preserved commits 8c28d9b, c677f09, and c75c8b1 as evidence while implementing an eval/test-only dependency-injection seam that drives verifier outcomes through the actual Wiki Ingester execution path or canonical generated adapter.
-- Phase: current-main reconciliation and bounded implementation; the prior harness-owned restoration approach is rejected.
+- Preserved branch: codex/restore-wiki-ingester-verifier-flow.
+- Preserved clean worktree: /Users/martinbechard/.codex/worktrees/8a44/dev-methodology.
+- Preserved eval-only evidence head: 914bc09, following the bounded executable-boundary correction history on the same branch.
+- The eval-only boundary now proves the current canonical Wiki Ingester behavior retains unaccepted docs/wiki drafts after a bound pre-move verifier interruption following one genuine correction.
+- No governed role or distributed skill definition was mutated.
+
+Exact approval question:
+
+Do you approve changing exactly agents/roles/wiki-activities/wiki-ingester.role.yaml, plus its supported generated role mirrors and focused bundle/eval expectations, to require Wiki Ingester to freeze the last accepted baseline; treat missing/interrupted verifier evidence as BLOCKED; restore every unaccepted wiki edit, source move, and link change; write the required restoration result; release all owned claims; and verify a clean worktree/empty registry? This approval would not authorize any distributed skill-definition change.
 
 ## Summary
 
