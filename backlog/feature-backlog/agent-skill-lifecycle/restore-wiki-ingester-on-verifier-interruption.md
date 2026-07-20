@@ -22,6 +22,18 @@ Approved governed scope: change only agents/roles/wiki-activities/wiki-ingester.
 
 Approval evidence: the user's direct clarification in parent thread 019f77f4-c4bd-7c91-b197-c987a7beb838 on 2026-07-20: “Ingest what is substantiated, flag what is not as open questions.”
 
+## Current Execution
+
+- Accepted correction candidate: 2cb0aea46cff6e9c40e8a656aa862f074d314da9.
+- Fresh independent review accepted the bounded role, supported-mirror, retained-result, and focused expectation changes.
+- Focused deterministic verification passed before live execution.
+- The prior four-case live run completed in 1087.607 seconds. Pre2 passed. Pre0, post0, and raw-ingest reached their required lifecycle, page, source, verifier, and cleanup outcomes but omitted a nonempty Substantiated Conclusions inventory.
+- Read-only classification found three target-output defects, zero evaluator defects, and zero infrastructure defects. Pre2 passing the same parser disproved a universal parser defect.
+- The next live proof is reduced to pre0 as the interruption representative and raw-ingest as the normal-flow representative. Passing pre2, duplicate post0, and unrelated cases are excluded.
+- Future live evidence retains sanitized terminal results and replays their exact shapes offline before another live run.
+- The live claim owns only test:live:wiki-ingester. It must use canonical isolated mode with no project-file or main-integration scope.
+- A short primary backlog transaction records this material phase and supplies a legitimate isolation window. It will release immediately after the resource-only claim is acquired.
+
 ## Summary
 
 Require Wiki Ingester to preserve and ingest substantiated material while recording unsubstantiated or unresolved material as explicit open questions on the relevant wiki pages.
