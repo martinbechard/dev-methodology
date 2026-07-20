@@ -1,30 +1,26 @@
 # Require Claimed Backlog Resumption
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
-## User Action Required
+## Approval Resolution
 
-The prepared eval-only candidate proves that the shipped Manage Backlog definition does not yet require safe claimed resumption. Changing that governed definition requires exact user approval.
+The user approved the exact governed definition scope after reviewing the prepared eval-only evidence.
 
-## Question for the User
+## Approved Scope
 
 Do you approve changing only skills/manage-backlog/SKILL.md to require that a blocked handoff releases prior ownership, preserves blocker/unblock/evidence/acceptance data, transitions through Ready, acquires a successful new exclusive claim and records the new owner before Running, and restores the byte-for-byte pre-attempt Blocked item when no claim or WAIT occurs?
 
 Approval also permits supported regeneration of design/generated/skill-definitions.js from that source and integration with prepared non-governed eval/test commit 244efcd2aa26dc14d226ad33dc9be680cef6b95d. It does not authorize any other agent or skill definition.
 
-## Why User Input Is Required
+## Approval Evidence
 
-The remaining delivery gap is in a governed distributed skill definition. Repository access, preserved commits, the eval-only candidate, and parent delegation do not create definition-change authority.
+- Basis: explicit-user-direction.
+- Exact answer: “Yes”.
+- Provenance: thread 019f77f4-c4bd-7c91-b197-c987a7beb838, the user's direct reply on 2026-07-20 to the exact question above.
 
-## Resolution
-
-Pending.
-
-## Unattended Work Boundary
-
-Preserve clean candidate 244efcd2aa26dc14d226ad33dc9be680cef6b95d and perform no governed source or generated-mirror mutation until the exact question is answered.
+The decision gate is resolved. Delivery completion still requires the governed pre-mutation check, implementation, supported regeneration, independent review, focused verification, integration, and terminal backlog evidence.
 
 ## Current Resumption Ownership
 
