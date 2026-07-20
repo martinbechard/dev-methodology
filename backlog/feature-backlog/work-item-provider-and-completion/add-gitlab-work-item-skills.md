@@ -1,28 +1,24 @@
 # Add GitLab Work-Item Skills
 
-Status: User Action Required
+Status: Ready
 
 Type: Feature
 
-## User Action Required
+## Approval Resolution
 
-This item creates two governed GitLab skill packages.
+The user approved the exact governed definition scope.
 
-## Question for the User
+## Approved Scope
 
 Do you approve creating skills/create-gitlab-work-item/SKILL.md and skills/manage-gitlab-work-items/SKILL.md with their agents/openai.yaml metadata, together with only their supported generated mirrors and directly related non-governed tests and documentation?
 
-## Why User Input Is Required
+## Approval Evidence
 
-The accepted provider contract establishes the design but does not constitute exact approval to create governed skill definitions.
+- Basis: explicit-user-direction.
+- Exact answer: “Ok”.
+- Provenance: thread 019f77f4-c4bd-7c91-b197-c987a7beb838, message item-2089, directly answering the exact question above.
 
-## Resolution
-
-Pending.
-
-## Unattended Work Boundary
-
-Do not dispatch or create these skill packages until the exact question is answered.
+The decision gate is resolved. Delivery completion still requires implementation, exact governed pre-mutation checks, supported regeneration, independent review, focused verification, integration, and terminal backlog evidence.
 
 ## Summary
 

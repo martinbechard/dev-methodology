@@ -50,7 +50,7 @@ This series plans the transformation only. It does not implement, rename, delete
 2. After the contract is accepted, proceed in parallel with:
    - [Transform file work-item skills](transform-file-work-item-skills.md).
    - [Split GitHub work-item skills](split-github-work-item-skills.md).
-   - [Add GitLab work-item skills](../../user-action-required/add-gitlab-work-item-skills.md).
+   - [Add GitLab work-item skills](add-gitlab-work-item-skills.md).
    - [Add Azure DevOps and Jira placeholders](../../user-action-required/add-azure-devops-and-jira-placeholders.md).
    - [Add direct-main completion](../../user-action-required/add-direct-main-completion-skill.md).
    - [Add feature-branch completion](../../user-action-required/add-feature-branch-completion-skill.md).
