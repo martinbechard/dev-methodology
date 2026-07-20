@@ -6,11 +6,23 @@ Type: Defect
 
 ## Running Ownership
 
-- Owner: Dev Orchestrator root task 019f77f4-c4bd-7c91-b197-c987a7beb838.
+- Owner: Dev Orchestrator task 019f7e00-7b6e-7db1-a463-5e648ce79f89 under parent Dev Backlog Coordinator task 019f77f4-c4bd-7c91-b197-c987a7beb838.
 - Lifecycle agent: Dev Backlog Steward.
 - Lifecycle claim: preserve-canonical-review-checklists-lifecycle.
 - Claim evidence: PRIMARY exact-file backlog ownership acquired at 2026-07-20T00:55:10.289057Z from clean baseline commit 439f638a0c752afa4acae42e3cd9c97eff84e443.
 - Scope boundary: this claim owns only the Running transition and primary index resource and is released after its clean commit. Implementation artifacts, tests, review, verification, and integration require a separate canonical isolated claim.
+
+## Execution Record
+
+- Canonical Dev Orchestrator task: 019f7e00-7b6e-7db1-a463-5e648ce79f89
+- Branch: accepted source branch codex/baton-8-canonical-checklists-current-main; delivery is integrated on main
+- Worktree: /Users/martinbechard/.codex/worktrees/b27c/dev-methodology
+- Current phase: Fresh post-integration review and focused verification
+- Accepted candidate commit: 6eede9c3c90526f12bf2442bacbc8c7215f000f6
+- Integrated main commit: 2978cb2340c55cb18d4b49c97732d28c152094bd
+- Integration or completion wait: None
+- Claim attempts: Integration acquired on the first attempt at event 56b884c0-84d4-4f4e-a1a9-f1e3ca7ca774 and released at event 02ac3c1f-8fce-4eb4-ae97-4e51d0bc9023; task-record claim acquired at event 7bb440c7-4905-471d-b0cd-1f8882f30bd5
+- Open issues: Fresh post-integration review and focused verifier evidence are required before terminal completion
 
 ## Summary
 
