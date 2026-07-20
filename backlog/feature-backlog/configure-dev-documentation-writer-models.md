@@ -1,8 +1,17 @@
 # Configure Dev Documentation Writer Models
 
-Status: Ready
+Status: Running
 
 Type: Feature
+
+## Current Execution
+
+- Canonical Dev Orchestrator task: 019f8159-ae46-7c20-82ad-f5a668132fcc.
+- Worktree: /Users/martinbechard/.codex/worktrees/c3bc/dev-methodology.
+- Intended branch: codex/configure-dev-documentation-writer-models.
+- Starting main commit: 515a2137d910f22e13d9141202181f2f0d4437b4.
+- Phase: Reconciling the provider-neutral model-profile sources and exact governed approval scope.
+- Verification: focused Tier 2 model-profile resolution, generated definition, unchanged-agent, freshness, diff, and independent review checks.
 
 ## Summary
 
