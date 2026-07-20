@@ -1874,19 +1874,19 @@ def _evidence_status_for_case(
         *_require_mapping(coverage.get("agents"), "coverage agents").values(),
         *_require_mapping(coverage.get("skills"), "coverage skills").values(),
     ]
-    verified = any(
-        case_id in state.get("verifiedCases", [])
-        for state in states
-        if isinstance(state, dict)
-    )
-    if verified:
-        return "verified"
     stale = any(
         case_id in state.get("staleByDigestCases", [])
         for state in states
         if isinstance(state, dict)
     )
-    return "blocked" if stale else "declared"
+    if stale:
+        return "blocked"
+    verified = any(
+        case_id in state.get("verifiedCases", [])
+        for state in states
+        if isinstance(state, dict)
+    )
+    return "verified" if verified else "declared"
 
 
 def _build_evidence_records(
@@ -1896,7 +1896,7 @@ def _build_evidence_records(
     receipt_paths_by_case: dict[str, list[str]] = {}
     evidence_root = root / "evals" / "evidence"
     if evidence_root.is_dir():
-        for path in sorted(evidence_root.rglob("*.yaml")):
+        for path in sorted(evidence_root.glob("*.yaml")):
             receipt = load_yaml(path)
             case_id = receipt.get("case")
             if isinstance(case_id, str):

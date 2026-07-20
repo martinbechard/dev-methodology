@@ -903,6 +903,9 @@ class EvalCoverageCatalogTests(unittest.TestCase):
         self.catalogs()
         snapshot = self.coverage()
 
+        self.write_yaml("evals/evidence/current.yaml", {"case": "case-a"})
+        self.write_yaml("evals/evidence/archive/ignored.yaml", {"case": "case-a"})
+
         self.write_yaml(
             "agents/model-profiles.yaml",
             {
@@ -973,6 +976,24 @@ class EvalCoverageCatalogTests(unittest.TestCase):
         self.assertEqual([], payload["skills"][0]["coverage"]["verifiedCases"])
         self.assertEqual("pending", payload["judgeStatus"]["calibrationStatus"])
         self.assertEqual(["codex", "junie"], payload["evaluationHarnesses"])
+        self.assertEqual(
+            ["evals/evidence/current.yaml"], payload["evidence"][0]["receiptPaths"]
+        )
+        self.assertEqual(
+            "blocked",
+            self.module._evidence_status_for_case(
+                "case-a",
+                {
+                    "agents": {
+                        "agent-a": {
+                            "verifiedCases": ["case-a"],
+                            "staleByDigestCases": ["case-a"],
+                        }
+                    },
+                    "skills": {},
+                },
+            ),
+        )
         self.assertEqual(
             "agents/roles/test/agent-a.role.yaml", payload["roles"][0]["sourcePath"]
         )
