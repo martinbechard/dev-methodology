@@ -5463,7 +5463,19 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(status=phrase):
                 self.assertIn(phrase, checklist)
         self.assertIn("Evaluation execution support is limited to Codex and Junie.", checklist)
-        self.assertIn("8 cases can run locally through Codex and 8 can run locally through Junie.", checklist)
+        cases = load_yaml_object(REPOSITORY_ROOT / "evals" / "cases.yaml")["cases"]
+        runnable_by_harness = {
+            harness: sum(
+                case.get("harnessExecutionStatus", {}).get(harness) == "runnable"
+                for case in cases
+            )
+            for harness in ("codex", "junie")
+        }
+        self.assertIn(
+            f"{runnable_by_harness['codex']} cases can run locally through Codex and "
+            f"{runnable_by_harness['junie']} can run locally through Junie.",
+            checklist,
+        )
         self.assertNotIn("Every post-run verification command still requires trusted external containment.", checklist)
         self.assertNotIn("| Claude Code |", checklist)
         self.assertNotIn("| Gemini CLI |", checklist)
