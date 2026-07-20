@@ -24,12 +24,13 @@ Approval evidence: the user's direct clarification in parent thread 019f77f4-c4b
 
 ## Current Execution
 
-- Accepted correction candidate: 2cb0aea46cff6e9c40e8a656aa862f074d314da9.
-- Fresh independent review accepted the bounded role, supported-mirror, retained-result, and focused expectation changes.
-- Focused deterministic verification passed before live execution.
+- Accepted correction candidate: c8bf42888595fb3a2bf6e8f15b460a819c884f00, superseding 2cb0aea46cff6e9c40e8a656aa862f074d314da9.
+- The first reduced pre0 proof stopped after 207.217 seconds when its conclusion bullet used a semicolon/em-dash page-and-source shape instead of the required explicit colon before fact text. Raw-ingest did not start, and the isolated live claim released normally at event 4ba33706-949e-4700-a889-0cda9cfa9dbf.
+- The retained sanitized result was replayed offline. The exact failing shape now has deterministic regression coverage, and the corrected role wording requires an explicit colon before fact text.
+- Fresh independent methodology review accepted c8bf428, and focused verification passed 21 boundary tests, one bundle test, generated integrity, build-skill-docs freshness, and all four supported mirror hashes from a clean worktree.
 - The prior four-case live run completed in 1087.607 seconds. Pre2 passed. Pre0, post0, and raw-ingest reached their required lifecycle, page, source, verifier, and cleanup outcomes but omitted a nonempty Substantiated Conclusions inventory.
 - Read-only classification found three target-output defects, zero evaluator defects, and zero infrastructure defects. Pre2 passing the same parser disproved a universal parser defect.
-- The next live proof is reduced to pre0 as the interruption representative and raw-ingest as the normal-flow representative. Passing pre2, duplicate post0, and unrelated cases are excluded.
+- The next live proof is pre0 only under an eight-minute hard cap. Passing pre2, duplicate post0, raw-ingest, and unrelated cases are excluded. Raw-ingest may be proposed later only for a distinct acceptance criterion that retained evidence and deterministic checks cannot prove; it must not start automatically after pre0.
 - Future live evidence retains sanitized terminal results and replays their exact shapes offline before another live run.
 - The live claim owns only test:live:wiki-ingester. It must use canonical isolated mode with no project-file or main-integration scope.
 - A short primary backlog transaction records this material phase and supplies a legitimate isolation window. It will release immediately after the resource-only claim is acquired.
