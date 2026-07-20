@@ -1,8 +1,16 @@
 # Add Direct-Main Completion Skill
 
-Status: Ready
+Status: Running
 
 Type: Feature
+
+## Current Execution
+
+- Canonical Dev Orchestrator task: 019f7f8c-e53a-7f23-9920-9df843d3b5d9.
+- Branch: codex/add-direct-main-completion-skill.
+- Worktree: /Users/martinbechard/.codex/worktrees/5785/dev-methodology.
+- Started from approved Ready commit 547e2159e5621351adb9a4e975b7659bc1993671.
+- Scope remains limited to the approved direct-main completion skill, its metadata, supported generated mirrors, and directly related non-governed tests and documentation.
 
 ## Approval Resolution
 
