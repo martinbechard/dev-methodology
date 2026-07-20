@@ -1,8 +1,16 @@
 # Add Feature-Branch Completion Skill
 
-Status: Ready
+Status: Running
 
 Type: Feature
+
+## Current Execution
+
+- Canonical Dev Orchestrator task: 019f7f8c-e6ed-7331-a7e1-9f5a32ebcb32.
+- Branch: codex/add-feature-branch-completion-skill.
+- Worktree: /Users/martinbechard/.codex/worktrees/ccd1/dev-methodology.
+- Started from approved Ready commit 547e2159e5621351adb9a4e975b7659bc1993671.
+- Scope remains limited to the approved feature-branch completion skill, its metadata, supported generated mirrors, and directly related non-governed tests and documentation.
 
 ## Approval Resolution
 
