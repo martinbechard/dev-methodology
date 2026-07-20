@@ -1,8 +1,28 @@
 # Prevent Unauthorized Contract Narrowing
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
+
+## User Action Required
+
+The remaining implementation requires exact approval for three governed distributed skill definitions.
+
+## Question for the User
+
+Do you approve changing only skills/code-discovery/SKILL.md, skills/careful-coding/SKILL.md, and skills/test-driven-development/SKILL.md to prevent unsupported public-contract narrowing, together with their supported generated skill-definition mirrors and directly related non-governed evaluation/test coverage?
+
+## Why User Input Is Required
+
+The task and current repository evidence identify missing public-contract-narrowing guidance in governed skill definitions. Parent delegation and general backlog-completion authority do not authorize those changes.
+
+## Resolution
+
+Pending.
+
+## Unattended Work Boundary
+
+Preserve the clean branch codex/prevent-unauthorized-contract-narrowing and perform no governed definition or generated-mirror mutation until the exact question is answered.
 
 ## Current Execution
 
