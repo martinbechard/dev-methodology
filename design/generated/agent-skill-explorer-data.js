@@ -5696,7 +5696,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "declaredCases": [
         "project-configuration-routing"
       ],
-      "description": "Creates or updates the single project-root PROJECT.yaml and validates conceptual agent definitions, work-item and backlog workflow selectors, skillsets, folder routing, nested AGENTS.md guidance, and Claude bridges.",
+      "description": "Creates or updates the single project-root PROJECT.yaml and validates conceptual agent definitions, independent work-item provider and completion selectors, skillsets, folder routing, nested AGENTS.md guidance, and Claude bridges.",
       "dynamicFolderSkills": false,
       "executedCases": [],
       "fixedSkills": [

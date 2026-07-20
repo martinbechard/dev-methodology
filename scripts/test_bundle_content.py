@@ -1436,7 +1436,7 @@ class BundleContentTests(unittest.TestCase):
             code_delivery["skillProbes"],
         )
 
-    def test_workitem_and_backlog_processes_are_selector_driven(self) -> None:
+    def test_workitem_provider_and_completion_processes_are_selector_driven(self) -> None:
         execute_text = (
             SKILLS_ROOT / "execute-workitem" / "SKILL.md"
         ).read_text(encoding="utf-8")
@@ -1542,8 +1542,28 @@ class BundleContentTests(unittest.TestCase):
             / PROJECT_TEMPLATE
         ).read_text(encoding="utf-8")
         self.assertIn("workflow_selection:", project_template)
-        self.assertIn("simple-workitem, feature-branch-workitem, or UNSET", project_template)
-        self.assertIn("file-based-backlog, github-issues-backlog, none, or UNSET", project_template)
+        self.assertIn("provider:", project_template)
+        self.assertIn("file, github, gitlab, azure-devops, jira, none, or UNSET", project_template)
+        self.assertIn("completion:", project_template)
+        self.assertIn("direct-main, feature-branch, or UNSET", project_template)
+        self.assertNotIn("  workitem:", project_template)
+        self.assertNotIn("  backlog:", project_template)
+
+        project_configuration = load_yaml_object(REPOSITORY_ROOT / "PROJECT.yaml")
+        self.assertEqual(
+            "file",
+            project_configuration["workflow_selection"]["provider"]["default"],
+        )
+        self.assertEqual(
+            "direct-main",
+            project_configuration["workflow_selection"]["completion"]["default"],
+        )
+        agents_text = (REPOSITORY_ROOT / "AGENTS.md").read_text(encoding="utf-8")
+        self.assertIn("## Work-Item Workflow Skill References", agents_text)
+        self.assertIn("create-file-work-item", agents_text)
+        self.assertIn("manage-file-work-items", agents_text)
+        self.assertIn("complete-work-item-direct-main", agents_text)
+        self.assertIn("Technology skill inlining is a separate mechanism", agents_text)
 
         probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
         probe_ids = {entry["id"] for entry in probes["probes"]}
@@ -2249,8 +2269,11 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("proprietary_validation_notes:", template_text)
         self.assertIn("nested_agents_files:", template_text)
         self.assertIn("workflow_selection:", template_text)
-        self.assertIn("simple-workitem, feature-branch-workitem, or UNSET", template_text)
-        self.assertIn("file-based-backlog, github-issues-backlog, none, or UNSET", template_text)
+        self.assertIn("file, github, gitlab, azure-devops, jira, none, or UNSET", template_text)
+        self.assertIn("direct-main, feature-branch, or UNSET", template_text)
+        self.assertIn("simple-workitem to direct-main", skill_text)
+        self.assertIn("file-based-backlog to file", skill_text)
+        self.assertIn("selected create, manage, and completion skills as references only", skill_text)
         self.assertNotIn("nested_project_files:", template_text)
         self.assertIn("Create exactly one PROJECT.yaml", skill_text)
         self.assertIn("Do not create nested PROJECT.yaml files", skill_text)
@@ -2275,7 +2298,7 @@ class BundleContentTests(unittest.TestCase):
         )
         self.assertIn("Record a coordination_overrides mapping only when", skill_text)
         self.assertIn("Keep workflow configuration selector-only", skill_text)
-        self.assertIn("Do not infer either process", skill_text)
+        self.assertIn("Do not infer either selector", skill_text)
         self.assertIn(
             "Treat a missing conceptual agent definition, skill, or command as BLOCKED",
             skill_text,

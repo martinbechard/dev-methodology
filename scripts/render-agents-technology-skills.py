@@ -21,8 +21,31 @@ SKILLS_ROOT = REPOSITORY_ROOT / "skills"
 SKILL_FILE_NAME = "SKILL.md"
 FRONTMATTER_DELIMITER = "---"
 SKILL_NAME_PATTERN = re.compile(r"^[a-z0-9][a-z0-9-]*$")
-PROCESS_NAME_PATTERN = re.compile(r"^(?:[a-z0-9][a-z0-9-]*|UNSET)$")
 AUTHORITY_HEADING = "## Agent And Skill Definition Approval"
+PROVIDER_SKILLS = {
+    "file": ("create-file-work-item", "manage-file-work-items"),
+    "github": ("create-github-work-item", "manage-github-work-items"),
+    "gitlab": ("create-gitlab-work-item", "manage-gitlab-work-items"),
+    "azure-devops": ("create-azure-devops-work-item", "manage-azure-devops-work-items"),
+    "jira": ("create-jira-work-item", "manage-jira-work-items"),
+}
+PROVIDER_VALUES = (*PROVIDER_SKILLS, "none", "UNSET")
+COMPLETION_SKILLS = {
+    "direct-main": "complete-work-item-direct-main",
+    "feature-branch": "complete-work-item-feature-branch",
+}
+COMPLETION_VALUES = (*COMPLETION_SKILLS, "UNSET")
+LEGACY_PROVIDER_VALUES = {
+    "file-based-backlog": "file",
+    "github-issues-backlog": "github",
+    "none": "none",
+    "UNSET": "UNSET",
+}
+LEGACY_COMPLETION_VALUES = {
+    "simple-workitem": "direct-main",
+    "feature-branch-workitem": "feature-branch",
+    "UNSET": "UNSET",
+}
 PROVENANCE_REFERENCE_PATTERNS = {
     "user-message": re.compile(r"^thread:[^/\s]+/message:[^/\s]+$"),
     "delegated-user-direction": re.compile(r"^thread:[^/\s]+/delegation:[^/\s]+$"),
@@ -448,45 +471,190 @@ def update_authority_directive(existing: str, section_lines: list[str]) -> str:
     return "\n".join(merged) + "\n"
 
 
+def _legacy_selector_migration(selection: dict[str, object]) -> str | None:
+    """Return deterministic migration guidance for the prototype selector shape."""
+
+    migrations: list[str] = []
+    for legacy_key, target_key, values in (
+        ("workitem", "completion", LEGACY_COMPLETION_VALUES),
+        ("backlog", "provider", LEGACY_PROVIDER_VALUES),
+    ):
+        if legacy_key not in selection:
+            continue
+        configuration = selection[legacy_key]
+        if not isinstance(configuration, dict):
+            migrations.append(f"workflow_selection.{legacy_key} must become workflow_selection.{target_key}")
+            continue
+        default = configuration.get("default")
+        if isinstance(default, str) and default in values:
+            migrations.append(
+                f"workflow_selection.{target_key}.default: {values[default]}"
+            )
+        else:
+            mappings = ", ".join(f"{source} -> {target}" for source, target in values.items())
+            migrations.append(
+                f"workflow_selection.{legacy_key} must become workflow_selection.{target_key} using {mappings}"
+            )
+        overrides = configuration.get("folder_overrides", [])
+        if isinstance(overrides, list):
+            for override_index, override in enumerate(overrides):
+                if not isinstance(override, dict):
+                    continue
+                pattern = override.get("pattern")
+                process = override.get("process")
+                if isinstance(pattern, str) and isinstance(process, str) and process in values:
+                    migrations.append(
+                        f"workflow_selection.{target_key}.folder_overrides[{override_index}]: "
+                        f"pattern={pattern}, {target_key}={values[process]}"
+                    )
+    if not migrations:
+        return None
+    return (
+        "legacy workflow selectors require migration: "
+        + "; ".join(migrations)
+        + "; preserve folder overrides under the matching independent selector and do not infer replacements from repository evidence"
+    )
+
+
+def _workflow_configuration(
+    selection: dict[str, object],
+    key: str,
+    supported_values: tuple[str, ...],
+) -> tuple[str, list[tuple[str, str]]]:
+    """Return one validated selector default and its folder overrides."""
+
+    configuration = selection.get(key)
+    prefix = f"workflow_selection.{key}"
+    if not isinstance(configuration, dict):
+        raise ValueError(f"{prefix} must be a mapping")
+    allowed_configuration_keys = {"default", "folder_overrides"}
+    unsupported_configuration_keys = set(configuration) - allowed_configuration_keys
+    if unsupported_configuration_keys:
+        raise ValueError(f"{prefix} keys must be exactly: default, folder_overrides")
+    default = configuration.get("default")
+    if not isinstance(default, str) or default not in supported_values:
+        legacy_values = LEGACY_PROVIDER_VALUES if key == "provider" else LEGACY_COMPLETION_VALUES
+        if isinstance(default, str) and default in legacy_values:
+            raise ValueError(
+                f"{prefix}.default uses legacy value {default!r}; migrate to {legacy_values[default]!r}"
+            )
+        rendered_values = ", ".join(supported_values)
+        raise ValueError(f"{prefix}.default rejects {default!r}; supported values: {rendered_values}")
+    overrides = configuration.get("folder_overrides", [])
+    if not isinstance(overrides, list):
+        raise ValueError(f"{prefix}.folder_overrides must be a list")
+    validated_overrides: list[tuple[str, str]] = []
+    for override_index, override in enumerate(overrides):
+        override_prefix = f"{prefix}.folder_overrides[{override_index}]"
+        if not isinstance(override, dict):
+            raise ValueError(f"{override_prefix} must be a mapping")
+        if set(override) != {"pattern", key}:
+            raise ValueError(f"{override_prefix} keys must be exactly: pattern, {key}")
+        pattern = override.get("pattern")
+        if not isinstance(pattern, str) or not pattern:
+            raise ValueError(f"{override_prefix}.pattern must be a non-empty project-relative path pattern")
+        try:
+            normalized_pattern = _normalize_project_path(pattern)
+        except ValueError as error:
+            detail = str(error).removeprefix("definition path ")
+            raise ValueError(f"{override_prefix}.pattern {detail}") from error
+        if normalized_pattern != pattern:
+            raise ValueError(f"{override_prefix}.pattern must be normalized: {pattern}")
+        selected_value = override.get(key)
+        if not isinstance(selected_value, str) or selected_value not in supported_values:
+            legacy_values = LEGACY_PROVIDER_VALUES if key == "provider" else LEGACY_COMPLETION_VALUES
+            if isinstance(selected_value, str) and selected_value in legacy_values:
+                raise ValueError(
+                    f"{override_prefix}.{key} uses legacy value {selected_value!r}; migrate to {legacy_values[selected_value]!r}"
+                )
+            rendered_values = ", ".join(supported_values)
+            raise ValueError(
+                f"{override_prefix}.{key} rejects {selected_value!r}; supported values: {rendered_values}"
+            )
+        validated_overrides.append((pattern, selected_value))
+    return default, validated_overrides
+
+
+def _provider_reference(label: str, provider: str) -> str:
+    """Render one provider selection as create and manage skill references."""
+
+    if provider == "UNSET":
+        return f"- {label} provider UNSET: the pertinent agent asks for the provider decision before a provider operation."
+    if provider == "none":
+        return (
+            f"- {label} provider none: no durable provider skill; durable create and manage operations are invalid."
+        )
+    create_skill, manage_skill = PROVIDER_SKILLS[provider]
+    suffix = ""
+    if provider in {"azure-devops", "jira"}:
+        suffix = " The unsupported placeholder remains selected and reports BLOCKED without mutation."
+    return (
+        f"- {label} provider {provider}: create with {create_skill}; manage with {manage_skill}."
+        f"{suffix}"
+    )
+
+
+def _completion_reference(label: str, completion: str) -> str:
+    """Render one completion selection as a completion skill reference."""
+
+    if completion == "UNSET":
+        return (
+            f"- {label} completion UNSET: the pertinent agent asks for the completion decision before implementation or publication."
+        )
+    return f"- {label} completion {completion}: use {COMPLETION_SKILLS[completion]}."
+
+
 def workflow_lines(value: dict[str, object]) -> list[str]:
-    """Render selector-only work-item and backlog workflow guidance."""
+    """Render reference-only provider and completion workflow guidance."""
 
     selection = value.get("workflow_selection")
     if selection is None:
         return []
     if not isinstance(selection, dict):
         raise ValueError("workflow_selection must be a mapping")
+    migration = _legacy_selector_migration(selection)
+    if migration is not None:
+        raise ValueError(migration)
+    allowed_keys = {"provider", "completion", "selection_policy"}
+    unsupported_keys = set(selection) - allowed_keys
+    if unsupported_keys:
+        raise ValueError(
+            "workflow_selection keys must be exactly provider, completion, and optional selection_policy"
+        )
+    selection_policy = selection.get("selection_policy")
+    if selection_policy is not None and (
+        not isinstance(selection_policy, str) or not selection_policy
+    ):
+        raise ValueError("workflow_selection.selection_policy must be a non-empty string")
+    provider, provider_overrides = _workflow_configuration(
+        selection,
+        "provider",
+        PROVIDER_VALUES,
+    )
+    completion, completion_overrides = _workflow_configuration(
+        selection,
+        "completion",
+        COMPLETION_VALUES,
+    )
 
     lines = [
-        "## Work Item And Backlog Workflows",
+        "## Work-Item Workflow Skill References",
         "",
-        "Project Configurator owns these selectors. They choose role-owned procedures without duplicating those procedures here.",
+        "Project Configurator owns these independent selectors. Workflow skills are referenced by name only and are never inlined; their procedures stay in the selected skill definitions. Technology skill inlining is a separate mechanism below.",
         "",
+        _provider_reference("Default", provider),
     ]
-    for key, label in (("workitem", "work-item"), ("backlog", "backlog")):
-        configuration = selection.get(key)
-        if not isinstance(configuration, dict):
-            raise ValueError(f"workflow_selection.{key} must be a mapping")
-        default = configuration.get("default")
-        if not isinstance(default, str) or not PROCESS_NAME_PATTERN.fullmatch(default):
-            raise ValueError(f"workflow_selection.{key}.default must be a process identifier or UNSET")
-        lines.append(f"- Default {label} process: {default}.")
-        overrides = configuration.get("folder_overrides", [])
-        if not isinstance(overrides, list):
-            raise ValueError(f"workflow_selection.{key}.folder_overrides must be a list")
-        for override in overrides:
-            if not isinstance(override, dict):
-                raise ValueError(f"workflow_selection.{key}.folder_overrides entries must be mappings")
-            pattern = override.get("pattern")
-            process = override.get("process")
-            if not isinstance(pattern, str) or not pattern:
-                raise ValueError(f"workflow_selection.{key} override pattern must be a non-empty string")
-            if not isinstance(process, str) or not PROCESS_NAME_PATTERN.fullmatch(process):
-                raise ValueError(f"workflow_selection.{key} override process must be a process identifier or UNSET")
-            lines.append(f"- {pattern}: use the {process} {label} process.")
+    lines.extend(_provider_reference(pattern, selected) for pattern, selected in provider_overrides)
+    lines.append(_completion_reference("Default", completion))
+    lines.extend(
+        _completion_reference(pattern, selected)
+        for pattern, selected in completion_overrides
+    )
     lines.extend([
         "",
-        "When a required selector is UNSET, the pertinent agent asks the user before that operation and does not infer a process from repository or hosting evidence.",
+        "Most-specific matching folder pattern wins independently for provider and completion overrides. A folder override changes only its own selector.",
+        "",
+        "When a selector is UNSET, the pertinent agent asks at the stated operation boundary and does not infer either value from repository or hosting evidence, files, remotes, templates, plugins, or available tools.",
         "",
     ])
     return lines

@@ -36,6 +36,17 @@ Do not create separate skill files for repo-local maintenance procedures. Keep r
 - Preserve unrelated local changes and untracked files.
 - Keep changes scoped to the requested maintenance work.
 
+## Work-Item Workflow Skill References
+
+Project Configurator owns these independent selectors. Workflow skills are referenced by name only and are never inlined; their procedures stay in the selected skill definitions. Technology skill inlining is a separate mechanism below.
+
+- Default provider file: create with create-file-work-item; manage with manage-file-work-items.
+- Default completion direct-main: use complete-work-item-direct-main.
+
+Most-specific matching folder pattern wins independently for provider and completion overrides. A folder override changes only its own selector.
+
+When a selector is UNSET, the pertinent agent asks at the stated operation boundary and does not infer either value from repository or hosting evidence, files, remotes, templates, plugins, or available tools.
+
 ## Agent And Skill Definition Approval
 
 Every change to an agent definition or skill definition requires explicit, scope-specific user approval before mutation. Record the user's direction, the exact definition scope it authorizes, and the approval evidence in the work lifecycle. Silence, unrelated prior approval, and broad repository mutation authority are insufficient.
