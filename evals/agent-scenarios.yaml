@@ -1236,7 +1236,7 @@ agents:
       - codex
       - junie
     outputContractFields:
-      - approved path
+      - approved path or placement blocker
       - placement rationale
       - file-placement audit
     judgePlan:
