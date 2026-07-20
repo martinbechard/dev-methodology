@@ -89,6 +89,8 @@ NEW_DEVELOPMENT_SKILLS = (
     "execute-workitem",
     "file-based-backlog",
     "github-issues-backlog",
+    "create-gitlab-work-item",
+    "manage-gitlab-work-items",
     "create-pull-request",
     "create-unit-test-plan",
     "review-unit-test-plan",
@@ -1162,6 +1164,59 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(skill_name=skill_name):
                 self.assertTrue((SKILLS_ROOT / skill_name / "SKILL.md").is_file())
                 self.assertTrue(openai_metadata_path(skill_name).is_file())
+
+    def test_gitlab_work_item_skills_define_provider_native_authority_and_lifecycle(self) -> None:
+        create_text = (SKILLS_ROOT / "create-gitlab-work-item" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        manage_text = (SKILLS_ROOT / "manage-gitlab-work-items" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+
+        for text in (create_text, manage_text):
+            for phrase in (
+                "authenticated GitLab issue interface",
+                "issue internal identifier",
+                "repository backlog files",
+                "GitHub issues",
+                "Return BLOCKED",
+                "Read the issue back",
+                "namespace",
+                "project",
+                "labels",
+                "assignees",
+                "relationships",
+                "updated content",
+            ):
+                with self.subTest(phrase=phrase):
+                    self.assertIn(phrase, text)
+            self.assertNotIn("pull request", text.lower())
+
+        for phrase in (
+            "Search open and recently closed issues",
+            "do not create another issue",
+            "several plausible matches exist",
+            "partial-mutation evidence",
+            "Never retry by creating a second issue",
+        ):
+            with self.subTest(create_phrase=phrase):
+                self.assertIn(phrase, create_text)
+
+        for phrase in (
+            "Keep issue completion independent from delivery completion",
+            "Merge-request publication",
+            "completion disposition READY",
+            "successful pipeline",
+            "main-observation",
+            "claim-release",
+            "Only after the terminal update is observed",
+            "return terminal evidence and lifecycle COMPLETED",
+            "preserve the READY disposition",
+            "Reopen only when authorized recovery",
+            "Do not repeat an ambiguous mutation",
+        ):
+            with self.subTest(manage_phrase=phrase):
+                self.assertIn(phrase, manage_text)
 
     def test_create_pull_request_skill_and_template_define_modular_scope_and_review_order(
         self,

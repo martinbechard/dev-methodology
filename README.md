@@ -393,6 +393,8 @@ The development practice skills are:
 - manage-backlog
 - file-based-backlog
 - github-issues-backlog
+- create-gitlab-work-item
+- manage-gitlab-work-items
 - execute-workitem
 - fix-explanation
 - structured-explanation
