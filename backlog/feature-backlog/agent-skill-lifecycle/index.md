@@ -34,7 +34,7 @@ Conceptual agent definitions declare their generic definition-owned skills. Proj
 4. [Build the agent and skill mind map](build-agent-skill-mind-map.md).
 5. [Align Project Organiser filename selection](align-project-organiser-filename-selection.md).
 6. [Enforce behavioral regression assertions](enforce-behavioral-regression-assertions.md).
-7. [Prevent unsupported review findings](prevent-unsupported-review-findings.md).
+7. [Prevent unsupported review findings](../../completed-backlog/defects/prevent-unsupported-review-findings.md).
 8. [Prevent unauthorized contract narrowing](prevent-unauthorized-contract-narrowing.md).
 9. [Preserve authoritative configuration evidence](../../completed-backlog/features/preserve-authoritative-configuration-evidence.md).
 10. [Prevent read-only review side effects](prevent-read-only-review-side-effects.md).
@@ -42,7 +42,7 @@ Conceptual agent definitions declare their generic definition-owned skills. Proj
 12. [Preserve canonical review checklists](preserve-canonical-review-checklists.md).
 13. [Require claimed backlog resumption](require-claimed-backlog-resumption.md).
 14. [Preserve Configurator runtime bridges](preserve-configurator-runtime-bridges.md).
-15. [Enforce documentation template conformance](enforce-documentation-template-conformance.md).
+15. [Enforce documentation template conformance](../../completed-backlog/defects/enforce-documentation-template-conformance.md).
 16. [Preserve integrated documentation steady state](preserve-integrated-documentation-steady-state.md).
 17. [Restore Wiki Ingester on verifier interruption](restore-wiki-ingester-on-verifier-interruption.md).
 18. [Preserve Wiki Research source links](preserve-wiki-research-source-links.md).
