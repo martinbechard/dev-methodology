@@ -1,16 +1,31 @@
 # Split GitHub Work-Item Skills
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
-## Current Execution
+## Running Ownership
 
 - Canonical Dev Orchestrator task: 019f7f82-4118-76d3-9581-09facc586cf6.
 - Branch: codex/split-github-work-item-skills.
 - Worktree: /Users/martinbechard/.codex/worktrees/e0d3/dev-methodology.
 - Started from approved Ready commit 77492898a96db592d5beab27177ef42bd361f9fc.
 - Scope remains limited to the approved legacy GitHub skill, the two replacement packages, their metadata, supported generated mirrors, and directly related non-governed tests and documentation.
+
+## Completion Evidence
+
+- Accepted source commit: ff8a0f40c17b16f62e34cc9a54eecba5507297d7 on codex/split-github-work-item-skills.
+- Independent methodology review: the fresh reviewer identified missing executable provider coverage, premature migration wording, and incomplete mutation readback; the corrected candidate resolved every finding and was accepted with no remaining actionable issue.
+- Independent focused verification: a separate verifier confirmed the clean candidate, three mocked-provider tests, eight focused bundle tests, evaluation catalogs, exact-package metadata freshness, generated skill documentation, hierarchy and support freshness, and Git integrity.
+- Integrated delivery: the accepted sources and current-main generated hierarchy were integrated as eba27afa052b9a72a6e66eff34407061f3588d07 and observed as main HEAD.
+- Focused post-integration verification: three mocked-provider tests and six directly related bundle tests passed on main; exact-package metadata, generated skill documentation, hierarchy freshness, commit diff validation, main reachability, and clean status passed.
+- Provider coverage: the fixture-backed github-work-item-provider case covers search, duplicate prevention, creation, lifecycle update, dependencies, block, reopen, close, authentication failure, permission denial, ambiguous partial mutation, completion independence, and no shadow backlog path.
+- Compatibility boundary: github-issues-backlog now routes current generated and configured callers to the canonical pair until the separately governed selector and role migration changes those callers. The combined provider behavior has moved to create-github-work-item and manage-github-work-items.
+- Validation omissions: the preferred MCP skill and YAML validators rejected the linked worktree because it is outside their configured roots, so their policy rejection was not bypassed. No live disposable-repository smoke mutation ran because no explicit disposable GitHub repository authority was supplied.
+- Baseline warning: current main already contained create-gitlab-work-item and manage-gitlab-work-items without probe declarations at integration baseline 337e65e7f943cf81f9a28db1a421129ea41a26e8. That unrelated state blocks the broader support-checklist generator on current main and does not invalidate the focused GitHub checks.
+- Integration ownership: exact project paths and merge:integration:main were released normally from clean main at event ae07378a-9d5b-408f-b572-a28ca639baae.
+- Terminal ownership: exact active and completed backlog paths were acquired separately at event 9cb7d51e-65b8-487b-9e17-62158c4ae1fb and are released immediately after this archive commit is clean.
+- Cleanup eligibility: the private branch and worktree are clean, their accepted source patch is integrated on main, and the parent may remove the worktree and safely delete the coordination branch after reconciling the current-main generated hierarchy.
 
 ## Approval Resolution
 
@@ -34,7 +49,7 @@ Replace github-issues-backlog with symmetric create-github-work-item and manage-
 
 ## Context
 
-This item is a provider lane in the [Work-Item Provider And Completion Contracts series](../feature-backlog/work-item-provider-and-completion/index.md). The current github-issues-backlog prototype combines creation and lifecycle management in one skill. Separating those responsibilities makes GitHub symmetric with other providers while keeping issue lifecycle distinct from pull-request delivery.
+This item is a provider lane in the [Work-Item Provider And Completion Contracts series](../../feature-backlog/work-item-provider-and-completion/index.md). The current github-issues-backlog prototype combines creation and lifecycle management in one skill. Separating those responsibilities makes GitHub symmetric with other providers while keeping issue lifecycle distinct from pull-request delivery.
 
 ## Requirements
 
