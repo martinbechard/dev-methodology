@@ -1,8 +1,16 @@
 # Transform File Work-Item Skills
 
-Status: Ready
+Status: Running
 
 Type: Feature
+
+## Current Execution
+
+- Canonical Dev Orchestrator task: 019f7f7e-78df-7790-a845-928e9f2a03b9.
+- Branch: codex/transform-file-work-item-skills.
+- Worktree: /Users/martinbechard/.codex/worktrees/c90f/dev-methodology.
+- Started from approved Ready commit 7ab9e985c6ef7f26462bde7878d28fb1c0307d40.
+- Scope remains limited to the approved five skill packages, their metadata, supported generated mirrors, and directly related non-governed tests and documentation.
 
 ## Approval Resolution
 
