@@ -1,8 +1,16 @@
 # Split Hibernate ORM With Panache From Quarkus Persistence
 
-Status: Ready
+Status: Running
 
 Type: Feature
+
+## Running Ownership
+
+- Owner: Dev Orchestrator root task 019f77f4-c4bd-7c91-b197-c987a7beb838.
+- Lifecycle agent: Dev Backlog Steward.
+- Lifecycle claim: hibernate-panache-split-lifecycle.
+- Claim evidence: PRIMARY exact-file backlog ownership acquired at 2026-07-20T02:38:16.677214Z from clean baseline commit ff6c23fc2a5ca789f83e14f45f71f6c08154bd3b.
+- Scope boundary: this claim owns only the Running transition and is released after its clean commit. Unique skill sources use a separate canonical isolated claim; shared catalogs, tests, generated outputs, review, verification, and integration remain separately owned.
 
 ## Definition Approval
 
