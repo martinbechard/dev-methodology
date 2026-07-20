@@ -1,6 +1,6 @@
 # Prevent Unauthorized Contract Narrowing
 
-Status: Ready
+Status: Running
 
 Type: Defect
 
@@ -22,9 +22,10 @@ The decision gate is resolved. Delivery completion still requires the exact gove
 
 ## Current Execution
 
-- Canonical Dev Orchestrator task: 019f7e76-b941-78d3-bb53-abfe2b2d00f8.
-- Worktree: /Users/martinbechard/.codex/worktrees/079f/dev-methodology.
-- Phase: approval reconciliation, scoped implementation, focused verification, review, integration, completion, and cleanup.
+- Canonical Dev Orchestrator task: 019f7fbe-d91d-7e10-85a2-55f4729f3bed.
+- Worktree: /Users/martinbechard/.codex/worktrees/52a3/dev-methodology.
+- Phase: approved scoped implementation, focused verification, independent review, integration, completion, and cleanup.
+- Running ownership was recorded after feature-branch completion released its terminal backlog claim; the replacement task supersedes the archived approval-boundary task without changing the approved definition scope.
 
 ## Summary
 
