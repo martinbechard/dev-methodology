@@ -2,11 +2,11 @@
 # Derived interface fields are refreshed from SKILL.md by scripts/openai_metadata.py.
 interface:
   # User-facing name shown in Codex skill surfaces.
-  display_name: Manage Backlog
+  display_name: Manage File Work Items
   # User-facing summary shown in Codex skill surfaces.
-  short_description: Migration-only bridge from the retired manage-backlog identifier to manage-file-work-items.
+  short_description: Manage authoritative repository-backed work items through inventory, dispatch, lifecycle...
   # Prompt Codex can use when launching this skill directly.
-  default_prompt: Use $manage-backlog only to migrate this request to $manage-file-work-items.
+  default_prompt: Use $manage-file-work-items to manage authoritative file-backed work items.
 
 # Optional invocation policy placeholder.
 # policy:

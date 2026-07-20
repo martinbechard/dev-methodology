@@ -88,6 +88,8 @@ NEW_DEVELOPMENT_SKILLS = (
     "organise-project-files",
     "execute-workitem",
     "complete-work-item-direct-main",
+    "create-file-work-item",
+    "manage-file-work-items",
     "file-based-backlog",
     "create-github-work-item",
     "manage-github-work-items",
@@ -1372,7 +1374,13 @@ class BundleContentTests(unittest.TestCase):
             / "references"
             / "feature-branch-workitem.md"
         ).read_text(encoding="utf-8")
-        file_backlog_text = (
+        create_file_text = (
+            SKILLS_ROOT / "create-file-work-item" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        manage_file_text = (
+            SKILLS_ROOT / "manage-file-work-items" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        legacy_file_text = (
             SKILLS_ROOT / "file-based-backlog" / "SKILL.md"
         ).read_text(encoding="utf-8")
         github_backlog_text = (
@@ -1390,7 +1398,10 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("Do not push a branch or create a pull request", simple_text)
         self.assertIn("Set the pull request ready for review", feature_text)
         self.assertIn("report AWAITING_REVIEW", feature_text)
-        self.assertIn("Apply create-backlog", file_backlog_text)
+        self.assertIn("effective provider is file", create_file_text)
+        self.assertIn("effective provider is file", manage_file_text)
+        self.assertIn("create-file-work-item and manage-file-work-items", legacy_file_text)
+        self.assertNotIn("## Operations", legacy_file_text)
         self.assertIn("transition route for current generated and configured callers", github_backlog_text)
         self.assertIn("create-github-work-item", github_backlog_text)
         self.assertIn("manage-github-work-items", github_backlog_text)
@@ -1463,7 +1474,9 @@ class BundleContentTests(unittest.TestCase):
             "probe-file-based-backlog",
             "probe-create-github-work-item",
             "probe-manage-github-work-items",
+            "probe-create-file-work-item",
             "probe-github-issues-backlog",
+            "probe-manage-file-work-items",
         ):
             self.assertIn(probe_id, probe_ids)
 
@@ -1473,7 +1486,9 @@ class BundleContentTests(unittest.TestCase):
             "file-based-backlog",
             "create-github-work-item",
             "manage-github-work-items",
+            "create-file-work-item",
             "github-issues-backlog",
+            "manage-file-work-items",
         ):
             self.assertIn(f"- {skill_name}", readme_text)
 
@@ -3070,16 +3085,16 @@ class BundleContentTests(unittest.TestCase):
 
     def test_backlog_skills_separate_user_action_required_from_dispatchable_work(self) -> None:
         primary_root = resolve_primary_repository_root()
-        create_text = (SKILLS_ROOT / "create-backlog" / "SKILL.md").read_text(
+        create_text = (SKILLS_ROOT / "create-file-work-item" / "SKILL.md").read_text(
             encoding="utf-8"
         )
-        manage_text = (SKILLS_ROOT / "manage-backlog" / "SKILL.md").read_text(
+        manage_text = (SKILLS_ROOT / "manage-file-work-items" / "SKILL.md").read_text(
             encoding="utf-8"
         )
 
         for skill_name, skill_text in (
-            ("create-backlog", create_text),
-            ("manage-backlog", manage_text),
+            ("create-file-work-item", create_text),
+            ("manage-file-work-items", manage_text),
         ):
             with self.subTest(skill=skill_name):
                 self.assertIn("backlog/user-action-required", skill_text)
@@ -3106,6 +3121,57 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(manage_guidance=required_guidance):
                 self.assertIn(required_guidance, manage_text)
         self.assertNotIn("set its active status according to project convention", manage_text)
+
+    def test_file_work_item_skills_own_behavior_and_legacy_ids_are_migration_only(self) -> None:
+        primary_root = resolve_primary_repository_root()
+        canonical_contracts = {
+            "create-file-work-item": (
+                "The only authoritative file-provider storage root is backlog in the primary worktree while that worktree is on main.",
+                "Do not write a shadow queue elsewhere.",
+                "Before writing, search every active typed folder",
+                "Source Evidence",
+                "released backlog claim reference",
+            ),
+            "manage-file-work-items": (
+                "The only authoritative file-provider storage root is backlog in the primary worktree while that worktree is on main.",
+                "must not create, transition, or archive the canonical record",
+                "PRIMARY_REQUIRED is a coordination outcome rather than a failed mutation",
+                "AWAITING_REVIEW",
+                "main observation",
+                "failed archive path",
+            ),
+        }
+
+        for skill_name, required_contracts in canonical_contracts.items():
+            skill_path = SKILLS_ROOT / skill_name / "SKILL.md"
+            skill_text = skill_path.read_text(encoding="utf-8")
+            frontmatter = load_yaml_object_from_frontmatter(skill_path)
+            with self.subTest(skill=skill_name):
+                self.assertEqual(skill_name, frontmatter["name"])
+                self.assertIn("effective provider is file", frontmatter["description"])
+                for required_contract in required_contracts:
+                    self.assertIn(required_contract, skill_text)
+
+        legacy_replacements = {
+            "create-backlog": ("create-file-work-item",),
+            "manage-backlog": ("manage-file-work-items",),
+            "file-based-backlog": (
+                "create-file-work-item",
+                "manage-file-work-items",
+            ),
+        }
+        for legacy_name, replacements in legacy_replacements.items():
+            legacy_text = (SKILLS_ROOT / legacy_name / "SKILL.md").read_text(
+                encoding="utf-8"
+            )
+            with self.subTest(legacy=legacy_name):
+                self.assertIn("migration-only", legacy_text.lower())
+                self.assertIn("supplies no", legacy_text)
+                self.assertNotIn("## Operations", legacy_text)
+                self.assertNotIn("## Folder Model", legacy_text)
+                self.assertNotIn("## Completion Workflow", legacy_text)
+                for replacement in replacements:
+                    self.assertIn(replacement, legacy_text)
 
         user_action_required_root = primary_root / "backlog" / "user-action-required"
         queue_readme = user_action_required_root / "README.md"
@@ -3203,7 +3269,7 @@ class BundleContentTests(unittest.TestCase):
         self.assertTrue(all((primary_root / path).is_file() for path in tracked_backlog))
 
     def test_answered_user_action_enters_ready_before_claiming(self) -> None:
-        manage_text = (SKILLS_ROOT / "manage-backlog" / "SKILL.md").read_text(
+        manage_text = (SKILLS_ROOT / "manage-file-work-items" / "SKILL.md").read_text(
             encoding="utf-8"
         )
 
@@ -3776,10 +3842,10 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn(required_contract, readme_text)
 
     def test_backlog_claim_guidance_uses_short_primary_batons(self) -> None:
-        create_text = (SKILLS_ROOT / "create-backlog" / "SKILL.md").read_text(
+        create_text = (SKILLS_ROOT / "create-file-work-item" / "SKILL.md").read_text(
             encoding="utf-8"
         )
-        manage_text = (SKILLS_ROOT / "manage-backlog" / "SKILL.md").read_text(
+        manage_text = (SKILLS_ROOT / "manage-file-work-items" / "SKILL.md").read_text(
             encoding="utf-8"
         )
 

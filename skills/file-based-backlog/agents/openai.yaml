@@ -4,9 +4,9 @@ interface:
   # User-facing name shown in Codex skill surfaces.
   display_name: File Based Backlog
   # User-facing summary shown in Codex skill surfaces.
-  short_description: Route backlog creation, inventory, lifecycle, recovery, and archival through repository files.
+  short_description: Migration-only bridge from the retired file-based-backlog selector to create-file-work-item and...
   # Prompt Codex can use when launching this skill directly.
-  default_prompt: Use $file-based-backlog to create or manage this repository-backed work item.
+  default_prompt: Use $file-based-backlog only to migrate this request to the canonical file-provider skill.
 
 # Optional invocation policy placeholder.
 # policy:

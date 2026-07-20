@@ -389,6 +389,8 @@ The development practice skills are:
 - careful-coding
 - code-comments
 - organise-project-files
+- create-file-work-item
+- manage-file-work-items
 - create-backlog
 - manage-backlog
 - file-based-backlog
@@ -427,6 +429,17 @@ The development practice skills are:
 - interpreter-pattern
 
 create-github-work-item and manage-github-work-items are the canonical split GitHub provider skills. github-issues-backlog remains only as a transition route for existing callers until the separately governed selector and role migration removes those references.
+
+create-file-work-item and manage-file-work-items are the canonical file-provider pair. They keep authoritative records only under backlog in the primary worktree on main, use short backlog claims for each mutation, and never mirror provider issues into repository files.
+
+create-backlog, manage-backlog, and file-based-backlog are migration-only bridges while separately governed callers still use the prototype identifiers. They contain no independent work-item procedure. Existing repositories migrate as follows:
+
+- Replace create-backlog with create-file-work-item.
+- Replace manage-backlog with manage-file-work-items.
+- Replace file-based-backlog selector values with provider file, then load the canonical create or manage skill for the operation.
+- Keep provider and completion selection independent and preserve UNSET until the user decides.
+
+Remove the three bridge packages only after PROJECT.yaml files, generated guidance, conceptual agent definitions, evaluations, and other authorized callers use the canonical pair and generated-output checks pass without the legacy identifiers.
 
 The stack and project-domain skill packs are:
 

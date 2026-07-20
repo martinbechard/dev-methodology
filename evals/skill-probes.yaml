@@ -275,15 +275,15 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
-  - id: probe-create-backlog
-    skill: create-backlog
-    source: skills/create-backlog/SKILL.md
+  - id: probe-create-file-work-item
+    skill: create-file-work-item
+    source: skills/create-file-work-item/SKILL.md
     evaluationCategory: development-practice
     evaluationKind: artifact-contract
-    activationCondition: A requested or independently identified defect, feature, analysis, or investigation must become a durable backlog item.
-    negativeCondition: Completed or failed archive folders never receive newly created work, independently identified unauthorized ideas never enter a dispatchable typed queue, and one coherent outcome is not split needlessly.
-    expectedBehavior: Classify the outcome and authority, create directly authorized work as Ready in its typed folder, route independently identified unauthorized ideas to User Action Required with one approval question, avoid duplicates, and preserve context, requirements, acceptance criteria, dependencies, and verification.
-    judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, queue-state-transition], modelRubric: null}
+    activationCondition: The effective provider is file and one requested or independently identified defect, feature, analysis, or investigation must become a durable work item.
+    negativeCondition: Non-file providers, isolated worktrees, non-main authorities, completed archives, and duplicate outcomes receive no new backlog file or shadow queue.
+    expectedBehavior: Require file provider authority, create only under backlog in the primary main worktree with a short backlog claim, classify typed or User Action Required placement, deduplicate, preserve source, requirements, acceptance, dependencies, verification, and report the canonical path and released claim.
+    judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, queue-state-transition, claim-lifecycle, tool-authority], modelRubric: null}
     scenarioAssociations: [dev-backlog-steward-happy, dev-backlog-steward-boundary]
     workflowAssociations: [backlog]
     executableCases: []
@@ -540,7 +540,7 @@ probes:
     workflowAssociations: [code-delivery]
     executableCases: []
     coverageStatus: declared
-    ablation: {omitTargetSkill: true, wrongSkillControl: manage-backlog}
+    ablation: {omitTargetSkill: true, wrongSkillControl: manage-file-work-items}
   - id: probe-fastapi
     skill: fastapi
     source: skills/fastapi/SKILL.md
@@ -555,20 +555,6 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
-  - id: probe-file-based-backlog
-    skill: file-based-backlog
-    source: skills/file-based-backlog/SKILL.md
-    evaluationCategory: development-practice
-    evaluationKind: workflow-invariant
-    activationCondition: Applicable project guidance or the request selects repository files as the authoritative backlog.
-    negativeCondition: The skill does not silently select file storage, create duplicate GitHub issues, or infer completion without configured delivery evidence.
-    expectedBehavior: Use the configured repository backlog location, apply create-backlog for new items and manage-backlog for lifecycle operations, claim file mutations, avoid duplicate active items, and report the durable item path and state.
-    judgePlan: {deterministicChecks: [skill-read-trace, artifact-structure, queue-state-transition, claim-lifecycle], modelRubric: workflow-quality}
-    scenarioAssociations: [dev-backlog-steward-happy, dev-backlog-steward-boundary]
-    workflowAssociations: [backlog]
-    executableCases: []
-    coverageStatus: declared
-    ablation: {omitTargetSkill: true, wrongSkillControl: github-issues-backlog}
   - id: probe-fix-explanation
     skill: fix-explanation
     source: skills/fix-explanation/SKILL.md
@@ -975,14 +961,14 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
-  - id: probe-manage-backlog
-    skill: manage-backlog
-    source: skills/manage-backlog/SKILL.md
+  - id: probe-manage-file-work-items
+    skill: manage-file-work-items
+    source: skills/manage-file-work-items/SKILL.md
     evaluationCategory: development-practice
     evaluationKind: workflow-invariant
-    activationCondition: Backlog inventory, dispatch, claim, resume, blocking, completion, failure, archive, or recovery is requested.
-    negativeCondition: Holding and archived items are not dispatched, and missing logs or silence never imply completion.
-    expectedBehavior: Reconcile visible items and durable state, respect typed folders, series and dependencies, resume claimed work first, enforce explicit transitions, and preserve delivery or failure evidence in archives.
+    activationCondition: The effective provider is file and work-item inventory, dispatch, claim, resume, blocking, completion, failure, archive, or recovery is requested.
+    negativeCondition: Non-file providers, isolated worktrees, and non-main authorities cannot mutate backlog; holding and archived items are not dispatched; publication, missing logs, and silence never imply completion.
+    expectedBehavior: Require primary-main file authority, reconcile visible items and durable state, respect typed folders, series and dependencies, use short backlog claims separate from delivery, enforce explicit transitions, and preserve source, ownership, review, checks, main observation, delivery, recovery, and archive evidence.
     judgePlan: {deterministicChecks: [skill-read-trace, queue-state-transition, claim-lifecycle, artifact-structure], modelRubric: workflow-quality}
     scenarioAssociations: [dev-backlog-steward-happy, dev-backlog-steward-boundary]
     workflowAssociations: [backlog]
@@ -1128,7 +1114,7 @@ probes:
     workflowAssociations: [wiki-lifecycle]
     executableCases: [wiki-raw-ingest]
     coverageStatus: fixture-backed
-    ablation: {omitTargetSkill: true, wrongSkillControl: manage-backlog}
+    ablation: {omitTargetSkill: true, wrongSkillControl: manage-file-work-items}
   - id: probe-project-wiki-create
     skill: project-wiki-create
     source: skills/project-wiki-create/SKILL.md
@@ -1142,7 +1128,7 @@ probes:
     workflowAssociations: [documentation-methodology, wiki-lifecycle]
     executableCases: []
     coverageStatus: declared
-    ablation: {omitTargetSkill: true, wrongSkillControl: create-backlog}
+    ablation: {omitTargetSkill: true, wrongSkillControl: create-file-work-item}
   - id: probe-project-wiki-query
     skill: project-wiki-query
     source: skills/project-wiki-query/SKILL.md

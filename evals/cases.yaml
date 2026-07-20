@@ -516,9 +516,9 @@ cases:
     harnessExecutionStatus: {codex: runnable, junie: runnable}
     requiredAgents: [dev-backlog-steward]
     agentScenarios: [dev-backlog-steward-boundary]
-    requiredSkills: [manage-backlog, agent-claim, structured-explanation]
-    skillProbes: [probe-manage-backlog, probe-agent-claim, probe-structured-explanation]
-    fixtureBackedProbeClaims: [probe-manage-backlog]
+    requiredSkills: [manage-file-work-items, agent-claim, structured-explanation]
+    skillProbes: [probe-manage-file-work-items, probe-agent-claim, probe-structured-explanation]
+    fixtureBackedProbeClaims: [probe-manage-file-work-items]
     workflowPack: backlog
     sandboxProfiles: {codex: codex-workspace-write, junie: junie-workspace-write}
     judgePlan:
@@ -527,12 +527,12 @@ cases:
     contextPack:
       fixtureRoot: evals/projects/backlog-lifecycle
       include: [TASK.md, backlog, .backlog-state]
-      stagedSkillPackages: [manage-backlog, agent-claim, structured-explanation]
+      stagedSkillPackages: [manage-file-work-items, agent-claim, structured-explanation]
       wholeRepositoryAllowed: false
       approvedSensitiveData: false
     modelVisiblePaths: [TASK.md, backlog, .backlog-state]
     skillResourceAllowlist:
-      manage-backlog: [SKILL.md]
+      manage-file-work-items: [SKILL.md]
       agent-claim: [SKILL.md, scripts/claim.py]
       structured-explanation: [SKILL.md]
     requiredEvidence: [BACKLOG-ITEM, OWNERSHIP-RECORD, STATE-TRANSITION, TERMINAL-SUMMARY]
