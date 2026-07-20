@@ -1,8 +1,17 @@
 # Render Selected Work-Item Skills
 
-Status: Ready
+Status: Running
 
 Type: Feature
+
+## Current Execution
+
+- Canonical Dev Orchestrator task: 019f80a4-8c6a-7a50-9a0a-636053ce5710.
+- Worktree: /Users/martinbechard/.codex/worktrees/bc99/dev-methodology.
+- Intended branch: codex/render-selected-work-item-skills.
+- Owner: Dev Orchestrator.
+- Phase: current-main reconciliation and affected-surface planning.
+- Verification: focused selector and renderer tests, applicable generated freshness checks, governed-definition approval gates where required, and Git diff validation before independent review.
 
 ## Summary
 
