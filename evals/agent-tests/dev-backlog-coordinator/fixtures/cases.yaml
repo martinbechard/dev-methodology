@@ -1,44 +1,39 @@
 schema: synthetic-agent-suite-cases
 cases:
-  lifecycle-batons-and-artifact-scaling:
-    readyItems: [item-a, item-b, item-c]
-    primaryState: {clean: true, registry: empty}
-    artifactScopes: [skill source, role source, evaluation documentation]
-    healthyScaling: {startingFloor: 3, increment: 1}
-    namedResources: [generator, browser, verification, integration, claim contention]
-    finalCatalogRun: after-accepted-fixes-integrate
-    expectedInitialActiveCampaigns: 3
-    expectedHealthyIncrement: 1
-    finishedLaneDestination: independent review
-  ambiguous-dispatch-and-just-in-time-resume:
+  file-backed-ten-item-dispatch:
+    runningItems: 7
+    readyItems: 5
+    nonRunningStatuses: [Blocked, User Action Required, Holding]
+    targetRunningItems: 10
+    expectedDispatchCount: 3
+    durableRecord: work-item files
+    forbiddenRegistry: separate parent task ledger
+  bounded-integration-retry-and-closeout:
+    workItemStatus: Running
+    candidateReview: accepted
+    claimAttemptMinutes: [0, 5, 10, 15, 20, 25, 30]
+    maximumRetries: 6
+    investigationMinute: 30
+    directDeliveryOwner: dev-orchestrator
+    claimKinds: [integration, completion]
+    requiredCompletionEvidence: [integration commit, focused tests, distinct integration claim, integration release, completion commit, distinct completion claim, completion release, clean worktree, fully merged branch]
+    requiredParentCleanup: [worktree removal, merged branch deletion, Done title, task archival]
+    forbiddenPerItemGate: complete agent catalog
+  ambiguous-dispatch-and-user-decision-integrity:
     parentTaskId: parent-123
     canonicalBacklogPath: backlog/feature-backlog/example.md
-    normalizedObjective: coordinate example delivery
-    initialListMatches: 0
-    settlementListMatches: 2
-    creationTimes: [2026-07-19T10:00:00Z, 2026-07-19T10:00:02Z]
-    statuses: [waiting, waiting]
-    titles: [Preflight work item, Generic old title]
-    archivedMatchPresent: true
-    maximumRetryCount: 1
+    normalizedObjective: deliver example
+    immediateMatches: 0
+    settlementMatches: 2
     expectedRetryCount: 0
-    duplicateContainment: [stop, verify stopped and no mutation, archive when supported]
-  decision-resolution-and-terminal-integrity:
+    duplicateContainment: [stop, verify zero mutation, archive when supported]
     userAnswer: approved
-    provenance: thread:synthetic/message:approval
-    readyTransition: PRIMARY_REQUIRED
-    delivery: incomplete
-    review: pending
-    verification: pending
-    integration: pending
-    releasedClaims: false
-    terminalBacklogEvidence: false
-    archiveOutcome: Inactive thread archive did not persist
-    successTitle: Done — Codex work-item coordination
-    wakeAuditIntervalMinutes: 15
-    successorChain:
-      - {label: Codex coordination, id: 019f77f4-c4bd-7c91-b197-c987a7beb838}
-      - {label: review quotation traceability, id: 019f7a45-a697-7d80-9744-a06c8d22d69a}
-      - {label: Wiki Research, id: 019f7a45-9c77-79c1-9c68-35cf6cb9f710}
-      - {label: Hibernate/Panache, id: 019f7a73-53f1-7b12-9f66-c4aebe6bab2e}
-      - {label: MySQL, id: 019f79e6-25ef-7b51-ab3c-39fce2656db4}
+    decisionEffect: Ready only
+  private-worktree-and-tiered-verification:
+    privateOperations: [implementation, correction, independent review, focused local tests]
+    sharedOperations: [main integration, backlog mutation, generated output, exclusive resource]
+    perItemVerification: [focused tests]
+    expandedVerification: [focused tests, expanded regression]
+    finalCampaignVerification: [complete agent catalog]
+    postFactoOptions: [narrow claim paths, split named resources, sequence only shared finalization]
+    selectedPostFactoOption: split named resources

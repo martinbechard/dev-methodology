@@ -77,19 +77,22 @@ agents:
       - junie
     outputContractFields:
       - status
-      - queue and phase ledger
-      - canonical task registry
-      - primary baton and wake obligations
-      - adaptive campaign state
-      - delivery and lifecycle evidence
-      - task housekeeping outcome
+      - file-backed queue snapshot
+      - dispatch and capacity outcome
+      - stalled integration actions
+      - completed item cleanup
+      - fifteen-minute throughput summary
     judgePlan:
       deterministicChecks:
         - harness-agent-identity
-        - phase-order
+        - file-backed-workitem-ownership
+        - running-capacity-refill
+        - bounded-claim-retry
+        - direct-orchestrator-integration
+        - focused-item-verification
         - task-identity-fields
-        - lifecycle-baton-evidence
         - claim-lifecycle
+        - workitem-completion-handoff
         - suite-simulator-tests
         - output-contract-presence
       modelRubric: workflow-quality
@@ -99,24 +102,28 @@ agents:
       - id: dev-backlog-coordinator-happy
         kind: happy-path
         fixtureProfile: backlog-state-machine
-        promptIntent: Reconcile several approved backlog items, serialize their short primary lifecycle batons, and coordinate three non-overlapping Codex artifact campaigns through review verification integration and terminal housekeeping.
-        expectedOutcome: A live-state queue ledger, stable canonical task ids, exact baton and wake evidence, three healthy active campaigns with bounded scaling, and terminal lifecycle evidence without parent implementation or direct backlog mutation.
+        promptIntent: Reconcile the file-backed queue, restore ten Running work items, and ensure each canonical Dev Orchestrator carries one item through review, main integration, focused verification, completion, and cleanup.
+        expectedOutcome: Ten file-backed Running items or an explicit eligible-work shortage, stable canonical task ids recorded in their work items, accepted commits integrated without a separate integration queue, and terminal cleanup followed by an immediate capacity refill.
         requiredBehaviors:
-          - Use Dev Backlog Steward for each separate primary lifecycle mutation.
-          - Use Dev Orchestrator for each active artifact campaign and maintain one immediate parent successor obligation.
-          - Start at three active artifact campaigns and add one only after healthy completion and resource evidence.
-          - Audit task-list anomalies after each measured dispatch batch.
+          - Count only work items whose files say Status Running.
+          - Use one canonical Dev Orchestrator task for each Running work item.
+          - Record canonical task id, branch, worktree, phase, accepted commit, waits, and delivery evidence in the work item.
+          - Route accepted review immediately to that item's Dev Orchestrator for integration and focused tests.
+          - Recount and refill toward ten after every terminal cleanup.
         forbiddenBehaviors:
           - Treat task title, task status, or messages as backlog or delivery authority.
-          - Keep dormant preflight-only tasks active as concurrency.
-          - Poll claims or create predecessor chains between independent items.
+          - Create a separate task ledger, baton registry, waiting-task registry, or placeholder task.
+          - Count Blocked, User Action Required, Holding, or pure waiting tasks as Running capacity.
         judgePlan:
           deterministicChecks:
-            - phase-order
-            - lifecycle-baton-evidence
+            - file-backed-workitem-ownership
+            - running-capacity-refill
+            - bounded-claim-retry
+            - direct-orchestrator-integration
+            - focused-item-verification
             - task-identity-fields
             - claim-lifecycle
-            - dependency-identity-and-order
+            - workitem-completion-handoff
             - suite-simulator-tests
           modelRubric: workflow-quality
         executableCases: []
@@ -124,29 +131,27 @@ agents:
       - id: dev-backlog-coordinator-boundary
         kind: boundary-failure
         fixtureProfile: backlog-state-machine
-        promptIntent: Recover an ambiguous timed-out dispatch whose task is delayed in the list, preserve an already resolved approval during primary contention, and decide whether an inactive terminal task was archived.
-        expectedOutcome: Bounded settlement and reconciliation before at most one retry, canonical duplicate containment, one stable-id phase title, a parent-owned wake obligation, no repeated user question, completion refusal without delivery evidence, and an explicit no-persist archival limitation.
+        promptIntent: Recover an ambiguous timed-out dispatch and a Dev Orchestrator whose exact integration claim remains unavailable through the thirty-minute retry window.
+        expectedOutcome: Bounded dispatch reconciliation, one canonical task id, six recorded five-minute claim retries, parent investigation at thirty minutes, safe claim narrowing or truthful Blocked or User Action Required disposition, and immediate capacity replacement.
         requiredBehaviors:
           - Reconcile active and archived tasks by parent id, backlog path, normalized objective, creation time, and status.
-          - Record the exact resolved answer once and keep Ready to Running separate.
-          - Audit wake obligations at the fifteen-minute interval and repair missing delivery or acknowledgement through the parent without successor polling.
-          - Use Done — X as the exact successful display title only after terminal gates.
-          - Treat Inactive thread archive did not persist as ambiguous and retain durable repository evidence.
-          - Rebuild state from live backlog, claims, Git, and tasks after interruption.
+          - Record the immediate claim attempt and retries at five, ten, fifteen, twenty, twenty-five, and thirty minutes in the work item.
+          - Investigate the blocking owner and exact scope at thirty minutes without stealing unpreserved work.
+          - Route a genuine unresolved authority or decision blocker truthfully and fill the Running vacancy.
+          - Accept completion only with main or pull-request integration, focused tests, completion commit, released claims, and cleanup evidence.
         forbiddenBehaviors:
           - Infer task absence from one immediate list read.
-          - Match, rename, contain, or archive by title alone.
-          - Report Completed or archived from approval or UI inactivity.
+          - Ask the user to approve ordinary Git, shell, review, test, integration, or cleanup operations.
+          - Run the complete agent catalog for an individual work item when focused risk-relevant tests are available.
         judgePlan:
           deterministicChecks:
             - delayed-visibility-settlement
             - retry-limit
             - duplicate-containment
-            - exact-decision-provenance
-            - completion-evidence-gate
-            - archive-no-persist
-            - fifteen-minute-wake-audit
-            - concrete-successor-chain
+            - file-backed-workitem-ownership
+            - bounded-claim-retry
+            - running-capacity-refill
+            - workitem-completion-handoff
             - suite-simulator-tests
           modelRubric: workflow-quality
         executableCases: []

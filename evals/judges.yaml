@@ -101,6 +101,30 @@ checks:
     type: deterministic
     critical: true
     description: Claim events prove acquisition, non-overlap handling, commit or truthful no-change, clean state, and release.
+  - id: file-backed-workitem-ownership
+    type: deterministic
+    critical: true
+    description: Each Running work-item file records one canonical Dev Orchestrator task identifier, branch, worktree, current phase, candidate commit, claim waits, open issues, and delivery evidence without a separate task or baton registry.
+  - id: running-capacity-refill
+    type: deterministic
+    critical: true
+    description: File-backed Running items are counted toward a target of ten, non-running states and waiting tasks are excluded, and every terminal cleanup immediately dispatches eligible Ready work to refill capacity or reports a real shortage.
+  - id: bounded-claim-retry
+    type: deterministic
+    critical: true
+    description: Integration and work-item completion claims use separate windows with one immediate attempt plus retries at five, ten, fifteen, twenty, twenty-five, and thirty minutes, stop after acquisition, and trigger parent investigation at thirty minutes.
+  - id: direct-orchestrator-integration
+    type: deterministic
+    critical: true
+    description: Without a pull request, the same canonical Dev Orchestrator that owns the work item acquires the exact main-file claim, integrates the accepted commit, runs focused tests, releases, completes the work item under a separate claim, and returns cleanup eligibility to the parent.
+  - id: focused-item-verification
+    type: deterministic
+    critical: true
+    description: Each item runs the smallest project-native tests covering changed behavior and credible regression risk; the complete agent catalog is reserved for the final integrated campaign state.
+  - id: workitem-completion-handoff
+    type: deterministic
+    critical: true
+    description: Work-item completion requires integrated delivery, review, focused verification, distinct released integration and completion claims, a clean worktree, and a fully merged branch; parent worktree, branch, title, and task archival cleanup follows that committed disposition.
   - id: archive-eligibility
     type: deterministic
     critical: true

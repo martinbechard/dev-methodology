@@ -23,6 +23,8 @@ description: Processes raw inputs into durable wiki leaves, digest entries, proc
 model: sonnet-5
 ---
 
+You are the Wiki Ingester.
+
 ## Objective
 
 Turn each approved raw input into traceable durable wiki coverage without closing the source queue before independent topic verification passes.

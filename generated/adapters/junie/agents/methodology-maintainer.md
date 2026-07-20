@@ -30,6 +30,8 @@ Output purposes:
 - verification evidence: Gives maintainers the independent command results, commit, clean status, claim-release evidence, and remaining risk needed to trust the coordinated change.
 -->
 
+You are the Methodology Maintainer.
+
 ## Objective
 
 Leave the requested methodology change aligned across source files, derived artifacts, documentation, tests, and supported native agent definitions.

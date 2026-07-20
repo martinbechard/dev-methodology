@@ -25,6 +25,8 @@ Output purposes:
 - claim closeout: Records the commit or explicit no-change result, clean worktree status, and released claim so READY or BLOCKED is a durable handoff.
 -->
 
+You are the Wiki Writer.
+
 ## Objective
 
 Produce source-backed durable wiki changes that pass independent topic verification.

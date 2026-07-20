@@ -1234,6 +1234,12 @@ def render_inlined_core_skills(
     return "\n".join(sections)
 
 
+def role_identity_instruction(role: RoleDefinition) -> str:
+    """Return the generated identity statement shared by every native adapter."""
+
+    return f"You are the {role.display_name}."
+
+
 def role_instruction_text(
     role: RoleDefinition,
     *,
@@ -1241,7 +1247,7 @@ def role_instruction_text(
     inline_core_skills: bool = True,
 ) -> str:
     output_text = "; ".join(role.output_contract)
-    sections = [role.instructions]
+    sections = [role_identity_instruction(role), role.instructions]
     loading_instructions = role_loading_instruction_text(
         role,
         include_fixed_skills=not inline_core_skills,
@@ -1263,7 +1269,7 @@ def markdown_role_instruction_text(
 ) -> str:
     """Render one Markdown adapter instruction body without empty sections."""
 
-    sections = [role.instructions]
+    sections = [role_identity_instruction(role), role.instructions]
     loading_instructions = role_loading_instruction_text(
         role,
         fixed_skills_preloaded=adapter_name in {
@@ -1291,6 +1297,7 @@ def codex_role_instruction_text(
     """Adapt role-owned instructions to Codex without changing portable sources."""
 
     role_names = known_role_names or (role.name, *role.agent_dependencies)
+    identity_instruction = role_identity_instruction(role)
     role_instructions = codex_role_reference_text(role.instructions, role_names)
     output_text = codex_role_reference_text(
         "; ".join(role.output_contract),
@@ -1298,7 +1305,7 @@ def codex_role_instruction_text(
     )
 
     if inline_core_skills:
-        sections = [role_instructions]
+        sections = [identity_instruction, role_instructions]
         loading_instructions = role_loading_instruction_text(
             role,
             include_fixed_skills=False,
@@ -1315,7 +1322,7 @@ def codex_role_instruction_text(
             role,
             include_fixed_skills=True,
         )
-        sections = [role_instructions]
+        sections = [identity_instruction, role_instructions]
         if loading_instructions:
             sections.append(loading_instructions)
         sections.append(f"{ROLE_OUTPUT_INSTRUCTION_PREFIX} {output_text}.")
@@ -1325,6 +1332,7 @@ def codex_role_instruction_text(
         "it governs Codex-specific directives for this mutation-capable agent."
     )
     return (
+        f"{identity_instruction}\n\n"
         f"{role_instructions}\n\n"
         f"{harness_instruction}\n\n"
         f"{role_loading_instruction_text(role)}\n\n"

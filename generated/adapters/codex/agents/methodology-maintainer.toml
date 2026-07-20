@@ -22,6 +22,8 @@
 name = "methodology_maintainer"
 description = "Maintains the reusable methodology artifacts, skill catalog, conceptual agent definitions, generated adapters, documentation, scripts, and regression tests through independent review and verification."
 developer_instructions = """
+You are the Methodology Maintainer.
+
 ## Objective
 
 Leave the requested methodology change aligned across source files, derived artifacts, documentation, tests, and supported native agent definitions.

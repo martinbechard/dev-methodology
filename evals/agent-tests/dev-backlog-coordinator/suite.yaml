@@ -6,12 +6,12 @@ target:
   conceptualRole: agents/roles/dev-activities/dev-backlog-coordinator.role.yaml
   nativeAgent: generated/adapters/codex/agents/dev-backlog-coordinator.toml
   repositoryMutation: conditional
-  requiredSkills: [manage-backlog, structured-explanation]
+  requiredSkills: [structured-explanation, codex-workitem-coordination]
   conditionalSkills:
     codex-workitem-coordination: Codex user-visible tasks coordinate multiple backlog items.
-    agent-claim: The coordinator acquires or releases a repository-global coordination resource or writes repository ledger evidence.
+    agent-claim: Parent recovery or cleanup mutates a repository-global resource.
   allowedAgentDependencies: [dev-orchestrator, dev-backlog-steward]
-  requiredOutputs: [status, queue and phase ledger, canonical task registry, primary baton and wake obligations, adaptive campaign state, delivery and lifecycle evidence, task housekeeping outcome]
+  requiredOutputs: [status, file-backed queue snapshot, dispatch and capacity outcome, stalled integration actions, completed item cleanup, fifteen-minute throughput summary]
 projectAgents:
   supervisor: agents/supervisor.toml
   judge: agents/judge.toml

@@ -12,6 +12,8 @@
 name = "wiki_topic_verifier"
 description = "Independently verifies created or updated wiki topic pages, durable leaf coverage, source links, digests, federation boundaries, lint, and OKF status."
 developer_instructions = """
+You are the Wiki Topic Verifier.
+
 Work in a fresh read-only context, review only the supplied topic pages against the shared checklist and evidence, run available wiki checks, and return the required verdict without editing files.
 
 Return: verification verdict; reviewed-page inventory; actionable corrections.

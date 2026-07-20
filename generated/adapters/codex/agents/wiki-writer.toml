@@ -18,6 +18,8 @@
 name = "wiki_writer"
 description = "Creates and maintains durable wiki topic pages, hubs, links, digests, and code-aware project knowledge outside raw-source ingest."
 developer_instructions = """
+You are the Wiki Writer.
+
 ## Objective
 
 Produce source-backed durable wiki changes that pass independent topic verification.

@@ -1,182 +1,208 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Verifies deterministic Dev Backlog Coordinator state and audit decisions.
-# Design: design/orchestrated-development-lifecycle.html
+# Summary: Verifies file-backed capacity, claim retry, dispatch, and cleanup contracts.
 # Test plan: evals/agent-tests/dev-backlog-coordinator/requirements-matrix.md
 
-"""Verify the deterministic coordination simulator through observable state."""
+"""Verify the deterministic parent backlog coordination simulator."""
 
 from datetime import datetime, timezone
+from pathlib import Path
 import unittest
 
+import yaml
+
 from coordination_simulator import (
+    CLAIM_ATTEMPT_MINUTES,
     CoordinationSimulator,
-    SUCCESSOR_CHAIN,
+    DeliveryEvidence,
+    TaskCleanupEvidence,
     TaskCandidate,
+    WorkItem,
 )
 
 
+CASES_PATH = Path(__file__).parent / "fixtures" / "cases.yaml"
+
+
+def _fixture_cases() -> dict[str, dict[str, object]]:
+    """Load the suite-owned executable coordination cases."""
+
+    return yaml.safe_load(CASES_PATH.read_text(encoding="utf-8"))["cases"]
+
+
 class CoordinationSimulatorTests(unittest.TestCase):
-    """Exercise coordinator scheduling, baton, dispatch, and title contracts.
+    """Exercise queue capacity and delivery recovery through observable state."""
 
-    Run the class through unittest discovery from its suite directory.
+    def test_dispatches_ready_items_until_ten_are_running(self) -> None:
+        """Use file-backed status to fill three vacancies without placeholders."""
 
-    Example:
-        python3 -m unittest test_coordination_simulator.py
-    """
-
-    def test_scheduler_starts_three_scales_by_one_and_routes_finished_lane(
-        self,
-    ) -> None:
-        """Start three lanes, scale by one, and route completion continuously."""
-
-        simulator = CoordinationSimulator(("skill", "role", "evals", "docs"))
-
-        self.assertEqual(
-            ("skill", "role", "evals"), simulator.start_initial_campaigns()
+        case = _fixture_cases()["file-backed-ten-item-dispatch"]
+        items = [
+            WorkItem(f"running-{index}", "Running")
+            for index in range(case["runningItems"])
+        ]
+        items.extend(
+            WorkItem(f"ready-{index}", "Ready")
+            for index in range(case["readyItems"])
         )
-        self.assertEqual(3, len(simulator.active_campaign_ids()))
-        self.assertEqual(
-            ("skill", "role", "evals", "docs"),
-            simulator.record_healthy_interval(),
+        items.extend(
+            WorkItem(f"non-running-{index}", status)
+            for index, status in enumerate(case["nonRunningStatuses"])
         )
-        self.assertEqual(4, simulator.active_limit)
+        simulator = CoordinationSimulator(items)
 
-        self.assertEqual(
-            "independent review", simulator.route_finished_campaign("role")
-        )
-        self.assertEqual(("skill", "evals", "docs"), simulator.active_campaign_ids())
-        self.assertEqual("finished-lane-routed", simulator.events[-1]["event"])
+        self.assertEqual(("ready-0", "ready-1", "ready-2"), simulator.dispatch_to_target())
+        self.assertEqual(case["targetRunningItems"], simulator.running_count())
+        self.assertEqual(case["expectedDispatchCount"], len(simulator.events[-1]["started"]))
+        self.assertEqual("Ready", simulator.items[10].status)
+        for item in simulator.items[7:10]:
+            self.assertEqual(f"task-{item.item_id}", item.canonical_task_id)
+            self.assertEqual("Implementation", item.phase)
 
-    def test_contention_wait_release_and_parent_resume_without_successor_polling(
-        self,
-    ) -> None:
-        """Repair the exact Wiki Research-to-Hibernate baton without polling."""
+    def test_dispatches_every_ready_item_when_queue_has_less_than_ten(self) -> None:
+        """Report a real eligible-work shortage instead of creating wait-only work."""
 
-        simulator = CoordinationSimulator()
-        required = ("commit", "release event", "clean primary HEAD", "next mutation")
-        obligations = simulator.seed_successor_chain(required)
-        wiki_to_hibernate = next(
-            obligation
-            for obligation in obligations
-            if obligation.source_id == "019f7a45-9c77-79c1-9c68-35cf6cb9f710"
-            and obligation.successor_id == "019f7a73-53f1-7b12-9f66-c4aebe6bab2e"
+        simulator = CoordinationSimulator(
+            (WorkItem("running", "Running"), WorkItem("ready", "Ready"))
         )
 
-        self.assertEqual("ARTIFACT WAIT", wiki_to_hibernate.phase)
-        simulator.record_predecessor_release(wiki_to_hibernate.source_id)
-        self.assertEqual((), simulator.audit_wake_obligations(elapsed_minutes=14))
-        findings = simulator.audit_wake_obligations(elapsed_minutes=15)
-        finding = next(
-            item
-            for item in findings
-            if item.source_id == wiki_to_hibernate.source_id
-            and item.successor_id == wiki_to_hibernate.successor_id
-        )
-        self.assertTrue(wiki_to_hibernate.predecessor_released)
-        self.assertEqual(
-            "019f7a45-9c77-79c1-9c68-35cf6cb9f710", finding.source_id
-        )
-        self.assertEqual(
-            "019f7a73-53f1-7b12-9f66-c4aebe6bab2e", finding.successor_id
-        )
-        self.assertEqual(required, finding.missing_evidence)
-        self.assertTrue(finding.notification_missing)
-        self.assertTrue(finding.acknowledgement_missing)
+        self.assertEqual(("ready",), simulator.dispatch_to_target())
+        self.assertEqual(2, simulator.running_count())
 
-        repaired = simulator.parent_repair_baton(
-            source_id=wiki_to_hibernate.source_id,
-            successor_id=wiki_to_hibernate.successor_id,
-            delivered_evidence=required,
-        )
-        pending_ack = simulator.audit_wake_obligations(elapsed_minutes=15)
-        self.assertEqual(1, len(pending_ack))
-        self.assertFalse(pending_ack[0].notification_missing)
-        self.assertTrue(pending_ack[0].acknowledgement_missing)
-        repeated = simulator.parent_repair_baton(
-            source_id=wiki_to_hibernate.source_id,
-            successor_id=wiki_to_hibernate.successor_id,
-            delivered_evidence=required,
-        )
-        self.assertIs(repaired, repeated)
-        self.assertEqual(
-            1,
-            sum(
-                event["event"] == "parent-baton-repaired"
-                for event in simulator.events
-            ),
-        )
-        simulator.acknowledge_resume(
-            source_id=wiki_to_hibernate.source_id,
-            successor_id=wiki_to_hibernate.successor_id,
-        )
-        self.assertEqual("ARTIFACT RESUME", repaired.phase)
-        self.assertTrue(repaired.notified)
-        self.assertTrue(repaired.acknowledged)
-        self.assertEqual(0, repaired.successor_poll_count)
-        self.assertEqual(15, repaired.last_audit_minutes)
-        self.assertEqual((), simulator.audit_wake_obligations(elapsed_minutes=15))
+    def test_claim_retry_window_is_bounded_to_thirty_minutes(self) -> None:
+        """Record one immediate attempt and six five-minute retries in the work item."""
 
-        unreleased = CoordinationSimulator()
-        blocked = unreleased.seed_successor_chain(required)[0]
-        with self.assertRaisesRegex(ValueError, "must release"):
-            unreleased.parent_repair_baton(
-                source_id=blocked.source_id,
-                successor_id=blocked.successor_id,
-                delivered_evidence=required,
+        case = _fixture_cases()["bounded-integration-retry-and-closeout"]
+        item = WorkItem("integration", "Running")
+        simulator = CoordinationSimulator((item,))
+
+        for elapsed in case["claimAttemptMinutes"]:
+            simulator.record_claim_attempt(
+                "integration",
+                claim_kind="integration",
+                elapsed_minutes=elapsed,
+                outcome="WAIT",
+                blocking_claim_id="shared-generator",
             )
-        self.assertEqual("ARTIFACT WAIT", blocked.phase)
-        self.assertFalse(blocked.notified)
 
-    def test_concrete_successor_chain_and_wiki_research_obligation(self) -> None:
-        """Keep the approved concrete chain confined to executable evaluation."""
+        self.assertEqual(list(CLAIM_ATTEMPT_MINUTES), [
+            attempt["elapsedMinutes"]
+            for attempt in item.claim_attempts["integration"]
+        ])
+        self.assertEqual(case["maximumRetries"], len(item.claim_attempts["integration"]) - 1)
+        self.assertEqual("Integration Investigation", item.phase)
+        self.assertEqual(("integration",), simulator.waits_requiring_investigation())
+        self.assertIn("shared-generator", item.open_issues[0])
+        with self.assertRaisesRegex(ValueError, "retry window is exhausted"):
+            simulator.record_claim_attempt(
+                "integration",
+                claim_kind="integration",
+                elapsed_minutes=30,
+                outcome="WAIT",
+            )
 
-        self.assertEqual(
-            (
-                "019f77f4-c4bd-7c91-b197-c987a7beb838",
-                "019f7a45-a697-7d80-9744-a06c8d22d69a",
-                "019f7a45-9c77-79c1-9c68-35cf6cb9f710",
-                "019f7a73-53f1-7b12-9f66-c4aebe6bab2e",
-                "019f79e6-25ef-7b51-ab3c-39fce2656db4",
-            ),
-            tuple(task.task_id for task in SUCCESSOR_CHAIN),
+    def test_successful_retry_stops_the_wait_window(self) -> None:
+        """Move directly into integration as soon as the exact claim succeeds."""
+
+        item = WorkItem("integration", "Running")
+        simulator = CoordinationSimulator((item,))
+        simulator.record_claim_attempt(
+            "integration",
+            claim_kind="integration",
+            elapsed_minutes=0,
+            outcome="WAIT",
+            blocking_claim_id="owner",
         )
-        self.assertEqual("Wiki Research", SUCCESSOR_CHAIN[2].label)
-
-    def test_mismatched_isolated_checkout_refuses_lifecycle_and_artifact_go(
-        self,
-    ) -> None:
-        """Refuse artifact start from isolation while primary mutation is active."""
-
-        simulator = CoordinationSimulator(("skill", "role", "evals"))
-
-        decision = simulator.lifecycle_start(
-            checkout="isolated", primary_backlog_mutation_active=True
+        simulator.record_claim_attempt(
+            "integration",
+            claim_kind="integration",
+            elapsed_minutes=5,
+            outcome="ACQUIRED",
         )
 
-        self.assertEqual("PRIMARY_REQUIRED", decision["outcome"])
-        self.assertFalse(decision["artifact_go"])
-        self.assertEqual((), simulator.active_campaign_ids())
+        self.assertEqual("Integration", item.phase)
+        self.assertEqual((), simulator.waits_requiring_investigation())
+        with self.assertRaisesRegex(ValueError, "already acquired"):
+            simulator.record_claim_attempt(
+                "integration",
+                claim_kind="integration",
+                elapsed_minutes=10,
+                outcome="WAIT",
+            )
 
-    def test_settled_matches_prevent_retry_and_contain_duplicate(self) -> None:
-        """Contain a settled duplicate through stopped, clean, archived states."""
+    def test_claim_windows_reject_out_of_order_and_separate_completion(self) -> None:
+        """Reject reordered attempts and start completion only after integration acquisition."""
+
+        item = WorkItem("delivery", "Running")
+        simulator = CoordinationSimulator((item,))
+        with self.assertRaisesRegex(ValueError, "minute 0"):
+            simulator.record_claim_attempt(
+                "delivery",
+                claim_kind="integration",
+                elapsed_minutes=5,
+                outcome="WAIT",
+            )
+        with self.assertRaisesRegex(ValueError, "requires acquired integration"):
+            simulator.record_claim_attempt(
+                "delivery",
+                claim_kind="completion",
+                elapsed_minutes=0,
+                outcome="WAIT",
+            )
+        simulator.record_claim_attempt(
+            "delivery",
+            claim_kind="integration",
+            elapsed_minutes=0,
+            outcome="ACQUIRED",
+        )
+        simulator.record_claim_attempt(
+            "delivery",
+            claim_kind="completion",
+            elapsed_minutes=0,
+            outcome="WAIT",
+        )
+        simulator.record_claim_attempt(
+            "delivery",
+            claim_kind="completion",
+            elapsed_minutes=5,
+            outcome="ACQUIRED",
+        )
+
+        self.assertEqual({"integration", "completion"}, item.acquired_claims)
+        self.assertEqual([0, 5], [
+            attempt["elapsedMinutes"]
+            for attempt in item.claim_attempts["completion"]
+        ])
+
+    def test_unresolved_wait_frees_capacity_only_after_investigation(self) -> None:
+        """Route an exhausted wait truthfully before dispatching a replacement."""
+
+        stalled = WorkItem("stalled", "Running", phase="Integration Investigation")
+        replacement = WorkItem("replacement", "Ready")
+        running = [WorkItem(f"running-{index}", "Running") for index in range(9)]
+        simulator = CoordinationSimulator((stalled, replacement, *running))
+
+        simulator.dispose_unresolved_wait("stalled", user_decision=False)
+        self.assertEqual("Blocked", stalled.status)
+        self.assertEqual(("replacement",), simulator.dispatch_to_target())
+        self.assertEqual(10, simulator.running_count())
+
+    def test_settled_dispatch_contains_duplicate_without_retry(self) -> None:
+        """Keep one canonical task and stop, verify, and archive its duplicate."""
 
         common = {
             "parent_task_id": "parent-123",
             "backlog_path": "backlog/feature-backlog/example.md",
-            "normalized_objective": "coordinate example delivery",
-            "status": "waiting",
+            "normalized_objective": "deliver example",
         }
         canonical = TaskCandidate(
             task_id="task-original",
-            created_at=datetime(2026, 7, 19, 10, 0, tzinfo=timezone.utc),
-            title="Preflight work item",
+            created_at=datetime(2026, 7, 20, 10, 0, tzinfo=timezone.utc),
             **common,
         )
         duplicate = TaskCandidate(
             task_id="task-duplicate",
-            created_at=datetime(2026, 7, 19, 10, 0, 2, tzinfo=timezone.utc),
-            title="Generic old title",
+            created_at=datetime(2026, 7, 20, 10, 0, 2, tzinfo=timezone.utc),
             **common,
         )
 
@@ -185,28 +211,85 @@ class CoordinationSimulatorTests(unittest.TestCase):
         )
 
         self.assertEqual("task-original", result.canonical_task_id)
-        self.assertEqual((duplicate,), result.contained_duplicates)
-        self.assertEqual("waiting", canonical.status)
-        self.assertFalse(canonical.archived)
+        self.assertEqual(0, result.retry_count)
         self.assertEqual("stopped", duplicate.status)
-        self.assertEqual(0, duplicate.repository_mutation_count)
         self.assertTrue(duplicate.archived)
         self.assertEqual(
             ("stopped", "zero mutation verified", "archived"),
             tuple(duplicate.containment_transitions),
         )
-        contained_evidence = result.evidence()["containedDuplicates"]
-        self.assertEqual("stopped", contained_evidence[0]["status"])
-        self.assertEqual(0, contained_evidence[0]["repositoryMutationCount"])
-        self.assertTrue(contained_evidence[0]["archived"])
-        self.assertEqual(0, result.evidence()["expectedRetryCount"])
 
-    def test_success_title_is_exact_done_title(self) -> None:
-        """Use Done rather than Completed for successful terminal display state."""
+    def test_completion_handoff_precedes_parent_cleanup(self) -> None:
+        """Complete the work item before parent worktree, branch, title, and archive cleanup."""
 
+        incomplete_delivery = DeliveryEvidence(
+            integration_commit="abc",
+            focused_tests_passed=True,
+            integration_claim_id="integration-claim",
+            integration_release_event="release-integration",
+            completion_commit="def",
+            completion_claim_id="completion-claim",
+            completion_release_event="release-completion",
+            worktree_clean=True,
+            branch_fully_merged=False,
+        )
+        ready_delivery = DeliveryEvidence(
+            integration_commit="abc",
+            focused_tests_passed=True,
+            integration_claim_id="integration-claim",
+            integration_release_event="release-integration",
+            completion_commit="def",
+            completion_claim_id="completion-claim",
+            completion_release_event="release-completion",
+            worktree_clean=True,
+            branch_fully_merged=True,
+        )
+        waiting_cleanup = TaskCleanupEvidence(ready_delivery, False, False)
+        complete_cleanup = TaskCleanupEvidence(ready_delivery, True, True)
+
+        self.assertFalse(incomplete_delivery.completion_ready)
+        self.assertTrue(ready_delivery.completion_ready)
+        self.assertFalse(waiting_cleanup.complete)
+        self.assertTrue(complete_cleanup.complete)
         self.assertEqual(
-            "Done — Codex work-item coordination",
-            CoordinationSimulator.success_title("Codex work-item coordination"),
+            "Done — example",
+            CoordinationSimulator.success_title("example"),
+        )
+
+    def test_private_work_claims_tiered_tests_and_post_facto_audits_are_executable(self) -> None:
+        """Exercise private scope, focused verification, and non-gating audit choices."""
+
+        case = _fixture_cases()["private-worktree-and-tiered-verification"]
+        for operation in case["privateOperations"]:
+            self.assertFalse(CoordinationSimulator.shared_claim_required(operation))
+        for operation in case["sharedOperations"]:
+            self.assertTrue(CoordinationSimulator.shared_claim_required(operation))
+        self.assertEqual(
+            tuple(case["perItemVerification"]),
+            CoordinationSimulator.verification_plan(),
+        )
+        self.assertEqual(
+            tuple(case["expandedVerification"]),
+            CoordinationSimulator.verification_plan(cross_cutting_risk=True),
+        )
+        self.assertEqual(
+            tuple(case["finalCampaignVerification"]),
+            CoordinationSimulator.verification_plan(final_campaign=True),
+        )
+        self.assertIsNone(
+            CoordinationSimulator.post_facto_reduction(
+                actual_waste_observed=False,
+                options=case["postFactoOptions"],
+                selected=case["selectedPostFactoOption"],
+            )
+        )
+        self.assertEqual(
+            case["selectedPostFactoOption"],
+            CoordinationSimulator.post_facto_reduction(
+                actual_waste_observed=True,
+                options=case["postFactoOptions"],
+                selected=case["selectedPostFactoOption"],
+            ),
         )
 
 

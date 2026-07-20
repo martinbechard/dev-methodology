@@ -111,7 +111,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "review-structured-artifact"
     },
     {
-      "condition": "when acquiring or releasing a repository-global coordination resource or creating or updating repository ledger evidence",
+      "condition": "when parent recovery or cleanup mutates a repository-global resource",
       "kind": "conditional",
       "role": "dev-backlog-coordinator",
       "skill": "agent-claim"
@@ -121,11 +121,6 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "kind": "conditional",
       "role": "dev-backlog-coordinator",
       "skill": "codex-workitem-coordination"
-    },
-    {
-      "kind": "fixed",
-      "role": "dev-backlog-coordinator",
-      "skill": "manage-backlog"
     },
     {
       "kind": "fixed",
@@ -1099,7 +1094,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     },
     {
       "conditionalSkills": {
-        "agent-claim": "when acquiring or releasing a repository-global coordination resource or creating or updating repository ledger evidence",
+        "agent-claim": "when parent recovery or cleanup mutates a repository-global resource",
         "codex-workitem-coordination": "when Codex user-visible tasks coordinate multiple backlog work items"
       },
       "coverage": {
@@ -1140,11 +1135,10 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
         ]
       },
       "declaredCases": [],
-      "description": "Coordinates a prioritized backlog across user-visible work-item tasks while preserving canonical task identity, serialized lifecycle batons, adaptive artifact concurrency, durable handoffs, and terminal task housekeeping.",
+      "description": "Acts as the parent backlog coordinator for a file-backed work-item queue, sustaining ten Running items, recovering stalled integration, and cleaning up terminal tasks without taking over per-item delivery.",
       "dynamicFolderSkills": false,
       "executedCases": [],
       "fixedSkills": [
-        "manage-backlog",
         "structured-explanation"
       ],
       "id": "dev-backlog-coordinator",

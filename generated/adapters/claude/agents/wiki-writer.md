@@ -23,6 +23,8 @@ description: Creates and maintains durable wiki topic pages, hubs, links, digest
 model: sonnet-5
 ---
 
+You are the Wiki Writer.
+
 ## Objective
 
 Produce source-backed durable wiki changes that pass independent topic verification.

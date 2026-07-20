@@ -6,163 +6,163 @@
         {
           "name": "dev-artifact-reviewer",
           "output": "generated/adapters/claude/agents/dev-artifact-reviewer.md",
-          "sha256": "250a93f9743cb7d3986800aef3eac59e9c168717b0d6d8679dec817abb294b96",
+          "sha256": "bea61bb6a824b3da8487f0edfb5909042455d05069daeaf6ab6c1fafc48c99d1",
           "source": "agents/roles/dev-activities/dev-artifact-reviewer.role.yaml"
         },
         {
           "name": "dev-backlog-coordinator",
           "output": "generated/adapters/claude/agents/dev-backlog-coordinator.md",
-          "sha256": "de3395eaa2adc0e46b3ccf08998a59c2deababec2c1b5640dd94c9df507a9daf",
+          "sha256": "6acef2893773878cd68f3621290ade5d7d4abba29db037de8a3a6f16ec4677a7",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
           "name": "dev-backlog-steward",
           "output": "generated/adapters/claude/agents/dev-backlog-steward.md",
-          "sha256": "b31f3444dff04e4589ee6e8704d4aeb1f9228392b16d5faf94ea69573e016152",
+          "sha256": "3e6037b729332c294428d914b48ae7fd61284aadb11799379b22404d8f0d61c5",
           "source": "agents/roles/dev-activities/dev-backlog-steward.role.yaml"
         },
         {
           "name": "dev-browser-operator",
           "output": "generated/adapters/claude/agents/dev-browser-operator.md",
-          "sha256": "d358943205721a9a39e5e1ac5ee8b12a673aa8e2689fa0397ae91a2ff4df7188",
+          "sha256": "1b8924907d0188afbc0c403ea5894bb98c8286c85be238fe47db6fe038bce011",
           "source": "agents/roles/dev-activities/dev-browser-operator.role.yaml"
         },
         {
           "name": "dev-code-reviewer",
           "output": "generated/adapters/claude/agents/dev-code-reviewer.md",
-          "sha256": "1c35589b7ecf96746950637e043930ac040c713016be714387bcbe8298364733",
+          "sha256": "b1dc19e845f1a747f46c84bf62bbff8df64fc90b8dc934023f469e10a728c351",
           "source": "agents/roles/dev-activities/dev-code-reviewer.role.yaml"
         },
         {
           "name": "dev-coder",
           "output": "generated/adapters/claude/agents/dev-coder.md",
-          "sha256": "85a116db704529fe0523b8a0a68a4bdcb4ff1eea02bbdb10c8e94900e3e9c556",
+          "sha256": "cf0c519fa73b9253170cda9f4b4848f62fb45529c7869a472f39f64709bba642",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
         },
         {
           "name": "dev-documentation-writer",
           "output": "generated/adapters/claude/agents/dev-documentation-writer.md",
-          "sha256": "45807f0928b38633d214722058dfe91bc2ae2da5361f181203fa8f8407f5fbf8",
+          "sha256": "55d9ca64dd1da2a6831a2818e070af295d6e7c438ffcf1f1ed735f91ae425920",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
           "name": "dev-merge-coordinator",
           "output": "generated/adapters/claude/agents/dev-merge-coordinator.md",
-          "sha256": "58ece15548b14d056aee06946895a685b9e6ba14d11c7bad740ee69b590e3081",
+          "sha256": "4d6ab8c6192fc94134ef4cfcd3fcb5a5f868671096aa7aeb761c345e5b3f9f54",
           "source": "agents/roles/dev-activities/dev-merge-coordinator.role.yaml"
         },
         {
           "name": "dev-orchestrator",
           "output": "generated/adapters/claude/agents/dev-orchestrator.md",
-          "sha256": "2799e0a9107e881a0206c6c196465e9f09f2e4fce5669fcb33d8f5439acee267",
+          "sha256": "c231e9b52f6cdf888769193eb9746d7bc906cb201a01b525fb87d60181ab83fa",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
           "name": "dev-prompt-reviewer",
           "output": "generated/adapters/claude/agents/dev-prompt-reviewer.md",
-          "sha256": "0c43c5d51c550a0fb179887b9b6838bc3e2cb602cc1bc940d0635c6d96ca36ba",
+          "sha256": "892a13bc0e6f79f0838b989207d5db63bd256761c54da60d7e0abfb3f1623099",
           "source": "agents/roles/dev-activities/dev-prompt-reviewer.role.yaml"
         },
         {
           "name": "dev-runtime-diagnostician",
           "output": "generated/adapters/claude/agents/dev-runtime-diagnostician.md",
-          "sha256": "ed968d645532f27123880292b9a147216eaeef694a75432ff72e7a468838e991",
+          "sha256": "be563d9b94b4cded1d96c4f7ce603fbe04f1f51641bfe9c43f8713965fa04e3f",
           "source": "agents/roles/dev-activities/dev-runtime-diagnostician.role.yaml"
         },
         {
           "name": "dev-security-reviewer",
           "output": "generated/adapters/claude/agents/dev-security-reviewer.md",
-          "sha256": "945d028d30bfa6cb4d974385a7b453c7de9547fc2eaa22ebf645498b2e251d49",
+          "sha256": "ecb7f62bc361481f4f926b6b9b25cc078a971ceb2cd1fd5afba9ec3dc4614d89",
           "source": "agents/roles/dev-activities/dev-security-reviewer.role.yaml"
         },
         {
           "name": "dev-ux-specialist",
           "output": "generated/adapters/claude/agents/dev-ux-specialist.md",
-          "sha256": "139b6d3b12d31ecdd3170942b6bc35c0771a4f5b5a7ac928f335e56e7066ec54",
+          "sha256": "4fa1ced760ca89af232b5750447e0f226967eb030bc3f06ef67955f775f6c996",
           "source": "agents/roles/dev-activities/dev-ux-specialist.role.yaml"
         },
         {
           "name": "dev-verifier",
           "output": "generated/adapters/claude/agents/dev-verifier.md",
-          "sha256": "b3e956a674d89e93d4e6dbf199bb6e9ea414ae8171961c31d64fed4ccda30d0b",
+          "sha256": "f54bbff94b210f31bc7e73a496633b69d82fbe9eca7a5a9b7385b1fd601c1850",
           "source": "agents/roles/dev-activities/dev-verifier.role.yaml"
         },
         {
           "name": "methodology-artifact-reviewer",
           "output": "generated/adapters/claude/agents/methodology-artifact-reviewer.md",
-          "sha256": "ab3477ab78323c9b7de9594123033e7d6b6d13cbb9d3ae79157beb4b080cf723",
+          "sha256": "ad5642294c7f59a8cfd04ade981b0e9a39c52f2492fa462a4cca5c5468a43600",
           "source": "agents/roles/methodology-maintenance/methodology-artifact-reviewer.role.yaml"
         },
         {
           "name": "methodology-maintainer",
           "output": "generated/adapters/claude/agents/methodology-maintainer.md",
-          "sha256": "d9c804f864bb426487285bff3ede312a82dcfb76cbb115a8a92aead26820a0cc",
+          "sha256": "cd9c8050e02f9e110efce72e1d5d7a9582cd8396a30cc23a5f7f89777c94366a",
           "source": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml"
         },
         {
           "name": "project-bootstrapper",
           "output": "generated/adapters/claude/agents/project-bootstrapper.md",
-          "sha256": "bd8bdd51974ab1198a2edfec7ecea80e026ffc316716fdcce3d18580aa144ca4",
+          "sha256": "1b72ca8b26077184d41c01a3ce64b153c92862fc1db97d7c0469d028027ed715",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
           "name": "project-configurator",
           "output": "generated/adapters/claude/agents/project-configurator.md",
-          "sha256": "884d9edf97373ec3f85795b46ff125b23e0042a103617c9bf512c8d14b65233f",
+          "sha256": "d0da9bb01e636f1b9fcee16c5d50734f0d041f8187129d242b179d22977ad2f4",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {
           "name": "project-organiser",
           "output": "generated/adapters/claude/agents/project-organiser.md",
-          "sha256": "8e4e7c3a6ce9075677031b590b1cc5c0ad44563c31032167fa3a6d89a0cafcc5",
+          "sha256": "b0ee0c3a3249f808d31f8c2b024907af35327b3917ccccb43662a34dd4123179",
           "source": "agents/roles/project-setup/project-organiser.role.yaml"
         },
         {
           "name": "wiki-architect",
           "output": "generated/adapters/claude/agents/wiki-architect.md",
-          "sha256": "e3477c3dcc8e39798a391f9ee82654994063ae77ea7fdcfa9ec3e7c73347eebf",
+          "sha256": "ed8d07753fb460557c3054678526d6e1f688869adefe1d4974915d738dca6f18",
           "source": "agents/roles/wiki-activities/wiki-architect.role.yaml"
         },
         {
           "name": "wiki-artifact-reviewer",
           "output": "generated/adapters/claude/agents/wiki-artifact-reviewer.md",
-          "sha256": "165201c7ed7157da5eec1b8f1e7efe99673829623c7524e42e2ebd2b39c4f625",
+          "sha256": "4ed82802d6ab36f58837d7c809913279890b47dd8464dd5b78f5b00728a56093",
           "source": "agents/roles/wiki-activities/wiki-artifact-reviewer.role.yaml"
         },
         {
           "name": "wiki-ingester",
           "output": "generated/adapters/claude/agents/wiki-ingester.md",
-          "sha256": "2a3d65948a3cb764ff1bead866b58ac4f466adc30bc8fced9e740aaba7435ad0",
+          "sha256": "0a974588cb28fc1ac1b990c3b1bfe455066514d847d7accaa9a1f6ef844b29e4",
           "source": "agents/roles/wiki-activities/wiki-ingester.role.yaml"
         },
         {
           "name": "wiki-query-responder",
           "output": "generated/adapters/claude/agents/wiki-query-responder.md",
-          "sha256": "76ddb11462265a5457f877a9dcd2f353ed0573754da3683b948dbd6cf148acb3",
+          "sha256": "36f3433a634a133c2992b98f82e8d9f10ef9448a3b7e9a0f0d8c67c9b7679dbc",
           "source": "agents/roles/wiki-activities/wiki-query-responder.role.yaml"
         },
         {
           "name": "wiki-researcher",
           "output": "generated/adapters/claude/agents/wiki-researcher.md",
-          "sha256": "6dce4042c035595738abddd0504da95debcb446ca63b484c83b558bb186061a1",
+          "sha256": "29cde9794e78320745d9ae8cc24def1aea3d78e7f0cc4a2a5957d161d7ff4723",
           "source": "agents/roles/wiki-activities/wiki-researcher.role.yaml"
         },
         {
           "name": "wiki-source-collector",
           "output": "generated/adapters/claude/agents/wiki-source-collector.md",
-          "sha256": "3a811c72a4a5b6224ecd91585d67b6662b248d60637caec42c172a0a7378f831",
+          "sha256": "ad4c6e8eeb9b1d60fca9bbd11717889a712f98cc987ecf2ad09cf28b245d9515",
           "source": "agents/roles/wiki-activities/wiki-source-collector.role.yaml"
         },
         {
           "name": "wiki-topic-verifier",
           "output": "generated/adapters/claude/agents/wiki-topic-verifier.md",
-          "sha256": "7c8a05a41684b38c6c7a60ed9fe872e203c152afcf1b673fa38ee44cbfe8cd43",
+          "sha256": "29ecb75c7d966fa611ae29265fe27458488d54d231f0b0986da25668e0e7694c",
           "source": "agents/roles/wiki-activities/wiki-topic-verifier.role.yaml"
         },
         {
           "name": "wiki-writer",
           "output": "generated/adapters/claude/agents/wiki-writer.md",
-          "sha256": "0fa13c4a7045d5ef9a87b4109a9e5e7706605c4409857890a094b2b936cbc445",
+          "sha256": "141ff8a43cd05d5f0fa11ce504c18436ac9c34f0d54b392de133fa5ed0b07b46",
           "source": "agents/roles/wiki-activities/wiki-writer.role.yaml"
         }
       ],
@@ -176,163 +176,163 @@
         {
           "name": "dev-artifact-reviewer",
           "output": "generated/adapters/codex/agents/dev-artifact-reviewer.toml",
-          "sha256": "0900a8af28038416afd983e06422ac29312b29d7d8541070807febb5016d7f28",
+          "sha256": "1af6ebc64c741970ad1ecd488e75bdc275503a0a52555020b3183e56c0f62782",
           "source": "agents/roles/dev-activities/dev-artifact-reviewer.role.yaml"
         },
         {
           "name": "dev-backlog-coordinator",
           "output": "generated/adapters/codex/agents/dev-backlog-coordinator.toml",
-          "sha256": "1090e947cec905b0248325237acb9d9eb479a963f84acea1b02d6131b53fda25",
+          "sha256": "e56ab9beb399f6fa1f58e0338cdf2aeb353e9350c0aad5016fb2647b06836329",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
           "name": "dev-backlog-steward",
           "output": "generated/adapters/codex/agents/dev-backlog-steward.toml",
-          "sha256": "2532d6c3f9d1be133f2bffa2accdc72cd4970932c153fafdd375f3feb6905f81",
+          "sha256": "9d0a5a5b300e8775c1c0c21d3be3b35acafa434913dfec4f6fd1468339529828",
           "source": "agents/roles/dev-activities/dev-backlog-steward.role.yaml"
         },
         {
           "name": "dev-browser-operator",
           "output": "generated/adapters/codex/agents/dev-browser-operator.toml",
-          "sha256": "21d3ab3873acf3231eac9c902d5ba2e08e805ad2e93c6036fe213766ce5b5f93",
+          "sha256": "76a2c7fd4a2b2a9d02d7d2d8f7a51f825ee6b1ea67744c255fa58cd62289685d",
           "source": "agents/roles/dev-activities/dev-browser-operator.role.yaml"
         },
         {
           "name": "dev-code-reviewer",
           "output": "generated/adapters/codex/agents/dev-code-reviewer.toml",
-          "sha256": "06c1015ad7bf5307fe59d06fc9d8f5925c9333fb5c5df8e1225505e95404012e",
+          "sha256": "ed74c7b6d3d4862ac5f54170730001c951281d795513412730bd45f442c931bb",
           "source": "agents/roles/dev-activities/dev-code-reviewer.role.yaml"
         },
         {
           "name": "dev-coder",
           "output": "generated/adapters/codex/agents/dev-coder.toml",
-          "sha256": "b22768675ba69dd832d0643655c01aba8b4e3cc0d6cd13dd1a7f2deda0afd0c7",
+          "sha256": "9d9d6b3400f31ea877d8e20ef34a921a60a19985a2940c5ea58e10e84a78a6a4",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
         },
         {
           "name": "dev-documentation-writer",
           "output": "generated/adapters/codex/agents/dev-documentation-writer.toml",
-          "sha256": "c61626067f677d6ffd5d4a50d1080e94c725cd52138bf26eb54d624462b6f0f8",
+          "sha256": "c6f2969a15b900d6a051f1ac1bea3e5355adaaed75ed9adf83e0c34fc40727c7",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
           "name": "dev-merge-coordinator",
           "output": "generated/adapters/codex/agents/dev-merge-coordinator.toml",
-          "sha256": "e9e6021422aa52d5479999ff7495c38884c0e11d158cb1827ab447a7b07ab9d4",
+          "sha256": "86414458ec4475bccb38973f270f45a36a93bd39ecc8cfb47608283d34f3a04c",
           "source": "agents/roles/dev-activities/dev-merge-coordinator.role.yaml"
         },
         {
           "name": "dev-orchestrator",
           "output": "generated/adapters/codex/agents/dev-orchestrator.toml",
-          "sha256": "4364bcd4731f14ab44f2c4582561a28613c4a248ae39c3ce9bf9bb3254e3bc5c",
+          "sha256": "8536db6e466326933be4fcb69a0e161f7859a85796e4cfffadb21ae5e19ad439",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
           "name": "dev-prompt-reviewer",
           "output": "generated/adapters/codex/agents/dev-prompt-reviewer.toml",
-          "sha256": "9c37e1c537d85f7b58b6fa3dfeb22ac2041fb5b3eec7b09140e1390c2c913ae6",
+          "sha256": "e0efc6e75cf4bb9388626cf0603a4e70eb81ea34035de02c5c783e8194bb31d1",
           "source": "agents/roles/dev-activities/dev-prompt-reviewer.role.yaml"
         },
         {
           "name": "dev-runtime-diagnostician",
           "output": "generated/adapters/codex/agents/dev-runtime-diagnostician.toml",
-          "sha256": "2c9bae29f7524041937e0a0bc0c1473ab7ca87c0ef703468a1a49467bb328562",
+          "sha256": "61443e47d12e9c8a61d89a3dee1f83ff647f4fbde724319137a42cdb06f0ade4",
           "source": "agents/roles/dev-activities/dev-runtime-diagnostician.role.yaml"
         },
         {
           "name": "dev-security-reviewer",
           "output": "generated/adapters/codex/agents/dev-security-reviewer.toml",
-          "sha256": "ccb7c078443da88f14d3d90e42149b889a6e07b63c6869c202a9fff64a615029",
+          "sha256": "a5138239076674dcec0d43ade26d21481c37bf96507900b96f636b17e3ddcff0",
           "source": "agents/roles/dev-activities/dev-security-reviewer.role.yaml"
         },
         {
           "name": "dev-ux-specialist",
           "output": "generated/adapters/codex/agents/dev-ux-specialist.toml",
-          "sha256": "fb19bdf595c7f82f55b9148c04a352e082b08eef868525b4418cccaeeb1d1985",
+          "sha256": "6bfa59ced75a229676398202da569bd7cd91d46614ecffe37eba228ac211f2ee",
           "source": "agents/roles/dev-activities/dev-ux-specialist.role.yaml"
         },
         {
           "name": "dev-verifier",
           "output": "generated/adapters/codex/agents/dev-verifier.toml",
-          "sha256": "93d6c003cb7276d03794e446573bca758450f1c3d7e904def22b67b7a5a571da",
+          "sha256": "225cbeb35e4829af51eb3ea7e63f1bf60899c7198ec02bec5573ab023e3c54a3",
           "source": "agents/roles/dev-activities/dev-verifier.role.yaml"
         },
         {
           "name": "methodology-artifact-reviewer",
           "output": "generated/adapters/codex/agents/methodology-artifact-reviewer.toml",
-          "sha256": "0381c2a9ba74e95c600c8b6f93172443baf338e1f824f92630b2e5a80c41efe2",
+          "sha256": "f40ac79f35955fe7a06c8920f64f6fde94374d706932e03e8ea18e2b54c158a3",
           "source": "agents/roles/methodology-maintenance/methodology-artifact-reviewer.role.yaml"
         },
         {
           "name": "methodology-maintainer",
           "output": "generated/adapters/codex/agents/methodology-maintainer.toml",
-          "sha256": "407e086ddf6e28c6eb9cfd4ddc7852ce1d4fddcd5cc43965837add16affc0906",
+          "sha256": "98c68b8b567342c2b06c6e3a8620d8e2b5a62a94b9696e0420ae953e0a51a45d",
           "source": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml"
         },
         {
           "name": "project-bootstrapper",
           "output": "generated/adapters/codex/agents/project-bootstrapper.toml",
-          "sha256": "0bfe709d65a5073a73e408c0fd17716656fe616bc1cad2090057ac18a5294e2a",
+          "sha256": "5ea090968a1c08d293701eded10446fdd268c9355421a899cb682d02e15030af",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
           "name": "project-configurator",
           "output": "generated/adapters/codex/agents/project-configurator.toml",
-          "sha256": "875739dd5d11fbd4d52c5ee26e984399e73d76a887fa55899eaa01c4381ff88f",
+          "sha256": "c88f82923ca71d33a681bc91f9972543d25a047c93fdd547ae012e57c9a066e0",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {
           "name": "project-organiser",
           "output": "generated/adapters/codex/agents/project-organiser.toml",
-          "sha256": "f26a7b45370b4fc809e41449a12e05c169d248f65f3f014bfa790d200210e1f2",
+          "sha256": "600f4ade9d441a581cfc7412d36efca3bb74d5bf248f5bc62028638391c035c2",
           "source": "agents/roles/project-setup/project-organiser.role.yaml"
         },
         {
           "name": "wiki-architect",
           "output": "generated/adapters/codex/agents/wiki-architect.toml",
-          "sha256": "ed6e3b9d09b3581f9338982acc4d2d13116a74647055ad871393097e651cdee7",
+          "sha256": "93b98279dac7ee901c6d849f44708ec54d0e56a59791c7477515dd6cfa82e6e7",
           "source": "agents/roles/wiki-activities/wiki-architect.role.yaml"
         },
         {
           "name": "wiki-artifact-reviewer",
           "output": "generated/adapters/codex/agents/wiki-artifact-reviewer.toml",
-          "sha256": "13b6f2334fb7c83d4052ee4ef02efd787d7c603ec34ecf4b1678a1b9c50f0324",
+          "sha256": "24a104d3e1a33743672a51a5d4094e908b3ef373e955012ec4535ec95000f035",
           "source": "agents/roles/wiki-activities/wiki-artifact-reviewer.role.yaml"
         },
         {
           "name": "wiki-ingester",
           "output": "generated/adapters/codex/agents/wiki-ingester.toml",
-          "sha256": "73575fa64040f2d9e0db79993c5f670d6ccdf0a16c912749e544a8a1a59caa1a",
+          "sha256": "f0d3097e7578cee8f0641308d9fe145b2ee8ca61916a5400823e866b759c63e4",
           "source": "agents/roles/wiki-activities/wiki-ingester.role.yaml"
         },
         {
           "name": "wiki-query-responder",
           "output": "generated/adapters/codex/agents/wiki-query-responder.toml",
-          "sha256": "d0f88199620e0655529a89523c9c481ecf3285198f6435dc0c9079a1fab5605b",
+          "sha256": "8528d209955f3d7b803e641ae45a1136806ac947355bec38323a723f2f4144bf",
           "source": "agents/roles/wiki-activities/wiki-query-responder.role.yaml"
         },
         {
           "name": "wiki-researcher",
           "output": "generated/adapters/codex/agents/wiki-researcher.toml",
-          "sha256": "8ad321ffba16d7762417b52e88dc9ae041536a5af155ae8b42945af983d9a2af",
+          "sha256": "edc1387d98181aa887073302c24c2c92ceb1120c249ff8794366c385a1bde0ca",
           "source": "agents/roles/wiki-activities/wiki-researcher.role.yaml"
         },
         {
           "name": "wiki-source-collector",
           "output": "generated/adapters/codex/agents/wiki-source-collector.toml",
-          "sha256": "35a55b41acd0522fe19d222411312134abd0af37679a8a8dfbb9aa04a0fbc526",
+          "sha256": "13cb9bc9b4734c13c02d66191f471ff06f360628cdb0a477a33a9a208c382766",
           "source": "agents/roles/wiki-activities/wiki-source-collector.role.yaml"
         },
         {
           "name": "wiki-topic-verifier",
           "output": "generated/adapters/codex/agents/wiki-topic-verifier.toml",
-          "sha256": "67e407b1661a0333bb12b9c7cb107445806e0cc0e0ea628aac53d79f94775a88",
+          "sha256": "b8d6783a47e3fe9bd56c4b2f31c997604f04fe7955bda648e6f778096894c14f",
           "source": "agents/roles/wiki-activities/wiki-topic-verifier.role.yaml"
         },
         {
           "name": "wiki-writer",
           "output": "generated/adapters/codex/agents/wiki-writer.toml",
-          "sha256": "e734741ea033d2a58d1fc3dd06cb164db1a51fffa0e83ea3492b908a87588963",
+          "sha256": "e4f31fc0417af9280c388307365f77fae82576d7ab6bd169c4bc3e67c15815a2",
           "source": "agents/roles/wiki-activities/wiki-writer.role.yaml"
         }
       ],
@@ -352,163 +352,163 @@
         {
           "name": "dev-artifact-reviewer",
           "output": "generated/adapters/gemini/agents/dev-artifact-reviewer.md",
-          "sha256": "aab1ba6e7bc897de68b51c8ee13281f507aa76da7a9c3dea1a69d5072d26f0a9",
+          "sha256": "7bef4f884a39b96ce9f0af38551318178ce908d71c84df2e9551cae88a5c2375",
           "source": "agents/roles/dev-activities/dev-artifact-reviewer.role.yaml"
         },
         {
           "name": "dev-backlog-coordinator",
           "output": "generated/adapters/gemini/agents/dev-backlog-coordinator.md",
-          "sha256": "f35a8dbf17b9f843cf88b34878904ad0ddee967c2f1edc9ea5023846c954e42f",
+          "sha256": "1fa9d587ae5b929e4c99aca9c99373afcd1d4da84d6c45d8d85d160788242fb6",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
           "name": "dev-backlog-steward",
           "output": "generated/adapters/gemini/agents/dev-backlog-steward.md",
-          "sha256": "d32bf6c295a73b44551a2c329f79bb63a119498e9c7084689e82bf86a958492f",
+          "sha256": "b696eb5451e4a293a2af3e36e813a05b6209e4a648bd7dfa95557243db950989",
           "source": "agents/roles/dev-activities/dev-backlog-steward.role.yaml"
         },
         {
           "name": "dev-browser-operator",
           "output": "generated/adapters/gemini/agents/dev-browser-operator.md",
-          "sha256": "1278ac3cd8ad8ef50fce030e7b8299b128a74c9f259974bf7b4087d6ccadf89f",
+          "sha256": "2c4a3f8827d379138d2743ddb5478d9d9a113d489d58a8ff4316900accf67c8b",
           "source": "agents/roles/dev-activities/dev-browser-operator.role.yaml"
         },
         {
           "name": "dev-code-reviewer",
           "output": "generated/adapters/gemini/agents/dev-code-reviewer.md",
-          "sha256": "81825d9bd83c8f988347aee64c19d632f4701e96d64928e1696e6ed4ffd6cd01",
+          "sha256": "a445816ba5a50e15d72ba08cb15c2f17fc78ffde90e6a35007dbfaca0a7e51a0",
           "source": "agents/roles/dev-activities/dev-code-reviewer.role.yaml"
         },
         {
           "name": "dev-coder",
           "output": "generated/adapters/gemini/agents/dev-coder.md",
-          "sha256": "8bbfa1300375758cd170cadeba239bd81757ea843f0256e0ea1c552860f87e0f",
+          "sha256": "ecdeab6412d6319d743937a5896b7c9402037bd4d9865c49ab3d3159e9581444",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
         },
         {
           "name": "dev-documentation-writer",
           "output": "generated/adapters/gemini/agents/dev-documentation-writer.md",
-          "sha256": "534720f984c1aba15d33d8e7f80618beeea48cadfad0a31f672887390e722629",
+          "sha256": "8dc5855cce7bd98a616b68f0e99d49635b23c1e6e550eefed90bbe326116b8c2",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
           "name": "dev-merge-coordinator",
           "output": "generated/adapters/gemini/agents/dev-merge-coordinator.md",
-          "sha256": "c94b1cc26e617f5ab7928ba25c08ef41f8f7bdeae776899df97a06f9d0e4f549",
+          "sha256": "1844592fa5b62760d5365df2ed5994666a5823c30c65b27457896d9d818fc4c5",
           "source": "agents/roles/dev-activities/dev-merge-coordinator.role.yaml"
         },
         {
           "name": "dev-orchestrator",
           "output": "generated/adapters/gemini/agents/dev-orchestrator.md",
-          "sha256": "4a540a151223651537d91037835aa8a7cf4209fae0bc92c4b1f285d0f87dcabb",
+          "sha256": "bb13f1dd7440e04d6806d974a6818cd5fcf39d07e1f91bac500c8ae5b120316d",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
           "name": "dev-prompt-reviewer",
           "output": "generated/adapters/gemini/agents/dev-prompt-reviewer.md",
-          "sha256": "c966c6aea943d267cd1ffbc3cd2212f8a9290d9956a24cf986055c2112fd8a95",
+          "sha256": "3157bf1bbe61cbda948d69502a1b0fbfba70ddec48c7b0e81a70a774c0d841a1",
           "source": "agents/roles/dev-activities/dev-prompt-reviewer.role.yaml"
         },
         {
           "name": "dev-runtime-diagnostician",
           "output": "generated/adapters/gemini/agents/dev-runtime-diagnostician.md",
-          "sha256": "9632cc000f1738fcd51d902409804eeaf03736ff2e17617d2bf231ce8c5327b1",
+          "sha256": "2a2cdf31f9cfa83502625197eb10d65868e0cea68207644407789f3d2e5827ca",
           "source": "agents/roles/dev-activities/dev-runtime-diagnostician.role.yaml"
         },
         {
           "name": "dev-security-reviewer",
           "output": "generated/adapters/gemini/agents/dev-security-reviewer.md",
-          "sha256": "a7d9d62cd2790f3d41ef9a09610edf0f568813b953542ed6987a7377aa273bf8",
+          "sha256": "461b8ceca8815c136ad705efed34dcaca9a39a3670c9403c8294f52a5de8744c",
           "source": "agents/roles/dev-activities/dev-security-reviewer.role.yaml"
         },
         {
           "name": "dev-ux-specialist",
           "output": "generated/adapters/gemini/agents/dev-ux-specialist.md",
-          "sha256": "2adff00926bed6267e371dc117483f885c4fdcf28801735adb14d448a219069e",
+          "sha256": "9c2456d936053905bc6b7e5bbd2fca5fbe6d1eb54b5457eb14254cead33ba3de",
           "source": "agents/roles/dev-activities/dev-ux-specialist.role.yaml"
         },
         {
           "name": "dev-verifier",
           "output": "generated/adapters/gemini/agents/dev-verifier.md",
-          "sha256": "21cba4a210d98cb278d10c5f247041b3eb8bd20cceba039c357ced196ee83b90",
+          "sha256": "209350e539c356b589d390c880f94211f6c5d5881ecb595d2cf0ce7ca219d4f8",
           "source": "agents/roles/dev-activities/dev-verifier.role.yaml"
         },
         {
           "name": "methodology-artifact-reviewer",
           "output": "generated/adapters/gemini/agents/methodology-artifact-reviewer.md",
-          "sha256": "64515e8ad67d2655fbbe38962be23d867a2b0f3d67fe3258f84ed760f1611944",
+          "sha256": "45eda726a5b268733ca52bb16831f8d5a1fba5bc682877d4527ea2e670ac58be",
           "source": "agents/roles/methodology-maintenance/methodology-artifact-reviewer.role.yaml"
         },
         {
           "name": "methodology-maintainer",
           "output": "generated/adapters/gemini/agents/methodology-maintainer.md",
-          "sha256": "43be98594655517a9cafcb2f08c6cf450703e6cb889f5386211c4d0609df721c",
+          "sha256": "844652f4462a73336d56410baa1a18281e55f2dc8e8ab4cdd96e57d2ffa77158",
           "source": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml"
         },
         {
           "name": "project-bootstrapper",
           "output": "generated/adapters/gemini/agents/project-bootstrapper.md",
-          "sha256": "f1ca47d5cd1062d2ad567976ab9f0a7de499a70acdfc294d2b752aa73504e320",
+          "sha256": "2411eb551fcd761117c5887e8abd0d471899ecaa47bc96ce7984dc752355866c",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
           "name": "project-configurator",
           "output": "generated/adapters/gemini/agents/project-configurator.md",
-          "sha256": "8d73137360babc959cc67765021b73998d18b70c7cbaf052a0a0dd13d190697c",
+          "sha256": "a0784ee2eb2f6cf9a5d1c9b83b889c37aa777356b056563e9a873b445dc39848",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {
           "name": "project-organiser",
           "output": "generated/adapters/gemini/agents/project-organiser.md",
-          "sha256": "b44e42578986dd95193d5a0b742cea380e9b6b8b9eaac0d0f762be9b787f4794",
+          "sha256": "8112d963ef2d4c82fdbd77459dc05b7701cf4b190ff0d9a14dbba6ae77f1a6b6",
           "source": "agents/roles/project-setup/project-organiser.role.yaml"
         },
         {
           "name": "wiki-architect",
           "output": "generated/adapters/gemini/agents/wiki-architect.md",
-          "sha256": "e2ad4c44f3ec102d0a83ab1febc6fc55924780f31e882c6fa89937c3747b3cd1",
+          "sha256": "89d87fc52aea33122aa403f9c98121bc2cd951fc5545b15600d69c2dee1cbdfc",
           "source": "agents/roles/wiki-activities/wiki-architect.role.yaml"
         },
         {
           "name": "wiki-artifact-reviewer",
           "output": "generated/adapters/gemini/agents/wiki-artifact-reviewer.md",
-          "sha256": "652c3155ca53563843d363dfd8a9f220ab4690cc83eb2609661fea09e067113c",
+          "sha256": "34a26e4ca87869e38241c25974f24c6e82f30151bf91edadddddf4be0a786eb6",
           "source": "agents/roles/wiki-activities/wiki-artifact-reviewer.role.yaml"
         },
         {
           "name": "wiki-ingester",
           "output": "generated/adapters/gemini/agents/wiki-ingester.md",
-          "sha256": "ac77911cb07a4c8b0a923b90bf93bef17e2b032f5b88ec6249f033ac89646c5b",
+          "sha256": "5bdd79e046d0ccc16f8755c5c7a2cf0a33838fd6ed3daad1b91f886f2b87d13b",
           "source": "agents/roles/wiki-activities/wiki-ingester.role.yaml"
         },
         {
           "name": "wiki-query-responder",
           "output": "generated/adapters/gemini/agents/wiki-query-responder.md",
-          "sha256": "18d5cb9b2541f9a1ee01641d68b7d1703fd4e14dc879ad70a3125471ccbab6c0",
+          "sha256": "a126d71392eef569c19816d4117560070cc4d31d024fdf14091081641d875657",
           "source": "agents/roles/wiki-activities/wiki-query-responder.role.yaml"
         },
         {
           "name": "wiki-researcher",
           "output": "generated/adapters/gemini/agents/wiki-researcher.md",
-          "sha256": "2194d24bf6521d796f4acd0344ea663c84ed69e195a61a5d375df85a96ade0b0",
+          "sha256": "ab2cfd07480e5dd783b42aa5dbf4e9e690eea2248f49b2e100219477f02e8eb8",
           "source": "agents/roles/wiki-activities/wiki-researcher.role.yaml"
         },
         {
           "name": "wiki-source-collector",
           "output": "generated/adapters/gemini/agents/wiki-source-collector.md",
-          "sha256": "a4dc3b6e85ce5c1bf7cc9d1379c382d26414923bdfd8ba4c953db95f50ba2167",
+          "sha256": "a1e0fb9d183e36ffccacf121d69135cfb0ac47c653df0034d972ad3e4dfd282c",
           "source": "agents/roles/wiki-activities/wiki-source-collector.role.yaml"
         },
         {
           "name": "wiki-topic-verifier",
           "output": "generated/adapters/gemini/agents/wiki-topic-verifier.md",
-          "sha256": "49214da147d646a303108235c012df76496fd033b39c2dcad377c9c5d40898a6",
+          "sha256": "14e0f089cf10bcb9eed15cd1c3efb25eda90a8eec295d8c8a55e7043583ca84b",
           "source": "agents/roles/wiki-activities/wiki-topic-verifier.role.yaml"
         },
         {
           "name": "wiki-writer",
           "output": "generated/adapters/gemini/agents/wiki-writer.md",
-          "sha256": "33f32decf126c0e71d1c0eeb58ff997aba862ed98180aa10d4034e266fc374e3",
+          "sha256": "b5cb042fde0f592aed4bb86ed76b3f2926244ba366da3d63aa88a1cdce56c47e",
           "source": "agents/roles/wiki-activities/wiki-writer.role.yaml"
         }
       ],
@@ -522,163 +522,163 @@
         {
           "name": "dev-artifact-reviewer",
           "output": "generated/adapters/junie/agents/dev-artifact-reviewer.md",
-          "sha256": "d626e65a1ee24ce6060abee1d9f762292128c0c7da9f71a83ce955a234a872e3",
+          "sha256": "71f70ff4e2c0c0eeabf919234c0b66a938e23e48360fb4b3a29faedd477596e9",
           "source": "agents/roles/dev-activities/dev-artifact-reviewer.role.yaml"
         },
         {
           "name": "dev-backlog-coordinator",
           "output": "generated/adapters/junie/agents/dev-backlog-coordinator.md",
-          "sha256": "988f7a2505810fa0f5adf5f09f8c95e7bd4b1ee454ae26d68a3339884ba3062a",
+          "sha256": "0e482c23aac2da45830d8bee4e47edc0227d3969c785957dc153eb37c068127f",
           "source": "agents/roles/dev-activities/dev-backlog-coordinator.role.yaml"
         },
         {
           "name": "dev-backlog-steward",
           "output": "generated/adapters/junie/agents/dev-backlog-steward.md",
-          "sha256": "09c14c26e45abcb2a3ad8905df5e9068164a2854d170cd2a4d86a0549fd218a0",
+          "sha256": "a4b3ac599781eff8b2de353c46e44e0bd0c427342c8a824f0ac3078379dcf17e",
           "source": "agents/roles/dev-activities/dev-backlog-steward.role.yaml"
         },
         {
           "name": "dev-browser-operator",
           "output": "generated/adapters/junie/agents/dev-browser-operator.md",
-          "sha256": "0f3ac6181a1d04657d575ce02954495d4cd1d455a0e22c60d6d9e1139487143d",
+          "sha256": "0bf6336151a24a3f4d3539e665ed1be365cb6b8489c907c939318382becc3d55",
           "source": "agents/roles/dev-activities/dev-browser-operator.role.yaml"
         },
         {
           "name": "dev-code-reviewer",
           "output": "generated/adapters/junie/agents/dev-code-reviewer.md",
-          "sha256": "6cf9ebf40a7c2dff91f68dff539a958a30447c861f6e23d68d905091ab4d8f3a",
+          "sha256": "eb09774c5b92ca1b9f5d2b4de7a08659ded8c794381a5f37fa3b95f4ab0ee0d4",
           "source": "agents/roles/dev-activities/dev-code-reviewer.role.yaml"
         },
         {
           "name": "dev-coder",
           "output": "generated/adapters/junie/agents/dev-coder.md",
-          "sha256": "e13778cddde9efbff27860d9a74591d84093b25014ae9fb920ef8cc700d0a4ac",
+          "sha256": "8efdeec773a51e8f08b588ce58159989385945dc29e58f674f99ff5b4ea6ec46",
           "source": "agents/roles/dev-activities/dev-coder.role.yaml"
         },
         {
           "name": "dev-documentation-writer",
           "output": "generated/adapters/junie/agents/dev-documentation-writer.md",
-          "sha256": "5db7626b2a0c6999c8d41a310d859be98323d700b3fdd7f4435bbe7c90962590",
+          "sha256": "fd6aea51915d02772dbf6b4a642d7c0e37b0c2d5f485d06332b013b4b8255e93",
           "source": "agents/roles/dev-activities/dev-documentation-writer.role.yaml"
         },
         {
           "name": "dev-merge-coordinator",
           "output": "generated/adapters/junie/agents/dev-merge-coordinator.md",
-          "sha256": "0f3a2dbfb244901b5128c207294a928e5eec71f581982ab1509cf5fa21d3c53d",
+          "sha256": "b66a210f0260d0778e8d44b7db0a926525d63faf0353030ab52146d1de629d65",
           "source": "agents/roles/dev-activities/dev-merge-coordinator.role.yaml"
         },
         {
           "name": "dev-orchestrator",
           "output": "generated/adapters/junie/agents/dev-orchestrator.md",
-          "sha256": "57d0165094d82afd6d75a1530072bc8de67124c6c357514acc43b0d7c217990a",
+          "sha256": "ce345e26f069d5373d11c8a59b7712ac62e1285ab7b8ff85a82361d911b9ac43",
           "source": "agents/roles/dev-activities/dev-orchestrator.role.yaml"
         },
         {
           "name": "dev-prompt-reviewer",
           "output": "generated/adapters/junie/agents/dev-prompt-reviewer.md",
-          "sha256": "cb14e7285bed72dd90990924c1a7e551c9bb873a587312bd66c3e955277b56e3",
+          "sha256": "24b3eb056845d5d8daf3ab678d84565bcbe59800c8301a9fe7522de6ac9820b6",
           "source": "agents/roles/dev-activities/dev-prompt-reviewer.role.yaml"
         },
         {
           "name": "dev-runtime-diagnostician",
           "output": "generated/adapters/junie/agents/dev-runtime-diagnostician.md",
-          "sha256": "fa57e83b7e60d127cbae619f9906876e7730fa8fca5d79bc7e28a2b98a950d2d",
+          "sha256": "5568b40a1a525280bca4149a0a8c5fdefc6618d6452c49fdffc5e1fcece191db",
           "source": "agents/roles/dev-activities/dev-runtime-diagnostician.role.yaml"
         },
         {
           "name": "dev-security-reviewer",
           "output": "generated/adapters/junie/agents/dev-security-reviewer.md",
-          "sha256": "f4b4af567951e0c96fb08a5be52a806d7821ed91ca9dc92a3286546d5bdae540",
+          "sha256": "68200f284a1763c82028b739879662c77c00f088472833edd3730c29a9fdcb28",
           "source": "agents/roles/dev-activities/dev-security-reviewer.role.yaml"
         },
         {
           "name": "dev-ux-specialist",
           "output": "generated/adapters/junie/agents/dev-ux-specialist.md",
-          "sha256": "f9595808e3db176c7647ace79b1c411e50c7e1cdf4b155c0d40c939de7c6eef9",
+          "sha256": "7c244ec884562a345a7a82e6830ba9a48df0e3a049c805e91178924536c307be",
           "source": "agents/roles/dev-activities/dev-ux-specialist.role.yaml"
         },
         {
           "name": "dev-verifier",
           "output": "generated/adapters/junie/agents/dev-verifier.md",
-          "sha256": "6ce816d25e757f668a85bc444e4ad48fef46963d078bb4b041411a42985bfd8e",
+          "sha256": "bb59df51c82bccef9b2b759e6a8b0a1fd19ea10fc9bcbf66ac81ca502f9e2302",
           "source": "agents/roles/dev-activities/dev-verifier.role.yaml"
         },
         {
           "name": "methodology-artifact-reviewer",
           "output": "generated/adapters/junie/agents/methodology-artifact-reviewer.md",
-          "sha256": "e4f5762785a944b3a600d3f8487549d9efa36ca2ea328d7b3b84fdeb1e3f22c4",
+          "sha256": "c517fcd79d871f8f1e8ba0bb73b32ef53b90da9a9b6218e85f4616066c9eb3ca",
           "source": "agents/roles/methodology-maintenance/methodology-artifact-reviewer.role.yaml"
         },
         {
           "name": "methodology-maintainer",
           "output": "generated/adapters/junie/agents/methodology-maintainer.md",
-          "sha256": "29d7001ac71520b206905353cf470b66689bbd4601dc349271cd062d93f57740",
+          "sha256": "f93a9179eb4f091b50d3e448e5d223fca3e1a4845f6635011dde129ece880308",
           "source": "agents/roles/methodology-maintenance/methodology-maintainer.role.yaml"
         },
         {
           "name": "project-bootstrapper",
           "output": "generated/adapters/junie/agents/project-bootstrapper.md",
-          "sha256": "ec2ec2fc18e47308a62c8a2bdc7ec551d0f10da41fd1057320a0784cb783a88a",
+          "sha256": "dec437c593870767f7bd3e5160de3229acefd234eaf2ae86b6e0c04a634bba05",
           "source": "agents/roles/project-setup/project-bootstrapper.role.yaml"
         },
         {
           "name": "project-configurator",
           "output": "generated/adapters/junie/agents/project-configurator.md",
-          "sha256": "f728cc462ee394575181c890123bd65edb12ef5756809ee9197b1f963b74002a",
+          "sha256": "a8da1c88b319da469ac975bae2a8771880d5ca8ca848f15749c536797d369513",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {
           "name": "project-organiser",
           "output": "generated/adapters/junie/agents/project-organiser.md",
-          "sha256": "8be63fd8295b1e6f1b5bebc8ef6cf8db546e8d8d7c6fe56abf20bc70a9e5fb87",
+          "sha256": "972a1cdc9f93d647eebeb42a7c101e5233bd9549ca5489827893a07d304ddb49",
           "source": "agents/roles/project-setup/project-organiser.role.yaml"
         },
         {
           "name": "wiki-architect",
           "output": "generated/adapters/junie/agents/wiki-architect.md",
-          "sha256": "449b99b5ce039297d6b16463c99e7017028209e3ba22b9811b592daa30adc186",
+          "sha256": "20fcfbc5aa423960135a2deb2a926bb023d0d96e90f7b4cd5c518de7e5af5545",
           "source": "agents/roles/wiki-activities/wiki-architect.role.yaml"
         },
         {
           "name": "wiki-artifact-reviewer",
           "output": "generated/adapters/junie/agents/wiki-artifact-reviewer.md",
-          "sha256": "0874d12a397ee9ebc2ef824f51b5d4ca6ebf3d33ee93e909c18738dda7611bd2",
+          "sha256": "bfac3ff7acb8ac8f60e385ff78464618459540b2cd3825a140045233f77348b3",
           "source": "agents/roles/wiki-activities/wiki-artifact-reviewer.role.yaml"
         },
         {
           "name": "wiki-ingester",
           "output": "generated/adapters/junie/agents/wiki-ingester.md",
-          "sha256": "bf5a768a97535abacac8e955bc3fe1f72049f22597498ce267dd1d87df3dd4f4",
+          "sha256": "ff0292011af491353c4f6d430c7b95ed3c5b7b013c34649302ac9e881713e145",
           "source": "agents/roles/wiki-activities/wiki-ingester.role.yaml"
         },
         {
           "name": "wiki-query-responder",
           "output": "generated/adapters/junie/agents/wiki-query-responder.md",
-          "sha256": "306db90f2c0be265f39265d351f1402d690fa9ab160b6abf80e4eec61b261110",
+          "sha256": "4a1a14c8a19b65ce6f44ee5591bd0626fe160ec1d88427add75e1697183f44ff",
           "source": "agents/roles/wiki-activities/wiki-query-responder.role.yaml"
         },
         {
           "name": "wiki-researcher",
           "output": "generated/adapters/junie/agents/wiki-researcher.md",
-          "sha256": "2f352d97b538384fa6f519391af68678315655368ae76c3da53dad0eb0f477a5",
+          "sha256": "de43a16d1b4e3114884bea682b4afd62ee354342a0a42932e8e3e3e3b32ea541",
           "source": "agents/roles/wiki-activities/wiki-researcher.role.yaml"
         },
         {
           "name": "wiki-source-collector",
           "output": "generated/adapters/junie/agents/wiki-source-collector.md",
-          "sha256": "3790972ea817b199438a3b6cbac9707df825a4ef60105ee6f116c9a1229560ce",
+          "sha256": "c7bc429c5be71d3d49ea879d99aa11f18cbcb04415f690ab21076dbafa52aef2",
           "source": "agents/roles/wiki-activities/wiki-source-collector.role.yaml"
         },
         {
           "name": "wiki-topic-verifier",
           "output": "generated/adapters/junie/agents/wiki-topic-verifier.md",
-          "sha256": "05f7a9b84242d2b16498a3138f579c66a0e73939d6b27b67f3c2938010e552f6",
+          "sha256": "cfa30530b2298592cef1a94c9730a4f6d116e936ca5f5e514c0635d468a5f44a",
           "source": "agents/roles/wiki-activities/wiki-topic-verifier.role.yaml"
         },
         {
           "name": "wiki-writer",
           "output": "generated/adapters/junie/agents/wiki-writer.md",
-          "sha256": "7d89bfeae8a0f60e47da500a56fc237dbb085fa882de8fc4bd8a40e18ed9d7c5",
+          "sha256": "182edc4138a3763376b22f74bed6a1faf871648794dc2736211b1e6ab4bb46fa",
           "source": "agents/roles/wiki-activities/wiki-writer.role.yaml"
         }
       ],
