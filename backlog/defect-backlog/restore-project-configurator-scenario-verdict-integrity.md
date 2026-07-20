@@ -1,8 +1,16 @@
 # Restore Project Configurator Scenario Verdict Integrity
 
-Status: Ready
+Status: Running
 
 Type: Defect
+
+## Running Ownership
+
+- Owner: Dev Orchestrator root task 019f77f4-c4bd-7c91-b197-c987a7beb838.
+- Lifecycle agent: Dev Backlog Steward.
+- Lifecycle claim: restore-project-configurator-verdict-start.
+- Claim evidence: PRIMARY exact-file backlog ownership acquired at 2026-07-20T00:50:55.174511Z from clean baseline commit 353273d2806b7109033ec3954e7a7394126d4db5.
+- Scope boundary: this claim owns only the Running transition and primary index resource and is released after its clean commit. Project Configurator suite artifacts, tests, review, verification, and integration require a separate canonical isolated claim.
 
 ## Summary
 
