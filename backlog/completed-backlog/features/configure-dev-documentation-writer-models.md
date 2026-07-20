@@ -1,17 +1,48 @@
 # Configure Dev Documentation Writer Models
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
-## Current Execution
+## Completion Evidence
 
 - Canonical Dev Orchestrator task: 019f8159-ae46-7c20-82ad-f5a668132fcc.
 - Worktree: /Users/martinbechard/.codex/worktrees/c3bc/dev-methodology.
-- Intended branch: codex/configure-dev-documentation-writer-models.
+- Branch: codex/configure-dev-documentation-writer-models.
 - Starting main commit: 515a2137d910f22e13d9141202181f2f0d4437b4.
-- Phase: Reconciling the provider-neutral model-profile sources and exact governed approval scope.
-- Verification: focused Tier 2 model-profile resolution, generated definition, unchanged-agent, freshness, diff, and independent review checks.
+- Accepted candidate commit: 6db636d33c9321b853f7ae37cc0558b0dca6b82a.
+- Integration strategy: cherry-pick onto clean main.
+- Integration commit and observed main tip: 2782d3356b21b318617a579574ccf72257264414.
+- Content-equivalence evidence: the accepted candidate and integration commits have stable patch id dc2070de22d0897919642f37fb0845d34edfe604; the integration commit is reachable from main.
+- Provider: file. Completion selector: direct-main. Completion disposition: READY.
+- Completed at: 2026-07-20T21:34:12Z.
+- Completed provider reference: backlog/completed-backlog/features/configure-dev-documentation-writer-models.md.
+
+### Approval And Source Evidence
+
+- Explicit delegated user direction came from parent task 019f77f4-c4bd-7c91-b197-c987a7beb838 on 2026-07-20.
+- Exact approval records and ALLOWED_APPROVED_DEFINITION_CHANGE prechecks covered agents/roles/dev-activities/dev-documentation-writer.role.yaml, agents/model-profiles.yaml, and the Codex, Claude, Gemini, and Junie adapter model-profile sources before mutation.
+- The conceptual role selects the provider-neutral documentation profile. Provider model identifiers remain in adapter-owned mappings.
+- Candidate commit 6db636d33c9321b853f7ae37cc0558b0dca6b82a was clean before review and integration.
+
+### Review And Verification
+
+- Independent methodology review: ACCEPTED with no actionable findings for candidate 6db636d33c9321b853f7ae37cc0558b0dca6b82a.
+- Independent Tier 2 verification: VERIFIED. All 26 unrelated roles retained identical model and reasoning mappings across every adapter.
+- Exact generated mappings: Codex gpt-5.6-sol with high effort; Junie gpt-5.6-sol with high reasoning; Claude fable-5; Gemini auto unchanged.
+- Junie adapter profile loading and generation accepted gpt-5.6-sol with high reasoning. No Junie binary was installed for an environment-specific live catalog probe.
+- Source and post-integration checks each passed the 10 focused unit tests covering semantic-profile completeness, exact adapter resolution, generated role freshness, support-checklist freshness, documentation, hierarchy, explorer links, identity rendering, and Codex runtime names.
+- scripts/build-skill-docs.py --check, scripts/build-agent-skill-hierarchy.py --check, scripts/build-support-checklist.py --check, and git diff --check passed on the candidate and integrated main states.
+- No full repository or agent catalog suite was run because focused Tier 2 evidence covered the bounded generated-definition change.
+
+### Claims And Wait History
+
+- Integration wait started at 2026-07-20T21:12Z because primary resource-only claim verify-four-case-f621fe9 was running the bounded Wiki Ingester live verification.
+- Integration claim attempt count: 5. Attempts 1 through 4 returned ISOLATE_REQUIRED; direct-main integration did not isolate or poll early. The blocking claim released normally at event 8e7279f3-2056-4b3e-a886-20fe60e78b83.
+- Integration claim 4fa77419-6719-4d95-9ce4-14ec0b41dfa7 acquired PRIMARY at event eb4980fb-b6f8-4262-965b-accde6f2b25c for the exact 17 changed paths plus merge:integration:main.
+- Integration claim released normally after clean focused main verification at event 4f851f48-6555-484b-ae4d-49c5c706438e.
+- Terminal backlog claim 80941f4f-1659-4cac-9a27-f34b55ef1cc9 acquired PRIMARY at event bfc985fd-f196-4630-9367-6c6c87dacc02 for only the active and completed provider paths. Its normal release follows the terminal archive commit.
+- Open issues: none.
 
 ## Summary
 
