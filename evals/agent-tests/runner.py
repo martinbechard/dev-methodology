@@ -33,6 +33,7 @@ from typing import Any
 from urllib.parse import urlsplit
 
 import yaml
+import workspace_inventory as workspace_inventory_support
 
 
 _SUITE_ROOT = Path(__file__).resolve().parent
@@ -1469,6 +1470,14 @@ def _coordinator_prompt(
                 "runtimeCapabilities": sorted(_runtime_capabilities((run,))),
                 "checkpointRoot": str(checkpoint_root),
                 "fixtureRoot": str(fixture_root / run.suite.suite_id),
+                "workspaceInventoryRoots": {
+                    str(scenario["id"]): str(
+                        fixture_root / run.suite.suite_id / str(scenario["id"])
+                    )
+                    for scenario in run.suite.scenarios
+                    if str(scenario["id"]) in set(run.scenario_ids)
+                    and scenario.get("requiresWorkspaceInventory") is True
+                },
                 "agentDependencies": list(_agent_dependencies(run)),
                 "fixtureContracts": [
                     str(scenario["fixtureContract"])
@@ -1666,12 +1675,16 @@ def _validate_workspace_mutation_evidence(
     evidence: Mapping[str, Any],
     field: str,
     diagnostics: list[str],
+    expected_root: Path | None = None,
 ) -> None:
     expected_fields = {
         "schema",
         "version",
         "root",
+        "baseline",
         "baselineSha256",
+        "observed",
+        "observedSha256",
         "detected",
         "derivedMutationClaim",
         "preExisting",
@@ -1681,17 +1694,84 @@ def _validate_workspace_mutation_evidence(
         "remaining",
         "finalMatchesBaseline",
     }
-    change_fields = {"created", "modified", "deleted"}
+    change_fields = {"created", "modified", "deleted", "gitMetadata"}
+    baseline = evidence.get("baseline")
+    observed = evidence.get("observed")
     detected = evidence.get("detected")
     remaining = evidence.get("remaining")
     cleanup = evidence.get("cleanup")
     pre_existing = evidence.get("preExisting")
     final = evidence.get("final")
-    valid_changes = all(
-        isinstance(value, Mapping)
-        and set(value) == change_fields
-        and all(isinstance(value[key], list) for key in change_fields)
-        for value in (detected, remaining)
+    def valid_inventory(value: object) -> bool:
+        if not isinstance(value, Mapping) or set(value) != {
+            "schema", "version", "root", "git", "entries"
+        }:
+            return False
+        git = value.get("git")
+        if (
+            value.get("schema") != "dev-methodology-workspace-inventory"
+            or value.get("version") != 1
+            or value.get("root") != evidence.get("root")
+            or not isinstance(git, Mapping)
+            or set(git) != {"head", "symbolicHead", "indexSha256", "refsSha256"}
+            or not isinstance(git.get("head"), str)
+            or re.fullmatch(r"[0-9a-f]{40,64}", str(git.get("head"))) is None
+            or git.get("symbolicHead") is not None
+            and not isinstance(git.get("symbolicHead"), str)
+            or any(
+                not isinstance(git.get(key), str)
+                or _SHA256_PATTERN.fullmatch(str(git.get(key))) is None
+                for key in ("indexSha256", "refsSha256")
+            )
+            or not isinstance(value.get("entries"), list)
+        ):
+            return False
+        seen: set[str] = set()
+        for entry in value["entries"]:
+            if not isinstance(entry, Mapping):
+                return False
+            path = entry.get("path")
+            kind = entry.get("kind")
+            relative = PurePosixPath(str(path)) if isinstance(path, str) else None
+            if (
+                relative is None
+                or relative.is_absolute()
+                or any(part in {"", ".", ".."} for part in relative.parts)
+                or path in seen
+                or re.fullmatch(r"[0-7]{4}", str(entry.get("mode"))) is None
+            ):
+                return False
+            seen.add(path)
+            if kind == "directory":
+                if set(entry) != {"path", "kind", "mode"}:
+                    return False
+            elif kind in {"file", "symlink"}:
+                if (
+                    set(entry) != {"path", "kind", "mode", "sha256", "gitState"}
+                    or _SHA256_PATTERN.fullmatch(str(entry.get("sha256"))) is None
+                    or entry.get("gitState") not in {"tracked", "ignored", "untracked"}
+                ):
+                    return False
+            else:
+                return False
+        return True
+
+    valid_inventories = all(valid_inventory(value) for value in (baseline, observed, final))
+    recomputed_detected = (
+        workspace_inventory_support._changes(dict(baseline), dict(observed))
+        if valid_inventories
+        else None
+    )
+    recomputed_remaining = (
+        workspace_inventory_support._changes(dict(baseline), dict(final))
+        if valid_inventories
+        else None
+    )
+    valid_changes = (
+        isinstance(detected, Mapping)
+        and isinstance(remaining, Mapping)
+        and dict(detected) == recomputed_detected
+        and dict(remaining) == recomputed_remaining
     )
     has_detected_changes = valid_changes and any(detected[key] for key in change_fields)
     has_remaining_changes = valid_changes and any(remaining[key] for key in change_fields)
@@ -1722,11 +1802,21 @@ def _validate_workspace_mutation_evidence(
         and evidence.get("version") == 1
         and isinstance(evidence.get("root"), str)
         and bool(evidence.get("root"))
+        and (expected_root is None or evidence.get("root") == str(expected_root.resolve(strict=True)))
         and isinstance(evidence.get("baselineSha256"), str)
         and _SHA256_PATTERN.fullmatch(str(evidence.get("baselineSha256"))) is not None
         and isinstance(evidence.get("finalSha256"), str)
         and _SHA256_PATTERN.fullmatch(str(evidence.get("finalSha256"))) is not None
         and valid_changes
+        and valid_inventories
+        and evidence.get("baselineSha256")
+        == hashlib.sha256(
+            json.dumps(baseline, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        ).hexdigest()
+        and evidence.get("observedSha256")
+        == hashlib.sha256(
+            json.dumps(observed, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        ).hexdigest()
         and evidence.get("derivedMutationClaim") == expected_claim
         and isinstance(pre_existing, Mapping)
         and set(pre_existing) == {"ignored", "untracked"}
@@ -1744,11 +1834,6 @@ def _validate_workspace_mutation_evidence(
             for key in ("removed", "preserved")
         )
         and cleanup_accounts_for_created
-        and isinstance(final, Mapping)
-        and final.get("schema") == "dev-methodology-workspace-inventory"
-        and final.get("version") == 1
-        and final.get("root") == evidence.get("root")
-        and isinstance(final.get("entries"), list)
         and evidence.get("finalSha256") == final_digest
         and type(evidence.get("finalMatchesBaseline")) is bool
         and evidence.get("finalMatchesBaseline") is (not has_remaining_changes)
@@ -1766,6 +1851,7 @@ def _validate_evidence_receipts(
     reported_status: str,
     judge_invoked: bool,
     require_runtime_judge_provenance: bool,
+    fixture_root: Path | None = None,
 ) -> dict[str, Any]:
     diagnostics: list[str] = []
     if not isinstance(references, list):
@@ -1850,7 +1936,28 @@ def _validate_evidence_receipts(
             if check_id == "no-forbidden-mutation" and scenario.get("requiresWorkspaceInventory") is True:
                 inventory = _json_mapping(evidence_path, f"{field}.evidence", diagnostics)
                 if inventory is not None:
-                    _validate_workspace_mutation_evidence(inventory, f"{field}.evidence", diagnostics)
+                    expected_inventory_root = (
+                        fixture_root / run.suite.suite_id / scenario_id
+                        if fixture_root is not None
+                        else None
+                    )
+                    if expected_inventory_root is not None and not expected_inventory_root.is_dir():
+                        diagnostics.append(
+                            f"{field}.evidence protected workspace is missing: {expected_inventory_root}"
+                        )
+                        expected_inventory_root = None
+                    _validate_workspace_mutation_evidence(
+                        inventory,
+                        f"{field}.evidence",
+                        diagnostics,
+                        expected_inventory_root,
+                    )
+                    if expected_inventory_root is not None:
+                        actual_final = workspace_inventory_support._inventory(expected_inventory_root)
+                        if inventory.get("final") != actual_final:
+                            diagnostics.append(
+                                f"{field}.evidence final inventory does not match the protected workspace"
+                            )
                 if (
                     inventory is not None
                     and receipt.get("verdict") == "passed"
@@ -1986,6 +2093,7 @@ def _load_checkpoint_report(
     run_identity: str,
     *,
     require_runtime_judge_provenance: bool = True,
+    fixture_root: Path | None = None,
 ) -> dict[str, Any] | None:
     runs: list[dict[str, Any]] = []
     for run in batch:
@@ -2043,6 +2151,7 @@ def _load_checkpoint_report(
                 str(loaded.get("status")),
                 bool(loaded.get("judgeInvoked")),
                 require_runtime_judge_provenance,
+                fixture_root,
             )
             reported_status = str(loaded.get("status"))
             validated_status = (
@@ -4033,6 +4142,7 @@ def _run_live_junie_batch(
                 batch,
                 run_identity,
                 require_runtime_judge_provenance=False,
+                fixture_root=fixture_root,
             )
             report = _extract_junie_report(event_path)
             _audit_report(batch, report, checkpoint_report)
@@ -4154,7 +4264,12 @@ def _run_live_batch(
         partial_report: dict[str, Any] | None = None
         report_error: str | None = None
         try:
-            checkpoint_report = _load_checkpoint_report(checkpoint_destination, batch, run_identity)
+            checkpoint_report = _load_checkpoint_report(
+                checkpoint_destination,
+                batch,
+                run_identity,
+                fixture_root=fixture_root,
+            )
         except (json.JSONDecodeError, RuntimeError) as checkpoint_error:
             checkpoint_report = None
             report_error = f"checkpoint error: {checkpoint_error}"

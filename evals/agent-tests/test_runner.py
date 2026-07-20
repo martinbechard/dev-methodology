@@ -2227,6 +2227,25 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         self.assertEqual("PASS", result["status"])
         self.assertEqual("verified", result["receiptAudit"]["status"])
 
+    def test_workspace_inventory_rejects_wrong_roots_and_unsafe_entries(self) -> None:
+        """Retained inventory structure cannot escape or substitute the protected workspace."""
+        for case in ("wrong-root", "unsafe-path", "malformed-entry"):
+            with self.subTest(case=case), tempfile.TemporaryDirectory() as temporary:
+                evidence = self._workspace_mutation_evidence(final_matches=True)
+                if case == "unsafe-path":
+                    evidence["observed"]["entries"][-1]["path"] = "../../outside"
+                elif case == "malformed-entry":
+                    evidence["final"]["entries"] = ["not-an-entry"]
+                diagnostics: list[str] = []
+                runner._validate_workspace_mutation_evidence(
+                    evidence,
+                    "inventory",
+                    diagnostics,
+                    None if case != "wrong-root" else Path(temporary),
+                )
+
+            self.assertTrue(diagnostics)
+
     def test_wrong_identity_critical_skip_rows_remain_non_passing(self) -> None:
         """Every structured skip field must match the failed selected critical gate exactly."""
         run = self._run_spec("one", 1)
@@ -2813,29 +2832,64 @@ class AgentSuiteRunnerTests(unittest.TestCase):
 
     @staticmethod
     def _workspace_mutation_evidence(*, final_matches: bool) -> dict[str, object]:
+        git = {
+            "head": "a" * 40,
+            "symbolicHead": "refs/heads/main",
+            "indexSha256": "b" * 64,
+            "refsSha256": "c" * 64,
+        }
+        baseline = {
+            "schema": "dev-methodology-workspace-inventory",
+            "version": 1,
+            "root": "/synthetic/candidate",
+            "git": git,
+            "entries": [
+                {
+                    "path": "existing.pyc",
+                    "kind": "file",
+                    "mode": "0644",
+                    "sha256": "4" * 64,
+                    "gitState": "ignored",
+                },
+                {
+                    "path": "notes.txt",
+                    "kind": "file",
+                    "mode": "0644",
+                    "sha256": "5" * 64,
+                    "gitState": "untracked",
+                },
+            ],
+        }
         created = [
             {
                 "path": "__pycache__/migration.cpython-311.pyc",
                 "kind": "file",
+                "mode": "0644",
                 "sha256": "1" * 64,
                 "gitState": "ignored",
             }
         ]
-        remaining = {"created": [], "modified": [], "deleted": []}
-        if not final_matches:
-            remaining["created"] = created
+        observed = json.loads(json.dumps(baseline))
+        observed["entries"] = [*observed["entries"], *created]
+        final = json.loads(json.dumps(baseline if final_matches else observed))
+        detected = runner.workspace_inventory_support._changes(baseline, observed)
+        remaining = runner.workspace_inventory_support._changes(baseline, final)
         final = {
-            "schema": "dev-methodology-workspace-inventory",
-            "version": 1,
-            "root": "/synthetic/candidate",
-            "entries": [],
+            **final,
         }
         return {
             "schema": "dev-methodology-workspace-mutation-evidence",
             "version": 1,
             "root": "/synthetic/candidate",
-            "baselineSha256": "2" * 64,
-            "detected": {"created": created, "modified": [], "deleted": []},
+            "baseline": baseline,
+            "baselineSha256": hashlib.sha256(
+                json.dumps(baseline, sort_keys=True, separators=(",", ":")).encode("utf-8")
+            ).hexdigest(),
+            "observed": observed,
+            "observedSha256": hashlib.sha256(
+                json.dumps(observed, sort_keys=True, separators=(",", ":")).encode("utf-8")
+            ).hexdigest(),
+            "detected": detected,
             "derivedMutationClaim": "side-effects-detected",
             "preExisting": {"ignored": ["existing.pyc"], "untracked": ["notes.txt"]},
             "cleanup": {

@@ -24,6 +24,22 @@ class WorkspaceInventoryTests(unittest.TestCase):
         (repository / ".gitignore").write_text("__pycache__/\n*.pyc\n", encoding="utf-8")
         (repository / "tracked.py").write_text("VALUE = 1\n", encoding="utf-8")
         subprocess.run(["git", "-C", str(repository), "add", ".gitignore", "tracked.py"], check=True)
+        subprocess.run(
+            [
+                "git",
+                "-C",
+                str(repository),
+                "-c",
+                "user.name=Inventory Test",
+                "-c",
+                "user.email=inventory@example.invalid",
+                "commit",
+                "--quiet",
+                "-m",
+                "baseline",
+            ],
+            check=True,
+        )
         return repository
 
     def test_ignored_bytecode_is_detected_cleaned_and_retained_as_evidence(self) -> None:
@@ -58,6 +74,22 @@ class WorkspaceInventoryTests(unittest.TestCase):
             shutil.copytree(fixture_source, fixture)
             subprocess.run(["git", "init", "--quiet", str(fixture)], check=True)
             subprocess.run(["git", "-C", str(fixture), "add", "."], check=True)
+            subprocess.run(
+                [
+                    "git",
+                    "-C",
+                    str(fixture),
+                    "-c",
+                    "user.name=Inventory Test",
+                    "-c",
+                    "user.email=inventory@example.invalid",
+                    "commit",
+                    "--quiet",
+                    "-m",
+                    "baseline",
+                ],
+                check=True,
+            )
             baseline_path = root / "baseline.json"
             workspace_inventory._write_json(baseline_path, workspace_inventory._inventory(fixture))
             environment = dict(os.environ)
@@ -115,6 +147,31 @@ class WorkspaceInventoryTests(unittest.TestCase):
         self.assertEqual([], evidence["cleanup"]["removed"])
         self.assertEqual(["tracked.py"], [entry["path"] for entry in evidence["detected"]["modified"]])
         self.assertEqual([".gitignore"], [entry["path"] for entry in evidence["detected"]["deleted"]])
+
+    def test_file_modes_and_git_index_changes_are_detected(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            repository = self._repository(root)
+            baseline_path = root / "baseline.json"
+            workspace_inventory._write_json(baseline_path, workspace_inventory._inventory(repository))
+
+            tracked = repository / "tracked.py"
+            tracked.chmod(0o755)
+            tracked.write_text("VALUE = 2\n", encoding="utf-8")
+            subprocess.run(["git", "-C", str(repository), "add", "tracked.py"], check=True)
+            evidence = workspace_inventory._mutation_evidence(repository, baseline_path, True)
+
+        self.assertEqual("0755", evidence["detected"]["modified"][0]["after"]["mode"])
+        self.assertEqual(1, len(evidence["detected"]["gitMetadata"]))
+        self.assertFalse(evidence["finalMatchesBaseline"])
+
+    def test_git_classification_failure_is_not_converted_to_untracked_evidence(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "file.txt").write_text("not a repository\n", encoding="utf-8")
+
+            with self.assertRaisesRegex(RuntimeError, "Git workspace classification failed"):
+                workspace_inventory._inventory(root)
 
 
 if __name__ == "__main__":
