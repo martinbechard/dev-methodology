@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import importlib.util
 import json
 import os
@@ -1760,6 +1761,20 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "definitely-missing-skill"):
             runner._validate_target_skills(suite, ("happy",), Path("/definitely/missing"))
 
+    def test_workspace_inventory_requires_the_matching_mutation_gate(self) -> None:
+        """A scenario cannot request structured inventory without its deterministic gate."""
+        suite = runner._load_catalog(include_ids={"dev-code-reviewer"})["dev-code-reviewer"]
+        scenario = dict(suite.scenarios[0])
+        scenario["requiresWorkspaceInventory"] = True
+        scenario["deterministicChecks"] = [
+            check for check in scenario["deterministicChecks"] if check != "no-forbidden-mutation"
+        ]
+        scenarios = (scenario, *suite.scenarios[1:])
+        suite = runner._Suite(suite.suite_id, suite.priority, suite.path, suite.manifest, scenarios)
+
+        with self.assertRaisesRegex(ValueError, "workspace inventory requires no-forbidden-mutation"):
+            runner._validate_suite(suite, require_executable=False)
+
     def test_controlled_environment_does_not_inherit_host_credentials(self) -> None:
         """Only process-location and locale values cross the host boundary."""
         bundled_node = Path("/tmp/runtime/bin/node")
@@ -2144,6 +2159,73 @@ class AgentSuiteRunnerTests(unittest.TestCase):
             self.assertEqual("BLOCKED", result["status"])
             self.assertEqual("invalid", result["receiptAudit"]["status"])
             self.assertTrue(result["receiptAudit"]["diagnostics"])
+
+    def test_required_workspace_inventory_rejects_prose_and_unrestored_mutation(self) -> None:
+        """Read-only mutation receipts bind complete inventory evidence and a restored baseline."""
+        suite = self._suite("one")
+        scenario = dict(suite.scenarios[0])
+        scenario["deterministicChecks"] = ["no-forbidden-mutation"]
+        scenario["requiresWorkspaceInventory"] = True
+        suite = runner._Suite(suite.suite_id, suite.priority, suite.path, suite.manifest, (scenario,))
+        run = runner._RunSpec(suite=suite, scenario_ids=("happy",))
+        run_identity = "codex-batch-01-test"
+
+        for case in ("prose", "unrestored"):
+            with self.subTest(case=case), tempfile.TemporaryDirectory() as temporary:
+                checkpoint_root = Path(temporary)
+                checkpoint = self._write_receipt_checkpoint(checkpoint_root, run, run_identity)
+                if case == "unrestored":
+                    self._replace_deterministic_artifact(
+                        checkpoint_root,
+                        checkpoint,
+                        "no-forbidden-mutation",
+                        self._workspace_mutation_evidence(final_matches=False),
+                    )
+                path = checkpoint_root / "one" / "happy.json"
+                path.write_text(json.dumps(checkpoint, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+                report = runner._load_checkpoint_report(
+                    checkpoint_root,
+                    (run,),
+                    run_identity,
+                    require_runtime_judge_provenance=False,
+                )
+
+            assert report is not None
+            result = report["runs"][0]["scenarioResults"][0]
+            self.assertEqual("BLOCKED", result["status"])
+            self.assertEqual("invalid", result["receiptAudit"]["status"])
+
+    def test_required_workspace_inventory_accepts_detected_cleaned_side_effects(self) -> None:
+        """Owned ignored artifacts remain visible even after exact cleanup restores the baseline."""
+        suite = self._suite("one")
+        scenario = dict(suite.scenarios[0])
+        scenario["deterministicChecks"] = ["no-forbidden-mutation"]
+        scenario["requiresWorkspaceInventory"] = True
+        suite = runner._Suite(suite.suite_id, suite.priority, suite.path, suite.manifest, (scenario,))
+        run = runner._RunSpec(suite=suite, scenario_ids=("happy",))
+        run_identity = "codex-batch-01-test"
+        with tempfile.TemporaryDirectory() as temporary:
+            checkpoint_root = Path(temporary)
+            checkpoint = self._write_receipt_checkpoint(checkpoint_root, run, run_identity)
+            self._replace_deterministic_artifact(
+                checkpoint_root,
+                checkpoint,
+                "no-forbidden-mutation",
+                self._workspace_mutation_evidence(final_matches=True),
+            )
+            path = checkpoint_root / "one" / "happy.json"
+            path.write_text(json.dumps(checkpoint, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+            report = runner._load_checkpoint_report(
+                checkpoint_root,
+                (run,),
+                run_identity,
+                require_runtime_judge_provenance=False,
+            )
+
+        assert report is not None
+        result = report["runs"][0]["scenarioResults"][0]
+        self.assertEqual("PASS", result["status"])
+        self.assertEqual("verified", result["receiptAudit"]["status"])
 
     def test_wrong_identity_critical_skip_rows_remain_non_passing(self) -> None:
         """Every structured skip field must match the failed selected critical gate exactly."""
@@ -2587,9 +2669,13 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         artifacts.mkdir(parents=True)
         receipts.mkdir()
         references: list[dict[str, str]] = []
+        selected_scenario = next(
+            scenario for scenario in run.suite.scenarios if scenario["id"] == scenario_id
+        )
+        catalog = runner._deterministic_check_catalog()
         criticality = {
-            "harness-agent-identity": True,
-            "test-state-transition": False,
+            check_id: catalog[check_id]
+            for check_id in selected_scenario["deterministicChecks"]
         }
         failed_check = "harness-agent-identity" if status == "FAIL" and not judge_invoked else None
         for check_id, critical in criticality.items():
@@ -2724,6 +2810,68 @@ class AgentSuiteRunnerTests(unittest.TestCase):
         }
         checkpoint.write_text(json.dumps(document, indent=2, sort_keys=True) + "\n", encoding="utf-8")
         return document
+
+    @staticmethod
+    def _workspace_mutation_evidence(*, final_matches: bool) -> dict[str, object]:
+        created = [
+            {
+                "path": "__pycache__/migration.cpython-311.pyc",
+                "kind": "file",
+                "sha256": "1" * 64,
+                "gitState": "ignored",
+            }
+        ]
+        remaining = {"created": [], "modified": [], "deleted": []}
+        if not final_matches:
+            remaining["created"] = created
+        final = {
+            "schema": "dev-methodology-workspace-inventory",
+            "version": 1,
+            "root": "/synthetic/candidate",
+            "entries": [],
+        }
+        return {
+            "schema": "dev-methodology-workspace-mutation-evidence",
+            "version": 1,
+            "root": "/synthetic/candidate",
+            "baselineSha256": "2" * 64,
+            "detected": {"created": created, "modified": [], "deleted": []},
+            "derivedMutationClaim": "side-effects-detected",
+            "preExisting": {"ignored": ["existing.pyc"], "untracked": ["notes.txt"]},
+            "cleanup": {
+                "requested": True,
+                "removed": ["__pycache__/migration.cpython-311.pyc"] if final_matches else [],
+                "preserved": [] if final_matches else ["__pycache__/migration.cpython-311.pyc"],
+            },
+            "final": final,
+            "finalSha256": hashlib.sha256(
+                json.dumps(final, sort_keys=True, separators=(",", ":")).encode("utf-8")
+            ).hexdigest(),
+            "remaining": remaining,
+            "finalMatchesBaseline": final_matches,
+        }
+
+    @staticmethod
+    def _replace_deterministic_artifact(
+        checkpoint_root: Path,
+        checkpoint: dict[str, object],
+        check_id: str,
+        evidence: object,
+    ) -> None:
+        references = checkpoint["evidenceReceipts"]
+        assert isinstance(references, list)
+        for reference in references:
+            receipt_path = checkpoint_root / str(reference["path"])
+            receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+            if receipt.get("eventType") != "deterministic-check-disposition" or receipt.get("checkId") != check_id:
+                continue
+            artifact_path = checkpoint_root / receipt["evidence"]["path"]
+            artifact_path.write_text(json.dumps(evidence, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+            receipt["evidence"]["sha256"] = runner._sha256(artifact_path)
+            receipt_path.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+            reference["sha256"] = runner._sha256(receipt_path)
+            return
+        raise AssertionError(f"Missing deterministic receipt {check_id}")
 
     @staticmethod
     def _rewrite_receipt(

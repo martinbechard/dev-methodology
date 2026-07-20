@@ -58,6 +58,7 @@ _CAPTURE_REPLACEMENTS = (
 )
 _MAXIMUM_CAPTURE_BYTES = 10 * 1024 * 1024
 _EVIDENCE_RECEIPT_SCHEMA = "dev-methodology-agent-suite-evidence-receipt"
+_WORKSPACE_MUTATION_SCHEMA = "dev-methodology-workspace-mutation-evidence"
 _JUDGE_OUTPUT_SCHEMA = "dev-methodology-agent-suite-judge-output"
 _SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 _IMMEDIATE_NOOP_CLOSE_SECONDS = 10.0
@@ -318,6 +319,17 @@ def _validate_suite(suite: _Suite, require_executable: bool = True) -> None:
             raise ValueError(
                 f"{suite.suite_id}:{scenario_id} has an unknown runtime capability: "
                 f"{', '.join(sorted(unknown_capabilities))}"
+            )
+        requires_inventory = scenario.get("requiresWorkspaceInventory", False)
+        if type(requires_inventory) is not bool:
+            raise ValueError(
+                f"{suite.suite_id}:{scenario_id} requiresWorkspaceInventory must be a boolean"
+            )
+        if requires_inventory and "no-forbidden-mutation" not in scenario.get(
+            "deterministicChecks", []
+        ):
+            raise ValueError(
+                f"{suite.suite_id}:{scenario_id} workspace inventory requires no-forbidden-mutation"
             )
         for field in (
             "taskSelectedAgentDependencies",
@@ -1650,6 +1662,101 @@ def _deterministic_check_catalog() -> dict[str, bool]:
     }
 
 
+def _validate_workspace_mutation_evidence(
+    evidence: Mapping[str, Any],
+    field: str,
+    diagnostics: list[str],
+) -> None:
+    expected_fields = {
+        "schema",
+        "version",
+        "root",
+        "baselineSha256",
+        "detected",
+        "derivedMutationClaim",
+        "preExisting",
+        "cleanup",
+        "final",
+        "finalSha256",
+        "remaining",
+        "finalMatchesBaseline",
+    }
+    change_fields = {"created", "modified", "deleted"}
+    detected = evidence.get("detected")
+    remaining = evidence.get("remaining")
+    cleanup = evidence.get("cleanup")
+    pre_existing = evidence.get("preExisting")
+    final = evidence.get("final")
+    valid_changes = all(
+        isinstance(value, Mapping)
+        and set(value) == change_fields
+        and all(isinstance(value[key], list) for key in change_fields)
+        for value in (detected, remaining)
+    )
+    has_detected_changes = valid_changes and any(detected[key] for key in change_fields)
+    has_remaining_changes = valid_changes and any(remaining[key] for key in change_fields)
+    expected_claim = "side-effects-detected" if has_detected_changes else "no-changes-detected"
+    created_paths = {
+        str(entry.get("path"))
+        for entry in detected.get("created", [])
+        if isinstance(entry, Mapping) and isinstance(entry.get("path"), str)
+    } if isinstance(detected, Mapping) else set()
+    removed_paths = set(cleanup.get("removed", [])) if isinstance(cleanup, Mapping) else set()
+    preserved_paths = set(cleanup.get("preserved", [])) if isinstance(cleanup, Mapping) else set()
+    cleanup_requested = cleanup.get("requested") if isinstance(cleanup, Mapping) else None
+    cleanup_accounts_for_created = (
+        cleanup_requested is True
+        and not (removed_paths & preserved_paths)
+        and removed_paths | preserved_paths == created_paths
+    ) or (cleanup_requested is False and not removed_paths and not preserved_paths)
+    final_digest = (
+        hashlib.sha256(
+            json.dumps(final, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        ).hexdigest()
+        if isinstance(final, Mapping)
+        else None
+    )
+    valid = (
+        set(evidence) == expected_fields
+        and evidence.get("schema") == _WORKSPACE_MUTATION_SCHEMA
+        and evidence.get("version") == 1
+        and isinstance(evidence.get("root"), str)
+        and bool(evidence.get("root"))
+        and isinstance(evidence.get("baselineSha256"), str)
+        and _SHA256_PATTERN.fullmatch(str(evidence.get("baselineSha256"))) is not None
+        and isinstance(evidence.get("finalSha256"), str)
+        and _SHA256_PATTERN.fullmatch(str(evidence.get("finalSha256"))) is not None
+        and valid_changes
+        and evidence.get("derivedMutationClaim") == expected_claim
+        and isinstance(pre_existing, Mapping)
+        and set(pre_existing) == {"ignored", "untracked"}
+        and all(
+            isinstance(pre_existing[key], list)
+            and all(isinstance(path, str) and path for path in pre_existing[key])
+            for key in ("ignored", "untracked")
+        )
+        and isinstance(cleanup, Mapping)
+        and set(cleanup) == {"requested", "removed", "preserved"}
+        and type(cleanup.get("requested")) is bool
+        and all(
+            isinstance(cleanup.get(key), list)
+            and all(isinstance(path, str) and path for path in cleanup[key])
+            for key in ("removed", "preserved")
+        )
+        and cleanup_accounts_for_created
+        and isinstance(final, Mapping)
+        and final.get("schema") == "dev-methodology-workspace-inventory"
+        and final.get("version") == 1
+        and final.get("root") == evidence.get("root")
+        and isinstance(final.get("entries"), list)
+        and evidence.get("finalSha256") == final_digest
+        and type(evidence.get("finalMatchesBaseline")) is bool
+        and evidence.get("finalMatchesBaseline") is (not has_remaining_changes)
+    )
+    if not valid:
+        diagnostics.append(f"{field} is not a complete workspace mutation inventory")
+
+
 def _validate_evidence_receipts(
     checkpoint_root: Path,
     references: object,
@@ -1740,6 +1847,18 @@ def _validate_evidence_receipts(
                 diagnostics.append(f"{field} deterministic criticality mismatch: {check_id}")
             if receipt.get("verdict") not in {"passed", "failed"}:
                 diagnostics.append(f"{field} deterministic verdict is invalid: {check_id}")
+            if check_id == "no-forbidden-mutation" and scenario.get("requiresWorkspaceInventory") is True:
+                inventory = _json_mapping(evidence_path, f"{field}.evidence", diagnostics)
+                if inventory is not None:
+                    _validate_workspace_mutation_evidence(inventory, f"{field}.evidence", diagnostics)
+                if (
+                    inventory is not None
+                    and receipt.get("verdict") == "passed"
+                    and inventory.get("finalMatchesBaseline") is not True
+                ):
+                    diagnostics.append(
+                        f"{field} no-forbidden-mutation passed without restoring the baseline inventory"
+                    )
             deterministic[check_id] = receipt
         elif event_type == "judge-disposition":
             expected_fields = {

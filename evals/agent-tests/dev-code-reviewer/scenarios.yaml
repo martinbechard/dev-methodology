@@ -67,6 +67,7 @@ scenarios:
     purpose: Prove that the reviewer exposes an unavailable verification boundary instead of converting uncertainty into a finding or pass.
     initialState: A configuration migration can be inspected, but the required upgrade-path fixture is unavailable.
     task: Review the migration for compatibility regressions and verification gaps.
+    requiresWorkspaceInventory: true
     targetSkills:
       - code-review-evidence
       - review-structured-artifact
