@@ -308,6 +308,7 @@ README_REQUIRED_PHRASES = (
     "- quarkus-testing",
     "jhipster-domain-modeling",
     "[Technology Skills](design/skills-modularization.html) explains always-used and rule-selected agent skills",
+    "[Wiki Skills And Project Context page](design/wiki-skills-and-project-context.html)",
     "The generic Gang of Four pattern skills are request-specific assignments for design authoring and design review.",
     "project-wiki-create",
     "create-functional-spec",
@@ -641,6 +642,16 @@ DOCUMENT_INFORMATION_OWNERS = {
         "Wiki Format",
         "Template Completion",
     ),
+    "wiki-skills-and-project-context.html": (
+        "Wiki Skills And Project Context",
+        "Four Layers, Not Four Names For One Thing",
+        "Compiled Context Flow",
+        "Project Wiki Operating Model",
+        "Separation Of Work",
+        "Skill Collaboration Boundaries",
+        "Code-Aware Hybrid",
+        "Verification And Compounding Health",
+    ),
 }
 DOCUMENT_FORBIDDEN_HEADINGS = {
     "skills-modularization.html": (
@@ -685,6 +696,7 @@ DOCUMENT_FORBIDDEN_HEADINGS = {
 DOCUMENT_REQUIRED_CONTENT_LINKS = {
     "skills-modularization.html": (
         "agent-and-skill-definitions.html#skills-title",
+        "wiki-skills-and-project-context.html",
     ),
     "agent-skill-specialization-examples.html": (
         "../skills/development-methodology/assets/templates/project-template.yaml",
@@ -708,6 +720,20 @@ DOCUMENT_REQUIRED_CONTENT_LINKS = {
         "../skills/development-methodology/assets/templates/module-design-template.md",
         "../skills/development-methodology/assets/templates/unit-test-plan-template.md",
         "../skills/project-wiki/references/page-schema.md",
+        "wiki-skills-and-project-context.html",
+    ),
+    "wiki-skills-and-project-context.html": (
+        "https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f",
+        "https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing",
+        "https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md",
+        "../skills/project-wiki/SKILL.md",
+        "../skills/project-wiki-create/SKILL.md",
+        "../skills/project-wiki-query/SKILL.md",
+        "../skills/project-wiki-research/SKILL.md",
+        "../skills/project-wiki-review/SKILL.md",
+        "../skills/project-wiki-topic-write/SKILL.md",
+        "../skills/project-wiki-topic-verify/SKILL.md",
+        "../skills/code-project-wiki/SKILL.md",
     ),
 }
 DEVELOPMENT_USE_LOADOUTS = (
@@ -5297,6 +5323,28 @@ class BundleContentTests(unittest.TestCase):
                 with self.subTest(filename=filename, required_link=link):
                     self.assertIn(f'href="{link}', page_text[filename])
 
+        wiki_context_path = design_root / "wiki-skills-and-project-context.html"
+        wiki_context_hrefs = set(
+            re.findall(
+                r'href="([^"]+)"',
+                page_text["wiki-skills-and-project-context.html"],
+            )
+        )
+        for link in DOCUMENT_REQUIRED_CONTENT_LINKS[
+            "wiki-skills-and-project-context.html"
+        ]:
+            with self.subTest(wiki_context_exact_link=link):
+                self.assertIn(link, wiki_context_hrefs)
+            if not link.startswith("../"):
+                continue
+            with self.subTest(wiki_context_local_link=link):
+                actual_link = next(href for href in wiki_context_hrefs if href == link)
+                local_target = (wiki_context_path.parent / actual_link).resolve()
+                self.assertTrue(
+                    local_target.is_file(),
+                    f"Wiki context link does not resolve: {link}",
+                )
+
         template_page_text = page_text["documentation-templates.html"]
         for template_name in DOCUMENTATION_TEMPLATE_FILENAMES:
             with self.subTest(template_modal_trigger=template_name):
@@ -5337,6 +5385,7 @@ class BundleContentTests(unittest.TestCase):
             "examples",
             "execution",
             "templates",
+            "wiki-context",
         )
         index_owners = tuple(
             re.findall(
