@@ -407,7 +407,7 @@
         </div>
         <div class="flow-row">
           <div><span class="name">3. Render Each Harness Format</span></div>
-          <p><code>scripts/build-skill-docs.py</code> converts the conceptual values into native property names and file structures. For example, conceptual <code>instructions</code> becomes Codex <code>developer_instructions</code> or the Markdown body of a Claude Code, Gemini CLI, or Junie CLI agent. The generator statically appends unconditional core skill bodies by default and leaves conditional request-specific skills for dynamic loading. The Codex adapter also inlines <code>codex-harness-directives</code> when <code>repositoryMutation</code> is required or conditional. Passing <code>--inline-core-skills false</code> retains native core-skill loading and the Codex harness loading directive.</p>
+          <p><code>scripts/build-skill-docs.py</code> converts the conceptual values into native property names and file structures. For example, conceptual <code>instructions</code> becomes Codex <code>developer_instructions</code> or the Markdown body of a Claude Code, Gemini CLI, or Junie CLI agent. The generator statically appends unconditional core skill bodies by default and preserves conditional request-specific selection instructions. The Codex adapter also inlines <code>codex-harness-directives</code> when <code>repositoryMutation</code> is required or conditional. Passing <code>--inline-core-skills false</code> retains each adapter's native or instruction-driven core-skill delivery. The <a href="skills-modularization.html#skill-lifecycle-title">cross-harness skill lifecycle</a> owns the preload, dynamic invocation, content-read, application, and proof distinctions.</p>
         </div>
         <div class="flow-row">
           <div><span class="name">4. Use Generated Native Agent Definition Files</span></div>
@@ -519,7 +519,7 @@
           <tr>
             <td><span class="name">Agent dependencies</span></td>
             <td><code>agentDependencies</code></td>
-            <td>Names fixed direct agent-to-agent use declared by this conceptual definition. The generated diagram renders an arrow from the using agent to each used agent; dynamic task-time routing remains outside this list.</td>
+            <td>Names fixed direct agent-to-agent use declared by this conceptual definition. The generated diagram renders an arrow from the using agent to each used agent; runtime-selected delegation that is not a fixed dependency remains outside this list.</td>
           </tr>
           <tr>
             <td><span class="name">Skill condition</span></td>
@@ -645,7 +645,7 @@
             <tr>
               <td><span class="name">Codex</span></td>
               <td>One standalone TOML file per custom agent.</td>
-              <td>Codex discovers project <code>.codex/agents/</code> and user <code>~/.codex/agents/</code>. This bundle generates <code>generated/adapters/codex/agents/*.toml</code>. Mutation-capable definitions inline <code>codex-harness-directives</code> by default; the false inlining mode enables it through <code>[[skills.config]]</code> and adds a loading directive. Read-only definitions omit it.</td>
+              <td>Codex discovers project <code>.codex/agents/</code> and user <code>~/.codex/agents/</code>. This bundle generates <code>generated/adapters/codex/agents/*.toml</code>. Mutation-capable definitions inline <code>codex-harness-directives</code> by default; the false inlining mode enables its catalog entry through <code>[[skills.config]]</code> and adds a developer instruction to read it. Read-only definitions omit it. Enablement is not preloading or behavioral evidence.</td>
             </tr>
             <tr>
               <td><span class="name">Claude Code</span></td>
@@ -720,7 +720,7 @@
           </tr>
           <tr>
             <td><span class="name">skillAvailability</span></td>
-            <td><code>[[skills.config]]</code></td>
+            <td><code>[[skills.config]]</code> name-based or path-based enablement; not instruction preloading</td>
             <td>No documented equivalent.</td>
             <td>No documented equivalent.</td>
             <td>No documented equivalent.</td>

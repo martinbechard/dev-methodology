@@ -515,14 +515,14 @@
 
   <section class="section" aria-labelledby="agent-skills-title">
     <h2 id="agent-skills-title">Core Agent Skills</h2>
-    <p class="lede">An agent definition may directly reference both required and optional core skills. A required skill has no condition and loads whenever that agent runs. An optional skill has a human-readable condition and loads only when the request and available evidence make it applicable. Both kinds of directly referenced skills must be technology-agnostic so the generic agent definition can be reused across programming languages, frameworks, project types, and agentic coding vendors. View their complete definitions in the <a href="agent-and-skill-definitions.html#skills-title">Skill Catalog on the Core Agent and Skills page</a>. The <a href="wiki-skills-and-project-context.html">Wiki Skills And Project Context page</a> explains the operating relationships within the wiki skill family without duplicating that catalog.</p>
+    <p class="lede">An agent definition may directly reference both required and optional core skills. A required skill has no condition and is selected for every invocation of that agent. An optional skill has a human-readable condition and is selected only when the request and available evidence make it applicable. Selection does not by itself say whether a harness preloads, dynamically reads, or applies the skill; the <a href="#skill-lifecycle-title">cross-harness lifecycle</a> makes those states explicit. Both kinds of directly referenced skills must be technology-agnostic so the generic agent definition can be reused across programming languages, frameworks, project types, and agentic coding vendors. View their complete definitions in the <a href="agent-and-skill-definitions.html#skills-title">Skill Catalog on the Core Agent and Skills page</a>. The <a href="wiki-skills-and-project-context.html">Wiki Skills And Project Context page</a> explains the operating relationships within the wiki skill family without duplicating that catalog.</p>
     <div class="matrix">
       <table>
         <thead>
           <tr>
             <th>Skill relationship</th>
             <th>How it is declared</th>
-            <th>When it loads</th>
+            <th>When it is selected</th>
             <th>Example</th>
           </tr>
         </thead>
@@ -602,6 +602,136 @@
         </tbody>
       </table>
     </div>
+  </section>
+
+  <section class="section" aria-labelledby="skill-lifecycle-title">
+    <h2 id="skill-lifecycle-title">Cross-Harness Skill Lifecycle</h2>
+    <p class="lede">Skill discovery, selection, instruction delivery, behavioral use, and proof are separate events. This section owns those distinctions for the bundle. The native runtime files described on the <a href="generic-agent-definitions-source.html">source-model page</a> and the project context layers described on the <a href="agentic-configuration.html">agentic configuration page</a> link here instead of redefining them.</p>
+    <div class="matrix">
+      <table>
+        <thead>
+          <tr>
+            <th>Lifecycle state</th>
+            <th>Meaning</th>
+            <th>What it does not prove</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="name">Available</span></td>
+            <td>The harness catalog can expose the skill's name, description, and location, and the skill is not disabled.</td>
+            <td>The full instructions are not necessarily in model context, selected for the request, or followed.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Preloaded</span></td>
+            <td>The full skill instructions are inserted into the agent's initial context before it starts the task.</td>
+            <td>The agent has not necessarily exercised the instructions or produced their required evidence.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Dynamically invoked</span></td>
+            <td>The user, caller, or model requests a discovered skill after the task has started.</td>
+            <td>A request or marker alone does not prove that the full content was resolved and read.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Content read</span></td>
+            <td>The complete selected instructions entered the active context, either through preloading, runtime loading, explicit caller injection, or static adapter inlining.</td>
+            <td>Presence in context does not establish behavioral compliance.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Behaviorally applied</span></td>
+            <td>Observable commands, decisions, artifacts, or boundary handling satisfy requirements unique enough to attribute to the skill.</td>
+            <td>Self-report, prompt text, or a generated definition alone is not independent evidence.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Verified</span></td>
+            <td>Trusted runtime identity, retained events or artifacts, deterministic assertions, and an independent assessment support the claimed application. An outcome-less completed call is not semantic evidence. Negative or wrong-skill controls are required when attribution would otherwise be ambiguous.</td>
+            <td>A fixture pass, declaration, catalog listing, or heading named Skills Used is not equivalent evidence.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="section-subheading">Native runtime mechanisms</h3>
+    <div class="matrix">
+      <table>
+        <thead>
+          <tr>
+            <th>Harness mechanism</th>
+            <th>Lifecycle effect</th>
+            <th>Authority and limits</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="name">Claude Code subagent <code>skills</code></span></td>
+            <td>Preloads the full content of every listed skill into the subagent context at startup.</td>
+            <td>The <a href="https://code.claude.com/docs/en/sub-agents#preload-skills-into-subagents">Claude Code subagent documentation</a> defines this field. It controls preload, not the complete accessible catalog; missing or disabled entries are skipped with a debug warning.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Claude Code <code>Skill</code> tool</span></td>
+            <td>Dynamically invokes a discovered project, user, or plugin skill and loads its full body when selected.</td>
+            <td>The <a href="https://code.claude.com/docs/en/slash-commands#restrict-claudes-skill-access">Claude Code skill documentation</a> defines invocation and access controls. A restrictive subagent <code>tools</code> allowlist that omits <code>Skill</code>, or a matching deny rule, prevents dynamic invocation even though separately preloaded content remains in context. A skill's <code>allowed-tools</code> grants permission while active; it is not a restrictive allowlist.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Codex catalog discovery</span></td>
+            <td>Makes a bounded list of skill names, descriptions, and paths available for explicit or implicit selection. Codex reads the full <code>SKILL.md</code> only after selecting the skill.</td>
+            <td>The <a href="https://developers.openai.com/codex/skills#how-codex-uses-skills">Codex skill documentation</a> defines progressive disclosure and explicit or description-based invocation. Catalog presence is availability, not preloading or activation proof.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Codex developer instructions</span></td>
+            <td>Can require the model to read and apply a named skill when a condition holds. This bundle uses that instruction path for request-specific core skills and for dynamic fallback modes.</td>
+            <td>The instruction selects expected behavior but does not itself prove that a file was read or its behavior applied. Bundle generation tests verify the instruction text; runtime receipts and behavioral assertions establish stronger evidence.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Codex <code>skills.config</code></span></td>
+            <td>Enables or disables a catalog entry by name or absolute path. It changes availability; it does not preload instructions.</td>
+            <td>The published <a href="https://developers.openai.com/codex/config-reference#skillsconfig">configuration reference</a> documents path-based enablement. The installed app-server schema also accepts a name selector, and generated adapter tests exercise that schema form. Neither form is counted as content-read or behavioral evidence.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Codex app-server <code>skill</code> input item</span></td>
+            <td>Lets the caller select a name and path for a turn; the server injects the full skill instructions instead of asking the model to resolve the name.</td>
+            <td>The <a href="https://developers.openai.com/codex/app-server#skills">app-server protocol documentation</a> recommends pairing the item with the textual skill marker. Because the caller controls the item, it proves explicit instruction delivery only when the retained request and resolved content identity are trusted; behavioral application still needs output evidence.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="section-subheading">Bundle selection and delivery</h3>
+    <div class="matrix">
+      <table>
+        <thead>
+          <tr>
+            <th>Skill category</th>
+            <th>Selection owner</th>
+            <th>Default delivery</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="name">Definition-owned core skill</span></td>
+            <td>The conceptual agent definition declares an unconditional technology-agnostic skill.</td>
+            <td>The generator appends the complete body to every supported native agent definition by default. False core inlining uses each adapter's documented native or instruction-driven loading mechanism instead.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Request-specific core or tool skill</span></td>
+            <td>The conceptual definition supplies a human-readable condition; the request and available evidence determine whether it applies. Any declared tool dependency must also be available and authorized.</td>
+            <td>The generated instructions preserve the condition and require dynamic use only when applicable. Tool availability permits execution but does not prove selection, content read, or behavioral application.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Detected-folder technology skill</span></td>
+            <td>Project Configurator runs the setup detector against repository evidence, resolves companions and conflicts, and records the accepted folder loadout in <code>PROJECT.yaml</code>.</td>
+            <td>The guidance renderer embeds complete instructions in the applicable root or nested <code>AGENTS.md</code> by default. Claude Code receives the same guidance through a thin colocated <code>CLAUDE.md</code> import. The false technology-inlining mode emits explicit dynamic load-by-name guidance.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Unsupported technology</span></td>
+            <td>The detector returns <code>NO_VARIANT</code> when repository evidence is pertinent but no compatible specialized skill exists.</td>
+            <td><code>PROJECT.yaml</code> records general model training as the fallback. Agents do not invent a skill, silently substitute an unrelated specialization, or rerun detection during ordinary work.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">Adapter generation is portable because conceptual sources name bundle skill IDs and conditions rather than machine paths. Only harness-native output may use native preload or availability fields; generated mirrors are rebuilt from approved canonical sources and never edited directly.</p>
+    <p class="note">Local evidence is intentionally layered. <a href="../scripts/test_bundle_content.py">Bundle-content tests</a> verify generated inlining, Claude preload fallback, Codex name-based availability entries, conditional instructions, and the rule that ordinary agents do not own detection. <a href="../evals/README.md#harness-context-and-privacy-preflight">Harness evaluation documentation</a> defines retained runtime identity and evidence boundaries. The <a href="../evals/agent-tests/results/2026-07-17-codex-agent-suites.md">accepted Codex agent-suite report</a> records agent identity and behavioral runs, but does not verify per-skill content read or activation. Schema support, staged skill packages, generated text, and general agent behavior remain insufficient for a per-skill claim until a matching installed-runtime run supplies trusted content and behavior receipts.</p>
   </section>
 
   <section class="section" aria-labelledby="technology-examples-title">
@@ -773,26 +903,26 @@
   <section class="section" aria-labelledby="technology-boundary-title">
     <h2 id="technology-boundary-title">Why Technology-Specific Skills Are Loaded Separately</h2>
     <p class="lede">Required versus optional is not the architectural split: both are valid forms of technology-agnostic skill references inside an agent definition. The actual boundary is technology dependence. No finite agent definition can list every language, framework, library, runtime, database, and tool that may exist now or be added later. Listing technology skills in generic agents would also require every relevant agent definition to be changed whenever the technology catalog grows.</p>
-    <p>The toolkit therefore uses two independent skill-selection mechanisms. Agent definitions provide their own required and optional technology-agnostic skills. Generated adapters statically append the required core skill instructions by default, while optional request-specific skills remain dynamically loaded when their conditions apply. Project setup separately considers only technology and domain skills that actually exist in the available skill collection, detects which ones match each project or folder scope, and statically embeds those skills under the applicable AGENTS.md route by default. New technology skills can be added without editing every generic agent definition.</p>
+    <p>The toolkit therefore uses two independent skill-selection mechanisms. Agent definitions provide their own required and optional technology-agnostic skills. Generated adapters statically append the required core skill instructions by default, while optional request-specific skills remain subject to their conditions and the native lifecycle described above. Project setup separately considers only technology and domain skills that actually exist in the available skill collection, detects which ones match each project or folder scope, and statically embeds those skills under the applicable AGENTS.md scope by default. New technology skills can be added without editing every generic agent definition.</p>
     <div class="matrix">
       <table>
         <thead>
           <tr>
-            <th>Loading mechanism</th>
-            <th>What it can load</th>
-            <th>How selection works</th>
+            <th>Selection mechanism</th>
+            <th>What it can select</th>
+            <th>How delivery follows</th>
             <th>Why it belongs here</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><span class="name">Agent-definition loading</span></td>
+            <td><span class="name">Agent-definition selection</span></td>
             <td>Required and optional technology-agnostic skills declared directly in the conceptual agent definition.</td>
-            <td>A required entry is statically inlined into generated agent instructions by default. An optional entry loads dynamically when its human-readable condition applies to the request and available evidence. The inline-core-skills false mode retains native core-skill loading.</td>
+            <td>A required entry is statically inlined into generated agent instructions by default. An optional entry is selected when its human-readable condition applies to the request and available evidence. The harness-specific lifecycle above determines how selected content reaches context. The inline-core-skills false mode retains native or instruction-driven delivery.</td>
             <td>These skills describe stable responsibilities and methods that remain useful regardless of the project's technology stack.</td>
           </tr>
           <tr>
-            <td><span class="name">Folder technology loading</span></td>
+            <td><span class="name">Folder technology selection</span></td>
             <td>Available technology and domain skills with detection metadata, such as python, fastapi, the separate Java, Spring Boot, and Quarkus coding and design skills, or the focused JHipster skills.</td>
             <td>Project Configurator detects matching repository evidence for each scope, records the intended loadout in PROJECT.yaml, and renders the complete skill instructions under the applicable AGENTS.md route by default. The inline-tech-skills false mode emits dynamic load-by-name guidance.</td>
             <td>The project and folder determine the applicable technologies, and the available technology catalog can grow independently of the generic agents.</td>
@@ -857,9 +987,9 @@
       </article>
     </div>
     <aside class="note">
-      <div class="tag-row"><span class="tag reference">Optional skills through the MCP server</span></div>
-      <p>Request-specific optional skills remain dynamic because their conditions can be evaluated only against the current request and evidence. When an optional skill is selected and its content is not already in context, the configured <a href="../README.md#preferred-mcp-operations-layer">mcp-agent-ops server</a> loads the complete selected set in one bounded <code>skill_load</code> call. The agent then uses <code>skill_resource_load</code> only for supporting resources that the selected instructions actually require.</p>
-      <p>This MCP path avoids building shell commands, starting subprocesses, quoting filesystem paths, parsing command output, or generating helper code merely to load optional skills into an agent. The bounded MCP request remains a tool call, but it supplies a structured catalog operation directly and consolidates exact optional-skill loading instead of creating a separate shell or code-generation workflow for each file.</p>
+      <div class="tag-row"><span class="tag reference">Conditional MCP delivery path</span></div>
+      <p>Request-specific optional skills are selected only after their conditions are evaluated against the current request and evidence. Delivery then follows the harness-specific lifecycle above. Within the development-methodology workflow, when mcp-agent-ops is configured and selected content is not already in context, that skill directs the agent to load the complete selected set in one bounded <code>skill_load</code> call and to use <code>skill_resource_load</code> only for required supporting resources.</p>
+      <p>This conditional <a href="../README.md#preferred-mcp-operations-layer">MCP path</a> is a bundle procedure rather than a universal harness mechanism. It avoids constructing shell commands or helper code for retrieval while preserving native Claude Code and Codex invocation paths when MCP is absent or not selected.</p>
     </aside>
   </section>
 
