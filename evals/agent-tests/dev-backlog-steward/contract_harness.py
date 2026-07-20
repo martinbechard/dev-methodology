@@ -8,6 +8,15 @@ from __future__ import annotations
 
 
 _SUCCESSFUL_CLAIM_OUTCOMES = frozenset({"PRIMARY", "ISOLATE", "RECOVER"})
+_REQUIRED_ACTIVE_HANDOFF_MARKERS = (
+    b"Status: Running",
+    b"Owner:",
+    b"Claim:",
+    b"Blocker:",
+    b"Unblock Condition:",
+    b"Evidence:",
+    b"Acceptance Criteria:",
+)
 _REQUIRED_BLOCKED_MARKERS = (
     b"Status: Blocked",
     b"Owner: Unowned",
@@ -17,6 +26,25 @@ _REQUIRED_BLOCKED_MARKERS = (
     b"Evidence:",
     b"Acceptance Criteria:",
 )
+
+
+def block_for_handoff(item_before: bytes) -> tuple[bytes, tuple[str, ...]]:
+    """Release active ownership while preserving durable blocked-work evidence."""
+    if any(marker not in item_before for marker in _REQUIRED_ACTIVE_HANDOFF_MARKERS):
+        raise ValueError("blocked handoff fixture lacks required durable evidence")
+    if b"Owner: Unowned" in item_before or b"Claim: None" in item_before:
+        raise ValueError("blocked handoff fixture must begin with active ownership")
+
+    lines = item_before.splitlines(keepends=True)
+    replacements = {
+        b"Status:": b"Status: Blocked\n",
+        b"Owner:": b"Owner: Unowned\n",
+        b"Claim:": b"Claim: None\n",
+    }
+    item_after = b"".join(
+        replacements.get(line.split(maxsplit=1)[0], line) for line in lines
+    )
+    return item_after, ("running", "blocked", "released")
 
 
 def attempt_resumption(

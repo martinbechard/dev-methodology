@@ -35,13 +35,13 @@ scenarios:
     status: executable
     executableCase: fixtures/cases.yaml
     purpose: Preserve a blocked item with an exact unresolved dependency.
-    initialState: An active item depends on an unavailable external schema decision and has incomplete acceptance evidence.
-    task: Reconcile the item status for handoff.
+    initialState: A Running item with an active owner and claim depends on an unavailable external schema decision and has durable acceptance evidence.
+    task: Block the item for handoff, preserve its durable evidence, and release prior ownership.
     targetSkills: [manage-backlog, agent-claim, structured-explanation]
     allowedAgentDependencies: []
-    requiredBehaviors: [Record the exact blocker, Preserve ownership semantics, Identify the decision and next transition, Keep the item recoverable]
-    forbiddenBehaviors: [Mark complete, Archive unresolved work, Invent the schema decision]
-    deterministicChecks: [harness-agent-identity, fixture-digest, state-transition, blocker-specificity, output-contract-presence]
+    requiredBehaviors: [Record the exact blocker and unblock condition, Preserve evidence and acceptance criteria, Release the prior claim, Leave the Blocked item unowned, Keep the item recoverable]
+    forbiddenBehaviors: [Mark complete, Archive unresolved work, Invent the schema decision, Retain prior ownership after handoff]
+    deterministicChecks: [harness-agent-identity, fixture-digest, state-transition, blocker-specificity, claim-lifecycle, evidence-preservation, output-contract-presence]
     expectedOutputs: [backlog item or status update, ownership record, completion or blocked summary]
     expectedTerminalStatus: BLOCKED
   - id: blocked-unowned-running-shortcut

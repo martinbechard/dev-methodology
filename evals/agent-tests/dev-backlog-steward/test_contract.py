@@ -28,6 +28,34 @@ _SPEC.loader.exec_module(contract_harness)
 class DevBacklogStewardContractTests(unittest.TestCase):
     """Protect explicit claim acquisition and evidence preservation during resumption."""
 
+    def test_blocked_handoff_releases_prior_ownership_and_preserves_evidence(self) -> None:
+        """A blocked handoff ends the prior claim without losing durable evidence."""
+        fixture = yaml.safe_load(
+            (SUITE_ROOT / "fixtures" / "cases.yaml").read_text(encoding="utf-8")
+        )["cases"]["blocked-state-transition"]
+        before = fixture["itemBefore"].encode("utf-8")
+
+        after, transitions = contract_harness.block_for_handoff(before)
+
+        self.assertEqual(("running", "blocked", "released"), transitions)
+        expected = before.replace(b"Status: Running", b"Status: Blocked", 1)
+        expected = expected.replace(b"Owner: dev-coder", b"Owner: Unowned", 1)
+        expected = expected.replace(
+            b"Claim: schema-migration-active", b"Claim: None", 1
+        )
+        self.assertEqual(expected, after)
+        for preserved_line in (
+            b"Blocker: External schema decision is unavailable.",
+            b"Unblock Condition: Approved schema decision is recorded.",
+            b"Evidence: Existing schema analysis and verification log.",
+            (
+                b"Acceptance Criteria: Schema decision remains traceable; "
+                b"existing verification remains required."
+            ),
+        ):
+            with self.subTest(preserved_line=preserved_line):
+                self.assertIn(preserved_line, after)
+
     def test_blocked_resumption_has_negative_and_positive_scenarios(self) -> None:
         """The suite covers unowned, failed-claim, and successful claim outcomes."""
         scenarios = yaml.safe_load(
@@ -73,19 +101,22 @@ class DevBacklogStewardContractTests(unittest.TestCase):
         for case_id, transitions_expected in expected_transitions.items():
             fixture = cases[case_id]
             before = fixture["itemBefore"].encode("utf-8")
-            after, transitions = contract_harness.attempt_resumption(
-                before,
-                unblock_condition_satisfied=fixture["unblockConditionSatisfied"],
-                claim_outcome=fixture["claimOutcome"],
-            )
+            claim_outcomes = [fixture["claimOutcome"]]
+            claim_outcomes.extend(fixture.get("otherFailedClaimOutcomes", []))
+            for claim_outcome in claim_outcomes:
+                after, transitions = contract_harness.attempt_resumption(
+                    before,
+                    unblock_condition_satisfied=fixture["unblockConditionSatisfied"],
+                    claim_outcome=claim_outcome,
+                )
 
-            with self.subTest(case_id=case_id):
-                self.assertEqual(before, after)
-                self.assertEqual(transitions_expected, transitions)
-                self.assertIn(b"Status: Blocked", after)
-                self.assertIn(b"Owner: Unowned", after)
-                self.assertIn(b"Claim: None", after)
-                self.assertNotIn(b"Status: Running", after)
+                with self.subTest(case_id=case_id, claim_outcome=claim_outcome):
+                    self.assertEqual(before, after)
+                    self.assertEqual(transitions_expected, transitions)
+                    self.assertIn(b"Status: Blocked", after)
+                    self.assertIn(b"Owner: Unowned", after)
+                    self.assertIn(b"Claim: None", after)
+                    self.assertNotIn(b"Status: Running", after)
 
     def test_successful_claim_resumes_in_order_and_preserves_evidence(self) -> None:
         """A new claim and owner precede Running without rewriting prior evidence."""
