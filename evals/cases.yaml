@@ -572,3 +572,63 @@ cases:
       manage-github-work-items: [SKILL.md]
       structured-explanation: [SKILL.md]
     requiredEvidence: [DUPLICATE, CREATED, LIFECYCLE, DEPENDENCY, TERMINAL, REOPEN, PARTIAL-MUTATION, AUTHENTICATION, PERMISSION, NO-SHADOW-FILE, COMPLETION-INDEPENDENCE]
+  - id: provider-placeholder-matrix
+    coverageStatus: fixture-backed
+    executionStatus: runnable
+    project: evals/projects/provider-placeholder-matrix
+    task: TASK.md
+    readOnly: true
+    resultDestination: external-evidence
+    allowedWritePaths: []
+    ephemeralWritePaths: []
+    install: null
+    verify:
+      argv: [python3, -c, "raise SystemExit(0)"]
+      modelVisible: false
+    harnesses: [codex, junie]
+    risk: {level: ordinary, reasons: []}
+    executionTier: local
+    securityContainmentRequired: false
+    harnessExecutionStatus: {codex: runnable, junie: runnable}
+    requiredAgents: [dev-backlog-steward]
+    agentScenarios: [dev-backlog-steward-boundary]
+    requiredSkills:
+      - create-azure-devops-work-item
+      - manage-azure-devops-work-items
+      - create-jira-work-item
+      - manage-jira-work-items
+      - structured-explanation
+    skillProbes:
+      - probe-create-azure-devops-work-item
+      - probe-manage-azure-devops-work-items
+      - probe-create-jira-work-item
+      - probe-manage-jira-work-items
+    fixtureBackedProbeClaims:
+      - probe-create-azure-devops-work-item
+      - probe-manage-azure-devops-work-items
+      - probe-create-jira-work-item
+      - probe-manage-jira-work-items
+    workflowPack: backlog
+    sandboxProfiles: {codex: codex-read-only, junie: junie-read-only}
+    judgePlan:
+      deterministicChecks: [model-input-safety, skill-read-trace, harness-agent-identity, no-forbidden-mutation, output-contract-presence, snapshot-reset, local-execution-boundary]
+      modelRubric: workflow-quality
+    contextPack:
+      fixtureRoot: evals/projects/provider-placeholder-matrix
+      include: [TASK.md]
+      stagedSkillPackages:
+        - create-azure-devops-work-item
+        - manage-azure-devops-work-items
+        - create-jira-work-item
+        - manage-jira-work-items
+        - structured-explanation
+      wholeRepositoryAllowed: false
+      approvedSensitiveData: false
+    modelVisiblePaths: [TASK.md]
+    skillResourceAllowlist:
+      create-azure-devops-work-item: [SKILL.md]
+      manage-azure-devops-work-items: [SKILL.md]
+      create-jira-work-item: [SKILL.md]
+      manage-jira-work-items: [SKILL.md]
+      structured-explanation: [SKILL.md]
+    requiredEvidence: [AZURE-DEVOPS-CREATE, AZURE-DEVOPS-MANAGE, JIRA-CREATE, JIRA-MANAGE, ZERO-MUTATION]

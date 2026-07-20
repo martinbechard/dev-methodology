@@ -374,10 +374,14 @@ packs:
       - probe-codex-workitem-coordination
       - probe-create-backlog
       - probe-create-github-work-item
+      - probe-create-azure-devops-work-item
+      - probe-create-jira-work-item
       - probe-file-based-backlog
       - probe-github-issues-backlog
       - probe-manage-backlog
       - probe-manage-github-work-items
+      - probe-manage-azure-devops-work-items
+      - probe-manage-jira-work-items
       - probe-organise-project-files
       - probe-structured-explanation
     phases:
@@ -434,5 +438,6 @@ packs:
     executableCases:
       - backlog-lifecycle
       - github-work-item-provider
+      - provider-placeholder-matrix
     caseCoverageStatus: partial
     coverageStatus: declared

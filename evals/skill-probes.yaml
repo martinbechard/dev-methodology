@@ -289,6 +289,34 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
+  - id: probe-create-azure-devops-work-item
+    skill: create-azure-devops-work-item
+    source: skills/create-azure-devops-work-item/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: workflow-invariant
+    activationCondition: Azure DevOps is the selected work-item provider and creation of a durable work item is requested.
+    negativeCondition: No connector, credential, remote, browser, network client, file queue, or alternative provider activates unsupported behavior or authorizes mutation.
+    expectedBehavior: Return BLOCKED with provider azure-devops, operation create, the missing capability, no identifier, zero-mutation evidence, and the next implementation decision without probing or falling back.
+    judgePlan: {deterministicChecks: [skill-read-trace, no-forbidden-mutation, output-contract-presence], modelRubric: workflow-quality}
+    scenarioAssociations: [dev-backlog-steward-boundary]
+    workflowAssociations: [backlog]
+    executableCases: [provider-placeholder-matrix]
+    coverageStatus: fixture-backed
+    ablation: {omitTargetSkill: true, wrongSkillControl: create-backlog}
+  - id: probe-create-jira-work-item
+    skill: create-jira-work-item
+    source: skills/create-jira-work-item/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: workflow-invariant
+    activationCondition: Jira is the selected work-item provider and creation of a durable issue is requested.
+    negativeCondition: No connector, credential, remote, browser, network client, file queue, or alternative provider activates unsupported behavior or authorizes mutation.
+    expectedBehavior: Return BLOCKED with provider jira, operation create, the missing capability, no identifier, zero-mutation evidence, and the next implementation decision without probing or falling back.
+    judgePlan: {deterministicChecks: [skill-read-trace, no-forbidden-mutation, output-contract-presence], modelRubric: workflow-quality}
+    scenarioAssociations: [dev-backlog-steward-boundary]
+    workflowAssociations: [backlog]
+    executableCases: [provider-placeholder-matrix]
+    coverageStatus: fixture-backed
+    ablation: {omitTargetSkill: true, wrongSkillControl: create-backlog}
   - id: probe-create-functional-spec
     skill: create-functional-spec
     source: skills/create-functional-spec/SKILL.md
@@ -947,6 +975,34 @@ probes:
     executableCases: [backlog-lifecycle]
     coverageStatus: fixture-backed
     ablation: {omitTargetSkill: true, wrongSkillControl: typescript}
+  - id: probe-manage-azure-devops-work-items
+    skill: manage-azure-devops-work-items
+    source: skills/manage-azure-devops-work-items/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: workflow-invariant
+    activationCondition: Azure DevOps is the selected work-item provider and an existing work item must be read or changed.
+    negativeCondition: No connector, credential, remote, browser, network client, file queue, or alternative provider activates unsupported behavior or authorizes mutation.
+    expectedBehavior: Return BLOCKED with provider azure-devops, the requested management operation, the missing capability, no identifier, zero-mutation evidence, and the next implementation decision without probing or falling back.
+    judgePlan: {deterministicChecks: [skill-read-trace, no-forbidden-mutation, output-contract-presence], modelRubric: workflow-quality}
+    scenarioAssociations: [dev-backlog-steward-boundary]
+    workflowAssociations: [backlog]
+    executableCases: [provider-placeholder-matrix]
+    coverageStatus: fixture-backed
+    ablation: {omitTargetSkill: true, wrongSkillControl: manage-backlog}
+  - id: probe-manage-jira-work-items
+    skill: manage-jira-work-items
+    source: skills/manage-jira-work-items/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: workflow-invariant
+    activationCondition: Jira is the selected work-item provider and an existing issue must be read or changed.
+    negativeCondition: No connector, credential, remote, browser, network client, file queue, or alternative provider activates unsupported behavior or authorizes mutation.
+    expectedBehavior: Return BLOCKED with provider jira, the requested management operation, the missing capability, no identifier, zero-mutation evidence, and the next implementation decision without probing or falling back.
+    judgePlan: {deterministicChecks: [skill-read-trace, no-forbidden-mutation, output-contract-presence], modelRubric: workflow-quality}
+    scenarioAssociations: [dev-backlog-steward-boundary]
+    workflowAssociations: [backlog]
+    executableCases: [provider-placeholder-matrix]
+    coverageStatus: fixture-backed
+    ablation: {omitTargetSkill: true, wrongSkillControl: manage-backlog}
   - id: probe-name-methodology-artifacts
     skill: name-methodology-artifacts
     source: skills/name-methodology-artifacts/SKILL.md

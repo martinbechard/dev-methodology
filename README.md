@@ -397,6 +397,10 @@ The development practice skills are:
 - github-issues-backlog
 - create-gitlab-work-item
 - manage-gitlab-work-items
+- create-azure-devops-work-item
+- manage-azure-devops-work-items
+- create-jira-work-item
+- manage-jira-work-items
 - execute-workitem
 - fix-explanation
 - structured-explanation

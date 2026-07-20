@@ -93,6 +93,10 @@ NEW_DEVELOPMENT_SKILLS = (
     "github-issues-backlog",
     "create-gitlab-work-item",
     "manage-gitlab-work-items",
+    "create-azure-devops-work-item",
+    "manage-azure-devops-work-items",
+    "create-jira-work-item",
+    "manage-jira-work-items",
     "create-pull-request",
     "create-unit-test-plan",
     "review-unit-test-plan",
@@ -1166,6 +1170,58 @@ class BundleContentTests(unittest.TestCase):
             with self.subTest(skill_name=skill_name):
                 self.assertTrue((SKILLS_ROOT / skill_name / "SKILL.md").is_file())
                 self.assertTrue(openai_metadata_path(skill_name).is_file())
+
+    def test_azure_devops_and_jira_placeholders_block_without_fallback(self) -> None:
+        expected = {
+            "create-azure-devops-work-item": ("azure-devops", "create"),
+            "manage-azure-devops-work-items": ("azure-devops", "the requested"),
+            "create-jira-work-item": ("jira", "create"),
+            "manage-jira-work-items": ("jira", "the requested"),
+        }
+
+        for skill_name, (provider, operation) in expected.items():
+            with self.subTest(skill_name=skill_name):
+                skill_text = (SKILLS_ROOT / skill_name / "SKILL.md").read_text(
+                    encoding="utf-8"
+                )
+                self.assertIn("Status: BLOCKED.", skill_text)
+                self.assertIn(f"Provider: {provider}.", skill_text)
+                self.assertIn(f"Requested operation: {operation}", skill_text)
+                self.assertIn("Missing capability:", skill_text)
+                self.assertIn("Work-item identifier: none.", skill_text)
+                self.assertIn("Mutation evidence:", skill_text)
+                self.assertIn("Next authority or implementation decision:", skill_text)
+                self.assertIn("Do not replace", skill_text)
+                self.assertIn("filesystem", skill_text)
+                metadata_text = openai_metadata_path(skill_name).read_text(
+                    encoding="utf-8"
+                )
+                self.assertNotIn("dependencies:\n  tools:", metadata_text)
+
+        probes = load_yaml_object(REPOSITORY_ROOT / "evals" / "skill-probes.yaml")
+        probe_ids = {entry["id"] for entry in probes["probes"]}
+        for skill_name in expected:
+            self.assertIn(f"probe-{skill_name}", probe_ids)
+
+        placeholder_probes = {
+            entry["id"]: entry for entry in probes["probes"] if entry["id"] in probe_ids
+        }
+        for skill_name in expected:
+            probe = placeholder_probes[f"probe-{skill_name}"]
+            self.assertEqual(["provider-placeholder-matrix"], probe["executableCases"])
+            self.assertEqual("fixture-backed", probe["coverageStatus"])
+
+        cases = load_yaml_object(REPOSITORY_ROOT / "evals" / "cases.yaml")
+        placeholder_case = next(
+            case
+            for case in cases["cases"]
+            if case["id"] == "provider-placeholder-matrix"
+        )
+        self.assertTrue(placeholder_case["readOnly"])
+        self.assertEqual([], placeholder_case["allowedWritePaths"])
+        deterministic_checks = placeholder_case["judgePlan"]["deterministicChecks"]
+        self.assertIn("no-forbidden-mutation", deterministic_checks)
+        self.assertIn("output-contract-presence", deterministic_checks)
 
     def test_gitlab_work_item_skills_define_provider_native_authority_and_lifecycle(self) -> None:
         create_text = (SKILLS_ROOT / "create-gitlab-work-item" / "SKILL.md").read_text(

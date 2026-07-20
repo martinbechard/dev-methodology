@@ -279,6 +279,7 @@ agents:
           modelRubric: workflow-quality
         executableCases:
           - backlog-lifecycle
+          - provider-placeholder-matrix
         coverageStatus: fixture-backed
     coverageStatus: fixture-backed
   - id: dev-browser-operator
