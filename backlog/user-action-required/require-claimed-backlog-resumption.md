@@ -1,8 +1,30 @@
 # Require Claimed Backlog Resumption
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
+
+## User Action Required
+
+The prepared eval-only candidate proves that the shipped Manage Backlog definition does not yet require safe claimed resumption. Changing that governed definition requires exact user approval.
+
+## Question for the User
+
+Do you approve changing only skills/manage-backlog/SKILL.md to require that a blocked handoff releases prior ownership, preserves blocker/unblock/evidence/acceptance data, transitions through Ready, acquires a successful new exclusive claim and records the new owner before Running, and restores the byte-for-byte pre-attempt Blocked item when no claim or WAIT occurs?
+
+Approval also permits supported regeneration of design/generated/skill-definitions.js from that source and integration with prepared non-governed eval/test commit 244efcd2aa26dc14d226ad33dc9be680cef6b95d. It does not authorize any other agent or skill definition.
+
+## Why User Input Is Required
+
+The remaining delivery gap is in a governed distributed skill definition. Repository access, preserved commits, the eval-only candidate, and parent delegation do not create definition-change authority.
+
+## Resolution
+
+Pending.
+
+## Unattended Work Boundary
+
+Preserve clean candidate 244efcd2aa26dc14d226ad33dc9be680cef6b95d and perform no governed source or generated-mirror mutation until the exact question is answered.
 
 ## Current Resumption Ownership
 
