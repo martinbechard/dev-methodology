@@ -1,28 +1,24 @@
 # Add Direct-Main Completion Skill
 
-Status: User Action Required
+Status: Ready
 
 Type: Feature
 
-## User Action Required
+## Approval Resolution
 
-This item creates one governed direct-main completion skill package.
+The user approved the exact governed definition scope as part of the originally requested work-item completion skills.
 
-## Question for the User
+## Approved Scope
 
 Do you approve creating skills/complete-work-item-direct-main/SKILL.md with its agents/openai.yaml metadata, together with only its supported generated mirrors and directly related non-governed tests and documentation?
 
-## Why User Input Is Required
+## Approval Evidence
 
-The accepted provider contract establishes the design but does not constitute exact approval to create a governed skill definition.
+- Basis: explicit-user-direction.
+- Exact answer: “Ok - I approve all of the skills that I orignianlly requested”.
+- Provenance: thread 019f77f4-c4bd-7c91-b197-c987a7beb838, message item-2093, applying to the exact direct-main skill question above.
 
-## Resolution
-
-Pending.
-
-## Unattended Work Boundary
-
-Do not dispatch or create this skill package until the exact question is answered.
+The decision gate is resolved. Delivery completion still requires implementation, the exact governed pre-mutation check, supported regeneration, independent review, focused verification, integration, and terminal backlog evidence.
 
 ## Summary
 

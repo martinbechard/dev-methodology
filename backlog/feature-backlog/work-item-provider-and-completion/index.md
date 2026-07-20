@@ -51,9 +51,9 @@ This series plans the transformation only. It does not implement, rename, delete
    - [Transform file work-item skills](transform-file-work-item-skills.md).
    - [Split GitHub work-item skills](split-github-work-item-skills.md).
    - [Add GitLab work-item skills](add-gitlab-work-item-skills.md).
-   - [Add Azure DevOps and Jira placeholders](../../user-action-required/add-azure-devops-and-jira-placeholders.md).
-   - [Add direct-main completion](../../user-action-required/add-direct-main-completion-skill.md).
-   - [Add feature-branch completion](../../user-action-required/add-feature-branch-completion-skill.md).
+   - [Add Azure DevOps and Jira placeholders](add-azure-devops-and-jira-placeholders.md).
+   - [Add direct-main completion](add-direct-main-completion-skill.md).
+   - [Add feature-branch completion](add-feature-branch-completion-skill.md).
 3. [Render selected work-item skills](render-selected-work-item-skills.md) after every provider and completion identifier stabilizes.
 4. [Integrate work-item contracts across the bundle](integrate-work-item-contracts-across-bundle.md) after selector rendering is accepted.
 

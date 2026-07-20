@@ -1,28 +1,24 @@
 # Add Azure DevOps And Jira Placeholders
 
-Status: User Action Required
+Status: Ready
 
 Type: Feature
 
-## User Action Required
+## Approval Resolution
 
-This item creates four governed unsupported-provider skill packages.
+The user approved the exact governed definition scope as part of the originally requested work-item provider skills.
 
-## Question for the User
+## Approved Scope
 
 Do you approve creating skills/create-azure-devops-work-item/SKILL.md, skills/manage-azure-devops-work-items/SKILL.md, skills/create-jira-work-item/SKILL.md, and skills/manage-jira-work-items/SKILL.md with their agents/openai.yaml metadata, together with only their supported generated mirrors and directly related non-governed tests and documentation?
 
-## Why User Input Is Required
+## Approval Evidence
 
-The accepted provider contract establishes the design but does not constitute exact approval to create governed skill definitions.
+- Basis: explicit-user-direction.
+- Exact answer: “Ok - I approve all of the skills that I orignianlly requested”.
+- Provenance: thread 019f77f4-c4bd-7c91-b197-c987a7beb838, message item-2093, directly following the exact question above and covering the remaining original provider/completion skills.
 
-## Resolution
-
-Pending.
-
-## Unattended Work Boundary
-
-Do not dispatch or create these skill packages until the exact question is answered.
+The decision gate is resolved. Delivery completion still requires implementation, exact governed pre-mutation checks, supported regeneration, independent review, focused verification, integration, and terminal backlog evidence.
 
 ## Summary
 
