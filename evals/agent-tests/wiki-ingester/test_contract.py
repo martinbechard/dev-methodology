@@ -9,6 +9,7 @@ import inspect
 import json
 import os
 import re
+import subprocess
 import sys
 import tempfile
 import tomllib
@@ -18,6 +19,7 @@ from pathlib import Path
 
 SUITE_ROOT = Path(__file__).resolve().parent
 REPOSITORY_ROOT = SUITE_ROOT.parents[2]
+RETAINED_REPLAY_PATH = SUITE_ROOT / "fixtures" / "retained-evaluator-replay.json"
 CORRECTION_EXPECTATIONS = (
     (
         "docs/wiki/retry-policy/request-retry-eligibility.md",
@@ -39,6 +41,12 @@ OPEN_QUESTION_INVENTORY_LABEL = (
     r"(?:(?:recorded|retained|preserved|page-local)\s+)*"
     r"(?:open\s+questions?|unresolved\s+(?:questions?|points?|uncertaint(?:y|ies)))"
 )
+MISSING_EVIDENCE_PATTERN = (
+    r"authoritative|missing evidence|no .{0,80}evidence|lacks?.{0,80}evidence"
+    r"|neither .{0,80} nor .{0,80} evidence"
+)
+LIVE_CASE_SELECTOR_ENV = "WIKI_INGESTER_LIVE_CASES"
+FOCUSED_LIVE_CASES = frozenset({"pre0", "pre2", "post0", "post1", "raw-ingest"})
 
 
 def _load_module(name: str, path: Path):
@@ -137,7 +145,7 @@ def _assert_result_inventory(test: unittest.TestCase, result_text: str) -> None:
     with test.subTest(result_inventory="open-question-missing-evidence"):
         test.assertRegex(
             open_questions,
-            r"authoritative|missing evidence|no .{0,80}evidence|lacks?.{0,80}evidence",
+            MISSING_EVIDENCE_PATTERN,
         )
     with test.subTest(result_inventory="open-question-provenance"):
         test.assertIn("raw/processed/retry-policy.md", open_questions)
@@ -195,10 +203,44 @@ def _canonical_runtime_path(path: str) -> str:
 def _contains_missing_evidence(text: str) -> bool:
     """Return whether text semantically identifies absent authoritative evidence."""
     return re.search(
-        r"authoritative|missing evidence|no .{0,80}evidence|lacks?.{0,80}evidence",
+        MISSING_EVIDENCE_PATTERN,
         text,
         flags=re.IGNORECASE | re.DOTALL,
     ) is not None
+
+
+def _contains_correction_attempt_count(text: str) -> bool:
+    """Return whether text reports the two allowed correction attempts."""
+    return re.search(
+        r"(?:two|2)(?:\s+genuine)?\s+correction attempts",
+        text,
+        flags=re.IGNORECASE,
+    ) is not None
+
+
+def _parse_live_case_selector(value: str | None) -> frozenset[str] | None:
+    """Parse the exact portable selector for the approved focused live rerun."""
+    if value is None:
+        return None
+    if not value or value.strip() != value:
+        raise ValueError(f"invalid {LIVE_CASE_SELECTOR_ENV}: {value!r}")
+    cases = value.split(",")
+    if any(not case or case.strip() != case for case in cases):
+        raise ValueError(f"invalid {LIVE_CASE_SELECTOR_ENV}: {value!r}")
+    if len(cases) != len(set(cases)):
+        raise ValueError(f"duplicate {LIVE_CASE_SELECTOR_ENV}: {value!r}")
+    selected = frozenset(cases)
+    unknown = selected - FOCUSED_LIVE_CASES
+    if unknown:
+        raise ValueError(
+            f"unsupported {LIVE_CASE_SELECTOR_ENV}: {', '.join(sorted(unknown))}"
+        )
+    return selected
+
+
+def _selected_live_cases() -> frozenset[str] | None:
+    """Return the optional focused live selection from the environment."""
+    return _parse_live_case_selector(os.environ.get(LIVE_CASE_SELECTOR_ENV))
 
 
 def _assert_collision_no_change(
@@ -208,7 +250,8 @@ def _assert_collision_no_change(
     normalized = result_text.lower()
     test.assertRegex(
         normalized,
-        r"no[- ]product(?:[- ]changes?| or durable wiki content changed)",
+        r"no[- ]product(?:[- ]changes?| or (?:durable )?wiki "
+        r"(?:content )?(?:changed|changes?(?: (?:were|was) made)?))",
     )
     test.assertRegex(normalized, r"queue.{0,40}unchanged|unchanged.{0,40}queue")
     for surface in ("topic page", "digest", "source link", "code", "test"):
@@ -394,7 +437,7 @@ def _validate_control_result(
             )
         with test.subTest(page_contract="jitter-open-question-provenance"):
             test.assertIn("raw/processed/retry-policy.md", open_question_text)
-    test.assertIn(str(result["head"]), terminal)
+    _assert_terminal_head(test, result, terminal)
     test.assertIn("RELEASED", terminal.upper())
     test.assertIn("CLEAN", terminal.upper())
     _validate_claim_events(test, result, terminal)
@@ -420,6 +463,8 @@ def _validate_execution_ownership(
         or spawn_arguments.get("fork_turns") == "none"
     )
     dependency_calls = result["dependencyToolCalls"]
+    target_session_id = str(result["targetSessionId"])
+    test.assertTrue(target_session_id)
     test.assertEqual(len(result["dependencySessionIds"]), len(dependency_calls))
     test.assertEqual(
         len(result["dependencySessionIds"]),
@@ -429,6 +474,7 @@ def _validate_execution_ownership(
         len(result["dependencyAgentPaths"]),
         len(set(result["dependencyAgentPaths"])),
     )
+    test.assertNotIn(target_session_id, result["dependencySessionIds"])
     dependency_requests = result["dependencyRequests"]
     test.assertEqual(len(dependency_calls), len(dependency_requests))
     target_spawns = []
@@ -449,6 +495,8 @@ def _validate_execution_ownership(
         )
         trace = result["verifierControlTrace"][index]
         receipt = trace["receipt"]
+        response_receipt = json.loads(str(result["dependencyResponses"][index]))
+        test.assertEqual(receipt, response_receipt)
         request_messages = dependency_requests[index]
         test.assertIsInstance(request_messages, list)
         test.assertTrue(request_messages)
@@ -460,28 +508,127 @@ def _validate_execution_ownership(
             _canonical_runtime_path(captured_cwds[-1]),
         )
         spawn_arguments = target_spawns[index]
+        test.assertEqual("wiki_topic_verifier", spawn_arguments.get("agent_type"))
+        expected_task_name = (
+            f"{str(receipt['gate']).replace('-', '_')}_verifier_"
+            f"{receipt['invocation']}"
+        )
+        test.assertEqual(expected_task_name, spawn_arguments.get("task_name"))
+        agent_path = str(result["dependencyAgentPaths"][index])
+        test.assertEqual(expected_task_name, agent_path.rsplit("/", maxsplit=1)[-1])
+        test.assertTrue(agent_path.startswith("/root/wiki_ingester/"))
         verifier_request = str(spawn_arguments.get("message", ""))
         test.assertTrue(verifier_request)
-        test.assertIn(str(receipt["gate"]), verifier_request.lower())
-        test.assertIn("lint", verifier_request.lower())
-        source_name = (
-            "provider-routing.md"
-            if result.get("rawSourcePresent") or result.get("processedSourcePresent")
-            else "retry-policy.md"
-        )
-        expected_source = (
-            f"raw/{source_name}"
-            if receipt["gate"] == "pre-move"
-            else f"raw/processed/{source_name}"
-        )
-        test.assertIn(expected_source, verifier_request)
-        for path in trace["changedPaths"]:
-            if str(path).startswith("docs/wiki/"):
-                test.assertIn(path, verifier_request)
+        if not _is_encrypted_spawn_message(verifier_request):
+            test.assertIn(str(receipt["gate"]), verifier_request.lower())
+            test.assertIn("lint", verifier_request.lower())
+            source_name = (
+                "provider-routing.md"
+                if result.get("rawSourcePresent") or result.get("processedSourcePresent")
+                else "retry-policy.md"
+            )
+            expected_source = (
+                f"raw/{source_name}"
+                if receipt["gate"] == "pre-move"
+                else f"raw/processed/{source_name}"
+            )
+            test.assertIn(expected_source, verifier_request)
+            for path in trace["changedPaths"]:
+                if str(path).startswith("docs/wiki/"):
+                    test.assertIn(path, verifier_request)
         test.assertTrue(
             spawn_arguments.get("fork_context") is False
             or spawn_arguments.get("fork_turns") == "none"
         )
+
+
+def _is_encrypted_spawn_message(message: str) -> bool:
+    """Recognize retained Fernet-shaped spawn ciphertext without decoding it."""
+    return re.fullmatch(r"gAAAA[A-Za-z0-9_-]{32,}={0,2}", message) is not None
+
+
+def _retained_ownership_result(ownership: dict[str, object]) -> dict[str, object]:
+    """Build a portable result shape from sanitized retained ownership evidence."""
+    receipts = ownership["receipts"]
+    session_ids = ownership["dependencySessionIds"]
+    agent_paths = ownership["dependencyAgentPaths"]
+    command = "/portable/python /portable/control/next_verdict.py"
+    encrypted_message = "gAAAA" + "SANITIZED_RETAINED_CIPHERTEXT_" * 3
+    target_calls = []
+    dependency_calls = []
+    dependency_requests = []
+    traces = []
+    for receipt, agent_path in zip(receipts, agent_paths, strict=True):
+        target_calls.append({
+            "name": "spawn_agent",
+            "arguments": json.dumps({
+                "agent_type": "wiki_topic_verifier",
+                "fork_turns": "none",
+                "task_name": str(agent_path).rsplit("/", maxsplit=1)[-1],
+                "message": encrypted_message,
+            }),
+        })
+        dependency_calls.append([{
+            "name": "exec",
+            "arguments": (
+                "const r=await tools.exec_command({cmd:"
+                f"{json.dumps(command)}"
+                "}); text(r.output);"
+            ),
+        }])
+        dependency_requests.append([
+            "<environment_context><cwd>/portable/wiki-fixture</cwd>"
+            "</environment_context>"
+        ])
+        traces.append({"receipt": receipt, "changedPaths": []})
+    return {
+        "targetSessionId": ownership["targetSessionId"],
+        "targetInstructionMarker": "retained-target-marker",
+        "targetInstructionMarkers": ["retained-target-marker"],
+        "rootToolCalls": [{
+            "name": "spawn_agent",
+            "arguments": json.dumps({
+                "agent_type": "wiki_ingester",
+                "fork_turns": "none",
+            }),
+        }],
+        "targetToolCalls": target_calls,
+        "dependencySessionIds": session_ids,
+        "dependencyAgentPaths": agent_paths,
+        "dependencyResponses": [json.dumps(receipt) for receipt in receipts],
+        "dependencyRequests": dependency_requests,
+        "dependencyToolCalls": dependency_calls,
+        "verifierDriverCommand": command,
+        "repositoryPath": "/portable/wiki-fixture",
+        "verifierControlTrace": traces,
+    }
+
+
+def _assert_terminal_head(
+    test: unittest.TestCase,
+    result: dict[str, object],
+    terminal: str,
+) -> None:
+    """Require the full HEAD or one Git-resolved, labeled commit abbreviation."""
+    expected_head = str(result["head"])
+    if expected_head in terminal:
+        return
+    abbreviations = set(re.findall(
+        r"(?i)\bcommit(?:ted)?\s*(?:(?:is|as)\s*)?[:=#-]?\s*`?"
+        r"([0-9a-f]{7,39})\b",
+        terminal,
+    ))
+    test.assertEqual(1, len(abbreviations))
+    abbreviation = next(iter(abbreviations))
+    completed = subprocess.run(
+        ["git", "rev-parse", "--verify", f"{abbreviation}^{{commit}}"],
+        cwd=str(result["repositoryPath"]),
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    test.assertEqual(0, completed.returncode)
+    test.assertEqual(expected_head, completed.stdout.strip())
 
 
 def _validate_claim_events(
@@ -649,6 +796,108 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
             "source: raw/processed/retry-policy.md.\n"
         )
         _assert_result_inventory(self, result_text)
+
+    def test_retained_evaluator_artifacts_replay_offline(self) -> None:
+        """Sanitized 02/06/08/09 artifacts must replay without live execution."""
+        replay = json.loads(RETAINED_REPLAY_PATH.read_text(encoding="utf-8"))
+        self.assertEqual(
+            "4e2f8ce5abac470a099b46dcb178c62c4292e1cdea19d3de3c0b7620631a259f",
+            replay["matrixSha256"],
+        )
+        executions = replay["executions"]
+        _assert_result_inventory(self, executions["02"]["resultText"])
+        _assert_result_inventory(self, executions["06"]["resultText"])
+        self.assertTrue(_contains_missing_evidence(executions["06"]["resultText"]))
+        _assert_collision_no_change(self, executions["08"]["resultText"])
+        _assert_provider_result_inventory(self, executions["09"]["resultText"])
+        self.assertTrue(_contains_correction_attempt_count(executions["09"]["resultText"]))
+        for execution in ("02", "06", "09"):
+            with self.subTest(retained_execution=execution):
+                _validate_execution_ownership(
+                    self,
+                    _retained_ownership_result(executions[execution]["ownership"]),
+                )
+        self.assertTrue(
+            executions["06"]["expectedHead"].startswith(
+                executions["06"]["terminalCommit"]
+            )
+        )
+
+    def test_encrypted_spawn_fallback_rejects_false_identity_and_receipts(self) -> None:
+        """Opaque prompts cannot bypass fresh-child, call, or receipt evidence."""
+        replay = json.loads(RETAINED_REPLAY_PATH.read_text(encoding="utf-8"))
+        baseline = _retained_ownership_result(
+            replay["executions"]["02"]["ownership"]
+        )
+        _validate_execution_ownership(self, baseline)
+        mutations = (
+            lambda result: result["dependencySessionIds"].__setitem__(
+                1, result["dependencySessionIds"][0]
+            ),
+            lambda result: result["dependencyAgentPaths"].__setitem__(
+                0, "/root/unbound/pre_move_verifier_0"
+            ),
+            lambda result: result["dependencyResponses"].__setitem__(
+                0, json.dumps({"gate": "pre-move", "invocation": 0, "outcome": "GOOD"})
+            ),
+            lambda result: result["dependencyToolCalls"][0].append({
+                "name": "exec",
+                "arguments": "tools.exec_command({cmd:\"git status\"})",
+            }),
+            lambda result: result["targetToolCalls"][0].__setitem__(
+                "arguments",
+                json.dumps({
+                    "agent_type": "wiki_topic_verifier",
+                    "fork_turns": "none",
+                    "task_name": "wrong_verifier_identity",
+                    "message": "gAAAA" + "SANITIZED_CIPHERTEXT_" * 3,
+                }),
+            ),
+        )
+        for mutate in mutations:
+            with self.subTest(mutation=mutate):
+                adversarial = json.loads(json.dumps(baseline))
+                mutate(adversarial)
+                with self.assertRaises(AssertionError):
+                    _validate_execution_ownership(self, adversarial)
+        inspectable_bypass = json.loads(json.dumps(baseline))
+        arguments = json.loads(inspectable_bypass["targetToolCalls"][0]["arguments"])
+        arguments["message"] = "opaque but not encrypted"
+        inspectable_bypass["targetToolCalls"][0]["arguments"] = json.dumps(arguments)
+        with self.assertRaises(AssertionError):
+            _validate_execution_ownership(self, inspectable_bypass)
+
+    def test_terminal_commit_accepts_only_resolved_expected_head(self) -> None:
+        """A labeled abbreviation must resolve uniquely to the observed HEAD."""
+        head = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=REPOSITORY_ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
+        result = {"head": head, "repositoryPath": str(REPOSITORY_ROOT)}
+        _assert_terminal_head(self, result, f"READY. Commit: {head[:7]}.")
+        for terminal in (
+            "READY. Commit: abcdef0.",
+            f"READY. Commit: {head[:6]}.",
+            "READY without commit evidence.",
+        ):
+            with self.subTest(terminal=terminal):
+                with self.assertRaises(AssertionError):
+                    _assert_terminal_head(self, result, terminal)
+
+    def test_live_case_selector_is_exact_and_rejects_adversarial_input(self) -> None:
+        """Focused reruns select only named interruption and raw-ingest controls."""
+        self.assertIsNone(_parse_live_case_selector(None))
+        self.assertEqual(
+            frozenset({"pre0", "pre2", "post0", "post1", "raw-ingest"}),
+            _parse_live_case_selector("pre0,pre2,post0,post1,raw-ingest"),
+        )
+        for invalid in ("", "pre1", "pre0,pre0", "pre0, raw-ingest", "all"):
+            with self.subTest(invalid=invalid):
+                with self.assertRaises(ValueError):
+                    _parse_live_case_selector(invalid)
 
     def test_none_inventory_requires_assessed_source_and_page_scope(self) -> None:
         """None is valid only with explicit assessed raw source and wiki page scope."""
@@ -822,6 +1071,7 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
         }
         result = {
             "process": {"exitCode": 0},
+            "targetSessionId": "target-session",
             "targetInstructionMarker": "target-marker",
             "targetInstructionMarkers": ["target-marker"],
             "rootToolCalls": [
@@ -840,6 +1090,7 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
                     "arguments": json.dumps({
                         "agent_type": "wiki_topic_verifier",
                         "fork_turns": "none",
+                        "task_name": "pre_move_verifier_0",
                         "message": (
                             "/var/folders/example/fixture pre-move raw/retry-policy.md "
                             "lint docs/wiki/retry-policy/example.md"
@@ -851,6 +1102,7 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
                     "arguments": json.dumps({
                         "agent_type": "wiki_topic_verifier",
                         "fork_turns": "none",
+                        "task_name": "pre_move_verifier_1",
                         "message": (
                             "/var/folders/example/fixture pre-move raw/retry-policy.md "
                             "lint docs/wiki/retry-policy/example.md"
@@ -1009,6 +1261,8 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
         ):
             with self.subTest(prohibited=prohibited):
                 self.assertNotIn(prohibited, source)
+        observer = inspect.getsource(self.harness._observe_target_result)
+        self.assertIn("session.parent_thread_id == target.session_id", observer)
 
     def test_raw_ingest_collision_and_verifier_fixtures_preserve_boundaries(self) -> None:
         """All focused Wiki Ingester scenarios stage their distinct queue boundary."""
@@ -1092,8 +1346,12 @@ class WikiIngesterLiveInterruptionTests(unittest.TestCase):
 
     def test_target_continues_and_closes_every_interruption(self) -> None:
         """Each injected non-verdict preserves supported content and closes cleanly."""
+        selected = _selected_live_cases()
         for gate in ("pre-move", "post-move"):
             for interruption in range(3):
+                case = f"{'pre' if gate == 'pre-move' else 'post'}{interruption}"
+                if selected is not None and case not in selected:
+                    continue
                 with self.subTest(gate=gate, interruption=interruption):
                     with tempfile.TemporaryDirectory() as temporary:
                         plan = self.harness.VerifierPlan(gate, interruption)
@@ -1121,6 +1379,9 @@ class WikiIngesterLiveNeighborTests(unittest.TestCase):
 
     def test_raw_ingest_reaches_both_good_gates_and_closes_cleanly(self) -> None:
         """Normal ingest moves the source only after both target-owned verifier gates."""
+        selected = _selected_live_cases()
+        if selected is not None and "raw-ingest" not in selected:
+            self.skipTest("raw-ingest not selected by focused live case selector")
         with tempfile.TemporaryDirectory() as temporary:
             result = self.harness.run_neighbor_control(
                 "raw-ingest", Path(temporary) / "fixture"
@@ -1200,11 +1461,13 @@ class WikiIngesterLiveNeighborTests(unittest.TestCase):
                 with self.subTest(result_evidence=evidence):
                     self.assertRegex(result_text, pattern)
             _assert_result_inventory(self, result_text)
-            self.assertIn(str(result["head"]), result["targetTerminalResponse"])
+            _assert_terminal_head(self, result, result["targetTerminalResponse"])
             _validate_claim_events(self, result, result["targetTerminalResponse"])
 
     def test_collision_preserves_both_sources_without_verifier_mutation(self) -> None:
         """A destination collision keeps both source bytes and closes as clean BLOCKED."""
+        if _selected_live_cases() is not None:
+            self.skipTest("collision excluded from the focused live correction rerun")
         with tempfile.TemporaryDirectory() as temporary:
             result = self.harness.run_neighbor_control(
                 "destination-collision", Path(temporary) / "fixture"
@@ -1232,11 +1495,13 @@ class WikiIngesterLiveNeighborTests(unittest.TestCase):
                     self.assertRegex(result_text, pattern)
             _assert_collision_no_change(self, result_text)
             _assert_collision_result_inventory(self, result_text)
-            self.assertIn(str(result["head"]), result["targetTerminalResponse"])
+            _assert_terminal_head(self, result, result["targetTerminalResponse"])
             _validate_claim_events(self, result, result["targetTerminalResponse"])
 
     def test_verifier_failure_retains_substantiated_content_and_closes_blocked(self) -> None:
         """Three real correction verdicts retain supported content and release cleanly."""
+        if _selected_live_cases() is not None:
+            self.skipTest("verifier-failure excluded from focused live correction rerun")
         with tempfile.TemporaryDirectory() as temporary:
             result = self.harness.run_neighbor_control(
                 "verifier-failure", Path(temporary) / "fixture"
@@ -1301,12 +1566,15 @@ class WikiIngesterLiveNeighborTests(unittest.TestCase):
             result_text = result["evaluationResultText"].lower()
             for evidence, pattern in (
                 ("correction verdict", r"needs[_ -]correction"),
-                ("correction count", r"(?:two|2) correction attempts"),
+                (
+                    "correction count",
+                    r"(?:two|2)(?:\s+genuine)?\s+correction attempts",
+                ),
             ):
                 with self.subTest(result_evidence=evidence):
                     self.assertRegex(result_text, pattern)
             _assert_provider_result_inventory(self, result_text)
-            self.assertIn(str(result["head"]), terminal)
+            _assert_terminal_head(self, result, terminal)
             _validate_claim_events(self, result, terminal)
 
 

@@ -43,8 +43,9 @@ Turn each approved raw input into traceable durable wiki coverage that preserves
 3. Run leaf linking, wiki lint, and applicable OKF validation, then request a fresh wiki-topic-verifier verdict before moving the source.
 4. After a GOOD pre-move verdict, move the completed source under raw/processed and update every affected page to the processed relative link.
 5. Rerun lint and applicable OKF validation after the move. When any topic-page link changed, request a fresh post-move wiki-topic-verifier verdict.
-6. If any verifier invocation is interrupted or returns an unavailable non-verdict at either gate, end verifier work for that source immediately and do not invoke wiki-topic-verifier again for that source. Preserve every substantiated wiki change, classify each unresolved or verifier-dependent point as a page-local open question with its missing evidence or decision and provenance, rerun validation, and complete the source move and processed-link updates without entering the other verifier gate.
-7. Recheck every applicable ingest queue and report its final state before completion.
+6. Treat every actual NEEDS_CORRECTION verdict, including one returned after the source move, as the ordinary bounded correction path. Apply the in-scope correction, revalidate, and submit to a fresh verifier; do not report BLOCKED on the first finding and do not enter interruption reconciliation unless a later invocation is actually interrupted or unavailable.
+7. If any verifier invocation is interrupted or returns an unavailable non-verdict at either gate, end verifier work for that source immediately and do not invoke wiki-topic-verifier again for that source. Preserve every substantiated wiki change, classify each unresolved or verifier-dependent point as a page-local open question with its missing evidence or decision and provenance, rerun validation, and complete the source move and processed-link updates without entering the other verifier gate.
+8. Recheck every applicable ingest queue and report its final state before completion.
 
 ## Delegation
 
@@ -52,20 +53,20 @@ Turn each approved raw input into traceable durable wiki coverage that preserves
 
 ## Review
 
-- Require GOOD at every applicable verification gate in the ordinary verifier path. Route NEEDS_CORRECTION findings back to this agent, apply only in-scope ingest corrections, rerun validation, and use a fresh verifier context.
+- Require GOOD at every applicable verification gate in the ordinary verifier path. Route NEEDS_CORRECTION findings back to this agent, apply only in-scope ingest corrections, rerun validation, and use a fresh verifier context. This same correction loop applies before and after the source move until the governing cap is exhausted.
 - Treat an interrupted or unavailable verifier response as not a NEEDS_CORRECTION verdict. Enter the interruption reconciliation workflow and do not invent acceptance, rejection, or findings that the verifier did not return.
 
 ## Failure Handling
 
 - After the initial verdict at each pre-move or post-move gate, allow at most two ingester correction attempts for that gate. Report BLOCKED when the second corrected submission still returns NEEDS_CORRECTION.
-- If post-move acceptance cannot be reached, restore the source and its page links to the pre-move raw state when that can be done without overwriting unrelated work, and keep the source eligible for later ingest.
+- When the post-move correction cap is exhausted, retain substantiated conclusions and relationships and preserve their processed-source provenance. Put every unresolved or unsubstantiated point in the Open Questions section of its owning page and report the exact remaining verifier finding; do not restore substantiated content to a prior raw state merely because acceptance was not reached.
 - Do not roll back substantiated wiki conclusions or relationships when a verifier is interrupted or unavailable. Preserve them and route only the unresolved or verifier-dependent points to page-local open questions.
 - Report BLOCKED only when an actual NEEDS_CORRECTION loop exhausts its correction cap or another operational boundary prevents safe provenance, validation, source movement, commit, or claim closeout. Verifier interruption alone is not a BLOCKED condition.
 
 ## Completion
 
 - Before reporting READY or BLOCKED, record the commit or explicit no-change result, confirm the claimed worktree is clean, and release the owned claim under agent-claim.
-- Write every READY or BLOCKED terminal result with a labeled ingested or substantiated conclusions inventory and a labeled Open Questions inventory. Keep the inventories separate and fact-bearing; each entry names its durable page and source provenance. When a category is empty, say None and name the assessed source and page scope.
+- Write every READY or BLOCKED terminal result with a labeled ingested or substantiated conclusions inventory and a labeled Open Questions inventory. Keep the inventories separate and fact-bearing; each entry names its durable page and source provenance. When any substantiated conclusions exist, the conclusions inventory must be nonempty. When any unresolved or unsubstantiated points exist, the Open Questions inventory must be nonempty. Use None only when that category truly has no entries, and name the assessed source and page scope for that explicit None.
 - Report READY after every assigned source either passes all applicable verifier gates or completes the verifier interruption workflow, processed-source links resolve, validation passes, both result inventories are complete, and the final queue recheck is recorded.
 - Report BLOCKED with the source and page inventories, latest verifier findings, validation output, correction attempts, source location, and exact unresolved condition.
 

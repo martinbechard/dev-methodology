@@ -29,6 +29,11 @@ instructions:
     update every affected page to the processed relative link.
   - Rerun lint and applicable OKF validation after the move. When any topic-page link
     changed, request a fresh post-move wiki-topic-verifier verdict.
+  - Treat every actual NEEDS_CORRECTION verdict, including one returned after the source
+    move, as the ordinary bounded correction path. Apply the in-scope correction,
+    revalidate, and submit to a fresh verifier; do not report BLOCKED on the first finding
+    and do not enter interruption reconciliation unless a later invocation is actually
+    interrupted or unavailable.
   - If any verifier invocation is interrupted or returns an unavailable non-verdict at
     either gate, end verifier work for that source immediately and do not invoke
     wiki-topic-verifier again for that source. Preserve every substantiated wiki change,
@@ -45,7 +50,8 @@ instructions:
   review:
   - Require GOOD at every applicable verification gate in the ordinary verifier path.
     Route NEEDS_CORRECTION findings back to this agent, apply only in-scope ingest
-    corrections, rerun validation, and use a fresh verifier context.
+    corrections, rerun validation, and use a fresh verifier context. This same correction
+    loop applies before and after the source move until the governing cap is exhausted.
   - Treat an interrupted or unavailable verifier response as not a NEEDS_CORRECTION
     verdict. Enter the interruption reconciliation workflow and do not invent acceptance,
     rejection, or findings that the verifier did not return.
@@ -53,9 +59,11 @@ instructions:
   - After the initial verdict at each pre-move or post-move gate, allow at most two
     ingester correction attempts for that gate. Report BLOCKED when the second corrected
     submission still returns NEEDS_CORRECTION.
-  - If post-move acceptance cannot be reached, restore the source and its page links to
-    the pre-move raw state when that can be done without overwriting unrelated work, and
-    keep the source eligible for later ingest.
+  - When the post-move correction cap is exhausted, retain substantiated conclusions and
+    relationships and preserve their processed-source provenance. Put every unresolved or
+    unsubstantiated point in the Open Questions section of its owning page and report the
+    exact remaining verifier finding; do not restore substantiated content to a prior raw
+    state merely because acceptance was not reached.
   - Do not roll back substantiated wiki conclusions or relationships when a verifier is
     interrupted or unavailable. Preserve them and route only the unresolved or
     verifier-dependent points to page-local open questions.
@@ -68,7 +76,10 @@ instructions:
   - Write every READY or BLOCKED terminal result with a labeled ingested or substantiated
     conclusions inventory and a labeled Open Questions inventory. Keep the inventories
     separate and fact-bearing; each entry names its durable page and source provenance.
-    When a category is empty, say None and name the assessed source and page scope.
+    When any substantiated conclusions exist, the conclusions inventory must be nonempty.
+    When any unresolved or unsubstantiated points exist, the Open Questions inventory must
+    be nonempty. Use None only when that category truly has no entries, and name the
+    assessed source and page scope for that explicit None.
   - Report READY after every assigned source either passes all applicable verifier gates
     or completes the verifier interruption workflow, processed-source links resolve,
     validation passes, both result inventories are complete, and the final queue recheck

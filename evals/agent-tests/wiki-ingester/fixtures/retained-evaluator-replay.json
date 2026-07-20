@@ -1,0 +1,115 @@
+{
+  "matrixSha256": "4e2f8ce5abac470a099b46dcb178c62c4292e1cdea19d3de3c0b7620631a259f",
+  "executions": {
+    "02": {
+      "resultText": "Interruption reconciliation completed.\n\n## Substantiated Conclusions\n\n- docs/wiki/retry-policy/fixed-retry-backoff.md from raw/processed/retry-policy.md: fixed retry delays are 200 and 500 milliseconds.\n- docs/wiki/retry-policy/request-retry-eligibility.md from raw/processed/retry-policy.md: idempotent reads are eligible and mutation requests are never retried.\n\n## Open Questions\n\n- docs/wiki/retry-policy/fixed-retry-backoff.md from raw/processed/retry-policy.md: deployment jitter remains unresolved because authoritative evidence has not been identified.\n",
+      "ownership": {
+        "targetSessionId": "retained-target-02",
+        "dependencySessionIds": [
+          "retained-verifier-02-0",
+          "retained-verifier-02-1"
+        ],
+        "dependencyAgentPaths": [
+          "/root/wiki_ingester/pre_move_verifier_0",
+          "/root/wiki_ingester/pre_move_verifier_1"
+        ],
+        "receipts": [
+          {
+            "gate": "pre-move",
+            "invocation": 0,
+            "outcome": "NEEDS_CORRECTION",
+            "finding": "focused retained correction"
+          },
+          {
+            "gate": "pre-move",
+            "invocation": 1,
+            "outcome": "VERIFIER_INTERRUPTED"
+          }
+        ]
+      }
+    },
+    "06": {
+      "resultText": "Interruption reconciliation completed.\n\n## Retained Substantiated Conclusions\n\n- docs/wiki/retry-policy/fixed-retry-backoff.md from raw/processed/retry-policy.md: fixed retry delays are 200 and 500 milliseconds.\n- docs/wiki/retry-policy/request-retry-eligibility.md from raw/processed/retry-policy.md: idempotent reads are eligible and mutation requests are not retried.\n\n## Open Questions\n\n- docs/wiki/retry-policy/fixed-retry-backoff.md from raw/processed/retry-policy.md: the source supplies neither deployment-policy nor implementation evidence for jitter.\n",
+      "expectedHead": "e8bda2abc7c4e48b8a2fdedf5e66c90b3a8af116",
+      "terminalCommit": "e8bda2a",
+      "ownership": {
+        "targetSessionId": "retained-target-06",
+        "dependencySessionIds": [
+          "retained-verifier-06-0",
+          "retained-verifier-06-1",
+          "retained-verifier-06-2",
+          "retained-verifier-06-3"
+        ],
+        "dependencyAgentPaths": [
+          "/root/wiki_ingester/pre_move_verifier_0",
+          "/root/wiki_ingester/post_move_verifier_0",
+          "/root/wiki_ingester/post_move_verifier_1",
+          "/root/wiki_ingester/post_move_verifier_2"
+        ],
+        "receipts": [
+          {
+            "gate": "pre-move",
+            "invocation": 0,
+            "outcome": "GOOD"
+          },
+          {
+            "gate": "post-move",
+            "invocation": 0,
+            "outcome": "NEEDS_CORRECTION",
+            "finding": "focused retained correction"
+          },
+          {
+            "gate": "post-move",
+            "invocation": 1,
+            "outcome": "NEEDS_CORRECTION",
+            "finding": "focused retained correction"
+          },
+          {
+            "gate": "post-move",
+            "invocation": 2,
+            "outcome": "VERIFIER_INTERRUPTED"
+          }
+        ]
+      }
+    },
+    "08": {
+      "resultText": "Queue unchanged. No product or wiki changes were made. No topic page, digest, source link, code, or test was changed."
+    },
+    "09": {
+      "resultText": "Two genuine correction attempts were made after the initial submission.\n\n## Retained Substantiated Conclusions\n\n- docs/wiki/provider-routing.md from raw/provider-routing.md: primary provider reads may fail over to the secondary provider; mutation requests do not fail over.\n\n## Open Questions\n\n- docs/wiki/provider-routing.md from raw/provider-routing.md: federated ownership lacks an authoritative decision.\n",
+      "ownership": {
+        "targetSessionId": "retained-target-09",
+        "dependencySessionIds": [
+          "retained-verifier-09-0",
+          "retained-verifier-09-1",
+          "retained-verifier-09-2"
+        ],
+        "dependencyAgentPaths": [
+          "/root/wiki_ingester/pre_move_verifier_0",
+          "/root/wiki_ingester/pre_move_verifier_1",
+          "/root/wiki_ingester/pre_move_verifier_2"
+        ],
+        "receipts": [
+          {
+            "gate": "pre-move",
+            "invocation": 0,
+            "outcome": "NEEDS_CORRECTION",
+            "finding": "federated ownership duplicated"
+          },
+          {
+            "gate": "pre-move",
+            "invocation": 1,
+            "outcome": "NEEDS_CORRECTION",
+            "finding": "federated ownership duplicated"
+          },
+          {
+            "gate": "pre-move",
+            "invocation": 2,
+            "outcome": "NEEDS_CORRECTION",
+            "finding": "federated ownership duplicated"
+          }
+        ]
+      }
+    }
+  }
+}
