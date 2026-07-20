@@ -475,6 +475,7 @@ def _legacy_selector_migration(selection: dict[str, object]) -> str | None:
     """Validate prototype selectors and return deterministic canonical migration guidance."""
 
     migrations: list[str] = []
+    collisions: list[str] = []
     for legacy_key, target_key, values in (
         ("workitem", "completion", LEGACY_COMPLETION_VALUES),
         ("backlog", "provider", LEGACY_PROVIDER_VALUES),
@@ -497,7 +498,34 @@ def _legacy_selector_migration(selection: dict[str, object]) -> str | None:
             raise ValueError(
                 f"{prefix}.default rejects {default!r}; supported legacy values and canonical replacements: {mappings}"
             )
-        migrations.append(f"workflow_selection.{target_key}.default: {values[default]}")
+        canonical_default: str | None = None
+        canonical_overrides: list[tuple[str, str]] = []
+        if target_key in selection:
+            supported_values = PROVIDER_VALUES if target_key == "provider" else COMPLETION_VALUES
+            canonical_default, canonical_overrides = _workflow_configuration(
+                selection,
+                target_key,
+                supported_values,
+            )
+        mapped_default = values[default]
+        if canonical_default is None:
+            migrations.append(f"workflow_selection.{target_key}.default: {mapped_default}")
+        else:
+            legacy_path = f"{prefix}.default"
+            canonical_path = f"workflow_selection.{target_key}.default"
+            if mapped_default == canonical_default:
+                collisions.append(
+                    f"{legacy_path} {default!r} maps to {mapped_default!r}, redundantly matching "
+                    f"{canonical_path} {canonical_default!r}; preserve {canonical_path}, migrate any "
+                    f"remaining {prefix} overrides, then remove {prefix}"
+                )
+            else:
+                collisions.append(
+                    f"{legacy_path} {default!r} maps to {mapped_default!r}, conflicts with "
+                    f"{canonical_path} {canonical_default!r}; preserve the valid canonical maintainer edit "
+                    f"at {canonical_path}; migrate any remaining {prefix} overrides, then remove {prefix} "
+                    f"without overwriting {canonical_path}"
+                )
         overrides = configuration.get("folder_overrides", [])
         if not isinstance(overrides, list):
             raise ValueError(f"{prefix}.folder_overrides must be a list; {guidance}")
@@ -530,10 +558,50 @@ def _legacy_selector_migration(selection: dict[str, object]) -> str | None:
                 process,
                 guidance=guidance,
             )
-            migrations.append(
-                f"workflow_selection.{target_key}.folder_overrides[{override_index}]: "
-                f"pattern={pattern}, {target_key}={values[process]}"
+            mapped_process = values[process]
+            canonical_match = next(
+                (
+                    (canonical_index, canonical_value)
+                    for canonical_index, (canonical_pattern, canonical_value) in enumerate(canonical_overrides)
+                    if canonical_pattern == pattern
+                ),
+                None,
             )
+            if canonical_match is None:
+                migrations.append(
+                    f"add workflow_selection.{target_key}.folder_overrides entry: "
+                    f"pattern={pattern}, {target_key}={mapped_process}"
+                )
+                continue
+            canonical_index, canonical_value = canonical_match
+            legacy_path = f"{override_prefix}.process"
+            canonical_path = (
+                f"workflow_selection.{target_key}.folder_overrides[{canonical_index}].{target_key}"
+            )
+            if mapped_process == canonical_value:
+                collisions.append(
+                    f"{legacy_path} {process!r} maps to {mapped_process!r}, redundantly matching "
+                    f"{canonical_path} {canonical_value!r} for pattern {pattern!r}; preserve "
+                    f"{canonical_path} and remove the redundant legacy override"
+                )
+            else:
+                collisions.append(
+                    f"{legacy_path} {process!r} maps to {mapped_process!r}, conflicts with "
+                    f"{canonical_path} {canonical_value!r} for pattern {pattern!r}; preserve the valid "
+                    f"canonical maintainer edit at {canonical_path} and resolve the legacy override explicitly"
+                )
+    if collisions:
+        collision_message = (
+            collisions[0]
+            if len(collisions) == 1
+            else "mixed legacy and canonical workflow selectors collide: " + "; ".join(collisions)
+        )
+        if migrations:
+            collision_message += (
+                "; after resolving these collisions, apply remaining migration guidance without changing "
+                "canonical fields: " + "; ".join(migrations)
+            )
+        raise ValueError(collision_message)
     if not migrations:
         return None
     return (
@@ -637,6 +705,19 @@ def _workflow_configuration(
             raise ValueError(f"{override_prefix} must be a mapping")
         if "pattern" not in override:
             _validated_override_pattern(override_prefix, None)
+        combined_process = override.get("process")
+        if (
+            set(override) == {"pattern", "process"}
+            and isinstance(combined_process, str)
+            and "+" in combined_process
+        ):
+            other_key = "completion" if key == "provider" else "provider"
+            rendered_values = ", ".join(supported_values)
+            raise ValueError(
+                f"{override_prefix}.process rejects combined value {combined_process!r}; supported {key} "
+                f"values: {rendered_values}; split it into {override_prefix}.{key} and a "
+                f"workflow_selection.{other_key}.folder_overrides entry with the same pattern"
+            )
         if set(override) != {"pattern", key}:
             raise ValueError(f"{override_prefix} keys must be exactly: pattern, {key}")
         pattern = _validated_override_pattern(override_prefix, override.get("pattern"))
@@ -648,8 +729,16 @@ def _workflow_configuration(
                     f"{override_prefix}.{key} uses legacy value {selected_value!r}; migrate to {legacy_values[selected_value]!r}"
                 )
             rendered_values = ", ".join(supported_values)
+            split_guidance = ""
+            if isinstance(selected_value, str) and "+" in selected_value:
+                other_key = "completion" if key == "provider" else "provider"
+                split_guidance = (
+                    f"; split the combined value into {override_prefix}.{key} and a "
+                    f"workflow_selection.{other_key}.folder_overrides entry with the same pattern"
+                )
             raise ValueError(
-                f"{override_prefix}.{key} rejects {selected_value!r}; supported values: {rendered_values}"
+                f"{override_prefix}.{key} rejects {selected_value!r}; supported values: "
+                f"{rendered_values}{split_guidance}"
             )
         _reject_duplicate_override_pattern(
             seen_patterns,
@@ -772,11 +861,11 @@ def inlined_skill_body(skill_name: str) -> str:
 def render(value: dict[str, object], inline_tech_skills: bool = True) -> str:
     """Render configured root AGENTS.md authority, workflow, and technology sections.
 
-    value is the mapping loaded from PROJECT.yaml. Optional authority and workflow
-    configuration produce their corresponding sections; technology guidance is always
-    produced from the configured loadouts. When inline_tech_skills is true, the return
-    value embeds each referenced bundled skill body. When false, it emits dynamic loading
-    instructions instead.
+    value is the mapping loaded from PROJECT.yaml. Optional definition authority produces
+    its corresponding section, while workflow_selection is required and technology guidance
+    is always produced from the configured loadouts. When inline_tech_skills is true, the
+    return value embeds each referenced bundled skill body. When false, it emits dynamic
+    loading instructions instead.
 
     The return value is the complete generated Markdown text and ends with a newline.
     Rendering does not write an output file, but inlined rendering reads bundled SKILL.md

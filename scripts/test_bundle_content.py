@@ -1544,8 +1544,16 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("workflow_selection:", project_template)
         self.assertIn("provider:", project_template)
         self.assertIn("file, github, gitlab, azure-devops, jira, none, or UNSET", project_template)
+        self.assertIn(
+            'provider: "TODO: file, github, gitlab, azure-devops, jira, none, or UNSET."',
+            project_template,
+        )
         self.assertIn("completion:", project_template)
         self.assertIn("direct-main, feature-branch, or UNSET", project_template)
+        self.assertIn(
+            'completion: "TODO: direct-main, feature-branch, or UNSET."',
+            project_template,
+        )
         self.assertNotIn("  workitem:", project_template)
         self.assertNotIn("  backlog:", project_template)
 
