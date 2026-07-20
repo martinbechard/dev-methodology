@@ -38,6 +38,17 @@ Summary: Presents the generated agent and skill relationship contract as an offl
       outline: 3px solid var(--focus);
       outline-offset: 3px;
     }
+    .site-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.7rem 1.2rem;
+      min-height: 3.5rem;
+      padding: 0.5rem clamp(1rem, 3vw, 2.5rem);
+      border-bottom: 1px solid var(--line);
+      background: #091b2a;
+    }
+    .site-header a { font-weight: 700; }
     .masthead {
       display: grid;
       grid-template-columns: minmax(0, 1.5fr) minmax(16rem, 0.7fr);
@@ -83,7 +94,7 @@ Summary: Presents the generated agent and skill relationship contract as an offl
     .workspace { display: grid; grid-template-columns: minmax(0, 1fr) minmax(17rem, 24rem); gap: 1rem; align-items: start; }
     .map-shell, .detail-panel { border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); }
     .map-shell { min-width: 0; max-width: 100%; overflow: auto; max-height: 72vh; }
-    #relationship-map { display: block; width: 100%; min-width: 48rem; min-height: 35rem; }
+    #relationship-map { display: block; width: 100%; min-width: 75rem; min-height: 35rem; }
     .detail-panel { position: sticky; top: 1rem; padding: 1.15rem; }
     .detail-panel h2 { margin: 0.3rem 0 0.7rem; font-size: 1.7rem; }
     .detail-panel p { color: var(--muted); }
@@ -92,6 +103,19 @@ Summary: Presents the generated agent and skill relationship contract as an offl
     .empty { padding: 4rem 2rem; color: var(--muted); text-align: center; }
     .map-node rect { fill: var(--panel-raised); stroke: var(--line); stroke-width: 1.5; }
     .map-node text { fill: var(--ink); font: 13px ui-monospace, monospace; pointer-events: none; }
+    .map-node .node-status { font-size: 10px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; }
+    .map-node.status-missing rect { stroke: #b8c1c7; }
+    .map-node.status-unsupported rect { stroke: #d9a7e8; stroke-dasharray: 3 3; }
+    .map-node.status-blocked rect { stroke: var(--red); }
+    .map-node.status-manual rect { stroke: var(--magenta); stroke-dasharray: 6 3; }
+    .map-node.status-declared rect { stroke: var(--amber); }
+    .map-node.status-verified rect { stroke: var(--green); stroke-width: 2.5; }
+    .map-node.status-missing .node-status { fill: #b8c1c7; }
+    .map-node.status-unsupported .node-status { fill: #d9a7e8; }
+    .map-node.status-blocked .node-status { fill: var(--red); }
+    .map-node.status-manual .node-status { fill: var(--magenta); }
+    .map-node.status-declared .node-status { fill: var(--amber); }
+    .map-node.status-verified .node-status { fill: var(--green); }
     .map-node:hover rect, .map-node[data-selected="true"] rect { stroke: var(--focus); stroke-width: 3; }
     .map-edge { fill: none; stroke-width: 1.4; opacity: 0.52; }
     .edge-fixed, .edge-conditional { stroke: var(--amber); }
@@ -107,16 +131,19 @@ Summary: Presents the generated agent and skill relationship contract as an offl
       .masthead { padding: 2rem 1rem; }
       main { padding: 0.75rem; }
       .controls { grid-template-columns: 1fr; }
-      #relationship-map { min-width: 42rem; }
     }
     @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
   </style>
 </head>
 <body>
-  <header class="masthead">
+  <header class="site-header">
+    <a href="../index.html">Back to Documentation Index</a>
+    <a href="agent-and-skill-definitions.html">Back to Core Agent and Skills</a>
+  </header>
+  <section class="masthead" aria-labelledby="page-title">
     <div>
       <div class="eyebrow">Generated relationship contract / offline</div>
-      <h1>Agent &amp; skill wiring map</h1>
+      <h1 id="page-title">Agent &amp; skill wiring map</h1>
       <p class="lede">Trace what an agent owns, what a folder can add, how each harness loads it, and whether evidence is merely declared or actually verified. Amber is definition-owned. Cyan is detected from repository scope.</p>
     </div>
     <div class="signal-card">
@@ -124,7 +151,7 @@ Summary: Presents the generated agent and skill relationship contract as an offl
       <strong id="result-count">Loading…</strong>
       <span id="result-summary">Reading generated data.</span>
     </div>
-  </header>
+  </section>
   <main>
     <section class="controls" aria-label="Relationship filters">
       <div class="control"><label for="filter-agent">Agent</label><select id="filter-agent"><option value="">All agents</option></select></div>
@@ -163,6 +190,7 @@ Summary: Presents the generated agent and skill relationship contract as an offl
       </aside>
     </div>
   </main>
+  <script src="documentation-settings.js"></script>
   <script src="generated/agent-skill-explorer-data.js"></script>
   <script src="agent-skill-explorer.js"></script>
 </body>

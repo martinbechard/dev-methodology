@@ -12,8 +12,8 @@
    */
   function nodeStatus(node) {
     const coverage = node.coverage || {};
-    if ((coverage.verifiedCases || []).length) return "verified";
     if ((coverage.staleByDigestCases || []).length) return "blocked";
+    if ((coverage.verifiedCases || []).length) return "verified";
     if ((coverage.executableCases || []).length || coverage.structural) return "declared";
     return "missing";
   }
@@ -32,24 +32,15 @@
    */
   function filterGraph(data, filters) {
     const active = filters || {};
-    const modeHarnesses = new Set(
-      (data.loadingModes || [])
-        .filter((item) => !active.loadingMode || item.mode === active.loadingMode)
-        .filter((item) => !active.harness || item.harness === active.harness || item.harness === "all")
-        .map((item) => item.harness)
-    );
-    const modeEdgeKinds = new Set(
-      (data.loadingModes || [])
-        .filter((item) => !active.loadingMode || item.mode === active.loadingMode)
-        .filter((item) => !active.harness || item.harness === active.harness || item.harness === "all")
-        .flatMap((item) => item.edgeKinds || [])
-    );
+    const matchingModes = (data.loadingModes || [])
+      .filter((item) => !active.loadingMode || item.mode === active.loadingMode)
+      .filter((item) => !active.harness || item.harness === active.harness || item.harness === "all");
+    const modeEdgeKinds = new Set(matchingModes.flatMap((item) => item.edgeKinds || []));
+    const constrainByMode = Boolean(modeEdgeKinds.size && (active.harness || active.loadingMode));
     let roles = (data.roles || []).filter((role) =>
       (!active.agent || role.id === active.agent) &&
       (!active.modelProfile || role.modelProfile === active.modelProfile) &&
-      (!active.folderScope || (active.folderScope === "dynamic") === Boolean(role.dynamicFolderSkills)) &&
       (!active.harness || (role.generatedAdapters || []).some((item) => item.harness === active.harness)) &&
-      (!active.loadingMode || modeHarnesses.has("all") || (role.generatedAdapters || []).some((item) => modeHarnesses.has(item.harness))) &&
       (!active.declarationStatus || nodeStatus(role) === active.declarationStatus) &&
       matchesVerified(role, active.verifiedBehavior)
     );
@@ -62,32 +53,23 @@
     );
     let roleIds = new Set(roles.map((role) => role.id));
     let skillIds = new Set(skills.map((skill) => skill.id));
-    const graphEdges = (data.edges || []).filter((edge) =>
-      !active.loadingMode || modeEdgeKinds.has(edge.kind)
+    const graphEdges = (data.edges || [])
+      .filter((edge) => !active.folderScope || (active.folderScope === "dynamic" ? edge.kind === "detected-folder" : edge.kind !== "detected-folder"))
+      .filter((edge) => !constrainByMode || modeEdgeKinds.has(edge.kind));
+    const pruneDisconnected = Boolean(
+      active.agent || active.category || active.technology || active.capability ||
+      active.folderScope || active.harness || active.modelProfile ||
+      (active.loadingMode && modeEdgeKinds.size)
     );
 
-    if (active.loadingMode) {
-      const adjacentSkills = new Set(
-        graphEdges.filter((edge) => roleIds.has(edge.role)).map((edge) => edge.skill)
-      );
-      skills = skills.filter((skill) => adjacentSkills.has(skill.id));
-      skillIds = new Set(skills.map((skill) => skill.id));
-      const adjacentRoles = new Set(
-        graphEdges.filter((edge) => skillIds.has(edge.skill)).map((edge) => edge.role)
-      );
+    if (pruneDisconnected) {
+      const eligibleEdges = graphEdges.filter((edge) => roleIds.has(edge.role) && skillIds.has(edge.skill));
+      const adjacentRoles = new Set(eligibleEdges.map((edge) => edge.role));
+      const adjacentSkills = new Set(eligibleEdges.map((edge) => edge.skill));
       roles = roles.filter((role) => adjacentRoles.has(role.id));
+      skills = skills.filter((skill) => adjacentSkills.has(skill.id));
       roleIds = new Set(roles.map((role) => role.id));
-    }
-
-    if (active.agent) {
-      const adjacent = new Set(graphEdges.filter((edge) => roleIds.has(edge.role)).map((edge) => edge.skill));
-      skills = skills.filter((skill) => adjacent.has(skill.id));
       skillIds = new Set(skills.map((skill) => skill.id));
-    }
-    if (active.technology || active.capability || active.category) {
-      const adjacent = new Set(graphEdges.filter((edge) => skillIds.has(edge.skill)).map((edge) => edge.role));
-      roles = roles.filter((role) => adjacent.has(role.id));
-      roleIds = new Set(roles.map((role) => role.id));
     }
     const edges = graphEdges.filter((edge) => roleIds.has(edge.role) && skillIds.has(edge.skill));
     return {
@@ -95,6 +77,43 @@
       skills: skills.slice().sort((a, b) => a.id.localeCompare(b.id)),
       edges,
     };
+  }
+
+  /**
+   * Return loading routes supported by the relationships adjacent to one node.
+   * @param {object} data Complete explorer payload.
+   * @param {string} kind Node kind, either agent or skill.
+   * @param {string} nodeId Selected node identifier.
+   * @param {object} filters Current harness and loading-mode filters.
+   * @returns {object[]} Loading-mode records whose edge kinds touch the node.
+   */
+  function routesForNode(data, kind, nodeId, filters) {
+    const active = filters || {};
+    const selectedRole = kind === "agent" ? (data.roles || []).find((role) => role.id === nodeId) : null;
+    const hasAvailabilityOverrides = Boolean(selectedRole && (selectedRole.skillAvailability || []).length);
+    const adjacentKinds = new Set(
+      (data.edges || [])
+        .filter((edge) => kind === "agent" ? edge.role === nodeId : edge.skill === nodeId)
+        .filter((edge) => !active.folderScope || (active.folderScope === "dynamic" ? edge.kind === "detected-folder" : edge.kind !== "detected-folder"))
+        .map((edge) => edge.kind)
+    );
+    return (data.loadingModes || [])
+      .filter((item) => !active.harness || item.harness === active.harness || item.harness === "all")
+      .filter((item) => !active.loadingMode || item.mode === active.loadingMode)
+      .filter((item) =>
+        (item.edgeKinds || []).some((edgeKind) => adjacentKinds.has(edgeKind)) ||
+        (hasAvailabilityOverrides && item.mode === "availability-override")
+      );
+  }
+
+  /**
+   * Preserve a selection only while its node remains visible after filtering.
+   * @param {string} selectedKey Current kind-and-id selection key.
+   * @param {string[]} visibleKeys Keys present in the filtered graph.
+   * @returns {string} The preserved key or an empty selection.
+   */
+  function reconcileSelection(selectedKey, visibleKeys) {
+    return (visibleKeys || []).includes(selectedKey) ? selectedKey : "";
   }
 
   /**
@@ -113,7 +132,7 @@
     return Math.max(0, Math.min(count - 1, current + step));
   }
 
-  const api = { filterGraph, nextIndex, nodeStatus };
+  const api = { filterGraph, nextIndex, nodeStatus, reconcileSelection, routesForNode };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   if (!globalScope || !globalScope.document) return;
 
@@ -125,8 +144,21 @@
   const empty = document.getElementById("empty-state");
   const namespace = "http://www.w3.org/2000/svg";
   const filterNames = ["agent", "category", "technology", "capability", "folder-scope", "harness", "model-profile", "loading-mode", "declaration-status", "verified-behavior"];
+  const settings = globalScope.DEV_METHODOLOGY_DOCUMENTATION_SETTINGS;
+  const settingsChangeEvent = settings ? settings.changeEventName : "dev-methodology:documentation-settings-change";
+  const settingsHarnessToFilter = {
+    codex: "codex",
+    "claude-code": "claude",
+    "gemini-cli": "gemini",
+    "junie-cli": "junie",
+  };
+  const filterHarnessToSettings = Object.fromEntries(
+    Object.entries(settingsHarnessToFilter).map(([settingValue, filterValue]) => [filterValue, settingValue])
+  );
+  const emptySelectionMarkup = '<span class="utility">Selection</span><h2>Choose a node</h2><p>Use a filter or select a node to inspect its canonical source, generated adapters, loading route, and evidence.</p>';
   let focusNodes = [];
   let selectedKey = "";
+  let rovingKey = "";
 
   function appendOptions(id, values) {
     const select = document.getElementById(`filter-${id}`);
@@ -146,6 +178,11 @@
   appendOptions("model-profile", data.modelProfiles.map((item) => item.id));
   appendOptions("loading-mode", [...new Set(data.loadingModes.map((item) => item.mode))].sort());
   appendOptions("declaration-status", data.statusVocabulary.map((item) => item.id));
+
+  if (settings) {
+    const preferredHarness = settings.resolveHarness(Object.keys(settingsHarnessToFilter), "codex");
+    document.getElementById("filter-harness").value = settingsHarnessToFilter[preferredHarness] || "codex";
+  }
 
   const legend = document.getElementById("status-legend");
   data.statusVocabulary.forEach((status) => {
@@ -176,6 +213,21 @@
     return `<li><strong>${label}</strong><br>${paths.map((path) => `<a href="../${path}">${path}</a>`).join("<br>")}</li>`;
   }
 
+  function routeExplanation(route) {
+    if (route.mode === "native-preload") return "Claude preloads fixed skills when static inlining is disabled.";
+    if (route.mode === "skill-tool") return "Claude loads applicable conditional and detected-folder skills through its Skill tool.";
+    if (route.mode === "instruction-driven") return "Codex follows repository and folder instructions that activate applicable conditional and detected-folder skills.";
+    if (route.mode === "static-inline") return "Definition-owned fixed skills are inserted into the agent instructions.";
+    if (route.mode === "request-driven") return "Definition-owned conditional skills apply when their request trigger matches.";
+    if (route.mode === "availability-override") return "Per-agent availability can explicitly enable or disable optional Codex skills.";
+    if (route.mode === "app-server-injection") return "App-server injection remains separately inspectable even though it defines no graph relationship.";
+    return route.label;
+  }
+
+  function routeMarkup(route) {
+    return `<li><span class="status-chip status-${route.status}">${route.status}</span><br><strong>${route.label}</strong><br>${route.harness} · ${route.mode}<br>${routeExplanation(route)}${route.sourcePath ? `<br><a href="../${route.sourcePath}">Loading source: ${route.sourcePath}</a>` : ""}</li>`;
+  }
+
   function evidenceList(caseIds) {
     return (data.evidence || [])
       .filter((record) => caseIds.includes(record.id))
@@ -193,9 +245,22 @@
     const adapters = (node.generatedAdapters || []).map((item) => item.path);
     const cases = (node.coverage && node.coverage.executableCases) || [];
     const adapterModels = (node.generatedAdapters || []).map((item) => `${item.harness}: ${item.model || item.modelProfile}`);
-    const routes = data.loadingModes.filter((item) => item.harness === "all" || (node.generatedAdapters || []).some((adapter) => adapter.harness === item.harness));
-    selection.innerHTML = `<span class="utility">${kind}</span><h2>${node.label || node.id}</h2><span class="status-chip status-${status}">${status}</span><p>${node.description || "Generated from the canonical repository contract."}</p><ul class="detail-list">${linkList("Canonical source", sourcePaths)}${linkList("Generated adapters", adapters)}${adapterModels.length ? `<li><strong>Model routes</strong><br>${adapterModels.join("<br>")}</li>` : ""}</ul><h2>Evaluation evidence</h2><ul class="detail-list">${evidenceList(cases) || "<li>No associated evaluation case.</li>"}</ul><h2>Applicable loading routes</h2><ul class="detail-list">${routes.map((item) => `<li><span class="status-chip status-${item.status}">${item.status}</span><br><strong>${item.label}</strong><br>${item.mode}${item.evidenceCase ? `<br><a href="../evals/cases.yaml">Evidence case: ${item.evidenceCase}</a>` : ""}</li>`).join("")}</ul>`;
-    focusNodes.forEach((item) => item.setAttribute("data-selected", String(item.getAttribute("data-key") === selectedKey)));
+    const routes = routesForNode(data, kind, node.id, activeFilters());
+    const availability = (node.skillAvailability || []).map((item) => `${item.enabled ? "Enabled" : "Disabled"}: ${item.name || item.path}`);
+    selection.innerHTML = `<span class="utility">${kind}</span><h2>${node.label || node.id}</h2><span class="status-chip status-${status}">${status}</span><p>${node.description || "Generated from the canonical repository contract."}</p><ul class="detail-list">${linkList("Canonical source", sourcePaths)}${linkList("Generated adapters", adapters)}${adapterModels.length ? `<li><strong>Model routes</strong><br>${adapterModels.join("<br>")}</li>` : ""}${availability.length ? `<li><strong>Skill availability overrides</strong><br>${availability.join("<br>")}</li>` : ""}</ul><h2>Evaluation evidence</h2><ul class="detail-list">${evidenceList(cases) || "<li>No associated evaluation case.</li>"}</ul><h2>Applicable loading routes</h2><ul class="detail-list">${routes.map(routeMarkup).join("") || "<li>No loading route is adjacent to this node under the current harness and mode filters.</li>"}</ul>`;
+    focusNodes.forEach((item) => {
+      const pressed = item.getAttribute("data-key") === selectedKey;
+      item.setAttribute("data-selected", String(pressed));
+      item.setAttribute("aria-pressed", String(pressed));
+    });
+  }
+
+  function setRovingNode(node, shouldFocus) {
+    focusNodes.forEach((item) => item.setAttribute("tabindex", "-1"));
+    if (!node) return;
+    rovingKey = node.getAttribute("data-key");
+    node.setAttribute("tabindex", "0");
+    if (shouldFocus) node.focus();
   }
 
   function addNode(node, kind, x, y) {
@@ -207,12 +272,20 @@
       "aria-label": `${kind} ${node.label || node.id}, ${nodeStatus(node)}`,
       "data-key": `${kind}:${node.id}`,
       "data-selected": selectedKey === `${kind}:${node.id}`,
+      "aria-pressed": selectedKey === `${kind}:${node.id}`,
     });
-    group.appendChild(svgElement("rect", { width: 330, height: 38, rx: 8 }));
-    const text = svgElement("text", { x: 13, y: 24 });
+    group.appendChild(svgElement("rect", { width: 330, height: 48, rx: 8 }));
+    const text = svgElement("text", { x: 13, y: 20 });
     text.textContent = node.label || node.id;
     group.appendChild(text);
-    group.addEventListener("click", () => showDetails(kind, node));
+    const statusText = svgElement("text", { x: 13, y: 38, class: "node-status" });
+    statusText.textContent = nodeStatus(node);
+    group.appendChild(statusText);
+    group.addEventListener("click", () => {
+      setRovingNode(group, false);
+      showDetails(kind, node);
+    });
+    group.addEventListener("focus", () => setRovingNode(group, false));
     group.addEventListener("keydown", (event) => {
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
@@ -223,7 +296,7 @@
       const target = nextIndex(index, event.key, focusNodes.length, 1);
       if (target !== index) {
         event.preventDefault();
-        focusNodes[target].focus();
+        setRovingNode(focusNodes[target], true);
       }
     });
     svg.appendChild(group);
@@ -234,7 +307,7 @@
     const filtered = filterGraph(data, activeFilters());
     svg.replaceChildren();
     focusNodes = [];
-    const row = 48;
+    const row = 58;
     const top = 58;
     const roleY = new Map(filtered.roles.map((item, index) => [item.id, top + index * row]));
     const skillY = new Map(filtered.skills.map((item, index) => [item.id, top + index * row]));
@@ -251,13 +324,24 @@
       const end = skillY.get(edge.skill);
       const path = svgElement("path", {
         class: `map-edge edge-${edge.kind}`,
-        d: `M 365 ${start + 19} C 560 ${start + 19}, 640 ${end + 19}, 835 ${end + 19}`,
+        d: `M 365 ${start + 24} C 560 ${start + 24}, 640 ${end + 24}, 835 ${end + 24}`,
       });
       svg.appendChild(path);
     });
     filtered.roles.forEach((node) => addNode(node, "agent", 35, roleY.get(node.id)));
     filtered.skills.forEach((node) => addNode(node, "skill", 835, skillY.get(node.id)));
-    focusNodes.forEach((node, index) => node.setAttribute("tabindex", index === 0 ? "0" : "-1"));
+    const visibleKeys = focusNodes.map((node) => node.getAttribute("data-key"));
+    selectedKey = reconcileSelection(selectedKey, visibleKeys);
+    rovingKey = reconcileSelection(rovingKey, visibleKeys) || visibleKeys[0] || "";
+    setRovingNode(focusNodes.find((node) => node.getAttribute("data-key") === rovingKey), false);
+    if (selectedKey) {
+      const [kind, id] = selectedKey.split(":");
+      const nodes = kind === "agent" ? filtered.roles : filtered.skills;
+      const selectedNode = nodes.find((node) => node.id === id);
+      if (selectedNode) showDetails(kind, selectedNode);
+    } else {
+      selection.innerHTML = emptySelectionMarkup;
+    }
     empty.hidden = Boolean(filtered.roles.length || filtered.skills.length);
     svg.hidden = !empty.hidden;
     document.getElementById("result-count").textContent = `${filtered.edges.length} links`;
@@ -268,8 +352,8 @@
       routeList.innerHTML = data.loadingModes
         .filter((item) => !filters.harness || item.harness === filters.harness || item.harness === "all")
         .filter((item) => !filters.loadingMode || item.mode === filters.loadingMode)
-        .map((item) => `<li><span class="status-chip status-${item.status}">${item.status}</span><br><strong>${item.label}</strong><br>${item.mode}</li>`)
-        .join("");
+        .map(routeMarkup)
+        .join("") || "<li>No route matches this harness and mode.</li>";
     }
     const evidence = document.getElementById("evidence-list");
     if (evidence) {
@@ -282,10 +366,21 @@
     }
   }
 
-  filterNames.forEach((name) => document.getElementById(`filter-${name}`).addEventListener("change", render));
+  filterNames.forEach((name) => document.getElementById(`filter-${name}`).addEventListener("change", () => {
+    if (name === "harness" && settings && filterHarnessToSettings[document.getElementById("filter-harness").value]) {
+      settings.set("harness", filterHarnessToSettings[document.getElementById("filter-harness").value]);
+    }
+    render();
+  }));
   document.getElementById("reset-filters").addEventListener("click", () => {
     filterNames.forEach((name) => { document.getElementById(`filter-${name}`).value = ""; });
     render();
   });
+  if (settings) {
+    document.addEventListener(settingsChangeEvent, (event) => {
+      document.getElementById("filter-harness").value = settingsHarnessToFilter[event.detail.harness] || "codex";
+      render();
+    });
+  }
   render();
 })(typeof window !== "undefined" ? window : undefined);

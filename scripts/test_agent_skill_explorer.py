@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import json
 import re
+import shutil
 import subprocess
 import unittest
 from pathlib import Path
@@ -15,6 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 PAGE_PATH = ROOT / "design" / "agent-skill-explorer.html"
 SCRIPT_PATH = ROOT / "design" / "agent-skill-explorer.js"
 DATA_PATH = ROOT / "design" / "generated" / "agent-skill-explorer-data.js"
+NODE_PATH = shutil.which("node")
 
 
 class AgentSkillExplorerTests(unittest.TestCase):
@@ -26,6 +28,13 @@ class AgentSkillExplorerTests(unittest.TestCase):
 
         self.assertNotIn("https://", page)
         self.assertNotIn("http://", page)
+        self.assertIn('class="site-header"', page)
+        self.assertIn('href="../index.html">Back to Documentation Index</a>', page)
+        self.assertIn(
+            'href="agent-and-skill-definitions.html">Back to Core Agent and Skills</a>',
+            page,
+        )
+        self.assertIn('src="documentation-settings.js"', page)
         self.assertIn('src="generated/agent-skill-explorer-data.js"', page)
         self.assertIn('src="agent-skill-explorer.js"', page)
         self.assertIn('id="relationship-map"', page)
@@ -48,15 +57,22 @@ class AgentSkillExplorerTests(unittest.TestCase):
         ):
             self.assertIn(f'id="filter-{filter_id}"', page)
 
-    def test_filtering_and_keyboard_helpers_cover_representative_paths(self) -> None:
-        """Pure browser helpers must preserve relationships and deterministic focus movement."""
+    @unittest.skipUnless(NODE_PATH, "Node is unavailable for pure JavaScript checks")
+    def test_filtering_routes_status_and_keyboard_helpers_cover_representative_paths(self) -> None:
+        """Pure helpers must preserve harness routes, graph scope, status, and focus state."""
         fixture = {
             "roles": [
                 {
                     "id": "dev-coder",
                     "modelProfile": "advanced",
                     "dynamicFolderSkills": True,
-                    "generatedAdapters": [{"harness": "codex"}],
+                    "generatedAdapters": [
+                        {"harness": harness}
+                        for harness in ("claude", "codex", "gemini", "junie")
+                    ],
+                    "skillAvailability": [
+                        {"name": "typescript", "enabled": False}
+                    ],
                     "coverage": {"executableCases": ["case-a"], "verifiedCases": []},
                 },
                 {
@@ -88,8 +104,12 @@ class AgentSkillExplorerTests(unittest.TestCase):
                 {"role": "dev-coder", "skill": "careful-coding", "kind": "fixed"},
             ],
             "loadingModes": [
-                {"id": "codex-folder", "harness": "codex", "mode": "instruction-driven", "edgeKinds": ["detected-folder"]},
-                {"id": "core-inline", "harness": "all", "mode": "static-inline", "edgeKinds": ["fixed"]}
+                {"id": "core-inline", "harness": "all", "mode": "static-inline", "status": "declared", "sourcePath": "scripts/build.py", "edgeKinds": ["fixed"]},
+                {"id": "claude-preload", "harness": "claude", "mode": "native-preload", "status": "declared", "sourcePath": "scripts/build.py", "edgeKinds": ["fixed"]},
+                {"id": "claude-folder", "harness": "claude", "mode": "skill-tool", "status": "declared", "sourcePath": "agents/schema.yaml", "edgeKinds": ["detected-folder"]},
+                {"id": "codex-folder", "harness": "codex", "mode": "instruction-driven", "status": "declared", "sourcePath": "agents/schema.yaml", "edgeKinds": ["detected-folder"]},
+                {"id": "codex-availability", "harness": "codex", "mode": "availability-override", "status": "declared", "sourcePath": "agents/schema.yaml", "edgeKinds": []},
+                {"id": "codex-app-server", "harness": "codex", "mode": "app-server-injection", "status": "missing", "sourcePath": "evals/cases.yaml", "edgeKinds": []},
             ],
         }
         node_program = f"""
@@ -98,17 +118,35 @@ const data = {json.dumps(fixture)};
 const byAgent = explorer.filterGraph(data, {{agent: 'dev-coder'}});
 const byTechnology = explorer.filterGraph(data, {{technology: 'typescript'}});
 const byCapability = explorer.filterGraph(data, {{capability: 'typed-javascript'}});
-const byLoading = explorer.filterGraph(data, {{loadingMode: 'instruction-driven'}});
-const byInline = explorer.filterGraph(data, {{loadingMode: 'static-inline'}});
+const byDetectedFolder = explorer.filterGraph(data, {{folderScope: 'dynamic'}});
+const byDefinition = explorer.filterGraph(data, {{folderScope: 'static'}});
+const byCodex = explorer.filterGraph(data, {{harness: 'codex'}});
+const byClaude = explorer.filterGraph(data, {{harness: 'claude'}});
+const byGemini = explorer.filterGraph(data, {{harness: 'gemini'}});
+const byJunie = explorer.filterGraph(data, {{harness: 'junie'}});
+const byAvailability = explorer.filterGraph(data, {{harness: 'codex', loadingMode: 'availability-override'}});
+const byAppServer = explorer.filterGraph(data, {{harness: 'codex', loadingMode: 'app-server-injection'}});
+const disconnectedProfile = explorer.filterGraph(data, {{modelProfile: 'default'}});
 const verified = explorer.filterGraph(data, {{verifiedBehavior: 'verified'}});
 process.stdout.write(JSON.stringify({{
   byAgent: [byAgent.roles.map(x => x.id), byAgent.skills.map(x => x.id), byAgent.edges.length],
   byTechnology: [byTechnology.roles.map(x => x.id), byTechnology.skills.map(x => x.id)],
   byCapability: byCapability.skills.map(x => x.id),
-  byLoading: byLoading.roles.map(x => x.id),
-  byLoadingSkills: byLoading.skills.map(x => x.id),
-  byInlineSkills: byInline.skills.map(x => x.id),
+  byDetectedFolder: [byDetectedFolder.roles.map(x => x.id), byDetectedFolder.skills.map(x => x.id), byDetectedFolder.edges.map(x => x.kind)],
+  byDefinition: [byDefinition.roles.map(x => x.id), byDefinition.skills.map(x => x.id), byDefinition.edges.map(x => x.kind)],
+  harnessKinds: [byCodex, byClaude, byGemini, byJunie].map(graph => graph.edges.map(x => x.kind).sort()),
+  emptyEdgeModes: [byAvailability, byAppServer].map(graph => [graph.roles.length, graph.skills.length, graph.edges.length]),
+  disconnectedProfile: [disconnectedProfile.roles.length, disconnectedProfile.skills.length, disconnectedProfile.edges.length],
+  fixedClaudeRoutes: explorer.routesForNode(data, 'skill', 'careful-coding', {{harness: 'claude'}}).map(x => x.id),
+  detectedClaudeRoutes: explorer.routesForNode(data, 'skill', 'typescript', {{harness: 'claude'}}).map(x => x.id),
+  detectedCodexRoutes: explorer.routesForNode(data, 'skill', 'typescript', {{harness: 'codex'}}).map(x => x.id),
+  availabilityAgentRoutes: explorer.routesForNode(data, 'agent', 'dev-coder', {{harness: 'codex', loadingMode: 'availability-override'}}).map(x => x.id),
   verified: verified.skills.map(x => x.id),
+  staleWins: explorer.nodeStatus({{coverage: {{verifiedCases: ['case-b'], staleByDigestCases: ['case-a']}}}}),
+  selection: [
+    explorer.reconcileSelection('skill:typescript', ['agent:dev-coder', 'skill:typescript']),
+    explorer.reconcileSelection('skill:typescript', ['agent:dev-coder'])
+  ],
   keys: [
     explorer.nextIndex(0, 'ArrowRight', 5, 2),
     explorer.nextIndex(2, 'ArrowUp', 5, 2),
@@ -118,7 +156,7 @@ process.stdout.write(JSON.stringify({{
 }}));
 """
         result = subprocess.run(
-            ["node", "-e", node_program],
+            [NODE_PATH, "-e", node_program],
             cwd=ROOT,
             check=False,
             capture_output=True,
@@ -132,11 +170,49 @@ process.stdout.write(JSON.stringify({{
         )
         self.assertEqual([["dev-coder"], ["typescript"]], actual["byTechnology"])
         self.assertEqual(["typescript"], actual["byCapability"])
-        self.assertEqual(["dev-coder"], actual["byLoading"])
-        self.assertEqual(["typescript"], actual["byLoadingSkills"])
-        self.assertEqual(["careful-coding"], actual["byInlineSkills"])
+        self.assertEqual(
+            [["dev-coder"], ["typescript"], ["detected-folder"]],
+            actual["byDetectedFolder"],
+        )
+        self.assertEqual(
+            [["dev-coder"], ["careful-coding"], ["fixed"]],
+            actual["byDefinition"],
+        )
+        self.assertEqual(
+            [
+                ["detected-folder", "fixed"],
+                ["detected-folder", "fixed"],
+                ["fixed"],
+                ["fixed"],
+            ],
+            actual["harnessKinds"],
+        )
+        self.assertEqual([[1, 2, 2], [1, 2, 2]], actual["emptyEdgeModes"])
+        self.assertEqual([0, 0, 0], actual["disconnectedProfile"])
+        self.assertEqual(["core-inline", "claude-preload"], actual["fixedClaudeRoutes"])
+        self.assertEqual(["claude-folder"], actual["detectedClaudeRoutes"])
+        self.assertEqual(["codex-folder"], actual["detectedCodexRoutes"])
+        self.assertEqual(["codex-availability"], actual["availabilityAgentRoutes"])
         self.assertEqual(["careful-coding"], actual["verified"])
+        self.assertEqual("blocked", actual["staleWins"])
+        self.assertEqual(["skill:typescript", ""], actual["selection"])
         self.assertEqual([1, 0, 0, 4], actual["keys"])
+
+    def test_interaction_contract_exposes_routes_overrides_and_roving_state(self) -> None:
+        """Static assets must expose loading evidence, overrides, and accessible state."""
+        page = PAGE_PATH.read_text(encoding="utf-8")
+        script = SCRIPT_PATH.read_text(encoding="utf-8")
+
+        self.assertIn("min-width: 75rem", page)
+        self.assertIn(".map-node.status-missing rect", page)
+        self.assertIn(".map-node.status-verified rect", page)
+        self.assertIn("node-status", page + script)
+        self.assertIn("skillAvailability", script)
+        self.assertIn("sourcePath", script)
+        self.assertIn('"aria-pressed"', script)
+        self.assertIn('setAttribute("tabindex", "0")', script)
+        self.assertIn("resolveHarness", script)
+        self.assertIn("dev-methodology:documentation-settings-change", script)
 
     def test_text_states_and_component_boundaries_meet_contrast_targets(self) -> None:
         """Every evidence color and the shared boundary token must remain perceivable."""
