@@ -1,8 +1,16 @@
 # Split GitHub Work-Item Skills
 
-Status: Ready
+Status: Running
 
 Type: Feature
+
+## Current Execution
+
+- Canonical Dev Orchestrator task: 019f7f82-4118-76d3-9581-09facc586cf6.
+- Branch: codex/split-github-work-item-skills.
+- Worktree: /Users/martinbechard/.codex/worktrees/e0d3/dev-methodology.
+- Started from approved Ready commit 77492898a96db592d5beab27177ef42bd361f9fc.
+- Scope remains limited to the approved legacy GitHub skill, the two replacement packages, their metadata, supported generated mirrors, and directly related non-governed tests and documentation.
 
 ## Approval Resolution
 
