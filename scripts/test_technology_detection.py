@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import re
 import subprocess
 import sys
 import tempfile
@@ -1556,10 +1557,208 @@ class TechnologyDetectionTests(unittest.TestCase):
         ):
             renderer.render(project, inline_tech_skills=False)
 
-    def test_agents_section_renders_selector_only_workitem_and_backlog_workflows(self) -> None:
-        with tempfile.TemporaryDirectory() as directory:
-            plan = Path(directory) / "PROJECT.yaml"
-            plan.write_text(yaml.safe_dump({
+    def test_agents_section_renders_every_provider_as_reference_only_skill_guidance(self) -> None:
+        renderer = load_renderer_module()
+        provider_skills = {
+            "file": ("create-file-work-item", "manage-file-work-items"),
+            "github": ("create-github-work-item", "manage-github-work-items"),
+            "gitlab": ("create-gitlab-work-item", "manage-gitlab-work-items"),
+            "azure-devops": (
+                "create-azure-devops-work-item",
+                "manage-azure-devops-work-items",
+            ),
+            "jira": ("create-jira-work-item", "manage-jira-work-items"),
+        }
+        completion_skills = {
+            "direct-main": "complete-work-item-direct-main",
+            "feature-branch": "complete-work-item-feature-branch",
+        }
+
+        for provider, (create_skill, manage_skill) in provider_skills.items():
+            for completion, completion_skill in completion_skills.items():
+                with self.subTest(provider=provider, completion=completion):
+                    rendered = renderer.render({
+                        "workflow_selection": {
+                            "provider": {"default": provider},
+                            "completion": {"default": completion},
+                        },
+                        "technology_skill_loadouts": [],
+                    })
+
+                    self.assertIn("## Work-Item Workflow Skill References", rendered)
+                    self.assertIn(
+                        f"Default provider {provider}: create with {create_skill}; manage with {manage_skill}.",
+                        rendered,
+                    )
+                    self.assertIn(
+                        f"Default completion {completion}: use {completion_skill}.",
+                        rendered,
+                    )
+                    self.assertNotIn(f"# {create_skill}", rendered)
+                    self.assertNotIn(f"# {manage_skill}", rendered)
+                    self.assertNotIn(f"# {completion_skill}", rendered)
+
+    def test_agents_section_resolves_provider_and_completion_overrides_independently(self) -> None:
+        renderer = load_renderer_module()
+        rendered = renderer.render({
+            "workflow_selection": {
+                "provider": {
+                    "default": "file",
+                    "folder_overrides": [{
+                        "pattern": "services/**",
+                        "provider": "github",
+                    }],
+                },
+                "completion": {
+                    "default": "feature-branch",
+                    "folder_overrides": [{
+                        "pattern": "services/**",
+                        "completion": "direct-main",
+                    }],
+                },
+            },
+            "technology_skill_loadouts": [],
+        })
+
+        self.assertIn(
+            "Default provider file: create with create-file-work-item; manage with manage-file-work-items.",
+            rendered,
+        )
+        self.assertIn(
+            "services/** provider github: create with create-github-work-item; manage with manage-github-work-items.",
+            rendered,
+        )
+        self.assertIn(
+            "Default completion feature-branch: use complete-work-item-feature-branch.",
+            rendered,
+        )
+        self.assertIn(
+            "services/** completion direct-main: use complete-work-item-direct-main.",
+            rendered,
+        )
+        self.assertIn("Most-specific matching folder pattern wins independently", rendered)
+
+    def test_agents_section_preserves_none_unset_and_unsupported_boundaries(self) -> None:
+        renderer = load_renderer_module()
+        none_rendered = renderer.render({
+            "workflow_selection": {
+                "provider": {"default": "none"},
+                "completion": {"default": "feature-branch"},
+            },
+        })
+        unset_rendered = renderer.render({
+            "workflow_selection": {
+                "provider": {"default": "UNSET"},
+                "completion": {"default": "UNSET"},
+            },
+        })
+        placeholder_rendered = renderer.render({
+            "workflow_selection": {
+                "provider": {"default": "azure-devops"},
+                "completion": {"default": "direct-main"},
+            },
+        })
+
+        self.assertIn(
+            "Default provider none: no durable provider skill; durable create and manage operations are invalid.",
+            none_rendered,
+        )
+        self.assertIn("asks for the provider decision before a provider operation", unset_rendered)
+        self.assertIn("asks for the completion decision before implementation or publication", unset_rendered)
+        self.assertIn("does not infer either value from repository or hosting evidence", unset_rendered)
+        self.assertIn("create-azure-devops-work-item", placeholder_rendered)
+        self.assertIn("manage-azure-devops-work-items", placeholder_rendered)
+        self.assertIn("unsupported placeholder remains selected and reports BLOCKED", placeholder_rendered)
+
+    def test_agents_section_keeps_workflow_references_distinct_from_inlined_technology(self) -> None:
+        renderer = load_renderer_module()
+        rendered = renderer.render({
+            "workflow_selection": {
+                "provider": {"default": "github"},
+                "completion": {"default": "feature-branch"},
+            },
+            "technology_skill_loadouts": [{
+                "pathPattern": "services/**",
+                "skills": ["python"],
+            }],
+        })
+
+        self.assertIn("Workflow skills are referenced by name only and are never inlined", rendered)
+        self.assertIn("## Technology Skills", rendered)
+        self.assertIn("----- BEGIN INLINED TECHNOLOGY SKILL: python -----", rendered)
+        self.assertIn("# Python", rendered)
+        self.assertNotIn("# Create GitHub Work Item", rendered)
+        self.assertNotIn("# Complete Work Item Feature Branch", rendered)
+
+    def test_agents_section_rejects_invalid_workflow_values_and_combined_overrides(self) -> None:
+        renderer = load_renderer_module()
+        invalid_projects = (
+            (
+                {
+                    "workflow_selection": {
+                        "provider": {"default": "bitbucket"},
+                        "completion": {"default": "direct-main"},
+                    },
+                },
+                "workflow_selection.provider.default rejects 'bitbucket'; supported values: file, github, gitlab, azure-devops, jira, none, UNSET",
+            ),
+            (
+                {
+                    "workflow_selection": {
+                        "provider": {"default": "file"},
+                        "completion": {"default": "merge-when-green"},
+                    },
+                },
+                "workflow_selection.completion.default rejects 'merge-when-green'; supported values: direct-main, feature-branch, UNSET",
+            ),
+            (
+                {
+                    "workflow_selection": {
+                        "provider": {
+                            "default": "file",
+                            "folder_overrides": [{
+                                "pattern": "services/**",
+                                "process": "github+feature-branch",
+                            }],
+                        },
+                        "completion": {"default": "direct-main"},
+                    },
+                },
+                "workflow_selection.provider.folder_overrides[0] keys must be exactly: pattern, provider",
+            ),
+        )
+
+        for project, expected in invalid_projects:
+            with self.subTest(expected=expected):
+                with self.assertRaisesRegex(ValueError, f"^{re.escape(expected)}$"):
+                    renderer.render(project)
+
+    def test_agents_section_reports_deterministic_legacy_selector_migrations(self) -> None:
+        renderer = load_renderer_module()
+        legacy_values = (
+            ("workitem", "simple-workitem", "workflow_selection.completion.default: direct-main"),
+            ("workitem", "feature-branch-workitem", "workflow_selection.completion.default: feature-branch"),
+            ("backlog", "file-based-backlog", "workflow_selection.provider.default: file"),
+            ("backlog", "github-issues-backlog", "workflow_selection.provider.default: github"),
+            ("backlog", "none", "workflow_selection.provider.default: none"),
+            ("backlog", "UNSET", "workflow_selection.provider.default: UNSET"),
+        )
+
+        for selector, legacy_value, expected_target in legacy_values:
+            with self.subTest(selector=selector, legacy_value=legacy_value):
+                with self.assertRaises(ValueError) as raised:
+                    renderer.render({
+                        "workflow_selection": {
+                            selector: {"default": legacy_value},
+                        },
+                    })
+                message = str(raised.exception)
+                self.assertIn(expected_target, message)
+                self.assertIn("preserve folder overrides", message)
+                self.assertIn("do not infer replacements", message)
+
+        with self.assertRaises(ValueError) as raised:
+            renderer.render({
                 "workflow_selection": {
                     "workitem": {
                         "default": "simple-workitem",
@@ -1576,52 +1775,59 @@ class TechnologyDetectionTests(unittest.TestCase):
                         }],
                     },
                 },
-                "technology_skill_loadouts": [],
-            }), encoding="utf-8")
+            })
+        migration = str(raised.exception)
+        self.assertIn(
+            "workflow_selection.completion.folder_overrides[0]: pattern=services/**, completion=feature-branch",
+            migration,
+        )
+        self.assertIn(
+            "workflow_selection.provider.folder_overrides[0]: pattern=services/**, provider=github",
+            migration,
+        )
 
-            rendered = subprocess.run(
-                [sys.executable, str(RENDER_SCRIPT), "--project", str(plan)],
-                cwd=ROOT,
-                check=True,
-                capture_output=True,
-                text=True,
-            ).stdout
-
-            self.assertIn("## Work Item And Backlog Workflows", rendered)
-            self.assertIn("Default work-item process: simple-workitem", rendered)
-            self.assertIn(
-                "services/**: use the feature-branch-workitem work-item process",
-                rendered,
-            )
-            self.assertIn("Default backlog process: file-based-backlog", rendered)
-            self.assertIn(
-                "services/**: use the github-issues-backlog backlog process",
-                rendered,
-            )
-            self.assertIn("pertinent agent asks the user", rendered)
-            self.assertNotIn("create a feature branch", rendered)
-            self.assertNotIn("pull-request template", rendered)
-
-    def test_agents_section_rejects_invalid_workflow_selector(self) -> None:
-        with tempfile.TemporaryDirectory() as directory:
-            plan = Path(directory) / "PROJECT.yaml"
-            plan.write_text(yaml.safe_dump({
-                "workflow_selection": {
-                    "workitem": {"default": "invent a process"},
-                    "backlog": {"default": "UNSET"},
+    def test_agents_section_rejects_legacy_values_under_canonical_selector_keys(self) -> None:
+        renderer = load_renderer_module()
+        projects = (
+            (
+                {
+                    "workflow_selection": {
+                        "provider": {"default": "file-based-backlog"},
+                        "completion": {"default": "direct-main"},
+                    },
                 },
-            }), encoding="utf-8")
+                "workflow_selection.provider.default uses legacy value 'file-based-backlog'; migrate to 'file'",
+            ),
+            (
+                {
+                    "workflow_selection": {
+                        "provider": {"default": "github"},
+                        "completion": {"default": "simple-workitem"},
+                    },
+                },
+                "workflow_selection.completion.default uses legacy value 'simple-workitem'; migrate to 'direct-main'",
+            ),
+        )
 
-            completed = subprocess.run(
-                [sys.executable, str(RENDER_SCRIPT), "--project", str(plan)],
-                cwd=ROOT,
-                check=False,
-                capture_output=True,
-                text=True,
-            )
+        for project, expected in projects:
+            with self.subTest(expected=expected):
+                with self.assertRaisesRegex(ValueError, f"^{re.escape(expected)}$"):
+                    renderer.render(project)
 
-            self.assertEqual(1, completed.returncode)
-            self.assertIn("must be a process identifier or UNSET", completed.stderr)
+    def test_agents_section_preserves_valid_maintainer_selected_values(self) -> None:
+        renderer = load_renderer_module()
+        workflow_selection = {
+            "provider": {"default": "gitlab"},
+            "completion": {"default": "direct-main"},
+            "selection_policy": "Maintainer-selected values are authoritative.",
+        }
+
+        rendered = renderer.render({"workflow_selection": workflow_selection})
+
+        self.assertEqual("gitlab", workflow_selection["provider"]["default"])
+        self.assertEqual("direct-main", workflow_selection["completion"]["default"])
+        self.assertIn("create-gitlab-work-item", rendered)
+        self.assertIn("complete-work-item-direct-main", rendered)
 
     def test_agents_section_inlines_technology_skills_by_default_with_false_override(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
