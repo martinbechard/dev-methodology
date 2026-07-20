@@ -155,6 +155,22 @@ def _assert_inventory_scope(test: unittest.TestCase, inventory: str) -> None:
     test.assertIn("docs/wiki/", normalized)
 
 
+def _assert_single_scoped_none_entry(
+    test: unittest.TestCase, inventory: str
+) -> None:
+    """Require exactly one explicit None entry with assessed source and page scope."""
+    lines = [line.strip() for line in inventory.splitlines() if line.strip()]
+    bullet_lines = [line for line in lines if re.match(r"^[-*]\s+", line)]
+    if bullet_lines:
+        test.assertEqual(1, len(bullet_lines))
+        entry_start = bullet_lines[0]
+    else:
+        test.assertEqual(1, len(lines))
+        entry_start = lines[0]
+    test.assertRegex(entry_start, r"^(?:[-*]\s+)?none\s*[.:;]")
+    _assert_inventory_scope(test, inventory)
+
+
 def _markdown_section(page_text: str, heading: str) -> str:
     """Return one level-two Markdown section body without adjacent sections."""
     matched = re.search(
@@ -206,9 +222,8 @@ def _assert_collision_result_inventory(
     """Require scoped empty conclusions and one fact-bearing collision question."""
     conclusions = _labeled_inventory(result_text, CONCLUSION_INVENTORY_LABEL)
     open_questions = _labeled_inventory(result_text, OPEN_QUESTION_INVENTORY_LABEL)
-    _assert_inventory_scope(test, conclusions)
+    _assert_single_scoped_none_entry(test, conclusions)
     _assert_inventory_scope(test, open_questions)
-    test.assertRegex(conclusions, r"\bnone\b")
     test.assertNotRegex(open_questions, r"\bnone\b")
     test.assertIn("raw/provider.md", conclusions)
     test.assertIn("raw/provider.md", open_questions)
@@ -673,6 +688,20 @@ class WikiIngesterTargetBoundaryTests(unittest.TestCase):
         )
         _assert_collision_no_change(self, result_text)
         _assert_collision_result_inventory(self, result_text)
+        bypass = result_text.replace(
+            "- None. Assessed source: raw/provider.md. "
+            "Assessed page scope: docs/wiki; no pages changed.",
+            "- There are none. raw/provider.md docs/wiki/.",
+        )
+        with self.assertRaises(AssertionError):
+            _assert_collision_result_inventory(self, bypass)
+        second_entry = result_text.replace(
+            "Assessed page scope: docs/wiki; no pages changed.",
+            "Assessed page scope: docs/wiki; no pages changed.\n"
+            "- A second conclusion from raw/provider.md for docs/wiki/.",
+        )
+        with self.assertRaises(AssertionError):
+            _assert_collision_result_inventory(self, second_entry)
 
     def test_provider_page_contract_is_bound_to_one_committed_page(self) -> None:
         """Provider conclusions and their open question must share one committed page."""
