@@ -1,12 +1,13 @@
 # Split Hibernate ORM With Panache From Quarkus Persistence
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
 ## Running Ownership
 
 - Owner: Dev Orchestrator root task 019f77f4-c4bd-7c91-b197-c987a7beb838.
+- Canonical task: 019f7d90-88e6-7333-b0ef-1e87b061527a.
 - Lifecycle agent: Dev Backlog Steward.
 - Lifecycle claim: hibernate-panache-split-lifecycle.
 - Claim evidence: PRIMARY exact-file backlog ownership acquired at 2026-07-20T02:38:16.677214Z from clean baseline commit ff6c23fc2a5ca789f83e14f45f71f6c08154bd3b.
@@ -68,6 +69,17 @@ None.
 - Run scripts/validate-agent-skills.py for skills and scripts/openai_metadata.py in check mode.
 - Run every generated-output freshness check required by AGENTS.md.
 - Run the repository script test suite, the project-wiki script test suite, and git diff validation.
+
+## Completion Evidence
+
+- Accepted source lineage: commits 0e7f07462256c0a843fb768a5ea909b58fdbb333, 672f16d3f41a3a86ce35a267f2f6948e027c6caa, and e0e0d50d910a36fa333b4a792c6a85dec7ae28a9 were preserved byte-for-byte in finalization commit 7840fb3e29e6ece46f291cce2be067e76cbf7c36.
+- Source finalization: the exact 16-file contribution was independently accepted and proportionally verified before its claim released cleanly at event 638711f8-f69e-4970-ab3c-bc3c7be2ca80.
+- Integration: main fast-forwarded from accepted base 3f75ea58ee38fcba0d6bc6d7515a6d656c3ac037 to 7840fb3e29e6ece46f291cce2be067e76cbf7c36 under exact primary integration claim acquisition d2161df8-8e45-4de7-932f-badf99c3891c; the claim released cleanly at event 24a971a3-3351-4b70-8fe6-c099ec14028f.
+- Post-integration review: a fresh independent review on the later clean main lineage reported ACCEPTED with no findings or open questions, confirmed all six governed source blobs remained identical to the accepted commit, and confirmed later generated-catalog updates preserved the Hibernate ORM With Panache records.
+- Focused verification: the Dev Verifier reran the complete bounded gate on clean main at ded845bf39f8f21c1cb9a2b250141a38ab8c5c5c. Three Hibernate detection regressions, seven affected bundle-content tests, two evaluation-catalog tests, both affected skill validations, path-scoped OpenAI metadata synchronization, all three relevant generated-output freshness checks, ancestry, git diff validation, and clean status passed.
+- Concurrency reconciliation: main later advanced through unrelated backlog, evaluation, and wiki-candidate commits to terminal-claim baseline 3ebf5974a43466936ea9f1e803e34ed199d947e5. The accepted commit remained an ancestor and none of the exact 16 Hibernate/Panache paths changed after the fresh verifier.
+- Verification scope: broad repository, project-wiki, live, and browser suites were intentionally omitted by terminal direction. An unrelated stale coordination-skill metadata warning was excluded from this item.
+- Terminal authorization: parent task 019f77f4-c4bd-7c91-b197-c987a7beb838 issued POST-INTEGRATION / TERMINAL GO and TERMINAL CLAIM RETRY GO for this separate archive transaction.
 
 ## Notes
 
