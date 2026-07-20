@@ -1,8 +1,16 @@
 # Replace Bootstrapper Marathon With Isolated Test Doubles
 
-Status: Ready
+Status: Running
 
 Type: Defect
+
+## Running Ownership
+
+- Owner: Dev Orchestrator root task 019f77f4-c4bd-7c91-b197-c987a7beb838.
+- Lifecycle agent: Dev Backlog Steward.
+- Lifecycle claim: baton-1-bootstrapper-isolated-doubles-lifecycle.
+- Claim evidence: PRIMARY exact-file backlog ownership acquired at 2026-07-20T01:42:21.016690Z from clean baseline commit 54f8fa65dd840c2a5d529c6acff1080830c516bc.
+- Scope boundary: this claim owns only the Running transition and primary index resource and is released after its clean commit. Project Bootstrapper suite-local scripted doubles, fixtures, tests, independent review, verification, and integration require a separate canonical isolated claim.
 
 ## Summary
 
