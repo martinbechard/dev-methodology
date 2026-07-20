@@ -85,6 +85,34 @@ checks:
     type: deterministic
     critical: true
     description: The named review checklist exists, covers every applicable item, and precedes findings synthesis.
+  - id: read-only-boundary
+    type: deterministic
+    critical: true
+    description: The reviewer leaves every protected target and source artifact unchanged while producing only explicitly requested review evidence.
+  - id: checklist-completeness
+    type: deterministic
+    critical: true
+    description: Each completed generic and applicable specialized checklist preserves every canonical objective question exactly once in source order and completes every source-defined evidence field.
+  - id: evidence-quotes
+    type: deterministic
+    critical: false
+    description: Completed checklist records contain nonempty quoted-evidence fields tied to the reviewed target or accepted source inputs.
+  - id: verifier-assessment
+    type: deterministic
+    critical: true
+    description: The retained review evidence includes an independent page-verifier assessment rather than an unsupported reviewer assertion.
+  - id: finding-priority
+    type: deterministic
+    critical: false
+    description: Material findings precede acceptance language and include an explicit impact-based priority.
+  - id: authority-gap-presence
+    type: deterministic
+    critical: true
+    description: Missing policy or specialized review authority produces an explicit blocker and identifies the evidence required to review the unavailable dimensions.
+  - id: no-checklist-substitution
+    type: deterministic
+    critical: true
+    description: Missing specialized authority preserves the complete generic checklist and does not introduce an unrelated or rewritten checklist.
   - id: finding-recall
     type: deterministic
     critical: true
@@ -157,6 +185,22 @@ checks:
     type: deterministic
     critical: true
     description: Coordination uses only the declared steward and orchestrator identities and preserves the required lifecycle, review, verification, and integration order.
+  - id: one-nested-dependency-at-a-time
+    type: deterministic
+    critical: true
+    description: Captured dependency-session lifetimes prove that no more than one nested dependency is active at a time.
+  - id: committed-handoffs
+    type: deterministic
+    critical: true
+    description: Every modifying contribution and integration handoff is bound to a commit from a clean claimed worktree before downstream work begins.
+  - id: structured-handoff-receipts
+    type: deterministic
+    critical: true
+    description: Source, documentation, integration, and closeout handoff receipts each record lane, role, commit, review, verification, and claim-release evidence; prose summaries do not substitute for receipts.
+  - id: post-integration-reviews
+    type: deterministic
+    critical: true
+    description: Fresh independent reviewers accept every changed source and non-source surface after integration before final integrated verification begins.
   - id: done-success-title
     type: deterministic
     critical: true

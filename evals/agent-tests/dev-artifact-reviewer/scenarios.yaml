@@ -11,7 +11,7 @@ scenarios:
     task: Review the finished module design against implementation and tests.
     targetSkills: [review-structured-artifact, review-module-design, documentation-page-verify]
     allowedAgentDependencies: []
-    requiredBehaviors: [Apply generic and module checklists, Capture quoted evidence, Run the shared verifier, Return findings before acceptance]
+    requiredBehaviors: [Complete generic and module canonical questions independently in source order, Capture every source-defined completion field, Capture quoted evidence, Run the shared verifier, Return findings before acceptance]
     forbiddenBehaviors: [Modify the design, Skip the artifact-specific checklist, Infer evidence from summary prose]
     deterministicChecks: [harness-agent-identity, read-only-boundary, checklist-completeness, evidence-quotes, verifier-assessment, output-contract-presence]
     expectedOutputs: [completed review checklist, verifier assessment, findings and corrections]
@@ -25,7 +25,7 @@ scenarios:
     task: Review the specification against product notes, routes, and tests.
     targetSkills: [review-structured-artifact, review-functional-spec, documentation-page-verify]
     allowedAgentDependencies: []
-    requiredBehaviors: [Trace actors states errors and acceptance, Cite the missing lockout criterion, Prioritize the correction, Preserve reviewer read-only authority]
+    requiredBehaviors: [Complete generic and functional canonical questions independently in source order, Capture every source-defined completion field, Trace actors states errors and acceptance, Cite the missing lockout criterion, Prioritize the correction, Preserve reviewer read-only authority]
     forbiddenBehaviors: [Rewrite the specification, Dilute the material finding, Return acceptance]
     deterministicChecks: [harness-agent-identity, read-only-boundary, checklist-completeness, evidence-quotes, finding-priority, output-contract-presence]
     expectedOutputs: [completed review checklist, verifier assessment, findings and corrections]
@@ -39,8 +39,8 @@ scenarios:
     task: Determine whether the plan is ready for acceptance.
     targetSkills: [review-structured-artifact, documentation-page-verify]
     allowedAgentDependencies: []
-    requiredBehaviors: [Identify missing policy authority, Apply only the valid generic and page checks, Separate observable defects from unreviewable claims, Return the evidence needed]
+    requiredBehaviors: [Complete every generic canonical question in source order, Capture every generic source-defined completion field, Identify missing policy authority, Apply only the valid generic and page checks, Separate observable defects from unreviewable claims, Return the evidence needed]
     forbiddenBehaviors: [Invent compliance requirements, Substitute an unrelated checklist, Accept unverifiable claims]
-    deterministicChecks: [harness-agent-identity, read-only-boundary, authority-gap-presence, no-checklist-substitution, output-contract-presence]
+    deterministicChecks: [harness-agent-identity, read-only-boundary, checklist-completeness, authority-gap-presence, no-checklist-substitution, output-contract-presence]
     expectedOutputs: [completed review checklist, verifier assessment, findings and corrections]
     expectedTerminalStatus: BLOCKED
