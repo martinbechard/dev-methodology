@@ -1,8 +1,17 @@
 # Integrate Work-Item Contracts Across The Bundle
 
-Status: Ready
+Status: Running
 
 Type: Feature
+
+## Current Execution
+
+- Canonical Dev Orchestrator task: 019f80f3-41d5-7481-910e-6f54d43083ae.
+- Worktree: /Users/martinbechard/.codex/worktrees/2c00/dev-methodology.
+- Intended branch: codex/integrate-work-item-contracts-across-bundle.
+- Starting main commit: 2ddedf5a83ca8567ac3de93867a3f90624a2e28c.
+- Phase: Reconciling current main and completed dependency evidence.
+- Verification: focused provider, completion, selector, role, metadata, renderer, migration, stale-name, and evaluation checks first; then the item-required full repository, project-wiki, catalog, generated-adapter, disposable smoke, and install/refresh release gates.
 
 ## Summary
 
