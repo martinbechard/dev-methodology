@@ -1,6 +1,6 @@
 # Preserve Wiki Research Source Links
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
@@ -11,6 +11,15 @@ Type: Defect
 - Lifecycle claim: preserve-wiki-research-source-links-lifecycle.
 - Claim evidence: PRIMARY exact-file backlog ownership acquired at 2026-07-20T01:12:15.710366Z from clean baseline commit 9f6f4d41ef185eecd1a37fe3334c082cf85c6bdb.
 - Scope boundary: this claim owns only the Running transition and primary index resource and is released after its clean commit. Wiki Researcher suite-local fixtures, scenarios, link validation, tests, review, verification, and integration require a separate canonical isolated claim.
+
+## Completion Evidence
+
+- Accepted source commit: dde9d061c139da880043f57153895faaffd06926; source claim released normally in event 933a2ee3-abe9-4875-97d1-adbf0c6b5f87.
+- Current-main reconciliation commit a297b0547ed4f4b69c4fdb573d16c6dbdd44602a preserved the accepted three-file behavior and was independently verified; verifier claim released normally in event c033e7de-f3b4-4423-9fb1-056da343aba3.
+- Integrated on main as 3ebf5974a43466936ea9f1e803e34ed199d947e5 with source provenance.
+- Focused verification passed: five suite-local source-link tests, global catalog validation, Codex validate-only for the bounded Wiki Researcher source-link scenario with jobs 1, Python compilation, Git diff validation, and clean status.
+- Integration claim integrate-wiki-research-source-links released normally in event 6e029910-096e-47af-bac1-591fb29ada65.
+- No broad or full agent-catalog run was used for this item; that final-state gate remains campaign-level work.
 
 ## Summary
 
