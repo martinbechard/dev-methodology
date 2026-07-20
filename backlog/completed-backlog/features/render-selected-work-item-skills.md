@@ -10,8 +10,23 @@ Type: Feature
 - Worktree: /Users/martinbechard/.codex/worktrees/bc99/dev-methodology.
 - Intended branch: codex/render-selected-work-item-skills.
 - Owner: Dev Orchestrator.
-- Phase: current-main reconciliation and affected-surface planning.
+- Phase: Completed and integrated on main.
 - Verification: focused selector and renderer tests, applicable generated freshness checks, governed-definition approval gates where required, and Git diff validation before independent review.
+
+## Completion Evidence
+
+- Accepted candidate: 9d84ce39c5efae6871060293bf6505ee43779ab5.
+- Independent review: two fresh final ACCEPT reviews found no material findings.
+- Independent candidate verification: GO.
+- Governed definition gates: exact skill and role checks returned ALLOWED_APPROVED_DEFINITION_CHANGE; supported generated preflights also passed.
+- Main delivery commits: a5636b3, 176ef60, and a71823bb6e2bf6e156705e5b8067904250ec8e56.
+- Post-integration GO: 88/88 renderer tests, 2/2 focused bundle tests, 17/17 fixtures, skill and generated-output freshness checks, Git diff validation, 21/21 matrix checks, 8/8 collision checks, 2/2 combined diagnostics, and clean main.
+- Runtime boundary: system Python 3.9 lacked tomllib; supported Python 3.11 was used for the applicable checks.
+- Verification tier: bounded Tier 1/2 scope. Broad repository, project-wiki, and live-agent-catalog suites were intentionally omitted. The unchanged broad-bundle phrase warning was independently confirmed as a baseline condition outside this candidate scope.
+- Integration ownership: claim acquired at event 10b2a2c6-4c16-4a1f-83b5-8024a0c70936 and released at event 9d96dda7-52fd-4d89-bd37-26567f98c13b. The earlier event 513411a6-a747-4851-9478-81dbc3d32ace was an invalid worktree-path attempt corrected before acquisition; it did not establish ownership.
+- Terminal backlog ownership: claim render-selected-work-item-skills-completion-019f80a4 acquired PRIMARY at event 1d292e41-c57c-4d16-a1b2-c6691d799b2c for exactly this source and completed destination. It will be released immediately after this committed archive transaction from clean main.
+- Cleanup eligibility: the private worktree and intended branch are preserved for parent cleanup after this terminal claim releases. The parent next action is to verify merge/patch-equivalence, remove the clean worktree, safely delete the merged branch, prune worktree metadata, and update the task display state.
+- Open issues: none for this work item.
 
 ## Summary
 
