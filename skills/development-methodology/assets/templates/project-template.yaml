@@ -126,12 +126,12 @@ workflow_selection:
     default: "TODO: file, github, gitlab, azure-devops, jira, none, or UNSET when the user has not selected a durable work-item provider."
     folder_overrides:
       - pattern: "TODO: Real repository-relative folder path or valid glob, or Not applicable."
-        provider: "TODO: file, github, gitlab, azure-devops, jira, or none."
+        provider: "TODO: file, github, gitlab, azure-devops, jira, none, or UNSET."
   completion:
     default: "TODO: direct-main, feature-branch, or UNSET when the user has not selected a completion process."
     folder_overrides:
       - pattern: "TODO: Real repository-relative folder path or valid glob, or Not applicable."
-        completion: "TODO: direct-main or feature-branch."
+        completion: "TODO: direct-main, feature-branch, or UNSET."
   selection_policy: "Always record provider and completion independently, using explicit UNSET when a decision is deferred. Within either selector, one exact folder pattern may appear only once. Do not infer either selector from repository files, remotes, hosting metadata, templates, installed plugins, or available tools. Azure DevOps and Jira remain selected as unsupported BLOCKED placeholders instead of falling back."
 
 folder_routing:

@@ -1638,6 +1638,36 @@ class TechnologyDetectionTests(unittest.TestCase):
             (
                 {
                     "workflow_selection": {
+                        "provider": {
+                            "default": "file",
+                            "folder_overrides": [
+                                {"pattern": "services/**", "provider": "github"},
+                                {"pattern": "services/**", "provider": "github"},
+                            ],
+                        },
+                        "completion": {"default": "direct-main"},
+                    },
+                },
+                "workflow_selection.provider.folder_overrides[1].pattern 'services/**' duplicates workflow_selection.provider.folder_overrides[0].pattern with value 'github'; duplicate patterns are not allowed",
+            ),
+            (
+                {
+                    "workflow_selection": {
+                        "provider": {"default": "file"},
+                        "completion": {
+                            "default": "direct-main",
+                            "folder_overrides": [
+                                {"pattern": "services/**", "completion": "direct-main"},
+                                {"pattern": "services/**", "completion": "feature-branch"},
+                            ],
+                        },
+                    },
+                },
+                "workflow_selection.completion.folder_overrides[1].pattern 'services/**' conflicts with workflow_selection.completion.folder_overrides[0].pattern using values 'direct-main' and 'feature-branch'",
+            ),
+            (
+                {
+                    "workflow_selection": {
                         "provider": {"default": "file"},
                         "completion": {
                             "default": "direct-main",
@@ -1683,23 +1713,23 @@ class TechnologyDetectionTests(unittest.TestCase):
 
     def test_agents_section_renders_every_provider_as_reference_only_skill_guidance(self) -> None:
         renderer = load_renderer_module()
-        provider_skills = {
-            "file": ("create-file-work-item", "manage-file-work-items"),
-            "github": ("create-github-work-item", "manage-github-work-items"),
-            "gitlab": ("create-gitlab-work-item", "manage-gitlab-work-items"),
-            "azure-devops": (
-                "create-azure-devops-work-item",
-                "manage-azure-devops-work-items",
-            ),
-            "jira": ("create-jira-work-item", "manage-jira-work-items"),
+        provider_guidance = {
+            "file": "Default provider file: create with create-file-work-item; manage with manage-file-work-items.",
+            "github": "Default provider github: create with create-github-work-item; manage with manage-github-work-items.",
+            "gitlab": "Default provider gitlab: create with create-gitlab-work-item; manage with manage-gitlab-work-items.",
+            "azure-devops": "Default provider azure-devops: create with create-azure-devops-work-item; manage with manage-azure-devops-work-items.",
+            "jira": "Default provider jira: create with create-jira-work-item; manage with manage-jira-work-items.",
+            "none": "Default provider none: no durable provider skill; durable create and manage operations are invalid.",
+            "UNSET": "Default provider UNSET: the pertinent agent asks for the provider decision before a provider operation.",
         }
-        completion_skills = {
-            "direct-main": "complete-work-item-direct-main",
-            "feature-branch": "complete-work-item-feature-branch",
+        completion_guidance = {
+            "direct-main": "Default completion direct-main: use complete-work-item-direct-main.",
+            "feature-branch": "Default completion feature-branch: use complete-work-item-feature-branch.",
+            "UNSET": "Default completion UNSET: the pertinent agent asks for the completion decision before implementation or publication.",
         }
 
-        for provider, (create_skill, manage_skill) in provider_skills.items():
-            for completion, completion_skill in completion_skills.items():
+        for provider, expected_provider in provider_guidance.items():
+            for completion, expected_completion in completion_guidance.items():
                 with self.subTest(provider=provider, completion=completion):
                     rendered = renderer.render({
                         "workflow_selection": {
@@ -1710,17 +1740,10 @@ class TechnologyDetectionTests(unittest.TestCase):
                     })
 
                     self.assertIn("## Work-Item Workflow Skill References", rendered)
-                    self.assertIn(
-                        f"Default provider {provider}: create with {create_skill}; manage with {manage_skill}.",
-                        rendered,
-                    )
-                    self.assertIn(
-                        f"Default completion {completion}: use {completion_skill}.",
-                        rendered,
-                    )
-                    self.assertNotIn(f"# {create_skill}", rendered)
-                    self.assertNotIn(f"# {manage_skill}", rendered)
-                    self.assertNotIn(f"# {completion_skill}", rendered)
+                    self.assertIn(expected_provider, rendered)
+                    self.assertIn(expected_completion, rendered)
+                    self.assertNotIn("# Create File Work Item", rendered)
+                    self.assertNotIn("# Complete Work Item Direct Main", rendered)
 
     def test_agents_section_resolves_provider_and_completion_overrides_independently(self) -> None:
         renderer = load_renderer_module()
@@ -1810,7 +1833,7 @@ class TechnologyDetectionTests(unittest.TestCase):
         self.assertIn("Workflow skills are referenced by name only and are never inlined", rendered)
         self.assertIn("## Technology Skills", rendered)
         self.assertIn("----- BEGIN INLINED TECHNOLOGY SKILL: python -----", rendered)
-        self.assertIn("# Python", rendered)
+        self.assertIn(renderer.inlined_skill_body("python"), rendered)
         self.assertNotIn("# Create GitHub Work Item", rendered)
         self.assertNotIn("# Complete Work Item Feature Branch", rendered)
 
@@ -1848,7 +1871,22 @@ class TechnologyDetectionTests(unittest.TestCase):
                         "completion": {"default": "direct-main"},
                     },
                 },
-                "workflow_selection.provider.folder_overrides[0] keys must be exactly: pattern, provider",
+                "workflow_selection.provider.folder_overrides[0].process rejects combined value 'github+feature-branch'; supported provider values: file, github, gitlab, azure-devops, jira, none, UNSET; split it into workflow_selection.provider.folder_overrides[0].provider and a workflow_selection.completion.folder_overrides entry with the same pattern",
+            ),
+            (
+                {
+                    "workflow_selection": {
+                        "provider": {"default": "file"},
+                        "completion": {
+                            "default": "direct-main",
+                            "folder_overrides": [{
+                                "pattern": "services/**",
+                                "process": "github+feature-branch",
+                            }],
+                        },
+                    },
+                },
+                "workflow_selection.completion.folder_overrides[0].process rejects combined value 'github+feature-branch'; supported completion values: direct-main, feature-branch, UNSET; split it into workflow_selection.completion.folder_overrides[0].completion and a workflow_selection.provider.folder_overrides entry with the same pattern",
             ),
             (
                 {
@@ -1883,6 +1921,160 @@ class TechnologyDetectionTests(unittest.TestCase):
             with self.subTest(expected=expected):
                 with self.assertRaisesRegex(ValueError, f"^{re.escape(expected)}$"):
                     renderer.render(project)
+
+    def test_agents_section_collision_checks_mixed_legacy_and_canonical_defaults(self) -> None:
+        renderer = load_renderer_module()
+        cases = (
+            (
+                "workitem",
+                {"default": "simple-workitem"},
+                "completion",
+                {"default": "direct-main"},
+                "workflow_selection.workitem.default 'simple-workitem' maps to 'direct-main', redundantly matching workflow_selection.completion.default 'direct-main'; preserve workflow_selection.completion.default, migrate any remaining workflow_selection.workitem overrides, then remove workflow_selection.workitem",
+            ),
+            (
+                "workitem",
+                {"default": "simple-workitem"},
+                "completion",
+                {"default": "feature-branch"},
+                "workflow_selection.workitem.default 'simple-workitem' maps to 'direct-main', conflicts with workflow_selection.completion.default 'feature-branch'; preserve the valid canonical maintainer edit at workflow_selection.completion.default; migrate any remaining workflow_selection.workitem overrides, then remove workflow_selection.workitem without overwriting workflow_selection.completion.default",
+            ),
+            (
+                "backlog",
+                {"default": "file-based-backlog"},
+                "provider",
+                {"default": "file"},
+                "workflow_selection.backlog.default 'file-based-backlog' maps to 'file', redundantly matching workflow_selection.provider.default 'file'; preserve workflow_selection.provider.default, migrate any remaining workflow_selection.backlog overrides, then remove workflow_selection.backlog",
+            ),
+            (
+                "backlog",
+                {"default": "file-based-backlog"},
+                "provider",
+                {"default": "github"},
+                "workflow_selection.backlog.default 'file-based-backlog' maps to 'file', conflicts with workflow_selection.provider.default 'github'; preserve the valid canonical maintainer edit at workflow_selection.provider.default; migrate any remaining workflow_selection.backlog overrides, then remove workflow_selection.backlog without overwriting workflow_selection.provider.default",
+            ),
+        )
+
+        for legacy_key, legacy, canonical_key, canonical, expected in cases:
+            with self.subTest(legacy_key=legacy_key, expected=expected):
+                project = {
+                    "workflow_selection": {
+                        legacy_key: legacy,
+                        canonical_key: canonical,
+                    },
+                }
+                with self.assertRaisesRegex(ValueError, f"^{re.escape(expected)}$"):
+                    renderer.render(project)
+                self.assertEqual(canonical, project["workflow_selection"][canonical_key])
+
+    def test_agents_section_collision_checks_mixed_legacy_and_canonical_overrides(self) -> None:
+        renderer = load_renderer_module()
+        cases = (
+            (
+                "workitem",
+                "feature-branch-workitem",
+                "completion",
+                "feature-branch",
+                "workflow_selection.workitem.folder_overrides[0].process 'feature-branch-workitem' maps to 'feature-branch', redundantly matching workflow_selection.completion.folder_overrides[0].completion 'feature-branch' for pattern 'services/**'; preserve workflow_selection.completion.folder_overrides[0].completion and remove the redundant legacy override",
+            ),
+            (
+                "workitem",
+                "feature-branch-workitem",
+                "completion",
+                "direct-main",
+                "workflow_selection.workitem.folder_overrides[0].process 'feature-branch-workitem' maps to 'feature-branch', conflicts with workflow_selection.completion.folder_overrides[0].completion 'direct-main' for pattern 'services/**'; preserve the valid canonical maintainer edit at workflow_selection.completion.folder_overrides[0].completion and resolve the legacy override explicitly",
+            ),
+            (
+                "backlog",
+                "github-issues-backlog",
+                "provider",
+                "github",
+                "workflow_selection.backlog.folder_overrides[0].process 'github-issues-backlog' maps to 'github', redundantly matching workflow_selection.provider.folder_overrides[0].provider 'github' for pattern 'services/**'; preserve workflow_selection.provider.folder_overrides[0].provider and remove the redundant legacy override",
+            ),
+            (
+                "backlog",
+                "github-issues-backlog",
+                "provider",
+                "file",
+                "workflow_selection.backlog.folder_overrides[0].process 'github-issues-backlog' maps to 'github', conflicts with workflow_selection.provider.folder_overrides[0].provider 'file' for pattern 'services/**'; preserve the valid canonical maintainer edit at workflow_selection.provider.folder_overrides[0].provider and resolve the legacy override explicitly",
+            ),
+        )
+
+        for legacy_key, legacy_value, canonical_key, canonical_value, expected in cases:
+            with self.subTest(legacy_key=legacy_key, expected=expected):
+                legacy_default = "simple-workitem" if legacy_key == "workitem" else "file-based-backlog"
+                canonical_default = "direct-main" if canonical_key == "completion" else "file"
+                project = {
+                    "workflow_selection": {
+                        legacy_key: {
+                            "default": legacy_default,
+                            "folder_overrides": [{
+                                "pattern": "services/**",
+                                "process": legacy_value,
+                            }],
+                        },
+                        canonical_key: {
+                            "default": canonical_default,
+                            "folder_overrides": [{
+                                "pattern": "services/**",
+                                canonical_key: canonical_value,
+                            }],
+                        },
+                    },
+                }
+                with self.assertRaises(ValueError) as raised:
+                    renderer.render(project)
+                message = str(raised.exception)
+                self.assertTrue(
+                    message.startswith("mixed legacy and canonical workflow selectors collide: "),
+                    message,
+                )
+                self.assertIn(expected, message)
+                self.assertEqual(
+                    canonical_value,
+                    project["workflow_selection"][canonical_key]["folder_overrides"][0][canonical_key],
+                )
+
+        project = {
+            "workflow_selection": {
+                "workitem": {
+                    "default": "simple-workitem",
+                    "folder_overrides": [{
+                        "pattern": "legacy-only/**",
+                        "process": "feature-branch-workitem",
+                    }],
+                },
+                "completion": {
+                    "default": "direct-main",
+                    "folder_overrides": [{
+                        "pattern": "maintainer/**",
+                        "completion": "feature-branch",
+                    }],
+                },
+            },
+        }
+        with self.assertRaises(ValueError) as raised:
+            renderer.render(project)
+        message = str(raised.exception)
+        self.assertIn(
+            "after resolving these collisions, apply remaining migration guidance without changing canonical fields",
+            message,
+        )
+        self.assertIn(
+            "add workflow_selection.completion.folder_overrides entry: pattern=legacy-only/**, completion=feature-branch",
+            message,
+        )
+        self.assertEqual(
+            [{"pattern": "maintainer/**", "completion": "feature-branch"}],
+            project["workflow_selection"]["completion"]["folder_overrides"],
+        )
+
+    def test_render_docstring_distinguishes_optional_authority_from_required_workflow(self) -> None:
+        renderer = load_renderer_module()
+
+        self.assertIn("Optional definition authority", renderer.render.__doc__)
+        self.assertIn("workflow_selection is required", renderer.render.__doc__)
+        self.assertNotIn("Optional authority and workflow", renderer.render.__doc__)
 
     def test_agents_section_reports_deterministic_legacy_selector_migrations(self) -> None:
         renderer = load_renderer_module()
@@ -1929,11 +2121,11 @@ class TechnologyDetectionTests(unittest.TestCase):
             })
         migration = str(raised.exception)
         self.assertIn(
-            "workflow_selection.completion.folder_overrides[0]: pattern=services/**, completion=feature-branch",
+            "add workflow_selection.completion.folder_overrides entry: pattern=services/**, completion=feature-branch",
             migration,
         )
         self.assertIn(
-            "workflow_selection.provider.folder_overrides[0]: pattern=services/**, provider=github",
+            "add workflow_selection.provider.folder_overrides entry: pattern=services/**, provider=github",
             migration,
         )
 

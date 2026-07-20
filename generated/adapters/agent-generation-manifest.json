@@ -108,7 +108,7 @@
         {
           "name": "project-configurator",
           "output": "generated/adapters/claude/agents/project-configurator.md",
-          "sha256": "822db1bcfe477103d49fa7af628c9344da0ba2891de77302a8df09b37e8df375",
+          "sha256": "ae934b62e78be6c978d0a403364e79bce2144b8ee1f7c516dcd450da427f58d1",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {
@@ -278,7 +278,7 @@
         {
           "name": "project-configurator",
           "output": "generated/adapters/codex/agents/project-configurator.toml",
-          "sha256": "d6878e7a6ac23f6684f3b26243dd7076961b0e8b38ec9fadbb688493e235fe4e",
+          "sha256": "b11bbafa74ccc307ae7e611f48fdbf8cfc844e7ad9acb946d7d7aeb5b886c6a8",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {
@@ -454,7 +454,7 @@
         {
           "name": "project-configurator",
           "output": "generated/adapters/gemini/agents/project-configurator.md",
-          "sha256": "6f3ce03bef70eecb464589946ccf250dbc66f6d7cd492ed3db1e88b23a455473",
+          "sha256": "1cc86ce23b8121ba3088d835b1d8ca4dac65829b2e810a50df28b6af18642c04",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {
@@ -624,7 +624,7 @@
         {
           "name": "project-configurator",
           "output": "generated/adapters/junie/agents/project-configurator.md",
-          "sha256": "e6f8ccea011117f2e1a59b04260979df14ddcca01394dcde84851aed574e55f7",
+          "sha256": "6f53071b6dbba4979b7eabb8675a266bc272e0858776ef4adbdeecf9d3b87a3b",
           "source": "agents/roles/project-setup/project-configurator.role.yaml"
         },
         {
