@@ -1,8 +1,30 @@
 # Preserve Integrated Documentation Steady State
 
-Status: Running
+Status: User Action Required
 
 Type: Defect
+
+## User Action Required
+
+The remaining implementation changes one governed Project Bootstrapper role definition.
+
+## Question for the User
+
+Do you approve changing agents/roles/project-setup/project-bootstrapper.role.yaml so Project Bootstrapper must re-read the integrated final tree, assign Dev Documentation Writer explicit ownership of a final cross-artifact steady-state sweep, route resulting configuration/wiki corrections to their existing owners, and require the sweep plus renewed independent review before final verification?
+
+Approval also permits regeneration of only the supported generated agent mirrors from that source.
+
+## Why User Input Is Required
+
+No exact user-approval record exists for this governed definition change. Parent delegation and the backlog item are task direction, not approval.
+
+## Resolution
+
+Pending.
+
+## Unattended Work Boundary
+
+Perform no governed role or generated-mirror mutation until the exact question is answered.
 
 ## Current Execution
 
