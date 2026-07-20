@@ -1,8 +1,14 @@
 # Prevent Read-Only Review Side Effects
 
-Status: Ready
+Status: Running
 
 Type: Defect
+
+## Current Execution
+
+- Canonical Dev Orchestrator task: 019f7e76-aea4-7b00-8afa-2ad589baff95.
+- Worktree: /Users/martinbechard/.codex/worktrees/954a/dev-methodology.
+- Phase: current-main reconciliation, scoped implementation, focused verification, review, integration, completion, and cleanup.
 
 ## Summary
 

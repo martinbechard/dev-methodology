@@ -1,8 +1,14 @@
 # Improve Documentation Reverse-Engineering Contracts
 
-Status: Ready
+Status: Running
 
 Type: Feature
+
+## Current Execution
+
+- Canonical Dev Orchestrator task: 019f7e76-e620-7143-a120-906f29ffbd41.
+- Worktree: /Users/martinbechard/.codex/worktrees/e224/dev-methodology.
+- Phase: approval reconciliation, scoped implementation, focused verification, review, integration, completion, and cleanup.
 
 ## Summary
 

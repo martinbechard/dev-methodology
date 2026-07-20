@@ -1,8 +1,14 @@
 # Define Provider And Completion Selector Contracts
 
-Status: Ready
+Status: Running
 
 Type: Feature
+
+## Current Execution
+
+- Canonical Dev Orchestrator task: 019f7e76-e5e9-78b3-bfae-ab6ef1df6410.
+- Worktree: /Users/martinbechard/.codex/worktrees/789a/dev-methodology.
+- Phase: approval reconciliation, scoped implementation, focused verification, review, integration, completion, and cleanup.
 
 ## Summary
 

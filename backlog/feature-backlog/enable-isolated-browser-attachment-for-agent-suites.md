@@ -1,8 +1,14 @@
 # Enable Isolated Browser Attachment For Agent Suites
 
-Status: Ready
+Status: Running
 
 Type: Feature
+
+## Current Execution
+
+- Canonical Dev Orchestrator task: 019f7e76-c898-7e72-bdef-1c5f6897abd2.
+- Worktree: /Users/martinbechard/.codex/worktrees/a509/dev-methodology.
+- Phase: current-main reconciliation, scoped implementation, focused verification, review, integration, completion, and cleanup.
 
 ## Summary
 

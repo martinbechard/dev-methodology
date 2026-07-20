@@ -1,8 +1,14 @@
 # Add The Wiki Skills And Project Context Page
 
-Status: Ready
+Status: Running
 
 Type: Feature
+
+## Current Execution
+
+- Canonical Dev Orchestrator task: 019f7e76-9ff3-74d2-a73d-b4453a506dc2.
+- Worktree: /Users/martinbechard/.codex/worktrees/b4ac/dev-methodology.
+- Phase: approval reconciliation, scoped implementation, focused verification, review, integration, completion, and cleanup.
 
 ## Summary
 

@@ -1,8 +1,14 @@
 # Add Settings Popup To HTML Documentation Headers
 
-Status: Ready
+Status: Running
 
 Type: Feature
+
+## Current Execution
+
+- Canonical Dev Orchestrator task: 019f7e76-9f7d-77d0-8a0e-ca2b95065370.
+- Worktree: /Users/martinbechard/.codex/worktrees/5a4d/dev-methodology.
+- Phase: current-main reconciliation, scoped implementation, focused verification, review, integration, completion, and cleanup.
 
 ## Summary
 
