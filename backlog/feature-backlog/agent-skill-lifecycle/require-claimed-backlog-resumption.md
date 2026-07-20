@@ -1,6 +1,6 @@
 # Require Claimed Backlog Resumption
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
@@ -27,6 +27,8 @@ The decision gate is resolved. Delivery completion still requires the governed p
 The reviewed implementation cannot be integrated against current main under the original approval scope. Commit 60dbbd2 retired skills/manage-backlog/SKILL.md into a migration-only bridge that owns no lifecycle or recovery procedure. The replacement skills/manage-file-work-items/SKILL.md now owns file-work-item lifecycle and recovery behavior, and the bridge explicitly forbids adding new procedure there.
 
 Do you approve changing only skills/manage-file-work-items/SKILL.md to carry the already reviewed claimed blocked-work resumption contract (blocked handoff commits Status: Blocked, Owner: Unowned, Claim: None with evidence preserved before release; resumption passes Ready → successful new exclusive claim/new owner → Running; absent/WAIT/rejected acquisition restores the exact pre-attempt Blocked bytes), together with only its supported generated skill-definition mirror and the already reviewed non-governed eval/test coverage? This supersedes the obsolete manage-backlog target and authorizes no other definition.
+
+The user approved this exact replacement scope with the direct answer “ok” in parent thread 019f77f4-c4bd-7c91-b197-c987a7beb838 on 2026-07-20. The approval supersedes only the obsolete governed target; all behavioral, mirror, and non-governed coverage boundaries above remain unchanged.
 
 ## Preserved Candidate
 
