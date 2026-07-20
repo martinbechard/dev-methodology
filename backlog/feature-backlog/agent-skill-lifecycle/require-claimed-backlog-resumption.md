@@ -1,6 +1,6 @@
 # Require Claimed Backlog Resumption
 
-Status: Ready
+Status: Running
 
 Type: Defect
 
@@ -24,11 +24,14 @@ The decision gate is resolved. Delivery completion still requires the governed p
 
 ## Current Resumption Ownership
 
-- Canonical Dev Orchestrator task: 019f7e67-dfdf-74f0-ac17-e6d06b63828e.
+- Canonical Dev Orchestrator task: 019f7f95-1242-7133-9033-a921c127df66.
 - Parent task: 019f77f4-c4bd-7c91-b197-c987a7beb838.
-- Phase: post-restart semantic current-main reconciliation, focused governed resumption verification, review, integration, closeout, and cleanup.
+- Worktree: /Users/martinbechard/.codex/worktrees/3dd5/dev-methodology.
+- Branch/ref: codex/claimed-backlog-resumption, preserving candidate 244efcd2aa26dc14d226ad33dc9be680cef6b95d.
+- Started from approved Ready commit 78441b34f6e2df68d38e61d048d8d0d3f0bc0a81.
+- Phase: semantic current-main reconciliation, approved governed source implementation, focused resumption verification, review, integration, closeout, and cleanup.
 - Preserved commits 25b93bad57e1ee2ffe445de29421aa5bf80c5c9a, 58b502bcfd3d79666b190b3db192da5007c22391, and eb9826f4c87e6b3ed30b1068841cc357898fe531 remain evidence until a reviewed current-main candidate supersedes them.
-- Superseded archived claimed-resumption tasks are not canonical ownership.
+- Superseded archived claimed-resumption tasks, including 019f7e67-dfdf-74f0-ac17-e6d06b63828e, are not canonical ownership.
 
 ## Blocked Outcome
 
