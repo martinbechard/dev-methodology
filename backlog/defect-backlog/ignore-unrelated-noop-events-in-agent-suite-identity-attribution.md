@@ -1,8 +1,16 @@
 # Ignore Unrelated Noop Events In Agent Suite Identity Attribution
 
-Status: Ready
+Status: Running
 
 Type: Defect
+
+## Current Execution Ownership
+
+- Canonical Dev Orchestrator task: 019f7e52-1c6d-7cc2-bf96-3edd212462a8.
+- Parent Dev Backlog Coordinator task: 019f77f4-c4bd-7c91-b197-c987a7beb838.
+- Worktree: /Users/martinbechard/.codex/worktrees/12da/dev-methodology.
+- Phase: implement the bounded identity-attribution correction, obtain fresh independent review, run focused deterministic verification, integrate directly into main, and complete this work item.
+- Verification boundary: focused runner and identity-attribution tests only; no live or full agent-catalog run unless affected-surface evidence requires escalation.
 
 ## Summary
 
