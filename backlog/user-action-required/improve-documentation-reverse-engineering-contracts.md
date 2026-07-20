@@ -1,8 +1,30 @@
 # Improve Documentation Reverse-Engineering Contracts
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
+
+## User Action Required
+
+The remaining implementation changes reverse-engineering and artifact acceptance semantics across eleven governed distributed skill definitions.
+
+## Question for the User
+
+Do you approve changing exactly skills/documentation-reverse-engineer/SKILL.md, skills/documentation-bootstrap/SKILL.md, skills/create-project-configuration/SKILL.md, skills/create-module-design/SKILL.md, skills/review-module-design/SKILL.md, skills/create-high-level-design/SKILL.md, skills/review-high-level-design/SKILL.md, skills/create-architecture/SKILL.md, skills/review-architecture/SKILL.md, skills/create-functional-spec/SKILL.md, and skills/review-functional-spec/SKILL.md to preserve bottom-up authoring and separate documentation acceptance from downstream implementation readiness?
+
+Approval also permits supported regeneration of their listed generated mirrors. Non-governed template, README/design, and regression-test changes remain ordinary implementation work.
+
+## Why User Input Is Required
+
+No scope-specific approval record exists for these governed definitions. Parent delegation and general backlog-completion authority are insufficient under AGENTS.md.
+
+## Resolution
+
+Pending.
+
+## Unattended Work Boundary
+
+Perform no governed source or generated-mirror mutation until the exact question is answered.
 
 ## Current Execution
 
