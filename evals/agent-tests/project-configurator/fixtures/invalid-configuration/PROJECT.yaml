@@ -75,6 +75,14 @@ technology_skill_loadouts:
     local_rules_source: Not yet identified.
     notes: The required skill is absent from available-skills.txt.
 folder_route_precedence: Most-specific matching path pattern wins.
+workflow_selection:
+  provider:
+    default: UNSET
+    folder_overrides: []
+  completion:
+    default: UNSET
+    folder_overrides: []
+  selection_policy: Fixture behavior defers both workflow decisions explicitly without inference.
 folder_routing:
   - pattern: service/**
     tier_or_workflow: Service

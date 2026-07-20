@@ -41,7 +41,7 @@ Completion skill identifiers are action-centered because each skill owns the ter
 
 ### Folder overrides
 
-Provider and completion folder overrides are resolved independently using the project's existing most-specific matching pattern rule. A provider override never changes completion, and a completion override never changes provider. Each effective value must pass the same validation as its corresponding default.
+Provider and completion folder overrides are resolved independently using the project's existing most-specific matching pattern rule. A provider override never changes completion, and a completion override never changes provider. Each effective value must pass the same validation as its corresponding default. Within one selector, an exact folder pattern may appear only once; validation rejects both a redundant duplicate with the same value and a conflict with different values, naming both indexed rows and selected values.
 
 ## Combination Matrix
 
