@@ -100,6 +100,7 @@ NEW_DEVELOPMENT_SKILLS = (
     "manage-azure-devops-work-items",
     "create-jira-work-item",
     "manage-jira-work-items",
+    "complete-work-item-feature-branch",
     "create-pull-request",
     "create-unit-test-plan",
     "review-unit-test-plan",
@@ -1356,6 +1357,40 @@ class BundleContentTests(unittest.TestCase):
             (REPOSITORY_ROOT / "design" / "agent-and-skill-definitions.html").read_text(
                 encoding="utf-8"
             ),
+        )
+
+    def test_complete_work_item_feature_branch_requires_observed_provider_accurate_merge(
+        self,
+    ) -> None:
+        skill_path = (
+            SKILLS_ROOT / "complete-work-item-feature-branch" / "SKILL.md"
+        )
+        skill_text = skill_path.read_text(encoding="utf-8")
+
+        for phrase in (
+            "Create the intended feature branch from the assigned base before changing source files.",
+            "use create-pull-request and GitHub evidence. Call it a pull request.",
+            "use the configured merge-request capability and GitLab evidence. Call it a merge request.",
+            "Successful publication returns AWAITING_REVIEW",
+            "A ready publication is not READY delivery evidence.",
+            "apply accepted corrections on the same branch",
+            "The pull request or merge request reports a merged state",
+            "reachable from the configured base branch in Git",
+            "A closed-unmerged, abandoned, replaced, or superseded publication cannot return READY.",
+            "the provider lifecycle update this evidence authorizes",
+        ):
+            with self.subTest(skill_phrase=phrase):
+                self.assertIn(phrase, skill_text)
+
+        self.assertIn(
+            "- complete-work-item-feature-branch",
+            README_PATH.read_text(encoding="utf-8"),
+        )
+        self.assertIn(
+            "Publication is therefore a resumable handoff rather than completion.",
+            (
+                REPOSITORY_ROOT / "design" / "agent-and-skill-definitions.html"
+            ).read_text(encoding="utf-8"),
         )
 
     def test_workitem_and_backlog_processes_are_selector_driven(self) -> None:

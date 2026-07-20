@@ -412,6 +412,7 @@ The development practice skills are:
 - agent-claim
 - agent-work-merge
 - codex-workitem-coordination
+- complete-work-item-feature-branch
 - create-pull-request
 - code-review-evidence
 - test-driven-development
