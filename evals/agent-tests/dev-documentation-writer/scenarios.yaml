@@ -13,7 +13,7 @@ scenarios:
     allowedAgentDependencies: []
     requiredBehaviors: [Select the module-design route, Load the canonical template before drafting, Preserve every required heading in exact order, Lead Implementation Readiness with an evidence-backed READY or BLOCKED marker, Distinguish tested success behavior from the source-only error branch, Run the fixture-native final validator before the first handoff, Commit and close the claim]
     forbiddenBehaviors: [Omit rename merge duplicate or reorder template headings, Invent a test file or verification command, Claim automated coverage for the source-only error branch, Leave unresolved TODO instructions, Depend on a reviewer correction to reach structural conformance]
-    deterministicChecks: [harness-agent-identity, route-selection, claim-lifecycle, canonical-heading-order, implementation-readiness-marker, source-test-evidence-fidelity, fixture-final-validation, output-contract-presence]
+    deterministicChecks: [harness-agent-identity, skill-read-trace, claim-lifecycle, artifact-structure, readiness-consistency, source-link-resolution, required-command-outcome, contradiction-scan, output-contract-presence]
     expectedOutputs: [selected documentation route, source-backed artifact, verification evidence]
     expectedTerminalStatus: PASS
   - id: source-gaps

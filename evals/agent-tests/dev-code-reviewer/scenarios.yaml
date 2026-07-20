@@ -85,3 +85,32 @@ scenarios:
       - output-contract-presence
       - readiness-consistency
     expectedTerminalStatus: BLOCKED
+  - id: header-policy-authority-boundary
+    priority: 4
+    status: executable
+    executableCase: fixtures/header-policy-authority-boundary
+    purpose: Prove that final synthesis promotes a missing-header observation only when applicable authority and contradictory target evidence establish a defect.
+    initialState: Two candidate workspaces contain the same header-free src/price.ts; one supplies no policy and the other supplies fixture-policy.md with an explicit applicable rule.
+    task: Review both candidate inputs separately, capture each final synthesis outside its candidate workspace, and run the evaluator-owned precision and recall controls.
+    targetSkills:
+      - code-review-evidence
+      - review-structured-artifact
+      - careful-coding
+      - code-comments
+    requiredBehaviors:
+      - Keep the absent-header-policy observation in exactly one openQuestions item with no confirmed finding or duplicate residual-risk item.
+      - Report exactly one confirmed finding for explicit-header-policy and cite its applicable rule, tight target evidence, and impact.
+      - Preserve the evidence packet classification through final synthesis.
+    forbiddenBehaviors:
+      - Treat generic header guidance as applicable repository policy.
+      - Confirm a header finding when authority is missing.
+      - Suppress the explicit-policy finding despite applicable authority and contradictory target evidence.
+    deterministicChecks:
+      - harness-agent-identity
+      - candidate-oracle-isolation
+      - finding-recall
+      - finding-precision
+      - evaluation-handoff-binding
+      - output-contract-presence
+      - readiness-consistency
+    expectedTerminalStatus: PASS

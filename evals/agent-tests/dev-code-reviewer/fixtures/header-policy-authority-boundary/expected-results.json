@@ -1,0 +1,54 @@
+{
+  "cases": {
+    "absent-header-policy": {
+      "requiredOpenQuestion": {
+        "authority": {
+          "status": "missing",
+          "source": null,
+          "location": null
+        },
+        "target": {
+          "source": "src/price.ts",
+          "location": {
+            "line": 1
+          }
+        },
+        "contradiction": {
+          "expected": "applicable-policy-established",
+          "observed": "applicable-policy-not-supplied"
+        },
+        "impact": {
+          "category": "decision-risk",
+          "meaning": "requirement-cannot-be-confirmed"
+        },
+        "uncertaintyClassification": "missing-authority"
+      }
+    },
+    "explicit-header-policy": {
+      "requiredFinding": {
+        "authority": {
+          "source": "fixture-policy.md",
+          "location": {
+            "line": 3
+          },
+          "meaning": "provenance-header-required"
+        },
+        "target": {
+          "source": "src/price.ts",
+          "location": {
+            "line": 1
+          }
+        },
+        "contradiction": {
+          "expected": "provenance-header-present",
+          "observed": "provenance-header-absent"
+        },
+        "impact": {
+          "category": "traceability",
+          "meaning": "source-provenance-unverifiable"
+        },
+        "uncertaintyClassification": "confirmed"
+      }
+    }
+  }
+}

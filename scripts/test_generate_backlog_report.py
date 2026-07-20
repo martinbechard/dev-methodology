@@ -13,6 +13,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 SCRIPT_PATH = Path(__file__).with_name("generate-backlog-report.py")
@@ -658,6 +659,39 @@ Do not proceed.
         self.assertIn('name="viewport"', first)
         self.assertIn("Workspace Claim Snapshot", first)
         self.assertIn("source commit unavailable", first)
+
+    def test_long_snapshot_metadata_has_narrow_viewport_wrap_contract(self) -> None:
+        """Long source and claim metadata cannot widen a 320-pixel viewport."""
+        self.write_item(
+            "backlog/feature-backlog/ready.md",
+            title="Ready",
+            status="Ready",
+            item_type="Feature",
+        )
+        long_commit = "a" * 80
+        long_claim_value = "claim-" + "b" * 80
+        claim = {
+            "claim_id": long_claim_value,
+            "agent": "Fixture Agent",
+            "branch": long_claim_value,
+            "worktree": f"/fixture/{long_claim_value}",
+            "heartbeat": "2026-07-19T05:59:00Z",
+        }
+
+        with (
+            mock.patch.object(REPORT, "_source_commit", return_value=long_commit),
+            mock.patch.object(
+                REPORT,
+                "_claim_snapshot",
+                return_value=("2026-07-19T06:00:00+00:00", (claim,), "available"),
+            ),
+        ):
+            rendered = self.generate()
+
+        self.assertIn(f"source commit {long_commit}", rendered)
+        self.assertIn(long_claim_value, rendered)
+        self.assertIn(".meta,.snapshot{overflow-wrap:anywhere}", rendered)
+        self.assertIn("@media(max-width:420px)", rendered)
 
     def test_git_source_and_claim_snapshot_do_not_change_eligibility(self) -> None:
         """Git and claim metadata form a separate snapshot and never remove Ready work."""

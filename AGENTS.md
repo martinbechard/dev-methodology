@@ -308,9 +308,42 @@ If a change affects the skill catalog, adapter shape, conceptual agent definitio
 
 ## Validation
 
-Before finishing changes to this repository, run the relevant checks from the repository root.
+Before finishing changes to this repository, select the lowest verification tier supported by the affected surfaces and risks. The verification plan must identify those surfaces and map every check to a concrete risk. Record why the task selected a higher tier whenever it escalates beyond the lowest applicable tier.
 
-For skill or bundle changes, run:
+Escalate only when affected-surface evidence, a failed focused check, a shared generator or runner change, or a final-campaign requirement justifies it.
+
+### Tier 1: Small Bounded Skill Or Catalog Changes
+
+For bounded skill wording, metadata, detection, or catalog additions:
+
+- Run the exact governed-definition approval check before mutation when the changed source is governed.
+- Validate the changed source and metadata.
+- Run focused behavior, detection, and bundle tests that exercise the changed surface.
+- Run applicable generator freshness checks without regenerating unrelated output.
+- Run git diff --check.
+- Obtain an independent review of the exact change.
+
+Do not require the full scripts regression, project-wiki regression, or live agent catalog solely because a skill was added or changed.
+
+### Tier 2: Generated Definition Changes
+
+For generated-definition changes:
+
+- Run focused tests for the approved canonical source.
+- Regenerate only the supported mirrors from approved sources.
+- Run the relevant generator freshness checks.
+- Run git diff --check.
+- Obtain an independent review of the exact source and generated diff.
+
+### Tier 3: Shared Infrastructure Changes
+
+For shared runner, claim engine, cleanup, installer, generator framework, or other broad infrastructure changes, run the full applicable deterministic regression and appropriate live verification. Keep the checks tied to the affected execution paths and declared risks.
+
+### Tier 4: Campaign Or Release Gates
+
+Run the full scripts, project-wiki, and agent catalog regression as a campaign final-state gate, a release gate, or an evidence-backed broad-impact gate. It is not the default per-item gate. The final campaign full-agent-catalog gate remains required.
+
+The full deterministic repository regression is:
 
 ```bash
 python3 scripts/validate-agent-skills.py skills
@@ -322,7 +355,7 @@ python3 -m unittest discover scripts
 PYTHONPATH=skills/project-wiki/scripts python3 -m unittest discover skills/project-wiki/scripts
 ```
 
-For wiki or OKF changes, also run:
+For wiki or OKF changes at a tier that requires the affected wiki surface, also run:
 
 ```bash
 python3 skills/project-wiki/scripts/wiki_ops.py status
@@ -335,6 +368,10 @@ For any tracked-file change, run:
 ```bash
 git diff --check
 ```
+
+Do not rerun an unchanged expensive full suite after integration when the integrated bytes are identical to an independently reviewed contribution and fresh pre-integration full evidence exists. Run focused post-integration checks plus integrity and provenance checks instead.
+
+Reproduce an unrelated baseline failure on the baseline and route it as a warning or follow-up. Do not use an unrelated confirmed baseline failure to keep an otherwise bounded item open.
 
 If a build script is introduced later, run the repository build after code, imports, generated artifacts, or project metadata changes.
 

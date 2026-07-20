@@ -5036,7 +5036,22 @@ class BundleContentTests(unittest.TestCase):
                     target["allowedAgentDependencies"],
                 )
                 self.assertEqual(entry["id"], scenarios["suite"])
-                self.assertEqual(3, len(scenarios["scenarios"]))
+                if entry["id"] == "dev-code-reviewer":
+                    self.assertEqual(4, len(scenarios["scenarios"]))
+                    self.assertEqual(
+                        {
+                            "seeded-typescript-defects",
+                            "justified-clean-review",
+                            "incomplete-review-evidence",
+                            "header-policy-authority-boundary",
+                        },
+                        {
+                            scenario["id"]
+                            for scenario in scenarios["scenarios"]
+                        },
+                    )
+                else:
+                    self.assertEqual(3, len(scenarios["scenarios"]))
 
             for scenario in scenarios["scenarios"]:
                 executable_case = scenario.get("executableCase")
