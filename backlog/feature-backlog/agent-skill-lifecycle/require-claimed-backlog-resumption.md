@@ -6,9 +6,9 @@ Type: Defect
 
 ## Current Resumption Ownership
 
-- Canonical Dev Orchestrator task: 019f7e25-66de-74d1-8263-a1653161e926.
+- Canonical Dev Orchestrator task: 019f7e67-dfdf-74f0-ac17-e6d06b63828e.
 - Parent task: 019f77f4-c4bd-7c91-b197-c987a7beb838.
-- Phase: semantic current-main reconciliation of preserved commits, focused governed resumption verification, review, integration, and closeout.
+- Phase: post-restart semantic current-main reconciliation, focused governed resumption verification, review, integration, closeout, and cleanup.
 - Preserved commits 25b93bad57e1ee2ffe445de29421aa5bf80c5c9a, 58b502bcfd3d79666b190b3db192da5007c22391, and eb9826f4c87e6b3ed30b1068841cc357898fe531 remain evidence until a reviewed current-main candidate supersedes them.
 - Superseded archived claimed-resumption tasks are not canonical ownership.
 
