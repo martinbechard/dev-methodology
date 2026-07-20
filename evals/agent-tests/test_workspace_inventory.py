@@ -165,6 +165,22 @@ class WorkspaceInventoryTests(unittest.TestCase):
         self.assertEqual(1, len(evidence["detected"]["gitMetadata"]))
         self.assertFalse(evidence["finalMatchesBaseline"])
 
+    def test_extended_git_index_flags_are_detected(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            repository = self._repository(root)
+            baseline_path = root / "baseline.json"
+            workspace_inventory._write_json(baseline_path, workspace_inventory._inventory(repository))
+
+            subprocess.run(
+                ["git", "-C", str(repository), "update-index", "--assume-unchanged", "tracked.py"],
+                check=True,
+            )
+            evidence = workspace_inventory._mutation_evidence(repository, baseline_path, False)
+
+        self.assertEqual(1, len(evidence["detected"]["gitMetadata"]))
+        self.assertFalse(evidence["finalMatchesBaseline"])
+
     def test_git_classification_failure_is_not_converted_to_untracked_evidence(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

@@ -78,7 +78,7 @@ def _git_metadata(root: Path) -> dict[str, str | None]:
     return {
         "head": output(("rev-parse", "HEAD")).decode("ascii").strip(),
         "symbolicHead": symbolic_head.stdout.strip() or None,
-        "indexSha256": _sha256_bytes(output(("ls-files", "-z", "--stage"))),
+        "indexSha256": _sha256_bytes(output(("ls-files", "-z", "--stage", "--debug"))),
         "refsSha256": _sha256_bytes(
             output(("for-each-ref", "--format=%(refname)%00%(objectname)%00"))
         ),

@@ -945,6 +945,52 @@ def _stage_batch(batch: Sequence[_RunSpec], run_root: Path) -> tuple[Path, Path,
     return workspace, codex_home, tuple(staged.values())
 
 
+def _stage_workspace_inventory_fixtures(
+    batch: Sequence[_RunSpec],
+    fixture_root: Path,
+    checkpoint_root: Path,
+) -> dict[tuple[str, str], dict[str, Any]]:
+    baselines: dict[tuple[str, str], dict[str, Any]] = {}
+    for run in batch:
+        selected = set(run.scenario_ids)
+        for scenario in run.suite.scenarios:
+            scenario_id = str(scenario["id"])
+            if scenario_id not in selected or scenario.get("requiresWorkspaceInventory") is not True:
+                continue
+            source = (run.suite.path / str(scenario["executableCase"])).resolve(strict=True)
+            if not source.is_dir() or (source / ".git").exists():
+                raise RuntimeError(
+                    f"Workspace inventory fixture must be a non-repository directory: "
+                    f"{run.suite.suite_id}:{scenario_id}"
+                )
+            destination = fixture_root / run.suite.suite_id / scenario_id
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copytree(source, destination)
+            subprocess.run(["git", "init", "--quiet", str(destination)], check=True, capture_output=True)
+            subprocess.run(["git", "-C", str(destination), "add", "."], check=True, capture_output=True)
+            subprocess.run(
+                [
+                    "git", "-C", str(destination),
+                    "-c", "user.name=Synthetic Agent Eval",
+                    "-c", "user.email=agent-eval@example.invalid",
+                    "commit", "--quiet", "-m", "Frozen scenario baseline",
+                ],
+                check=True,
+                capture_output=True,
+            )
+            baseline = workspace_inventory_support._inventory(destination)
+            baseline_path = (
+                checkpoint_root
+                / run.suite.suite_id
+                / scenario_id
+                / "artifacts"
+                / "workspace-baseline.json"
+            )
+            workspace_inventory_support._write_json(baseline_path, baseline)
+            baselines[(run.suite.suite_id, scenario_id)] = baseline
+    return baselines
+
+
 def _stage_junie_batch(batch: Sequence[_RunSpec], run_root: Path) -> tuple[Path, Path, Path, tuple[_StagedAgent, ...]]:
     workspace = run_root / "workspace"
     junie_home = run_root / "junie-home"
@@ -1454,7 +1500,9 @@ def _coordinator_prompt(
     checkpoint_root: Path,
     fixture_root: Path,
     run_identity: str,
+    workspace_inventory_baselines: Mapping[tuple[str, str], Mapping[str, Any]] | None = None,
 ) -> str:
+    workspace_inventory_baselines = workspace_inventory_baselines or {}
     assignments = []
     for run in batch:
         execution = run.suite.manifest["execution"]
@@ -1474,6 +1522,29 @@ def _coordinator_prompt(
                     str(scenario["id"]): str(
                         fixture_root / run.suite.suite_id / str(scenario["id"])
                     )
+                    for scenario in run.suite.scenarios
+                    if str(scenario["id"]) in set(run.scenario_ids)
+                    and scenario.get("requiresWorkspaceInventory") is True
+                },
+                "workspaceInventoryBaselines": {
+                    str(scenario["id"]): {
+                        "path": str(
+                            checkpoint_root
+                            / run.suite.suite_id
+                            / str(scenario["id"])
+                            / "artifacts"
+                            / "workspace-baseline.json"
+                        ),
+                        "sha256": hashlib.sha256(
+                            json.dumps(
+                                workspace_inventory_baselines[
+                                    (run.suite.suite_id, str(scenario["id"]))
+                                ],
+                                sort_keys=True,
+                                separators=(",", ":"),
+                            ).encode("utf-8")
+                        ).hexdigest(),
+                    }
                     for scenario in run.suite.scenarios
                     if str(scenario["id"]) in set(run.scenario_ids)
                     and scenario.get("requiresWorkspaceInventory") is True
@@ -1552,8 +1623,15 @@ def _junie_coordinator_prompt(
     checkpoint_root: Path,
     fixture_root: Path,
     run_identity: str,
+    workspace_inventory_baselines: Mapping[tuple[str, str], Mapping[str, Any]] | None = None,
 ) -> str:
-    prompt = _coordinator_prompt(batch, checkpoint_root, fixture_root, run_identity)
+    prompt = _coordinator_prompt(
+        batch,
+        checkpoint_root,
+        fixture_root,
+        run_identity,
+        workspace_inventory_baselines,
+    )
     for run in batch:
         execution = run.suite.manifest["execution"]
         for field in ("supervisorInvocation", "targetInvocation", "judgeInvocation"):
@@ -1676,6 +1754,7 @@ def _validate_workspace_mutation_evidence(
     field: str,
     diagnostics: list[str],
     expected_root: Path | None = None,
+    expected_baseline: Mapping[str, Any] | None = None,
 ) -> None:
     expected_fields = {
         "schema",
@@ -1803,6 +1882,7 @@ def _validate_workspace_mutation_evidence(
         and isinstance(evidence.get("root"), str)
         and bool(evidence.get("root"))
         and (expected_root is None or evidence.get("root") == str(expected_root.resolve(strict=True)))
+        and (expected_baseline is None or baseline == expected_baseline)
         and isinstance(evidence.get("baselineSha256"), str)
         and _SHA256_PATTERN.fullmatch(str(evidence.get("baselineSha256"))) is not None
         and isinstance(evidence.get("finalSha256"), str)
@@ -1824,6 +1904,18 @@ def _validate_workspace_mutation_evidence(
             isinstance(pre_existing[key], list)
             and all(isinstance(path, str) and path for path in pre_existing[key])
             for key in ("ignored", "untracked")
+        )
+        and pre_existing.get("ignored")
+        == sorted(
+            str(entry["path"])
+            for entry in baseline.get("entries", [])
+            if isinstance(entry, Mapping) and entry.get("gitState") == "ignored"
+        )
+        and pre_existing.get("untracked")
+        == sorted(
+            str(entry["path"])
+            for entry in baseline.get("entries", [])
+            if isinstance(entry, Mapping) and entry.get("gitState") == "untracked"
         )
         and isinstance(cleanup, Mapping)
         and set(cleanup) == {"requested", "removed", "preserved"}
@@ -1852,6 +1944,7 @@ def _validate_evidence_receipts(
     judge_invoked: bool,
     require_runtime_judge_provenance: bool,
     fixture_root: Path | None = None,
+    workspace_inventory_baselines: Mapping[tuple[str, str], Mapping[str, Any]] | None = None,
 ) -> dict[str, Any]:
     diagnostics: list[str] = []
     if not isinstance(references, list):
@@ -1941,6 +2034,13 @@ def _validate_evidence_receipts(
                         if fixture_root is not None
                         else None
                     )
+                    expected_baseline = (workspace_inventory_baselines or {}).get(
+                        (run.suite.suite_id, scenario_id)
+                    )
+                    if fixture_root is not None and expected_baseline is None:
+                        diagnostics.append(
+                            f"{field}.evidence runner-owned workspace baseline is missing"
+                        )
                     if expected_inventory_root is not None and not expected_inventory_root.is_dir():
                         diagnostics.append(
                             f"{field}.evidence protected workspace is missing: {expected_inventory_root}"
@@ -1951,6 +2051,7 @@ def _validate_evidence_receipts(
                         f"{field}.evidence",
                         diagnostics,
                         expected_inventory_root,
+                        expected_baseline,
                     )
                     if expected_inventory_root is not None:
                         actual_final = workspace_inventory_support._inventory(expected_inventory_root)
@@ -2094,6 +2195,7 @@ def _load_checkpoint_report(
     *,
     require_runtime_judge_provenance: bool = True,
     fixture_root: Path | None = None,
+    workspace_inventory_baselines: Mapping[tuple[str, str], Mapping[str, Any]] | None = None,
 ) -> dict[str, Any] | None:
     runs: list[dict[str, Any]] = []
     for run in batch:
@@ -2152,6 +2254,7 @@ def _load_checkpoint_report(
                 bool(loaded.get("judgeInvoked")),
                 require_runtime_judge_provenance,
                 fixture_root,
+                workspace_inventory_baselines,
             )
             reported_status = str(loaded.get("status"))
             validated_status = (
@@ -4089,6 +4192,11 @@ def _run_live_junie_batch(
         fixture_root.mkdir()
         checkpoint_root = run_root / "checkpoints"
         checkpoint_root.mkdir()
+        workspace_inventory_baselines = _stage_workspace_inventory_fixtures(
+            batch,
+            fixture_root,
+            checkpoint_root,
+        )
         event_path = run_root / "junie-events.jsonl"
         cache_root = run_root / "junie-cache"
         agent_root = run_root / "junie-agents"
@@ -4108,7 +4216,7 @@ def _run_live_junie_batch(
             f"--skill-location={skill_root}",
             f"--agent-location={agent_root}",
             f"--timeout={timeout_seconds * 1000}",
-            f"--task={_junie_coordinator_prompt(batch, checkpoint_root, fixture_root, run_identity)}",
+            f"--task={_junie_coordinator_prompt(batch, checkpoint_root, fixture_root, run_identity, workspace_inventory_baselines)}",
         ]
         environment = _controlled_environment(run_root / "home", junie_home, run_root / "tmp")
         environment.pop("CODEX_HOME", None)
@@ -4143,6 +4251,7 @@ def _run_live_junie_batch(
                 run_identity,
                 require_runtime_judge_provenance=False,
                 fixture_root=fixture_root,
+                workspace_inventory_baselines=workspace_inventory_baselines,
             )
             report = _extract_junie_report(event_path)
             _audit_report(batch, report, checkpoint_report)
@@ -4215,6 +4324,11 @@ def _run_live_batch(
         checkpoint_root.mkdir()
         fixture_root = workspace / ".agent-suite-fixtures"
         fixture_root.mkdir()
+        workspace_inventory_baselines = _stage_workspace_inventory_fixtures(
+            batch,
+            fixture_root,
+            checkpoint_root,
+        )
         schema_path = run_root / "coordinator-output-schema.json"
         schema_path.write_text(json.dumps(_coordinator_schema(), indent=2) + "\n", encoding="utf-8")
         temporary_home = run_root / "home"
@@ -4241,7 +4355,13 @@ def _run_live_batch(
             str(schema_path),
             "-C",
             str(workspace),
-            _coordinator_prompt(batch, checkpoint_root, fixture_root, run_identity),
+            _coordinator_prompt(
+                batch,
+                checkpoint_root,
+                fixture_root,
+                run_identity,
+                workspace_inventory_baselines,
+            ),
         ]
         environment = _controlled_environment(temporary_home, codex_home, temporary_dir)
         preflight_evidence = _preflight_runtime_capabilities(batch, workspace, codex_home, environment)
@@ -4269,6 +4389,7 @@ def _run_live_batch(
                 batch,
                 run_identity,
                 fixture_root=fixture_root,
+                workspace_inventory_baselines=workspace_inventory_baselines,
             )
         except (json.JSONDecodeError, RuntimeError) as checkpoint_error:
             checkpoint_report = None

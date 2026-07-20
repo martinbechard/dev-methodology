@@ -2229,13 +2229,18 @@ class AgentSuiteRunnerTests(unittest.TestCase):
 
     def test_workspace_inventory_rejects_wrong_roots_and_unsafe_entries(self) -> None:
         """Retained inventory structure cannot escape or substitute the protected workspace."""
-        for case in ("wrong-root", "unsafe-path", "malformed-entry"):
+        for case in ("wrong-root", "unsafe-path", "malformed-entry", "invented-preexisting"):
             with self.subTest(case=case), tempfile.TemporaryDirectory() as temporary:
                 evidence = self._workspace_mutation_evidence(final_matches=True)
                 if case == "unsafe-path":
                     evidence["observed"]["entries"][-1]["path"] = "../../outside"
                 elif case == "malformed-entry":
                     evidence["final"]["entries"] = ["not-an-entry"]
+                elif case == "invented-preexisting":
+                    evidence["preExisting"] = {
+                        "ignored": ["invented.pyc"],
+                        "untracked": ["invented.txt"],
+                    }
                 diagnostics: list[str] = []
                 runner._validate_workspace_mutation_evidence(
                     evidence,
@@ -2245,6 +2250,42 @@ class AgentSuiteRunnerTests(unittest.TestCase):
                 )
 
             self.assertTrue(diagnostics)
+
+    def test_runner_owned_baseline_rejects_a_late_self_consistent_snapshot(self) -> None:
+        """A supervisor cannot hide a mutation by capturing its baseline after target work."""
+        suite = runner._load_catalog(include_ids={"dev-code-reviewer"})["dev-code-reviewer"]
+        run = runner._RunSpec(suite=suite, scenario_ids=("incomplete-review-evidence",))
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            fixture_root = root / "fixtures"
+            checkpoint_root = root / "checkpoints"
+            fixture_root.mkdir()
+            checkpoint_root.mkdir()
+            baselines = runner._stage_workspace_inventory_fixtures(
+                (run,), fixture_root, checkpoint_root
+            )
+            protected = fixture_root / "dev-code-reviewer" / "incomplete-review-evidence"
+            (protected / "late-created.pyc").write_bytes(b"hidden mutation")
+            late_baseline_path = root / "late-baseline.json"
+            runner.workspace_inventory_support._write_json(
+                late_baseline_path,
+                runner.workspace_inventory_support._inventory(protected),
+            )
+            evidence = runner.workspace_inventory_support._mutation_evidence(
+                protected,
+                late_baseline_path,
+                False,
+            )
+            diagnostics: list[str] = []
+            runner._validate_workspace_mutation_evidence(
+                evidence,
+                "inventory",
+                diagnostics,
+                protected,
+                baselines[("dev-code-reviewer", "incomplete-review-evidence")],
+            )
+
+        self.assertTrue(diagnostics)
 
     def test_wrong_identity_critical_skip_rows_remain_non_passing(self) -> None:
         """Every structured skip field must match the failed selected critical gate exactly."""
