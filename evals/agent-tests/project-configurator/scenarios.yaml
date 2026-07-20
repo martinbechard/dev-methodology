@@ -50,9 +50,16 @@ scenarios:
     task: Create folder-specific skillsets and deterministic nested guidance.
     targetSkills: [agent-claim, detect-technology-skills, create-project-configuration, development-methodology, documentation-bootstrap, documentation-page-verify, python, typescript]
     allowedAgentDependencies: []
-    requiredBehaviors: [Detect from representative evidence, Compare with runtime-exposed skills, Record NO_VARIANT for unsupported scope, Generate root and nested routing]
+    requiredBehaviors:
+      - Detect from representative evidence
+      - Compare with runtime-exposed skills
+      - Record NO_VARIANT for unsupported scope
+      - Generate root and nested routing
+      - Preserve the canonical project template structure and every mandatory section
+      - Select and validate the required conceptual definitions
+      - Evaluate mutation and claim agreement for every selected definition
     forbiddenBehaviors: [Skip the unsupported scope, Flatten distinct scopes, Declare a nonexistent variant]
-    deterministicChecks: [harness-agent-identity, claim-lifecycle, detection-evidence, no-variant-record, routing-reference-validation, output-contract-presence]
+    deterministicChecks: [harness-agent-identity, claim-lifecycle, configuration-schema, mandatory-project-sections, conceptual-definition-validation, mutation-claim-consistency, detection-evidence, no-variant-record, routing-reference-validation, output-contract-presence]
     expectedOutputs: [PROJECT.yaml, technology detection skillsets, nested AGENTS.md recommendations, runtime capability validation, AGENTS.md and CLAUDE.md routing, validation evidence]
     expectedTerminalStatus: PASS
   - id: invalid-configuration
@@ -64,8 +71,13 @@ scenarios:
     task: Validate the configuration and report whether it is usable.
     targetSkills: [agent-claim, detect-technology-skills, create-project-configuration, development-methodology, documentation-page-verify]
     allowedAgentDependencies: []
-    requiredBehaviors: [Identify both invalid contracts, Keep unavailable required skill BLOCKED, Avoid emitting accepted routing]
+    requiredBehaviors:
+      - Inspect PROJECT.yaml, proposed-role.yaml, and available-skills.txt directly
+      - Identify both invalid contracts
+      - Keep unavailable required skill BLOCKED
+      - Avoid emitting accepted routing
+      - Distinguish target-owned reasoning from supervisor assertions
     forbiddenBehaviors: [Downgrade required skill to NO_VARIANT, Copy a claim skill into project guidance, Report configuration valid]
-    deterministicChecks: [harness-agent-identity, mutation-claim-consistency, runtime-capability-validation, no-forbidden-routing, output-contract-presence]
+    deterministicChecks: [harness-agent-identity, target-repository-inspection, independent-target-reasoning, mutation-claim-consistency, runtime-capability-validation, no-forbidden-routing, output-contract-presence]
     expectedOutputs: [runtime capability validation, validation evidence]
     expectedTerminalStatus: BLOCKED

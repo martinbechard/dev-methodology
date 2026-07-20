@@ -24,3 +24,9 @@ Require generated AGENTS.md text and any changed PROJECT.yaml evidence or fact s
 ## Technology Routing
 
 Apply this section only when the selected scenario id is technology-routing. Treat the fixture's anchored /.worktrees/ ignore rule as a frozen setup prerequisite, not as target output. Verify the rule before dispatch and require it to remain unchanged. Do not apply valid-configuration-reuse move provenance, baseline-preservation, or changed-statement gates to this scenario.
+
+Freeze and supply the complete canonical project template and the complete canonical Project Configurator conceptual definition. Require PROJECT.yaml to retain schema project, schema_version 1, and every mandatory section in the canonical project template. Require the role_agent_set to select the supplied conceptual definition with its complete fixed and conditional skill metadata. Mutation agreement is applicable: the supplied definition declares required repository mutation and owns agent-claim. Require a passing source-faithful mutation and agent-claim disposition. The deterministic packet and Judge packet must identify the canonical project template digest, mandatory section comparison, conceptual definition evidence, and mutation agreement result.
+
+## Invalid Configuration
+
+Apply this section only when the selected scenario id is invalid-configuration. Require direct repository inspection of PROJECT.yaml, proposed-role.yaml, and available-skills.txt before the target returns BLOCKED. Require target-owned path-and-field observations for repositoryMutation, definition skills, the required technology skill, runtimeAvailability, routing status, and catalog presence. Supervisor assertions and independent deterministic checks corroborate those observations but cannot replace them. Reject repetition of supervisor findings, supplied conclusions, or fixture summaries when the target supplies no direct repository inspection evidence.

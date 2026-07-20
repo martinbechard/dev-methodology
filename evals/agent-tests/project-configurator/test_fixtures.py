@@ -144,6 +144,35 @@ class ProjectConfiguratorFixtureTests(unittest.TestCase):
         )
         self.assertEqual(0, result.returncode, result.stderr)
 
+    def test_routing_scenario_requires_canonical_complete_configuration_evidence(self) -> None:
+        """The routing verdict cannot accept an invented or incomplete PROJECT.yaml."""
+        scenarios = yaml.safe_load((SUITE_ROOT / "scenarios.yaml").read_text(encoding="utf-8"))["scenarios"]
+        routing = next(item for item in scenarios if item["id"] == "technology-routing")
+
+        self.assertIn("Preserve the canonical project template structure and every mandatory section", routing["requiredBehaviors"])
+        self.assertIn("Select and validate the required conceptual definitions", routing["requiredBehaviors"])
+        self.assertIn("Evaluate mutation and claim agreement for every selected definition", routing["requiredBehaviors"])
+        self.assertIn("configuration-schema", routing["deterministicChecks"])
+        self.assertIn("mandatory-project-sections", routing["deterministicChecks"])
+        self.assertIn("conceptual-definition-validation", routing["deterministicChecks"])
+        self.assertIn("mutation-claim-consistency", routing["deterministicChecks"])
+
+    def test_routing_contracts_share_template_definition_and_mutation_gates(self) -> None:
+        """Target, supervisor, and Judge receive the same canonical routing boundary."""
+        task = (SUITE_ROOT / "fixtures" / "technology-routing" / "TASK.md").read_text(encoding="utf-8")
+        supervisor = (SUITE_ROOT / "agents" / "supervisor.toml").read_text(encoding="utf-8")
+        judge = (SUITE_ROOT / "agents" / "judge.toml").read_text(encoding="utf-8")
+        contract = (
+            SUITE_ROOT / "skills" / "project-configurator-suite-contract" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+
+        for source in (task, supervisor, judge, contract):
+            self.assertIn("canonical project template", source)
+            self.assertIn("mandatory section", source)
+            self.assertIn("conceptual definition", source)
+            self.assertIn("mutation", source)
+            self.assertIn("agent-claim", source)
+
     def test_invalid_fixture_contains_both_independent_contract_failures(self) -> None:
         """The invalid scenario proves claim and runtime-capability validation."""
         fixture = SUITE_ROOT / "fixtures" / "invalid-configuration"
@@ -156,6 +185,31 @@ class ProjectConfiguratorFixtureTests(unittest.TestCase):
         self.assertIn("unavailable-framework", loadout["skills"])
         self.assertEqual("UNAVAILABLE", loadout["sourceEvidence"][0]["runtimeAvailability"])
         self.assertEqual("READY", loadout["status"])
+
+    def test_invalid_scenario_requires_target_owned_repository_evidence(self) -> None:
+        """A truthful BLOCKED result must still come from direct repository inspection."""
+        scenarios = yaml.safe_load((SUITE_ROOT / "scenarios.yaml").read_text(encoding="utf-8"))["scenarios"]
+        invalid = next(item for item in scenarios if item["id"] == "invalid-configuration")
+
+        self.assertIn("Inspect PROJECT.yaml, proposed-role.yaml, and available-skills.txt directly", invalid["requiredBehaviors"])
+        self.assertIn("Distinguish target-owned reasoning from supervisor assertions", invalid["requiredBehaviors"])
+        self.assertIn("target-repository-inspection", invalid["deterministicChecks"])
+        self.assertIn("independent-target-reasoning", invalid["deterministicChecks"])
+
+    def test_invalid_contracts_reject_repetition_only_reasoning(self) -> None:
+        """Every evaluation role preserves the inspection and non-repetition threshold."""
+        task = (SUITE_ROOT / "fixtures" / "invalid-configuration" / "TASK.md").read_text(encoding="utf-8")
+        supervisor = (SUITE_ROOT / "agents" / "supervisor.toml").read_text(encoding="utf-8")
+        judge = (SUITE_ROOT / "agents" / "judge.toml").read_text(encoding="utf-8")
+        contract = (
+            SUITE_ROOT / "skills" / "project-configurator-suite-contract" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+
+        for source in (task, supervisor, judge, contract):
+            self.assertIn("direct repository inspection", source)
+            self.assertIn("target-owned", source)
+            self.assertIn("supervisor", source)
+            self.assertIn("repetition", source)
 
 
 if __name__ == "__main__":
