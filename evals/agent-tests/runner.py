@@ -1258,6 +1258,22 @@ def _validate_target_skills(suite: _Suite, scenario_ids: Sequence[str], reposito
                 raise ValueError(f"{suite.suite_id}:{scenario['id']} requires missing skill {skill_name}")
 
 
+def _canonical_primary_worktree(repository_root: Path) -> Path | None:
+    completed = subprocess.run(
+        ("git", "-C", str(repository_root), "worktree", "list", "--porcelain", "-z"),
+        check=False,
+        capture_output=True,
+    )
+    if completed.returncode != 0:
+        return None
+    first_field = completed.stdout.split(b"\0", 1)[0]
+    prefix = b"worktree "
+    if not first_field.startswith(prefix):
+        return None
+    primary = Path(os.fsdecode(first_field[len(prefix) :])).resolve()
+    return primary if primary.is_dir() else None
+
+
 def _stage_offline_project_dependencies(
     batch: Sequence[_RunSpec],
     repository_root: Path,
@@ -1282,29 +1298,55 @@ def _stage_offline_project_dependencies(
             relative = Path("evals") / "projects" / executable_case / "node_modules"
             project_root = (repository_root / "evals" / "projects").resolve()
             workspace_project_root = (workspace / "evals" / "projects").resolve()
-            source = (repository_root / relative).resolve()
+            selected_source = (repository_root / relative).resolve()
+            source = selected_source
+            primary_source: Path | None = None
+            primary = None if source.is_dir() else _canonical_primary_worktree(repository_root)
+            if primary is not None and primary != repository_root.resolve():
+                primary_project_root = (primary / "evals" / "projects").resolve()
+                candidate = (primary / relative).resolve()
+                if not candidate.is_relative_to(primary_project_root):
+                    raise RuntimeError(
+                        f"Offline Node fixture escapes its primary project root: "
+                        f"{run.suite.suite_id}:{scenario['id']}"
+                    )
+                primary_source = candidate
+                if not source.is_dir() and primary_source.is_dir():
+                    source = primary_source
             destination = (workspace / relative).resolve()
-            if not source.is_relative_to(project_root) or not destination.is_relative_to(workspace_project_root):
+            if not selected_source.is_relative_to(project_root) or not destination.is_relative_to(workspace_project_root):
                 raise RuntimeError(
                     f"Offline Node fixture escapes its project root: {run.suite.suite_id}:{scenario['id']}"
                 )
             if not source.is_dir():
+                checked = f"checked selected checkout {selected_source}"
+                if primary_source is not None:
+                    checked += f"; checked canonical primary worktree {primary_source}"
                 raise RuntimeError(
                     f"Pinned offline Node dependencies are unavailable for {run.suite.suite_id}:"
-                    f"{scenario['id']}: {source}"
+                    f"{scenario['id']}: {checked}"
                 )
             for candidate in source.rglob("*"):
-                if candidate.is_symlink() and not candidate.resolve().is_relative_to(source):
+                if not candidate.is_symlink():
+                    continue
+                if not candidate.resolve().is_relative_to(source):
                     raise RuntimeError(f"Offline Node fixture contains an escaping symlink: {candidate}")
-            package_lock = source.parent / "package-lock.json"
+                if candidate.readlink().is_absolute():
+                    raise RuntimeError(f"Offline Node fixture contains an absolute symlink: {candidate}")
+            package_lock = selected_source.parent / "package-lock.json"
             installed_package = source / "typescript" / "package.json"
             if not package_lock.is_file() or not installed_package.is_file():
-                raise RuntimeError(f"Offline Node fixture lacks TypeScript lock evidence: {source.parent}")
+                raise RuntimeError(
+                    f"Offline Node fixture lacks TypeScript lock evidence: {selected_source.parent}"
+                )
             locked = json.loads(package_lock.read_text(encoding="utf-8"))
             installed = json.loads(installed_package.read_text(encoding="utf-8"))
             locked_version = (locked.get("packages", {}).get("node_modules/typescript", {}) or {}).get("version")
             if not locked_version or locked_version != installed.get("version"):
-                raise RuntimeError(f"Offline Node fixture TypeScript version does not match its lockfile: {source.parent}")
+                raise RuntimeError(
+                    f"Offline Node fixture TypeScript version does not match its lockfile: "
+                    f"{selected_source.parent}"
+                )
             if destination.exists():
                 continue
             destination.parent.mkdir(parents=True, exist_ok=True)
