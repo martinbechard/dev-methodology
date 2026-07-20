@@ -257,6 +257,14 @@ checks:
     type: deterministic
     critical: true
     description: Detection output matches source activation evidence, runtime availability, conflicts, and NO_VARIANT rules.
+  - id: canonical-role-skill-ownership
+    type: deterministic
+    critical: true
+    description: Generated project configuration preserves every canonical fixed and conditional role-owned skill with its source condition and rejects missing, added, duplicated, or reclassified skills.
+  - id: functional-claude-bridges
+    type: deterministic
+    critical: true
+    description: Every configured Claude bridge exists at the required boundary and its exact bytes contain only the functional import of the colocated AGENTS.md followed by one newline.
   - id: wiki-validation
     type: deterministic
     critical: true

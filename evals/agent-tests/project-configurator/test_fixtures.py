@@ -151,11 +151,114 @@ class ProjectConfiguratorFixtureTests(unittest.TestCase):
 
         self.assertIn("Preserve the canonical project template structure and every mandatory section", routing["requiredBehaviors"])
         self.assertIn("Select and validate the required conceptual definitions", routing["requiredBehaviors"])
+        self.assertIn(
+            "Preserve the Project Configurator fixed and conditional skill sets without omissions, duplicates, or reclassification",
+            routing["requiredBehaviors"],
+        )
         self.assertIn("Evaluate mutation and claim agreement for every selected definition", routing["requiredBehaviors"])
         self.assertIn("configuration-schema", routing["deterministicChecks"])
         self.assertIn("mandatory-project-sections", routing["deterministicChecks"])
         self.assertIn("conceptual-definition-validation", routing["deterministicChecks"])
+        self.assertIn("canonical-role-skill-ownership", routing["deterministicChecks"])
         self.assertIn("mutation-claim-consistency", routing["deterministicChecks"])
+
+    def test_routing_scenario_requires_exact_functional_claude_bridges(self) -> None:
+        """Bridge validation must inspect exact imports rather than prose or existence."""
+        scenarios = yaml.safe_load((SUITE_ROOT / "scenarios.yaml").read_text(encoding="utf-8"))["scenarios"]
+        routing = next(item for item in scenarios if item["id"] == "technology-routing")
+        task = (SUITE_ROOT / "fixtures" / "technology-routing" / "TASK.md").read_text(encoding="utf-8")
+
+        self.assertIn(
+            "Write every root and nested Claude bridge as the exact functional import of its colocated AGENTS.md",
+            routing["requiredBehaviors"],
+        )
+        self.assertIn("functional-claude-bridges", routing["deterministicChecks"])
+        self.assertIn("@AGENTS.md", task)
+        self.assertIn("The file must end after that line", task)
+        self.assertIn("Descriptive prose", task)
+
+    def test_routing_contracts_name_exact_role_ownership_and_bridge_bytes(self) -> None:
+        """Supervisor and Judge must compare the canonical sets and bridge bytes."""
+        role = yaml.safe_load(
+            (
+                SUITE_ROOT.parents[2]
+                / "agents"
+                / "roles"
+                / "project-setup"
+                / "project-configurator.role.yaml"
+            ).read_text(encoding="utf-8")
+        )
+        supervisor = (SUITE_ROOT / "agents" / "supervisor.toml").read_text(encoding="utf-8")
+        judge = (SUITE_ROOT / "agents" / "judge.toml").read_text(encoding="utf-8")
+        task = (SUITE_ROOT / "fixtures" / "technology-routing" / "TASK.md").read_text(encoding="utf-8")
+        contract = (
+            SUITE_ROOT / "skills" / "project-configurator-suite-contract" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+
+        fixed_skills: set[str] = set()
+        conditional_skills: dict[str, str] = {}
+        for item in role["skills"]:
+            skill_name, metadata = next(iter(item.items()))
+            condition = metadata.get("condition") if isinstance(metadata, dict) else None
+            if condition is None:
+                fixed_skills.add(skill_name)
+            else:
+                conditional_skills[skill_name] = condition
+
+        self.assertEqual(
+            {
+                "agent-claim",
+                "detect-technology-skills",
+                "create-project-configuration",
+                "development-methodology",
+                "documentation-page-verify",
+            },
+            fixed_skills,
+        )
+        self.assertEqual(
+            {"organise-project-files", "documentation-bootstrap"},
+            set(conditional_skills),
+        )
+        self.assertTrue(all(condition.strip() for condition in conditional_skills.values()))
+
+        sources = (task, supervisor, judge, contract)
+        for source in sources:
+            for skill_name in fixed_skills | set(conditional_skills):
+                self.assertIn(skill_name, source)
+            for bridge_path in (
+                "CLAUDE.md",
+                "service/CLAUDE.md",
+                "ui/CLAUDE.md",
+                "infra/CLAUDE.md",
+            ):
+                self.assertIn(bridge_path, source)
+            self.assertIn("@AGENTS.md", source)
+            self.assertIn("duplicated", source)
+            self.assertIn("reclassified", source)
+
+        for source in (supervisor, judge, contract):
+            self.assertIn("one newline", source)
+            self.assertIn("canonical condition", source)
+
+        for source in (supervisor, contract):
+            self.assertIn("no other content", source)
+        self.assertIn("contains only @AGENTS.md", judge)
+        self.assertIn("trailing content", judge)
+        self.assertIn("The file must end after that line", task)
+        self.assertIn("including their canonical conditions", task)
+        self.assertIn("canonical-role-skill-ownership", supervisor)
+        self.assertIn("functional-claude-bridges", supervisor)
+
+    def test_routing_specific_gates_are_registered_as_critical(self) -> None:
+        """Runner evidence must recognize both exact acceptance gates."""
+        judges = yaml.safe_load((SUITE_ROOT.parents[1] / "judges.yaml").read_text(encoding="utf-8"))
+        checks = {item["id"]: item for item in judges["checks"]}
+
+        for check_id in ("canonical-role-skill-ownership", "functional-claude-bridges"):
+            with self.subTest(check_id=check_id):
+                self.assertIn(check_id, checks)
+                self.assertEqual("deterministic", checks[check_id]["type"])
+                self.assertIs(True, checks[check_id]["critical"])
 
     def test_routing_contracts_share_template_definition_and_mutation_gates(self) -> None:
         """Target, supervisor, and Judge receive the same canonical routing boundary."""
