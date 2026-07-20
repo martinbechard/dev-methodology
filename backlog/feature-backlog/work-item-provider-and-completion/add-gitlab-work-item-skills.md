@@ -1,8 +1,16 @@
 # Add GitLab Work-Item Skills
 
-Status: Ready
+Status: Running
 
 Type: Feature
+
+## Current Execution
+
+- Canonical Dev Orchestrator task: 019f7f89-2eb3-74c2-bb87-191d19a9efe4.
+- Branch: codex/add-gitlab-work-item-skills.
+- Worktree: /Users/martinbechard/.codex/worktrees/6e52/dev-methodology.
+- Started from approved Ready commit 4a7cb49119def8dde665f8a2f9f5508adb9edd86.
+- Scope remains limited to the two approved GitLab skill packages, their metadata, supported generated mirrors, and directly related non-governed tests and documentation.
 
 ## Approval Resolution
 
