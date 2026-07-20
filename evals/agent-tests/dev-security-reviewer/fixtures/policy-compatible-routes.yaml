@@ -1,0 +1,12 @@
+schema: dev-security-reviewer-policy-routes
+version: 1
+scope: bounded-synthetic-security-review
+routes:
+  codex:
+    nativeAgent: generated/adapters/codex/agents/dev-security-reviewer.toml
+    permittedModelFamilies: []
+    prohibitedModelFamilies: [sol, terra, luna]
+  junie:
+    nativeAgent: generated/adapters/junie/agents/dev-security-reviewer.md
+    permittedModelFamilies: [opus]
+    prohibitedModelFamilies: []

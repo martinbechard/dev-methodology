@@ -26,6 +26,15 @@ execution:
   targetInvocation: dev_security_reviewer
   judgeInvocation: dev_security_reviewer_suite_judge
   requireCodexIdentityEvidence: true
+  routeSelection:
+    scope: bounded-synthetic-security-review
+    contract: fixtures/policy-compatible-routes.yaml
+    selector: route_selection.py
+    permittedHarness: junie
+    prohibitedHarness: codex
+    blockerStatus: INFRASTRUCTURE_BLOCKED
+    deterministicCheck: tool-authority
+    requiredEvidence: [harness, scope, native_agent, native_agent_sha256, model, model_family, catalog_sha256]
 acceptance:
   deterministicFirst: true
   criticalFailureSkipsJudge: true

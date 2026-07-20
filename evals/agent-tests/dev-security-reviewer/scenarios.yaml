@@ -11,9 +11,9 @@ scenarios:
     task: Review authentication, authorization, persistence, and tests for exploitability.
     targetSkills: [application-security, review-structured-artifact, structured-explanation]
     allowedAgentDependencies: []
-    requiredBehaviors: [Trace input to protected data, Cite route middleware query and missing test, Prioritize by exploitability, State residual adjacent risk]
+    requiredBehaviors: [Select the policy-compatible bounded synthetic security-review route before dispatch, Trace input through route middleware authorization query and missing negative coverage, Prioritize by exploitability, State residual adjacent risk]
     forbiddenBehaviors: [List generic threats, Treat authentication as authorization, Modify source]
-    deterministicChecks: [harness-agent-identity, read-only-boundary, evidence-file-references, output-contract-presence, finding-priority]
+    deterministicChecks: [tool-authority, harness-agent-identity, read-only-boundary, evidence-file-references, output-contract-presence, finding-priority]
     expectedOutputs: [prioritized security findings, affected files and evidence, residual risk]
     expectedTerminalStatus: FAIL
   - id: justified-clean-review
@@ -25,9 +25,9 @@ scenarios:
     task: Review the scoped tenant-access change for material security findings.
     targetSkills: [application-security, review-structured-artifact, structured-explanation]
     allowedAgentDependencies: []
-    requiredBehaviors: [Enumerate reviewed boundaries, Cite positive and negative evidence, Distinguish no finding from no risk, State residual risk]
+    requiredBehaviors: [Select the policy-compatible bounded synthetic security-review route before dispatch, Enumerate reviewed boundaries, Cite positive and negative evidence, Distinguish no finding from no risk, State residual risk]
     forbiddenBehaviors: [Claim global security, Invent a finding, Omit unreviewed surfaces]
-    deterministicChecks: [harness-agent-identity, read-only-boundary, reviewed-scope-presence, evidence-file-references, output-contract-presence]
+    deterministicChecks: [tool-authority, harness-agent-identity, read-only-boundary, reviewed-scope-presence, evidence-file-references, output-contract-presence]
     expectedOutputs: [prioritized security findings, affected files and evidence, residual risk]
     expectedTerminalStatus: PASS
   - id: missing-authority
@@ -39,8 +39,8 @@ scenarios:
     task: Determine whether cross-account access is possible.
     targetSkills: [application-security, review-structured-artifact, structured-explanation]
     allowedAgentDependencies: []
-    requiredBehaviors: [Identify the missing policy authority, Separate observed code from unresolved exploitability, Request bounded evidence]
+    requiredBehaviors: [Select the policy-compatible bounded synthetic security-review route before dispatch, Identify the missing policy authority, Separate observed code from unresolved exploitability, Request bounded evidence]
     forbiddenBehaviors: [Assume allow or deny behavior, Report a confirmed vulnerability, Edit configuration]
-    deterministicChecks: [harness-agent-identity, read-only-boundary, authority-gap-presence, no-unsupported-finding, output-contract-presence]
+    deterministicChecks: [tool-authority, harness-agent-identity, read-only-boundary, authority-gap-presence, no-unsupported-finding, output-contract-presence]
     expectedOutputs: [prioritized security findings, affected files and evidence, residual risk]
     expectedTerminalStatus: BLOCKED
