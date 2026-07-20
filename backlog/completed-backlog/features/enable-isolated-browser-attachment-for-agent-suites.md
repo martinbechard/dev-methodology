@@ -1,6 +1,6 @@
 # Provide Isolated Playwright Harness For Agent Suites
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
@@ -12,15 +12,18 @@ On 2026-07-20 the user directed the repository to use a UI-level test framework 
 
 Do not proxy, spoof, reuse, or otherwise bypass a desktop-owned browser-session identity. Do not use the user's Chrome profile, existing tabs, authenticated state, or non-local destinations. The target agent must exercise the declared interaction through the isolated Playwright surface; a supervisor must not substitute a prewritten test result for the target's work.
 
-## Current Execution
+## Completion Evidence
 
 - Canonical Dev Orchestrator task: 019f7e76-c898-7e72-bdef-1c5f6897abd2.
-- Branch: codex/isolated-browser-attachment.
-- Worktree: /Users/martinbechard/.codex/worktrees/a509/dev-methodology.
+- Integrated implementation: main commit 6ccbbda0f3cf73177f10d01758d9293a819e1b45.
 - Approval and Ready transition: main commit 0b211b653cdd13612b38376d996deba4289fe940; claim release event a38b9d21-e85b-40eb-8111-73f180bd4618.
-- Root-task proof: fresh local tab and Account-flow DOM with empty inventories before and after; claim released at event 5a17988a-8d9c-4283-afa2-d018e360a221.
-- Child-target blocker: no in-app backend was provisioned for either nested child identity; no repository change or candidate commit was produced.
-- Phase: Running under the canonical Dev Orchestrator task for an isolated Playwright implementation.
+- Fresh review: accepted with no remaining findings after seven reviewer regressions and the retained-path audit regression. The candidate closed atomic one-shot broker reservation, fixture symlink containment, bounded preflight process-group cleanup, ephemeral token delivery and redaction, and fixture-root identity/swap protection.
+- Live governed run: process exit 0; coordinator PASS; fresh Judge PASS with verified provenance; exact receipts `harness-agent-identity`, `no-forbidden-mutation`, and `output-contract-presence`; no extra receipts.
+- Browser evidence: one fresh Chromium/browser-context/page execution completed 49 target-authored actions across wide and narrow viewports with retained trace, screenshots, console, network, and service evidence. The audit observed one Playwright run, one target session, and four closed resources.
+- Isolation and security evidence: zero non-loopback access; exact target and handoff identities; maximum three active sessions and one child; protected fixture canonical path plus device/inode binding; one consumed broker attempt; exact broker token absent from retained assignment, command, rollout, receipts, logs, and evidence; page, context, browser, fixture service, and broker closed cleanly.
+- Retained evidence: `/tmp/dev-methodology-playwright-accepted.d2LeDZ`; corrected retained-shape audit replay: `/tmp/dev-methodology-browser-audit-replay.jBfot2`.
+- Integration ownership: exact claim event 373524ec-4927-47e3-a456-cc5b53cab3e0; clean release event 5fe7d923-c051-4aa9-b066-e614adab983c.
+- Post-integration verification: runner 117 PASS; reporting 29 PASS; Dev Browser Operator and Dev UX Specialist validate-only PASS; Node syntax, Python compile, diff, and status checks clean. `npm ci` from the committed lockfile provisioned the primary worktree's ignored dependencies only and made no source change.
 
 ## Summary
 
