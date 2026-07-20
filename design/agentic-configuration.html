@@ -704,10 +704,22 @@
   <footer class="site-footer">
     <p>Copyright 2026 (c) Martin.Bechard@DevConsult.ca - <a href="../LICENSE">MIT License</a></p>
   </footer>
+  <script src="documentation-settings.js"></script>
   <script>
+    const settings = window.DEV_METHODOLOGY_DOCUMENTATION_SETTINGS;
     const harnessFilter = document.querySelector("#harness-filter");
     const harnessRows = Array.from(document.querySelectorAll("[data-harness-row]"));
     const harnessFilterStatus = document.querySelector("#harness-filter-status");
+    const settingsHarnessToFilter = {
+      codex: "codex",
+      "claude-code": "claude",
+      "gemini-cli": "gemini",
+      "junie-cli": "junie",
+      "github-copilot": "copilot",
+    };
+    const filterHarnessToSettings = Object.fromEntries(
+      Object.entries(settingsHarnessToFilter).map(([settingValue, filterValue]) => [filterValue, settingValue]),
+    );
 
     function applyHarnessFilter() {
       const selectedHarness = harnessFilter.value;
@@ -724,7 +736,23 @@
       harnessFilterStatus.textContent = `Showing 4 rows for ${harnessName}.`;
     }
 
-    harnessFilter.addEventListener("change", applyHarnessFilter);
+    if (settings) {
+      const availableHarnesses = Object.keys(settingsHarnessToFilter);
+      const preferredHarness = settings.resolveHarness(availableHarnesses, "codex");
+      harnessFilter.value = settingsHarnessToFilter[preferredHarness] || "all";
+    }
+    harnessFilter.addEventListener("change", () => {
+      if (settings && filterHarnessToSettings[harnessFilter.value]) {
+        settings.set("harness", filterHarnessToSettings[harnessFilter.value]);
+      }
+      applyHarnessFilter();
+    });
+    if (settings) {
+      document.addEventListener(settings.changeEventName, (event) => {
+        harnessFilter.value = settingsHarnessToFilter[event.detail.harness] || "all";
+        applyHarnessFilter();
+      });
+    }
     applyHarnessFilter();
   </script>
 </body>

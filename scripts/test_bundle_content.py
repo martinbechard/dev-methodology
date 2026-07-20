@@ -48,6 +48,7 @@ SUPPORT_CHECKLIST_PATH = REPOSITORY_ROOT / "design" / "agent-skill-test-coverage
 AGENT_TEST_SUITES_ROOT = REPOSITORY_ROOT / "evals" / "agent-tests"
 AGENT_BROWSER_PATH = REPOSITORY_ROOT / "design" / "agent-browser.js"
 TEMPLATE_BROWSER_PATH = REPOSITORY_ROOT / "design" / "template-browser.js"
+DOCUMENTATION_SETTINGS_PATH = REPOSITORY_ROOT / "design" / "documentation-settings.js"
 GENERATED_ADAPTERS_ROOT = REPOSITORY_ROOT / "generated" / "adapters"
 AGENT_GENERATION_MANIFEST_PATH = GENERATED_ADAPTERS_ROOT / "agent-generation-manifest.json"
 BUILD_SKILL_DOCS_PATH = REPOSITORY_ROOT / "scripts" / "build-skill-docs.py"
@@ -5353,6 +5354,7 @@ class BundleContentTests(unittest.TestCase):
             )
         )
         self.assertEqual(tuple(DOCUMENT_INFORMATION_OWNERS), index_pages)
+
         for position, filename in enumerate(index_pages):
             text = page_text[filename]
             with self.subTest(document_navigation=filename):
@@ -5464,6 +5466,40 @@ class BundleContentTests(unittest.TestCase):
             "deliberately present the same definition-to-skill relationships in two generated views",
             page_text["agent-and-skill-definitions.html"],
         )
+
+    def test_html_documentation_loads_accessible_persistent_settings(self) -> None:
+        settings_text = DOCUMENTATION_SETTINGS_PATH.read_text(encoding="utf-8")
+        design_pages = tuple((REPOSITORY_ROOT / "design").glob("*.html"))
+
+        self.assertIn(
+            '<script src="design/documentation-settings.js"></script>',
+            (REPOSITORY_ROOT / "index.html").read_text(encoding="utf-8"),
+        )
+        for page_path in design_pages:
+            with self.subTest(settings_consumer=page_path.name):
+                self.assertIn(
+                    '<script src="documentation-settings.js"></script>',
+                    page_path.read_text(encoding="utf-8"),
+                )
+
+        for phrase in (
+            "Copyright (c) 2026 Martin.Bechard@DevConsult.ca",
+            "DEV_METHODOLOGY_DOCUMENTATION_SETTINGS",
+            "dev-methodology.documentation.default-harness",
+            "dev-methodology.documentation.editor",
+            'trigger.setAttribute("aria-label", "Settings")',
+            'trigger.setAttribute("aria-expanded", "false")',
+            'dialog.setAttribute("role", "dialog")',
+            'dialog.setAttribute("aria-modal", "true")',
+            'harnessLabel.textContent = "Default harness"',
+            'editorLabel.textContent = "Editor"',
+            'const KEY_ESCAPE = "Escape"',
+            'const KEY_TAB = "Tab"',
+            "storage.getItem",
+            "storage.setItem",
+        ):
+            with self.subTest(documentation_settings_phrase=phrase):
+                self.assertIn(phrase, settings_text)
 
     def test_html_documentation_has_no_repeated_long_prose_blocks(self) -> None:
         occurrences: dict[str, set[str]] = {}
@@ -5748,7 +5784,11 @@ class BundleContentTests(unittest.TestCase):
             configuration_text,
         )
         self.assertIn(
-            'harnessFilter.addEventListener("change", applyHarnessFilter);',
+            'harnessFilter.addEventListener("change", () => {',
+            configuration_text,
+        )
+        self.assertIn(
+            'settings.set("harness", filterHarnessToSettings[harnessFilter.value]);',
             configuration_text,
         )
         self.assertNotIn("Markdown agent definition", locations_section)

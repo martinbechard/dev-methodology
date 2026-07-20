@@ -1,14 +1,14 @@
 // Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 // AI attribution: Generated with AI assistance.
-// Summary: Opens generated methodology templates in accessible source-view dialogs with repository-aware links.
+// Summary: Opens generated methodology templates in accessible source-view dialogs with preference-aware editing links.
 // Design: design/documentation-templates.html
 
 (() => {
   "use strict";
 
   const DATA_GLOBAL_NAME = "DEV_METHODOLOGY_TEMPLATE_DEFINITIONS";
+  const SETTINGS_GLOBAL_NAME = "DEV_METHODOLOGY_DOCUMENTATION_SETTINGS";
   const TEMPLATE_SELECTOR = "[data-template-definition]";
-  const EDITOR_QUERY_PARAMETER = "editor";
   const REPOSITORY_ROOT_QUERY_PARAMETER = "repoRoot";
   const DEFAULT_EDITOR_SCHEME = "vscode";
   const DOM_READY_STATE_LOADING = "loading";
@@ -16,7 +16,6 @@
   const KEY_TAB = "Tab";
   const EDIT_BUTTON_LABEL = "Edit";
   const EDIT_UNAVAILABLE_LABEL = "Edit requires repoRoot or a local file URL.";
-  const EDITOR_SCHEME_PATTERN = /^[a-z][a-z0-9+.-]*$/i;
   const STYLE_TEXT = `
     .template-definition-trigger {
       border-radius: 0.2rem;
@@ -208,11 +207,8 @@
   }
 
   function selectedEditorScheme() {
-    const configuredEditor = new URLSearchParams(window.location.search).get(EDITOR_QUERY_PARAMETER);
-    if (configuredEditor && EDITOR_SCHEME_PATTERN.test(configuredEditor)) {
-      return configuredEditor;
-    }
-    return DEFAULT_EDITOR_SCHEME;
+    const settings = window[SETTINGS_GLOBAL_NAME];
+    return settings ? settings.editorScheme() : DEFAULT_EDITOR_SCHEME;
   }
 
   function repositoryRootPath() {

@@ -1,11 +1,12 @@
 // Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 // AI attribution: Modified with AI assistance.
-// Summary: Enhances generated conceptual agent definition cards with dialogs and repository-aware editing links.
+// Summary: Enhances generated conceptual agent definition cards with dialogs, preferred harnesses, and repository-aware editing links.
 
 (() => {
   "use strict";
 
   const DATA_GLOBAL_NAME = "DEV_METHODOLOGY_ROLE_DEFINITIONS";
+  const SETTINGS_GLOBAL_NAME = "DEV_METHODOLOGY_DOCUMENTATION_SETTINGS";
   const ENHANCE_SKILL_DEFINITIONS_EVENT = "dev-methodology:enhance-skill-definitions";
   const RUNTIME_LABELS = {
     codex: "Codex",
@@ -22,14 +23,12 @@
     ["completion", "Completion", "list"],
   ];
   const DEFINITION_SELECTOR = "[data-agent-definition]";
-  const EDITOR_QUERY_PARAMETER = "editor";
   const REPOSITORY_ROOT_QUERY_PARAMETER = "repoRoot";
   const DEFAULT_EDITOR_SCHEME = "vscode";
   const DOM_READY_STATE_LOADING = "loading";
   const KEY_ESCAPE = "Escape";
   const EDIT_BUTTON_LABEL = "Edit";
   const EDIT_UNAVAILABLE_LABEL = "Edit requires repoRoot or a local file URL.";
-  const EDITOR_SCHEME_PATTERN = /^[a-z][a-z0-9+.-]*$/i;
   const STYLE_TEXT = `
     .agent-card__heading {
       display: flex;
@@ -393,11 +392,15 @@
   }
 
   function selectedEditorScheme() {
-    const configuredEditor = new URLSearchParams(window.location.search).get(EDITOR_QUERY_PARAMETER);
-    if (configuredEditor && EDITOR_SCHEME_PATTERN.test(configuredEditor)) {
-      return configuredEditor;
-    }
-    return DEFAULT_EDITOR_SCHEME;
+    const settings = window[SETTINGS_GLOBAL_NAME];
+    return settings ? settings.editorScheme() : DEFAULT_EDITOR_SCHEME;
+  }
+
+  function selectedHarness(availableHarnesses, fallbackHarness) {
+    const settings = window[SETTINGS_GLOBAL_NAME];
+    return settings
+      ? settings.resolveHarness(availableHarnesses, fallbackHarness)
+      : fallbackHarness;
   }
 
   function repositoryRootPath() {
@@ -583,9 +586,9 @@
         option.textContent = RUNTIME_LABELS[runtimeId] || runtimeId;
         runtimeSelect.appendChild(option);
       });
-      if ("codex" in invocations) {
-        runtimeSelect.value = "codex";
-      }
+      const availableHarnesses = Object.keys(invocations);
+      const fallbackHarness = "codex" in invocations ? "codex" : availableHarnesses[0];
+      runtimeSelect.value = selectedHarness(availableHarnesses, fallbackHarness);
       const invocationText = document.createElement("pre");
       invocationText.className = "agent-modal__invocation-text";
       const invocationCode = document.createElement("code");
@@ -593,7 +596,11 @@
       const showInvocation = () => {
         invocationCode.textContent = invocations[runtimeSelect.value] || "";
       };
-      runtimeSelect.addEventListener("change", showInvocation);
+      runtimeSelect.addEventListener("change", () => {
+        const settings = window[SETTINGS_GLOBAL_NAME];
+        if (settings) settings.set("harness", runtimeSelect.value);
+        showInvocation();
+      });
       showInvocation();
       invocation.append(invocationHeading, runtimeSelect, invocationText);
       card.insertBefore(invocation, card.lastElementChild);
@@ -701,6 +708,18 @@
       if (role) {
         button.addEventListener("click", () => openRoleDefinition(role, button));
       }
+    });
+  }
+
+  const settings = window[SETTINGS_GLOBAL_NAME];
+  if (settings) {
+    document.addEventListener(settings.changeEventName, (event) => {
+      document.querySelectorAll(".agent-modal__runtime-select").forEach((select) => {
+        const availableHarnesses = Array.from(select.options, (option) => option.value);
+        if (!availableHarnesses.includes(event.detail.harness)) return;
+        select.value = event.detail.harness;
+        select.dispatchEvent(new Event("change"));
+      });
     });
   }
 

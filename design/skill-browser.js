@@ -1,24 +1,23 @@
 // Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 // AI attribution: Modified with AI assistance.
-// Summary: Enhances generated skill definitions with accessible dialogs, navigation, and repository-aware editing links.
+// Summary: Enhances generated skill definitions with accessible dialogs, navigation, and preference-aware editing links.
 
 (() => {
   "use strict";
 
   const DATA_GLOBAL_NAME = "DEV_METHODOLOGY_SKILL_DEFINITIONS";
+  const SETTINGS_GLOBAL_NAME = "DEV_METHODOLOGY_DOCUMENTATION_SETTINGS";
   const ENHANCE_SKILL_DEFINITIONS_EVENT = "dev-methodology:enhance-skill-definitions";
   const EMPTY_INDEX = 0;
   const NEXT_INDEX = 1;
   const KEY_ENTER = "Enter";
   const KEY_SPACE = " ";
   const KEY_ESCAPE = "Escape";
-  const EDITOR_QUERY_PARAMETER = "editor";
   const REPOSITORY_ROOT_QUERY_PARAMETER = "repoRoot";
   const DEFAULT_EDITOR_SCHEME = "vscode";
   const DOM_READY_STATE_LOADING = "loading";
   const EDIT_BUTTON_LABEL = "Edit";
   const EDIT_UNAVAILABLE_LABEL = "Edit requires repoRoot or a local file URL.";
-  const EDITOR_SCHEME_PATTERN = /^[a-z][a-z0-9+.-]*$/i;
   const STYLE_TEXT = `
     .skill-definition-trigger {
       cursor: pointer;
@@ -241,11 +240,8 @@
   }
 
   function selectedEditorScheme() {
-    const configuredEditor = new URLSearchParams(window.location.search).get(EDITOR_QUERY_PARAMETER);
-    if (configuredEditor && EDITOR_SCHEME_PATTERN.test(configuredEditor)) {
-      return configuredEditor;
-    }
-    return DEFAULT_EDITOR_SCHEME;
+    const settings = window[SETTINGS_GLOBAL_NAME];
+    return settings ? settings.editorScheme() : DEFAULT_EDITOR_SCHEME;
   }
 
   function repositoryRootPath() {
