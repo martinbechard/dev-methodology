@@ -1,12 +1,12 @@
 # Simplify Project Configuration Setup And Skill Routing
 
-Status: User Action Required
+Status: Ready
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/simplify-project-configuration-setup-and-skill-routing.md
+Provider Reference: backlog/feature-backlog/simplify-project-configuration-setup-and-skill-routing.md
 
 Completion: direct-main
 
@@ -15,13 +15,13 @@ Completion: direct-main
 - Owner: Unowned
 - Claim: None
 - Canonical task: 019f85cc-cb4e-7422-af62-438048aa9b89
-- Worktree: /Users/martinbechard/.codex/worktrees/1b29/dev-methodology
-- Branch: codex/simplify-project-configuration-setup-and-skill-routing
+- Worktree: Removed after clean bounded discovery.
+- Branch: Removed after clean bounded discovery.
 - Starting main: df696249845d21d812cd752b9faa54d4d706d0da
-- Phase: Bounded selector/schema, installation-mode, renderer, and exact governed-scope discovery completed; implementation is paused for path-specific approval.
+- Phase: Bounded selector/schema, installation-mode, renderer, and exact governed-scope discovery completed; exact approval is recorded and the item is ready for fresh dispatch.
 - Started: 2026-07-21
 - Running-record claim: start-project-configuration-simplification-019f85cc, acquired event 3f714ce6-be15-4aa2-b651-8873fc1ba056.
-- Open issues: The exact seven-path governed-definition scope requires the user answer below.
+- Open issues: None. Implementation must remain within the exact seven-path governed-definition scope below.
 - Accepted candidate: Pending.
 
 ## User Action Required
@@ -50,16 +50,23 @@ The approved work item requires changes to seven governed definitions. Repositor
 
 ### Resolution
 
-Pending.
+- Answer: Approved.
+- User wording: "approved".
+- Date: 2026-07-21.
+- Provenance: direct user response in parent backlog-coordination task 019f77f4-c4bd-7c91-b197-c987a7beb838 to the exact seven-path question recorded above.
+- Approved governed scope: the seven definition paths listed in the question above.
+- Approved dependent scope: only their supported generated mirrors and directly related ordinary scripts, templates, tests, evaluation fixtures, README, and design documentation required by this work item.
+- Exclusions: no other governed definition unless separately approved.
+- Disposition: Ready for a fresh canonical Dev Orchestrator task.
 
 ### Unattended Work Boundary
 
-No governed or project mutation is authorized while this question is pending. Preserve the resolved schema, migration, documentation-setup, installed-core-delivery, technology-confirmation, and reference-rendering decisions.
+Implementation is authorized only within the exact resolved scope above. Preserve the resolved schema, migration, documentation-setup, installed-core-delivery, technology-confirmation, and reference-rendering decisions.
 
 ### Discovery Evidence
 
 - Canonical task: 019f85cc-cb4e-7422-af62-438048aa9b89.
-- Clean branch/worktree: codex/simplify-project-configuration-setup-and-skill-routing at /Users/martinbechard/.codex/worktrees/1b29/dev-methodology, based on df696249845d21d812cd752b9faa54d4d706d0da.
+- Prior clean discovery branch/worktree: codex/simplify-project-configuration-setup-and-skill-routing at /Users/martinbechard/.codex/worktrees/1b29/dev-methodology, based on df696249845d21d812cd752b9faa54d4d706d0da; both were removed after discovery closeout.
 - Setup schema: setup.mode is basic or advanced; concurrent_tasking.capacity is present only when enabled and defaults to 3 when enabled.
 - Workflow migration: workflow_selection.provider becomes persistence and completion becomes commit, retaining existing vocabularies and selector-specific hand-edited folder overrides with exact conflict reporting.
 - Documentation boundary: setup-time documentation_structure creates only empty selected roots; documentation_mode.selected remains the later reverse-engineering contract.
@@ -68,12 +75,13 @@ No governed or project mutation is authorized while this question is pending. Pr
 - Existing conceptual role inventories already satisfy the no-technology-skill and no-provider-specific Dev Coder dependency invariants; tests are required, not Dev Coder mutation.
 - No agents/role-schema.yaml or model-profile change is required.
 - UAR routing claim: route-project-config-simplification-approval, acquired event 6665be8c-0d9c-40c9-9fe5-061074d7f5d6.
+- Approval transaction claim: approve-simplify-project-config-20260721, acquired event 1e1cdaab-1c48-4255-b834-6f1ea2c3e92b.
 
 ## Approval Resolution
 
 - On 2026-07-21, in parent backlog-coordination task 019f77f4-c4bd-7c91-b197-c987a7beb838, the user directed: "I approve the items in holding".
 - This approves the requested work item and moves it to Ready for bounded discovery, exact governed-path determination, and implementation of ordinary non-governed surfaces.
-- Repository policy still requires the Dev Orchestrator to identify every governed canonical definition path and obtain path-specific approval before mutating any governed definition not already covered by an exact recorded approval.
+- The later exact seven-path approval recorded above resolves the governed-definition boundary for this item; any additional governed definition still requires separate approval.
 - Approval transaction claim: approve-held-project-configuration-items, acquired event 5503ae8e-cd11-4567-978f-dc0e1d4e8475.
 
 ## Summary
