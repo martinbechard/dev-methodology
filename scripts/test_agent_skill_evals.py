@@ -2036,7 +2036,7 @@ class HarnessAndJudgeTests(unittest.TestCase):
                     "skill_validate": "VALID",
                     "skill_refresh": "CATALOG",
                     "detect_technology_skills": "NO_VARIANT",
-                    "claim_acquire": "SHARED_CHECKOUT_ACQUIRED",
+                    "claim_acquire": contract["requiredToolOutcomes"]["claim_acquire"][0],
                     "claim_status": "STATUS",
                     "claim_extend": "EXTENDED",
                     "claim_heartbeat": "HEARTBEAT",
@@ -3853,7 +3853,7 @@ class HarnessAndJudgeTests(unittest.TestCase):
             contract["requiredRuntimeDigest"],
         )
         self.assertEqual(
-            ["SHARED_CHECKOUT_ACQUIRED"],
+            ["PRIMARY"],
             contract["requiredToolOutcomes"]["claim_acquire"],
         )
         required = {
@@ -4144,7 +4144,7 @@ class HarnessAndJudgeTests(unittest.TestCase):
             "skill_validate": "VALID",
             "skill_refresh": "CATALOG",
             "detect_technology_skills": "READY",
-            "claim_acquire": "SHARED_CHECKOUT_ACQUIRED",
+            "claim_acquire": contract["requiredToolOutcomes"]["claim_acquire"][0],
             "claim_status": "STATUS",
             "claim_extend": "EXTENDED",
             "claim_heartbeat": "HEARTBEAT",

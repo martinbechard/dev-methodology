@@ -363,7 +363,7 @@ cases:
         skill_validate: [VALID]
         skill_refresh: [CATALOG]
         detect_technology_skills: [READY, NO_VARIANT]
-        claim_acquire: [SHARED_CHECKOUT_ACQUIRED]
+        claim_acquire: [PRIMARY]
         claim_status: [STATUS]
         claim_extend: [EXTENDED]
         claim_heartbeat: [HEARTBEAT]

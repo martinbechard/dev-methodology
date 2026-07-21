@@ -1047,7 +1047,7 @@ class AgentClaimTests(unittest.TestCase):
 
     def test_isolated_claim_cannot_extend_into_backlog_scope(self) -> None:
         self.claim(*self.acquire_arguments("first"), "--file", "README.md")
-        isolated, _isolated_path = self.isolated_arguments("second")
+        isolated, isolated_path = self.isolated_arguments("second")
         self.claim(*self.acquire_arguments("second"), "--file", "src/one.py", *isolated)
         before = self.registry_path().read_bytes()
 
@@ -1057,13 +1057,75 @@ class AgentClaimTests(unittest.TestCase):
             "second",
             "--file",
             "backlog/feature-backlog/queued.md",
+            repo=isolated_path,
+        )
+        report = self.claim("report", "--since", "2d")
+
+        self.assertEqual(3, completed.returncode)
+        result = self.output(completed)
+        self.assertEqual("SHARED_CHECKOUT_RELEASE_REQUIRED", result["outcome"])
+        self.assertEqual("PRIMARY_REQUIRED", result["legacy_outcome"])
+        self.assertEqual(before, self.registry_path().read_bytes())
+        event = next(
+            event
+            for event in self.journal_events()
+            if event["claim_id"] == "second" and event["outcome"] == "PRIMARY_REQUIRED"
+        )
+        self.assertIs(event["shared_checkout_claimed"], True)
+        self.assertEqual(0, report.returncode, report.stderr)
+        metrics = self.output(report)["metrics"]
+        self.assertEqual(1, metrics["outcome_counts"]["SHARED_CHECKOUT_RELEASE_REQUIRED"])
+        self.assertEqual(1, metrics["raw_outcome_counts"]["PRIMARY_REQUIRED"])
+        self.assertEqual([], metrics["outcome_normalization_gaps"])
+
+    def test_isolated_backlog_extension_reports_available_shared_checkout(self) -> None:
+        self.claim(*self.acquire_arguments("first"), "--file", "README.md")
+        isolated, isolated_path = self.isolated_arguments("second")
+        self.claim(*self.acquire_arguments("second"), "--file", "src/one.py", *isolated)
+        self.claim("release", "--claim-id", "first", "--no-change")
+
+        completed = self.claim(
+            "extend",
+            "--claim-id",
+            "second",
+            "--file",
+            "backlog/feature-backlog/queued.md",
+            repo=isolated_path,
+        )
+
+        self.assertEqual(3, completed.returncode)
+        self.assertEqual("SHARED_CHECKOUT_REQUIRED", self.output(completed)["outcome"])
+        event = next(
+            event
+            for event in self.journal_events()
+            if event["claim_id"] == "second" and event["outcome"] == "PRIMARY_REQUIRED"
+        )
+        self.assertIs(event["shared_checkout_claimed"], False)
+
+    def test_isolated_primary_resource_extension_reports_active_shared_checkout(self) -> None:
+        self.claim(*self.acquire_arguments("first"), "--file", "README.md")
+        isolated, isolated_path = self.isolated_arguments("second")
+        self.claim(*self.acquire_arguments("second"), "--file", "src/one.py", *isolated)
+
+        completed = self.claim(
+            "extend",
+            "--claim-id",
+            "second",
+            "--resource",
+            "git-index:primary",
+            repo=isolated_path,
         )
 
         self.assertEqual(3, completed.returncode)
         result = self.output(completed)
-        self.assertEqual("SHARED_CHECKOUT_REQUIRED", result["outcome"])
-        self.assertEqual("PRIMARY_REQUIRED", result["legacy_outcome"])
-        self.assertEqual(before, self.registry_path().read_bytes())
+        self.assertEqual("SHARED_CHECKOUT_RELEASE_REQUIRED", result["outcome"])
+        self.assertEqual("primary_location_resource_requires_primary_worktree", result["reason"])
+        event = next(
+            event
+            for event in self.journal_events()
+            if event["claim_id"] == "second" and event["outcome"] == "PRIMARY_REQUIRED"
+        )
+        self.assertIs(event["shared_checkout_claimed"], True)
 
     def test_report_uses_explicit_context_when_shared_checkout_is_available(self) -> None:
         self.claim(*self.acquire_arguments("first"), "--file", "README.md")
