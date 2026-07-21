@@ -1,6 +1,6 @@
 # Simplify Project Configuration Setup And Skill Routing
 
-Status: Running
+Status: Blocked
 
 Type: Feature
 
@@ -12,8 +12,8 @@ Completion: direct-main
 
 ## Current Execution
 
-- Owner: Dev Orchestrator
-- Claim: None; private implementation and review do not require shared repository ownership.
+- Owner: Unowned
+- Claim: None
 - Canonical task: 019f86b1-e0e5-7fc2-8fd2-d4e2391c7193
 - Worktree: /Users/martinbechard/.codex/worktrees/6445/dev-methodology
 - Branch: codex/simplify-project-configuration-setup-and-skill-routing
@@ -23,6 +23,14 @@ Completion: direct-main
 - Running-record claim: start-simplify-project-config-019f86b1, acquired event 3d804405-ef17-42aa-b1f2-24d0b0edde33.
 - Open issues: None. Implementation must remain within the exact seven-path governed-definition scope below.
 - Accepted candidate: Pending.
+
+## Blocked Handoff
+
+- Blocker: Independent review has a recurring material finding in agents/roles/project-setup/project-bootstrapper.role.yaml around line 326. Its example still treats a configuration-only setup request as requiring artifact review, multi-contribution integration, and Dev Verifier, contradicting the ordinary setup terminal branch.
+- Exhausted correction evidence: Two bounded correction attempts were completed. The preserved candidate branch codex/simplify-project-configuration-setup-and-skill-routing is clean at a2142c5, following commits 99b348a and 703af39; it is not integrated.
+- Implementation claim: simplify-project-config-impl-019f86b1 was released cleanly, event a9a6193b-3784-4fc3-a59b-5dfe0adcbe6a.
+- Additional review observation: Checked-in PROJECT.yaml and AGENTS.md still use provider and completion, but those paths were explicitly outside this item’s mutation scope and do not authorize further work.
+- Recovery: No integration or completion is authorized from this Blocked state. A freshly authorized Dev Orchestrator may resume only by first transitioning this item through Ready, then acquiring a new Running claim. The resumed work must correct and independently re-review the recurring Project Bootstrapper example before any integration decision.
 
 ## User Action Required
 
