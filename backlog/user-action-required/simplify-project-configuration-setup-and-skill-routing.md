@@ -1,27 +1,73 @@
 # Simplify Project Configuration Setup And Skill Routing
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/simplify-project-configuration-setup-and-skill-routing.md
+Provider Reference: backlog/user-action-required/simplify-project-configuration-setup-and-skill-routing.md
 
 Completion: direct-main
 
-## Current Execution
+## Discovery Execution
 
-- Owner: Dev Orchestrator
+- Owner: Unowned
+- Claim: None
 - Canonical task: 019f85cc-cb4e-7422-af62-438048aa9b89
 - Worktree: /Users/martinbechard/.codex/worktrees/1b29/dev-methodology
 - Branch: codex/simplify-project-configuration-setup-and-skill-routing
 - Starting main: df696249845d21d812cd752b9faa54d4d706d0da
-- Phase: Bounded selector/schema, installation-mode, renderer, and exact governed-scope discovery.
+- Phase: Bounded selector/schema, installation-mode, renderer, and exact governed-scope discovery completed; implementation is paused for path-specific approval.
 - Started: 2026-07-21
 - Running-record claim: start-project-configuration-simplification-019f85cc, acquired event 3f714ce6-be15-4aa2-b651-8873fc1ba056.
-- Open issues: Exact governed-definition approval scope remains to be established from discovery evidence.
+- Open issues: The exact seven-path governed-definition scope requires the user answer below.
 - Accepted candidate: Pending.
+
+## User Action Required
+
+### Question For The User
+
+Do you approve changes to exactly these seven governed definition paths for the Simplify Project Configuration Setup And Skill Routing item, with supported generated mirrors regenerated only from those approved sources?
+
+1. skills/create-project-configuration/SKILL.md
+2. skills/documentation-bootstrap/SKILL.md
+3. skills/development-methodology/SKILL.md
+4. skills/detect-technology-skills/SKILL.md
+5. skills/maintain-methodology-documentation/SKILL.md
+6. agents/roles/project-setup/project-configurator.role.yaml
+7. agents/roles/project-setup/project-bootstrapper.role.yaml
+
+### Why User Input Is Required
+
+The approved work item requires changes to seven governed definitions. Repository policy requires exact path-specific approval before mutation; the user's prior approval of the Holding item authorized dispatch and discovery but did not invent path-specific scope.
+
+### Options And Tradeoffs
+
+- Approve the exact seven-path scope: implement the resolved setup and routing contract with supported mirrors and directly related ordinary surfaces.
+- Narrow the scope by naming allowed paths: preserve excluded behavior as blocked follow-up work.
+- Defer: retain the resolved technical model without implementation.
+
+### Resolution
+
+Pending.
+
+### Unattended Work Boundary
+
+No governed or project mutation is authorized while this question is pending. Preserve the resolved schema, migration, documentation-setup, installed-core-delivery, technology-confirmation, and reference-rendering decisions.
+
+### Discovery Evidence
+
+- Canonical task: 019f85cc-cb4e-7422-af62-438048aa9b89.
+- Clean branch/worktree: codex/simplify-project-configuration-setup-and-skill-routing at /Users/martinbechard/.codex/worktrees/1b29/dev-methodology, based on df696249845d21d812cd752b9faa54d4d706d0da.
+- Setup schema: setup.mode is basic or advanced; concurrent_tasking.capacity is present only when enabled and defaults to 3 when enabled.
+- Workflow migration: workflow_selection.provider becomes persistence and completion becomes commit, retaining existing vocabularies and selector-specific hand-edited folder overrides with exact conflict reporting.
+- Documentation boundary: setup-time documentation_structure creates only empty selected roots; documentation_mode.selected remains the later reverse-engineering contract.
+- Skill delivery: core delivery is reconciled from generated and installed agent metadata and defaults to by-reference; project override requires compatible regeneration and installation. Technology delivery independently defaults to by-reference.
+- Technology evidence: each loadout records candidates, evidence, conflicts, accepted skills, rejections, and user confirmation.
+- Existing conceptual role inventories already satisfy the no-technology-skill and no-provider-specific Dev Coder dependency invariants; tests are required, not Dev Coder mutation.
+- No agents/role-schema.yaml or model-profile change is required.
+- UAR routing claim: route-project-config-simplification-approval, acquired event 6665be8c-0d9c-40c9-9fe5-061074d7f5d6.
 
 ## Approval Resolution
 
