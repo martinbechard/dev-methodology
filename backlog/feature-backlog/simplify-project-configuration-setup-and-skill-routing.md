@@ -1,6 +1,6 @@
 # Simplify Project Configuration Setup And Skill Routing
 
-Status: Ready
+Status: Running
 
 Type: Feature
 
@@ -9,6 +9,19 @@ Provider: file
 Provider Reference: backlog/feature-backlog/simplify-project-configuration-setup-and-skill-routing.md
 
 Completion: direct-main
+
+## Current Execution
+
+- Owner: Dev Orchestrator
+- Canonical task: 019f85cc-cb4e-7422-af62-438048aa9b89
+- Worktree: /Users/martinbechard/.codex/worktrees/1b29/dev-methodology
+- Branch: codex/simplify-project-configuration-setup-and-skill-routing
+- Starting main: df696249845d21d812cd752b9faa54d4d706d0da
+- Phase: Bounded selector/schema, installation-mode, renderer, and exact governed-scope discovery.
+- Started: 2026-07-21
+- Running-record claim: start-project-configuration-simplification-019f85cc, acquired event 3f714ce6-be15-4aa2-b651-8873fc1ba056.
+- Open issues: Exact governed-definition approval scope remains to be established from discovery evidence.
+- Accepted candidate: Pending.
 
 ## Approval Resolution
 
