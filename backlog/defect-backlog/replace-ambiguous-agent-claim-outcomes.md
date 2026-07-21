@@ -1,6 +1,6 @@
 # Replace Ambiguous Agent Claim Outcomes
 
-Status: Ready
+Status: Running
 
 Type: Defect
 
@@ -9,6 +9,19 @@ Provider: file
 Provider Reference: backlog/defect-backlog/replace-ambiguous-agent-claim-outcomes.md
 
 Completion: direct-main
+
+## Current Execution
+
+- Owner: Dev Orchestrator
+- Canonical task: 019f85c8-626e-77b2-8b7e-09c393a1530a
+- Worktree: /Users/martinbechard/.codex/worktrees/2cfe/dev-methodology
+- Branch: codex/replace-ambiguous-agent-claim-outcomes
+- Starting main: 2624b5b25ba6e5548051d7b9953933b1e57b3f87
+- Phase: Bounded outcome inventory, technical decision resolution, and exact governed-scope discovery.
+- Started: 2026-07-21
+- Running-record claim: start-ambiguous-agent-claim-outcomes-019f85c8, acquired event 2e56cf2f-8e7f-4cdb-b4eb-a8439e79c4a6.
+- Open issues: Exact governed-definition approval scope remains to be established from discovery evidence.
+- Accepted candidate: Pending.
 
 Creation Claim: capture-resource-coordination-dialogue-20260721
 
