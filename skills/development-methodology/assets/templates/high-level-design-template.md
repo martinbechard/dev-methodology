@@ -97,9 +97,19 @@ TODO: The Scope Boundary Diagram should show what belongs inside the subsystem, 
 
 ## Data Anchors
 
-TODO: List the planned or existing data structures, state variables, configuration fields, logs, files, API routes, or UI surfaces that this subsystem must use.
+TODO: Data anchors establish the shared reference points that the next design layer must elaborate without redefining. Include only routes, selectors, configuration contracts, exchanged data contracts, persisted records, files, logs, UI surfaces, transient state, or derived state whose identity, authority, ownership, or downstream treatment must remain consistent across later designs.
 
-TODO: State which anchors are authoritative and which are derived outputs.
+TODO: For every anchor, state its concrete identity, anchor type, authority, owner and representation, and constraint for the next design layer. Do not use an abstract category such as API base URL when an exact configuration contract exists. Keep access mechanisms such as environment lookup expressions under Owner and representation; they are not authorities.
+
+| Anchor | Anchor type | Authority | Owner and representation | Constraint for the next design layer |
+| --- | --- | --- | --- | --- |
+| Feature route /features/:featureId | Navigation and selector anchor | Accepted functional route contract | Router declares :featureId; feature page consumes the selected value | Preserve the route and selector name; downstream pages and commands reuse the same selected value. |
+| FEATURE_API_BASE_URL | Configuration anchor | Parent architecture configuration rule | Runtime environment supplies the value; configuration adapter owns access and validation | Integration modules use the configuration adapter; other modules neither read the environment nor construct service origins. |
+| FeatureDetail response | API contract anchor | Accepted API boundary | Contract module owns the type and decoder; feature page consumes it | Preserve authoritative fields and ordering; do not invent alternative response shapes in consumers. |
+
+TODO: Adapt the anchor types to the subsystem. Common types include navigation and selector, configuration, API or event contract, persisted-record, file or log, UI-surface, transient-state, and derived-state anchors. Split anchors that have different owners or downstream constraints; do not combine several response or state contracts merely because they are related.
+
+TODO: State which anchors are authoritative and which are derived outputs. For derived anchors, define the authoritative inputs plus the replace, append, clear, or recompute rules that later designs must preserve. For transient-state anchors, define lifetime, reset, failure-preservation, and persistence restrictions when applicable.
 
 TODO: Add a Data Anchor Map in this section when multiple records, state values, logs, routes, or UI surfaces anchor the subsystem.
 
