@@ -1,12 +1,12 @@
 # Simplify Coordination Registry And Branch Integration
 
-Status: User Action Required
+Status: Ready
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/simplify-coordination-registry-and-branch-integration.md
+Provider Reference: backlog/feature-backlog/simplify-coordination-registry-and-branch-integration.md
 
 Completion: direct-main
 
@@ -91,11 +91,11 @@ Repository policy requires explicit scope-specific user approval before mutating
 
 ## Resolution
 
-Pending.
+Approved on 2026-07-21. In parent task 019f77f4-c4bd-7c91-b197-c987a7beb838, after the exact three-skill scope and tradeoffs were presented, the user answered: "ok I approve". This authorizes exactly skills/agent-claim/SKILL.md, skills/agent-work-merge/SKILL.md, and skills/codex-workitem-coordination/SKILL.md, together with their supported generated skill mirrors and directly related focused tests or design documentation, for the requirements recorded in this item.
 
 ## Unattended Work Boundary
 
-Do not mutate the proposed skill definitions, generated mirrors, or related implementation before the exact approval is recorded. Read-only inspection and preservation of this work item remain allowed.
+The exact approval is recorded. The assigned Dev Orchestrator must run each supported governed-definition pre-mutation check with this approval provenance before changing the three approved skill definitions. No other governed definition is authorized.
 
 ## Notes
 
