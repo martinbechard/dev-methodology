@@ -1,6 +1,6 @@
 # Support Project-Level Skill Extensions
 
-Status: Ready
+Status: Running
 
 Type: Feature
 
@@ -9,6 +9,19 @@ Provider: file
 Provider Reference: backlog/feature-backlog/support-project-level-skill-extensions.md
 
 Completion: direct-main
+
+## Current Execution
+
+- Owner: Dev Orchestrator
+- Canonical task: 019f85c8-62c2-71d0-bab4-861e863d03ed
+- Worktree: /Users/martinbechard/.codex/worktrees/9052/dev-methodology
+- Branch: codex/support-project-level-skill-extensions
+- Starting main: 2624b5b25ba6e5548051d7b9953933b1e57b3f87
+- Phase: Bounded schema, renderer, and exact governed-scope discovery.
+- Started: 2026-07-21
+- Running-record claim: start-project-skill-extensions-019f85c8, acquired event 294844ff-d66c-4452-bb44-9d6d1be019de.
+- Open issues: Exact governed-definition approval scope remains to be established from discovery evidence.
+- Accepted candidate: Pending.
 
 Creation Claim: capture-resource-coordination-dialogue-20260721
 
