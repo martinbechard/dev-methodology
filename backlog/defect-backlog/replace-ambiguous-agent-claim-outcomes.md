@@ -1,12 +1,12 @@
 # Replace Ambiguous Agent Claim Outcomes
 
-Status: User Action Required
+Status: Ready
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/replace-ambiguous-agent-claim-outcomes.md
+Provider Reference: backlog/defect-backlog/replace-ambiguous-agent-claim-outcomes.md
 
 Completion: direct-main
 
@@ -15,13 +15,13 @@ Completion: direct-main
 - Owner: Unowned
 - Claim: None
 - Canonical task: 019f85c8-626e-77b2-8b7e-09c393a1530a
-- Worktree: /Users/martinbechard/.codex/worktrees/2cfe/dev-methodology
-- Branch: codex/replace-ambiguous-agent-claim-outcomes
+- Worktree: Removed after clean discovery closeout.
+- Branch: Removed after clean discovery closeout.
 - Starting main: 2624b5b25ba6e5548051d7b9953933b1e57b3f87
-- Phase: Bounded outcome inventory and exact governed-scope discovery completed; implementation is paused for path-specific approval.
+- Phase: Bounded outcome inventory and exact governed-scope discovery completed; exact approval is recorded and the item is ready for fresh dispatch.
 - Started: 2026-07-21
 - Running-record claim: start-ambiguous-agent-claim-outcomes-019f85c8, acquired event 2e56cf2f-8e7f-4cdb-b4eb-a8439e79c4a6.
-- Open issues: The exact governed-definition and paired-repository scope requires the user answer below.
+- Open issues: None. Implementation must preserve the approved exact scope and paired-repository parity.
 - Accepted candidate: Pending.
 
 ## User Action Required
@@ -42,11 +42,18 @@ The smallest coherent correction changes three governed skill definitions, and c
 
 ### Resolution
 
-Pending.
+- Answer: Approved.
+- User wording: "ok authorized".
+- Date: 2026-07-21.
+- Provenance: direct user response in parent backlog-coordination task 019f77f4-c4bd-7c91-b197-c987a7beb838 to the exact question recorded above.
+- Approved governed scope: skills/agent-claim/SKILL.md, skills/create-file-work-item/SKILL.md, and skills/manage-file-work-items/SKILL.md.
+- Approved dependent scope: supported generated mirrors; directly related non-governed Python implementation, tests, evaluation contracts, README/design/migration documentation in dev-methodology; and paired non-governed claim engine, MCP tool descriptions, tests, and migration documentation in /Users/martinbechard/dev/mcp-agent-ops.
+- Exclusions: no conceptual agent definition and no other governed skill.
+- Disposition: Ready for a fresh canonical Dev Orchestrator task.
 
 ### Unattended Work Boundary
 
-No governed or paired-repository mutation is authorized while this question is pending. Preserve the clean discovery branch and the append-only journal compatibility decision.
+Implementation is authorized only within the exact resolved scope above. Preserve the append-only journal compatibility decision and do not expand to another governed definition without separate approval.
 
 ### Canonical Vocabulary And Compatibility Plan
 
@@ -63,8 +70,9 @@ No governed or paired-repository mutation is authorized while this question is p
 ### Discovery Evidence
 
 - Canonical task: 019f85c8-626e-77b2-8b7e-09c393a1530a.
-- Clean branch/worktree: codex/replace-ambiguous-agent-claim-outcomes at /Users/martinbechard/.codex/worktrees/2cfe/dev-methodology, based on 2624b5b25ba6e5548051d7b9953933b1e57b3f87.
+- Discovery branch/worktree were clean and removed after routing the question; fresh delivery must start from current main.
 - UAR routing claim: route-ambiguous-outcomes-approval, acquired event 044ba28a-355a-4d14-9df9-192c45345826.
+- Approval transaction claim: approve-ambiguous-outcomes-20260721, acquired event f89e11bf-d998-46d1-8ccd-3167198ee5ca.
 
 Creation Claim: capture-resource-coordination-dialogue-20260721
 
