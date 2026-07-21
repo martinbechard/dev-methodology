@@ -1,6 +1,6 @@
 # Configure Agent Claim Transport Adapters
 
-Status: Ready
+Status: Running
 
 Type: Feature
 
@@ -10,17 +10,17 @@ Provider Reference: backlog/feature-backlog/configure-agent-claim-transport-adap
 
 Completion: direct-main
 
-## Discovery Execution
+## Current Execution
 
-- Owner: Unowned
-- Claim: None
-- Canonical task: 019f85c8-626e-77b2-8b7e-09a893d60c1b
-- Worktree: Removed after clean discovery closeout.
-- Branch: Removed after clean discovery closeout.
-- Starting main: 2624b5b25ba6e5548051d7b9953933b1e57b3f87
-- Phase: Bounded transport inventory and exact governed-scope discovery completed; exact approval is recorded and the item is ready for fresh dispatch.
+- Owner: Dev Orchestrator
+- Claim: None; private implementation and review do not require shared repository ownership.
+- Canonical task: 019f86a0-9f68-75c2-a7d1-8624d7dd83c6
+- Worktree: /Users/martinbechard/.codex/worktrees/8c2f/dev-methodology
+- Branch: codex/configure-agent-claim-transport-adapters
+- Starting main: 723fdedc8f5002a3a0c08d48ee39e6c52b945cb9
+- Phase: Run the eight exact approval checks, implement the bounded standalone-adapter and Project Configurator changes, obtain fresh independent review and focused verification, then integrate from fresh current main and complete the item separately.
 - Started: 2026-07-21
-- Running-record claim: start-agent-claim-transport-adapters-019f85c8, acquired event 8a69729f-031d-465d-8ff1-2e0c3951e62c.
+- Running-record claim: start-claim-transport-adapters-019f86a0, acquired event cc4e4dbb-24bb-4750-b99d-bc61968ff342.
 - Open issues: None. Implementation must preserve the approved standalone-adapter scope.
 - Accepted candidate: Pending.
 
