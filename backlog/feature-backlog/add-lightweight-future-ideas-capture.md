@@ -1,6 +1,6 @@
 # Add Lightweight Future Ideas Capture
 
-Status: Ready
+Status: Running
 
 Type: Feature
 
@@ -9,6 +9,19 @@ Provider: file
 Provider Reference: backlog/feature-backlog/add-lightweight-future-ideas-capture.md
 
 Completion: direct-main
+
+## Current Execution
+
+- Owner: Dev Orchestrator
+- Canonical task: 019f85c8-6274-7593-b073-dd8b12b7b079
+- Worktree: /Users/martinbechard/.codex/worktrees/ceb0/dev-methodology
+- Branch: codex/add-lightweight-future-ideas-capture
+- Starting main: 2624b5b25ba6e5548051d7b9953933b1e57b3f87
+- Phase: Bounded storage, scanner, promotion, and exact governed-scope discovery.
+- Started: 2026-07-21
+- Running-record claim: start-future-ideas-019f85c8, acquired event e227f815-0a32-41f5-9753-606238d66788.
+- Open issues: Exact governed-definition approval scope remains to be established from discovery evidence.
+- Accepted candidate: Pending.
 
 Creation Claim: capture-resource-coordination-dialogue-20260721
 
