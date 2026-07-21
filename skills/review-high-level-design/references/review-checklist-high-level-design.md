@@ -62,7 +62,9 @@ Do not mark pass without quoted evidence.
 
 - Question: Does Parent Architecture explain why the subsystem exists and how it fits an accepted parent architecture, or, during bottom-up reverse engineering before the architecture pass, state that the intentionally absent later parent is Not yet identified without inventing constraints or blocking current-pass documentation acceptance?
 - Question: Do Scope And Non-Goals distinguish included components, excluded components, and deferred work?
-- Question: Do Data Anchors name planned or existing authoritative data sources, state owners, records, events, messages, or external systems?
+- Question: Does each Data Anchors row identify a concrete anchor, its anchor type, its authority, its owner and representation, and an enforceable constraint for the next design layer rather than merely naming a value or access mechanism?
+- Question: Do configuration anchors distinguish the exact configuration contract and decision authority from the environment, file, expression, or adapter used to access and validate it?
+- Question: Do API, event, record, transient-state, and derived-state anchors state the fields or state boundary that must remain consistent, the owning representation, the downstream consumers, and the replace, append, clear, reset, recompute, lifetime, or persistence rules that later designs must preserve when applicable?
 - Question: Do Constituent Components identify each component and responsibility without collapsing into implementation detail for every module?
 - Question: Does the HLD prevent chaos at the next level of detail by giving module designers one consistent coordination frame for component vocabulary, ownership boundaries, contracts, dependencies, paths, packages or modules, integration seams, and implementation order?
 - Question: Does an artifact-placement ledger map every planned source, test, configuration, migration, generated, and resource artifact to a complete repository-relative path and complete package or module namespace when applicable?
