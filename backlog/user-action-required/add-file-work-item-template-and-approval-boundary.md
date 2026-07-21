@@ -1,14 +1,44 @@
 # Add File Work Item Template And Approval Boundary
 
-Status: Ready
+Status: User Action Required
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/add-file-work-item-template-and-approval-boundary.md
+Provider Reference: backlog/user-action-required/add-file-work-item-template-and-approval-boundary.md
 
 Completion: direct-main
+
+## User Action Required
+
+### Question For The User
+
+Do you approve changing exactly skills/create-file-work-item/SKILL.md and skills/development-methodology/SKILL.md, together with their supported generated skill mirrors and directly related non-governed file-work-item template, template-catalog documentation, generated template data, and focused tests, to implement this work item?
+
+### Why User Input Is Required
+
+Bounded read-only discovery by canonical task 019f85c8-628f-75c3-87b6-65a140c3dd20 established these two governed skill definitions as the smallest coherent source scope. Repository policy requires exact path-specific approval before either definition is mutated.
+
+### Options And Tradeoffs
+
+- Approve the exact two-skill scope: implement the reusable template and approval boundary coherently with its distribution owner.
+- Narrow the scope by naming allowed paths: preserve the remaining requirements as unresolved follow-up work.
+- Defer: move the item to Holding without creating implementation artifacts.
+
+### Resolution
+
+Pending.
+
+### Unattended Work Boundary
+
+No governed or project mutation is authorized while this question is pending. Preserve the read-only decision that removable HTML comments provide template guidance and that exact approval scope plus user-message provenance remain durably recorded in the work-item body, with any checker YAML treated as derived operational evidence.
+
+### Discovery Evidence
+
+- Canonical discovery task: 019f85c8-628f-75c3-87b6-65a140c3dd20.
+- Worktree: /Users/martinbechard/.codex/worktrees/b295/dev-methodology, clean at starting main 2624b5b25ba6e5548051d7b9953933b1e57b3f87.
+- UAR routing claim: route-file-work-item-template-approval, acquired event b1fb319c-060d-41e3-80b3-f24d830f17b0.
 
 Creation Claim: capture-resource-coordination-dialogue-20260721
 
