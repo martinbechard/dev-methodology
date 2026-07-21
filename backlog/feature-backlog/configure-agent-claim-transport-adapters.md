@@ -1,6 +1,6 @@
 # Configure Agent Claim Transport Adapters
 
-Status: Ready
+Status: Running
 
 Type: Feature
 
@@ -9,6 +9,19 @@ Provider: file
 Provider Reference: backlog/feature-backlog/configure-agent-claim-transport-adapters.md
 
 Completion: direct-main
+
+## Current Execution
+
+- Owner: Dev Orchestrator
+- Canonical task: 019f85c8-626e-77b2-8b7e-09a893d60c1b
+- Worktree: /Users/martinbechard/.codex/worktrees/4e3b/dev-methodology
+- Branch: codex/configure-agent-claim-transport-adapters
+- Starting main: 2624b5b25ba6e5548051d7b9953933b1e57b3f87
+- Phase: Bounded transport inventory, composition decision, and exact governed-scope discovery.
+- Started: 2026-07-21
+- Running-record claim: start-agent-claim-transport-adapters-019f85c8, acquired event 8a69729f-031d-465d-8ff1-2e0c3951e62c.
+- Open issues: Exact governed-definition approval scope remains to be established from discovery evidence.
+- Accepted candidate: Pending.
 
 Creation Claim: capture-resource-coordination-dialogue-20260721
 
