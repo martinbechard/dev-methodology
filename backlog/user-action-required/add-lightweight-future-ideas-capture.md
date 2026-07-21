@@ -1,27 +1,69 @@
 # Add Lightweight Future Ideas Capture
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/add-lightweight-future-ideas-capture.md
+Provider Reference: backlog/user-action-required/add-lightweight-future-ideas-capture.md
 
 Completion: direct-main
 
-## Current Execution
+## Discovery Execution
 
-- Owner: Dev Orchestrator
+- Owner: Unowned
+- Claim: None
 - Canonical task: 019f85c8-6274-7593-b073-dd8b12b7b079
 - Worktree: /Users/martinbechard/.codex/worktrees/ceb0/dev-methodology
 - Branch: codex/add-lightweight-future-ideas-capture
 - Starting main: 2624b5b25ba6e5548051d7b9953933b1e57b3f87
-- Phase: Bounded storage, scanner, promotion, and exact governed-scope discovery.
+- Phase: Bounded storage, scanner, promotion, and exact governed-scope discovery completed; implementation is paused for path-specific approval.
 - Started: 2026-07-21
 - Running-record claim: start-future-ideas-019f85c8, acquired event e227f815-0a32-41f5-9753-606238d66788.
-- Open issues: Exact governed-definition approval scope remains to be established from discovery evidence.
+- Open issues: The exact four-file governed-definition scope requires the user answer below.
 - Accepted candidate: Pending.
+
+## User Action Required
+
+### Question For The User
+
+Do you approve changes to exactly these four governed canonical files for this work item, with regeneration only of their supported mirrors?
+
+1. skills/create-file-work-item/SKILL.md
+2. skills/manage-file-work-items/SKILL.md
+3. skills/codex-workitem-coordination/SKILL.md
+4. agents/roles/dev-activities/dev-backlog-steward.role.yaml
+
+### Why User Input Is Required
+
+The evidence-backed Future Ideas design changes three governed skill definitions and one governed conceptual agent definition. Repository policy requires exact path-specific approval before mutation.
+
+### Options And Tradeoffs
+
+- Approve the exact four-file scope: implement lightweight non-dispatchable ideas, opt-in listing, and explicit promotion provenance.
+- Narrow the scope by naming allowed paths: preserve excluded behavior as blocked follow-up work.
+- Defer: retain the resolved design without implementation.
+
+### Resolution
+
+Pending.
+
+### Unattended Work Boundary
+
+No governed or project mutation is authorized while this question is pending. Future Ideas remain outside normal backlog scans and dispatch.
+
+### Discovery Evidence
+
+- Canonical task: 019f85c8-6274-7593-b073-dd8b12b7b079.
+- Clean branch/worktree: codex/add-lightweight-future-ideas-capture at /Users/martinbechard/.codex/worktrees/ceb0/dev-methodology, based on 2624b5b25ba6e5548051d7b9953933b1e57b3f87.
+- Storage decision: backlog/future-ideas is outside the ordinary scanner folder set.
+- Listing decision: Future Ideas appear only through an explicit opt-in report operation.
+- Promotion decision: retain the source idea in place with a durable Promoted To reference.
+- Revisit decision: keep revisit triggers free text so ideas do not become routine machine-scheduled work.
+- Supported generated mirrors: design/generated skill and role definitions, Dev Backlog Steward native adapters, and the agent-generation manifest emitted by the supported generator.
+- Directly related non-governed scope: scripts/generate-backlog-report.py, scripts/test_generate_backlog_report.py, scripts/test_bundle_content.py, README.md, design/work-item-provider-and-completion-contracts.md, and focused Dev Backlog Steward scenario coverage if needed.
+- UAR routing claim: route-future-ideas-approval, acquired event 60e626ac-6c5e-4f53-b074-c9028d906779.
 
 Creation Claim: capture-resource-coordination-dialogue-20260721
 
