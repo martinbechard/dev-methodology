@@ -1,12 +1,12 @@
 # Simplify Coordination Registry And Branch Integration
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/simplify-coordination-registry-and-branch-integration.md
+Provider Reference: backlog/completed-backlog/features/simplify-coordination-registry-and-branch-integration.md
 
 Completion: direct-main
 
@@ -15,13 +15,26 @@ Completion: direct-main
 - Owner: Dev Orchestrator
 - Canonical task: 019f8510-331a-75e1-9dee-ba1b966e595f
 - Worktree: /Users/martinbechard/.codex/worktrees/a85a/dev-methodology
-- Branch: codex/simplify-coordination-registry-and-branch-integration
+- Branch: codex/reconcile-simplify-coordination-registry-and-branch-integration
 - Starting main: 22b9c30697433fa1160a65168cf861328ac9fae4
-- Phase: Implementing the approved coordination-registry reset and fresh-current-main integration guidance.
+- Phase: Completed after reviewed, verified, exact-content direct-main integration.
 - Started: 2026-07-21
 - Running-record claim: start-coordination-registry-guidance-019f8510, acquired as event 03d64dc7-0ac8-4c8b-89a2-9067a458965a.
-- Open issues: None.
-- Accepted candidate: Pending.
+- Open issues: None. The MCP skill and Markdown-link validators rejected the private worktree as outside their configured roots; this is recorded as an environment gap and was not treated as content-validation evidence.
+- Accepted candidate: f3ac31445e6da40048c2d02db5b31b7b4fde6308.
+
+## Completion Evidence
+
+- Completed: 2026-07-21.
+- Source candidate: f3ac31445e6da40048c2d02db5b31b7b4fde6308 on codex/simplify-coordination-registry-and-branch-integration.
+- Fresh current-main reconciliation: codex/reconcile-simplify-coordination-registry-and-branch-integration was created from bcb42d3881f3b8de08f707e69c8ce04018326c26 under the integration claim. It applied exactly the candidate's 51 accepted paths without importing the source branch ancestry.
+- Main integration: 860cc0c7968ef8659a3d85bbbe334f1db34b7dc6. Its commit message records the source candidate, source branch, work item, and complete accepted-path manifest.
+- Independent methodology review: ACCEPTED for f3ac31445e6da40048c2d02db5b31b7b4fde6308 after correcting the cleanup-role boundary, the missing atomic-reset dependency, and the full-history merge example.
+- Independent focused verification: VERIFIED for f3ac31445e6da40048c2d02db5b31b7b4fde6308. The three skill definitions validated, supported mirrors were current, the focused coordination contract passed, 11 selected claim protections passed, and diff hygiene was clean.
+- Post-integration verification on main: all 61 agent-claim regressions passed; both focused bundle contract tests passed; the three changed skill definitions validated; generated skill documentation and adapters were current; Git diff validation and main cleanliness passed.
+- Integration claim: integrate-coordination-registry-f3ac314 acquired as event 379c7e9a-d50e-401f-9085-70ae1fbb61da, heartbeat event 3efdabf5-a21e-4421-8fa3-62d48dca8ed5, and clean release event 906fcce3-4b48-45b1-8dce-dce27b96e244.
+- Terminal backlog claim: complete-coordination-registry-guidance-019f8510 acquired as event 8e0a79be-c6aa-4acd-85ee-4e1a0c433fe1 for exactly the active and completed work-item paths. Its clean release follows the terminal commit.
+- Cleanup handoff: the fresh reconciliation branch is fully merged into main and its private worktree is clean. The older candidate branch is retained separately as recorded source provenance and contains no accepted content absent from main.
 
 ## Summary
 
