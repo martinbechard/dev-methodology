@@ -12,13 +12,15 @@ Completion: direct-main
 
 ## Summary
 
-Give Project Configurator a concise Basic or Advanced setup dialogue, rename the existing Provider choice to Persistence and the existing Completion choice to Commit, let the user confirm detected technologies, default core and technology skills to by-reference delivery, create only the selected empty documentation structure during setup, and document the dependency boundary between conceptual agents, core skills, PROJECT.yaml, AGENTS.md, technology skills, and persistence-specific workflow skills.
+Give Project Configurator a concise Basic or Advanced project setup dialogue, coordinate it with the core-skill delivery mode chosen during initial methodology installation, rename the existing Provider choice to Persistence and the existing Completion choice to Commit, let the user confirm detected technologies, default core and technology skills to by-reference delivery, create only the selected empty documentation structure during setup, and document the dependency boundary between conceptual agents, core skills, PROJECT.yaml, AGENTS.md, technology skills, and persistence-specific workflow skills.
 
 ## Context
 
 Project setup currently asks for provider and completion without defaults, supports only the hybrid specifications-and-wiki documentation mode, selects technology skills automatically, defaults generated core and folder technology guidance to inline content, and carries concurrency infrastructure without a persisted single-agent versus concurrent-tasking choice.
 
 The desired setup is intentionally smaller. Basic setup hides choices that have safe defaults but displays each hidden decision as Set with its resolved value. Advanced setup exposes the project-dependent choices with defaults. Technology detection remains source-backed, but its detected candidates and evidence are shown to the user for confirmation. Setup creates the selected documentation folders only and does not perform source reverse engineering.
+
+Core-skill delivery has an earlier authority boundary than project technology routing. Native methodology agents are generated and installed with core skills either inline or by reference. Initial methodology installation must choose and record that mode so Project Configurator can reuse the installed reality when it later creates PROJECT.yaml. Project setup must not claim a different core-skill mode unless it also performs an explicit compatible regeneration and project-scoped installation. Technology-skill delivery remains a project setup choice because it is rendered into folder AGENTS.md guidance.
 
 The skill architecture must remain layered. Conceptual agent definitions own only reusable technology-agnostic core skills. PROJECT.yaml records project selections. Generated agent definitions refer to their core skills. Root or nested AGENTS.md guidance refers to the selected folder technology skills. Technology skills provide the technology-specific tools, commands, and rules used to realize the generic workflows described by core skills. Provider-specific persistence skills are selected through project workflow configuration and must not become direct Dev Coder dependencies.
 
@@ -29,7 +31,8 @@ The skill architecture must remain layered. Conceptual agent definitions own onl
 - The user required Basic setup to display hidden decisions as Set with their resolved value, ask whether to create the Wiki, show scraped technology detections for user selection, and default both core and technology skills to by-reference delivery.
 - The user limited setup documentation work to creating empty Wiki or specification folders and explicitly excluded reverse engineering from setup.
 - The user required the implementation and HTML documentation to explain the relationship between agent definitions, core skills, PROJECT.yaml, AGENTS.md, and technology skills, with no direct Dev Coder dependency on provider-specific skills.
-- Current implementation anchors include skills/create-project-configuration/SKILL.md, skills/development-methodology/assets/templates/project-template.yaml, scripts/build-skill-docs.py, scripts/render-agents-technology-skills.py, agents/role-schema.yaml, and agents/roles/dev-activities/dev-coder.role.yaml.
+- The user required initial methodology installation to choose inline or by-reference delivery for core skills and remember that selection for later project setup.
+- Current implementation anchors include skills/create-project-configuration/SKILL.md, skills/documentation-bootstrap/SKILL.md, skills/development-methodology/assets/templates/project-template.yaml, scripts/build-skill-docs.py, scripts/install-skills.py, scripts/render-agents-technology-skills.py, generated/adapters/agent-generation-manifest.json, agents/role-schema.yaml, agents/roles/project-setup/project-bootstrapper.role.yaml, agents/roles/project-setup/project-configurator.role.yaml, and agents/roles/dev-activities/dev-coder.role.yaml.
 
 ## Creation Evidence
 
@@ -54,6 +57,17 @@ This item remains in Holding while its exact governed definition scope and final
 - Never show a disabled or irrelevant Concurrent capacity control. Show it only after Advanced setup selects Concurrent tasking Yes.
 - Keep repository-derived facts distinct from project-owned choices. Label confirmed detector results as detected and user-selected rather than presenting them as hidden defaults.
 
+### Initial Methodology Installation Coordination
+
+- Resolve core skill delivery when the methodology initially generates and installs its native agent definitions, before any project setup uses those agents.
+- Offer inline or by reference with by reference as the default. This is an installation decision, not a technology-detection result.
+- Record the selected mode in generated agent metadata and durable installation metadata that Project Configurator can inspect. Do not rely on conversation history to reconstruct it.
+- Ensure the installed agent bytes, the agent-generation manifest, and the installation record agree on the selected core-skill delivery mode.
+- During later project setup, Project Bootstrapper and Project Configurator must read the recorded installed mode, persist that effective value in PROJECT.yaml, and display it as Set rather than asking the user to repeat the installation choice.
+- If the installation metadata is missing, inconsistent with the installed agents, or unsupported by the active runtime, stop with an exact remediation path. Do not guess from the presence of skill files or silently switch modes.
+- Allow a different core-skill delivery mode for one project only through an explicit reconfiguration that regenerates and installs compatible project-scoped native agents before recording the new effective value in PROJECT.yaml.
+- Keep core skill delivery and technology skill delivery as separate persisted decisions. Core delivery describes installed native agents; technology delivery describes project folder guidance.
+
 ### Basic Setup Contract
 
 - Set Concurrent tasking to No.
@@ -62,7 +76,7 @@ This item remains in Holding while its exact governed definition scope and final
 - Set Commit to direct-main.
 - Ask whether to create the Wiki, with Yes as the default.
 - Run technology detection, show the detected technology candidates and their evidence, and require the user to confirm which candidates apply.
-- Set core skill delivery to by reference.
+- Display core skill delivery as Set to the mode recorded by methodology installation. A default installation records by reference.
 - Set technology skill delivery to by reference.
 - Display the hidden resolved values for Concurrent tasking, Persistence, Commit, core skill delivery, and technology skill delivery.
 
@@ -74,7 +88,9 @@ This item remains in Holding while its exact governed definition scope and final
 - Ask for Commit independently, with direct-main as the default. Supported choices remain direct-main and feature-branch unless a separately accepted commit contract changes them.
 - Ask for Documentation using Wiki, specs, or both, with both as the default.
 - Run technology detection, show every detected candidate with its evidence and conflicts, and let the user confirm the applicable set.
-- Ask whether core skills and technology skills are inline or by reference. Keep both defaults by reference and present them together as one Skill loading question group.
+- Display the installed core skill delivery mode in the Skill loading group without asking it again.
+- Ask whether technology skills are inline or by reference, with by reference as the default.
+- Offer a core skill delivery change only as an explicit project-scoped agent regeneration and installation action, not as an ordinary Project Configurator field change.
 - Preserve unsupported Persistence selections as explicit blocked choices rather than silently falling back.
 
 ### Rename Provider And Completion
@@ -115,11 +131,12 @@ This item remains in Holding while its exact governed definition scope and final
 
 ### Generated Guidance And Compatibility
 
-- Replace the current inline-by-default setup output with by-reference defaults for both core and technology skill delivery.
-- Retain explicit inline as an Advanced option for runtimes or projects that deliberately want self-contained generated instructions.
+- Replace the current inline-by-default methodology generation and project setup output with by-reference defaults for core and technology skill delivery.
+- Retain explicit inline for methodology installation and for an Advanced project-scoped regeneration when a runtime or project deliberately needs self-contained generated instructions.
 - Preserve fixed versus conditional core skill semantics when delivery changes from inline to by reference.
 - Preserve root and nested AGENTS.md precedence and thin Claude bridge behavior.
 - Preserve existing valid PROJECT.yaml intent during migration and report unsupported or conflicting legacy values with exact paths and remediation.
+- Define deterministic migration for a legacy methodology installation or PROJECT.yaml that has no core skill delivery value. Reconcile generated and installed agent evidence, persist one confirmed effective value, and block on ambiguity rather than overwriting established behavior.
 - Remove stale user-facing Provider, Completion, inline-by-default, automatic-technology-selection, and setup-time-reverse-engineering wording from maintained examples and generated guidance.
 
 ### HTML And Entry Documentation
@@ -127,7 +144,7 @@ This item remains in Holding while its exact governed definition scope and final
 - Update design/skills-modularization.html to own the complete agent definition to core skill to PROJECT.yaml to AGENTS.md to technology skill relationship, including by-reference defaults and the prohibition on technology skills in conceptual agent definitions.
 - Update design/agent-and-skill-definitions.html so its diagram and explanatory text distinguish core agent-skill relationships from setup-selected folder technology skills and do not imply provider-specific Dev Coder dependencies.
 - Update design/agentic-configuration.html to show how PROJECT.yaml selections render into root and nested AGENTS.md references across supported harnesses.
-- Update design/orchestrated-development-lifecycle.html so project setup creates configuration and empty documentation structure without running reverse engineering, and later workflows consume the accepted setup.
+- Update design/orchestrated-development-lifecycle.html so initial methodology installation resolves and persists core skill delivery before later project setup records the effective value, project setup creates configuration and empty documentation structure without running reverse engineering, and later workflows consume the accepted setup.
 - Update design/generic-agent-definitions-source.html when generated core-skill reference behavior or adapter examples change.
 - Update README.md because the public setup flow, configuration choices, and default skill-delivery behavior change.
 - Regenerate only source-owned generated documentation data and native adapter mirrors supported by the approved canonical source categories.
@@ -142,6 +159,9 @@ This item remains in Holding while its exact governed definition scope and final
 - Add an invariant test that Dev Coder contains no provider-specific persistence create or manage skills.
 - Add generated-adapter tests proving by-reference core skills remain fixed or conditional as declared without copied skill bodies.
 - Add AGENTS.md renderer tests proving by-reference technology skills are routed at the correct folder scope without copied skill bodies.
+- Add initial-installation tests proving the selected core skill mode drives native agent generation, is recorded in the generation and installation metadata, and defaults to by reference.
+- Add project-setup tests proving Project Bootstrapper and Project Configurator read and persist the installed core skill mode without asking again.
+- Add mismatch tests proving a different project core mode requires explicit compatible project-scoped regeneration and installation, while missing, inconsistent, invalid, or runtime-incompatible evidence blocks with remediation.
 - Add Project Configurator evaluation scenarios for Basic setup and Advanced setup with multiple detected technologies, rejected candidates, user selection, Wiki-only folder creation, specifications-only folder creation, and both.
 - Update bundle-content and generated-freshness assertions for the accepted schema, wording, documentation, and adapter behavior.
 
@@ -152,7 +172,9 @@ This item remains in Holding while its exact governed definition scope and final
 - Advanced setup exposes Concurrent tasking, Persistence, Commit, Documentation, technology confirmation, and Skill loading with the specified defaults and conditional behavior.
 - Setup creates only the selected empty documentation folder structure and never runs source reverse engineering.
 - Detection results are shown with evidence and the user's confirmed technology selection is persisted.
-- Core and technology skills default to by-reference delivery in both setup modes, while Advanced can explicitly select inline delivery.
+- Initial methodology installation defaults core skills to by-reference delivery, records the chosen mode with the installed native agents, and later project setup reuses it without asking again.
+- Technology skills default to by-reference delivery in both project setup modes, while Advanced can explicitly select inline technology delivery.
+- A project can change core skill delivery only through explicit compatible project-scoped agent regeneration and installation; changing PROJECT.yaml alone is rejected.
 - Every conceptual agent definition lists only technology-agnostic core skills.
 - Dev Coder has no direct provider-specific persistence skill dependency.
 - Generated agent definitions refer to core skills, and applicable AGENTS.md guidance refers to folder technology skills, with PROJECT.yaml providing the reviewed link between them.
@@ -180,6 +202,7 @@ Supported generated mirrors, templates, renderer code, tests, evaluation fixture
 - Verify all conceptual role skill lists against the technology detection registry.
 - Verify Dev Coder dependencies against every current persistence-provider skill identifier.
 - Verify Basic and Advanced question visibility and Set-value reporting through deterministic setup fixtures.
+- Verify methodology generation and installation persistence, Project Bootstrapper to Project Configurator reuse, project-scoped regeneration ordering, and missing or conflicting installation evidence handling.
 - Verify Wiki, specs, and both create only the selected empty directory structure and do not invoke reverse engineering.
 - Review every changed HTML page against the accepted implementation and run applicable page validation.
 - Run Git diff validation and obtain an independent review of the exact source, generated, test, and documentation changes.
