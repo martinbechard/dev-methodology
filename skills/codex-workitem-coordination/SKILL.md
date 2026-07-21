@@ -13,7 +13,7 @@ Use one Dev Backlog Coordinator as the parent dispatcher. Give each Running work
 
 - The file-backed work item is the only durable task record.
 - Git records branches, commits, integration, and cleanup eligibility.
-- The claim registry records current shared mutation authority.
+- The coordination registry records temporary shared-mutation protection. It prevents concurrent conflicts but does not determine whether reviewed, verified, committed delivery exists.
 - Codex task state and title are display and execution state, not lifecycle authority.
 - Dev Backlog Coordinator owns queue inventory, priority, dispatch, stalled-integration investigation, and terminal task cleanup.
 - Dev Orchestrator owns one work item from Running through delivery or a truthful terminal outcome. It may start Dev Coder, independent reviewer, and verifier subagents inside that task.
@@ -96,15 +96,20 @@ Keep every shared claim limited to the exact files and named resources required 
 The work item's Dev Orchestrator owns integration and completion.
 
 1. Finish implementation and independent review on the task branch.
-2. Acquire one integration claim covering every path on main that the integration may modify and the exact shared test resources needed for focused verification.
-3. Integrate the accepted commit into main.
-4. Run the smallest project-native tests that cover the changed behavior and credible regression risk.
-5. Record the main commit and test results in the work item, then release the integration claim from clean main.
-6. Acquire a separate short claim for exactly the active work-item path and its completed destination.
-7. Record completion evidence, set Status to Completed, move the item to the applicable completed-backlog folder, commit, and release the work-item claim.
-8. Notify the parent with the main commit, test evidence, integration and work-item release events, branch, worktree, and cleanup eligibility.
-9. The parent verifies that the branch is fully merged, removes the clean worktree, deletes the merged branch with a safe non-forcing delete, prunes worktree metadata, sets the task title to Done — item, and archives the task when supported.
-10. The parent immediately recounts file-backed Running items and dispatches eligible Ready work until ten are Running or no eligible work remains.
+2. Acquire one integration claim covering every path on main that the integration may modify, the target integration resource, and the exact shared test resources needed for focused verification.
+3. Under that ownership, refresh current main and create a fresh reconciliation branch from that exact commit. Designate this fresh branch as the task integration and cleanup branch. Record the prior candidate branch, accepted source commit, and path set as source provenance before applying content.
+4. Apply only the accepted file content or explicitly selected in-scope commits to the fresh current-main branch. Preserve required current-main and accepted contracts, regenerate supported outputs, and review the reconciled diff when semantic reconciliation is required.
+5. Record source commit identifiers and accepted paths in the integration commit and work item. Do not import cumulative branch ancestry merely to preserve provenance. Use a full-history merge only when the complete history is intentional, reviewed, and in scope.
+6. Integrate the bounded reconciliation commit into main.
+7. Run the smallest project-native tests that cover the changed behavior and credible regression risk.
+8. Record the main commit and test results in the work item, then release the integration claim from clean main.
+9. Acquire a separate short claim for exactly the active work-item path and its completed destination.
+10. Record completion evidence, set Status to Completed, move the item to the applicable completed-backlog folder, commit, and release the work-item claim.
+11. Notify the parent with the main commit, test evidence, integration and work-item release events, branch, worktree, and cleanup eligibility.
+12. The parent verifies that the fresh task integration branch is fully merged, removes its clean worktree, safely deletes that merged branch, prunes worktree metadata, sets the task title to Done — item, and archives the task when supported. A prior candidate branch used only as a non-ancestral content source is not the task cleanup branch; preserve or remove it separately according to repository policy after confirming the durable source mapping and absence of unique unintegrated work.
+13. The parent immediately recounts file-backed Running items and dispatches eligible Ready work until ten are Running or no eligible work remains.
+
+Keep administrative coordination-registry cleanup, Git integration, and terminal backlog completion as three distinct operations. Each operation has its own authority, evidence, and outcome; none can manufacture or replace another.
 
 Do not leave a reviewed commit for a separate integration task. The Dev Orchestrator performs this sequence because it knows the accepted commit, affected main paths, and required focused tests.
 
@@ -126,6 +131,12 @@ When an integration or work-item claim is unavailable, the Dev Orchestrator reco
 This is one initial attempt plus no more than six retries. Do not create a waiting task, transfer the wait through a task chain, poll more frequently, or ask the user to approve ordinary Git or shell commands already covered by the work item.
 
 At thirty minutes, Dev Backlog Coordinator investigates instead of allowing another passive wait. Identify the blocking owner, verify whether its claim is active or stale, and choose a safe remedy: request prompt release, narrow or split an unnecessarily broad claim, complete the blocking integration first, or route a genuine technical or user-decision blocker. Never release or override a claim whose owner has uncommitted or otherwise unpreserved work.
+
+An evidence-backed administrative reset is available only for an inactive coordination-registry entry. Before reset, inspect the task and logs, matching processes, claimed worktrees, Git cleanliness and preserved commits, every claimed shared resource, other registry entries, and journal evidence. Retain a readable snapshot or journal reference. Reset only registry state after proving the owner inactive, all work completed or preserved, all resources stopped or handed off, and no active protection affected. A live owner, dirty unpreserved worktree, resource in use, or unclear evidence blocks reset.
+
+Perform the reset only through a host-supported targeted atomic operation that names the exact entry, locks the coordination registry, revalidates those safeguards at mutation time, removes no peer entry, and journals the administrative outcome. The bundled portable claim command has no reset operation. If a supported atomic operation is unavailable, stop and route the reset instead of editing the registry file manually.
+
+Treat inactive-entry or ancestry-only release-validation failures as coordination diagnostics. They do not automatically invalidate correct integrated bytes, independent review, focused verification, or durable completion evidence. Reconcile each evidence owner separately and never invent a successful release.
 
 If the wait remains unresolved after investigation, record the precise open issue and move the item to the truthful Blocked or User Action Required state so it no longer consumes a Running slot. Dispatch a replacement Ready item immediately when available.
 
@@ -197,6 +208,6 @@ Do not retroactively invalidate valid evidence or weaken the final campaign-wide
 
 A user answer resolves a decision gate once; it does not prove delivery. Record the exact answer and provenance in the work item and never ask it again. Route approved work to Ready, deferred work to Holding, and declined work to the applicable terminal disposition.
 
-Completed requires integrated delivery, required independent review, focused verification, released integration and work-item claims, and committed terminal backlog evidence. The Dev Orchestrator supplies a clean worktree and a fully merged branch as cleanup eligibility; the parent then removes the worktree and branch before setting Done or archiving the task. An idle, stopped, titled, or archived Codex task proves none of those facts.
+Completed requires integrated delivery, required independent review, focused verification, released integration and work-item claims, and committed terminal backlog evidence. The Dev Orchestrator supplies a clean worktree and a fully merged fresh task integration branch as cleanup eligibility. When content came from an older candidate branch without importing its ancestry, the durable mapping proves source provenance but does not make that older branch the task cleanup branch. Preserve or remove the source branch separately according to repository policy after confirming that it contains no unique unintegrated work. An idle, stopped, titled, or archived Codex task proves none of those facts.
 
 Archive a terminal task only after the work-item disposition is committed, all claims are released, the worktree is removed or deliberately preserved, the merged branch is safely deleted when eligible, and no unresolved notification remains. If archival does not persist, record the tool limitation in the work item and do not report success.

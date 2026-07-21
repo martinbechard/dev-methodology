@@ -4344,6 +4344,78 @@ class BundleContentTests(unittest.TestCase):
         )
         self.assertIn("/.worktrees/", GITIGNORE_PATH.read_text(encoding="utf-8").splitlines())
 
+    def test_coordination_registry_reset_and_current_main_reconciliation_contracts(self) -> None:
+        """Protect inactive-entry reset and ancestry-bounded integration guidance."""
+        claim_text = (SKILLS_ROOT / "agent-claim" / "SKILL.md").read_text(encoding="utf-8")
+        merge_text = (SKILLS_ROOT / "agent-work-merge" / "SKILL.md").read_text(encoding="utf-8")
+        coordination_text = (
+            SKILLS_ROOT / "codex-workitem-coordination" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        design_text = (
+            REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
+        ).read_text(encoding="utf-8")
+
+        for required_contract in (
+            "temporary conflict protection for shared mutation",
+            "does not decide whether reviewed, verified, committed product delivery exists",
+            "## Administrative Reset Of Inactive Entries",
+            "dirty unpreserved claimed worktree",
+            "another active owner's protection",
+            "a resource still in use",
+            "no other active protection can be affected",
+            "retain a readable registry snapshot or exact journal references",
+            "host-supported targeted atomic reset operation",
+            "revalidates the safeguards at mutation time",
+            "bundled portable command does not expose an administrative reset subcommand",
+            "Never edit the live registry file manually",
+            "must not rewrite Git, edit project files, discard a worktree, manufacture a release event",
+            "release-validation failures as coordination diagnostics",
+            "inactive-entry or ancestry-only scratch state",
+        ):
+            with self.subTest(claim_contract=required_contract):
+                self.assertIn(required_contract, claim_text)
+
+        for required_contract in (
+            "fresh reconciliation branch from current main",
+            "exact accepted paths",
+            "Do not merge cumulative feature-branch history merely to preserve provenance",
+            "Record every source commit identifier",
+            "Use a full-history merge only when the complete imported history is intentional",
+            "reconcile their semantic union on the fresh branch",
+            "Content equivalence and durable source mapping are valid provenance evidence",
+            "Use a full-history merge only when that complete ancestry is intentional",
+            "The default ancestry-bounded path is a fresh branch from current main",
+        ):
+            with self.subTest(merge_contract=required_contract):
+                self.assertIn(required_contract, merge_text)
+
+        for required_contract in (
+            "temporary shared-mutation protection",
+            "Designate this fresh branch as the task integration and cleanup branch",
+            "Do not import cumulative branch ancestry merely to preserve provenance",
+            "Keep administrative coordination-registry cleanup, Git integration, and terminal backlog completion as three distinct operations",
+            "A live owner, dirty unpreserved worktree, resource in use, or unclear evidence blocks reset",
+            "The bundled portable claim command has no reset operation",
+            "If a supported atomic operation is unavailable, stop and route the reset",
+            "inactive-entry or ancestry-only release-validation failures as coordination diagnostics",
+            "fresh task integration branch is fully merged",
+            "prior candidate branch used only as a non-ancestral content source is not the task cleanup branch",
+        ):
+            with self.subTest(coordination_contract=required_contract):
+                self.assertIn(required_contract, coordination_text)
+
+        for required_contract in (
+            "create a fresh reconciliation branch from that exact commit",
+            "Do not import unrelated ancestry merely for provenance",
+            "reset only an inactive entry whose work is preserved",
+            "Reset only through a host-supported targeted atomic operation",
+            "Registry cleanup, Git integration, and backlog closeout are distinct operations",
+            "this becomes the task integration and cleanup branch",
+            "older candidate branch retained only as a non-ancestral content source is handled separately",
+        ):
+            with self.subTest(design_contract=required_contract):
+                self.assertIn(required_contract, design_text)
+
     def test_codex_read_only_sandbox_is_reserved_for_never_mutating_roles(self) -> None:
         """Keep evidence-writing reviewers writable while preserving true read-only agents."""
         build_skill_docs = load_build_skill_docs_module()

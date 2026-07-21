@@ -48,13 +48,21 @@ Example claim:
 1. Inspect all source worktrees and branches.
 2. Order merges by dependency. Merge shared foundation changes before leaf UI or tests.
 3. For each source, inspect status, recent commits, and changed files.
-4. Merge one source at a time into the integration checkout.
+4. Reconcile one source at a time on a fresh branch based on current main, applying only the accepted file content or explicitly selected commits required by the work item.
 5. Resolve conflicts by preserving the intended steady-state behavior, not by blindly choosing either side.
 6. Run focused verification after each risky merge.
 7. Commit each coherent merged unit before starting the next source.
 8. Regenerate shared outputs only after the branches containing their source changes are integrated.
 9. Run final repository verification required by the project.
 10. Release claims only after verification, a clean integration commit, and cleanup are complete.
+
+## Fresh Current-Main Reconciliation
+
+Prefer a fresh reconciliation branch from current main when a candidate branch contains cumulative, unrelated, or out-of-scope ancestry. Apply the exact accepted paths, or cherry-pick only the explicitly selected commits whose complete changes are in scope. Do not merge cumulative feature-branch history merely to preserve provenance.
+
+Record every source commit identifier, accepted path set, and any non-ancestral content mapping in the reconciliation commit message and durable work item. That evidence preserves provenance without making unrelated history reachable from main. Use a full-history merge only when the complete imported history is intentional, reviewed, and inside the integration ownership scope.
+
+When current main and an accepted contribution both contain contracts that must survive, reconcile their semantic union on the fresh branch. Regenerate only supported outputs, review the complete reconciled diff in a fresh context, and verify the bounded result before integration. Content equivalence and durable source mapping are valid provenance evidence; a two-parent merge is not required.
 
 ## Commands
 
@@ -67,13 +75,15 @@ git log --oneline --decorate -n 5
 git diff --stat main...HEAD
 ```
 
-Merge a source branch into the integration checkout:
+Use a full-history merge only when that complete ancestry is intentional, reviewed, and in scope:
 
 ```bash
 git merge --no-ff source-branch
 ```
 
 If the project prefers rebased or squash integration, follow the repository instructions instead.
+
+The default ancestry-bounded path is a fresh branch from current main with exact accepted content or selected commits applied according to the repository's supported workflow. The resulting commit must identify its source commits and accepted paths.
 
 ## Conflict Handling
 
@@ -104,6 +114,7 @@ After a source is merged and verified:
 - Remove completed worktrees only when the repository policy allows it and the branch has been safely integrated.
 - Leave failed or blocked worktrees intact with a clear status note.
 - Never release the integration claim while newly created uncommitted work remains.
+- Keep inactive coordination-registry cleanup, Git integration, and terminal backlog closeout as distinct operations with separate evidence. A successful administrative reset is not an integration or completion event.
 
 ## Final Report
 

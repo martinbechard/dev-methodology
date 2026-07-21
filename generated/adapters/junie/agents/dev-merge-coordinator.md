@@ -85,13 +85,21 @@ Example claim:
 1. Inspect all source worktrees and branches.
 2. Order merges by dependency. Merge shared foundation changes before leaf UI or tests.
 3. For each source, inspect status, recent commits, and changed files.
-4. Merge one source at a time into the integration checkout.
+4. Reconcile one source at a time on a fresh branch based on current main, applying only the accepted file content or explicitly selected commits required by the work item.
 5. Resolve conflicts by preserving the intended steady-state behavior, not by blindly choosing either side.
 6. Run focused verification after each risky merge.
 7. Commit each coherent merged unit before starting the next source.
 8. Regenerate shared outputs only after the branches containing their source changes are integrated.
 9. Run final repository verification required by the project.
 10. Release claims only after verification, a clean integration commit, and cleanup are complete.
+
+## Fresh Current-Main Reconciliation
+
+Prefer a fresh reconciliation branch from current main when a candidate branch contains cumulative, unrelated, or out-of-scope ancestry. Apply the exact accepted paths, or cherry-pick only the explicitly selected commits whose complete changes are in scope. Do not merge cumulative feature-branch history merely to preserve provenance.
+
+Record every source commit identifier, accepted path set, and any non-ancestral content mapping in the reconciliation commit message and durable work item. That evidence preserves provenance without making unrelated history reachable from main. Use a full-history merge only when the complete imported history is intentional, reviewed, and inside the integration ownership scope.
+
+When current main and an accepted contribution both contain contracts that must survive, reconcile their semantic union on the fresh branch. Regenerate only supported outputs, review the complete reconciled diff in a fresh context, and verify the bounded result before integration. Content equivalence and durable source mapping are valid provenance evidence; a two-parent merge is not required.
 
 ## Commands
 
@@ -104,13 +112,15 @@ git log --oneline --decorate -n 5
 git diff --stat main...HEAD
 ```
 
-Merge a source branch into the integration checkout:
+Use a full-history merge only when that complete ancestry is intentional, reviewed, and in scope:
 
 ```bash
 git merge --no-ff source-branch
 ```
 
 If the project prefers rebased or squash integration, follow the repository instructions instead.
+
+The default ancestry-bounded path is a fresh branch from current main with exact accepted content or selected commits applied according to the repository's supported workflow. The resulting commit must identify its source commits and accepted paths.
 
 ## Conflict Handling
 
@@ -141,6 +151,7 @@ After a source is merged and verified:
 - Remove completed worktrees only when the repository policy allows it and the branch has been safely integrated.
 - Leave failed or blocked worktrees intact with a clear status note.
 - Never release the integration claim while newly created uncommitted work remains.
+- Keep inactive coordination-registry cleanup, Git integration, and terminal backlog closeout as distinct operations with separate evidence. A successful administrative reset is not an integration or completion event.
 
 ## Final Report
 
@@ -163,6 +174,12 @@ Use this skill before editing files or taking exclusive runtime resources in a r
 Claims make shared work explicit and keep completed work durable. The first independent writer may use a clean primary worktree. Later independent writers use isolated worktrees when their scopes do not overlap. Every isolated checkout lives in the canonical .worktrees directory beneath the primary worktree, with the claim id as one portable directory component. Each isolated worktree uses worktree-specific sparse checkout so the repository-root backlog/ directory remains available only from the primary worktree. Overlapping work waits. Dirty unclaimed state enters recovery rather than accepting another anonymous edit.
 
 Start with the narrow scope supported by current evidence. Extend the same claim atomically when another file or resource becomes necessary. Do not speculate about entire directories merely because future scope is unknown.
+
+## Coordination Registry Authority
+
+The coordination registry is temporary conflict protection for shared mutation. It records which exact paths and exclusive resources currently require protection so concurrent owners do not collide. It does not decide whether reviewed, verified, committed product delivery exists, whether accepted bytes are integrated, or whether a work item is complete.
+
+Treat acquisition, wait, heartbeat, release, and release-validation outcomes as coordination evidence. Reconcile those diagnostics with the durable work item, Git commits and content, review evidence, verification evidence, processes, worktrees, and resource state. A coordination failure does not erase evidence owned by those other records.
 
 ## Operation Selection
 
@@ -469,18 +486,21 @@ python3 "$CLAIM_SCRIPT" --repo . report --since 12h --format text
 
 The versioned JSON report counts primary, isolated, and recovery acquisitions; waits and rejected transitions; correlated wait episodes; claim duration statistics; exact-file, tree, and resource hotspots; broad-scope reasons; open and incomplete claims; stale heartbeat evidence; integration-resource use; and journal coverage gaps. Repeated WAIT polling by the same claim and action becomes one wait episode while preserving the raw attempt count. Report is read-only and never parses agent harness transcripts.
 
-## Stale Claims
+## Administrative Reset Of Inactive Entries
 
-A claim may be stale when its heartbeat is old and no matching task, process, or worktree activity exists. Do not remove it merely because it is inconvenient.
+An entry may be inactive when its heartbeat is old and no matching task, process, worktree activity, or claimed resource use exists. Do not reset an entry merely because it is inconvenient or because another task wants its scope.
 
-Before removing a stale claim:
+Before an administrative reset:
 
-1. Check task status, logs, running processes, worktrees, Git status, and recent commits.
-2. Treat a live process or dirty claimed worktree as active or interrupted work needing handoff.
-3. Preserve recovery evidence.
-4. Remove only the confirmed stale entry.
+1. Inspect the owning task state and logs, matching running processes, every claimed worktree, Git cleanliness, recent commits, and preserved source or integration commits.
+2. Inspect every claimed shared resource and confirm that no browser, database, port, server, generator, installation, integration target, or other exclusive facility remains in use or awaiting explicit handoff.
+3. Inspect the other coordination registry entries and confirm that removing the target entry cannot erase or weaken another active owner's protection.
+4. Inspect the event journal and retain a readable registry snapshot or exact journal references that identify the target, the observations, the decision, and the administrative actor.
+5. Treat a live process, a dirty unpreserved claimed worktree, unclear task ownership, or a resource still in use as active or interrupted work requiring handoff. Stop the reset and report the exact blocker.
+6. Reset only when the target entry is inactive, its work is completed or preserved in durable commits and evidence, every claimed resource is stopped or handed off, and no other active protection can be affected.
+7. Use only a host-supported targeted atomic reset operation that names the exact entry, reacquires the coordination registry lock, revalidates the safeguards at mutation time, removes only that entry, and appends the administrative outcome to the event journal. If no such operation is available, stop and route the reset to an administrator or implementation that supplies those guarantees.
 
-If ownership is unclear, leave the claim and report the exact blocker.
+The bundled portable command does not expose an administrative reset subcommand. Never edit the live registry file manually: an unlocked edit can race acquisition, remove an active protection, or bypass the event journal. An administrative reset changes only the inactive coordination registry state. It must not rewrite Git, edit project files, discard a worktree, manufacture a release event, or substitute for review, verification, integration, work-item completion, or cleanup evidence. Preserve the snapshot or journal reference with the durable work-item or incident record.
 
 ## Recovery
 
@@ -508,6 +528,8 @@ A modifying task is not complete merely because implementation or tests are comp
 - The final response reports the commit hash, verification, and final status.
 
 Release checks only owned-domain cleanliness while comparing out-of-domain status with its acquisition baseline. Git status and committed-path inspection use NUL-delimited records so spaces, quotes, non-ASCII text, newlines, rename records, and text resembling a rename arrow remain exact paths. Unchanged pre-existing out-of-domain dirtiness does not become owned work and does not block release. A changed staged, unstaged, or untracked out-of-domain path returns RELEASE_REJECTED with reason out_of_domain_changes and reports only paths whose current state differs from their baseline state. Every commit between baseline_commit and the resulting commit is inspected, so committing and later reverting an out-of-domain path remains a rejected out_of_domain_commit. A non-ancestor resulting history is rejected as baseline_not_ancestor. These outcomes preserve the claim and registry. The command never stages, commits, reverts, or cleans those paths.
+
+Treat release-validation failures as coordination diagnostics, not automatic delivery verdicts. When the final tree is clean and correct but validation reports inactive-entry or ancestry-only scratch state, preserve the rejection, inspect the administrative-reset safeguards, and reconcile the durable Git, review, verification, and work-item evidence. Never use that diagnosis to bypass an active owner, accept a dirty unpreserved worktree, or declare a release that did not occur.
 
 Contention reports count broad events by project_files, backlog, and all_files domain in addition to total broad events and reasons. This keeps ordinary project ownership, serialized backlog transitions, and exceptional repository-wide work distinguishable in historical diagnostics.
 
