@@ -1,6 +1,6 @@
 # Simplify Coordination Registry And Branch Integration
 
-Status: Ready
+Status: Running
 
 Type: Feature
 
@@ -9,6 +9,19 @@ Provider: file
 Provider Reference: backlog/feature-backlog/simplify-coordination-registry-and-branch-integration.md
 
 Completion: direct-main
+
+## Current Execution
+
+- Owner: Dev Orchestrator
+- Canonical task: 019f8510-331a-75e1-9dee-ba1b966e595f
+- Worktree: /Users/martinbechard/.codex/worktrees/a85a/dev-methodology
+- Branch: codex/simplify-coordination-registry-and-branch-integration
+- Starting main: 22b9c30697433fa1160a65168cf861328ac9fae4
+- Phase: Implementing the approved coordination-registry reset and fresh-current-main integration guidance.
+- Started: 2026-07-21
+- Running-record claim: start-coordination-registry-guidance-019f8510, acquired as event 03d64dc7-0ac8-4c8b-89a2-9067a458965a.
+- Open issues: None.
+- Accepted candidate: Pending.
 
 ## Summary
 
