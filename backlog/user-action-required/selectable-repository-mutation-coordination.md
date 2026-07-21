@@ -1,4 +1,4 @@
-# Selectable Repository Mutation Coordination
+# Selectable Operational Coordination
 
 Status: User Action Required
 
@@ -12,136 +12,119 @@ Completion: direct-main
 
 Creation Claim: draft-selectable-mutation-coordination
 
+Refinement Claim: improve-selectable-mutation-coordination-019f850e
+
 ## Summary
 
-Introduce a neutral repository-mutation coordination contract and a simple project-level selector so a project can deliberately use agent claims or operate under an explicit single-writer contract without rewriting agent definitions and workflow skills.
-
-## Context
-
-Repository mutation capability and claim coordination are currently coupled. Canonical agent definitions declare repositoryMutation and load agent-claim directly, generation validates that relationship, and several workflow skills prescribe claim acquisition, heartbeat, release, and claim-release evidence.
-
-The desired architecture combines two previously discussed options:
-
-- Define a neutral mutation-coordination interface that roles and workflow skills depend on instead of depending directly on agent-claim.
-- Expose one project-level selector that chooses the coordination implementation.
-
-Work-item ownership and operational resource ownership are different concerns. GitHub, GitLab, and file-backed providers may record assignment, lifecycle state, or the agent currently working on an item. They must not be treated as the authority for exclusive repository paths or shared runtime resources. Browsers, browser profiles, databases, ports, servers, generated-output refreshes, integration targets, and other exclusive runtime resources belong to the selected operational coordination provider, not to GitHub or another work-item provider.
+Introduce a provider-neutral operational coordination contract and one independent project selector. Mutating roles and workflow skills use the contract, while the selector chooses either agent-claim or an explicit single-writer model.
 
 ## Source Evidence
 
-- The user requested a draft work item combining option 2, a mutation-coordination interface, with option 1, a project-level selection mechanism, on 2026-07-21.
-- The user clarified that shared browser or database ownership must not be recorded in GitHub and rejected conflating work-item assignment with operational resource coordination.
-- Live source inspection found direct claim behavior in agent-claim, agent-work-merge, codex-workitem-coordination, both completion skills, and the file-work-item creation and management skills. Role generation currently validates agent-claim membership against repositoryMutation.
+- Repository mutation authority and operational coordination are separate decisions. The repositoryMutation field states whether a role may or must mutate repository state; it does not select the coordination implementation.
+- Work-item providers record assignment and lifecycle state. They do not own repository paths or exclusive operational resources.
+- Shared browsers, browser profiles, databases, ports, servers, generated-output refreshes, integration targets, and similar resources must be coordinated through the selected operational coordination implementation.
+- The requested initial implementations are agent-claim and an explicit single-writer model.
+- Creating and refining this work item does not authorize implementation or any governed-definition change.
 
-## Proposed Design Direction
+## Context
 
-Define one provider-neutral coordination contract for operations such as:
+### Current Facts
 
-- inspect current operational ownership;
-- acquire and extend repository-path or exclusive-resource ownership;
-- report contention;
-- maintain ownership during long-running work;
-- release or hand off operational ownership; and
-- produce provider-appropriate completion evidence.
+Live inspection on 2026-07-21 found:
 
-Supply at least two implementations:
+- PROJECT.yaml and its template define independent provider and completion selectors, but no operational coordination selector.
+- scripts/render-agents-technology-skills.py accepts only provider, completion, and optional selection policy under workflow_selection.
+- agents/role-schema.yaml requires repositoryMutation with required, conditional, or never values.
+- scripts/build-skill-docs.py directly validates repositoryMutation against fixed, conditional, or absent agent-claim membership.
+- Twenty-five conceptual roles declare required or conditional repository mutation, and the same twenty-five role definitions reference agent-claim.
+- Eight skills other than agent-claim name agent-claim directly: agent-role-authoring, agent-work-merge, complete-work-item-direct-main, complete-work-item-feature-branch, create-file-work-item, create-project-configuration, maintain-methodology-documentation, and manage-file-work-items.
+- codex-workitem-coordination embeds claim-specific status, acquisition, heartbeat, release, wait, and completion-evidence behavior without naming agent-claim as a skill dependency.
+- manage-github-work-items uses the phrase Claim or start for issue assignment and lifecycle transition, while manage-gitlab-work-items retains claim-release delivery evidence. These facts support a terminology and evidence-boundary review, but do not establish that either provider skill must implement operational coordination.
 
-- agent-claim: use the repository-global coordination registry and retain the current file, worktree, shared-resource, heartbeat, recovery, and release semantics;
-- single-writer: perform no claim-registry mutation because the project or execution environment guarantees a single writer, while retaining clean-worktree, resource-cleanup, commit, and truthful completion requirements.
+These facts identify coupling that a design must address. They are not an approved implementation manifest.
 
-Add one explicit project selector, separate from work-item provider and completion workflow selection. The exact field name is a design decision, but its meaning must be equivalent to selecting agent-claim or single-writer for operational mutation coordination. Existing projects should default to agent-claim unless they explicitly choose another supported provider.
+### Accepted Decision Boundaries
 
-## Proposed Governed Definition Scope
+- Keep repositoryMutation independent from the selected operational coordination implementation.
+- Keep work-item provider, completion process, and operational coordination as independent project decisions.
+- Treat work-item ownership as assignment and lifecycle state only.
+- Route ownership of repository paths and exclusive operational resources through the selected operational coordination implementation, never through GitHub, GitLab, or file-backed work-item records.
+- Keep agent-claim as a supported implementation rather than removing it.
+- Define single-writer as an explicit exclusivity model, not an absence of concurrency safety.
 
-The following is a draft scope for later explicit approval. Creation of this work item does not authorize mutation of these definitions.
+## Proposed Design
 
-### New Definition
+Define a provider-neutral contract for the operational lifecycle needed by mutating work:
 
-- skills/repository-mutation-coordination/SKILL.md
+- inspect current ownership or exclusivity state;
+- establish ownership of repository paths and named operational resources;
+- handle contention or unavailable exclusivity;
+- maintain long-running ownership when the implementation requires it;
+- release or hand off ownership; and
+- return implementation-appropriate completion evidence.
 
-### Existing Skill Definitions
+Add one project-level selector, independent from provider and completion selection, with these initial implementations:
 
-- skills/agent-claim/SKILL.md
-- skills/agent-role-authoring/SKILL.md
-- skills/agent-work-merge/SKILL.md
-- skills/codex-workitem-coordination/SKILL.md
-- skills/complete-work-item-direct-main/SKILL.md
-- skills/complete-work-item-feature-branch/SKILL.md
-- skills/create-file-work-item/SKILL.md
-- skills/create-project-configuration/SKILL.md
-- skills/maintain-methodology-documentation/SKILL.md
-- skills/manage-file-work-items/SKILL.md
-- skills/manage-github-work-items/SKILL.md
-- skills/manage-gitlab-work-items/SKILL.md
+- agent-claim uses the repository-global claim registry and retains its current atomic ownership, contention, worktree, recovery, heartbeat, shared-resource, and release behavior.
+- single-writer performs no claim-registry operations because an identified project or execution authority guarantees exclusive mutation. It still requires clean delivery state, resource cleanup, verification, commit or truthful no-change evidence, and safe handoff.
 
-### Conceptual Agent Definitions
+The contract form, selector field name, override shape, compatibility default, and exact source placement remain design decisions.
 
-- agents/roles/dev-activities/dev-artifact-reviewer.role.yaml
-- agents/roles/dev-activities/dev-backlog-coordinator.role.yaml
-- agents/roles/dev-activities/dev-backlog-steward.role.yaml
-- agents/roles/dev-activities/dev-browser-operator.role.yaml
-- agents/roles/dev-activities/dev-code-reviewer.role.yaml
-- agents/roles/dev-activities/dev-coder.role.yaml
-- agents/roles/dev-activities/dev-documentation-writer.role.yaml
-- agents/roles/dev-activities/dev-merge-coordinator.role.yaml
-- agents/roles/dev-activities/dev-orchestrator.role.yaml
-- agents/roles/dev-activities/dev-prompt-reviewer.role.yaml
-- agents/roles/dev-activities/dev-runtime-diagnostician.role.yaml
-- agents/roles/dev-activities/dev-security-reviewer.role.yaml
-- agents/roles/dev-activities/dev-ux-specialist.role.yaml
-- agents/roles/dev-activities/dev-verifier.role.yaml
-- agents/roles/methodology-maintenance/methodology-artifact-reviewer.role.yaml
-- agents/roles/methodology-maintenance/methodology-maintainer.role.yaml
-- agents/roles/project-setup/project-bootstrapper.role.yaml
-- agents/roles/project-setup/project-configurator.role.yaml
-- agents/roles/project-setup/project-organiser.role.yaml
-- agents/roles/wiki-activities/wiki-architect.role.yaml
-- agents/roles/wiki-activities/wiki-artifact-reviewer.role.yaml
-- agents/roles/wiki-activities/wiki-ingester.role.yaml
-- agents/roles/wiki-activities/wiki-researcher.role.yaml
-- agents/roles/wiki-activities/wiki-source-collector.role.yaml
-- agents/roles/wiki-activities/wiki-writer.role.yaml
+## Evidence-Backed Candidate Scope
 
-### Definition Schema And Supporting Implementation
+A design pass must re-check and narrow these surfaces before seeking implementation approval:
 
-- agents/role-schema.yaml
-- skills/development-methodology/assets/templates/project-template.yaml
-- scripts/build-skill-docs.py
-- scripts/render-agents-technology-skills.py
-- focused tests, supported generated mirrors, README inventory, and design documentation directly owned by the approved canonical changes
+- operational contract and agent-claim provider behavior;
+- the eight directly coupled workflow and authoring skills listed under Current Facts;
+- claim-specific behavior in codex-workitem-coordination;
+- PROJECT.yaml, the project template, and project-guidance rendering and validation;
+- repositoryMutation validation in agents/role-schema.yaml and scripts/build-skill-docs.py;
+- the twenty-five mutating or conditionally mutating conceptual role definitions;
+- focused tests, supported generated mirrors, README inventory, and design pages owned by approved canonical changes; and
+- provider terminology or terminal-evidence wording only where inspection proves that it confuses assignment with operational ownership.
 
-The implementation owner must re-run source discovery before requesting approval. If the design can avoid changing some listed definitions, narrow the approval scope. If another governed definition is necessary, stop and obtain additional exact approval before mutation.
+Do not treat this candidate scope as exact governed-definition approval. The implementation request must enumerate every governed canonical path, remove unnecessary paths, identify supported generated mirrors, and obtain scope-specific approval before mutation.
+
+## Open Decisions
+
+- What is the provider-neutral contract artifact and which component resolves it at runtime or generation time?
+- What is the selector field name, and does it support folder overrides or only one project-wide value?
+- Which authority records and enforces the single-writer guarantee?
+- What deterministic compatibility behavior applies when an existing project lacks the selector?
+- Which claim-specific completion evidence becomes generic operational evidence, and which remains exclusive to agent-claim?
+- What is the final exact governed-definition manifest after design and fresh discovery?
 
 ## Requirements
 
-- Keep repositoryMutation as the declaration of whether an agent may or must mutate repository state. Do not make that field select a coordination implementation.
-- Make agent definitions and ordinary workflow skills depend on the provider-neutral coordination contract rather than directly requiring agent-claim.
-- Add an explicit project-level operational-coordination selector whose supported initial choices are agent-claim and single-writer.
-- Keep work-item provider selection, completion workflow selection, and operational coordination selection independent.
-- Preserve agent-claim as the default for existing projects unless an explicit migration policy approved during implementation selects another default.
-- Preserve agent-claim support for exact files, trees, backlog, integration resources, browsers, browser profiles, databases, ports, servers, generated outputs, shared installations, and other named exclusive resources.
-- Define single-writer as an explicit external exclusivity contract, not as silent uncontrolled concurrency. Document who or what guarantees that only one mutating execution owns repository and runtime state.
-- Do not acquire, heartbeat, release, or require claim-release evidence when single-writer is selected.
-- Retain commit, clean-worktree, runtime cleanup, verification, handoff, and truthful no-change requirements under both providers where applicable.
-- Replace ambiguous work-item phrases such as claim an item with assign, start, or another provider-accurate lifecycle term. GitHub, GitLab, and file-backed work-item state must not represent ownership of a browser, database, repository path, port, server, or integration target.
-- Make unavailable or unsupported coordination selections fail explicitly. Do not silently fall back from agent-claim to single-writer or from single-writer to agent-claim.
-- Keep project-specific coordination overrides separate from the generic provider contract and do not copy complete provider procedures into PROJECT.yaml or AGENTS.md.
-- Provide a deterministic migration path for existing PROJECT.yaml files and generated agent definitions.
+- Make mutating role definitions and ordinary workflow skills depend on the provider-neutral operational coordination contract rather than directly on agent-claim.
+- Add one explicit project selector with initial supported values equivalent to agent-claim and single-writer.
+- Preserve repositoryMutation solely as the role mutation-capability declaration.
+- Resolve work-item provider, completion process, and operational coordination independently.
+- Route repository paths and named exclusive resources through the selected operational coordination implementation.
+- Limit GitHub, GitLab, and file-backed work-item ownership to provider-appropriate assignment and lifecycle state.
+- Preserve current agent-claim safety behavior when agent-claim is selected.
+- Require a named external exclusivity authority and no claim acquisition, heartbeat, registry mutation, or claim-release evidence when single-writer is selected.
+- Fail explicitly for unsupported or unavailable coordination selections, and for missing selections after the approved migration boundary makes the selector required. Do not silently switch implementations.
+- Preserve normal verification, commit, clean-state, cleanup, publication, and handoff requirements under both implementations where applicable.
+- Provide deterministic migration and generation behavior for existing projects and generated role definitions.
+- Keep provider procedures out of PROJECT.yaml and AGENTS.md except for source-backed project-specific overrides.
+- Perform no governed-definition mutation until the exact path manifest has scope-specific user approval and passes the repository pre-mutation check.
 
 ## Acceptance Criteria
 
-- One explicit project setting selects agent-claim or single-writer operational coordination without editing canonical role definitions.
-- The same mutating role definition can run under either supported coordination provider.
+- One project setting selects agent-claim or single-writer without changing canonical role definitions per project.
+- The same mutating role definition can operate under either supported implementation.
 - Role validation no longer equates repositoryMutation directly with agent-claim membership.
-- Selecting agent-claim preserves current atomic path and shared-resource ownership, contention, recovery, worktree, heartbeat, and release behavior.
-- Selecting single-writer produces no coordination-registry mutation and no claim-release completion requirement while preserving the declared external exclusivity and normal delivery safety checks.
-- GitHub, GitLab, and file-backed work-item providers record only provider-appropriate assignment and lifecycle evidence. They never become the operational authority for shared runtime resources.
-- A focused browser-sharing scenario and a focused database-sharing scenario prove that operational resource ownership is routed through the selected coordination provider and not through a work-item provider.
-- A focused single-writer scenario proves that a mutating task completes without claim acquisition or release and cannot falsely report claim evidence.
-- A focused agent-claim scenario proves that two writers contending for the same repository path or runtime resource retain the current safe outcome.
-- Existing projects without the new selector follow the approved compatibility default deterministically.
-- Canonical definitions, supported generated mirrors, project configuration rendering, documentation, and focused regression tests remain synchronized.
-- Fresh independent methodology review accepts the final provider boundary, migration behavior, and exact governed-definition diff.
+- Agent-claim selection preserves current repository-path and shared-resource contention, recovery, worktree, heartbeat, and release outcomes.
+- Single-writer selection performs no claim-registry mutation and cannot report claim acquisition or release evidence.
+- Single-writer selection identifies the authority that guarantees exclusivity and still enforces normal delivery safety checks.
+- Browser, database, port or server, generated-output, repository-path, backlog, and main-integration scenarios route operational ownership through the selected implementation.
+- GitHub, GitLab, and file-backed scenarios record assignment and lifecycle state without representing operational resource ownership.
+- Unsupported and unavailable selections fail deterministically without fallback. Missing selections follow the approved compatibility rule and fail once the approved migration boundary requires the selector.
+- Existing projects follow an explicitly approved and tested compatibility rule.
+- Focused tests cover selector validation, role generation, both coordination lifecycles, provider boundaries, and completion evidence.
+- Approved canonical sources, only their supported generated mirrors, documentation, and regression expectations remain synchronized.
+- Independent methodology review accepts the final contract boundary, migration behavior, and exact governed-definition diff.
 
 ## Dependencies
 
@@ -149,34 +132,31 @@ None.
 
 ## Verification
 
-- Run the governed-definition approval check separately for every approved canonical definition before mutation.
-- Add focused schema and generator tests for independent repository-mutation and coordination-provider selection.
-- Add provider-contract tests that execute equivalent mutation lifecycles through agent-claim and single-writer.
-- Verify browser, database, repository-path, backlog, and main-integration resource routing.
-- Verify GitHub, GitLab, and file-backed work-item records contain assignment and lifecycle evidence without pretending to own operational resources.
-- Run focused role-generation, skill validation, configuration rendering, bundle-content, claim-engine compatibility, and completion-workflow tests.
-- Regenerate only mirrors supported by the approved canonical source categories and run freshness checks.
-- Run Git diff validation and obtain fresh independent methodology review.
-- Escalate verification tier only when the final affected surfaces or failed focused checks justify it.
+- Re-run source discovery and produce an exact canonical-path and generated-mirror manifest before implementation approval.
+- Run the governed-definition pre-mutation check for each approved canonical definition.
+- Add focused selector, schema, generator, role, provider-boundary, completion, and coordination-lifecycle tests.
+- Exercise equivalent mutation work under agent-claim and single-writer, including shared browser and database resources.
+- Verify that work-item provider records never act as operational ownership authorities.
+- Run applicable freshness checks, focused bundle tests, Git diff validation, and independent methodology review.
+- Escalate verification only when the final affected surfaces or failed focused checks justify it.
 
 ## User Action Required
 
-Explicit scope-specific approval is required before adding or changing the proposed distributed skill definitions, conceptual agent definitions, or agent-definition schema.
+The next mutating step requires user authorization. Repository policy also requires a later exact, scope-specific approval before any governed definition changes.
 
 ## Question For The User
 
-After the draft is reviewed and narrowed as needed, do you approve the exact governed definition paths listed under Proposed Governed Definition Scope for implementation of selectable repository mutation coordination?
+Do you authorize a design-only precursor that resolves the open decisions and produces the exact governed-definition manifest without changing governed definitions?
 
 ## Why User Input Is Required
 
-Repository policy requires exact approval before any governed skill or agent definition changes. The current request authorizes only creation of this draft work item.
+The current authority covers only this backlog refinement. It does not authorize a new design artifact or implementation, and the current evidence is not an exact governed-definition approval manifest.
 
 ## Options And Tradeoffs
 
-- Approve the final exact scope: implement the interface and selector as one coherent cross-cutting feature.
-- Request a design-only precursor: produce a non-mutating design that narrows the definition and generator scope before approval.
-- Narrow the feature: introduce only the project selector and retain direct agent-claim dependencies temporarily, accepting transitional branching in workflow skills.
-- Defer: move the item to Holding without authorizing implementation.
+- Authorize the design-only precursor: narrow the contract, selector, migration, and exact approval scope before implementation.
+- Supply the unresolved design decisions and request an exact approval manifest directly: reduce a separate design step but require the user to choose the open policy details.
+- Defer: keep the feature visible and non-dispatchable without creating more artifacts.
 
 ## Resolution
 
@@ -184,10 +164,10 @@ Pending.
 
 ## Unattended Work Boundary
 
-Do not create or change any proposed skill definition, agent definition, schema, generated mirror, implementation, or documentation under this item until exact governed-definition approval is recorded. Read-only discovery and refinement of this work item remain allowed.
+Read-only discovery and refinement of this one backlog item are allowed. Do not create a design artifact or change any skill, agent definition, schema, generator, generated mirror, project configuration, documentation, test, or implementation file until the required user authorization is recorded. Do not infer approval from this item, repository access, or a request to make validation pass.
 
 ## Notes
 
-- Removing agent-claim is not a goal. The feature makes operational coordination selectable.
-- A bare boolean such as use claims is discouraged because it does not name the safety model used when claims are disabled.
-- The existing coordination-registry reset and branch-integration work item has a distinct outcome and is not a duplicate of this provider-selection feature.
+- Removing agent-claim is not a goal.
+- Do not encode the choice as a boolean that leaves the no-claim safety model unnamed.
+- The coordination-registry simplification item has a separate outcome and is not a duplicate of this feature.
