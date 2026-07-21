@@ -294,38 +294,6 @@ def _path_belongs_to_domain(path: str, file_domain: str) -> bool:
     return file_domain in {"all_files", "none"} or _path_domain(path) == file_domain
 
 
-def _committed_paths(worktree: Path, baseline_commit: str, resulting_commit: str) -> list[str]:
-    if baseline_commit == resulting_commit:
-        return []
-    ancestry = _git(
-        worktree,
-        "merge-base",
-        "--is-ancestor",
-        baseline_commit,
-        resulting_commit,
-        check=False,
-    )
-    if ancestry.returncode != SUCCESS:
-        raise ValueError("baseline_not_ancestor")
-    commits = _git(worktree, "rev-list", "--reverse", f"{baseline_commit}..{resulting_commit}").stdout.splitlines()
-    paths: set[str] = set()
-    for commit in commits:
-        raw_paths = _git(
-            worktree,
-            "diff-tree",
-            "--no-commit-id",
-            "--name-only",
-            "--diff-filter=ACDMRTUXB",
-            "--no-renames",
-            "-r",
-            "-m",
-            "-z",
-            commit,
-        ).stdout
-        paths.update(path for path in raw_paths.split("\0") if path)
-    return sorted(paths)
-
-
 def _head(worktree: Path) -> str:
     return _git(worktree, "rev-parse", "HEAD").stdout.strip()
 
@@ -1402,46 +1370,6 @@ def _release(args: argparse.Namespace) -> int:
                     current_out_of_domain_status=outside_status,
                 )
             resulting_commit = _head(worktree)
-            try:
-                committed_paths = _committed_paths(
-                    worktree,
-                    str(claim["baseline_commit"]),
-                    resulting_commit,
-                )
-            except ValueError as error:
-                event = _event(
-                    "release",
-                    "RELEASE_REJECTED",
-                    args,
-                    claim=claim,
-                    resulting_commit=resulting_commit,
-                    reason=str(error),
-                )
-                return _journaled_result(ERROR, common_directory, event, reason=str(error))
-            outside_commit_paths = (
-                []
-                if complete_worktree_release
-                else [
-                    path for path in committed_paths if not _path_belongs_to_domain(path, file_domain)
-                ]
-            )
-            if outside_commit_paths:
-                event = _event(
-                    "release",
-                    "RELEASE_REJECTED",
-                    args,
-                    claim=claim,
-                    resulting_commit=resulting_commit,
-                    reason="out_of_domain_commit",
-                    out_of_domain_paths=outside_commit_paths,
-                )
-                return _journaled_result(
-                    ERROR,
-                    common_directory,
-                    event,
-                    reason="out_of_domain_commit",
-                    out_of_domain_paths=outside_commit_paths,
-                )
             if resulting_commit == claim.get("baseline_commit") and not args.no_change:
                 event = _event(
                     "release",

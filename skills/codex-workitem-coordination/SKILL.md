@@ -136,7 +136,7 @@ An evidence-backed administrative reset is available only for an inactive coordi
 
 Perform the reset only through a host-supported targeted atomic operation that names the exact entry, locks the coordination registry, revalidates those safeguards at mutation time, removes no peer entry, and journals the administrative outcome. The bundled portable claim command has no reset operation. If a supported atomic operation is unavailable, stop and route the reset instead of editing the registry file manually.
 
-Treat inactive-entry or ancestry-only release-validation failures as coordination diagnostics. They do not automatically invalidate correct integrated bytes, independent review, focused verification, or durable completion evidence. Reconcile each evidence owner separately and never invent a successful release.
+Treat inactive-entry release problems as coordination diagnostics. Claim release does not audit commit history or interpret merge ancestry; independent review and integration own committed-content, changed-path, and provenance decisions. Reconcile each evidence owner separately and never invent a successful release.
 
 If the wait remains unresolved after investigation, record the precise open issue and move the item to the truthful Blocked or User Action Required state so it no longer consumes a Running slot. Dispatch a replacement Ready item immediately when available.
 

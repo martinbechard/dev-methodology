@@ -653,64 +653,42 @@ class AgentClaimTests(unittest.TestCase):
         self.assertEqual("out_of_domain_changes", result["reason"])
         self.assertEqual(["backlog/feature-backlog/queued.md"], result["out_of_domain_paths"])
 
-    def test_project_claim_release_rejects_committed_backlog_change(self) -> None:
+    def test_project_claim_release_does_not_audit_committed_backlog_history(self) -> None:
         acquired = self.claim(*self.acquire_arguments("project"), "--project-files", "--scope-reason", "project work")
         self.assertEqual(0, acquired.returncode, acquired.stderr)
         backlog_path = self.repository / "backlog" / "feature-backlog" / "queued.md"
         backlog_path.write_text("committed\n", encoding="utf-8")
         self.git("add", str(backlog_path))
-        self.git("commit", "-m", "wrong domain")
+        self.git("commit", "-m", "review-owned scope decision")
 
         released = self.claim("release", "--claim-id", "project")
 
-        self.assertEqual(1, released.returncode)
-        result = self.output(released)
-        self.assertEqual("out_of_domain_commit", result["reason"])
-        self.assertEqual(["backlog/feature-backlog/queued.md"], result["out_of_domain_paths"])
+        self.assertEqual(0, released.returncode, released.stderr)
+        self.assertEqual("RELEASED", self.output(released)["outcome"])
 
-    def test_project_claim_rejects_backlog_commit_reverted_later_in_history(self) -> None:
-        acquired = self.claim(*self.acquire_arguments("project"), "--project-files", "--scope-reason", "project work")
-        self.assertEqual(0, acquired.returncode, acquired.stderr)
+    def test_project_claim_release_ignores_merge_parent_history(self) -> None:
+        source_branch = "project-source"
+        target_branch = self.git("branch", "--show-current").stdout.strip()
+        self.git("branch", source_branch)
         backlog_path = self.repository / "backlog" / "feature-backlog" / "queued.md"
-        backlog_path.write_text("temporary commit\n", encoding="utf-8")
+        backlog_path.write_text("completed before claim\n", encoding="utf-8")
         self.git("add", str(backlog_path))
-        self.git("commit", "-m", "temporary wrong domain")
-        backlog_path.write_text("queued\n", encoding="utf-8")
-        self.git("add", str(backlog_path))
-        self.git("commit", "-m", "restore backlog")
-
-        released = self.claim("release", "--claim-id", "project")
-
-        self.assertEqual(1, released.returncode)
-        result = self.output(released)
-        self.assertEqual("out_of_domain_commit", result["reason"])
-        self.assertEqual(["backlog/feature-backlog/queued.md"], result["out_of_domain_paths"])
-
-    def test_committed_path_scan_is_nul_safe_for_odd_backlog_names(self) -> None:
+        self.git("commit", "-m", "complete backlog work before claim")
         acquired = self.claim(*self.acquire_arguments("project"), "--project-files", "--scope-reason", "project work")
         self.assertEqual(0, acquired.returncode, acquired.stderr)
-        odd_path = self.repository / "backlog" / "feature-backlog" / 'odd\n" café -> name.md'
-        odd_path.write_text("committed\n", encoding="utf-8")
-        self.git("add", str(odd_path))
-        self.git("commit", "-m", "wrong odd domain")
+
+        self.git("checkout", source_branch)
+        source_path = self.repository / "src" / "one.py"
+        source_path.write_text("project change\n", encoding="utf-8")
+        self.git("add", str(source_path))
+        self.git("commit", "-m", "project source change")
+        self.git("checkout", target_branch)
+        self.git("merge", "--no-ff", source_branch, "-m", "integrate project source")
 
         released = self.claim("release", "--claim-id", "project")
 
-        self.assertEqual(1, released.returncode)
-        result = self.output(released)
-        self.assertEqual("out_of_domain_commit", result["reason"])
-        self.assertEqual(['backlog/feature-backlog/odd\n" café -> name.md'], result["out_of_domain_paths"])
-
-    def test_release_rejects_history_that_diverged_from_claim_baseline(self) -> None:
-        acquired = self.claim(*self.acquire_arguments("project"), "--project-files", "--scope-reason", "project work")
-        self.assertEqual(0, acquired.returncode, acquired.stderr)
-        self.git("checkout", "--orphan", "divergent")
-        self.git("commit", "--allow-empty", "-m", "divergent root")
-
-        released = self.claim("release", "--claim-id", "project")
-
-        self.assertEqual(1, released.returncode)
-        self.assertEqual("baseline_not_ancestor", self.output(released)["reason"])
+        self.assertEqual(0, released.returncode, released.stderr)
+        self.assertEqual("RELEASED", self.output(released)["outcome"])
 
     def test_status_and_extend_preserve_active_legacy_mixed_claim(self) -> None:
         legacy_claim = {

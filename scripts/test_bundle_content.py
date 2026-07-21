@@ -4397,6 +4397,9 @@ class BundleContentTests(unittest.TestCase):
         for required_contract in (
             "temporary conflict protection for shared mutation",
             "does not decide whether reviewed, verified, committed product delivery exists",
+            "Release validates operational coordination state, not committed content",
+            "does not traverse commit history, audit committed paths, enforce contribution scope, or interpret merge ancestry",
+            "Independent review and integration own committed-content, changed-path, and provenance decisions",
             "## Administrative Reset Of Inactive Entries",
             "dirty unpreserved claimed worktree",
             "another active owner's protection",
@@ -4409,7 +4412,7 @@ class BundleContentTests(unittest.TestCase):
             "Never edit the live registry file manually",
             "must not rewrite Git, edit project files, discard a worktree, manufacture a release event",
             "release-validation failures as coordination diagnostics",
-            "inactive-entry or ancestry-only scratch state",
+            "inactive registry entry remains after work and resources are preserved",
         ):
             with self.subTest(claim_contract=required_contract):
                 self.assertIn(required_contract, claim_text)
@@ -4436,7 +4439,7 @@ class BundleContentTests(unittest.TestCase):
             "A live owner, dirty unpreserved worktree, resource in use, or unclear evidence blocks reset",
             "The bundled portable claim command has no reset operation",
             "If a supported atomic operation is unavailable, stop and route the reset",
-            "inactive-entry or ancestry-only release-validation failures as coordination diagnostics",
+            "Claim release does not audit commit history or interpret merge ancestry",
             "fresh task integration branch is fully merged",
             "prior candidate branch used only as a non-ancestral content source is not the task cleanup branch",
         ):
@@ -4446,6 +4449,8 @@ class BundleContentTests(unittest.TestCase):
         for required_contract in (
             "create a fresh reconciliation branch from that exact commit",
             "Do not import unrelated ancestry merely for provenance",
+            "It does not audit commit history or decide whether committed paths belong to the contribution",
+            "Independent review and integration own committed-content, changed-path, and provenance decisions",
             "reset only an inactive entry whose work is preserved",
             "Reset only through a host-supported targeted atomic operation",
             "Registry cleanup, Git integration, and backlog closeout are distinct operations",

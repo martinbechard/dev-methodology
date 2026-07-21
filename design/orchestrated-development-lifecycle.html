@@ -835,7 +835,7 @@
       <div class="protocol-boundary">
         <strong>Placement outcomes are not priority ranks</strong>
         <p><code>PRIMARY</code> means the claim is bound to the primary checkout. <code>ISOLATE</code> means it is bound to a canonical isolated worktree. Neither name makes one work item more important than another. <code>WAIT</code>, <code>PRIMARY_REQUIRED</code>, <code>ISOLATE_REQUIRED</code>, and <code>RECOVERY_REQUIRED</code> describe coordination conditions, not delivery verdicts.</p>
-        <p>The portable <a href="../skills/agent-claim/SKILL.md">agent-claim skill</a> defines acquisition, extension, heartbeat, contention, recovery, release, and cleanup. Prefer its structured operations when available; <a href="../skills/agent-claim/scripts/claim.py">the bundled command</a> is the portability fallback. Before an administrative reset, inspect the task, processes, claimed worktrees, Git cleanliness, preserved commits, shared-resource use, registry peers, and journal. Retain a readable snapshot or journal reference and reset only an inactive entry whose work is preserved. Never remove protection for an active owner, dirty unpreserved worktree, or live shared resource. Reset only through a host-supported targeted atomic operation that locks and revalidates the registry and journals the outcome; if none exists, stop rather than editing the registry file manually.</p>
+        <p>The portable <a href="../skills/agent-claim/SKILL.md">agent-claim skill</a> defines acquisition, extension, heartbeat, contention, recovery, release, and cleanup. Prefer its structured operations when available; <a href="../skills/agent-claim/scripts/claim.py">the bundled command</a> is the portability fallback. Release checks live worktree and index state, then relinquishes recorded ownership and resources after the caller has stopped or handed off their actual use. It does not audit commit history or decide whether committed paths belong to the contribution. Independent review and integration own committed-content, changed-path, and provenance decisions. Before an administrative reset, inspect the task, processes, claimed worktrees, Git cleanliness, preserved commits, shared-resource use, registry peers, and journal. Retain a readable snapshot or journal reference and reset only an inactive entry whose work is preserved. Never remove protection for an active owner, dirty unpreserved worktree, or live shared resource. Reset only through a host-supported targeted atomic operation that locks and revalidates the registry and journals the outcome; if none exists, stop rather than editing the registry file manually.</p>
         <p>Registry cleanup, Git integration, and backlog closeout are distinct operations. A reset changes only temporary coordination state; it does not rewrite Git, manufacture a release, or prove review, verification, delivery, or completion.</p>
       </div>
 
@@ -987,7 +987,7 @@
           <tr>
             <td>Coordination registry and event journal</td>
             <td>Current exact shared ownership, contention, heartbeat, release, and recovery observations.</td>
-            <td>Whether product bytes were accepted, delivered, or completed.</td>
+            <td>Whether committed paths or product bytes were accepted, correctly integrated, delivered, or completed.</td>
           </tr>
           <tr>
             <td>Codex task</td>

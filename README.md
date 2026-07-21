@@ -121,7 +121,7 @@ Every modifying agent uses agent-claim before changing repository files or exclu
 - Every linked agent worktree uses worktree-specific sparse checkout to omit the repository-root backlog directory; backlog claims wait for the primary worktree.
 - Project-files owns the repository file tree except backlog and ignored operational state. Backlog owns only the complete primary-worktree backlog subtree. All-files is their deliberate union for recovery and true repository-wide work.
 - Exact files and trees inherit their project or backlog domain. One claim cannot mix domains, while exclusive resources may accompany the selected domain.
-- Acquisition and release compare owned and out-of-domain status separately. Unchanged pre-existing out-of-domain dirtiness remains outside the claim; a new staged, unstaged, untracked, or committed out-of-domain path rejects release with structured evidence.
+- Acquisition and release compare owned and out-of-domain operational status separately. Unchanged pre-existing out-of-domain dirtiness remains outside the claim; a new staged, unstaged, or untracked out-of-domain path rejects release with structured evidence. Release does not audit commit history or decide whether committed paths belong to the accepted contribution; independent review and integration own those decisions.
 - Exact files, directory trees, repository-wide ownership, and exclusive resources use distinct scope forms.
 - A claim can atomically extend its narrow scope as new files or resources become necessary.
 - Overlap returns exact conflict pairs; a blocked extension leaves the live claim unchanged.
