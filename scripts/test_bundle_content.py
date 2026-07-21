@@ -4321,6 +4321,10 @@ class BundleContentTests(unittest.TestCase):
         self.assertTrue(claim_script.is_file())
         self.assertIn("## Operation Selection", claim_skill)
         self.assertIn("## Fallback Command Path", claim_skill)
+        operation_selection = claim_skill.split("## Operation Selection", 1)[1].split(
+            "## Fallback Command Path",
+            1,
+        )[0]
         for tool_name in (
             "claim_status",
             "claim_acquire",
@@ -4332,7 +4336,13 @@ class BundleContentTests(unittest.TestCase):
         ):
             self.assertIn(tool_name, claim_skill)
         self.assertIn("A valid result is not an MCP failure", claim_skill)
-        self.assertIn("explicitly advertises SHARED_CHECKOUT_REQUIRED and SHARED_CHECKOUT_RELEASE_REQUIRED", claim_skill)
+        self.assertIn("explicitly advertises result schema version 2", operation_selection)
+        self.assertIn("complete canonical outcome vocabulary", operation_selection)
+        for required_outcome in (
+            "SHARED_CHECKOUT_REQUIRED",
+            "SHARED_CHECKOUT_RELEASE_REQUIRED",
+        ):
+            self.assertIn(required_outcome, operation_selection)
         self.assertIn("canonical primary-root worktree placement", claim_skill)
         self.assertIn("cannot initialize or connect before request dispatch", claim_skill)
         self.assertIn("Never use a fallback after a path", claim_skill)
