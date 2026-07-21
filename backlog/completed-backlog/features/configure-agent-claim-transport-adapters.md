@@ -1,27 +1,27 @@
 # Configure Agent Claim Transport Adapters
 
-Status: Running
+Status: Completed
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/configure-agent-claim-transport-adapters.md
+Provider Reference: backlog/completed-backlog/features/configure-agent-claim-transport-adapters.md
 
 Completion: direct-main
 
 ## Current Execution
 
 - Owner: Dev Orchestrator
-- Claim: None; the exact Running-record transaction is released after this committed transition, and artifact ownership must be acquired separately before integration.
+- Claim: complete-claim-transport-019f870e acquired the exact active and completed provider paths at event 078568ec-c495-4dcd-8136-862fbf9b142f; normal release follows this committed archive transaction.
 - Canonical task: 019f870e-5de9-7730-a8ca-658250ba8b24
 - Worktree: /Users/martinbechard/.codex/worktrees/87f4/dev-methodology
 - Branch: codex/configure-agent-claim-transport-adapters-reconcile-019f870e
 - Starting main: 71771f33507ab1e4aa529c07cb2f581f5384874d
-- Phase: Reconcile the preserved independently accepted candidate 1b276dc63b1901b98c1731b695348f8c11b9be1f onto fresh current main, preserve current-main contracts, integrate only the accepted transport-adapter scope, run focused post-integration verification, and complete the backlog item separately.
+- Phase: Completed on main through fresh ancestry-free reconciliation commit 1b1b819fa051f9f0f1d572184b18f18c06d3cba0.
 - Started: 2026-07-21
 - Running-record claim: start-claim-transport-adapters-019f86a0, acquired event cc4e4dbb-24bb-4750-b99d-bc61968ff342.
-- Open issues: None. Do not replay or import the rejected simplify-project-configuration candidate.
+- Open issues: None. The rejected simplify-project-configuration candidate was not replayed, imported, or repaired.
 - Accepted candidate: 1b276dc63b1901b98c1731b695348f8c11b9be1f, independently ACCEPTED and VERIFIED-WARN with only two unrelated pre-existing Wiki Ingester warnings.
 - Integration wait started: 2026-07-21T22:52:00Z.
 - Claim attempts: 7 total at initial, 5, 10, 15, 20, 25, and 30 minutes.
@@ -30,6 +30,26 @@ Completion: direct-main
 - Unblock condition: simplify-project-config-impl-019f86b1 releases normally after its correction is committed or safely handed off, and fresh-main reconciliation confirms the accepted transport contract can be integrated without discarding either contribution.
 - Resumption: Preserve these exact Blocked bytes until the unblock condition is satisfied; then transition through Ready, acquire new exclusive ownership, record the new owner, and only then set Running.
 - Blocked-handoff claim: block-claim-transport-integration-019f86a0, acquired event 0580f671-8d86-4c5b-9fc7-89f48b0f4231.
+
+## Completion Evidence
+
+- Provider: file. Completion selector: direct-main. Completion disposition: READY. Lifecycle disposition: Completed.
+- Completed at: 2026-07-21T23:58:28Z.
+- Completed provider reference: backlog/completed-backlog/features/configure-agent-claim-transport-adapters.md.
+- Accepted source commit: 1b276dc63b1901b98c1731b695348f8c11b9be1f on codex/configure-agent-claim-transport-adapters, based on 723fdedc8f5002a3a0c08d48ee39e6c52b945cb9.
+- Fresh integration and cleanup branch: codex/configure-agent-claim-transport-adapters-reconcile-019f870e in /Users/martinbechard/.codex/worktrees/87f4/dev-methodology.
+- Integration strategy: apply the complete accepted 723fded-to-1b276dc content as one ancestry-free reconciliation patch on current main 138d16c463bf0b90ea51e7ef3a766f863cc993a1, regenerate only supported mirrors, and fast-forward main.
+- Integration commit and observed clean main tip: 1b1b819fa051f9f0f1d572184b18f18c06d3cba0. The commit is reachable from main, and its complete accepted path set compared byte-for-byte with source 1b276dc before commit.
+- Governed-definition evidence: all eight approved canonical paths returned ALLOWED_APPROVED_DEFINITION_CHANGE before mutation using the exact user-message provenance already recorded below.
+- Independent review: preserved candidate 1b276dc was independently ACCEPTED. Fresh-main comparison found no overlapping current-main edits on any accepted path, so no semantic reconciliation or additional semantic review was required.
+- Focused verification: Python 3.11.13 passed all 12 transport-adapter parity tests. The supported-runtime focused run executed 379 tests; 371 passed and the eight BundleContentTests failures reproduced with identical identities on both accepted source 1b276dc and its starting main 723fded, so they are recorded as pre-existing baseline warnings rather than transport regressions.
+- Freshness and hygiene: build-skill-docs, build-agent-skill-hierarchy, and build-support-checklist check modes passed on integrated main; the 138d16c-to-main range passed Git diff validation; main and the private reconciliation worktree are clean.
+- Structured validation: the changed PROJECT.yaml, role, evaluation, metadata, and template YAML files passed MCP YAML validation. MCP skill validation rejected the repository source paths as outside its configured installed skill roots, so no policy-bypassing fallback was attempted.
+- Link validation warning: the Markdown checker reported README.md target design/agent-and-skill-definitions.html#hierarchy-title as missing, but the unchanged target contains h2 id hierarchy-title at the same baseline and current lines; the finding is retained as a baseline tool limitation.
+- Integration claim integrate-claim-transport-019f870e acquired the exact accepted paths and main/generated resources at event 5f00ceba-174b-426a-a5cd-07d3aaea12b6, extended to the rename source path at event d355ced5-c0cf-4f59-a5d9-bfb7619f02c4, heartbeated at event 27ad6804-57f6-41ab-9378-8d27fac9e4db, and released cleanly at event 5827c1ad-d7d8-4cd6-9270-2b1f7931b55e.
+- Terminal backlog claim complete-claim-transport-019f870e acquired only the active and completed provider paths at event 078568ec-c495-4dcd-8136-862fbf9b142f. Its normal release follows this committed archive transaction.
+- Cleanup eligibility: the fresh reconciliation branch tip equals integrated main commit 1b1b819 and the private worktree is clean. The parent may remove that worktree, delete the fully merged fresh branch, prune worktree metadata, update the task title, and archive the task. The older non-ancestral source branch remains separate preserved provenance.
+- No full agent catalog was run because that remains the campaign final-state gate rather than a per-item requirement.
 
 ## Resumption Evidence
 
