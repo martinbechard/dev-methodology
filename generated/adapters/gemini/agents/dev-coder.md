@@ -116,9 +116,9 @@ Use the tool that matches the intended operation:
 | Maintain the journal | claim_maintain_journal | maintain-journal |
 | Report contention | claim_report | report |
 
-For an acquisition or extension that includes backlog scope, and for an isolation acquisition that supplies branch or worktree arguments, use the MCP operation only when its exposed contract explicitly advertises PRIMARY_REQUIRED and backlog sparse-checkout behavior, plus canonical primary-root worktree placement. Otherwise resolve and run the loaded agent-claim skill's claim.py script before dispatch. Following ISOLATE_REQUIRED with the required isolation arguments is the documented state transition, not a retry of a failed mutation.
+For an acquisition or extension that includes backlog scope, and for an isolation acquisition that supplies branch or worktree arguments, use the MCP operation only when its exposed contract explicitly advertises SHARED_CHECKOUT_REQUIRED and SHARED_CHECKOUT_RELEASE_REQUIRED, backlog sparse-checkout behavior, and canonical primary-root worktree placement. Otherwise resolve and run the loaded agent-claim skill's claim.py script before dispatch. Following ISOLATED_CHECKOUT_SETUP_REQUIRED with the required isolation arguments is the documented state transition, not a retry of a failed mutation.
 
-Always inspect result.outcome. PRIMARY, ISOLATE, RECOVER, WAIT, PRIMARY_REQUIRED, ISOLATE_REQUIRED, RECOVERY_REQUIRED, and structured rejections are valid coordination results. A valid result is not an MCP failure and must not be retried through a fallback command.
+Always inspect result.outcome. SHARED_CHECKOUT_ACQUIRED, ISOLATED_CHECKOUT_ACQUIRED, DIRTY_CHECKOUT_RECOVERY_ACQUIRED, CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED, SHARED_CHECKOUT_REQUIRED, SHARED_CHECKOUT_RELEASE_REQUIRED, ISOLATED_CHECKOUT_SETUP_REQUIRED, DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED, and structured rejections are valid coordination results. A valid result is not an MCP failure and must not be retried through a fallback command.
 
 Outside that explicit capability route, use a fallback only when the tool is absent or the MCP server cannot initialize or connect before request dispatch. Never use a fallback after a path, root, authorization, input-policy, or other structured rejection; those results enforce the active boundary. Prefer the installed mcp-agent-ops-claims command when available. For the capability-routed sparse or backlog flows, use the claim.py script inside the loaded agent-claim package when the copied command does not advertise the required behavior. Resolve the script path once and reuse it for every fallback command in the task. Do not assume the target repository contains skills/agent-claim.
 
@@ -187,7 +187,7 @@ Select at most one broad file domain. Exact files and trees are classified into 
 
 The command rejects repository root, wildcards, and existing directories passed through file. It also rejects an existing file passed through tree. A temporary compat-file-directories switch converts existing directories passed through file into warned tree scopes, but still requires a scope reason. New callers use the explicit forms.
 
-The repository-root backlog directory and all-files ownership are primary-worktree-only. Claim backlog paths from the primary worktree. When another claim already owns the primary worktree, a backlog acquisition or an isolated claim extension into backlog returns PRIMARY_REQUIRED and preserves the live registry unchanged. Project-files claims remain eligible for canonical isolated worktrees.
+The repository-root backlog directory and all-files ownership are primary-worktree-only. Claim backlog paths from the primary worktree. When another claim already owns that shared checkout, a backlog acquisition returns SHARED_CHECKOUT_RELEASE_REQUIRED and preserves the live registry unchanged. An isolated claim extension into backlog returns SHARED_CHECKOUT_REQUIRED because the caller must hand the work to the shared checkout. Project-files claims remain eligible for canonical isolated worktrees.
 
 Every claim and scope result records file_domain as project_files, backlog, all_files, or none and records the matching broad booleans. The none value is used when no file scope was selected. Existing no-file-scope callers retain complete-worktree clean-release compatibility.
 
@@ -208,24 +208,42 @@ Use the smallest useful file and resource scope. A parent agent keeps the root t
 
 ## Stable Exit Codes
 
-The structured JSON outcome is the authoritative coordination result. Stable process exit codes support shell control flow:
+The structured JSON outcome is the authoritative coordination result. Result schema version 2 uses the canonical outcome vocabulary and includes legacy_outcome only when a canonical name replaces a schema version 1 name. Stable process exit codes support shell control flow:
 
-- 0 means the command succeeded. Acquisition success returns PRIMARY, ISOLATE, or RECOVER.
+- 0 means the command succeeded. Acquisition success returns SHARED_CHECKOUT_ACQUIRED, ISOLATED_CHECKOUT_ACQUIRED, or DIRTY_CHECKOUT_RECOVERY_ACQUIRED.
 - 1 means a general rejection or failure such as INVALID_SCOPE, INVALID_IDENTIFIER, INVALID_WORKTREE_PATH, WORKTREE_ROOT_NOT_IGNORED, CLAIM_NOT_FOUND, RELEASE_REJECTED, or worktree creation failure.
-- 3 means WAIT. Requested scope overlaps another active claim.
-- PRIMARY_REQUIRED with exit code 3 means backlog scope must wait until it can run from the primary worktree.
-- 4 means ISOLATE_REQUIRED. Another non-overlapping claim exists, but branch and worktree arguments were not supplied.
-- 5 means RECOVERY_REQUIRED. The unclaimed primary worktree is dirty and explicit recovery authorization was not supplied.
+- 3 with CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED means requested scope overlaps another active claim.
+- 3 with SHARED_CHECKOUT_REQUIRED means the operation must be handed to the shared checkout before it can proceed.
+- 3 with SHARED_CHECKOUT_RELEASE_REQUIRED means another owner must release the shared checkout before the operation can proceed there.
+- 4 means ISOLATED_CHECKOUT_SETUP_REQUIRED. Another non-overlapping claim exists, but branch and worktree arguments were not supplied.
+- 5 means DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED. The unclaimed shared checkout is dirty and explicit recovery authorization was not supplied.
 
 Several successful and error outcomes share exit codes 0 and 1, so always inspect the JSON outcome. A malformed command line may be rejected by the Python argument parser with exit code 2 before claim coordination runs; that is not a claim outcome.
+
+### Result Migration
+
+Schema version 2 result documents use these canonical outcomes. During the compatibility period, legacy_outcome carries the prior result name shown below. Outcomes not listed here keep their existing name and omit legacy_outcome.
+
+| Canonical outcome | Plain-language meaning | Required next action | Legacy outcome |
+|---|---|---|---|
+| SHARED_CHECKOUT_ACQUIRED | Ownership was acquired in the repository's existing shared checkout. | Work only within the acquired scope there. | PRIMARY |
+| ISOLATED_CHECKOUT_ACQUIRED | Ownership was acquired in a newly prepared isolated checkout. | Work only within the acquired scope in the returned checkout. | ISOLATE |
+| DIRTY_CHECKOUT_RECOVERY_ACQUIRED | Recovery ownership was acquired over explicitly authorized dirty state. | Preserve the state in a checkpoint commit before cleanup. | RECOVER |
+| CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED | No ownership was acquired because requested scope overlaps another owner. | Wait for a handoff or choose genuinely non-overlapping scope. | WAIT |
+| SHARED_CHECKOUT_REQUIRED | No ownership was acquired because the operation must run from the shared checkout. | Hand the operation to that checkout and reconcile status there. | PRIMARY_REQUIRED |
+| SHARED_CHECKOUT_RELEASE_REQUIRED | No ownership was acquired because another claim currently owns the shared checkout. | Wait for its release notification before retrying there. | PRIMARY_REQUIRED |
+| ISOLATED_CHECKOUT_SETUP_REQUIRED | No ownership was acquired because an isolated branch and checkout must be prepared. | Repeat the acquisition with the required isolation arguments. | ISOLATE_REQUIRED |
+| DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED | No ownership was acquired because dirty state requires explicit recovery authority. | Obtain authority before repeating with recovery enabled. | RECOVERY_REQUIRED |
+
+Schema version 1 journal events remain append-only and retain the original outcome strings. Reporting readers interpret recognized legacy and canonical strings through the same meanings, publish canonical outcome counts, and retain raw outcome counts so historical provenance is not rewritten or hidden.
 
 ## Acquisition Workflow
 
 The acquisition command uses an exclusive registry lock. Its result includes the claim mode, branch, and target worktree.
 
-### Primary Acquisition
+### Shared Checkout Acquisition
 
-Request only the narrow scope currently supported by evidence. When no other claim exists and the primary worktree is clean, this returns PRIMARY with exit code 0:
+Request only the narrow scope currently supported by evidence. When no other claim exists and the shared checkout is clean, this returns SHARED_CHECKOUT_ACQUIRED with exit code 0:
 
 ```bash
 python3 "$CLAIM_SCRIPT" --repo . acquire \
@@ -266,9 +284,9 @@ For a short serialized queue transition from the primary worktree, use:
 --backlog
 ```
 
-### Isolation Acquisition
+### Isolated Checkout Acquisition
 
-When another non-overlapping claim is active, the primary command without a branch returns ISOLATE_REQUIRED with exit code 4 and does not create a claim. The structured result reports the canonical worktree root and suggested checkout. Retry the same claim identifier with a unique branch:
+When another non-overlapping claim is active, the command without a branch returns ISOLATED_CHECKOUT_SETUP_REQUIRED with exit code 4 and does not create a claim. The structured result reports the canonical worktree root and suggested checkout. Retry the same claim identifier with a unique branch:
 
 ```bash
 python3 "$CLAIM_SCRIPT" --repo . acquire \
@@ -281,15 +299,15 @@ python3 "$CLAIM_SCRIPT" --repo . acquire \
   --base main
 ```
 
-This returns ISOLATE with exit code 0. The base option selects the Git commit or ref from which the isolated branch is created; it defaults to HEAD. The command derives the target as the primary worktree's .worktrees/task-123 directory, creates the linked checkout with worktree-specific sparse checkout, and omits the backlog/ directory without changing primary-worktree status. The worktree-path compatibility option is accepted only when it resolves exactly to that derived target; any other value returns INVALID_WORKTREE_PATH. Before creation, .worktrees must match the anchored /.worktrees/ pattern in the project .gitignore or another Git ignore source; otherwise the command returns WORKTREE_ROOT_NOT_IGNORED. Do not supply isolation arguments to bypass overlap: conflicting scope still returns WAIT.
+This returns ISOLATED_CHECKOUT_ACQUIRED with exit code 0. The base option selects the Git commit or ref from which the isolated branch is created; it defaults to HEAD. The command derives the target as the primary worktree's .worktrees/task-123 directory, creates the linked checkout with worktree-specific sparse checkout, and omits the backlog/ directory without changing primary-worktree status. The worktree-path compatibility option is accepted only when it resolves exactly to that derived target; any other value returns INVALID_WORKTREE_PATH. Before creation, .worktrees must match the anchored /.worktrees/ pattern in the project .gitignore or another Git ignore source; otherwise the command returns WORKTREE_ROOT_NOT_IGNORED. Do not supply isolation arguments to bypass overlap: conflicting scope still returns CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED.
 
-### Primary-Only Backlog Acquisition
+### Shared-Checkout-Only Backlog Acquisition
 
-Backlog creation, lifecycle changes, and archive movements run under a short backlog claim from the primary worktree. When another claim owns the primary worktree, a backlog request returns PRIMARY_REQUIRED with exit code 3 instead of creating an isolated checkout. Wait for a direct baton handoff or completion notification, then retry without branch or worktree arguments. Do not poll.
+Backlog creation, lifecycle changes, and archive movements run under a short backlog claim from the primary worktree. When another claim owns that shared checkout, a backlog request returns SHARED_CHECKOUT_RELEASE_REQUIRED with exit code 3 instead of creating an isolated checkout. Wait for a direct baton handoff or completion notification, then retry without branch or worktree arguments. Do not poll. When the caller is in an isolated checkout but the shared checkout is available, SHARED_CHECKOUT_REQUIRED directs a handoff to the shared checkout.
 
-### WAIT
+### Claim Scope Conflict Wait
 
-Given an active claim that already owns src/feature.py, this overlapping request returns WAIT with exit code 3, conflicting claim identifiers, and exact overlap pairs:
+Given an active claim that already owns src/feature.py, this overlapping request returns CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED with exit code 3, conflicting claim identifiers, and exact overlap pairs:
 
 ```bash
 python3 "$CLAIM_SCRIPT" --repo . acquire \
@@ -304,7 +322,7 @@ Do not edit, create a competing worktree, or add isolation arguments. Wait, coor
 
 ### Recovery Acquisition
 
-When the unclaimed primary worktree is dirty, a normal acquisition returns RECOVERY_REQUIRED with exit code 5. After explicit authorization to preserve the complete dirty state, acquire recovery ownership with the allow-recovery option:
+When the unclaimed shared checkout is dirty, a normal acquisition returns DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED with exit code 5. After explicit authorization to preserve the complete dirty state, acquire recovery ownership with the allow-recovery option:
 
 ```bash
 python3 "$CLAIM_SCRIPT" --repo . acquire \
@@ -317,7 +335,7 @@ python3 "$CLAIM_SCRIPT" --repo . acquire \
   --allow-recovery
 ```
 
-This returns RECOVER with exit code 0. Create the required checkpoint commit before cleanup or release.
+This returns DIRTY_CHECKOUT_RECOVERY_ACQUIRED with exit code 0. Create the required checkpoint commit before cleanup or release.
 
 ## Atomic Scope Extension
 
@@ -330,9 +348,9 @@ python3 "$CLAIM_SCRIPT" --repo . extend \
   --resource generated:codegen
 ```
 
-Extension checks only net-new scope against every other active claim under the registry lock. All requested additions succeed together or WAIT leaves the live claim unchanged. Repeating scope the claim already owns succeeds idempotently and the structured result separates added scope from already-owned scope. Extension preserves the original worktree, branch, mode, baseline commit, and claim timestamp.
+Extension checks only net-new scope against every other active claim under the registry lock. All requested additions succeed together or CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED leaves the live claim unchanged. Repeating scope the claim already owns succeeds idempotently and the structured result separates added scope from already-owned scope. Extension preserves the original worktree, branch, mode, baseline commit, and claim timestamp.
 
-An isolated claim cannot extend into backlog scope. That request returns PRIMARY_REQUIRED and leaves the claim unchanged so backlog work can be retried from the primary worktree.
+An isolated claim cannot extend into backlog scope. That request returns SHARED_CHECKOUT_REQUIRED and leaves the claim unchanged so backlog work can be retried from the primary worktree.
 
 Scope contraction is not supported. Relinquishing a path while it still has uncommitted changes requires a separate safety design.
 
@@ -373,7 +391,7 @@ The shared Git operation is integration into a target branch. Acquire a target-s
 - All-files overlaps every exact file and tree.
 - Identical exclusive resources overlap even when file scope differs.
 - Backlog paths are never materialized in isolated worktrees and may only be claimed from the primary worktree.
-- Overlap returns WAIT. Worktree isolation does not make conflicting changes logically safe.
+- Overlap returns CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED. Worktree isolation does not make conflicting changes logically safe.
 - Never stage, commit, revert, or clean another claim owner’s files unless acting as the explicit integration owner.
 
 ## Event Journal Safety
@@ -403,7 +421,7 @@ python3 "$CLAIM_SCRIPT" --repo . report --since 2d
 python3 "$CLAIM_SCRIPT" --repo . report --since 12h --format text
 ```
 
-The versioned JSON report counts primary, isolated, and recovery acquisitions; waits and rejected transitions; correlated wait episodes; claim duration statistics; exact-file, tree, and resource hotspots; broad-scope reasons; open and incomplete claims; stale heartbeat evidence; integration-resource use; and journal coverage gaps. Repeated WAIT polling by the same claim and action becomes one wait episode while preserving the raw attempt count. Report is read-only and never parses agent harness transcripts.
+The versioned JSON report counts shared-checkout, isolated-checkout, and dirty-checkout recovery acquisitions; waits and rejected transitions; correlated wait episodes; claim duration statistics; exact-file, tree, and resource hotspots; broad-scope reasons; open and incomplete claims; stale heartbeat evidence; integration-resource use; and journal coverage gaps. Readers normalize recognized legacy aliases into canonical outcome_counts while retaining the original strings in raw_outcome_counts. Repeated conflict-wait events by the same claim and action become one wait episode while preserving the raw attempt count. Report is read-only and never parses agent harness transcripts.
 
 ## Administrative Reset Of Inactive Entries
 

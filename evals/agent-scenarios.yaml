@@ -291,7 +291,7 @@ agents:
         kind: boundary-failure
         fixtureProfile: backlog-state-machine
         promptIntent: Evaluate file-provider create, transition, and archive requests when another provider is selected and primary-main authority is unavailable.
-        expectedOutcome: BLOCKED evidence for provider mismatch, isolated and non-main authority, PRIMARY_REQUIRED handoff, and zero backlog or shadow-provider mutations.
+        expectedOutcome: BLOCKED evidence for provider mismatch, isolated and non-main authority, SHARED_CHECKOUT_REQUIRED handoff, and zero backlog or shadow-provider mutations.
         requiredBehaviors:
           - Read effective provider and worktree authority from current fixture state.
           - Block every file mutation and report the exact next safe handoff.

@@ -1,5 +1,7 @@
 {
-  "outcome": "WAIT",
+  "schema_version": 2,
+  "outcome": "CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED",
+  "legacy_outcome": "WAIT",
   "conflictingClaim": "synthetic-wiki-recovery",
   "trees": ["raw", "Clippings", "docs/wiki"],
   "queuePreserved": true

@@ -24,7 +24,7 @@ The only authoritative file-provider storage root is backlog in the primary work
 
 An isolated worktree, a linked worktree other than the primary worktree, or a primary worktree not on main has no authority to create the item. Return BLOCKED with the observed worktree and branch, the required primary-main authority, and the next handoff. Do not write a shadow queue elsewhere.
 
-Before each creation mutation, acquire agent-claim backlog scope from the primary main worktree. PRIMARY_REQUIRED is a coordination outcome: arrange a direct handoff or completion notification and suspend without polling. After notification, reconcile live status before retrying. Commit the one queue mutation and release the short backlog-domain claim immediately.
+Before each creation mutation, acquire agent-claim backlog scope from the primary main worktree. SHARED_CHECKOUT_RELEASE_REQUIRED is a coordination outcome: arrange a direct handoff or completion notification and suspend without polling. SHARED_CHECKOUT_REQUIRED means the operation must be handed to the primary main worktree. After notification or handoff, reconcile live status before retrying. Commit the one queue mutation and release the short backlog-domain claim immediately.
 
 After that commit, release that claim immediately.
 

@@ -81,7 +81,7 @@ class CoordinationSimulatorTests(unittest.TestCase):
                 "integration",
                 claim_kind="integration",
                 elapsed_minutes=elapsed,
-                outcome="WAIT",
+                outcome="CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED",
                 blocking_claim_id="shared-generator",
             )
 
@@ -98,7 +98,7 @@ class CoordinationSimulatorTests(unittest.TestCase):
                 "integration",
                 claim_kind="integration",
                 elapsed_minutes=30,
-                outcome="WAIT",
+                outcome="CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED",
             )
 
     def test_successful_retry_stops_the_wait_window(self) -> None:
@@ -110,7 +110,7 @@ class CoordinationSimulatorTests(unittest.TestCase):
             "integration",
             claim_kind="integration",
             elapsed_minutes=0,
-            outcome="WAIT",
+            outcome="CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED",
             blocking_claim_id="owner",
         )
         simulator.record_claim_attempt(
@@ -127,7 +127,7 @@ class CoordinationSimulatorTests(unittest.TestCase):
                 "integration",
                 claim_kind="integration",
                 elapsed_minutes=10,
-                outcome="WAIT",
+                outcome="CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED",
             )
 
     def test_claim_windows_reject_out_of_order_and_separate_completion(self) -> None:
@@ -140,14 +140,14 @@ class CoordinationSimulatorTests(unittest.TestCase):
                 "delivery",
                 claim_kind="integration",
                 elapsed_minutes=5,
-                outcome="WAIT",
+                outcome="CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED",
             )
         with self.assertRaisesRegex(ValueError, "requires acquired integration"):
             simulator.record_claim_attempt(
                 "delivery",
                 claim_kind="completion",
                 elapsed_minutes=0,
-                outcome="WAIT",
+                outcome="CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED",
             )
         simulator.record_claim_attempt(
             "delivery",
@@ -159,7 +159,7 @@ class CoordinationSimulatorTests(unittest.TestCase):
             "delivery",
             claim_kind="completion",
             elapsed_minutes=0,
-            outcome="WAIT",
+            outcome="CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED",
         )
         simulator.record_claim_attempt(
             "delivery",

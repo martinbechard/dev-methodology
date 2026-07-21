@@ -7,7 +7,13 @@
 from __future__ import annotations
 
 
-_SUCCESSFUL_CLAIM_OUTCOMES = frozenset({"PRIMARY", "ISOLATE", "RECOVER"})
+_SUCCESSFUL_CLAIM_OUTCOMES = frozenset(
+    {
+        "SHARED_CHECKOUT_ACQUIRED",
+        "ISOLATED_CHECKOUT_ACQUIRED",
+        "DIRTY_CHECKOUT_RECOVERY_ACQUIRED",
+    }
+)
 _REQUIRED_ACTIVE_HANDOFF_MARKERS = (
     b"Status: Running",
     b"Owner:",
@@ -58,8 +64,9 @@ def attempt_resumption(
     """Evaluate a blocked item's claimed-resumption transition.
 
     item_before is the exact durable Blocked item. unblock_condition_satisfied records
-    prerequisite eligibility. claim_outcome is a structured claim result such as WAIT or
-    PRIMARY. Successful outcomes also require non-empty new_owner and new_claim values.
+    prerequisite eligibility. claim_outcome is a structured claim result such as
+    CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED or SHARED_CHECKOUT_ACQUIRED. Successful outcomes
+    also require non-empty new_owner and new_claim values.
     The result contains the durable post-attempt bytes and the ordered lifecycle evidence.
     Rejected or failed claims return the original bytes unchanged. Missing evidence or
     successful outcomes without ownership identifiers raise ValueError.

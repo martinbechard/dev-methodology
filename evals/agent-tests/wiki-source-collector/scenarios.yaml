@@ -72,7 +72,7 @@ scenarios:
       - project-wiki
       - structured-explanation
     requiredBehaviors:
-      - Attempt the narrow raw claim and treat WAIT as the authoritative result.
+      - Attempt the narrow raw claim and treat CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED as the authoritative result.
       - Preserve the collection queue and perform no repository write.
       - Report the blocked raw artifact path, active conflicting scope, window, and resumable ingest handoff.
       - Return BLOCKED without claiming an artifact was saved.

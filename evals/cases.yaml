@@ -363,7 +363,7 @@ cases:
         skill_validate: [VALID]
         skill_refresh: [CATALOG]
         detect_technology_skills: [READY, NO_VARIANT]
-        claim_acquire: [PRIMARY]
+        claim_acquire: [SHARED_CHECKOUT_ACQUIRED]
         claim_status: [STATUS]
         claim_extend: [EXTENDED]
         claim_heartbeat: [HEARTBEAT]
@@ -647,7 +647,7 @@ cases:
         - |
           from pathlib import Path
           result = Path("eval-result.md")
-          required = ["PROVIDER-MISMATCH", "ISOLATED-WORKTREE", "NON-MAIN-AUTHORITY", "PRIMARY-REQUIRED", "NO-SHADOW-WRITE"]
+          required = ["PROVIDER-MISMATCH", "ISOLATED-WORKTREE", "NON-MAIN-AUTHORITY", "SHARED-CHECKOUT-REQUIRED", "NO-SHADOW-WRITE"]
           missing = required if not result.is_file() else [heading for heading in required if heading not in result.read_text(encoding="utf-8")]
           active = Path("backlog/feature-backlog/existing-file-item.md")
           expected = "# Existing File Item\n\nStatus: Ready\n\nType: Feature\n\nProvider: file\n\nProvider Reference: backlog/feature-backlog/existing-file-item.md\n\n## Summary\n\nPreserve this fixture unchanged when file-provider mutation authority is absent.\n\n## Requirements\n\n- Keep the current item unchanged.\n\n## Acceptance Criteria\n\n- No transition or archive mutation occurs.\n\n## Dependencies\n\nNone.\n\n## Verification\n\n- Compare the file with the prepared fixture.\n"
@@ -683,4 +683,4 @@ cases:
       create-file-work-item: [SKILL.md]
       manage-file-work-items: [SKILL.md]
       structured-explanation: [SKILL.md]
-    requiredEvidence: [PROVIDER-MISMATCH, ISOLATED-WORKTREE, NON-MAIN-AUTHORITY, PRIMARY-REQUIRED, NO-SHADOW-WRITE]
+    requiredEvidence: [PROVIDER-MISMATCH, ISOLATED-WORKTREE, NON-MAIN-AUTHORITY, SHARED-CHECKOUT-REQUIRED, NO-SHADOW-WRITE]

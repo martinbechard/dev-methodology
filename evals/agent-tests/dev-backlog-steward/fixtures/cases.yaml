@@ -43,7 +43,7 @@ cases:
     unblockCondition: approved schema decision is recorded
     unblockConditionSatisfied: true
     acceptanceEvidence: [schema decision remains traceable, existing verification remains required]
-    claimOutcome: PRIMARY
+    claimOutcome: SHARED_CHECKOUT_ACQUIRED
     newOwner: dev-coder
     newClaim: schema-migration-resumption
     requiredTransitions: [ready, claimed, running]
@@ -55,7 +55,7 @@ cases:
     unblockCondition: approved schema decision is recorded
     unblockConditionSatisfied: true
     acceptanceEvidence: [schema decision remains traceable, existing verification remains required]
-    claimOutcome: WAIT
-    otherFailedClaimOutcomes: [INVALID_SCOPE, RECOVERY_REQUIRED]
+    claimOutcome: CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED
+    otherFailedClaimOutcomes: [INVALID_SCOPE, DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED]
     requiredResult: byte-for-byte unchanged
     itemBefore: *blocked-resumption-item

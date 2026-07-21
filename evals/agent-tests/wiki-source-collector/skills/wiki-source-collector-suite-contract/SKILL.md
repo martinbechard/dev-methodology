@@ -16,7 +16,7 @@ Evaluate the target as a collision-safe raw-only collector for approved public t
 - Save one collision-safe artifact under raw with source URLs, timestamps, factual summaries, provenance, and relevance.
 - Record duplicate, secondary, off-topic, out-of-window, ambiguously dated, and failed candidates as exclusions.
 - Leave docs/wiki and raw/processed unchanged and hand the raw inventory to wiki ingest.
-- Respect active claim ownership; WAIT preserves the queue and returns BLOCKED without a saved-artifact claim.
+- Respect active claim ownership; CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED preserves the queue and returns BLOCKED without a saved-artifact claim.
 - Return the raw-only artifact result, timestamp window, exclusions, and ingest handoff.
 
 ## Failure Conditions

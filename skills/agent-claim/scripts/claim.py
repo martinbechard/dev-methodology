@@ -25,9 +25,9 @@ from uuid import uuid4
 
 SUCCESS = 0
 ERROR = 1
-WAIT = 3
-ISOLATE_REQUIRED = 4
-RECOVERY_REQUIRED = 5
+COORDINATION_REQUIRED_EXIT_CODE = 3
+ISOLATION_SETUP_EXIT_CODE = 4
+RECOVERY_AUTHORIZATION_EXIT_CODE = 5
 BACKLOG_ROOT_DIRECTORY = "backlog"
 WORKTREE_ROOT_DIRECTORY = ".worktrees"
 WORKTREE_IGNORE_PATTERN = "/.worktrees/"
@@ -37,8 +37,9 @@ REGISTRY_FILE_NAME = "agent-claims.json"
 LOCK_FILE_NAME = "agent-claims.lock"
 EVENT_DIRECTORY_NAME = "agent-claim-events"
 EVENT_SCHEMA_VERSION = 1
-SUMMARY_SCHEMA_VERSION = 1
-REPORT_SCHEMA_VERSION = 1
+RESULT_SCHEMA_VERSION = 2
+SUMMARY_SCHEMA_VERSION = 2
+REPORT_SCHEMA_VERSION = 2
 DEFAULT_HOT_DAYS = 2
 MAX_SCOPE_REASON_LENGTH = 200
 MAX_IDENTIFIER_LENGTH = 200
@@ -46,6 +47,15 @@ STALE_HEARTBEAT_HOURS = 24
 UTC_DAY_PATTERN = re.compile(r"^(\d{4}-\d{2}-\d{2})\.jsonl$")
 SINCE_PATTERN = re.compile(r"^(\d+)([dh])$")
 WORKTREE_COMPONENT_PATTERN = re.compile(r"^[A-Za-z0-9](?:[A-Za-z0-9._-]{0,198}[A-Za-z0-9_-])?$")
+LEGACY_OUTCOME_ALIASES = {
+    "PRIMARY": "SHARED_CHECKOUT_ACQUIRED",
+    "ISOLATE": "ISOLATED_CHECKOUT_ACQUIRED",
+    "RECOVER": "DIRTY_CHECKOUT_RECOVERY_ACQUIRED",
+    "WAIT": "CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED",
+    "PRIMARY_REQUIRED": "SHARED_CHECKOUT_REQUIRED",
+    "ISOLATE_REQUIRED": "ISOLATED_CHECKOUT_SETUP_REQUIRED",
+    "RECOVERY_REQUIRED": "DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED",
+}
 
 
 class _ScopeError(ValueError):
@@ -827,6 +837,12 @@ def _event(
     return event
 
 
+def _canonical_outcome(outcome: str, shared_checkout_claimed: bool = False) -> str:
+    if outcome == "PRIMARY_REQUIRED" and shared_checkout_claimed:
+        return "SHARED_CHECKOUT_RELEASE_REQUIRED"
+    return LEGACY_OUTCOME_ALIASES.get(outcome, outcome)
+
+
 def _append_event(common_directory: Path, event: dict[str, Any]) -> Path:
     if os.environ.get("AGENT_CLAIM_TEST_FAIL_JOURNAL_WRITE") == "1":
         raise OSError("simulated journal write failure")
@@ -844,8 +860,21 @@ def _append_event(common_directory: Path, event: dict[str, Any]) -> Path:
     return path
 
 
-def _print_result(outcome: str, **details: Any) -> None:
-    print(json.dumps({"outcome": outcome, **details}, indent=2, sort_keys=True))
+def _print_result(
+    outcome: str,
+    *,
+    canonical_outcome: str | None = None,
+    **details: Any,
+) -> None:
+    result_outcome = canonical_outcome or _canonical_outcome(outcome)
+    result = {
+        "schema_version": RESULT_SCHEMA_VERSION,
+        "outcome": result_outcome,
+        **details,
+    }
+    if result_outcome != outcome:
+        result["legacy_outcome"] = outcome
+    print(json.dumps(result, indent=2, sort_keys=True))
 
 
 def _journaled_result(
@@ -853,6 +882,7 @@ def _journaled_result(
     common_directory: Path,
     event: dict[str, Any],
     output_warnings: list[dict[str, str]] | None = None,
+    canonical_outcome: str | None = None,
     **details: Any,
 ) -> int:
     warnings = list(output_warnings or [])
@@ -865,7 +895,12 @@ def _journaled_result(
         journal = {"event_id": event["event_id"], "persisted": False}
     if warnings:
         details["warnings"] = warnings
-    _print_result(event["outcome"], journal=journal, **details)
+    _print_result(
+        event["outcome"],
+        canonical_outcome=canonical_outcome,
+        journal=journal,
+        **details,
+    )
     return code
 
 
@@ -904,6 +939,7 @@ def _primary_required_result(
     requested_scope: dict[str, Any],
     scope_warnings: list[dict[str, str]],
     claim: dict[str, Any] | None = None,
+    shared_checkout_claimed: bool = False,
     **details: Any,
 ) -> int:
     backlog_scope = requested_scope.get("file_domain") in {"backlog", "all_files"}
@@ -928,10 +964,14 @@ def _primary_required_result(
         **details,
     )
     return _journaled_result(
-        WAIT,
+        COORDINATION_REQUIRED_EXIT_CODE,
         common_directory,
         event,
         scope_warnings,
+        canonical_outcome=_canonical_outcome(
+            event["outcome"],
+            shared_checkout_claimed=shared_checkout_claimed,
+        ),
         reason=reason,
         message=message,
         requested_scopes=requested_scope,
@@ -1027,7 +1067,7 @@ def _acquire(args: argparse.Namespace) -> int:
                 command_warnings=scope_warnings,
             )
             return _journaled_result(
-                WAIT,
+                COORDINATION_REQUIRED_EXIT_CODE,
                 common_directory,
                 event,
                 scope_warnings,
@@ -1050,6 +1090,7 @@ def _acquire(args: argparse.Namespace) -> int:
                     args,
                     requested_scope,
                     scope_warnings,
+                    shared_checkout_claimed=primary_is_claimed,
                     active_claim_count=len(claims),
                 )
 
@@ -1066,7 +1107,7 @@ def _acquire(args: argparse.Namespace) -> int:
                     command_warnings=scope_warnings,
                 )
                 return _journaled_result(
-                    ISOLATE_REQUIRED,
+                    ISOLATION_SETUP_EXIT_CODE,
                     common_directory,
                     event,
                     scope_warnings,
@@ -1117,7 +1158,7 @@ def _acquire(args: argparse.Namespace) -> int:
                     command_warnings=scope_warnings,
                 )
                 return _journaled_result(
-                    RECOVERY_REQUIRED,
+                    RECOVERY_AUTHORIZATION_EXIT_CODE,
                     common_directory,
                     event,
                     scope_warnings,
@@ -1225,7 +1266,7 @@ def _extend(args: argparse.Namespace) -> int:
                 command_warnings=scope_warnings,
             )
             return _journaled_result(
-                WAIT,
+                COORDINATION_REQUIRED_EXIT_CODE,
                 common_directory,
                 event,
                 scope_warnings,
@@ -1469,9 +1510,20 @@ def _top_counts(counter: Counter[str]) -> list[dict[str, Any]]:
 
 def _aggregate(events: list[dict[str, Any]], now: datetime, live_claims: list[dict[str, Any]]) -> dict[str, Any]:
     ordered = sorted(events, key=_event_sort_key)
-    successful_outcomes = {"PRIMARY": "primary", "ISOLATE": "isolated", "RECOVER": "recovery"}
+    successful_outcomes = {
+        "SHARED_CHECKOUT_ACQUIRED": "primary",
+        "ISOLATED_CHECKOUT_ACQUIRED": "isolated",
+        "DIRTY_CHECKOUT_RECOVERY_ACQUIRED": "recovery",
+    }
     acquisitions = Counter()
-    outcome_counts = Counter(str(event.get("outcome")) for event in ordered)
+    raw_outcome_counts = Counter(str(event.get("outcome")) for event in ordered)
+    outcome_counts = Counter(
+        _canonical_outcome(
+            str(event.get("outcome")),
+            shared_checkout_claimed=bool(event.get("active_claim_count")),
+        )
+        for event in ordered
+    )
     action_counts = Counter(str(event.get("action")) for event in ordered)
     acquisition_times: dict[str, datetime] = {}
     released_claims: set[str] = set()
@@ -1488,7 +1540,10 @@ def _aggregate(events: list[dict[str, Any]], now: datetime, live_claims: list[di
     journal_warning_count = 0
 
     for event in ordered:
-        outcome = str(event.get("outcome"))
+        outcome = _canonical_outcome(
+            str(event.get("outcome")),
+            shared_checkout_claimed=bool(event.get("active_claim_count")),
+        )
         action = str(event.get("action"))
         claim_id = str(event.get("claim_id") or "")
         timestamp = _parse_timestamp(str(event["timestamp"]))
@@ -1503,7 +1558,7 @@ def _aggregate(events: list[dict[str, Any]], now: datetime, live_claims: list[di
                 durations.append(max(0.0, (timestamp - acquired).total_seconds()))
 
         wait_key = (claim_id, action)
-        if outcome == "WAIT" and claim_id:
+        if outcome == "CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED" and claim_id:
             episode = active_waits.setdefault(
                 wait_key,
                 {
@@ -1515,7 +1570,7 @@ def _aggregate(events: list[dict[str, Any]], now: datetime, live_claims: list[di
             )
             episode["attempt_count"] += 1
             episode["last_wait_at"] = event["timestamp"]
-        elif wait_key in active_waits and outcome in {"PRIMARY", "ISOLATE", "RECOVER", "EXTENDED"}:
+        elif wait_key in active_waits and outcome in {*successful_outcomes, "EXTENDED"}:
             episode = active_waits.pop(wait_key)
             episode["resolved_at"] = event["timestamp"]
             episode["duration_seconds"] = max(
@@ -1524,7 +1579,7 @@ def _aggregate(events: list[dict[str, Any]], now: datetime, live_claims: list[di
             )
             wait_episodes.append(episode)
 
-        if outcome == "WAIT":
+        if outcome == "CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED":
             for overlap in event.get("overlaps", []):
                 if overlap.get("scope_kind") == "resource":
                     resources[str(overlap.get("requested"))] += 1
@@ -1536,7 +1591,7 @@ def _aggregate(events: list[dict[str, Any]], now: datetime, live_claims: list[di
                     exact_files[str(overlap.get("requested"))] += 1
 
         requested = event.get("requested_scopes") or {}
-        if outcome in {"PRIMARY", "ISOLATE", "RECOVER", "EXTENDED"}:
+        if outcome in {*successful_outcomes, "EXTENDED"}:
             if (
                 requested.get("trees")
                 or requested.get("project_files")
@@ -1574,11 +1629,12 @@ def _aggregate(events: list[dict[str, Any]], now: datetime, live_claims: list[di
     return {
         "action_counts": dict(sorted(action_counts.items())),
         "outcome_counts": dict(sorted(outcome_counts.items())),
+        "raw_outcome_counts": dict(sorted(raw_outcome_counts.items())),
         "successful_acquisitions": {
             mode: acquisitions.get(mode, 0) for mode in ("primary", "isolated", "recovery")
         },
         "wait_episodes": sorted(wait_episodes, key=lambda item: (item["started_at"], item["claim_id"])),
-        "wait_attempt_count": outcome_counts.get("WAIT", 0),
+        "wait_attempt_count": outcome_counts.get("CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED", 0),
         "claim_duration_seconds": {
             "count": len(durations),
             "median": median(durations) if durations else None,
@@ -1616,10 +1672,14 @@ def _daily_summary(day: str, events: list[dict[str, Any]]) -> dict[str, Any]:
         "event_ids_sha256": hashlib.sha256("\n".join(event_ids).encode("utf-8")).hexdigest(),
         "action_counts": metrics["action_counts"],
         "outcome_counts": metrics["outcome_counts"],
+        "raw_outcome_counts": metrics["raw_outcome_counts"],
         "claim_duration_seconds": metrics["claim_duration_seconds"],
         "wait_episodes": metrics["wait_episodes"],
         "top_contention": metrics["top_contention"],
-        "recovery_event_count": metrics["outcome_counts"].get("RECOVER", 0),
+        "recovery_event_count": metrics["outcome_counts"].get(
+            "DIRTY_CHECKOUT_RECOVERY_ACQUIRED",
+            0,
+        ),
         "incomplete_lifecycle_claim_ids": metrics["claims_with_missing_release"],
     }
 
@@ -1765,7 +1825,12 @@ def _report(args: argparse.Namespace) -> int:
     acquired_claim_ids = {
         str(event.get("claim_id"))
         for event in events
-        if event.get("outcome") in {"PRIMARY", "ISOLATE", "RECOVER"}
+        if _canonical_outcome(str(event.get("outcome")))
+        in {
+            "SHARED_CHECKOUT_ACQUIRED",
+            "ISOLATED_CHECKOUT_ACQUIRED",
+            "DIRTY_CHECKOUT_RECOVERY_ACQUIRED",
+        }
     }
     for claim in live_claims:
         claim_id = str(claim.get("claim_id"))

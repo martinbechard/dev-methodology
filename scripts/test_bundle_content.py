@@ -3551,7 +3551,7 @@ class BundleContentTests(unittest.TestCase):
             "manage-file-work-items": (
                 "The only authoritative file-provider storage root is backlog in the primary worktree while that worktree is on main.",
                 "must not create, transition, or archive the canonical record",
-                "PRIMARY_REQUIRED is a coordination outcome rather than a failed mutation",
+                "SHARED_CHECKOUT_RELEASE_REQUIRED is a coordination outcome rather than a failed mutation",
                 "AWAITING_REVIEW",
                 "main observation",
                 "failed archive path",
@@ -4283,7 +4283,7 @@ class BundleContentTests(unittest.TestCase):
             "release immediately",
             "Delivery then uses a separate exact, tree, or project-files claim without backlog ownership",
             "acquire a later backlog claim to record result evidence and archive the item",
-            "PRIMARY_REQUIRED is a coordination outcome rather than a failed mutation",
+            "SHARED_CHECKOUT_RELEASE_REQUIRED is a coordination outcome rather than a failed mutation",
             "suspend without polling",
             "Resume only after that notification",
         ):
@@ -4331,7 +4331,7 @@ class BundleContentTests(unittest.TestCase):
         ):
             self.assertIn(tool_name, claim_skill)
         self.assertIn("A valid result is not an MCP failure", claim_skill)
-        self.assertIn("explicitly advertises PRIMARY_REQUIRED and backlog sparse-checkout behavior", claim_skill)
+        self.assertIn("explicitly advertises SHARED_CHECKOUT_REQUIRED and SHARED_CHECKOUT_RELEASE_REQUIRED", claim_skill)
         self.assertIn("canonical primary-root worktree placement", claim_skill)
         self.assertIn("cannot initialize or connect before request dispatch", claim_skill)
         self.assertIn("Never use a fallback after a path", claim_skill)
@@ -4343,18 +4343,18 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("~/.codex/skills/agent-claim/scripts/claim.py", claim_skill)
         self.assertNotIn("python3 skills/agent-claim/scripts/claim.py", claim_skill)
         self.assertIn("## Stable Exit Codes", claim_skill)
-        self.assertIn("ISOLATE_REQUIRED with exit code 4", claim_skill)
-        self.assertIn("PRIMARY_REQUIRED with exit code 3", claim_skill)
-        self.assertIn("RECOVERY_REQUIRED with exit code 5", claim_skill)
-        self.assertIn("### Primary Acquisition", claim_skill)
-        self.assertIn("### Isolation Acquisition", claim_skill)
+        self.assertIn("4 means ISOLATED_CHECKOUT_SETUP_REQUIRED", claim_skill)
+        self.assertIn("3 with SHARED_CHECKOUT_RELEASE_REQUIRED", claim_skill)
+        self.assertIn("5 means DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED", claim_skill)
+        self.assertIn("### Shared Checkout Acquisition", claim_skill)
+        self.assertIn("### Isolated Checkout Acquisition", claim_skill)
         self.assertIn("primary worktree's .worktrees/task-123 directory", claim_skill)
         self.assertIn("INVALID_WORKTREE_PATH", claim_skill)
         self.assertIn("WORKTREE_ROOT_NOT_IGNORED", claim_skill)
         self.assertNotIn("--worktree-path ../project-task-123", claim_skill)
         self.assertIn("backlog/ directory", claim_skill)
         self.assertIn("worktree-specific sparse checkout", claim_skill)
-        self.assertIn("### WAIT", claim_skill)
+        self.assertIn("### Claim Scope Conflict Wait", claim_skill)
         self.assertIn("### Recovery Acquisition", claim_skill)
         self.assertIn("--base main", claim_skill)
         self.assertIn("--allow-recovery", claim_skill)
@@ -5090,9 +5090,9 @@ class BundleContentTests(unittest.TestCase):
             "ten are Running",
             "Do not leave a reviewed commit for a separate integration task",
             "separate short claim",
-            "PRIMARY_REQUIRED",
-            "ISOLATE_REQUIRED",
-            "RECOVERY_REQUIRED",
+            "SHARED_CHECKOUT_RELEASE_REQUIRED",
+            "ISOLATED_CHECKOUT_SETUP_REQUIRED",
+            "DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED",
             "five, ten, fifteen, twenty, twenty-five, and thirty minutes",
             "Dev Backlog Steward attempts any completion or status claim",
             "direct the steward to record the truthful non-Running state",

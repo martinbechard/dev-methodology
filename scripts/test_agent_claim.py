@@ -151,7 +151,9 @@ class AgentClaimTests(unittest.TestCase):
 
         self.assertEqual(0, completed.returncode, completed.stderr)
         result = self.output(completed)
-        self.assertEqual("PRIMARY", result["outcome"])
+        self.assertEqual(2, result["schema_version"])
+        self.assertEqual("SHARED_CHECKOUT_ACQUIRED", result["outcome"])
+        self.assertEqual("PRIMARY", result["legacy_outcome"])
         self.assertEqual(str(self.repository.resolve()), result["claim"]["worktree"])
         self.assertEqual("primary", result["target"]["mode"])
 
@@ -168,7 +170,8 @@ class AgentClaimTests(unittest.TestCase):
         self.assertEqual(0, first.returncode, first.stderr)
         self.assertEqual(0, second.returncode, second.stderr)
         result = self.output(second)
-        self.assertEqual("ISOLATE", result["outcome"])
+        self.assertEqual("ISOLATED_CHECKOUT_ACQUIRED", result["outcome"])
+        self.assertEqual("ISOLATE", result["legacy_outcome"])
         self.assertEqual(str(isolated_path), result["target"]["worktree"])
         self.assertTrue((isolated_path / ".git").is_file())
         self.assertTrue((isolated_path / "src" / "one.py").is_file())
@@ -183,7 +186,8 @@ class AgentClaimTests(unittest.TestCase):
 
         self.assertEqual(4, completed.returncode)
         result = self.output(completed)
-        self.assertEqual("ISOLATE_REQUIRED", result["outcome"])
+        self.assertEqual("ISOLATED_CHECKOUT_SETUP_REQUIRED", result["outcome"])
+        self.assertEqual("ISOLATE_REQUIRED", result["legacy_outcome"])
         self.assertEqual(str((self.repository / ".worktrees").resolve()), result["worktree_root"])
         self.assertEqual(
             str((self.repository / ".worktrees" / "second").resolve()),
@@ -206,7 +210,9 @@ class AgentClaimTests(unittest.TestCase):
 
         self.assertEqual(1, completed.returncode)
         result = self.output(completed)
+        self.assertEqual(2, result["schema_version"])
         self.assertEqual("INVALID_WORKTREE_PATH", result["outcome"])
+        self.assertNotIn("legacy_outcome", result)
         self.assertEqual(
             str((self.repository / ".worktrees" / "second").resolve()),
             result["expected_worktree"],
@@ -280,7 +286,8 @@ class AgentClaimTests(unittest.TestCase):
 
         self.assertEqual(3, completed.returncode)
         result = self.output(completed)
-        self.assertEqual("PRIMARY_REQUIRED", result["outcome"])
+        self.assertEqual("SHARED_CHECKOUT_RELEASE_REQUIRED", result["outcome"])
+        self.assertEqual("PRIMARY_REQUIRED", result["legacy_outcome"])
         self.assertEqual("backlog_requires_primary_worktree", result["reason"])
         self.assertFalse(isolated_path.exists())
 
@@ -306,7 +313,7 @@ class AgentClaimTests(unittest.TestCase):
         self.assertEqual(0, released.returncode, released.stderr)
         self.assertEqual(0, completed.returncode, completed.stderr)
         result = self.output(completed)
-        self.assertEqual("PRIMARY", result["outcome"])
+        self.assertEqual("SHARED_CHECKOUT_ACQUIRED", result["outcome"])
         self.assertEqual(str(self.repository.resolve()), result["target"]["worktree"])
 
     def test_primary_integration_scope_uses_available_primary_while_isolated_claim_remains(self) -> None:
@@ -332,7 +339,7 @@ class AgentClaimTests(unittest.TestCase):
 
         self.assertEqual(0, completed.returncode, completed.stderr)
         result = self.output(completed)
-        self.assertEqual("PRIMARY", result["outcome"])
+        self.assertEqual("SHARED_CHECKOUT_ACQUIRED", result["outcome"])
         self.assertEqual(str(self.repository.resolve()), result["target"]["worktree"])
 
     def test_primary_git_index_resource_uses_available_primary_while_isolated_claim_remains(self) -> None:
@@ -354,7 +361,7 @@ class AgentClaimTests(unittest.TestCase):
 
         self.assertEqual(0, completed.returncode, completed.stderr)
         result = self.output(completed)
-        self.assertEqual("PRIMARY", result["outcome"])
+        self.assertEqual("SHARED_CHECKOUT_ACQUIRED", result["outcome"])
         self.assertEqual(str(self.repository.resolve()), result["target"]["worktree"])
 
     def test_primary_integration_scope_waits_for_overlapping_isolated_claim(self) -> None:
@@ -380,7 +387,8 @@ class AgentClaimTests(unittest.TestCase):
 
         self.assertEqual(3, completed.returncode)
         result = self.output(completed)
-        self.assertEqual("WAIT", result["outcome"])
+        self.assertEqual("CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED", result["outcome"])
+        self.assertEqual("WAIT", result["legacy_outcome"])
         self.assertEqual(["isolated"], result["conflicting_claim_ids"])
 
     def test_primary_integration_scope_waits_for_existing_primary_owner(self) -> None:
@@ -396,7 +404,7 @@ class AgentClaimTests(unittest.TestCase):
 
         self.assertEqual(3, completed.returncode)
         result = self.output(completed)
-        self.assertEqual("PRIMARY_REQUIRED", result["outcome"])
+        self.assertEqual("SHARED_CHECKOUT_RELEASE_REQUIRED", result["outcome"])
         self.assertEqual("primary_location_resource_requires_primary_worktree", result["reason"])
 
     def test_primary_integration_scope_preserves_dirty_primary_recovery(self) -> None:
@@ -421,7 +429,8 @@ class AgentClaimTests(unittest.TestCase):
 
         self.assertEqual(5, completed.returncode)
         result = self.output(completed)
-        self.assertEqual("RECOVERY_REQUIRED", result["outcome"])
+        self.assertEqual("DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED", result["outcome"])
+        self.assertEqual("RECOVERY_REQUIRED", result["legacy_outcome"])
         self.assertEqual(
             [{"path": "docs/guide.md", "status": " M"}],
             result["dirty_status"],
@@ -438,7 +447,10 @@ class AgentClaimTests(unittest.TestCase):
         return_codes = sorted(code for _stdout, _stderr, code in completed)
 
         self.assertEqual([0, 4], return_codes)
-        self.assertEqual({"PRIMARY", "ISOLATE_REQUIRED"}, outcomes)
+        self.assertEqual(
+            {"ISOLATED_CHECKOUT_SETUP_REQUIRED", "SHARED_CHECKOUT_ACQUIRED"},
+            outcomes,
+        )
 
     def test_exact_files_do_not_use_ancestry_overlap(self) -> None:
         first = self.claim(*self.acquire_arguments("first"), "--file", "future")
@@ -452,7 +464,7 @@ class AgentClaimTests(unittest.TestCase):
 
         self.assertEqual(0, first.returncode, first.stderr)
         self.assertEqual(0, second.returncode, second.stderr)
-        self.assertEqual("ISOLATE", self.output(second)["outcome"])
+        self.assertEqual("ISOLATED_CHECKOUT_ACQUIRED", self.output(second)["outcome"])
 
     def test_tree_and_all_files_scopes_overlap_descendants(self) -> None:
         tree = self.claim(
@@ -473,7 +485,7 @@ class AgentClaimTests(unittest.TestCase):
         self.assertEqual(0, tree.returncode, tree.stderr)
         self.assertEqual(3, nested.returncode)
         nested_result = self.output(nested)
-        self.assertEqual("WAIT", nested_result["outcome"])
+        self.assertEqual("CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED", nested_result["outcome"])
         self.assertEqual("tree", nested_result["overlaps"][0]["claimed_kind"])
         self.assertFalse(blocked_path.exists())
 
@@ -514,7 +526,7 @@ class AgentClaimTests(unittest.TestCase):
         self.assertEqual(3, other_project.returncode)
         self.assertFalse(isolated_path.exists())
         self.assertEqual(3, backlog.returncode)
-        self.assertEqual("PRIMARY_REQUIRED", self.output(backlog)["outcome"])
+        self.assertEqual("SHARED_CHECKOUT_RELEASE_REQUIRED", self.output(backlog)["outcome"])
         self.assertEqual(["project"], [item["claim_id"] for item in self.output(self.claim("status"))["claims"]])
 
     def test_backlog_broad_scope_does_not_overlap_project_paths(self) -> None:
@@ -569,7 +581,7 @@ class AgentClaimTests(unittest.TestCase):
 
         self.assertEqual(3, completed.returncode)
         result = self.output(completed)
-        self.assertEqual("PRIMARY_REQUIRED", result["outcome"])
+        self.assertEqual("SHARED_CHECKOUT_RELEASE_REQUIRED", result["outcome"])
         self.assertEqual("backlog", result["requested_scopes"]["file_domain"])
         self.assertEqual("compat_backlog_path", result["warnings"][0]["code"])
 
@@ -581,7 +593,7 @@ class AgentClaimTests(unittest.TestCase):
         released = self.claim("release", "--claim-id", "project", "--no-change")
 
         self.assertEqual(0, acquired.returncode, acquired.stderr)
-        self.assertEqual("PRIMARY", self.output(acquired)["outcome"])
+        self.assertEqual("SHARED_CHECKOUT_ACQUIRED", self.output(acquired)["outcome"])
         self.assertEqual(0, released.returncode, released.stderr)
 
     def test_project_claim_detects_content_change_to_preexisting_dirty_backlog_path(self) -> None:
@@ -865,7 +877,7 @@ class AgentClaimTests(unittest.TestCase):
         released = self.claim("release", "--claim-id", "backlog", "--no-change")
 
         self.assertEqual(0, acquired.returncode, acquired.stderr)
-        self.assertEqual("PRIMARY", self.output(acquired)["outcome"])
+        self.assertEqual("SHARED_CHECKOUT_ACQUIRED", self.output(acquired)["outcome"])
         self.assertEqual(0, released.returncode, released.stderr)
 
     def test_operational_worktree_paths_are_not_claimable_as_project_files(self) -> None:
@@ -972,7 +984,7 @@ class AgentClaimTests(unittest.TestCase):
         blocked = self.claim("extend", "--claim-id", "second", "--file", "README.md")
 
         self.assertEqual(3, blocked.returncode)
-        self.assertEqual("WAIT", self.output(blocked)["outcome"])
+        self.assertEqual("CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED", self.output(blocked)["outcome"])
         self.assertEqual(before, self.registry_path().read_bytes())
 
     def test_isolated_extension_reports_primary_resource_overlap_before_location(self) -> None:
@@ -995,7 +1007,7 @@ class AgentClaimTests(unittest.TestCase):
 
         self.assertEqual(3, blocked.returncode)
         result = self.output(blocked)
-        self.assertEqual("WAIT", result["outcome"])
+        self.assertEqual("CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED", result["outcome"])
         self.assertEqual(["first"], result["conflicting_claim_ids"])
         self.assertEqual(before, self.registry_path().read_bytes())
 
@@ -1015,7 +1027,7 @@ class AgentClaimTests(unittest.TestCase):
 
         self.assertEqual([0, 3], sorted(code for _stdout, _stderr, code in completed))
         self.assertEqual(
-            {"EXTENDED", "WAIT"},
+            {"CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED", "EXTENDED"},
             {json.loads(stdout)["outcome"] for stdout, _stderr, _code in completed},
         )
 
@@ -1046,7 +1058,9 @@ class AgentClaimTests(unittest.TestCase):
         )
 
         self.assertEqual(3, completed.returncode)
-        self.assertEqual("PRIMARY_REQUIRED", self.output(completed)["outcome"])
+        result = self.output(completed)
+        self.assertEqual("SHARED_CHECKOUT_REQUIRED", result["outcome"])
+        self.assertEqual("PRIMARY_REQUIRED", result["legacy_outcome"])
         self.assertEqual(before, self.registry_path().read_bytes())
 
     def test_linked_worktrees_share_one_journal(self) -> None:
@@ -1118,6 +1132,7 @@ class AgentClaimTests(unittest.TestCase):
 
         self.assertEqual(0, released.returncode, released.stderr)
         events = self.journal_events()
+        self.assertTrue(all(event["schema_version"] == 1 for event in events))
         self.assertEqual(["PRIMARY", "HEARTBEAT", "RELEASED"], [event["outcome"] for event in events])
         self.assertEqual(self.git("rev-parse", "HEAD").stdout.strip(), events[-1]["resulting_commit"])
 
@@ -1144,7 +1159,9 @@ class AgentClaimTests(unittest.TestCase):
         released = self.claim("release", "--claim-id", "recovery")
 
         self.assertEqual(0, acquired.returncode, acquired.stderr)
-        self.assertEqual("RECOVER", self.output(acquired)["outcome"])
+        result = self.output(acquired)
+        self.assertEqual("DIRTY_CHECKOUT_RECOVERY_ACQUIRED", result["outcome"])
+        self.assertEqual("RECOVER", result["legacy_outcome"])
         self.assertEqual(1, rejected.returncode)
         self.assertEqual(0, released.returncode, released.stderr)
 
@@ -1368,12 +1385,15 @@ class AgentClaimTests(unittest.TestCase):
 
         self.assertEqual(0, completed.returncode, completed.stderr)
         report = json.loads(completed.stdout)
+        self.assertEqual(2, report["schema_version"])
         metrics = report["metrics"]
         self.assertEqual(
             {"primary": 1, "isolated": 1, "recovery": 1},
             metrics["successful_acquisitions"],
         )
         self.assertEqual(2, metrics["wait_attempt_count"])
+        self.assertEqual(2, metrics["outcome_counts"]["CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED"])
+        self.assertEqual(2, metrics["raw_outcome_counts"]["WAIT"])
         self.assertEqual(1, len(metrics["wait_episodes"]))
         self.assertEqual(300.0, metrics["wait_episodes"][0]["duration_seconds"])
         self.assertEqual("src/one.py", metrics["top_contention"]["exact_files"][0]["scope"])

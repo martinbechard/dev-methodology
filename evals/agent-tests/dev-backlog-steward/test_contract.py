@@ -80,11 +80,11 @@ class DevBacklogStewardContractTests(unittest.TestCase):
 
         failed_claim = by_id["blocked-failed-claim-resumption"]
         self.assertEqual("BLOCKED", failed_claim["expectedTerminalStatus"])
-        self.assertIn("WAIT", failed_claim["initialState"])
+        self.assertIn("CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED", failed_claim["initialState"])
         self.assertIn("project-hash-policy", failed_claim["deterministicChecks"])
 
     def test_failed_or_missing_claim_leaves_the_item_unchanged(self) -> None:
-        """Missing and WAIT claim outcomes keep exact blocked bytes and prior evidence."""
+        """Missing and conflict-wait claim outcomes keep exact blocked bytes and evidence."""
         cases = yaml.safe_load(
             (SUITE_ROOT / "fixtures" / "cases.yaml").read_text(encoding="utf-8")
         )["cases"]

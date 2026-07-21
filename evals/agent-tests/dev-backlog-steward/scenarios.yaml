@@ -77,12 +77,12 @@ scenarios:
     status: executable
     executableCase: fixtures/cases.yaml
     purpose: Preserve the exact blocked item when a new claim cannot be acquired.
-    initialState: A blocked item has preserved evidence, no active owner, a satisfied unblock condition, and claim acquisition returns WAIT.
+    initialState: A blocked item has preserved evidence, no active owner, a satisfied unblock condition, and claim acquisition returns CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED.
     task: Attempt governed resumption and report the failed claim without changing the item.
     targetSkills: [manage-file-work-items, agent-claim, structured-explanation]
     allowedAgentDependencies: []
-    requiredBehaviors: [Record eligible Ready only as an attempted transition, Restore the exact pre-attempt Blocked bytes after WAIT, Leave the item unowned and not Running, Preserve blocker unblock evidence and acceptance criteria]
-    forbiddenBehaviors: [Record Running, Invent a claim or owner, Leave a Ready mutation after WAIT, Rewrite or discard prior evidence]
+    requiredBehaviors: [Record eligible Ready only as an attempted transition, Restore the exact pre-attempt Blocked bytes after CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED, Leave the item unowned and not Running, Preserve blocker unblock evidence and acceptance criteria]
+    forbiddenBehaviors: [Record Running, Invent a claim or owner, Leave a Ready mutation after CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED, Rewrite or discard prior evidence]
     deterministicChecks: [harness-agent-identity, artifact-structure, project-hash-policy, claim-lifecycle, test-state-transition, output-contract-presence]
     expectedOutputs: [backlog item or status update, ownership record, completion or blocked summary]
     expectedTerminalStatus: BLOCKED

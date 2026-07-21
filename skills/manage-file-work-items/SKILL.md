@@ -24,7 +24,7 @@ The only authoritative file-provider storage root is backlog in the primary work
 
 An isolated worktree, another linked worktree, or a primary worktree not on main may inspect available evidence but must not create, transition, or archive the canonical record. Return BLOCKED with the observed worktree and branch, required primary-main authority, exact requested transition, and next handoff. Never create a shadow queue.
 
-Serialize each queue mutation with a short agent-claim backlog scope from the primary main worktree. PRIMARY_REQUIRED is a coordination outcome rather than a failed mutation. Arrange a direct handoff or completion notification and suspend without polling. Resume only after that notification, reconcile live status, then retry the exact transition.
+Serialize each queue mutation with a short agent-claim backlog scope from the primary main worktree. SHARED_CHECKOUT_RELEASE_REQUIRED is a coordination outcome rather than a failed mutation. Arrange a direct handoff or completion notification and suspend without polling. SHARED_CHECKOUT_REQUIRED means the operation must be handed to the primary main worktree. Resume only after that notification or handoff, reconcile live status, then retry the exact transition.
 
 Use one short backlog claim to record Status: Running and ownership evidence, commit that transition, and release immediately. Delivery then uses a separate exact, tree, or project-files claim without backlog ownership. After delivery, review, verification, and integration complete, acquire a later backlog claim to record result evidence and archive the item, then commit and release it.
 
@@ -128,7 +128,7 @@ Resume blocked work through one serialized backlog transaction:
 4. Acquire a new exclusive claim for the resuming agent.
 5. Only after a successful claim, record the new claim and owner, then set Status to Running and commit the transaction.
 
-If no claim is attempted, no successful claim result exists, or acquisition returns WAIT, a structured rejection, or another non-success outcome, do not infer ownership. Restore the byte-for-byte pre-attempt Blocked item, leave it unowned and not Running, and preserve all prior blocker, unblock, evidence, and acceptance data. Release any partially acquired ownership truthfully before reporting the unchanged Blocked outcome.
+If no claim is attempted, no successful claim result exists, or acquisition returns CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED, a structured rejection, or another non-success outcome, do not infer ownership. Restore the byte-for-byte pre-attempt Blocked item, leave it unowned and not Running, and preserve all prior blocker, unblock, evidence, and acceptance data. Release any partially acquired ownership truthfully before reporting the unchanged Blocked outcome.
 
 ## User Action Required Workflow
 
