@@ -1,6 +1,6 @@
 # Add Java Comment Placement Skill
 
-Status: Ready
+Status: Running
 
 Type: Feature
 
@@ -9,6 +9,20 @@ Provider: file
 Provider Reference: backlog/feature-backlog/add-java-comment-placement-skill.md
 
 Completion: direct-main
+
+## Current Execution
+
+- Owner: Dev Orchestrator
+- Claim: None; private discovery and implementation do not require shared repository ownership.
+- Canonical task: 019f86b4-9e20-76a1-b5cb-7618fce32e28
+- Worktree: /Users/martinbechard/.codex/worktrees/2682/dev-methodology
+- Branch: codex/add-java-comment-placement-skill
+- Starting main: 3539bf0445ccb9359b8403b5ef5af6558a85f4d3
+- Phase: Perform bounded source and routing discovery, determine the smallest exact governed-definition manifest, and route one consolidated approval question before governed mutation; if authorized, continue through focused implementation, independent review, verification, integration, and separate completion.
+- Started: 2026-07-21
+- Running-record claim: start-java-comment-placement-019f86b4, acquired event e78cc5c5-74bf-443f-9b79-23011788d47a.
+- Open issues: Exact governed-definition scope and path-specific approval remain to be established by bounded discovery.
+- Accepted candidate: Pending.
 
 Creation Claim: create-java-comment-skill-019f86a3
 
