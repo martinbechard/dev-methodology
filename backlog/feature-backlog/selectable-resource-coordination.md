@@ -1,6 +1,6 @@
 # Select Resource Coordination Per Project
 
-Status: Ready
+Status: Blocked
 
 Type: Feature
 
@@ -9,6 +9,16 @@ Provider: file
 Provider Reference: backlog/feature-backlog/selectable-resource-coordination.md
 
 Completion: direct-main
+
+## Blocked State
+
+- Owner: Unowned
+- Claim: None
+- Blocker: The required Configure Agent Claim Transport Adapters work item has not yet completed and its accepted transport contract is an input to this item.
+- Unblock condition: backlog/feature-backlog/configure-agent-claim-transport-adapters.md is integrated, focused-verified, and archived as Completed on main.
+- Next action owner: Dev Backlog Coordinator.
+- Resumption: Reconcile the completed dependency, transition this item through Ready, acquire new exclusive ownership for one canonical Dev Orchestrator, and only then record Running.
+- Evidence: The Dependencies section names Configure Agent Claim Transport Adapters; claim block-selectable-resource-coordination-dependency acquired event 0e436d62-4184-48ec-a689-e6aa12d56df5 to record this non-user dependency.
 
 Creation Claim: draft-selectable-mutation-coordination
 
