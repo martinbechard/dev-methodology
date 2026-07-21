@@ -12,7 +12,7 @@ Completion: direct-main
 
 ## Summary
 
-Give Project Configurator a concise Basic or Advanced setup dialogue, use clear Persistence and Commit terminology, let the user confirm detected technologies, default core and technology skills to by-reference delivery, create only the selected empty documentation structure during setup, and document the dependency boundary between conceptual agents, core skills, PROJECT.yaml, AGENTS.md, technology skills, and persistence-specific workflow skills.
+Give Project Configurator a concise Basic or Advanced setup dialogue, rename the existing Provider choice to Persistence and the existing Completion choice to Commit, let the user confirm detected technologies, default core and technology skills to by-reference delivery, create only the selected empty documentation structure during setup, and document the dependency boundary between conceptual agents, core skills, PROJECT.yaml, AGENTS.md, technology skills, and persistence-specific workflow skills.
 
 ## Context
 
@@ -77,11 +77,13 @@ This item remains in Holding while its exact governed definition scope and final
 - Ask whether core skills and technology skills are inline or by reference. Keep both defaults by reference and present them together as one Skill loading question group.
 - Preserve unsupported Persistence selections as explicit blocked choices rather than silently falling back.
 
-### Persistence And Commit Terminology
+### Rename Provider And Completion
 
-- Use Persistence as the user-facing and canonical project-configuration term that selects none or the durable work-item storage provider.
+- Rename the existing Provider setup choice and canonical project-configuration field to Persistence.
+- Persistence continues to select none or the durable work-item storage provider.
 - Keep none as an explicit Persistence option.
-- Use Commit as the user-facing and canonical project-configuration term that selects direct-main or feature-branch delivery.
+- Rename the existing Completion setup choice and canonical project-configuration field to Commit.
+- Commit continues to select direct-main or feature-branch delivery.
 - Keep Persistence and Commit independent.
 - Provide deterministic migration and compatibility handling for existing workflow_selection.provider and workflow_selection.completion values without silently changing recorded project intent.
 - Do not expose folder overrides during ordinary Basic or Advanced installation. Preserve existing compatible override behavior only as an advanced hand-edited configuration capability if it remains necessary.
