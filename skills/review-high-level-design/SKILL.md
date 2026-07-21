@@ -13,6 +13,8 @@ For planned development, review the artifact as solution design. Accept a choice
 
 Review whether the HLD prevents chaos at the next level of detail by providing one consistent coordination frame for components, ownership, contracts, dependencies, integration seams, implementation order, precise artifact placement, and complete package or module names. Reject placeholder paths and namespaces because they force downstream interpretation.
 
+Require an appropriate Mermaid diagram whenever the HLD describes an ordered sequence of actions, handoffs, states, transitions, retries, recovery, scheduled phases, startup, shutdown, or dependent implementation steps. Accept prose and tables as supporting explanation, but treat a complete sequence carried only by prose, a numbered list, or a table as a readability and response-adequacy finding. Match the diagram to the relationship: sequence diagrams for ordered exchanges, state diagrams for named lifecycle states, and flowcharts for branches, decisions, recovery paths, or ordered phases.
+
 ## Required Inputs
 
 - The high-level design artifact under review.
@@ -23,7 +25,7 @@ For the high-level-design current reverse-engineering pass, accepted module desi
 
 ## Workflow
 
-1. Read the artifact and identify its design mode, authoritative inputs, requirements coverage, subsystem scope, constituent components, artifact-placement ledger, exact source and test paths, package or module namespaces, interactions, critical trust and identity boundaries, cross-module contract reconciliation, data anchors, principles, patterns, justified propositions, residual open questions, invariants, documentation acceptance, implementation readiness, and verification claims.
+1. Read the artifact and identify its design mode, authoritative inputs, requirements coverage, subsystem scope, constituent components, artifact-placement ledger, exact source and test paths, package or module namespaces, interactions, ordered action sequences and their diagrams, critical trust and identity boundaries, cross-module contract reconciliation, data anchors, principles, patterns, justified propositions, residual open questions, invariants, documentation acceptance, implementation readiness, and verification claims.
 2. Read references/review-checklist-high-level-design.md.
 3. Complete every applicable checklist question with status, quoted evidence, and assessment. Use exactly one allowed status: `pass`, `fail`, `question`, or `n/a`; never qualify a status with wording such as `pass with finding`. When a material finding applies, use `fail` or `question` and record any partial strengths in the assessment.
 4. Save the completed review checklist next to the artifact using this form: artifact-name.review-checklist-high-level-design.md.

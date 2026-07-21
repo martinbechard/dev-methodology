@@ -2329,6 +2329,55 @@ class BundleContentTests(unittest.TestCase):
         )
         self.assertNotIn("Do not invent paths.", module_create)
 
+    def test_hld_ordered_action_sequences_require_diagrams(self) -> None:
+        """Keep lifecycle and delivery sequences out of dense prose-only blocks."""
+        create_text = (SKILLS_ROOT / "create-high-level-design" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        template_text = (
+            SKILLS_ROOT
+            / "development-methodology"
+            / "assets"
+            / "templates"
+            / "high-level-design-template.md"
+        ).read_text(encoding="utf-8")
+        review_text = (SKILLS_ROOT / "review-high-level-design" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        checklist_text = (
+            SKILLS_ROOT
+            / "review-high-level-design"
+            / "references"
+            / "review-checklist-high-level-design.md"
+        ).read_text(encoding="utf-8")
+
+        for phrase in (
+            "Use a Mermaid diagram whenever a section describes an ordered sequence",
+            "must not carry the complete sequence alone",
+            "no lifecycle or implementation sequence remains a dense text blob",
+        ):
+            self.assertIn(phrase, create_text)
+
+        for phrase in (
+            "Add a Mermaid Lifecycle Diagram whenever this section describes an ordered sequence",
+            "Do not leave the complete sequence only in prose or a table",
+            "Add a Mermaid Implementation Sequence Diagram whenever this section describes ordered or dependent implementation actions",
+            "Do not leave the complete sequence only in a numbered list, prose, or a table",
+        ):
+            self.assertIn(phrase, template_text)
+
+        for phrase in (
+            "Require an appropriate Mermaid diagram whenever the HLD describes an ordered sequence",
+            "a complete sequence carried only by prose, a numbered list, or a table",
+        ):
+            self.assertIn(phrase, review_text)
+
+        for phrase in (
+            "does it include an appropriate Mermaid sequence, state, or flow diagram",
+            "an ordered action sequence left only in prose, a numbered list, or a table",
+        ):
+            self.assertIn(phrase, checklist_text)
+
     def test_forward_design_closes_supporting_operation_inventories(self) -> None:
         """Keep supporting APIs from disappearing between functional and design levels."""
         functional_create = (SKILLS_ROOT / "create-functional-spec" / "SKILL.md").read_text(

@@ -158,9 +158,9 @@ TODO: Describe subsystem startup, normal operation, user-triggered actions, sche
 
 TODO: Identify ordering constraints and concurrency constraints.
 
-TODO: Add a Lifecycle Diagram in this section when the subsystem has ordered states, retries, recovery paths, concurrent phases, scheduled phases, or shutdown behavior.
+TODO: Add a Mermaid Lifecycle Diagram whenever this section describes an ordered sequence of startup, operation, user action, scheduled action, failure, retry, recovery, persistence, or shutdown steps. Do not leave the complete sequence only in prose or a table.
 
-TODO: The Lifecycle Diagram should show states and transitions. Use a state diagram when state names are the main concept, and use a flowchart when ordered phases are the main concept.
+TODO: The Lifecycle Diagram should show states and transitions. Use a state diagram when state names are the main concept, a sequence diagram when actors or components exchange ordered actions, and a flowchart when ordered phases, branches, decisions, or recovery paths are the main concept. Keep prose for constraints, ownership, concurrency, and exceptions.
 
 ## Data Shapes And Contracts
 
@@ -200,7 +200,7 @@ TODO: List the recommended implementation sequence.
 
 TODO: For each step, name the component or capability being added and the verification that must pass before moving on.
 
-TODO: Add an Implementation Sequence Diagram in this section when implementation steps depend on each other or when verification gates control the next step.
+TODO: Add a Mermaid Implementation Sequence Diagram whenever this section describes ordered or dependent implementation actions or verification gates. Do not leave the complete sequence only in a numbered list, prose, or a table.
 
 TODO: The Implementation Sequence Diagram should show dependency order and required verification gates. It should not become a task tracker.
 

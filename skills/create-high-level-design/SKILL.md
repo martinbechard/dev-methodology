@@ -75,7 +75,7 @@ Use documentation-reverse-engineer when the user asks to derive subsystem design
 10. Replace each TODO with authoritative content, an explicit inference, or an open question.
 11. Keep the shared page contract sections first.
 12. Link constituent module design documents when they exist and identify missing module designs when needed. For each missing module design, name its exact proposed document path and the exact source, test, configuration, migration, generated, and resource paths it governs.
-13. Use diagrams only where component collaboration, lifecycle, contracts, configuration, implementation order, or verification coverage are easier to inspect visually.
+13. Use a Mermaid diagram whenever a section describes an ordered sequence of actions, handoffs, states, transitions, retries, recovery, scheduled phases, startup, shutdown, or dependent implementation steps. Use a sequence diagram when ordered exchanges across actors or components are central, a state diagram when named states and transitions are central, and a flowchart when branches, decisions, recovery paths, or ordered phases are central. Prose and tables may explain constraints, ownership, and exceptions, but must not carry the complete sequence alone. Also use diagrams where non-sequential component collaboration, contracts, configuration, or verification coverage are materially easier to inspect visually.
 14. Say Not yet identified for related code, tests, backlog items, or wiki pages that do not exist yet.
 15. Keep the artifact steady-state. Do not describe it as new, revised, or enhanced unless the document is explicitly a change plan.
 16. Treat the target as the installed documentation path when resolving links. Link only durable project artifacts that will exist from that location. Temporary inputs may guide the draft, but do not link or cite transient assembly or control files such as prompts, manifests, assignments, copied project context, evaluation case roots, or scratch files. When no durable project source exists, state that it is not yet identified instead of inventing a link.
@@ -102,5 +102,6 @@ Before finishing:
 16. Confirm Implementation Readiness begins with READY or BLOCKED as a separate downstream decision and keeps known defects, open decisions, and current limitations visible.
 17. Confirm justified HLD propositions close every resolvable design gap and state basis, necessity, and decision owner.
 18. Confirm all planned artifact paths and package or module names are complete, literal, consistent, and precise enough to assign module work without interpretation.
+19. Confirm every ordered sequence described in prose, a numbered list, or a table also has an appropriate Mermaid sequence, state, or flow diagram and that no lifecycle or implementation sequence remains a dense text blob.
 
 Do not send private, proprietary, sensitive, PII, or company-internal material to an external service unless the user explicitly authorizes it.
