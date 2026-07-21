@@ -1,27 +1,62 @@
 # Support Project-Level Skill Extensions
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/support-project-level-skill-extensions.md
+Provider Reference: backlog/user-action-required/support-project-level-skill-extensions.md
 
 Completion: direct-main
 
-## Current Execution
+## Discovery Execution
 
-- Owner: Dev Orchestrator
+- Owner: Unowned
+- Claim: None
 - Canonical task: 019f85c8-62c2-71d0-bab4-861e863d03ed
 - Worktree: /Users/martinbechard/.codex/worktrees/9052/dev-methodology
 - Branch: codex/support-project-level-skill-extensions
 - Starting main: 2624b5b25ba6e5548051d7b9953933b1e57b3f87
-- Phase: Bounded schema, renderer, and exact governed-scope discovery.
+- Phase: Bounded schema, renderer, and exact governed-scope discovery completed; implementation is paused for path-specific approval.
 - Started: 2026-07-21
 - Running-record claim: start-project-skill-extensions-019f85c8, acquired event 294844ff-d66c-4452-bb44-9d6d1be019de.
-- Open issues: Exact governed-definition approval scope remains to be established from discovery evidence.
+- Open issues: The exact two-skill governed-definition scope requires the user answer below.
 - Accepted candidate: Pending.
+
+## User Action Required
+
+### Question For The User
+
+Do you approve changing exactly skills/create-project-configuration/SKILL.md and skills/development-methodology/SKILL.md, together with their supported generated skill mirrors and the directly related non-governed project template, renderer, focused validation and bundle tests, README, and skills-modularization design documentation, to implement backlog/feature-backlog/support-project-level-skill-extensions.md?
+
+### Why User Input Is Required
+
+The evidence-backed design requires changes to two governed skill definitions. Repository policy requires exact path-specific approval before mutation.
+
+### Options And Tradeoffs
+
+- Approve the exact two-skill scope: implement the ordered project-level extension mechanism and its directly related surfaces.
+- Narrow the scope by naming allowed paths: preserve excluded behavior as blocked follow-up work.
+- Defer: retain the discovery result without implementation.
+
+### Resolution
+
+Pending.
+
+### Unattended Work Boundary
+
+No governed or project mutation is authorized while this question is pending. Preserve the resolved ordered-list schema and root-only reference rendering contract.
+
+### Discovery Evidence
+
+- Canonical task: 019f85c8-62c2-71d0-bab4-861e863d03ed.
+- Clean branch/worktree: codex/support-project-level-skill-extensions at /Users/martinbechard/.codex/worktrees/9052/dev-methodology, based on 2624b5b25ba6e5548051d7b9953933b1e57b3f87.
+- Schema decision: one ordered project_skill_extensions list accepts bundled identifiers and explicit registered-skill mapping entries; normalized skill id controls duplicate, availability, unknown, and definition-owned conflict checks.
+- Rendering decision: one final Project Skill Extensions reference-only section is rendered in root AGENTS.md only; nested AGENTS.md files, technology loadouts, and workflow selectors remain independent.
+- Exact governed manifest: skills/create-project-configuration/SKILL.md and skills/development-methodology/SKILL.md.
+- Directly related non-governed surfaces: skills/development-methodology/assets/templates/project-template.yaml, scripts/render-agents-technology-skills.py, scripts/test_technology_detection.py, scripts/test_bundle_content.py, README.md, and design/skills-modularization.html.
+- UAR routing claim: route-project-skill-extensions-approval, acquired event bf5b9715-7427-4e1d-b290-1e865248ecfb.
 
 Creation Claim: capture-resource-coordination-dialogue-20260721
 
