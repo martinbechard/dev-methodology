@@ -2397,6 +2397,9 @@ class BundleContentTests(unittest.TestCase):
         for phrase in (
             "the next design layer must elaborate without redefining",
             "| Anchor | Anchor type | Authority | Owner and representation | Constraint for the next design layer |",
+            "cite the exact accepted artifact plus requirement ID or section",
+            "name or link the exact fields or state boundary",
+            "identify the downstream consumers that must reuse it",
             "they are not authorities",
             "Split anchors that have different owners or downstream constraints",
             "replace, append, clear, or recompute rules",
@@ -2406,6 +2409,8 @@ class BundleContentTests(unittest.TestCase):
 
         for phrase in (
             "a concrete anchor, its anchor type, its authority, its owner and representation",
+            "an exact accepted artifact plus requirement ID or section",
+            "a justified HLD proposition with its basis and decision owner",
             "the exact configuration contract and decision authority",
             "the fields or state boundary that must remain consistent",
             "replace, append, clear, reset, recompute, lifetime, or persistence rules",
