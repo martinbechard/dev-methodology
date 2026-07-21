@@ -1,22 +1,28 @@
 # Integrate Work-Item Routing Through Core-Only Agent Definitions
 
-Status: Holding
+Status: Blocked
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/holding/integrate-work-item-routing-through-core-only-agent-definitions.md
+Provider Reference: backlog/feature-backlog/integrate-work-item-routing-through-core-only-agent-definitions.md
 
 Completion: direct-main
 
-## Holding State
+## Blocked State
 
 - Previous canonical Dev Orchestrator task: 019f80f3-41d5-7481-910e-6f54d43083ae.
 - Previous worktree: /Users/martinbechard/.codex/worktrees/2c00/dev-methodology.
 - Previous branch: codex/integrate-work-item-contracts-across-bundle.
 - Previous starting main commit: 2ddedf5a83ca8567ac3de93867a3f90624a2e28c.
-- Phase: Holding after approval resolution because the accepted core-only routing design depends on simplify-project-configuration-setup-and-skill-routing.
+- Owner: Unowned.
+- Claim: None.
+- Phase: Blocked after approval resolution because the accepted core-only routing design depends on simplify-project-configuration-setup-and-skill-routing.
+- User approval: On 2026-07-21, in parent task 019f77f4-c4bd-7c91-b197-c987a7beb838, the user directed: "I approve the items in holding". The prior exact codex-workitem-coordination approval remains recorded below.
+- Unblock condition: backlog/feature-backlog/simplify-project-configuration-setup-and-skill-routing.md is integrated, verified, and archived as Completed on main.
+- Next action owner: Dev Backlog Coordinator.
+- Resumption: Reconcile the completed dependency, transition through Ready, acquire a new canonical Dev Orchestrator, and only then record Running.
 - Verification: focused provider, completion, selector, role, metadata, renderer, migration, stale-name, and evaluation checks first; then the item-required full repository, project-wiki, catalog, generated-adapter, disposable smoke, and install/refresh release gates.
 
 ## Resolved Approval

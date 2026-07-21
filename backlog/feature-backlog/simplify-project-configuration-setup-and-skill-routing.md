@@ -1,14 +1,21 @@
 # Simplify Project Configuration Setup And Skill Routing
 
-Status: Holding
+Status: Ready
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/holding/simplify-project-configuration-setup-and-skill-routing.md
+Provider Reference: backlog/feature-backlog/simplify-project-configuration-setup-and-skill-routing.md
 
 Completion: direct-main
+
+## Approval Resolution
+
+- On 2026-07-21, in parent backlog-coordination task 019f77f4-c4bd-7c91-b197-c987a7beb838, the user directed: "I approve the items in holding".
+- This approves the requested work item and moves it to Ready for bounded discovery, exact governed-path determination, and implementation of ordinary non-governed surfaces.
+- Repository policy still requires the Dev Orchestrator to identify every governed canonical definition path and obtain path-specific approval before mutating any governed definition not already covered by an exact recorded approval.
+- Approval transaction claim: approve-held-project-configuration-items, acquired event 5503ae8e-cd11-4567-978f-dc0e1d4e8475.
 
 ## Summary
 
@@ -42,9 +49,9 @@ The skill architecture must remain layered. Conceptual agent definitions own onl
 - Claim acquisition event: 6caa0b9c-0632-47ed-b6f9-cec29295af25.
 - Claim scope: repository-root backlog on the primary main worktree only.
 
-## Draft State
+## Ready State
 
-This item remains in Holding while its exact governed definition scope and final selector schema are reviewed. It must not be dispatched as unattended Ready work until the applicable skill and conceptual-agent definition paths receive explicit scope-specific approval under repository policy.
+The item is approved for dispatch. Begin with bounded discovery and record the exact governed definition scope and final selector schema. Do not mutate a governed skill or conceptual-agent definition until its exact path has scope-specific approval under repository policy.
 
 ## Requirements
 
