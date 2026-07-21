@@ -1,27 +1,39 @@
 # Replace Ambiguous Agent Claim Outcomes
 
-Status: Running
+Status: Completed
 
 Type: Defect
 
 Provider: file
 
-Provider Reference: backlog/defect-backlog/replace-ambiguous-agent-claim-outcomes.md
+Provider Reference: backlog/completed-backlog/defects/replace-ambiguous-agent-claim-outcomes.md
 
 Completion: direct-main
 
-## Current Execution
+## Completion Evidence
 
-- Owner: Dev Orchestrator
+- Owner: Dev Orchestrator, completed
 - Canonical task: 019f8635-04d8-76a3-a895-5b7c7aafb734
 - Worktree: /Users/martinbechard/.codex/worktrees/169b/dev-methodology
-- Branch: codex/replace-ambiguous-agent-claim-outcomes
+- Source branch: codex/replace-ambiguous-agent-claim-outcomes
+- Fresh integration branch: codex/replace-ambiguous-agent-claim-outcomes-integration
 - Starting main: 3749489f1fdab17d9055a2905ec5ed6185b33a93
-- Phase: Exact approval checks, bounded cross-repository implementation, independent review, and focused Tier 3 verification.
+- Phase: Completed after exact-path direct-main integration, paired repository parity delivery, focused post-main verification, released integration claims, and serialized provider archival.
 - Started: 2026-07-21
+- Completed: 2026-07-21
 - Running-record claim: start-ambiguous-outcomes-019f8635, acquired event 6567944e-5ec3-4b80-a7d0-3111acbbec38.
-- Open issues: None. Preserve the approved governed scope, append-only journal compatibility, and command/MCP parity.
-- Accepted candidate: Pending.
+- Accepted dev-methodology candidate: 20f1a47a86b14ee77f44a793c40728b0c9e3e510.
+- Accepted mcp-agent-ops candidate: f5b78eaebd0a5d8dff5a0797ab5b6d1c36263500.
+- Independent review: Dev Code Reviewer and Methodology Artifact Reviewer accepted the exact cumulative candidates after three focused correction cycles; the final test-only correction was separately accepted.
+- Independent verification: Dev Verifier accepted the exact candidates. Dev-methodology passed 63 claim tests, 9 coordinator tests, 4 steward tests, 3 selected MCP-evidence evaluation tests, the exact bundle capability assertion, skill validation, generated-skill freshness, compilation, headers, and diff integrity. mcp-agent-ops passed 85 focused CLI, service, MCP, and stdio tests, mypy across 26 source files, compilation, headers, and diff integrity.
+- Dev-methodology integration: source commits 5eef1267c517e6912a1a4b724a3ddc58372070bb, 38d517c8f3646b142532efd1521fd83bb4d95b54, e8ec4bca24fea2f7a476c672d7d0bb236af91428, and 20f1a47a86b14ee77f44a793c40728b0c9e3e510 were replayed with provenance as 218a2de, 3caa726, d154d2c, and f9987bf on fresh main 0cddb8de46b632c56a1c33ad8f0c5196effc7c52. Observed main is f9987bf67606c11796427d73742e663cc7329ee0.
+- mcp-agent-ops parity integration: source commits f778d24f36cd61692d916f9acdf4a12b5722bdaa, fa03f7ab09d672f0e7608c8f6c9df70408f67454, and f5b78eaebd0a5d8dff5a0797ab5b6d1c36263500 were replayed with provenance as 3e3dbc7, ba4551e, and 06962bf. Observed paired main is 06962bf261cf0a2846c7887c639a54776334fea3.
+- Post-main verification: dev-methodology claim tests 63 of 63 passed; the exact bundle capability assertion, skill validation, and build-skill-docs freshness passed. mcp-agent-ops focused claim tests 85 of 85 and mypy passed.
+- Integration claims: integrate-ambiguous-outcomes-019f8635-dev acquired event e373b74f-b135-4503-ba95-6eb2b0c17418 and released event 2bf7d00d-dca7-4c5e-a250-05e2943ad98a; integrate-ambiguous-outcomes-019f8635-mcp acquired event 5b8402a6-1447-4628-8b94-7c27bbaae2c0 and released event 0fa91247-c390-41bc-8589-b66427460707.
+- Terminal provider claim: complete-ambiguous-outcomes-019f8635, acquired event 0764cd79-8277-45f5-9c4b-adf5fdba4f8f.
+- Completion disposition: READY from complete-work-item-direct-main; lifecycle COMPLETED persisted by manage-file-work-items.
+- Baseline-only warnings: one unchanged lifecycle exact-string assertion is stale on both baseline and candidate; mcp-agent-ops retains the same 23 Ruff findings on baseline and integrated bytes; Python 3.11 was required for evaluator checks using tomllib and zip strict mode. The full agent catalog and campaign release suites were intentionally not run for this item.
+- Open issues: None.
 
 ## User Action Required
 
