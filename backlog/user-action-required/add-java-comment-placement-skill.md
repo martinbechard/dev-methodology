@@ -1,28 +1,69 @@
 # Add Java Comment Placement Skill
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/add-java-comment-placement-skill.md
+Provider Reference: backlog/user-action-required/add-java-comment-placement-skill.md
 
 Completion: direct-main
 
 ## Current Execution
 
-- Owner: Dev Orchestrator
-- Claim: None; private discovery and implementation do not require shared repository ownership.
+- Owner: Unowned
+- Claim: None
 - Canonical task: 019f86b4-9e20-76a1-b5cb-7618fce32e28
 - Worktree: /Users/martinbechard/.codex/worktrees/2682/dev-methodology
 - Branch: codex/add-java-comment-placement-skill
 - Starting main: 3539bf0445ccb9359b8403b5ef5af6558a85f4d3
-- Phase: Perform bounded source and routing discovery, determine the smallest exact governed-definition manifest, and route one consolidated approval question before governed mutation; if authorized, continue through focused implementation, independent review, verification, integration, and separate completion.
+- Phase: Bounded source and routing discovery completed; implementation is paused at the exact governed-definition approval boundary below.
 - Started: 2026-07-21
 - Running-record claim: start-java-comment-placement-019f86b4, acquired event e78cc5c5-74bf-443f-9b79-23011788d47a.
-- Open issues: Exact governed-definition scope and path-specific approval remain to be established by bounded discovery.
+- Open issues: The exact three-path governed-definition scope requires the user's answer below.
 - Accepted candidate: Pending.
+
+## User Action Required
+
+### Question For The User
+
+Do you approve creating or changing exactly these three governed definition paths for the Java comment-placement item?
+
+1. skills/code-comments/SKILL.md
+2. skills/java-comment/SKILL.md
+3. skills/java-comment/agents/openai.yaml
+
+This approval also permits only their supported generated mirrors and directly related non-governed detection metadata, review checklists, tests and evaluations, README, and design documentation. No other governed definition is authorized.
+
+### Why User Input Is Required
+
+The work item requires two distributed skill definitions and one skill metadata definition. Repository policy requires explicit path-specific approval before any of those governed sources can be created or changed.
+
+### Options And Tradeoffs
+
+- Approve the exact three-path scope: implement the requested Java placement refinement and its supported dependent surfaces.
+- Narrow the scope by naming allowed paths: preserve excluded behavior as blocked follow-up work.
+- Defer: retain the completed discovery without implementation.
+
+### Resolution
+
+Pending.
+
+### Unattended Work Boundary
+
+No governed or project mutation is authorized while this question is pending. Preserve the evidence-backed selection through java-comment detection metadata and do not change the existing java skill definitions.
+
+### Discovery Evidence
+
+- Discovery task: 019f86b4-9e20-76a1-b5cb-7618fce32e28.
+- Exact governed manifest: skills/code-comments/SKILL.md, skills/java-comment/SKILL.md, and skills/java-comment/agents/openai.yaml.
+- No change is required to skills/java/SKILL.md or skills/java/agents/openai.yaml.
+- Java selection is owned by ordinary skills/java-comment/detection.yaml using .java activation, parallel to the existing Java detection metadata.
+- code-comments remains definition-owned by Dev Coder and Dev Code Reviewer; java-comment is setup-detected for Java folder scopes so both contracts apply.
+- Directly related ordinary scope: the two review checklists, detection metadata, focused detection/bundle/evaluation coverage, README, relevant design documentation, and generated technology registry/detector outputs.
+- Supported mirrors must be regenerated from approved skill sources; generated files must not be hand-edited.
+- UAR routing claim: route-java-comment-approval-019f86b4, acquired event 18214d2e-c045-4a60-b25f-808da470d053.
 
 Creation Claim: create-java-comment-skill-019f86a3
 
