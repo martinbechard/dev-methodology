@@ -1,6 +1,6 @@
 # Configure Agent Claim Transport Adapters
 
-Status: Blocked
+Status: Running
 
 Type: Feature
 
@@ -12,16 +12,16 @@ Completion: direct-main
 
 ## Current Execution
 
-- Owner: Unowned
-- Claim: None
-- Canonical task: 019f86a0-9f68-75c2-a7d1-8624d7dd83c6
-- Worktree: /Users/martinbechard/.codex/worktrees/8c2f/dev-methodology
-- Branch: codex/configure-agent-claim-transport-adapters
-- Starting main: 723fdedc8f5002a3a0c08d48ee39e6c52b945cb9
-- Phase: Accepted and independently reviewed candidate is preserved; integration stopped after the bounded retry window because an active project-configuration correction owns overlapping main paths and generated resources.
+- Owner: Dev Orchestrator
+- Claim: None; the exact Running-record transaction is released after this committed transition, and artifact ownership must be acquired separately before integration.
+- Canonical task: 019f870e-5de9-7730-a8ca-658250ba8b24
+- Worktree: /Users/martinbechard/.codex/worktrees/87f4/dev-methodology
+- Branch: codex/configure-agent-claim-transport-adapters-reconcile-019f870e
+- Starting main: 71771f33507ab1e4aa529c07cb2f581f5384874d
+- Phase: Reconcile the preserved independently accepted candidate 1b276dc63b1901b98c1731b695348f8c11b9be1f onto fresh current main, preserve current-main contracts, integrate only the accepted transport-adapter scope, run focused post-integration verification, and complete the backlog item separately.
 - Started: 2026-07-21
 - Running-record claim: start-claim-transport-adapters-019f86a0, acquired event cc4e4dbb-24bb-4750-b99d-bc61968ff342.
-- Open issues: Integration claim is blocked by live claim simplify-project-config-impl-019f86b1 owned by task 019f86b1-e0e5-7fc2-8fd2-d4e2391c7193. That owner is actively preserving a final bounded correction and must release normally before resumption.
+- Open issues: None. Do not replay or import the rejected simplify-project-configuration candidate.
 - Accepted candidate: 1b276dc63b1901b98c1731b695348f8c11b9be1f, independently ACCEPTED and VERIFIED-WARN with only two unrelated pre-existing Wiki Ingester warnings.
 - Integration wait started: 2026-07-21T22:52:00Z.
 - Claim attempts: 7 total at initial, 5, 10, 15, 20, 25, and 30 minutes.
@@ -30,6 +30,15 @@ Completion: direct-main
 - Unblock condition: simplify-project-config-impl-019f86b1 releases normally after its correction is committed or safely handed off, and fresh-main reconciliation confirms the accepted transport contract can be integrated without discarding either contribution.
 - Resumption: Preserve these exact Blocked bytes until the unblock condition is satisfied; then transition through Ready, acquire new exclusive ownership, record the new owner, and only then set Running.
 - Blocked-handoff claim: block-claim-transport-integration-019f86a0, acquired event 0580f671-8d86-4c5b-9fc7-89f48b0f4231.
+
+## Resumption Evidence
+
+- Pre-attempt Blocked state: commit c9b29931f3b4c316f63ecff93264b5b412361ea0, blob 429e9a534ab8c230737e48373bb81e98a1072a07, Status Blocked, Owner Unowned, Claim None.
+- Unblock evidence: simplify-project-config-impl-019f86b1 released cleanly at event a9a6193b-3784-4fc3-a59b-5dfe0adcbe6a, and its separate Blocked lifecycle transaction committed as 71771f33507ab1e4aa529c07cb2f581f5384874d and released at event f7b82231-19ae-41e7-833c-c36fd10ee41d.
+- Failed resumption attempt: event 49c4b151-363c-4859-a33f-22c39497fa3b returned SHARED_CHECKOUT_RELEASE_REQUIRED while the simplify lifecycle transaction held the shared checkout; the exact Blocked bytes were preserved and no owner was inferred.
+- Eligibility transition: the released blocker satisfied the recorded unblock condition, making this item Ready for a fresh owner before the successful acquisition below.
+- Successful new ownership: resume-claim-transport-019f870e acquired the exact backlog file at event 7c834eac-ec6f-4efc-8af2-7da1a098f7ac; only after that acquisition were the new Dev Orchestrator owner and Status Running recorded.
+- Preserved delivery evidence: accepted candidate 1b276dc63b1901b98c1731b695348f8c11b9be1f remains durable on codex/configure-agent-claim-transport-adapters and must be reconciled rather than reimplemented.
 
 ## User Action Required
 
