@@ -1,6 +1,6 @@
 # Simplify Project Configuration Setup And Skill Routing
 
-Status: Ready
+Status: Running
 
 Type: Feature
 
@@ -10,17 +10,17 @@ Provider Reference: backlog/feature-backlog/simplify-project-configuration-setup
 
 Completion: direct-main
 
-## Discovery Execution
+## Current Execution
 
-- Owner: Unowned
-- Claim: None
-- Canonical task: 019f85cc-cb4e-7422-af62-438048aa9b89
-- Worktree: Removed after clean bounded discovery.
-- Branch: Removed after clean bounded discovery.
-- Starting main: df696249845d21d812cd752b9faa54d4d706d0da
-- Phase: Bounded selector/schema, installation-mode, renderer, and exact governed-scope discovery completed; exact approval is recorded and the item is ready for fresh dispatch.
+- Owner: Dev Orchestrator
+- Claim: None; private implementation and review do not require shared repository ownership.
+- Canonical task: 019f86b1-e0e5-7fc2-8fd2-d4e2391c7193
+- Worktree: /Users/martinbechard/.codex/worktrees/6445/dev-methodology
+- Branch: codex/simplify-project-configuration-setup-and-skill-routing
+- Starting main: 351799b174362ca418cf167ecae6ef3a20dbebff
+- Phase: Run the seven exact approval checks; implement the bounded setup, selector, delivery-mode, documentation-boundary, renderer, and migration contract; obtain fresh independent review and focused verification; then integrate from fresh current main and complete the item separately.
 - Started: 2026-07-21
-- Running-record claim: start-project-configuration-simplification-019f85cc, acquired event 3f714ce6-be15-4aa2-b651-8873fc1ba056.
+- Running-record claim: start-simplify-project-config-019f86b1, acquired event 3d804405-ef17-42aa-b1f2-24d0b0edde33.
 - Open issues: None. Implementation must remain within the exact seven-path governed-definition scope below.
 - Accepted candidate: Pending.
 
