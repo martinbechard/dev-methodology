@@ -9,6 +9,10 @@ metadata:
 
 Use this skill to review a functional specification artifact created from the methodology templates. A functional specification should describe observable behavior from the actor's point of view and link the code and tests that support it.
 
+For planned development, review the artifact as behavior design, not only as a transcription of upstream notes. Accept undefined actor-visible details as justified functional propositions when they are compatible with authoritative constraints and state basis, necessity, and decision ownership. Treat unlabeled, contradictory, or unjustified assertions as findings.
+
+Review whether the specification prevents chaos in architecture and design by giving downstream authors one coherent actor-visible contract. Avoidable open questions, ambiguous shorthand, and gaps that force separate designers to invent actors, operations, inputs, states, errors, recovery, persistence outcomes, or acceptance behavior are findings.
+
 ## Required Inputs
 
 - The functional specification under review.
@@ -19,7 +23,7 @@ For the functional-specification current reverse-engineering pass, accepted arch
 
 ## Workflow
 
-1. Read the artifact and identify the actor, workflow, surfaces, states, documentation acceptance, implementation readiness, and verification claims.
+1. Read the artifact and identify the actor, workflow, operation inventory, surfaces, inputs, permissions, validation, states, ordering, visible outcomes, errors, recovery, persistence outcomes, justified propositions, residual open questions, acceptance scenarios, documentation acceptance, implementation readiness, and verification claims.
 2. Read references/review-checklist-functional-spec.md.
 3. Complete every applicable checklist question with status, quoted evidence, and assessment.
 4. Save the completed review checklist next to the artifact using this form: artifact-name.review-checklist-functional-spec.md.

@@ -2209,6 +2209,126 @@ class BundleContentTests(unittest.TestCase):
         ):
             self.assertIn(phrase, module_template)
 
+    def test_forward_document_design_prevents_downstream_coordination_chaos(self) -> None:
+        """Planned document levels must close resolvable gaps for their consumers."""
+        cases = {
+            "functional-spec": {
+                "create": "create-functional-spec",
+                "review": "review-functional-spec",
+                "checklist": "review-checklist-functional-spec.md",
+                "create_phrases": (
+                    "avoid chaos in architecture and design",
+                    "justified functional proposition",
+                    "basis, why it is necessary",
+                    "stable operation identity",
+                    "Unicode ellipsis",
+                ),
+                "review_phrases": (
+                    "prevents chaos in architecture and design",
+                    "justified functional propositions",
+                    "Avoidable open questions",
+                ),
+                "checklist_phrases": (
+                    "one coherent actor-visible contract",
+                    "role that owns or may revise it",
+                    "catch-all wording",
+                ),
+            },
+            "architecture": {
+                "create": "create-architecture",
+                "review": "review-architecture",
+                "checklist": "review-checklist-architecture.md",
+                "create_phrases": (
+                    "avoid chaos in high-level designs",
+                    "justified architecture proposition",
+                    "system-frame ledger",
+                    "complete repository-relative paths",
+                    "Unicode ellipsis",
+                ),
+                "review_phrases": (
+                    "prevents chaos in high-level designs",
+                    "justified propositions",
+                    "incomplete paths",
+                ),
+                "checklist_phrases": (
+                    "one coherent system frame",
+                    "system-frame ledger",
+                    "complete repository-relative",
+                ),
+            },
+            "high-level-design": {
+                "create": "create-high-level-design",
+                "review": "review-high-level-design",
+                "checklist": "review-checklist-high-level-design.md",
+                "create_phrases": (
+                    "avoid chaos at the next level of detail",
+                    "Precise artifact placement",
+                    "artifact-placement ledger",
+                    "complete package or module name",
+                    "Unicode ellipsis",
+                ),
+                "review_phrases": (
+                    "prevents chaos at the next level of detail",
+                    "justified HLD proposition",
+                    "precise artifact placement",
+                ),
+                "checklist_phrases": (
+                    "one consistent coordination frame",
+                    "artifact-placement ledger",
+                    "without interpretation",
+                ),
+            },
+            "module-design": {
+                "create": "create-module-design",
+                "review": "review-module-design",
+                "checklist": "review-checklist-module-design.md",
+                "create_phrases": (
+                    "avoid chaos in implementation",
+                    "justified module proposition",
+                    "implementation-placement and symbol ledger",
+                    "complete package or module names",
+                    "Unicode ellipsis",
+                ),
+                "review_phrases": (
+                    "prevents chaos in implementation",
+                    "justified module propositions",
+                    "incomplete signatures",
+                ),
+                "checklist_phrases": (
+                    "one directly usable frame",
+                    "implementation-placement and symbol ledger",
+                    "method signatures",
+                ),
+            },
+        }
+
+        for level, case in cases.items():
+            with self.subTest(level=level):
+                create_text = (SKILLS_ROOT / case["create"] / "SKILL.md").read_text(
+                    encoding="utf-8"
+                )
+                review_text = (SKILLS_ROOT / case["review"] / "SKILL.md").read_text(
+                    encoding="utf-8"
+                )
+                checklist_text = (
+                    SKILLS_ROOT
+                    / case["review"]
+                    / "references"
+                    / case["checklist"]
+                ).read_text(encoding="utf-8")
+
+                for phrase in case["create_phrases"]:
+                    self.assertIn(phrase, create_text)
+                for phrase in case["review_phrases"]:
+                    self.assertIn(phrase, review_text)
+                for phrase in case["checklist_phrases"]:
+                    self.assertIn(phrase, checklist_text)
+
+        module_create = (SKILLS_ROOT / "create-module-design" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        self.assertNotIn("Do not invent paths.", module_create)
+
     def test_forward_design_closes_supporting_operation_inventories(self) -> None:
         """Keep supporting APIs from disappearing between functional and design levels."""
         functional_create = (SKILLS_ROOT / "create-functional-spec" / "SKILL.md").read_text(

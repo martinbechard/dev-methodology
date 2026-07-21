@@ -9,6 +9,8 @@ metadata:
 
 Use this skill to create or substantially rewrite one architecture artifact. The artifact explains a whole system, project-wide boundary, or cross-cutting concern without duplicating every module detail.
 
+For planned development, treat architecture as solution design rather than only a summary of upstream decisions. Make reasonable, explicitly labeled justified architecture propositions for undefined but resolvable technology, boundary, ownership, topology, or file-organization choices. State each proposition's basis, why it is necessary to complete the system frame or unblock HLD work, and the role that owns or may revise it. Do not present propositions as accepted requirements.
+
 ## Template
 
 Use skills/development-methodology/assets/templates/architecture-template.md as the starting asset.
@@ -16,6 +18,10 @@ Use skills/development-methodology/assets/templates/architecture-template.md as 
 Copy the template only when a local editable artifact is needed. Replace every TODO instruction with source-backed content from the target repository.
 
 ## Scope
+
+A central goal of architecture is to avoid chaos in high-level designs. Establish one shared system frame for runtime units, subsystem and component vocabulary, technology choices, repository roots, documentation homes, layers, ownership, dependency direction, data authority, integrations and trust boundaries, configuration ownership, lifecycle, and implementation sequence.
+
+Build a system-frame ledger that maps each runtime unit, subsystem, layer, data owner, integration boundary, configuration owner, and documentation family to a stable name, responsibility, allowed dependencies, and complete repository-relative paths and roots where applicable. Architecture-owned paths and names must be literal and directly usable: reject `...`, a Unicode ellipsis, wildcards, omitted intermediate directories, abbreviated names, `TBD`, and similar placeholders. When sources do not define a needed choice, select a coherent proposition rather than forcing separate HLD authors to invent conflicting answers.
 
 Create one architecture artifact that defines:
 
@@ -67,5 +73,7 @@ Before finishing:
 5. Confirm every architectural claim names source evidence, a verification path, or an open question.
 6. Confirm Documentation Acceptance begins with ACCEPTED or BLOCKED and judges only source evidence, accepted HLD prerequisites, and current reverse-engineering pass requirements.
 7. Confirm Implementation Readiness begins with READY or BLOCKED as a separate downstream decision and does not turn an accurately documented defect or open decision into an automatic documentation failure.
+8. Confirm every justified architecture proposition states basis, necessity, and decision owner and that no resolvable system-frame gap remains open.
+9. Confirm complete repository-relative source, test, configuration, resource, migration, generated, script, runtime-data, and documentation roots are explicit and contain no placeholder segments.
 
 Do not send private, proprietary, sensitive, PII, or company-internal material to an external service unless the user explicitly authorizes it.

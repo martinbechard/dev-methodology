@@ -38,8 +38,12 @@ Do not mark pass without quoted evidence.
 ## Artifact-Specific Questions
 
 - Question: Does System Purpose And Scope define what the system is and what it excludes?
+- Question: Does the architecture prevent chaos in high-level designs by giving them one coherent system frame for runtime units, subsystem vocabulary, stack, repository roots, documentation homes, ownership, layers, dependency direction, data authority, integrations, trust boundaries, configuration, lifecycle, and implementation sequence?
+- Question: Are undefined but resolvable architecture choices classified as justified architecture propositions with basis, necessity, and decision owner rather than avoidable open questions?
+- Question: Does a system-frame ledger map each runtime unit, subsystem, layer, data owner, integration boundary, configuration owner, and documentation family to one stable name, responsibility, allowed dependencies, and complete repository-relative roots where applicable?
 - Question: Do Runtime Assumptions identify technology stack, runtime environment, deployment assumptions, and key configuration?
-- Question: Does File Organization name important source paths, test paths, generated artifacts, and ownership boundaries?
+- Question: Does File Organization name complete repository-relative source, test, configuration, resource, migration, generated, script, runtime-data, and documentation roots plus their ownership boundaries?
+- Question: Are architecture-owned paths and names literal and directly usable, without `...`, Unicode ellipsis, wildcards, omitted intermediate directories, abbreviated names, `TBD`, or similar placeholders?
 - Question: Do Major Layers And Dependency Direction explain which layers may call which other layers?
 - Question: Do Major Components And Ownership identify durable components and their responsibilities?
 - Question: Does Data Flow And Lifecycle explain data movement, persistence, state transitions, startup, shutdown, and external handoffs when applicable?
@@ -51,4 +55,4 @@ Do not mark pass without quoted evidence.
 
 ## Findings
 
-Report findings first. Treat missing boundaries, unsourced stack claims, unclear dependency direction, missing ownership, unsupported cross-cutting rules, and missing verification as review findings.
+Report findings first. Treat missing boundaries, unlabeled or unjustified propositions, avoidable open questions, conflicting system frames, incomplete or placeholder paths, unstable component vocabulary, unsourced stack claims, unclear dependency direction, missing ownership, unclear data or configuration authority, unsupported cross-cutting rules, HLD coordination ambiguity, and missing verification as review findings.

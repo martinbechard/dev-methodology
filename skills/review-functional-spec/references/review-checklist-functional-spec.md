@@ -38,6 +38,11 @@ Do not mark pass without quoted evidence.
 ## Artifact-Specific Questions
 
 - Question: Does User Or Actor Goal name the actor and the outcome they need?
+- Question: Does the specification prevent chaos in architecture and design by giving downstream authors one coherent actor-visible contract for actors, operations, entry points, inputs, permissions, validation, states, ordering, visible results, errors, recovery, persistence outcomes, and acceptance scenarios?
+- Question: Are details not established by authoritative inputs classified as justified functional propositions or open questions rather than presented as accepted requirements?
+- Question: Does each justified functional proposition explain its supporting constraints or reasoning, why it is necessary to complete the workflow or unblock downstream design, and the role that owns or may revise it?
+- Question: Before leaving a resolvable actor-visible detail open, does the specification make a reasonable effort to propose practical behavior?
+- Question: Are exact actor-visible contracts free of `...`, Unicode ellipsis, wildcards, `TBD`, catch-all wording, unnamed variants, and omitted intermediate states?
 - Question: Do Parent Workflow And Entry Points identify where the workflow starts and how users reach it?
 - Question: Does Route Or Surface List cover relevant routes, screens, commands, APIs, notifications, or external surfaces?
 - Question: Does a primary and supporting operation inventory cover every route, API, command, event, job, notification, and supporting reference-data lookup directly invoked by the workflow, with actor and authentication source; authorization, ownership, tenancy, and data filtering; selector, request, paging, and sort; response projection, disclosure, status, and error; state or side effects; and verification?
@@ -54,4 +59,4 @@ Do not mark pass without quoted evidence.
 
 ## Findings
 
-Report findings first. Treat missing actor goal, missing entry points, missing acceptance behavior, missing state or permission coverage, unsourced workflow claims, and missing verification as review findings.
+Report findings first. Treat missing actor goal, missing entry points, missing acceptance behavior, missing state or permission coverage, unlabeled or unjustified propositions, avoidable open questions, ambiguous shorthand, downstream behavior ambiguity, unsourced workflow claims, and missing verification as review findings.

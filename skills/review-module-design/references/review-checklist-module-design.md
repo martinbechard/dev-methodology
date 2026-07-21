@@ -19,7 +19,7 @@ Do not mark pass without quoted evidence.
 
 - Question: Before semantic review, do the artifact's ordered level-two headings match every module design template heading exactly, with no missing, renamed, duplicated, merged, or reordered heading?
 - Question: Does the first nonblank content under Documentation Acceptance begin with ACCEPTED or BLOCKED, and does the first nonblank content under Implementation Readiness begin with READY or BLOCKED, before any explanatory prose?
-- Question: Does the review identify runtime path, responsibility, callers, dependencies, contracts, internal state, processing rules, error handling, and verification claims before assessment?
+- Question: Does the review identify runtime path, implementation-placement and symbol ledger, responsibility, callers, dependencies, contracts, justified module propositions, internal state, processing rules, error handling, and verification claims before assessment?
 - Question: Does the completed review checklist name this checklist as review-checklist-module-design.md?
 - Question: Does the completed review checklist save next to the artifact using artifact-name.review-checklist-module-design.md?
 - Question: Does the review use documentation-page-verify with the artifact, source evidence, and completed review checklist?
@@ -81,6 +81,10 @@ Do not mark pass without quoted evidence.
 ## Artifact-Specific Questions
 
 - Question: Does Runtime Path name the module's project-relative runtime path and identify its entry point when the module is a folder?
+- Question: Does the design prevent implementation chaos by giving implementers and test authors one directly usable frame for owned artifacts, namespaces, symbols, contracts, configuration, errors, and verification?
+- Question: Does an implementation-placement and symbol ledger enumerate every owned source, test, configuration, resource, migration, generated, fixture, and script artifact with its complete repository-relative path, namespace, declared symbols, and responsibility?
+- Question: Are repository-relative paths, package or module names, type names, method signatures, field types and requiredness, configuration keys and defaults, error or result variants, and test targets literal and complete, without `...`, a Unicode ellipsis, wildcards, omitted directories, abbreviated package segments, `TBD`, placeholder type parameters, or similar shorthand?
+- Question: Does every planned module-internal choice not already fixed upstream appear as a justified proposition with its basis, necessity, and decision owner, while actor-visible and cross-module contracts remain governed by parent artifacts?
 - Question: Does Parent Context explain the subsystem, architecture, feature, or workflow that owns the module?
 - Question: Are Responsibilities coherent, bounded, and not a mixed list of unrelated work?
 - Question: Do Callers and Dependencies identify direct callers, imported dependencies, external systems, generated artifacts, and test seams?
@@ -95,4 +99,4 @@ Do not mark pass without quoted evidence.
 
 ## Findings
 
-Report findings first in separate Response Adequacy, Identity And Security, and Other Contract Or Evidence groups. Treat unaccounted requirements, unsupported specificity, hidden omissions, missing runtime path, broad or mixed responsibilities, missing callers, vague contracts, unresolved selector conflicts, collapsed authentication and authorization claims, unclear disclosure or validation ownership, incomplete error timing, unsafe sensitive logging, false readiness, unsourced processing rules, and missing verification as review findings.
+Report findings first in separate Response Adequacy, Identity And Security, and Other Contract Or Evidence groups. Treat unaccounted requirements, unsupported specificity, hidden omissions, missing runtime path, implementation-placement or symbol gaps, incomplete paths or namespaces, placeholder shorthand, unjustified internal decisions, unresolved avoidable questions, broad or mixed responsibilities, missing callers, vague contracts, unresolved selector conflicts, collapsed authentication and authorization claims, unclear disclosure or validation ownership, incomplete error timing, unsafe sensitive logging, false readiness, unsourced processing rules, and missing verification as review findings.

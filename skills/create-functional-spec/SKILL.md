@@ -9,6 +9,8 @@ metadata:
 
 Use this skill to create or substantially rewrite one functional specification artifact. The artifact describes observable behavior from the actor's point of view and links the code, tests, and source material that define the behavior.
 
+For planned development, treat the functional specification as behavior design rather than only a restatement of upstream notes. Make reasonable, explicitly labeled justified functional propositions for undefined but resolvable actor-visible behavior. State each proposition's basis, why it is necessary to complete the workflow or unblock downstream design, and the role that owns or may revise it. Do not present propositions as accepted requirements.
+
 ## Template
 
 Use skills/development-methodology/assets/templates/functional-spec-template.md as the starting asset.
@@ -16,6 +18,10 @@ Use skills/development-methodology/assets/templates/functional-spec-template.md 
 Copy the template only when a local editable artifact is needed. Replace every TODO instruction with source-backed content from the target repository.
 
 ## Scope
+
+A central goal of the functional specification is to avoid chaos in architecture and design. Give downstream authors one coherent actor-visible contract for actor vocabulary, stable operation identity, entry points, inputs and requiredness, permissions, validation, states, ordering, visible results, errors, recovery, persistence outcomes, and acceptance scenarios. Do not leave separate architecture or design authors to invent incompatible behavior.
+
+Use authoritative constraints, project directives, product conventions, usability principles, and practical judgment to propose missing behavior. Reserve Open Questions for genuine conflicts or decisions that cannot be resolved satisfactorily within functional-specification authority. Where an exact actor-visible contract is required, reject `...`, a Unicode ellipsis, wildcards, `TBD`, catch-all wording, unnamed variants, and omitted intermediate states. Keep implementation paths and package structures in architecture and design documents.
 
 Create one functional specification that defines:
 
@@ -67,5 +73,7 @@ Before finishing:
 6. Reconcile every primary and supporting operation inventory row with Entry Points, Workflows, States And Rules, Edge Cases, and Verification. Do not omit a supporting operation merely because its most specific filter, projection, paging, or error detail remains open.
 7. Confirm Documentation Acceptance begins with ACCEPTED or BLOCKED and judges source evidence, accepted design prerequisites, and current reverse-engineering pass requirements without requiring intentionally absent wiki pages.
 8. Confirm Implementation Readiness begins with READY or BLOCKED as a separate downstream decision and preserves known defects, unimplemented behavior, open decisions, and current limitations.
+9. Confirm every undefined but resolvable actor-visible detail is covered by a justified functional proposition with basis, necessity, and decision owner rather than an avoidable open question.
+10. Confirm exact actors, operation identities, inputs, states, statuses, outcomes, and acceptance scenarios contain no ellipsis, wildcard, `TBD`, catch-all wording, unnamed variant, or omitted intermediate state that would force downstream invention.
 
 Do not send private, proprietary, sensitive, PII, or company-internal material to an external service unless the user explicitly authorizes it.
