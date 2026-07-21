@@ -2378,6 +2378,40 @@ class BundleContentTests(unittest.TestCase):
         ):
             self.assertIn(phrase, checklist_text)
 
+    def test_hld_data_anchors_are_actionable_for_downstream_design(self) -> None:
+        """Keep HLD anchors concrete, owned, and reusable by later designs."""
+        template_text = (
+            SKILLS_ROOT
+            / "development-methodology"
+            / "assets"
+            / "templates"
+            / "high-level-design-template.md"
+        ).read_text(encoding="utf-8")
+        checklist_text = (
+            SKILLS_ROOT
+            / "review-high-level-design"
+            / "references"
+            / "review-checklist-high-level-design.md"
+        ).read_text(encoding="utf-8")
+
+        for phrase in (
+            "the next design layer must elaborate without redefining",
+            "| Anchor | Anchor type | Authority | Owner and representation | Constraint for the next design layer |",
+            "they are not authorities",
+            "Split anchors that have different owners or downstream constraints",
+            "replace, append, clear, or recompute rules",
+            "lifetime, reset, failure-preservation, and persistence restrictions",
+        ):
+            self.assertIn(phrase, template_text)
+
+        for phrase in (
+            "a concrete anchor, its anchor type, its authority, its owner and representation",
+            "the exact configuration contract and decision authority",
+            "the fields or state boundary that must remain consistent",
+            "replace, append, clear, reset, recompute, lifetime, or persistence rules",
+        ):
+            self.assertIn(phrase, checklist_text)
+
     def test_forward_design_closes_supporting_operation_inventories(self) -> None:
         """Keep supporting APIs from disappearing between functional and design levels."""
         functional_create = (SKILLS_ROOT / "create-functional-spec" / "SKILL.md").read_text(
