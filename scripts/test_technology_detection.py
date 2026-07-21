@@ -127,12 +127,26 @@ def explicit_user_approval(path: str) -> dict[str, object]:
 
 
 def with_unset_workflows(value: dict[str, object]) -> dict[str, object]:
-    """Add explicit deferred provider and completion selectors to one renderer fixture."""
+    """Add one verified claim transport and explicit deferred workflow selectors."""
 
     return {
+        **with_claim_transport({}),
         "workflow_selection": {
             "provider": {"default": "UNSET"},
             "completion": {"default": "UNSET"},
+        },
+        **value,
+    }
+
+
+def with_claim_transport(value: dict[str, object]) -> dict[str, object]:
+    """Add one available command adapter selection to a renderer fixture."""
+
+    return {
+        "agent_claim_transport": {
+            "selected": "command",
+            "availability": "AVAILABLE",
+            "verification": ["bundled command fixture"],
         },
         **value,
     }
@@ -1415,7 +1429,14 @@ class TechnologyDetectionTests(unittest.TestCase):
             self.assertIn("Do not rerun detection during ordinary work", completed.stdout)
             self.assertIn("most-specific matching pattern wins", completed.stdout)
             self.assertNotIn("Agent Claims And Worktrees", completed.stdout)
-            self.assertNotIn("agent-claim", completed.stdout)
+            self.assertIn(
+                "BEGIN INLINED CLAIM TRANSPORT SKILL: agent-claim-command",
+                completed.stdout,
+            )
+            self.assertNotIn(
+                "BEGIN INLINED CLAIM TRANSPORT SKILL: agent-claim-mcp",
+                completed.stdout,
+            )
 
     def test_agents_section_preserves_scalar_source_evidence_verbatim(self) -> None:
         renderer = load_renderer_module()
@@ -1689,7 +1710,7 @@ class TechnologyDetectionTests(unittest.TestCase):
 
     def test_agents_section_accepts_boundary_provider_overrides_without_inference(self) -> None:
         renderer = load_renderer_module()
-        rendered = renderer.render({
+        rendered = renderer.render(with_claim_transport({
             "workflow_selection": {
                 "provider": {
                     "default": "file",
@@ -1702,7 +1723,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 },
                 "completion": {"default": "direct-main"},
             },
-        })
+        }))
 
         self.assertIn("interactive/** provider none: no durable provider skill", rendered)
         self.assertIn("deferred/** provider UNSET: the pertinent agent asks", rendered)
@@ -1731,13 +1752,13 @@ class TechnologyDetectionTests(unittest.TestCase):
         for provider, expected_provider in provider_guidance.items():
             for completion, expected_completion in completion_guidance.items():
                 with self.subTest(provider=provider, completion=completion):
-                    rendered = renderer.render({
+                    rendered = renderer.render(with_claim_transport({
                         "workflow_selection": {
                             "provider": {"default": provider},
                             "completion": {"default": completion},
                         },
                         "technology_skill_loadouts": [],
-                    })
+                    }))
 
                     self.assertIn("## Work-Item Workflow Skill References", rendered)
                     self.assertIn(expected_provider, rendered)
@@ -1747,7 +1768,7 @@ class TechnologyDetectionTests(unittest.TestCase):
 
     def test_agents_section_resolves_provider_and_completion_overrides_independently(self) -> None:
         renderer = load_renderer_module()
-        rendered = renderer.render({
+        rendered = renderer.render(with_claim_transport({
             "workflow_selection": {
                 "provider": {
                     "default": "file",
@@ -1765,7 +1786,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 },
             },
             "technology_skill_loadouts": [],
-        })
+        }))
 
         self.assertIn(
             "Default provider file: create with create-file-work-item; manage with manage-file-work-items.",
@@ -1787,24 +1808,24 @@ class TechnologyDetectionTests(unittest.TestCase):
 
     def test_agents_section_preserves_none_unset_and_unsupported_boundaries(self) -> None:
         renderer = load_renderer_module()
-        none_rendered = renderer.render({
+        none_rendered = renderer.render(with_claim_transport({
             "workflow_selection": {
                 "provider": {"default": "none"},
                 "completion": {"default": "feature-branch"},
             },
-        })
-        unset_rendered = renderer.render({
+        }))
+        unset_rendered = renderer.render(with_claim_transport({
             "workflow_selection": {
                 "provider": {"default": "UNSET"},
                 "completion": {"default": "UNSET"},
             },
-        })
-        placeholder_rendered = renderer.render({
+        }))
+        placeholder_rendered = renderer.render(with_claim_transport({
             "workflow_selection": {
                 "provider": {"default": "azure-devops"},
                 "completion": {"default": "direct-main"},
             },
-        })
+        }))
 
         self.assertIn(
             "Default provider none: no durable provider skill; durable create and manage operations are invalid.",
@@ -1819,7 +1840,7 @@ class TechnologyDetectionTests(unittest.TestCase):
 
     def test_agents_section_keeps_workflow_references_distinct_from_inlined_technology(self) -> None:
         renderer = load_renderer_module()
-        rendered = renderer.render({
+        rendered = renderer.render(with_claim_transport({
             "workflow_selection": {
                 "provider": {"default": "github"},
                 "completion": {"default": "feature-branch"},
@@ -1828,7 +1849,7 @@ class TechnologyDetectionTests(unittest.TestCase):
                 "pathPattern": "services/**",
                 "skills": ["python"],
             }],
-        })
+        }))
 
         self.assertIn("Workflow skills are referenced by name only and are never inlined", rendered)
         self.assertIn("## Technology Skills", rendered)
@@ -2297,7 +2318,7 @@ class TechnologyDetectionTests(unittest.TestCase):
             "selection_policy": "Maintainer-selected values are authoritative.",
         }
 
-        rendered = renderer.render({"workflow_selection": workflow_selection})
+        rendered = renderer.render(with_claim_transport({"workflow_selection": workflow_selection}))
 
         self.assertEqual("gitlab", workflow_selection["provider"]["default"])
         self.assertEqual("direct-main", workflow_selection["completion"]["default"])

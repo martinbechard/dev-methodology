@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Coordinates repository claims, scope extension, event journaling, archival, reporting, isolation, recovery, and release.
+# Summary: Implements the command transport for repository claims, scope extension, journaling, isolation, recovery, and release.
 
 from __future__ import annotations
 

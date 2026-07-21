@@ -3837,6 +3837,8 @@ class HarnessAndJudgeTests(unittest.TestCase):
             "claim_extend",
             "claim_heartbeat",
             "claim_release",
+            "claim_maintain_journal",
+            "claim_report",
             "skill_list",
             "skill_load",
             "skill_resource_load",
@@ -3847,13 +3849,14 @@ class HarnessAndJudgeTests(unittest.TestCase):
             "verify_markdown_links",
         ]
         self.assertEqual(expected_tools, contract["enabledTools"])
-        self.assertEqual("0.3.0", contract["requiredVersion"])
+        self.assertEqual(2, contract["claimResultSchemaVersion"])
+        self.assertEqual("0.4.0", contract["requiredVersion"])
         self.assertEqual(
-            "314a780796740e8e31c375af7e5a3b1f8446d7566b2732846f266fe1cca13aeb",
+            "b4abdd4054a3b6181d2cc48d4c9de6b4fbbc29eb6fd256e0427d861e2ae1620d",
             contract["requiredRuntimeDigest"],
         )
         self.assertEqual(
-            ["PRIMARY"],
+            ["SHARED_CHECKOUT_ACQUIRED"],
             contract["requiredToolOutcomes"]["claim_acquire"],
         )
         required = {
@@ -3875,7 +3878,11 @@ class HarnessAndJudgeTests(unittest.TestCase):
             ["skill-authoring", "maintain-methodology-documentation"],
             contract["mcpOnlySkills"],
         )
-        self.assertEqual(set(contract["enabledTools"]), required)
+        self.assertTrue(required.issubset(set(contract["enabledTools"])))
+        self.assertEqual(
+            {"claim_maintain_journal", "claim_report"},
+            set(contract["enabledTools"]) - required,
+        )
         self.assertEqual(
             [[
                 "skill_list",

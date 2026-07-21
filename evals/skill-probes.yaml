@@ -65,6 +65,34 @@ probes:
     executableCases: []
     coverageStatus: declared
     ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-agent-claim-mcp
+    skill: agent-claim-mcp
+    source: skills/agent-claim-mcp/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: workflow-invariant
+    activationCondition: PROJECT.yaml selects and verifies the MCP claim transport for a repository coordination operation.
+    negativeCondition: A project configured for the command transport does not load or probe the MCP adapter.
+    expectedBehavior: Invoke the exact configured claim tool, preserve exit_code and result.outcome, treat structured rejections as completed coordination results, and reconcile ambiguous mutation through claim_status on the same transport.
+    judgePlan: {deterministicChecks: [skill-read-trace, claim-lifecycle, required-command-outcome, allowed-paths-only], modelRubric: null}
+    scenarioAssociations: [project-configurator-happy]
+    workflowAssociations: [project-setup]
+    executableCases: [project-configuration-routing]
+    coverageStatus: fixture-backed
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
+  - id: probe-agent-claim-command
+    skill: agent-claim-command
+    source: skills/agent-claim-command/SKILL.md
+    evaluationCategory: development-practice
+    evaluationKind: workflow-invariant
+    activationCondition: PROJECT.yaml selects and verifies the bundled command claim transport for a repository coordination operation.
+    negativeCondition: A project configured for the MCP transport does not load or probe the command adapter.
+    expectedBehavior: Invoke the adapter-bundled command, preserve exit_code and result.outcome, treat structured rejections as completed coordination results, and reconcile ambiguous mutation through status on the same command path.
+    judgePlan: {deterministicChecks: [skill-read-trace, claim-lifecycle, required-command-outcome, allowed-paths-only], modelRubric: null}
+    scenarioAssociations: [project-configurator-happy]
+    workflowAssociations: [project-setup]
+    executableCases: [typescript-order-pricing, spring-boot-order-cancellation, documentation-functional-spec, wiki-raw-ingest, backlog-lifecycle]
+    coverageStatus: fixture-backed
+    ablation: {omitTargetSkill: true, wrongSkillControl: project-wiki-query}
   - id: probe-codex-workitem-coordination
     skill: codex-workitem-coordination
     source: skills/codex-workitem-coordination/SKILL.md

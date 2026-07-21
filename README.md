@@ -113,7 +113,7 @@ python3 scripts/build-skill-docs.py --check
 
 ## Agent Claims And Worktrees
 
-Every modifying agent uses agent-claim before changing repository files or exclusive runtime state. Claim acquisition is atomic and repository-global across linked Git worktrees.
+Every modifying agent uses the transport-neutral agent-claim contract before changing repository files or exclusive runtime state. Project Configurator verifies exactly one agent-claim-mcp or agent-claim-command adapter and renders only that adapter into project guidance. Runtime agents invoke the selected transport directly; they do not probe or fall back to the unused transport.
 
 - The first independent writer may claim a clean primary worktree.
 - A later non-overlapping writer receives a dedicated branch and a linked checkout under the primary worktree's .worktrees directory, using the claim id as its single directory name.
@@ -140,11 +140,19 @@ After a released isolated contribution is preserved on its branch or integrated 
 
 The live registry remains authoritative. Coordination outcomes also append to a repository-global event journal under the Git common directory. The default maintenance policy keeps today and yesterday as hot UTC JSON Lines files, archives older complete days losslessly, and writes compact daily summaries. Native reports use only that journal and the live registry; they do not parse agent transcripts.
 
-The bundled command implements primary, isolation, wait, recovery, extension, heartbeat, status, release, journal maintenance, and contention reporting:
+The command adapter owns the portable implementation of shared checkout, isolation, wait, recovery, extension, heartbeat, status, release, journal maintenance, and contention reporting:
 
 ```bash
-python3 skills/agent-claim/scripts/claim.py --help
+python3 skills/agent-claim-command/scripts/claim.py --help
 ```
+
+A standard Codex user-scope installation resolves that same adapter-owned command from the current shared skill root:
+
+```bash
+python3 "${HOME}/.agents/skills/agent-claim-command/scripts/claim.py" --help
+```
+
+Both adapters return the same structured outcomes. A configured transport that is unavailable produces CLAIM_TRANSPORT_UNAVAILABLE and requires Project Configurator reconfiguration. A structured rejection is coordination evidence, not permission to change transports. When mutating dispatch is ambiguous, reconcile status through the same configured adapter before continuing.
 
 Use project-files for an ordinary broad implementation claim, backlog for a short queue-state transition, and all-files only when both domains truly belong to one recovery or migration. Keep backlog lifecycle commits separate from long-running implementation claims.
 
@@ -228,9 +236,9 @@ python3 scripts/install-skills.py \
 
 ### Preferred MCP Operations Layer
 
-Codex and Junie can use mcp-agent-ops as the preferred deterministic interface for claims, skill catalog reads, technology detection, skill validation, YAML verification, and Markdown link checks. Claim operations use MCP only when the exposed claim tools advertise result schema version 2, its action-oriented outcomes such as SHARED_CHECKOUT_ACQUIRED, CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED, and ISOLATED_CHECKOUT_SETUP_REQUIRED, and the legacy_outcome compatibility alias. Otherwise the distributed claim script is selected before dispatch. A valid structured result such as CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED, BLOCKED, NO_VARIANT, a validation finding, or a path and authorization rejection is not a transport failure and must not be retried through a fallback.
+Codex and Junie can use mcp-agent-ops as the deterministic interface for claims, skill catalog reads, technology detection, skill validation, YAML verification, and Markdown link checks. During setup, Project Configurator may select agent-claim-mcp only after verifying the complete schema-version-2 claim tool surface and its action-oriented outcomes. The generated guidance then invokes those tools directly. It never probes agent-claim-command or changes transports after a valid result or dispatch failure.
 
-Install a verified mcp-agent-ops release whose claim tools advertise result schema version 2 before deploying MCP-backed claims with the Codex or Junie bundle. Published release 0.4.0 does not contain that claim-result contract and is not a valid minimum for MCP-backed schema version 2 claims; use the distributed claim fallback until a later verified release advertises the capability. Follow the companion project's [verified release installation procedure](https://github.com/martinbechard/mcp-agent-ops#install-the-latest-release), including checksum verification and the installed identity checks. The bundle installer does not install an external executable; it configures the already installed server during scoped Codex and Junie skill deployment.
+Install a verified mcp-agent-ops release whose claim tools advertise result schema version 2 before selecting MCP-backed claims with the Codex or Junie bundle. Published release 0.4.0 does not contain that claim-result contract and is not a valid MCP selection. Select the command adapter explicitly when the verified MCP surface is unavailable. Follow the companion project's [verified release installation procedure](https://github.com/martinbechard/mcp-agent-ops#install-the-latest-release), including checksum verification and installed identity checks. The bundle installer does not install an external executable; it configures the already installed server during scoped Codex and Junie skill deployment.
 
 The installer configures Codex at user or trusted-project scope in config.toml. Custom subagents inherit parent MCP configuration when they omit an agent-specific server table, so the generated conceptual agents do not duplicate this connection definition. The following block is the manual equivalent when installer-managed configuration is disabled.
 
@@ -285,7 +293,7 @@ The server reuses one immutable catalog snapshot. After an explicit deployment u
 
 See the [Codex MCP configuration reference](https://learn.chatgpt.com/docs/extend/mcp) and [Junie MCP configuration reference](https://junie.jetbrains.com/docs/junie-cli-mcp-configuration.html) for the host-owned configuration surfaces.
 
-Host approval policy remains user-owned. The evaluation runner's automatic approval of thirteen exact MCP operations and its Git-lifecycle permissions are isolated evaluation policy and are not copied into normal Codex or Junie host configuration.
+Host approval policy remains user-owned. The evaluation runner's automatic approval of fifteen exact MCP operations and its Git-lifecycle permissions are isolated evaluation policy and are not copied into normal Codex or Junie host configuration.
 
 An MCP evaluation requires one call-bearing MCP process stream. A completed call in any additional process stream invalidates the exact-once session evidence instead of being ignored.
 
@@ -412,6 +420,8 @@ The development practice skills are:
 - structured-design
 - review-structured-artifact
 - agent-claim
+- agent-claim-mcp
+- agent-claim-command
 - agent-work-merge
 - codex-workitem-coordination
 - complete-work-item-feature-branch
@@ -521,14 +531,14 @@ Artifact-specific review skills pass the artifact, source evidence, and complete
 Invoke Project Bootstrapper once and describe the desired steady state:
 
 1. Use the repository bundle sources and matching generated runtime adapter.
-2. Review the resulting PROJECT.yaml, reference-only provider and completion skill guidance, root or nested AGENTS.md guidance, and verification commands. Detected technology skills are inlined into the applicable AGENTS.md guidance by default through their separate folder-routing mechanism. Pass inline-tech-skills as false to scripts/render-agents-technology-skills.py only when the target runtime should load those skills dynamically. [Technology Skills](design/skills-modularization.html) explains setup-time detection and folder skillsets.
+2. Review the resulting PROJECT.yaml, its one verified agent_claim_transport selection, reference-only provider and completion skill guidance, root or nested AGENTS.md guidance, and verification commands. The selected claim adapter is always inlined and the unused adapter is absent. Detected technology skills are inlined into applicable AGENTS.md guidance by default through their separate folder-routing mechanism. Pass inline-tech-skills as false to scripts/render-agents-technology-skills.py only when the target runtime should load those technology skills dynamically. [Technology Skills](design/skills-modularization.html) explains setup-time selection and folder skillsets.
 3. Use documentation-bootstrap and documentation-reverse-engineer when the project needs a source-backed documentation baseline. Whole-project reverse engineering covers every meaningful module by default: inventory and review module designs first, group the complete set into high-level designs, derive architecture from those groups, cover all observable workflows, complete README and wiki integration, then run the final supplemental top-down semantic reconciliation from wiki and functional specifications through architecture, high-level designs, module designs, and source. Narrower coverage is valid only when the user explicitly names the boundary.
 4. For normal planned development, treat accepted functional specifications and architecture as the upstream authority. Create and review the HLD, create and review its module designs, then implement with the ordinary coding agent and project-routed technology skills. A missing high-impact contract blocks dependent work instead of being filled with an unsupported assumption.
 5. Follow the [orchestrated development lifecycle](design/orchestrated-development-lifecycle.html) for the owning execution, independent review, integrated verification, commit, and claim-release gates.
 
 Separately requested deployment uses the user or project defaults, or caller-supplied destination overrides, under Scoped Target Deployment.
 
-The guidance renderer writes configured authority directives, selector-only workflow routing, and technology-skill sections to standard output by default so Project Configurator can merge them into an existing AGENTS.md without disturbing project instructions. The --output option creates a file only when the target does not exist. If the target already exists, the command stops and directs the caller to --replace; use that option only when complete replacement of the target file is intentional. When definition_change_authority is configured, use --update-authority-directive with --output to insert or replace only its generated AGENTS.md section while preserving all other maintained guidance.
+The guidance renderer validates and writes the configured claim transport, authority directives, selector-only workflow routing, and technology-skill sections to standard output by default so Project Configurator can merge them into an existing AGENTS.md without disturbing project instructions. Missing or UNAVAILABLE agent_claim_transport state is a deterministic configuration error. The --output option creates a file only when the target does not exist. If the target already exists, the command stops and directs the caller to --replace; use that option only when complete replacement of the target file is intentional. When definition_change_authority is configured, use --update-authority-directive with --output to insert or replace only its generated AGENTS.md section while preserving all other maintained guidance.
 
 ```bash
 python3 scripts/render-agents-technology-skills.py --project PROJECT.yaml --inline-tech-skills false
@@ -586,7 +596,7 @@ Deterministic Judges run before semantic judgment and own executable checks, sch
 
 Fixtures are prepared once per content digest, dependency inputs, platform, architecture, and toolchain. A trusted fixture-preparation step may install dependencies while populating the integrity-checked prepared snapshot; live harness execution refuses install hooks. Before a live clone, the runner checks the full prepared-tree digest while holding the cache-key lock. Each run receives a disposable copy-on-write workspace when the platform supports it and a full disposable copy otherwise. Transient dependency, build, cache, and version-control trees do not participate in source hashing or source copying. The prepared cache is not claimed as filesystem-immutable, and external dependency-cache mounts are not implemented.
 
-Ordinary Codex and Junie cases run in the local tier. This tier isolates reproducibility and host state; it is not a hostile-code sandbox. Both receive a disposable workspace, controlled configuration and environment, isolated evidence, bounded output and time, cleanup, and a complete mutation audit. Personal configuration and credentials are not inherited. Any explicitly approved authentication variable must contain a dedicated evaluation credential, and its value is redacted from retained captures and printed diagnostics. The host runner does not rerun model-modified verification code; required command outcomes come from captured harness evidence. Codex applies either its native read-only or workspace-write sandbox, or the exact evaluator-owned permission profile used by the MCP Git-lifecycle case. That profile denies the host home and evidence root, disables network access, preserves staged agent and configuration trees as read-only, and grants writes only to the disposable workspace, its Git metadata, and the unique temporary directory; other system paths remain read-only. Junie receives a pinned executable plus unique JUNIE_HOME, HOME, cache, temporary, and event locations, and a successful run must produce one non-empty terminal result event. Its MCP case allows ordinary read-only commands, Git add and Git commit, and the same thirteen exact mcp-agent-ops operations; unmatched actions still require approval. This is capability routing rather than filesystem containment. Junie session-ledger events can prove the named custom agent started and finished, but they do not carry the adapter digest, so exact-definition attribution remains unverified and is never inferred from the task prompt.
+Ordinary Codex and Junie cases run in the local tier. This tier isolates reproducibility and host state; it is not a hostile-code sandbox. Both receive a disposable workspace, controlled configuration and environment, isolated evidence, bounded output and time, cleanup, and a complete mutation audit. Personal configuration and credentials are not inherited. Any explicitly approved authentication variable must contain a dedicated evaluation credential, and its value is redacted from retained captures and printed diagnostics. The host runner does not rerun model-modified verification code; required command outcomes come from captured harness evidence. Codex applies either its native read-only or workspace-write sandbox, or the exact evaluator-owned permission profile used by the MCP Git-lifecycle case. That profile denies the host home and evidence root, disables network access, preserves staged agent and configuration trees as read-only, and grants writes only to the disposable workspace, its Git metadata, and the unique temporary directory; other system paths remain read-only. Junie receives a pinned executable plus unique JUNIE_HOME, HOME, cache, temporary, and event locations, and a successful run must produce one non-empty terminal result event. Its MCP case allows ordinary read-only commands, Git add and Git commit, and the same fifteen exact mcp-agent-ops operations; unmatched actions still require approval. This is capability routing rather than filesystem containment. Junie session-ledger events can prove the named custom agent started and finished, but they do not carry the adapter digest, so exact-definition attribution remains unverified and is never inferred from the task prompt.
 
 The prepared-snapshot cache, copy-on-write workspaces, transient-tree pruning, cleanup, and local Codex and Junie execution paths are implemented. All seven current cases are ordinary local cases and are runnable through both harnesses. Selected cases currently execute serially. Bounded parallel case execution, the externally-contained tier for explicitly high-risk cases, read-only dependency mounts or copy-on-write delta enumeration, and warm-worker pooling remain follow-on components.
 

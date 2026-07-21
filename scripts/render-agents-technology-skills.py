@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Modified with AI assistance.
-# Summary: Renders project authority, workflow selectors, and unconditional folder technology guidance from PROJECT.yaml.
+# Summary: Renders project authority, one verified claim transport, workflow selectors, and folder technology guidance.
 
 from __future__ import annotations
 
@@ -22,6 +22,11 @@ SKILL_FILE_NAME = "SKILL.md"
 FRONTMATTER_DELIMITER = "---"
 SKILL_NAME_PATTERN = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 AUTHORITY_HEADING = "## Agent And Skill Definition Approval"
+CLAIM_TRANSPORT_HEADING = "## Agent Claim Transport"
+CLAIM_TRANSPORT_SKILLS = {
+    "mcp": "agent-claim-mcp",
+    "command": "agent-claim-command",
+}
 PROVIDER_SKILLS = {
     "file": ("create-file-work-item", "manage-file-work-items"),
     "github": ("create-github-work-item", "manage-github-work-items"),
@@ -839,6 +844,63 @@ def workflow_lines(value: dict[str, object]) -> list[str]:
     return lines
 
 
+def claim_transport_lines(value: dict[str, object]) -> list[str]:
+    """Render the one setup-verified claim transport selected by Project Configurator.
+
+    The input must contain agent_claim_transport with exactly selected, availability,
+    and verification. selected is mcp or command, availability is AVAILABLE, and
+    verification is a non-empty list of evidence strings. An unavailable selection
+    produces a deterministic reconfiguration error instead of guidance that could fall
+    back at runtime. The returned lines inline only the matching bundled adapter body.
+    Invalid configuration or adapter content raises ValueError or OSError.
+    """
+
+    configuration = value.get("agent_claim_transport")
+    if configuration is None:
+        raise ValueError(
+            "agent_claim_transport is required; run Project Configurator to select and verify mcp or command"
+        )
+    if not isinstance(configuration, dict):
+        raise ValueError("agent_claim_transport must be a mapping")
+    if set(configuration) != {"selected", "availability", "verification"}:
+        raise ValueError(
+            "agent_claim_transport keys must be exactly: selected, availability, verification"
+        )
+    selected = configuration.get("selected")
+    if not isinstance(selected, str) or selected not in CLAIM_TRANSPORT_SKILLS:
+        raise ValueError("agent_claim_transport.selected must be mcp or command")
+    availability = configuration.get("availability")
+    if availability not in {"AVAILABLE", "UNAVAILABLE"}:
+        raise ValueError(
+            "agent_claim_transport.availability must be AVAILABLE or UNAVAILABLE"
+        )
+    verification = configuration.get("verification")
+    if not isinstance(verification, list) or not verification or not all(
+        isinstance(item, str) and item for item in verification
+    ):
+        raise ValueError(
+            "agent_claim_transport.verification must be a non-empty list of evidence strings"
+        )
+    if availability == "UNAVAILABLE":
+        raise ValueError(
+            f"configured claim transport {selected} is unavailable; run Project Configurator to select and verify one available transport"
+        )
+
+    skill_name = CLAIM_TRANSPORT_SKILLS[selected]
+    return [
+        CLAIM_TRANSPORT_HEADING,
+        "",
+        f"Project Configurator selected and verified the {selected} transport. Apply the shared agent-claim semantics and the inlined {skill_name} adapter for every claim operation.",
+        "",
+        "Invoke this configured adapter directly. Runtime work does not probe or switch to another transport. If it is unavailable, report CLAIM_TRANSPORT_UNAVAILABLE and request Project Configurator reconfiguration.",
+        "",
+        f"----- BEGIN INLINED CLAIM TRANSPORT SKILL: {skill_name} -----",
+        inlined_skill_body(skill_name),
+        f"----- END INLINED CLAIM TRANSPORT SKILL: {skill_name} -----",
+        "",
+    ]
+
+
 def inlined_skill_body(skill_name: str) -> str:
     """Return one validated bundled technology skill body."""
 
@@ -859,13 +921,14 @@ def inlined_skill_body(skill_name: str) -> str:
 
 
 def render(value: dict[str, object], inline_tech_skills: bool = True) -> str:
-    """Render configured root AGENTS.md authority, workflow, and technology sections.
+    """Render configured root AGENTS.md authority, claim transport, workflow, and technology sections.
 
     value is the mapping loaded from PROJECT.yaml. Optional definition authority produces
-    its corresponding section, while workflow_selection is required and technology guidance
-    is always produced from the configured loadouts. When inline_tech_skills is true, the
-    return value embeds each referenced bundled skill body. When false, it emits dynamic
-    loading instructions instead.
+    its corresponding section. agent_claim_transport is required and workflow_selection is required.
+    Technology guidance is always produced from the configured loadouts. The claim
+    adapter is always embedded because setup selected it as a project-wide transport. When
+    inline_tech_skills is true, the return value also embeds each referenced bundled
+    technology skill body. When false, it emits dynamic technology loading instructions.
 
     The return value is the complete generated Markdown text and ends with a newline.
     Rendering does not write an output file, but inlined rendering reads bundled SKILL.md
@@ -874,7 +937,9 @@ def render(value: dict[str, object], inline_tech_skills: bool = True) -> str:
     files raise OSError, and malformed YAML may raise yaml.YAMLError.
     """
     lines: list[str] = definition_change_authority_lines(value)
-    lines.extend(workflow_lines(value))
+    workflow = workflow_lines(value)
+    lines.extend(claim_transport_lines(value))
+    lines.extend(workflow)
     lines.extend([
         "## Technology Skills",
         "",
@@ -972,7 +1037,7 @@ def main(arguments: Sequence[str] | None = None) -> int:
     arguments is an explicit CLI argument sequence for programmatic callers, or None to
     parse the process arguments. Preflight mode prints one JSON policy result: allowed
     outcomes return 0 and blocked outcomes return 3. Render mode without an output path
-    prints generated authority, workflow, and technology Markdown to standard output.
+    prints generated authority, selected claim-adapter, workflow, and technology Markdown.
     Output mode writes the generated Markdown to its file: it creates a missing file,
     replaces one only with the replace option, or updates only the authority section
     with the dedicated update option. Every successful render, output, and update mode
@@ -982,7 +1047,9 @@ def main(arguments: Sequence[str] | None = None) -> int:
     ValueError, and yaml.YAMLError failures are printed to standard error and return 1.
     Argument-parser usage failures raise SystemExit with argparse's exit code, normally 2.
     """
-    parser = argparse.ArgumentParser(description="Render AGENTS.md workflow selectors and unconditional technology skill guidance.")
+    parser = argparse.ArgumentParser(
+        description="Render one claim transport, workflow selectors, and unconditional technology guidance."
+    )
     parser.add_argument("--project", type=Path, required=True)
     parser.add_argument("--output", type=Path)
     parser.add_argument(

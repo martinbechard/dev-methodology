@@ -16,6 +16,12 @@ documentation_mode:
   legacy_missing_field_policy: "Migrate a legacy PROJECT.yaml to hybrid-specifications-and-wiki only when both structured specification roots and docs/wiki exist or documentation-bootstrap is establishing that full hierarchy; otherwise obtain and persist the project-owned selection before downstream documentation work."
   unsupported_value_policy: "BLOCKED until create-project-configuration records a supported value."
 
+agent_claim_transport:
+  selected: "TODO: mcp or command. Select exactly one transport from target-runtime evidence."
+  availability: "TODO: AVAILABLE or UNAVAILABLE. Rendering requires AVAILABLE."
+  verification:
+    - "TODO: Record the setup-time tool-surface or adapter-package evidence that verifies the selected transport."
+
 authoritative_sources:
   readme_files:
     - path: "TODO: README or entry point path."

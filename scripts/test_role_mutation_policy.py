@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Verifies conceptual agent definition mutation policy and keeps generic claim procedure out of project configuration.
+# Summary: Verifies mutation policy plus deterministic claim-transport selection in project configuration.
 
 from __future__ import annotations
 
@@ -100,7 +100,7 @@ class RoleMutationPolicyTests(unittest.TestCase):
         self.assertNotIn("agent-claim", roles["wiki-topic-verifier"].skills)
 
     def test_project_configuration_omits_generic_claim_procedure(self) -> None:
-        """Keep universal claim policy in shared conceptual definitions and skills rather than copied project artifacts."""
+        """Select one adapter without copying shared claim semantics into project configuration."""
         template_text = PROJECT_TEMPLATE.read_text(encoding="utf-8")
         skill_text = PROJECT_CONFIGURATION_SKILL.read_text(encoding="utf-8")
 
@@ -108,7 +108,9 @@ class RoleMutationPolicyTests(unittest.TestCase):
         self.assertNotIn("claim_skill:", template_text)
         self.assertNotIn("dirty_unclaimed_policy:", template_text)
         self.assertIn("Generic repository-mutation behavior belongs to conceptual agent definitions", skill_text)
-        self.assertIn("Do not reproduce that procedure in PROJECT.yaml or AGENTS.md", skill_text)
+        self.assertIn("agent_claim_transport:", template_text)
+        self.assertIn("Select exactly one agent_claim_transport value", skill_text)
+        self.assertIn("generated AGENTS.md inlines that adapter", skill_text)
 
     def test_role_schema_requires_repository_mutation(self) -> None:
         """Expose repository mutation as a required conceptual definition capability declaration."""

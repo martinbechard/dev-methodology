@@ -525,7 +525,7 @@ def _observe_target_result(
         _run(
             [
                 sys.executable,
-                str(REPOSITORY_ROOT / "skills/agent-claim/scripts/claim.py"),
+                str(REPOSITORY_ROOT / "skills/agent-claim-command/scripts/claim.py"),
                 "--repo",
                 ".",
                 "status",

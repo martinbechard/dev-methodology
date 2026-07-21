@@ -3178,6 +3178,18 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "skill": "documentation-bootstrap"
     },
     {
+      "condition": "when PROJECT.yaml selects command or initial setup verifies the independently distributable command adapter",
+      "kind": "conditional",
+      "role": "project-configurator",
+      "skill": "agent-claim-command"
+    },
+    {
+      "condition": "when PROJECT.yaml selects mcp or initial setup verifies the complete MCP claim tool surface",
+      "kind": "conditional",
+      "role": "project-configurator",
+      "skill": "agent-claim-mcp"
+    },
+    {
       "condition": "when the target lacks the documentation and routing structure needed for agents to load and follow the configuration consistently",
       "kind": "conditional",
       "role": "project-configurator",
@@ -3807,7 +3819,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "modelJudgeCalibratedAgentCount": 0,
     "modelJudgeCalibratedSkillCount": 0,
     "modelJudgeNotRequiredAgentCount": 0,
-    "modelJudgeNotRequiredSkillCount": 24,
+    "modelJudgeNotRequiredSkillCount": 26,
     "modelJudgePendingAgentCount": 27,
     "modelJudgePendingSkillCount": 102,
     "negativeCaseBackedSkillCount": 0,
@@ -3815,13 +3827,13 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "pairedControlsExecutableSkillCount": 0,
     "partialScenarioBackedAgentCount": 5,
     "partialWorkflowPackCount": 5,
-    "positiveCaseBackedSkillCount": 23,
+    "positiveCaseBackedSkillCount": 25,
     "positiveExecutedSkillCount": 0,
     "positiveJudgePassedSkillCount": 0,
     "positiveSecurityContainedSkillCount": 0,
     "positiveStaleByDigestSkillCount": 0,
     "positiveVerifiedSkillCount": 0,
-    "probeDeclaredSkillCount": 126,
+    "probeDeclaredSkillCount": 128,
     "scenarioDeclaredAgentCount": 27,
     "securityContainedAgentCount": 0,
     "securityContainedRunCount": 0,
@@ -3830,7 +3842,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     "staleByDigestRunCount": 0,
     "staleByDigestSkillCount": 0,
     "structuralAgentCount": 27,
-    "structuralSkillCount": 126,
+    "structuralSkillCount": 128,
     "verifiedAgentCount": 0,
     "verifiedRunCount": 0,
     "verifiedSkillCount": 0,
@@ -5674,6 +5686,8 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
     },
     {
       "conditionalSkills": {
+        "agent-claim-command": "when PROJECT.yaml selects command or initial setup verifies the independently distributable command adapter",
+        "agent-claim-mcp": "when PROJECT.yaml selects mcp or initial setup verifies the complete MCP claim tool surface",
         "documentation-bootstrap": "when the target lacks the documentation and routing structure needed for agents to load and follow the configuration consistently",
         "organise-project-files": "when the requested configuration creates a new project file or directory whose path is not fixed by the configuration contract."
       },
@@ -5725,7 +5739,7 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "declaredCases": [
         "project-configuration-routing"
       ],
-      "description": "Creates or updates the single project-root PROJECT.yaml and validates conceptual agent definitions, independent work-item provider and completion selectors, skillsets, folder routing, nested AGENTS.md guidance, and Claude bridges.",
+      "description": "Creates or updates the single project-root PROJECT.yaml and validates one claim transport, conceptual agent definitions, work-item selectors, skillsets, folder routing, nested AGENTS.md guidance, and Claude bridges.",
       "dynamicFolderSkills": false,
       "executedCases": [],
       "fixedSkills": [
@@ -6769,6 +6783,130 @@ window.DEV_METHODOLOGY_AGENT_SKILL_EXPLORER_DATA = {
       "label": "Agent Claim",
       "securityContainedCases": [],
       "sourcePath": "skills/agent-claim/SKILL.md",
+      "verifiedCases": []
+    },
+    {
+      "capabilities": [],
+      "category": "development-practice",
+      "coverage": {
+        "catalogFixtureBacked": true,
+        "evaluationCategory": "development-practice",
+        "executableCases": [
+          "backlog-lifecycle",
+          "documentation-functional-spec",
+          "spring-boot-order-cancellation",
+          "typescript-order-pricing",
+          "wiki-raw-ingest"
+        ],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "not-required",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": true,
+        "positiveCaseBackedCases": [
+          "backlog-lifecycle",
+          "documentation-functional-spec",
+          "spring-boot-order-cancellation",
+          "typescript-order-pricing",
+          "wiki-raw-ingest"
+        ],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
+          "probe-agent-claim-command"
+        ],
+        "scenarioAssociations": [
+          "project-configurator-happy"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "project-setup"
+        ]
+      },
+      "declaredCases": [
+        "backlog-lifecycle",
+        "documentation-functional-spec",
+        "spring-boot-order-cancellation",
+        "typescript-order-pricing",
+        "wiki-raw-ingest"
+      ],
+      "detection": null,
+      "detectionPath": null,
+      "executedCases": [],
+      "id": "agent-claim-command",
+      "judgePassedCases": [],
+      "kind": "core",
+      "label": "Agent Claim Command",
+      "securityContainedCases": [],
+      "sourcePath": "skills/agent-claim-command/SKILL.md",
+      "verifiedCases": []
+    },
+    {
+      "capabilities": [],
+      "category": "development-practice",
+      "coverage": {
+        "catalogFixtureBacked": true,
+        "evaluationCategory": "development-practice",
+        "executableCases": [
+          "project-configuration-routing"
+        ],
+        "executableFixture": false,
+        "executedCases": [],
+        "fixtureBacked": false,
+        "fixtureBackedCases": [],
+        "judgeCalibration": "not-required",
+        "judgePassedCases": [],
+        "negativeCaseBacked": false,
+        "negativeCaseBackedCases": [],
+        "pairedControlsExecutable": false,
+        "positiveCaseBacked": true,
+        "positiveCaseBackedCases": [
+          "project-configuration-routing"
+        ],
+        "positiveExecutedCases": [],
+        "positiveJudgePassedCases": [],
+        "positiveSecurityContainedCases": [],
+        "positiveStaleByDigestCases": [],
+        "positiveVerifiedCases": [],
+        "probeDeclared": true,
+        "probeIds": [
+          "probe-agent-claim-mcp"
+        ],
+        "scenarioAssociations": [
+          "project-configurator-happy"
+        ],
+        "securityContainedCases": [],
+        "staleByDigestCases": [],
+        "structural": true,
+        "verifiedCases": [],
+        "workflowAssociations": [
+          "project-setup"
+        ]
+      },
+      "declaredCases": [
+        "project-configuration-routing"
+      ],
+      "detection": null,
+      "detectionPath": null,
+      "executedCases": [],
+      "id": "agent-claim-mcp",
+      "judgePassedCases": [],
+      "kind": "core",
+      "label": "Agent Claim Mcp",
+      "securityContainedCases": [],
+      "sourcePath": "skills/agent-claim-mcp/SKILL.md",
       "verifiedCases": []
     },
     {

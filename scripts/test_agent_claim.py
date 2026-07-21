@@ -1,6 +1,6 @@
 # Copyright (c) 2026 Martin.Bechard@DevConsult.ca
 # AI attribution: Generated with AI assistance.
-# Summary: Verifies claim coordination, scope extension, journaling, archival, reporting, isolation, recovery, and release invariants.
+# Summary: Verifies the command adapter's claim coordination, journaling, isolation, recovery, and release invariants.
 
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-CLAIM_SCRIPT = ROOT / "skills" / "agent-claim" / "scripts" / "claim.py"
+CLAIM_SCRIPT = ROOT / "skills" / "agent-claim-command" / "scripts" / "claim.py"
 
 
 class AgentClaimTests(unittest.TestCase):

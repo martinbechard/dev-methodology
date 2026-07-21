@@ -20,19 +20,19 @@ This page is generated from the live conceptual agent and skill inventories, all
 
 ## Summary
 
-- [x] 27 conceptual agents and 126 bundled skills have structural coverage.
-- [x] 27 agents are scenario-declared and 126 skills are probe-declared.
+- [x] 27 conceptual agents and 128 bundled skills have structural coverage.
+- [x] 27 agents are scenario-declared and 128 skills are probe-declared.
 - [x] 55 agent scenarios and 5 workflow packs are declared.
 - 5 workflow packs have associated cases; 5 are partial and 0 have end-to-end fixture coverage.
 - 10 cases are fixture-backed and 10 fixtures are structurally executable before harness readiness is considered.
 - 10 cases can run locally through Codex and 10 can run locally through Junie.
 - 10 cases use the ordinary local tier; 0 explicitly high-risk cases require the externally-contained tier.
 - 6 agents have at least one case-backed scenario; 5 are partial and 1 have all declared scenarios backed.
-- 23 skills have positive-case support, 0 have negative-activation cases, 0 have executable paired controls, and 0 satisfy the full probe contract.
+- 25 skills have positive-case support, 0 have negative-activation cases, 0 have executable paired controls, and 0 satisfy the full probe contract.
 - 1 agents and 0 skills have executable full fixtures.
 - 0 agents and 0 skills have calibrated Model Judge status.
 - 27 agents and 102 skills have pending Model Judge status.
-- 0 agents and 24 skills use Deterministic Judges only and do not require Model Judge calibration.
+- 0 agents and 26 skills use Deterministic Judges only and do not require Model Judge calibration.
 - 0 agents and 0 skills have classified executions.
 - 0 agents and 0 skills have Judge-passed evidence.
 - 0 agents and 0 skills have security-contained evidence.
@@ -138,6 +138,8 @@ Evaluation execution support is limited to Codex and Junie. Ordinary synthetic c
 | Skill | Structural | Probe-declared | Positive case | Negative case | Paired controls | Full probe | Executable full fixture | Judge calibration | Executed | Judge-passed | Security-contained | Stale-by-digest |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | agent-claim | [x] | [x] probe-agent-claim | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
+| agent-claim-command | [x] | [x] probe-agent-claim-command | [x] backlog-lifecycle, documentation-functional-spec, spring-boot-order-cancellation, typescript-order-pricing, wiki-raw-ingest | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
+| agent-claim-mcp | [x] | [x] probe-agent-claim-mcp | [x] project-configuration-routing | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |
 | agent-work-merge | [x] | [x] probe-agent-work-merge | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | application-security | [x] | [x] probe-application-security | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | pending | none | none | none | none |
 | ast-grep | [x] | [x] probe-ast-grep | [ ] none | [ ] none | [ ] | [ ] none | [ ] none | not-required | none | none | none | none |

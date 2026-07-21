@@ -88,6 +88,15 @@ _MCP_AGENT_OPS_TOOL_NAMES = frozenset({
     "verify_markdown_links",
     "verify_yaml",
 })
+_MCP_AGENT_OPS_CLAIM_TOOL_NAMES = frozenset({
+    "claim_acquire",
+    "claim_extend",
+    "claim_heartbeat",
+    "claim_maintain_journal",
+    "claim_release",
+    "claim_report",
+    "claim_status",
+})
 _CATALOG_SPECS = {
     "skill-probes.yaml": (
         "probes",
@@ -360,6 +369,7 @@ def _validate_mcp_agent_ops_case(
         return
     expected_fields = {
         "schemaVersion",
+        "claimResultSchemaVersion",
         "enablement",
         "serverName",
         "enabledTools",
@@ -376,6 +386,8 @@ def _validate_mcp_agent_ops_case(
         errors.append("case.mcpAgentOps must define the complete version-three contract")
     if value.get("schemaVersion") != 3:
         errors.append("case.mcpAgentOps.schemaVersion must be 3")
+    if value.get("claimResultSchemaVersion") != 2:
+        errors.append("case.mcpAgentOps.claimResultSchemaVersion must be 2")
     if value.get("enablement") != "base-case-only":
         errors.append("case.mcpAgentOps.enablement must be base-case-only")
     if value.get("serverName") != "mcp-agent-ops":
@@ -393,6 +405,14 @@ def _validate_mcp_agent_ops_case(
     ):
         errors.append(
             "case.mcpAgentOps.enabledTools must list unique known operations"
+        )
+    if "agent-claim-mcp" in _string_items(
+        case.get("executionSkills", case.get("requiredSkills"))
+    ) and not _MCP_AGENT_OPS_CLAIM_TOOL_NAMES.issubset(
+        set(_string_items(enabled_tools))
+    ):
+        errors.append(
+            "case.mcpAgentOps.enabledTools must expose the complete MCP claim surface"
         )
     if not isinstance(value.get("requiredVersion"), str) or not re.fullmatch(
         r"\d+\.\d+\.\d+(?:[-+][A-Za-z0-9.-]+)?",
@@ -492,9 +512,9 @@ def _validate_mcp_agent_ops_case(
         errors.append(
             "case.mcpAgentOps.requiredToolSequences must not repeat a required tool"
         )
-    if set(_string_items(enabled_tools)) != required_tools:
+    if not required_tools.issubset(set(_string_items(enabled_tools))):
         errors.append(
-            "case.mcpAgentOps.enabledTools must cover exactly the sequenced tools"
+            "case.mcpAgentOps.enabledTools must cover every sequenced tool"
         )
     if set(outcomes) != required_tools:
         errors.append(

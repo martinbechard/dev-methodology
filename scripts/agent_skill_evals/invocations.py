@@ -37,6 +37,8 @@ _CODEX_MCP_AGENT_OPS_ENABLED_TOOLS = (
     "claim_extend",
     "claim_heartbeat",
     "claim_release",
+    "claim_maintain_journal",
+    "claim_report",
     "skill_list",
     "skill_load",
     "skill_resource_load",

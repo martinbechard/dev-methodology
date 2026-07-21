@@ -353,7 +353,7 @@ README_REQUIRED_PHRASES = (
     "--dest ~/.codex/skills",
     "claim tools advertise result schema version 2",
     "Published release 0.4.0 does not contain that claim-result contract",
-    "thirteen exact MCP operations",
+    "fifteen exact MCP operations",
     "one call-bearing MCP process stream",
     "An outcome-less completed call is not semantic evidence.",
     "Keep Codex openai.yaml metadata beside each source SKILL.md",
@@ -612,7 +612,7 @@ AGENTIC_CONFIGURATION_REQUIRED_PHRASES = (
     "Codex-generated agents that may mutate the repository inline its instructions by default",
     "Read-only Codex agents and non-Codex adapters do not receive it.",
     "The Codex MCP skill root must match the selected installer destination.",
-    "same thirteen MCP operations",
+    "same fifteen MCP operations",
     "one call-bearing MCP process stream",
     "An outcome-less completed call is not semantic evidence.",
 )
@@ -722,7 +722,9 @@ DOCUMENT_REQUIRED_CONTENT_LINKS = {
     ),
     "orchestrated-development-lifecycle.html": (
         "../skills/agent-claim/SKILL.md",
-        "../skills/agent-claim/scripts/claim.py",
+        "../skills/agent-claim-mcp/SKILL.md",
+        "../skills/agent-claim-command/SKILL.md",
+        "../skills/agent-claim-command/scripts/claim.py",
         "../scripts/test_agent_claim.py",
         "../README.md#agent-claims-and-worktrees",
         "agent-and-skill-definitions.html#dev-activities-title",
@@ -2510,6 +2512,10 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("schema: project", template_text)
         self.assertIn("proprietary_validation_notes:", template_text)
         self.assertIn("nested_agents_files:", template_text)
+        self.assertIn("agent_claim_transport:", template_text)
+        self.assertIn("selected: \"TODO: mcp or command", template_text)
+        self.assertIn("Select exactly one agent_claim_transport value", skill_text)
+        self.assertIn("inline exactly the selected claim transport adapter", skill_text)
         self.assertIn("workflow_selection:", template_text)
         self.assertIn("file, github, gitlab, azure-devops, jira, none, or UNSET", template_text)
         self.assertIn("direct-main, feature-branch, or UNSET", template_text)
@@ -4316,15 +4322,15 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("committed clean contributions", merge_coordinator.instructions)
         self.assertIn("release only from a clean worktree", merge_coordinator.instructions)
         claim_skill = (SKILLS_ROOT / "agent-claim" / "SKILL.md").read_text(encoding="utf-8")
+        mcp_skill = (SKILLS_ROOT / "agent-claim-mcp" / "SKILL.md").read_text(encoding="utf-8")
+        command_skill = (SKILLS_ROOT / "agent-claim-command" / "SKILL.md").read_text(encoding="utf-8")
         merge_skill = (SKILLS_ROOT / "agent-work-merge" / "SKILL.md").read_text(encoding="utf-8")
-        claim_script = SKILLS_ROOT / "agent-claim" / "scripts" / "claim.py"
+        claim_script = SKILLS_ROOT / "agent-claim-command" / "scripts" / "claim.py"
         self.assertTrue(claim_script.is_file())
-        self.assertIn("## Operation Selection", claim_skill)
-        self.assertIn("## Fallback Command Path", claim_skill)
-        operation_selection = claim_skill.split("## Operation Selection", 1)[1].split(
-            "## Fallback Command Path",
-            1,
-        )[0]
+        self.assertFalse((SKILLS_ROOT / "agent-claim" / "scripts" / "claim.py").exists())
+        self.assertNotIn("## Operation Selection", claim_skill)
+        self.assertNotIn("CLAIM_SCRIPT", claim_skill)
+        self.assertIn("## Coordination Outcomes", claim_skill)
         for tool_name in (
             "claim_status",
             "claim_acquire",
@@ -4334,50 +4340,50 @@ class BundleContentTests(unittest.TestCase):
             "claim_maintain_journal",
             "claim_report",
         ):
-            self.assertIn(tool_name, claim_skill)
-        self.assertIn("A valid result is not an MCP failure", claim_skill)
-        self.assertIn("explicitly advertises result schema version 2", operation_selection)
-        self.assertIn("complete canonical outcome vocabulary", operation_selection)
+            self.assertIn(tool_name, mcp_skill)
+            self.assertNotIn(tool_name, claim_skill)
         for required_outcome in (
             "SHARED_CHECKOUT_REQUIRED",
             "SHARED_CHECKOUT_RELEASE_REQUIRED",
         ):
-            self.assertIn(required_outcome, operation_selection)
-        self.assertIn("canonical primary-root worktree placement", claim_skill)
-        self.assertIn("cannot initialize or connect before request dispatch", claim_skill)
-        self.assertIn("Never use a fallback after a path", claim_skill)
-        self.assertIn("Reconcile with claim_status first", claim_skill)
+            self.assertIn(required_outcome, claim_skill)
+        self.assertIn("canonical .worktrees directory", claim_skill)
+        self.assertIn("CLAIM_TRANSPORT_UNAVAILABLE", mcp_skill)
+        self.assertIn("CLAIM_TRANSPORT_UNAVAILABLE", command_skill)
+        self.assertIn("do not switch transports", mcp_skill)
+        self.assertIn("do not switch transports", command_skill)
         self.assertIn(
-            'CLAIM_SCRIPT="${CODEX_HOME:-$HOME/.codex}/skills/agent-claim/scripts/claim.py"',
-            claim_skill,
+            'CLAIM_SCRIPT="${HOME}/.agents/skills/agent-claim-command/scripts/claim.py"',
+            command_skill,
         )
-        self.assertIn("~/.codex/skills/agent-claim/scripts/claim.py", claim_skill)
-        self.assertNotIn("python3 skills/agent-claim/scripts/claim.py", claim_skill)
-        self.assertIn("## Stable Exit Codes", claim_skill)
-        self.assertIn("4 means ISOLATED_CHECKOUT_SETUP_REQUIRED", claim_skill)
-        self.assertIn("3 with SHARED_CHECKOUT_RELEASE_REQUIRED", claim_skill)
-        self.assertIn("5 means DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED", claim_skill)
+        self.assertIn("skills/agent-claim-command/scripts/claim.py", command_skill)
+        self.assertNotIn("agent-claim-command", mcp_skill)
+        self.assertNotIn("agent-claim-mcp", command_skill)
+        self.assertIn("Stable process exit codes", command_skill)
+        self.assertIn("4 for ISOLATED_CHECKOUT_SETUP_REQUIRED", command_skill)
+        self.assertIn("3 for CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED", command_skill)
+        self.assertIn("5 for DIRTY_CHECKOUT_RECOVERY_AUTHORIZATION_REQUIRED", command_skill)
         self.assertIn("### Shared Checkout Acquisition", claim_skill)
         self.assertIn("### Isolated Checkout Acquisition", claim_skill)
-        self.assertIn("primary worktree's .worktrees/task-123 directory", claim_skill)
+        self.assertIn("primary worktree's .worktrees directory", claim_skill)
         self.assertIn("INVALID_WORKTREE_PATH", claim_skill)
         self.assertIn("WORKTREE_ROOT_NOT_IGNORED", claim_skill)
-        self.assertNotIn("--worktree-path ../project-task-123", claim_skill)
-        self.assertIn("backlog/ directory", claim_skill)
+        self.assertNotIn("--worktree-path ../project-task-123", command_skill)
+        self.assertIn("repository-root backlog directory", claim_skill)
         self.assertIn("worktree-specific sparse checkout", claim_skill)
         self.assertIn("### Claim Scope Conflict Wait", claim_skill)
         self.assertIn("### Recovery Acquisition", claim_skill)
-        self.assertIn("--base main", claim_skill)
-        self.assertIn("--allow-recovery", claim_skill)
+        self.assertIn("--base main", command_skill)
+        self.assertIn("--allow-recovery", command_skill)
         self.assertIn("## Heartbeat", claim_skill)
         self.assertIn("### No-Change Release", claim_skill)
-        self.assertIn("--no-change", claim_skill)
+        self.assertIn("--no-change", command_skill)
         self.assertIn("## Atomic Scope Extension", claim_skill)
-        self.assertIn("--tree", claim_skill)
-        self.assertIn("--all-files", claim_skill)
+        self.assertIn("tree", claim_skill)
+        self.assertIn("all-files", claim_skill)
         self.assertIn("## Event Journal Safety", claim_skill)
-        self.assertIn("maintain-journal --hot-days 2", claim_skill)
-        self.assertIn("report --since 2d", claim_skill)
+        self.assertIn("maintain-journal --hot-days 2", command_skill)
+        self.assertIn("report --since 2d", command_skill)
         self.assertNotIn("git:commit", claim_skill)
         self.assertIn("merge:integration:main", claim_skill)
         self.assertIn("merge:integration:main", merge_skill)
@@ -4388,6 +4394,7 @@ class BundleContentTests(unittest.TestCase):
         self.assertIn("primary worktree's .worktrees directory", readme_text)
         self.assertIn("Double-force Git clean is prohibited", readme_text)
         self.assertNotIn("Agent Claims And Worktrees", AGENTS_PATH.read_text(encoding="utf-8"))
+        self.assertIn("## Agent Claim Transport", AGENTS_PATH.read_text(encoding="utf-8"))
         self.assertIn(
             ".worktrees contains ignored linked agent checkouts rooted at the primary worktree",
             AGENTS_PATH.read_text(encoding="utf-8"),
@@ -4511,7 +4518,7 @@ class BundleContentTests(unittest.TestCase):
         skill_texts = {
             skill: (SKILLS_ROOT / skill / "SKILL.md").read_text(encoding="utf-8")
             for skill in (
-                "agent-claim",
+                "agent-claim-mcp",
                 "detect-technology-skills",
                 "create-project-configuration",
                 "skill-authoring",
@@ -4525,6 +4532,10 @@ class BundleContentTests(unittest.TestCase):
                 self.assertIn("mcp-agent-ops", text)
                 self.assertIn("rejection", text)
 
+        shared_claim_text = (SKILLS_ROOT / "agent-claim" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        self.assertNotIn("mcp-agent-ops", shared_claim_text)
         self.assertIn("one skill_load call", skill_texts["development-methodology"])
         self.assertIn("skill_resource_load", skill_texts["development-methodology"])
         self.assertIn("Do not reread a skill through MCP", skill_texts["development-methodology"])
