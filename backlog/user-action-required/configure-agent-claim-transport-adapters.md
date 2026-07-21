@@ -1,27 +1,68 @@
 # Configure Agent Claim Transport Adapters
 
-Status: Running
+Status: User Action Required
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/feature-backlog/configure-agent-claim-transport-adapters.md
+Provider Reference: backlog/user-action-required/configure-agent-claim-transport-adapters.md
 
 Completion: direct-main
 
-## Current Execution
+## Discovery Execution
 
-- Owner: Dev Orchestrator
+- Owner: Unowned
+- Claim: None
 - Canonical task: 019f85c8-626e-77b2-8b7e-09a893d60c1b
 - Worktree: /Users/martinbechard/.codex/worktrees/4e3b/dev-methodology
 - Branch: codex/configure-agent-claim-transport-adapters
 - Starting main: 2624b5b25ba6e5548051d7b9953933b1e57b3f87
-- Phase: Bounded transport inventory, composition decision, and exact governed-scope discovery.
+- Phase: Bounded transport inventory and exact governed-scope discovery completed; implementation is paused for path-specific approval.
 - Started: 2026-07-21
 - Running-record claim: start-agent-claim-transport-adapters-019f85c8, acquired event 8a69729f-031d-465d-8ff1-2e0c3951e62c.
-- Open issues: Exact governed-definition approval scope remains to be established from discovery evidence.
+- Open issues: The exact eight-path governed-definition scope requires the user answer below.
 - Accepted candidate: Pending.
+
+## User Action Required
+
+### Question For The User
+
+Do you approve changes to exactly the eight governed-definition paths listed below for this work item, with standalone agent-claim-mcp and agent-claim-command adapters selected and verified by Project Configurator, and with no other governed definition changed unless separately approved?
+
+1. skills/agent-claim/SKILL.md
+2. skills/agent-claim/agents/openai.yaml
+3. skills/agent-claim-mcp/SKILL.md
+4. skills/agent-claim-mcp/agents/openai.yaml
+5. skills/agent-claim-command/SKILL.md
+6. skills/agent-claim-command/agents/openai.yaml
+7. skills/create-project-configuration/SKILL.md
+8. agents/roles/project-setup/project-configurator.role.yaml
+
+### Why User Input Is Required
+
+The evidence-backed design requires eight governed definition paths. Repository policy requires exact path-specific approval before mutation.
+
+### Options And Tradeoffs
+
+- Approve the exact eight-path scope: implement standalone transport skills selected by Project Configurator.
+- Narrow the scope by naming allowed paths: preserve the remaining behavior as blocked follow-up work.
+- Defer: retain the discovery result without implementation.
+
+### Resolution
+
+Pending.
+
+### Unattended Work Boundary
+
+No governed or project mutation is authorized while this question is pending. Preserve the decision to use standalone adapter skills rather than generator-owned materializations.
+
+### Discovery Evidence
+
+- Canonical task: 019f85c8-626e-77b2-8b7e-09a893d60c1b.
+- Clean branch/worktree: codex/configure-agent-claim-transport-adapters at /Users/martinbechard/.codex/worktrees/4e3b/dev-methodology, based on 2624b5b25ba6e5548051d7b9953933b1e57b3f87.
+- Composition evidence: mutating roles keep transport-neutral agent-claim semantics; PROJECT.yaml and generated AGENTS.md select exactly one standalone MCP or command adapter; the command implementation moves with the independently distributable command adapter.
+- UAR routing claim: route-agent-claim-adapters-approval, acquired event 779b72b1-c565-44b9-9f93-c45b5586fcc0.
 
 Creation Claim: capture-resource-coordination-dialogue-20260721
 
