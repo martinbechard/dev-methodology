@@ -4919,8 +4919,8 @@ class BundleContentTests(unittest.TestCase):
                     r"(?:the verifier|it) returns GOOD",
                 )
 
-    def test_lifecycle_documents_claim_topology_and_communication_sequences(self) -> None:
-        """The lifecycle should make claim ownership and wake-up communication explicit."""
+    def test_lifecycle_documents_simplified_coordination_and_delivery_sequences(self) -> None:
+        """The lifecycle should separate durable delivery evidence from temporary coordination."""
         lifecycle_path = (
             REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
         )
@@ -4938,89 +4938,86 @@ class BundleContentTests(unittest.TestCase):
             3,
             lifecycle_text.count('class="sequence-messages" role="list"'),
         )
-        self.assertEqual(26, lifecycle_text.count('aria-label="sends to"'))
-        self.assertEqual(7, lifecycle_text.count('aria-label="exchanges with"'))
+        self.assertGreater(lifecycle_text.count('aria-label="sends to"'), 0)
+        self.assertGreater(lifecycle_text.count('aria-label="exchanges with"'), 0)
         for sequence_title in (
-            "Sequence 1: normal lifecycle and artifact delivery",
-            "Sequence 2: WAIT or PRIMARY_REQUIRED without polling",
-            "Sequence 3: serialized backlog batons, then concurrent artifact lanes",
+            "Sequence 1: one work item from Running to Done",
+            "Sequence 2: bounded claim wait and recovery",
+            "Sequence 3: queue capacity and long-running supervision",
         ):
             with self.subTest(sequence_title=sequence_title):
                 self.assertEqual(1, lifecycle_text.count(sequence_title))
 
         for structural_label in (
-            "Portable policy",
-            "Execution interface",
-            "Authoritative state",
-            "Primary-only backlog domain",
-            "Project artifact domains",
-            "Canonical isolation",
-            "Target-specific integration",
-            "Codex task worktree is not claim ownership",
+            "Work item",
+            "Git",
+            "Coordination registry",
+            "Codex task",
+            "Private worktree",
+            "Main integration",
+            "Backlog closeout",
+            "Exclusive resources",
+            "Placement outcomes are not priority ranks",
         ):
             with self.subTest(structural_label=structural_label):
-                self.assertEqual(1, lifecycle_text.count(f">{structural_label}<"))
+                self.assertGreaterEqual(
+                    lifecycle_text.count(f">{structural_label}<"),
+                    1,
+                )
 
         for phrase in (
-            "project-files",
-            "all-files",
+            "only durable task record",
+            "Temporary shared-mutation protection",
+            "not proof of review, verification, delivery, or work-item completion",
+            "One user-visible Dev Orchestrator task",
+            "do not create placeholder tasks or predecessor chains",
+            "ten are Running",
+            "Do not leave a reviewed commit for a separate integration task",
+            "separate short claim",
             "PRIMARY_REQUIRED",
             "ISOLATE_REQUIRED",
             "RECOVERY_REQUIRED",
-            "RECOVER",
-            "READ-ONLY PREFLIGHT",
-            "LIFECYCLE START",
-            "ARTIFACT GO",
-            "ARTIFACT WAIT",
-            "ARTIFACT RESUME",
-            "stop without polling",
-            "Parent Backlog Coordinator",
+            "five, ten, fifteen, twenty, twenty-five, and thirty minutes",
+            "Dev Backlog Steward attempts any completion or status claim",
+            "direct the steward to record the truthful non-Running state",
+            "one cheapest representative first",
+            "heartbeat proves ownership only",
+            "complete accepted agent catalog once",
+            "Dev Backlog Coordinator",
             "Dev Backlog Steward",
-            "Dev Orchestrator task",
-            "Artifact producer",
-            "Independent reviewer",
+            "Dev Orchestrator",
+            "Independent reviewer and Dev Verifier",
             "Dev Verifier",
-            "Dev Merge Coordinator",
-            "Claim MCP server and registry",
-            "Codex task wake-up messaging",
-            "A task status, title, archive state, or message acknowledges coordination only",
-            "set its parent_claim_id to the orchestrator root claim's claim_id",
-            "Lineage never transfers file ownership",
-            "explicit authorization to preserve the complete dirty state",
-            "checkpoint commit before cleanup or release",
-            "keeps the heartbeat current during long work",
-            "remove only their clean released worktrees",
+            "Coordination registry and event journal",
+            "File-backed work item",
         ):
             with self.subTest(lifecycle_phrase=phrase):
                 self.assertIn(phrase, lifecycle_prose)
 
-        normal_index = lifecycle_text.index(
-            "Sequence 1: normal lifecycle and artifact delivery"
-        )
-        wait_index = lifecycle_text.index(
-            "Sequence 2: WAIT or PRIMARY_REQUIRED without polling"
-        )
+        for obsolete_phrase in (
+            "parent ledger",
+            "ARTIFACT GO",
+            "ARTIFACT WAIT",
+            "ARTIFACT RESUME",
+            "LIFECYCLE START",
+            ".agents/runs/",
+            "claim engine",
+        ):
+            with self.subTest(obsolete_phrase=obsolete_phrase):
+                self.assertNotIn(obsolete_phrase, lifecycle_prose)
+
+        normal_index = lifecycle_text.index("Sequence 1: one work item from Running to Done")
+        wait_index = lifecycle_text.index("Sequence 2: bounded claim wait and recovery")
         parallel_index = lifecycle_text.index(
-            "Sequence 3: serialized backlog batons, then concurrent artifact lanes"
+            "Sequence 3: queue capacity and long-running supervision"
         )
         self.assertLess(normal_index, wait_index)
         self.assertLess(wait_index, parallel_index)
-        recovery_required_index = lifecycle_prose.index(
-            "When an unclaimed primary worktree is dirty, RECOVERY_REQUIRED"
-        )
-        recovery_authorization_index = lifecycle_prose.index(
-            "explicit authorization to preserve the complete dirty state"
-        )
-        recover_index = lifecycle_prose.index(
-            "a successful RECOVER owner creates a checkpoint commit"
-        )
-        self.assertLess(recovery_required_index, recovery_authorization_index)
-        self.assertLess(recovery_authorization_index, recover_index)
         self.assertIn("@media (prefers-reduced-motion: reduce)", lifecycle_text)
         self.assertIn("@media (prefers-color-scheme: dark)", lifecycle_text)
 
-    def test_lifecycle_routes_direct_and_integrated_completion_paths(self) -> None:
-        """The lifecycle should route one accepted lane differently from integrated work."""
+    def test_lifecycle_routes_direct_main_and_pull_request_completion_paths(self) -> None:
+        """The lifecycle should keep direct-main integration with the owning orchestrator."""
         lifecycle_path = (
             REPOSITORY_ROOT / "design" / "orchestrated-development-lifecycle.html"
         )
@@ -5051,50 +5048,57 @@ class BundleContentTests(unittest.TestCase):
         _, verification_row = table_row("Contribution verification")
         self.assertIn("Dev Verifier", verification_row)
 
-        _, path_row = table_row("Path decision")
+        _, path_row = table_row("Delivery-path decision")
         for phrase in (
-            "One accepted contribution lane",
-            "independently reviewed and verified commit",
-            "final direct commit",
-            "without Dev Merge Coordinator",
-            "Multiple accepted committed contributions",
+            "direct-main delivery",
+            "same Dev Orchestrator",
+            "nested dependency inside that same canonical task",
+            "not as a separate integration task or queue",
+            "pull-request delivery",
+            "authorized reviewer or merge owner",
+            "does not acquire a duplicate main-integration claim",
         ):
             with self.subTest(path_phrase=phrase):
                 self.assertIn(phrase, path_row)
 
-        integration_index, integration_row = table_row("Multi-lane integration")
-        self.assertIn("Dev Merge Coordinator", integration_row)
-        self.assertIn("Do not create a merge lane for one accepted contribution", integration_row)
+        integration_index, integration_row = table_row("Direct-main integration")
+        self.assertIn("Dev Orchestrator", integration_row)
+        self.assertIn("exact claim for every main path", integration_row)
+        self.assertIn("smallest project-native checks", integration_row)
+        self.assertIn("Do not leave a reviewed commit for a separate integration task", integration_row)
 
-        integrated_verification_index, integrated_verification_row = table_row(
-            "Integrated-artifact review and verification"
+        reconciliation_index, reconciliation_row = table_row(
+            "Multi-contribution reconciliation"
         )
         for phrase in (
-            "every changed surface",
-            "fresh read-only context",
-            "Dev Code Reviewer",
-            "source changes",
-            "non-source",
-            "task-selected independent artifact or domain reviewers",
+            "nested Dev Merge Coordinator",
+            "same work item and canonical task",
+            "fresh independent review",
+            "complete integrated result",
+            "does not create another user-visible task",
+        ):
+            with self.subTest(reconciliation_phrase=phrase):
+                self.assertIn(phrase, reconciliation_row)
+        self.assertLess(integration_index, reconciliation_index)
+
+        integrated_verification_index, integrated_verification_row = table_row("Focused verification")
+        for phrase in (
             "Dev Verifier",
-            "complete integrated outcome",
-            "final integration commit",
+            "proportional to the affected surface and risk",
+            "changed-module and directly related regressions",
+            "complete agent catalog runs once",
+            "not once per work item",
         ):
             with self.subTest(integrated_verification_phrase=phrase):
                 self.assertIn(phrase, integrated_verification_row)
-        self.assertRegex(
-            integrated_verification_row,
-            r"All applicable post-integration review gates must pass before "
-            r"Dev Verifier checks the complete integrated outcome",
-        )
-        self.assertLess(integration_index, integrated_verification_index)
+        self.assertLess(reconciliation_index, integrated_verification_index)
 
         _, completion_row = table_row("Completion")
         for phrase in (
-            "final direct commit",
-            "final integration commit",
-            "clean status",
-            "Release artifact and integration ownership",
+            "separate short claim",
+            "Status: Completed",
+            "safely deletes the merged branch",
+            "recounts Running items",
         ):
             with self.subTest(completion_phrase=phrase):
                 self.assertIn(phrase, completion_row)

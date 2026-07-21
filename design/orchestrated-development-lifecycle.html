@@ -699,7 +699,7 @@
   <section class="hero" aria-labelledby="page-title">
     <h1 id="page-title">Orchestrated Development Lifecycle</h1>
     <p class="lede">
-      This page describes how the toolkit's agents and skills can be combined into longer workflows to achieve more autonomous agency across bootstrap, planned design, complete source-backed documentation, execution, review, verification, integration, completion, and evidence capture. Use it after the individual agents have been calibrated through manual invocation and their results provide confidence that combining them into a longer workflow is likely to succeed.
+      This page describes the steady-state workflow for coordinating file-backed development work. One durable work item maps to one Dev Orchestrator task, private work proceeds without shared-file ownership, integration and backlog updates use short exact claims, and the parent keeps the Running queue full without creating wait-only tasks or a second task registry. The same lifecycle also connects project bootstrap, planned design, source-backed documentation, implementation, review, verification, and completion.
     </p>
   </section>
 
@@ -722,13 +722,13 @@
           </tr>
           <tr>
             <td><span class="name">Intake</span></td>
-            <td>Parent Backlog Coordinator, Dev Backlog Steward, and Dev Orchestrator</td>
-            <td>Begin with read-only preflight. After dependencies resolve, the parent sends LIFECYCLE START so Dev Backlog Steward records Running under a brief primary-only backlog claim, commits, and releases. Only the later evidence-bearing ARTIFACT GO authorizes the Dev Orchestrator to dispatch project mutation.</td>
+            <td>Dev Backlog Coordinator, Dev Backlog Steward, and Dev Orchestrator</td>
+            <td>Dev Backlog Coordinator counts file-backed <code>Running</code> items and dispatches eligible <code>Ready</code> work until ten are Running or no eligible item remains. Dev Backlog Steward uses a short backlog-only transaction to record the canonical task id, branch, worktree, and initial phase. One user-visible Dev Orchestrator task then owns the item through delivery or a truthful terminal outcome.</td>
           </tr>
           <tr>
-            <td><span class="name">Claim gate</span></td>
-            <td>Every modifying claim owner</td>
-            <td>Mutation begins only after <a href="../skills/agent-claim/SKILL.md">agent-claim</a> establishes one file domain plus any exclusive resources. Exact project files, project trees, and <code>project-files</code> exclude backlog; <code>backlog</code> is primary-only; <code>all-files</code> is their deliberate primary-only union. The owner extends the same claim atomically as evidence reveals scope. Eligible non-overlapping project writers follow <code>ISOLATE_REQUIRED</code> into canonical sparse worktrees; <code>WAIT</code> and <code>PRIMARY_REQUIRED</code> suspend for a direct release notice and parent wake-up without polling.</td>
+            <td><span class="name">Private delivery</span></td>
+            <td>Dev Orchestrator and selected implementation or writing agents</td>
+            <td>Implementation, correction, read-only review, and focused local tests occur on the task-owned private branch and worktree. They need no project-file claim when they cannot mutate shared state. A claim is required only for main integration, backlog mutation, generated shared output, or a named exclusive resource such as a browser, port, database, or live test facility.</td>
           </tr>
           <tr>
             <td><span class="name">Placement, when needed</span></td>
@@ -738,7 +738,7 @@
           <tr>
             <td><span class="name">Execution</span></td>
             <td>Selected implementation or writing agent</td>
-            <td>Each assigned lane stays within its narrow claim and returns a committed, clean handoff before independent review; the <a href="agent-and-skill-definitions.html">generated catalog</a> owns each conceptual agent definition's detailed inputs, skills, and output contract.</td>
+            <td>The selected agent implements one bounded responsibility and returns a committed, clean handoff before independent review. The <a href="agent-and-skill-definitions.html">generated catalog</a> owns each conceptual agent definition's detailed inputs, skills, and output contract.</td>
           </tr>
           <tr>
             <td><span class="name">Independent contribution review</span></td>
@@ -751,29 +751,34 @@
             <td>The acceptance checks required by the behavior and risk must pass without weakened gates. A failed behavior check returns to the original executor; an accepted lane advances to the path decision.</td>
           </tr>
           <tr>
-            <td><span class="name">Path decision</span></td>
+            <td><span class="name">Delivery-path decision</span></td>
             <td>Dev Orchestrator</td>
-            <td>One accepted contribution lane keeps its independently reviewed and verified commit as the final direct commit, without Dev Merge Coordinator. Multiple accepted committed contributions enter the multi-lane integration path.</td>
+            <td>For direct-main delivery, the same Dev Orchestrator that knows the accepted commit and affected paths owns integration and focused post-integration verification. A work item with several accepted committed contributions or an integration conflict uses Dev Merge Coordinator as a nested dependency inside that same canonical task, not as a separate integration task or queue. For pull-request delivery, the authorized reviewer or merge owner performs the merge and the Dev Orchestrator does not acquire a duplicate main-integration claim.</td>
           </tr>
           <tr>
-            <td><span class="name">Multi-lane integration, when required</span></td>
-            <td>Dev Merge Coordinator</td>
-            <td>Acquire the target-specific integration resource, then combine multiple accepted commits in dependency order with their claim, review, and verification evidence. Separate worktrees commit to their unique branches without a repository-global commit resource. Do not create a merge lane for one accepted contribution.</td>
+            <td><span class="name">Direct-main integration</span></td>
+            <td>Dev Orchestrator</td>
+            <td>Acquire one exact claim for every main path the integration may modify and only the shared test resources needed for focused verification. Reconcile the accepted change with current main, integrate it, run the smallest project-native checks that cover the changed behavior and credible regression risk, record the main commit, and release from clean main. Do not leave a reviewed commit for a separate integration task.</td>
           </tr>
           <tr>
-            <td><span class="name">Integrated-artifact review and verification, multiple lanes only</span></td>
-            <td>Appropriate task-selected independent reviewers, then Dev Verifier, each in fresh contexts</td>
-            <td>After combination, every changed surface is reviewed in a fresh read-only context by its appropriate reviewer or reviewers: source changes by Dev Code Reviewer, and non-source setup, documentation, and wiki artifacts by their task-selected independent artifact or domain reviewers. All applicable post-integration review gates must pass before Dev Verifier checks the complete integrated outcome in another fresh context. Both stages must pass before the result becomes the final integration commit.</td>
+            <td><span class="name">Multi-contribution reconciliation, when required</span></td>
+            <td>Dev Orchestrator and nested Dev Merge Coordinator</td>
+            <td>Within the same work item and canonical task, combine the accepted commits in dependency order, preserve each contribution's provenance, and resolve integration-only conflicts. Then send every changed surface through the applicable fresh independent review before Dev Verifier checks the complete integrated result. This conditional dependency does not create another user-visible task, queue, ledger, or ownership chain.</td>
+          </tr>
+          <tr>
+            <td><span class="name">Focused verification</span></td>
+            <td>Dev Orchestrator and Dev Verifier</td>
+            <td>Per-item verification is proportional to the affected surface and risk. Start with changed-module and directly related regressions; add freshness, shared-resource, or integration checks only when those surfaces require them. Expand after a focused failure or evidence-backed cross-cutting risk. The complete agent catalog runs once against the final integrated campaign state, not once per work item.</td>
           </tr>
           <tr>
             <td><span class="name">Correction or blocker</span></td>
-            <td>Original executor, Dev Merge Coordinator, and Dev Orchestrator</td>
-            <td>Implementation findings and failed behavior checks return to the original executor; integration-only findings and conflict defects return to Dev Merge Coordinator. A corrected contribution or combined artifact re-enters the applicable fresh review and verification gates. After two failed correction attempts for the same finding or acceptance criterion, or when a required fixed dependency is unavailable, Dev Orchestrator reports BLOCKED with preserved commits and evidence rather than substituting self-review.</td>
+            <td>Original executor and Dev Orchestrator</td>
+            <td>Findings return to the original executor and corrected work re-enters fresh review and focused verification. Expensive failures are classified from retained evidence before another live or broad run. After two failed correction attempts for the same criterion, a repeated failure signature, or an unavailable fixed dependency, Dev Orchestrator records the preserved commit and exact blocker instead of substituting self-review or another blind retry.</td>
           </tr>
           <tr>
-            <td><span class="name">Completion and claim release</span></td>
-            <td>Dev Orchestrator and every claim owner</td>
-            <td>Record the final direct commit for the single-lane path, or the final integration commit after integrated review and verification for the multi-lane path. Release artifact and integration ownership only after clean status and resource cleanup or handoff. Once isolated contributions are preserved or integrated, remove only their clean released worktrees and prune stale metadata. Dev Backlog Steward then acquires a separate short backlog claim to record evidence and archive the item before releasing the primary baton. Repository-global claim events retain the coordination lifecycle for later contention reporting.</td>
+            <td><span class="name">Completion and cleanup</span></td>
+            <td>Dev Orchestrator, Dev Backlog Steward, and Dev Backlog Coordinator</td>
+            <td>After integration ownership is released, use a separate short claim for exactly the active work-item path and completed destination. Record delivery evidence, set <code>Status: Completed</code>, archive the item, commit, and release. The parent verifies merged delivery, removes the clean worktree, safely deletes the merged branch, prunes metadata, sets <code>Done — item</code>, archives the task, recounts Running items, and fills the vacancy.</td>
           </tr>
         </tbody>
       </table>
@@ -782,144 +787,129 @@
 
   <section class="section" aria-labelledby="claims-communication-title">
     <h2 id="claims-communication-title">Claims, Worktrees, And Communication</h2>
-    <p class="lede">The portable <a href="../skills/agent-claim/SKILL.md">agent-claim skill</a> owns claim policy, the claim engine enforces it, and the preferred MCP operations expose structured coordination results. Codex task messages carry assignments and wake-ups between tasks, but only the repository-global registry establishes file or resource ownership.</p>
+    <p class="lede">The durable work item, Git history, coordination registry, and Codex task each answer a different question. Keeping those responsibilities separate removes the need for baton ledgers, waiting-task registries, and separate integration queues.</p>
 
     <figure class="protocol-figure" aria-labelledby="ownership-topology-title">
-      <figcaption id="ownership-topology-title" class="name">Ownership topology</figcaption>
+      <figcaption id="ownership-topology-title" class="name">Four records with four responsibilities</figcaption>
       <div class="protocol-chain">
         <div class="protocol-node policy">
-          <strong>Portable policy</strong>
-          <p>Agent Claim defines acquisition, extension, heartbeat, contention, recovery, release, and cleanup obligations for every runtime.</p>
+          <strong>Work item</strong>
+          <p>The only durable task record: lifecycle state, canonical task id, branch, worktree, phase, accepted commit, waits, open issues, and delivery evidence.</p>
         </div>
         <span class="protocol-arrow" aria-hidden="true">&rarr;</span>
         <div class="protocol-node interface">
-          <strong>Execution interface</strong>
-          <p>Codex and Junie prefer the claim MCP operations when the exposed schema advertises the required domain and worktree behavior. The bundled claim command is the permitted portability fallback.</p>
+          <strong>Git</strong>
+          <p>Branches, commits, integration, reachability, content-equivalence evidence, clean status, and branch-cleanup eligibility.</p>
         </div>
         <span class="protocol-arrow" aria-hidden="true">&rarr;</span>
         <div class="protocol-node state">
-          <strong>Authoritative state</strong>
-          <p>The live registry under the Git common directory is authoritative across linked worktrees. The adjacent event journal records coordination evidence, not prompts or agent transcripts.</p>
+          <strong>Coordination registry</strong>
+          <p>Temporary shared-mutation protection for exact files and exclusive resources. It prevents concurrent conflicts; it is not proof of review, verification, delivery, or work-item completion.</p>
         </div>
         <span class="protocol-arrow" aria-hidden="true">&rarr;</span>
         <div class="protocol-node workspace">
-          <strong>Owned execution</strong>
-          <p>Successful outcomes bind one claim to the primary worktree, a canonical isolated worktree, or an exclusive resource until clean committed or explicit no-change release.</p>
+          <strong>Codex task</strong>
+          <p>Execution and display state. A title, message, stopped state, or archive state does not replace work-item or Git evidence.</p>
         </div>
       </div>
 
       <div class="protocol-workspaces">
         <div class="protocol-node workspace">
-          <strong>Primary-only backlog domain</strong>
-          <p><code>backlog</code> owns the complete queue subtree. Dev Backlog Steward uses brief serialized claims for Ready-to-Running and terminal archive transitions, commits each transition, and releases immediately.</p>
+          <strong>Private worktree</strong>
+          <p>Implementation, correction, review, and focused local tests need no project-file claim when they cannot affect shared state.</p>
         </div>
         <div class="protocol-node workspace">
-          <strong>Project artifact domains</strong>
-          <p>Exact project files, project trees, and <code>project-files</code> exclude backlog. <code>all-files</code> is the deliberate primary-only union reserved for recovery or true repository-wide work.</p>
+          <strong>Main integration</strong>
+          <p>Claim the exact main paths that may change and only the shared test resources required for focused verification. Release after clean integrated evidence.</p>
         </div>
         <div class="protocol-node workspace">
-          <strong>Canonical isolation</strong>
-          <p>A later non-overlapping writer follows <code>ISOLATE_REQUIRED</code> with a unique branch and, when coordination fixes it, an explicit accepted base; otherwise the base defaults to <code>HEAD</code>. The engine derives <code>.worktrees/&lt;claim-id&gt;</code> beneath the primary worktree and omits backlog by sparse checkout.</p>
+          <strong>Backlog closeout</strong>
+          <p>After integration release, claim only the active work-item path and completed destination, commit the terminal transition, and release immediately.</p>
         </div>
         <div class="protocol-node workspace">
-          <strong>Target-specific integration</strong>
-          <p>Separate branches commit independently. Dev Merge Coordinator acquires a target-specific integration resource before combining multiple accepted contributions and releases it only from a clean target worktree.</p>
+          <strong>Exclusive resources</strong>
+          <p>Claim a browser, port, database, generator output, or live-test facility only when equivalent work cannot safely run concurrently. A resource-only task should not occupy main integration unnecessarily.</p>
         </div>
       </div>
 
       <div class="protocol-boundary">
-        <strong>Codex task worktree is not claim ownership</strong>
-        <p>A task may be created or moved into a runtime worktree before any repository claim exists. Task placement, task status, and wake-up messaging do not authorize mutation; the task must still obtain <code>PRIMARY</code>, <code>ISOLATE</code>, or <code>RECOVER</code> for its intended file and resource scope. <code>WAIT</code>, <code>PRIMARY_REQUIRED</code>, <code>ISOLATE_REQUIRED</code>, and <code>RECOVERY_REQUIRED</code> are coordination states, not generic transport failures.</p>
-        <p>When an unclaimed primary worktree is dirty, <code>RECOVERY_REQUIRED</code> stops acquisition. Only explicit authorization to preserve the complete dirty state permits an <code>all-files</code> recovery claim with <code>allow-recovery</code>; a successful <code>RECOVER</code> owner creates a checkpoint commit before cleanup or release. Every active owner keeps the heartbeat current during long work.</p>
+        <strong>Placement outcomes are not priority ranks</strong>
+        <p><code>PRIMARY</code> means the claim is bound to the primary checkout. <code>ISOLATE</code> means it is bound to a canonical isolated worktree. Neither name makes one work item more important than another. <code>WAIT</code>, <code>PRIMARY_REQUIRED</code>, <code>ISOLATE_REQUIRED</code>, and <code>RECOVERY_REQUIRED</code> describe coordination conditions, not delivery verdicts.</p>
+        <p>The portable <a href="../skills/agent-claim/SKILL.md">agent-claim skill</a> defines acquisition, extension, heartbeat, contention, recovery, release, and cleanup. Prefer its structured operations when available; <a href="../skills/agent-claim/scripts/claim.py">the bundled command</a> is the portability fallback. Before any stale-entry recovery, inspect the owner, process, worktree, preserved commits, resource use, registry peers, and journal. Never remove protection for active or unpreserved work.</p>
       </div>
 
       <div class="protocol-workspaces" aria-label="Codex task coordination boundaries">
         <div class="protocol-node policy">
-          <strong>Canonical task identity</strong>
-          <p>The parent reconciles active and archived tasks by source parent task id, canonical backlog path, normalized objective, creation time, and status. It persists one stable task id for later wakes. A generic or phase title is display state and never an identity, backlog, claim, or delivery record.</p>
+          <strong>One task per Running item</strong>
+          <p>Reconcile active and archived tasks by parent id, backlog path, normalized objective, creation time, and status. Preserve one canonical id through correction, integration, and closeout.</p>
         </div>
         <div class="protocol-node interface">
-          <strong>Ambiguous dispatch</strong>
-          <p>An error, timeout, or ambiguous create response may already have changed task state. After an immediate zero-match read, wait one bounded settlement interval and reconcile again before the only permitted retry; settle and reconcile again afterward. Adopt one match, or stop and verify duplicate tasks before they can claim or mutate.</p>
+          <strong>Useful task titles</strong>
+          <p>Use a concise phase prefix such as <code>Implementing —</code>, <code>Reviewing —</code>, <code>Integrating —</code>, <code>Waiting for Claim —</code>, <code>Waiting for User —</code>, or <code>Done —</code>. Never use raw prompts, XML tags, error output, or task ids as titles.</p>
         </div>
         <div class="protocol-node state">
-          <strong>Just-in-time visibility</strong>
-          <p>Do not keep a child active merely for preflight when it cannot enter its current lifecycle or artifact window. Persist its handoff and canonical id, archive the dormant UI task when supported, and unarchive or wake only the selected next item. The parent retains one immediate successor obligation instead of building independent-item predecessor chains.</p>
+          <strong>No wait-only tasks</strong>
+          <p>Dispatch only work that can start a bounded delivery phase. Approval, dependency, reviewer, claim, and integration waits remain in the existing work item and canonical task; they do not create placeholder tasks or predecessor chains.</p>
         </div>
         <div class="protocol-node workspace">
-          <strong>Terminal UI housekeeping</strong>
-          <p>Archive only after the terminal backlog disposition, required commit or no-change evidence, review and verification or truthful blocker evidence, clean released claims and worktrees, and every wake obligation are durable. <code>Inactive thread archive did not persist</code> is an ambiguous no-persist result: reconcile once, record it, and do not claim archival or retry blindly.</p>
+          <strong>Compatible execution</strong>
+          <p>A Dev Orchestrator task must be able to run ordinary Git, shell, test, process, and coordination operations without user approval prompts. After runtime or configuration changes, prove the effective child environment with one disposable pilot before broad dispatch.</p>
         </div>
       </div>
 
       <div class="protocol-boundary">
-        <strong>Fifteen-minute parent wake-obligation audit</strong>
-        <p>The parent ledger persists the predecessor or source task id, successor task id, required baton evidence, notification state, and acknowledgement state. Every fifteen minutes while any baton, notification, or acknowledgement remains pending, the parent checks for a released predecessor whose evidence was not delivered or whose successor did not acknowledge it. The successor never polls. The parent repairs the evidence-bearing baton, sends exactly one <code>ARTIFACT RESUME</code> wake to the canonical successor, and records acknowledgement.</p>
-        <p>The deterministic coordination fixture exercises representative predecessor-to-successor edges and proves release detection, missing delivery and acknowledgement, one parent repair wake, and zero successor polling. Concrete task identities remain evaluation data rather than general lifecycle guidance.</p>
-        <p>After every terminal gate is durable, <code>Done — X</code> is the exact successful display title. It still does not replace delivery, lifecycle, claim-release, or archival evidence.</p>
+        <strong>Long-running work is observed by evidence, not heartbeat alone</strong>
+        <p>Before a phase expected to exceed five minutes, publish the active unit, queued units, estimate, hard stop, retained evidence path, and distinct acceptance criterion. The parent observes phase start, first failure, timeout, and completion without serializing healthy work.</p>
+        <p>After an expensive failure, classify the signature from retained output, add the smallest offline replay or deterministic regression, and run one cheapest representative first. A second expensive representative starts only for a distinct unproved criterion. Two unproductive attempts or fifteen minutes beyond the estimate require parent investigation and a revised plan.</p>
+        <p>The fifteen-minute queue review measures Running capacity, phase age, claim pressure, accepted work awaiting integration, terminal closeout, task anomalies, and interval delivery. It writes no second ledger: durable facts remain in the work items.</p>
       </div>
     </figure>
 
     <div class="sequence-stack" aria-label="Claim and worktree communication sequences">
       <figure class="sequence-figure" aria-labelledby="normal-sequence-title">
-        <figcaption id="normal-sequence-title">Sequence 1: normal lifecycle and artifact delivery
-          <span>Backlog ownership is short and serialized; production, review, verification, optional integration, and terminal archival carry explicit evidence between distinct owners.</span>
+        <figcaption id="normal-sequence-title">Sequence 1: one work item from Running to Done
+          <span>The same Dev Orchestrator owns delivery through integration; backlog mutation remains a separate short transaction.</span>
         </figcaption>
         <ol class="sequence-messages" role="list">
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Parent Backlog Coordinator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Dev Orchestrator task</span><span class="sequence-payload">Reconcile the canonical task across active and archived results, persist its stable id, then send <strong>READ-ONLY PREFLIGHT</strong> with the authorized item, dependency state, source inventory, review route, and mutation boundary. A material phase title may follow reconciliation, but creates no claim or lifecycle evidence.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Parent Backlog Coordinator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Dev Backlog Steward</span><span class="sequence-payload"><strong>LIFECYCLE START:</strong> authorize only the Ready-to-Running transition for the selected backlog item.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Backlog Steward</span><span class="sequence-direction" role="img" aria-label="exchanges with">&harr;</span><span class="sequence-receiver">Claim MCP server and registry</span><span class="sequence-payload">Acquire <code>backlog</code>; require <code>PRIMARY</code>; record Running ownership, commit cleanly, and release. The returned commit and release event become lifecycle evidence.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Backlog Steward</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Parent Backlog Coordinator</span><span class="sequence-payload">Return the lifecycle commit, claim outcome, release event, clean status, and the separately authorized artifact boundary.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Parent Backlog Coordinator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Dev Orchestrator task</span><span class="sequence-payload"><strong>ARTIFACT GO:</strong> send the lifecycle evidence, accepted base, exact artifact scope, dependencies, and completion gates.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Orchestrator task</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Artifact producer</span><span class="sequence-payload">Delegate one bounded lane. The producer acquires its own exact project files, tree, or <code>project-files</code> scope and any exclusive generator, browser, port, or database resources.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Artifact producer</span><span class="sequence-direction" role="img" aria-label="exchanges with">&harr;</span><span class="sequence-receiver">Claim MCP server and registry</span><span class="sequence-payload">Follow <code>PRIMARY</code>, <code>ISOLATE_REQUIRED</code> then <code>ISOLATE</code>, or <code>RECOVERY_REQUIRED</code> exactly. Commit the verified lane and return a clean evidence-bearing handoff.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Artifact producer</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Independent reviewer</span><span class="sequence-payload">Send the commit, changed scope, authoritative sources, and focused checks into a fresh read-only review. Findings return to the same producer.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Independent reviewer</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Dev Verifier</span><span class="sequence-payload">After acceptance, send the reviewed commit and required behavior, risk, accessibility, and repository checks for independent verification.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Verifier</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Dev Orchestrator task</span><span class="sequence-payload">Return PASS, WARN, or FAIL with commands, coverage, skipped checks, and owned resource cleanup. One accepted lane stays direct; several accepted lanes require deliberate integration.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Orchestrator task</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Dev Merge Coordinator</span><span class="sequence-payload"><strong>Multiple lanes only:</strong> send clean commits in dependency order. Acquire the target-specific integration resource, combine them, repeat fresh review and complete verification, then commit and release the clean result.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Orchestrator task</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Dev Backlog Steward</span><span class="sequence-payload">After direct or integrated delivery is accepted, send final commit, review, verification, claim-release, and cleanup evidence. The steward acquires a later <code>backlog</code> claim, records completion, archives the item, commits, and releases. Only then may the parent record a terminal display title and attempt UI task archival after confirming no wake or baton obligation remains.</span></li>
+          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Backlog Coordinator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Dev Backlog Steward</span><span class="sequence-payload">Select one eligible Ready item. Record <code>Running</code>, canonical task id, branch, worktree, and initial phase under a brief backlog-only claim.</span></li>
+          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Backlog Coordinator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Dev Orchestrator</span><span class="sequence-payload">Assign the complete item. The task uses its private worktree for implementation, corrections, local tests, and fresh independent review.</span></li>
+          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Orchestrator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Independent reviewer and Dev Verifier</span><span class="sequence-payload">Obtain acceptance of the exact candidate and focused evidence. Findings return to the original executor.</span></li>
+          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Orchestrator</span><span class="sequence-direction" role="img" aria-label="exchanges with">&harr;</span><span class="sequence-receiver">Coordination registry</span><span class="sequence-payload">Acquire exact main paths and required shared test resources, integrate the accepted change, run focused post-integration checks, and release from clean main.</span></li>
+          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Orchestrator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Dev Backlog Steward</span><span class="sequence-payload">Use a separate short claim for the active and completed work-item paths. Persist <code>Completed</code> and the delivery evidence, move the item, commit, and release.</span></li>
+          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Orchestrator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Dev Backlog Coordinator</span><span class="sequence-payload">Return the integration commit, focused checks, both release events, branch, worktree, and cleanup eligibility.</span></li>
+          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Backlog Coordinator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Git and Codex task</span><span class="sequence-payload">Verify merged delivery, remove the clean worktree, safely delete the merged branch, prune metadata, set <code>Done — item</code>, archive the task, recount Running items, and dispatch a replacement if capacity exists.</span></li>
         </ol>
       </figure>
 
       <figure class="sequence-figure" aria-labelledby="wait-sequence-title">
-        <figcaption id="wait-sequence-title">Sequence 2: WAIT or PRIMARY_REQUIRED without polling
-          <span>The waiting task yields control. Only a direct release notice and evidence-bearing parent baton wake it for one reconciled retry.</span>
+        <figcaption id="wait-sequence-title">Sequence 2: bounded claim wait and recovery
+          <span>The existing Dev Orchestrator owns the wait; no waiting task or baton chain is created.</span>
         </figcaption>
         <ol class="sequence-messages" role="list">
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Waiting task</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Claim MCP server and registry</span><span class="sequence-payload">Request the exact artifact scope or primary-only backlog baton.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Claim MCP server and registry</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Waiting task</span><span class="sequence-payload">Return <code>WAIT</code> with conflicting claims and overlap pairs, or <code>PRIMARY_REQUIRED</code> when backlog cannot use the occupied primary worktree. The registry is unchanged.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Waiting task</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Codex task wake-up messaging</span><span class="sequence-payload"><strong>ARTIFACT WAIT:</strong> send the outcome event, blocking claim, requested scope, current commit, and unfinished boundary; then stop without polling or mutating.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Codex task wake-up messaging</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Parent Backlog Coordinator</span><span class="sequence-payload">Deliver the stopped task's evidence and stable canonical id. The parent holds the only immediate successor obligation and may archive the dormant UI task when supported. A task status, title, archive state, or message acknowledges coordination only; it is not implementation or release evidence.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Current producer or steward</span><span class="sequence-direction" role="img" aria-label="exchanges with">&harr;</span><span class="sequence-receiver">Claim MCP server and registry</span><span class="sequence-payload">Finish only the owned scope, commit or declare no change, confirm clean status, release normally, and preserve the release event.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Current producer or steward</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Parent Backlog Coordinator</span><span class="sequence-payload">Fulfil only the release-notification duty: return the resulting commit, release event, clean status, and accepted handoff scope. Do not wake or probe the waiting successor.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Parent Backlog Coordinator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Codex task wake-up messaging</span><span class="sequence-payload">Verify that the baton is complete, reconcile the persisted canonical id across active and archived tasks, preserve unrelated contributions, unarchive when supported, and issue one evidence-bearing <strong>ARTIFACT RESUME</strong> message to that task.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Codex task wake-up messaging</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Waiting task</span><span class="sequence-payload">Deliver the authorized scope, prior wait event, release event, accepted commit, base, and explicit instruction to reconcile once before reacquisition.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Resumed task</span><span class="sequence-direction" role="img" aria-label="exchanges with">&harr;</span><span class="sequence-receiver">Claim MCP server and registry</span><span class="sequence-payload">Read live status once, then reacquire. Continue only from the observed <code>PRIMARY</code>, <code>ISOLATE_REQUIRED</code> then <code>ISOLATE</code>, or another valid stop outcome.</span></li>
+          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Orchestrator or Dev Backlog Steward</span><span class="sequence-direction" role="img" aria-label="exchanges with">&harr;</span><span class="sequence-receiver">Coordination registry</span><span class="sequence-payload">The Dev Orchestrator attempts the exact integration claim; Dev Backlog Steward attempts any completion or status claim. Record the outcome, blocking claim, wait start, attempt count, and next attempt in the work item.</span></li>
+          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Orchestrator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Blocking owner</span><span class="sequence-payload">Request direct release notification. Retry at five, ten, fifteen, twenty, twenty-five, and thirty minutes, stopping as soon as ownership succeeds.</span></li>
+          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Blocking owner</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Dev Orchestrator</span><span class="sequence-payload">After preserving work and cleaning the owned boundary, release and send the exact release event. The waiting task reconciles current main once and retries the same exact scope.</span></li>
+          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Backlog Coordinator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Dev Orchestrator and blocking owner</span><span class="sequence-payload">At thirty minutes, investigate the owner and actual scope. Prompt safe release, narrow or split an unnecessarily broad claim, finish the blocking integration first, or record a truthful technical or user-decision blocker.</span></li>
+          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Backlog Coordinator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Dev Backlog Steward</span><span class="sequence-payload">If unresolved, direct the steward to record the truthful non-Running state under a short exact backlog claim, then fill the vacancy with eligible Ready work. Never release protection for dirty or unpreserved work.</span></li>
         </ol>
       </figure>
 
       <figure class="sequence-figure" aria-labelledby="parallel-sequence-title">
-        <figcaption id="parallel-sequence-title">Sequence 3: serialized backlog batons, then concurrent artifact lanes
-          <span>Primary-only queue commits happen one at a time. Their releases open independent project lanes that may execute concurrently in canonical worktrees.</span>
+        <figcaption id="parallel-sequence-title">Sequence 3: queue capacity and long-running supervision
+          <span>The parent maximizes useful parallelism while intervening early when a phase is expensive or stalled.</span>
         </figcaption>
         <ol class="sequence-messages" role="list">
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Parent Backlog Coordinator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Dev Backlog Steward</span><span class="sequence-payload">Send the first Ready item and <strong>LIFECYCLE START</strong>. Do not bundle other queue transitions into its ownership.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Backlog Steward</span><span class="sequence-direction" role="img" aria-label="exchanges with">&harr;</span><span class="sequence-receiver">Claim MCP server and registry</span><span class="sequence-payload">Acquire <code>backlog</code> on primary, commit Running ownership, release, and return the exact baton evidence.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Parent Backlog Coordinator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Dev Backlog Steward</span><span class="sequence-payload">Only after release, send the next queue transition. Repeat the same short primary claim, commit, and release sequence.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Parent Backlog Coordinator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Dev Orchestrator task</span><span class="sequence-payload">After the relevant lifecycle commits are durable, dispatch a measured starting floor of three active <strong>ARTIFACT GO</strong> campaigns with non-overlapping scopes, dependency order, resource requirements, and accepted bases. Audit the task list after the batch; add one campaign only after healthy progress and resource evidence.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Orchestrator task</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Artifact producers</span><span class="sequence-payload">Assign distinct files, trees, or resources. Producers do not inherit ownership from the parent task or from their runtime worktree.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Producer A</span><span class="sequence-direction" role="img" aria-label="exchanges with">&harr;</span><span class="sequence-receiver">Claim MCP server and registry</span><span class="sequence-payload">Acquire a distinct child claim with the shared <code>root_task_id</code>, and set its <code>parent_claim_id</code> to the orchestrator root claim's <code>claim_id</code>. Lineage never transfers file ownership; when the parent coordination claim occupies primary, an eligible child project lane isolates.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Producer B and later producers</span><span class="sequence-direction" role="img" aria-label="exchanges with">&harr;</span><span class="sequence-receiver">Claim MCP server and registry</span><span class="sequence-payload">For non-overlapping scopes, receive <code>ISOLATE_REQUIRED</code>, resubmit the same claim id with a unique branch and an optional accepted base, and receive <code>ISOLATE</code> at canonical <code>.worktrees/&lt;claim-id&gt;</code> checkouts without backlog.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Artifact producers</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Independent reviewers</span><span class="sequence-payload">Work concurrently only within owned scopes. Generators, browsers, verification capacity, integration targets, claim contention, ports, databases, and other shared state use adaptive backoff or explicit serialization; parked preflights never count as active capacity.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Independent reviewers</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Dev Verifier</span><span class="sequence-payload">Review every contribution in a fresh read-only context, then verify each accepted lane without weakening or sharing its gates.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Verifier</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Dev Merge Coordinator</span><span class="sequence-payload">For multiple accepted commits, provide dependency order and verification evidence. The coordinator acquires the target integration resource and preserves each contribution distinctly.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Merge Coordinator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Independent reviewers and Dev Verifier</span><span class="sequence-payload">After combination, repeat applicable review and complete verification. Commit and release the clean target, then remove only released, clean, preserved isolated worktrees.</span></li>
-          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Parent Backlog Coordinator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Dev Backlog Steward</span><span class="sequence-payload">Serialize terminal backlog claims after delivery evidence is complete. Archive one item per governed transition and wake the one parent-selected next task with the exact commit and release event. Run the final full agent catalog only after every accepted correction is integrated, then reconcile terminal task ids and UI housekeeping outcomes.</span></li>
+          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Backlog Coordinator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">File-backed queue</span><span class="sequence-payload">Count <code>Running</code>. Dispatch distinct eligible Ready items until ten are Running or every eligible item is active. Never create wait-only tasks to meet the target.</span></li>
+          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Orchestrator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Parent and work item</span><span class="sequence-payload">Before a phase expected to exceed five minutes, expose the active and queued units, estimate, hard stop, evidence path, and distinct acceptance criterion.</span></li>
+          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Backlog Coordinator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Long-running task</span><span class="sequence-payload">Observe phase start, first failure, timeout, and completion. Inspect process state, elapsed time, latest evidence-bearing output, and remaining work; a heartbeat proves ownership only.</span></li>
+          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Orchestrator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Focused correction</span><span class="sequence-payload">After failure, preserve evidence, reproduce the boundary offline, and run the cheapest representative. Do not automatically start later serial cases after a shared-boundary failure.</span></li>
+          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Backlog Coordinator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Queue and claims</span><span class="sequence-payload">Every fifteen minutes, review capacity, phase age, waits, claim scope, accepted work awaiting integration, closeout, anomalies, and interval delivery. Make a recovery or scheduling adjustment in the same review when delivery worsens.</span></li>
+          <li><span class="sequence-number" aria-hidden="true"></span><span class="sequence-sender">Dev Backlog Coordinator</span><span class="sequence-direction" role="img" aria-label="sends to">&rarr;</span><span class="sequence-receiver">Final campaign verifier</span><span class="sequence-payload">After all accepted work is integrated and terminal, run the complete accepted agent catalog once against the exact final commit and disposition every failure.</span></li>
         </ol>
       </figure>
     </div>
 
-    <p class="source-note">Implementation sources: <a href="../skills/codex-workitem-coordination/SKILL.md">Codex Work-Item Coordination</a>, <a href="../skills/agent-claim/SKILL.md">Agent Claim workflow</a>, <a href="../skills/agent-claim/scripts/claim.py">claim engine</a>, <a href="../scripts/test_agent_claim.py">focused claim tests</a>, the <a href="../evals/agent-tests/dev-backlog-coordinator/coordination_simulator.py">deterministic coordination simulator</a> and <a href="../evals/agent-tests/dev-backlog-coordinator/test_coordination_simulator.py">focused simulator tests</a>, <a href="../README.md#agent-claims-and-worktrees">operator guidance</a>, and the <a href="agent-and-skill-definitions.html#dev-activities-title">generated development-agent catalog</a>.</p>
+    <p class="source-note">Implementation sources: <a href="../skills/codex-workitem-coordination/SKILL.md">Codex Work-Item Coordination</a>, <a href="../skills/complete-work-item-direct-main/SKILL.md">Direct-Main Completion</a>, <a href="../skills/agent-claim/SKILL.md">Agent Claim workflow</a>, <a href="../skills/agent-claim/scripts/claim.py">portable claim command</a>, <a href="../scripts/test_agent_claim.py">focused claim tests</a>, <a href="../README.md#agent-claims-and-worktrees">operator guidance</a>, and the <a href="agent-and-skill-definitions.html#dev-activities-title">generated development-agent catalog</a>.</p>
   </section>
 
   <section class="section" aria-labelledby="planned-design-title">
@@ -953,7 +943,7 @@
           <tr>
             <td><span class="name">Implementation</span></td>
             <td>Dev Orchestrator delegates the normalized work item and selected work-item process to Dev Coder. The coder implements the accepted design with the technology skills already routed for the affected project folders.</td>
-            <td>Implementation does not receive project-specific reconstruction instructions or evaluator guidance. It preserves accepted contracts and supplies tests for the named verification obligations. Simple-workitem delivery ends with a verified local commit and interactive report. Feature-branch-workitem delivery begins on a feature branch and ends with a pushed pull request explicitly set ready for review. Backlog updates are delegated separately to Dev Backlog Steward through the selected backend.</td>
+            <td>Implementation does not receive project-specific reconstruction instructions or evaluator guidance. It preserves accepted contracts and supplies tests for the named verification obligations. Direct-main delivery remains with the Dev Orchestrator through accepted integration and focused post-integration verification. Feature-branch delivery ends with a pushed pull request ready for its authorized reviewer or merge owner. Backlog completion is always a separate provider transaction after delivery evidence exists.</td>
           </tr>
           <tr>
             <td><span class="name">Verification and evaluation</span></td>
@@ -967,7 +957,7 @@
 
   <section class="section" aria-labelledby="evidence-title">
     <h2 id="evidence-title">Execution Evidence</h2>
-    <p class="lede">An orchestrated run leaves four complementary records. Each fact has one record owner so later readers do not have to reconcile competing summaries.</p>
+    <p class="lede">An orchestrated run leaves complementary records with deliberately separate responsibilities. No title, message, claim event, or branch label can substitute for the evidence owned by another record.</p>
     <div class="matrix">
       <table>
         <thead>
@@ -979,24 +969,29 @@
         </thead>
         <tbody>
           <tr>
-            <td><code>.agents/runs/&lt;run-id&gt;/context-pack.json</code></td>
-            <td>Inputs supplied to the assigned agent: files, applicable guidance, constraints, and selected skills.</td>
-            <td>Results or verification claims.</td>
+            <td>File-backed work item</td>
+            <td>Lifecycle state, canonical task id, branch and worktree, current phase, waits, open issues, accepted commit, review, verification, integration, completion, and cleanup evidence.</td>
+            <td>Git reachability, live shared ownership, or task UI state.</td>
           </tr>
           <tr>
-            <td><code>.agents/runs/&lt;run-id&gt;/agent-results.jsonl</code></td>
-            <td>Ordered agent outputs and status events for replay, audit, and merge coordination.</td>
-            <td>A synthesized verification verdict.</td>
+            <td>Git</td>
+            <td>Source and integration commits, branch ancestry or recorded non-ancestral mapping, changed paths, clean status, and safe worktree or branch cleanup eligibility.</td>
+            <td>Review acceptance, test meaning, or work-item lifecycle.</td>
           </tr>
           <tr>
-            <td><code>.agents/runs/&lt;run-id&gt;/verification.md</code></td>
-            <td>Checks run, outcomes, unresolved risks, and justified omissions.</td>
-            <td>Task history or next-owner context.</td>
+            <td>Review and verification outputs</td>
+            <td>The exact candidate, findings or acceptance, checks run, retained reports, risks, cleanup observations, and justified omissions.</td>
+            <td>Shared mutation ownership or terminal backlog state.</td>
           </tr>
           <tr>
-            <td><code>.agents/runs/&lt;run-id&gt;/handoff.md</code></td>
-            <td>Completed work, remaining work, follow-up ownership, and the context needed to continue.</td>
-            <td>Raw event history or duplicated command transcripts.</td>
+            <td>Coordination registry and event journal</td>
+            <td>Current exact shared ownership, contention, heartbeat, release, and recovery observations.</td>
+            <td>Whether product bytes were accepted, delivered, or completed.</td>
+          </tr>
+          <tr>
+            <td>Codex task</td>
+            <td>Live execution, concise phase title, messages, and user-visible status.</td>
+            <td>Durable identity, work-item lifecycle, Git delivery, or claim authority.</td>
           </tr>
         </tbody>
       </table>
