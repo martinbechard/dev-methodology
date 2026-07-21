@@ -1,12 +1,12 @@
 # Configure Agent Claim Transport Adapters
 
-Status: User Action Required
+Status: Ready
 
 Type: Feature
 
 Provider: file
 
-Provider Reference: backlog/user-action-required/configure-agent-claim-transport-adapters.md
+Provider Reference: backlog/feature-backlog/configure-agent-claim-transport-adapters.md
 
 Completion: direct-main
 
@@ -15,13 +15,13 @@ Completion: direct-main
 - Owner: Unowned
 - Claim: None
 - Canonical task: 019f85c8-626e-77b2-8b7e-09a893d60c1b
-- Worktree: /Users/martinbechard/.codex/worktrees/4e3b/dev-methodology
-- Branch: codex/configure-agent-claim-transport-adapters
+- Worktree: Removed after clean discovery closeout.
+- Branch: Removed after clean discovery closeout.
 - Starting main: 2624b5b25ba6e5548051d7b9953933b1e57b3f87
-- Phase: Bounded transport inventory and exact governed-scope discovery completed; implementation is paused for path-specific approval.
+- Phase: Bounded transport inventory and exact governed-scope discovery completed; exact approval is recorded and the item is ready for fresh dispatch.
 - Started: 2026-07-21
 - Running-record claim: start-agent-claim-transport-adapters-019f85c8, acquired event 8a69729f-031d-465d-8ff1-2e0c3951e62c.
-- Open issues: The exact eight-path governed-definition scope requires the user answer below.
+- Open issues: None. Implementation must preserve the approved standalone-adapter scope.
 - Accepted candidate: Pending.
 
 ## User Action Required
@@ -51,18 +51,26 @@ The evidence-backed design requires eight governed definition paths. Repository 
 
 ### Resolution
 
-Pending.
+- Answer: Approved.
+- User wording: "yes".
+- Date: 2026-07-21.
+- Provenance: direct user response in parent backlog-coordination task 019f77f4-c4bd-7c91-b197-c987a7beb838 to the exact eight-path question recorded above.
+- Approved governed scope: the eight definition paths listed in the question above.
+- Approved dependent scope: their supported generated mirrors and directly related non-governed project configuration, renderer, validation, documentation, and focused test surfaces required by this work item.
+- Exclusions: no other governed definition unless separately approved.
+- Disposition: Ready for a fresh canonical Dev Orchestrator task.
 
 ### Unattended Work Boundary
 
-No governed or project mutation is authorized while this question is pending. Preserve the decision to use standalone adapter skills rather than generator-owned materializations.
+Implementation is authorized only within the exact resolved scope above. Preserve the decision to use standalone adapter skills rather than generator-owned materializations.
 
 ### Discovery Evidence
 
 - Canonical task: 019f85c8-626e-77b2-8b7e-09a893d60c1b.
-- Clean branch/worktree: codex/configure-agent-claim-transport-adapters at /Users/martinbechard/.codex/worktrees/4e3b/dev-methodology, based on 2624b5b25ba6e5548051d7b9953933b1e57b3f87.
+- Discovery branch/worktree were clean and removed after routing the question; fresh delivery must start from current main.
 - Composition evidence: mutating roles keep transport-neutral agent-claim semantics; PROJECT.yaml and generated AGENTS.md select exactly one standalone MCP or command adapter; the command implementation moves with the independently distributable command adapter.
 - UAR routing claim: route-agent-claim-adapters-approval, acquired event 779b72b1-c565-44b9-9f93-c45b5586fcc0.
+- Approval transaction claim: approve-claim-transport-adapters-20260721, acquired event dfb1ec1a-ead3-4888-815d-0985f490f50a.
 
 Creation Claim: capture-resource-coordination-dialogue-20260721
 
