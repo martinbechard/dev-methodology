@@ -351,7 +351,8 @@ README_REQUIRED_PHRASES = (
     "Unowned skills and agents are never removed.",
     "For a user-scope Codex deployment, the MCP skill root is the resolved absolute path to ~/.agents/skills.",
     "--dest ~/.codex/skills",
-    "Install mcp-agent-ops 0.2.3 or newer",
+    "claim tools advertise result schema version 2",
+    "Published release 0.4.0 does not contain that claim-result contract",
     "thirteen exact MCP operations",
     "one call-bearing MCP process stream",
     "An outcome-less completed call is not semantic evidence.",
@@ -5073,7 +5074,7 @@ class BundleContentTests(unittest.TestCase):
             "Main integration",
             "Backlog closeout",
             "Exclusive resources",
-            "Placement outcomes are not priority ranks",
+            "Claim outcomes state ownership and required action",
         ):
             with self.subTest(structural_label=structural_label):
                 self.assertGreaterEqual(

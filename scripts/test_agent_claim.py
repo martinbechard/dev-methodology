@@ -290,6 +290,8 @@ class AgentClaimTests(unittest.TestCase):
         self.assertEqual("PRIMARY_REQUIRED", result["legacy_outcome"])
         self.assertEqual("backlog_requires_primary_worktree", result["reason"])
         self.assertFalse(isolated_path.exists())
+        event = next(event for event in self.journal_events() if event["claim_id"] == "backlog")
+        self.assertIs(event["shared_checkout_claimed"], True)
 
     def test_backlog_scope_uses_available_primary_while_isolated_claim_remains(self) -> None:
         self.claim(*self.acquire_arguments("first"), "--file", "README.md")
@@ -1063,6 +1065,28 @@ class AgentClaimTests(unittest.TestCase):
         self.assertEqual("PRIMARY_REQUIRED", result["legacy_outcome"])
         self.assertEqual(before, self.registry_path().read_bytes())
 
+    def test_report_uses_explicit_context_when_shared_checkout_is_available(self) -> None:
+        self.claim(*self.acquire_arguments("first"), "--file", "README.md")
+        isolated, isolated_path = self.isolated_arguments("isolated")
+        self.claim(*self.acquire_arguments("isolated"), "--file", "src/one.py", *isolated)
+        self.claim("release", "--claim-id", "first", "--no-change")
+
+        required = self.claim(
+            *self.acquire_arguments("backlog"),
+            "--backlog",
+            repo=isolated_path,
+        )
+        report = self.claim("report", "--since", "2d")
+
+        self.assertEqual(3, required.returncode)
+        event = next(event for event in self.journal_events() if event["claim_id"] == "backlog")
+        self.assertIs(event["shared_checkout_claimed"], False)
+        self.assertEqual(0, report.returncode, report.stderr)
+        metrics = self.output(report)["metrics"]
+        self.assertEqual(1, metrics["outcome_counts"]["SHARED_CHECKOUT_REQUIRED"])
+        self.assertEqual(1, metrics["raw_outcome_counts"]["PRIMARY_REQUIRED"])
+        self.assertEqual([], metrics["outcome_normalization_gaps"])
+
     def test_linked_worktrees_share_one_journal(self) -> None:
         self.claim(*self.acquire_arguments("first"), "--file", "README.md")
         isolated, isolated_path = self.isolated_arguments("second")
@@ -1371,7 +1395,23 @@ class AgentClaimTests(unittest.TestCase):
                 },
             ),
             self.synthetic_event("release", "2026-07-12T10:06:00Z", "release", "RELEASED", "blocked"),
-            self.synthetic_event("isolate", "2026-07-12T10:10:00Z", "acquire", "ISOLATE", "isolated"),
+            self.synthetic_event(
+                "isolate",
+                "2026-07-12T10:10:00Z",
+                "acquire",
+                "ISOLATE",
+                "isolated",
+                mode="isolated",
+            ),
+            self.synthetic_event(
+                "shared-required",
+                "2026-07-12T10:10:30Z",
+                "acquire",
+                "PRIMARY_REQUIRED",
+                "shared-required",
+                active_claim_count=1,
+                shared_checkout_claimed=False,
+            ),
             self.synthetic_event("isolate-release", "2026-07-12T10:11:00Z", "release", "RELEASED", "isolated"),
             self.synthetic_event("recover", "2026-07-12T10:20:00Z", "acquire", "RECOVER", "recovery"),
             self.synthetic_event("recover-release", "2026-07-12T10:21:00Z", "release", "RELEASED", "recovery"),
@@ -1394,6 +1434,8 @@ class AgentClaimTests(unittest.TestCase):
         self.assertEqual(2, metrics["wait_attempt_count"])
         self.assertEqual(2, metrics["outcome_counts"]["CLAIM_SCOPE_CONFLICT_WAIT_REQUIRED"])
         self.assertEqual(2, metrics["raw_outcome_counts"]["WAIT"])
+        self.assertEqual(1, metrics["outcome_counts"]["SHARED_CHECKOUT_REQUIRED"])
+        self.assertEqual(1, metrics["raw_outcome_counts"]["PRIMARY_REQUIRED"])
         self.assertEqual(1, len(metrics["wait_episodes"]))
         self.assertEqual(300.0, metrics["wait_episodes"][0]["duration_seconds"])
         self.assertEqual("src/one.py", metrics["top_contention"]["exact_files"][0]["scope"])
@@ -1409,6 +1451,32 @@ class AgentClaimTests(unittest.TestCase):
         self.assertEqual(1, metrics["journal_warning_count"])
         self.assertEqual(registry_before, self.registry_path().read_bytes() if self.registry_path().exists() else None)
         self.assertEqual(journal_before, (self.hot_directory() / "2026-07-12.jsonl").read_bytes())
+
+    def test_report_keeps_ambiguous_legacy_primary_required_outcome_raw(self) -> None:
+        event = self.synthetic_event(
+            "ambiguous-primary-required",
+            "2026-07-12T10:00:00Z",
+            "acquire",
+            "PRIMARY_REQUIRED",
+            "ambiguous",
+            active_claim_count=1,
+        )
+        self.write_daily_events("2026-07-12", [event])
+
+        completed = self.claim(
+            "report",
+            "--since",
+            "2d",
+            environment={"AGENT_CLAIM_TEST_NOW": "2026-07-13T10:00:00Z"},
+        )
+
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        report = self.output(completed)
+        self.assertEqual(1, report["metrics"]["outcome_counts"]["PRIMARY_REQUIRED"])
+        self.assertEqual(
+            "legacy PRIMARY_REQUIRED lacks deterministic shared-checkout ownership evidence",
+            report["metrics"]["outcome_normalization_gaps"][0]["detail"],
+        )
 
     def test_daily_boundaries_use_utc_not_local_daylight_saving(self) -> None:
         event = self.synthetic_event("old", "2026-11-01T23:30:00Z", "acquire", "PRIMARY", "old")

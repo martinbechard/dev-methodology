@@ -843,6 +843,35 @@ def _canonical_outcome(outcome: str, shared_checkout_claimed: bool = False) -> s
     return LEGACY_OUTCOME_ALIASES.get(outcome, outcome)
 
 
+def _normalized_event_outcomes(
+    events: Sequence[dict[str, Any]],
+) -> tuple[list[str], list[dict[str, str]]]:
+    normalized: list[str] = []
+    gaps: list[dict[str, str]] = []
+    for event in sorted(events, key=_event_sort_key):
+        event_id = str(event.get("event_id") or "")
+        raw_outcome = str(event.get("outcome"))
+        if raw_outcome == "PRIMARY_REQUIRED":
+            shared_checkout_claimed = event.get("shared_checkout_claimed")
+            if isinstance(shared_checkout_claimed, bool):
+                outcome = _canonical_outcome(raw_outcome, shared_checkout_claimed)
+            else:
+                outcome = raw_outcome
+                gaps.append(
+                    {
+                        "source": event_id,
+                        "detail": (
+                            "legacy PRIMARY_REQUIRED lacks deterministic "
+                            "shared-checkout ownership evidence"
+                        ),
+                    }
+                )
+        else:
+            outcome = _canonical_outcome(raw_outcome)
+        normalized.append(outcome)
+    return normalized, gaps
+
+
 def _append_event(common_directory: Path, event: dict[str, Any]) -> Path:
     if os.environ.get("AGENT_CLAIM_TEST_FAIL_JOURNAL_WRITE") == "1":
         raise OSError("simulated journal write failure")
@@ -960,6 +989,7 @@ def _primary_required_result(
         claim=claim,
         requested_scope=requested_scope,
         reason=reason,
+        shared_checkout_claimed=shared_checkout_claimed,
         command_warnings=scope_warnings,
         **details,
     )
@@ -1508,8 +1538,13 @@ def _top_counts(counter: Counter[str]) -> list[dict[str, Any]]:
     ]
 
 
-def _aggregate(events: list[dict[str, Any]], now: datetime, live_claims: list[dict[str, Any]]) -> dict[str, Any]:
+def _aggregate(
+    events: list[dict[str, Any]],
+    now: datetime,
+    live_claims: list[dict[str, Any]],
+) -> dict[str, Any]:
     ordered = sorted(events, key=_event_sort_key)
+    normalized_outcomes, normalization_gaps = _normalized_event_outcomes(ordered)
     successful_outcomes = {
         "SHARED_CHECKOUT_ACQUIRED": "primary",
         "ISOLATED_CHECKOUT_ACQUIRED": "isolated",
@@ -1517,13 +1552,7 @@ def _aggregate(events: list[dict[str, Any]], now: datetime, live_claims: list[di
     }
     acquisitions = Counter()
     raw_outcome_counts = Counter(str(event.get("outcome")) for event in ordered)
-    outcome_counts = Counter(
-        _canonical_outcome(
-            str(event.get("outcome")),
-            shared_checkout_claimed=bool(event.get("active_claim_count")),
-        )
-        for event in ordered
-    )
+    outcome_counts = Counter(normalized_outcomes)
     action_counts = Counter(str(event.get("action")) for event in ordered)
     acquisition_times: dict[str, datetime] = {}
     released_claims: set[str] = set()
@@ -1539,11 +1568,8 @@ def _aggregate(events: list[dict[str, Any]], now: datetime, live_claims: list[di
     integration_resources: Counter[str] = Counter()
     journal_warning_count = 0
 
-    for event in ordered:
-        outcome = _canonical_outcome(
-            str(event.get("outcome")),
-            shared_checkout_claimed=bool(event.get("active_claim_count")),
-        )
+    for index, event in enumerate(ordered):
+        outcome = normalized_outcomes[index]
         action = str(event.get("action"))
         claim_id = str(event.get("claim_id") or "")
         timestamp = _parse_timestamp(str(event["timestamp"]))
@@ -1630,6 +1656,7 @@ def _aggregate(events: list[dict[str, Any]], now: datetime, live_claims: list[di
         "action_counts": dict(sorted(action_counts.items())),
         "outcome_counts": dict(sorted(outcome_counts.items())),
         "raw_outcome_counts": dict(sorted(raw_outcome_counts.items())),
+        "outcome_normalization_gaps": normalization_gaps,
         "successful_acquisitions": {
             mode: acquisitions.get(mode, 0) for mode in ("primary", "isolated", "recovery")
         },
