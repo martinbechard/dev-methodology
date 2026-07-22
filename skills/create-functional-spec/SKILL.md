@@ -32,6 +32,7 @@ Create one functional specification that defines:
 - User-facing concepts.
 - Workflows.
 - Workflow diagrams for every workflow with two or more ordered actor actions, or with any branch, permission gate, alternate path, recovery path, state transition, or external handoff.
+- Proportionate interface examples, or a concrete no-example rationale when no required-example condition applies.
 - States and rules.
 - Edge cases.
 - Verification blocks.
@@ -39,6 +40,18 @@ Create one functional specification that defines:
 Use project-wiki-topic-write instead when the task is a durable wiki topic page that summarizes existing functional knowledge without owning the functional specification.
 
 Use documentation-reverse-engineer when the user asks to derive a set of functional specifications from an existing codebase.
+
+## Interface Examples
+
+Classify every documented interface as UI, API, event or message, CLI, or another non-interactive surface. Select examples from the interface type and the behavior that the specification makes contractually significant. This methodology does not require HTML or a UI mockup for every functional specification.
+
+- UI behavior requires a proportionate mockup, wireframe, or interaction diagram when the contract depends on spatial placement, ordering, grouping, relative prominence, two or more view states that must be compared, an overlay or simultaneous region, responsive or conditional layout, or direct manipulation such as drag, drop, drawing, or spatial selection. Identify whether the visual example defines a layout, state-transition, or interaction contract. A workflow diagram satisfies this requirement only when it makes that same contract observable.
+- API behavior requires one coherent example containing the method, path, query parameters, headers, authentication, and request body together with the response status, headers, and body. Include representative validation, authentication, and conflict cases.
+- Event or message behavior requires a representative payload and a producer-consumer sequence that makes direction, ordering, acknowledgement, and failure behavior observable when applicable.
+- CLI behavior requires a representative invocation, output, and failure, including relevant arguments, options, exit status, and diagnostic output.
+- Simple or non-interactive behavior may use a concrete no-example rationale only when no required interface example above applies. Name the interface and behavior, explain why an additional example would add no contract information, and identify the exact prose, table, or verification block that already makes the observable behavior unambiguous.
+
+One example may cover multiple operations only when the specification maps each operation to the example and preserves its distinct inputs, outcomes, and failures. Otherwise provide separate examples.
 
 ## Reverse-Engineering Acceptance
 
@@ -58,9 +71,10 @@ Documentation acceptance asks whether the specification accurately records obser
 8. Include disabled states, error states, empty states, unavailable states, confirmation behavior, redirects, persistence outcomes, and important negative behavior when source evidence supports them.
 9. When scenario-heavy behavior is involved, map actors, entry points, states, permissions, main paths, alternate paths, and recovery paths to named scenarios. Keep diagrams, prose, tables, and machine-readable contracts consistent.
 10. Add a Mermaid workflow diagram whenever a workflow has two or more ordered actor actions, or any branch, permission gate, alternate path, recovery path, state transition, or external handoff. Use a sequence diagram for ordered actor-system exchanges, a state diagram for named states and transitions, and a flowchart for branches, decisions, or recovery paths. Prose, numbered lists, and tables may explain details but must not carry the complete workflow alone. Verification-step lists are test procedures and do not independently trigger a workflow diagram.
-11. Record the project-owned approval or acceptance authority when one exists. Do not invent a universal approval gate.
-12. Say Not yet identified for related code, tests, backlog items, or wiki pages that do not exist yet.
-13. Keep the artifact steady-state. Do not describe it as new, revised, or enhanced unless the document is explicitly a change plan.
+11. Classify every documented interface and provide each required interface example or its permitted concrete no-example rationale.
+12. Record the project-owned approval or acceptance authority when one exists. Do not invent a universal approval gate.
+13. Say Not yet identified for related code, tests, backlog items, or wiki pages that do not exist yet.
+14. Keep the artifact steady-state. Do not describe it as new, revised, or enhanced unless the document is explicitly a change plan.
 
 ## Verification
 
@@ -77,5 +91,6 @@ Before finishing:
 9. Confirm every undefined but resolvable actor-visible detail is covered by a justified functional proposition with basis, necessity, and decision owner rather than an avoidable open question.
 10. Confirm exact actors, operation identities, inputs, states, statuses, outcomes, and acceptance scenarios contain no ellipsis, wildcard, `TBD`, catch-all wording, unnamed variant, or omitted intermediate state that would force downstream invention.
 11. Confirm every workflow with two or more ordered actor actions, or any branch, permission gate, alternate path, recovery path, state transition, or external handoff, has an appropriate Mermaid diagram and is not left only in prose, a numbered list, or a table.
+12. Confirm every documented interface has its required proportionate example, or a concrete no-example rationale only when no required-example condition applies.
 
 Do not send private, proprietary, sensitive, PII, or company-internal material to an external service unless the user explicitly authorizes it.

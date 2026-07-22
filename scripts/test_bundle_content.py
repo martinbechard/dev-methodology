@@ -3261,6 +3261,58 @@ class BundleContentTests(unittest.TestCase):
             hld_template,
         )
 
+    def test_functional_spec_interface_examples_are_proportionate(self) -> None:
+        """Require interface-specific examples without imposing universal UI mockups."""
+        surfaces = (
+            (SKILLS_ROOT / "create-functional-spec" / "SKILL.md").read_text(
+                encoding="utf-8"
+            ),
+            (
+                SKILLS_ROOT
+                / "development-methodology"
+                / "assets"
+                / "templates"
+                / "functional-spec-template.md"
+            ).read_text(encoding="utf-8"),
+            (
+                SKILLS_ROOT
+                / "review-functional-spec"
+                / "references"
+                / "review-checklist-functional-spec.md"
+            ).read_text(encoding="utf-8"),
+        )
+
+        required_contracts = (
+            "mockup, wireframe, or interaction diagram",
+            "spatial placement, ordering, grouping, relative prominence",
+            "two or more view states that must be compared",
+            "responsive or conditional layout",
+            "method, path, query parameters, headers, authentication, and request body",
+            "response status, headers, and body",
+            "validation, authentication, and conflict cases",
+            "representative payload and a producer-consumer sequence",
+            "representative invocation, output, and failure",
+            "concrete no-example rationale",
+            "only when no required interface example",
+            "why an additional example would add no contract information",
+            "exact prose, table, or verification block",
+            "distinct inputs, outcomes, and failures",
+        )
+        for text in surfaces:
+            with self.subTest(surface=text[:80]):
+                for contract in required_contracts:
+                    self.assertIn(contract, text)
+
+        for guidance_text in surfaces[:2]:
+            self.assertIn(
+                "does not require HTML or a UI mockup for every functional specification",
+                guidance_text,
+            )
+        self.assertIn(
+            "select proportionate examples from the documented interface type and behavior",
+            surfaces[2],
+        )
+
     def test_project_configuration_routes_to_template_and_verifier(self) -> None:
         development_methodology_text = (
             SKILLS_ROOT / "development-methodology" / "SKILL.md"

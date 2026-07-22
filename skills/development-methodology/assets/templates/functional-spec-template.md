@@ -115,6 +115,22 @@ TODO: For each workflow, write the steps from the actor's point of view.
 
 TODO: Include expected visible results, confirmation messages, disabled states, navigation outcomes, and persistence outcomes.
 
+## Interface Examples
+
+TODO: Classify every documented interface as UI, API, event or message, CLI, or another non-interactive surface. Provide each required example below, or a concrete no-example rationale only when no required-example condition applies. This template does not require HTML or a UI mockup for every functional specification.
+
+TODO: For UI behavior, add a proportionate mockup, wireframe, or interaction diagram when the contract depends on spatial placement, ordering, grouping, relative prominence, two or more view states that must be compared, an overlay or simultaneous region, responsive or conditional layout, or direct manipulation such as drag, drop, drawing, or spatial selection. State whether the visual example defines a layout, state-transition, or interaction contract. A workflow diagram counts only when it makes that same contract observable.
+
+TODO: For API behavior, provide one coherent example containing the method, path, query parameters, headers, authentication, and request body together with the response status, headers, and body. Include representative validation, authentication, and conflict cases.
+
+TODO: For event or message behavior, provide a representative payload and a producer-consumer sequence that makes direction, ordering, acknowledgement, and failure behavior observable when applicable.
+
+TODO: For CLI behavior, provide a representative invocation, output, and failure, including relevant arguments, options, exit status, and diagnostic output.
+
+TODO: For simple or non-interactive behavior, use a concrete no-example rationale only when no required interface example above applies. Name the interface and behavior, explain why an additional example would add no contract information, and identify the exact prose, table, or verification block that already makes the observable behavior unambiguous.
+
+TODO: One example may cover multiple operations only when each operation is mapped to it with distinct inputs, outcomes, and failures. Otherwise provide separate examples.
+
 ## Workflow Diagram
 
 TODO: Add a Mermaid diagram whenever a workflow contains two or more ordered actor actions, or any branch, permission gate, alternate path, recovery path, state transition, or external handoff. Do not leave the complete workflow only in prose, a numbered list, or a table.
